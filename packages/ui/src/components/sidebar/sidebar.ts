@@ -2,22 +2,22 @@ import type { BadgeProps } from "../badge/badge"
 
 export interface SidebarItem {
   label: string
-  href?: string
-  icon?: string
-  badge?: string | BadgeProps
-  active?: boolean
-  children?: SidebarItem[]
-  items?: SidebarItem[]
-  collapsed?: boolean
+  href?: string | undefined
+  icon?: string | undefined
+  badge?: string | BadgeProps | undefined
+  active?: boolean | undefined
+  children?: SidebarItem[] | undefined
+  items?: SidebarItem[] | undefined
+  collapsed?: boolean | undefined
 }
 
 export interface SidebarScope {
-  id?: string
+  id?: string | undefined
   label: string
-  href?: string
-  icon?: string
-  items?: SidebarItem[]
-  collapsed?: boolean
+  href?: string | undefined
+  icon?: string | undefined
+  items?: SidebarItem[] | undefined
+  collapsed?: boolean | undefined
 }
 
 export interface SidebarProps {

@@ -1,12 +1,12 @@
 ---
 import AppLayout from './AppLayout.astro';
-import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro";
-import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro";
-import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro";
-import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro";
-import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro";
-import RLADashboardSidebarToggle from "@rimelight/ui/components/dashboard-sidebar-toggle/RLADashboardSidebarToggle.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLDashboardGroup from "@rimelight/ui/components/dashboard-group/RLDashboardGroup.tsx";
+import RLDashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLDashboardSidebar.tsx";
+import RLDashboardPanel from "@rimelight/ui/components/dashboard-panel/RLDashboardPanel.tsx";
+import RLDashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLDashboardNavbar.tsx";
+import RLDashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLDashboardSidebarCollapse.tsx";
+import RLDashboardSidebarToggle from "@rimelight/ui/components/dashboard-sidebar-toggle/RLDashboardSidebarToggle.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 
 interface Props {
 	title?: string;
@@ -29,15 +29,15 @@ const footerLinks = [
 ---
 
 <AppLayout title={title} description={description} noindex={true} favicon={favicon}>
-	<RLADashboardGroup style="padding-top: var(--rl-total-header-height, 0px)">
-		<RLADashboardSidebar side="left" collapsible class="h-full border-r border-neutral-200/50 bg-neutral-50">
+	<RLDashboardGroup style="padding-top: var(--rl-total-header-height, 0px)">
+		<RLDashboardSidebar side="left" collapsible class="h-full border-r border-neutral-200/50 bg-neutral-50">
 			<template #header>
 				<div class="flex flex-col gap-2 w-full p-4">
 					<div class="flex items-center gap-3 p-2">
 						<span class="i-lucide-layout-dashboard size-5 shrink-0 text-neutral-600" />
 						<span class="text-sm font-semibold text-neutral-900 truncate">Dashboard</span>
 					</div>
-					<RLADashboardSidebarCollapse side="left" class="shrink-0" />
+					<RLDashboardSidebarCollapse side="left" class="shrink-0" />
 				</div>
 			</template>
 
@@ -69,40 +69,40 @@ const footerLinks = [
 					<div class="h-[1px] bg-neutral-200 my-2" />
 					<div class="flex flex-row gap-2 justify-between items-center">
 						<a href="/dashboard/settings">
-							<RLAButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Settings">
+							<RLButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Settings">
 								<span class="i-lucide-cog size-4"></span>
-							</RLAButton>
+							</RLButton>
 						</a>
 						<a href="/dashboard/help">
-							<RLAButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Help">
+							<RLButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Help">
 								<span class="i-lucide-circle-help size-4"></span>
-							</RLAButton>
+							</RLButton>
 						</a>
 						<a href="/dashboard/report-issue">
-							<RLAButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Report Issue">
+							<RLButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Report Issue">
 								<span class="i-lucide-bug size-4"></span>
-							</RLAButton>
+							</RLButton>
 						</a>
 					</div>
 				</div>
 			</template>
-		</RLADashboardSidebar>
+		</RLDashboardSidebar>
 
-		<RLADashboardPanel>
+		<RLDashboardPanel>
 			<template #header>
-				<RLADashboardNavbar>
+				<RLDashboardNavbar>
 					<template #left>
-						<RLADashboardSidebarToggle side="left" class="lg:hidden" />
+						<RLDashboardSidebarToggle side="left" class="lg:hidden" />
 						<h1 class="text-lg font-semibold text-neutral-900">
 							{title}
 						</h1>
 					</template>
-				</RLADashboardNavbar>
+				</RLDashboardNavbar>
 			</template>
 
 			<div data-slot="body" class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6">
 				<slot />
 			</div>
-		</RLADashboardPanel>
-	</RLADashboardGroup>
+		</RLDashboardPanel>
+	</RLDashboardGroup>
 </AppLayout>

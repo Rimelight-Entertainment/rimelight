@@ -1,9 +1,9 @@
 import { createSignal, onMount, For, Show, createMemo, type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
 
 export interface BylineEntity {
   id: string
@@ -212,7 +212,7 @@ export const RimelightBylinesManager: Component = () => {
         <div class="lg:col-span-5 flex flex-col gap-3">
           <div class="flex items-center gap-2">
             <div class="flex-1">
-              <RLSInput
+              <RLInput
                 value={searchQuery()}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setSearchQuery(e.currentTarget.value)
@@ -221,7 +221,7 @@ export const RimelightBylinesManager: Component = () => {
                 size="sm"
               />
             </div>
-            <RLSButton
+            <RLButton
               variant="solid"
               color="primary"
               size="sm"
@@ -241,7 +241,7 @@ export const RimelightBylinesManager: Component = () => {
 
           <Show when={!isLoading() && filteredBylines().length === 0}>
             <div class="p-8 text-center border border-dashed border-default rounded-xl flex flex-col items-center gap-2">
-              <RLSIcon name="user" size="md" class="text-muted/50" />
+              <RLIcon name="user" size="md" class="text-muted/50" />
               <span class="text-xs font-semibold text-highlighted">No bylines found</span>
               <p class="text-[11px] text-muted">
                 Create a byline to attribute authors to your posts.
@@ -280,9 +280,9 @@ export const RimelightBylinesManager: Component = () => {
                           {item.name}
                         </span>
                         <Show when={isSelected()}>
-                          <RLSBadge variant="solid" color="primary" size="sm">
+                          <RLBadge variant="solid" color="primary" size="sm">
                             Active
-                          </RLSBadge>
+                          </RLBadge>
                         </Show>
                       </div>
                       <span class="text-xs font-mono text-muted truncate">{item.slug}</span>
@@ -309,7 +309,7 @@ export const RimelightBylinesManager: Component = () => {
             {/* Display Name */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Display name *</label>
-              <RLSInput
+              <RLInput
                 value={form().name}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   handleNameChange(e.currentTarget.value)
@@ -321,7 +321,7 @@ export const RimelightBylinesManager: Component = () => {
             {/* Slug */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Slug</label>
-              <RLSInput
+              <RLInput
                 value={form().slug}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setForm((prev) => ({ ...prev, slug: e.currentTarget.value }))
@@ -333,7 +333,7 @@ export const RimelightBylinesManager: Component = () => {
             {/* Website URL */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Website URL</label>
-              <RLSInput
+              <RLInput
                 value={form().websiteUrl}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setForm((prev) => ({ ...prev, websiteUrl: e.currentTarget.value }))
@@ -345,7 +345,7 @@ export const RimelightBylinesManager: Component = () => {
             {/* Bio */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Bio</label>
-              <RLSTextarea
+              <RLTextarea
                 value={form().bio}
                 onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
                   setForm((prev) => ({ ...prev, bio: e.currentTarget.value }))
@@ -368,7 +368,7 @@ export const RimelightBylinesManager: Component = () => {
                   when={form().avatar}
                   fallback={
                     <div class="w-12 h-12 rounded-xl border border-dashed border-default flex items-center justify-center text-muted/50 shrink-0">
-                      <RLSIcon name="image" size="md" />
+                      <RLIcon name="image" size="md" />
                     </div>
                   }
                 >
@@ -379,7 +379,7 @@ export const RimelightBylinesManager: Component = () => {
                   />
                 </Show>
                 <div class="flex-1">
-                  <RLSInput
+                  <RLInput
                     value={form().avatar}
                     onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                       setForm((prev) => ({ ...prev, avatar: e.currentTarget.value }))
@@ -393,7 +393,7 @@ export const RimelightBylinesManager: Component = () => {
             {/* Linked User ID */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Linked user</label>
-              <RLSInput
+              <RLInput
                 value={form().userId}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setForm((prev) => ({ ...prev, userId: e.currentTarget.value }))
@@ -405,7 +405,7 @@ export const RimelightBylinesManager: Component = () => {
             {/* Form Actions */}
             <div class="flex items-center justify-between border-t border-default pt-4 mt-2">
               <Show when={selectedId()} fallback={<div />}>
-                <RLSButton
+                <RLButton
                   type="button"
                   variant="outline"
                   color="neutral"
@@ -417,7 +417,7 @@ export const RimelightBylinesManager: Component = () => {
               </Show>
 
               <div class="flex items-center gap-2">
-                <RLSButton
+                <RLButton
                   type="button"
                   variant="outline"
                   color="neutral"
@@ -425,7 +425,7 @@ export const RimelightBylinesManager: Component = () => {
                   onClick={startNewByline}
                   label="Cancel"
                 />
-                <RLSButton
+                <RLButton
                   type="submit"
                   variant="solid"
                   color="primary"

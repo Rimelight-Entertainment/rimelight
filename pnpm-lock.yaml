@@ -507,18 +507,9 @@ importers:
         specifier: 66.10.5
         version: 66.10.5(cac@7.0.0)(rolldown@1.2.3)(rollup@4.63.4)(srvx@1.0.3)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))
     devDependencies:
-      '@astrojs/check':
-        specifier: 0.9.10
-        version: 0.9.10(prettier@3.9.6)(typescript@6.0.3)
-      '@astrojs/solid-js':
-        specifier: 7.0.2
-        version: 7.0.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(solid-js@1.9.15)(supports-color@10.2.2)(tsx@4.23.11)(yaml@2.9.0)
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      astro:
-        specifier: 7.3.3
-        version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.2)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
       solid-js:
         specifier: 1.9.15
         version: 1.9.15

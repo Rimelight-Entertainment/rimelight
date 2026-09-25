@@ -1,6 +1,6 @@
 ---
 import GrandTaleLayout from "#layouts/GrandTaleLayout.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 import { t } from "@rimelight/i18n";
 
 const newsItems = [
@@ -59,7 +59,7 @@ const newsItems = [
               <p class="text-neutral-400 text-sm leading-relaxed line-clamp-3">
                 {item.excerpt}
               </p>
-              <RLAButton
+              <RLButton
                 label={t("page_grand-tale_news.read_btn")}
                 color="primary"
                 variant="link"

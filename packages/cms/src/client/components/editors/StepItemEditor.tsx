@@ -1,8 +1,8 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface StepItemEditorProps {
   blockId?: string
@@ -74,14 +74,14 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
   return (
     <div class="rimelight-step-item-editor flex flex-col gap-2 p-3 rounded-lg border border-default bg-muted/10 w-full">
       <div class="flex flex-col gap-1.5">
-        <RLSInput
+        <RLInput
           type="text"
           placeholder="Step title (e.g. Install Dependencies)"
           value={componentProps.props["title"] || ""}
           onBlur={(e) => saveMeta(e.currentTarget.value, undefined)}
           size="sm"
         />
-        <RLSInput
+        <RLInput
           type="text"
           placeholder="Step description (optional)"
           value={componentProps.props["description"] || ""}
@@ -97,7 +97,7 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-2">
             <span class="text-xs text-muted block">Empty step content</span>
-            <RLSButton
+            <RLButton
               variant="link"
               color="primary"
               size="xs"

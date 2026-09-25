@@ -1,7 +1,7 @@
 ---
 import WikiLayout from '#layouts/WikiLayout.astro';
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLCard from "@rimelight/ui/components/card/RLCard.tsx";
 
 const guides = [
 	{
@@ -49,15 +49,15 @@ const guides = [
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{guides.map((guide) => (
-					<RLACard class="bg-neutral-900/40 border-neutral-800 rounded-2xl p-6">
+					<RLCard class="bg-neutral-900/40 border-neutral-800 rounded-2xl p-6">
 						<div slot="header" class="mb-2">
 							<h3 class="text-lg font-bold text-white uppercase">{guide.title}</h3>
 						</div>
 						<p class="text-neutral-400 text-sm leading-relaxed mb-4">
 							{guide.description}
 						</p>
-						<RLAButton variant="ghost" color="primary" class="p-0 text-indigo-400 hover:text-indigo-300 font-bold text-xs uppercase" label="Read Guide →" />
-					</RLACard>
+						<RLButton variant="ghost" color="primary" class="p-0 text-indigo-400 hover:text-indigo-300 font-bold text-xs uppercase" label="Read Guide →" />
+					</RLCard>
 				))}
 			</div>
 		</section>
@@ -74,12 +74,12 @@ const guides = [
 					Grand Tale is rich with history, mysteries, and interconnected storylines.
 				</p>
 				<div class="flex flex-wrap gap-4">
-					<RLAButton color="primary" variant="outline" label="Timeline of Events" class="rounded-xl px-4 py-2" />
-					<RLAButton color="primary" variant="outline" label="The Nine Factions" class="rounded-xl px-4 py-2" />
+					<RLButton color="primary" variant="outline" label="Timeline of Events" class="rounded-xl px-4 py-2" />
+					<RLButton color="primary" variant="outline" label="The Nine Factions" class="rounded-xl px-4 py-2" />
 				</div>
 			</div>
 
-			<RLACard class="bg-neutral-900/40 border-neutral-800 rounded-2xl p-6">
+			<RLCard class="bg-neutral-900/40 border-neutral-800 rounded-2xl p-6">
 				<div class="flex flex-col md:flex-row gap-6 items-center">
 					<div class="p-4 bg-indigo-500/20 rounded-xl border border-indigo-500/30 shrink-0">
 						<span class="i-lucide-info size-8 text-indigo-400"></span>
@@ -92,7 +92,7 @@ const guides = [
 						</p>
 					</div>
 				</div>
-			</RLACard>
+			</RLCard>
 		</section>
 	</div>
 </WikiLayout>

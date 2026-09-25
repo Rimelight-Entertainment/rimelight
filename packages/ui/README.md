@@ -1,7 +1,6 @@
 # Rimelight UI (@rimelight/ui)
 
-[![Built with Astro](https://astro.badg.es/v2/built-with-astro/small.svg)](https://astro.build) &nbsp;
-
+[![Built with Solid](https://img.shields.io/badge/SolidJS-2c4f7c?style=for-the-badge&logo=solid&logoColor=white)](https://www.solidjs.com) &nbsp;
 [![PLAYGROUND](https://img.shields.io/badge/PLAYGROUND-A682FF?style=for-the-badge&logo=astro&logoColor=white)](https://playground.rimelight.com/ui) &nbsp;
 [![DOCUMENTATION](https://img.shields.io/badge/DOCUMENTATION-A682FF?style=for-the-badge&logo=astro&logoColor=white)](https://rimelight.com/company/docs/packages/rimelight-ui/) &nbsp;
 
@@ -10,96 +9,57 @@
 [![View on npmx](https://img.shields.io/badge/VIEW%20ON%20NPMX-A682FF?style=for-the-badge&logo=npm&logoColor=white)](https://npmx.dev/package/@rimelight/ui) &nbsp;
 [![pkg.pr.new](https://pkg.pr.new/badge/Rimelight-Entertainment/rimelight)](https://pkg.pr.new/~/Rimelight-Entertainment/rimelight) &nbsp;
 
-Rimelight UI is a comprehensive component library for [Astro](https://astro.build) websites used and maintained by [Rimelight Entertainment](https://rimelight.com).
-It offers a suite of accessible and highly performant components as [Astro Components](https://docs.astro.build/basics/astro-components/) and [Solid Components](https://www.solidjs.com), and is available as a free and open source project for any to use.
+Rimelight UI is a comprehensive SolidJS component library used and maintained by [Rimelight Entertainment](https://rimelight.com).
+It offers a full suite of accessible, reactive, and highly performant components for [SolidJS](https://www.solidjs.com) and [Astro](https://astro.build) (via `@astrojs/solid-js` islands and SSR), and is available as a free and open source project for anyone to use.
 
 ## Features
 
-- **Dual Framework Support**: Astro and Solid with a unified usage pattern - use what suits your project best.
-- **Intuitive**: Simple APIs, comprehensive documentation, and convenient integrations.
-- **Accessible**: All components are WAI-ARIA compliant and include keyboard navigation, focus management, and
-  screen reader support.
-- **Customizable**: Create your own design system by overriding styles and variants globally or per instance.
-- **Performant**: Fully type-safe, SEO-friendly, modern and lean dependencies, and blazing fast.
+- **Pure SolidJS**: Reactive, zero-virtual-DOM performance with fine-grained reactivity.
+- **Astro Island & SSR Ready**: Seamlessly server-rendered and hydrated in Astro applications.
+- **Accessible**: All components are WAI-ARIA compliant and include keyboard navigation, focus management, and screen reader support.
+- **Customizable**: Create your own design system by overriding styles and variants globally or per instance via UnoCSS.
+- **Performant**: Fully type-safe, modern and lean dependencies, and blazing fast.
 
 For a complete list of available components, refer to the [documentation](https://rimelight.com/company/docs/packages/rimelight-ui/).
 
 ## Installation
 
-To use Rimelight UI in an Astro project, you need to install the package and add the integration.
-
-1. Install the package into your project:
-
 ```bash
 # vp
-vp install @rimelight/ui
-
-# npm
-npm install @rimelight/ui
+vp install @rimelight/ui solid-js
 
 # pnpm
-pnpm add @rimelight/ui
+pnpm add @rimelight/ui solid-js
 
-# yarn
-yarn add @rimelight/ui
-
-# deno
-deno add npm:@rimelight/ui
-
-# bun
-bun add @rimelight/ui
-```
-
-2. Add the Rimelight UI Vite plugin to your configuration:
-
-```typescript
-// astro.config.ts
-import { ui } from "@rimelight/ui"
-import { defineConfig } from "astro/config"
-
-export default defineConfig({
-  vite: {
-    plugins: [
-      ui({
-        // Optional: Provide global UI overrides
-        components: {
-          themes: {
-            button: {
-              defaultVariants: { variant: "primary" }
-            }
-          }
-        }
-      })
-    ]
-  }
-})
+# npm
+npm install @rimelight/ui solid-js
 ```
 
 ## Usage
 
-### Astro Components
-
-```astro
----
-// component.astro
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
----
-
-<RLAButton label="Click Me" />
-```
-
-### Solid Components
+### In SolidJS
 
 ```tsx
-// component.tsx
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import { RLButton } from "@rimelight/ui/components"
 
-export default function MyButton() {
-  return <RLSButton label="Click Me" />
+export default function MyComponent() {
+  return <RLButton label="Click Me" color="primary" variant="solid" />
 }
 ```
 
-For mixed usage please refer to the [Astro documentation on using front-end frameworks](https://docs.astro.build/en/guides/framework-components/).
+### In Astro (as Islands or Static SSR)
+
+```astro
+---
+import { RLButton } from "@rimelight/ui/components"
+---
+
+<!-- Static SSR -->
+<RLButton label="Static Action" color="primary" />
+
+<!-- Interactive Island -->
+<RLButton client:load label="Interactive Island" color="secondary" />
+```
 
 ## Frequently Asked Questions
 
@@ -110,17 +70,12 @@ For mixed usage please refer to the [Astro documentation on using front-end fram
 
 <details>
   <summary><b>Can I use Rimelight UI without Astro?</b></summary>
-    For the time being, no. The component library itself is Astro-based (the <code>.astro</code> components require Astro's compiler), but its configuration and styling pipeline are distributed as a plain Vite plugin, so any Vite-powered project can consume the Solid components, themes, and design tokens.
-</details>
-
-<details>
-  <summary><b>Are other front-end frameworks supported?</b></summary>
-     For the time being, no. The library currently offers Astro and Solid components, but in theory could support other front-end frameworks, and we welcome community contributions to expand this.
+    Yes! Rimelight UI is a standard SolidJS component library and can be used in any SolidJS, SolidStart, or Vite project.
 </details>
 
 <details>
   <summary><b>Is Rimelight UI customizable?</b></summary>
-    Yes. All components can have their styles overridden per slot and per variant, either globally via your <code>astro.config.ts</code> configuration or locally on an individual instance using the <code>ui</code> prop.
+    Yes. All components can have their styles overridden per slot and per variant, either globally via your UI configuration or locally on an individual instance using the <code>ui</code> prop.
 </details>
 
 <details>
@@ -138,8 +93,6 @@ For mixed usage please refer to the [Astro documentation on using front-end fram
 ## Contributing
 
 We welcome contributions to this project and its documentation. If you are interested in contributing, please refer to our [contribution guidelines](https://rimelight.com/company/docs/contributing/).
-
-If you would like to financially support this project, please consider [sponsoring us](https://rimelight.com/company/docs/contributing/sponsoring/).
 
 ## Support
 

@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show, type Component } from "solid-js"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface InlineNode {
   type: "text" | "link"
@@ -220,7 +220,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
         class="toolbar-div flex items-center gap-0.5 px-1.5 py-1 bg-elevated border border-default rounded-lg shadow-sm mb-1 self-start"
         classList={{ hidden: !toolbarVisible() }}
       >
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"
@@ -229,7 +229,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           class="font-bold !px-2"
           label="B"
         />
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"
@@ -238,7 +238,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           class="italic font-serif !px-2"
           label="I"
         />
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"
@@ -248,7 +248,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           label="U"
         />
         <div class="w-px h-3.5 bg-default mx-1" />
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"
@@ -266,20 +266,20 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
 
       {/* Link URL Modal — replaces browser prompt() */}
       <Show when={linkModalOpen()}>
-        <RLSModal
+        <RLModal
           open={linkModalOpen()}
           onClose={() => setLinkModalOpen(false)}
           title="Insert Link"
           footerSlot={
             <>
-              <RLSButton
+              <RLButton
                 variant="outline"
                 color="neutral"
                 size="sm"
                 onClick={() => setLinkModalOpen(false)}
                 label="Cancel"
               />
-              <RLSButton
+              <RLButton
                 variant="solid"
                 color="primary"
                 size="sm"
@@ -291,7 +291,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
         >
           <div class="flex flex-col gap-2 py-2">
             <span class="text-xs font-semibold text-muted">URL</span>
-            <RLSInput
+            <RLInput
               value={linkUrl()}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setLinkUrl(e.currentTarget.value)
@@ -307,7 +307,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
               autofocus
             />
           </div>
-        </RLSModal>
+        </RLModal>
       </Show>
     </div>
   )

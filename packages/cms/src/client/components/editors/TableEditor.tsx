@@ -1,7 +1,7 @@
 import { For, type Component } from "solid-js"
 import type { TableColumnDef } from "../../../core/types/blocks"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface TableEditorProps {
   props: Record<string, any>
@@ -80,7 +80,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
       <div class="flex items-center justify-between">
         <span class="text-xs font-bold uppercase tracking-wider text-muted">Table</span>
         <div class="flex items-center gap-2">
-          <RLSButton
+          <RLButton
             variant="outline"
             color="neutral"
             size="xs"
@@ -88,7 +88,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
             leadingIcon="plus"
             label="Add Column"
           />
-          <RLSButton
+          <RLButton
             variant="outline"
             color="neutral"
             size="xs"
@@ -169,7 +169,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
         </table>
       </div>
 
-      <RLSInput
+      <RLInput
         type="text"
         placeholder="Table caption (optional)"
         value={componentProps.props["caption"] || ""}

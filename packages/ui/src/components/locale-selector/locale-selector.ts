@@ -31,17 +31,23 @@ export interface LocaleSelectorProps {
    */
   currentLocale?: string
   /**
+   * The display mode of the locale selector.
+   *
+   * @default "select"
+   */
+  mode?: "select" | "icon"
+  /**
    * The styling variant of the language selection element.
    *
    * @default "default"
    */
-  variant?: "default" | "outline" | "ghost"
+  variant?: "default" | "outline" | "ghost" | "icon"
   /**
    * The size scale of typography and spacing metrics.
    *
    * @default "md"
    */
-  size?: "sm" | "md" | "lg"
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
   /**
    * The color theme mode override for this component.
    */

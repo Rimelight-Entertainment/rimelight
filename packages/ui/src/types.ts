@@ -2,7 +2,7 @@ import type { UserConfig } from "unocss"
 import type { RimelightIcons } from "./icons"
 import type { PALETTES } from "./preset"
 
-export type Theme = "light" | "dark"
+export type Theme = "light" | "dark" | "flat"
 export type BuiltinThemeColor = keyof typeof PALETTES
 export type ThemeColor = BuiltinThemeColor | (string & {})
 

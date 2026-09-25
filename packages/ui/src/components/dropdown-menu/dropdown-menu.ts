@@ -1,25 +1,27 @@
 import type { ThemeColor } from "../../types"
 
 export interface DropdownMenuItem {
-  label?: string
-  icon?: string
-  avatar?: {
-    src: string
-    loading?: "lazy" | "eager"
-    alt?: string
-  }
-  shortcut?: string
-  kbds?: string[]
-  type?: "link" | "label" | "separator" | "checkbox" | "item"
-  color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral"
-  checked?: boolean
-  disabled?: boolean
-  slot?: string
-  onSelect?: (e: Event) => void
-  onUpdateChecked?: (checked: boolean) => void
-  children?: DropdownMenuItem[] | DropdownMenuItem[][]
-  to?: string
-  target?: string
+  label?: string | undefined
+  icon?: string | undefined
+  avatar?:
+    | {
+        src: string
+        loading?: "lazy" | "eager" | undefined
+        alt?: string | undefined
+      }
+    | undefined
+  shortcut?: string | undefined
+  kbds?: string[] | undefined
+  type?: "link" | "label" | "separator" | "checkbox" | "item" | undefined
+  color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral" | undefined
+  checked?: boolean | undefined
+  disabled?: boolean | undefined
+  slot?: string | undefined
+  onSelect?: ((e: Event) => void) | undefined
+  onUpdateChecked?: ((checked: boolean) => void) | undefined
+  children?: DropdownMenuItem[] | DropdownMenuItem[][] | undefined
+  to?: string | undefined
+  target?: string | undefined
   class?: any
   ui?: any
   [key: string]: any

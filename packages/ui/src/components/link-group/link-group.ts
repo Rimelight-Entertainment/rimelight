@@ -1,3 +1,4 @@
+import type { Theme } from "../../types"
 import type { LinkProps } from "../link/link"
 
 export interface LinkGroupProps {
@@ -26,11 +27,9 @@ export interface LinkGroupProps {
    */
   ui?: any
   /**
-   * Force a color-scheme context on the link group. `"light"` or `"dark"` sets `color-scheme` on
-   * the root element, causing all `light-dark()` color variables to resolve to the correct scheme
-   * regardless of the global page mode.
+   * Force a color-scheme context on the link group.
    */
-  theme?: "light" | "dark"
+  theme?: Theme | undefined
   /**
    * Additional CSS classes to apply to the root element.
    */

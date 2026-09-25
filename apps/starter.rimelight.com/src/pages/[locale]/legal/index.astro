@@ -2,7 +2,7 @@
 import AppLayout from "#layouts/AppLayout.astro"
 import { siteConfig } from "virtual:rimelight/seo"
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro"
+import RLContainer from "@rimelight/ui/components/container/RLContainer.tsx"
 import { db } from "#db"
 import { pages } from "#db/schema"
 import { eq, and, isNull, desc } from "drizzle-orm"
@@ -25,7 +25,7 @@ const legalPages = await db
 ---
 
 <AppLayout title={t("legal.title")} description={siteConfig.description}>
-	<RLAContainer class="py-16 max-w-3xl">
+	<RLContainer class="py-16 max-w-3xl">
 		<section class="legal-section">
 			<h1 class="text-3xl font-extrabold text-white mb-8">{t("legal.heading")}</h1>
 			<ul class="legal-list flex flex-col gap-6">
@@ -47,5 +47,5 @@ const legalPages = await db
 				})}
 			</ul>
 		</section>
-	</RLAContainer>
+	</RLContainer>
 </AppLayout>

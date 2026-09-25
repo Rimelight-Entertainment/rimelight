@@ -1,7 +1,7 @@
 ---
 import GrandTaleLayout from "#layouts/GrandTaleLayout.astro";
-import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
-import RLAVideo from "@rimelight/ui/components/video/RLAVideo.astro";
+import RLPageSection from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import RLVideo from "@rimelight/ui/components/video/RLVideo.tsx";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const heroLinks = [
@@ -27,7 +27,7 @@ const overviewLinks = [
 
 <GrandTaleLayout title={t("page_grand-tale_home.hero_title")} description={t("page_grand-tale_home.hero_description")}>
   <!-- Hero Section -->
-  <RLAPageSection
+  <RLPageSection
     variant="hero"
     title={t("page_grand-tale_home.hero_title")}
     description={t("page_grand-tale_home.hero_description")}
@@ -49,10 +49,10 @@ const overviewLinks = [
       </video>
       <div class="absolute inset-0 bg-black/40" />
     </div>
-  </RLAPageSection>
+  </RLPageSection>
 
   <!-- Overview Section -->
-  <RLAPageSection
+  <RLPageSection
     orientation="horizontal"
     title={t("page_grand-tale_home.overview_title")}
     description={t("page_grand-tale_home.overview_description")}
@@ -74,13 +74,13 @@ const overviewLinks = [
     </div>
 
     <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
-      <RLAVideo
+      <RLVideo
         src="https://www.youtube.com/watch?v=QdXl3QtutQI"
         title="Grand Tale Official Trailer"
         class="aspect-video w-full max-w-2xl overflow-hidden rounded-2xl border border-neutral-800 shadow-2xl"
       />
     </div>
-  </RLAPageSection>
+  </RLPageSection>
 
   <!-- Features Cards Section -->
   <section class="py-24 bg-black border-t border-neutral-900">

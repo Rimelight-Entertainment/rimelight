@@ -1,13 +1,13 @@
 ---
 import DashboardLayout from "#layouts/DashboardLayout.astro";
-import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro";
-import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro";
-import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro";
-import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro";
-import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro";
-import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro";
-import RLADashboardSidebarToggle from "@rimelight/ui/components/dashboard-sidebar-toggle/RLADashboardSidebarToggle.astro";
-import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLDashboardGroup from "@rimelight/ui/components/dashboard-group/RLDashboardGroup.tsx";
+import RLDashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLDashboardSidebar.tsx";
+import RLDashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLDashboardNavbar.tsx";
+import RLDashboardPanel from "@rimelight/ui/components/dashboard-panel/RLDashboardPanel.tsx";
+import RLDashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLDashboardToolbar.tsx";
+import RLDashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLDashboardSidebarCollapse.tsx";
+import RLDashboardSidebarToggle from "@rimelight/ui/components/dashboard-sidebar-toggle/RLDashboardSidebarToggle.tsx";
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 const navItems = [
 	{ icon: "i-lucide-layout-dashboard", label: "Overview", href: "/admin", id: "overview" },
@@ -30,19 +30,19 @@ const currentActive = activeNav || activeSection || "overview";
 ---
 
 <DashboardLayout title={title} description={description} noindex={true}>
-	<RLADashboardGroup>
-		<RLADashboardSidebar side="left" collapsible>
+	<RLDashboardGroup>
+		<RLDashboardSidebar side="left" collapsible>
 			<Fragment slot="header">
 				<div class="flex items-center gap-2.5">
 					<div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
-						<RLAIcon name="i-lucide-shield" class="size-5 text-primary group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
+						<RLIcon name="i-lucide-shield" class="size-5 text-primary group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
 					</div>
 					<div class="flex flex-col truncate group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>
 						<span class="font-semibold text-highlighted text-sm leading-none">Identity Admin</span>
 						<span class="text-xs text-muted mt-0.5">Cloudflare Access</span>
 					</div>
 				</div>
-				<RLADashboardSidebarCollapse side="left" class="shrink-0 ml-auto group-data-[collapsed=true]:mx-auto" />
+				<RLDashboardSidebarCollapse side="left" class="shrink-0 ml-auto group-data-[collapsed=true]:mx-auto" />
 			</Fragment>
 
 			<nav class="flex flex-col gap-1 mt-2" data-dashboard-nav-container>
@@ -58,7 +58,7 @@ const currentActive = activeNav || activeSection || "overview";
 								: "text-muted hover:text-highlighted hover:bg-muted/50")
 						}
 					>
-						<RLAIcon name={item.icon} class="size-5 shrink-0" />
+						<RLIcon name={item.icon} class="size-5 shrink-0" />
 						<span class="truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-nav-label>{item.label}</span>
 					</a>
 				))}
@@ -66,21 +66,21 @@ const currentActive = activeNav || activeSection || "overview";
 
 			<Fragment slot="footer">
 			</Fragment>
-		</RLADashboardSidebar>
+		</RLDashboardSidebar>
 
-		<RLADashboardPanel>
-			<RLADashboardNavbar slot="header" title={title} icon="i-lucide-shield">
+		<RLDashboardPanel>
+			<RLDashboardNavbar slot="header" title={title} icon="i-lucide-shield">
 				<Fragment slot="left">
 					<div class="flex items-center gap-3">
-						<RLADashboardSidebarToggle class="flex lg:hidden size-9 rounded-lg items-center justify-center border border-default hover:bg-muted text-toned hover:text-highlighted transition-colors shrink-0" />
-						<RLADashboardSidebarCollapse side="left" class="hidden lg:flex size-9 rounded-lg" />
+						<RLDashboardSidebarToggle class="flex lg:hidden size-9 rounded-lg items-center justify-center border border-default hover:bg-muted text-toned hover:text-highlighted transition-colors shrink-0" />
+						<RLDashboardSidebarCollapse side="left" class="hidden lg:flex size-9 rounded-lg" />
 						<h1 class="text-xl font-semibold text-highlighted truncate" data-dashboard-navbar-title>{title}</h1>
 					</div>
 				</Fragment>
-			</RLADashboardNavbar>
+			</RLDashboardNavbar>
 
 			<div slot="body" class="flex flex-col gap-4 flex-1">
-				<RLADashboardToolbar>
+				<RLDashboardToolbar>
 					<Fragment slot="left">
 						<p class="text-sm text-muted">{description}</p>
 					</Fragment>
@@ -89,12 +89,12 @@ const currentActive = activeNav || activeSection || "overview";
 							<slot name="actions" />
 						</div>
 					</Fragment>
-				</RLADashboardToolbar>
+				</RLDashboardToolbar>
 
 				<div class="flex-1 overflow-y-auto min-h-0 p-6">
 					<slot />
 				</div>
 			</div>
-		</RLADashboardPanel>
-	</RLADashboardGroup>
+		</RLDashboardPanel>
+	</RLDashboardGroup>
 </DashboardLayout>

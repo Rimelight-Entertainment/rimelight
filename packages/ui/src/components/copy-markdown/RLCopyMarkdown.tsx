@@ -1,0 +1,58 @@
+import { createSignal, onCleanup, splitProps, type Component } from "solid-js"
+import type { ButtonProps } from "../button/button"
+import RLButton from "../button/RLButton"
+
+export interface RLCopyMarkdownProps extends Omit<
+  ButtonProps,
+  | "href"
+  | "label"
+  | "leadingIcon"
+  | "trailingIcon"
+  | "loading"
+  | "loadingAuto"
+  | "square"
+  | "active"
+  | "activeColor"
+  | "activeVariant"
+> {
+  raw: string
+}
+
+const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
+  const [props, rest] = splitProps(allProps, ["raw", "class", "ui"])
+  const [copied, setCopied] = createSignal(false)
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+
+  onCleanup(() => {
+    if (timeoutId !== undefined) clearTimeout(timeoutId)
+  })
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(props.raw)
+      setCopied(true)
+      if (timeoutId !== undefined) clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy:", err)
+    }
+  }
+
+  return (
+    <RLButton
+      class={`rl-copy-markdown ${typeof props.class === "string" ? props.class : ""}`.trim()}
+      color="neutral"
+      variant="outline"
+      size="sm"
+      leadingIcon="copy"
+      label={copied() ? "Copied!" : "Copy Markdown"}
+      data-raw={props.raw}
+      ui={props.ui}
+      onClick={handleCopy}
+      {...rest}
+    />
+  )
+}
+
+export { RLCopyMarkdown }
+export default RLCopyMarkdown

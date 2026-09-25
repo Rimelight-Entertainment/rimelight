@@ -1,11 +1,11 @@
 ---
-import RLAFooter from "@rimelight/ui/components/footer/RLAFooter.astro";
-import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLFooter from "@rimelight/ui/components/footer/RLFooter.tsx";
+import RLLogo from "@rimelight/ui/components/logo/RLLogo.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
-import RLALinkGroup from "@rimelight/ui/components/link-group/RLALinkGroup.astro";
-import RLAThemeSelector from "@rimelight/ui/components/theme-selector/RLAThemeSelector.astro";
-import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
+import RLLinkGroup from "@rimelight/ui/components/link-group/RLLinkGroup.tsx";
+import RLThemeSelector from "@rimelight/ui/components/theme-selector/RLThemeSelector.tsx";
+import RLLocaleSelector from "@rimelight/ui/components/locale-selector/RLLocaleSelector.tsx";
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 
 const columns = [
@@ -78,10 +78,10 @@ const targetLanguages = [
 ];
 ---
 
-<RLAFooter contain={false} data-theme="dark" class="bg-black z-50">
+<RLFooter contain={false} data-theme="dark" class="bg-black z-50">
   <div slot="left" class="flex flex-col items-center gap-xs lg:items-start flex-1">
     <div class="flex flex-col items-center gap-xs lg:items-start mt-auto">
-      <RLALogo
+      <RLLogo
         variant="logotype"
         class="h-6 w-auto"
         mode="color"
@@ -92,7 +92,7 @@ const targetLanguages = [
   </div>
   <div slot="center" class="flex flex-col md:flex-row gap-12">
     {columns.map(column => (
-      <RLALinkGroup 
+      <RLLinkGroup 
         title={column.label} 
         links={column.children.map(child => ({ label: child.label, href: child.to }))}
         theme="flat"
@@ -101,12 +101,12 @@ const targetLanguages = [
   </div>
   <div slot="right" class="flex flex-col items-center lg:items-end flex-1 justify-between gap-sm">
     <div class="flex flex-col gap-sm items-center lg:items-end">
-      <RLAThemeSelector />
-      <RLALocaleSelector locales={targetLanguages} currentLocale={getLocale()} />
+      <RLThemeSelector client:load />
+      <RLLocaleSelector client:load locales={targetLanguages} currentLocale={getLocale()} />
     </div>
     <div class="flex flex-row flex-wrap gap-sm justify-center lg:justify-end items-center lg:items-end">
       {socials.map((social) => (
-          <RLAButton
+          <RLButton
               size="xl"
               color="neutral"
               variant="ghost"
@@ -115,4 +115,4 @@ const targetLanguages = [
       ))}
     </div>
   </div>
-</RLAFooter>
+</RLFooter>

@@ -4,12 +4,12 @@ import {
   type PageDefinition,
   type FieldDefinition
 } from "../../core/page-definitions.ts"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
 
 function getTextValue(value: any): string {
   if (typeof value === "string") return value
@@ -252,7 +252,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       return (
         <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
-          <RLSInput
+          <RLInput
             value={getTextValue(value)}
             onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
               handlePropertyChange(fieldId, e.currentTarget.value)
@@ -268,7 +268,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       return (
         <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
-          <RLSInput
+          <RLInput
             type="number"
             value={value !== undefined ? String(value) : ""}
             onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -286,7 +286,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       return (
         <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
-          <RLSSelect
+          <RLSelect
             items={selectItems}
             value={getTextValue(value)}
             onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
@@ -321,7 +321,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
           <div class="flex flex-wrap gap-1 mb-1">
             <For each={arr}>
               {(item, idx) => (
-                <RLSBadge variant="soft" color="neutral" size="sm">
+                <RLBadge variant="soft" color="neutral" size="sm">
                   <span>{item}</span>
                   <button
                     type="button"
@@ -330,13 +330,13 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   >
                     ×
                   </button>
-                </RLSBadge>
+                </RLBadge>
               )}
             </For>
           </div>
           <div class="flex gap-1 mt-1">
             <div class="flex-1">
-              <RLSInput
+              <RLInput
                 value={arrayInputs()[fieldId] || ""}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setArrayInputs((prev) => ({ ...prev, [fieldId]: e.currentTarget.value }))
@@ -351,7 +351,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                 placeholder="Add item..."
               />
             </div>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="neutral"
               size="sm"
@@ -373,7 +373,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         <div class="flex flex-col gap-2 items-center text-center">
           <div class="relative group/icon mb-1">
             <div class="w-10 h-10 rounded-full flex items-center justify-center border border-default text-muted">
-              <RLSIcon name="fileText" size="md" />
+              <RLIcon name="fileText" size="md" />
             </div>
           </div>
 
@@ -411,7 +411,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             <div class="flex flex-wrap gap-1 mb-1">
               <For each={tagsList()}>
                 {(tag) => (
-                  <RLSBadge variant="soft" color="primary" size="sm">
+                  <RLBadge variant="soft" color="primary" size="sm">
                     <span>#{tag}</span>
                     <button
                       type="button"
@@ -420,13 +420,13 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                     >
                       ×
                     </button>
-                  </RLSBadge>
+                  </RLBadge>
                 )}
               </For>
             </div>
             <div class="flex gap-1 mt-1">
               <div class="flex-1">
-                <RLSInput
+                <RLInput
                   value={newTagInput()}
                   onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                     setNewTagInput(e.currentTarget.value)
@@ -441,7 +441,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   placeholder="Add tag..."
                 />
               </div>
-              <RLSButton variant="outline" color="neutral" size="sm" onClick={addTag} label="+" />
+              <RLButton variant="outline" color="neutral" size="sm" onClick={addTag} label="+" />
             </div>
           </div>
         </div>
@@ -450,7 +450,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         <div class="mt-3 p-3 rounded-lg border border-default/70 bg-elevated/30 flex flex-col gap-2">
           <div class="flex items-center justify-between mb-1">
             <h6 class="text-xs font-bold uppercase tracking-wider text-muted">Bylines / Authors</h6>
-            <RLSButton
+            <RLButton
               variant="ghost"
               color="neutral"
               size="xs"
@@ -516,7 +516,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                         class="text-muted hover:text-primary cursor-pointer p-1"
                         title="Edit"
                       >
-                        <RLSIcon name="edit" size="xs" />
+                        <RLIcon name="edit" size="xs" />
                       </button>
                       <button
                         type="button"
@@ -524,7 +524,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                         class="text-muted hover:text-error-500 cursor-pointer p-1"
                         title="Delete"
                       >
-                        <RLSIcon name="trash" size="xs" />
+                        <RLIcon name="trash" size="xs" />
                       </button>
                     </div>
                   </div>
@@ -547,7 +547,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                     class="flex justify-between items-center w-full p-2 rounded-lg text-left font-medium text-sm text-highlighted hover:bg-elevated transition cursor-pointer mt-2 bg-transparent border-0"
                   >
                     <span>{getTextValue(group.label)}</span>
-                    <RLSIcon
+                    <RLIcon
                       name="chevronDown"
                       size="sm"
                       class={`transition-transform duration-150 text-muted ${
@@ -574,7 +574,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       <div class="flex flex-col gap-2 pt-2 border-t border-default">
         <div class="flex items-center justify-between mb-1">
           <h6 class="text-xs font-bold uppercase tracking-wider text-muted">Links</h6>
-          <RLSButton
+          <RLButton
             variant="ghost"
             color="neutral"
             size="xs"
@@ -593,11 +593,11 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
               {(item, index) => (
                 <div class="flex items-center justify-between p-2 rounded-lg border border-default text-sm">
                   <div class="flex items-center gap-2 truncate">
-                    <RLSIcon name="link" size="xs" class="text-muted shrink-0" />
+                    <RLIcon name="link" size="xs" class="text-muted shrink-0" />
                     <span class="font-medium text-highlighted truncate">{item.label}</span>
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
-                    <RLSButton
+                    <RLButton
                       variant="ghost"
                       color="neutral"
                       size="xs"
@@ -605,9 +605,9 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                       onClick={() => openLinkModal(index())}
                       aria-label="Edit"
                       title="Edit"
-                      leading={<RLSIcon name="edit" size="xs" />}
+                      leading={<RLIcon name="edit" size="xs" />}
                     />
-                    <RLSButton
+                    <RLButton
                       variant="ghost"
                       color="neutral"
                       size="xs"
@@ -616,7 +616,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                       aria-label="Delete"
                       title="Delete"
                       class="!text-error-500 hover:!text-error-600"
-                      leading={<RLSIcon name="trash" size="xs" />}
+                      leading={<RLIcon name="trash" size="xs" />}
                     />
                   </div>
                 </div>
@@ -627,20 +627,20 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       </div>
 
       {/* Byline Modal */}
-      <RLSModal
+      <RLModal
         open={isBylineModalOpen()}
         onClose={() => setIsBylineModalOpen(false)}
         title={editingBylineIndex() !== null ? "Edit Author Byline" : "Add Author Byline"}
         footerSlot={
           <>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="neutral"
               size="sm"
               onClick={() => setIsBylineModalOpen(false)}
               label="Cancel"
             />
-            <RLSButton
+            <RLButton
               variant="solid"
               color="primary"
               size="sm"
@@ -653,7 +653,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         <div class="flex flex-col gap-4 py-2">
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Author Name *</span>
-            <RLSInput
+            <RLInput
               value={bylineDraft().name}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setBylineDraft({ ...bylineDraft(), name: e.currentTarget.value })
@@ -664,7 +664,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Role / Title</span>
-            <RLSInput
+            <RLInput
               value={bylineDraft().role || ""}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setBylineDraft({ ...bylineDraft(), role: e.currentTarget.value })
@@ -675,7 +675,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Avatar URL</span>
-            <RLSInput
+            <RLInput
               value={bylineDraft().avatar || ""}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setBylineDraft({ ...bylineDraft(), avatar: e.currentTarget.value })
@@ -686,7 +686,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Profile / Website URL</span>
-            <RLSInput
+            <RLInput
               value={bylineDraft().url || ""}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setBylineDraft({ ...bylineDraft(), url: e.currentTarget.value })
@@ -695,23 +695,23 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             />
           </div>
         </div>
-      </RLSModal>
+      </RLModal>
 
       {/* Link Add/Edit Modal */}
-      <RLSModal
+      <RLModal
         open={isLinkModalOpen()}
         onClose={() => setIsLinkModalOpen(false)}
         title={editingLinkIndex() !== null ? "Edit Link" : "Add Link"}
         footerSlot={
           <>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="neutral"
               size="sm"
               onClick={() => setIsLinkModalOpen(false)}
               label="Cancel"
             />
-            <RLSButton
+            <RLButton
               variant="solid"
               color="primary"
               size="sm"
@@ -724,7 +724,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         <div class="flex flex-col gap-4 py-2">
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Label</span>
-            <RLSInput
+            <RLInput
               value={linkDraft().label}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setLinkDraft({ ...linkDraft(), label: e.currentTarget.value })
@@ -735,7 +735,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">URL</span>
-            <RLSInput
+            <RLInput
               value={linkDraft().to}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setLinkDraft({ ...linkDraft(), to: e.currentTarget.value })
@@ -744,7 +744,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             />
           </div>
         </div>
-      </RLSModal>
+      </RLModal>
     </aside>
   )
 }

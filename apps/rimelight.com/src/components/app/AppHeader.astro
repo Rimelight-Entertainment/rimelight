@@ -1,17 +1,18 @@
 ---
-import RLAHeader from "@rimelight/ui/components/header/RLAHeader.astro";
-import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
-import RLANavigationMenu from "@rimelight/ui/components/navigation-menu/RLANavigationMenu.astro"
-import RLALinkGroup from "@rimelight/ui/components/link-group/RLALinkGroup.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLASlideover from "@rimelight/ui/components/slideover/RLASlideover.astro";
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
-import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
-import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
-import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
-import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
+import RLHeader from "@rimelight/ui/components/header/RLHeader.tsx";
+import RLLogo from "@rimelight/ui/components/logo/RLLogo.tsx";
+import RLNavigationMenu from "@rimelight/ui/components/navigation-menu/RLNavigationMenu.tsx"
+import RLLinkGroup from "@rimelight/ui/components/link-group/RLLinkGroup.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLSlideover from "@rimelight/ui/components/slideover/RLSlideover.tsx";
+import RLAvatar from "@rimelight/ui/components/avatar/RLAvatar.tsx";
+import RLSearch from "@rimelight/ui/components/search/RLSearch.tsx";
+import RLDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx";
+import RLImage from "@rimelight/ui/components/image/RLImage.tsx";
+import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts";
+import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts";
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts";
 
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
@@ -633,7 +634,7 @@ const storeAssistanceGroup: LinkGroupProps = {
 	]
 };
 
-const userDropdownItems = session ? [
+const userDropdownItems: DropdownMenuItem[] = session ? [
 	{
 		type: "label",
 		label: currentUser?.tag && currentUser?.tag !== '0000' ? `${currentUser?.name} #${currentUser?.tag}` : `${currentUser?.name || currentUser?.email || 'User'}`
@@ -666,19 +667,21 @@ const userDropdownItems = session ? [
 ] : [];
 ---
 
-<RLAHeader
+<RLHeader
+	client:load
 	contain={false}
 	fixed={true}
 	class="bg-black"
 >
   <div slot="left" class="flex items-center gap-md">
     <div class="hidden md:flex flex-row gap-md">
-      <RLALogo
+      <RLLogo
         variant="logomark"
         class="h-10 w-auto"
         mode="color"
       />
-      <RLANavigationMenu
+      <RLNavigationMenu
+        client:load
         items={leftLinks}
         variant="link"
         theme="flat"
@@ -691,7 +694,7 @@ const userDropdownItems = session ? [
         <!-- Grand Tale Mega Menu -->
         <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <RLAImage
+              <RLImage
                 src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -702,26 +705,26 @@ const userDropdownItems = session ? [
 
               <div class="flex flex-col gap-sm flex-2">
                 <div class="grid grid-cols-2 gap-xl gap-y-4">
-                  <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
                 <div class="flex flex-col gap-lg">
-                  <RLALinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...grandTaleComicsLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...grandTaleComicsLinkGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
             </div>
           </div>
 
           <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
-            <RLALinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
-            <RLALinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
 
         <!-- Community Mega Menu -->
         <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <RLAImage
+              <RLImage
                 src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -732,21 +735,21 @@ const userDropdownItems = session ? [
 
               <div class="flex flex-col gap-sm flex-2">
                 <div class="grid grid-cols-2 gap-1">
-                  <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
-                <RLALinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
+                <RLLinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
               </div>
             </div>
           </div>
 
           <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
-            <RLALinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
 
         <!-- Company Mega Menu -->
         <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <RLAImage
+              <RLImage
                 src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -757,23 +760,23 @@ const userDropdownItems = session ? [
 
               <div class="flex flex-col gap-sm flex-2">
                 <div class="grid grid-cols-3 gap-1">
-                  <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
-                <RLALinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
-                <RLALinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
+                <RLLinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
+                <RLLinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
               </div>
             </div>
           </div>
 
           <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
-            <RLALinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
-            <RLALinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
 
         <!-- Store Mega Menu -->
         <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <RLAImage
+              <RLImage
                 src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -785,31 +788,31 @@ const userDropdownItems = session ? [
               <div class="flex flex-col gap-sm flex-2">
                 <div class="grid grid-cols-3 gap-xl gap-y-4">
                   <div class="flex flex-col gap-lg">
-                  <RLALinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
                 <div class="flex flex-col gap-lg">
-                  <RLALinkGroup {...storeClothingGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...storeAccessoriesGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...storeClothingGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...storeAccessoriesGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
                 <div class="flex flex-col gap-lg">
-                  <RLALinkGroup {...storeApparelGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...storeCollectiblesGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...storeArtGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...storeApparelGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...storeCollectiblesGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...storeArtGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
             </div>
           </div>
 
           <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
-            <RLALinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
-      </RLANavigationMenu>
+      </RLNavigationMenu>
     </div>
 
     <div class="block md:hidden">
-      <RLASlideover side="left" title="Menu">
-        <RLAButton
+      <RLSlideover client:load side="left" title="Menu">
+        <RLButton
           slot="trigger"
           color="neutral"
           variant="ghost"
@@ -820,7 +823,8 @@ const userDropdownItems = session ? [
           aria-label="Open Menu"
         />
 
-        <RLANavigationMenu
+        <RLNavigationMenu
+          client:load
           items={leftLinks}
           orientation="vertical"
           variant="link"
@@ -831,7 +835,7 @@ const userDropdownItems = session ? [
           <!-- Grand Tale Mobile Mega Menu -->
           <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <RLAImage
+                <RLImage
                   src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -842,26 +846,26 @@ const userDropdownItems = session ? [
 
                 <div class="flex flex-col gap-sm flex-2">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                    <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
                   <div class="flex flex-col gap-lg">
-                    <RLALinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
-                    <RLALinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
-                    <RLALinkGroup {...grandTaleComicsLinkGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...grandTaleComicsLinkGroup} ui={{ title: "!text-primary-500" }} />
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
-              <RLALinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
-              <RLALinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <!-- Community Mobile Mega Menu -->
           <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <RLAImage
+                <RLImage
                   src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -872,21 +876,21 @@ const userDropdownItems = session ? [
 
                 <div class="flex flex-col gap-sm flex-2">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
             </div>
 
             <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
-              <RLALinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <!-- Company Mobile Mega Menu -->
           <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <RLAImage
+                <RLImage
                   src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -897,23 +901,23 @@ const userDropdownItems = session ? [
 
                 <div class="flex flex-col gap-sm flex-2">
                   <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                    <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
             </div>
 
             <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
-              <RLALinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
-              <RLALinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <!-- Store Mobile Mega Menu -->
           <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <RLAImage
+                <RLImage
                   src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
@@ -925,33 +929,33 @@ const userDropdownItems = session ? [
                 <div class="flex flex-col gap-sm flex-2">
                   <div class="grid grid-cols-1 sm:grid-cols-3 gap-xl gap-y-4">
                     <div class="flex flex-col gap-lg">
-                    <RLALinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
                   </div>
                   <div class="flex flex-col gap-lg">
-                    <RLALinkGroup {...storeClothingGroup} ui={{ title: "!text-primary-500" }} />
-                    <RLALinkGroup {...storeAccessoriesGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...storeClothingGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...storeAccessoriesGroup} ui={{ title: "!text-primary-500" }} />
                   </div>
                   <div class="flex flex-col gap-lg">
-                    <RLALinkGroup {...storeApparelGroup} ui={{ title: "!text-primary-500" }} />
-                    <RLALinkGroup {...storeCollectiblesGroup} ui={{ title: "!text-primary-500" }} />
-                    <RLALinkGroup {...storeArtGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...storeApparelGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...storeCollectiblesGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLLinkGroup {...storeArtGroup} ui={{ title: "!text-primary-500" }} />
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
-              <RLALinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
-        </RLANavigationMenu>
-      </RLASlideover>
+        </RLNavigationMenu>
+      </RLSlideover>
       </div>
 		</div>
 
     <div slot="center" class="flex items-center gap-md">
       <div class="block md:hidden">
-        <RLALogo
+        <RLLogo
           variant="logomark"
           class="h-10 w-auto"
           mode="color"
@@ -960,24 +964,25 @@ const userDropdownItems = session ? [
     </div>
 
     <div slot="right" class="flex items-center gap-md">
-      <RLASearch placeholder="Search blog, docs, legal..." />
-      <RLAButton
+      <RLSearch client:load placeholder="Search blog, docs, legal..." />
+      <RLButton
         variant="ghost"
         color="neutral"
         leadingIcon="i-lucide-keyboard"
         aria-label="Keyboard Shortcuts"
-        onclick="document.dispatchEvent(new CustomEvent('rla-shortcuts:open'))"
+        onclick="document.dispatchEvent(new CustomEvent('rl-shortcuts:open'))"
       />
       <div class="hidden md:flex flex-row gap-md">
         {session ? (
-          <RLADropdownMenu
+          <RLDropdownMenu
+            client:load
             items={userDropdownItems}
             content={{ align: "end", side: "bottom" }}
             class="text-white"
           >
             <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
               <div class="relative">
-                <RLAAvatar src={currentUser?.avatar || currentUser?.image} alt={currentUser?.name} size="sm" />
+                <RLAvatar src={currentUser?.avatar || currentUser?.image} alt={currentUser?.name} size="sm" />
                 <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
                   currentUser?.availability === 'busy' ? 'bg-error-500' :
                   currentUser?.availability === 'invisible' ? 'bg-neutral-500' :
@@ -986,24 +991,25 @@ const userDropdownItems = session ? [
               </div>
               <span class="hidden md:inline text-sm font-medium">{currentUser?.name}</span>
             </div>
-          </RLADropdownMenu>
+          </RLDropdownMenu>
         ) : (
           actions.map((act) => (
-            <RLAButton {...act} />
+            <RLButton {...act} />
           ))
         )}
       </div>
 
       <div class="block md:hidden">
         {session ? (
-          <RLADropdownMenu
+          <RLDropdownMenu
+            client:load
             items={userDropdownItems}
             content={{ align: "end", side: "bottom" }}
             class="text-white"
           >
             <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
               <div class="relative">
-                <RLAAvatar src={currentUser?.avatar || currentUser?.image} alt={currentUser?.name} size="sm" />
+                <RLAvatar src={currentUser?.avatar || currentUser?.image} alt={currentUser?.name} size="sm" />
                 <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
                   currentUser?.availability === 'busy' ? 'bg-error-500' :
                   currentUser?.availability === 'invisible' ? 'bg-neutral-500' :
@@ -1011,10 +1017,10 @@ const userDropdownItems = session ? [
                 }`} />
               </div>
             </div>
-          </RLADropdownMenu>
+          </RLDropdownMenu>
         ) : (
-          <RLASlideover side="right" title="Actions">
-            <RLAButton
+          <RLSlideover client:load side="right" title="Actions">
+            <RLButton
               slot="trigger"
               color="neutral"
               variant="ghost"
@@ -1027,14 +1033,14 @@ const userDropdownItems = session ? [
 
             <div class="flex flex-col gap-md">
               {actions.map((act) => (
-                <RLAButton {...act} block={true} />
+                <RLButton {...act} block={true} />
               ))}
             </div>
-          </RLASlideover>
+          </RLSlideover>
         )}
       </div>
 	</div>
-</RLAHeader>
+</RLHeader>
 
 
 

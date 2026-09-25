@@ -3,11 +3,11 @@ import { createSeoHead } from "@rimelight/seo/head";
 import { createSecurityHead } from "@rimelight/security/head";
 import { createUiHead } from "@rimelight/ui/head";
 import AppHeader from '#components/app/AppHeader.astro';
-import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
+import RLMain from "@rimelight/ui/components/main/RLMain.tsx";
 import AppFooter from '#components/app/AppFooter.astro';
-import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro";
-import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro";
-import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
+import RLScrollToTop from "@rimelight/ui/components/scroll-to-top/RLScrollToTop.tsx";
+import RLShortcuts from "@rimelight/ui/components/shortcuts/RLShortcuts.tsx";
+import RLToaster from "@rimelight/ui/components/toaster/RLToaster.tsx";
 import { siteConfig } from "virtual:rimelight/seo";
 import { Font } from 'astro:assets';
 import { getHtmlLang, getOgLocale, getLanguageAlternates } from '@rimelight/i18n';
@@ -70,12 +70,12 @@ const ui = createUiHead();
   </head>
 	<body class="isolate">
 		{!minimal && <AppHeader />}
-		<RLAMain>
+		<RLMain>
 			<slot />
-		</RLAMain>
+		</RLMain>
 		<AppFooter />
-		<RLAScrollToTop showProgress={true} />
-		<RLAShortcuts />
-		<RLAToaster />
+		<RLScrollToTop client:idle showProgress={true} />
+		<RLShortcuts client:load />
+		<RLToaster client:load />
 	</body>
 </html>

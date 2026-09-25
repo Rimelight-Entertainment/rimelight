@@ -1,7 +1,7 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface TabsEditorProps {
   blockId?: string
@@ -65,7 +65,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
     <div class="rimelight-tabs-editor flex flex-col gap-3 p-3 rounded-xl border border-default/70 w-full">
       <div class="flex items-center justify-between">
         <span class="text-xs font-bold uppercase tracking-wider text-muted">Tabs Container</span>
-        <RLSButton
+        <RLButton
           variant="outline"
           color="neutral"
           size="xs"
@@ -82,7 +82,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-3">
             <span class="text-xs text-muted block mb-2">No tabs in container</span>
-            <RLSButton
+            <RLButton
               variant="link"
               color="primary"
               size="xs"

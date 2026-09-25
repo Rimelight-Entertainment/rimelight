@@ -1,7 +1,7 @@
 ---
 import AppLayout from "#layouts/AppLayout.astro"
 import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
-import RLADate from "@rimelight/ui/components/date/RLADate.astro"
+import RLDate from "@rimelight/ui/components/date/RLDate.tsx"
 import { t, getLocale } from "@rimelight/i18n"
 import { db } from "#db"
 import { pages } from "#db/schema"
@@ -54,11 +54,11 @@ const updatedDate = page.updatedAt
 			<div class="prose">
 				<div class="title">
 					<div class="date">
-						<RLADate date={pubDate} />
+						<RLDate date={pubDate} />
 						{
 							updatedDate && (
 								<div class="last-updated-on">
-									{t("blog.lastUpdatedOn")} <RLADate date={updatedDate} />
+									{t("blog.lastUpdatedOn")} <RLDate date={updatedDate} />
 								</div>
 							)
 						}

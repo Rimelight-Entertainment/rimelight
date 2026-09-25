@@ -1,17 +1,18 @@
 ---
-import RLAHeader from "@rimelight/ui/components/header/RLAHeader.astro";
-import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
-import RLANavigationMenu from "@rimelight/ui/components/navigation-menu/RLANavigationMenu.astro"
-import RLALinkGroup from "@rimelight/ui/components/link-group/RLALinkGroup.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLASlideover from "@rimelight/ui/components/slideover/RLASlideover.astro";
-import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
-import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
-import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
-import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
+import RLHeader from "@rimelight/ui/components/header/RLHeader.tsx";
+import RLLogo from "@rimelight/ui/components/logo/RLLogo.tsx";
+import RLNavigationMenu from "@rimelight/ui/components/navigation-menu/RLNavigationMenu.tsx"
+import RLLinkGroup from "@rimelight/ui/components/link-group/RLLinkGroup.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLSlideover from "@rimelight/ui/components/slideover/RLSlideover.tsx";
+import RLSearch from "@rimelight/ui/components/search/RLSearch.tsx";
+import RLImage from "@rimelight/ui/components/image/RLImage.tsx";
+import RLAvatar from "@rimelight/ui/components/avatar/RLAvatar.tsx";
+import RLDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx";
+import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts";
+import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts";
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const { auth } = await import("@rimelight/auth");
@@ -133,7 +134,7 @@ const actions: ButtonProps[] = [
   }
 ];
 
-const userDropdownItems = session ? [
+const userDropdownItems: DropdownMenuItem[] = session ? [
   {
     type: "label",
     label: session?.tag && session?.tag !== '0000' ? `${session?.name} #${session?.tag}` : `${session?.name || session?.email || 'User'}`
@@ -167,7 +168,7 @@ const userDropdownItems = session ? [
 const { stackIndex = 1 } = Astro.props;
 ---
 
-<RLAHeader
+<RLHeader
   fixed={true}
   stackIndex={stackIndex}
   data-theme="dark"
@@ -175,12 +176,13 @@ const { stackIndex = 1 } = Astro.props;
 >
   <div slot="left" class="flex items-center gap-md">
     <div class="hidden md:flex flex-row gap-md">
-      <RLALogo
+      <RLLogo
         variant="logomark"
         class="h-10 w-auto"
         mode="color"
       />
-      <RLANavigationMenu
+      <RLNavigationMenu
+        client:load
         items={leftLinks}
         variant="link"
         ui={{
@@ -192,28 +194,28 @@ const { stackIndex = 1 } = Astro.props;
         <!-- Features Mega Menu -->
         <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
           <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-            <RLAImage
+            <RLImage
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
               src="https://cdn.rimelight.com/images/placeholder.webp"
               alt=""
             />
 
             <div class="flex flex-col gap-sm flex-2">
-              <RLALinkGroup {...foundationLinkGroup} ui={{ title: "!text-primary-500" }} />
-              <RLALinkGroup {...componentsLinkGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...foundationLinkGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...componentsLinkGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <div class="bg-muted p-lg w-64 shrink-0">
-            <RLALinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
+            <RLLinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
-      </RLANavigationMenu>
+      </RLNavigationMenu>
     </div>
 
     <div class="block md:hidden">
-      <RLASlideover side="left" title="Menu">
-        <RLAButton
+      <RLSlideover client:load side="left" title="Menu">
+        <RLButton
           slot="trigger"
           color="neutral"
           variant="ghost"
@@ -223,7 +225,8 @@ const { stackIndex = 1 } = Astro.props;
           aria-label="Open Menu"
         />
 
-        <RLANavigationMenu
+        <RLNavigationMenu
+          client:load
           items={leftLinks}
           orientation="vertical"
           variant="link"
@@ -234,7 +237,7 @@ const { stackIndex = 1 } = Astro.props;
           <!-- Features Mega Menu (Mobile/Vertical) -->
           <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
             <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <RLAImage
+              <RLImage
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
                 src="https://cdn.rimelight.com/images/placeholder.webp"
                 alt=""
@@ -246,24 +249,24 @@ const { stackIndex = 1 } = Astro.props;
 
               <div class="flex flex-col gap-sm flex-2">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                  <RLALinkGroup {...foundationLinkGroup} ui={{ title: "!text-primary-500" }} />
-                  <RLALinkGroup {...componentsLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...foundationLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...componentsLinkGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
             </div>
 
             <div class="bg-muted p-lg w-64 shrink-0">
-              <RLALinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
+              <RLLinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
-        </RLANavigationMenu>
-      </RLASlideover>
+        </RLNavigationMenu>
+      </RLSlideover>
     </div>
   </div>
 
   <div slot="center" class="flex items-center gap-md">
     <div class="block md:hidden">
-      <RLALogo
+      <RLLogo
         variant="logomark"
         class="h-10 w-auto"
         mode="color"
@@ -272,8 +275,8 @@ const { stackIndex = 1 } = Astro.props;
   </div>
 
   <div slot="right" class="flex items-center gap-md">
-    <RLASearch />
-    <RLAButton
+    <RLSearch client:load />
+    <RLButton
       id="rla-shortcuts-btn"
       variant="ghost"
       color="neutral"
@@ -282,14 +285,15 @@ const { stackIndex = 1 } = Astro.props;
     />
     <div class="hidden md:flex flex-row gap-md">
       {session ? (
-        <RLADropdownMenu
+        <RLDropdownMenu
+          client:load
           items={userDropdownItems}
           content={{ align: "end", side: "bottom" }}
           class="text-white"
         >
           <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
             <div class="relative">
-              <RLAAvatar src={session?.avatar || session?.image} alt={session?.name} size="sm" />
+              <RLAvatar src={session?.avatar || session?.image} alt={session?.name} size="sm" />
               <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
                 session?.availability === 'busy' ? 'bg-error-500' :
                   session?.availability === 'invisible' ? 'bg-neutral-500' :
@@ -298,24 +302,25 @@ const { stackIndex = 1 } = Astro.props;
             </div>
             <span class="hidden md:inline text-sm font-medium">{session?.name}</span>
           </div>
-        </RLADropdownMenu>
+        </RLDropdownMenu>
       ) : (
         actions.map((buttonProps) => (
-          <RLAButton {...buttonProps} />
+          <RLButton {...buttonProps} />
         ))
       )}
     </div>
 
     <div class="block md:hidden">
       {session ? (
-        <RLADropdownMenu
+        <RLDropdownMenu
+          client:load
           items={userDropdownItems}
           content={{ align: "end", side: "bottom" }}
           class="text-white"
         >
           <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
             <div class="relative">
-              <RLAAvatar src={session?.avatar || session?.image} alt={session?.name} size="sm" />
+              <RLAvatar src={session?.avatar || session?.image} alt={session?.name} size="sm" />
               <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
                 session?.availability === 'busy' ? 'bg-error-500' :
                   session?.availability === 'invisible' ? 'bg-neutral-500' :
@@ -323,10 +328,10 @@ const { stackIndex = 1 } = Astro.props;
               }`} />
             </div>
           </div>
-        </RLADropdownMenu>
+        </RLDropdownMenu>
       ) : (
-        <RLASlideover side="right" title="Actions">
-          <RLAButton
+        <RLSlideover client:load side="right" title="Actions">
+          <RLButton
             slot="trigger"
             color="neutral"
             variant="ghost"
@@ -338,14 +343,14 @@ const { stackIndex = 1 } = Astro.props;
 
           <div class="flex flex-col gap-md">
             {actions.map((buttonProps) => (
-              <RLAButton {...buttonProps} block={true} />
+              <RLButton {...buttonProps} block={true} />
             ))}
           </div>
-        </RLASlideover>
+        </RLSlideover>
       )}
     </div>
   </div>
-</RLAHeader>
+</RLHeader>
 
 <style is:global>
   @property --viewport-margin {
@@ -469,6 +474,7 @@ const { stackIndex = 1 } = Astro.props;
   function setupShortcutsBtn() {
     const btn = document.getElementById("rla-shortcuts-btn");
     btn?.addEventListener("click", () => {
+      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"));
       document.dispatchEvent(new CustomEvent("rla-shortcuts:open"));
     });
   }

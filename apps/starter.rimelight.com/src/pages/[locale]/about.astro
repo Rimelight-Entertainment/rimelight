@@ -1,49 +1,49 @@
 ---
 import AppLayout from '#layouts/AppLayout.astro';
-import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
-import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
-import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
+import RLPageSection from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import RLGrid from "@rimelight/ui/components/grid/RLGrid.tsx";
+import RLCard from "@rimelight/ui/components/card/RLCard.tsx";
+import RLImage from "@rimelight/ui/components/image/RLImage.tsx";
 import { t } from '@rimelight/i18n';
 ---
 
 <AppLayout title={t("page_about.title")} description={t("page_about.description")}>
-  <RLAPageSection
+  <RLPageSection
     variant="hero"
     title={t("page_about.hero_title")}
     description={t("page_about.hero_description")}
     orientation="horizontal"
   >
-    <RLAImage src="https://cdn.rimelight.com/images/placeholder.webp" alt="" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
-  </RLAPageSection>
+    <RLImage src="https://cdn.rimelight.com/images/placeholder.webp" alt="" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
+  </RLPageSection>
 
-  <RLAPageSection
+  <RLPageSection
     title={t("page_about.section_about_template_title")}
     description={t("page_about.section_about_template_description")}
     orientation="vertical"
   />
 
-  <RLAPageSection
+  <RLPageSection
     title={t("page_about.section_values_title")}
     description={t("page_about.section_values_description")}
     orientation="vertical"
   >
     <div slot="body">
-      <RLAGrid>
-        <RLACard
+      <RLGrid>
+        <RLCard
           title={t("page_about.value_dx_title")}
           description={t("page_about.value_dx_description")}
         />
-        <RLACard
+        <RLCard
           title={t("page_about.value_design_title")}
           description={t("page_about.value_design_description")}
         />
-        <RLACard
+        <RLCard
           title={t("page_about.value_performance_title")}
           description={t("page_about.value_performance_description")}
         />
-      </RLAGrid>
+      </RLGrid>
     </div>
-  </RLAPageSection>
+  </RLPageSection>
 </AppLayout>
 

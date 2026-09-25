@@ -1,9 +1,9 @@
 ---
-import RLAForm from "@rimelight/ui/components/form/RLAForm.astro";
-import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro";
-import RLAFieldGroup from "@rimelight/ui/components/field-group/RLAFieldGroup.astro";
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLForm from "@rimelight/ui/components/form/RLForm.tsx";
+import RLFormField from "@rimelight/ui/components/form-field/RLFormField.tsx";
+import RLFieldGroup from "@rimelight/ui/components/field-group/RLFieldGroup.tsx";
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 
 interface Props {
 	title?: string;
@@ -36,16 +36,16 @@ const resolvedButtonLabel = submit ?? buttonLabel ?? 'Subscribe';
 const resolvedDescription = description ?? 'Stay updated on new posts and updates. Unsubscribe at any time.';
 ---
 
-<RLAForm>
-	<RLAFormField
+<RLForm>
+	<RLFormField
 		name="email"
 		label={resolvedFieldLabel}
 		description={resolvedDescription}
 		class:list={[rc.label, rc.description]}
 	>
-		<RLAFieldGroup class:list={['pt-2', rc.group]}>
-			<RLAInput type="email" placeholder={placeholder} class={rc.input} />
-			<RLAButton type="submit" label={resolvedButtonLabel} class={rc.button} />
-		</RLAFieldGroup>
-	</RLAFormField>
-</RLAForm>
+		<RLFieldGroup class:list={['pt-2', rc.group]}>
+			<RLInput type="email" placeholder={placeholder} class={rc.input} />
+			<RLButton type="submit" label={resolvedButtonLabel} class={rc.button} />
+		</RLFieldGroup>
+	</RLFormField>
+</RLForm>

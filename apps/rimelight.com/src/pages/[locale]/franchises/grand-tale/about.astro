@@ -1,6 +1,6 @@
 ---
 import GrandTaleLayout from "#layouts/GrandTaleLayout.astro";
-import RLAAccordion from "@rimelight/ui/components/accordion/RLAAccordion.astro";
+import RLAccordion from "@rimelight/ui/components/accordion/RLAccordion.tsx";
 import { t } from "@rimelight/i18n";
 
 const faqItems = [
@@ -67,7 +67,7 @@ const faqItems = [
     <section class="max-w-4xl mx-auto px-4 w-full">
       <h2 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight mb-12 text-center">{t("page_grand-tale_about.faq_title")}</h2>
       <div class="space-y-6 max-w-2xl mx-auto bg-neutral-900 border border-neutral-850 rounded-2xl p-8 shadow-xl">
-        <RLAAccordion items={faqItems} class="border-0" />
+        <RLAccordion items={faqItems} class="border-0" />
       </div>
     </section>
   </div>

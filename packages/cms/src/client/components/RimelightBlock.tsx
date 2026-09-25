@@ -16,9 +16,9 @@ import { StepItemEditor } from "./editors/StepItemEditor"
 import { CardsEditor } from "./editors/CardsEditor"
 import { CardEditor } from "./editors/CardEditor"
 import { FileTreeEditor } from "./editors/FileTreeEditor"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
 
 export interface RimelightBlockProps {
   block: BaseBlock
@@ -255,7 +255,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         ref={(el) => (menuWrapEl = el)}
         class="cms-block-grip absolute -left-7 top-1 z-30 flex items-center justify-center opacity-0 group-hover/block:opacity-100 transition-opacity"
       >
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"
@@ -267,7 +267,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
           aria-label="Drag handle and options menu"
           class="cms-drag-handle !p-1 text-muted hover:text-highlighted cursor-grab active:cursor-grabbing"
           title="Drag to reorder / Click for options"
-          leading={<RLSIcon name="gripVertical" size="sm" />}
+          leading={<RLIcon name="gripVertical" size="sm" />}
         />
 
         {/* Dropdown Options Menu */}
@@ -285,7 +285,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowUp" size="xs" class="text-muted" />
+                  <RLIcon name="arrowUp" size="xs" class="text-muted" />
                   <span>Move Up</span>
                 </button>
                 <button
@@ -296,7 +296,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowDown" size="xs" class="text-muted" />
+                  <RLIcon name="arrowDown" size="xs" class="text-muted" />
                   <span>Move Down</span>
                 </button>
                 <div class="my-1 border-t border-default" />
@@ -308,7 +308,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowUpFromLine" size="xs" class="text-muted" />
+                  <RLIcon name="arrowUpFromLine" size="xs" class="text-muted" />
                   <span>Add Block Above</span>
                 </button>
                 <button
@@ -319,7 +319,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowDownToLine" size="xs" class="text-muted" />
+                  <RLIcon name="arrowDownToLine" size="xs" class="text-muted" />
                   <span>Add Block Below</span>
                 </button>
                 <div class="my-1 border-t border-default" />
@@ -331,7 +331,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="copy" size="xs" class="text-muted" />
+                  <RLIcon name="copy" size="xs" class="text-muted" />
                   <span>Duplicate Block</span>
                 </button>
                 <button
@@ -342,7 +342,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-error-50 text-error-500 hover:text-error-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="trash" size="xs" class="text-error-500" />
+                  <RLIcon name="trash" size="xs" class="text-error-500" />
                   <span>Delete Block...</span>
                 </button>
               </>
@@ -354,7 +354,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
       <div class="flex-1 min-w-0 relative">
         {/* Top Action Floating Toolbar (Shows on hover, inside block at top-right) */}
         <div class="absolute top-0 right-0 z-20 opacity-0 group-hover/block:opacity-100 transition-opacity flex items-center gap-0.5 bg-elevated border border-default rounded-lg p-0.5 shadow-md">
-          <RLSButton
+          <RLButton
             variant="ghost"
             color="neutral"
             size="xs"
@@ -362,9 +362,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             onClick={() => props.onAddAdjacent(props.block.id, "before")}
             aria-label="Add block above"
             title="Add block above"
-            leading={<RLSIcon name="arrowUpFromLine" size="xs" />}
+            leading={<RLIcon name="arrowUpFromLine" size="xs" />}
           />
-          <RLSButton
+          <RLButton
             variant="ghost"
             color="neutral"
             size="xs"
@@ -372,9 +372,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             onClick={() => props.onAddAdjacent(props.block.id, "after")}
             aria-label="Add block below"
             title="Add block below"
-            leading={<RLSIcon name="arrowDownToLine" size="xs" />}
+            leading={<RLIcon name="arrowDownToLine" size="xs" />}
           />
-          <RLSButton
+          <RLButton
             variant="ghost"
             color="neutral"
             size="xs"
@@ -382,9 +382,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             onClick={() => props.onMove(props.block.id, -1)}
             aria-label="Move up"
             title="Move up"
-            leading={<RLSIcon name="arrowUp" size="xs" />}
+            leading={<RLIcon name="arrowUp" size="xs" />}
           />
-          <RLSButton
+          <RLButton
             variant="ghost"
             color="neutral"
             size="xs"
@@ -392,9 +392,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             onClick={() => props.onMove(props.block.id, 1)}
             aria-label="Move down"
             title="Move down"
-            leading={<RLSIcon name="arrowDown" size="xs" />}
+            leading={<RLIcon name="arrowDown" size="xs" />}
           />
-          <RLSButton
+          <RLButton
             variant="ghost"
             color="neutral"
             size="xs"
@@ -402,12 +402,12 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             onClick={() => props.onDuplicate(props.block.id)}
             aria-label="Duplicate"
             title="Duplicate"
-            leading={<RLSIcon name="copy" size="xs" />}
+            leading={<RLIcon name="copy" size="xs" />}
           />
 
           {/* More Actions Dropdown */}
           <div ref={(el) => (toolbarMenuWrapEl = el)} class="relative inline-flex">
-            <RLSButton
+            <RLButton
               variant="ghost"
               color="neutral"
               size="xs"
@@ -418,7 +418,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
               }}
               aria-label="More actions"
               title="More actions"
-              leading={<RLSIcon name="ellipsisVertical" size="xs" />}
+              leading={<RLIcon name="ellipsisVertical" size="xs" />}
             />
             <Show when={toolbarMenuOpen()}>
               <div class="absolute right-0 top-7 z-50 w-36 bg-elevated border border-default rounded-xl shadow-xl py-1 text-xs">
@@ -430,7 +430,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-error-50 text-error-500 hover:text-error-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="trash" size="xs" class="text-error-500" />
+                  <RLIcon name="trash" size="xs" class="text-error-500" />
                   <span>Delete Block...</span>
                 </button>
               </div>
@@ -450,7 +450,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
       </div>
 
       {/* Rimelight UI Delete Confirmation Modal */}
-      <RLSModal
+      <RLModal
         open={isDeleteModalOpen()}
         onClose={() => setIsDeleteModalOpen(false)}
         title="Delete Block"
@@ -458,14 +458,14 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         size="sm"
         footerSlot={
           <>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="neutral"
               size="sm"
               onClick={() => setIsDeleteModalOpen(false)}
               label="Cancel"
             />
-            <RLSButton
+            <RLButton
               variant="solid"
               color="error"
               size="sm"
@@ -481,7 +481,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         <p class="text-xs text-muted mt-1">
           Block type: <span class="font-semibold text-highlighted">{props.block.type}</span>
         </p>
-      </RLSModal>
+      </RLModal>
     </div>
   )
 }

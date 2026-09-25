@@ -1,8 +1,8 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface CardsEditorProps {
   blockId?: string
@@ -82,7 +82,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold uppercase tracking-wider text-muted">Cards Grid</span>
           <div class="w-32">
-            <RLSSelect
+            <RLSelect
               items={COLUMN_OPTIONS}
               value={String(componentProps.props["columns"] || 2)}
               onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
@@ -92,7 +92,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
             />
           </div>
         </div>
-        <RLSButton
+        <RLButton
           variant="outline"
           color="neutral"
           size="xs"
@@ -109,7 +109,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-3">
             <span class="text-xs text-muted block mb-2">No cards in grid</span>
-            <RLSButton
+            <RLButton
               variant="link"
               color="primary"
               size="xs"

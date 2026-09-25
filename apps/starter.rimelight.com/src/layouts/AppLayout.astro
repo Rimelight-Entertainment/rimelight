@@ -3,15 +3,15 @@ import { createSeoHead } from "@rimelight/seo/head";
 import { createSecurityHead } from "@rimelight/security/head";
 import { createUiHead } from "@rimelight/ui/head";
 import AppHeader from '#components/app/AppHeader.astro';
-import RLABanner from "@rimelight/ui/components/banner/RLABanner.astro";
-import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
+import RLBanner from "@rimelight/ui/components/banner/RLBanner.tsx";
+import RLMain from "@rimelight/ui/components/main/RLMain.tsx";
 import AppFooter from '#components/app/AppFooter.astro';
-import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro";
-import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro";
-import RLALayoutGrid from "@rimelight/ui/components/layout-grid/RLALayoutGrid.astro";
-import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
-import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLScrollToTop from "@rimelight/ui/components/scroll-to-top/RLScrollToTop.tsx";
+import RLShortcuts from "@rimelight/ui/components/shortcuts/RLShortcuts.tsx";
+import RLLayoutGrid from "@rimelight/ui/components/layout-grid/RLLayoutGrid.tsx";
+import RLToast from "@rimelight/ui/components/toast/RLToast.tsx";
+import RLToaster from "@rimelight/ui/components/toaster/RLToaster.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 import { siteConfig } from "virtual:rimelight/seo";
 import { Font } from 'astro:assets';
 import { t, getRelativeLocaleUrl, getHtmlLang, getOgLocale, getLanguageAlternates } from '@rimelight/i18n';
@@ -77,7 +77,7 @@ const ui = createUiHead();
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-neutral-50 focus:text-highlighted">
 			{t("app_layout.skipToContent")}
 		</a>
-		<RLABanner
+		<RLBanner
 			contain={false}
 			dismissable
 			dismissId="v2-announcement"
@@ -89,34 +89,34 @@ const ui = createUiHead();
 			]}
 		>
 			New: Rimelight v2 is out
-		</RLABanner>
+		</RLBanner>
 		<AppHeader stackIndex={1} />
-		<RLAMain id="main-content">
+		<RLMain id="main-content">
 			<slot />
-		</RLAMain>
+		</RLMain>
 		<AppFooter />
-		<RLAScrollToTop showProgress={true} />
-		<RLAShortcuts />
-		<RLALayoutGrid />
-		<RLAToaster />
+		<RLScrollToTop client:idle showProgress={true} />
+		<RLShortcuts client:load />
+		<RLLayoutGrid />
+		<RLToaster client:load />
 
 		{!hasConsent && (
 			<div id="cookie-notice-container" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300">
-				<RLAToast title={t("cookie_notice.title")} dismissable={false} class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm">
+				<RLToast title={t("cookie_notice.title")} dismissable={false} class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm">
 					<span slot="description">
 						{t("cookie_notice.description_prefix")}
 						<a href={getRelativeLocaleUrl('/legal/cookie-policy')} class="underline hover:text-primary transition-colors font-medium">{t("cookie_notice.cookie_policy_label")}</a>
 						{t("cookie_notice.description_suffix")}
 					</span>
 					<Fragment slot="actions">
-						<RLAButton id="cookie-allow" variant="solid" color="success" size="sm">
+						<RLButton id="cookie-allow" variant="solid" color="success" size="sm">
 							{t("cookie_notice.allow_all")}
-						</RLAButton>
-						<RLAButton id="cookie-deny" variant="solid" color="error" size="sm">
+						</RLButton>
+						<RLButton id="cookie-deny" variant="solid" color="error" size="sm">
 							{t("cookie_notice.deny_all")}
-						</RLAButton>
+						</RLButton>
 					</Fragment>
-				</RLAToast>
+				</RLToast>
 			</div>
 		)}
 

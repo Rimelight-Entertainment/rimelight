@@ -1,9 +1,9 @@
 import { createSignal, onMount, onCleanup, For, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface CalloutEditorProps {
   blockId?: string
@@ -107,7 +107,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold uppercase tracking-wider text-muted">Callout:</span>
           <div class="w-36">
-            <RLSSelect
+            <RLSelect
               items={VARIANT_OPTIONS}
               value={variant()}
               onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
@@ -118,7 +118,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
           </div>
         </div>
 
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"
@@ -132,7 +132,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
       <Show when={linkSettingsOpen()}>
         <div class="flex items-center gap-2 p-2 rounded-lg border border-default text-xs">
           <div class="flex-1">
-            <RLSInput
+            <RLInput
               type="text"
               placeholder="Link URL (e.g. https://... or /slug)"
               value={componentProps.props["to"] || ""}
@@ -143,7 +143,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
             />
           </div>
           <div class="w-32">
-            <RLSSelect
+            <RLSelect
               items={TARGET_OPTIONS}
               value={componentProps.props["target"] || "_self"}
               onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
@@ -162,7 +162,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-2">
             <span class="text-xs text-muted block">Empty callout</span>
-            <RLSButton
+            <RLButton
               variant="link"
               color="primary"
               size="xs"

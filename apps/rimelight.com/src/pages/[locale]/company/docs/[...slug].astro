@@ -13,10 +13,10 @@ import { rimelightCustomBlocks } from "#components/blocks"
 import { getLocale } from "@rimelight/i18n"
 
 // Build component registry from all UI components
-const componentModules: Record<string, any> = import.meta.glob("../../../../../../../packages/ui/src/components/*/RLA*.astro", { eager: true })
+const componentModules: Record<string, any> = import.meta.glob("../../../../../../../packages/ui/src/components/*/RL*.tsx", { eager: true })
 const componentRegistry: Record<string, any> = {}
 for (const [path, mod] of Object.entries(componentModules)) {
-  const fileName = path.split("/").pop()?.replace(".astro", "")
+  const fileName = path.split("/").pop()?.replace(".tsx", "")
   if (fileName && mod.default) {
     componentRegistry[fileName] = mod.default
   }
@@ -63,7 +63,7 @@ function generateCombinationClasses(themeFn: any, propsConfig: Record<string, st
   return { combinationClasses: result, initialThemeClasses }
 }
 
-/** Parse a raw Astro tag like <RLAButton label="Rounded" rounded /> into { tag, props } */
+/** Parse a raw tag like <RLButton label="Rounded" rounded /> into { tag, props } */
 function parseComponentTag(html: string): { tag: string; props: Record<string, any> } | null {
   const trimmed = html.trim()
 
@@ -93,8 +93,8 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
     return { tag, props }
   }
 
-  // First, try to find a known component tag (RLA*/RLS*) — prioritize these over generic HTML wrappers
-  const componentMatch = trimmed.match(/<(RLA\w+|RLS\w+)([\s\S]*?)(\/?)>/)
+  // First, try to find a known component tag (RL*) — prioritize these over generic HTML wrappers
+  const componentMatch = trimmed.match(/<(RL\w+)([\s\S]*?)(\/?)>/)
   if (componentMatch) return parseTag(componentMatch[0]!)
 
   // Fall back to matching the first tag (could be a div wrapper, etc.)

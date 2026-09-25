@@ -2,11 +2,11 @@
 import AppLayout from "#layouts/AppLayout.astro"
 import { siteConfig } from "virtual:rimelight/seo"
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
-import RLATabs from "@rimelight/ui/components/tabs/RLATabs.astro"
-import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
-import RLAPost from "@rimelight/ui/components/post/RLAPost.astro"
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLPageSection from "@rimelight/ui/components/page-section/RLPageSection.tsx"
+import RLTabs from "@rimelight/ui/components/tabs/RLTabs.tsx"
+import RLGrid from "@rimelight/ui/components/grid/RLGrid.tsx"
+import RLPost from "@rimelight/ui/components/post/RLPost.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 import { db } from "#db"
 import { pages } from "#db/schema"
 import { and, isNull, desc, sql } from "drizzle-orm"
@@ -77,24 +77,24 @@ const tabsItems = [
 ---
 
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
-	<RLAPageSection
+	<RLPageSection
 		orientation="horizontal"
 		title={t("page_company_blog.meta_title")}
 		description={t("page_company_blog.meta_description")}
 	>
 		<div class="flex justify-end items-start h-full w-full">
-			<RLAButton
+			<RLButton
 				label="RSS"
 				icon="i-lucide-rss"
 				size="sm"
 				href={getRelativeLocaleUrl("/rss.xml")}
 			/>
 		</div>
-		<RLATabs slot="content" items={tabsItems} variant="underline">
+		<RLTabs slot="content" items={tabsItems} variant="underline">
 			<div role="tabpanel" data-value="all" class="hidden">
-				<RLAGrid cols={4}>
+				<RLGrid cols={4}>
 					{posts.map((post, index) => (
-						<RLAPost
+						<RLPost
 							variant="ghost"
 							orientation={index === 0 ? "horizontal" : "vertical"}
 							class={index === 0 ? "col-span-full mb-6" : ""}
@@ -107,17 +107,17 @@ const tabsItems = [
 							badgeColor={badgeColorMap[post.category] || "primary"}
 						/>
 					))}
-				</RLAGrid>
+				</RLGrid>
 			</div>
 			{categoryOrder.map((category) => {
 				const categoryPosts = groupedPosts[category]
 				if (!categoryPosts || categoryPosts.length === 0) return null
 				return (
 					<div role="tabpanel" data-value={category} class="hidden">
-						<RLAGrid cols={4}>
+						<RLGrid cols={4}>
 							{
 								categoryPosts.map((post, index) => (
-									<RLAPost
+									<RLPost
 										variant="ghost"
 										orientation={index === 0 ? "horizontal" : "vertical"}
 										class={index === 0 ? "col-span-full mb-6" : ""}
@@ -131,10 +131,10 @@ const tabsItems = [
 									/>
 								))
 							}
-						</RLAGrid>
+						</RLGrid>
 					</div>
 				);
 			})}
-		</RLATabs>
-	</RLAPageSection>
+		</RLTabs>
+	</RLPageSection>
 </AppLayout>

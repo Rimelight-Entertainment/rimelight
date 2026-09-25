@@ -1,11 +1,11 @@
 ---
 import BlankLayout from "#layouts/BlankLayout.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
-import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro";
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro";
-import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
+import RLCard from "@rimelight/ui/components/card/RLCard.tsx";
+import RLFormField from "@rimelight/ui/components/form-field/RLFormField.tsx";
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLCheckbox from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import RLLogo from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { t } from "@rimelight/i18n";
 
 const redirect = Astro.url.searchParams.get("redirect") || "/";
@@ -20,7 +20,7 @@ const isError = Astro.url.searchParams.get("error") === "invalid";
   <div class="flex min-h-screen flex-col items-center justify-center px-4 py-12">
     <div class="w-full max-w-md space-y-6 text-center">
       <div class="flex flex-col items-center gap-4">
-        <RLALogo class="h-12 w-auto" variant="logomark" />
+        <RLLogo class="h-12 w-auto" variant="logomark" />
         <h1 class="m-0 text-3xl font-bold tracking-tight sm:text-4xl">
           {t("page_construction.title")}
         </h1>
@@ -29,7 +29,7 @@ const isError = Astro.url.searchParams.get("error") === "invalid";
         </p>
       </div>
 
-      <RLACard class="text-left w-full">
+      <RLCard class="text-left w-full">
         {isError && (
           <div class="mb-4 rounded-md border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-400" role="alert">
             Invalid credentials. Please try again.
@@ -40,11 +40,11 @@ const isError = Astro.url.searchParams.get("error") === "invalid";
         <form method="POST" action="/api/construction-guest" class="flex flex-col gap-4">
           <input type="hidden" name="redirect" value={redirect} />
 
-          <RLAFormField
+          <RLFormField
             label={t("page_construction.form_passphrase_label")}
             required
           >
-            <RLAInput
+            <RLInput
               id="construction-passphrase-input"
               type="password"
               name="passphrase"
@@ -54,16 +54,16 @@ const isError = Astro.url.searchParams.get("error") === "invalid";
               autofocus
               autocomplete="current-password"
             />
-          </RLAFormField>
+          </RLFormField>
 
-          <RLACheckbox
+          <RLCheckbox
             id="construction-remember-me-checkbox"
             name="rememberMe"
             label={t("page_construction.form_remember_me_label")}
             checked
           />
 
-          <RLAButton
+          <RLButton
             type="submit"
             color="primary"
             variant="solid"
@@ -71,9 +71,9 @@ const isError = Astro.url.searchParams.get("error") === "invalid";
             class="w-full mt-2"
           >
             {t("page_construction.form_sign_in_button")}
-          </RLAButton>
+          </RLButton>
         </form>
-      </RLACard>
+      </RLCard>
     </div>
   </div>
 </BlankLayout>

@@ -1,11 +1,11 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSCheckbox from "@rimelight/ui/components/checkbox/RLSCheckbox.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLCheckbox from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
 
 export interface RimelightTemplateEditorProps {
   initialBlocks?: BaseBlock[]
@@ -130,7 +130,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
         </div>
         <div class="flex items-center gap-2">
           <div class="w-44">
-            <RLSSelect
+            <RLSelect
               items={TEMPLATE_BLOCK_OPTIONS}
               value={selectedType()}
               onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
@@ -139,7 +139,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
               size="sm"
             />
           </div>
-          <RLSButton
+          <RLButton
             variant="solid"
             color="primary"
             size="sm"
@@ -180,19 +180,19 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
                       <span class="font-bold text-highlighted uppercase">{block.type}</span>
                       <span class="text-[10px] text-muted">#{index() + 1}</span>
                     </div>
-                    <RLSButton
+                    <RLButton
                       variant="ghost"
                       color="neutral"
                       size="xs"
                       onClick={() => deleteBlock(block.id)}
                       class="!text-red-500 hover:!text-red-600"
-                      leading={<RLSIcon name="trash" size="xs" />}
+                      leading={<RLIcon name="trash" size="xs" />}
                       label="Delete"
                     />
                   </div>
 
                   <div class="flex items-center gap-4 py-1">
-                    <RLSCheckbox
+                    <RLCheckbox
                       checked={!!block.isTemplated}
                       onChange={(e: Event & { currentTarget: HTMLInputElement }) =>
                         updateBlockItem(block.id, (b) => {
@@ -202,7 +202,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
                       label="📌 Anchor (Permanent)"
                       size="sm"
                     />
-                    <RLSCheckbox
+                    <RLCheckbox
                       checked={block.templatedProps === true}
                       onChange={(e: Event & { currentTarget: HTMLInputElement }) =>
                         updateBlockItem(block.id, (b) => {
@@ -218,7 +218,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
                     <div>
                       <span class="block text-[11px] text-muted mb-1">Block Content / Text</span>
                       <div class="mt-1">
-                        <RLSInput
+                        <RLInput
                           id={`tmpl-content-${block.id}`}
                           value={escapeHtml(textVal)}
                           onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => {

@@ -1,4 +1,11 @@
-import type { ImageMetadata } from "astro"
+export interface ImageMetadata {
+  src: string
+  width: number
+  height: number
+  format: string
+  orientation?: number
+  fsPath?: string
+}
 
 export interface ImageMetadataInfo {
   width?: number

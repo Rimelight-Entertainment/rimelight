@@ -1,7 +1,7 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 const BLOCK_DEFS = [
   {
@@ -211,19 +211,19 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
               Add Block{" "}
               {props.containerType ? `to ${props.containerType.replace("Block", "")}` : ""}
             </div>
-            <RLSButton
+            <RLButton
               variant="ghost"
               color="neutral"
               size="xs"
               square={true}
               onClick={() => props.onClose()}
               aria-label="Close"
-              leading={<RLSIcon name="close" size="xs" />}
+              leading={<RLIcon name="close" size="xs" />}
             />
           </div>
 
           <div class="px-4 py-3 border-b border-default/50">
-            <RLSInput
+            <RLInput
               ref={(el: HTMLInputElement) => {
                 searchInput = el
                 if (props.open) setTimeout(() => searchInput?.focus(), 10)
@@ -272,7 +272,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                             classList={{ "bg-neutral-100": isSelected }}
                           >
                             <div class="text-base w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-neutral-100 text-highlighted border border-default">
-                              <RLSIcon name={block.icon} size="sm" />
+                              <RLIcon name={block.icon} size="sm" />
                             </div>
                             <div class="flex flex-col flex-1 min-w-0">
                               <div class="flex items-center justify-between">

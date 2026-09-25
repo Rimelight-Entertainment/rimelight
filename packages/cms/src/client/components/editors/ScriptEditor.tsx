@@ -1,10 +1,10 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface ScriptEditorProps {
   blockId?: string
@@ -94,7 +94,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
     <div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-2 border-primary/50 w-full">
       <div class="flex flex-col gap-1">
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Script Title</span>
-        <RLSInput
+        <RLInput
           data-field="title"
           value={componentProps.props["title"] || ""}
           onInput={(e) => saveProps({ title: e.currentTarget.value })}
@@ -105,7 +105,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
 
       <div class="flex flex-col gap-1">
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Synopsis</span>
-        <RLSTextarea
+        <RLTextarea
           data-field="synopsis"
           value={componentProps.props["synopsis"] || ""}
           onInput={(e) => saveProps({ synopsis: e.currentTarget.value })}
@@ -122,7 +122,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
           ) : (
             <For each={characters()}>
               {(char) => (
-                <RLSBadge variant="soft" color="primary" size="sm">
+                <RLBadge variant="soft" color="primary" size="sm">
                   <span>{char}</span>
                   <button
                     type="button"
@@ -131,14 +131,14 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
                   >
                     ×
                   </button>
-                </RLSBadge>
+                </RLBadge>
               )}
             </For>
           )}
         </div>
         <div class="flex gap-2">
           <div class="flex-1">
-            <RLSInput
+            <RLInput
               data-field="char-input"
               value={charInputVal()}
               onInput={(e) => setCharInputVal(e.currentTarget.value)}
@@ -152,7 +152,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
               size="sm"
             />
           </div>
-          <RLSButton
+          <RLButton
             variant="outline"
             color="neutral"
             size="sm"
@@ -165,21 +165,21 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
       <div class="flex flex-col gap-1">
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Plots</span>
         <div class="grid grid-cols-3 gap-2">
-          <RLSInput
+          <RLInput
             data-field="aPlot"
             value={componentProps.props["aPlot"] || ""}
             onInput={(e) => saveProps({ aPlot: e.currentTarget.value })}
             placeholder="A-Plot"
             size="sm"
           />
-          <RLSInput
+          <RLInput
             data-field="bPlot"
             value={componentProps.props["bPlot"] || ""}
             onInput={(e) => saveProps({ bPlot: e.currentTarget.value })}
             placeholder="B-Plot"
             size="sm"
           />
-          <RLSInput
+          <RLInput
             data-field="cPlot"
             value={componentProps.props["cPlot"] || ""}
             onInput={(e) => saveProps({ cPlot: e.currentTarget.value })}
@@ -191,7 +191,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
 
       <div class="flex flex-col gap-1">
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Stinger</span>
-        <RLSInput
+        <RLInput
           data-field="stinger"
           value={componentProps.props["stinger"] || ""}
           onInput={(e) => saveProps({ stinger: e.currentTarget.value })}
@@ -211,7 +211,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
           {childrenBlocks().length === 0 ? (
             <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-default text-center my-1">
               <div class="text-xs font-semibold text-muted">Empty script content</div>
-              <RLSButton
+              <RLButton
                 variant="outline"
                 color="neutral"
                 size="xs"

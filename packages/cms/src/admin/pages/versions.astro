@@ -1,7 +1,7 @@
 ---
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
-import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.ts";
+import RLATable from "@rimelight/ui/components/table/RLTable.tsx";
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/RLTable.tsx";
 import { db } from "virtual:rimelight-cms/db";
 import { pageVersions, pages } from "../../schema";
 import { desc, eq } from "drizzle-orm";

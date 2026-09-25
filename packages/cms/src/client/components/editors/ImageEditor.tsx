@@ -1,5 +1,5 @@
 import { type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface ImageEditorProps {
   props: Record<string, any>
@@ -20,7 +20,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
     <div class="w-full flex flex-col gap-3 p-2">
       <div class="flex flex-col gap-1">
         <span class="text-xs font-bold text-muted uppercase">Image URL</span>
-        <RLSInput
+        <RLInput
           id="image-src-input"
           type="text"
           value={componentProps.props["src"] || ""}
@@ -33,7 +33,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div class="flex flex-col gap-1">
           <span class="text-xs font-bold text-muted uppercase">Alt Text</span>
-          <RLSInput
+          <RLInput
             id="image-alt-input"
             type="text"
             value={componentProps.props["alt"] || ""}
@@ -45,7 +45,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
 
         <div class="flex flex-col gap-1">
           <span class="text-xs font-bold text-muted uppercase">Caption</span>
-          <RLSInput
+          <RLInput
             id="image-caption-input"
             type="text"
             value={componentProps.props["caption"] || ""}

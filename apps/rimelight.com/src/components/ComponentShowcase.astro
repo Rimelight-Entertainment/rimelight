@@ -1,8 +1,8 @@
 ---
-import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLAPopover from "@rimelight/ui/components/popover/RLAPopover.astro";
-import RLASeparator from "@rimelight/ui/components/separator/RLASeparator.astro";
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLPopover from "@rimelight/ui/components/popover/RLPopover.tsx";
+import RLSeparator from "@rimelight/ui/components/separator/RLSeparator.tsx";
 
 interface Props {
   component?: string;
@@ -38,7 +38,7 @@ if (!resolvedComponentName) {
   const pathSegments = Astro.url.pathname.split('/').filter(Boolean);
   const lastSegment = pathSegments[pathSegments.length - 1];
   if (lastSegment) {
-    resolvedComponentName = 'RLA' + lastSegment.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+    resolvedComponentName = 'RL' + lastSegment.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
   }
 }
 const isDynamic = !!propsConfig;
@@ -66,7 +66,7 @@ if (
   resolvedComponentName
 ) {
   const compKey = resolvedComponentName
-    .replace(/^RL[AV]/, '')
+    .replace(/^RL[AVS]?/, '')
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .toLowerCase();
 
@@ -130,21 +130,21 @@ const defaultCodeLang = hasAstroCode ? 'astro' : 'tsx';
           <div class="flex items-center gap-2 prop-control-group" data-prop={prop}>
             <label class="text-xs font-semibold text-muted uppercase tracking-wider">{prop}:</label>
             <div class="flex items-center gap-1.5">
-              <RLASelect
+              <RLSelect
                 items={resolvedPropsConfig[prop]}
                 value={defaultProps ? defaultProps[prop] : ""}
                 name={prop}
                 size="sm"
               />
               {togglingPattern === "icon" && propsConfig?.[prop] && propsConfig[prop].length > 1 && (
-                <RLAButton class="compare-prop-btn" size="sm" variant="ghost" color="neutral" title={`Compare all ${prop}s`} square>
+                <RLButton class="compare-prop-btn" size="sm" variant="ghost" color="neutral" title={`Compare all ${prop}s`} square>
                   <span class="i-lucide-layout-grid size-3.5"></span>
-                </RLAButton>
+                </RLButton>
               )}
               {togglingPattern === "pill-toggle" && propsConfig?.[prop] && propsConfig[prop].length > 1 && (
-                <RLAButton class="compare-prop-btn" size="xs" variant="outline" color="neutral" rounded title={`Compare all ${prop}s`}>
+                <RLButton class="compare-prop-btn" size="xs" variant="outline" color="neutral" rounded title={`Compare all ${prop}s`}>
                   Compare
-                </RLAButton>
+                </RLButton>
               )}
             </div>
           </div>
@@ -154,8 +154,8 @@ const defaultCodeLang = hasAstroCode ? 'astro' : 'tsx';
       <!-- Segmented Control for Layout Mode -->
       {togglingPattern === "tab-segmented" && (
         <div class="flex items-center gap-1 bg-muted/40 p-0.5 rounded-lg border border-default/40 mode-segmented-control ml-auto">
-          <RLAButton class="mode-tab active bg-neutral-50 text-highlighted shadow-xs border border-default/40" size="xs" variant="ghost" color="neutral" data-mode="single">Single Preview</RLAButton>
-          <RLAButton class="mode-tab text-muted" size="xs" variant="ghost" color="neutral" data-mode="compare">Compare All</RLAButton>
+          <RLButton class="mode-tab active bg-neutral-50 text-highlighted shadow-xs border border-default/40" size="xs" variant="ghost" color="neutral" data-mode="single">Single Preview</RLButton>
+          <RLButton class="mode-tab text-muted" size="xs" variant="ghost" color="neutral" data-mode="compare">Compare All</RLButton>
         </div>
       )}
     </div>
@@ -166,28 +166,28 @@ const defaultCodeLang = hasAstroCode ? 'astro' : 'tsx';
       {hasCode && (
         <div class="flex items-center gap-sm">
           {hasAstroCode && (
-            <RLAButton class="showcase-tab active bg-neutral-50 text-highlighted shadow-sm border border-default" size="sm" variant="ghost" color="neutral" data-lang="astro">Astro</RLAButton>
+            <RLButton class="showcase-tab active bg-neutral-50 text-highlighted shadow-sm border border-default" size="sm" variant="ghost" color="neutral" data-lang="astro">Astro</RLButton>
           )}
           {hasSolidCode && (
-            <RLAButton class={`showcase-tab ${defaultCodeLang === 'tsx' ? 'active bg-neutral-50 text-highlighted shadow-sm border border-default' : ''}`} size="sm" variant="ghost" color="neutral" data-lang="tsx">Solid</RLAButton>
+            <RLButton class={`showcase-tab ${defaultCodeLang === 'tsx' ? 'active bg-neutral-50 text-highlighted shadow-sm border border-default' : ''}`} size="sm" variant="ghost" color="neutral" data-lang="tsx">Solid</RLButton>
           )}
         </div>
       )}
 
     <div class="flex items-center gap-1.5">
-         <RLAPopover class="highlight-slots-wrapper" placement="bottom-end" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
-            <RLAButton slot="trigger" class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
+         <RLPopover class="highlight-slots-wrapper" placement="bottom-end" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
+            <RLButton slot="trigger" class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
                <span class="i-lucide-boxes size-4"></span>
-            </RLAButton>
+            </RLButton>
             <span class="font-semibold text-sm text-highlighted">Slots</span>
-            <RLASeparator />
+            <RLSeparator />
             <div class="slots-list flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
               <!-- Slots populated by JS -->
             </div>
-         </RLAPopover>
-         <RLAButton href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground" size="sm" variant="ghost" color="neutral" title="Open in Playground" square>
+         </RLPopover>
+         <RLButton href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground" size="sm" variant="ghost" color="neutral" title="Open in Playground" square>
             <span class="i-lucide-flask-conical size-4"></span>
-         </RLAButton>
+         </RLButton>
     </div>
   </div>
 
@@ -205,7 +205,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : 'tsx';
   {hasCode && (
     <div class="code-area relative p-4">
       <div class="absolute top-2 right-2 z-10">
-        <RLAButton icon="i-lucide-copy" class="copy-code" size="sm" variant="ghost" color="neutral" />
+        <RLButton icon="i-lucide-copy" class="copy-code" size="sm" variant="ghost" color="neutral" />
       </div>
 
       {hasAstroCode && (

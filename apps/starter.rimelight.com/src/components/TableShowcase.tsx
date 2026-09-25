@@ -1,10 +1,10 @@
 import { createSignal, createMemo, Show, For } from "solid-js"
-import RLSTable from "@rimelight/ui/components/table/RLSTable.tsx"
+import RLTable from "@rimelight/ui/components/table/RLTable.tsx"
 import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
-import RLSCheckbox from "@rimelight/ui/components/checkbox/RLSCheckbox.tsx"
-import RLSDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLSDropdownMenu.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLCheckbox from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
+import RLDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx"
 import {
   SHOWCASE_PAYMENTS_DATA,
   formatShowcaseDate,
@@ -115,7 +115,7 @@ export default function TableShowcase() {
         const isSome = () => table?.getIsSomeRowsSelected() ?? false
 
         return (
-          <RLSCheckbox
+          <RLCheckbox
             checked={isAll()}
             indeterminate={isSome()}
             onChange={() => {
@@ -125,7 +125,7 @@ export default function TableShowcase() {
         )
       },
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
-        <RLSCheckbox
+        <RLCheckbox
           checked={row.getIsSelected()}
           indeterminate={row.getIsSomeSelected()}
           onChange={() => row.toggleSelected()}
@@ -182,9 +182,9 @@ export default function TableShowcase() {
         const val = row.getValue("status")
         const badgeColor = val === "paid" ? "success" : val === "failed" ? "error" : "warning"
         return (
-          <RLSBadge size="sm" color={badgeColor} variant="soft" class="capitalize">
+          <RLBadge size="sm" color={badgeColor} variant="soft" class="capitalize">
             {val}
-          </RLSBadge>
+          </RLBadge>
         )
       }
     },
@@ -213,7 +213,10 @@ export default function TableShowcase() {
         const total = () =>
           table
             ?.getFilteredRows()
-            .reduce((sum, r) => sum + (Number(r.getValue("amount")) || 0), 0) ?? 0
+            .reduce(
+              (sum: number, r: TableRow<PaymentItem>) => sum + (Number(r.getValue("amount")) || 0),
+              0
+            ) ?? 0
         return (
           <div class="text-right font-mono font-bold text-highlighted">
             {formatShowcaseCurrency(total())}
@@ -271,7 +274,7 @@ export default function TableShowcase() {
         ]
 
         return (
-          <RLSDropdownMenu
+          <RLDropdownMenu
             items={dropdownItems as any}
             size="xs"
             color="neutral"
@@ -286,34 +289,34 @@ export default function TableShowcase() {
     <div class="flex flex-col gap-6 w-full">
       {/* Controls Bar */}
       <div class="flex flex-wrap items-center gap-2.5 p-4 rounded-xl border border-default bg-muted/20">
-        <RLSButton
+        <RLButton
           size="sm"
           color={striped() ? "primary" : "neutral"}
           variant={striped() ? "solid" : "outline"}
           onClick={() => setStriped(!striped())}
         >
           {striped() ? "Striped: ON" : "Striped: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={bordered() ? "primary" : "neutral"}
           variant={bordered() ? "solid" : "outline"}
           onClick={() => setBordered(!bordered())}
         >
           {bordered() ? "Bordered: ON" : "Bordered: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={hoverable() ? "primary" : "neutral"}
           variant={hoverable() ? "solid" : "outline"}
           onClick={() => setHoverable(!hoverable())}
         >
           {hoverable() ? "Hoverable: ON" : "Hoverable: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={groupingLevel() !== "none" ? "primary" : "neutral"}
           variant={groupingLevel() !== "none" ? "solid" : "outline"}
@@ -332,45 +335,45 @@ export default function TableShowcase() {
             : groupingLevel() === "category"
               ? "Grouping: Category"
               : "Grouping: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={enableResizing() ? "primary" : "neutral"}
           variant={enableResizing() ? "solid" : "outline"}
           onClick={() => setEnableResizing(!enableResizing())}
         >
           {enableResizing() ? "Column Resizing: ON" : "Column Resizing: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={enableColumnReordering() ? "primary" : "neutral"}
           variant={enableColumnReordering() ? "solid" : "outline"}
           onClick={() => setEnableColumnReordering(!enableColumnReordering())}
         >
           {enableColumnReordering() ? "Column Reorder: ON" : "Column Reorder: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={enableRowReordering() ? "primary" : "neutral"}
           variant={enableRowReordering() ? "solid" : "outline"}
           onClick={() => setEnableRowReordering(!enableRowReordering())}
         >
           {enableRowReordering() ? "Row Reorder: ON" : "Row Reorder: OFF"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color={isVirtual() ? "primary" : "neutral"}
           variant={isVirtual() ? "solid" : "outline"}
           onClick={toggleVirtualize}
         >
           {isVirtual() ? "Virtualization: 500 Rows" : "Virtualize (500 rows)"}
-        </RLSButton>
+        </RLButton>
 
-        <RLSButton
+        <RLButton
           size="sm"
           color="neutral"
           variant="outline"
@@ -380,7 +383,7 @@ export default function TableShowcase() {
           }}
         >
           Test Loading Bar
-        </RLSButton>
+        </RLButton>
 
         <div class="flex items-center gap-2 ml-auto">
           <span class="text-xs text-muted">Anim:</span>
@@ -402,7 +405,7 @@ export default function TableShowcase() {
       </div>
 
       {/* Solid Table Component */}
-      <RLSTable<PaymentItem>
+      <RLTable<PaymentItem>
         data={data()}
         columns={columns()}
         searchable={true}

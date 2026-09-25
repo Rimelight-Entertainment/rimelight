@@ -1,6 +1,6 @@
 import { onMount, type Component } from "solid-js"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface CodeEditorProps {
   props: Record<string, any>
@@ -48,10 +48,10 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
         <div class="flex items-center gap-2">
           <span class="text-xs font-semibold text-muted uppercase tracking-wide">Language</span>
           <div class="w-36">
-            <RLSSelect
+            <RLSelect
               items={LANGUAGES}
               value={componentProps.props["language"] || "typescript"}
-              onChange={(e) => saveProps(e.currentTarget.value)}
+              onChange={(e: any) => saveProps(e.currentTarget.value)}
               size="xs"
             />
           </div>
@@ -78,7 +78,7 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
           }}
         />
       </div>
-      <RLSInput
+      <RLInput
         type="text"
         data-field="caption"
         value={componentProps.props["caption"] || ""}

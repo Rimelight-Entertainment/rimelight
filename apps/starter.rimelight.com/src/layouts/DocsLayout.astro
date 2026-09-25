@@ -1,14 +1,14 @@
 ---
 import AppLayout from "./AppLayout.astro";
-import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
-import RLATableOfContents from "@rimelight/ui/components/table-of-contents/RLATableOfContents.astro";
-import RLASurround from "@rimelight/ui/components/surround/RLASurround.astro";
-import RLACopyMarkdown from "@rimelight/ui/components/copy-markdown/RLACopyMarkdown.astro";
-import RLAShare from "@rimelight/ui/components/share/RLAShare.astro";
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
-import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
-import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
+import RLSidebar from "@rimelight/ui/components/sidebar/RLSidebar.tsx";
+import RLTableOfContents from "@rimelight/ui/components/table-of-contents/RLTableOfContents.tsx";
+import RLSurround from "@rimelight/ui/components/surround/RLSurround.tsx";
+import RLCopyMarkdown from "@rimelight/ui/components/copy-markdown/RLCopyMarkdown.tsx";
+import RLShare from "@rimelight/ui/components/share/RLShare.tsx";
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx";
+import RLContainer from "@rimelight/ui/components/container/RLContainer.tsx";
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx";
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import type { ResolvedSidebarItem } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
@@ -172,7 +172,7 @@ const getVersionHomeUrl = (v: string) => {
           <div class="flex flex-col gap-1 p-3 border-b border-default/50">
             <span class="text-[10px] text-muted font-bold uppercase tracking-wider px-1 mb-1">Version</span>
             <rla-version-selector class="block w-full">
-              <RLASelect
+              <RLSelect
                 items={versions.map(v => ({ label: v, value: getVersionHomeUrl(v) }))}
                 value={getVersionHomeUrl(activeVersion || "")}
                 size="sm"
@@ -182,7 +182,7 @@ const getVersionHomeUrl = (v: string) => {
         )}
         {/* Filter input */}
         <div class="p-3 border-b border-default/50">
-          <RLAInput
+          <RLInput
             type="text"
             placeholder="Filter navigation..."
             size="sm"
@@ -242,14 +242,14 @@ const getVersionHomeUrl = (v: string) => {
                           {(() => {
                             const b = normalizeBadge(child.badge);
                             return b && (
-                              <RLABadge
+                              <RLBadge
                                 variant={b.variant}
                                 color={b.color}
                                 size="xs"
                                 class={"select-none " + b.class}
                               >
                                 {b.text}
-                              </RLABadge>
+                              </RLBadge>
                             );
                           })()}
                         </a>
@@ -272,14 +272,14 @@ const getVersionHomeUrl = (v: string) => {
                   {(() => {
                     const b = normalizeBadge(item.badge);
                     return b && (
-                      <RLABadge
+                      <RLBadge
                         variant={b.variant}
                         color={b.color}
                         size="xs"
                         class={"select-none " + b.class}
                       >
                         {b.text}
-                      </RLABadge>
+                      </RLBadge>
                     );
                   })()}
                 </a>
@@ -323,7 +323,7 @@ const getVersionHomeUrl = (v: string) => {
   </div>
 
   {/* ── Main docs layout ── */}
-  <RLAContainer class="py-8 flex flex-col lg:flex-row gap-8 items-start relative min-h-[calc(100vh-200px)]">
+  <RLContainer class="py-8 flex flex-col lg:flex-row gap-8 items-start relative min-h-[calc(100vh-200px)]">
 
     {/* Sidebar column — lg+ only */}
     <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
@@ -331,7 +331,7 @@ const getVersionHomeUrl = (v: string) => {
         <div class="mb-4 px-2">
           <label class="block text-[10px] text-muted font-bold uppercase tracking-wider mb-1.5 px-1">Version</label>
           <rla-version-selector class="block w-full">
-            <RLASelect
+            <RLSelect
               items={versions.map(v => ({ label: v, value: getVersionHomeUrl(v) }))}
               value={getVersionHomeUrl(activeVersion || "")}
               size="sm"
@@ -346,7 +346,7 @@ const getVersionHomeUrl = (v: string) => {
         </div>
       )}
       <div class="mb-4 px-2">
-        <RLAInput
+        <RLInput
           type="text"
           placeholder="Filter navigation..."
           size="sm"
@@ -378,7 +378,7 @@ const getVersionHomeUrl = (v: string) => {
           );
         })}
       </div>
-      <RLASidebar items={sidebarItems} collapsible="none" class="docs-nav-sidebar" />
+      <RLSidebar items={sidebarItems} collapsible="none" class="docs-nav-sidebar" />
     </div>
 
     {/* Main content */}
@@ -387,8 +387,8 @@ const getVersionHomeUrl = (v: string) => {
         <h1 class="text-3xl font-extrabold text-highlighted tracking-tight">{title}</h1>
         {description && <p class="mt-2 text-base text-muted">{description}</p>}
         <div class="flex gap-2 items-center justify-end my-4">
-          {rawMarkdown && <RLACopyMarkdown raw={rawMarkdown} />}
-          <RLAShare />
+          {rawMarkdown && <RLCopyMarkdown raw={rawMarkdown} />}
+          <RLShare />
         </div>
       </div>
       <style is:global>
@@ -397,7 +397,7 @@ const getVersionHomeUrl = (v: string) => {
       <article class="markdown-content prose max-w-none prose-base">
         <slot />
       </article>
-      <RLASurround prev={prev ?? null} next={next ?? null} />
+      <RLSurround prev={prev ?? null} next={next ?? null} />
 
       {/* Edit link */}
       {resolvedEditUrl && (
@@ -418,11 +418,11 @@ const getVersionHomeUrl = (v: string) => {
     {/* TOC right column — xl+ only */}
     {hasToc && (
       <div class="hidden xl:block w-[240px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto pl-4">
-        <RLATableOfContents headings={headings} tableOfContents={resolvedToc as any} />
+        <RLTableOfContents headings={headings} tableOfContents={resolvedToc as any} />
       </div>
     )}
 
-  </RLAContainer>
+  </RLContainer>
 </AppLayout>
 
 <script>
@@ -460,7 +460,7 @@ const getVersionHomeUrl = (v: string) => {
         const container = el.closest('#docs-nav-details') || el.closest('.docs-sidebar-wrapper');
         if (!container) return;
 
-        // RLASidebar items (desktop / component rendered)
+        // RLSidebar items (desktop / component rendered)
         const sidebar = container.querySelector('.docs-nav-sidebar');
         if (sidebar) {
           const items = sidebar.querySelectorAll('[data-slot="item"]');
@@ -484,7 +484,7 @@ const getVersionHomeUrl = (v: string) => {
           });
         }
 
-        // Mobile list items (if rendered without RLASidebar component)
+        // Mobile list items (if rendered without RLSidebar component)
         const mobileList = container.querySelector('.docs-mobile-nav-list');
         if (mobileList) {
           const listItems = mobileList.querySelectorAll('[data-nav-item]');
@@ -505,7 +505,7 @@ const getVersionHomeUrl = (v: string) => {
   initDocsBars();
   document.addEventListener('astro:after-swap', initDocsBars);
 
-  class RLAVersionSelector extends HTMLElement {
+  class RLVersionSelector extends HTMLElement {
     private onchangeHandler = (event: Event) => {
       const target = event.target as HTMLSelectElement | HTMLInputElement;
       if (!target || !target.value) return;
@@ -520,7 +520,7 @@ const getVersionHomeUrl = (v: string) => {
 
     connectedCallback() {
       // Delegate on `this` — change bubbles from both the native <select> and
-      // the hidden input, so we catch either render path of RLASelect.
+      // the hidden input, so we catch either render path of RLSelect.
       this.addEventListener('change', this.onchangeHandler);
     }
 
@@ -529,7 +529,7 @@ const getVersionHomeUrl = (v: string) => {
     }
   }
   if (!customElements.get('rla-version-selector')) {
-    customElements.define('rla-version-selector', RLAVersionSelector);
+    customElements.define('rla-version-selector', RLVersionSelector);
   }
 </script>
 

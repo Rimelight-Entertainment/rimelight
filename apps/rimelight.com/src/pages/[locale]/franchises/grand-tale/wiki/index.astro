@@ -1,8 +1,8 @@
 ---
 import WikiLayout from '#layouts/WikiLayout.astro';
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx";
+import RLCard from "@rimelight/ui/components/card/RLCard.tsx";
 import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const quickNavItems = [
@@ -60,13 +60,13 @@ const trendingArticles = [
 			
 			<div class="flex flex-col md:flex-row gap-6 items-start lg:items-center pt-2">
 				<div class="bg-neutral-900/60 border border-neutral-800 p-4 flex gap-3 w-full max-w-xl rounded-2xl shadow-inner">
-					<RLAInput
+					<RLInput
 						placeholder="Search the library..."
 						size="lg"
 						class="flex-1"
 						color="neutral"
 					/>
-					<RLAButton color="primary" label="Search" class="px-6 rounded-xl" />
+					<RLButton color="primary" label="Search" class="px-6 rounded-xl" />
 				</div>
 
 				<div class="flex gap-12 px-4">
@@ -98,7 +98,7 @@ const trendingArticles = [
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{quickNavItems.map((item) => (
 					<a href={getRelativeLocaleUrl(item.href)} class="group block no-underline">
-						<RLACard class="bg-neutral-900/40 border-neutral-800 hover:bg-neutral-850 hover:border-indigo-500/50 transition-all h-full rounded-2xl p-6">
+						<RLCard class="bg-neutral-900/40 border-neutral-800 hover:bg-neutral-850 hover:border-indigo-500/50 transition-all h-full rounded-2xl p-6">
 							<div class="flex items-start gap-4">
 								<div class="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30 shrink-0">
 									<span class={`${item.icon} size-6 text-indigo-400`}></span>
@@ -112,7 +112,7 @@ const trendingArticles = [
 									</p>
 								</div>
 							</div>
-						</RLACard>
+						</RLCard>
 					</a>
 				))}
 			</div>

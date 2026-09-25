@@ -1,6 +1,6 @@
 ---
 import GuidesLayout from "#layouts/GuidesLayout.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 import { t } from "@rimelight/i18n";
 ---
 
@@ -34,7 +34,7 @@ import { t } from "@rimelight/i18n";
               {t("page_grand-tale_guides_build-planners.new_draft_desc")}
             </p>
           </div>
-          <RLAButton label={t("page_grand-tale_guides_build-planners.new_draft_btn")} color="primary" variant="solid" class="w-full justify-center font-bold" />
+          <RLButton label={t("page_grand-tale_guides_build-planners.new_draft_btn")} color="primary" variant="solid" class="w-full justify-center font-bold" />
         </div>
 
         <!-- My Library -->
@@ -48,7 +48,7 @@ import { t } from "@rimelight/i18n";
               {t("page_grand-tale_guides_build-planners.library_desc")}
             </p>
           </div>
-          <RLAButton label={t("page_grand-tale_guides_build-planners.library_btn")} color="neutral" variant="outline" class="w-full justify-center font-bold text-white ring-white hover:bg-white hover:text-black" />
+          <RLButton label={t("page_grand-tale_guides_build-planners.library_btn")} color="neutral" variant="outline" class="w-full justify-center font-bold text-white ring-white hover:bg-white hover:text-black" />
         </div>
       </section>
 

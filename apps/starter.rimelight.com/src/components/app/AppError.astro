@@ -1,7 +1,7 @@
 ---
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx";
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import type { BadgeProps } from "@rimelight/ui/components/badge/badge.ts";
 import type { ThemeColor } from "@rimelight/ui/types.ts";
@@ -96,7 +96,7 @@ const config = statusConfig[code] || defaultConfig;
 			</div>
 
 			<div class={`size-16 rounded-2xl border ${config.iconBoxClass} flex items-center justify-center shadow-sm`}>
-				<RLAIcon name={config.icon} class="size-8" />
+				<RLIcon name={config.icon} class="size-8" />
 			</div>
 
 			<div class="flex flex-col gap-2 max-w-md">
@@ -113,7 +113,7 @@ const config = statusConfig[code] || defaultConfig;
 					{userEmail && (
 						<div class="flex items-center justify-between gap-3">
 							<span class="text-muted font-medium flex items-center gap-1.5">
-								<RLAIcon name="i-lucide-user" class="size-3.5 text-muted/80" />
+								<RLIcon name="i-lucide-user" class="size-3.5 text-muted/80" />
 								Signed in as:
 							</span>
 							<span class="font-mono font-semibold text-highlighted truncate max-w-[220px]">
@@ -125,12 +125,12 @@ const config = statusConfig[code] || defaultConfig;
 					{requiredRole && (
 						<div class="flex items-center justify-between gap-3">
 							<span class="text-muted font-medium flex items-center gap-1.5">
-								<RLAIcon name="i-lucide-shield" class="size-3.5 text-muted/80" />
+								<RLIcon name="i-lucide-shield" class="size-3.5 text-muted/80" />
 								Required Privilege:
 							</span>
-							<RLABadge variant="subtle" color="primary" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
+							<RLBadge variant="subtle" color="primary" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
 								{requiredRole}
-							</RLABadge>
+							</RLBadge>
 						</div>
 					)}
 				</div>
@@ -138,7 +138,7 @@ const config = statusConfig[code] || defaultConfig;
 
 			<div class="flex flex-col sm:flex-row items-center gap-3 w-full mt-1">
 				{actions.map((act) => (
-					<RLAButton
+					<RLButton
 						href={act.href}
 						variant={act.variant || "solid"}
 						color={act.color || "primary"}
@@ -146,7 +146,7 @@ const config = statusConfig[code] || defaultConfig;
 						class="w-full justify-center py-2.5 font-semibold"
 					>
 						{act.label}
-					</RLAButton>
+					</RLButton>
 				))}
 			</div>
 

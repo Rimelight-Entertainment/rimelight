@@ -2,10 +2,10 @@ import { createSignal, onMount, onCleanup, For, Show, type Component } from "sol
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
 import { createDefaultBlock } from "../../state/history"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface SceneEditorProps {
   blockId?: string
@@ -111,7 +111,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
       <div class="grid grid-cols-2 gap-3">
         <div class="col-span-2 flex flex-col gap-1">
           <span class="text-xs font-semibold text-muted uppercase tracking-wide">Location</span>
-          <RLSInput
+          <RLInput
             id="scene-location-input"
             data-field="location"
             value={componentProps.props["location"] || ""}
@@ -123,20 +123,20 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
 
         <div class="flex flex-col gap-1">
           <span class="text-xs font-semibold text-muted uppercase tracking-wide">Setting</span>
-          <RLSSelect
+          <RLSelect
             items={SETTINGS}
             value={componentProps.props["setting"] || "INT."}
-            onChange={(e) => saveProps({ setting: e.currentTarget.value })}
+            onChange={(e: any) => saveProps({ setting: e.currentTarget.value })}
             size="sm"
           />
         </div>
 
         <div class="flex flex-col gap-1">
           <span class="text-xs font-semibold text-muted uppercase tracking-wide">Time of Day</span>
-          <RLSSelect
+          <RLSelect
             items={TIMES_OF_DAY}
             value={componentProps.props["timeOfDay"] || "MORNING"}
-            onChange={(e) => saveProps({ timeOfDay: e.currentTarget.value })}
+            onChange={(e: any) => saveProps({ timeOfDay: e.currentTarget.value })}
             size="sm"
           />
         </div>
@@ -146,11 +146,11 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         <span class="text-xs font-semibold text-muted uppercase tracking-wide">
           Action / Description
         </span>
-        <RLSTextarea
+        <RLTextarea
           id="scene-description-textarea"
           data-field="description"
           value={componentProps.props["description"] || ""}
-          onBlur={(e) => saveProps({ description: e.currentTarget.value })}
+          onBlur={(e: any) => saveProps({ description: e.currentTarget.value })}
           placeholder="Action lines..."
           autoGrow
         />
@@ -161,10 +161,10 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
           Transition (End of Scene)
         </span>
         <div class="w-48">
-          <RLSSelect
+          <RLSelect
             items={TRANSITIONS}
             value={componentProps.props["transition"] || "NONE"}
-            onChange={(e) => saveProps({ transition: e.currentTarget.value })}
+            onChange={(e: any) => saveProps({ transition: e.currentTarget.value })}
             size="sm"
           />
         </div>
@@ -178,7 +178,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         {childrenBlocks().length === 0 ? (
           <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-default text-center my-1">
             <div class="text-xs font-semibold text-muted">Empty scene</div>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="neutral"
               size="xs"
@@ -198,14 +198,14 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
 
       <Show when={addMenuOpen()}>
         <div class="add-block-menu mt-2 p-2 rounded-lg border border-default flex items-center gap-2">
-          <RLSButton
+          <RLButton
             variant="soft"
             color="neutral"
             size="xs"
             onClick={() => addChildBlock("ParagraphBlock")}
             label="Text"
           />
-          <RLSButton
+          <RLButton
             variant="soft"
             color="primary"
             size="xs"
@@ -213,7 +213,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
             label="Dialogue"
           />
           <div class="ml-auto">
-            <RLSButton
+            <RLButton
               variant="ghost"
               color="neutral"
               size="xs"
@@ -225,7 +225,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
       </Show>
 
       <div class="pt-1">
-        <RLSButton
+        <RLButton
           variant="outline"
           color="neutral"
           size="xs"

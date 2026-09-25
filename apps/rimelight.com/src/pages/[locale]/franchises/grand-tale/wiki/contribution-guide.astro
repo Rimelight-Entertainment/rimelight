@@ -1,6 +1,6 @@
 ---
 import WikiLayout from '#layouts/WikiLayout.astro';
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
 
 const rules = [
 	{
@@ -107,9 +107,9 @@ const rules = [
 			<p class="text-xs text-neutral-400 max-w-lg mx-auto">
 				Join the Wiki Development channel in our Discord to coordinate with other contributors.
 			</p>
-			<RLAButton class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-md flex items-center gap-1.5 mx-auto" label="Join Discord">
+			<RLButton class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-md flex items-center gap-1.5 mx-auto" label="Join Discord">
 				<span class="i-logos-discord-icon size-4"></span>
-			</RLAButton>
+			</RLButton>
 		</section>
 	</div>
 </WikiLayout>

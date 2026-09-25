@@ -1,6 +1,6 @@
 import { type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
 
 export interface DialogueEditorProps {
   props: Record<string, any>
@@ -21,7 +21,7 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
   return (
     <div class="rimelight-dialogue-editor flex flex-col gap-2 p-2 border-l-2 border-primary/50 w-full">
       <div class="w-48 mx-auto">
-        <RLSInput
+        <RLInput
           data-field="character"
           value={componentProps.props["character"] || ""}
           onBlur={(e) => saveProps(e.currentTarget.value)}
@@ -31,7 +31,7 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
         />
       </div>
       <div class="w-64 mx-auto">
-        <RLSInput
+        <RLInput
           data-field="parenthetical"
           value={componentProps.props["parenthetical"] || ""}
           onBlur={(e) => saveProps(undefined, e.currentTarget.value)}
@@ -40,7 +40,7 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
           size="sm"
         />
       </div>
-      <RLSTextarea
+      <RLTextarea
         data-field="line"
         value={componentProps.props["line"] || ""}
         onBlur={(e) => saveProps(undefined, undefined, e.currentTarget.value)}

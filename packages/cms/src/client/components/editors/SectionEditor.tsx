@@ -1,7 +1,7 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
 import { type BaseBlock, calculateHeadingLevel } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface SectionEditorProps {
   blockId?: string
@@ -107,7 +107,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
         {childrenBlocks().length === 0 ? (
           <div class="flex flex-col items-center justify-center p-3 border border-dashed border-default rounded-lg text-center">
             <span class="text-xs text-muted">Empty section</span>
-            <RLSButton
+            <RLButton
               variant="link"
               color="primary"
               size="xs"
@@ -125,7 +125,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       </div>
 
       <div class="flex items-center pt-1">
-        <RLSButton
+        <RLButton
           variant="ghost"
           color="neutral"
           size="xs"

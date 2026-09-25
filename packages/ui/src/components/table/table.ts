@@ -161,7 +161,7 @@ export interface TableVirtualizeOptions {
 }
 
 /**
- * Imperative API exposed by RLATable (on the custom element) and RLSTable (via ref callback).
+ * Imperative API exposed by RLTable (via ref callback or instance).
  */
 export interface TableApi<T = any> {
   tableRef: HTMLTableElement | null

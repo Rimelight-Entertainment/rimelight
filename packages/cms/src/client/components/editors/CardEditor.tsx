@@ -1,5 +1,5 @@
 import { type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface CardEditorProps {
   props: Record<string, any>
@@ -17,14 +17,14 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
   return (
     <div class="rimelight-card-editor flex flex-col gap-2 p-3 rounded-xl border border-default bg-muted/10 w-full">
       <div class="grid grid-cols-2 gap-2">
-        <RLSInput
+        <RLInput
           type="text"
           placeholder="Card Title"
           value={componentProps.props["title"] || ""}
           onBlur={(e) => save("title", e.currentTarget.value)}
           size="sm"
         />
-        <RLSInput
+        <RLInput
           type="text"
           placeholder="Link (href e.g. /docs/getting-started)"
           value={componentProps.props["href"] || ""}
@@ -32,7 +32,7 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
           size="sm"
         />
       </div>
-      <RLSInput
+      <RLInput
         type="text"
         placeholder="Card Description"
         value={componentProps.props["description"] || ""}
@@ -40,14 +40,14 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
         size="sm"
       />
       <div class="grid grid-cols-2 gap-2">
-        <RLSInput
+        <RLInput
           type="text"
           placeholder="Icon (e.g. i-lucide-book-open)"
           value={componentProps.props["icon"] || ""}
           onBlur={(e) => save("icon", e.currentTarget.value)}
           size="sm"
         />
-        <RLSInput
+        <RLInput
           type="text"
           placeholder="Badge (optional e.g. New, Beta)"
           value={componentProps.props["badge"] || ""}

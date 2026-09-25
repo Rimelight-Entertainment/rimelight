@@ -1,9 +1,9 @@
 ---
 import AppLayout from "#layouts/AppLayout.astro"
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
-import RLACard from "@rimelight/ui/components/card/RLACard.astro"
-import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLCard from "@rimelight/ui/components/card/RLCard.tsx"
+import RLGrid from "@rimelight/ui/components/grid/RLGrid.tsx"
 
 const COLOR_SHADES = [
   "50",
@@ -71,25 +71,25 @@ const PALETTE_NAMES = [
       <h2 class="text-xl font-bold">Component Variants & Theming</h2>
 
       <div class="flex flex-wrap items-center gap-md">
-        <RLAButton label="Primary Solid" color="primary" variant="solid" />
-        <RLAButton label="Secondary Soft" color="secondary" variant="soft" />
-        <RLAButton label="Success Outline" color="success" variant="outline" />
-        <RLAButton label="Warning Subtle" color="warning" variant="subtle" />
-        <RLAButton label="Error Ghost" color="error" variant="ghost" />
-        <RLAButton label="Info Link" color="info" variant="link" />
+        <RLButton label="Primary Solid" color="primary" variant="solid" />
+        <RLButton label="Secondary Soft" color="secondary" variant="soft" />
+        <RLButton label="Success Outline" color="success" variant="outline" />
+        <RLButton label="Warning Subtle" color="warning" variant="subtle" />
+        <RLButton label="Error Ghost" color="error" variant="ghost" />
+        <RLButton label="Info Link" color="info" variant="link" />
       </div>
 
       <div class="flex flex-wrap items-center gap-sm">
-        <RLABadge label="Neutral" color="neutral" />
-        <RLABadge label="Primary" color="primary" />
-        <RLABadge label="Secondary" color="secondary" />
-        <RLABadge label="Success" color="success" />
-        <RLABadge label="Warning" color="warning" />
-        <RLABadge label="Error" color="error" />
-        <RLABadge label="Info" color="info" />
-        <RLABadge label="Commentary" color="commentary" />
-        <RLABadge label="Ideation" color="ideation" />
-        <RLABadge label="Source" color="source" />
+        <RLBadge label="Neutral" color="neutral" />
+        <RLBadge label="Primary" color="primary" />
+        <RLBadge label="Secondary" color="secondary" />
+        <RLBadge label="Success" color="success" />
+        <RLBadge label="Warning" color="warning" />
+        <RLBadge label="Error" color="error" />
+        <RLBadge label="Info" color="info" />
+        <RLBadge label="Commentary" color="commentary" />
+        <RLBadge label="Ideation" color="ideation" />
+        <RLBadge label="Source" color="source" />
       </div>
     </section>
 
@@ -140,11 +140,11 @@ const PALETTE_NAMES = [
     <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50">
       <h2 class="text-xl font-bold">Layout Grid Showcase</h2>
 
-      <RLAGrid cols={3}>
-        <RLACard title="Hybrid Seed Matrix" description="Generates lightweight OKLCH scales without 200+ hardcoded number strings." />
-        <RLACard title="Component Scoping" description="Single-class rl-color-* resolver drives all button, badge, and input variants." />
-        <RLACard title="Lean Architecture" description="Unified tokens, zero intermediate preflight variables, and fast compilation." />
-      </RLAGrid>
+      <RLGrid cols={3}>
+        <RLCard title="Hybrid Seed Matrix" description="Generates lightweight OKLCH scales without 200+ hardcoded number strings." />
+        <RLCard title="Component Scoping" description="Single-class rl-color-* resolver drives all button, badge, and input variants." />
+        <RLCard title="Lean Architecture" description="Unified tokens, zero intermediate preflight variables, and fast compilation." />
+      </RLGrid>
     </section>
 
     <!-- 5. UI Slot Overrides (String & Function Overrides) -->
@@ -156,7 +156,7 @@ const PALETTE_NAMES = [
 
       <div class="flex flex-wrap items-center gap-md">
         <!-- String slot overrides -->
-        <RLAButton
+        <RLButton
           label="String Override (Border + Shadow)"
           color="primary"
           variant="outline"
@@ -167,7 +167,7 @@ const PALETTE_NAMES = [
         />
 
         <!-- Function slot overrides -->
-        <RLAButton
+        <RLButton
           label="Function Override (Custom Badge Style)"
           color="secondary"
           ui={{
@@ -177,7 +177,7 @@ const PALETTE_NAMES = [
         />
 
         <!-- Badge slot overrides -->
-        <RLABadge
+        <RLBadge
           label="Custom Slot Badge"
           color="warning"
           ui={{
@@ -187,7 +187,7 @@ const PALETTE_NAMES = [
         />
       </div>
 
-      <RLACard
+      <RLCard
         title="Card Slot Customization"
         description="Testing card slot overrides for header, title, description, and body containers."
         ui={{
@@ -197,7 +197,7 @@ const PALETTE_NAMES = [
         }}
       >
         <p class="text-sm text-neutral-500">Body content within styled container slot.</p>
-      </RLACard>
+      </RLCard>
     </section>
   </main>
 </AppLayout>

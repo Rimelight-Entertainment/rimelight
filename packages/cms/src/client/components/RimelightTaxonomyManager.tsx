@@ -1,10 +1,10 @@
 import { createSignal, onMount, For, Show, type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
 
 export interface TaxonomyTermRecord {
   id: string
@@ -181,7 +181,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
             </button>
           </div>
 
-          <RLSButton
+          <RLButton
             variant="solid"
             color="primary"
             size="sm"
@@ -204,14 +204,14 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
 
         <Show when={!isLoading() && terms().length === 0}>
           <div class="p-12 text-center flex flex-col items-center justify-center gap-2">
-            <RLSIcon name="folder" size="lg" class="text-muted/50" />
+            <RLIcon name="folder" size="lg" class="text-muted/50" />
             <span class="text-sm font-semibold text-highlighted">
               No {activeTaxonomy()} terms found
             </span>
             <p class="text-xs text-muted max-w-sm">
               Create your first {activeTaxonomy()} term to classify articles and documentation.
             </p>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="primary"
               size="xs"
@@ -240,9 +240,9 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
                     <tr class="hover:bg-elevated/50 transition">
                       <td class="py-3 px-4 font-medium text-highlighted flex items-center gap-2">
                         {activeTaxonomy() === "tag" ? (
-                          <RLSBadge variant="soft" color="neutral" size="sm">
+                          <RLBadge variant="soft" color="neutral" size="sm">
                             #{term.name}
-                          </RLSBadge>
+                          </RLBadge>
                         ) : (
                           <span>{term.name}</span>
                         )}
@@ -258,16 +258,16 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
                       </td>
                       <td class="py-3 px-4 text-right">
                         <div class="inline-flex items-center gap-1">
-                          <RLSButton
+                          <RLButton
                             variant="ghost"
                             color="neutral"
                             size="xs"
                             square={true}
                             onClick={() => openEditModal(term)}
                             title="Edit"
-                            leading={<RLSIcon name="edit" size="xs" />}
+                            leading={<RLIcon name="edit" size="xs" />}
                           />
-                          <RLSButton
+                          <RLButton
                             variant="ghost"
                             color="neutral"
                             size="xs"
@@ -275,7 +275,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
                             onClick={() => handleDeleteTerm(term.id, term.name)}
                             title="Delete"
                             class="!text-error-500 hover:!text-error-600"
-                            leading={<RLSIcon name="trash" size="xs" />}
+                            leading={<RLIcon name="trash" size="xs" />}
                           />
                         </div>
                       </td>
@@ -289,20 +289,20 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
       </div>
 
       {/* Add / Edit Modal */}
-      <RLSModal
+      <RLModal
         open={isModalOpen()}
         onClose={() => setIsModalOpen(false)}
         title={editingTermId() ? `Edit ${activeTaxonomy()}` : `Add New ${activeTaxonomy()}`}
         footerSlot={
           <>
-            <RLSButton
+            <RLButton
               variant="outline"
               color="neutral"
               size="sm"
               onClick={() => setIsModalOpen(false)}
               label="Cancel"
             />
-            <RLSButton
+            <RLButton
               variant="solid"
               color="primary"
               size="sm"
@@ -315,7 +315,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
         <div class="flex flex-col gap-4 py-2">
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Name *</span>
-            <RLSInput
+            <RLInput
               value={termForm().name}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setTermForm({ ...termForm(), name: e.currentTarget.value })
@@ -326,7 +326,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Slug (URL identifier)</span>
-            <RLSInput
+            <RLInput
               value={termForm().slug}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                 setTermForm({ ...termForm(), slug: e.currentTarget.value })
@@ -353,7 +353,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Description</span>
-            <RLSTextarea
+            <RLTextarea
               value={termForm().description}
               onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
                 setTermForm({ ...termForm(), description: e.currentTarget.value })
@@ -368,7 +368,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
             />
           </div>
         </div>
-      </RLSModal>
+      </RLModal>
     </div>
   )
 }

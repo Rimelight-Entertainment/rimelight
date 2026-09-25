@@ -3,7 +3,7 @@ import type { EditorState } from "../state/editor-store"
 import { RimelightBlock } from "./RimelightBlock"
 import { RimelightBlockPicker } from "./RimelightBlockPicker"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface RimelightEditorProps {
   state: EditorState
@@ -71,7 +71,7 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
               Start building your page content by adding your first block below.
             </p>
             <div class="mt-4">
-              <RLSButton
+              <RLButton
                 variant="outline"
                 color="neutral"
                 size="sm"
@@ -104,7 +104,7 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
 
       {props.state.blocks.length > 0 && (
         <div class="flex flex-col items-center justify-center gap-4 p-4 mt-2">
-          <RLSButton
+          <RLButton
             variant="outline"
             color="neutral"
             size="sm"

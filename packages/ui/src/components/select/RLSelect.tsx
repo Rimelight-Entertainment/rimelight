@@ -1,0 +1,203 @@
+import { createMemo, createSignal, splitProps, For, type Component, type JSX } from "solid-js"
+import type { SelectItem, SelectProps } from "./select"
+import { selectTheme } from "./select.theme"
+import RLButton, { type RLButtonProps } from "../button/RLButton"
+import RLIcon from "../icon/RLIcon"
+
+export interface RLSelectProps extends Partial<Omit<SelectProps, "onChange" | "onBlur">> {
+  id?: string | undefined
+  name?: string | undefined
+  value?: string | number | (string | number)[] | undefined
+  defaultValue?: string | number | (string | number)[] | undefined
+  placeholder?: string | undefined
+  disabled?: boolean | undefined
+  required?: boolean | undefined
+  multiple?: boolean | undefined
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined
+  variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none" | undefined
+  buttonVariant?: RLButtonProps["variant"] | undefined
+  buttonColor?: RLButtonProps["color"] | undefined
+  class?: string | undefined
+  items?: SelectItem[] | undefined
+  leadingIcon?: string | undefined
+  leading?: JSX.Element | undefined
+  children?: JSX.Element | undefined
+  theme?: string | undefined
+  ui?: any
+  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void
+}
+
+const RLSelect: Component<RLSelectProps> = (allProps) => {
+  const [props, rest] = splitProps(allProps, [
+    "id",
+    "name",
+    "value",
+    "defaultValue",
+    "placeholder",
+    "disabled",
+    "required",
+    "multiple",
+    "size",
+    "variant",
+    "buttonVariant",
+    "buttonColor",
+    "class",
+    "items",
+    "leadingIcon",
+    "leading",
+    "children",
+    "theme",
+    "ui",
+    "onChange",
+    "onBlur"
+  ])
+
+  const resolvedVariant = () =>
+    props.variant === "default" || props.variant === "icon" ? props.variant : "default"
+
+  const buttonVariant = () => props.buttonVariant ?? "ghost"
+  const buttonColor = () => props.buttonColor ?? "neutral"
+
+  const classes = createMemo(() =>
+    selectTheme({
+      size: props.size,
+      variant: resolvedVariant(),
+      ui: props.ui,
+      class: props.class
+    })
+  )
+
+  const normalizedItems = createMemo(() => {
+    if (!props.items) return []
+    return props.items.map((item: SelectItem) => {
+      if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
+        return { label: String(item), value: String(item), disabled: false }
+      }
+      const i = item as {
+        label?: string
+        value?: any
+        disabled?: boolean
+        icon?: string
+        avatar?: { src?: string; alt?: string; loading?: "lazy" | "eager" }
+      }
+      return {
+        label: String(i.label ?? i.value ?? ""),
+        value: String(i.value ?? ""),
+        disabled: !!i.disabled,
+        icon: i.icon,
+        avatar: i.avatar
+      }
+    })
+  })
+
+  const [internalValue, setInternalValue] = createSignal(props.defaultValue)
+  const currentValue = createMemo(() => (props.value !== undefined ? props.value : internalValue()))
+
+  const currentLabel = createMemo(() => {
+    const val = currentValue()
+    if (props.placeholder && (val === undefined || val === "")) return props.placeholder
+    if (Array.isArray(val)) return props.placeholder ?? ""
+    const item = normalizedItems().find((i) => String(i.value) === String(val))
+    return item?.label ?? ""
+  })
+
+  const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
+    setInternalValue(e.currentTarget.value)
+    props.onChange?.(e)
+  }
+
+  const triggerProps = () => {
+    const p: RLButtonProps = {
+      "variant": buttonVariant(),
+      "color": buttonColor(),
+      "square": true,
+      "aria-hidden": "true",
+      "tabIndex": -1,
+      "data-slot": "trigger",
+      "type": "button"
+    }
+    if (props.size) p.size = props.size
+    if (props.disabled !== undefined) p.disabled = props.disabled
+    if (props.leadingIcon) p.leadingIcon = props.leadingIcon
+    if (props.leading) p.leading = props.leading
+    return p
+  }
+
+  return (
+    <div class={classes().root} data-slot="root" data-theme={props.theme}>
+      {resolvedVariant() === "icon" ? (
+        <RLButton data-slot="trigger" {...triggerProps()} />
+      ) : props.leading ? (
+        <span class={classes().leading} data-slot="leading">
+          {props.leading}
+        </span>
+      ) : props.leadingIcon ? (
+        <span class={classes().leading} data-slot="leading">
+          <RLIcon name={props.leadingIcon} size="sm" class="size-4" />
+        </span>
+      ) : null}
+
+      {resolvedVariant() !== "icon" ? (
+        <span class={classes().label} data-slot="label" aria-hidden="true">
+          {currentLabel()}
+        </span>
+      ) : null}
+
+      <select
+        id={props.id}
+        name={props.name}
+        disabled={props.disabled}
+        required={props.required}
+        multiple={props.multiple}
+        value={currentValue() !== undefined ? String(currentValue()) : undefined}
+        onChange={handleChange}
+        onBlur={props.onBlur}
+        class={classes().select}
+        data-slot="select"
+        {...rest}
+      >
+        {props.placeholder && !props.multiple ? (
+          <option value="" disabled selected={!currentValue()} class="bg-default text-highlighted">
+            {props.placeholder}
+          </option>
+        ) : null}
+
+        {props.children ? (
+          props.children
+        ) : (
+          <For each={normalizedItems()}>
+            {(item) => {
+              const val = currentValue()
+              const isSelected = Array.isArray(val)
+                ? val.map(String).includes(String(item.value))
+                : val !== undefined
+                  ? String(val) === String(item.value)
+                  : undefined
+              return (
+                <option
+                  value={item.value}
+                  disabled={item.disabled}
+                  selected={isSelected}
+                  class="bg-default text-highlighted"
+                >
+                  {item.label}
+                </option>
+              )
+            }}
+          </For>
+        )}
+      </select>
+
+      {/* Custom Chevron arrow */}
+      {resolvedVariant() !== "icon" ? (
+        <span class={classes().icon} data-slot="icon">
+          <RLIcon name="chevronDown" size="sm" class="size-4" aria-hidden="true" />
+        </span>
+      ) : null}
+    </div>
+  )
+}
+
+export { RLSelect }
+export default RLSelect

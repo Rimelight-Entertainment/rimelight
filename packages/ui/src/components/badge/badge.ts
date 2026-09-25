@@ -5,7 +5,7 @@ export interface BadgeProps {
   /**
    * Visual style variant.
    */
-  variant?: "solid" | "outline" | "soft" | "ghost"
+  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost"
   /**
    * Color scheme applied.
    */
@@ -13,7 +13,7 @@ export interface BadgeProps {
   /**
    * The size scale of the badge.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
   /**
    * The shape corner rounding.
    */

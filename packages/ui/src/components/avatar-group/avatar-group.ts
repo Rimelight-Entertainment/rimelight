@@ -35,7 +35,7 @@ export interface AvatarGroupProps {
    */
   displayLimit?: number
   /**
-   * Avatar size — forwarded to each inner RLAAvatar.
+   * Avatar size — forwarded to each inner RLAvatar.
    *
    * @default "md"
    */

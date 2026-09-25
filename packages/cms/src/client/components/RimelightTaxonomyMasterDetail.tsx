@@ -1,9 +1,9 @@
 import { createSignal, onMount, For, Show, createMemo, type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
-import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
+import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
 
 export interface TaxonomyRecord {
   id: string
@@ -215,7 +215,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
         <div class="lg:col-span-5 flex flex-col gap-3">
           <div class="flex items-center gap-2">
             <div class="flex-1">
-              <RLSInput
+              <RLInput
                 value={searchQuery()}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setSearchQuery(e.currentTarget.value)
@@ -224,7 +224,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
                 size="sm"
               />
             </div>
-            <RLSButton
+            <RLButton
               variant="solid"
               color="primary"
               size="sm"
@@ -244,7 +244,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
 
           <Show when={!isLoading() && filteredTerms().length === 0}>
             <div class="p-8 text-center border border-dashed border-default rounded-xl flex flex-col items-center gap-2">
-              <RLSIcon name="folder" size="md" class="text-muted/50" />
+              <RLIcon name="folder" size="md" class="text-muted/50" />
               <span class="text-xs font-semibold text-highlighted">No terms found</span>
               <p class="text-[11px] text-muted">Create a term to organize your content.</p>
             </div>
@@ -281,9 +281,9 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
                         {item.postCount ?? 0} posts
                       </span>
                       <Show when={isSelected()}>
-                        <RLSBadge variant="solid" color="primary" size="sm">
+                        <RLBadge variant="solid" color="primary" size="sm">
                           Active
-                        </RLSBadge>
+                        </RLBadge>
                       </Show>
                     </div>
                   </button>
@@ -310,7 +310,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
             {/* Name */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Display name *</label>
-              <RLSInput
+              <RLInput
                 value={form().name}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   handleNameChange(e.currentTarget.value)
@@ -324,7 +324,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
             {/* Slug */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Slug</label>
-              <RLSInput
+              <RLInput
                 value={form().slug}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                   setForm((prev) => ({ ...prev, slug: e.currentTarget.value }))
@@ -355,7 +355,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
             {/* Description */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Description</label>
-              <RLSTextarea
+              <RLTextarea
                 value={form().description}
                 onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
                   setForm((prev) => ({ ...prev, description: e.currentTarget.value }))
@@ -373,7 +373,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
             {/* Form Actions */}
             <div class="flex items-center justify-between border-t border-default pt-4 mt-2">
               <Show when={selectedId()} fallback={<div />}>
-                <RLSButton
+                <RLButton
                   type="button"
                   variant="outline"
                   color="neutral"
@@ -385,7 +385,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
               </Show>
 
               <div class="flex items-center gap-2">
-                <RLSButton
+                <RLButton
                   type="button"
                   variant="outline"
                   color="neutral"
@@ -393,7 +393,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
                   onClick={startNewTerm}
                   label="Cancel"
                 />
-                <RLSButton
+                <RLButton
                   type="submit"
                   variant="solid"
                   color="primary"

@@ -1,9 +1,9 @@
 ---
 import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLCard from "@rimelight/ui/components/card/RLCard.tsx";
+import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx";
+import RLButton from "@rimelight/ui/components/button/RLButton.tsx";
+import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx";
 import { db } from "#db";
 import { pages, bylines, taxonomyTerms as categories, taxonomyTerms as tags } from "#db/schema";
 import { count } from "drizzle-orm";
@@ -41,14 +41,14 @@ try {
 >
 	<Fragment slot="actions">
 		<a href="/cms/pages/new">
-			<RLAButton variant="solid" color="primary" leadingIcon="i-lucide-file-plus" size="sm">
+			<RLButton variant="solid" color="primary" leadingIcon="i-lucide-file-plus" size="sm">
 				New Page
-			</RLAButton>
+			</RLButton>
 		</a>
 		<a href="/cms">
-			<RLAButton variant="outline" color="neutral" leadingIcon="i-lucide-layout-dashboard" size="sm">
+			<RLButton variant="outline" color="neutral" leadingIcon="i-lucide-layout-dashboard" size="sm">
 				Open CMS Dashboard
-			</RLAButton>
+			</RLButton>
 		</a>
 	</Fragment>
 
@@ -56,69 +56,69 @@ try {
 		<!-- Top Metrics Grid -->
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 			<!-- Total Pages -->
-			<RLACard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-primary/40 transition-colors shadow-sm">
+			<RLCard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-primary/40 transition-colors shadow-sm">
 				<div class="flex items-center justify-between">
 					<span class="text-xs font-semibold uppercase tracking-wider text-muted">Pages</span>
 					<div class="p-2 rounded-lg bg-primary/10 text-primary">
-						<RLAIcon name="i-lucide-file-text" class="size-5" />
+						<RLIcon name="i-lucide-file-text" class="size-5" />
 					</div>
 				</div>
 				<div class="flex items-baseline justify-between">
 					<span class="text-3xl font-bold text-highlighted">{totalPages}</span>
 					<a href="/cms/pages" class="text-xs text-primary hover:underline font-medium">Manage Pages &rarr;</a>
 				</div>
-			</RLACard>
+			</RLCard>
 
 			<!-- Categories -->
-			<RLACard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-success/40 transition-colors shadow-sm">
+			<RLCard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-success/40 transition-colors shadow-sm">
 				<div class="flex items-center justify-between">
 					<span class="text-xs font-semibold uppercase tracking-wider text-muted">Categories</span>
 					<div class="p-2 rounded-lg bg-success/10 text-success">
-						<RLAIcon name="i-lucide-folder" class="size-5" />
+						<RLIcon name="i-lucide-folder" class="size-5" />
 					</div>
 				</div>
 				<div class="flex items-baseline justify-between">
 					<span class="text-3xl font-bold text-highlighted">{totalCategories}</span>
 					<a href="/admin/categories" class="text-xs text-success hover:underline font-medium">Manage Categories &rarr;</a>
 				</div>
-			</RLACard>
+			</RLCard>
 
 			<!-- Tags -->
-			<RLACard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-warning/40 transition-colors shadow-sm">
+			<RLCard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-warning/40 transition-colors shadow-sm">
 				<div class="flex items-center justify-between">
 					<span class="text-xs font-semibold uppercase tracking-wider text-muted">Tags</span>
 					<div class="p-2 rounded-lg bg-warning/10 text-warning">
-						<RLAIcon name="i-lucide-tag" class="size-5" />
+						<RLIcon name="i-lucide-tag" class="size-5" />
 					</div>
 				</div>
 				<div class="flex items-baseline justify-between">
 					<span class="text-3xl font-bold text-highlighted">{totalTags}</span>
 					<a href="/admin/tags" class="text-xs text-warning hover:underline font-medium">Manage Tags &rarr;</a>
 				</div>
-			</RLACard>
+			</RLCard>
 
 			<!-- Bylines -->
-			<RLACard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-purple-500/40 transition-colors shadow-sm">
+			<RLCard class="p-5 flex flex-col justify-between gap-4 border-default hover:border-purple-500/40 transition-colors shadow-sm">
 				<div class="flex items-center justify-between">
 					<span class="text-xs font-semibold uppercase tracking-wider text-muted">Author Bylines</span>
 					<div class="p-2 rounded-lg bg-purple-500/10 text-purple-500">
-						<RLAIcon name="i-lucide-pen-tool" class="size-5" />
+						<RLIcon name="i-lucide-pen-tool" class="size-5" />
 					</div>
 				</div>
 				<div class="flex items-baseline justify-between">
 					<span class="text-3xl font-bold text-highlighted">{totalBylines}</span>
 					<a href="/admin/bylines" class="text-xs text-purple-500 hover:underline font-medium">Manage Bylines &rarr;</a>
 				</div>
-			</RLACard>
+			</RLCard>
 		</div>
 
 		<!-- Quick Workflows & System Info Cards -->
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 			<!-- Quick Actions -->
-			<RLACard class="p-6 flex flex-col gap-4 border-default lg:col-span-2 shadow-sm">
+			<RLCard class="p-6 flex flex-col gap-4 border-default lg:col-span-2 shadow-sm">
 				<div class="flex items-center justify-between">
 					<div class="flex items-center gap-2">
-						<RLAIcon name="i-lucide-zap" class="size-5 text-primary" />
+						<RLIcon name="i-lucide-zap" class="size-5 text-primary" />
 						<h2 class="text-base font-semibold text-highlighted">CMS Quick Actions</h2>
 					</div>
 					<span class="text-xs text-muted">Protected by Cloudflare Access</span>
@@ -127,7 +127,7 @@ try {
 					<a href="/cms/pages/new" class="group p-4 rounded-xl border border-default/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
 						<div class="flex items-center gap-3">
 							<div class="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:scale-105 transition-transform">
-								<RLAIcon name="i-lucide-file-plus" class="size-5" />
+								<RLIcon name="i-lucide-file-plus" class="size-5" />
 							</div>
 							<div>
 								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Create Page</h3>
@@ -139,7 +139,7 @@ try {
 					<a href="/admin/categories" class="group p-4 rounded-xl border border-default/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
 						<div class="flex items-center gap-3">
 							<div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:scale-105 transition-transform">
-								<RLAIcon name="i-lucide-folder-tree" class="size-5" />
+								<RLIcon name="i-lucide-folder-tree" class="size-5" />
 							</div>
 							<div>
 								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Manage Categories</h3>
@@ -151,7 +151,7 @@ try {
 					<a href="/admin/tags" class="group p-4 rounded-xl border border-default/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
 						<div class="flex items-center gap-3">
 							<div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-500 group-hover:scale-105 transition-transform">
-								<RLAIcon name="i-lucide-tag" class="size-5" />
+								<RLIcon name="i-lucide-tag" class="size-5" />
 							</div>
 							<div>
 								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Content Tags</h3>
@@ -163,7 +163,7 @@ try {
 					<a href="/admin/bylines" class="group p-4 rounded-xl border border-default/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
 						<div class="flex items-center gap-3">
 							<div class="p-2.5 rounded-lg bg-purple-500/10 text-purple-500 group-hover:scale-105 transition-transform">
-								<RLAIcon name="i-lucide-pen-tool" class="size-5" />
+								<RLIcon name="i-lucide-pen-tool" class="size-5" />
 							</div>
 							<div>
 								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Author Bylines</h3>
@@ -172,18 +172,18 @@ try {
 						</div>
 					</a>
 				</div>
-			</RLACard>
+			</RLCard>
 
 			<!-- Security Identity Card -->
-			<RLACard class="p-6 flex flex-col gap-4 border-default shadow-sm">
+			<RLCard class="p-6 flex flex-col gap-4 border-default shadow-sm">
 				<div class="flex items-center justify-between">
 					<div class="flex items-center gap-2">
-						<RLAIcon name="i-lucide-shield-check" class="size-5 text-primary" />
+						<RLIcon name="i-lucide-shield-check" class="size-5 text-primary" />
 						<h2 class="text-base font-semibold text-highlighted">Edge Identity</h2>
 					</div>
-					<RLABadge variant="subtle" color="success" class="text-xs">
+					<RLBadge variant="subtle" color="success" class="text-xs">
 						Active
-					</RLABadge>
+					</RLBadge>
 				</div>
 				<div class="flex flex-col gap-3 mt-1 text-sm text-muted">
 					<p>
@@ -197,7 +197,7 @@ try {
 						<span class="text-muted">No database user tables or local passwords required.</span>
 					</div>
 				</div>
-			</RLACard>
+			</RLCard>
 		</div>
 	</div>
 </AuthAdminDashboardLayout>
