@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, splitProps, type Component } from "solid-js"
+import { createSignal, onCleanup, omit, type Component } from "solid-js"
 import type { ButtonProps } from "../button/button"
 import RLButton from "../button/RLButton"
 
@@ -17,7 +17,8 @@ export interface RLShareProps extends Omit<
 > {}
 
 const RLShare: Component<RLShareProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["class", "ui"])
+  const props = allProps
+  const rest = omit(allProps, "class", "ui")
   const [copied, setCopied] = createSignal(false)
   let timeoutId: ReturnType<typeof setTimeout> | undefined
 
@@ -50,13 +51,13 @@ const RLShare: Component<RLShareProps> = (allProps) => {
   return (
     <RLButton
       id="rl-share"
-      class={props.class}
+      class={props["class"]}
       color="neutral"
       variant="outline"
       size="sm"
       leadingIcon="share"
       label={copied() ? "Link Copied!" : "Share"}
-      ui={props.ui}
+      ui={props["ui"]}
       onClick={handleShare}
       {...rest}
     />

@@ -1,10 +1,10 @@
 import {
   createMemo,
   createSignal,
-  splitProps,
+  omit,
   For,
   Show,
-  onMount,
+  onSettled,
   onCleanup,
   createEffect,
   type Component
@@ -21,7 +21,9 @@ export interface RLInputMenuProps extends InputMenuProps {
 type InputMenuItem = { label: string; value: string; [key: string]: any }
 
 const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "value",
     "defaultValue",
@@ -34,7 +36,7 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     "ui",
     "class",
     "onValueChange"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     inputMenuTheme({
@@ -102,11 +104,14 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     selectItem(item.value, item.label)
   }
 
-  createEffect(() => {
-    if (open()) searchRef?.focus()
-  })
+  createEffect(
+    () => open(),
+    (isOpen) => {
+      if (isOpen) searchRef?.focus()
+    }
+  )
 
-  onMount(() => {
+  onSettled(() => {
     const handleDocumentClick = () => {
       setOpen(false)
     }

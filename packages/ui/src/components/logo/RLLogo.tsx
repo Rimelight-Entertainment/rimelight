@@ -1,4 +1,5 @@
-import { createMemo, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { LogoProps } from "./logo"
 import { logoTheme } from "./logo.theme"
 import uiConfig from "virtual:rimelight/ui"
@@ -9,7 +10,9 @@ export interface RLLogoProps extends LogoProps {
 }
 
 const RLLogo: Component<RLLogoProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "variant",
     "mode",
     "theme",
@@ -19,7 +22,7 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
     "ui",
     "class",
     "children"
-  ])
+  )
 
   const variant = () => props.variant || "logomark"
   const href = () => props.href ?? "/"

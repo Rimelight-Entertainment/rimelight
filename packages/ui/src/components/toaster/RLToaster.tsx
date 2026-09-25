@@ -1,4 +1,4 @@
-import { createSignal, For, onMount, onCleanup, splitProps, type Component } from "solid-js"
+import { createSignal, For, onSettled, onCleanup, omit, type Component } from "solid-js"
 import { toasts, removeToast, addToast } from "../toast/store"
 import type { ToastItem } from "../toast/store"
 import RLToast from "../toast/RLToast"
@@ -9,10 +9,11 @@ export interface RLToasterProps {
 }
 
 const RLToaster: Component<RLToasterProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["class"])
+  const props = allProps
+  const rest = omit(allProps, "class")
   const [list, setList] = createSignal<ToastItem[]>([])
 
-  onMount(() => {
+  onSettled(() => {
     const unsubscribe = toasts.subscribe((items) => setList([...items]))
     onCleanup(unsubscribe)
 

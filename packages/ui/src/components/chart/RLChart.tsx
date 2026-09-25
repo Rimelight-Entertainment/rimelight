@@ -1,4 +1,5 @@
-import { createMemo, For, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, For, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ChartProps, ChartDataPoint } from "./chart"
 import { chartTheme } from "./chart.theme"
 
@@ -36,16 +37,8 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
 }
 
 const RLChart: Component<RLChartProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "type",
-    "data",
-    "title",
-    "height",
-    "color",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "type", "data", "title", "height", "color", "ui", "class", "children")
 
   const data = createMemo(() => props.data ?? [])
   const chartType = () => props.type ?? "bar"

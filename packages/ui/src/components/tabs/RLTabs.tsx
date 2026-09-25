@@ -4,12 +4,12 @@ import {
   createSignal,
   For,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { TabItem, TabsProps } from "./tabs"
 import { tabsTheme } from "./tabs.theme"
 import RLBadge from "../badge/RLBadge"
@@ -21,7 +21,9 @@ export interface RLTabsProps<T extends TabItem = TabItem> extends TabsProps<T> {
 }
 
 const RLTabs: Component<RLTabsProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "value",
     "defaultValue",
@@ -39,7 +41,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     "class",
     "ui",
     "children"
-  ])
+  )
 
   const items = () => props.items ?? []
   const valueKey = () => props.valueKey ?? "value"
@@ -67,11 +69,14 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
 
   const [internalValue, setInternalValue] = createSignal(initialVal())
 
-  createEffect(() => {
-    if (props.value !== undefined) {
-      setInternalValue(props.value)
+  createEffect(
+    () => props.value,
+    (val) => {
+      if (val !== undefined) {
+        setInternalValue(val)
+      }
     }
-  })
+  )
 
   const currentValue = () => (props.value !== undefined ? props.value : internalValue())
 
@@ -131,7 +136,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     updateIndicator()
     if (typeof ResizeObserver !== "undefined" && listRef) {
       const ro = new ResizeObserver(() => updateIndicator())
@@ -140,10 +145,12 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     }
   })
 
-  createEffect(() => {
-    currentValue()
-    requestAnimationFrame(() => updateIndicator())
-  })
+  createEffect(
+    () => currentValue(),
+    () => {
+      requestAnimationFrame(() => updateIndicator())
+    }
+  )
 
   const effectiveMax = () =>
     props.maxTabs !== undefined ? Math.max(1, props.maxTabs) : items().length

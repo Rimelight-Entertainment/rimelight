@@ -1,12 +1,5 @@
-import {
-  createMemo,
-  createSignal,
-  onCleanup,
-  onMount,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createMemo, createSignal, onCleanup, onSettled, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ThemeSelectorProps } from "./theme-selector"
 import { themeSelectorTheme } from "./theme-selector.theme"
 import RLSelect from "../select/RLSelect"
@@ -24,15 +17,8 @@ const themeItems = [
 ]
 
 const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "mode",
-    "size",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "onChange"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "mode", "size", "theme", "ui", "class", "children", "onChange")
 
   const [currentPreference, setCurrentPreference] = createSignal<string>("system")
 
@@ -58,7 +44,7 @@ const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
     props.onChange?.(next)
   }
 
-  onMount(() => {
+  onSettled(() => {
     const pref = getPreference()
     applyTheme(pref)
 

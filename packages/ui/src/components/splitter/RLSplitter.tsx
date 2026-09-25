@@ -1,12 +1,5 @@
-import {
-  children,
-  createMemo,
-  createSignal,
-  For,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { children, createMemo, createSignal, For, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { SplitterProps } from "./splitter"
 import { splitterTheme } from "./splitter.theme"
 import RLIcon from "../icon/RLIcon"
@@ -24,14 +17,8 @@ interface DragState {
 }
 
 const RLSplitter: Component<RLSplitterProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "direction",
-    "defaultSizes",
-    "ui",
-    "class",
-    "children",
-    "panels"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "direction", "defaultSizes", "ui", "class", "children", "panels")
 
   const childContent = children(() => props.children)
 

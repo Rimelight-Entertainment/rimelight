@@ -1,4 +1,4 @@
-import { createMemo, For, Show, splitProps, type Component } from "solid-js"
+import { createMemo, For, Show, type Component } from "solid-js"
 
 interface HighlightGroup {
   keys: string[]
@@ -195,17 +195,7 @@ const numpadPositions: [number, number][] = [
 ]
 
 const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
-  const [props] = splitProps(allProps, [
-    "highlightedKeys",
-    "groups",
-    "keyGap",
-    "sectionGap",
-    "keySize",
-    "variant",
-    "os",
-    "highlightColor",
-    "backgroundColor"
-  ])
+  const props = allProps
 
   const keyGap = (): number => props.keyGap ?? 8
   const sectionGap = (): number => props.sectionGap ?? 40

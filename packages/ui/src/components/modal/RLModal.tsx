@@ -2,13 +2,13 @@ import {
   createMemo,
   createSignal,
   createEffect,
-  splitProps,
+  omit,
   Show,
-  onMount,
+  onSettled,
   onCleanup,
-  type Component,
-  type JSX
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ModalProps } from "./modal"
 import { modalTheme } from "./modal.theme"
 import RLButton from "../button/RLButton"
@@ -25,7 +25,9 @@ export interface RLModalProps extends ModalProps {
 }
 
 const RLModal: Component<RLModalProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "open",
     "onClose",
     "title",
@@ -45,17 +47,20 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     "descriptionSlot",
     "footer",
     "footerSlot"
-  ])
+  )
 
   const [internalOpen, setInternalOpen] = createSignal(props.open ?? false)
   const isControlled = () => props.open !== undefined
   const isOpen = () => (isControlled() ? !!props.open : internalOpen())
 
-  createEffect(() => {
-    if (props.open !== undefined) {
-      setInternalOpen(props.open)
+  createEffect(
+    () => props.open,
+    (open) => {
+      if (open !== undefined) {
+        setInternalOpen(open)
+      }
     }
-  })
+  )
 
   const closeOnClickOutside = () => props.closeOnClickOutside !== false
   const closeOnEscape = () => props.closeOnEscape !== false
@@ -72,7 +77,7 @@ const RLModal: Component<RLModalProps> = (allProps) => {
 
   let dialogRef: HTMLDialogElement | undefined
 
-  onMount(() => {
+  onSettled(() => {
     const handleCancel = (e: Event) => {
       if (e.target !== dialogRef) return
       if (!closeOnEscape()) {
@@ -103,24 +108,27 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     })
   )
 
-  createEffect(() => {
-    if (!dialogRef) return
-    if (isOpen()) {
-      if (!dialogRef.open && typeof dialogRef.showModal === "function") {
-        dialogRef.showModal()
-        if (props.lockScroll !== false) {
-          document.body.style.overflow = "hidden"
+  createEffect(
+    () => isOpen(),
+    (open) => {
+      if (!dialogRef) return
+      if (open) {
+        if (!dialogRef.open && typeof dialogRef.showModal === "function") {
+          dialogRef.showModal()
+          if (props.lockScroll !== false) {
+            document.body.style.overflow = "hidden"
+          }
         }
-      }
-    } else {
-      if (dialogRef.open && typeof dialogRef.close === "function") {
-        dialogRef.close()
-        if (props.lockScroll !== false) {
-          document.body.style.overflow = ""
+      } else {
+        if (dialogRef.open && typeof dialogRef.close === "function") {
+          dialogRef.close()
+          if (props.lockScroll !== false) {
+            document.body.style.overflow = ""
+          }
         }
       }
     }
-  })
+  )
 
   const triggerContent = () => props.trigger ?? props.triggerSlot
   const footerContent = () => props.footer ?? props.footerSlot

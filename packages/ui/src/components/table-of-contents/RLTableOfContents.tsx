@@ -1,12 +1,4 @@
-import {
-  createMemo,
-  createSignal,
-  For,
-  onCleanup,
-  onMount,
-  splitProps,
-  type Component
-} from "solid-js"
+import { createMemo, createSignal, For, onCleanup, onSettled, omit, type Component } from "solid-js"
 import type { TableOfContentsProps, TableOfContentsHeading } from "./table-of-contents"
 import { tableOfContentsTheme } from "./table-of-contents.theme"
 import RLIcon from "../icon/RLIcon"
@@ -14,7 +6,9 @@ import RLIcon from "../icon/RLIcon"
 export interface RLTableOfContentsProps extends TableOfContentsProps {}
 
 const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "headings",
     "collapsible",
     "containerSelector",
@@ -22,7 +16,7 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
     "as",
     "ui",
     "class"
-  ])
+  )
 
   const [activeId, setActiveId] = createSignal("")
   const [open, setOpen] = createSignal(false)
@@ -59,7 +53,7 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
     })
   )
 
-  onMount(() => {
+  onSettled(() => {
     if (collapsible() || !rootRef) return
     const update = () => {
       const root = rootRef

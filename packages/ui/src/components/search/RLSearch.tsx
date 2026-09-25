@@ -3,13 +3,13 @@ import {
   createSignal,
   For,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
-import { Portal } from "solid-js/web"
+import type { JSX } from "@solidjs/web"
+import { Portal } from "@solidjs/web"
 import type { SearchProps } from "./search"
 import { searchTheme } from "./search.theme"
 import RLIcon from "../icon/RLIcon"
@@ -34,7 +34,9 @@ export interface RLSearchProps extends SearchProps {
 const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`
 
 const RLSearch: Component<RLSearchProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "endpoint",
     "placeholder",
     "messages",
@@ -42,7 +44,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     "class",
     "children",
     "triggerSlot"
-  ])
+  )
 
   const endpoint = () => props.endpoint ?? "/api/search"
   const searchPlaceholder = () =>
@@ -89,7 +91,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     const handleOpen = () => openModal()
     const handleToggle = () => toggleModal()
 

@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { CheckboxProps } from "./checkbox"
 import { checkboxTheme } from "./checkbox.theme"
 import RLIcon from "../icon/RLIcon"
@@ -10,7 +11,9 @@ export interface RLCheckboxProps extends CheckboxProps {
 }
 
 const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "id",
     "checked",
     "disabled",
@@ -23,7 +26,7 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     "class",
     "onChange",
     "children"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     checkboxTheme({

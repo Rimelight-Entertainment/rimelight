@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { LinkProps } from "./link"
 import { linkTheme } from "./link.theme"
 import RLIcon from "../icon/RLIcon"
@@ -11,7 +12,9 @@ export interface RLLinkProps extends LinkProps {
 }
 
 const RLLink: Component<RLLinkProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "label",
     "leadingIcon",
     "trailingIcon",
@@ -33,7 +36,7 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
     "children",
     "leading",
     "trailing"
-  ])
+  )
 
   const attrs = createMemo(() => resolveLinkAttrs(props))
 

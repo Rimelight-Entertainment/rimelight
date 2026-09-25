@@ -1,4 +1,4 @@
-import { renderToString as renderSolidToString } from "solid-js/web"
+import { renderToString as renderSolidToString } from "@solidjs/web"
 import { createComponent } from "solid-js"
 
 /**

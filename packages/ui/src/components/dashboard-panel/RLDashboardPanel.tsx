@@ -1,4 +1,5 @@
-import { createMemo, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { DashboardPanelProps } from "./dashboard-panel"
 import { dashboardPanelTheme } from "./dashboard-panel.theme"
 
@@ -15,7 +16,9 @@ export interface RLDashboardPanelProps extends DashboardPanelProps {
 }
 
 const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "resizable",
     "ui",
     "class",
@@ -28,7 +31,7 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
     "footerSlot",
     "resizeHandle",
     "resizeHandleSlot"
-  ])
+  )
 
   const resizable = () => props.resizable ?? false
 

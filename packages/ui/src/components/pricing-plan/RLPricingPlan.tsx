@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { PricingPlanProps } from "./pricing-plan"
 import { pricingPlanTheme } from "./pricing-plan.theme"
 
@@ -7,7 +8,8 @@ export interface RLPricingPlanProps extends PricingPlanProps {
 }
 
 const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     pricingPlanTheme({

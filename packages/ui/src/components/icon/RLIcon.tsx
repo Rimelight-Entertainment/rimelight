@@ -1,4 +1,4 @@
-import { createMemo, splitProps, type Component } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
 import { resolveIcon } from "../../icons"
 import type { IconProps } from "./icon"
 import { iconTheme } from "./icon.theme"
@@ -6,7 +6,8 @@ import { iconTheme } from "./icon.theme"
 export interface RLIconProps extends IconProps {}
 
 const RLIcon: Component<RLIconProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["name", "size", "ui", "class"])
+  const props = allProps
+  const rest = omit(allProps, "name", "size", "ui", "class")
   const resolved = createMemo(() => resolveIcon(props.name))
   const classes = createMemo(() =>
     iconTheme({

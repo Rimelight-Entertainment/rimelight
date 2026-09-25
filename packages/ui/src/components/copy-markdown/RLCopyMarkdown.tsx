@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, splitProps, type Component } from "solid-js"
+import { createSignal, onCleanup, omit, type Component } from "solid-js"
 import type { ButtonProps } from "../button/button"
 import RLButton from "../button/RLButton"
 
@@ -16,10 +16,13 @@ export interface RLCopyMarkdownProps extends Omit<
   | "activeVariant"
 > {
   raw: string
+  class?: any
+  ui?: any
 }
 
 const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["raw", "class", "ui"])
+  const props = allProps
+  const rest = omit(allProps, "raw", "class", "ui")
   const [copied, setCopied] = createSignal(false)
   let timeoutId: ReturnType<typeof setTimeout> | undefined
 

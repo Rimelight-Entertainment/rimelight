@@ -3,12 +3,12 @@ import {
   createMemo,
   createSignal,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { DashboardSidebarProps } from "./dashboard-sidebar"
 import { dashboardSidebarTheme } from "./dashboard-sidebar.theme"
 
@@ -22,7 +22,9 @@ export interface RLDashboardSidebarProps extends DashboardSidebarProps {
 }
 
 const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "side",
     "collapsible",
     "collapsed",
@@ -34,24 +36,30 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     "children",
     "onOpenMobileChange",
     "onCollapseChange"
-  ])
+  )
 
   const side = () => props.side ?? "left"
   const isCollapsible = () => props.collapsible ?? false
   const [isCollapsed, setIsCollapsed] = createSignal(props.collapsed ?? false)
   const [isMobileOpen, setIsMobileOpen] = createSignal(props.openMobile ?? false)
 
-  createEffect(() => {
-    if (props.collapsed !== undefined) {
-      setIsCollapsed(props.collapsed)
+  createEffect(
+    () => props.collapsed,
+    (collapsed) => {
+      if (collapsed !== undefined) {
+        setIsCollapsed(collapsed)
+      }
     }
-  })
+  )
 
-  createEffect(() => {
-    if (props.openMobile !== undefined) {
-      setIsMobileOpen(props.openMobile)
+  createEffect(
+    () => props.openMobile,
+    (openMobile) => {
+      if (openMobile !== undefined) {
+        setIsMobileOpen(openMobile)
+      }
     }
-  })
+  )
 
   const setCollapsedState = (collapsed: boolean) => {
     if (props.collapsed === undefined) {
@@ -67,7 +75,7 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     props.onOpenMobileChange?.(open)
   }
 
-  onMount(() => {
+  onSettled(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as Element | null
       if (!target) return

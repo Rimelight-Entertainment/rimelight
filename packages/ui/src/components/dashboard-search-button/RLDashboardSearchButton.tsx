@@ -1,4 +1,5 @@
-import { createMemo, For, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, For, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { DashboardSearchButtonProps } from "./dashboard-search-button"
 import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme"
 import RLIcon from "../icon/RLIcon"
@@ -9,7 +10,9 @@ export interface RLDashboardSearchButtonProps extends DashboardSearchButtonProps
 }
 
 const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "icon",
     "label",
     "kbds",
@@ -19,7 +22,7 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
     "ui",
     "class",
     "children"
-  ])
+  )
 
   const labelText = () => props.label ?? "Search"
   const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }]
@@ -54,8 +57,8 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
       <span data-slot="trailing" class={resolvedClasses().trailing}>
         {props.trailingSlot ? (
           props.trailingSlot
-        ) : props.trailing ? (
-          (props.trailing as JSX.Element)
+        ) : props["trailing"] ? (
+          (props["trailing"] as JSX.Element)
         ) : (
           <Show when={kbdsList().length > 0}>
             <span class="flex items-center gap-0.5">

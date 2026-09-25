@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { SeparatorProps } from "./separator"
 import { separatorTheme } from "./separator.theme"
 import RLAvatar from "../avatar/RLAvatar"
@@ -13,7 +14,9 @@ export interface RLSeparatorProps extends SeparatorProps {
 }
 
 const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "color",
     "size",
     "type",
@@ -28,7 +31,7 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
     "children",
     "avatarSlot",
     "iconSlot"
-  ])
+  )
 
   const classes = createMemo(() =>
     separatorTheme({

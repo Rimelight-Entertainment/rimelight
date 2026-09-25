@@ -4,13 +4,13 @@ import {
   createMemo,
   createSignal,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
-import { Portal } from "solid-js/web"
+import type { JSX } from "@solidjs/web"
+import { Portal } from "@solidjs/web"
 import type { SlideoverProps } from "./slideover"
 import { slideoverTheme } from "./slideover.theme"
 import RLIcon from "../icon/RLIcon"
@@ -28,7 +28,9 @@ export interface RLSlideoverProps extends SlideoverProps {
 }
 
 const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "side",
     "open",
     "defaultOpen",
@@ -46,18 +48,21 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     "footer",
     "footerSlot",
     "onOpenChange"
-  ])
+  )
 
   const side = () => props.side ?? "left"
   const unmountOnHide = () => props.unmountOnHide ?? true
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false)
 
-  createEffect(() => {
-    if (props.open !== undefined) {
-      setIsOpen(props.open)
+  createEffect(
+    () => props.open,
+    (open) => {
+      if (open !== undefined) {
+        setIsOpen(open)
+      }
     }
-  })
+  )
 
   const setOpenState = (open: boolean) => {
     if (props.open === undefined) {
@@ -69,7 +74,7 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     props.onOpenChange?.(open)
   }
 
-  onMount(() => {
+  onSettled(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen()) {
         setOpenState(false)

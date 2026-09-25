@@ -1,12 +1,5 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  Show,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ColorFieldProps } from "./color-field"
 import { colorFieldTheme } from "./color-field.theme"
 import {
@@ -28,7 +21,9 @@ export interface RLColorFieldProps extends ColorFieldProps {
 }
 
 const RLColorField: Component<RLColorFieldProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "channel",
     "colorSpace",
     "defaultValue",
@@ -49,7 +44,7 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     "children",
     "onChange",
     "onUpdate:modelValue"
-  ])
+  )
 
   const colorSpace = () => props.colorSpace ?? "hsl"
   const stepValue = () => props.step ?? 1
@@ -57,12 +52,14 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
 
   const [currentHex, setCurrentHex] = createSignal(initialHex())
 
-  createEffect(() => {
-    const controlled = props.modelValue ?? props.value
-    if (controlled !== undefined) {
-      setCurrentHex(controlled)
+  createEffect(
+    () => props.modelValue ?? props.value,
+    (controlled) => {
+      if (controlled !== undefined) {
+        setCurrentHex(controlled)
+      }
     }
-  })
+  )
 
   const getDisplayValue = () => {
     const hex = currentHex()
@@ -86,10 +83,12 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
 
   const [displayValue, setDisplayValue] = createSignal(getDisplayValue())
 
-  createEffect(() => {
-    currentHex()
-    setDisplayValue(getDisplayValue())
-  })
+  createEffect(
+    () => currentHex(),
+    () => {
+      setDisplayValue(getDisplayValue())
+    }
+  )
 
   const updateColor = (newHex: string) => {
     if (props.modelValue === undefined && props.value === undefined) {
@@ -219,7 +218,7 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
         placeholder={props.placeholder}
         required={props.required}
         disabled={props.disabled}
-        readOnly={props.readonly}
+        readonly={props.readonly}
         value={displayValue()}
         onInput={handleInputChange}
         onKeyDown={handleKeyDown}

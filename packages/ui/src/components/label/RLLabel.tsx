@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { LabelProps } from "./label"
 import { labelTheme } from "./label.theme"
 
@@ -7,7 +8,8 @@ export interface RLLabelProps extends LabelProps {
 }
 
 const RLLabel: Component<RLLabelProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["for", "size", "ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "for", "size", "ui", "class", "children")
 
   const classes = createMemo(() =>
     labelTheme({

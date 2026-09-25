@@ -1,4 +1,4 @@
-import { createMemo, createSignal, splitProps, onMount, onCleanup, type Component } from "solid-js"
+import { createMemo, createSignal, omit, onSettled, onCleanup, type Component } from "solid-js"
 import type { ScrollToTopProps } from "./scroll-to-top"
 import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { trackScroll, scrollToTop } from "./scroll"
@@ -7,7 +7,9 @@ import RLIcon from "../icon/RLIcon"
 export interface RLScrollToTopProps extends ScrollToTopProps {}
 
 const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "color",
     "progressWidth",
     "duration",
@@ -16,12 +18,12 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
     "theme",
     "ui",
     "class"
-  ])
+  )
 
   const [isVisible, setIsVisible] = createSignal(false)
   const [scrollPercentage, setScrollPercentage] = createSignal(0)
 
-  onMount(() => {
+  onSettled(() => {
     const unsubscribe = trackScroll({ threshold: props.threshold ?? 200 }, (state) => {
       setIsVisible(state.isVisible)
       setScrollPercentage(state.scrollPercentage)

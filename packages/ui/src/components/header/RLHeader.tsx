@@ -1,5 +1,6 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { HeaderProps } from "./header"
 import { headerTheme } from "./header.theme"
 import { useHeaderStack } from "./useHeaderStack"
@@ -13,7 +14,9 @@ export interface RLHeaderProps extends HeaderProps {
 }
 
 const RLHeader: Component<RLHeaderProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "as",
     "layerType",
     "contain",
@@ -29,7 +32,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     "center",
     "right",
     "children"
-  ])
+  )
 
   const tag = () => props.as ?? "header"
   const contain = () => props.contain ?? true
@@ -41,7 +44,9 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const isBanner = () => layerType() === "banner"
 
   const layerId =
-    typeof props.id === "string" ? props.id : `rl-header-${Math.random().toString(36).slice(2, 8)}`
+    typeof props["id"] === "string"
+      ? props["id"]
+      : `rl-header-${Math.random().toString(36).slice(2, 8)}`
 
   const resolvedClasses = createMemo(() =>
     headerTheme({
@@ -65,7 +70,8 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
   })
 
   const dynamicStyles = () => {
-    if (!fixed() && !sticky()) return typeof props.style === "object" ? props.style : undefined
+    if (!fixed() && !sticky())
+      return typeof props["style"] === "object" ? props["style"] : undefined
 
     const base: Record<string, any> = {
       top: `${topOffset()}px`,
@@ -74,8 +80,8 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
         "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
     }
 
-    if (typeof props.style === "object" && props.style !== null) {
-      return { ...props.style, ...base }
+    if (typeof props["style"] === "object" && props["style"] !== null) {
+      return { ...props["style"], ...base }
     }
     return base
   }

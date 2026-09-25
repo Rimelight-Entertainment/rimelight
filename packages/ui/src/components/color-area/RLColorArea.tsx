@@ -1,11 +1,5 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ColorAreaProps } from "./color-area"
 import { colorAreaTheme } from "./color-area.theme"
 
@@ -199,7 +193,9 @@ const getChannelRange = (channel: string): { min: number; max: number } => {
 }
 
 const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "colorSpace",
     "defaultValue",
     "disabled",
@@ -218,7 +214,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     "onValueChange",
     "onChangeEnd",
     "children"
-  ])
+  )
 
   const colorSpace = props.colorSpace ?? "hsl"
   const xChannel: Channel = props.xChannel ?? "saturation"
@@ -256,10 +252,12 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     }
   }
 
-  createEffect(() => {
-    const hex = value()
-    setState((prev) => syncChannelsFromValue(hex, prev))
-  })
+  createEffect(
+    () => value(),
+    (hex) => {
+      setState((prev) => syncChannelsFromValue(hex, prev))
+    }
+  )
 
   const resolvedClasses = createMemo(() =>
     colorAreaTheme({

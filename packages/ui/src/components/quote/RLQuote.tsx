@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { QuoteProps } from "./quote"
 import { quoteTheme } from "./quote.theme"
 import RLIcon from "../icon/RLIcon"
@@ -10,7 +11,8 @@ export interface RLQuoteProps extends QuoteProps {
 }
 
 const RLQuote: Component<RLQuoteProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["quote", "caption", "children", "ui", "class"])
+  const props = allProps
+  const rest = omit(allProps, "quote", "caption", "children", "ui", "class")
 
   const resolvedClasses = createMemo(() =>
     quoteTheme({

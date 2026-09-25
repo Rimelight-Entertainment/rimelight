@@ -1,4 +1,5 @@
-import { createMemo, createSignal, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { FileUploadProps } from "./file-upload"
 import { fileUploadTheme } from "./file-upload.theme"
 import RLIcon from "../icon/RLIcon"
@@ -10,7 +11,9 @@ export interface RLFileUploadProps extends FileUploadProps {
 }
 
 const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "accept",
     "multiple",
     "disabled",
@@ -23,7 +26,7 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
     "onChange",
     "children",
     "iconSlot"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     fileUploadTheme({
@@ -95,7 +98,7 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
       data-fileUpload
       data-disabled={props.disabled ? "true" : undefined}
       role="button"
-      tabIndex={props.disabled ? -1 : 0}
+      tabindex={props.disabled ? -1 : 0}
       aria-label={uploadTitle()}
       onClick={openPicker}
       onKeyDown={handleKeyDown}
@@ -112,7 +115,7 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
         disabled={props.disabled}
         data-fileUpload-input
         aria-hidden="true"
-        tabIndex={-1}
+        tabindex={-1}
         ref={(el) => (inputRef = el)}
         onChange={handleInputChange}
       />

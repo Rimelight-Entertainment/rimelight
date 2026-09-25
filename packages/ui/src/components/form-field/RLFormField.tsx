@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { FormFieldProps } from "./form-field"
 import { formFieldTheme } from "./form-field.theme"
 
@@ -12,7 +13,9 @@ export interface RLFormFieldProps extends FormFieldProps {
 }
 
 const RLFormField: Component<RLFormFieldProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "id",
     "label",
     "description",
@@ -27,7 +30,7 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
     "descriptionSlot",
     "errorSlot",
     "helpSlot"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     formFieldTheme({

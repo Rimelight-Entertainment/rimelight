@@ -1,5 +1,6 @@
-import { createMemo, For, splitProps, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, For, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { TimelineProps, TimelineItem } from "./timeline"
 import { timelineTheme } from "./timeline.theme"
 import RLAvatar from "../avatar/RLAvatar"
@@ -17,7 +18,9 @@ export interface RLTimelineProps extends TimelineProps {
 }
 
 const RLTimeline: Component<RLTimelineProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "as",
     "items",
     "size",
@@ -35,7 +38,7 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     "date",
     "title",
     "description"
-  ])
+  )
 
   const items = (): TimelineItem[] => props.items ?? []
   const valueKey = (): string => props.valueKey ?? "value"

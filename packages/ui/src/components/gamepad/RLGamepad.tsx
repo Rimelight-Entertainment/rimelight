@@ -1,4 +1,4 @@
-import { For, Show, splitProps, type Component } from "solid-js"
+import { For, Show, type Component } from "solid-js"
 
 interface HighlightGroup {
   label: string
@@ -47,12 +47,7 @@ const mainButtons: GamepadButton[] = [
 ]
 
 const RLGamepad: Component<RLGamepadProps> = (allProps) => {
-  const [props] = splitProps(allProps, [
-    "highlightedButtons",
-    "groups",
-    "highlightColor",
-    "backgroundColor"
-  ])
+  const props = allProps
 
   const highlighted = (): string[] => props.highlightedButtons ?? []
   const groups = (): HighlightGroup[] => props.groups ?? []

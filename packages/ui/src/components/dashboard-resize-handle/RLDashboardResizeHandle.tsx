@@ -1,5 +1,6 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { DashboardResizeHandleProps } from "./dashboard-resize-handle"
 import { dashboardResizeHandleTheme } from "./dashboard-resize-handle.theme"
 
@@ -8,7 +9,8 @@ export interface RLDashboardResizeHandleProps extends DashboardResizeHandleProps
 }
 
 const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["as", "ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "as", "ui", "class", "children")
 
   const Tag = () => props.as || "div"
 

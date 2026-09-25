@@ -1,11 +1,5 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { SliderProps } from "./slider"
 import { sliderTheme } from "./slider.theme"
 
@@ -16,7 +10,9 @@ export interface RLSliderProps extends SliderProps {
 }
 
 const RLSlider: Component<RLSliderProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "value",
     "defaultValue",
     "min",
@@ -29,7 +25,7 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
     "class",
     "children",
     "onChange"
-  ])
+  )
 
   const min = () => props.min ?? 0
   const max = () => props.max ?? 100
@@ -37,11 +33,14 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
 
   const [internalVal, setInternalVal] = createSignal(props.value ?? props.defaultValue ?? min())
 
-  createEffect(() => {
-    if (props.value !== undefined) {
-      setInternalVal(props.value)
+  createEffect(
+    () => props.value,
+    (val) => {
+      if (val !== undefined) {
+        setInternalVal(val)
+      }
     }
-  })
+  )
 
   const currentVal = () => (props.value !== undefined ? props.value : internalVal())
 

@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { AspectRatioProps } from "./aspect-ratio"
 import { aspectRatioTheme } from "./aspect-ratio.theme"
 
@@ -7,7 +8,8 @@ export interface RLAspectRatioProps extends AspectRatioProps {
 }
 
 const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ratio", "ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ratio", "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     aspectRatioTheme({ ratio: props.ratio, ui: props.ui, class: props.class })

@@ -1,4 +1,5 @@
-import { createMemo, createSignal, splitProps, For, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, omit, For, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { InputPinProps } from "./input-pin"
 import { inputPinTheme } from "./input-pin.theme"
 import { inputTheme } from "../input/input.theme"
@@ -20,7 +21,9 @@ export interface RLInputPinProps extends InputPinProps {
 }
 
 const RLInputPin: Component<RLInputPinProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "children",
     "length",
     "value",
@@ -36,7 +39,7 @@ const RLInputPin: Component<RLInputPinProps> = (allProps) => {
     "onChange",
     "onKeyDown",
     "onComplete"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     inputPinTheme({
@@ -156,9 +159,9 @@ const RLInputPin: Component<RLInputPinProps> = (allProps) => {
                 ref={(el) => setCellRef(el, index())}
                 type="text"
                 name={props.name ? `${props.name}-${index()}` : undefined}
-                inputMode={pinType() === "numeric" ? "numeric" : "text"}
+                inputmode={pinType() === "numeric" ? "numeric" : "text"}
                 autocomplete="one-time-code"
-                maxLength={1}
+                maxlength={1}
                 value={initial[index()] ?? ""}
                 disabled={props.disabled}
                 required={props.required}

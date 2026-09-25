@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"
 import RLIcon from "../icon/RLIcon"
@@ -14,7 +15,9 @@ export interface RLButtonProps extends ButtonProps {
 }
 
 const RLButton: Component<RLButtonProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "variant",
     "color",
     "size",
@@ -51,9 +54,9 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
     "raw",
     "ariaLabel",
     "ariaCurrentValue"
-  ])
+  )
 
-  const href = () => props.href || (props.to as string | undefined)
+  const href = () => props.href || (props["to"] as string | undefined)
   const isLeading = () => !!(props.leadingIcon || props.avatar || props.leading) || !!props.loading
   const isTrailing = () =>
     !!(props.trailingIcon || props.trailing) || (!!props.loading && !isLeading())
@@ -80,7 +83,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
       justify: props.justify,
       block: props.block,
       square: props.square !== undefined ? props.square : !props.label && !props.children,
-      rounded: props.rounded ?? false,
+      rounded: (props["rounded"] as boolean | string | undefined) ?? false,
       leading: isLeading(),
       trailing: isTrailing(),
       loading: props.loading,

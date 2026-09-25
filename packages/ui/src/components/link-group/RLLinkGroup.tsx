@@ -1,4 +1,5 @@
-import { createMemo, splitProps, For, Show, type Component, type JSX } from "solid-js"
+import { createMemo, omit, For, Show, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { LinkGroupProps } from "./link-group"
 import { linkGroupTheme } from "./link-group.theme"
 import RLLink from "../link/RLLink"
@@ -9,7 +10,9 @@ export interface RLLinkGroupProps extends LinkGroupProps {
 }
 
 const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "label",
     "leadingIcon",
     "trailingIcon",
@@ -19,7 +22,7 @@ const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
     "ui",
     "class",
     "children"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     linkGroupTheme({

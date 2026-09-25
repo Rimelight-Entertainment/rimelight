@@ -2,14 +2,14 @@ import {
   children as resolveChildren,
   createMemo,
   createSignal,
-  splitProps,
+  omit,
   For,
   Show,
-  onMount,
+  onSettled,
   onCleanup,
-  type Component,
-  type JSX
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type {
   NavigationMenuItem,
   NavigationMenuChildItem,
@@ -24,15 +24,8 @@ export interface RLNavigationMenuProps extends NavigationMenuProps {
 }
 
 const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "items",
-    "color",
-    "orientation",
-    "theme",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "items", "color", "orientation", "theme", "ui", "class", "children")
 
   let navRef: HTMLElement | undefined
   let viewportRef: HTMLDivElement | undefined
@@ -116,7 +109,7 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
     }, 150)
   }
 
-  onMount(() => {
+  onSettled(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (
         openIndex() !== null &&

@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { AvatarProps } from "./avatar"
 import { avatarTheme } from "./avatar.theme"
 import RLIcon from "../icon/RLIcon"
@@ -11,7 +12,9 @@ export interface RLAvatarProps extends AvatarProps {
 }
 
 const RLAvatar: Component<RLAvatarProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "src",
     "alt",
     "fallback",
@@ -38,7 +41,7 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     "fallbackSlot",
     "badgeSlot",
     "imgProps"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     avatarTheme({
@@ -66,7 +69,7 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
           class={resolvedClasses().image}
           data-slot="image"
           loading={props.loading}
-          referrerPolicy={props.referrerpolicy || undefined}
+          referrerpolicy={props.referrerpolicy || undefined}
           crossorigin={props.crossorigin || undefined}
           decoding={props.decoding}
           {...props.imgProps}

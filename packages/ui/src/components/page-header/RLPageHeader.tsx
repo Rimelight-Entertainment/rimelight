@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { PageHeaderProps } from "./page-header"
 import { pageHeaderTheme } from "./page-header.theme"
 
@@ -7,7 +8,8 @@ export interface RLPageHeaderProps extends PageHeaderProps {
 }
 
 const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() => pageHeaderTheme({ ui: props.ui, class: props.class }))
 

@@ -3,11 +3,11 @@ import {
   createMemo,
   createSignal,
   onCleanup,
-  onMount,
-  splitProps,
-  type Component,
-  type JSX
+  onSettled,
+  omit,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ImageMetadata, ImageProps } from "./image"
 import { imageTheme } from "./image.theme"
 import RLIcon from "../icon/RLIcon"
@@ -19,7 +19,9 @@ export interface RLImageProps extends ImageProps {
 }
 
 const RLImage: Component<RLImageProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "src",
     "lightSrc",
     "darkSrc",
@@ -54,7 +56,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     "trigger",
     "captionSlot",
     "children"
-  ])
+  )
 
   const isInteractive = props.lightbox ?? props.interactive ?? true
   const isFigure = props.figure ?? !!props.caption
@@ -150,47 +152,52 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     }
   }
 
-  createEffect(() => {
-    const el = rootRef
-    if (!el || loading !== "lazy" || show()) return
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setShow(true)
-          io.disconnect()
-        }
-      },
-      { rootMargin: "200px" }
-    )
-    io.observe(el)
-    onCleanup(() => io.disconnect())
-  })
-
-  createEffect(() => {
-    const dialog = dialogRef
-    if (!dialog) return
-    if (open()) {
-      if (!dialog.open) dialog.showModal()
-      if (!fetched) {
-        fetched = true
-        const url = activeModalSrc()
-        if (url) {
-          fetch(url)
-            .then((r) => r.blob())
-            .then((blob) => {
-              setMetaSizeTxt(`${(blob.size / 1024).toFixed(2)} KB`)
-              const mime = blob.type.split("/").pop()?.toUpperCase()
-              if (mime && mime !== "OCTET-STREAM") setMetaFormatTxt(mime)
-            })
-            .catch(() => setMetaSizeTxt("unavailable"))
-        }
-      }
-    } else if (dialog.open) {
-      dialog.close()
+  createEffect(
+    () => show(),
+    (isShown) => {
+      const el = rootRef
+      if (!el || loading !== "lazy" || isShown) return
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            setShow(true)
+            io.disconnect()
+          }
+        },
+        { rootMargin: "200px" }
+      )
+      io.observe(el)
+      onCleanup(() => io.disconnect())
     }
-  })
+  )
 
-  onMount(() => {
+  createEffect(
+    () => ({ isOpen: open(), src: activeModalSrc() }),
+    ({ isOpen, src }) => {
+      const dialog = dialogRef
+      if (!dialog) return
+      if (isOpen) {
+        if (!dialog.open) dialog.showModal()
+        if (!fetched) {
+          fetched = true
+          if (src) {
+            fetch(src)
+              .then((r) => r.blob())
+              .then((blob) => {
+                setMetaSizeTxt(`${(blob.size / 1024).toFixed(2)} KB`)
+                const mime = blob.type.split("/").pop()?.toUpperCase()
+                if (mime && mime !== "OCTET-STREAM") setMetaFormatTxt(mime)
+              })
+              .catch(() => setMetaSizeTxt("unavailable"))
+          }
+        }
+      } else if (dialog.open) {
+        dialog.close()
+      }
+    }
+  )
+
+  onSettled(() => {
     const dialog = dialogRef
     if (dialog) {
       const onClose = () => setOpen(false)

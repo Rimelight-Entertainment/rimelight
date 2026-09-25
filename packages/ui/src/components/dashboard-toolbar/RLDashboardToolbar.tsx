@@ -1,5 +1,6 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { DashboardToolbarProps } from "./dashboard-toolbar"
 import { dashboardToolbarTheme } from "./dashboard-toolbar.theme"
 
@@ -10,14 +11,8 @@ export interface RLDashboardToolbarProps extends DashboardToolbarProps {
 }
 
 const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "as",
-    "ui",
-    "class",
-    "children",
-    "leftSlot",
-    "rightSlot"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "as", "ui", "class", "children", "leftSlot", "rightSlot")
 
   const Tag = () => props.as || "div"
 

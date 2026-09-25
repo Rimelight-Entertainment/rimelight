@@ -2,13 +2,13 @@ import {
   createMemo,
   createSignal,
   createEffect,
-  splitProps,
+  omit,
   Show,
-  onMount,
+  onSettled,
   onCleanup,
   type Component
 } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { Dynamic } from "@solidjs/web"
 import type { LayoutGridProps } from "./layout-grid"
 import { layoutGridTheme } from "./layout-grid.theme"
 import { defineShortcuts } from "../../shortcuts"
@@ -39,7 +39,9 @@ const hexToRgba = (hex: string, alpha: number): string => {
 export interface RLLayoutGridProps extends LayoutGridProps {}
 
 const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "cols",
     "smCols",
     "mdCols",
@@ -68,7 +70,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     "devOnly",
     "ui",
     "class"
-  ])
+  )
 
   const resolvedClasses = createMemo(() => layoutGridTheme({ ui: props.ui, class: props.class }))
 
@@ -98,7 +100,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     })
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof localStorage !== "undefined") {
       setVisible(localStorage.getItem("rl-grid-visible") === "true")
     }
@@ -320,10 +322,13 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
   }
 
-  createEffect(() => {
-    if (overlayRef) overlayRef.style.display = visible() ? "block" : "none"
-    updateGrid()
-  })
+  createEffect(
+    () => visible(),
+    (isVisible) => {
+      if (overlayRef) overlayRef.style.display = isVisible ? "block" : "none"
+      updateGrid()
+    }
+  )
 
   return (
     <Show when={shouldRender()}>

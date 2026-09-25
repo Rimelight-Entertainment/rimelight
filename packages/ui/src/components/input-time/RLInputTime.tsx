@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { InputTimeProps } from "./input-time"
 import { inputTimeTheme } from "./input-time.theme"
 import { inputTheme } from "../input/input.theme"
@@ -24,7 +25,9 @@ export interface RLInputTimeProps extends InputTimeProps {
 }
 
 const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "children",
     "value",
     "defaultValue",
@@ -44,7 +47,7 @@ const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
     "onBlur",
     "onFocus",
     "onKeyDown"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     inputTimeTheme({

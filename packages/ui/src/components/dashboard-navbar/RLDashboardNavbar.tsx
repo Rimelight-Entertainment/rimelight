@@ -1,5 +1,6 @@
-import { createMemo, Show, splitProps, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { DashboardNavbarProps } from "./dashboard-navbar"
 import { dashboardNavbarTheme } from "./dashboard-navbar.theme"
 import RLIcon from "../icon/RLIcon"
@@ -15,7 +16,9 @@ export interface RLDashboardNavbarProps extends DashboardNavbarProps {
 }
 
 const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "as",
     "icon",
     "title",
@@ -30,7 +33,7 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     "titleSlot",
     "leadingSlot",
     "trailingSlot"
-  ])
+  )
 
   const Tag = () => props.as || "header"
   const showToggle = () => props.toggle ?? true

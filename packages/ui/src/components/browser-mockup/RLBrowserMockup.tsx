@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { BrowserMockupProps } from "./browser-mockup"
 import { browserMockupTheme } from "./browser-mockup.theme"
 
@@ -7,7 +8,8 @@ export interface RLBrowserMockupProps extends BrowserMockupProps {
 }
 
 const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() => browserMockupTheme({ ui: props.ui, class: props.class }))
 

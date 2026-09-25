@@ -1,4 +1,5 @@
-import { createMemo, splitProps, Show, type Component, type JSX } from "solid-js"
+import { createMemo, omit, Show, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ChipProps } from "./chip"
 import { chipTheme } from "./chip.theme"
 
@@ -11,7 +12,9 @@ export interface RLChipProps extends ChipProps {
 }
 
 const RLChip: Component<RLChipProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "text",
     "standalone",
     "show",
@@ -24,17 +27,17 @@ const RLChip: Component<RLChipProps> = (allProps) => {
     "class",
     "children",
     "content"
-  ])
+  )
 
   const classes = createMemo(() =>
     chipTheme({
-      color: props.color,
-      size: props.size,
-      position: props.position,
-      inset: props.inset,
+      color: props["color"],
+      size: props["size"],
+      position: props["position"],
+      inset: props["inset"],
       standalone: props.standalone ?? false,
-      ui: props.ui,
-      class: props.class
+      ui: props["ui"],
+      class: props["class"]
     })
   )
 

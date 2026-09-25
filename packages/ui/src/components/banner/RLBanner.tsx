@@ -1,4 +1,5 @@
-import { createMemo, createSignal, splitProps, For, Show, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, omit, For, Show, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { BannerAction, BannerProps } from "./banner"
 import { bannerTheme } from "./banner.theme"
 import RLButton from "../button/RLButton"
@@ -13,7 +14,9 @@ export interface RLBannerProps extends BannerProps {
 }
 
 const RLBanner: Component<RLBannerProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "contain",
     "sticky",
     "fixed",
@@ -29,7 +32,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     "left",
     "center",
     "right"
-  ])
+  )
 
   const fixed = () => props.fixed ?? true
   const sticky = () => (fixed() ? false : (props.sticky ?? false))
@@ -81,7 +84,8 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
   })
 
   const dynamicStyles = () => {
-    if (!fixed() && !sticky()) return typeof props.style === "object" ? props.style : undefined
+    if (!fixed() && !sticky())
+      return typeof props["style"] === "object" ? props["style"] : undefined
 
     const base: Record<string, any> = {
       top: `${topOffset()}px`,
@@ -90,8 +94,8 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
         "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
     }
 
-    if (typeof props.style === "object" && props.style !== null) {
-      return { ...props.style, ...base }
+    if (typeof props["style"] === "object" && props["style"] !== null) {
+      return { ...props["style"], ...base }
     }
     return base
   }

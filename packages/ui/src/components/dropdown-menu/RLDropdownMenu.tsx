@@ -1,15 +1,15 @@
 import {
   createSignal,
   createMemo,
-  splitProps,
-  onMount,
+  omit,
+  onSettled,
   onCleanup,
   For,
   Show,
-  type Component,
-  type JSX
+  type Component
 } from "solid-js"
-import { Portal } from "solid-js/web"
+import type { JSX } from "@solidjs/web"
+import { Portal } from "@solidjs/web"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
 import RLIcon from "../icon/RLIcon"
@@ -20,7 +20,9 @@ export interface RLDropdownMenuProps extends DropdownMenuProps {
 }
 
 const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "label",
     "icon",
@@ -33,7 +35,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     "class",
     "children",
     "trigger"
-  ])
+  )
 
   const [isOpen, setIsOpen] = createSignal(false)
   const [coords, setCoords] = createSignal<{
@@ -63,7 +65,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof window === "undefined" || typeof document === "undefined") return
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node
@@ -266,7 +268,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
                               data-slot="item"
                               role="menuitemcheckbox"
-                              aria-checked={isChecked()}
+                              aria-checked={isChecked() ? "true" : "false"}
                               onClick={(e) => {
                                 const next = !isChecked()
                                 item.onUpdateChecked?.(next)
