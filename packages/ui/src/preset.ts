@@ -3,14 +3,20 @@ import type { ColorModeInput, UIConfig } from "./types"
 import { getIconSvg } from "./icons.raw"
 import {
   createLocalFontProcessor,
+  emittedFonts,
+  resolveFontPaths,
   resolveWebFontsPreset,
+  rimelightFontsVitePlugin,
   DEFAULT_UI_FONTS,
   type LocalFontProcessorOptions
 } from "./fonts"
 
 export {
   createLocalFontProcessor,
+  emittedFonts,
+  resolveFontPaths,
   resolveWebFontsPreset,
+  rimelightFontsVitePlugin,
   DEFAULT_UI_FONTS,
   type LocalFontProcessorOptions
 }
