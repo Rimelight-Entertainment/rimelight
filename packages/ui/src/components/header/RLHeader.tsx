@@ -1,6 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Dynamic } from "@solidjs/web"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { HeaderProps } from "./header"
 import { headerTheme } from "./header.theme"
 import { useHeaderStack } from "./useHeaderStack"
@@ -34,7 +33,6 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     "children"
   )
 
-  const tag = () => props.as ?? "header"
   const contain = () => props.contain ?? true
   const sticky = () => props.sticky ?? true
   const fixed = () => props.fixed ?? false
@@ -43,10 +41,10 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const layerType = () => props.layerType ?? "header"
   const isBanner = () => layerType() === "banner"
 
+  // Deterministic id: explicit `id` wins, else derived from layer identity
+  // (random ids diverge between SSR and hydration and never persist).
   const layerId =
-    typeof props["id"] === "string"
-      ? props["id"]
-      : `rl-header-${Math.random().toString(36).slice(2, 8)}`
+    typeof props["id"] === "string" ? props["id"] : `rl-header-${layerType()}-${stackIndex()}`
 
   const resolvedClasses = createMemo(() =>
     headerTheme({
@@ -86,10 +84,13 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     return base
   }
 
+  // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh
+  // factory at every call site).
+  const Tag = dynamic(() => props.as ?? "header")
+
   return (
-    <Dynamic
+    <Tag
       ref={ref}
-      component={tag()}
       id={layerId}
       data-slot="root"
       class={resolvedClasses().root}
@@ -116,7 +117,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
           </div>
         </div>
       </div>
-    </Dynamic>
+    </Tag>
   )
 }
 

@@ -1,6 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Dynamic } from "@solidjs/web"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { DashboardGroupProps } from "./dashboard-group"
 import { dashboardGroupTheme } from "./dashboard-group.theme"
 
@@ -19,18 +18,14 @@ const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
     })
   )
 
-  if (props.as) {
-    return (
-      <Dynamic component={props.as} class={resolvedClasses().root} data-slot="root" {...rest}>
-        {props.children}
-      </Dynamic>
-    )
-  }
+  // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh
+  // factory at every call site). Collapses the old if/else into one return.
+  const GroupTag = dynamic(() => props.as ?? "div")
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <GroupTag class={resolvedClasses().root} data-slot="root" {...rest}>
       {props.children}
-    </div>
+    </GroupTag>
   )
 }
 

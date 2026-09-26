@@ -1,8 +1,10 @@
 import { accordionAudit } from "./accordion.audit"
+import { aspectRatioAudit } from "./aspect-ratio.audit"
 import type { ComponentAuditDefinition } from "./types"
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
-  accordion: accordionAudit
+  "accordion": accordionAudit,
+  "aspect-ratio": aspectRatioAudit
 }
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS)

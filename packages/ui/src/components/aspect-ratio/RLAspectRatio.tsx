@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { AspectRatioProps } from "./aspect-ratio"
 import { aspectRatioTheme } from "./aspect-ratio.theme"
 
@@ -9,23 +9,37 @@ export interface RLAspectRatioProps extends AspectRatioProps {
 
 const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
   const props = allProps
-  const rest = omit(allProps, "ratio", "ui", "class", "children")
+  const rest = omit(allProps, "as", "ratio", "ui", "class", "children")
 
-  const resolvedClasses = createMemo(() =>
-    aspectRatioTheme({ ratio: props.ratio, ui: props.ui, class: props.class })
-  )
+  const safeRatio = () => {
+    const value = props.ratio ?? 1
+    return Number.isFinite(value) && value > 0 ? value : 1
+  }
 
-  return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+  const resolvedClasses = createMemo(() => aspectRatioTheme({ ui: props.ui, class: props.class }))
+
+  const spacerHeight = () => (1 / safeRatio()) * 100
+
+  const inner = () => (
+    <>
       <svg
-        viewBox={`0 0 100 ${(1 / (props.ratio ?? 1)) * 100}`}
-        class="w-full h-auto pointer-events-none block"
+        viewBox={`0 0 100 ${spacerHeight()}`}
+        class={resolvedClasses().spacer}
+        data-slot="spacer"
         aria-hidden="true"
       />
       <div class={resolvedClasses().content} data-slot="content">
         {props.children}
       </div>
-    </div>
+    </>
+  )
+
+  const Root = dynamic(() => props.as ?? "div")
+
+  return (
+    <Root class={resolvedClasses().root} data-slot="root" data-ratio={safeRatio()} {...rest}>
+      {inner()}
+    </Root>
   )
 }
 

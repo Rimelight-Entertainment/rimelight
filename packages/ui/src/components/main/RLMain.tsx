@@ -1,6 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Dynamic } from "@solidjs/web"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { MainProps } from "./main"
 import { mainTheme } from "./main.theme"
 
@@ -19,23 +18,14 @@ const RLMain: Component<RLMainProps> = (allProps) => {
     })
   )
 
-  if (props.as) {
-    return (
-      <Dynamic
-        component={props.as}
-        class={`${resolvedClasses().root} rl-main-container`}
-        data-slot="main"
-        {...rest}
-      >
-        {props.children}
-      </Dynamic>
-    )
-  }
+  // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh
+  // factory at every call site). Collapses the old if/else into one return.
+  const MainTag = dynamic(() => props.as ?? "main")
 
   return (
-    <main class={`${resolvedClasses().root} rl-main-container`} data-slot="main" {...rest}>
+    <MainTag class={`${resolvedClasses().root} rl-main-container`} data-slot="main" {...rest}>
       {props.children}
-    </main>
+    </MainTag>
   )
 }
 

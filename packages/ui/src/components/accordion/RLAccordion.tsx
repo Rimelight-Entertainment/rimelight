@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, untrack, For, type Component } from "solid-js"
-import { Dynamic, type JSX } from "@solidjs/web"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { AccordionItem, AccordionProps } from "./accordion"
 import { accordionTheme } from "./accordion.theme"
 import RLIcon from "../icon/RLIcon"
@@ -332,27 +332,17 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
   const rootValue = () =>
     isMultiple() ? currentMultiple().join(" ") : (currentSingle() ?? undefined)
 
-  // Plain ternary branches (not <Show>) and plain tags (not <Dynamic>) on the
-  // hot path: the proven SSR/hydration-safe shape. `as` still works via
-  // <Dynamic>, isolated to branches that only render when `as` is provided.
+  // Hoisted per instance (not per render): <Dynamic> is deprecated because it
+  // rebuilds a fresh factory at every call site. dynamic() defaults keep the
+  // hot path on plain tags with identical output.
+  const ItemsRoot = dynamic(() => props.as ?? "div")
+  const SummaryRoot = dynamic(() => props.as ?? "details")
+
   if (props.items && props.items.length > 0) {
-    if (props.as) {
-      return (
-        <Dynamic
-          component={props.as}
-          class={resolvedClasses().root}
-          data-slot="root"
-          data-value={rootValue()}
-          {...rest}
-        >
-          {rows()}
-        </Dynamic>
-      )
-    }
     return (
-      <div class={resolvedClasses().root} data-slot="root" data-value={rootValue()} {...rest}>
+      <ItemsRoot class={resolvedClasses().root} data-slot="root" data-value={rootValue()} {...rest}>
         {rows()}
-      </div>
+      </ItemsRoot>
     )
   }
 
@@ -384,28 +374,15 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     </>
   )
 
-  if (props.as) {
-    return (
-      <Dynamic
-        component={props.as}
-        class={`${resolvedClasses().root} ${resolvedClasses().item}`}
-        data-slot="root"
-        name={props.name}
-        {...rest}
-      >
-        {summaryRoot}
-      </Dynamic>
-    )
-  }
   return (
-    <details
+    <SummaryRoot
       class={`${resolvedClasses().root} ${resolvedClasses().item}`}
       data-slot="root"
       name={props.name}
       {...rest}
     >
       {summaryRoot}
-    </details>
+    </SummaryRoot>
   )
 }
 
