@@ -54,15 +54,15 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
   )
 
   const avatarFallback = () => props.fallback || props.initials
-  const hasTextLayout = () => Boolean(props.title || props.subtitle)
   const badgeClass = () =>
     props.badgeColor?.startsWith("bg-")
       ? props.badgeColor
       : `bg-${props.badgeColor ?? "success"}-500`
 
-  const image = () => (
-    <>
-      {props.src ? (
+  const avatarContent = () => {
+    if (props.children) return props.children
+    if (props.src) {
+      return (
         <img
           src={props.src}
           alt={props.alt ?? ""}
@@ -74,44 +74,49 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
           decoding={props.decoding}
           {...props.imgProps}
         />
-      ) : (
+      )
+    }
+    const fallbackVal = props.fallbackSlot ?? avatarFallback()
+    if (fallbackVal) {
+      return (
         <span class={resolvedClasses().fallback} data-slot="fallback">
-          {props.fallbackSlot ? (
-            props.fallbackSlot
-          ) : avatarFallback() ? (
-            avatarFallback()
-          ) : (
-            <RLIcon name="i-rl-user" class={resolvedClasses().icon} aria-hidden="true" />
-          )}
+          {fallbackVal}
         </span>
-      )}
-    </>
+      )
+    }
+    return (
+      <span class={resolvedClasses().fallback} data-slot="fallback">
+        <RLIcon name="user" class={resolvedClasses().icon} aria-hidden="true" />
+      </span>
+    )
+  }
+
+  const avatarBadge = () => {
+    if (!props.badge && !props.badgeSlot) return null
+    return (
+      <span class={`${resolvedClasses().badge} ${badgeClass()}`} data-slot="badge">
+        {props.badgeSlot ?? props.badge}
+      </span>
+    )
+  }
+
+  const avatarRoot = () => (
+    <span
+      class={resolvedClasses().root}
+      data-slot="root"
+      aria-label={props.label || props.title}
+      role={props.label || props.title ? "img" : undefined}
+      {...rest}
+    >
+      {avatarContent()}
+      {avatarBadge()}
+    </span>
   )
 
-  const badgeEl = () =>
-    props.badge || props.badgeSlot ? (
-      <span class={`${resolvedClasses().badge}  ${badgeClass()}`} data-slot="badge">
-        {props.badgeSlot
-          ? props.badgeSlot
-          : typeof props.badge === "string" || typeof props.badge === "number"
-            ? props.badge
-            : null}
-      </span>
-    ) : null
-
-  if (hasTextLayout()) {
+  if (props.title || props.subtitle) {
     return (
       <div class="flex items-center gap-3" data-slot="profile-wrapper">
-        <span
-          class={resolvedClasses().root}
-          data-slot="root"
-          aria-label={props.label || props.title}
-          role={props.label || props.title ? "img" : undefined}
-          {...rest}
-        >
-          {props.children ? props.children : image()}
-          {badgeEl()}
-        </span>
+        {avatarRoot()}
         <div class="flex flex-col leading-tight">
           {props.title && (
             <span class="font-medium text-sm text-default" data-slot="title">
@@ -128,18 +133,7 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     )
   }
 
-  return (
-    <span
-      class={resolvedClasses().root}
-      data-slot="root"
-      aria-label={props.label}
-      role={props.label ? "img" : undefined}
-      {...rest}
-    >
-      {props.children ? props.children : image()}
-      {badgeEl()}
-    </span>
-  )
+  return avatarRoot()
 }
 
 export { RLAvatar }

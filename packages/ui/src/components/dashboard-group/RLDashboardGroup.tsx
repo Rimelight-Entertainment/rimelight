@@ -12,8 +12,6 @@ const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
   const props = allProps
   const rest = omit(allProps, "as", "ui", "class", "children")
 
-  const Tag = () => props.as || "div"
-
   const resolvedClasses = createMemo(() =>
     dashboardGroupTheme({
       ui: props.ui,
@@ -21,10 +19,18 @@ const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
     })
   )
 
+  if (props.as) {
+    return (
+      <Dynamic component={props.as} class={resolvedClasses().root} data-slot="root" {...rest}>
+        {props.children}
+      </Dynamic>
+    )
+  }
+
   return (
-    <Dynamic component={Tag()} class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={resolvedClasses().root} data-slot="root" {...rest}>
       {props.children}
-    </Dynamic>
+    </div>
   )
 }
 

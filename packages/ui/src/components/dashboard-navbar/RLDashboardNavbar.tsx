@@ -1,4 +1,4 @@
-import { createMemo, Show, omit, type Component } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import { Dynamic } from "@solidjs/web"
 import type { DashboardNavbarProps } from "./dashboard-navbar"
@@ -35,7 +35,6 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     "trailingSlot"
   )
 
-  const Tag = () => props.as || "header"
   const showToggle = () => props.toggle ?? true
   const toggleSide = () => props.toggleSide ?? "left"
 
@@ -47,58 +46,84 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     })
   )
 
-  return (
-    <Dynamic component={Tag()} class={resolvedClasses().root} data-slot="root" {...rest}>
+  const leftToggle = () =>
+    showToggle() && toggleSide() === "left" ? (
+      <button
+        type="button"
+        data-dashboard-toggle="mobile"
+        class={`${resolvedClasses().toggle} lg:hidden`}
+        data-slot="toggle"
+        aria-label="Toggle sidebar"
+      >
+        <RLIcon name="menu" class="size-5" />
+      </button>
+    ) : null
+
+  const rightToggle = () =>
+    showToggle() && toggleSide() === "right" ? (
+      <button
+        type="button"
+        data-dashboard-toggle="mobile"
+        class={`${resolvedClasses().toggle} lg:hidden`}
+        data-slot="toggle"
+        aria-label="Toggle sidebar"
+      >
+        <RLIcon name="menu" class="size-5" />
+      </button>
+    ) : null
+
+  const leftContent = () => {
+    if (props.leftSlot !== undefined) {
+      return props.leftSlot
+    }
+    return (
+      <>
+        {props.leadingSlot ?? (props.icon ? (
+          <RLIcon name={props.icon} class={resolvedClasses().icon} data-slot="icon" />
+        ) : null)}
+        <h1 data-slot="title" class={resolvedClasses().title}>
+          {props.titleSlot !== undefined ? props.titleSlot : props.title}
+        </h1>
+        {props.trailingSlot}
+      </>
+    )
+  }
+
+  const centerContent = () =>
+    props.centerSlot !== undefined || props.children !== undefined ? (
+      <div data-slot="center" class={resolvedClasses().center}>
+        {props.centerSlot !== undefined ? props.centerSlot : props.children}
+      </div>
+    ) : null
+
+  const navbarBody = () => (
+    <>
       <div data-slot="left" class={resolvedClasses().left}>
-        <Show when={showToggle() && toggleSide() === "left"}>
-          <button
-            type="button"
-            data-dashboard-toggle="mobile"
-            class={`${resolvedClasses().toggle} lg:hidden`}
-            data-slot="toggle"
-            aria-label="Toggle sidebar"
-          >
-            <RLIcon name="menu" class="size-5" />
-          </button>
-        </Show>
-
-        <Show when={props.leftSlot === undefined} fallback={props.leftSlot}>
-          {props.leadingSlot !== undefined ? (
-            props.leadingSlot
-          ) : props.icon ? (
-            <RLIcon name={props.icon} class={resolvedClasses().icon} data-slot="icon" />
-          ) : null}
-
-          <h1 data-slot="title" class={resolvedClasses().title}>
-            {props.titleSlot !== undefined ? props.titleSlot : props.title}
-          </h1>
-
-          {props.trailingSlot}
-        </Show>
+        {leftToggle()}
+        {leftContent()}
       </div>
 
-      <Show when={props.children !== undefined || props.centerSlot !== undefined}>
-        <div data-slot="center" class={resolvedClasses().center}>
-          {props.centerSlot !== undefined ? props.centerSlot : props.children}
-        </div>
-      </Show>
+      {centerContent()}
 
       <div data-slot="right" class={resolvedClasses().right}>
         {props.rightSlot}
-
-        <Show when={showToggle() && toggleSide() === "right"}>
-          <button
-            type="button"
-            data-dashboard-toggle="mobile"
-            class={`${resolvedClasses().toggle} lg:hidden`}
-            data-slot="toggle"
-            aria-label="Toggle sidebar"
-          >
-            <RLIcon name="menu" class="size-5" />
-          </button>
-        </Show>
+        {rightToggle()}
       </div>
-    </Dynamic>
+    </>
+  )
+
+  if (props.as) {
+    return (
+      <Dynamic component={props.as} class={resolvedClasses().root} data-slot="root" {...rest}>
+        {navbarBody()}
+      </Dynamic>
+    )
+  }
+
+  return (
+    <header class={resolvedClasses().root} data-slot="root" {...rest}>
+      {navbarBody()}
+    </header>
   )
 }
 

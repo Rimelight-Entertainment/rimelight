@@ -12,30 +12,34 @@ const RLMain: Component<RLMainProps> = (allProps) => {
   const props = allProps
   const rest = omit(allProps, "as", "ui", "class", "children")
 
-  const tag = () => props.as ?? "main"
-
   const resolvedClasses = createMemo(() =>
     mainTheme({
-      hasContent: props.children !== undefined,
       ui: props.ui,
       class: props.class
     })
   )
 
+  if (props.as) {
+    return (
+      <Dynamic
+        component={props.as}
+        class={`${resolvedClasses().root} rl-main-container`}
+        data-slot="main"
+        {...rest}
+      >
+        {props.children}
+      </Dynamic>
+    )
+  }
+
   return (
-    <Dynamic
-      component={tag()}
-      class={`${resolvedClasses().root}  rl-main-container`}
+    <main
+      class={`${resolvedClasses().root} rl-main-container`}
       data-slot="main"
       {...rest}
     >
       {props.children}
-      <style>{`
-        .rl-main-container {
-          padding-top: var(--rl-total-header-height, 4rem);
-        }
-      `}</style>
-    </Dynamic>
+    </main>
   )
 }
 

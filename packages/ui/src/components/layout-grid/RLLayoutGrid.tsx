@@ -139,10 +139,15 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
   })
 
-  const updateGrid = () => {
+  const updateGrid = (
+    bp: "base" | "sm" | "md" | "lg" | "xl",
+    gutters: number[],
+    margins: number[],
+    isVisible: boolean
+  ) => {
     const columnsContainer = columnsRef
     const indicatorElement = indicatorRef
-    if (!columnsContainer || !visible()) return
+    if (!columnsContainer || !isVisible) return
 
     const width = document.documentElement.clientWidth
     const smBreakpoint = props.smBreakpoint ?? 640
@@ -154,7 +159,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     let colCount = props.cols ?? 4
     let breakpointThreshold = 0
 
-    switch (currentBreakpoint()) {
+    switch (bp) {
       case "xl":
         breakpointIndex = 4
         colCount = props.xlCols ?? 12
@@ -182,8 +187,6 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         break
     }
 
-    const gutters = gutterArray()
-    const margins = marginArray()
     const gutterValue = gutters[breakpointIndex] ?? gutters[gutters.length - 1] ?? 1
     const marginValue = margins[breakpointIndex] ?? margins[margins.length - 1] ?? 1
 
@@ -255,7 +258,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
 
     if (indicatorElement) {
-      indicatorElement.innerHTML = `<span style="color: #3b82f6;">${currentBreakpoint().toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
+      indicatorElement.innerHTML = `<span style="color: #3b82f6;">${bp.toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
     }
 
     const gridWrapper = document.createElement("div")
@@ -326,18 +329,17 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
   createEffect(
     () => {
       const isVisible = visible()
-      // Track breakpoint + spacing memos so grid redraws on resize.
-      currentBreakpoint()
-      gutterArray()
-      marginArray()
-      return isVisible
+      const bp = currentBreakpoint()
+      const gutters = gutterArray()
+      const margins = marginArray()
+      return { isVisible, bp, gutters, margins }
     },
-    (isVisible) => {
+    ({ isVisible, bp, gutters, margins }) => {
       if (overlayRef) {
         overlayRef.classList.toggle("hidden", !isVisible)
         overlayRef.classList.toggle("block", isVisible)
       }
-      updateGrid()
+      updateGrid(bp, gutters, margins, isVisible)
     }
   )
 

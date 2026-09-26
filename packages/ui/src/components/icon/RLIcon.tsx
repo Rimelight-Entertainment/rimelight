@@ -17,13 +17,13 @@ const RLIcon: Component<RLIconProps> = (allProps) => {
     })
   )
   return (
-    <span class={classes().root} data-slot="icon" aria-hidden="true" {...rest}>
-      {resolved().isClass ? (
-        <span class={`${resolved().content} block size-full`} />
-      ) : (
-        <span innerHTML={resolved().content} />
-      )}
-    </span>
+    <span
+      class={resolved().isClass ? `${classes().root} ${resolved().content}` : classes().root}
+      data-slot="icon"
+      aria-hidden="true"
+      innerHTML={!resolved().isClass ? resolved().content : undefined}
+      {...rest}
+    />
   )
 }
 

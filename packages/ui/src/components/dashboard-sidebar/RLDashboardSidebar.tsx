@@ -3,7 +3,6 @@ import {
   createMemo,
   createSignal,
   onSettled,
-  Show,
   omit,
   type Component
 } from "solid-js"
@@ -120,76 +119,53 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     })
   )
 
+  const headerContent = () =>
+    props.headerSlot !== undefined ? (
+      <div data-slot="header" class={resolvedClasses().header}>
+        {props.headerSlot}
+      </div>
+    ) : null
+
+  const footerContent = () =>
+    props.footerSlot !== undefined ? (
+      <div data-slot="footer" class={resolvedClasses().footer}>
+        {props.footerSlot}
+      </div>
+    ) : null
+
   return (
     <>
+      <div
+        data-dashboard-sidebar-overlay
+        data-slot="overlay"
+        class={`${resolvedClasses().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 ${
+          isMobileOpen() ? "block" : "hidden"
+        } lg:hidden`}
+        onClick={() => setMobileOpenState(false)}
+      />
+
       <div
         data-dashboard-sidebar
         data-side={side()}
         data-collapsible={isCollapsible() ? "true" : "false"}
         data-collapsed={isCollapsible() && isCollapsed() ? "true" : "false"}
+        data-mobile-open={isMobileOpen() ? "true" : "false"}
         data-slot="root"
-        class={resolvedClasses().root}
+        class={`${resolvedClasses().root} ${
+          isMobileOpen()
+            ? "!flex fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default"
+            : "hidden lg:flex"
+        }`}
         {...rest}
       >
-        <Show when={props.headerSlot !== undefined}>
-          <div data-slot="header" class={resolvedClasses().header}>
-            {props.headerSlot}
-          </div>
-        </Show>
+        {headerContent()}
 
         <div data-slot="body" class={resolvedClasses().body}>
           {props.children}
         </div>
 
-        <Show when={props.footerSlot !== undefined}>
-          <div data-slot="footer" class={resolvedClasses().footer}>
-            {props.footerSlot}
-          </div>
-        </Show>
+        {footerContent()}
       </div>
-
-      <Show when={isMobileOpen()}>
-        <div
-          data-dashboard-sidebar-overlay
-          data-slot="overlay"
-          class={`${resolvedClasses().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 block`}
-          onClick={() => setMobileOpenState(false)}
-        />
-
-        <div
-          data-dashboard-sidebar-mobile
-          data-slot="content"
-          class={`${resolvedClasses().content} fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default transform transition-transform duration-300 flex flex-col h-full translate-x-0`}
-        >
-          <Show when={props.headerSlot !== undefined}>
-            <div
-              data-slot="header"
-              class={`${resolvedClasses().header} sm:px-6 shrink-0`}
-              data-menu
-            >
-              {props.headerSlot}
-            </div>
-          </Show>
-
-          <div
-            data-slot="body"
-            class={`${resolvedClasses().body} sm:px-6 overflow-y-auto flex-1`}
-            data-menu
-          >
-            {props.children}
-          </div>
-
-          <Show when={props.footerSlot !== undefined}>
-            <div
-              data-slot="footer"
-              class={`${resolvedClasses().footer} sm:px-6 shrink-0`}
-              data-menu
-            >
-              {props.footerSlot}
-            </div>
-          </Show>
-        </div>
-      </Show>
     </>
   )
 }

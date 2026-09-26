@@ -1,4 +1,4 @@
-import { createMemo, Show, omit, type Component } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { LogoProps } from "./logo"
 import { logoTheme } from "./logo.theme"
@@ -56,17 +56,17 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
 
   const startsWithUrlPrefix = () => {
     const s = logoInfo().logoSrc
-    return s && (s.startsWith("http") || s.startsWith("/") || s.startsWith("."))
+    return Boolean(s && (s.startsWith("http") || s.startsWith("/") || s.startsWith(".")))
   }
 
   const isIcon = () => {
     const s = logoInfo().logoSrc
-    return s && !startsWithUrlPrefix() && (s.includes(":") || s.startsWith("i-"))
+    return Boolean(s && !startsWithUrlPrefix() && (s.includes(":") || s.startsWith("i-")))
   }
 
   const hasAutoMode = () => {
     const { darkSrc, lightSrc } = logoInfo()
-    return darkSrc && lightSrc && darkSrc !== lightSrc && !props.mode
+    return Boolean(darkSrc && lightSrc && darkSrc !== lightSrc && !props.mode)
   }
 
   const resolvedClasses = createMemo(() =>
@@ -77,6 +77,37 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
     })
   )
 
+  const renderContent = () => {
+    const { logoSrc, darkSrc, lightSrc } = logoInfo()
+    if (!logoSrc) return props.children
+    if (isIcon()) {
+      return <span class={`${logoSrc} size-full block shrink-0`} aria-hidden="true" />
+    }
+    if (hasAutoMode()) {
+      return (
+        <span class="rl-logo-image size-full flex items-center justify-center shrink-0">
+          <img
+            src={lightSrc || ""}
+            alt={props.alt || ""}
+            class="rl-logo-light size-full block object-contain shrink-0"
+          />
+          <img
+            src={darkSrc || ""}
+            alt={props.alt || ""}
+            class="rl-logo-dark size-full hidden object-contain shrink-0"
+          />
+        </span>
+      )
+    }
+    return (
+      <img
+        src={logoSrc}
+        alt={props.alt || ""}
+        class="size-full block object-contain shrink-0"
+      />
+    )
+  }
+
   return (
     <a
       class={resolvedClasses().root}
@@ -86,38 +117,7 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
       data-theme={props.theme}
       {...rest}
     >
-      <Show when={logoInfo().logoSrc} fallback={props.children}>
-        <Show
-          when={!isIcon()}
-          fallback={
-            <span class={`${logoInfo().logoSrc} size-full block shrink-0`} aria-hidden="true" />
-          }
-        >
-          <Show
-            when={!hasAutoMode()}
-            fallback={
-              <span class="rl-logo-image size-full flex items-center justify-center shrink-0">
-                <img
-                  src={logoInfo().lightSrc || ""}
-                  alt={props.alt || ""}
-                  class="rl-logo-light size-full block object-contain shrink-0"
-                />
-                <img
-                  src={logoInfo().darkSrc || ""}
-                  alt={props.alt || ""}
-                  class="rl-logo-dark size-full hidden object-contain shrink-0"
-                />
-              </span>
-            }
-          >
-            <img
-              src={logoInfo().logoSrc || ""}
-              alt={props.alt || ""}
-              class="size-full block object-contain shrink-0"
-            />
-          </Show>
-        </Show>
-      </Show>
+      {renderContent()}
     </a>
   )
 }

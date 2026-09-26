@@ -1,4 +1,4 @@
-import { createMemo, omit, type Component } from "solid-js"
+import { createMemo, omit, Show, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"
@@ -141,7 +141,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
         onClick={props.onClick}
         {...rest}
       >
-        {renderLeading()}
+        {isLeading() ? renderLeading() : null}
 
         {props.children !== undefined && props.children !== null ? (
           props.children
@@ -151,7 +151,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
           </span>
         ) : null}
 
-        {renderTrailing()}
+        {isTrailing() ? renderTrailing() : null}
       </a>
     )
   }
@@ -169,7 +169,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
       onClick={props.onClick}
       {...rest}
     >
-      {renderLeading()}
+      {isLeading() ? renderLeading() : null}
 
       {props.children !== undefined && props.children !== null ? (
         props.children
@@ -179,7 +179,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
         </span>
       ) : null}
 
-      {renderTrailing()}
+      {isTrailing() ? renderTrailing() : null}
     </button>
   )
 }

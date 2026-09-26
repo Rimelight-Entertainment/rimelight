@@ -10,10 +10,11 @@ export interface RLDashboardSidebarCollapseProps extends DashboardSidebarCollaps
 
 const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (allProps) => {
   const props = allProps
-  const rest = omit(allProps, "icon", "ui", "class", "children")
+  const rest = omit(allProps, "icon", "ui", "class", "children", "side")
 
   const resolvedClasses = createMemo(() =>
     dashboardSidebarCollapseTheme({
+      side: props.side ?? "left",
       ui: props.ui,
       class: props.class
     })
@@ -29,13 +30,13 @@ const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
       {...rest}
     >
       <RLIcon
-        name={props.icon || "i-lucide-panel-left"}
+        name={props.icon || "panelLeft"}
         class="size-5"
         data-dashboard-collapse-icon
         data-expanded
       />
       <RLIcon
-        name="i-lucide-panel-right"
+        name="panelRight"
         class="size-5 hidden"
         data-dashboard-collapse-icon
         data-collapsed
