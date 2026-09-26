@@ -148,42 +148,48 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
         </Show>
       </div>
 
-      <div
-        data-dashboard-sidebar-overlay
-        data-slot="overlay"
-        class={`${resolvedClasses().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 ${
-          isMobileOpen() ? "block" : "hidden"
-        }`}
-        onClick={() => setMobileOpenState(false)}
-      />
-
-      <div
-        data-dashboard-sidebar-mobile
-        data-slot="content"
-        class={`${resolvedClasses().content} fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default transform transition-transform duration-300 flex flex-col h-full ${
-          isMobileOpen() ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <Show when={props.headerSlot !== undefined}>
-          <div data-slot="header" class={`${resolvedClasses().header} sm:px-6 shrink-0`} data-menu>
-            {props.headerSlot}
-          </div>
-        </Show>
+      <Show when={isMobileOpen()}>
+        <div
+          data-dashboard-sidebar-overlay
+          data-slot="overlay"
+          class={`${resolvedClasses().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 block`}
+          onClick={() => setMobileOpenState(false)}
+        />
 
         <div
-          data-slot="body"
-          class={`${resolvedClasses().body} sm:px-6 overflow-y-auto flex-1`}
-          data-menu
+          data-dashboard-sidebar-mobile
+          data-slot="content"
+          class={`${resolvedClasses().content} fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default transform transition-transform duration-300 flex flex-col h-full translate-x-0`}
         >
-          {props.children}
-        </div>
+          <Show when={props.headerSlot !== undefined}>
+            <div
+              data-slot="header"
+              class={`${resolvedClasses().header} sm:px-6 shrink-0`}
+              data-menu
+            >
+              {props.headerSlot}
+            </div>
+          </Show>
 
-        <Show when={props.footerSlot !== undefined}>
-          <div data-slot="footer" class={`${resolvedClasses().footer} sm:px-6 shrink-0`} data-menu>
-            {props.footerSlot}
+          <div
+            data-slot="body"
+            class={`${resolvedClasses().body} sm:px-6 overflow-y-auto flex-1`}
+            data-menu
+          >
+            {props.children}
           </div>
-        </Show>
-      </div>
+
+          <Show when={props.footerSlot !== undefined}>
+            <div
+              data-slot="footer"
+              class={`${resolvedClasses().footer} sm:px-6 shrink-0`}
+              data-menu
+            >
+              {props.footerSlot}
+            </div>
+          </Show>
+        </div>
+      </Show>
     </>
   )
 }

@@ -37,9 +37,13 @@
       "types": "./dist/config/index.d.mts",
       "import": "./dist/config/index.mjs"
     },
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
+    },
     "./integration": {
-      "types": "./dist/integration.d.mts",
-      "import": "./dist/integration.mjs"
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
     },
     "./turnstile": {
       "types": "./dist/turnstile.d.mts",

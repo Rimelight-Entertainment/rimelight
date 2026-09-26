@@ -111,4 +111,4 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
   ]
 }
 
-export { i18n as rimelightI18n }
+export default i18n

@@ -47,7 +47,7 @@ export function isContained(rootDir: string, requestedPath: string): boolean {
  * Single Consolidated Vite Plugin orchestrating SEO virtual modules, dev-server asset middleware,
  * and production static asset generation.
  */
-export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
+export function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
   let rootDir = process.cwd()
 
   // Resolve configuration according to priority:
@@ -659,4 +659,4 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
   }
 }
 
-export default rimelightSeo
+export default seo

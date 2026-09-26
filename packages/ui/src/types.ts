@@ -44,9 +44,13 @@ export interface PresetOptions {
    */
   icons?: RimelightIcons
   /**
+   * Web fonts configuration using UnoCSS Web Fonts preset.
+   */
+  fonts?: Record<string, any> | boolean
+  /**
    * Configure which built-in UnoCSS presets are enabled/disabled.
    */
-  presets?: { wind?: boolean; typography?: boolean; icons?: boolean }
+  presets?: { wind?: boolean; typography?: boolean; icons?: boolean; fonts?: boolean }
 }
 
 export interface UIConfig extends PresetOptions {

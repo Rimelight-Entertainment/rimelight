@@ -1,6 +1,19 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
 import type { ColorModeInput, UIConfig } from "./types"
 import { getIconSvg } from "./icons.raw"
+import {
+  createLocalFontProcessor,
+  resolveWebFontsPreset,
+  DEFAULT_UI_FONTS,
+  type LocalFontProcessorOptions
+} from "./fonts"
+
+export {
+  createLocalFontProcessor,
+  resolveWebFontsPreset,
+  DEFAULT_UI_FONTS,
+  type LocalFontProcessorOptions
+}
 
 export const PALETTES = {
   neutral: [0, 0],
@@ -80,8 +93,15 @@ function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
   return { themeColors, tokenVarLines }
 }
 
-export default function rimelightUiPreset({ colors, icons, presets = {} }: UIConfig = {}): Preset {
+export default function rimelightUiPreset({
+  colors,
+  icons,
+  fonts,
+  presets = {}
+}: UIConfig = {}): Preset {
   const { themeColors, tokenVarLines } = resolveTokens(colors)
+  const webFontsPreset =
+    presets.fonts !== false && fonts !== false ? resolveWebFontsPreset(fonts) : null
 
   return {
     name: "rimelight-ui",
@@ -96,6 +116,7 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
       presets.wind !== false && presetWind4(),
       presets.typography !== false && presetTypography(),
       presets.icons !== false && presetIcons({ collections: { rl: getIconSvg } }),
+      webFontsPreset,
       {
         name: "rimelight-theme",
         theme: {

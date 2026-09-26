@@ -27,6 +27,10 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
+    },
     "./integration": {
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"

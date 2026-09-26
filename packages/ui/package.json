@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/ui",
-  "version": "0.0.66",
+  "version": "0.0.67",
   "private": false,
   "description": "Rimelight Entertainment's UI Package",
   "homepage": "https://rimelight.com/docs",
@@ -22,42 +22,61 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./src/index.ts",
+      "solid": "./src/index.tsx",
+      "import": "./src/index.tsx",
+      "default": "./src/index.tsx"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs",
+      "default": "./dist/plugin.mjs"
     },
     "./components": {
-      "solid": "./src/components/index.ts",
       "types": "./src/components/index.ts",
-      "import": "./src/components/index.ts",
-      "default": "./src/components/index.ts"
+      "solid": "./src/components/index.tsx",
+      "import": "./src/components/index.tsx",
+      "default": "./src/components/index.tsx"
     },
     "./preset": {
       "types": "./dist/preset.d.mts",
+      "solid": "./dist/preset.mjs",
       "import": "./dist/preset.mjs"
     },
     "./resolver": {
       "types": "./dist/resolver.d.mts",
+      "solid": "./dist/resolver.mjs",
       "import": "./dist/resolver.mjs"
     },
     "./shortcuts": {
       "types": "./dist/shortcuts.d.mts",
+      "solid": "./dist/shortcuts.mjs",
       "import": "./dist/shortcuts.mjs"
     },
     "./stores": {
       "types": "./dist/stores.d.mts",
+      "solid": "./dist/stores.mjs",
       "import": "./dist/stores.mjs"
     },
     "./types": {
       "types": "./dist/types.d.mts",
+      "solid": "./dist/types.mjs",
       "import": "./dist/types.mjs"
     },
     "./icons": {
       "types": "./dist/icons.d.mts",
+      "solid": "./dist/icons.mjs",
       "import": "./dist/icons.mjs"
     },
     "./head": {
       "types": "./dist/head.d.mts",
+      "solid": "./dist/head.mjs",
       "import": "./dist/head.mjs"
+    },
+    "./fonts": {
+      "types": "./dist/fonts.d.mts",
+      "solid": "./dist/fonts.mjs",
+      "import": "./dist/fonts.mjs"
     },
     "./*": "./src/*"
   },
@@ -76,12 +95,12 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/vite-plugin": "^3.0.0-next.44",
+    "@solidjs/vite-plugin": "3.0.0-next.35",
     "@solidjs/web": "2.0.0-rc.9",
     "solid-js": "2.0.0-rc.9"
   },
   "peerDependencies": {
-    "solid-js": ">=2.0.0-rc.0"
+    "solid-js": ">=2.0.0-rc.9"
   },
   "peerDependenciesMeta": {
     "solid-js": {

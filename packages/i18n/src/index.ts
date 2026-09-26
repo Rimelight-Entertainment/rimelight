@@ -18,7 +18,7 @@ import {
   initializeI18n,
   getPluralCategory
 } from "./runtime"
-import { i18n, rimelightI18n, type RimelightI18nOptions, type RimelightI18nPlugins } from "./plugin"
+import { i18n, type RimelightI18nOptions, type RimelightI18nPlugins } from "./plugin"
 
 let locales: string[] = ["en"]
 let defaultLocale: string = "en"
@@ -54,7 +54,6 @@ export {
   defaultLocale,
   prefixDefaultLocale,
   i18n,
-  rimelightI18n,
   baseTRaw as tRaw,
   baseTArray as tArray,
   getRawTranslation,

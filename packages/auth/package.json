@@ -60,9 +60,13 @@
       "types": "./dist/jwt.d.mts",
       "import": "./dist/jwt.mjs"
     },
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
+    },
     "./integration": {
-      "types": "./dist/vite.d.mts",
-      "import": "./dist/vite.mjs"
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
     }
   },
   "publishConfig": {

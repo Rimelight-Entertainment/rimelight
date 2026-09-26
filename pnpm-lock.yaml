@@ -511,8 +511,8 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@solidjs/vite-plugin':
-        specifier: ^3.0.0-next.44
-        version: 3.0.0-next.44(@solidjs/web@2.0.0-rc.9(solid-js@2.0.0-rc.9))(solid-js@2.0.0-rc.9)(supports-color@10.2.2)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))
+        specifier: 3.0.0-next.35
+        version: 3.0.0-next.35(@solidjs/web@2.0.0-rc.9(solid-js@2.0.0-rc.9))(solid-js@2.0.0-rc.9)(supports-color@10.2.2)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))
       '@solidjs/web':
         specifier: 2.0.0-rc.9
         version: 2.0.0-rc.9(solid-js@2.0.0-rc.9)
@@ -2360,14 +2360,14 @@ packages:
     resolution: {integrity: sha512-o3pqiTgpH5NR2DstiKrt9s/6+0YOFtv+MfvLONwLsS247I+EWMMyTu9BkRcgd35UR5Pa1DM16lI1/5uaIMY6Gw==}
     engines: {node: '>=22.12.0'}
 
-  '@solidjs/vite-plugin@3.0.0-next.44':
-    resolution: {integrity: sha512-P/jIo9khECJft0eS2VCYJq16/JPtqoeBqaw/33VAlov8DSkd/6DU605wUTTZ3ZzpB0BFjDrwlyInjKNxFH0oLQ==}
+  '@solidjs/vite-plugin@3.0.0-next.35':
+    resolution: {integrity: sha512-8Mlftd+WfZkwOoCZRyMxA8innT8b2D/qawTu+28RW/Hj4eSmStSLx4dHjYeH9MxyOwo7DQStAyHAADk5LFQVRw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       '@solidjs/start-devtools': ^1.0.0-next.2
-      '@solidjs/web': ^2.0.0-rc.9
-      '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.0.0 || ^7.0.0
-      solid-js: ^2.0.0-rc.9
+      '@solidjs/web': ^2.0.0-rc.0
+      '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
+      solid-js: ^2.0.0-rc.0
       vite: ^8.0.0 || ^9.0.0
     peerDependenciesMeta:
       '@solidjs/start-devtools':
@@ -5917,7 +5917,7 @@ snapshots:
 
   '@solidjs/signals@2.0.0-rc.9': {}
 
-  '@solidjs/vite-plugin@3.0.0-next.44(@solidjs/web@2.0.0-rc.9(solid-js@2.0.0-rc.9))(solid-js@2.0.0-rc.9)(supports-color@10.2.2)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))':
+  '@solidjs/vite-plugin@3.0.0-next.35(@solidjs/web@2.0.0-rc.9(solid-js@2.0.0-rc.9))(solid-js@2.0.0-rc.9)(supports-color@10.2.2)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@babel/core': 7.29.7(supports-color@10.2.2)

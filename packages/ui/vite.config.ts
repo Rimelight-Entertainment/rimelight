@@ -8,13 +8,15 @@ export default defineConfig(
     },
     entry: [
       "src/index.ts",
+      "src/plugin.ts",
       "src/head.ts",
       "src/preset.ts",
       "src/resolver.ts",
       "src/shortcuts.ts",
       "src/stores.ts",
       "src/types.ts",
-      "src/icons.ts"
+      "src/icons.ts",
+      "src/fonts.ts"
     ]
   })
 )
