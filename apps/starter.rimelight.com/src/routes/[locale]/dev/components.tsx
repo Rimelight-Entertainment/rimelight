@@ -1,6 +1,6 @@
 import { type Component } from "solid-js"
 import { useSearchParams } from "@solidjs/router"
-import AppLayout from "#layouts/AppLayout"
+import { Title, Meta } from "@solidjs/meta"
 import ComponentAuditShell from "../../../components/dev/ComponentAuditShell.tsx"
 
 export const DevComponentsPage: Component = () => {
@@ -11,11 +11,14 @@ export const DevComponentsPage: Component = () => {
   }
 
   return (
-    <AppLayout title="Component Testing" description="Testing page for Rimelight UI components">
+    <>
+      <Title>Component Testing</Title>
+      <Meta name="description" content="Barebones testing page for Rimelight UI components" />
+      <Meta name="robots" content="noindex, nofollow" />
       <main class="container mx-auto px-4 py-8">
         <ComponentAuditShell initialComponentId={requestedComp()} />
       </main>
-    </AppLayout>
+    </>
   )
 }
 

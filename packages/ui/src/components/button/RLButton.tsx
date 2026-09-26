@@ -1,4 +1,4 @@
-import { createMemo, omit, Show, type Component } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"

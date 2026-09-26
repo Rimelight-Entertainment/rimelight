@@ -21,7 +21,7 @@ const RLIcon: Component<RLIconProps> = (allProps) => {
       class={resolved().isClass ? `${classes().root} ${resolved().content}` : classes().root}
       data-slot="icon"
       aria-hidden="true"
-      innerHTML={!resolved().isClass ? resolved().content : undefined}
+      {...(!resolved().isClass ? { innerHTML: resolved().content } : {})}
       {...rest}
     />
   )
