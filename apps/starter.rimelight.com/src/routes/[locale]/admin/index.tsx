@@ -5,9 +5,6 @@ import RLCard from "@rimelight/ui/components/card/RLCard.tsx"
 import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
 import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { db } from "#db"
-import { pages, bylines, taxonomyTerms } from "#db/schema"
-import { count } from "drizzle-orm"
 
 export const AdminIndexPage: Component = () => {
   const metrics = createAsyncData(
@@ -19,23 +16,14 @@ export const AdminIndexPage: Component = () => {
       let totalTags = 0
 
       try {
-        const [pRes] = await db.select({ count: count() }).from(pages)
-        totalPages = pRes?.count ?? 0
-      } catch {}
-
-      try {
-        const [bRes] = await db.select({ count: count() }).from(bylines)
-        totalBylines = bRes?.count ?? 0
-      } catch {}
-
-      try {
-        const [cRes] = await db.select({ count: count() }).from(taxonomyTerms)
-        totalCategories = cRes?.count ?? 0
-      } catch {}
-
-      try {
-        const [tRes] = await db.select({ count: count() }).from(taxonomyTerms)
-        totalTags = tRes?.count ?? 0
+        const res = await fetch("/api/cms/stats")
+        if (res.ok) {
+          const data = (await res.json()) as any
+          totalPages = data.totalPages ?? 0
+          totalBylines = data.totalBylines ?? 0
+          totalCategories = data.totalCategories ?? 0
+          totalTags = data.totalTags ?? 0
+        }
       } catch {}
 
       return {

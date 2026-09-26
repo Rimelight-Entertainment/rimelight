@@ -1,4 +1,5 @@
 import { Hono } from "hono"
+import { handleRequest } from "virtual:solid-ssr-handler"
 import { security, devOnly, ratelimit, construction } from "@rimelight/security/middleware"
 import { auth } from "@rimelight/auth/middleware"
 import api from "#api"
@@ -6,8 +7,11 @@ import { i18n } from "@rimelight/i18n/middleware"
 import { getRelativeLocaleUrl } from "@rimelight/i18n"
 import { handleCmsCron } from "@rimelight/cms/cron/scheduled"
 import { db } from "#db"
-import { renderToStringAsync } from "solid-js/web"
-import Root from "./root"
+import { rimelightSolidConfig } from "@rimelight/config/solid"
+
+const site = rimelightSolidConfig({
+  domain: "starter.rimelight.com"
+})
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -15,7 +19,7 @@ const app = new Hono<{ Bindings: Env }>()
 export { ChatRoom, Document } from "./chat/durableObject"
 
 // Middlewares
-app.use(security())
+app.use(security(site.securityOptions ?? {}))
 app.use(devOnly)
 app.use(ratelimit())
 app.use(construction())
@@ -33,13 +37,8 @@ app.route("/api", api)
 // Localization Middleware
 app.use(i18n())
 
-// Solid 2.0 SSR Pipeline
-app.get("*", async (c) => {
-  const url = c.req.url
-  const session = (c as any).get("session") ?? null
-  const html = await renderToStringAsync(() => Root({ url, session }))
-  return c.html(`<!DOCTYPE html>${html}`)
-})
+// Fall through all unmatched requests to Solid's SSR page renderer
+app.all("*", (c) => handleRequest(c.req.raw))
 
 // Global Error Handler
 app.onError((err, c) => {

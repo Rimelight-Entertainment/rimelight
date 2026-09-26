@@ -1,15 +1,17 @@
-import { type Component, createResource } from "solid-js"
+import { type Component, createSignal, onSettled } from "solid-js"
 import AppLayout from "#layouts/AppLayout"
 import AppError from "#components/app/AppError"
-import { auth } from "@rimelight/auth"
+import { authClient } from "@rimelight/auth"
 
 export const Page403: Component = () => {
-  const [session] = createResource(async () => {
-    try {
-      return await auth.getSession()
-    } catch {
-      return null
-    }
+  const [userEmail, setUserEmail] = createSignal("")
+  onSettled(() => {
+    void authClient
+      .getMe()
+      .then((user) => {
+        if (user?.email) setUserEmail(user.email)
+      })
+      .catch(() => {})
   })
 
   return (
@@ -21,7 +23,7 @@ export const Page403: Component = () => {
         code={403}
         title="Access Denied"
         description="Your account does not have administrator privileges required to access this page."
-        userEmail={session()?.email || ""}
+        userEmail={userEmail()}
         requiredRole="admin"
         actions={[
           {

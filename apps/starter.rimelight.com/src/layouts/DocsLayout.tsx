@@ -1,4 +1,5 @@
-import { type Component, type JSX, Show, createSignal, createEffect } from "solid-js"
+import { type Component, Show, createSignal, createEffect } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import AppLayout from "./AppLayout"
 import RLSidebar from "@rimelight/ui/components/sidebar/RLSidebar.tsx"
 import RLTableOfContents from "@rimelight/ui/components/table-of-contents/RLTableOfContents.tsx"
@@ -39,20 +40,26 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   })
 
   createEffect(
-    () => ({ activeVersion: props.activeVersion, includeVersionInUrl: props.includeVersionInUrl }),
-    async ({ activeVersion, includeVersionInUrl }) => {
-      const locale = getLocale()
-      const currentPath = typeof window !== "undefined" ? window.location.pathname : ""
-      try {
-        const data = await getDocsSidebar(
-          docsConfig as any,
-          locale,
-          currentPath,
-          activeVersion,
-          includeVersionInUrl
-        )
-        setSidebarData(data)
-      } catch {}
+    () => ({
+      activeVersion: props.activeVersion,
+      includeVersionInUrl: props.includeVersionInUrl
+    }),
+    (snapshot) => {
+      const { activeVersion, includeVersionInUrl } = snapshot
+      void (async () => {
+        const locale = getLocale()
+        const currentPath = typeof window !== "undefined" ? window.location.pathname : ""
+        try {
+          const data = await getDocsSidebar(
+            docsConfig as any,
+            locale,
+            currentPath,
+            activeVersion,
+            includeVersionInUrl
+          )
+          setSidebarData(data as { items: any[]; scopes: any[]; activeScope: any })
+        } catch {}
+      })()
     }
   )
 

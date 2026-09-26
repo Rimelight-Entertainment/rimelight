@@ -1,4 +1,4 @@
-import { type Component, createSignal, createEffect, onCleanup, For, Show } from "solid-js"
+import { type Component, createSignal, onSettled, onCleanup, For, Show } from "solid-js"
 import AppLayout from "#layouts/AppLayout"
 import { t } from "@rimelight/i18n"
 
@@ -120,7 +120,7 @@ export const ChatPage: Component = () => {
     })
   }
 
-  createEffect(() => {
+  onSettled(() => {
     if (typeof window === "undefined") return
     let id = localStorage.getItem("chat_user_id")
     if (!id) {
@@ -136,7 +136,7 @@ export const ChatPage: Component = () => {
       setNickname(savedNick)
       connectWebSocket()
     }
-  }, undefined)
+  })
 
   onCleanup(() => {
     if (socket) {
@@ -277,7 +277,7 @@ export const ChatPage: Component = () => {
 
             {/* Chat messages stream */}
             <div
-              ref={messagesContainerRef}
+              ref={(el) => (messagesContainerRef = el)}
               class="flex-1 overflow-y-auto p-6 flex flex-col gap-4 scrollbar-thin"
             >
               <For each={messages()}>
@@ -355,7 +355,7 @@ export const ChatPage: Component = () => {
                 value={messageInput()}
                 onInput={(e) => setMessageInput(e.currentTarget.value)}
                 placeholder={t("chat_page.placeholder_msg")}
-                maxLength={500}
+                maxlength={500}
                 required
                 autocomplete="off"
                 class="flex-1 bg-white/5 border border-white/10 hover:border-white/20 focus:border-indigo-500/80 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors"
@@ -422,7 +422,7 @@ export const ChatPage: Component = () => {
                       type="text"
                       value={nickInputValue()}
                       onInput={(e) => setNickInputValue(e.currentTarget.value)}
-                      maxLength={20}
+                      maxlength={20}
                       required
                       autocomplete="off"
                       placeholder="Enter nickname..."

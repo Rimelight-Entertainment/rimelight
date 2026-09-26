@@ -1,4 +1,4 @@
-import { onMount, type Component } from "solid-js"
+import { onSettled, type Component } from "solid-js"
 import type { FileTreeNode } from "../../../core/types/blocks"
 
 export interface FileTreeEditorProps {
@@ -15,7 +15,7 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
       { name: "package.json", isDir: false }
     ]
 
-  onMount(() => {
+  onSettled(() => {
     if (jsonTextarea) {
       jsonTextarea.value = JSON.stringify(tree(), null, 2)
     }

@@ -33,11 +33,7 @@ const RLMain: Component<RLMainProps> = (allProps) => {
   }
 
   return (
-    <main
-      class={`${resolvedClasses().root} rl-main-container`}
-      data-slot="main"
-      {...rest}
-    >
+    <main class={`${resolvedClasses().root} rl-main-container`} data-slot="main" {...rest}>
       {props.children}
     </main>
   )

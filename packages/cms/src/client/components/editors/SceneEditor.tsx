@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, For, Show, type Component } from "solid-js"
+import { createSignal, onSettled, onCleanup, For, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
 import { createDefaultBlock } from "../../state/history"
@@ -59,7 +59,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
     })
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (childrenCanvas) {
       sortableInstance = initBlockSortable(childrenCanvas, {
         filter: ".cms-empty-placeholder, .locked",

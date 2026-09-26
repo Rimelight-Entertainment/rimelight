@@ -6,9 +6,6 @@ import RLPageSection from "@rimelight/ui/components/page-section/RLPageSection.t
 import RLTabs from "@rimelight/ui/components/tabs/RLTabs.tsx"
 import RLGrid from "@rimelight/ui/components/grid/RLGrid.tsx"
 import RLPost from "@rimelight/ui/components/post/RLPost.tsx"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, desc, and, isNull } from "drizzle-orm"
 
 function getPageTitle(title: unknown, locale: string): string {
   if (typeof title === "object" && title !== null) {
@@ -26,11 +23,10 @@ export const BlogIndexPage: Component = () => {
     () => true,
     async () => {
       try {
-        return await db
-          .select()
-          .from(pages)
-          .where(and(eq(pages.type, "blog"), isNull(pages.deletedAt)))
-          .orderBy(desc(pages.postedAt), desc(pages.createdAt))
+        const res = await fetch("/api/content/pages?type=blog")
+        if (!res.ok) return []
+        const data = (await res.json()) as any
+        return (data.pages || []) as any[]
       } catch {
         return []
       }

@@ -1,11 +1,4 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  onSettled,
-  omit,
-  type Component
-} from "solid-js"
+import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { DashboardSidebarProps } from "./dashboard-sidebar"
 import { dashboardSidebarTheme } from "./dashboard-sidebar.theme"

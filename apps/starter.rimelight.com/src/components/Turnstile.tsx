@@ -1,4 +1,4 @@
-import { type Component, Show, onMount } from "solid-js"
+import { type Component, Show, onSettled } from "solid-js"
 import { getTurnstileSiteKey } from "@rimelight/security"
 
 export interface TurnstileProps {
@@ -19,7 +19,7 @@ export const Turnstile: Component<TurnstileProps> = (props) => {
   const resolvedSiteKey = () =>
     props.siteKey || getTurnstileSiteKey() || (import.meta as any).env?.["TURNSTILE_SITE_KEY"] || ""
 
-  onMount(() => {
+  onSettled(() => {
     if (props.injectScript !== false && typeof document !== "undefined") {
       const existing = document.querySelector('script[src*="turnstile/v0/api.js"]')
       if (!existing) {

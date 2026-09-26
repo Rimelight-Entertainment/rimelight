@@ -154,7 +154,7 @@ export const DevOgPage: Component = () => {
                 onInput={(e) => {
                   setSandboxTitle(e.currentTarget.value)
                 }}
-                maxLength={80}
+                maxlength={80}
                 class="px-3 py-2 bg-[#111] border border-[#333] rounded-md text-sm text-neutral-200 outline-none focus:border-blue-400"
               />
             </label>
@@ -166,7 +166,7 @@ export const DevOgPage: Component = () => {
                 onInput={(e) => {
                   setSandboxDesc(e.currentTarget.value)
                 }}
-                maxLength={160}
+                maxlength={160}
                 class="px-3 py-2 bg-[#111] border border-[#333] rounded-md text-sm text-neutral-200 outline-none focus:border-blue-400"
               />
             </label>
@@ -179,7 +179,7 @@ export const DevOgPage: Component = () => {
                   setSandboxType(e.currentTarget.value)
                 }}
                 placeholder="e.g. Blog Post"
-                maxLength={40}
+                maxlength={40}
                 class="px-3 py-2 bg-[#111] border border-[#333] rounded-md text-sm text-neutral-200 outline-none focus:border-blue-400"
               />
             </label>

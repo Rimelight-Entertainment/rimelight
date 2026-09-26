@@ -2,9 +2,6 @@ import { type Component, For, Show } from "solid-js"
 import { createAsyncData } from "#utils/async"
 import AppLayout from "#layouts/AppLayout"
 import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, and, isNull, desc } from "drizzle-orm"
 import RLPageSection from "@rimelight/ui/components/page-section/RLPageSection.tsx"
 import RLLogo from "@rimelight/ui/components/logo/RLLogo.tsx"
 import RLLink from "@rimelight/ui/components/link/RLLink.tsx"
@@ -28,11 +25,10 @@ export const HomePage: Component = () => {
     () => activeLocale(),
     async (loc) => {
       try {
-        const blogPages = await db
-          .select()
-          .from(pages)
-          .where(and(eq(pages.type, "blog"), isNull(pages.deletedAt)))
-          .orderBy(desc(pages.postedAt))
+        const res = await fetch("/api/content/pages?type=blog")
+        if (!res.ok) return []
+        const data = (await res.json()) as any
+        const blogPages = (data.pages || []) as any[]
 
         return blogPages
           .filter((post) => {

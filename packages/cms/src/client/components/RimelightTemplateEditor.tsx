@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
+import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
 import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
@@ -45,7 +45,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
     props.onChange?.(newBlocks)
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (canvasContainer) {
       sortableInstance = initBlockSortable(canvasContainer, {
         onReorder: (oldIdx: number, newIdx: number) => {

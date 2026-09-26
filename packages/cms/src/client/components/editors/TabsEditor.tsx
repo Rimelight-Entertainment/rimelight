@@ -1,4 +1,4 @@
-import { onMount, onCleanup, For, type Component } from "solid-js"
+import { onSettled, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
 import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
@@ -25,7 +25,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
     return componentProps.children || componentProps.props["children"] || []
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (childrenContainer) {
       sortableInstance = initBlockSortable(childrenContainer, {
         filter: ".cms-empty-placeholder, .locked",

@@ -1,4 +1,4 @@
-import { createSignal, onMount, For, Show, type Component } from "solid-js"
+import { createSignal, onSettled, For, Show, type Component } from "solid-js"
 import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
@@ -59,7 +59,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     void loadTerms()
   })
 

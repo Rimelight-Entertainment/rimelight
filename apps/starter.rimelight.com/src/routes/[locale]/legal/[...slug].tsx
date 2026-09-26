@@ -4,9 +4,6 @@ import AppLayout from "#layouts/AppLayout"
 import PageRenderer from "#components/cms/PageRenderer"
 import { createAsyncData } from "#utils/async"
 import { t, getLocale } from "@rimelight/i18n"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, and, isNull } from "drizzle-orm"
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
@@ -25,12 +22,10 @@ export const LegalSlugPage: Component = () => {
     async (slug) => {
       if (!slug) return null
       try {
-        const results = await db
-          .select()
-          .from(pages)
-          .where(and(eq(pages.type, "legal"), eq(pages.slug, slug), isNull(pages.deletedAt)))
-          .limit(1)
-        return results[0] || null
+        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=legal`)
+        if (!res.ok) return null
+        const data = (await res.json()) as any
+        return data.page || null
       } catch {
         return null
       }

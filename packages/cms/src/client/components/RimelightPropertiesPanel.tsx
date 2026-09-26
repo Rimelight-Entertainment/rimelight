@@ -1,4 +1,4 @@
-import { createSignal, onMount, For, Show, type Component } from "solid-js"
+import { createSignal, onSettled, For, Show, type Component } from "solid-js"
 import {
   getPageDefinition,
   type PageDefinition,
@@ -82,7 +82,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
   const [editingLinkIndex, setEditingLinkIndex] = createSignal<number | null>(null)
   const [linkDraft, setLinkDraft] = createSignal({ label: "", to: "", icon: "" })
 
-  onMount(async () => {
+  onSettled(async () => {
     const def = definition()
     if (def?.properties) {
       const initialExpanded: Record<string, boolean> = {}
@@ -100,7 +100,9 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         if (e.detail.properties.category) setSelectedCategory(e.detail.properties.category)
       }
     }
-    document.addEventListener("properties-change", handlePropsChange)
+    if (typeof document !== "undefined") {
+      document.addEventListener("properties-change", handlePropsChange)
+    }
 
     // Load available taxonomy categories
     try {

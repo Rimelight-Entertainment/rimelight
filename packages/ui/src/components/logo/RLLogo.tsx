@@ -100,11 +100,7 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
       )
     }
     return (
-      <img
-        src={logoSrc}
-        alt={props.alt || ""}
-        class="size-full block object-contain shrink-0"
-      />
+      <img src={logoSrc} alt={props.alt || ""} class="size-full block object-contain shrink-0" />
     )
   }
 

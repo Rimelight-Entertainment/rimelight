@@ -1,4 +1,5 @@
-import { createSignal, For, type JSX } from "solid-js"
+import { createSignal, For } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import RLAccordion from "@rimelight/ui/components/accordion/RLAccordion.tsx"
 import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts"
 import type { ComponentAuditDefinition } from "./types"

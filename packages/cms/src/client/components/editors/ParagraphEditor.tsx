@@ -1,4 +1,4 @@
-import { createSignal, onMount, Show, type Component } from "solid-js"
+import { createSignal, onSettled, Show, type Component } from "solid-js"
 import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
 import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
 import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
@@ -153,7 +153,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
     setLinkModalOpen(false)
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (!editableDiv) return
     const text = componentProps.props["text"]
     if (!text) {

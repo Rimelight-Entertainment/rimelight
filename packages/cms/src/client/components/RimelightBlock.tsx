@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, Show, type Component } from "solid-js"
+import { createSignal, onSettled, onCleanup, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { ParagraphEditor } from "./editors/ParagraphEditor"
 import { SectionEditor } from "./editors/SectionEditor"
@@ -49,7 +49,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
 
   const isLocked = () => !!props.block.isTemplated || props.block.templatedProps === true
 
-  onMount(() => {
+  onSettled(() => {
     const handleOutside = (e: MouseEvent) => {
       const target = e.target instanceof Node ? e.target : null
       if (menuOpen() && menuWrapEl && target && !menuWrapEl.contains(target)) {
@@ -59,8 +59,10 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         setToolbarMenuOpen(false)
       }
     }
-    document.addEventListener("click", handleOutside)
-    onCleanup(() => document.removeEventListener("click", handleOutside))
+    if (typeof document !== "undefined") {
+      document.addEventListener("click", handleOutside)
+      onCleanup(() => document.removeEventListener("click", handleOutside))
+    }
   })
 
   const renderEditorComponent = (blockItem: BaseBlock, depth: number) => {

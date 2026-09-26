@@ -5,7 +5,9 @@ export function createAsyncData<T>(
   fetcher: (val: any) => Promise<T>,
   initialValue?: T
 ): Accessor<T | undefined> {
-  const [data, setData] = createSignal<T | undefined>(initialValue)
+  const [data, setData] = createSignal<T | undefined>(
+    initialValue as Exclude<T | undefined, Function>
+  )
 
   createEffect(
     () => source(),

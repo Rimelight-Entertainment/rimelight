@@ -35,12 +35,7 @@ const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
         data-dashboard-collapse-icon
         data-expanded
       />
-      <RLIcon
-        name="panelRight"
-        class="size-5 hidden"
-        data-dashboard-collapse-icon
-        data-collapsed
-      />
+      <RLIcon name="panelRight" class="size-5 hidden" data-dashboard-collapse-icon data-collapsed />
       {props.children}
     </button>
   )

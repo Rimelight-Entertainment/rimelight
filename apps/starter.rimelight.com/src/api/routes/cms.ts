@@ -7,9 +7,11 @@ import {
   pageDraftLocks,
   pageTemplates,
   pageVersions,
-  pageVersionApprovals
+  pageVersionApprovals,
+  bylines,
+  taxonomyTerms
 } from "#db/schema"
-import { eq, and, desc, isNull } from "drizzle-orm"
+import { count, eq, and, desc, isNull } from "drizzle-orm"
 import {
   validateServerBlockPayload,
   getSiteSettings,
@@ -263,6 +265,24 @@ cms.get("/pages/:id", async (c) => {
     : null
 
   return c.json({ page: pageData, draft: draftData })
+})
+
+// Dashboard metrics (table counts for the admin overview)
+cms.get("/stats", async (c) => {
+  const session = await auth.getSession(c.req.raw)
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const [pRes] = await db.select({ count: count() }).from(pages)
+  const [bRes] = await db.select({ count: count() }).from(bylines)
+  const [cRes] = await db.select({ count: count() }).from(taxonomyTerms)
+  const [tRes] = await db.select({ count: count() }).from(taxonomyTerms)
+
+  return c.json({
+    totalPages: pRes?.count ?? 0,
+    totalBylines: bRes?.count ?? 0,
+    totalCategories: cRes?.count ?? 0,
+    totalTags: tRes?.count ?? 0
+  })
 })
 
 cms.post("/pages", async (c) => {

@@ -1,4 +1,4 @@
-import { onMount, type Component } from "solid-js"
+import { onSettled, type Component } from "solid-js"
 import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
 import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 
@@ -36,7 +36,7 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
     })
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (codeTextarea) {
       codeTextarea.value = componentProps.props["code"] || ""
     }

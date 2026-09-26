@@ -9,7 +9,7 @@ interface PageRendererProps {
   class?: string
 }
 
-export const BlockRenderer: Component<{ block: any; locale?: string }> = (props) => {
+export const BlockRenderer: Component<{ block: any; locale?: string | undefined }> = (props) => {
   const b = () => props.block || {}
   const type = () => b().type
   const p = () => b().props || {}

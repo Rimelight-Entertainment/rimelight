@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, For, Show, type Component } from "solid-js"
+import { createSignal, onSettled, onCleanup, For, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
 import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
@@ -50,7 +50,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
     return componentProps.children || componentProps.props["children"] || []
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (childrenContainer) {
       sortableInstance = initBlockSortable(childrenContainer, {
         filter: ".cms-empty-placeholder, .locked",

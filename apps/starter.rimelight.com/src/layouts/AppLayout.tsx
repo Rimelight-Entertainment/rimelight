@@ -1,4 +1,5 @@
-import { type Component, type JSX, Show, createSignal, onMount } from "solid-js"
+import { type Component, Show, createSignal, onSettled } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import { Title, Meta } from "@solidjs/meta"
 import AppHeader from "#components/app/AppHeader"
 import AppFooter from "#components/app/AppFooter"
@@ -15,16 +16,16 @@ import {
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
 
 export interface AppLayoutProps {
-  title?: string
-  description?: string
-  children?: JSX.Element
+  title?: string | undefined
+  description?: string | undefined
+  children?: JSX.Element | undefined
   session?: any
 }
 
 export const AppLayout: Component<AppLayoutProps> = (props) => {
   const [hasConsent, setHasConsent] = createSignal(true)
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof document !== "undefined") {
       setHasConsent(document.cookie.includes("cookie-consent="))
     }

@@ -1,4 +1,4 @@
-import { type Component, For, Show, onMount } from "solid-js"
+import { type Component, For, Show, onSettled } from "solid-js"
 import {
   RLHeader,
   RLLogo,
@@ -23,7 +23,7 @@ export interface AppHeaderProps {
 }
 
 export const AppHeader: Component<AppHeaderProps> = (props) => {
-  onMount(() => {
+  onSettled(() => {
     const btn = document.getElementById("rla-shortcuts-btn")
     const handler = () => {
       document.dispatchEvent(new CustomEvent("rl-shortcuts:open"))

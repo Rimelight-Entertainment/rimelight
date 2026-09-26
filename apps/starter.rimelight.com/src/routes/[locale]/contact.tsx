@@ -96,7 +96,11 @@ export const ContactPage: Component = () => {
                 {t("page_contact.contact_form_title")}
               </h2>
 
-              <form ref={contactFormRef} onSubmit={handleContactSubmit} class="flex flex-col gap-4">
+              <form
+                ref={(el) => (contactFormRef = el)}
+                onSubmit={handleContactSubmit}
+                class="flex flex-col gap-4"
+              >
                 <div class="flex flex-col gap-1">
                   <label for="contact-name" class="text-sm font-medium text-[var(--rl-text-muted)]">
                     {t("page_contact.contact_form_name_label")}
@@ -202,7 +206,11 @@ export const ContactPage: Component = () => {
                 {t("page_contact.upload_form_description")}
               </p>
 
-              <form ref={uploadFormRef} onSubmit={handleUploadSubmit} class="flex flex-col gap-4">
+              <form
+                ref={(el) => (uploadFormRef = el)}
+                onSubmit={handleUploadSubmit}
+                class="flex flex-col gap-4"
+              >
                 <div class="flex flex-col gap-1">
                   <label for="upload-file" class="text-sm font-medium text-[var(--rl-text-muted)]">
                     {t("page_contact.upload_form_file_label")}

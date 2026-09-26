@@ -2,9 +2,6 @@ import { type Component, For } from "solid-js"
 import AppLayout from "#layouts/AppLayout"
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
 import { createAsyncData } from "#utils/async"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, and, isNull, desc } from "drizzle-orm"
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
@@ -21,11 +18,10 @@ export const LegalIndexPage: Component = () => {
     () => true,
     async () => {
       try {
-        return await db
-          .select()
-          .from(pages)
-          .where(and(eq(pages.type, "legal"), isNull(pages.deletedAt)))
-          .orderBy(desc(pages.postedAt))
+        const res = await fetch("/api/content/pages?type=legal")
+        if (!res.ok) return []
+        const data = (await res.json()) as any
+        return (data.pages || []) as any[]
       } catch {
         return []
       }

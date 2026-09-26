@@ -78,9 +78,10 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     }
     return (
       <>
-        {props.leadingSlot ?? (props.icon ? (
-          <RLIcon name={props.icon} class={resolvedClasses().icon} data-slot="icon" />
-        ) : null)}
+        {props.leadingSlot ??
+          (props.icon ? (
+            <RLIcon name={props.icon} class={resolvedClasses().icon} data-slot="icon" />
+          ) : null)}
         <h1 data-slot="title" class={resolvedClasses().title}>
           {props.titleSlot !== undefined ? props.titleSlot : props.title}
         </h1>

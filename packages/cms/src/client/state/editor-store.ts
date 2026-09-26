@@ -1,5 +1,4 @@
-import { createSignal } from "solid-js"
-import { createStore, reconcile } from "solid-js/store"
+import { createSignal, createStore, reconcile } from "solid-js"
 import { type BaseBlock, MAX_SECTION_DEPTH } from "../../core/types/blocks"
 import { HistoryStack, createDefaultBlock } from "./history"
 import { AutosaveController, type AutosaveStatus } from "./autosave"

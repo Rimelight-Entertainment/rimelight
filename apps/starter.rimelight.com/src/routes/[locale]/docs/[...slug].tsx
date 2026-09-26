@@ -10,9 +10,6 @@ import {
 } from "@rimelight/cms"
 import PageRenderer from "#components/cms/PageRenderer"
 import { createAsyncData } from "#utils/async"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, and, isNull, inArray, sql } from "drizzle-orm"
 import { getLocale } from "@rimelight/i18n"
 
 function getLocalizedText(val: unknown, loc: string): string {
@@ -32,13 +29,11 @@ export const DocsSlugPage: Component = () => {
     async ({ slug, loc }) => {
       let allDocPages: any[] = []
       try {
-        allDocPages = await db
-          .select({
-            slug: pages.slug,
-            version: sql<string>`(${pages.content}->'properties'->>'version')`.as("version")
-          })
-          .from(pages)
-          .where(and(eq(pages.type, "doc"), isNull(pages.deletedAt)))
+        const res = await fetch("/api/content/doc-versions")
+        if (res.ok) {
+          const data = (await res.json()) as any
+          allDocPages = (data.versions || []) as any[]
+        }
       } catch {
         // DB fallback
       }
@@ -60,19 +55,19 @@ export const DocsSlugPage: Component = () => {
 
       let dbPage: any = null
       try {
-        const pageResults = await db
-          .select()
-          .from(pages)
-          .where(
-            and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt))
-          )
-
-        if (pageResults && pageResults.length > 0) {
-          for (const candidate of candidateSlugs) {
-            const match = pageResults.find((p: any) => p.slug === candidate)
-            if (match) {
-              dbPage = match
-              break
+        const res = await fetch(
+          `/api/content/docs?slugs=${candidateSlugs.map(encodeURIComponent).join(",")}`
+        )
+        if (res.ok) {
+          const data = (await res.json()) as any
+          const pageResults = (data.pages || []) as any[]
+          if (pageResults && pageResults.length > 0) {
+            for (const candidate of candidateSlugs) {
+              const match = pageResults.find((p: any) => p.slug === candidate)
+              if (match) {
+                dbPage = match
+                break
+              }
             }
           }
         }

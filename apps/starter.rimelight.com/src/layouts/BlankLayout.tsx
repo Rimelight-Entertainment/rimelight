@@ -1,4 +1,5 @@
-import { type Component, type JSX, Show } from "solid-js"
+import { type Component, Show } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import { Title, Meta } from "@solidjs/meta"
 import RLMain from "@rimelight/ui/components/main/RLMain.tsx"
 

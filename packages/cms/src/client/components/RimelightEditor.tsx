@@ -1,4 +1,4 @@
-import { onMount, onCleanup, For, type Component } from "solid-js"
+import { onSettled, onCleanup, For, type Component } from "solid-js"
 import type { EditorState } from "../state/editor-store"
 import { RimelightBlock } from "./RimelightBlock"
 import { RimelightBlockPicker } from "./RimelightBlockPicker"
@@ -13,7 +13,7 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
   let canvasContainer: HTMLDivElement | undefined = undefined
   let sortableInstance: any = null
 
-  onMount(() => {
+  onSettled(() => {
     if (canvasContainer) {
       sortableInstance = initBlockSortable(canvasContainer, {
         handle: ".cms-grip-btn",
@@ -52,10 +52,14 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
         props.state.redo()
       }
     }
-    window.addEventListener("keydown", handleKeydown)
+    if (typeof window !== "undefined") {
+      window.addEventListener("keydown", handleKeydown)
+    }
 
     onCleanup(() => {
-      window.removeEventListener("keydown", handleKeydown)
+      if (typeof window !== "undefined") {
+        window.removeEventListener("keydown", handleKeydown)
+      }
       if (sortableInstance) sortableInstance.destroy()
     })
   })

@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
+import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
 import { type BaseBlock, calculateHeadingLevel } from "../../core/types/blocks"
 
 export interface RimelightPreviewProps {
@@ -30,7 +30,7 @@ export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
   const [banner, setBanner] = createSignal<string>(props.banner || "")
   const [category, setCategory] = createSignal<string>(props.category || "")
 
-  onMount(() => {
+  onSettled(() => {
     const handleBlocksChange = (e: Event) => {
       if (e instanceof CustomEvent && Array.isArray(e.detail?.blocks)) {
         setBlocks(e.detail.blocks)
@@ -57,15 +57,17 @@ export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
       }
     }
 
-    document.addEventListener("blocks-change", handleBlocksChange)
-    document.addEventListener("page-meta-change", handleMetaChange)
-    document.addEventListener("properties-change", handlePropsChange)
+    if (typeof document !== "undefined") {
+      document.addEventListener("blocks-change", handleBlocksChange)
+      document.addEventListener("page-meta-change", handleMetaChange)
+      document.addEventListener("properties-change", handlePropsChange)
 
-    onCleanup(() => {
-      document.removeEventListener("blocks-change", handleBlocksChange)
-      document.removeEventListener("page-meta-change", handleMetaChange)
-      document.removeEventListener("properties-change", handlePropsChange)
-    })
+      onCleanup(() => {
+        document.removeEventListener("blocks-change", handleBlocksChange)
+        document.removeEventListener("page-meta-change", handleMetaChange)
+        document.removeEventListener("properties-change", handlePropsChange)
+      })
+    }
   })
 
   return (

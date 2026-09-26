@@ -3,9 +3,6 @@ import { useParams } from "@solidjs/router"
 import { createAsyncData } from "#utils/async"
 import AppLayout from "#layouts/AppLayout"
 import PageRenderer from "#components/cms/PageRenderer"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, and, isNull } from "drizzle-orm"
 import { getLocale } from "@rimelight/i18n"
 
 function getLocalizedText(val: unknown, locale: string): string {
@@ -25,12 +22,10 @@ export const BlogPostPage: Component = () => {
     async (slug) => {
       if (!slug) return null
       try {
-        const results = await db
-          .select()
-          .from(pages)
-          .where(and(eq(pages.slug, slug), isNull(pages.deletedAt)))
-          .limit(1)
-        return results[0] || null
+        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}`)
+        if (!res.ok) return null
+        const data = (await res.json()) as any
+        return data.page || null
       } catch {
         return null
       }

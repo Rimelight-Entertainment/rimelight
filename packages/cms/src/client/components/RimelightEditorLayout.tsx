@@ -1,4 +1,4 @@
-import { onMount, createEffect, createMemo, Show, type Component } from "solid-js"
+import { onSettled, createEffect, createMemo, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { createEditorState } from "../state/editor-store"
 import { RimelightEditor } from "./RimelightEditor"
@@ -62,7 +62,7 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     }
   })
 
-  onMount(() => {
+  onSettled(() => {
     const publicMethods = {
       undo: () => state.undo(),
       redo: () => state.redo(),

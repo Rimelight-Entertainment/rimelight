@@ -3,9 +3,6 @@ import DocsLayout from "#layouts/DocsLayout"
 import { extractHeadingsFromBlocks, blocksToMarkdown } from "@rimelight/cms"
 import PageRenderer from "#components/cms/PageRenderer"
 import { createAsyncData } from "#utils/async"
-import { db } from "#db"
-import { pages } from "#db/schema"
-import { eq, and, isNull, inArray } from "drizzle-orm"
 import { getLocale } from "@rimelight/i18n"
 
 function getLocalizedText(val: unknown, loc: string): string {
@@ -23,14 +20,10 @@ export const DocsIndexPage: Component = () => {
     () => true,
     async () => {
       try {
-        const candidateSlugs = ["index"]
-        const pageResults = await db
-          .select()
-          .from(pages)
-          .where(
-            and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt))
-          )
-
+        const res = await fetch("/api/content/docs?slugs=index")
+        if (!res.ok) return null
+        const data = (await res.json()) as any
+        const pageResults = (data.pages || []) as any[]
         return pageResults.find((p: any) => p.slug === "index") || null
       } catch {
         return null

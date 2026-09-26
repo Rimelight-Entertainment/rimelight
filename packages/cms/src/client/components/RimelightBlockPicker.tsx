@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
+import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
 import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
 import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
 import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
@@ -169,14 +169,16 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
     props.onSelect(type)
   }
 
-  onMount(() => {
+  onSettled(() => {
     const handleGlobalKeydown = (e: KeyboardEvent) => {
       if (props.open && e.key === "Escape") {
         props.onClose()
       }
     }
-    document.addEventListener("keydown", handleGlobalKeydown)
-    onCleanup(() => document.removeEventListener("keydown", handleGlobalKeydown))
+    if (typeof document !== "undefined") {
+      document.addEventListener("keydown", handleGlobalKeydown)
+      onCleanup(() => document.removeEventListener("keydown", handleGlobalKeydown))
+    }
   })
 
   const handleKeydown = (e: KeyboardEvent) => {
