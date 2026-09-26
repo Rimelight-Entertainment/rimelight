@@ -1,4 +1,4 @@
-import { atom } from "./stores"
+import { createStore } from "solid-js"
 
 export type Handler = (e: KeyboardEvent) => void
 export interface ShortcutConfig {
@@ -61,7 +61,7 @@ export const formatShortcutKeys = (k: string): string[] =>
     return KEYS[norm] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
   })
 
-export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
+export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<RegisteredShortcut[]>([])
 
 const isUsingInput = (el: Element | null): boolean | string => {
   const target = (el?.shadowRoot?.activeElement || el) as HTMLElement | null
@@ -122,12 +122,7 @@ export function defineShortcuts(
 
   const ids = new Set(reg.map((i) => i.id))
   if (ids.size) {
-    activeShortcutsStore.set(
-      activeShortcutsStore
-        .get()
-        .filter((i) => !ids.has(i.id))
-        .concat(reg)
-    )
+    setActiveShortcutsStore((prev) => [...prev.filter((i) => !ids.has(i.id)), ...reg])
   }
 
   const buffer: string[] = []
@@ -185,7 +180,7 @@ export function defineShortcuts(
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
     if (ids.size) {
-      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !ids.has(i.id)))
+      setActiveShortcutsStore((prev) => prev.filter((i) => !ids.has(i.id)))
     }
   }
 }

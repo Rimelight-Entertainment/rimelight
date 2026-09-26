@@ -1,4 +1,5 @@
-import { createMemo, createSignal, splitProps, For, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, omit, For, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { SelectItem, SelectProps } from "./select"
 import { selectTheme } from "./select.theme"
 import RLButton, { type RLButtonProps } from "../button/RLButton"
@@ -29,7 +30,9 @@ export interface RLSelectProps extends Partial<Omit<SelectProps, "onChange" | "o
 }
 
 const RLSelect: Component<RLSelectProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "id",
     "name",
     "value",
@@ -51,7 +54,7 @@ const RLSelect: Component<RLSelectProps> = (allProps) => {
     "ui",
     "onChange",
     "onBlur"
-  ])
+  )
 
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "icon" ? props.variant : "default"

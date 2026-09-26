@@ -1,13 +1,13 @@
 import {
   createMemo,
   createSignal,
-  splitProps,
+  omit,
   Show,
-  onMount,
+  onSettled,
   onCleanup,
-  type Component,
-  type JSX
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { PopoverProps } from "./popover"
 import { popoverTheme } from "./popover.theme"
 
@@ -19,7 +19,9 @@ export interface RLPopoverProps extends PopoverProps {
 }
 
 const RLPopover: Component<RLPopoverProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "open",
     "defaultOpen",
     "triggerLabel",
@@ -30,7 +32,7 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
     "children",
     "trigger",
     "onOpenChange"
-  ])
+  )
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false)
   const [isHovered, setIsHovered] = createSignal(false)
@@ -58,14 +60,14 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
     }, 150)
   }
 
-  onMount(() => {
+  onSettled(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (isOpen() && containerRef && !containerRef.contains(e.target as Node)) {
         handleOpenChange(false)
       }
     }
     document.addEventListener("click", handleOutsideClick)
-    onCleanup(() => document.removeEventListener("click", handleOutsideClick))
+    return () => document.removeEventListener("click", handleOutsideClick)
   })
 
   onCleanup(() => {

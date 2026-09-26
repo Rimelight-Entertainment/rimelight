@@ -1,4 +1,4 @@
-import { atom } from "../../stores"
+import { createStore } from "solid-js"
 
 export interface ToastItem {
   id: string
@@ -13,7 +13,7 @@ export interface ToastItem {
 
 export type Toast = ToastItem
 
-export const toasts = atom<ToastItem[]>([])
+export const [toasts, setToasts] = createStore<ToastItem[]>([])
 
 export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastItem {
   const id =
@@ -22,27 +22,26 @@ export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastI
       ? crypto.randomUUID()
       : Math.random().toString(36).substring(2, 9))
   const item: ToastItem = { duration: 6000, ...toast, id }
-  toasts.set([...toasts.get(), item])
+  setToasts((prev) => [...prev, item])
   return item
 }
 
 export function removeToast(id: string) {
-  const current = toasts.get()
-  const target = current.find((t) => t.id === id)
-  if (target?.onDismiss) {
-    const cb = target.onDismiss
-    delete target.onDismiss
+  const target = toasts.find((t) => t.id === id)
+  const cb = target?.onDismiss
+  // Remove first so re-entrant calls can't fire onDismiss twice.
+  setToasts((prev) => prev.filter((t) => t.id !== id))
+  if (cb) {
     try {
       cb()
     } catch (err) {
       console.error("Error executing toast onDismiss callback:", err)
     }
   }
-  toasts.set(current.filter((t) => t.id !== id))
 }
 
 export function clearToasts() {
-  toasts.set([])
+  setToasts(() => [])
 }
 
 export type ToastInput = string | (Omit<ToastItem, "id"> & { id?: string })

@@ -1,5 +1,6 @@
-import { createMemo, createSignal, For, onCleanup, onMount, Show, type JSX } from "solid-js"
-import { isServer } from "solid-js/web"
+import { createMemo, createSignal, For, onSettled, Show } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { isServer } from "@solidjs/web"
 import type {
   TableProps,
   TableColumn,
@@ -18,6 +19,7 @@ import type {
   TableExportOptions
 } from "./table"
 import { tableTheme } from "./table.theme"
+export * from "./table"
 import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme"
 import RLInput from "../input/RLInput"
 import RLDropdownMenu from "../dropdown-menu/RLDropdownMenu"
@@ -208,7 +210,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
             <span
               class={classes().dragHandle}
               data-slot="drag-handle"
-              draggable={true}
+              draggable="true"
               onDragStart={(e) => {
                 setDraggedRowIndex(row.index)
                 e.dataTransfer?.setData("text/plain", String(row.index))
@@ -340,7 +342,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     return cellValue() !== undefined && cellValue() !== null ? String(cellValue()) : "—"
   }
 
-  const resolvedColumns = createMemo<TableColumn<T>[]>(() => {
+  const resolvedColumns = (): TableColumn<T>[] => {
     const raw = rawResolvedColumns()
     const order = currentColumnOrder()
     if (!order || order.length === 0) return raw
@@ -363,7 +365,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       ordered.push(remaining)
     }
     return ordered
-  })
+  }
 
   const visibleColumns = createMemo(() => {
     const visibility = currentColumnVisibility()
@@ -777,15 +779,16 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
   })
 
   if (!isServer) {
-    onMount(() => {
+    onSettled(() => {
       if (isVirtual()) {
         const scrollEl = virtualOpts().getScrollElement?.() || containerRef
         if (scrollEl) {
           const handleScroll = () => setScrollTop(scrollEl.scrollTop)
           scrollEl.addEventListener("scroll", handleScroll, { passive: true })
-          onCleanup(() => scrollEl.removeEventListener("scroll", handleScroll))
+          return () => scrollEl.removeEventListener("scroll", handleScroll)
         }
       }
+      return undefined
     })
   }
 
@@ -1391,7 +1394,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                             <span
                               class={classes().dragHandle}
                               data-slot="drag-handle"
-                              draggable={true}
+                              draggable="true"
                               onDragStart={(e) => {
                                 setDraggedColId(colId())
                                 e.dataTransfer?.setData("text/plain", colId())
@@ -1464,7 +1467,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               fallback={
                 <tr>
                   <td
-                    colSpan={Math.max(1, visibleColumns().length)}
+                    colspan={Math.max(1, visibleColumns().length)}
                     class={classes().loading}
                     data-slot="loading"
                   >
@@ -1493,7 +1496,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                 fallback={
                   <tr>
                     <td
-                      colSpan={Math.max(1, visibleColumns().length)}
+                      colspan={Math.max(1, visibleColumns().length)}
                       class={classes().empty}
                       data-slot="empty"
                     >
@@ -1518,7 +1521,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                 <Show when={isVirtual() && virtualizedView().padTop > 0}>
                   <tr>
                     <td
-                      colSpan={Math.max(1, visibleColumns().length)}
+                      colspan={Math.max(1, visibleColumns().length)}
                       style={`height: ${virtualizedView().padTop}px; padding: 0; border: 0;`}
                     />
                   </tr>
@@ -1533,7 +1536,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                       return (
                         <tr class={classes().trGroup} data-slot="tr-group" data-depth={depth}>
                           <td
-                            colSpan={Math.max(1, visibleColumns().length)}
+                            colspan={Math.max(1, visibleColumns().length)}
                             class={classes().tdGroup}
                             style={{ "padding-left": `${depth * 1.5 + 1}rem` }}
                             data-slot="td-group"
@@ -1721,8 +1724,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                 <td
                                   class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
                                   style={`${sizeStyle()} ${pinStyle()} ${metaTdStyle()}`}
-                                  colSpan={colSpanVal()}
-                                  rowSpan={rowSpanVal()}
+                                  colspan={colSpanVal()}
+                                  rowspan={rowSpanVal()}
                                   data-slot="td"
                                   data-col-id={colId()}
                                 >
@@ -1757,7 +1760,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                         >
                           <tr class={classes().trExpanded} data-slot="tr-expanded">
                             <td
-                              colSpan={Math.max(1, visibleColumns().length)}
+                              colspan={Math.max(1, visibleColumns().length)}
                               class={classes().tdExpanded}
                               data-slot="td-expanded"
                             >
@@ -1878,8 +1881,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                         <td
                                           class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
                                           style={`${sizeStyle()} ${pinStyle()} ${metaTdStyle()}`}
-                                          colSpan={colSpanVal()}
-                                          rowSpan={rowSpanVal()}
+                                          colspan={colSpanVal()}
+                                          rowspan={rowSpanVal()}
                                           data-slot="td"
                                           data-col-id={colId()}
                                         >
@@ -1922,7 +1925,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                 <Show when={isVirtual() && virtualizedView().padBottom > 0}>
                   <tr>
                     <td
-                      colSpan={Math.max(1, visibleColumns().length)}
+                      colspan={Math.max(1, visibleColumns().length)}
                       style={`height: ${virtualizedView().padBottom}px; padding: 0; border: 0;`}
                     />
                   </tr>

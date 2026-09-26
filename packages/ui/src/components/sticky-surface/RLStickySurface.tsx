@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { StickySurfaceProps } from "./sticky-surface"
 import { stickySurfaceTheme } from "./sticky-surface.theme"
 
@@ -7,14 +8,8 @@ export interface RLStickySurfaceProps extends StickySurfaceProps {
 }
 
 const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "stuckShadow",
-    "offsetTop",
-    "zIndex",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children")
 
   const stuckShadow = () => props.stuckShadow ?? true
 

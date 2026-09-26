@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { StepsProps } from "./steps"
 import { stepsTheme } from "./steps.theme"
 
@@ -7,7 +8,8 @@ export interface RLStepsProps extends StepsProps {
 }
 
 const RLSteps: Component<RLStepsProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["size", "ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "size", "ui", "class", "children")
 
   const size = () => props.size || "md"
 

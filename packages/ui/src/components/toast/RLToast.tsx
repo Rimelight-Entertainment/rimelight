@@ -1,12 +1,5 @@
-import {
-  createMemo,
-  createSignal,
-  onMount,
-  onCleanup,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ToastProps } from "./toast"
 import { toastTheme } from "./toast.theme"
 import RLIcon from "../icon/RLIcon"
@@ -28,7 +21,9 @@ const variantIcons: Record<string, string> = {
 }
 
 const RLToast: Component<RLToastProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "title",
     "description",
     "variant",
@@ -42,7 +37,7 @@ const RLToast: Component<RLToastProps> = (allProps) => {
     "titleSlot",
     "descriptionSlot",
     "actionsSlot"
-  ])
+  )
 
   const [leaving, setLeaving] = createSignal(false)
   let rootRef: HTMLDivElement | undefined
@@ -90,7 +85,7 @@ const RLToast: Component<RLToastProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     const root = rootRef
     if (!root) return
 
@@ -105,13 +100,13 @@ const RLToast: Component<RLToastProps> = (allProps) => {
       })
     }
 
-    onCleanup(() => {
+    return () => {
       if (timerId !== null) clearTimeout(timerId)
       if (dismissTimerId !== undefined) clearTimeout(dismissTimerId)
       root.removeEventListener("mouseenter", pauseTimer)
       root.removeEventListener("mouseleave", startTimer)
       root.removeEventListener("focusin", pauseTimer)
-    })
+    }
   })
 
   return (

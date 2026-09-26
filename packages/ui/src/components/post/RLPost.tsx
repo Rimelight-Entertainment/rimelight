@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { PostProps } from "./post"
 import { postTheme } from "./post.theme"
 import RLBadge from "../badge/RLBadge"
@@ -14,7 +15,9 @@ export interface RLPostProps extends PostProps {
 }
 
 const RLPost: Component<RLPostProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "title",
     "description",
     "date",
@@ -33,7 +36,7 @@ const RLPost: Component<RLPostProps> = (allProps) => {
     "badgeSlot",
     "dateSlot",
     "footerSlot"
-  ])
+  )
 
   const classes = createMemo(() =>
     postTheme({

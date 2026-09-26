@@ -1,4 +1,5 @@
-import { createMemo, createSignal, For, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, For, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { StepperProps, StepperItem } from "./stepper"
 import { stepperTheme } from "./stepper.theme"
 import RLIcon from "../icon/RLIcon"
@@ -17,7 +18,9 @@ export interface RLStepperProps extends StepperProps {
 }
 
 const RLStepper: Component<RLStepperProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "value",
     "defaultValue",
@@ -36,7 +39,7 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
     "onChange",
     "onNext",
     "onPrev"
-  ])
+  )
 
   const items = (): StepperItem[] => props.items ?? []
   const valueKey = (): string => props.valueKey ?? "value"

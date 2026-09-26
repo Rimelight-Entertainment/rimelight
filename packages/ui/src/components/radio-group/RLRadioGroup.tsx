@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { RadioGroupProps } from "./radio-group"
 import { radioGroupTheme } from "./radio-group.theme"
 
@@ -7,7 +8,9 @@ export interface RLRadioGroupProps extends RadioGroupProps {
 }
 
 const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "ui",
     "class",
     "children",
@@ -17,7 +20,7 @@ const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
     "label",
     "value",
     "trailing"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     radioGroupTheme({

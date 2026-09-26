@@ -1,15 +1,6 @@
 import uiConfig from "virtual:rimelight/ui"
-import {
-  createMemo,
-  createSignal,
-  For,
-  onMount,
-  onCleanup,
-  Show,
-  splitProps,
-  type Component
-} from "solid-js"
-import { Portal } from "solid-js/web"
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js"
+import { Portal } from "@solidjs/web"
 import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts"
 import { shortcutsTheme } from "./shortcuts.theme"
 import RLIcon from "../icon/RLIcon"
@@ -30,7 +21,8 @@ interface CategorySection {
 const modalId = `rl-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
 const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["categories", "ui", "class"])
+  const props = allProps
+  const rest = omit(allProps, "categories", "ui", "class")
 
   const configCategories = (): Record<string, { label: string }> =>
     uiConfig.shortcuts?.categories || {}
@@ -48,7 +40,6 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   const categoryOrder = createMemo(() => Object.keys(configCategories()))
 
   const [isOpen, setIsOpen] = createSignal(false)
-  const [shortcuts, setShortcuts] = createSignal<RegisteredShortcut[]>([])
 
   const openHelp = () => {
     setIsOpen(true)
@@ -64,14 +55,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
-    const unsubscribe = activeShortcutsStore.subscribe((list) => {
-      setShortcuts([...list])
-    })
-    onCleanup(unsubscribe)
-  })
-
-  onMount(() => {
+  onSettled(() => {
     const handleOpenHelp = () => openHelp()
     document.addEventListener("rl-shortcuts:open", handleOpenHelp)
     document.addEventListener("rla-shortcuts:open", handleOpenHelp)
@@ -100,7 +84,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     }
     window.addEventListener("keydown", onKeyDown)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("rl-shortcuts:open", handleOpenHelp)
       document.removeEventListener("rla-shortcuts:open", handleOpenHelp)
       document.removeEventListener("shortcuts:open", handleOpenHelp)
@@ -109,7 +93,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
         document.body.style.overflow = ""
       }
       qShortcutCleanup()
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>
@@ -120,7 +104,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   )
 
   const sections = createMemo<CategorySection[]>(() => {
-    const list = shortcuts()
+    const list = activeShortcutsStore
     if (list.length === 0) return []
 
     const grouped: Record<string, RegisteredShortcut[]> = {}
@@ -197,7 +181,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
 
             <div class={resolvedClasses().body} data-slot="body">
               <Show
-                when={shortcuts().length > 0}
+                when={activeShortcutsStore.length > 0}
                 fallback={
                   <div class={resolvedClasses().empty} data-slot="empty">
                     No active shortcuts found on this page.

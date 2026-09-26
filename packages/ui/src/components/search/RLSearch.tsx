@@ -1,15 +1,6 @@
-import {
-  createMemo,
-  createSignal,
-  For,
-  onCleanup,
-  onMount,
-  Show,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
-import { Portal } from "solid-js/web"
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Portal } from "@solidjs/web"
 import type { SearchProps } from "./search"
 import { searchTheme } from "./search.theme"
 import RLIcon from "../icon/RLIcon"
@@ -34,7 +25,9 @@ export interface RLSearchProps extends SearchProps {
 const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`
 
 const RLSearch: Component<RLSearchProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "endpoint",
     "placeholder",
     "messages",
@@ -42,7 +35,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     "class",
     "children",
     "triggerSlot"
-  ])
+  )
 
   const endpoint = () => props.endpoint ?? "/api/search"
   const searchPlaceholder = () =>
@@ -89,7 +82,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     const handleOpen = () => openModal()
     const handleToggle = () => toggleModal()
 
@@ -124,7 +117,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     }
     window.addEventListener("keydown", onKeyDown)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("rl-search:open", handleOpen)
       document.removeEventListener("rla-search:open", handleOpen)
       document.removeEventListener("search:open", handleOpen)
@@ -135,7 +128,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
       }
       if (debounceTimer) clearTimeout(debounceTimer)
       searchShortcutCleanup()
-    })
+    }
   })
 
   const handleInput = (val: string) => {

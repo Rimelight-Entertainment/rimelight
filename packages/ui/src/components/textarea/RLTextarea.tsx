@@ -1,4 +1,4 @@
-import { createMemo, splitProps, type Component } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
 import type { TextareaProps } from "./textarea"
 import { textareaTheme } from "./textarea.theme"
 
@@ -12,7 +12,9 @@ export interface RLTextareaProps extends TextareaProps {
 }
 
 const RLTextarea: Component<RLTextareaProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "value",
     "placeholder",
     "disabled",
@@ -32,7 +34,7 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
     "onFocus",
     "onKeyDown",
     "ref"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     textareaTheme({

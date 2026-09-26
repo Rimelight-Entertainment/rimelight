@@ -1,11 +1,12 @@
-import { createMemo, splitProps, type Component } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
 import type { SpinnerProps } from "./spinner"
 import { spinnerTheme } from "./spinner.theme"
 
 export interface RLSpinnerProps extends SpinnerProps {}
 
 const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["size", "color", "theme", "ui", "class"])
+  const props = allProps
+  const rest = omit(allProps, "size", "color", "theme", "ui", "class")
 
   const classes = createMemo(() =>
     spinnerTheme({

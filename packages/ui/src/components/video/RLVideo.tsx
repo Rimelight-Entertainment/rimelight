@@ -1,4 +1,5 @@
-import { createMemo, createSignal, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { VideoProps } from "./video"
 import { videoTheme } from "./video.theme"
 import RLIcon from "../icon/RLIcon"
@@ -64,7 +65,9 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
 }
 
 const RLVideo: Component<RLVideoProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "src",
     "title",
     "icon",
@@ -74,7 +77,7 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
     "ui",
     "class",
     "children"
-  ])
+  )
 
   const [isPlaying, setIsPlaying] = createSignal(false)
 

@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from "vite-plus/test"
+import { describe, it, expect } from "vite-plus/test"
 import { normalizeModifier, formatShortcutKeys } from "../src/shortcuts"
-import { atom } from "../src/stores"
+import { createStore } from "solid-js"
+import { toasts, addToast, removeToast, clearToasts } from "../src/components/toast/store"
 
-describe("@rimelight/ui shortcuts and reactive state stores", () => {
+describe("@rimelight/ui shortcuts and reactive solid stores", () => {
   describe("normalizeModifier & formatShortcutKeys", () => {
     it("should normalize modifier aliases", () => {
       expect(normalizeModifier("cmd")).toBe("meta")
@@ -20,17 +21,32 @@ describe("@rimelight/ui shortcuts and reactive state stores", () => {
     })
   })
 
-  describe("reactive stores", () => {
-    it("should create, update, and subscribe to atom store", () => {
-      const state = atom({ theme: "dark", active: true })
-      const fn = vi.fn()
-      const unbind = state.subscribe(fn)
+  describe("solid stores", () => {
+    it("should create and update an isolated solid store", () => {
+      const [state, setState] = createStore({ theme: "dark", active: true })
+      expect(state.theme).toBe("dark")
 
-      expect(fn).toHaveBeenCalledWith({ theme: "dark", active: true })
-      state.set({ theme: "light", active: false })
-      expect(fn).toHaveBeenCalledWith({ theme: "light", active: false })
-      expect(state.get()).toEqual({ theme: "light", active: false })
-      unbind()
+      setState((s) => ({ ...s, theme: "light", active: false }))
+      expect(state.theme).toBe("light")
+      expect(state.active).toBe(false)
+    })
+
+    it("should add, remove, and clear toasts via the solid toast store", () => {
+      clearToasts()
+      expect(toasts.length).toBe(0)
+
+      const item = addToast({ title: "Hello", description: "World" })
+      expect(toasts.length).toBe(1)
+      expect(toasts[0]!.title).toBe("Hello")
+
+      removeToast(item.id)
+      expect(toasts.length).toBe(0)
+
+      addToast({ title: "A" })
+      addToast({ title: "B" })
+      expect(toasts.length).toBe(2)
+      clearToasts()
+      expect(toasts.length).toBe(0)
     })
   })
 })

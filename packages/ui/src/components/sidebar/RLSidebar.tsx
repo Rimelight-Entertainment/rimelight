@@ -1,4 +1,5 @@
-import { createMemo, For, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, For, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { SidebarItem, SidebarProps } from "./sidebar"
 import { sidebarTheme } from "./sidebar.theme"
 import RLBadge from "../badge/RLBadge"
@@ -163,7 +164,9 @@ const RLSidebarItems: Component<{
 }
 
 const RLSidebar: Component<RLSidebarProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "collapsible",
     "variant",
@@ -177,7 +180,7 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
     "headerSlot",
     "footer",
     "footerSlot"
-  ])
+  )
 
   const t = () => props.t ?? ((key: string) => key)
   const depth = () => props._depth ?? 0

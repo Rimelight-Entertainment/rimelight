@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { SpeedDialProps } from "./speed-dial"
 import { speedDialTheme } from "./speed-dial.theme"
 
@@ -7,7 +8,8 @@ export interface RLSpeedDialProps extends SpeedDialProps {
 }
 
 const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     speedDialTheme({

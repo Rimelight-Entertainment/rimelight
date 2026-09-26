@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vite-plus/test"
 import { createGenerator } from "unocss"
+import { createStore } from "solid-js"
 import rimelightUiPreset from "../src/preset"
 import { normalizeModifier, formatShortcutKeys } from "../src/shortcuts"
-import { atom } from "../src/stores"
 
 describe("@rimelight/ui - Preset Architecture and Reactive State Isolation", () => {
   it("preset configures theme colors with canonical pointers", async () => {
@@ -27,12 +27,12 @@ describe("@rimelight/ui - Preset Architecture and Reactive State Isolation", () 
     expect(formatted).toEqual(["Ctrl", "Alt", "K"])
   })
 
-  it("atom store provides reactive isolation across instances", () => {
-    const store1 = atom({ count: 0 })
-    const store2 = atom({ count: 100 })
+  it("solid stores provide reactive isolation across instances", () => {
+    const [store1, setStore1] = createStore({ count: 0 })
+    const [store2] = createStore({ count: 100 })
 
-    store1.set({ count: 1 })
-    expect(store1.get().count).toBe(1)
-    expect(store2.get().count).toBe(100)
+    setStore1((s) => ({ ...s, count: 1 }))
+    expect(store1.count).toBe(1)
+    expect(store2.count).toBe(100)
   })
 })

@@ -2,13 +2,12 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ScrollAreaProps } from "./scroll-area"
 import { scrollAreaTheme } from "./scroll-area.theme"
 
@@ -17,14 +16,8 @@ export interface RLScrollAreaProps extends ScrollAreaProps {
 }
 
 const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "orientation",
-    "scrollHideDelay",
-    "height",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "orientation", "scrollHideDelay", "height", "ui", "class", "children")
 
   const orientation = () => props.orientation ?? "vertical"
   const hideDelay = () => props.scrollHideDelay ?? 600
@@ -116,22 +109,24 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     return () => thumb.removeEventListener("mousedown", onMouseDown)
   }
 
-  onMount(() => {
+  onSettled(() => {
     updateThumbs()
     const cleanV = setupDraggable(vThumbRef, "scrollTop", "clientY", "scrollHeight", "clientHeight")
     const cleanH = setupDraggable(hThumbRef, "scrollLeft", "clientX", "scrollWidth", "clientWidth")
 
-    onCleanup(() => {
+    return () => {
       if (hideTimer) clearTimeout(hideTimer)
       cleanV()
       cleanH()
-    })
+    }
   })
 
-  createEffect(() => {
-    void props.children
-    requestAnimationFrame(() => updateThumbs())
-  })
+  createEffect(
+    () => props.children,
+    () => {
+      requestAnimationFrame(() => updateThumbs())
+    }
+  )
 
   const resolvedClasses = createMemo(() =>
     scrollAreaTheme({

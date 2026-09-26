@@ -1,6 +1,7 @@
 import type { UserConfig } from "unocss"
 import type { RimelightIcons } from "./icons"
 import type { PALETTES } from "./preset"
+import type { WebFontsOptions } from "./fonts"
 
 export type Theme = "light" | "dark" | "flat"
 export type BuiltinThemeColor = keyof typeof PALETTES
@@ -44,9 +45,14 @@ export interface PresetOptions {
    */
   icons?: RimelightIcons
   /**
+   * Web fonts configuration using UnoCSS Web Fonts preset. Fonts are always downloaded and served
+   * locally (dev + build); pass `false` to disable. See `WebFontsOptions` in `./fonts`.
+   */
+  fonts?: WebFontsOptions | boolean
+  /**
    * Configure which built-in UnoCSS presets are enabled/disabled.
    */
-  presets?: { wind?: boolean; typography?: boolean; icons?: boolean }
+  presets?: { wind?: boolean; typography?: boolean; icons?: boolean; fonts?: boolean }
 }
 
 export interface UIConfig extends PresetOptions {

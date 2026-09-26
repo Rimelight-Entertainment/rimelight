@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ProgressProps } from "./progress"
 import { progressTheme } from "./progress.theme"
 
@@ -7,15 +8,8 @@ export interface RLProgressProps extends ProgressProps {
 }
 
 const RLProgress: Component<RLProgressProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "value",
-    "max",
-    "theme",
-    "color",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "value", "max", "theme", "color", "ui", "class", "children")
 
   const value = () => props.value ?? 0
   const max = () => props.max ?? 100

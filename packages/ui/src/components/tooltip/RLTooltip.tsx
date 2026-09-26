@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { TooltipProps } from "./tooltip"
 import { tooltipTheme } from "./tooltip.theme"
 
@@ -8,14 +9,8 @@ export interface RLTooltipProps extends TooltipProps {
 }
 
 const RLTooltip: Component<RLTooltipProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "content",
-    "placement",
-    "ui",
-    "class",
-    "children",
-    "contentSlot"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "content", "placement", "ui", "class", "children", "contentSlot")
 
   const placement = () => props.placement ?? "top"
 
@@ -34,7 +29,7 @@ const RLTooltip: Component<RLTooltipProps> = (allProps) => {
       data-placement={placement()}
       {...rest}
     >
-      <div class={resolvedClasses().trigger} data-slot="trigger" tabIndex={0}>
+      <div class={resolvedClasses().trigger} data-slot="trigger" tabindex={0}>
         {props.children}
       </div>
 
