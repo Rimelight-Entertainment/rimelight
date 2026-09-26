@@ -94,7 +94,6 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       if (typeof localStorage !== "undefined") {
         localStorage.setItem("rl-grid-visible", next ? "true" : "false")
       }
-      if (overlayRef) overlayRef.style.display = next ? "block" : "none"
       return next
     })
   }
@@ -321,11 +320,32 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
   }
 
+  // Visibility + z-index are applied via classList / CSSOM (no SSR style
+  // attributes, keeping strict `style-src 'self'` CSP clean). All reactive
+  // deps are read inside the tracking scope.
   createEffect(
-    () => visible(),
+    () => {
+      const isVisible = visible()
+      // Track breakpoint + spacing memos so grid redraws on resize.
+      currentBreakpoint()
+      gutterArray()
+      marginArray()
+      return isVisible
+    },
     (isVisible) => {
-      if (overlayRef) overlayRef.style.display = isVisible ? "block" : "none"
+      if (overlayRef) {
+        overlayRef.classList.toggle("hidden", !isVisible)
+        overlayRef.classList.toggle("block", isVisible)
+      }
       updateGrid()
+    }
+  )
+
+  // Custom z-index via CSSOM only (never SSR-rendered as a style attribute).
+  createEffect(
+    () => props.zIndex,
+    (zIndex) => {
+      if (overlayRef) overlayRef.style.zIndex = String(zIndex ?? 1000)
     }
   )
 
@@ -334,7 +354,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       <Dynamic
         component={"rl-layout-grid"}
         ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
-        class={resolvedClasses().root}
+        class={`${resolvedClasses().root} contents`}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}
         data-md-cols={props.mdCols ?? 8}
@@ -359,43 +379,23 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         data-full-width-opacity={props.fullWidthGridOpacity ?? 0.05}
         data-show-full-width-background={(props.showFullWidthBackground ?? true) ? "true" : "false"}
         data-shortcut={props.shortcut ?? "meta_shift_g"}
-        style={{ display: "contents" }}
         {...rest}
       >
         <aside
           ref={(el) => (overlayRef = el as HTMLElement | undefined)}
-          class={resolvedClasses().overlay}
+          class={`${resolvedClasses().overlay} hidden`}
           data-slot="overlay"
-          style={{ "z-index": `${props.zIndex ?? 1000}`, "display": "none" }}
           id="rl-layout-grid-overlay"
         >
           <div
             ref={(el) => (columnsRef = el as HTMLElement | undefined)}
-            style={{ position: "relative", width: "100%", height: "100%" }}
+            class="relative w-full h-full"
             data-slot="columns-container"
           />
           <div
             ref={(el) => (indicatorRef = el as HTMLElement | undefined)}
             data-slot="indicator"
-            style={{
-              "position": "fixed",
-              "bottom": "20px",
-              "right": "20px",
-              "background": "rgba(0,0,0,0.85)",
-              "color": "#fff",
-              "padding": "6px 12px",
-              "border-radius": "6px",
-              "font-family": "var(--font-mono, monospace)",
-              "font-size": "11px",
-              "font-weight": "bold",
-              "pointer-events": "none",
-              "border": "1px solid rgba(255,255,255,0.15)",
-              "box-shadow": "0 4px 12px rgba(0,0,0,0.5)",
-              "letter-spacing": "0.05em",
-              "display": "flex",
-              "align-items": "center",
-              "gap": "8px"
-            }}
+            class="fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2"
           />
         </aside>
       </Dynamic>

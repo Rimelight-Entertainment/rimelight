@@ -1,6 +1,7 @@
 export interface RimelightSolidSecurityOptions {
   domain?: string | undefined
   imgSrc?: string[] | undefined
+  connectSrc?: string[] | undefined
   [key: string]: any
 }
 
