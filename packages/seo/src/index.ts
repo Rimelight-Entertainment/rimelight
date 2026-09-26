@@ -83,6 +83,6 @@ export {
 
 export { handleOgRequest, createHonoOgHandler } from "./og/index.js"
 
-import { rimelightSeo } from "./plugin.js"
-export { rimelightSeo }
-export default rimelightSeo
+import { seo } from "./plugin.js"
+export { seo }
+export default seo
