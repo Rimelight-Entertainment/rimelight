@@ -19,6 +19,7 @@ import type {
   TableExportOptions
 } from "./table"
 import { tableTheme } from "./table.theme"
+export * from "./table"
 import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme"
 import RLInput from "../input/RLInput"
 import RLDropdownMenu from "../dropdown-menu/RLDropdownMenu"
