@@ -1,11 +1,5 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { CollapsibleProps } from "./collapsible"
 import { collapsibleTheme } from "./collapsible.theme"
 import RLIcon from "../icon/RLIcon"
@@ -18,7 +12,9 @@ export interface RLCollapsibleProps extends CollapsibleProps {
 }
 
 const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "open",
     "defaultOpen",
     "label",
@@ -30,13 +26,16 @@ const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
     "children",
     "triggerSlot",
     "onOpenChange"
-  ])
+  )
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false)
 
-  createEffect(() => {
-    if (props.open !== undefined) setIsOpen(props.open)
-  })
+  createEffect(
+    () => props.open,
+    (open) => {
+      if (open !== undefined) setIsOpen(open)
+    }
+  )
 
   const resolvedClasses = createMemo(() =>
     collapsibleTheme({

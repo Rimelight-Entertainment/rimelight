@@ -1,5 +1,6 @@
 export {
   toasts,
+  setToasts,
   toast,
   addToast,
   removeToast,

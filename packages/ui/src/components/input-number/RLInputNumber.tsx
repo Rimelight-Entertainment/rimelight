@@ -1,4 +1,5 @@
-import { createMemo, createSignal, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { InputNumberProps } from "./input-number"
 import { inputNumberTheme } from "./input-number.theme"
 import { inputTheme } from "../input/input.theme"
@@ -26,7 +27,9 @@ export interface RLInputNumberProps extends InputNumberProps {
 }
 
 const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "children",
     "value",
     "defaultValue",
@@ -47,7 +50,7 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
     "onFocus",
     "onKeyDown",
     "onValueChange"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     inputNumberTheme({
@@ -154,7 +157,7 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
         <div class="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col">
           <button
             type="button"
-            tabIndex={-1}
+            tabindex={-1}
             aria-label="Increment"
             class="flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50"
             data-slot="increment"
@@ -165,7 +168,7 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
           </button>
           <button
             type="button"
-            tabIndex={-1}
+            tabindex={-1}
             aria-label="Decrement"
             class="flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50"
             data-slot="decrement"

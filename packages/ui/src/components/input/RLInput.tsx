@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { InputProps } from "./input"
 import { inputTheme } from "./input.theme"
 import RLIcon from "../icon/RLIcon"
@@ -15,7 +16,9 @@ export interface RLInputProps extends InputProps {
 }
 
 const RLInput: Component<RLInputProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "type",
     "value",
     "placeholder",
@@ -40,7 +43,7 @@ const RLInput: Component<RLInputProps> = (allProps) => {
     "ref",
     "leading",
     "trailing"
-  ])
+  )
 
   const hasLeading = () => !!(props.leadingIcon || props.leading)
   const hasTrailing = () => !!(props.trailingIcon || props.trailing)

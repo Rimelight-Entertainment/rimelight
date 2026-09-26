@@ -1,5 +1,6 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { MainProps } from "./main"
 import { mainTheme } from "./main.theme"
 
@@ -8,32 +9,37 @@ export interface RLMainProps extends MainProps {
 }
 
 const RLMain: Component<RLMainProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["as", "ui", "class", "children"])
-
-  const tag = () => props.as ?? "main"
+  const props = allProps
+  const rest = omit(allProps, "as", "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     mainTheme({
-      hasContent: props.children !== undefined,
       ui: props.ui,
       class: props.class
     })
   )
 
+  if (props.as) {
+    return (
+      <Dynamic
+        component={props.as}
+        class={`${resolvedClasses().root} rl-main-container`}
+        data-slot="main"
+        {...rest}
+      >
+        {props.children}
+      </Dynamic>
+    )
+  }
+
   return (
-    <Dynamic
-      component={tag()}
-      class={`${resolvedClasses().root}  rl-main-container`}
+    <main
+      class={`${resolvedClasses().root} rl-main-container`}
       data-slot="main"
       {...rest}
     >
       {props.children}
-      <style>{`
-        .rl-main-container {
-          padding-top: var(--rl-total-header-height, 4rem);
-        }
-      `}</style>
-    </Dynamic>
+    </main>
   )
 }
 

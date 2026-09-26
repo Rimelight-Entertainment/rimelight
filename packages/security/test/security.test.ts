@@ -240,4 +240,31 @@ describe("Security Middleware Headers", () => {
 
     delete (globalThis as any).HTMLRewriter
   })
+
+  it("permits unsafe-inline in dev mode Report-Only simulation to avoid false-positive warnings", async () => {
+    const originalEnv = process.env["NODE_ENV"]
+    process.env["NODE_ENV"] = "development"
+    try {
+      const middleware = security({ domain: "example.com" })
+      const req = new Request("http://localhost:5173/")
+      const res = new Response("<html><head></head><body>Hello</body></html>", {
+        headers: { "content-type": "text/html" }
+      })
+      const ctx = { req: { raw: req }, res }
+
+      await middleware(ctx, async () => {})
+
+      const activeCsp = ctx.res.headers.get("Content-Security-Policy")
+      const reportOnlyCsp = ctx.res.headers.get("Content-Security-Policy-Report-Only")
+
+      expect(activeCsp).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'")
+      expect(reportOnlyCsp).toBeDefined()
+      expect(reportOnlyCsp).toContain(
+        "script-src 'self' 'unsafe-inline' 'inline-speculation-rules'"
+      )
+      expect(reportOnlyCsp).toContain("style-src 'self' 'unsafe-inline'")
+    } finally {
+      process.env["NODE_ENV"] = originalEnv
+    }
+  })
 })

@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ContextMenuProps } from "./context-menu"
 import { contextMenuTheme } from "./context-menu.theme"
 
@@ -7,7 +8,8 @@ export interface RLContextMenuProps extends ContextMenuProps {
 }
 
 const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     contextMenuTheme({

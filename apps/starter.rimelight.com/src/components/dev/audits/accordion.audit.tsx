@@ -30,7 +30,7 @@ const BASE_ITEMS: AccordionItem[] = [
   }
 ]
 
-const AccordionSandbox = (): JSX.Element => {
+export const AccordionSandbox = (): JSX.Element => {
   const [multiple, setMultiple] = createSignal(false)
   const [disabled, setDisabled] = createSignal(false)
   const [useCustomIcon, setUseCustomIcon] = createSignal(false)

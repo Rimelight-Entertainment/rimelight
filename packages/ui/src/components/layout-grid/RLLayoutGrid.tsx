@@ -2,13 +2,12 @@ import {
   createMemo,
   createSignal,
   createEffect,
-  splitProps,
+  omit,
   Show,
-  onMount,
-  onCleanup,
+  onSettled,
   type Component
 } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { Dynamic } from "@solidjs/web"
 import type { LayoutGridProps } from "./layout-grid"
 import { layoutGridTheme } from "./layout-grid.theme"
 import { defineShortcuts } from "../../shortcuts"
@@ -39,7 +38,9 @@ const hexToRgba = (hex: string, alpha: number): string => {
 export interface RLLayoutGridProps extends LayoutGridProps {}
 
 const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "cols",
     "smCols",
     "mdCols",
@@ -68,7 +69,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     "devOnly",
     "ui",
     "class"
-  ])
+  )
 
   const resolvedClasses = createMemo(() => layoutGridTheme({ ui: props.ui, class: props.class }))
 
@@ -93,12 +94,11 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       if (typeof localStorage !== "undefined") {
         localStorage.setItem("rl-grid-visible", next ? "true" : "false")
       }
-      if (overlayRef) overlayRef.style.display = next ? "block" : "none"
       return next
     })
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof localStorage !== "undefined") {
       setVisible(localStorage.getItem("rl-grid-visible") === "true")
     }
@@ -133,16 +133,21 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       }
     })
 
-    onCleanup(() => {
+    return () => {
       resizeObserver.disconnect()
       cleanupShortcuts()
-    })
+    }
   })
 
-  const updateGrid = () => {
+  const updateGrid = (
+    bp: "base" | "sm" | "md" | "lg" | "xl",
+    gutters: number[],
+    margins: number[],
+    isVisible: boolean
+  ) => {
     const columnsContainer = columnsRef
     const indicatorElement = indicatorRef
-    if (!columnsContainer || !visible()) return
+    if (!columnsContainer || !isVisible) return
 
     const width = document.documentElement.clientWidth
     const smBreakpoint = props.smBreakpoint ?? 640
@@ -154,7 +159,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     let colCount = props.cols ?? 4
     let breakpointThreshold = 0
 
-    switch (currentBreakpoint()) {
+    switch (bp) {
       case "xl":
         breakpointIndex = 4
         colCount = props.xlCols ?? 12
@@ -182,8 +187,6 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         break
     }
 
-    const gutters = gutterArray()
-    const margins = marginArray()
     const gutterValue = gutters[breakpointIndex] ?? gutters[gutters.length - 1] ?? 1
     const marginValue = margins[breakpointIndex] ?? margins[margins.length - 1] ?? 1
 
@@ -255,7 +258,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
 
     if (indicatorElement) {
-      indicatorElement.innerHTML = `<span style="color: #3b82f6;">${currentBreakpoint().toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
+      indicatorElement.innerHTML = `<span style="color: #3b82f6;">${bp.toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
     }
 
     const gridWrapper = document.createElement("div")
@@ -320,17 +323,40 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
   }
 
-  createEffect(() => {
-    if (overlayRef) overlayRef.style.display = visible() ? "block" : "none"
-    updateGrid()
-  })
+  // Visibility + z-index are applied via classList / CSSOM (no SSR style
+  // attributes, keeping strict `style-src 'self'` CSP clean). All reactive
+  // deps are read inside the tracking scope.
+  createEffect(
+    () => {
+      const isVisible = visible()
+      const bp = currentBreakpoint()
+      const gutters = gutterArray()
+      const margins = marginArray()
+      return { isVisible, bp, gutters, margins }
+    },
+    ({ isVisible, bp, gutters, margins }) => {
+      if (overlayRef) {
+        overlayRef.classList.toggle("hidden", !isVisible)
+        overlayRef.classList.toggle("block", isVisible)
+      }
+      updateGrid(bp, gutters, margins, isVisible)
+    }
+  )
+
+  // Custom z-index via CSSOM only (never SSR-rendered as a style attribute).
+  createEffect(
+    () => props.zIndex,
+    (zIndex) => {
+      if (overlayRef) overlayRef.style.zIndex = String(zIndex ?? 1000)
+    }
+  )
 
   return (
     <Show when={shouldRender()}>
       <Dynamic
         component={"rl-layout-grid"}
         ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
-        class={resolvedClasses().root}
+        class={`${resolvedClasses().root} contents`}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}
         data-md-cols={props.mdCols ?? 8}
@@ -355,43 +381,23 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         data-full-width-opacity={props.fullWidthGridOpacity ?? 0.05}
         data-show-full-width-background={(props.showFullWidthBackground ?? true) ? "true" : "false"}
         data-shortcut={props.shortcut ?? "meta_shift_g"}
-        style={{ display: "contents" }}
         {...rest}
       >
         <aside
           ref={(el) => (overlayRef = el as HTMLElement | undefined)}
-          class={resolvedClasses().overlay}
+          class={`${resolvedClasses().overlay} hidden`}
           data-slot="overlay"
-          style={{ "z-index": `${props.zIndex ?? 1000}`, "display": "none" }}
           id="rl-layout-grid-overlay"
         >
           <div
             ref={(el) => (columnsRef = el as HTMLElement | undefined)}
-            style={{ position: "relative", width: "100%", height: "100%" }}
+            class="relative w-full h-full"
             data-slot="columns-container"
           />
           <div
             ref={(el) => (indicatorRef = el as HTMLElement | undefined)}
             data-slot="indicator"
-            style={{
-              "position": "fixed",
-              "bottom": "20px",
-              "right": "20px",
-              "background": "rgba(0,0,0,0.85)",
-              "color": "#fff",
-              "padding": "6px 12px",
-              "border-radius": "6px",
-              "font-family": "var(--font-mono, monospace)",
-              "font-size": "11px",
-              "font-weight": "bold",
-              "pointer-events": "none",
-              "border": "1px solid rgba(255,255,255,0.15)",
-              "box-shadow": "0 4px 12px rgba(0,0,0,0.5)",
-              "letter-spacing": "0.05em",
-              "display": "flex",
-              "align-items": "center",
-              "gap": "8px"
-            }}
+            class="fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2"
           />
         </aside>
       </Dynamic>

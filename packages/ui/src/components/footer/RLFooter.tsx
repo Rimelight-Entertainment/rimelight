@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { FooterProps } from "./footer"
 import { footerTheme } from "./footer.theme"
 
@@ -10,7 +11,9 @@ export interface RLFooterProps extends FooterProps {
 }
 
 const RLFooter: Component<RLFooterProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "contain",
     "theme",
     "ui",
@@ -19,7 +22,7 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
     "center",
     "right",
     "children"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     footerTheme({

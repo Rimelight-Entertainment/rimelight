@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { CardProps } from "./card"
 import { cardTheme } from "./card.theme"
 
@@ -10,7 +11,9 @@ export interface RLCardProps extends CardProps {
 }
 
 const RLCard: Component<RLCardProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "title",
     "description",
     "mediaSrc",
@@ -24,7 +27,7 @@ const RLCard: Component<RLCardProps> = (allProps) => {
     "header",
     "footer",
     "media"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     cardTheme({

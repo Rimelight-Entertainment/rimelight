@@ -1,4 +1,4 @@
-import { createMemo, splitProps, For, type Component } from "solid-js"
+import { createMemo, omit, For, type Component } from "solid-js"
 import type { PaginationProps } from "./pagination"
 import { paginationTheme } from "./pagination.theme"
 import RLIcon from "../icon/RLIcon"
@@ -9,7 +9,9 @@ export interface RLPaginationProps extends PaginationProps {
 }
 
 const RLPagination: Component<RLPaginationProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "currentPage",
     "page",
     "totalPages",
@@ -17,7 +19,7 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
     "onPageChange",
     "ui",
     "class"
-  ])
+  )
 
   const currentPage = () => props.page ?? props.currentPage ?? 1
   const totalPages = () => props.totalPages ?? 1
@@ -65,9 +67,11 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
             type="button"
             class={`${resolvedClasses().link} ${currentPage() === 1 ? "pointer-events-none opacity-50" : ""}`}
             aria-label="Go to previous page"
-            aria-disabled={currentPage() === 1}
+            aria-disabled={currentPage() === 1 ? "true" : "false"}
             disabled={currentPage() === 1}
-            onClick={() => props.onPageChange?.(currentPage() - 1)}
+            onClick={() => {
+              props.onPageChange?.(currentPage() - 1)
+            }}
           >
             <RLIcon name="chevronLeft" size="sm" aria-hidden="true" />
           </button>
@@ -85,7 +89,9 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
                   type="button"
                   class={itemLinkClasses(p === currentPage())}
                   aria-current={p === currentPage() ? "page" : undefined}
-                  onClick={() => props.onPageChange?.(p)}
+                  onClick={() => {
+                    if (typeof p === "number") props.onPageChange?.(p)
+                  }}
                 >
                   {p}
                 </button>
@@ -99,9 +105,11 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
             type="button"
             class={`${resolvedClasses().link} ${currentPage() === totalPages() ? "pointer-events-none opacity-50" : ""}`}
             aria-label="Go to next page"
-            aria-disabled={currentPage() === totalPages()}
+            aria-disabled={currentPage() === totalPages() ? "true" : "false"}
             disabled={currentPage() === totalPages()}
-            onClick={() => props.onPageChange?.(currentPage() + 1)}
+            onClick={() => {
+              props.onPageChange?.(currentPage() + 1)
+            }}
           >
             <RLIcon name="chevronRight" size="sm" aria-hidden="true" />
           </button>

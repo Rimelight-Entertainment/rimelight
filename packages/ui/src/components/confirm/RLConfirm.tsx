@@ -1,11 +1,5 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ConfirmProps } from "./confirm"
 import { confirmTheme } from "./confirm.theme"
 import RLButton from "../button/RLButton"
@@ -23,7 +17,9 @@ export interface RLConfirmProps extends ConfirmProps {
 }
 
 const RLConfirm: Component<RLConfirmProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "variant",
     "title",
     "description",
@@ -42,7 +38,7 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     "onOpenChange",
     "onConfirm",
     "onCancel"
-  ])
+  )
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? false)
   let dialogRef: HTMLDialogElement | undefined
@@ -55,20 +51,26 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     })
   )
 
-  createEffect(() => {
-    if (!dialogRef) return
-    if (isOpen()) {
-      if (!dialogRef.open) dialogRef.showModal()
-    } else {
-      if (dialogRef.open) dialogRef.close()
+  createEffect(
+    () => isOpen(),
+    (open) => {
+      if (!dialogRef) return
+      if (open) {
+        if (!dialogRef.open) dialogRef.showModal()
+      } else {
+        if (dialogRef.open) dialogRef.close()
+      }
     }
-  })
+  )
 
-  createEffect(() => {
-    if (props.open !== undefined) {
-      setIsOpen(props.open)
+  createEffect(
+    () => props.open,
+    (open) => {
+      if (open !== undefined) {
+        setIsOpen(open)
+      }
     }
-  })
+  )
 
   const openDialog = () => {
     setIsOpen(true)

@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, Show, splitProps, type Component } from "solid-js"
+import { createMemo, createSignal, For, Show, type Component } from "solid-js"
 import RLButton from "../button/RLButton"
 
 type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp"
@@ -76,15 +76,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
 }
 
 const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
-  const [props] = splitProps(allProps, [
-    "pkg",
-    "type",
-    "dev",
-    "args",
-    "comment",
-    "prefix",
-    "managers"
-  ])
+  const props = allProps
 
   const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
     let cmd = commands[mgr][cmdType]
@@ -111,9 +103,9 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
   }
 
   const tabs = createMemo(() =>
-    (props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"])
+    ((props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"]) as Manager[])
       .map((mgr) => ({ mgr, cmd: getCommand(mgr, props.type ?? "add") }))
-      .filter((tab) => tab.cmd !== undefined)
+      .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined)
   )
 
   const [activeIdx, setActiveIdx] = createSignal(0)

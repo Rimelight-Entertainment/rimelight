@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { KbdProps } from "./kbd"
 import { kbdTheme } from "./kbd.theme"
 
@@ -7,15 +8,8 @@ export interface RLKbdProps extends KbdProps {
 }
 
 const RLKbd: Component<RLKbdProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "color",
-    "variant",
-    "size",
-    "theme",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "color", "variant", "size", "theme", "ui", "class", "children")
 
   const classes = createMemo(() =>
     kbdTheme({

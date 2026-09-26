@@ -1,4 +1,11 @@
-import { createSignal, createMemo, createEffect, onMount, onCleanup, type Accessor } from "solid-js"
+import {
+  createSignal,
+  createMemo,
+  createEffect,
+  onSettled,
+  onCleanup,
+  type Accessor
+} from "solid-js"
 
 export interface HeaderLayer {
   id: string
@@ -61,7 +68,7 @@ function syncTotalHeaderHeight(total: number) {
  * collapses on scroll, and synchronizes the `--rl-total-header-height` CSS variable.
  */
 export function useHeaderStack() {
-  onMount(() => {
+  onSettled(() => {
     initGlobalScroll()
   })
 
@@ -74,7 +81,7 @@ export function useHeaderStack() {
         ? options.visible
         : () => Boolean(options.visible ?? true)
 
-    onMount(() => {
+    onSettled(() => {
       initGlobalScroll()
       if (!el) return
 
@@ -127,9 +134,12 @@ export function useHeaderStack() {
       }
 
       if (typeof options.visible === "function") {
-        createEffect(() => {
-          updateHeight()
-        })
+        createEffect(
+          () => (typeof options.visible === "function" ? options.visible() : true),
+          () => {
+            updateHeight()
+          }
+        )
       }
 
       onCleanup(() => {
@@ -195,9 +205,12 @@ export function useHeaderStack() {
     return total
   })
 
-  createEffect(() => {
-    syncTotalHeaderHeight(totalOffset())
-  })
+  createEffect(
+    () => totalOffset(),
+    (offset) => {
+      syncTotalHeaderHeight(offset)
+    }
+  )
 
   return {
     scrollY,

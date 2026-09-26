@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { BadgeProps } from "./badge"
 import { badgeTheme } from "./badge.theme"
 
@@ -7,7 +8,9 @@ export interface RLBadgeProps extends BadgeProps {
 }
 
 const RLBadge: Component<RLBadgeProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "label",
     "variant",
     "color",
@@ -17,7 +20,7 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
     "ui",
     "class",
     "children"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     badgeTheme({

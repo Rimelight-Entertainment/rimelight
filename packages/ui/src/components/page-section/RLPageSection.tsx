@@ -1,5 +1,6 @@
-import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createMemo, omit, For, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
+import { Dynamic } from "@solidjs/web"
 import type { PageSectionProps } from "./page-section"
 import { pageSectionTheme } from "./page-section.theme"
 import RLIcon from "../icon/RLIcon"
@@ -22,7 +23,9 @@ export interface RLPageSectionProps extends PageSectionProps {
 }
 
 const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "as",
     "variant",
     "ctaVariant",
@@ -50,7 +53,7 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     "content",
     "bottom",
     "children"
-  ])
+  )
 
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "hero" || props.variant === "cta"

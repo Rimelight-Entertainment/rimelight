@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/auth",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "private": false,
   "description": "Rimelight Entertainment's Universal Authentication & Identity Package",
   "homepage": "https://rimelight.com/docs",
@@ -60,9 +60,13 @@
       "types": "./dist/jwt.d.mts",
       "import": "./dist/jwt.mjs"
     },
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
+    },
     "./integration": {
-      "types": "./dist/vite.d.mts",
-      "import": "./dist/vite.mjs"
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
     }
   },
   "publishConfig": {

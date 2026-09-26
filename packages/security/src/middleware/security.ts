@@ -151,13 +151,16 @@ export function security(options: SecurityOptions = {}) {
   }
 
   return async (c: any, next: any): Promise<Response | void> => {
-    const isTest = import.meta.env?.MODE === "test" || process.env["NODE_ENV"] === "test"
-    const isProd =
-      import.meta.env?.PROD === true || process.env["NODE_ENV"] === "production" || isTest
     const isDev =
-      (import.meta.env?.DEV === true || process.env["NODE_ENV"] === "development") &&
-      !isTest &&
-      !isProd
+      process.env["NODE_ENV"] === "development" ||
+      (import.meta.env?.DEV === true &&
+        process.env["NODE_ENV"] !== "production" &&
+        process.env["NODE_ENV"] !== "test")
+    const isTest =
+      !isDev && (import.meta.env?.MODE === "test" || process.env["NODE_ENV"] === "test")
+    const isProd =
+      !isDev &&
+      (import.meta.env?.PROD === true || process.env["NODE_ENV"] === "production" || isTest)
 
     const req = c.req?.raw || c.request || c.req
     const cf = req?.cf || c.req?.cf || c.env?.cf
@@ -215,11 +218,39 @@ export function security(options: SecurityOptions = {}) {
       }
 
       // Prod simulation: check strict production directives in Report-Only mode
-      // so any violation that will break in production emits a warning in dev
+      // so any violation that will break in production emits a warning in dev.
+      // We permit 'unsafe-inline' for scripts and styles in Report-Only simulation because in production
+      // HTMLRewriter automatically injects nonces on all HTML tags, whereas in dev mode tags are un-nonced.
+      const userScriptSrc = mergedOptions.directives?.["script-src"]
+      const reportScriptSrc = userScriptSrc
+        ? Array.isArray(userScriptSrc)
+          ? Array.from(new Set([...userScriptSrc, "'unsafe-inline'"]))
+          : userScriptSrc
+        : Array.from(
+            new Set([
+              "'self'",
+              "'unsafe-inline'",
+              "'inline-speculation-rules'",
+              ...(mergedOptions.scriptResources || [])
+            ])
+          )
+
+      const userStyleSrc = mergedOptions.directives?.["style-src"]
+      const reportStyleSrc = userStyleSrc
+        ? Array.isArray(userStyleSrc)
+          ? Array.from(new Set([...userStyleSrc, "'unsafe-inline'"]))
+          : userStyleSrc
+        : Array.from(
+            new Set(["'self'", "'unsafe-inline'", ...(mergedOptions.styleResources || [])])
+          )
+
       const reportOnlySimulation: SecurityOptions = {
         ...mergedOptions,
         directives: {
-          ...mergedOptions.directives
+          ...mergedOptions.directives,
+          "script-src": reportScriptSrc,
+          "script-src-attr": ["'unsafe-inline'"],
+          "style-src": reportStyleSrc
         }
       }
 
@@ -263,6 +294,11 @@ export function security(options: SecurityOptions = {}) {
           }
         })
         .on("script", {
+          element(el: any) {
+            el.setAttribute("nonce", nonce)
+          }
+        })
+        .on("style", {
           element(el: any) {
             el.setAttribute("nonce", nonce)
           }

@@ -1,4 +1,5 @@
-import { createMemo, createSignal, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { HoverCardProps } from "./hover-card"
 import { hoverCardTheme } from "./hover-card.theme"
 
@@ -8,14 +9,8 @@ export interface RLHoverCardProps extends HoverCardProps {
 }
 
 const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "triggerLabel",
-    "placement",
-    "ui",
-    "class",
-    "children",
-    "trigger"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "triggerLabel", "placement", "ui", "class", "children", "trigger")
 
   const [isOpen, setIsOpen] = createSignal(false)
 

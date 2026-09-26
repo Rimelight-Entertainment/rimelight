@@ -124,6 +124,42 @@ export default defineConfig({
 })
 ```
 
+## Solid Configs
+
+Zero-boilerplate site derivation for Solid Start projects. Automatically derives `site`
+and `imageDomains` from `domain`, plus ready-to-use `securityOptions` (domain + `imgSrc`)
+for both the `security()` Vite plugin and the `security()` Hono middleware:
+
+```typescript
+import { rimelightSolidConfig } from "@rimelight/config/solid"
+
+const site = rimelightSolidConfig({
+  // Automatically derives site: "https://example.com",
+  // imageDomains: ["example.com", "cdn.example.com", "cdn.rimelight.com"],
+  // and securityOptions: { domain, imgSrc: ["https://example.com", ...] }
+  domain: "example.com",
+  security: true
+})
+```
+
+```typescript
+// vite.config.ts
+import { security } from "@rimelight/security/plugin"
+
+security(site.securityOptions ?? {})
+```
+
+```typescript
+// fetch.ts / worker entry
+import { security } from "@rimelight/security/middleware"
+
+app.use(security(site.securityOptions ?? {}))
+```
+
+Granular / composable pieces (`resolveImageDomains`, `resolveSecurityOptions`) are exported
+from the same module. Pass `security: { imgSrc: [...] }` to merge extra origins, or
+`security: false` to omit `securityOptions`.
+
 ## Drizzle Configs
 
 Zero-boilerplate Drizzle Kit configuration with standard defaults (`sqlite` dialect, `./drizzle` out directory, `./src/db/schema/index.ts` schema):

@@ -1,4 +1,4 @@
-import { splitProps, type Component } from "solid-js"
+import { omit, type Component } from "solid-js"
 
 export interface RLDateProps {
   date: Date | string | number
@@ -15,7 +15,8 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
 }
 
 const RLDate: Component<RLDateProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["date", "locale", "options"])
+  const props = allProps
+  const rest = omit(allProps, "date", "locale", "options")
 
   const resolvedDate = props.date instanceof Date ? props.date : new Date(props.date)
   const valid = !isNaN(resolvedDate.getTime())

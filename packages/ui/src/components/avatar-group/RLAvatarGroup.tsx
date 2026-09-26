@@ -1,4 +1,5 @@
-import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
+import { createMemo, omit, For, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { AvatarGroupProps } from "./avatar-group"
 import { avatarGroupTheme } from "./avatar-group.theme"
 import RLAvatar from "../avatar/RLAvatar"
@@ -20,14 +21,8 @@ const sizeCls: Record<string, string> = {
 }
 
 const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "items",
-    "displayLimit",
-    "size",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "items", "displayLimit", "size", "ui", "class", "children")
 
   const normalizedItems = () => props.items ?? []
   const displayLimit = () => props.displayLimit ?? 5

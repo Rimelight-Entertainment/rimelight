@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { CalloutProps } from "./callout"
 import { calloutTheme } from "./callout.theme"
 import RLAvatar from "../avatar/RLAvatar"
@@ -32,7 +33,9 @@ const colorToIcon: Record<string, string | undefined> = {
 }
 
 const RLCallout: Component<RLCalloutProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "variant",
     "color",
     "title",
@@ -52,7 +55,7 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
     "closeSlot",
     "actionsSlot",
     "onClose"
-  ])
+  )
 
   const resolvedColor = props.variant === "destructive" ? "error" : (props.color ?? "primary")
   const resolvedVariant =

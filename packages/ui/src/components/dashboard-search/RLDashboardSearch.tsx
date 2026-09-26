@@ -2,13 +2,12 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { DashboardSearchProps } from "./dashboard-search"
 import { dashboardSearchTheme } from "./dashboard-search.theme"
 import RLIcon from "../icon/RLIcon"
@@ -20,16 +19,20 @@ export interface RLDashboardSearchProps extends DashboardSearchProps {
 }
 
 const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children", "open", "onOpenChange"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children", "open", "onOpenChange")
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? false)
   let inputRef: HTMLInputElement | null = null
 
-  createEffect(() => {
-    if (props.open !== undefined) {
-      setIsOpen(props.open)
+  createEffect(
+    () => props.open,
+    (open) => {
+      if (open !== undefined) {
+        setIsOpen(open)
+      }
     }
-  })
+  )
 
   const setOpenState = (open: boolean) => {
     if (props.open === undefined) {
@@ -41,7 +44,7 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault()
@@ -62,10 +65,10 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
     document.addEventListener("keydown", onKeyDown)
     document.addEventListener("click", onClick)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("keydown", onKeyDown)
       document.removeEventListener("click", onClick)
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

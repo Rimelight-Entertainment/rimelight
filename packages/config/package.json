@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/config",
-  "version": "0.0.25",
+  "version": "0.0.28",
   "private": false,
   "description": "Rimelight Entertainment's shared configuration package",
   "homepage": "https://rimelight.com/docs",
@@ -41,6 +41,11 @@
       "types": "./dist/drizzle/index.d.mts",
       "import": "./dist/drizzle/index.mjs",
       "default": "./dist/drizzle/index.mjs"
+    },
+    "./solid": {
+      "types": "./dist/solid/index.d.mts",
+      "import": "./dist/solid/index.mjs",
+      "default": "./dist/solid/index.mjs"
     }
   },
   "publishConfig": {

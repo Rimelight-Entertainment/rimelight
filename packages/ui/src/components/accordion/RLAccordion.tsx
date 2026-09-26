@@ -1,4 +1,5 @@
-import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
+import { createMemo, omit, For, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { AccordionItem, AccordionProps } from "./accordion"
 import { accordionTheme } from "./accordion.theme"
 import RLIcon from "../icon/RLIcon"
@@ -9,7 +10,9 @@ export interface RLAccordionProps extends AccordionProps {
 }
 
 const RLAccordion: Component<RLAccordionProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "summary",
     "multiple",
@@ -20,7 +23,7 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     "class",
     "children",
     "trailingIconSlot"
-  ])
+  )
 
   const groupName =
     props.name ||

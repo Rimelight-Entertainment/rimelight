@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test"
-import { rimelightSeo, isContained } from "../src/plugin.js"
+import { seo, isContained } from "../src/plugin.js"
 import path from "node:path"
 
 describe("isContained path containment", () => {
@@ -16,9 +16,9 @@ describe("isContained path containment", () => {
   })
 })
 
-describe("rimelightSeo Vite Plugin", () => {
+describe("seo Vite Plugin", () => {
   it("resolves virtual modules correctly", () => {
-    const plugin = rimelightSeo({
+    const plugin = seo({
       name: "Test Site",
       url: "https://test.rimelight.com"
     })
@@ -31,7 +31,7 @@ describe("rimelightSeo Vite Plugin", () => {
   })
 
   it("loads virtual:rimelight/seo with normalized config and pre-bound createHead", () => {
-    const plugin = rimelightSeo({
+    const plugin = seo({
       name: "Plugin Test Site",
       url: "https://plugintest.com"
     })
@@ -45,7 +45,7 @@ describe("rimelightSeo Vite Plugin", () => {
 
   it("emits static assets during generateBundle", async () => {
     const emitted: any[] = []
-    const plugin = rimelightSeo({
+    const plugin = seo({
       name: "Bundle Site",
       url: "https://bundle.com",
       robots: true,
@@ -67,5 +67,36 @@ describe("rimelightSeo Vite Plugin", () => {
     expect(fileNames).toContain("sitemap-index.xml")
     expect(fileNames).toContain(".well-known/security.txt")
     expect(fileNames).toContain("site.webmanifest")
+  })
+
+  it("emits icon assets when branding favicon SVG is provided", async () => {
+    const emitted: any[] = []
+    const plugin = seo({
+      name: "Icon Site",
+      url: "https://icon.com",
+      branding: {
+        favicon: {
+          svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#00f"/></svg>`
+        }
+      }
+    })
+
+    ;(plugin.configResolved as any)({ root: process.cwd() })
+
+    const mockContext = {
+      emitFile(file: any) {
+        emitted.push(file)
+      }
+    }
+
+    await (plugin.generateBundle as any).call(mockContext)
+
+    const fileNames = emitted.map((e) => e.fileName)
+    expect(fileNames).toContain("icon-192.png")
+    expect(fileNames).toContain("icon-512.png")
+    expect(fileNames).toContain("icon-maskable-512.png")
+    expect(fileNames).toContain("favicon.ico")
+    expect(fileNames).toContain("apple-touch-icon.png")
+    expect(fileNames).toContain("favicon.svg")
   })
 })

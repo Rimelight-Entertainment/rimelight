@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { LocaleSelectorProps, LocaleItem } from "./locale-selector"
 import { localeSelectorTheme } from "./locale-selector.theme"
 import RLSelect from "../select/RLSelect"
@@ -26,7 +27,9 @@ const getLocaleDisplayName = (localeCode: string): string => {
 }
 
 const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "locales",
     "currentLocale",
     "mode",
@@ -41,7 +44,7 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
     "leadingIcon",
     "onSelect",
     "onChange"
-  ])
+  )
 
   const currentCode = (): string => props.currentLocale ?? "en"
 

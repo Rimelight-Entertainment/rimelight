@@ -1,4 +1,4 @@
-import { createMemo, createSignal, splitProps, For, type Component } from "solid-js"
+import { createMemo, createSignal, omit, For, type Component } from "solid-js"
 import type { InputRatingProps } from "./input-rating"
 import { inputRatingTheme } from "./input-rating.theme"
 import RLIcon from "../icon/RLIcon"
@@ -8,7 +8,9 @@ export interface RLInputRatingProps extends InputRatingProps {
 }
 
 const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "id",
     "readonly",
     "icon",
@@ -29,7 +31,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
     "ui",
     "class",
     "onValueChange"
-  ])
+  )
 
   const resolvedClasses = createMemo(() =>
     inputRatingTheme({
@@ -151,7 +153,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       aria-valuemax={length()}
       aria-readonly={props.readonly ? "true" : "false"}
       aria-disabled={props.disabled ? "true" : "false"}
-      tabIndex={props.disabled || props.readonly ? undefined : 0}
+      tabindex={props.disabled || props.readonly ? undefined : 0}
       onKeyDown={handleKeyDown}
       {...rest}
     >

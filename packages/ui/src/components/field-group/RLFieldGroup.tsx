@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { FieldGroupProps } from "./field-group"
 import { fieldGroupTheme } from "./field-group.theme"
 
@@ -9,20 +10,14 @@ export interface RLFieldGroupProps extends Omit<FieldGroupProps, "prepend" | "ap
 }
 
 const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "prepend",
-    "append",
-    "size",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "prepend", "append", "size", "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     fieldGroupTheme({
-      size: props.size ?? "md",
-      ui: props.ui,
-      class: props.class
+      size: props["size"] ?? "md",
+      ui: props["ui"],
+      class: props["class"]
     })
   )
 

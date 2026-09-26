@@ -2,13 +2,12 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  splitProps,
+  omit,
   Show,
-  onMount,
-  onCleanup,
-  type Component,
-  type JSX
+  onSettled,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { DrawerProps } from "./drawer"
 import { drawerTheme } from "./drawer.theme"
 import RLIcon from "../icon/RLIcon"
@@ -29,7 +28,9 @@ export interface RLDrawerProps extends DrawerProps {
 }
 
 const RLDrawer: Component<RLDrawerProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "open",
     "defaultOpen",
     "direction",
@@ -49,7 +50,7 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     "closeOnClickOutside",
     "closeOnEscape",
     "lockScroll"
-  ])
+  )
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false)
 
@@ -64,19 +65,22 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
 
   let dialogRef: HTMLDialogElement | undefined
 
-  createEffect(() => {
-    if (isOpen()) {
-      if (lockScroll()) {
-        document.body.style.overflow = "hidden"
+  createEffect(
+    () => ({ open: isOpen(), lock: lockScroll() }),
+    ({ open, lock }) => {
+      if (open) {
+        if (lock) {
+          document.body.style.overflow = "hidden"
+        }
+        if (dialogRef && !dialogRef.open) dialogRef.showModal()
+      } else {
+        document.body.style.overflow = ""
+        if (dialogRef && dialogRef.open) dialogRef.close()
       }
-      if (dialogRef && !dialogRef.open) dialogRef.showModal()
-    } else {
-      document.body.style.overflow = ""
-      if (dialogRef && dialogRef.open) dialogRef.close()
     }
-  })
+  )
 
-  onMount(() => {
+  onSettled(() => {
     const handleCancel = (e: Event) => {
       if (e.target !== dialogRef) return
       e.preventDefault()
@@ -89,11 +93,11 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     }
     document.addEventListener("cancel", handleCancel)
     document.addEventListener("click", handleClick)
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("cancel", handleCancel)
       document.removeEventListener("click", handleClick)
       document.body.style.overflow = ""
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

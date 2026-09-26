@@ -3,6 +3,6 @@ import { rimelightPackConfig } from "./vite-plus/base"
 
 export default defineConfig(
   rimelightPackConfig({
-    entry: ["vite-plus/base.ts", "astro/index.ts", "drizzle/index.ts"]
+    entry: ["vite-plus/base.ts", "astro/index.ts", "drizzle/index.ts", "solid/index.ts"]
   })
 )

@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { MarqueeProps } from "./marquee"
 import { marqueeTheme } from "./marquee.theme"
 
@@ -39,14 +40,8 @@ const MARQUEE_KEYFRAMES = `
 `
 
 const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "speed",
-    "direction",
-    "pauseOnHover",
-    "ui",
-    "class",
-    "children"
-  ])
+  const props = allProps
+  const rest = omit(allProps, "speed", "direction", "pauseOnHover", "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     marqueeTheme({

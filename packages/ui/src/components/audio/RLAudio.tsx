@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { AudioProps } from "./audio"
 import { audioTheme } from "./audio.theme"
 
@@ -8,7 +9,8 @@ export interface RLAudioProps extends AudioProps {
 }
 
 const RLAudio: Component<RLAudioProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children", "transcript"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children", "transcript")
 
   const resolvedClasses = createMemo(() => audioTheme({ ui: props.ui, class: props.class }))
 

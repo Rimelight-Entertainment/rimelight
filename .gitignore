@@ -46,3 +46,6 @@ worker-configuration.d.ts
 server/db/drizzle/*.json
 server/db/drizzle/_journal.json
 server/db/drizzle/*_draft.sql
+
+#Generated Files
+file-routes.d.ts

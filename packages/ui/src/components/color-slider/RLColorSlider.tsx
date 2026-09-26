@@ -1,12 +1,5 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  Show,
-  splitProps,
-  type Component,
-  type JSX
-} from "solid-js"
+import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ColorSliderProps } from "./color-slider"
 import { colorSliderTheme } from "./color-slider.theme"
 import {
@@ -29,7 +22,9 @@ export interface RLColorSliderProps extends ColorSliderProps {
 }
 
 const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "channel",
     "colorSpace",
     "defaultValue",
@@ -50,7 +45,7 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     "onChange",
     "onChangeEnd",
     "onUpdate:modelValue"
-  ])
+  )
 
   const channel = () => props.channel || "hue"
   const colorSpace = () => props.colorSpace ?? "hsl"
@@ -60,12 +55,14 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
 
   const [currentHex, setCurrentHex] = createSignal(initialHex())
 
-  createEffect(() => {
-    const controlled = props.modelValue ?? props.value
-    if (controlled !== undefined) {
-      setCurrentHex(controlled)
+  createEffect(
+    () => props.modelValue ?? props.value,
+    (controlled) => {
+      if (controlled !== undefined) {
+        setCurrentHex(controlled)
+      }
     }
-  })
+  )
 
   const updateColor = (newHex: string, isFinal = false) => {
     if (props.modelValue === undefined && props.value === undefined) {
@@ -344,7 +341,7 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
           data-slot="thumb"
           role="slider"
           aria-label="Color Slider Thumb"
-          tabIndex={props.disabled ? -1 : 0}
+          tabindex={props.disabled ? -1 : 0}
           onKeyDown={handleKeyDown}
           style={
             orientation() === "horizontal"

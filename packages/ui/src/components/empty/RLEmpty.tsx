@@ -1,4 +1,5 @@
-import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
+import { createMemo, omit, For, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { EmptyProps } from "./empty"
 import { emptyTheme } from "./empty.theme"
 import RLButton from "../button/RLButton"
@@ -17,7 +18,9 @@ export interface RLEmptyProps extends EmptyProps {
 }
 
 const RLEmpty: Component<RLEmptyProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "icon",
     "avatar",
     "loading",
@@ -38,7 +41,7 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
     "bodySlot",
     "actionsSlot",
     "footerSlot"
-  ])
+  )
 
   const activeIcon = props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon
   const actionList = props.actions ?? []

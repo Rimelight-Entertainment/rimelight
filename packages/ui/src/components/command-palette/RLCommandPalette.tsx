@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { CommandPaletteProps } from "./command-palette"
 import { commandPaletteTheme } from "./command-palette.theme"
 
@@ -7,7 +8,8 @@ export interface RLCommandPaletteProps extends CommandPaletteProps {
 }
 
 const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     commandPaletteTheme({

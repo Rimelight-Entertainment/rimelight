@@ -3,13 +3,12 @@ import {
   createMemo,
   createSignal,
   For,
-  onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
-  type Component,
-  type JSX
+  omit,
+  type Component
 } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { CarouselProps, CarouselSlide } from "./carousel"
 import { carouselTheme } from "./carousel.theme"
 import RLIcon from "../icon/RLIcon"
@@ -21,7 +20,8 @@ export interface RLCarouselProps extends CarouselProps {
 const SLIDE_TRANSITION = "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)"
 
 const RLCarousel: Component<RLCarouselProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["slides", "autoplay", "ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "slides", "autoplay", "ui", "class", "children")
 
   const [index, setIndex] = createSignal(0)
   const [dragOffset, setDragOffset] = createSignal(0)
@@ -83,9 +83,9 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     startAutoplay()
-    onCleanup(stopAutoplay)
+    return stopAutoplay
   })
 
   const handleBtnClick = (action: () => void) => {

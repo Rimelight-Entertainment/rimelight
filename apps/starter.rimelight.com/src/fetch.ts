@@ -1,23 +1,20 @@
 import { Hono } from "hono"
-import { cf } from "@astrojs/cloudflare/hono"
 import { security, devOnly, ratelimit, construction } from "@rimelight/security/middleware"
 import { auth } from "@rimelight/auth/middleware"
 import api from "#api"
 import { i18n } from "@rimelight/i18n/middleware"
 import { getRelativeLocaleUrl } from "@rimelight/i18n"
-import { astro } from "astro/hono"
-
-// Non-pipeline handlers (scheduled)
 import { handleCmsCron } from "@rimelight/cms/cron/scheduled"
 import { db } from "#db"
+import { renderToStringAsync } from "solid-js/web"
+import Root from "./root"
 
 const app = new Hono<{ Bindings: Env }>()
 
-// Export the Durable Object classes that wrangler.jsonc binds
+// Export Durable Object classes bound in wrangler.jsonc
 export { ChatRoom, Document } from "./chat/durableObject"
 
 // Middlewares
-app.use(cf())
 app.use(security())
 app.use(devOnly)
 app.use(ratelimit())
@@ -33,9 +30,16 @@ app.use(
 // Hono API Routing
 app.route("/api", api)
 
-// Localization & Astro Pipeline
+// Localization Middleware
 app.use(i18n())
-app.use(astro())
+
+// Solid 2.0 SSR Pipeline
+app.get("*", async (c) => {
+  const url = c.req.url
+  const session = (c as any).get("session") ?? null
+  const html = await renderToStringAsync(() => Root({ url, session }))
+  return c.html(`<!DOCTYPE html>${html}`)
+})
 
 // Global Error Handler
 app.onError((err, c) => {

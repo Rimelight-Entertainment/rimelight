@@ -1,4 +1,5 @@
-import { createMemo, createSignal, For, Show, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, For, Show, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { InputTagsProps, TagItem } from "./input-tags"
 import { inputTagsTheme } from "./input-tags.theme"
 
@@ -9,7 +10,9 @@ export interface RLInputTagsProps extends InputTagsProps {
 }
 
 const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
+  const props = allProps
+  const rest = omit(
+    allProps,
     "items",
     "displayLimit",
     "estimatedTagWidth",
@@ -21,7 +24,7 @@ const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
     "children",
     "onAddTag",
     "onRemoveTag"
-  ])
+  )
 
   const [inputValue, setInputValue] = createSignal("")
   const limit = () => props.displayLimit ?? 4

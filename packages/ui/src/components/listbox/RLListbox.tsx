@@ -1,4 +1,5 @@
-import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { createMemo, omit, type Component } from "solid-js"
+import type { JSX } from "@solidjs/web"
 import type { ListboxProps } from "./listbox"
 import { listboxTheme } from "./listbox.theme"
 
@@ -7,7 +8,8 @@ export interface RLListboxProps extends ListboxProps {
 }
 
 const RLListbox: Component<RLListboxProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
+  const props = allProps
+  const rest = omit(allProps, "ui", "class", "children")
 
   const resolvedClasses = createMemo(() =>
     listboxTheme({

@@ -1,6 +1,6 @@
 import { defineConfig } from "vite-plus"
 import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
-import solid from "vite-plugin-solid"
+import solid from "@solidjs/vite-plugin"
 
 export default defineConfig(
   rimelightPackConfig({
@@ -25,7 +25,6 @@ export default defineConfig(
       "src/preset.ts",
       "src/resolver.ts",
       "src/shortcuts.ts",
-      "src/stores.ts",
       "src/types.ts",
       "src/icons.ts"
     ]

@@ -1,4 +1,3 @@
-export { default as RL3dHover, type RL3dHoverProps } from "./3d-hover/RL3dHover"
 export { default as RLAccordion, type RLAccordionProps } from "./accordion/RLAccordion"
 export { default as RLAspectRatio, type RLAspectRatioProps } from "./aspect-ratio/RLAspectRatio"
 export { default as RLAudio, type RLAudioProps } from "./audio/RLAudio"
@@ -194,6 +193,7 @@ export {
 export { default as RLSurround, type RLSurroundProps } from "./surround/RLSurround"
 export { default as RLSwitch, type RLSwitchProps } from "./switch/RLSwitch"
 export { default as RLTable, type RLTableProps } from "./table/RLTable"
+export * from "./table/table"
 export {
   default as RLTableOfContents,
   type RLTableOfContentsProps
