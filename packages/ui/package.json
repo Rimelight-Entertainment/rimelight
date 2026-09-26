@@ -26,8 +26,8 @@
       "import": "./dist/index.mjs"
     },
     "./components": {
-      "types": "./src/components/index.ts",
-      "import": "./src/components/index.ts"
+      "types": "./dist/components/index.d.mts",
+      "import": "./dist/components/index.mjs"
     },
     "./preset": {
       "types": "./dist/preset.d.mts",

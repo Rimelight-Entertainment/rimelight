@@ -4,13 +4,15 @@ import solid from "@solidjs/vite-plugin"
 
 export default defineConfig(
   rimelightPackConfig({
-    plugins: [
-      solid({
-        solid: {
-          generate: "ssr"
-        }
-      })
-    ],
+    pack: {
+      plugins: [
+        solid({
+          solid: {
+            generate: "dom"
+          }
+        })
+      ]
+    },
     test: {
       environment: "node"
     },
@@ -22,7 +24,8 @@ export default defineConfig(
       "src/shortcuts.ts",
       "src/stores.ts",
       "src/types.ts",
-      "src/icons.ts"
+      "src/icons.ts",
+      "src/components/index.ts"
     ]
   })
 )
