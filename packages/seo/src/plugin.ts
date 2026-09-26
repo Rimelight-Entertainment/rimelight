@@ -43,6 +43,18 @@ export function isContained(rootDir: string, requestedPath: string): boolean {
   }
 }
 
+function createDefaultIconSvg(
+  name = "App",
+  background = "#0a0a0a",
+  foreground = "#ffffff"
+): string {
+  const initial = (name.trim()[0] || "A").toUpperCase()
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="128" fill="${background}" />
+  <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" font-family="system-ui, -apple-system, sans-serif" font-size="280" font-weight="700" fill="${foreground}">${initial}</text>
+</svg>`
+}
+
 /**
  * Single Consolidated Vite Plugin orchestrating SEO virtual modules, dev-server asset middleware,
  * and production static asset generation.
@@ -119,6 +131,7 @@ export function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
 
   const assetOpts = typeof options.assets === "object" ? options.assets : {}
   let masterIconBuffer: Buffer | null = null
+  let masterIconSource: Buffer | string | null = null
   let isSvg = false
   const bgColor =
     assetOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor || "#ffffff"
@@ -128,16 +141,47 @@ export function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
     configResolved(config) {
       rootDir = config.root || process.cwd()
 
-      // Discover master icon
-      const explicitIcon = assetOpts.icon ? path.resolve(rootDir, assetOpts.icon) : null
-      let masterIconPath: string | null = null
+      // Discover master icon from options or filesystem
+      const candidateIcon =
+        assetOpts.icon ||
+        (typeof options.branding?.favicon === "object"
+          ? options.branding.favicon.svg || options.branding.favicon.png
+          : options.branding?.favicon) ||
+        options.branding?.appleTouchIcon ||
+        options.branding?.icon ||
+        options.branding?.logo?.src ||
+        (typeof siteOpt.branding?.favicon === "object"
+          ? siteOpt.branding.favicon.svg || siteOpt.branding.favicon.png
+          : siteOpt.branding?.favicon) ||
+        siteOpt.branding?.appleTouchIcon ||
+        siteOpt.branding?.icon ||
+        siteOpt.branding?.logo?.src
 
-      if (explicitIcon && fs.existsSync(explicitIcon)) {
-        if (isContained(rootDir, explicitIcon)) {
-          masterIconPath = explicitIcon
+      if (candidateIcon) {
+        if (
+          typeof candidateIcon === "string" &&
+          (candidateIcon.startsWith("http://") ||
+            candidateIcon.startsWith("https://") ||
+            candidateIcon.startsWith("data:") ||
+            candidateIcon.startsWith("<svg"))
+        ) {
+          masterIconSource = candidateIcon
+          isSvg =
+            candidateIcon.includes("<svg") ||
+            candidateIcon.includes(".svg") ||
+            candidateIcon.startsWith("data:image/svg")
+        } else if (typeof candidateIcon === "string") {
+          const resolvedPath = path.resolve(rootDir, candidateIcon)
+          if (fs.existsSync(resolvedPath) && isContained(rootDir, resolvedPath)) {
+            masterIconBuffer = fs.readFileSync(resolvedPath)
+            masterIconSource = masterIconBuffer
+            isSvg = resolvedPath.endsWith(".svg")
+          }
         }
-      } else {
-        masterIconPath = findFile([
+      }
+
+      if (!masterIconSource) {
+        const masterIconPath = findFile([
           "src/assets/logos/logomark_color.svg",
           "src/assets/logos/logo_color.svg",
           "src/assets/logos/logomark.svg",
@@ -147,11 +191,22 @@ export function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
           "src/assets/icon.png",
           "public/favicon.svg"
         ])
+
+        if (masterIconPath && fs.existsSync(masterIconPath)) {
+          masterIconBuffer = fs.readFileSync(masterIconPath)
+          masterIconSource = masterIconBuffer
+          isSvg = masterIconPath.endsWith(".svg")
+        }
       }
 
-      if (masterIconPath && fs.existsSync(masterIconPath)) {
-        masterIconBuffer = fs.readFileSync(masterIconPath)
-        isSvg = masterIconPath.endsWith(".svg")
+      // Default fallback SVG if no icon configured or found
+      if (!masterIconSource && options.assets !== false) {
+        masterIconSource = createDefaultIconSvg(
+          normalizedSiteConfig.name,
+          bgColor,
+          normalizedSiteConfig.branding.colors.themeColor || "#ffffff"
+        )
+        isSvg = true
       }
     },
 
@@ -420,60 +475,75 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
         }
 
         // Dynamic Icons & Images middleware
-        if (masterIconBuffer && options.assets !== false) {
-          if (rawUrl === "/favicon.ico" && assetOpts.faviconIco !== false) {
-            const ico = await generateIco(masterIconBuffer, 32)
-            res.setHeader("Content-Type", "image/x-icon")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(ico)
-            return
-          }
-          if (rawUrl === "/apple-touch-icon.png" && assetOpts.appleTouchIcon !== false) {
-            const png = await generatePng(masterIconBuffer, { width: 180, height: 180 })
-            res.setHeader("Content-Type", "image/png")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(png)
-            return
-          }
-          if (rawUrl === "/icon-192.png" && assetOpts.icon192 !== false) {
-            const png = await generatePng(masterIconBuffer, { width: 192, height: 192 })
-            res.setHeader("Content-Type", "image/png")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(png)
-            return
-          }
-          if (rawUrl === "/icon-512.png" && assetOpts.icon512 !== false) {
-            const png = await generatePng(masterIconBuffer, { width: 512, height: 512 })
-            res.setHeader("Content-Type", "image/png")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(png)
-            return
-          }
-          if (rawUrl === "/icon-maskable-512.png" && assetOpts.iconMaskable !== false) {
-            const png = await generateMaskablePng(masterIconBuffer, {
-              size: 512,
-              background: bgColor
-            })
-            res.setHeader("Content-Type", "image/png")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(png)
-            return
-          }
-          if (rawUrl === "/favicon.svg" && isSvg) {
-            res.setHeader("Content-Type", "image/svg+xml")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(masterIconBuffer)
-            return
-          }
-          if (rawUrl === "/og.png" && assetOpts.ogImage !== false) {
-            const og = await generateOgCard({
-              logoBuffer: masterIconBuffer,
-              background: bgColor
-            })
-            res.setHeader("Content-Type", "image/png")
-            res.setHeader("Cache-Control", "no-cache")
-            res.end(og)
-            return
+        if (masterIconSource && options.assets !== false) {
+          try {
+            if (rawUrl === "/favicon.ico" && assetOpts.faviconIco !== false) {
+              const ico = await generateIco(masterIconSource, 32)
+              res.setHeader("Content-Type", "image/x-icon")
+              res.setHeader("Cache-Control", "no-cache")
+              res.end(ico)
+              return
+            }
+            if (rawUrl === "/apple-touch-icon.png" && assetOpts.appleTouchIcon !== false) {
+              const png = await generatePng(masterIconSource, { width: 180, height: 180 })
+              res.setHeader("Content-Type", "image/png")
+              res.setHeader("Cache-Control", "no-cache")
+              res.end(png)
+              return
+            }
+            if (rawUrl === "/icon-192.png" && assetOpts.icon192 !== false) {
+              const png = await generatePng(masterIconSource, { width: 192, height: 192 })
+              res.setHeader("Content-Type", "image/png")
+              res.setHeader("Cache-Control", "no-cache")
+              res.end(png)
+              return
+            }
+            if (rawUrl === "/icon-512.png" && assetOpts.icon512 !== false) {
+              const png = await generatePng(masterIconSource, { width: 512, height: 512 })
+              res.setHeader("Content-Type", "image/png")
+              res.setHeader("Cache-Control", "no-cache")
+              res.end(png)
+              return
+            }
+            if (rawUrl === "/icon-maskable-512.png" && assetOpts.iconMaskable !== false) {
+              const png = await generateMaskablePng(masterIconSource, {
+                size: 512,
+                background: bgColor
+              })
+              res.setHeader("Content-Type", "image/png")
+              res.setHeader("Cache-Control", "no-cache")
+              res.end(png)
+              return
+            }
+            if (rawUrl === "/favicon.svg" && isSvg) {
+              res.setHeader("Content-Type", "image/svg+xml")
+              res.setHeader("Cache-Control", "no-cache")
+              if (Buffer.isBuffer(masterIconSource)) {
+                res.end(masterIconSource)
+              } else if (
+                typeof masterIconSource === "string" &&
+                (masterIconSource.startsWith("http://") || masterIconSource.startsWith("https://"))
+              ) {
+                const fetched = await fetch(masterIconSource)
+                const buf = Buffer.from(await fetched.arrayBuffer())
+                res.end(buf)
+              } else {
+                res.end(Buffer.from(masterIconSource))
+              }
+              return
+            }
+            if (rawUrl === "/og.png" && assetOpts.ogImage !== false) {
+              const og = await generateOgCard({
+                logoBuffer: masterIconSource,
+                background: bgColor
+              })
+              res.setHeader("Content-Type", "image/png")
+              res.setHeader("Cache-Control", "no-cache")
+              res.end(og)
+              return
+            }
+          } catch (err) {
+            console.error("[@rimelight/seo] Error generating dynamic asset for", rawUrl, err)
           }
         }
 
@@ -620,39 +690,54 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
       }
 
       // Icon & Image Assets
-      if (options.assets !== false && masterIconBuffer) {
-        if (assetOpts.faviconIco !== false) {
-          const ico = await generateIco(masterIconBuffer, 32)
-          this.emitFile({ type: "asset", fileName: "favicon.ico", source: ico })
-        }
-        if (assetOpts.appleTouchIcon !== false) {
-          const png = await generatePng(masterIconBuffer, { width: 180, height: 180 })
-          this.emitFile({ type: "asset", fileName: "apple-touch-icon.png", source: png })
-        }
-        if (assetOpts.icon192 !== false) {
-          const png = await generatePng(masterIconBuffer, { width: 192, height: 192 })
-          this.emitFile({ type: "asset", fileName: "icon-192.png", source: png })
-        }
-        if (assetOpts.icon512 !== false) {
-          const png = await generatePng(masterIconBuffer, { width: 512, height: 512 })
-          this.emitFile({ type: "asset", fileName: "icon-512.png", source: png })
-        }
-        if (assetOpts.iconMaskable !== false) {
-          const png = await generateMaskablePng(masterIconBuffer, {
-            size: 512,
-            background: bgColor
-          })
-          this.emitFile({ type: "asset", fileName: "icon-maskable-512.png", source: png })
-        }
-        if (assetOpts.ogImage !== false) {
-          const og = await generateOgCard({
-            logoBuffer: masterIconBuffer,
-            background: bgColor
-          })
-          this.emitFile({ type: "asset", fileName: "og.png", source: og })
-        }
-        if (isSvg) {
-          this.emitFile({ type: "asset", fileName: "favicon.svg", source: masterIconBuffer })
+      if (options.assets !== false && masterIconSource) {
+        try {
+          if (assetOpts.faviconIco !== false) {
+            const ico = await generateIco(masterIconSource, 32)
+            this.emitFile({ type: "asset", fileName: "favicon.ico", source: ico })
+          }
+          if (assetOpts.appleTouchIcon !== false) {
+            const png = await generatePng(masterIconSource, { width: 180, height: 180 })
+            this.emitFile({ type: "asset", fileName: "apple-touch-icon.png", source: png })
+          }
+          if (assetOpts.icon192 !== false) {
+            const png = await generatePng(masterIconSource, { width: 192, height: 192 })
+            this.emitFile({ type: "asset", fileName: "icon-192.png", source: png })
+          }
+          if (assetOpts.icon512 !== false) {
+            const png = await generatePng(masterIconSource, { width: 512, height: 512 })
+            this.emitFile({ type: "asset", fileName: "icon-512.png", source: png })
+          }
+          if (assetOpts.iconMaskable !== false) {
+            const png = await generateMaskablePng(masterIconSource, {
+              size: 512,
+              background: bgColor
+            })
+            this.emitFile({ type: "asset", fileName: "icon-maskable-512.png", source: png })
+          }
+          if (assetOpts.ogImage !== false) {
+            const og = await generateOgCard({
+              logoBuffer: masterIconSource,
+              background: bgColor
+            })
+            this.emitFile({ type: "asset", fileName: "og.png", source: og })
+          }
+          if (isSvg) {
+            if (Buffer.isBuffer(masterIconSource)) {
+              this.emitFile({ type: "asset", fileName: "favicon.svg", source: masterIconSource })
+            } else if (
+              typeof masterIconSource === "string" &&
+              (masterIconSource.startsWith("http://") || masterIconSource.startsWith("https://"))
+            ) {
+              const response = await fetch(masterIconSource)
+              const buf = Buffer.from(await response.arrayBuffer())
+              this.emitFile({ type: "asset", fileName: "favicon.svg", source: buf })
+            } else if (typeof masterIconSource === "string") {
+              this.emitFile({ type: "asset", fileName: "favicon.svg", source: masterIconSource })
+            }
+          }
+        } catch (err) {
+          console.error("[@rimelight/seo] Error emitting bundle assets:", err)
         }
       }
     }
