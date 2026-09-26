@@ -267,6 +267,11 @@ export function security(options: SecurityOptions = {}) {
             el.setAttribute("nonce", nonce)
           }
         })
+        .on("style", {
+          element(el: any) {
+            el.setAttribute("nonce", nonce)
+          }
+        })
         .on("head", {
           element(el: any) {
             el.append(`<meta name="csp-nonce" content="${nonce}">`, { html: true })
