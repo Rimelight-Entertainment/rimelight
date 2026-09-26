@@ -13,7 +13,6 @@ export default defineConfig(
       "src/preset.ts",
       "src/resolver.ts",
       "src/shortcuts.ts",
-      "src/stores.ts",
       "src/types.ts",
       "src/icons.ts",
       "src/fonts.ts"

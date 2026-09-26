@@ -90,23 +90,23 @@ describe("block-hierarchy-and-rules", () => {
   describe("toast API", () => {
     it("dispatches error, success, warning, and info toasts", () => {
       clearToasts()
-      expect(toasts.get()).toHaveLength(0)
+      expect(toasts).toHaveLength(0)
 
       const errToast = toast.error("Test Error", "Something went wrong")
       expect(errToast.variant).toBe("error")
       expect(errToast.title).toBe("Test Error")
-      expect(toasts.get()).toHaveLength(1)
+      expect(toasts).toHaveLength(1)
 
       const successToast = toast.success("Saved", "Document saved")
       expect(successToast.variant).toBe("success")
-      expect(toasts.get()).toHaveLength(2)
+      expect(toasts).toHaveLength(2)
 
       toast.remove(errToast.id)
-      expect(toasts.get()).toHaveLength(1)
-      expect(toasts.get()[0]!.id).toBe(successToast.id)
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0]!.id).toBe(successToast.id)
 
       clearToasts()
-      expect(toasts.get()).toHaveLength(0)
+      expect(toasts).toHaveLength(0)
     })
   })
 
@@ -159,7 +159,7 @@ describe("block-hierarchy-and-rules", () => {
       ).toHaveLength(0)
 
       // Toast error should have been dispatched
-      const activeToasts = toasts.get()
+      const activeToasts = [...toasts]
       expect(activeToasts.length).toBeGreaterThan(0)
       expect(
         activeToasts.some(

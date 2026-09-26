@@ -40,7 +40,6 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   const categoryOrder = createMemo(() => Object.keys(configCategories()))
 
   const [isOpen, setIsOpen] = createSignal(false)
-  const [shortcuts, setShortcuts] = createSignal<RegisteredShortcut[]>([])
 
   const openHelp = () => {
     setIsOpen(true)
@@ -55,13 +54,6 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
       document.body.style.overflow = ""
     }
   }
-
-  onSettled(() => {
-    const unsubscribe = activeShortcutsStore.subscribe((list) => {
-      setShortcuts([...list])
-    })
-    return unsubscribe
-  })
 
   onSettled(() => {
     const handleOpenHelp = () => openHelp()
@@ -112,7 +104,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   )
 
   const sections = createMemo<CategorySection[]>(() => {
-    const list = shortcuts()
+    const list = activeShortcutsStore
     if (list.length === 0) return []
 
     const grouped: Record<string, RegisteredShortcut[]> = {}
@@ -189,7 +181,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
 
             <div class={resolvedClasses().body} data-slot="body">
               <Show
-                when={shortcuts().length > 0}
+                when={activeShortcutsStore.length > 0}
                 fallback={
                   <div class={resolvedClasses().empty} data-slot="empty">
                     No active shortcuts found on this page.

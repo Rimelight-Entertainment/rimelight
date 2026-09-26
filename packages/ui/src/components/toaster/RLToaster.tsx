@@ -1,6 +1,5 @@
-import { createSignal, For, onSettled, omit, type Component } from "solid-js"
-import { toasts, removeToast, addToast } from "../toast/store"
-import type { ToastItem } from "../toast/store"
+import { For, onSettled, omit, type Component } from "solid-js"
+import { toasts, removeToast, addToast, type ToastItem } from "../toast/store"
 import RLToast from "../toast/RLToast"
 
 export interface RLToasterProps {
@@ -11,11 +10,8 @@ export interface RLToasterProps {
 const RLToaster: Component<RLToasterProps> = (allProps) => {
   const props = allProps
   const rest = omit(allProps, "class")
-  const [list, setList] = createSignal<ToastItem[]>([])
 
   onSettled(() => {
-    const unsubscribe = toasts.subscribe((items) => setList([...items]))
-
     const stored = sessionStorage.getItem("pending_toast")
     if (stored) {
       sessionStorage.removeItem("pending_toast")
@@ -53,8 +49,6 @@ const RLToaster: Component<RLToasterProps> = (allProps) => {
       if (toastDesc) payload["description"] = toastDesc
       addToast(payload as Omit<ToastItem, "id">)
     }
-
-    return unsubscribe
   })
 
   return (
@@ -66,7 +60,7 @@ const RLToaster: Component<RLToasterProps> = (allProps) => {
       role="status"
       {...rest}
     >
-      <For each={list()}>
+      <For each={toasts}>
         {(item) => (
           <RLToast
             title={item.title}

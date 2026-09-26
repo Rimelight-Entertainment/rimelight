@@ -197,10 +197,9 @@ describe("@rimelight/ui shortcuts system", () => {
         }
       })
 
-      const active = activeShortcutsStore.get()
-      expect(active.some((s) => s.label === "Open Search")).toBe(true)
+      expect(activeShortcutsStore.some((s) => s.label === "Open Search")).toBe(true)
       cleanup()
-      expect(activeShortcutsStore.get().some((s) => s.label === "Open Search")).toBe(false)
+      expect(activeShortcutsStore.some((s) => s.label === "Open Search")).toBe(false)
     } finally {
       ;(globalThis as any).window = origWindow
     }
