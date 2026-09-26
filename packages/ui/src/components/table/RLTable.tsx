@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, onCleanup, onSettled, Show } from "solid-js"
+import { createMemo, createSignal, For, onSettled, Show } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import { isServer } from "@solidjs/web"
 import type {
@@ -784,9 +784,10 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         if (scrollEl) {
           const handleScroll = () => setScrollTop(scrollEl.scrollTop)
           scrollEl.addEventListener("scroll", handleScroll, { passive: true })
-          onCleanup(() => scrollEl.removeEventListener("scroll", handleScroll))
+          return () => scrollEl.removeEventListener("scroll", handleScroll)
         }
       }
+      return undefined
     })
   }
 

@@ -5,7 +5,6 @@ import {
   For,
   Show,
   onSettled,
-  onCleanup,
   createEffect,
   type Component
 } from "solid-js"
@@ -116,7 +115,7 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
       setOpen(false)
     }
     document.addEventListener("click", handleDocumentClick)
-    onCleanup(() => document.removeEventListener("click", handleDocumentClick))
+    return () => document.removeEventListener("click", handleDocumentClick)
   })
 
   return (

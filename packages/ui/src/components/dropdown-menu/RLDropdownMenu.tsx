@@ -1,13 +1,4 @@
-import {
-  createSignal,
-  createMemo,
-  omit,
-  onSettled,
-  onCleanup,
-  For,
-  Show,
-  type Component
-} from "solid-js"
+import { createSignal, createMemo, omit, onSettled, For, Show, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import { Portal } from "@solidjs/web"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
@@ -84,11 +75,11 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     document.addEventListener("click", handleOutsideClick)
     window.addEventListener("scroll", handleScroll, true)
     window.addEventListener("resize", handleScroll)
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("click", handleOutsideClick)
       window.removeEventListener("scroll", handleScroll, true)
       window.removeEventListener("resize", handleScroll)
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

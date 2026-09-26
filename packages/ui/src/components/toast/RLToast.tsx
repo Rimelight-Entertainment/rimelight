@@ -1,4 +1,4 @@
-import { createMemo, createSignal, onSettled, onCleanup, omit, type Component } from "solid-js"
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { ToastProps } from "./toast"
 import { toastTheme } from "./toast.theme"
@@ -100,13 +100,13 @@ const RLToast: Component<RLToastProps> = (allProps) => {
       })
     }
 
-    onCleanup(() => {
+    return () => {
       if (timerId !== null) clearTimeout(timerId)
       if (dismissTimerId !== undefined) clearTimeout(dismissTimerId)
       root.removeEventListener("mouseenter", pauseTimer)
       root.removeEventListener("mouseleave", startTimer)
       root.removeEventListener("focusin", pauseTimer)
-    })
+    }
   })
 
   return (

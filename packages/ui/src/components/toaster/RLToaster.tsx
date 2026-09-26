@@ -1,4 +1,4 @@
-import { createSignal, For, onSettled, onCleanup, omit, type Component } from "solid-js"
+import { createSignal, For, onSettled, omit, type Component } from "solid-js"
 import { toasts, removeToast, addToast } from "../toast/store"
 import type { ToastItem } from "../toast/store"
 import RLToast from "../toast/RLToast"
@@ -15,7 +15,6 @@ const RLToaster: Component<RLToasterProps> = (allProps) => {
 
   onSettled(() => {
     const unsubscribe = toasts.subscribe((items) => setList([...items]))
-    onCleanup(unsubscribe)
 
     const stored = sessionStorage.getItem("pending_toast")
     if (stored) {
@@ -54,6 +53,8 @@ const RLToaster: Component<RLToasterProps> = (allProps) => {
       if (toastDesc) payload["description"] = toastDesc
       addToast(payload as Omit<ToastItem, "id">)
     }
+
+    return unsubscribe
   })
 
   return (

@@ -1,13 +1,4 @@
-import {
-  createMemo,
-  createSignal,
-  For,
-  onCleanup,
-  onSettled,
-  Show,
-  omit,
-  type Component
-} from "solid-js"
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import { Portal } from "@solidjs/web"
 import type { SearchProps } from "./search"
@@ -126,7 +117,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     }
     window.addEventListener("keydown", onKeyDown)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("rl-search:open", handleOpen)
       document.removeEventListener("rla-search:open", handleOpen)
       document.removeEventListener("search:open", handleOpen)
@@ -137,7 +128,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
       }
       if (debounceTimer) clearTimeout(debounceTimer)
       searchShortcutCleanup()
-    })
+    }
   })
 
   const handleInput = (val: string) => {

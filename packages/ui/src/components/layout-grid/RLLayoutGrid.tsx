@@ -5,7 +5,6 @@ import {
   omit,
   Show,
   onSettled,
-  onCleanup,
   type Component
 } from "solid-js"
 import { Dynamic } from "@solidjs/web"
@@ -135,10 +134,10 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       }
     })
 
-    onCleanup(() => {
+    return () => {
       resizeObserver.disconnect()
       cleanupShortcuts()
-    })
+    }
   })
 
   const updateGrid = () => {

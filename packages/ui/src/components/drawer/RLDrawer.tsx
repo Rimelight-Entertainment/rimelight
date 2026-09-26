@@ -5,7 +5,6 @@ import {
   omit,
   Show,
   onSettled,
-  onCleanup,
   type Component
 } from "solid-js"
 import type { JSX } from "@solidjs/web"
@@ -94,11 +93,11 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     }
     document.addEventListener("cancel", handleCancel)
     document.addEventListener("click", handleClick)
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("cancel", handleCancel)
       document.removeEventListener("click", handleClick)
       document.body.style.overflow = ""
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

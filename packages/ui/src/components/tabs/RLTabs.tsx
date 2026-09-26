@@ -3,7 +3,6 @@ import {
   createMemo,
   createSignal,
   For,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -141,8 +140,9 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     if (typeof ResizeObserver !== "undefined" && listRef) {
       const ro = new ResizeObserver(() => updateIndicator())
       ro.observe(listRef)
-      onCleanup(() => ro.disconnect())
+      return () => ro.disconnect()
     }
+    return undefined
   })
 
   createEffect(

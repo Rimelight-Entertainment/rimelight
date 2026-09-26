@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, onCleanup, onSettled, omit, type Component } from "solid-js"
+import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js"
 import type { TableOfContentsProps, TableOfContentsHeading } from "./table-of-contents"
 import { tableOfContentsTheme } from "./table-of-contents.theme"
 import RLIcon from "../icon/RLIcon"
@@ -75,7 +75,7 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
     }
     update()
     window.addEventListener("scroll", update, { passive: true })
-    onCleanup(() => window.removeEventListener("scroll", update))
+    return () => window.removeEventListener("scroll", update)
   })
 
   const depthClass = (depth: number) => {

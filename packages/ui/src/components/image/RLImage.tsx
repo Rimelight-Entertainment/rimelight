@@ -1,12 +1,4 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  onCleanup,
-  onSettled,
-  omit,
-  type Component
-} from "solid-js"
+import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { ImageMetadata, ImageProps } from "./image"
 import { imageTheme } from "./image.theme"
@@ -167,7 +159,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
         { rootMargin: "200px" }
       )
       io.observe(el)
-      onCleanup(() => io.disconnect())
+      return () => io.disconnect()
     }
   )
 
@@ -202,8 +194,9 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     if (dialog) {
       const onClose = () => setOpen(false)
       dialog.addEventListener("close", onClose)
-      onCleanup(() => dialog.removeEventListener("close", onClose))
+      return () => dialog.removeEventListener("close", onClose)
     }
+    return undefined
   })
 
   const fallbackBox = () => (

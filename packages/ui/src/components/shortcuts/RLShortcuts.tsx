@@ -1,14 +1,5 @@
 import uiConfig from "virtual:rimelight/ui"
-import {
-  createMemo,
-  createSignal,
-  For,
-  onSettled,
-  onCleanup,
-  Show,
-  omit,
-  type Component
-} from "solid-js"
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js"
 import { Portal } from "@solidjs/web"
 import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts"
 import { shortcutsTheme } from "./shortcuts.theme"
@@ -69,7 +60,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     const unsubscribe = activeShortcutsStore.subscribe((list) => {
       setShortcuts([...list])
     })
-    onCleanup(unsubscribe)
+    return unsubscribe
   })
 
   onSettled(() => {
@@ -101,7 +92,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     }
     window.addEventListener("keydown", onKeyDown)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("rl-shortcuts:open", handleOpenHelp)
       document.removeEventListener("rla-shortcuts:open", handleOpenHelp)
       document.removeEventListener("shortcuts:open", handleOpenHelp)
@@ -110,7 +101,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
         document.body.style.overflow = ""
       }
       qShortcutCleanup()
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

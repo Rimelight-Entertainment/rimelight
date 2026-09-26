@@ -2,7 +2,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -66,10 +65,10 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
     document.addEventListener("keydown", onKeyDown)
     document.addEventListener("click", onClick)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("keydown", onKeyDown)
       document.removeEventListener("click", onClick)
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

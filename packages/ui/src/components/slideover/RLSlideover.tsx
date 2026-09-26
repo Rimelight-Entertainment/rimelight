@@ -3,7 +3,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -81,12 +80,12 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
       }
     }
     window.addEventListener("keydown", onKeyDown)
-    onCleanup(() => {
+    return () => {
       window.removeEventListener("keydown", onKeyDown)
       if (typeof document !== "undefined") {
         document.body.style.overflow = ""
       }
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

@@ -67,7 +67,7 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
       }
     }
     document.addEventListener("click", handleOutsideClick)
-    onCleanup(() => document.removeEventListener("click", handleOutsideClick))
+    return () => document.removeEventListener("click", handleOutsideClick)
   })
 
   onCleanup(() => {

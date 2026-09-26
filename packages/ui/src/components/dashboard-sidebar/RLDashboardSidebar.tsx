@@ -2,7 +2,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -106,10 +105,10 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     document.addEventListener("click", handleClick)
     document.addEventListener("keydown", handleKey)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("click", handleClick)
       document.removeEventListener("keydown", handleKey)
-    })
+    }
   })
 
   const resolvedClasses = createMemo(() =>

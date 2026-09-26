@@ -6,7 +6,6 @@ import {
   For,
   Show,
   onSettled,
-  onCleanup,
   type Component
 } from "solid-js"
 import type { JSX } from "@solidjs/web"
@@ -122,10 +121,10 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
     }
     document.addEventListener("click", handleOutsideClick)
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("click", handleOutsideClick)
       if (closeTimer) clearTimeout(closeTimer)
-    })
+    }
   })
 
   const itemHref = (item: NavigationMenuItem) =>

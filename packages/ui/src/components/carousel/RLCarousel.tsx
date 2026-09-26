@@ -3,7 +3,6 @@ import {
   createMemo,
   createSignal,
   For,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -86,7 +85,7 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
 
   onSettled(() => {
     startAutoplay()
-    onCleanup(stopAutoplay)
+    return stopAutoplay
   })
 
   const handleBtnClick = (action: () => void) => {

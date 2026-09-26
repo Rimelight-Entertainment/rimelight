@@ -1,4 +1,4 @@
-import { createMemo, createSignal, onCleanup, onSettled, omit, type Component } from "solid-js"
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { ThemeSelectorProps } from "./theme-selector"
 import { themeSelectorTheme } from "./theme-selector.theme"
@@ -63,7 +63,7 @@ const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
       }
     })
 
-    onCleanup(() => cleanupShortcut())
+    return () => cleanupShortcut()
   })
 
   const mode = () => props.mode || "select"

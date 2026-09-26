@@ -1,4 +1,4 @@
-import { createMemo, createSignal, omit, onSettled, onCleanup, type Component } from "solid-js"
+import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js"
 import type { ScrollToTopProps } from "./scroll-to-top"
 import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { trackScroll, scrollToTop } from "./scroll"
@@ -28,7 +28,7 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
       setIsVisible(state.isVisible)
       setScrollPercentage(state.scrollPercentage)
     })
-    onCleanup(unsubscribe)
+    return unsubscribe
   })
 
   const resolvedClasses = createMemo(() =>

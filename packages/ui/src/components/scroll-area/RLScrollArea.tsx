@@ -2,7 +2,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -115,11 +114,11 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     const cleanV = setupDraggable(vThumbRef, "scrollTop", "clientY", "scrollHeight", "clientHeight")
     const cleanH = setupDraggable(hThumbRef, "scrollLeft", "clientX", "scrollWidth", "clientWidth")
 
-    onCleanup(() => {
+    return () => {
       if (hideTimer) clearTimeout(hideTimer)
       cleanV()
       cleanH()
-    })
+    }
   })
 
   createEffect(
