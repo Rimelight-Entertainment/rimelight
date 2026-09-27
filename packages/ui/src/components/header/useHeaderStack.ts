@@ -1,11 +1,4 @@
-import {
-  createSignal,
-  createMemo,
-  createEffect,
-  onSettled,
-  onCleanup,
-  type Accessor
-} from "solid-js"
+import { createSignal, createMemo, createEffect, onSettled, type Accessor } from "solid-js"
 
 export interface HeaderLayer {
   id: string
@@ -133,22 +126,34 @@ export function useHeaderStack() {
         observer.observe(el)
       }
 
-      if (typeof options.visible === "function") {
-        createEffect(
-          () => (typeof options.visible === "function" ? options.visible() : true),
-          () => {
-            updateHeight()
-          }
-        )
-      }
-
-      onCleanup(() => {
+      return () => {
         if (observer) {
           observer.disconnect()
         }
         setHeaders((prev) => prev.filter((h) => h.id !== options.id))
-      })
+      }
     })
+
+    if (typeof options.visible === "function") {
+      const vis = options.visible
+      createEffect(
+        () => vis(),
+        (visible) => {
+          if (!el) return
+          const height = Math.round(el.getBoundingClientRect().height)
+          setHeaders((prev) => {
+            const index = prev.findIndex((h) => h.id === options.id)
+            if (index === -1) return prev
+            const copy = [...prev]
+            const existing = copy[index]
+            if (existing) {
+              copy[index] = { ...existing, height, visible: Boolean(visible) }
+            }
+            return copy
+          })
+        }
+      )
+    }
 
     const isCollapsed = createMemo(() => {
       const hide = options.hideOnScroll ?? false

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"
 import { RLIcon } from "../icon/RLIcon"
@@ -57,6 +57,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
   )
 
   const href = () => props.href || (props["to"] as string | undefined)
+  const isLink = () => Boolean(href())
   const isLeading = () => !!(props.leadingIcon || props.avatar || props.leading) || !!props.loading
   const isTrailing = () =>
     !!(props.trailingIcon || props.trailing) || (!!props.loading && !isLeading())
@@ -125,41 +126,16 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
     )
   }
 
-  if (href()) {
-    return (
-      <a
-        href={href()}
-        target={props.target}
-        rel={props.rel || undefined}
-        class={classes()["root"]}
-        data-slot="root"
-        data-theme={props.theme}
-        data-loading={props.loading ? "true" : undefined}
-        data-loading-auto={props.loadingAuto ? "true" : undefined}
-        aria-label={props.ariaLabel}
-        aria-disabled={props.disabled ? "true" : undefined}
-        onClick={props.onClick}
-        {...rest}
-      >
-        {isLeading() ? renderLeading() : null}
-
-        {props.children !== undefined && props.children !== null ? (
-          props.children
-        ) : props.label !== undefined && props.label !== null ? (
-          <span class={classes()["label"]} data-slot="label">
-            {props.label}
-          </span>
-        ) : null}
-
-        {isTrailing() ? renderTrailing() : null}
-      </a>
-    )
-  }
+  const Root = dynamic(() => (isLink() ? "a" : "button"))
 
   return (
-    <button
-      type={props.type || "button"}
-      disabled={props.disabled}
+    <Root
+      type={!isLink() ? props.type || "button" : undefined}
+      href={isLink() ? href() : undefined}
+      target={isLink() ? props.target : undefined}
+      rel={isLink() ? props.rel || undefined : undefined}
+      disabled={!isLink() ? props.disabled : undefined}
+      aria-disabled={isLink() && props.disabled ? "true" : undefined}
       class={classes()["root"]}
       data-slot="root"
       data-theme={props.theme}
@@ -180,7 +156,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
       ) : null}
 
       {isTrailing() ? renderTrailing() : null}
-    </button>
+    </Root>
   )
 }
 

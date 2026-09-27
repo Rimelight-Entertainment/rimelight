@@ -1,22 +1,37 @@
 import { createMemo, createSignal, omit, For, Show, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { BannerAction, BannerProps } from "./banner"
+import { dynamic, type JSX } from "@solidjs/web"
+import type { BannerProps } from "./banner"
 import { bannerTheme } from "./banner.theme"
 import { RLButton } from "../button/RLButton"
+import { RLIcon } from "../icon/RLIcon"
 import { useHeaderStack } from "../header/useHeaderStack"
+import { resolveLinkAttrs } from "../link/helpers"
+import type { ButtonProps } from "../button/button"
 
 export interface RLBannerProps extends BannerProps {
   children?: JSX.Element
+  leading?: JSX.Element
+  titleSlot?: JSX.Element
+  actionsSlot?: JSX.Element
+  closeSlot?: JSX.Element
   left?: JSX.Element
   center?: JSX.Element
   right?: JSX.Element
-  actions?: BannerAction[]
 }
 
 const RLBanner: Component<RLBannerProps> = (allProps) => {
   const props = allProps
   const rest = omit(
     allProps,
+    "as",
+    "id",
+    "icon",
+    "title",
+    "actions",
+    "color",
+    "close",
+    "closeIcon",
+    "onClose",
     "contain",
     "sticky",
     "fixed",
@@ -24,40 +39,52 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     "hideOnScroll",
     "dismissable",
     "dismissId",
-    "actions",
     "ui",
     "class",
     "style",
     "children",
+    "leading",
+    "titleSlot",
+    "actionsSlot",
+    "closeSlot",
     "left",
     "center",
-    "right"
+    "right",
+    "href",
+    "to",
+    "target",
+    "rel",
+    "external",
+    "externalIcon",
+    "noExternalIcon",
+    "prefetch",
+    "active",
+    "disabled",
+    "raw",
+    "ariaLabel",
+    "ariaCurrentValue",
+    "theme"
   )
 
-  const fixed = () => props.fixed ?? true
+  const isLink = () => Boolean(props.href || props.to)
+  const asTag = () => props.as || (isLink() ? "a" : "div")
+
+  const fixed = () => props.fixed ?? false
   const sticky = () => (fixed() ? false : (props.sticky ?? false))
-  const hideOnScroll = () => props.hideOnScroll ?? true
+  const hideOnScroll = () => props.hideOnScroll ?? false
   const stackIndex = () => props.stackIndex ?? 0
+  const color = () => props.color ?? "primary"
 
-  const classes = createMemo(() =>
-    bannerTheme({
-      contain: props.contain ?? true,
-      sticky: sticky(),
-      fixed: fixed(),
-      ui: props.ui,
-      class: props.class
-    })
-  )
+  const bannerId = (allProps.id as string) || (props.dismissId as string) || ""
+  const hasPersistence = () => Boolean(props.id || props.dismissId)
+  const storageKey = `banner-${bannerId}`
 
-  const bannerId = (rest["id"] as string) || `rl-banner-${Math.random().toString(36).slice(2, 8)}`
-  const storageKey = props.dismissId || bannerId
-  const dismissKey = `rl-banner-dismiss-${storageKey}`
-  const actions = props.actions ?? []
+  const isClosable = () => Boolean(props.close !== undefined ? props.close : props.dismissable)
 
   const readDismissed = () => {
-    if (typeof window === "undefined") return false
+    if (!hasPersistence() || typeof window === "undefined") return false
     try {
-      return window.localStorage.getItem(dismissKey) !== null
+      return window.localStorage.getItem(storageKey) !== null
     } catch {
       return false
     }
@@ -65,16 +92,32 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
 
   const [dismissed, setDismissed] = createSignal<boolean>(readDismissed())
 
-  const handleDismiss = () => {
-    try {
-      window.localStorage.setItem(dismissKey, "1")
-    } catch {}
+  const handleClose = (e?: MouseEvent) => {
+    e?.stopPropagation()
+    if (hasPersistence() && typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(storageKey, "1")
+      } catch {}
+    }
     setDismissed(true)
+    props.onClose?.()
   }
+
+  const classes = createMemo(() =>
+    bannerTheme({
+      color: color(),
+      contain: props.contain ?? true,
+      sticky: sticky(),
+      fixed: fixed(),
+      to: isLink(),
+      ui: props.ui,
+      class: props.class
+    })
+  )
 
   const { registerHeader } = useHeaderStack()
   const { ref, topOffset, isCollapsed } = registerHeader({
-    id: bannerId,
+    id: bannerId || `rl-banner-${stackIndex()}`,
     order: stackIndex(),
     type: "banner",
     sticky: sticky(),
@@ -100,90 +143,132 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     return base
   }
 
+  const linkAttrs = createMemo(() => {
+    if (!isLink()) return {}
+    return resolveLinkAttrs({
+      ...props,
+      href: props.href || (props.to as string | undefined)
+    })
+  })
+
+  const closeButtonProps = createMemo((): ButtonProps => {
+    const base: ButtonProps = {
+      size: "xs",
+      color: "neutral",
+      variant: "ghost",
+      square: true,
+      leadingIcon: props.closeIcon || "close",
+      ariaLabel: "Close banner"
+    }
+
+    if (typeof props.close === "object" && props.close !== null) {
+      return { ...base, ...props.close }
+    }
+    return base
+  })
+
+  const Root = dynamic(() => asTag())
+
   return (
     <Show when={!dismissed()}>
-      <div
+      <Root
         ref={ref}
-        id={bannerId}
+        id={bannerId || undefined}
         data-slot="root"
+        role={isLink() ? "link" : "region"}
+        aria-label={props.ariaLabel || (typeof props.title === "string" ? props.title : undefined)}
         class={classes()["root"]}
         data-contain={(props.contain ?? true) ? "true" : "false"}
         data-rl-banner="true"
         data-stack-index={stackIndex()}
         data-hide-on-scroll={String(hideOnScroll())}
-        data-header-layer-id={bannerId}
+        data-header-layer-id={bannerId || undefined}
         data-layer-type="banner"
-        data-dismiss-key={dismissKey}
+        data-dismiss-key={hasPersistence() ? storageKey : undefined}
         style={dynamicStyles() as JSX.CSSProperties}
+        {...linkAttrs()}
         {...rest}
       >
-        <div class={classes()["content"]} data-header-content>
+        <div class={classes()["content"]} data-slot="content" data-header-content>
           <div class={classes()["container"]} data-slot="container">
-            <Show when={actions.length > 0}>
-              <input type="checkbox" id={`${bannerId}-act`} class="peer sr-only shrink-0" />
-            </Show>
-
-            <div class={`${classes()["left"]} peer-checked:hidden`} data-slot="left">
+            {/* Left Slot */}
+            <div class={classes()["left"]} data-slot="left">
               {props.left}
             </div>
-            <div class={`${classes()["center"]} peer-checked:hidden`} data-slot="center">
-              {props.center !== undefined
-                ? props.center
-                : props.children !== undefined
-                  ? props.children
-                  : null}
+
+            {/* Center Slot (Leading icon, title, children) */}
+            <div class={classes()["center"]} data-slot="center">
+              {/* Leading Icon / Slot */}
+              <Show when={props.leading || props.icon}>
+                {props.leading ? (
+                  props.leading
+                ) : (
+                  <span class={classes()["icon"]} data-slot="icon">
+                    <RLIcon name={props.icon!} size="sm" aria-hidden="true" />
+                  </span>
+                )}
+              </Show>
+
+              {/* Title / Title Slot / Children */}
+              <Show
+                when={props.titleSlot || props.title !== undefined || props.children !== undefined}
+              >
+                {props.titleSlot ? (
+                  props.titleSlot
+                ) : props.title !== undefined ? (
+                  <span class={classes()["title"]} data-slot="title">
+                    {props.title}
+                  </span>
+                ) : props.children !== undefined ? (
+                  <span class={classes()["title"]} data-slot="title">
+                    {props.children}
+                  </span>
+                ) : null}
+              </Show>
             </div>
 
-            <div class="flex-1"></div>
+            {/* Right Slot (Actions & Close) */}
+            <div class={classes()["right"]} data-slot="right">
+              {props.right}
 
-            <div class={classes()["side"]}>{props.right}</div>
+              {/* Actions */}
+              <Show when={props.actionsSlot || (props.actions && props.actions.length > 0)}>
+                <div class={classes()["actions"]} data-slot="actions">
+                  <Show when={props.actionsSlot}>{props.actionsSlot}</Show>
+                  <Show when={props.actions && props.actions.length > 0}>
+                    <For each={props.actions}>
+                      {(action) => (
+                        <RLButton
+                          color={action.color ?? "neutral"}
+                          size={action.size ?? "xs"}
+                          variant={action.variant ?? "solid"}
+                          {...action}
+                        />
+                      )}
+                    </For>
+                  </Show>
+                </div>
+              </Show>
 
-            <Show when={actions.length > 0}>
-              <label
-                for={`${bannerId}-act`}
-                class="flex-none flex items-center justify-center size-7 rounded-md hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer md:hidden text-sm leading-none peer-checked:order-first"
-                aria-label="Show actions"
-              >
-                ···
-              </label>
-
-              <div
-                class={`${classes()["actions"]} hidden peer-checked:flex md:flex flex-row items-center justify-center gap-2 peer-checked:order-first`}
-              >
-                <For each={actions}>
-                  {(action) => (
-                    <a
-                      href={action.href || "#"}
-                      class={`inline-flex items-center justify-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-colors no-underline cursor-pointer shrink-0 ${
-                        action.variant === "solid" || !action.variant
-                          ? "bg-neutral-950 text-neutral-50 hover:opacity-90"
-                          : "bg-white/20 text-white hover:bg-white/30"
-                      } ${action.class ?? ""}`}
-                      data-banner-action
-                    >
-                      {action.label}
-                    </a>
-                  )}
-                </For>
-              </div>
-            </Show>
-
-            <Show when={props.dismissable}>
-              <RLButton
-                type="button"
-                variant="ghost"
-                color="neutral"
-                square
-                leadingIcon="close"
-                ariaLabel="Close banner"
-                class={classes()["dismiss"]}
-                data-banner-close
-                onClick={handleDismiss}
-              />
-            </Show>
+              {/* Close Button */}
+              <Show when={props.closeSlot || isClosable()}>
+                {props.closeSlot ? (
+                  props.closeSlot
+                ) : (
+                  <RLButton
+                    type="button"
+                    class={classes()["close"]}
+                    data-slot="close"
+                    data-banner-close
+                    onClick={handleClose}
+                    {...closeButtonProps()}
+                  />
+                )}
+              </Show>
+            </div>
           </div>
         </div>
-      </div>
+      </Root>
     </Show>
   )
 }
