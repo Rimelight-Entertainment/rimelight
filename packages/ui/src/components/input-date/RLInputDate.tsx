@@ -93,4 +93,3 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
 }
 
 export { RLInputDate }
-export default RLInputDate

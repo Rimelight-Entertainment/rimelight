@@ -26,4 +26,3 @@ const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {
 }
 
 export { RLContextMenu }
-export default RLContextMenu

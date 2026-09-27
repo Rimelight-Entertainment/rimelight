@@ -26,4 +26,3 @@ const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
 }
 
 export { RLFieldset }
-export default RLFieldset

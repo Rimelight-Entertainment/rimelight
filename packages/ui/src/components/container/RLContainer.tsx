@@ -25,4 +25,3 @@ const RLContainer: Component<RLContainerProps> = (allProps) => {
 }
 
 export { RLContainer }
-export default RLContainer

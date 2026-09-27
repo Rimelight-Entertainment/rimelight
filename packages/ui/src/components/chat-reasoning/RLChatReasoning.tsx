@@ -27,4 +27,3 @@ const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
 }
 
 export { RLChatReasoning }
-export default RLChatReasoning

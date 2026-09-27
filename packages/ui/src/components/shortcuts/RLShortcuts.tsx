@@ -3,8 +3,8 @@ import { createMemo, createSignal, For, onSettled, Show, omit, type Component } 
 import { Portal } from "@solidjs/web"
 import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts"
 import { shortcutsTheme } from "./shortcuts.theme"
-import RLIcon from "../icon/RLIcon"
-import RLKbd from "../kbd/RLKbd"
+import { RLIcon } from "../icon/RLIcon"
+import { RLKbd } from "../kbd/RLKbd"
 
 export interface RLShortcutsProps {
   categories?: Record<string, string>
@@ -236,4 +236,3 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
 }
 
 export { RLShortcuts }
-export default RLShortcuts

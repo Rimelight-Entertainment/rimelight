@@ -21,4 +21,3 @@ const RLPageAside: Component<RLPageAsideProps> = (allProps) => {
 }
 
 export { RLPageAside }
-export default RLPageAside

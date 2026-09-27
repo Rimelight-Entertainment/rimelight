@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { DashboardSidebarToggleProps } from "./dashboard-sidebar-toggle"
 import { dashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDashboardSidebarToggleProps extends DashboardSidebarToggleProps {
   children?: JSX.Element
@@ -35,4 +35,3 @@ const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allP
 }
 
 export { RLDashboardSidebarToggle }
-export default RLDashboardSidebarToggle

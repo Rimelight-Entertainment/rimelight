@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { LinkProps } from "./link"
 import { linkTheme } from "./link.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 import { resolveLinkAttrs } from "./helpers"
 
 export interface RLLinkProps extends LinkProps {
@@ -102,4 +102,3 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
 }
 
 export { RLLink }
-export default RLLink

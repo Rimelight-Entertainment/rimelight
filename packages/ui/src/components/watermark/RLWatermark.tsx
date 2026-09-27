@@ -27,4 +27,3 @@ const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
 }
 
 export { RLWatermark }
-export default RLWatermark

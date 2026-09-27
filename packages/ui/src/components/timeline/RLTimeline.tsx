@@ -3,8 +3,8 @@ import type { JSX } from "@solidjs/web"
 import { Dynamic } from "@solidjs/web"
 import type { TimelineProps, TimelineItem } from "./timeline"
 import { timelineTheme } from "./timeline.theme"
-import RLAvatar from "../avatar/RLAvatar"
-import RLIcon from "../icon/RLIcon"
+import { RLAvatar } from "../avatar/RLAvatar"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLTimelineProps extends TimelineProps {
   children?:
@@ -197,4 +197,3 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
 }
 
 export { RLTimeline }
-export default RLTimeline

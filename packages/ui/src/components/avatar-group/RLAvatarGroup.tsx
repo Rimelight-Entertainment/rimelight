@@ -2,7 +2,7 @@ import { createMemo, omit, For, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { AvatarGroupProps } from "./avatar-group"
 import { avatarGroupTheme } from "./avatar-group.theme"
-import RLAvatar from "../avatar/RLAvatar"
+import { RLAvatar } from "../avatar/RLAvatar"
 
 export interface RLAvatarGroupProps extends AvatarGroupProps {
   children?: JSX.Element
@@ -72,4 +72,3 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
 }
 
 export { RLAvatarGroup }
-export default RLAvatarGroup

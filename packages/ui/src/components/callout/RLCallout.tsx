@@ -2,8 +2,8 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { CalloutProps } from "./callout"
 import { calloutTheme } from "./callout.theme"
-import RLAvatar from "../avatar/RLAvatar"
-import RLIcon from "../icon/RLIcon"
+import { RLAvatar } from "../avatar/RLAvatar"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLCalloutProps extends CalloutProps {
   children?: JSX.Element
@@ -152,4 +152,3 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
 }
 
 export { RLCallout }
-export default RLCallout

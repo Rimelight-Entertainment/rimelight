@@ -73,4 +73,3 @@ const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
 }
 
 export { RLMarquee }
-export default RLMarquee

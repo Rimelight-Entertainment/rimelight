@@ -27,4 +27,3 @@ const RLChatPalette: Component<RLChatPaletteProps> = (allProps) => {
 }
 
 export { RLChatPalette }
-export default RLChatPalette

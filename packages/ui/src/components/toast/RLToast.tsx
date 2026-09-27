@@ -2,7 +2,7 @@ import { createMemo, createSignal, onSettled, omit, type Component } from "solid
 import type { JSX } from "@solidjs/web"
 import type { ToastProps } from "./toast"
 import { toastTheme } from "./toast.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLToastProps extends ToastProps {
   onDismiss?: () => void
@@ -172,4 +172,3 @@ const RLToast: Component<RLToastProps> = (allProps) => {
 }
 
 export { RLToast }
-export default RLToast

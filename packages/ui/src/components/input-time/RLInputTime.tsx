@@ -93,4 +93,3 @@ const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
 }
 
 export { RLInputTime }
-export default RLInputTime

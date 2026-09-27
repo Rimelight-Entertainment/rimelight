@@ -550,4 +550,3 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
 }
 
 export { RLColorArea }
-export default RLColorArea

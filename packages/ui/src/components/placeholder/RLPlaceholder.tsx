@@ -47,4 +47,3 @@ const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
 }
 
 export { RLPlaceholder }
-export default RLPlaceholder

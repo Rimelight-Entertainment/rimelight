@@ -30,4 +30,3 @@ const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
 }
 
 export { RLDashboardGroup }
-export default RLDashboardGroup

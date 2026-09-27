@@ -2,7 +2,7 @@ import { createMemo, createSignal, omit, onSettled, type Component } from "solid
 import type { ScrollToTopProps } from "./scroll-to-top"
 import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { trackScroll, scrollToTop } from "./scroll"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLScrollToTopProps extends ScrollToTopProps {}
 
@@ -90,4 +90,3 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
 }
 
 export { RLScrollToTop }
-export default RLScrollToTop

@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, onSettled, omit, type Component
 import type { JSX } from "@solidjs/web"
 import type { ImageMetadata, ImageProps } from "./image"
 import { imageTheme } from "./image.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLImageProps extends ImageProps {
   trigger?: JSX.Element
@@ -535,4 +535,3 @@ const RLImage: Component<RLImageProps> = (allProps) => {
 }
 
 export { RLImage }
-export default RLImage

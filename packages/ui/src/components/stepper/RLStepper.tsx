@@ -2,7 +2,7 @@ import { createMemo, createSignal, For, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { StepperProps, StepperItem } from "./stepper"
 import { stepperTheme } from "./stepper.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLStepperProps extends StepperProps {
   children?: JSX.Element
@@ -200,4 +200,3 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
 }
 
 export { RLStepper }
-export default RLStepper

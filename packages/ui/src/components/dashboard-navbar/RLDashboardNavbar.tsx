@@ -3,7 +3,7 @@ import type { JSX } from "@solidjs/web"
 import { Dynamic } from "@solidjs/web"
 import type { DashboardNavbarProps } from "./dashboard-navbar"
 import { dashboardNavbarTheme } from "./dashboard-navbar.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDashboardNavbarProps extends DashboardNavbarProps {
   children?: JSX.Element
@@ -129,4 +129,3 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
 }
 
 export { RLDashboardNavbar }
-export default RLDashboardNavbar

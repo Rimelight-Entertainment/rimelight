@@ -464,4 +464,3 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
 }
 
 export { RLKeyboard }
-export default RLKeyboard

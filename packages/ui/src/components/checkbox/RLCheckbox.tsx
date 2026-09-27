@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { CheckboxProps } from "./checkbox"
 import { checkboxTheme } from "./checkbox.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLCheckboxProps extends CheckboxProps {
   id?: string
@@ -66,4 +66,3 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
 }
 
 export { RLCheckbox }
-export default RLCheckbox

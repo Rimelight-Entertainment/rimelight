@@ -26,4 +26,3 @@ const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
 }
 
 export { RLPricingPlan }
-export default RLPricingPlan

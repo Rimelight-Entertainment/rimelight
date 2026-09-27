@@ -1,5 +1,5 @@
 import { createMemo, createSignal, For, Show, type Component } from "solid-js"
-import RLButton from "../button/RLButton"
+import { RLButton } from "../button/RLButton"
 
 type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp"
 type CommandType = "add" | "create" | "dlx" | "exec" | "install" | "remove" | "run"
@@ -194,4 +194,3 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
 }
 
 export { RLPackageManagers }
-export default RLPackageManagers

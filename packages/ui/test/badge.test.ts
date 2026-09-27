@@ -8,7 +8,7 @@ vi.mock("virtual:rimelight/ui", () => ({
   }
 }))
 
-import RLBadge from "../src/components/badge/RLBadge"
+import { RLBadge } from "../src/components/badge/RLBadge"
 import { renderSolid } from "./utils/normalize"
 
 describe("RLBadge Solid Component Rendering", () => {

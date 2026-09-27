@@ -53,5 +53,3 @@ export const slideoverTheme = defineTheme("slideover", {
     side: "left"
   }
 })
-
-export default slideoverTheme

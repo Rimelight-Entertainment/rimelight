@@ -2,8 +2,8 @@ import { createMemo, omit, For, Show, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { LinkGroupProps } from "./link-group"
 import { linkGroupTheme } from "./link-group.theme"
-import RLLink from "../link/RLLink"
-import RLIcon from "../icon/RLIcon"
+import { RLLink } from "../link/RLLink"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLLinkGroupProps extends LinkGroupProps {
   children?: JSX.Element
@@ -77,4 +77,3 @@ const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
 }
 
 export { RLLinkGroup }
-export default RLLinkGroup

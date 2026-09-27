@@ -11,7 +11,7 @@ import {
 import type { JSX } from "@solidjs/web"
 import type { CarouselProps, CarouselSlide } from "./carousel"
 import { carouselTheme } from "./carousel.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLCarouselProps extends CarouselProps {
   children?: JSX.Element
@@ -250,4 +250,3 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
 }
 
 export { RLCarousel }
-export default RLCarousel

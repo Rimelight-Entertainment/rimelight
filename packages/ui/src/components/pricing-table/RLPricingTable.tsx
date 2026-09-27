@@ -26,4 +26,3 @@ const RLPricingTable: Component<RLPricingTableProps> = (allProps) => {
 }
 
 export { RLPricingTable }
-export default RLPricingTable

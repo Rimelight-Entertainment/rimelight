@@ -26,4 +26,3 @@ const RLCompare: Component<RLCompareProps> = (allProps) => {
 }
 
 export { RLCompare }
-export default RLCompare

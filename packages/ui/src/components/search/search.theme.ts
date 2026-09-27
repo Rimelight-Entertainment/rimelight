@@ -60,5 +60,3 @@ export const searchTheme = defineTheme("search", {
   variants: {},
   defaultVariants: {}
 })
-
-export default searchTheme

@@ -10,7 +10,7 @@ import {
 import type { JSX } from "@solidjs/web"
 import type { ModalProps } from "./modal"
 import { modalTheme } from "./modal.theme"
-import RLButton from "../button/RLButton"
+import { RLButton } from "../button/RLButton"
 
 export interface RLModalProps extends ModalProps {
   onClose?: () => void
@@ -203,4 +203,3 @@ const RLModal: Component<RLModalProps> = (allProps) => {
 }
 
 export { RLModal }
-export default RLModal

@@ -27,4 +27,3 @@ const RLMeter: Component<RLMeterProps> = (allProps) => {
 }
 
 export { RLMeter }
-export default RLMeter

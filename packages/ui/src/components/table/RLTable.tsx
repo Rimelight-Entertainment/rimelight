@@ -21,9 +21,9 @@ import type {
 import { tableTheme } from "./table.theme"
 export * from "./table"
 import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme"
-import RLInput from "../input/RLInput"
-import RLDropdownMenu from "../dropdown-menu/RLDropdownMenu"
-import RLIcon from "../icon/RLIcon"
+import { RLInput } from "../input/RLInput"
+import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu"
+import { RLIcon } from "../icon/RLIcon"
 
 type AnyData = Record<string, any>
 
@@ -1969,5 +1969,3 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     </div>
   )
 }
-
-export default RLTable

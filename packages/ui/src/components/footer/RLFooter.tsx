@@ -57,4 +57,3 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
 }
 
 export { RLFooter }
-export default RLFooter

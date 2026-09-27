@@ -26,4 +26,3 @@ const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
 }
 
 export { RLFloatingAction }
-export default RLFloatingAction

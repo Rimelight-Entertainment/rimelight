@@ -406,4 +406,3 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
 }
 
 export { RLLayoutGrid }
-export default RLLayoutGrid

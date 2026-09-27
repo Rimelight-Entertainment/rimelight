@@ -27,4 +27,3 @@ const RLPassword: Component<RLPasswordProps> = (allProps) => {
 }
 
 export { RLPassword }
-export default RLPassword

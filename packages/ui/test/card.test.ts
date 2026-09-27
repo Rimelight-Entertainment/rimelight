@@ -8,7 +8,7 @@ vi.mock("virtual:rimelight/ui", () => ({
   }
 }))
 
-import RLCard from "../src/components/card/RLCard"
+import { RLCard } from "../src/components/card/RLCard"
 import { renderSolid } from "./utils/normalize"
 
 describe("RLCard Solid Component Rendering", () => {

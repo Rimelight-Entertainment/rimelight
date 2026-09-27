@@ -26,4 +26,3 @@ const RLError: Component<RLErrorProps> = (allProps) => {
 }
 
 export { RLError }
-export default RLError

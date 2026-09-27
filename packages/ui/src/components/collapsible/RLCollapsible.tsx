@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, omit, type Component } from "so
 import type { JSX } from "@solidjs/web"
 import type { CollapsibleProps } from "./collapsible"
 import { collapsibleTheme } from "./collapsible.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLCollapsibleProps extends CollapsibleProps {
   children?: JSX.Element
@@ -86,4 +86,3 @@ const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
 }
 
 export { RLCollapsible }
-export default RLCollapsible

@@ -3,7 +3,7 @@ import type { JSX } from "@solidjs/web"
 import type { InputNumberProps } from "./input-number"
 import { inputNumberTheme } from "./input-number.theme"
 import { inputTheme } from "../input/input.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLInputNumberProps extends InputNumberProps {
   children?: JSX.Element
@@ -185,4 +185,3 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
 }
 
 export { RLInputNumber }
-export default RLInputNumber

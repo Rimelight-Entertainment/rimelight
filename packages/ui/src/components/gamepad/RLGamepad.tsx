@@ -262,4 +262,3 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
 }
 
 export { RLGamepad }
-export default RLGamepad

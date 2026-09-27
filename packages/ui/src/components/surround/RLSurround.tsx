@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLSurroundItem {
   label: string
@@ -55,4 +55,3 @@ const RLSurround: Component<RLSurroundProps> = (props) => {
 }
 
 export { RLSurround }
-export default RLSurround

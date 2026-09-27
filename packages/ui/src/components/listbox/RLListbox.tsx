@@ -27,4 +27,3 @@ const RLListbox: Component<RLListboxProps> = (allProps) => {
 }
 
 export { RLListbox }
-export default RLListbox

@@ -290,4 +290,3 @@ const RLChart: Component<RLChartProps> = (allProps) => {
 }
 
 export { RLChart }
-export default RLChart

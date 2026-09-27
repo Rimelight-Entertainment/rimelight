@@ -27,4 +27,3 @@ const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {
 }
 
 export { RLPhoneMockup }
-export default RLPhoneMockup

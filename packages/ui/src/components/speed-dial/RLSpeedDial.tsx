@@ -27,4 +27,3 @@ const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
 }
 
 export { RLSpeedDial }
-export default RLSpeedDial

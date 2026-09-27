@@ -3,8 +3,8 @@ import type { JSX } from "@solidjs/web"
 import { Dynamic } from "@solidjs/web"
 import type { PageSectionProps } from "./page-section"
 import { pageSectionTheme } from "./page-section.theme"
-import RLIcon from "../icon/RLIcon"
-import RLButton from "../button/RLButton"
+import { RLIcon } from "../icon/RLIcon"
+import { RLButton } from "../button/RLButton"
 
 export interface RLPageSectionProps extends PageSectionProps {
   background?: JSX.Element
@@ -200,4 +200,3 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
 }
 
 export { RLPageSection }
-export default RLPageSection

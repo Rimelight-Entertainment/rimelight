@@ -11,8 +11,8 @@ import {
 import type { JSX } from "@solidjs/web"
 import type { TabItem, TabsProps } from "./tabs"
 import { tabsTheme } from "./tabs.theme"
-import RLBadge from "../badge/RLBadge"
-import RLIcon from "../icon/RLIcon"
+import { RLBadge } from "../badge/RLBadge"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLTabsProps<T extends TabItem = TabItem> extends TabsProps<T> {
   children?: JSX.Element
@@ -303,4 +303,3 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
 }
 
 export { RLTabs }
-export default RLTabs

@@ -71,4 +71,3 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
 }
 
 export { RLTextarea }
-export default RLTextarea

@@ -95,4 +95,3 @@ const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
 }
 
 export { RLInputTags }
-export default RLInputTags

@@ -51,5 +51,3 @@ export const shortcutsTheme = defineTheme("shortcuts", {
   variants: {},
   defaultVariants: {}
 })
-
-export default shortcutsTheme

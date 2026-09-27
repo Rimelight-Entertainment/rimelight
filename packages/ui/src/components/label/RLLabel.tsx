@@ -27,4 +27,3 @@ const RLLabel: Component<RLLabelProps> = (allProps) => {
 }
 
 export { RLLabel }
-export default RLLabel

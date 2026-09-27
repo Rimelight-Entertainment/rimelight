@@ -38,4 +38,3 @@ const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
 }
 
 export { RLRadioGroup }
-export default RLRadioGroup

@@ -27,4 +27,3 @@ const RLRating: Component<RLRatingProps> = (allProps) => {
 }
 
 export { RLRating }
-export default RLRating

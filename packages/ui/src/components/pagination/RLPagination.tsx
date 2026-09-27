@@ -1,7 +1,7 @@
 import { createMemo, omit, For, type Component } from "solid-js"
 import type { PaginationProps } from "./pagination"
 import { paginationTheme } from "./pagination.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLPaginationProps extends PaginationProps {
   page?: number
@@ -120,4 +120,3 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
 }
 
 export { RLPagination }
-export default RLPagination

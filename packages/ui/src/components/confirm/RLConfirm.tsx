@@ -2,7 +2,7 @@ import { createEffect, createMemo, createSignal, omit, type Component } from "so
 import type { JSX } from "@solidjs/web"
 import type { ConfirmProps } from "./confirm"
 import { confirmTheme } from "./confirm.theme"
-import RLButton from "../button/RLButton"
+import { RLButton } from "../button/RLButton"
 
 export interface RLConfirmProps extends ConfirmProps {
   children?: JSX.Element
@@ -173,4 +173,3 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
 }
 
 export { RLConfirm }
-export default RLConfirm

@@ -26,4 +26,3 @@ const RLProse: Component<RLProseProps> = (allProps) => {
 }
 
 export { RLProse }
-export default RLProse

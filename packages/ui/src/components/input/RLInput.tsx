@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { InputProps } from "./input"
 import { inputTheme } from "./input.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLInputProps extends InputProps {
   onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void
@@ -102,4 +102,3 @@ const RLInput: Component<RLInputProps> = (allProps) => {
 }
 
 export { RLInput }
-export default RLInput

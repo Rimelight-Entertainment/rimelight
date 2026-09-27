@@ -39,4 +39,3 @@ const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
 }
 
 export { RLFieldGroup }
-export default RLFieldGroup

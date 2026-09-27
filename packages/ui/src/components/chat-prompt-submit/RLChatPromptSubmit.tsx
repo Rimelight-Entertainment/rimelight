@@ -27,4 +27,3 @@ const RLChatPromptSubmit: Component<RLChatPromptSubmitProps> = (allProps) => {
 }
 
 export { RLChatPromptSubmit }
-export default RLChatPromptSubmit

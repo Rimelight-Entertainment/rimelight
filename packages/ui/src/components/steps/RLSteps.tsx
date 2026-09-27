@@ -108,4 +108,3 @@ const RLSteps: Component<RLStepsProps> = (allProps) => {
 }
 
 export { RLSteps }
-export default RLSteps

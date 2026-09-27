@@ -3,10 +3,10 @@ import type { JSX } from "@solidjs/web"
 import { Portal } from "@solidjs/web"
 import type { SearchProps } from "./search"
 import { searchTheme } from "./search.theme"
-import RLIcon from "../icon/RLIcon"
-import RLInput from "../input/RLInput"
-import RLKbd from "../kbd/RLKbd"
-import RLButton from "../button/RLButton"
+import { RLIcon } from "../icon/RLIcon"
+import { RLInput } from "../input/RLInput"
+import { RLKbd } from "../kbd/RLKbd"
+import { RLButton } from "../button/RLButton"
 import { defineShortcuts } from "../../shortcuts"
 
 export interface SearchResultItem {
@@ -294,4 +294,3 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
 }
 
 export { RLSearch }
-export default RLSearch

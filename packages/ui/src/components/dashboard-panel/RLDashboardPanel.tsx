@@ -80,4 +80,3 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
 }
 
 export { RLDashboardPanel }
-export default RLDashboardPanel

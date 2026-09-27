@@ -119,4 +119,3 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
 }
 
 export { RLLogo }
-export default RLLogo

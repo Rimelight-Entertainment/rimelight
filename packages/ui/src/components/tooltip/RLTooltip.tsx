@@ -41,4 +41,3 @@ const RLTooltip: Component<RLTooltipProps> = (allProps) => {
 }
 
 export { RLTooltip }
-export default RLTooltip

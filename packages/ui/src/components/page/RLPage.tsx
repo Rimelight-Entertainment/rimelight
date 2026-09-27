@@ -21,4 +21,3 @@ const RLPage: Component<RLPageProps> = (allProps) => {
 }
 
 export { RLPage }
-export default RLPage

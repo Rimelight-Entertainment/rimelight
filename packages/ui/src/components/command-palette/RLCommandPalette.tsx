@@ -26,4 +26,3 @@ const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
 }
 
 export { RLCommandPalette }
-export default RLCommandPalette

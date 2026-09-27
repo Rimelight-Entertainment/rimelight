@@ -186,4 +186,3 @@ const RLInputPin: Component<RLInputPinProps> = (allProps) => {
 }
 
 export { RLInputPin }
-export default RLInputPin

@@ -122,4 +122,3 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
 }
 
 export { RLHeader }
-export default RLHeader

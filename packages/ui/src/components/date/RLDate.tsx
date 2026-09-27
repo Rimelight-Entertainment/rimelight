@@ -33,4 +33,3 @@ const RLDate: Component<RLDateProps> = (allProps) => {
 }
 
 export { RLDate }
-export default RLDate

@@ -222,4 +222,3 @@ export function useHeaderStack() {
 }
 
 export const getHeaderStack = useHeaderStack
-export default useHeaderStack

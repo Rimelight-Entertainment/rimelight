@@ -15,7 +15,7 @@ import type {
   NavigationMenuProps
 } from "./navigation-menu"
 import { navigationMenuTheme } from "./navigation-menu.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLNavigationMenuProps extends NavigationMenuProps {
   children?: JSX.Element
@@ -393,4 +393,3 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
 }
 
 export { RLNavigationMenu }
-export default RLNavigationMenu

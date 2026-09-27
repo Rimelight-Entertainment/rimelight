@@ -21,4 +21,3 @@ const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
 }
 
 export { RLBrowserMockup }
-export default RLBrowserMockup

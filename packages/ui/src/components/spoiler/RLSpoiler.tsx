@@ -26,4 +26,3 @@ const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
 }
 
 export { RLSpoiler }
-export default RLSpoiler

@@ -26,4 +26,3 @@ const RLUser: Component<RLUserProps> = (allProps) => {
 }
 
 export { RLUser }
-export default RLUser

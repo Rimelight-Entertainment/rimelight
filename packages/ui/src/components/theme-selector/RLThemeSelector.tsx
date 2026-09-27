@@ -2,7 +2,7 @@ import { createMemo, createSignal, onSettled, omit, type Component } from "solid
 import type { JSX } from "@solidjs/web"
 import type { ThemeSelectorProps } from "./theme-selector"
 import { themeSelectorTheme } from "./theme-selector.theme"
-import RLSelect from "../select/RLSelect"
+import { RLSelect } from "../select/RLSelect"
 import { defineShortcuts } from "../../shortcuts"
 
 export interface RLThemeSelectorProps extends ThemeSelectorProps {
@@ -110,4 +110,3 @@ const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
 }
 
 export { RLThemeSelector }
-export default RLThemeSelector

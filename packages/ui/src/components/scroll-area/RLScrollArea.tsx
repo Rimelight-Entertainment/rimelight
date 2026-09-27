@@ -202,4 +202,3 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
 }
 
 export { RLScrollArea }
-export default RLScrollArea

@@ -66,4 +66,3 @@ const RLChip: Component<RLChipProps> = (allProps) => {
 }
 
 export { RLChip }
-export default RLChip

@@ -42,4 +42,3 @@ const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
 }
 
 export { RLDashboardToolbar }
-export default RLDashboardToolbar

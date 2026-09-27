@@ -72,4 +72,3 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
 }
 
 export { RLFormField }
-export default RLFormField

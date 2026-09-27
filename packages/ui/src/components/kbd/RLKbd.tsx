@@ -29,4 +29,3 @@ const RLKbd: Component<RLKbdProps> = (allProps) => {
 }
 
 export { RLKbd }
-export default RLKbd

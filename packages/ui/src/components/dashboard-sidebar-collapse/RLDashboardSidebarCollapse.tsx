@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { DashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse"
 import { dashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDashboardSidebarCollapseProps extends DashboardSidebarCollapseProps {
   children?: JSX.Element
@@ -42,4 +42,3 @@ const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
 }
 
 export { RLDashboardSidebarCollapse }
-export default RLDashboardSidebarCollapse

@@ -26,4 +26,3 @@ const RLEditor: Component<RLEditorProps> = (allProps) => {
 }
 
 export { RLEditor }
-export default RLEditor

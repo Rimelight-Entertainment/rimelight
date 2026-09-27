@@ -8,5 +8,3 @@ export const localeSelectorTheme = defineTheme("locale-selector", {
     select: ""
   }
 })
-
-export default localeSelectorTheme

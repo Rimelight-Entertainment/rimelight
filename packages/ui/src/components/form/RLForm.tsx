@@ -27,4 +27,3 @@ const RLForm: Component<RLFormProps> = (allProps) => {
 }
 
 export { RLForm }
-export default RLForm

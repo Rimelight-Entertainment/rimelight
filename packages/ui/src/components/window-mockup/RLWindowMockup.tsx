@@ -27,4 +27,3 @@ const RLWindowMockup: Component<RLWindowMockupProps> = (allProps) => {
 }
 
 export { RLWindowMockup }
-export default RLWindowMockup

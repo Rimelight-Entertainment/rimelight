@@ -233,4 +233,3 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
 }
 
 export { RLColorField }
-export default RLColorField

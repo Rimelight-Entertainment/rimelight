@@ -56,4 +56,3 @@ const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
 }
 
 export { RLStickySurface }
-export default RLStickySurface

@@ -12,7 +12,7 @@ import type { JSX } from "@solidjs/web"
 import { Portal } from "@solidjs/web"
 import type { SlideoverProps } from "./slideover"
 import { slideoverTheme } from "./slideover.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLSlideoverProps extends SlideoverProps {
   children?: JSX.Element
@@ -216,4 +216,3 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
 }
 
 export { RLSlideover }
-export default RLSlideover

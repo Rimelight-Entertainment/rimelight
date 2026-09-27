@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { PostProps } from "./post"
 import { postTheme } from "./post.theme"
-import RLBadge from "../badge/RLBadge"
+import { RLBadge } from "../badge/RLBadge"
 
 export interface RLPostProps extends PostProps {
   children?: JSX.Element
@@ -135,4 +135,3 @@ const RLPost: Component<RLPostProps> = (allProps) => {
 }
 
 export { RLPost }
-export default RLPost

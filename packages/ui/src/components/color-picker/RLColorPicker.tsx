@@ -26,4 +26,3 @@ const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
 }
 
 export { RLColorPicker }
-export default RLColorPicker

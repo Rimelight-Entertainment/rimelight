@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { SeparatorProps } from "./separator"
 import { separatorTheme } from "./separator.theme"
-import RLAvatar from "../avatar/RLAvatar"
+import { RLAvatar } from "../avatar/RLAvatar"
 
 export interface RLSeparatorProps extends SeparatorProps {
   children?: JSX.Element
@@ -93,4 +93,3 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
 }
 
 export { RLSeparator }
-export default RLSeparator

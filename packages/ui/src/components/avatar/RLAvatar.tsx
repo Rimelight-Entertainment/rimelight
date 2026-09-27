@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { AvatarProps } from "./avatar"
 import { avatarTheme } from "./avatar.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLAvatarProps extends AvatarProps {
   children?: JSX.Element
@@ -137,4 +137,3 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
 }
 
 export { RLAvatar }
-export default RLAvatar

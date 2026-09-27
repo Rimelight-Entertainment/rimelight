@@ -2,7 +2,7 @@ import { createMemo, createSignal, omit, untrack, For, type Component } from "so
 import { dynamic, type JSX } from "@solidjs/web"
 import type { AccordionItem, AccordionProps } from "./accordion"
 import { accordionTheme } from "./accordion.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export type AccordionSlotRenderer = (item: AccordionItem, index: number) => JSX.Element
 

@@ -65,4 +65,3 @@ const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
 }
 
 export { RLHoverCard }
-export default RLHoverCard

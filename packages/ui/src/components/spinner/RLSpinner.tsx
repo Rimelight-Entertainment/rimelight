@@ -21,4 +21,3 @@ const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
 }
 
 export { RLSpinner }
-export default RLSpinner

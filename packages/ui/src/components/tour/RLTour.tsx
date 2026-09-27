@@ -26,4 +26,3 @@ const RLTour: Component<RLTourProps> = (allProps) => {
 }
 
 export { RLTour }
-export default RLTour

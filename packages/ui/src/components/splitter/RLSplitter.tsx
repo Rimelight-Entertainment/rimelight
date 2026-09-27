@@ -2,7 +2,7 @@ import { children, createMemo, createSignal, For, omit, type Component } from "s
 import type { JSX } from "@solidjs/web"
 import type { SplitterProps } from "./splitter"
 import { splitterTheme } from "./splitter.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLSplitterProps extends SplitterProps {
   children?: JSX.Element
@@ -159,4 +159,3 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
 }
 
 export { RLSplitter }
-export default RLSplitter

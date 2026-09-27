@@ -57,4 +57,3 @@ const RLSwitch: Component<RLSwitchProps> = (allProps) => {
 }
 
 export { RLSwitch }
-export default RLSwitch

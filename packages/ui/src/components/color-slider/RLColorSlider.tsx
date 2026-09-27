@@ -368,4 +368,3 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
 }
 
 export { RLColorSlider }
-export default RLColorSlider

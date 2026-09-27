@@ -20,4 +20,3 @@ const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
 }
 
 export { RLSkeleton }
-export default RLSkeleton

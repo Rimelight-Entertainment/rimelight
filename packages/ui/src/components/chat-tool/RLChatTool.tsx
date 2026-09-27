@@ -27,4 +27,3 @@ const RLChatTool: Component<RLChatToolProps> = (allProps) => {
 }
 
 export { RLChatTool }
-export default RLChatTool

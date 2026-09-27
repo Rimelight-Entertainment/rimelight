@@ -1,6 +1,6 @@
 import { createSignal, onCleanup, omit, type Component } from "solid-js"
 import type { ButtonProps } from "../button/button"
-import RLButton from "../button/RLButton"
+import { RLButton } from "../button/RLButton"
 
 export interface RLCopyMarkdownProps extends Omit<
   ButtonProps,
@@ -58,4 +58,3 @@ const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
 }
 
 export { RLCopyMarkdown }
-export default RLCopyMarkdown

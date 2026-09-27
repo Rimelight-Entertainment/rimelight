@@ -27,4 +27,3 @@ const RLChat: Component<RLChatProps> = (allProps) => {
 }
 
 export { RLChat }
-export default RLChat

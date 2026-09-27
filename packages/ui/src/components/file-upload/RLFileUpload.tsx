@@ -2,7 +2,7 @@ import { createMemo, createSignal, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { FileUploadProps } from "./file-upload"
 import { fileUploadTheme } from "./file-upload.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLFileUploadProps extends FileUploadProps {
   onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
@@ -164,4 +164,3 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
 }
 
 export { RLFileUpload }
-export default RLFileUpload

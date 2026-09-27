@@ -56,4 +56,3 @@ const RLProgress: Component<RLProgressProps> = (allProps) => {
 }
 
 export { RLProgress }
-export default RLProgress

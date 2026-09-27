@@ -1,7 +1,7 @@
 import { createMemo, createSignal, omit, For, type Component } from "solid-js"
 import type { InputRatingProps } from "./input-rating"
 import { inputRatingTheme } from "./input-rating.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLInputRatingProps extends InputRatingProps {
   onValueChange?: (value: number) => void
@@ -205,4 +205,3 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
 }
 
 export { RLInputRating }
-export default RLInputRating

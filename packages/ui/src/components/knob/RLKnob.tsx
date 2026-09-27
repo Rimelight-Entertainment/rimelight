@@ -27,4 +27,3 @@ const RLKnob: Component<RLKnobProps> = (allProps) => {
 }
 
 export { RLKnob }
-export default RLKnob

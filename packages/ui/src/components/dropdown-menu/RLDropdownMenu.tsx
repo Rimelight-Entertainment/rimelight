@@ -3,7 +3,7 @@ import type { JSX } from "@solidjs/web"
 import { Portal } from "@solidjs/web"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDropdownMenuProps extends DropdownMenuProps {
   children?: JSX.Element
@@ -309,4 +309,3 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
 }
 
 export { RLDropdownMenu }
-export default RLDropdownMenu

@@ -26,4 +26,3 @@ const RLTree: Component<RLTreeProps> = (allProps) => {
 }
 
 export { RLTree }
-export default RLTree

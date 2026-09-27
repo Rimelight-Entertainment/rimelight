@@ -2,9 +2,9 @@ import { createMemo, omit, For, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { EmptyProps } from "./empty"
 import { emptyTheme } from "./empty.theme"
-import RLButton from "../button/RLButton"
-import RLAvatar from "../avatar/RLAvatar"
-import RLIcon from "../icon/RLIcon"
+import { RLButton } from "../button/RLButton"
+import { RLAvatar } from "../avatar/RLAvatar"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLEmptyProps extends EmptyProps {
   children?: JSX.Element
@@ -133,4 +133,3 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
 }
 
 export { RLEmpty }
-export default RLEmpty

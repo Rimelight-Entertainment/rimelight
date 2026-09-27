@@ -26,4 +26,3 @@ const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 }
 
 export { RLCalendar }
-export default RLCalendar

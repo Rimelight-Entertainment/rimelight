@@ -30,4 +30,3 @@ const RLMain: Component<RLMainProps> = (allProps) => {
 }
 
 export { RLMain }
-export default RLMain

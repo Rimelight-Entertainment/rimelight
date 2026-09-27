@@ -21,4 +21,3 @@ const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {
 }
 
 export { RLPageHeader }
-export default RLPageHeader

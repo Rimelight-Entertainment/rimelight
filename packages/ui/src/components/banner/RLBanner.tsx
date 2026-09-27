@@ -2,7 +2,7 @@ import { createMemo, createSignal, omit, For, Show, type Component } from "solid
 import type { JSX } from "@solidjs/web"
 import type { BannerAction, BannerProps } from "./banner"
 import { bannerTheme } from "./banner.theme"
-import RLButton from "../button/RLButton"
+import { RLButton } from "../button/RLButton"
 import { useHeaderStack } from "../header/useHeaderStack"
 
 export interface RLBannerProps extends BannerProps {
@@ -189,4 +189,3 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
 }
 
 export { RLBanner }
-export default RLBanner

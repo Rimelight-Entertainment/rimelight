@@ -2,7 +2,7 @@ import { createMemo, For, Show, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { DashboardSearchButtonProps } from "./dashboard-search-button"
 import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDashboardSearchButtonProps extends DashboardSearchButtonProps {
   children?: JSX.Element
@@ -83,4 +83,3 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
 }
 
 export { RLDashboardSearchButton }
-export default RLDashboardSearchButton

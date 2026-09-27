@@ -2,7 +2,7 @@ import { createMemo, omit, For, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { BreadcrumbItem, BreadcrumbProps } from "./breadcrumb"
 import { breadcrumbTheme } from "./breadcrumb.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLBreadcrumbProps extends BreadcrumbProps {
   children?: JSX.Element
@@ -132,4 +132,3 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
 }
 
 export { RLBreadcrumb }
-export default RLBreadcrumb

@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { LocaleSelectorProps, LocaleItem } from "./locale-selector"
 import { localeSelectorTheme } from "./locale-selector.theme"
-import RLSelect from "../select/RLSelect"
+import { RLSelect } from "../select/RLSelect"
 
 export interface RLLocaleSelectorProps extends LocaleSelectorProps {
   mode?: "select" | "icon"
@@ -129,4 +129,3 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
 }
 
 export { RLLocaleSelector }
-export default RLLocaleSelector

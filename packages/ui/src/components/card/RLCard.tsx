@@ -120,4 +120,3 @@ const RLCard: Component<RLCardProps> = (allProps) => {
 }
 
 export { RLCard }
-export default RLCard

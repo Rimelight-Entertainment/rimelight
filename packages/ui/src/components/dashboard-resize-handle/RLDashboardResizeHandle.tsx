@@ -35,4 +35,3 @@ const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allPro
 }
 
 export { RLDashboardResizeHandle }
-export default RLDashboardResizeHandle

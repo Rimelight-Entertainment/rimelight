@@ -109,4 +109,3 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
 }
 
 export { RLSlider }
-export default RLSlider

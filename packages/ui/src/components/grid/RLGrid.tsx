@@ -29,4 +29,3 @@ const RLGrid: Component<RLGridProps> = (allProps) => {
 }
 
 export { RLGrid }
-export default RLGrid

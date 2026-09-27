@@ -27,4 +27,3 @@ const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {
 }
 
 export { RLChatShimmer }
-export default RLChatShimmer

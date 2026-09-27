@@ -164,4 +164,3 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
 }
 
 export { RLDashboardSidebar }
-export default RLDashboardSidebar

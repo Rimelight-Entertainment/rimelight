@@ -10,7 +10,7 @@ import {
 import type { JSX } from "@solidjs/web"
 import type { DashboardSearchProps } from "./dashboard-search"
 import { dashboardSearchTheme } from "./dashboard-search.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDashboardSearchProps extends DashboardSearchProps {
   children?: JSX.Element
@@ -126,4 +126,3 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
 }
 
 export { RLDashboardSearch }
-export default RLDashboardSearch

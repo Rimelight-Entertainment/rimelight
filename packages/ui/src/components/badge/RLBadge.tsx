@@ -42,4 +42,3 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
 }
 
 export { RLBadge }
-export default RLBadge

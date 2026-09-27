@@ -26,4 +26,3 @@ const RLDock: Component<RLDockProps> = (allProps) => {
 }
 
 export { RLDock }
-export default RLDock

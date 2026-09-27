@@ -2,8 +2,8 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"
-import RLIcon from "../icon/RLIcon"
-import RLAvatar from "../avatar/RLAvatar"
+import { RLIcon } from "../icon/RLIcon"
+import { RLAvatar } from "../avatar/RLAvatar"
 
 export interface RLButtonProps extends ButtonProps {
   children?: JSX.Element

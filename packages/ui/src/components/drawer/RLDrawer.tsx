@@ -10,7 +10,7 @@ import {
 import type { JSX } from "@solidjs/web"
 import type { DrawerProps } from "./drawer"
 import { drawerTheme } from "./drawer.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLDrawerProps extends DrawerProps {
   children?: JSX.Element
@@ -179,4 +179,3 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
 }
 
 export { RLDrawer }
-export default RLDrawer

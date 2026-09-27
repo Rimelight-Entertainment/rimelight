@@ -2,7 +2,7 @@ import { createMemo, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { QuoteProps } from "./quote"
 import { quoteTheme } from "./quote.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLQuoteProps extends QuoteProps {
   children?: JSX.Element
@@ -37,4 +37,3 @@ const RLQuote: Component<RLQuoteProps> = (allProps) => {
 }
 
 export { RLQuote }
-export default RLQuote

@@ -26,4 +26,3 @@ const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
 }
 
 export { RLQrCode }
-export default RLQrCode

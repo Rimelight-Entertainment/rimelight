@@ -21,4 +21,3 @@ const RLGallery: Component<RLGalleryProps> = (allProps) => {
 }
 
 export { RLGallery }
-export default RLGallery

@@ -28,4 +28,3 @@ const RLIcon: Component<RLIconProps> = (allProps) => {
 }
 
 export { RLIcon }
-export default RLIcon

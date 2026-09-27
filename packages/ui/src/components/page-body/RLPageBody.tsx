@@ -21,4 +21,3 @@ const RLPageBody: Component<RLPageBodyProps> = (allProps) => {
 }
 
 export { RLPageBody }
-export default RLPageBody

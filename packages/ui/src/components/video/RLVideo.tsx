@@ -2,7 +2,7 @@ import { createMemo, createSignal, Show, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { VideoProps } from "./video"
 import { videoTheme } from "./video.theme"
-import RLIcon from "../icon/RLIcon"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLVideoProps extends VideoProps {
   children?: JSX.Element
@@ -160,4 +160,3 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
 }
 
 export { RLVideo }
-export default RLVideo

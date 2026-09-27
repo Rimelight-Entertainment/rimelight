@@ -2,8 +2,8 @@ import { createMemo, For, Show, omit, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { SidebarItem, SidebarProps } from "./sidebar"
 import { sidebarTheme } from "./sidebar.theme"
-import RLBadge from "../badge/RLBadge"
-import RLIcon from "../icon/RLIcon"
+import { RLBadge } from "../badge/RLBadge"
+import { RLIcon } from "../icon/RLIcon"
 
 export interface RLSidebarProps extends SidebarProps {
   children?: JSX.Element
@@ -267,4 +267,3 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
 }
 
 export { RLSidebar }
-export default RLSidebar
