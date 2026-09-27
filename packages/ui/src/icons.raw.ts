@@ -1,9 +1,17 @@
 export const svg = (inner: string) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="100%" height="100%">${inner}</svg>`
 
+const toCamelCase = (str: string): string => str.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase())
+
 export const getIconSvg = (name: string): string | undefined => {
-  if (!Object.prototype.hasOwnProperty.call(ICONS, name)) return undefined
-  return svg(ICONS[name as keyof typeof ICONS])
+  if (Object.prototype.hasOwnProperty.call(ICONS, name)) {
+    return svg(ICONS[name as keyof typeof ICONS])
+  }
+  const camel = toCamelCase(name)
+  if (Object.prototype.hasOwnProperty.call(ICONS, camel)) {
+    return svg(ICONS[camel as keyof typeof ICONS])
+  }
+  return undefined
 }
 
 export const ICONS = {
@@ -57,6 +65,7 @@ export const ICONS = {
   uploadCloud: `<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M12 12v9M9 15l3-3 3 3"/>`,
   user: `<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>`,
   star: `<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>`,
+  rocket: `<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>`,
   lock: `<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>`,
   eye: `<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/>`,
   eyeOff: `<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499A10.75 10.75 0 0 1 2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.225-4.22"/><line x1="2" x2="22" y1="2" y2="22"/>`,
