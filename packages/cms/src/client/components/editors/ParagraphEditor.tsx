@@ -1,7 +1,7 @@
 import { createSignal, onSettled, Show, type Component } from "solid-js"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
-import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface InlineNode {
   type: "text" | "link"
@@ -217,8 +217,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
       class="rimelight-paragraph-editor flex flex-col w-full relative"
     >
       <div
-        class="toolbar-div flex items-center gap-0.5 px-1.5 py-1 bg-elevated border border-default rounded-lg shadow-sm mb-1 self-start"
-        classList={{ hidden: !toolbarVisible() }}
+        class={`toolbar-div flex items-center gap-0.5 px-1.5 py-1 bg-elevated border border-default rounded-lg shadow-sm mb-1 self-start ${!toolbarVisible() ? "hidden" : ""}`}
       >
         <RLButton
           variant="ghost"
@@ -260,7 +259,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
       <div
         ref={(el) => (editableDiv = el)}
         aria-label="Paragraph text content"
-        contentEditable={true}
+        contenteditable="true"
         class="editable-div py-1.5 px-2 outline-none min-h-[2.5rem] text-sm text-highlighted bg-transparent leading-relaxed focus:ring-1 focus:ring-primary/40 rounded-lg"
       />
 

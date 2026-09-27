@@ -44,23 +44,27 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     return result
   })
 
-  createEffect(() => {
-    const currentStatus = state.status()
-    if (typeof document !== "undefined") {
-      document.dispatchEvent(
-        new CustomEvent("status-change", { detail: { status: currentStatus }, bubbles: true })
-      )
+  createEffect(
+    () => state.status(),
+    (currentStatus) => {
+      if (typeof document !== "undefined") {
+        document.dispatchEvent(
+          new CustomEvent("status-change", { detail: { status: currentStatus }, bubbles: true })
+        )
+      }
     }
-  })
+  )
 
-  createEffect(() => {
-    const rawBlocks = previewBlocks()
-    if (typeof document !== "undefined") {
-      document.dispatchEvent(
-        new CustomEvent("blocks-change", { detail: { blocks: rawBlocks }, bubbles: true })
-      )
+  createEffect(
+    () => previewBlocks(),
+    (rawBlocks) => {
+      if (typeof document !== "undefined") {
+        document.dispatchEvent(
+          new CustomEvent("blocks-change", { detail: { blocks: rawBlocks }, bubbles: true })
+        )
+      }
     }
-  })
+  )
 
   onSettled(() => {
     const publicMethods = {
@@ -97,15 +101,18 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     }
   })
 
-  createEffect(() => {
-    if (componentProps.showInternalPreview && state.previewVisible()) {
-      queueMicrotask(() => {
-        if (containerRef && editorPaneRef && previewPaneRef && handleRef) {
-          initSplitPane(containerRef, editorPaneRef, previewPaneRef, handleRef)
-        }
-      })
+  createEffect(
+    () => componentProps.showInternalPreview && state.previewVisible(),
+    (shouldInit) => {
+      if (shouldInit) {
+        queueMicrotask(() => {
+          if (containerRef && editorPaneRef && previewPaneRef && handleRef) {
+            initSplitPane(containerRef, editorPaneRef, previewPaneRef, handleRef)
+          }
+        })
+      }
     }
-  })
+  )
 
   return (
     <div class="rimelight-cms-editor-container flex-1 w-full h-full flex">

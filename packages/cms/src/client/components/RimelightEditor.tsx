@@ -3,7 +3,7 @@ import type { EditorState } from "../state/editor-store"
 import { RimelightBlock } from "./RimelightBlock"
 import { RimelightBlockPicker } from "./RimelightBlockPicker"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface RimelightEditorProps {
   state: EditorState

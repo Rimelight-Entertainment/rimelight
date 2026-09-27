@@ -1,7 +1,7 @@
 import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
-import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
 
 const BLOCK_DEFS = [
   {
@@ -199,7 +199,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
   }
 
   return (
-    <div classList={{ hidden: !props.open }}>
+    <div class={!props.open ? "hidden" : undefined}>
       <div
         role="presentation"
         onClick={(e) => {
@@ -270,8 +270,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                               handleSelectBlock(block.type)
                             }}
                             onMouseEnter={() => setSelectedIndex(index())}
-                            class="cms-picker-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-neutral-100 w-full text-left bg-transparent border-none"
-                            classList={{ "bg-neutral-100": isSelected }}
+                            class={`cms-picker-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-neutral-100 w-full text-left bg-transparent border-none ${isSelected ? "bg-neutral-100" : ""}`}
                           >
                             <div class="text-base w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-neutral-100 text-highlighted border border-default">
                               <RLIcon name={block.icon} size="sm" />

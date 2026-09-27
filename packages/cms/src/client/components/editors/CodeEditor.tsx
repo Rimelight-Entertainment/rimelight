@@ -1,6 +1,6 @@
 import { onSettled, type Component } from "solid-js"
-import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface CodeEditorProps {
   props: Record<string, any>

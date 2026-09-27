@@ -1,5 +1,5 @@
 import { type Component } from "solid-js"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
 
 export interface CardEditorProps {
   props: Record<string, any>

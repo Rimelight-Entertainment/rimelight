@@ -1,8 +1,8 @@
 ---
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
-import RLABadge from "@rimelight/ui/components/badge/RLBadge.tsx";
-import RLAIcon from "@rimelight/ui/components/icon/RLIcon.tsx";
-import RLAInput from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLABadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLAIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLAInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { getR2Bucket, listR2Files } from "../../storage/index";
 import { storageConfig } from "virtual:rimelight-cms/storage";
 import { getRelativeLocaleUrl } from "@rimelight/i18n";

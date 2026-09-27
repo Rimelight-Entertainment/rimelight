@@ -4,12 +4,12 @@ import {
   type PageDefinition,
   type FieldDefinition
 } from "../../core/page-definitions.ts"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
-import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
-import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
-import RLModal from "@rimelight/ui/components/modal/RLModal.tsx"
-import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
+import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx"
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
 
 function getTextValue(value: any): string {
   if (typeof value === "string") return value
@@ -82,7 +82,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
   const [editingLinkIndex, setEditingLinkIndex] = createSignal<number | null>(null)
   const [linkDraft, setLinkDraft] = createSignal({ label: "", to: "", icon: "" })
 
-  onSettled(async () => {
+  onSettled(() => {
     const def = definition()
     if (def?.properties) {
       const initialExpanded: Record<string, boolean> = {}
@@ -104,38 +104,40 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       document.addEventListener("properties-change", handlePropsChange)
     }
 
-    // Load available taxonomy categories
-    try {
-      const res = await fetch("/api/cms/taxonomies/category/terms")
-      if (res.ok) {
-        const data = await res.json()
-        if (Array.isArray(data)) {
-          setCategoriesList(data.map((t: any) => ({ id: t.id, name: t.name, slug: t.slug })))
+    void (async () => {
+      // Load available taxonomy categories
+      try {
+        const res = await fetch("/api/cms/taxonomies/category/terms")
+        if (res.ok) {
+          const data = await res.json()
+          if (Array.isArray(data)) {
+            setCategoriesList(data.map((t: any) => ({ id: t.id, name: t.name, slug: t.slug })))
+          }
         }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
 
-    // Load available global bylines
-    try {
-      const res = await fetch("/api/cms/bylines")
-      if (res.ok) {
-        const data = await res.json()
-        if (Array.isArray(data)) {
-          setAvailableBylines(
-            data.map((b: any) => ({
-              name: b.name,
-              avatar: b.avatar || "",
-              role: b.bio || "",
-              url: b.websiteUrl || ""
-            }))
-          )
+      // Load available global bylines
+      try {
+        const res = await fetch("/api/cms/bylines")
+        if (res.ok) {
+          const data = await res.json()
+          if (Array.isArray(data)) {
+            setAvailableBylines(
+              data.map((b: any) => ({
+                name: b.name,
+                avatar: b.avatar || "",
+                role: b.bio || "",
+                url: b.websiteUrl || ""
+              }))
+            )
+          }
         }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
+    })()
   })
 
   const handlePropertyChange = (key: string, value: any) => {

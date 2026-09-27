@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For } from "solid-js"
 import type { JSX } from "@solidjs/web"
-import RLAspectRatio from "@rimelight/ui/components/aspect-ratio/RLAspectRatio.tsx"
+import { RLAspectRatio } from "@rimelight/ui/components/aspect-ratio/RLAspectRatio.tsx"
 import type { ComponentAuditDefinition } from "./types"
 
 const RATIOS: Array<{ label: string; value: number }> = [

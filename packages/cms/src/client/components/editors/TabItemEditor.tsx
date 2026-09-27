@@ -1,8 +1,8 @@
 import { onSettled, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
 
 export interface TabItemEditorProps {
   blockId?: string

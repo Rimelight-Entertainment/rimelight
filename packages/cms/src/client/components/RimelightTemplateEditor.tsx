@@ -1,11 +1,11 @@
 import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
-import RLSelect from "@rimelight/ui/components/select/RLSelect.tsx"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
-import RLCheckbox from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
-import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
 
 export interface RimelightTemplateEditorProps {
   initialBlocks?: BaseBlock[]

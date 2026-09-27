@@ -2,10 +2,10 @@ import { type Component, For, createSignal } from "solid-js"
 import { createAsyncData } from "#utils/async"
 import AppLayout from "#layouts/AppLayout"
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import RLPageSection from "@rimelight/ui/components/page-section/RLPageSection.tsx"
-import RLTabs from "@rimelight/ui/components/tabs/RLTabs.tsx"
-import RLGrid from "@rimelight/ui/components/grid/RLGrid.tsx"
-import RLPost from "@rimelight/ui/components/post/RLPost.tsx"
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx"
+import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx"
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx"
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx"
 
 function getPageTitle(title: unknown, locale: string): string {
   if (typeof title === "object" && title !== null) {

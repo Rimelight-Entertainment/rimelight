@@ -1,10 +1,10 @@
 import { createSignal, createMemo, Show, For } from "solid-js"
-import RLTable from "@rimelight/ui/components/table/RLTable.tsx"
+import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx"
 import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
-import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
-import RLCheckbox from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
-import RLDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
+import { RLDropdownMenu } from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx"
 import {
   SHOWCASE_PAYMENTS_DATA,
   formatShowcaseDate,

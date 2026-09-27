@@ -1,6 +1,6 @@
 import { type Component } from "solid-js"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
-import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
 
 export interface DialogueEditorProps {
   props: Record<string, any>

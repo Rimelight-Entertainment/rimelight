@@ -1,9 +1,9 @@
 import { createSignal, onSettled, For, Show, createMemo, type Component } from "solid-js"
-import RLInput from "@rimelight/ui/components/input/RLInput.tsx"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
-import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
-import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
-import RLTextarea from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
 
 export interface TaxonomyRecord {
   id: string

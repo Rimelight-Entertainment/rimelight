@@ -1,7 +1,7 @@
 import { type Component, For, Show } from "solid-js"
 import { inlinesToMarkdown } from "@rimelight/cms"
-import RLCard from "@rimelight/ui/components/card/RLCard.tsx"
-import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
 
 interface PageRendererProps {
   blocks?: any[]

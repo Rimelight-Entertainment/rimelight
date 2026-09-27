@@ -1,10 +1,10 @@
 import { type Component } from "solid-js"
 import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout"
 import { createAsyncData } from "#utils/async"
-import RLCard from "@rimelight/ui/components/card/RLCard.tsx"
-import RLBadge from "@rimelight/ui/components/badge/RLBadge.tsx"
-import RLButton from "@rimelight/ui/components/button/RLButton.tsx"
-import RLIcon from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
 
 export const AdminIndexPage: Component = () => {
   const metrics = createAsyncData(
