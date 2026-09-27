@@ -3,7 +3,7 @@ import type { ChipProps } from "../chip/chip"
 
 export interface AvatarProps {
   /**
-   * The component the root element should render as.
+   * The element or component this component should render as.
    *
    * @default "span"
    */
@@ -12,8 +12,17 @@ export interface AvatarProps {
   alt?: string | undefined
   icon?: any
   text?: string | undefined
+  /**
+   * Fallback text (alias for text / initials).
+   */
   fallback?: string | undefined
   /**
+   * Compact initials displayed inside the avatar (alias for text / fallback).
+   */
+  initials?: string | undefined
+  /**
+   * Avatar size.
+   *
    * @default "md"
    */
   size?:
@@ -38,9 +47,20 @@ export interface AvatarProps {
     | (string & {})
     | undefined
   /**
+   * Color variant.
+   *
    * @default "neutral"
    */
-  color?: ThemeColor | undefined
+  color?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | ThemeColor
+    | undefined
   chip?: boolean | ChipProps | undefined
   badge?: boolean | string | number | undefined
   badgeColor?: string | undefined
@@ -65,10 +85,6 @@ export interface AvatarProps {
   srcset?: string | undefined
   usemap?: string | undefined
   /**
-   * Compact initials displayed inside the avatar circle (alias for fallback)
-   */
-  initials?: string | undefined
-  /**
    * Display name rendered adjacent to the avatar (e.g. "Daniel Marchi")
    */
   title?: string | undefined
@@ -83,7 +99,16 @@ export interface AvatarProps {
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: {
+    root?: any
+    image?: any
+    fallback?: any
+    icon?: any
+    badge?: any
+    wrapper?: any
+    title?: any
+    subtitle?: any
+  }
   /**
    * Additional CSS classes to apply to the root element.
    */

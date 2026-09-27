@@ -31,36 +31,38 @@ const RLChip: Component<RLChipProps> = (allProps) => {
 
   const classes = createMemo(() =>
     chipTheme({
-      color: props["color"],
-      size: props["size"],
-      position: props["position"],
-      inset: props["inset"],
+      color: props.color,
+      size: props.size,
+      position: props.position,
+      inset: props.inset,
       standalone: props.standalone ?? false,
-      ui: props["ui"],
-      class: props["class"]
+      ui: props.ui,
+      class: props.class
     })
   )
 
-  const show = props.show ?? true
+  const isVisible = () => props.show ?? true
 
   if (props.standalone) {
     return (
-      <Show when={show}>
-        <span class={classes()["base"]} data-slot="base">
+      <Show when={isVisible()}>
+        <span class={classes().base} data-slot="base">
           {props.children !== undefined ? props.children : props.text}
         </span>
       </Show>
     )
   }
 
+  const baseColorClass = () => (props.color ? `rl-color-${props.color}` : "")
+
   return (
-    <div class={classes()["root"]} data-slot="root" data-theme={props.theme} {...rest}>
+    <div class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
       {props.children}
-      {show && (
-        <span class={classes()["base"]} data-slot="base">
+      <Show when={isVisible()}>
+        <span class={`${classes().base} ${baseColorClass()}`} data-slot="base">
           {props.content !== undefined ? props.content : props.text}
         </span>
-      )}
+      </Show>
     </div>
   )
 }

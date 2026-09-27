@@ -1,5 +1,5 @@
-import { createMemo, omit, For, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
+import { children, createMemo, omit, For, type Component } from "solid-js"
+import { dynamic, type JSX } from "@solidjs/web"
 import type { AvatarGroupProps } from "./avatar-group"
 import { avatarGroupTheme } from "./avatar-group.theme"
 import { RLAvatar } from "../avatar/RLAvatar"
@@ -8,66 +8,123 @@ export interface RLAvatarGroupProps extends AvatarGroupProps {
   children?: JSX.Element
 }
 
-const sizeCls: Record<string, string> = {
-  "3xs": "size-4 text-[7px]",
-  "2xs": "size-5 text-[8px]",
-  "xs": "size-6 text-[9px]",
-  "sm": "size-7 text-[10px]",
-  "md": "size-8 text-[11px]",
-  "lg": "size-9 text-xs",
-  "xl": "size-10 text-xs",
-  "2xl": "size-11 text-sm",
-  "3xl": "size-12 text-sm"
-}
-
 const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
   const props = allProps
-  const rest = omit(allProps, "items", "displayLimit", "size", "ui", "class", "children")
+  const rest = omit(
+    allProps,
+    "as",
+    "items",
+    "max",
+    "displayLimit",
+    "size",
+    "color",
+    "ui",
+    "class",
+    "children"
+  )
 
-  const normalizedItems = () => props.items ?? []
-  const displayLimit = () => props.displayLimit ?? 5
+  const maxCount = () => {
+    if (props.max !== undefined) {
+      const parsed = Number(props.max)
+      return Number.isFinite(parsed) ? parsed : undefined
+    }
+    if (props.displayLimit !== undefined) {
+      return props.displayLimit
+    }
+    return undefined
+  }
+
   const size = () => props.size ?? "md"
+  const color = () => props.color ?? "neutral"
 
-  const resolvedClasses = createMemo(() => avatarGroupTheme({ ui: props.ui, class: props.class }))
+  const resolvedClasses = createMemo(() =>
+    avatarGroupTheme({
+      size: size(),
+      color: color(),
+      ui: props.ui,
+      class: props.class
+    })
+  )
 
-  const renderedItems = () => normalizedItems().slice(0, displayLimit())
-  const hiddenCount = () => normalizedItems().length - displayLimit()
+  const Root = dynamic(() => props.as ?? "div")
+
+  // For props.items mode
+  const normalizedItems = () => props.items ?? []
+  const renderedItems = () => {
+    const limit = maxCount()
+    return limit !== undefined ? normalizedItems().slice(0, limit) : normalizedItems()
+  }
+  const hiddenItemCount = () => {
+    const limit = maxCount()
+    if (limit === undefined) return 0
+    return Math.max(0, normalizedItems().length - limit)
+  }
+
+  // For children mode
+  const resolvedChildren = children(() => props.children)
+  const childArray = createMemo(() => {
+    const ch = resolvedChildren()
+    if (!ch) return []
+    return Array.isArray(ch) ? ch : [ch]
+  })
+
+  const visibleChildren = () => {
+    const limit = maxCount()
+    const arr = childArray()
+    return limit !== undefined ? arr.slice(0, limit) : arr
+  }
+
+  const hiddenChildCount = () => {
+    const limit = maxCount()
+    if (limit === undefined) return 0
+    return Math.max(0, childArray().length - limit)
+  }
 
   return (
-    <>
+    <Root class={resolvedClasses().root} data-slot="avatar-group" {...rest}>
       {normalizedItems().length > 0 ? (
-        <div class={resolvedClasses().root} data-slot="avatar-group" {...rest}>
-          <For each={renderedItems()}>
+        <>
+          {hiddenItemCount() > 0 && (
+            <span class={resolvedClasses().more} aria-hidden="true" data-slot="more">
+              +{hiddenItemCount()}
+            </span>
+          )}
+          <For each={[...renderedItems()].reverse()}>
             {(item) => (
-              <span class="inline-flex shrink-0">
+              <span class={resolvedClasses().base} data-slot="base">
                 <RLAvatar
                   src={item.src}
                   alt={item.alt ?? ""}
+                  icon={item.icon}
+                  text={item.text}
                   fallback={item.fallback}
                   initials={item.initials}
                   size={size()}
-                  color={(item.color ?? "neutral") as any}
+                  color={(item.color ?? color()) as any}
+                  chip={item.chip}
+                  loading={item.loading}
                 />
               </span>
             )}
           </For>
-
-          {hiddenCount() > 0 && (
-            <span
-              class={`${resolvedClasses().more} ${sizeCls[size()] ?? sizeCls["md"]}`}
-              aria-hidden="true"
-              data-slot="more"
-            >
-              +{hiddenCount()}
+        </>
+      ) : (
+        <>
+          {hiddenChildCount() > 0 && (
+            <span class={resolvedClasses().more} aria-hidden="true" data-slot="more">
+              +{hiddenChildCount()}
             </span>
           )}
-        </div>
-      ) : (
-        <div class={resolvedClasses().root} data-slot="avatar-group" {...rest}>
-          {props.children}
-        </div>
+          <For each={[...visibleChildren()].reverse()}>
+            {(child) => (
+              <span class={resolvedClasses().base} data-slot="base">
+                {child}
+              </span>
+            )}
+          </For>
+        </>
       )}
-    </>
+    </Root>
   )
 }
 

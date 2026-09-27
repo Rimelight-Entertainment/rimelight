@@ -16,6 +16,10 @@ export interface PopoverProps {
    */
   mode?: "click" | "hover" | "both"
   /**
+   * Size variant for padding.
+   */
+  size?: "xs" | "sm" | "md" | "lg" | (string & {}) | undefined
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

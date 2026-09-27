@@ -1,10 +1,38 @@
-import type { Theme } from "../../types"
+import type { Theme, ThemeColor } from "../../types"
 
 export interface ChipProps {
+  color?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | ThemeColor
+    | (string & {})
+    | undefined
+  size?:
+    | "3xs"
+    | "2xs"
+    | "xs"
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | (string & {})
+    | undefined
+  position?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined
+  inset?: boolean | undefined
+  text?: any
+  standalone?: boolean | undefined
+  show?: boolean | undefined
   activeColor?: string
   activeVariant?: string
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * Theme mode override — pins colors to flat, light, or dark mode.
    */
   theme?: Theme
   /**

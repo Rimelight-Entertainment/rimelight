@@ -6,14 +6,15 @@ export const popoverTheme = defineTheme("popover", {
     root: "relative inline-flex items-center justify-center",
     trigger: "inline-flex items-center justify-center",
     content: [
-      "absolute z-50 rounded-xl border border-default bg-elevated text-highlighted shadow-xl outline-none"
+      "absolute z-50 rounded-xl border border-default bg-elevated text-highlighted shadow-xl outline-none pointer-events-none"
     ]
   },
   variants: {
     size: {
-      sm: { content: "w-48 p-2.5" },
-      md: { content: "w-72 p-4" },
-      lg: { content: "w-96 p-5" }
+      xs: { content: "p-1.5 whitespace-nowrap" },
+      sm: { content: "p-2 whitespace-nowrap" },
+      md: { content: "p-2.5 whitespace-nowrap" },
+      lg: { content: "p-3 whitespace-nowrap" }
     },
     placement: {
       "top": { content: "bottom-full left-1/2 -translate-x-1/2 mb-2" },

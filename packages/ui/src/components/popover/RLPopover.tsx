@@ -1,12 +1,4 @@
-import {
-  createMemo,
-  createSignal,
-  omit,
-  Show,
-  onSettled,
-  onCleanup,
-  type Component
-} from "solid-js"
+import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js"
 import type { JSX } from "@solidjs/web"
 import type { PopoverProps } from "./popover"
 import { popoverTheme } from "./popover.theme"
@@ -41,7 +33,6 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
   const isVisible = () => isOpen() || isHovered()
 
   let containerRef: HTMLDivElement | undefined
-  let hoverTimer: ReturnType<typeof setTimeout> | undefined
 
   const handleOpenChange = (next: boolean) => {
     setIsOpen(next)
@@ -49,15 +40,11 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
   }
 
   const handleHoverShow = () => {
-    if (hoverTimer) clearTimeout(hoverTimer)
     setIsHovered(true)
   }
 
   const handleHoverHide = () => {
-    if (hoverTimer) clearTimeout(hoverTimer)
-    hoverTimer = setTimeout(() => {
-      setIsHovered(false)
-    }, 150)
+    setIsHovered(false)
   }
 
   onSettled(() => {
@@ -70,12 +57,9 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
     return () => document.removeEventListener("click", handleOutsideClick)
   })
 
-  onCleanup(() => {
-    if (hoverTimer) clearTimeout(hoverTimer)
-  })
-
   const resolvedClasses = createMemo(() =>
     popoverTheme({
+      size: props.size ?? "md",
       placement: props.placement ?? "bottom",
       ui: props.ui,
       class: props.class

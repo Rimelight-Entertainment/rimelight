@@ -1,3 +1,5 @@
+import type { ThemeColor } from "../../types"
+
 export interface AvatarItemData {
   /**
    * Image URL.
@@ -7,6 +9,14 @@ export interface AvatarItemData {
    * Alt text for the image.
    */
   alt?: string
+  /**
+   * Fallback icon name or element.
+   */
+  icon?: any
+  /**
+   * Fallback text.
+   */
+  text?: string
   /**
    * Fallback text (initials or short label).
    */
@@ -18,18 +28,38 @@ export interface AvatarItemData {
   /**
    * Color variant passed to the inner Avatar.
    */
-  color?: string
+  color?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | ThemeColor
+    | undefined
+  chip?: any
+  loading?: "lazy" | "eager"
+  [key: string]: unknown
 }
 
 export interface AvatarGroupProps {
   /**
-   * Array of avatar data to render automatically. When provided, enables the CSS responsive item
-   * counter. When omitted, falls back to the default `<slot />` behaviour.
+   * The element or component this component should render as.
+   *
+   * @default "div"
+   */
+  as?: any
+  /**
+   * Array of avatar data to render automatically. When omitted, renders default children.
    */
   items?: AvatarItemData[]
   /**
-   * Maximum number of avatars to show at full container width. Additional avatars are pre-hidden
-   * server-side and counted. Container queries will responsively hide more as width shrinks.
+   * The maximum number of avatars to display. The rest is displayed as a `+X` avatar.
+   */
+  max?: string | number | undefined
+  /**
+   * Alias for `max`.
    *
    * @default 5
    */
@@ -39,11 +69,41 @@ export interface AvatarGroupProps {
    *
    * @default "md"
    */
-  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
+  size?:
+    | "3xs"
+    | "2xs"
+    | "xs"
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | (string & {})
+    | undefined
+  /**
+   * Color variant — forwarded to each inner RLAvatar.
+   *
+   * @default "neutral"
+   */
+  color?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | ThemeColor
+    | undefined
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: {
+    root?: any
+    base?: any
+    more?: any
+  }
   /**
    * Additional CSS classes to apply to the root element.
    */
