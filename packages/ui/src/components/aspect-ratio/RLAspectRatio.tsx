@@ -44,4 +44,3 @@ const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
 }
 
 export { RLAspectRatio }
-export default RLAspectRatio

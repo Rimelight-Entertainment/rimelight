@@ -144,13 +144,14 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
             allowfullscreen
             loading="lazy"
             referrerpolicy="strict-origin-when-cross-origin"
-            class="w-full h-full absolute inset-0 border-0"
+            class={resolvedClasses().iframe}
+            data-slot="iframe"
           />
         </Show>
       </div>
 
       <Show when={props.transcriptSlot !== undefined || props.children !== undefined}>
-        <div class="mt-2 text-sm text-zinc-400" data-slot="transcript">
+        <div class={resolvedClasses().transcript} data-slot="transcript">
           {props.transcriptSlot !== undefined ? props.transcriptSlot : props.children}
         </div>
       </Show>

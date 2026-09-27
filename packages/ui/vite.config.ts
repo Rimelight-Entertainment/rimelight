@@ -1,8 +1,10 @@
 import { defineConfig } from "vite-plus"
 import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
+import solid from "@solidjs/vite-plugin"
 
 export default defineConfig(
   rimelightPackConfig({
+    plugins: [solid()],
     test: {
       environment: "node"
     },

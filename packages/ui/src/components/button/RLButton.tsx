@@ -185,4 +185,3 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
 }
 
 export { RLButton }
-export default RLButton

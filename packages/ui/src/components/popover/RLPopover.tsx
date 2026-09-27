@@ -105,13 +105,12 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
           if (mode() === "hover" || mode() === "both") handleHoverHide()
         }}
       >
-        {props.trigger ? (
-          props.trigger
-        ) : props.triggerLabel ? (
-          <button type="button" class="cursor-pointer">
-            {props.triggerLabel}
-          </button>
-        ) : null}
+        {props.trigger ??
+          (props.triggerLabel ? (
+            <button type="button" class="cursor-pointer">
+              {props.triggerLabel}
+            </button>
+          ) : null)}
       </div>
 
       <Show when={isVisible()}>
@@ -124,4 +123,3 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
 }
 
 export { RLPopover }
-export default RLPopover

@@ -387,4 +387,3 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
 }
 
 export { RLAccordion }
-export default RLAccordion

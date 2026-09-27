@@ -8,7 +8,7 @@ vi.mock("virtual:rimelight/ui", () => ({
   }
 }))
 
-import RLButton from "../src/components/button/RLButton"
+import { RLButton } from "../src/components/button/RLButton"
 import { renderSolid } from "./utils/normalize"
 
 describe("RLButton Solid Component Rendering", () => {

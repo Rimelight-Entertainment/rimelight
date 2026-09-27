@@ -3,15 +3,22 @@ import { defineTheme } from "../../resolver"
 export const popoverTheme = defineTheme("popover", {
   slots: ["root", "trigger", "content"],
   base: {
-    root: "relative inline-block",
-    trigger: "",
+    root: "relative inline-flex items-center justify-center",
+    trigger: "inline-flex items-center justify-center",
     content: [
-      "absolute z-50 w-72 rounded-xl border border-default bg-elevated p-4 text-highlighted shadow-xl outline-none"
+      "absolute z-50 rounded-xl border border-default bg-elevated text-highlighted shadow-xl outline-none"
     ]
   },
   variants: {
+    size: {
+      sm: { content: "w-48 p-2.5" },
+      md: { content: "w-72 p-4" },
+      lg: { content: "w-96 p-5" }
+    },
     placement: {
       "top": { content: "bottom-full left-1/2 -translate-x-1/2 mb-2" },
+      "top-start": { content: "bottom-full left-0 right-auto mb-2" },
+      "top-end": { content: "bottom-full right-0 left-auto mb-2" },
       "bottom": { content: "top-full left-1/2 -translate-x-1/2 mt-2" },
       "bottom-end": { content: "top-full right-0 left-auto mt-2" },
       "bottom-start": { content: "top-full left-0 right-auto mt-2" },
@@ -20,6 +27,7 @@ export const popoverTheme = defineTheme("popover", {
     }
   },
   defaultVariants: {
+    size: "md",
     placement: "bottom"
   }
 })
