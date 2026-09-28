@@ -1,0 +1,87 @@
+import { type Component, For, Show } from "solid-js"
+import { createAsyncData } from "#utils/async"
+import AppLayout from "#layouts/AppLayout"
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx"
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx"
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx"
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record["en"] || ""
+  }
+  return typeof val === "string" ? val : ""
+}
+
+export const LegalIndexPage: Component = () => {
+  const activeLocale = () => getLocale()
+
+  const legalPages = createAsyncData(
+    () => activeLocale(),
+    async (loc) => {
+      try {
+        const res = await fetch("/api/content/pages?type=legal")
+        if (!res.ok) return []
+        const data = (await res.json()) as any
+        const allPages = (data.pages || []) as any[]
+
+        return allPages.filter((post) => {
+          const content =
+            typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
+          return (content.properties?.locale || "en") === loc
+        })
+      } catch {
+        return []
+      }
+    },
+    []
+  )
+
+  return (
+    <AppLayout
+      title={t("page_legal.meta_title") || "Legal"}
+      description={
+        t("page_legal.meta_description") || "Terms of Service, Privacy Policy, and Legal Agreements"
+      }
+    >
+      <RLPageSection
+        title={t("page_legal.title") || "Legal Documents"}
+        description={t("page_legal.description") || "Our policies and agreements"}
+        class="py-16"
+      >
+        <div class="max-w-5xl mx-auto w-full px-4 mt-8">
+          <RLGrid cols={2}>
+            <For each={legalPages() || []}>
+              {(post) => {
+                const content =
+                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
+                const title = getLocalizedText(post.title, activeLocale())
+                const description =
+                  getLocalizedText(post.description, activeLocale()) ||
+                  content.properties?.description ||
+                  ""
+                const postDate = post.postedAt || post.createdAt
+                return (
+                  <RLPost
+                    title={title}
+                    description={description}
+                    date={postDate}
+                    to={getRelativeLocaleUrl(`/legal/${post.slug}/`)}
+                    variant="ghost"
+                  />
+                )
+              }}
+            </For>
+          </RLGrid>
+
+          <Show when={!legalPages() || legalPages()!.length === 0}>
+            <p class="text-center text-neutral-500 py-12">No legal documents found.</p>
+          </Show>
+        </div>
+      </RLPageSection>
+    </AppLayout>
+  )
+}
+
+export default LegalIndexPage

@@ -1,8 +1,8 @@
-import ScriptBlock from "./ScriptBlock.astro"
-import SceneBlock from "./SceneBlock.astro"
-import DialogueBlock from "./DialogueBlock.astro"
-import ApiDocumentationBlock from "./ApiDocumentationBlock.astro"
-import LivePreviewBlock from "./LivePreviewBlock.astro"
+import { ScriptBlock } from "./ScriptBlock"
+import { SceneBlock } from "./SceneBlock"
+import { DialogueBlock } from "./DialogueBlock"
+import { ApiDocumentationBlock } from "./ApiDocumentationBlock"
+import { LivePreviewBlock } from "./LivePreviewBlock"
 
 export const rimelightCustomBlocks: Record<string, any> = {
   ScriptBlock,

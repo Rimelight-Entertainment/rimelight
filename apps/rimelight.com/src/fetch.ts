@@ -1,24 +1,31 @@
 import { Hono } from "hono"
-import { cf } from "@astrojs/cloudflare/hono"
+import { handleRequest } from "virtual:solid-ssr-handler"
 import { security, devOnly, ratelimit, construction } from "@rimelight/security/middleware"
 import { auth } from "@rimelight/auth/middleware"
 import api from "#api"
 import { i18n } from "@rimelight/i18n/middleware"
 import { getRelativeLocaleUrl } from "@rimelight/i18n"
-import { astro } from "astro/hono"
+import { rimelightSolidConfig } from "@rimelight/config/solid"
+
+const site = rimelightSolidConfig({
+  domain: "rimelight.com"
+})
 
 const app = new Hono<{ Bindings: Env }>()
 
 // Middlewares
-app.use(cf())
-app.use(security())
+app.use(
+  security(
+    site.securityOptions ?? {
+      imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
+    }
+  )
+)
 app.use(devOnly)
 app.use(ratelimit())
 app.use(construction())
 app.use(
   auth({
-    signInUrl: "/api/auth/login",
-    authRedirectUrl: "/api/auth/login",
     roleGuards: {
       "/internal": {
         roles: ["employee", "staff", "admin", "owner"],
@@ -27,7 +34,8 @@ app.use(
       "/api/internal": {
         roles: ["employee", "staff", "admin", "owner"],
         userTypes: ["employee"]
-      }
+      },
+      "/admin": ["admin", "owner"]
     }
   })
 )
@@ -35,9 +43,11 @@ app.use(
 // Hono API Routing
 app.route("/api", api)
 
-// Localization & Astro Pipeline
+// Localization Middleware
 app.use(i18n())
-app.use(astro())
+
+// Fall through all unmatched requests to Solid's SSR page renderer
+app.all("*", (c) => handleRequest(c.req.raw))
 
 // Global Error Handler
 app.onError((err, c) => {

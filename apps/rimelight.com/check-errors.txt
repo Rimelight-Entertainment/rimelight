@@ -1,0 +1,677 @@
+pass: All 181 files are correctly formatted (418ms, 8 threads)
+! eslint(no-unused-vars): Identifier 'siteConfig' is imported but never used.
+   ,-[src/routes/[locale]/company/legal/index.tsx:4:10]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :          ^^^^^|^^^^
+   :               `-- 'siteConfig' is imported here
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/company/index.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'navigate' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/routes/[locale]/company/docs/index.tsx:19:9]
+ 18 | export const DocsIndexPage: Component = () => {
+ 19 |   const navigate = useNavigate()
+    :         ^^^^|^^^
+    :             `-- 'navigate' is declared here
+ 20 |   const activeLocale = () => getLocale()
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/company/contact.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'getRelativeLocaleUrl' is imported but never used.
+   ,-[src/routes/[locale]/company/careers.tsx:4:13]
+ 3 | import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+ 4 | import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+   :             ^^^^^^^^^^|^^^^^^^^^
+   :                       `-- 'getRelativeLocaleUrl' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/forums/rimelight.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/forums/grand-tale.tsx:3:10]
+ 2 | import GrandTaleLayout from "#layouts/GrandTaleLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/company/careers/culture.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/events/lightcon.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'RLButton' is imported but never used.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/review.tsx:3:10]
+ 2 | import DashboardLayout from "#layouts/DashboardLayout"
+ 3 | import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+   :          ^^^^|^^^
+   :              `-- 'RLButton' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Show' is imported but never used.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/edit.tsx:1:26]
+ 1 | import { type Component, Show, createSignal, onMount } from "solid-js"
+   :                          ^^|^
+   :                            `-- 'Show' is imported here
+ 2 | import { useParams } from "@solidjs/router"
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'onMount' is imported but never used.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/edit.tsx:1:46]
+ 1 | import { type Component, Show, createSignal, onMount } from "solid-js"
+   :                                              ^^^|^^^
+   :                                                 `-- 'onMount' is imported here
+ 2 | import { useParams } from "@solidjs/router"
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/company/blog/[...slug].tsx:7:10]
+ 6 | import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
+ 7 | import { t, getLocale } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 8 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'siteConfig' is imported but never used.
+   ,-[src/routes/[locale]/company/blog/index.tsx:4:10]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :          ^^^^^|^^^^
+   :               `-- 'siteConfig' is imported here
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/legal/[...slug].tsx:7:10]
+ 6 | import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
+ 7 | import { t, getLocale } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 8 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'siteConfig' is imported but never used.
+   ,-[src/routes/[locale]/legal/index.tsx:4:10]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :          ^^^^^|^^^^
+   :               `-- 'siteConfig' is imported here
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Function 'escapeHtml' is declared but never used.
+    ,-[src/components/blocks/ApiDocumentationBlock.tsx:10:10]
+  9 | 
+ 10 | function escapeHtml(str: string): string {
+    :          ^^^^^|^^^^
+    :               `-- 'escapeHtml' is declared here
+ 11 |   return str
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/company/studio/partnerships.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'For' is imported but never used.
+   ,-[src/routes/[locale]/franchises/grand-tale/about.tsx:1:26]
+ 1 | import { type Component, For } from "solid-js"
+   :                          ^|^
+   :                           `-- 'For' is imported here
+ 2 | import GrandTaleLayout from "#layouts/GrandTaleLayout"
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/franchises/grand-tale/about.tsx:4:10]
+ 3 | import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx"
+ 4 | import { t } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 't' is imported but never used.
+   ,-[src/routes/[locale]/company/legal/[...slug].tsx:7:10]
+ 6 | import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
+ 7 | import { t, getLocale } from "@rimelight/i18n"
+   :          |
+   :          `-- 't' is imported here
+ 8 | 
+   `----
+  help: Consider removing this import.
+
+  x typescript(TS2307): Cannot find module 'astro:content' or its corresponding type declarations.
+   ,-[src/live.config.ts:1:38]
+ 1 | import { defineLiveCollection } from "astro:content"
+   :                                      ^^^^^^^^^^^^^^^
+ 2 | import { rimelightCmsLoader } from "@rimelight/cms"
+   `----
+
+  x typescript(TS2305): Module '"solid-js"' has no exported member 'onMount'.
+   ,-[src/components/blocks/ApiDocumentationBlock.tsx:1:51]
+ 1 | import { type Component, Show, For, createSignal, onMount } from "solid-js"
+   :                                                   ^^^^^^^
+ 2 | import type { BaseBlock } from "@rimelight/cms"
+   `----
+
+  x typescript(TS6133): 'escapeHtml' is declared but its value is never read.
+    ,-[src/components/blocks/ApiDocumentationBlock.tsx:10:10]
+  9 | 
+ 10 | function escapeHtml(str: string): string {
+    :          ^^^^^^^^^^
+ 11 |   return str
+    `----
+
+  x typescript(TS2339): Property 'minHeadingLevel' does not exist on type 'false | TableOfContentsConfig'.
+    ,-[src/layouts/DocsLayout.tsx:71:38]
+ 70 |           return (
+ 71 |             h.depth >= (tocConfig()!.minHeadingLevel ?? 2) &&
+    :                                      ^^^^^^^^^^^^^^^
+ 72 |             h.depth <= (tocConfig()!.maxHeadingLevel ?? 3)
+    `----
+
+  x typescript(TS2339): Property 'maxHeadingLevel' does not exist on type 'false | TableOfContentsConfig'.
+    ,-[src/layouts/DocsLayout.tsx:72:38]
+ 71 |             h.depth >= (tocConfig()!.minHeadingLevel ?? 2) &&
+ 72 |             h.depth <= (tocConfig()!.maxHeadingLevel ?? 3)
+    :                                      ^^^^^^^^^^^^^^^
+ 73 |           )
+    `----
+
+  x typescript(TS2322): Type '(checked: boolean) => boolean' is not assignable to type '(e: Event & { currentTarget: HTMLInputElement; }) => void'.
+    ,-[src/routes/[locale]/construction.tsx:40:19]
+ 39 |                   checked={agreed()}
+ 40 |                   onChange={(checked: boolean) => setAgreed(checked)}
+    :                   ^^^^^^^^
+ 41 |                   label="Notify me when site goes live"
+    `----
+
+  x typescript(TS2307): Cannot find module 'virtual:rimelight/seo' or its corresponding type declarations.
+   ,-[src/routes/[locale]/index.tsx:4:28]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :                            ^^^^^^^^^^^^^^^^^^^^^^^
+ 5 | import { getRelativeLocaleUrl, t, getLocale } from "@rimelight/i18n"
+   `----
+
+  x typescript(TS2322): Type '{ title: string; description: string; children: Element; }' is not assignable to type 'IntrinsicAttributes & AdminLayoutProps'.
+   ,-[src/routes/[locale]/admin/bylines.tsx:6:40]
+ 5 |   return (
+ 6 |     <AdminLayout title="Admin Bylines" description="Manage bylines">
+   :                                        ^^^^^^^^^^^
+ 7 |       <h1>Admin Bylines</h1>
+   `----
+
+  x typescript(TS2322): Type '{ title: string; description: string; children: Element; }' is not assignable to type 'IntrinsicAttributes & AdminLayoutProps'.
+   ,-[src/routes/[locale]/admin/categories.tsx:6:43]
+ 5 |   return (
+ 6 |     <AdminLayout title="Admin Categories" description="Manage categories">
+   :                                           ^^^^^^^^^^^
+ 7 |       <h1>Admin Categories</h1>
+   `----
+
+  x typescript(TS2322): Type '{ title: string; description: string; children: Element; }' is not assignable to type 'IntrinsicAttributes & AdminLayoutProps'.
+   ,-[src/routes/[locale]/admin/tags.tsx:6:37]
+ 5 |   return (
+ 6 |     <AdminLayout title="Admin Tags" description="Manage tags">
+   :                                     ^^^^^^^^^^^
+ 7 |       <h1>Admin Tags</h1>
+   `----
+
+  x typescript(TS2322): Type '{ title: string; description: string; children: Element; }' is not assignable to type 'IntrinsicAttributes & AdminLayoutProps'.
+   ,-[src/routes/[locale]/admin/taxonomies.tsx:6:43]
+ 5 |   return (
+ 6 |     <AdminLayout title="Admin Taxonomies" description="Manage taxonomies">
+   :                                           ^^^^^^^^^^^
+ 7 |       <h1>Admin Taxonomies</h1>
+   `----
+
+  x typescript(TS2305): Module '"solid-js"' has no exported member 'onMount'.
+   ,-[src/routes/[locale]/auth/sign-in.tsx:1:26]
+ 1 | import { type Component, onMount } from "solid-js"
+   :                          ^^^^^^^
+ 2 | import { useLocation } from "@solidjs/router"
+   `----
+
+  x typescript(TS2305): Module '"solid-js"' has no exported member 'onMount'.
+   ,-[src/routes/[locale]/auth/sign-out.tsx:1:26]
+ 1 | import { type Component, onMount } from "solid-js"
+   :                          ^^^^^^^
+ 2 | 
+   `----
+
+  x typescript(TS2305): Module '"solid-js"' has no exported member 'onMount'.
+   ,-[src/routes/[locale]/auth/sign-up.tsx:1:26]
+ 1 | import { type Component, onMount } from "solid-js"
+   :                          ^^^^^^^
+ 2 | import { useLocation } from "@solidjs/router"
+   `----
+
+  x typescript(TS6133): 'getRelativeLocaleUrl' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/careers.tsx:4:13]
+ 3 | import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+ 4 | import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+   :             ^^^^^^^^^^^^^^^^^^^^
+ 5 | 
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/contact.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/index.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/blog/[...slug].tsx:7:10]
+ 6 | import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
+ 7 | import { t, getLocale } from "@rimelight/i18n"
+   :          ^
+ 8 | 
+   `----
+
+  x typescript(TS6133): 'siteConfig' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/blog/index.tsx:4:10]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :          ^^^^^^^^^^
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+
+  x typescript(TS2307): Cannot find module 'virtual:rimelight/seo' or its corresponding type declarations.
+   ,-[src/routes/[locale]/company/blog/index.tsx:4:28]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :                            ^^^^^^^^^^^^^^^^^^^^^^^
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/careers/culture.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS2307): Cannot find module 'virtual:rimelight-ui-docs-meta' or its corresponding type declarations.
+   ,-[src/routes/[locale]/company/docs/[...slug].tsx:6:18]
+ 5 | import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms"
+ 6 | import meta from "virtual:rimelight-ui-docs-meta"
+   :                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 7 | import { generateThemeCode } from "#docs/utils"
+   `----
+
+  x typescript(TS2307): Cannot find module '@rimelight/cms/solid/BlockRenderer.tsx' or its corresponding type declarations.
+    ,-[src/routes/[locale]/company/docs/[...slug].tsx:9:27]
+  8 | import ComponentShowcase from "#components/ComponentShowcase"
+  9 | import BlockRenderer from "@rimelight/cms/solid/BlockRenderer.tsx"
+    :                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 10 | import { rimelightCustomBlocks } from "#components/blocks"
+    `----
+
+  x typescript(TS2375): Type '{ combinationClasses?: never; initialThemeClasses?: never; themeSlots?: never; componentName: any; propsConfig: any; defaultProps: any; togglingPattern: any; playground: any; codeExamples: any; children: Element; } | { combinationClasses: any; initialThemeClasses: any; themeSlots: string[]; componentName: any; propsConfig: any; defaultProps: any; togglingPattern:
+  | any; playground: any; codeExamples: any; children: Element; }' is not assignable to type 'IntrinsicAttributes & ComponentShowcaseProps' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+     ,-[src/routes/[locale]/company/docs/[...slug].tsx:281:19]
+ 280 |                   playground={block.props.playgroundUrl}
+ 281 |                   codeExamples={block.props.codeExamples}
+     :                   ^^^^^^^^^^^^
+ 282 |                   {...showcaseProps}
+     `----
+
+  x typescript(TS6133): 'navigate' is declared but its value is never read.
+    ,-[src/routes/[locale]/company/docs/index.tsx:19:9]
+ 18 | export const DocsIndexPage: Component = () => {
+ 19 |   const navigate = useNavigate()
+    :         ^^^^^^^^
+ 20 |   const activeLocale = () => getLocale()
+    `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/legal/[...slug].tsx:7:10]
+ 6 | import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
+ 7 | import { t, getLocale } from "@rimelight/i18n"
+   :          ^
+ 8 | 
+   `----
+
+  x typescript(TS6133): 'siteConfig' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/legal/index.tsx:4:10]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :          ^^^^^^^^^^
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+
+  x typescript(TS2307): Cannot find module 'virtual:rimelight/seo' or its corresponding type declarations.
+   ,-[src/routes/[locale]/company/legal/index.tsx:4:28]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :                            ^^^^^^^^^^^^^^^^^^^^^^^
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/company/studio/partnerships.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS2538): Type 'undefined' cannot be used as an index type.
+    ,-[src/routes/[locale]/dev/email/index.tsx:67:42]
+ 66 |                   type="button"
+ 67 |                   disabled={loadingMap()[tplPath]}
+    :                                          ^^^^^^^
+ 68 |                   onClick={() => sendTest(tplPath)}
+    `----
+
+  x typescript(TS2345): Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+    ,-[src/routes/[locale]/dev/email/index.tsx:68:43]
+ 67 |                   disabled={loadingMap()[tplPath]}
+ 68 |                   onClick={() => sendTest(tplPath)}
+    :                                           ^^^^^^^
+ 69 |                   class="inline-block px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-sm font-medium rounded-md cursor-pointer disabled:opacity-50"
+    `----
+
+  x typescript(TS2322): Type '{ class: string; classList: { "text-green-500": boolean; "text-red-500": any; }; children: any; }' is not assignable to type 'HTMLAttributes<HTMLParagraphElement> & Properties<HTMLParagraphElement>'.
+    ,-[src/routes/[locale]/dev/email/index.tsx:76:17]
+ 75 |                 class="min-h-5 mt-3 text-xs"
+ 76 |                 classList={{
+    :                 ^^^^^^^^^
+ 77 |                   "text-green-500": !statusMap()[tplPath]?.error,
+    `----
+
+  x typescript(TS2538): Type 'undefined' cannot be used as an index type.
+    ,-[src/routes/[locale]/dev/email/index.tsx:77:50]
+ 76 |                 classList={{
+ 77 |                   "text-green-500": !statusMap()[tplPath]?.error,
+    :                                                  ^^^^^^^
+ 78 |                   "text-red-500": statusMap()[tplPath]?.error
+    `----
+
+  x typescript(TS2538): Type 'undefined' cannot be used as an index type.
+    ,-[src/routes/[locale]/dev/email/index.tsx:78:47]
+ 77 |                   "text-green-500": !statusMap()[tplPath]?.error,
+ 78 |                   "text-red-500": statusMap()[tplPath]?.error
+    :                                               ^^^^^^^
+ 79 |                 }}
+    `----
+
+  x typescript(TS2538): Type 'undefined' cannot be used as an index type.
+    ,-[src/routes/[locale]/dev/email/index.tsx:81:30]
+ 80 |               >
+ 81 |                 {statusMap()[tplPath]?.text || ""}
+    :                              ^^^^^^^
+ 82 |               </p>
+    `----
+
+  x typescript(TS2322): Type '{ type: "button"; onClick: () => Promise<void>; class: string; classList: { "!text-green-400 !border-green-500/40": boolean; }; children: string; }' is not assignable to type 'ButtonHTMLAttributes<HTMLButtonElement> & Properties<HTMLButtonElement>'.
+     ,-[src/routes/[locale]/dev/og/index.tsx:149:23]
+ 148 |                       class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-md text-xs font-medium text-neutral-200 transition-colors"
+ 149 |                       classList={{ "!text-green-400 !border-green-500/40": copiedUrl() === url }}
+     :                       ^^^^^^^^^
+ 150 |                     >
+     `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/events/lightcon.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/forums/grand-tale.tsx:3:10]
+ 2 | import GrandTaleLayout from "#layouts/GrandTaleLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/forums/rimelight.tsx:3:10]
+ 2 | import AppLayout from "#layouts/AppLayout"
+ 3 | import { t } from "@rimelight/i18n"
+   :          ^
+ 4 | 
+   `----
+
+  x typescript(TS6133): 'For' is declared but its value is never read.
+   ,-[src/routes/[locale]/franchises/grand-tale/about.tsx:1:26]
+ 1 | import { type Component, For } from "solid-js"
+   :                          ^^^
+ 2 | import GrandTaleLayout from "#layouts/GrandTaleLayout"
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/franchises/grand-tale/about.tsx:4:10]
+ 3 | import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx"
+ 4 | import { t } from "@rimelight/i18n"
+   :          ^
+ 5 | 
+   `----
+
+  x typescript(TS6133): 'Show' is declared but its value is never read.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/edit.tsx:1:26]
+ 1 | import { type Component, Show, createSignal, onMount } from "solid-js"
+   :                          ^^^^
+ 2 | import { useParams } from "@solidjs/router"
+   `----
+
+  x typescript(TS2305): Module '"solid-js"' has no exported member 'onMount'.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/edit.tsx:1:46]
+ 1 | import { type Component, Show, createSignal, onMount } from "solid-js"
+   :                                              ^^^^^^^
+ 2 | import { useParams } from "@solidjs/router"
+   `----
+
+  x typescript(TS6133): 'onMount' is declared but its value is never read.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/edit.tsx:1:46]
+ 1 | import { type Component, Show, createSignal, onMount } from "solid-js"
+   :                                              ^^^^^^^
+ 2 | import { useParams } from "@solidjs/router"
+   `----
+
+  x typescript(TS6133): 'RLButton' is declared but its value is never read.
+   ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/review.tsx:3:10]
+ 2 | import DashboardLayout from "#layouts/DashboardLayout"
+ 3 | import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+   :          ^^^^^^^^
+ 4 | 
+   `----
+
+  x typescript(TS6133): 't' is declared but its value is never read.
+   ,-[src/routes/[locale]/legal/[...slug].tsx:7:10]
+ 6 | import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
+ 7 | import { t, getLocale } from "@rimelight/i18n"
+   :          ^
+ 8 | 
+   `----
+
+  x typescript(TS6133): 'siteConfig' is declared but its value is never read.
+   ,-[src/routes/[locale]/legal/index.tsx:4:10]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :          ^^^^^^^^^^
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+
+  x typescript(TS2307): Cannot find module 'virtual:rimelight/seo' or its corresponding type declarations.
+   ,-[src/routes/[locale]/legal/index.tsx:4:28]
+ 3 | import AppLayout from "#layouts/AppLayout"
+ 4 | import { siteConfig } from "virtual:rimelight/seo"
+   :                            ^^^^^^^^^^^^^^^^^^^^^^^
+ 5 | import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+   `----
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/index.tsx:20:17]
+ 19 |   }
+ 20 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 21 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/company/blog/index.tsx:15:17]
+ 14 |   }
+ 15 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 16 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/company/blog/[...slug].tsx:14:17]
+ 13 |   }
+ 14 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 15 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/company/docs/index.tsx:15:17]
+ 14 |   }
+ 15 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 16 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/company/legal/[...slug].tsx:14:17]
+ 13 |   }
+ 14 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 15 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+     ,-[src/routes/[locale]/company/docs/[...slug].tsx:116:17]
+ 115 |   }
+ 116 |   return String(val || "")
+     :                 ^^^^^^^^^
+ 117 | }
+     `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/company/legal/index.tsx:15:17]
+ 14 |   }
+ 15 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 16 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/franchises/grand-tale/wiki/[...slug]/index.tsx:13:17]
+ 12 |   }
+ 13 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 14 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/legal/[...slug].tsx:14:17]
+ 13 |   }
+ 14 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 15 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+  ! typescript(no-base-to-string): 'val || ""' will use Object's default stringification format ('[object Object]') when stringified.
+    ,-[src/routes/[locale]/legal/index.tsx:15:17]
+ 14 |   }
+ 15 |   return String(val || "")
+    :                 ^^^^^^^^^
+ 16 | }
+    `----
+  help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.
+
+Found 48 errors and 31 warnings in 176 files (1.6s, 8 threads)
+
+error: Lint or type issues found

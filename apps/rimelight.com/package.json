@@ -22,26 +22,23 @@
       "./src/*.ts",
       "./src/*.tsx",
       "./src/*/index.ts",
-      "./src/*/index.tsx",
-      "./src/*/index.astro"
+      "./src/*/index.tsx"
     ]
   },
   "scripts": {
     "generate-types": "wrangler types",
-    "astro": "astro",
-    "dev": "astro dev",
+    "dev": "vp dev",
     "prebuild": "pnpm -r --parallel --filter \"@rimelight/*\" run --if-present build",
-    "build": "astro build",
-    "preview": "astro build && wrangler dev",
-    "profile": "astro build && wrangler check startup",
+    "build": "vp build",
+    "preview": "vp build && wrangler dev",
+    "profile": "vp build && wrangler check startup",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "check": "wrangler types && vp check --fix && astro check"
+    "check": "wrangler types && vp check --fix"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.3.2",
-    "@astrojs/solid-js": "7.0.2",
+    "@cloudflare/vite-plugin": "1.60.1",
     "@neondatabase/serverless": "1.1.0",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
@@ -49,18 +46,22 @@
     "@rimelight/security": "workspace:*",
     "@rimelight/seo": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "astro": "7.3.3",
+    "@solidjs/meta": "1.0.0-next.2",
+    "@solidjs/router": "2.0.0-next.30",
+    "@solidjs/signals": "2.0.0-rc.9",
+    "@solidjs/vite-plugin": "3.0.0-next.35",
+    "@solidjs/web": "2.0.0-rc.9",
     "drizzle-orm": "0.45.3",
     "hono": "4.13.8",
-    "solid-js": "1.9.15",
-    "wrangler": "4.135.0"
+    "solid-js": "2.0.0-rc.9",
+    "wrangler": "4.140.0"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.10",
     "@iconify-json/logos": "1.2.14",
     "@iconify-json/lucide": "1.2.135",
     "@rimelight/config": "workspace:*",
-    "drizzle-kit": "0.31.11"
+    "drizzle-kit": "0.31.11",
+    "filesystem-routing": "0.4.0"
   },
   "engines": {
     "node": ">=26.8.2"

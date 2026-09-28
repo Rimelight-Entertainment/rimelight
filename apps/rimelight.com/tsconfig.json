@@ -1,5 +1,6 @@
 {
-  "extends": "@rimelight/config/tsconfig/astro-solid",
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "extends": "@rimelight/config/tsconfig/solid",
+  "compilerOptions": {},
+  "include": ["worker-configuration.d.ts", "file-routes.d.ts", "**/*"],
+  "exclude": ["dist", "node_modules"]
 }

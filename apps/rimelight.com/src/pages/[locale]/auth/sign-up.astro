@@ -1,9 +1,0 @@
----
-export const prerender = false;
-
-return Astro.redirect(
-  Astro.url.searchParams.get("returnTo")
-    ? `/api/auth/login?screen_hint=signup&returnTo=${encodeURIComponent(Astro.url.searchParams.get("returnTo")!)}`
-    : "/api/auth/login?screen_hint=signup"
-);
----

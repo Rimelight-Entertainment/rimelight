@@ -1,0 +1,977 @@
+import { type Component, For, Show, onSettled } from "solid-js"
+import {
+  RLHeader,
+  RLLogo,
+  RLNavigationMenu,
+  RLLinkGroup,
+  RLButton,
+  RLSlideover,
+  RLAvatar,
+  RLSearch,
+  RLDropdownMenu,
+  RLImage,
+  type RLButtonProps,
+  type RLLinkGroupProps
+} from "@rimelight/ui"
+import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
+import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts"
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+
+export interface AppHeaderProps {
+  session?: any
+  stackIndex?: number
+}
+
+export const AppHeader: Component<AppHeaderProps> = (props) => {
+  onSettled(() => {
+    const btn = document.getElementById("rla-shortcuts-btn")
+    const handler = () => {
+      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"))
+      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"))
+    }
+    btn?.addEventListener("click", handler)
+    return () => {
+      btn?.removeEventListener("click", handler)
+    }
+  })
+
+  const currentUser = () => props.session?.user ?? props.session
+
+  const grandTaleLinkGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_grand-tale_main_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_grand-tale_main_news"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/news")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_main_about"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/about")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_main_wiki"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_main_guides"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/guides")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_main_forums"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/forums")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_main_leaderboards"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/leaderboards")
+      }
+    ]
+  })
+
+  const grandTaleSeriesLinkGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_grand-tale_series_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_grand-tale_series_children-of-the-light"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_series_grand-academy"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy")
+      },
+      {
+        label: t("app_header.link-groups_center_grand-tale_series_goldy-adventures"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures")
+      }
+    ]
+  })
+
+  const grandTaleBooksLinkGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_grand-tale_books_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_grand-tale_books_the-first-tale"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale")
+      }
+    ]
+  })
+
+  const grandTaleComicsLinkGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_grand-tale_comics_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_grand-tale_comics_ori-friends"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends")
+      }
+    ]
+  })
+
+  const grandTaleResourcesGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_right_grand-tale_resources_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_right_grand-tale_resources_download"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/download"),
+        leadingIcon: "i-lucide-download"
+      },
+      {
+        label: t("app_header.link-groups_right_grand-tale_resources_support"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/support"),
+        leadingIcon: "i-lucide-headset"
+      }
+    ]
+  })
+
+  const grandTaleSocialsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_right_grand-tale_socials_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_right_grand-tale_socials_discord"),
+        href: "https://discord.com/",
+        leadingIcon: "i-ic-baseline-discord"
+      },
+      {
+        label: t("app_header.link-groups_right_grand-tale_socials_youtube"),
+        href: "https://youtube.com/",
+        leadingIcon: "i-mdi-youtube"
+      },
+      {
+        label: t("app_header.link-groups_right_grand-tale_socials_instagram"),
+        href: "https://instagram.com/",
+        leadingIcon: "i-mdi-instagram"
+      }
+    ]
+  })
+
+  const commForumsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_community_forums_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_community_forums_rimelight"),
+        href: getRelativeLocaleUrl("/forums/rimelight")
+      },
+      {
+        label: t("app_header.link-groups_center_community_forums_grand-tale"),
+        href: getRelativeLocaleUrl("/forums/grand-tale")
+      }
+    ]
+  })
+
+  const commEventsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_community_events_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_community_events_lightcon"),
+        href: getRelativeLocaleUrl("/events/lightcon")
+      }
+    ]
+  })
+
+  const commSocialsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_right_grand-tale_socials_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_right_community_socials_instagram"),
+        href: "https://www.instagram.com/",
+        leadingIcon: "i-mdi-instagram"
+      },
+      {
+        label: t("app_header.link-groups_right_community_socials_discord"),
+        href: "https://discord.com/",
+        leadingIcon: "i-ic-baseline-discord"
+      },
+      {
+        label: t("app_header.link-groups_right_community_socials_spotify"),
+        href: "https://open.spotify.com",
+        leadingIcon: "i-mdi-spotify"
+      }
+    ]
+  })
+
+  const compStudioGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_company_main_studio_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_company_main_studio_about-us"),
+        href: getRelativeLocaleUrl("/company/about")
+      },
+      {
+        label: t("app_header.link-groups_center_company_main_studio_partnerships"),
+        href: getRelativeLocaleUrl("/company/studio/partnerships")
+      }
+    ]
+  })
+
+  const compCareersGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_company_main_careers_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_company_main_careers_life"),
+        href: getRelativeLocaleUrl("/company/careers/culture")
+      },
+      {
+        label: t("app_header.link-groups_center_company_main_careers_jobs"),
+        href: getRelativeLocaleUrl("/company/careers")
+      }
+    ]
+  })
+
+  const compNewsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_company_main_news_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_company_main_news_blog"),
+        href: getRelativeLocaleUrl("/company/blog")
+      }
+    ]
+  })
+
+  const compResourcesGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.links_company_resources_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_right_company_resources_docs"),
+        href: getRelativeLocaleUrl("/company/docs"),
+        leadingIcon: "i-lucide-file-text"
+      },
+      {
+        label: t("app_header.link-groups_right_company_resources_branding"),
+        href: getRelativeLocaleUrl("/company/branding"),
+        leadingIcon: "i-lucide-image"
+      },
+      {
+        label: t("app_header.link-groups_right_company_resources_legal"),
+        href: getRelativeLocaleUrl("/company/legal"),
+        leadingIcon: "i-lucide-scale"
+      },
+      {
+        label: t("app_header.link-groups_right_company_resources_contact"),
+        href: getRelativeLocaleUrl("/company/contact"),
+        leadingIcon: "i-lucide-mail"
+      }
+    ]
+  })
+
+  const compSocialsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_right_company_socials_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_right_company_socials_linkedin"),
+        href: "https://linkedin.com/",
+        leadingIcon: "i-logos-linkedin-icon"
+      },
+      {
+        label: t("app_header.link-groups_right_company_socials_github"),
+        href: "https://github.com/Rimelight-Entertainment",
+        leadingIcon: "i-logos-github-icon"
+      }
+    ]
+  })
+
+  const storeDealsGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_store_main_deals_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_store_main_deals_new-releases"),
+        href: getRelativeLocaleUrl("/store/deals/new")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_deals_sales"),
+        href: getRelativeLocaleUrl("/store/deals/sales")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_deals_bundles"),
+        href: getRelativeLocaleUrl("/store/deals/bundles")
+      }
+    ]
+  })
+
+  const storeClothingGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_store_main_clothing_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_store_main_clothing_headwear"),
+        href: getRelativeLocaleUrl("/store/clothing/headwear")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_clothing_tops"),
+        href: getRelativeLocaleUrl("/store/clothing/tops")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_clothing_bottoms"),
+        href: getRelativeLocaleUrl("/store/clothing/bottoms")
+      }
+    ]
+  })
+
+  const storeAccessoriesGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_store_main_accessories_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_store_main_accessories_jewelry"),
+        href: getRelativeLocaleUrl("/store/accessories/jewelry")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_accessories_pins-patches"),
+        href: getRelativeLocaleUrl("/store/merch/pins")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_accessories_keychains"),
+        href: getRelativeLocaleUrl("/store/accessories/keychains")
+      }
+    ]
+  })
+
+  const storeApparelGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_store_main_apparel_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_store_main_apparel_bottles-mugs"),
+        href: getRelativeLocaleUrl("/store/apparel/bottles-mugs")
+      }
+    ]
+  })
+
+  const storeCollectiblesGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_store_main_collectibles_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_store_main_collectibles_figurines-statues"),
+        href: getRelativeLocaleUrl("/store/collectibles/figurines")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_collectibles_plushies"),
+        href: getRelativeLocaleUrl("/store/merch/plushies")
+      }
+    ]
+  })
+
+  const storeArtGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_center_store_main_art_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_center_store_main_art_posters-prints"),
+        href: getRelativeLocaleUrl("/store/merch/posters")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_art_comics-books"),
+        href: getRelativeLocaleUrl("/store/art/books")
+      },
+      {
+        label: t("app_header.link-groups_center_store_main_art_physical-games"),
+        href: getRelativeLocaleUrl("/store/art/games")
+      }
+    ]
+  })
+
+  const storeAssistanceGroup = (): RLLinkGroupProps => ({
+    label: t("app_header.link-groups_right_store_assistance_title"),
+    links: [
+      {
+        label: t("app_header.link-groups_right_store_assistance_orders"),
+        href: getRelativeLocaleUrl("/store/orders"),
+        leadingIcon: "i-lucide-shopping-bag"
+      },
+      {
+        label: t("app_header.link-groups_right_store_assistance_customer-support"),
+        href: getRelativeLocaleUrl("/franchises/grand-tale/support"),
+        leadingIcon: "i-lucide-help-circle"
+      }
+    ]
+  })
+
+  const leftLinks = (): NavigationMenuItem[] => [
+    {
+      label: t("app_header.left-links_grand-tale_label"),
+      to: getRelativeLocaleUrl("/franchises/grand-tale"),
+      slot: "grand-tale" as const,
+      children: [
+        {
+          label: t("app_header.link-groups_center_grand-tale_main_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_grand-tale_main_news"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/news")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_main_about"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/about")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_main_wiki"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_main_guides"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/guides")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_main_forums"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/forums")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_main_leaderboards"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/leaderboards")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_grand-tale_series_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_grand-tale_series_children-of-the-light"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_series_grand-academy"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy")
+            },
+            {
+              label: t("app_header.link-groups_center_grand-tale_series_goldy-adventures"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_grand-tale_books_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_grand-tale_books_the-first-tale"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_grand-tale_comics_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_grand-tale_comics_ori-friends"),
+              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends")
+            }
+          ]
+        }
+      ]
+    },
+    {
+      label: t("app_header.left-links_community_label"),
+      slot: "community" as const,
+      children: [
+        {
+          label: t("app_header.link-groups_center_community_forums_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_community_forums_rimelight"),
+              to: getRelativeLocaleUrl("/forums/rimelight")
+            },
+            {
+              label: t("app_header.link-groups_center_community_forums_grand-tale"),
+              to: getRelativeLocaleUrl("/forums/grand-tale")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_community_events_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_community_events_lightcon"),
+              to: getRelativeLocaleUrl("/events/lightcon")
+            }
+          ]
+        }
+      ]
+    },
+    {
+      label: t("app_header.left-links_company_label"),
+      to: getRelativeLocaleUrl("/company"),
+      slot: "company" as const,
+      children: [
+        {
+          label: t("app_header.link-groups_center_company_main_studio_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_company_main_studio_about-us"),
+              to: getRelativeLocaleUrl("/company/about")
+            },
+            {
+              label: t("app_header.link-groups_center_company_main_studio_partnerships"),
+              to: getRelativeLocaleUrl("/company/studio/partnerships")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_company_main_careers_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_company_main_careers_life"),
+              to: getRelativeLocaleUrl("/company/careers/culture")
+            },
+            {
+              label: t("app_header.link-groups_center_company_main_careers_jobs"),
+              to: getRelativeLocaleUrl("/company/careers")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_company_main_news_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_company_main_news_blog"),
+              to: getRelativeLocaleUrl("/company/blog")
+            }
+          ]
+        },
+        {
+          label: t("app_header.links_company_resources_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_right_company_resources_docs"),
+              to: getRelativeLocaleUrl("/company/docs")
+            }
+          ]
+        }
+      ]
+    },
+    {
+      label: t("app_header.left-links_store_label"),
+      to: getRelativeLocaleUrl("/store"),
+      slot: "store" as const,
+      children: [
+        {
+          label: t("app_header.link-groups_center_store_main_digital-goods_title"),
+          to: getRelativeLocaleUrl("/store/digital")
+        },
+        {
+          label: t("app_header.link-groups_center_store_main_deals_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_store_main_deals_new-releases"),
+              to: getRelativeLocaleUrl("/store/deals/new")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_deals_sales"),
+              to: getRelativeLocaleUrl("/store/deals/sales")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_deals_bundles"),
+              to: getRelativeLocaleUrl("/store/deals/bundles")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_store_main_clothing_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_store_main_clothing_headwear"),
+              to: getRelativeLocaleUrl("/store/clothing/headwear")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_clothing_tops"),
+              to: getRelativeLocaleUrl("/store/clothing/tops")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_clothing_bottoms"),
+              to: getRelativeLocaleUrl("/store/clothing/bottoms")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_store_main_accessories_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_store_main_accessories_jewelry"),
+              to: getRelativeLocaleUrl("/store/accessories/jewelry")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_accessories_pins-patches"),
+              to: getRelativeLocaleUrl("/store/merch/pins")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_accessories_keychains"),
+              to: getRelativeLocaleUrl("/store/accessories/keychains")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_store_main_apparel_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_store_main_apparel_bottles-mugs"),
+              to: getRelativeLocaleUrl("/store/apparel/bottles-mugs")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_store_main_collectibles_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_store_main_collectibles_figurines-statues"),
+              to: getRelativeLocaleUrl("/store/collectibles/figurines")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_collectibles_plushies"),
+              to: getRelativeLocaleUrl("/store/merch/plushies")
+            }
+          ]
+        },
+        {
+          label: t("app_header.link-groups_center_store_main_art_title"),
+          children: [
+            {
+              label: t("app_header.link-groups_center_store_main_art_posters-prints"),
+              to: getRelativeLocaleUrl("/store/merch/posters")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_art_comics-books"),
+              to: getRelativeLocaleUrl("/store/art/books")
+            },
+            {
+              label: t("app_header.link-groups_center_store_main_art_physical-games"),
+              to: getRelativeLocaleUrl("/store/art/games")
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+  const actions = (): RLButtonProps[] => [
+    {
+      color: "neutral",
+      variant: "outline",
+      href: "/api/auth/login?screen_hint=signup",
+      label: t("app_header.actions_sign-up"),
+      prefetch: false
+    },
+    {
+      variant: "solid",
+      color: "primary",
+      href: "/api/auth/login",
+      label: t("app_header.actions_sign-in"),
+      prefetch: false
+    }
+  ]
+
+  const userDropdownItems = (): DropdownMenuItem[] =>
+    props.session
+      ? [
+          {
+            type: "label",
+            label:
+              currentUser()?.tag && currentUser()?.tag !== "0000"
+                ? `${currentUser()?.name} #${currentUser()?.tag}`
+                : `${currentUser()?.name || currentUser()?.email || "User"}`
+          },
+          {
+            label: t("app_header.user_dropdown_dashboard"),
+            icon: "i-lucide-layout-dashboard",
+            to: getRelativeLocaleUrl("/dashboard")
+          },
+          {
+            label: t("app_header.user_dropdown_profile"),
+            icon: "i-lucide-user",
+            to: getRelativeLocaleUrl("/dashboard/profile")
+          },
+          {
+            label: t("app_header.user_dropdown_settings"),
+            icon: "i-lucide-cog",
+            to: getRelativeLocaleUrl("/dashboard/settings")
+          },
+          {
+            type: "separator"
+          },
+          {
+            label: t("app_header.user_dropdown_sign-out"),
+            icon: "i-lucide-log-out",
+            to: "/api/auth/logout",
+            color: "error",
+            prefetch: false
+          }
+        ]
+      : []
+
+  return (
+    <RLHeader
+      fixed={true}
+      stackIndex={props.stackIndex ?? 1}
+      data-theme="dark"
+      class="scroll-header bg-black left-1/2"
+      left={
+        <div class="flex items-center gap-md">
+          <div class="hidden md:flex flex-row gap-md items-center">
+            <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
+            <RLNavigationMenu
+              items={leftLinks()}
+              variant="link"
+              ui={{
+                viewportWrapper:
+                  "top-[var(--rl-total-header-height,64px)] flex justify-center fixed left-0 right-0 z-[150] mt-0 bg-transparent",
+                viewport:
+                  "w-full rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden",
+                link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+              }}
+            >
+              {/* Grand Tale Mega Menu */}
+              <div
+                slot="grand-tale-content"
+                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
+              >
+                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                  <RLImage
+                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                    src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
+                    alt=""
+                  />
+                  <div class="flex flex-col gap-sm flex-2">
+                    <div class="grid grid-cols-2 gap-xl gap-y-4">
+                      <RLLinkGroup {...grandTaleLinkGroup()} ui={{ title: "!text-primary-500" }} />
+                      <div class="flex flex-col gap-lg">
+                        <RLLinkGroup
+                          {...grandTaleSeriesLinkGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                        <RLLinkGroup
+                          {...grandTaleBooksLinkGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                        <RLLinkGroup
+                          {...grandTaleComicsLinkGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-muted p-lg w-64 shrink-0">
+                  <RLLinkGroup {...grandTaleResourcesGroup()} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...grandTaleSocialsGroup()} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+
+              {/* Community Mega Menu */}
+              <div
+                slot="community-content"
+                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
+              >
+                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                  <RLImage
+                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                    src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
+                    alt=""
+                  />
+                  <div class="flex flex-col gap-sm flex-2">
+                    <div class="grid grid-cols-2 gap-1">
+                      <RLLinkGroup {...commForumsGroup()} ui={{ title: "!text-primary-500" }} />
+                      <RLLinkGroup {...commEventsGroup()} ui={{ title: "!text-primary-500" }} />
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-muted p-lg w-64 shrink-0">
+                  <RLLinkGroup {...commSocialsGroup()} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+
+              {/* Company Mega Menu */}
+              <div
+                slot="company-content"
+                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
+              >
+                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                  <RLImage
+                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                    src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
+                    alt=""
+                  />
+                  <div class="flex flex-col gap-sm flex-2">
+                    <div class="grid grid-cols-3 gap-1">
+                      <RLLinkGroup {...compStudioGroup()} ui={{ title: "!text-primary-500" }} />
+                      <RLLinkGroup {...compCareersGroup()} ui={{ title: "!text-primary-500" }} />
+                      <RLLinkGroup {...compNewsGroup()} ui={{ title: "!text-primary-500" }} />
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-muted p-lg w-64 shrink-0">
+                  <RLLinkGroup {...compResourcesGroup()} ui={{ title: "!text-primary-500" }} />
+                  <RLLinkGroup {...compSocialsGroup()} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+
+              {/* Store Mega Menu */}
+              <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                  <RLImage
+                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                    src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
+                    alt=""
+                  />
+                  <div class="flex flex-col gap-sm flex-2">
+                    <div class="grid grid-cols-3 gap-xl gap-y-4">
+                      <div class="flex flex-col gap-lg">
+                        <RLLinkGroup {...storeDealsGroup()} ui={{ title: "!text-primary-500" }} />
+                      </div>
+                      <div class="flex flex-col gap-lg">
+                        <RLLinkGroup
+                          {...storeClothingGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                        <RLLinkGroup
+                          {...storeAccessoriesGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                      </div>
+                      <div class="flex flex-col gap-lg">
+                        <RLLinkGroup {...storeApparelGroup()} ui={{ title: "!text-primary-500" }} />
+                        <RLLinkGroup
+                          {...storeCollectiblesGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                        <RLLinkGroup {...storeArtGroup()} ui={{ title: "!text-primary-500" }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-muted p-lg w-64 shrink-0">
+                  <RLLinkGroup {...storeAssistanceGroup()} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+            </RLNavigationMenu>
+          </div>
+
+          <div class="block md:hidden">
+            <RLSlideover
+              side="left"
+              title="Menu"
+              trigger={
+                <RLButton
+                  color="neutral"
+                  variant="ghost"
+                  rounded={true}
+                  leadingIcon="i-lucide-menu"
+                  class="!text-white"
+                  aria-label="Open Menu"
+                />
+              }
+            >
+              <RLNavigationMenu
+                items={leftLinks()}
+                orientation="vertical"
+                variant="link"
+                ui={{
+                  link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+                }}
+              />
+            </RLSlideover>
+          </div>
+        </div>
+      }
+      center={
+        <div class="flex items-center gap-md">
+          <div class="block md:hidden">
+            <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
+          </div>
+        </div>
+      }
+      right={
+        <div class="flex items-center gap-md">
+          <RLSearch />
+          <RLButton
+            id="rla-shortcuts-btn"
+            variant="ghost"
+            color="neutral"
+            leadingIcon="i-lucide-keyboard"
+            aria-label="Keyboard Shortcuts"
+          />
+          <div class="hidden md:flex flex-row gap-md">
+            <Show
+              when={props.session}
+              fallback={
+                <For each={actions()}>{(buttonProps) => <RLButton {...buttonProps} />}</For>
+              }
+            >
+              <RLDropdownMenu
+                items={userDropdownItems()}
+                content={{ align: "end", side: "bottom" }}
+                class="text-white"
+                trigger={
+                  <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
+                    <div class="relative">
+                      <RLAvatar
+                        src={currentUser()?.avatar || currentUser()?.image}
+                        alt={currentUser()?.name}
+                        size="sm"
+                      />
+                      <span
+                        class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                          currentUser()?.availability === "busy"
+                            ? "bg-error-500"
+                            : currentUser()?.availability === "invisible"
+                              ? "bg-neutral-500"
+                              : "bg-success-500"
+                        }`}
+                      />
+                    </div>
+                    <span class="hidden md:inline text-sm font-medium">{currentUser()?.name}</span>
+                  </div>
+                }
+              />
+            </Show>
+          </div>
+
+          <div class="block md:hidden">
+            <Show
+              when={props.session}
+              fallback={
+                <RLSlideover
+                  side="right"
+                  title="Actions"
+                  trigger={
+                    <RLButton
+                      color="neutral"
+                      variant="ghost"
+                      rounded={true}
+                      leadingIcon="i-lucide-ellipsis-vertical"
+                      class="!text-white"
+                      aria-label="Open Actions"
+                    />
+                  }
+                >
+                  <div class="flex flex-col gap-md">
+                    <For each={actions()}>
+                      {(buttonProps) => <RLButton {...buttonProps} block={true} />}
+                    </For>
+                  </div>
+                </RLSlideover>
+              }
+            >
+              <RLDropdownMenu
+                items={userDropdownItems()}
+                content={{ align: "end", side: "bottom" }}
+                class="text-white"
+                trigger={
+                  <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
+                    <div class="relative">
+                      <RLAvatar
+                        src={currentUser()?.avatar || currentUser()?.image}
+                        alt={currentUser()?.name}
+                        size="sm"
+                      />
+                      <span
+                        class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                          currentUser()?.availability === "busy"
+                            ? "bg-error-500"
+                            : currentUser()?.availability === "invisible"
+                              ? "bg-neutral-500"
+                              : "bg-success-500"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                }
+              />
+            </Show>
+          </div>
+        </div>
+      }
+    />
+  )
+}
+
+export default AppHeader
