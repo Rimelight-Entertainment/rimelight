@@ -17,7 +17,6 @@
   },
   "files": [
     "tsconfig",
-    "vite-plus",
     "dist"
   ],
   "type": "module",
@@ -25,13 +24,8 @@
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/solid": "./tsconfig/solid.json",
     "./vite-plus/base": {
-      "types": "./vite-plus/base.ts",
-      "default": "./vite-plus/base.js"
-    },
-    "./drizzle": {
-      "types": "./dist/drizzle/index.d.mts",
-      "import": "./dist/drizzle/index.mjs",
-      "default": "./dist/drizzle/index.mjs"
+      "types": "./dist/base.d.mts",
+      "default": "./dist/base.mjs"
     }
   },
   "publishConfig": {
@@ -43,14 +37,11 @@
     "check": "vp check --fix",
     "test": "vp test"
   },
-  "devDependencies": {
-    "drizzle-kit": "0.31.11"
-  },
   "peerDependencies": {
-    "drizzle-kit": ">=0.30.0"
+    "vite-plus": ">=1.0.0"
   },
   "peerDependenciesMeta": {
-    "drizzle-kit": {
+    "vite-plus": {
       "optional": true
     }
   },

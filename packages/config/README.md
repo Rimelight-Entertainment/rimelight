@@ -62,24 +62,7 @@ export default defineConfig(
 
 ## Drizzle Configs
 
-Zero-boilerplate Drizzle Kit configuration with standard defaults (`sqlite` dialect, `./drizzle` out directory, `./src/db/schema/index.ts` schema):
-
-```typescript
-import { rimelightDrizzleConfig } from "@rimelight/config/drizzle"
-
-export default rimelightDrizzleConfig()
-```
-
-Custom / overridden options:
-
-```typescript
-import { rimelightDrizzleConfig } from "@rimelight/config/drizzle"
-
-export default rimelightDrizzleConfig({
-  schema: "./src/db/schema.ts",
-  tablesFilter: ["custom_*"]
-})
-```
+This package does not ship a Drizzle preset. Each project declares its own `drizzle.config.ts` so the schema path and dialect are visible in the repo rather than inherited from a published default.
 
 ## Config Details
 

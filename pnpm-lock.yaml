@@ -493,28 +493,9 @@ importers:
 
   packages/config:
     dependencies:
-      '@rimelight/auth':
-        specifier: workspace:*
-        version: link:../auth
-      '@rimelight/cms':
-        specifier: workspace:*
-        version: link:../cms
-      '@rimelight/i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@rimelight/security':
-        specifier: workspace:*
-        version: link:../security
-      '@rimelight/seo':
-        specifier: workspace:*
-        version: link:../seo
-      '@rimelight/ui':
-        specifier: workspace:*
-        version: link:../ui
-    devDependencies:
-      drizzle-kit:
-        specifier: 0.31.11
-        version: 0.31.11
+      vite-plus:
+        specifier: '>=1.0.0'
+        version: 1.0.0(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.1)
 
   packages/i18n:
     dependencies:

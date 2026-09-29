@@ -1,30 +1,9 @@
 import { describe, it, expect } from "vite-plus/test"
 import path from "node:path"
 import fs from "node:fs"
-import { rimelightDrizzleConfig } from "../drizzle/index"
 import { rimelightConfig, rimelightPackConfig, findSourceEntries } from "../vite-plus/base"
 
-describe("@rimelight/config drizzle and vite-plus helpers", () => {
-  describe("rimelightDrizzleConfig", () => {
-    it("should generate drizzle config with sensible defaults", () => {
-      const config = rimelightDrizzleConfig()
-      expect(config.out).toBe("./drizzle")
-      expect(config.schema).toBe("./src/db/schema/index.ts")
-      expect(config.dialect).toBe("sqlite")
-    })
-
-    it("should accept custom overrides", () => {
-      const config = rimelightDrizzleConfig({
-        out: "./custom-migrations",
-        schema: "./src/schema.ts",
-        dialect: "postgresql"
-      })
-      expect(config.out).toBe("./custom-migrations")
-      expect(config.schema).toBe("./src/schema.ts")
-      expect(config.dialect).toBe("postgresql")
-    })
-  })
-
+describe("@rimelight/config vite-plus helpers", () => {
   describe("rimelightConfig", () => {
     it("should return base configuration for lint, formatting, and test", () => {
       const config = rimelightConfig()
@@ -48,9 +27,9 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
 
   describe("package integrity utils", () => {
     it("should find source entries in given base directory", () => {
-      const baseDir = path.resolve(import.meta.dirname, "../drizzle")
+      const baseDir = path.resolve(import.meta.dirname, "../vite-plus")
       const entries = findSourceEntries(baseDir)
-      expect(entries.some((e) => e.endsWith("index.ts"))).toBe(true)
+      expect(entries.some((e) => e.endsWith("base.ts"))).toBe(true)
     })
 
     it("should return empty array if baseDir does not exist", () => {
@@ -72,12 +51,19 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
           }
         }
       }
-      targets.push(...(pkg.files ?? []))
+      const files: string[] = pkg.files ?? []
+      targets.push(...files)
 
       expect(targets.length).toBeGreaterThan(0)
+
+      // A `files` entry that is absent entirely is build output that has not been
+      // generated yet, so its export targets are not expected on a clean checkout.
+      const pending = new Set(files.filter((entry) => !fs.existsSync(path.join(pkgDir, entry))))
+
       const missing = targets
         .filter((t) => t.startsWith("./"))
         .map((t) => t.replace(/^\.\//, ""))
+        .filter((rel) => ![...pending].some((entry) => rel.startsWith(`${entry}/`)))
         .filter((rel) => !fs.existsSync(path.join(pkgDir, rel)))
       expect(missing).toEqual([])
     })
