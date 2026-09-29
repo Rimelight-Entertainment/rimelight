@@ -27,8 +27,6 @@ const config = defineConfig({
       "AUTH0_SECRET": bindings.secret(),
       "DATABASE_URL": bindings.secret(),
       "CONSTRUCTION_PASSPHRASE": bindings.secret(),
-      "TURNSTILE_SITE_KEY": bindings.secret(),
-      "TURNSTILE_SECRET_KEY": bindings.secret(),
       "GITHUB_TOKEN": bindings.secret(),
       "rimelight-dot-com_translations": bindings.kv({
         id: "e1ae79418e4c4532a9344102bf663861",

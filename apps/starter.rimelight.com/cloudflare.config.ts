@@ -32,8 +32,6 @@ const config = defineConfig({
       "CONSTRUCTION_MODE": bindings.text("true"),
       "EMAIL_DOMAIN": bindings.text("rimelight.com"),
       "CONTACT_OWNER_EMAIL": bindings.text("owner@rimelight.com"),
-      "TURNSTILE_SITE_KEY": bindings.secret(),
-      "TURNSTILE_SECRET_KEY": bindings.secret(),
       "CONSTRUCTION_PASSPHRASE": bindings.secret(),
       "DB": bindings.d1({
         id: "a6610294-e214-4d35-b841-174469da54d2",
