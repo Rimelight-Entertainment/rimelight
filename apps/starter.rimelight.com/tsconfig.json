@@ -1,6 +1,5 @@
 {
   "extends": "@rimelight/config/tsconfig/solid",
-  "compilerOptions": {},
-  "include": [".cloudflare/types/**/*", "file-routes.d.ts", "**/*"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["**/*", ".cloudflare/types/**/*"],
+  "exclude": ["dist"]
 }
