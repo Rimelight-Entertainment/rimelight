@@ -23,7 +23,6 @@
   ],
   "type": "module",
   "exports": {
-    "./astro-env": "./astro.d.ts",
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/solid": "./tsconfig/solid.json",
     "./tsconfig/astro": "./tsconfig/astro.json",
@@ -31,11 +30,6 @@
     "./vite-plus/base": {
       "types": "./vite-plus/base.ts",
       "default": "./vite-plus/base.js"
-    },
-    "./astro": {
-      "types": "./dist/astro/index.d.mts",
-      "import": "./dist/astro/index.mjs",
-      "default": "./dist/astro/index.mjs"
     },
     "./drizzle": {
       "types": "./dist/drizzle/index.d.mts",
@@ -58,29 +52,18 @@
     "test": "vp test"
   },
   "devDependencies": {
-    "@astrojs/cloudflare": "14.3.2",
-    "astro": "7.3.3",
     "drizzle-kit": "0.31.11"
   },
   "peerDependencies": {
-    "@astrojs/cloudflare": ">=14.0.0",
-    "@astrojs/solid-js": ">=7.0.0",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
     "@rimelight/i18n": "workspace:*",
     "@rimelight/security": "workspace:*",
     "@rimelight/seo": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "astro": ">=7.0.0",
     "drizzle-kit": ">=0.30.0"
   },
   "peerDependenciesMeta": {
-    "@astrojs/cloudflare": {
-      "optional": true
-    },
-    "@astrojs/solid-js": {
-      "optional": true
-    },
     "@rimelight/auth": {
       "optional": true
     },
@@ -99,15 +82,12 @@
     "@rimelight/ui": {
       "optional": true
     },
-    "astro": {
-      "optional": true
-    },
     "drizzle-kit": {
       "optional": true
     }
   },
   "engines": {
-    "node": ">=26.8.2"
+    "node": ">=26.10.0"
   },
-  "packageManager": "pnpm@12.5.1"
+  "packageManager": "pnpm@12.6.0"
 }
