@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
+import type { Plugin } from "vite-plus"
 import type { RimelightSeoOptions, SiteConfig } from "./types.js"
 import { buildRobotsTxt } from "./robots.js"
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap.js"
@@ -10,16 +11,7 @@ import { buildApiCatalog } from "./catalog.js"
 import { buildWebManifest } from "./manifest.js"
 import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets.js"
 
-export interface RimelightSeoPlugin {
-  name: string
-  enforce?: "pre" | "post"
-  configResolved?: (config: any) => void
-  resolveId?: (id: string) => string | null | undefined
-  load?: (id: string) => string | null | undefined
-  configureServer?: (server: any) => void
-  generateBundle?: (this: any) => Promise<void> | void
-  [key: string]: any
-}
+export type RimelightSeoPlugin = Plugin
 
 export { type RimelightSeoOptions } from "./types.js"
 

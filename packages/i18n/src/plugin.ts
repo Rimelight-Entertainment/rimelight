@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
+import type { Plugin } from "vite-plus"
 
 export interface RimelightI18nOptions {
   /**
@@ -23,17 +24,9 @@ export interface RimelightI18nOptions {
   translationLoader?: string
 }
 
-export interface RimelightI18nVitePlugin {
-  name: string
-  enforce?: "pre" | "post"
-  resolveId?: (id: string) => string | null | undefined
-  load?: (id: string) => string | null | undefined
-  config?: (config: any) => any
-  closeBundle?: () => Promise<void> | void
-  [key: string]: any
-}
+export type RimelightI18nVitePlugin = Plugin
 
-export type RimelightI18nPlugins = RimelightI18nVitePlugin[]
+export type RimelightI18nPlugins = Plugin[]
 
 /**
  * Pure Vite plugin for Rimelight i18n. Provides virtual modules `@rimelight/i18n:runtime` and

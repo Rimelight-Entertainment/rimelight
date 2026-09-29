@@ -2,11 +2,22 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { describe, expect, it } from "vite-plus/test"
+import type { Plugin } from "vite-plus"
 import { i18n } from "../src/plugin"
 
+/**
+ * Invoke a Vite object-hook the way the container does (function or { handler }).
+ */
+async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
+  const fn =
+    typeof hook === "function" ? hook : (hook as { handler?: unknown } | undefined)?.handler
+  if (typeof fn !== "function") throw new Error("hook not implemented")
+  return (await (fn as (...a: any[]) => unknown).call(undefined, ...args)) as T
+}
+
 describe("@rimelight/i18n Vite plugin", () => {
-  it("creates virtual modules for config and runtime", () => {
-    const plugins = i18n({
+  it("creates virtual modules for config and runtime", async () => {
+    const plugins: Plugin[] = i18n({
       locales: ["en", "pt", "es"],
       defaultLocale: "en",
       prefixDefaultLocale: false,
@@ -20,24 +31,26 @@ describe("@rimelight/i18n Vite plugin", () => {
     const configPlugin = plugins[0]!
 
     // Resolve IDs
-    expect(configPlugin.resolveId!("virtual:rimelight-i18n-config")).toBe(
+    expect(await callHook(configPlugin.resolveId, "virtual:rimelight-i18n-config")).toBe(
       "\0virtual:rimelight-i18n-config"
     )
-    expect(configPlugin.resolveId!("virtual:rimelight/i18n")).toBe("\0virtual:rimelight/i18n")
-    expect(configPlugin.resolveId!("other-module")).toBeNull()
+    expect(await callHook(configPlugin.resolveId, "virtual:rimelight/i18n")).toBe(
+      "\0virtual:rimelight/i18n"
+    )
+    expect(await callHook(configPlugin.resolveId, "other-module")).toBeNull()
 
     // Load virtual content
-    const loaded = configPlugin.load!("\0virtual:rimelight-i18n-config") as string
+    const loaded = (await callHook(configPlugin.load, "\0virtual:rimelight-i18n-config")) as string
     expect(loaded).toContain(`["en","pt","es"]`)
     expect(loaded).toContain(`export const defaultLocale = "en";`)
     expect(loaded).toContain(`export const prefixDefaultLocale = false;`)
     expect(loaded).toContain(`"Início"`)
   })
 
-  it("handles default options when none are passed", () => {
-    const plugins = i18n()
+  it("handles default options when none are passed", async () => {
+    const plugins: Plugin[] = i18n()
     const configPlugin = plugins[0]!
-    const loaded = configPlugin.load!("\0virtual:rimelight-i18n-config") as string
+    const loaded = (await callHook(configPlugin.load, "\0virtual:rimelight-i18n-config")) as string
 
     expect(loaded).toContain(`export const defaultLocale = "en";`)
     expect(loaded).toContain(`export const prefixDefaultLocale = true;`)
@@ -48,7 +61,7 @@ describe("@rimelight/i18n Vite plugin", () => {
     process.env["WRANGLER_OUT_DIR"] = tmpDir
 
     try {
-      const plugins = i18n({
+      const plugins: Plugin[] = i18n({
         locales: ["en", "pt"],
         defaultLocale: "en",
         translations: {
@@ -58,7 +71,7 @@ describe("@rimelight/i18n Vite plugin", () => {
       })
 
       const configPlugin = plugins[0]!
-      await configPlugin.closeBundle!()
+      await callHook(configPlugin.closeBundle)
 
       const seedPath = path.join(tmpDir, "_translations-seed.json")
       expect(fs.existsSync(seedPath)).toBe(true)

@@ -1,16 +1,9 @@
 import { createHash } from "node:crypto"
+import type { Plugin } from "vite-plus"
 
 import type { SecurityOptions } from "./types"
 
-export interface RimelightSecurityPlugin {
-  name: string
-  enforce?: "pre" | "post"
-  resolveId?: (id: string) => string | null | undefined
-  load?: (id: string) => string | null | undefined
-  buildStart?: () => Promise<void> | void
-  generateBundle?: (options: any, bundle: Record<string, any>) => Promise<void> | void
-  [key: string]: any
-}
+export type RimelightSecurityPlugin = Plugin
 
 export interface SecurityPluginOptions extends SecurityOptions {
   /**

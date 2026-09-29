@@ -1,5 +1,6 @@
 import path from "node:path"
 import fs from "node:fs"
+import type { Plugin } from "vite-plus"
 import type { StorageConfig } from "./storage/index.ts"
 import type { AuthAdapter } from "@rimelight/auth"
 
@@ -27,12 +28,7 @@ export interface RimelightCmsPluginOptions {
   auth?: AuthAdapter | string | undefined
 }
 
-export interface RimelightCmsPlugin {
-  name: string
-  configResolved?: (config: any) => void
-  resolveId?: (id: string) => string | null | undefined
-  load?: (id: string) => string | null | undefined
-}
+export type RimelightCmsPlugin = Plugin
 
 const VIRTUAL_CMS = "virtual:rimelight/cms"
 const VIRTUAL_CMS_CONFIG = "virtual:rimelight/cms/config"

@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/security",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "private": false,
   "description": "Rimelight Entertainment's Security Package",
   "homepage": "https://rimelight.com/docs",
@@ -66,6 +66,9 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite-plus": "^1.0.0"
   },
   "engines": {
     "node": ">=26.6.0"

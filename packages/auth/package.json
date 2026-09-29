@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/auth",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "private": false,
   "description": "Rimelight Entertainment's Universal Authentication & Identity Package",
   "homepage": "https://rimelight.com/docs",
@@ -80,6 +80,9 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite-plus": "^1.0.0"
   },
   "engines": {
     "node": ">=26.6.0"
