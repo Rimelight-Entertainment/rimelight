@@ -50,7 +50,7 @@
     "@rimelight/config": "workspace:*"
   },
   "engines": {
-    "node": ">=26.10.0"
+    "node": ">=26.6.0"
   },
   "packageManager": "pnpm@12.6.0"
 }
