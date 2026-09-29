@@ -36,7 +36,6 @@ const config = defineConfig({
       "TURNSTILE_SECRET_KEY": bindings.secret(),
       "CONSTRUCTION_PASSPHRASE": bindings.secret(),
       "DB": bindings.d1({
-        name: "starter-dot-rimelight-dot-com",
         id: "a6610294-e214-4d35-b841-174469da54d2",
         dev: {
           remote: true
@@ -70,7 +69,8 @@ const config = defineConfig({
           period: 60
         }
       }),
-      "ASSETS": bindings.assets()
+      "ASSETS": bindings.assets(),
+      "IMAGES": bindings.images()
     }
   }
 })
