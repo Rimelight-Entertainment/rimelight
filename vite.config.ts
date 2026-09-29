@@ -15,13 +15,15 @@ export default defineConfig({
       ...baseConfig.run?.tasks,
       audit: {
         command: "pnpm audit",
-        input: [
-          "pnpm-lock.yaml",
-          "pnpm-workspace.yaml",
-          "package.json",
-          "apps/*/package.json",
-          "packages/*/package.json"
-        ]
+        cache: {
+          input: [
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "package.json",
+            "apps/*/package.json",
+            "packages/*/package.json"
+          ]
+        }
       },
       check: {
         dependsOn: [
