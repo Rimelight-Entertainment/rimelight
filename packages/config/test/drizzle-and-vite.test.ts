@@ -48,7 +48,7 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
 
   describe("package integrity utils", () => {
     it("should find source entries in given base directory", () => {
-      const baseDir = path.resolve(import.meta.dirname, "../solid")
+      const baseDir = path.resolve(import.meta.dirname, "../drizzle")
       const entries = findSourceEntries(baseDir)
       expect(entries.some((e) => e.endsWith("index.ts"))).toBe(true)
     })

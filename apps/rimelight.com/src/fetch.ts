@@ -5,19 +5,11 @@ import { auth } from "@rimelight/auth/middleware"
 import api from "#api"
 import { i18n } from "@rimelight/i18n/middleware"
 import { getRelativeLocaleUrl } from "@rimelight/i18n"
-import { rimelightSolidConfig } from "@rimelight/config/solid"
-
-const site = rimelightSolidConfig({
-  domain: "rimelight.com",
-  security: {
-    imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
-  }
-})
 
 const app = new Hono<{ Bindings: Env }>()
 
 // Middlewares
-app.use(security(site.securityOptions ?? {}))
+app.use(security())
 app.use(devOnly)
 app.use(ratelimit())
 app.use(construction())

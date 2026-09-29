@@ -8,17 +8,9 @@ import { seo } from "@rimelight/seo/plugin"
 import { security } from "@rimelight/security/plugin"
 import { auth } from "@rimelight/auth/plugin"
 import { i18n } from "@rimelight/i18n/plugin"
-import { rimelightSolidConfig } from "@rimelight/config/solid"
 import en from "./src/i18n/en.json"
 import es from "./src/i18n/es.json"
 import pt from "./src/i18n/pt.json"
-
-const site = rimelightSolidConfig({
-  domain: "starter.rimelight.com",
-  security: {
-    imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
-  }
-})
 
 export default defineConfig({
   ...rimelightConfig(),
@@ -78,7 +70,10 @@ export default defineConfig({
       privatePathPrefixes: ["/api", "/cdn-cgi"]
     }),
 
-    security(site.securityOptions ?? {}),
+    security({
+      domain: "starter.rimelight.com",
+      imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
+    }),
 
     auth(),
 

@@ -1,12 +1,19 @@
 export interface SecurityOptions {
   /**
-   * The base domain name for this project (e.g. "idantity.me") used to autoconfigure standard
-   * allowed domains and img-src CDN targets.
+   * The base domain name for this project (e.g. "idantity.me"), used to derive the
+   * `https://cdn.<domain>` img-src CDN target.
    */
   domain?: string | undefined
 
   /**
-   * Additional Allowed Domains for origin checking or cross-domain rules
+   * Additional origins allowed across the resource-fetching directives: `img-src`, `connect-src`
+   * and `frame-src`. Use this for origins the whole app is allowed to talk to; use `imgSrc` /
+   * `connectSrc` / `frameSrc` for single-directive allowances.
+   *
+   * Entries are emitted verbatim, so they must be full origins including the scheme (e.g.
+   * "https://api.example.com") - a bare hostname is a well-formed but never-matching CSP source.
+   * Deliberately not applied to `script-src` or `style-src`; script execution is governed by the
+   * per-request nonce and `'strict-dynamic'`.
    */
   allowedDomains?: string[] | undefined
 

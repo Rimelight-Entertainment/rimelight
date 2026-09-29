@@ -7,14 +7,6 @@ import { i18n } from "@rimelight/i18n/middleware"
 import { getRelativeLocaleUrl } from "@rimelight/i18n"
 import { handleCmsCron } from "@rimelight/cms/cron/scheduled"
 import { db } from "#db"
-import { rimelightSolidConfig } from "@rimelight/config/solid"
-
-const site = rimelightSolidConfig({
-  domain: "starter.rimelight.com",
-  security: {
-    imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
-  }
-})
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -22,7 +14,7 @@ const app = new Hono<{ Bindings: Env }>()
 export { ChatRoom, Document } from "./chat/durableObject"
 
 // Middlewares
-app.use(security(site.securityOptions ?? {}))
+app.use(security())
 app.use(devOnly)
 app.use(ratelimit())
 app.use(construction())

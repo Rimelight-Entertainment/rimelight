@@ -32,11 +32,6 @@
       "types": "./dist/drizzle/index.d.mts",
       "import": "./dist/drizzle/index.mjs",
       "default": "./dist/drizzle/index.mjs"
-    },
-    "./solid": {
-      "types": "./dist/solid/index.d.mts",
-      "import": "./dist/solid/index.mjs",
-      "default": "./dist/solid/index.mjs"
     }
   },
   "publishConfig": {
@@ -52,33 +47,9 @@
     "drizzle-kit": "0.31.11"
   },
   "peerDependencies": {
-    "@rimelight/auth": "workspace:*",
-    "@rimelight/cms": "workspace:*",
-    "@rimelight/i18n": "workspace:*",
-    "@rimelight/security": "workspace:*",
-    "@rimelight/seo": "workspace:*",
-    "@rimelight/ui": "workspace:*",
     "drizzle-kit": ">=0.30.0"
   },
   "peerDependenciesMeta": {
-    "@rimelight/auth": {
-      "optional": true
-    },
-    "@rimelight/cms": {
-      "optional": true
-    },
-    "@rimelight/i18n": {
-      "optional": true
-    },
-    "@rimelight/security": {
-      "optional": true
-    },
-    "@rimelight/seo": {
-      "optional": true
-    },
-    "@rimelight/ui": {
-      "optional": true
-    },
     "drizzle-kit": {
       "optional": true
     }

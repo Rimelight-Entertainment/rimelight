@@ -2,6 +2,7 @@ import { createHash } from "node:crypto"
 import type { Plugin } from "vite-plus"
 
 import type { SecurityOptions } from "./types"
+import { resolveSecurityDomain } from "./csp"
 
 export type RimelightSecurityPlugin = Plugin
 
@@ -26,6 +27,9 @@ function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string
  * (Nuxt-security style). 4. Exposes virtual:sri-manifest with a unified URL -> hash mapping.
  */
 export function security(options: SecurityPluginOptions = {}): RimelightSecurityPlugin {
+  // Fail fast at build/dev time on a malformed domain rather than silently emitting a dead CSP source.
+  resolveSecurityDomain(options.domain)
+
   const sriManifest: Record<string, string> = {}
   const externalUrls = Array.from(new Set(options.resources || []))
 

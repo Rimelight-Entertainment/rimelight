@@ -173,7 +173,7 @@ Mirror `@rimelight/seo`:
 - `./plugin` — `rimelightAnalytics(options)`: `transformIndexHtml` for HTML consumers, `virtual:rimelight/analytics` for SSR loaders, `configureServer` middleware to serve/proxy the tracker in dev.
 - `./head` — `defineAnalyticsConfig()` + `generateAnalyticsHead(): HeadResult`, producing a `script` `HeadTag` (`{ src, defer, "data-domain", nonce? }`) that conforms to the **Unified Head contract** shared by `@rimelight/seo`, `@rimelight/security`, `@rimelight/ui`.
 - `./events` — the dependency-free client helper (`analytics.event(name)`, SPA hook, `data-local` opt-in, `em-ignore` honor).
-- `./csp` — `cspAdditions(): { scriptSrc: string[], connectSrc: string[] }`, consumed by a composer in `@rimelight/config` that merges into `@rimelight/security`'s policy. Zero cross-package dependencies.
+- `./csp` — `cspAdditions(): { scriptSrc: string[], connectSrc: string[] }`, shaped to spread directly into `@rimelight/security`'s `SecurityOptions`. Zero cross-package dependencies.
 - `./tracker` — the raw tracker script as a string export (what a self-hosted instance serves), enabling dev-server serving without a network dependency.
 
 #### 3.3.2. Unified Head Contract Conformance
@@ -198,7 +198,18 @@ cspAdditions({ scriptUrl: "https://stats.example.com/em.js" })
 // => { scriptSrc: ["https://stats.example.com"], connectSrc: ["https://stats.example.com"] }
 ```
 
-A small composer in `@rimelight/config` reads this and the security options together, so a site enabling both gets a correct, single policy. This is the one genuinely new surface in the ecosystem — nothing today expresses "a trusted first-party origin my CSP must allow."
+The keys are named after `@rimelight/security`'s `SecurityOptions` fields, so no composer is needed — the result spreads straight into the site's security options:
+
+```typescript
+import { cspAdditions } from "@rimelight/analytics/csp"
+
+const securityOptions = {
+  domain: "example.com",
+  ...cspAdditions({ scriptUrl: "https://stats.example.com/em.js" })
+}
+```
+
+A site enabling both gets a correct, single policy with no extra layer. This supersedes the earlier plan to route the merge through `@rimelight/config`: that layer (`rimelightSolidConfig`, the `@rimelight/config/solid` subpath) has since been deleted, since it derived a CSP that `@rimelight/security` already derives from `domain` alone. `SecurityOptions` is now the single surface for CSP configuration.
 
 #### 3.3.4. Dev Mode
 
@@ -230,7 +241,7 @@ A small composer in `@rimelight/config` reads this and the security options toge
 
 ### Option B — Vite-Agnostic
 
-- Slightly more ceremony for an all-Astro shop: sites must be wired through `vite.plugins` rather than a dedicated `integrations` entry. Mitigation: `@rimelight/config` already centralizes this registration for auth/i18n/ui, so the pattern is familiar and one-line.
+- Slightly more ceremony for an all-Astro shop: sites must be wired through `vite.plugins` rather than a dedicated `integrations` entry. Mitigation: the Vite-plugin pattern is already the norm for auth/i18n/ui/seo, so the pattern is familiar and one-line.
 - The unified head contract means layouts render `<Fragment set:html={head.html} />` (or the platform equivalent) rather than relying on magic head injection. SSG-only sites must render the head at build time, which needs either `transformIndexHtml` (handled by the plugin for HTML output) or an explicit layout call.
 - Marginal: the dev-mode proxy and virtual module are new machinery for a three-functions package.
 - **Effort**: slightly larger (a packaged plugin + head + events + csp), still measured in days.
@@ -265,14 +276,14 @@ Export only pure functions (`generateAnalyticsHead`, `cspAdditions`) and call th
 
 Non-breaking; no existing project is forced to change.
 
-| Phase | Scope                                                                                               | Effort   |
-| ----- | --------------------------------------------------------------------------------------------------- | -------- |
-| **1** | Fork Edgemetry's tracker; scaffold `packages/analytics` (plugin, head, events, csp, tracker)        | 1–2 days |
-| **2** | Wire into `@rimelight/config` alongside auth/i18n/ui so the starter composes it + CSP automatically | 0.5 day  |
-| **3** | Pilot on `starter.rimelight.com` and one client site against a shared dev instance                  | 1 day    |
-| **4** | Add the Vitest suite (head output, CSP additions, virtual module) and ship                          | Ongoing  |
+| Phase | Scope                                                                                        | Effort   |
+| ----- | -------------------------------------------------------------------------------------------- | -------- |
+| **1** | Fork Edgemetry's tracker; scaffold `packages/analytics` (plugin, head, events, csp, tracker) | 1–2 days |
+| **2** | Wire alongside auth/i18n/ui so the starter spreads `cspAdditions()` into `security()`        | 0.5 day  |
+| **3** | Pilot on `starter.rimelight.com` and one client site against a shared dev instance           | 1 day    |
+| **4** | Add the Vitest suite (head output, CSP additions, virtual module) and ship                   | Ongoing  |
 
-Astro sites adopt via `vite.plugins` (or the `@rimelight/config` composer). A future optional `./integration` subpath (the `@rimelight/security` pattern) gives a dedicated `integrations` entry without changing the core. The server half is deployed separately and needs no migration.
+Astro sites adopt via `vite.plugins`. A future optional `./integration` subpath (the `@rimelight/security` pattern) gives a dedicated `integrations` entry without changing the core. The server half is deployed separately and needs no migration.
 
 ---
 

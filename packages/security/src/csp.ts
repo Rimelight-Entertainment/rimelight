@@ -1,16 +1,53 @@
 import type { SecurityOptions } from "./types"
 
+// Hostname (dot-separated labels) with an optional port. Single-label hosts such as "localhost"
+// are rejected: `domain` is used to derive production `cdn.<domain>` origins.
+const DOMAIN_PATTERN = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?$/
+
+/**
+ * Coerces a `domain` into a bare lowercase `host[:port]`, dropping any scheme, surrounding
+ * whitespace, path, query, fragment or trailing slash. Never throws, so it is safe to call on the
+ * request path.
+ */
+function normalizeDomain(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .split(/[/?#]/)[0]!
+    .replace(/\/+$/, "")
+}
+
+/**
+ * Build-time gate for the `domain` option. Accepts a bare host, a full URL, or a host with stray
+ * whitespace and returns a bare lowercase `host[:port]`. Returns `undefined` when the value is
+ * absent or blank, and throws when it cannot be repaired into a valid hostname.
+ */
+export function resolveSecurityDomain(value: string | undefined): string | undefined {
+  const normalized = value === undefined ? "" : normalizeDomain(value)
+  if (normalized === "") return undefined
+  if (!DOMAIN_PATTERN.test(normalized)) {
+    throw new Error(
+      `Invalid security domain ${JSON.stringify(value)}: expected a bare host such as ` +
+        `"example.com" (optionally with a port), not a URL or path.`
+    )
+  }
+  return normalized
+}
+
 /**
  * Builds the Content-Security-Policy header string dynamically for a given request nonce.
  */
 export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): string {
-  const domain = options.domain || ""
+  const domain = normalizeDomain(options.domain || "")
+  const allowedDomains = options.allowedDomains || []
 
   const imgSources = Array.from(
     new Set([
       "'self'",
       "data:",
       ...(domain ? [`https://cdn.${domain}`] : []),
+      ...allowedDomains,
       ...(options.imgSrc || [])
     ])
   )
@@ -21,6 +58,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     new Set([
       "'self'",
       ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
+      ...allowedDomains,
       ...(options.connectSrc || [])
     ])
   )
@@ -29,6 +67,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     new Set([
       "'self'",
       ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
+      ...allowedDomains,
       ...(options.frameSrc || [])
     ])
   )
