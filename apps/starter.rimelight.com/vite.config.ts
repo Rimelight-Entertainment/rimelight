@@ -9,6 +9,9 @@ import { security } from "@rimelight/security/plugin"
 import { auth } from "@rimelight/auth/plugin"
 import { i18n } from "@rimelight/i18n/plugin"
 import { rimelightSolidConfig } from "@rimelight/config/solid"
+import en from "./src/i18n/en.json"
+import es from "./src/i18n/es.json"
+import pt from "./src/i18n/pt.json"
 
 const site = rimelightSolidConfig({
   domain: "starter.rimelight.com"
@@ -63,7 +66,8 @@ export default defineConfig({
       titleTemplate: "%s | Rimelight Starter",
       locales: {
         en: "en-US",
-        pt: "pt-BR"
+        pt: "pt-BR",
+        es: "es-ES"
       },
       privatePathPrefixes: ["/api", "/cdn-cgi"]
     }),
@@ -73,8 +77,9 @@ export default defineConfig({
     auth(),
 
     i18n({
-      locales: ["en", "pt"],
-      defaultLocale: "en"
+      locales: ["en", "pt", "es"],
+      defaultLocale: "en",
+      translations: { en, es, pt }
     })
   ]
 })

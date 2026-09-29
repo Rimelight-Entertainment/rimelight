@@ -654,7 +654,11 @@ cms.post("/pages/:id/publish", async (c) => {
     .where(eq(pages.id, id))
 
   // Trigger automated search indexer
-  await indexPageForSearch(db, { id, title: page[0].title, content: body.content }, ["en", "pt"])
+  await indexPageForSearch(db, { id, title: page[0].title, content: body.content }, [
+    "en",
+    "pt",
+    "es"
+  ])
 
   return c.json({ version: version[0] })
 })
