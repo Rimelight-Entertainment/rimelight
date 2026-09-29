@@ -218,17 +218,32 @@ export async function getCmsEntry(
   return { entry, cacheHint }
 }
 
+export interface CmsCollectionFilter {
+  limit?: number | undefined
+  offset?: number | undefined
+}
+
+export interface CmsLoader {
+  name: string
+  loadCollection: (context?: {
+    filter?: CmsCollectionFilter | undefined
+    collection?: string | undefined
+  }) => Promise<{ entries: CmsEntry[]; cacheHint: CacheHint }>
+  loadEntry: (context: {
+    filter: { id: string }
+    collection?: string | undefined
+  }) => Promise<{ id: string; data: CmsPageData; cacheHint: CacheHint } | undefined>
+}
+
 /**
- * Astro Live Loader for CMS collections. Use inside src/live.config.ts with defineLiveCollection({
- * loader: rimelightCmsLoader({ type: 'blog' }) })
+ * Framework-agnostic CMS collection loader. Works with any runtime — call `loadCollection()` /
+ * `loadEntry()` from Solid resources, Hono handlers, or build scripts. (Previously an Astro
+ * live-collection loader.)
  */
-export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}) {
+export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}): CmsLoader {
   return {
     name: "rimelight-cms-loader",
-    loadCollection: async (context: {
-      filter?: { limit?: number; offset?: number }
-      collection?: string
-    }) => {
+    loadCollection: async (context = {}) => {
       const db = loaderOptions.db || (globalThis as any).db
       const limit = typeof context.filter?.limit === "number" ? context.filter.limit : undefined
       const offset = typeof context.filter?.offset === "number" ? context.filter.offset : undefined
@@ -239,7 +254,7 @@ export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}) {
         offset
       })
     },
-    loadEntry: async (context: { filter: { id: string }; collection?: string }) => {
+    loadEntry: async (context: { filter: { id: string }; collection?: string | undefined }) => {
       const db = loaderOptions.db || (globalThis as any).db
       const { entry, cacheHint } = await getCmsEntry(db, context.filter.id, loaderOptions)
       if (!entry) return undefined
@@ -251,3 +266,8 @@ export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}) {
     }
   }
 }
+
+/**
+ * Alias for the framework-agnostic loader.
+ */
+export const createCmsLoader = rimelightCmsLoader

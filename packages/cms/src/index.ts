@@ -46,8 +46,13 @@ export * from "./search/query.ts"
 // Database Schemas & Migration
 export * from "./schema/index.ts"
 
-// Astro Integration & Components
-export { rimelightCms, type RimelightCmsOptions } from "./integration.ts"
+// Vite Plugin & CMS Integration (Solid)
+export {
+  cms,
+  rimelightCms,
+  type RimelightCmsPluginOptions,
+  type RimelightCmsOptions
+} from "./integration.ts"
 
 // Toast API
 export * from "./client/toast.ts"
@@ -58,7 +63,7 @@ export * from "./core/excerpt.ts"
 // Dynamic Site Settings
 export * from "./services/site-settings.ts"
 
-// Astro Live Loader & Collections
+// CMS Collection Loader (framework-agnostic)
 export * from "./loader/live.ts"
 
 // Cloudflare Worker Cron Dispatcher

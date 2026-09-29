@@ -202,13 +202,19 @@ export interface FileTreeBlockProps {
 export interface ComponentShowcaseBlockProps {
   componentName: string
   componentPath: string
-  framework: "astro" | "solid"
+  /**
+   * UI framework the showcased component targets. Always `"solid"` — `"astro"` is deprecated.
+   */
+  framework: "solid" | "astro"
   defaultProps: Record<string, any>
   propsConfig: Record<string, string[]>
   togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
   codeExamples: {
-    astro?: string
     solid?: string
+    /**
+     * @deprecated Astro is no longer supported — use `solid`.
+     */
+    astro?: string
   }
   playgroundUrl: string | undefined
 }
@@ -228,7 +234,10 @@ export interface ApiDocumentationBlockProps {
 
 export interface LivePreviewBlockProps {
   componentCode: string
-  framework: "astro" | "solid"
+  /**
+   * Preview framework. Always `"solid"` — `"astro"` is deprecated.
+   */
+  framework: "solid" | "astro"
   height?: string
   width?: string
   editable?: boolean

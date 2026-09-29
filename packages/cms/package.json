@@ -53,7 +53,13 @@
       "default": "./src/mcp/index.ts"
     },
     "./core/*": "./src/core/*",
-    "./astro/*": "./src/astro/*",
+    "./solid/*": "./src/solid/*",
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs",
+      "default": "./dist/plugin.mjs"
+    },
+    "./server/*": "./src/server/*",
     "./cron/scheduled": {
       "types": "./src/cron/scheduled.ts",
       "import": "./src/cron/scheduled.ts"
@@ -77,7 +83,7 @@
   "scripts": {
     "build": "vp pack",
     "prepack": "pnpm run build",
-    "check": "vp check --fix && astro check",
+    "check": "vp check --fix",
     "test": "vp test"
   },
   "dependencies": {
@@ -90,13 +96,12 @@
     "sortablejs": "1.15.7"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.10",
     "@rimelight/config": "workspace:*",
     "@types/sortablejs": "1.15.9",
     "unocss": "66.10.5"
   },
   "peerDependencies": {
-    "astro": ">=7.0.0"
+    "solid-js": ">=2.0.0-rc.9"
   },
   "engines": {
     "node": ">=26.10.0"

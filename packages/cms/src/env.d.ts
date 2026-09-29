@@ -1,17 +1,30 @@
-declare module "virtual:rimelight-cms/parent-layout" {
-  const layout: any
-  export default layout
+declare module "virtual:rimelight/cms" {
+  export const routePrefix: string
+  export const storageConfig: any
+  export const cmsOptions: any
+  const cmsOptionsDefault: any
+  export default cmsOptionsDefault
 }
 
-declare module "virtual:rimelight-cms/db" {
+declare module "virtual:rimelight/cms/config" {
+  export const routePrefix: string
+  export const storageConfig: any
+  export const cmsOptions: any
+  const cmsOptionsDefault: any
+  export default cmsOptionsDefault
+}
+
+declare module "virtual:rimelight/cms/db" {
   export const db: any
 }
 
-declare module "virtual:rimelight-cms/storage" {
+declare module "virtual:rimelight/cms/storage" {
   export const storageConfig: any
+  const storageConfigDefault: any
+  export default storageConfigDefault
 }
 
-declare module "virtual:rimelight-cms/auth" {
+declare module "virtual:rimelight/cms/auth" {
   import type { AuthAdapter } from "@rimelight/auth"
   export const authAdapter: AuthAdapter
   export default authAdapter

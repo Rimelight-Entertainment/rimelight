@@ -54,9 +54,9 @@ rimelight-editor-layout,
   background-color: transparent;
 }
 
-/* Astro's client:only wraps the component in <astro-island> which defaults to display:inline.
-   Scope to .cms-editor-main so only the editor island is affected, not the properties panel. */
-.cms-editor-main > astro-island {
+/* Solid renders CMS components directly (no framework island wrapper).
+   Scope to .cms-editor-main so only the editor root is affected, not the properties panel. */
+.cms-editor-main > * {
   display: flex;
   flex: 1 1 100%;
   width: 100%;

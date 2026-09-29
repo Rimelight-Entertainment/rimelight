@@ -53,10 +53,10 @@ export function r2(options: R2StorageOptions = {}): StorageConfig {
 }
 
 /**
- * Resolves Cloudflare R2 bucket instance from Cloudflare env or Astro locals.
+ * Resolves Cloudflare R2 bucket instance from the Cloudflare env or request locals.
  */
 export async function getR2Bucket(locals?: any, bindingName = "BLOB"): Promise<any> {
-  // 1. Try cloudflare:workers standard export (Astro v6+)
+  // 1. Try cloudflare:workers standard export
   try {
     const cf = await import("cloudflare:workers")
     if (cf?.env && cf.env[bindingName]) {

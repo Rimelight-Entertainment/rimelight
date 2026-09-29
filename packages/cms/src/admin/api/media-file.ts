@@ -1,38 +1,8 @@
-import type { APIRoute } from "astro"
-import { getR2Bucket } from "../../storage/index"
-import { storageConfig } from "virtual:rimelight-cms/storage"
-
-export const prerender = false
-
-export const GET: APIRoute = async ({ params, locals }) => {
-  try {
-    const bindingName = storageConfig?.binding ?? "BLOB"
-    const bucket = await getR2Bucket(locals, bindingName)
-
-    if (!bucket) {
-      return new Response("Storage binding not found.", { status: 500 })
-    }
-
-    const key = params["key"] as string
-    if (!key) {
-      return new Response("Missing file key.", { status: 400 })
-    }
-
-    const object = await bucket.get(key)
-    if (!object) {
-      return new Response("File not found in R2 storage.", { status: 404 })
-    }
-
-    const headers = new Headers()
-    object.writeHttpMetadata(headers)
-    headers.set("etag", object.httpEtag)
-    headers.set("Cache-Control", "public, max-age=31536000, immutable")
-
-    return new Response(object.body, {
-      status: 200,
-      headers
-    })
-  } catch (error: any) {
-    return new Response(error.message || "Failed to retrieve file", { status: 500 })
-  }
-}
+/**
+ * CMS media file proxy (framework-agnostic).
+ *
+ * Previously an Astro `APIRoute`. Call `handleMediaFile(request, key, ctx)` from any router — e.g.
+ * Hono: `app.get("/cms/api/media/file/:key", (c) => handleMediaFile(c.req.raw, c.req.param("key"),
+ * ctx))`.
+ */
+export { handleMediaFile as GET, type MediaRouteContext } from "../../server/media.ts"

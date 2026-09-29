@@ -5,7 +5,7 @@
 ### Apps (`/packages`)
 
 - **`rimelight.com`**: The main company website.
-- **`starter.rimelight.com`**: Our standardized starter template for Astro websites.
+- **`starter.rimelight.com`**: Our standardized starter template for Solid websites.
 
 ### Packages (`/packages`)
 

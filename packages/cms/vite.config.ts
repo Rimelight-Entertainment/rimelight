@@ -8,7 +8,9 @@ export default defineConfig(
       "src/schema/index.ts",
       "src/schema/sqlite.ts",
       "src/integration.ts",
-      "src/storage/index.ts"
+      "src/plugin.ts",
+      "src/storage/index.ts",
+      "src/server/index.ts"
     ]
   })
 )
