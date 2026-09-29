@@ -56,15 +56,7 @@ export function r2(options: R2StorageOptions = {}): StorageConfig {
  * Resolves Cloudflare R2 bucket instance from the Cloudflare env or request locals.
  */
 export async function getR2Bucket(locals?: any, bindingName = "BLOB"): Promise<any> {
-  // 1. Try cloudflare:workers standard export
-  try {
-    const cf = await import("cloudflare:workers")
-    if (cf?.env && cf.env[bindingName]) {
-      return cf.env[bindingName]
-    }
-  } catch {}
-
-  // 2. Direct locals property check (locals.runtime.env, locals.env or locals[bindingName])
+  // 1. Direct locals property check (locals.runtime.env, locals.env or locals[bindingName])
   if (locals) {
     if (locals.runtime?.env && locals.runtime.env[bindingName]) {
       return locals.runtime.env[bindingName]
@@ -77,7 +69,7 @@ export async function getR2Bucket(locals?: any, bindingName = "BLOB"): Promise<a
     }
   }
 
-  // 3. Global process.env fallback
+  // 2. Global process.env fallback
   if (typeof process !== "undefined" && process.env && (process.env as any)[bindingName]) {
     return (process.env as any)[bindingName]
   }

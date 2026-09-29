@@ -16,7 +16,7 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     bitrate: "320 kbps",
     fileSize: "4.7 MB",
     transcript:
-      "[00:00] Relaxing soft piano chords begin to loop gently with background vinyl crackle..."
+      "00:00 — Relaxing soft piano chords begin to loop gently with background vinyl crackle..."
   },
   {
     src: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3",
@@ -28,7 +28,7 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     format: "MP3",
     bitrate: "320 kbps",
     fileSize: "3.5 MB",
-    transcript: "[00:00] Smooth Rhodes progression with melodic jazzy saxophone overlay..."
+    transcript: "00:00 — Smooth Rhodes progression with melodic jazzy saxophone overlay..."
   },
   {
     src: "https://cdn.pixabay.com/audio/2022/10/14/audio_9939f792cb.mp3",
@@ -40,7 +40,7 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     format: "MP3",
     bitrate: "320 kbps",
     fileSize: "5.5 MB",
-    transcript: "[00:00] Minimal electronic pulse synth layered over deep sub-bass frequencies..."
+    transcript: "00:00 — Minimal electronic pulse synth layered over deep sub-bass frequencies..."
   }
 ]
 
