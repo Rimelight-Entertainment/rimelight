@@ -36,15 +36,21 @@ export function resolveSecurityOptions(
   options: RimelightSolidOptions = {},
   imageDomains: string[] = resolveImageDomains(options)
 ): RimelightSolidSecurityOptions | undefined {
-  const { domain, security } = options
-  if (!security) return undefined
+  const { domain, security = true } = options
+
+  // Opt-out, not opt-in. An app that declares a domain always gets CSP defaults derived from it
+  // (domain + image domains), so callers can never end up with a `domain`-less CSP that blocks
+  // the project's own CDN. Pass `security: false` to disable entirely.
+  if (security === false) return undefined
+  if (!domain && imageDomains.length === 0) return undefined
+
   const secOpts: RimelightSolidSecurityOptions = typeof security === "object" ? security : {}
   const { domain: overrideDomain, imgSrc: overrideImgSrc, ...rest } = secOpts
   const resolvedDomain = overrideDomain || domain
   const defaultImgSrc = imageDomains.map(toHttpsOrigin)
-  const imgSrc = overrideImgSrc
-    ? Array.from(new Set([...defaultImgSrc, ...overrideImgSrc]))
-    : defaultImgSrc
+  const imgSrc = Array.from(
+    new Set(overrideImgSrc ? [...defaultImgSrc, ...overrideImgSrc] : defaultImgSrc)
+  )
   return {
     ...(resolvedDomain ? { domain: resolvedDomain } : {}),
     imgSrc,

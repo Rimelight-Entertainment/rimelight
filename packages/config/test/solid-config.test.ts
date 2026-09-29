@@ -23,9 +23,26 @@ describe("@rimelight/config solid presets", () => {
   })
 
   describe("resolveSecurityOptions", () => {
-    it("should return undefined when security is not enabled", () => {
-      expect(resolveSecurityOptions({ domain: "example.com" })).toBeUndefined()
+    it("should derive options by default when a domain is present", () => {
+      const result = resolveSecurityOptions({ domain: "example.com" })
+      expect(result?.domain).toBe("example.com")
+      expect(result?.imgSrc).toEqual([
+        "https://example.com",
+        "https://cdn.example.com",
+        "https://cdn.rimelight.com"
+      ])
+    })
+
+    it("should return undefined only when explicitly disabled", () => {
       expect(resolveSecurityOptions({ domain: "example.com", security: false })).toBeUndefined()
+      expect(resolveSecurityOptions()).toBeUndefined()
+    })
+
+    it("should never emit a domain-less CSP for a domain-scoped app", () => {
+      const result = resolveSecurityOptions({ domain: "rimelight.com" })
+      expect(result?.domain).toBe("rimelight.com")
+      expect(result?.imgSrc).toContain("https://cdn.rimelight.com")
+      expect(new Set(result?.imgSrc).size).toBe(result?.imgSrc?.length)
     })
 
     it("should derive domain and https imgSrc from image domains", () => {
@@ -70,8 +87,15 @@ describe("@rimelight/config solid presets", () => {
       expect(config.securityOptions?.imgSrc).toContain("https://cdn.example.com")
     })
 
-    it("should omit security options when security is not enabled", () => {
-      const config = rimelightSolidConfig({ domain: "example.com" })
+    it("should provide usable security options with only a domain, no opt-in required", () => {
+      const config = rimelightSolidConfig({ domain: "rimelight.com" })
+      expect(config.site).toBe("https://rimelight.com")
+      expect(config.securityOptions?.domain).toBe("rimelight.com")
+      expect(config.securityOptions?.imgSrc).toContain("https://cdn.rimelight.com")
+    })
+
+    it("should omit security options only when explicitly disabled", () => {
+      const config = rimelightSolidConfig({ domain: "example.com", security: false })
       expect(config.site).toBe("https://example.com")
       expect(config.securityOptions).toBeUndefined()
     })

@@ -14,7 +14,10 @@ import es from "./src/i18n/es.json"
 import pt from "./src/i18n/pt.json"
 
 const site = rimelightSolidConfig({
-  domain: "rimelight.com"
+  domain: "rimelight.com",
+  security: {
+    imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
+  }
 })
 
 export default defineConfig({
@@ -97,11 +100,7 @@ export default defineConfig({
       ]
     }),
 
-    security(
-      site.securityOptions ?? {
-        imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
-      }
-    ),
+    security(site.securityOptions ?? {}),
 
     auth(),
 

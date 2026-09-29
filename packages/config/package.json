@@ -16,7 +16,6 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "astro.d.ts",
     "tsconfig",
     "vite-plus",
     "dist"
@@ -25,8 +24,6 @@
   "exports": {
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/solid": "./tsconfig/solid.json",
-    "./tsconfig/astro": "./tsconfig/astro.json",
-    "./tsconfig/astro-solid": "./tsconfig/astro-solid.json",
     "./vite-plus/base": {
       "types": "./vite-plus/base.ts",
       "default": "./vite-plus/base.js"

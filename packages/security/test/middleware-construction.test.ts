@@ -64,6 +64,69 @@ describe("@rimelight/security construction middleware", () => {
     expect(next).toHaveBeenCalled()
   })
 
+  it("should pass Vite /assets/ chunks through instead of redirecting to the construction page", async () => {
+    const middleware = construction()
+
+    for (const path of [
+      "/assets/virtual_solid-ssr-entry-client-BZC9SKbh.js",
+      "/assets/virtual_solid-ssr-entry-client-Cg2ujBbw.css",
+      "/assets/fonts/inter.woff2"
+    ]) {
+      const ctx = createMockContext({ path, mode: "true" })
+      const next = vi.fn().mockResolvedValue("next-called")
+
+      await middleware(ctx, next)
+      expect(next, `expected ${path} to bypass the construction gate`).toHaveBeenCalled()
+      expect(ctx.getRedirected()).toBeNull()
+    }
+  })
+
+  it("should 404 subresource requests instead of redirecting them to HTML", async () => {
+    const middleware = construction()
+    const headers = new Headers({ "sec-fetch-dest": "script", "accept": "*/*" })
+    const ctx = {
+      req: {
+        path: "/stale-chunk-1234.js",
+        method: "GET",
+        raw: { headers },
+        url: "http://localhost/"
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      redirect: vi.fn()
+    }
+    const next = vi.fn()
+
+    const res = (await middleware(ctx, next)) as Response
+    expect(next).not.toHaveBeenCalled()
+    expect(ctx.redirect).not.toHaveBeenCalled()
+    expect(res.status).toBe(404)
+    expect(res.headers.get("content-type")).toContain("text/plain")
+  })
+
+  it("should still redirect top-level navigations when unauthorized", async () => {
+    const middleware = construction()
+    const headers = new Headers({ "sec-fetch-dest": "document", "accept": "text/html" })
+    let redirectedTo: string | null = null
+    const ctx = {
+      req: {
+        path: "/en/dashboard",
+        method: "GET",
+        raw: { headers },
+        url: "http://localhost/en/dashboard"
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      redirect: (target: string) => {
+        redirectedTo = target
+        return { status: 302, headers: { Location: target } }
+      }
+    }
+    const next = vi.fn()
+
+    await middleware(ctx, next)
+    expect(next).not.toHaveBeenCalled()
+    expect(redirectedTo).toContain("/en/construction?redirect=")
+  })
+
   it("should redirect unauthorized visitor to construction page", async () => {
     const middleware = construction()
     const ctx = createMockContext({ path: "/dashboard", mode: "true" })

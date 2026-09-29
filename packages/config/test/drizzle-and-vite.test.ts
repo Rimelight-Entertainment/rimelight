@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vite-plus/test"
 import path from "node:path"
+import fs from "node:fs"
 import { rimelightDrizzleConfig } from "../drizzle/index"
 import { rimelightConfig, rimelightPackConfig, findSourceEntries } from "../vite-plus/base"
 
@@ -47,7 +48,7 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
 
   describe("package integrity utils", () => {
     it("should find source entries in given base directory", () => {
-      const baseDir = path.resolve(import.meta.dirname, "../astro")
+      const baseDir = path.resolve(import.meta.dirname, "../solid")
       const entries = findSourceEntries(baseDir)
       expect(entries.some((e) => e.endsWith("index.ts"))).toBe(true)
     })
@@ -55,6 +56,30 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
     it("should return empty array if baseDir does not exist", () => {
       const entries = findSourceEntries("non-existent-directory")
       expect(entries).toEqual([])
+    })
+
+    it("should not ship exports or files entries that do not exist on disk", () => {
+      const pkgDir = path.resolve(import.meta.dirname, "..")
+      const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, "package.json"), "utf-8"))
+
+      const targets: string[] = []
+      for (const value of Object.values<unknown>(pkg.exports ?? {})) {
+        if (typeof value === "string") {
+          targets.push(value)
+        } else if (value && typeof value === "object") {
+          for (const entry of Object.values<unknown>(value as Record<string, unknown>)) {
+            if (typeof entry === "string") targets.push(entry)
+          }
+        }
+      }
+      targets.push(...(pkg.files ?? []))
+
+      expect(targets.length).toBeGreaterThan(0)
+      const missing = targets
+        .filter((t) => t.startsWith("./"))
+        .map((t) => t.replace(/^\.\//, ""))
+        .filter((rel) => !fs.existsSync(path.join(pkgDir, rel)))
+      expect(missing).toEqual([])
     })
   })
 })

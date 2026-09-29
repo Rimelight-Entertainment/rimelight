@@ -10,7 +10,10 @@ import { db } from "#db"
 import { rimelightSolidConfig } from "@rimelight/config/solid"
 
 const site = rimelightSolidConfig({
-  domain: "starter.rimelight.com"
+  domain: "starter.rimelight.com",
+  security: {
+    imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
+  }
 })
 
 const app = new Hono<{ Bindings: Env }>()

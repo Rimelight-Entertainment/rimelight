@@ -8,6 +8,10 @@ const DEFAULT_WHITELISTED_PATTERNS = [
   "/api/auth",
   "/api/construction-guest",
   "/_astro/",
+  // Vite/Vite+ emits hashed client chunks into /assets/ (Astro used /_astro/).
+  // Without this, a stale or missing chunk is redirected to the construction page
+  // and the browser rejects it on MIME type instead of getting a 404.
+  "/assets/",
   "/_image",
   "/favicon.",
   "/apple-touch-icon",
@@ -112,6 +116,15 @@ const getContextHelpers = (c: any) => {
     })
   }
 
+  const getHeader = (name: string): string | undefined => {
+    const lowered = name.toLowerCase()
+    if (typeof c.req?.header === "function") {
+      const viaHono = c.req.header(lowered)
+      if (viaHono) return viaHono
+    }
+    return c.req?.raw?.headers?.get?.(name) || c.request?.headers?.get?.(name) || undefined
+  }
+
   const getCookieValue = (name: string): string | undefined => {
     if (typeof c.req?.header === "function") {
       const headerVal = c.req.header("cookie")
@@ -157,7 +170,29 @@ const getContextHelpers = (c: any) => {
     }
   }
 
-  return { path, method, search, redirect, json, getCookieValue, setCookieValue }
+  return { path, method, search, redirect, json, getHeader, getCookieValue, setCookieValue }
+}
+
+/**
+ * Distinguishes top-level document navigations from subresource requests (scripts, styles, images,
+ * fetch/XHR). Only navigations may be redirected to the construction page: redirecting a
+ * subresource makes the browser reject the HTML body on MIME type instead of a clean 404.
+ */
+const isDocumentNavigation = (
+  getHeader: (name: string) => string | undefined,
+  path: string
+): boolean => {
+  // A path with a file extension is never a top-level page (e.g. a missing hashed chunk).
+  if (/\.[a-z0-9]{2,8}$/i.test(path)) return false
+
+  const secFetchDest = getHeader("sec-fetch-dest")
+  if (secFetchDest) return secFetchDest === "document" || secFetchDest === "iframe"
+
+  const accept = getHeader("accept")
+  // No request headers at all (non-browser clients, tests): keep the historical behaviour.
+  if (!accept) return true
+
+  return accept.includes("text/html")
 }
 
 /**
@@ -255,7 +290,7 @@ export function construction(options: ConstructionOptions = {}) {
   const constructionPath = options.constructionPath ?? "/construction"
 
   return async (c: any, next: any) => {
-    const { path, method, search, redirect, json } = getContextHelpers(c)
+    const { path, method, search, redirect, json, getHeader } = getContextHelpers(c)
 
     // 1. Auto-handle API guest authentication endpoint
     if (apiPath && path === apiPath && method === "POST") {
@@ -378,6 +413,19 @@ export function construction(options: ConstructionOptions = {}) {
     // 5. Authorized users proceed
     if (await isAuthorized()) {
       return next()
+    }
+
+    // 5b. Subresource requests must never be redirected to the construction page. A .css/.js
+    // request answered with text/html fails strict MIME checking and breaks hydration, so a
+    // missing asset gets a plain 404 instead.
+    if (!isDocumentNavigation(getHeader, path)) {
+      return new Response("Not Found", {
+        status: 404,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "no-store"
+        }
+      })
     }
 
     // 6. Redirect unauthorized users to construction page or serve fallback HTML
