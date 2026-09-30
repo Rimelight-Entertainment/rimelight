@@ -13,7 +13,7 @@ export interface RLThemeSelectorProps extends ThemeSelectorProps {
 const themeItems = [
   { label: "System", value: "system", icon: "i-lucide-laptop" },
   { label: "Light", value: "light", icon: "i-rl-sun" },
-  { label: "Dark", value: "dark", icon: "i-rl-moon" }
+  { label: "Dark", value: "dark", icon: "i-rl-moon" },
 ];
 
 const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
@@ -59,8 +59,8 @@ const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
         handler: cycle,
         label: "Cycle Theme",
         description: "Cycle between system, light, and dark theme mode",
-        category: "system"
-      }
+        category: "system",
+      },
     });
 
     return () => cleanupShortcut();
@@ -72,8 +72,8 @@ const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     themeSelectorTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const activeIcon = () => {

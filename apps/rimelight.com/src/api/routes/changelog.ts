@@ -14,7 +14,7 @@ const api = new Hono().get("/changelog", async (c) => {
   const token = import.meta.env["GITHUB_TOKEN"] || process.env["GITHUB_TOKEN"];
   const headers: Record<string, string> = {
     "User-Agent": "Rimelight-Docs-Changelog",
-    Accept: "application/vnd.github.v3+json"
+    Accept: "application/vnd.github.v3+json",
   };
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
@@ -23,7 +23,7 @@ const api = new Hono().get("/changelog", async (c) => {
   const paths = [
     `packages/ui/src/components/${component}/RLS${pascalName}.tsx`,
     `packages/ui/src/components/${component}/RLA${pascalName}.astro`,
-    `packages/ui/src/components/${component}/${component}.theme.ts`
+    `packages/ui/src/components/${component}/${component}.theme.ts`,
   ];
   try {
     const allCommitsPromises = paths.map(async (p) => {
@@ -35,7 +35,7 @@ const api = new Hono().get("/changelog", async (c) => {
       return data.map((commit: any) => ({
         sha: commit.sha,
         date: commit.commit.author?.date || commit.commit.committer?.date || "",
-        message: commit.commit.message.split("\n")[0] || ""
+        message: commit.commit.message.split("\n")[0] || "",
       }));
     });
 
@@ -49,7 +49,7 @@ const api = new Hono().get("/changelog", async (c) => {
       }
     }
     const commits = Array.from(uniqueCommits.values()).toSorted(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
 
     if (commits.length === 0) {
@@ -58,7 +58,7 @@ const api = new Hono().get("/changelog", async (c) => {
 
     const releasesRes = await fetch(
       "https://api.github.com/repos/Rimelight-Entertainment/rimelight/releases?per_page=50",
-      { headers }
+      { headers },
     );
     let releases = [];
     if (releasesRes.ok) {
@@ -69,7 +69,7 @@ const api = new Hono().get("/changelog", async (c) => {
     }
 
     const sortedReleases = [...releases].toSorted(
-      (a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+      (a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
     );
     const releasesOldestFirst = [...sortedReleases].toReversed();
 
@@ -79,7 +79,7 @@ const api = new Hono().get("/changelog", async (c) => {
     for (const commit of commits) {
       const commitTime = new Date(commit.date).getTime();
       const release = releasesOldestFirst.find(
-        (r: any) => new Date(r.published_at).getTime() >= commitTime
+        (r: any) => new Date(r.published_at).getTime() >= commitTime,
       );
 
       if (release) {
@@ -90,7 +90,7 @@ const api = new Hono().get("/changelog", async (c) => {
             title: release.name || release.tag_name,
             published_at: release.published_at,
             url: release.html_url,
-            commits: []
+            commits: [],
           };
           groups.push(group);
         }
@@ -105,7 +105,7 @@ const api = new Hono().get("/changelog", async (c) => {
       result.push({
         tag: "unreleased",
         title: "Soon",
-        commits: unreleased
+        commits: unreleased,
       });
     }
 

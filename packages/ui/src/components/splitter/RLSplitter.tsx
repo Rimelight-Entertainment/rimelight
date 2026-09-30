@@ -29,7 +29,7 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
       const ds = props.defaultSizes ?? [50, 50];
       const totalSize = ds.reduce((s, v) => s + v, 0);
       return ds.map((s) => (s / (totalSize || 100)) * 100);
-    })()
+    })(),
   );
 
   const [drag, setDrag] = createSignal<DragState | null>(null);
@@ -44,8 +44,8 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
     splitterTheme({
       direction: props.direction ?? "horizontal",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const containerSize = () =>
@@ -60,7 +60,7 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
       i,
       startPos: isHorizontal() ? e.clientX : e.clientY,
       startA: current[i] ?? 0,
-      startB: current[i + 1] ?? 0
+      startB: current[i + 1] ?? 0,
     });
   };
 

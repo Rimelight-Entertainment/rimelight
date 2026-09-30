@@ -8,13 +8,13 @@ export const WikiSidebar: Component = () => {
       items: [
         {
           label: t("wiki_sidebar.getting_started"),
-          to: "/franchises/grand-tale/wiki/getting-started"
+          to: "/franchises/grand-tale/wiki/getting-started",
         },
         {
           label: t("wiki_sidebar.contribution_guide"),
-          to: "/franchises/grand-tale/wiki/contribution-guide"
-        }
-      ]
+          to: "/franchises/grand-tale/wiki/contribution-guide",
+        },
+      ],
     },
     {
       label: t("wiki_sidebar.lore"),
@@ -24,8 +24,8 @@ export const WikiSidebar: Component = () => {
         { label: t("wiki_sidebar.locations"), to: "/franchises/grand-tale/wiki/lore/locations" },
         { label: t("wiki_sidebar.species"), to: "/franchises/grand-tale/wiki/lore/species" },
         { label: t("wiki_sidebar.objects"), to: "/franchises/grand-tale/wiki/lore/objects" },
-        { label: t("wiki_sidebar.groups"), to: "/franchises/grand-tale/wiki/lore/groups" }
-      ]
+        { label: t("wiki_sidebar.groups"), to: "/franchises/grand-tale/wiki/lore/groups" },
+      ],
     },
     {
       label: t("wiki_sidebar.game"),
@@ -34,9 +34,9 @@ export const WikiSidebar: Component = () => {
         { label: t("wiki_sidebar.items"), to: "/franchises/grand-tale/wiki/game/items" },
         { label: t("wiki_sidebar.quests"), to: "/franchises/grand-tale/wiki/game/quests" },
         { label: t("wiki_sidebar.skills"), to: "/franchises/grand-tale/wiki/game/skills" },
-        { label: t("wiki_sidebar.settings"), to: "/franchises/grand-tale/wiki/game/settings" }
-      ]
-    }
+        { label: t("wiki_sidebar.settings"), to: "/franchises/grand-tale/wiki/game/settings" },
+      ],
+    },
   ];
 
   return (

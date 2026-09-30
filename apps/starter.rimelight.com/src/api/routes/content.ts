@@ -6,7 +6,7 @@ import { renderPageAsMarkdown } from "@rimelight/cms";
 
 function normalizePage(page: any) {
   return Object.assign({}, page, {
-    content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
+    content: typeof page.content === "string" ? JSON.parse(page.content) : page.content,
   });
 }
 
@@ -39,7 +39,7 @@ content.get("/pages/:slug", async (c) => {
       .where(
         type
           ? and(eq(pages.type, type), eq(pages.slug, slug), isNull(pages.deletedAt))
-          : and(eq(pages.slug, slug), isNull(pages.deletedAt))
+          : and(eq(pages.slug, slug), isNull(pages.deletedAt)),
       )
       .limit(1);
     if (!results[0]) return c.json({ page: null }, 404);
@@ -63,7 +63,7 @@ content.get("/doc-versions", async (c) => {
       return {
         slug: row.slug,
         version: contentObj?.properties?.version,
-        properties: contentObj?.properties
+        properties: contentObj?.properties,
       };
     });
     return c.json({ versions });
@@ -102,7 +102,7 @@ content.get("/docs/:slug/md", async (c) => {
       .select()
       .from(pages)
       .where(
-        and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt))
+        and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt)),
       );
 
     let dbPage: any = null;
@@ -123,8 +123,8 @@ content.get("/docs/:slug/md", async (c) => {
     return new Response(body, {
       headers: {
         "Content-Type": "text/markdown; charset=utf-8",
-        "Cache-Control": "public, max-age=3600, s-maxage=86400"
-      }
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+      },
     });
   } catch (error: any) {
     console.error("[Content API /docs/:slug/md Error]:", error);

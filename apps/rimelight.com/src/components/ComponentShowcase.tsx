@@ -25,7 +25,7 @@ export const ComponentShowcase: Component<ComponentShowcaseProps> = (props) => {
   const isDynamic = () => Boolean(props.propsConfig);
   const propKeys = () => (props.propsConfig ? Object.keys(props.propsConfig) : []);
   const [selectedProps, setSelectedProps] = createSignal<Record<string, string>>(
-    props.defaultProps || {}
+    props.defaultProps || {},
   );
   const [selectedMode, setSelectedMode] = createSignal<"single" | "compare">("single");
 

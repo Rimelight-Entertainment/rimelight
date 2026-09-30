@@ -14,8 +14,8 @@ const RLProse: Component<RLProseProps> = (allProps) => {
   const classes = createMemo(() =>
     proseTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

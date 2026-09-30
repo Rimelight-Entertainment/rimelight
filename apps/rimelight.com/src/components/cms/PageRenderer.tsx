@@ -118,7 +118,7 @@ export const BlockRenderer: Component<{ block: any; locale?: string | undefined 
               "CodeBlock",
               "CardsBlock",
               "CardBlock",
-              "ImageBlock"
+              "ImageBlock",
             ].includes(type())
           }
         >

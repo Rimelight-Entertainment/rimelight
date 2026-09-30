@@ -15,8 +15,8 @@ const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
     watermarkTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

@@ -21,10 +21,10 @@ describe("@rimelight/cms - MCP Security and Tools Validation Matrix", () => {
         method: "tools/call",
         params: {
           name: "cms_unknown_nonexistent_tool",
-          arguments: {}
-        }
+          arguments: {},
+        },
       },
-      null
+      null,
     );
 
     expect(response.jsonrpc).toBe("2.0");
@@ -36,10 +36,10 @@ describe("@rimelight/cms - MCP Security and Tools Validation Matrix", () => {
       select: () => ({
         from: () => ({
           where: () => ({
-            limit: async () => []
-          })
-        })
-      })
+            limit: async () => [],
+          }),
+        }),
+      }),
     };
 
     const response = await handleCmsMcpRequest(
@@ -49,10 +49,10 @@ describe("@rimelight/cms - MCP Security and Tools Validation Matrix", () => {
         method: "tools/call",
         params: {
           name: "cms_get_page",
-          arguments: { slugOrId: "nonexistent-doc-uuid" }
-        }
+          arguments: { slugOrId: "nonexistent-doc-uuid" },
+        },
       },
-      mockDb
+      mockDb,
     );
 
     expect(response.error).toBeDefined();

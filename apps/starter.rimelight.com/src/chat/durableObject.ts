@@ -100,7 +100,7 @@ export class ChatRoom extends DurableObject<Env> {
       type: "join",
       userId,
       username,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     // Send current presence to the new user
@@ -109,7 +109,7 @@ export class ChatRoom extends DurableObject<Env> {
     // Return the client WebSocket in the response
     return new Response(null, {
       status: 101,
-      webSocket: client
+      webSocket: client,
     });
   }
 
@@ -140,7 +140,7 @@ export class ChatRoom extends DurableObject<Env> {
           userId: session.userId,
           username: session.username,
           content: parsed.content,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
 
         // Add to history
@@ -164,7 +164,7 @@ export class ChatRoom extends DurableObject<Env> {
     ws: WebSocket,
     code: number,
     _reason: string,
-    _wasClean: boolean
+    _wasClean: boolean,
   ): Promise<void> {
     // Get session data
     const raw = ws.deserializeAttachment();
@@ -180,7 +180,7 @@ export class ChatRoom extends DurableObject<Env> {
         type: "leave",
         userId: session.userId,
         username: session.username,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -220,7 +220,7 @@ export class ChatRoom extends DurableObject<Env> {
   private sendMessageHistory(ws: WebSocket): void {
     const historyMessage = JSON.stringify({
       type: "history",
-      messages: this.messageHistory
+      messages: this.messageHistory,
     });
     try {
       ws.send(historyMessage);
@@ -235,11 +235,11 @@ export class ChatRoom extends DurableObject<Env> {
   private sendPresence(ws: WebSocket): void {
     const users = Array.from(this.sessions.values()).map((s) => ({
       userId: s.userId,
-      username: s.username
+      username: s.username,
     }));
     const presenceMessage = JSON.stringify({
       type: "presence",
-      users
+      users,
     });
 
     try {

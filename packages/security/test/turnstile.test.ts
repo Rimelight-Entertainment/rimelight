@@ -3,7 +3,7 @@ import {
   isTurnstileEnabled,
   verifyTurnstile,
   getTurnstileSiteKey,
-  getTurnstileSecretKey
+  getTurnstileSecretKey,
 } from "../src/turnstile";
 import { buildCspHeader } from "../src/csp";
 
@@ -17,8 +17,8 @@ describe("Turnstile Module", () => {
       expect(
         isTurnstileEnabled({
           TURNSTILE_SITE_KEY: "0x4AAAAAA",
-          TURNSTILE_SECRET_KEY: "0x4BBBBBB"
-        })
+          TURNSTILE_SECRET_KEY: "0x4BBBBBB",
+        }),
       ).toBe(true);
     });
 
@@ -32,7 +32,7 @@ describe("Turnstile Module", () => {
     it("resolves site key and secret key correctly", () => {
       const env = {
         TURNSTILE_SITE_KEY: "site-123",
-        TURNSTILE_SECRET_KEY: "sec-456"
+        TURNSTILE_SECRET_KEY: "sec-456",
       };
       expect(getTurnstileSiteKey(env)).toBe("site-123");
       expect(getTurnstileSecretKey({ env })).toBe("sec-456");
@@ -50,7 +50,7 @@ describe("Turnstile Module", () => {
       const res = await verifyTurnstile({
         token: "some-token",
         env: {},
-        failOpen: false
+        failOpen: false,
       });
       expect(res.success).toBe(false);
       expect(res.error).toContain("not configured");
@@ -59,7 +59,7 @@ describe("Turnstile Module", () => {
     it("returns error if token is missing when keys are present", async () => {
       const res = await verifyTurnstile("", {
         TURNSTILE_SITE_KEY: "site",
-        TURNSTILE_SECRET_KEY: "sec"
+        TURNSTILE_SECRET_KEY: "sec",
       });
       expect(res.success).toBe(false);
       expect(res.error).toBe("Security check token is missing.");
@@ -71,14 +71,14 @@ describe("Turnstile Module", () => {
         status: 200,
         json: async () => ({
           success: true,
-          "error-codes": []
-        })
+          "error-codes": [],
+        }),
       } as any);
 
       const res = await verifyTurnstile({
         token: "valid-cf-token",
         secretKey: "0x4SECRET",
-        remoteIp: "127.0.0.1"
+        remoteIp: "127.0.0.1",
       });
 
       expect(res.success).toBe(true);
@@ -89,9 +89,9 @@ describe("Turnstile Module", () => {
           body: JSON.stringify({
             secret: "0x4SECRET",
             response: "valid-cf-token",
-            remoteip: "127.0.0.1"
-          })
-        })
+            remoteip: "127.0.0.1",
+          }),
+        }),
       );
     });
 
@@ -101,13 +101,13 @@ describe("Turnstile Module", () => {
         status: 200,
         json: async () => ({
           success: false,
-          "error-codes": ["timeout-or-duplicate"]
-        })
+          "error-codes": ["timeout-or-duplicate"],
+        }),
       } as any);
 
       const res = await verifyTurnstile({
         token: "expired-token",
-        secretKey: "0x4SECRET"
+        secretKey: "0x4SECRET",
       });
 
       expect(res.success).toBe(false);
@@ -121,7 +121,7 @@ describe("Turnstile Module", () => {
       const res = await verifyTurnstile({
         token: "some-token",
         secretKey: "0x4SECRET",
-        failOpen: true
+        failOpen: true,
       });
 
       expect(res.success).toBe(true);

@@ -15,8 +15,8 @@ const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
     speedDialTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

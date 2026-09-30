@@ -10,7 +10,7 @@ import {
   hsbToRgb,
   rgbToHex,
   rgbToHsb,
-  rgbToHsl
+  rgbToHsl,
 } from "../color-picker/color";
 
 export interface RLColorSliderProps extends ColorSliderProps {
@@ -44,7 +44,7 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     "children",
     "onChange",
     "onChangeEnd",
-    "onUpdate:modelValue"
+    "onUpdate:modelValue",
   );
 
   const channel = () => props.channel || "hue";
@@ -61,7 +61,7 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
       if (controlled !== undefined) {
         setCurrentHex(controlled);
       }
-    }
+    },
   );
 
   const updateColor = (newHex: string, isFinal = false) => {
@@ -310,8 +310,8 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     colorSliderTheme({
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (
@@ -349,13 +349,13 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
                   left: `${thumbPercent()}%`,
                   top: "50%",
                   transform: "translate(-50%, -50%)",
-                  "background-color": currentHex()
+                  "background-color": currentHex(),
                 }
               : {
                   left: "50%",
                   top: `${100 - thumbPercent()}%`,
                   transform: "translate(-50%, -50%)",
-                  "background-color": currentHex()
+                  "background-color": currentHex(),
                 }
           }
         />

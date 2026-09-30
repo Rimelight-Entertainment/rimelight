@@ -21,14 +21,14 @@ describe("Auth Client", () => {
           json: () =>
             Promise.resolve({
               user: { userId: "user-1" },
-              session: { id: "user-1", userId: "user-1" }
-            })
+              session: { id: "user-1", userId: "user-1" },
+            }),
         });
       }
       if (url === "/api/auth/me") {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ user: { userId: "user-1", name: "User" } })
+          json: () => Promise.resolve({ user: { userId: "user-1", name: "User" } }),
         });
       }
       return Promise.reject(new Error("Unknown"));
@@ -59,15 +59,15 @@ describe("Auth Vite Plugin", () => {
   it("resolves virtual auth modules and aliases", async () => {
     const plugin: Plugin = authPlugin({ adapter: "cf-access" });
     expect(await callHook(plugin.resolveId, "virtual:rimelight-auth")).toBe(
-      "\0virtual:rimelight-auth"
+      "\0virtual:rimelight-auth",
     );
     expect(await callHook(plugin.resolveId, "#auth/auth")).toBe("\0virtual:rimelight-auth");
     expect(await callHook(plugin.resolveId, "#auth")).toBe("\0virtual:rimelight-auth");
     expect(await callHook(plugin.resolveId, "virtual:rimelight-auth-client")).toBe(
-      "\0virtual:rimelight-auth-client"
+      "\0virtual:rimelight-auth-client",
     );
     expect(await callHook(plugin.resolveId, "#auth/auth-client")).toBe(
-      "\0virtual:rimelight-auth-client"
+      "\0virtual:rimelight-auth-client",
     );
   });
 

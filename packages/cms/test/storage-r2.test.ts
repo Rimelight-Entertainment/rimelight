@@ -6,7 +6,7 @@ describe("CMS R2 Storage Adapter", () => {
     const config = r2({
       binding: "MEDIA_BUCKET",
       publicUrl: "https://media.rimelight.com",
-      prefix: "uploads/"
+      prefix: "uploads/",
     });
     expect(config.provider).toBe("r2");
     expect(config.binding).toBe("MEDIA_BUCKET");
@@ -26,9 +26,9 @@ describe("CMS R2 Storage Adapter", () => {
     const locals = {
       runtime: {
         env: {
-          BLOB: mockBucket
-        }
-      }
+          BLOB: mockBucket,
+        },
+      },
     };
     expect(await getR2Bucket(locals, "BLOB")).toBe(mockBucket);
   });
@@ -42,16 +42,16 @@ describe("CMS R2 Storage Adapter", () => {
             size: 1024,
             httpMetadata: { contentType: "image/jpeg" },
             uploaded: new Date("2026-08-20T12:00:00Z"),
-            etag: "etag123"
-          }
+            etag: "etag123",
+          },
         ],
-        truncated: false
-      })
+        truncated: false,
+      }),
     };
 
     const res = await listR2Files(mockBucket, {
       prefix: "media/",
-      publicUrl: "https://cdn.example.com"
+      publicUrl: "https://cdn.example.com",
     });
 
     expect(res.files).toHaveLength(1);
@@ -69,7 +69,7 @@ describe("CMS R2 Storage Adapter", () => {
     const file = new File(["test content"], "document.pdf", { type: "application/pdf" });
     const uploaded = await uploadR2File(mockBucket, file, {
       prefix: "media/",
-      publicUrl: "https://cdn.example.com"
+      publicUrl: "https://cdn.example.com",
     });
 
     expect(mockPut).toHaveBeenCalled();

@@ -73,7 +73,7 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
     trustedTypes = true,
     nonceSync = true,
     devReporter = typeof process !== "undefined" && process.env?.["NODE_ENV"] !== "production",
-    nonce
+    nonce,
   } = options;
 
   const tags: HeadTag[] = [];
@@ -85,7 +85,7 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
     tags.push({
       tag: "script",
       ...(scriptProps ? { props: scriptProps } : {}),
-      children: TRUSTED_TYPES_SCRIPT
+      children: TRUSTED_TYPES_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${TRUSTED_TYPES_SCRIPT}</script>`);
   }
@@ -94,7 +94,7 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
     tags.push({
       tag: "script",
       ...(scriptProps ? { props: scriptProps } : {}),
-      children: NONCE_SYNC_SCRIPT
+      children: NONCE_SYNC_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${NONCE_SYNC_SCRIPT}</script>`);
   }
@@ -103,13 +103,13 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
     tags.push({
       tag: "script",
       ...(scriptProps ? { props: scriptProps } : {}),
-      children: DEV_REPORTER_SCRIPT
+      children: DEV_REPORTER_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${DEV_REPORTER_SCRIPT}</script>`);
   }
 
   return {
     html: htmlParts.join("\n"),
-    tags
+    tags,
   };
 }

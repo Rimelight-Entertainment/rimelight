@@ -3,7 +3,7 @@ import type {
   FlattenedTranslations,
   TranslationAuditReport,
   VerifyTranslationsOptions,
-  PlaceholderMismatch
+  PlaceholderMismatch,
 } from "./types";
 
 /**
@@ -12,7 +12,7 @@ import type {
 export function flatten(
   obj: Record<string, any>,
   prefix: string = "",
-  result: FlattenedTranslations = {}
+  result: FlattenedTranslations = {},
 ): FlattenedTranslations {
   if (obj == null || typeof obj !== "object") {
     return result;
@@ -135,7 +135,7 @@ export function findStaleKeys(base: Record<string, any>, target: Record<string, 
  */
 export function verifyTranslations(
   translations: Record<string, Record<string, any>>,
-  options: VerifyTranslationsOptions = {}
+  options: VerifyTranslationsOptions = {},
 ): TranslationAuditReport {
   const defaultLocale = options.defaultLocale || "en";
   const allowEmpty = options.allowEmpty ?? false;
@@ -188,7 +188,7 @@ export function verifyTranslations(
           mismatches.push({
             key,
             basePlaceholders: baseHolders,
-            targetPlaceholders: targetHolders
+            targetPlaceholders: targetHolders,
           });
           isValid = false;
         }
@@ -217,8 +217,8 @@ export function verifyTranslations(
     emptyKeys,
     placeholderMismatches,
     stats: {
-      completion
-    }
+      completion,
+    },
   };
 }
 
@@ -262,7 +262,7 @@ export function formatAuditReport(report: TranslationAuditReport): string {
       lines.push(`    Placeholder Mismatches (${mismatches.length}):`);
       for (const m of mismatches) {
         lines.push(
-          `      - ${m.key}: expected {${m.basePlaceholders.join(", ")}}, found {${m.targetPlaceholders.join(", ")}}`
+          `      - ${m.key}: expected {${m.basePlaceholders.join(", ")}}, found {${m.targetPlaceholders.join(", ")}}`,
         );
       }
     }
@@ -276,7 +276,7 @@ export function formatAuditReport(report: TranslationAuditReport): string {
  */
 export function fixTranslations(
   translations: Record<string, Record<string, any>>,
-  defaultLocale: string = "en"
+  defaultLocale: string = "en",
 ): Record<string, Record<string, any>> {
   const baseDict = translations[defaultLocale] || {};
   const baseFlat = flatten(baseDict);

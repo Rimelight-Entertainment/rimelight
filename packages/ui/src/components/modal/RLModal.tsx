@@ -5,7 +5,7 @@ import {
   omit,
   Show,
   onSettled,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { ModalProps } from "./modal";
@@ -45,7 +45,7 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     "titleSlot",
     "descriptionSlot",
     "footer",
-    "footerSlot"
+    "footerSlot",
   );
 
   const [internalOpen, setInternalOpen] = createSignal(props.open ?? false);
@@ -58,7 +58,7 @@ const RLModal: Component<RLModalProps> = (allProps) => {
       if (open !== undefined) {
         setInternalOpen(open);
       }
-    }
+    },
   );
 
   const closeOnClickOutside = () => props.closeOnClickOutside !== false;
@@ -103,8 +103,8 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     modalTheme({
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   createEffect(
@@ -126,7 +126,7 @@ const RLModal: Component<RLModalProps> = (allProps) => {
           }
         }
       }
-    }
+    },
   );
 
   const triggerContent = () => props.trigger ?? props.triggerSlot;

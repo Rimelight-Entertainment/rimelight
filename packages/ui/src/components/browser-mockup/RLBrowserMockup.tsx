@@ -12,7 +12,7 @@ const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    browserMockupTheme({ ui: props.ui, class: props.class })
+    browserMockupTheme({ ui: props.ui, class: props.class }),
   );
 
   return (

@@ -9,7 +9,7 @@ import {
   SHOWCASE_PAYMENTS_DATA,
   formatShowcaseDate,
   formatShowcaseCurrency,
-  type PaymentItem
+  type PaymentItem,
 } from "./showcase-table-data";
 
 export default function TableShowcase() {
@@ -91,7 +91,7 @@ export default function TableShowcase() {
       | "Infrastructure"
       | "Hardware",
     email: `customer.${i + 1}@example.com`,
-    amount: 100 + ((i * 17) % 900)
+    amount: 100 + ((i * 17) % 900),
   }));
 
   const toggleVirtualize = () => {
@@ -132,7 +132,7 @@ export default function TableShowcase() {
         />
       ),
       enableSorting: false,
-      enableHiding: false
+      enableHiding: false,
     },
     {
       accessorKey: "id",
@@ -156,7 +156,7 @@ export default function TableShowcase() {
           </Show>
           <span class="font-mono text-xs font-bold text-highlighted">{row.getValue("id")}</span>
         </div>
-      )
+      ),
     },
     {
       accessorKey: "category",
@@ -164,7 +164,7 @@ export default function TableShowcase() {
       size: 140,
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <span class="text-xs text-toned font-medium">{row.getValue("category")}</span>
-      )
+      ),
     },
     {
       accessorKey: "date",
@@ -172,7 +172,7 @@ export default function TableShowcase() {
       size: 150,
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <span class="text-xs font-mono text-muted">{formatShowcaseDate(row.getValue("date"))}</span>
-      )
+      ),
     },
     {
       accessorKey: "status",
@@ -186,7 +186,7 @@ export default function TableShowcase() {
             {val}
           </RLBadge>
         );
-      }
+      },
     },
     {
       accessorKey: "email",
@@ -194,7 +194,7 @@ export default function TableShowcase() {
       size: 200,
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <span class="text-xs text-highlighted truncate">{row.getValue("email")}</span>
-      )
+      ),
     },
     {
       accessorKey: "amount",
@@ -203,8 +203,8 @@ export default function TableShowcase() {
       meta: {
         class: {
           th: "text-right",
-          td: "text-right font-mono font-semibold"
-        }
+          td: "text-right font-mono font-semibold",
+        },
       },
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <span>{formatShowcaseCurrency(row.getValue("amount"))}</span>
@@ -215,14 +215,14 @@ export default function TableShowcase() {
             ?.getFilteredRows()
             .reduce(
               (sum: number, r: TableRow<PaymentItem>) => sum + (Number(r.getValue("amount")) || 0),
-              0
+              0,
             ) ?? 0;
         return (
           <div class="text-right font-mono font-bold text-highlighted">
             {formatShowcaseCurrency(total())}
           </div>
         );
-      }
+      },
     },
     {
       id: "actions",
@@ -233,8 +233,8 @@ export default function TableShowcase() {
       meta: {
         class: {
           th: "text-center",
-          td: "text-center"
-        }
+          td: "text-center",
+        },
       },
       cell: ({ row }: { row: TableRow<PaymentItem> }) => {
         const dropdownItems = [
@@ -242,24 +242,24 @@ export default function TableShowcase() {
             {
               label: "Copy ID",
               icon: "copy",
-              onSelect: () => navigator.clipboard.writeText(row.id)
+              onSelect: () => navigator.clipboard.writeText(row.id),
             },
             ...(row.getCanExpand()
               ? [
                   {
                     label: row.getIsExpanded() ? "Collapse Sub-rows" : "Expand Sub-rows",
                     icon: row.getIsExpanded() ? "chevron-up" : "chevron-down",
-                    onSelect: () => row.toggleExpanded()
-                  }
+                    onSelect: () => row.toggleExpanded(),
+                  },
                 ]
-              : [])
+              : []),
           ],
           [
             {
               label: row.getIsPinned() ? "Unpin Row" : "Pin to Top",
               icon: "pin",
-              onSelect: () => row.pin(row.getIsPinned() ? false : "top")
-            }
+              onSelect: () => row.pin(row.getIsPinned() ? false : "top"),
+            },
           ],
           [
             {
@@ -268,9 +268,9 @@ export default function TableShowcase() {
               color: "error" as const,
               onSelect: () => {
                 setData(data().filter((item) => item.id !== row.id));
-              }
-            }
-          ]
+              },
+            },
+          ],
         ];
 
         return (
@@ -281,8 +281,8 @@ export default function TableShowcase() {
             content={{ align: "end" }}
           />
         );
-      }
-    }
+      },
+    },
   ]);
 
   return (
@@ -326,7 +326,7 @@ export default function TableShowcase() {
                 ? "multi"
                 : groupingLevel() === "multi"
                   ? "none"
-                  : "category"
+                  : "category",
             )
           }
         >
@@ -392,7 +392,7 @@ export default function TableShowcase() {
             value={loadingAnimation()}
             onChange={(e) =>
               setLoadingAnimation(
-                e.currentTarget.value as "carousel" | "carousel-inverse" | "swing" | "elastic"
+                e.currentTarget.value as "carousel" | "carousel-inverse" | "swing" | "elastic",
               )
             }
           >

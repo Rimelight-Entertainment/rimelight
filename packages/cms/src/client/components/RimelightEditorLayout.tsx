@@ -49,10 +49,10 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     (currentStatus) => {
       if (typeof document !== "undefined") {
         document.dispatchEvent(
-          new CustomEvent("status-change", { detail: { status: currentStatus }, bubbles: true })
+          new CustomEvent("status-change", { detail: { status: currentStatus }, bubbles: true }),
         );
       }
-    }
+    },
   );
 
   createEffect(
@@ -60,10 +60,10 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     (rawBlocks) => {
       if (typeof document !== "undefined") {
         document.dispatchEvent(
-          new CustomEvent("blocks-change", { detail: { blocks: rawBlocks }, bubbles: true })
+          new CustomEvent("blocks-change", { detail: { blocks: rawBlocks }, bubbles: true }),
         );
       }
-    }
+    },
   );
 
   onSettled(() => {
@@ -77,14 +77,14 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
         state.setPreviewVisible(next);
         if (typeof document !== "undefined") {
           document.dispatchEvent(
-            new CustomEvent("preview-toggle", { detail: { visible: next }, bubbles: true })
+            new CustomEvent("preview-toggle", { detail: { visible: next }, bubbles: true }),
           );
         }
         return next;
       },
       getBlocks: () => JSON.parse(JSON.stringify(state.blocks)),
       setBlocks: (newBlocks: BaseBlock[]) => state.setBlocks(newBlocks),
-      getAttribute: (attr: string) => (attr === "page-id" ? componentProps.pageId : null)
+      getAttribute: (attr: string) => (attr === "page-id" ? componentProps.pageId : null),
     };
 
     if (componentProps.ref) {
@@ -111,7 +111,7 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
           }
         });
       }
-    }
+    },
   );
 
   return (
@@ -125,7 +125,7 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
           ref={editorPaneRef}
           style={{
             flex:
-              componentProps.showInternalPreview && state.previewVisible() ? "0 0 50%" : "1 1 100%"
+              componentProps.showInternalPreview && state.previewVisible() ? "0 0 50%" : "1 1 100%",
           }}
           class="flex flex-col h-full overflow-hidden w-full"
         >

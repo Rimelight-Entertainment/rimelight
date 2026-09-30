@@ -35,7 +35,7 @@ const RLPost: Component<RLPostProps> = (allProps) => {
     "descriptionSlot",
     "badgeSlot",
     "dateSlot",
-    "footerSlot"
+    "footerSlot",
   );
 
   const classes = createMemo(() =>
@@ -43,8 +43,8 @@ const RLPost: Component<RLPostProps> = (allProps) => {
       variant: props.variant ?? "soft",
       orientation: props.orientation ?? "vertical",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const formattedDate = props.date

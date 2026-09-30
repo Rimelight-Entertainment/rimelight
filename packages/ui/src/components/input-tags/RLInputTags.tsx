@@ -23,7 +23,7 @@ const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
     "class",
     "children",
     "onAddTag",
-    "onRemoveTag"
+    "onRemoveTag",
   );
 
   const [inputValue, setInputValue] = createSignal("");
@@ -31,8 +31,8 @@ const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
 
   const normalizedItems = createMemo<TagItem[]>(() =>
     (props.items ?? []).map((item) =>
-      typeof item === "string" ? { label: item, value: item } : item
-    )
+      typeof item === "string" ? { label: item, value: item } : item,
+    ),
   );
 
   const renderedItems = () => normalizedItems().slice(0, limit());
@@ -52,8 +52,8 @@ const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     inputTagsTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

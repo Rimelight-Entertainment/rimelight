@@ -86,5 +86,5 @@ export const ICONS = {
   pin: `<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>`,
   ellipsisVertical: `<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>`,
   arrowUpFromLine: `<path d="m18 9-6-6-6 6"/><path d="M12 3v14"/><path d="M5 21h14"/>`,
-  arrowDownToLine: `<path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/>`
+  arrowDownToLine: `<path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/>`,
 } as const;

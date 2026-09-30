@@ -61,9 +61,9 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
         props,
         slots,
         emits,
-        theme
+        theme,
       };
-    })
+    }),
   );
 
   return result;

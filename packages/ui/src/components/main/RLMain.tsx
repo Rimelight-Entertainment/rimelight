@@ -14,8 +14,8 @@ const RLMain: Component<RLMainProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     mainTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh

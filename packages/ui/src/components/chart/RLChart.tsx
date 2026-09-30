@@ -13,7 +13,7 @@ const palette = [
   "hsl(142 76% 36%)",
   "hsl(32 95% 44%)",
   "hsl(0 84% 60%)",
-  "hsl(187 85% 43%)"
+  "hsl(187 85% 43%)",
 ];
 
 const PIE_R = 80;
@@ -47,7 +47,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
     "color",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const data = createMemo(() => props.data ?? []);
@@ -57,8 +57,8 @@ const RLChart: Component<RLChartProps> = (allProps) => {
     chartTheme({
       color: props.color ?? "primary",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const max = createMemo(() => {
@@ -92,13 +92,13 @@ const RLChart: Component<RLChartProps> = (allProps) => {
           : LINE_PAD + (i / (data().length - 1)) * (LINE_W - LINE_PAD * 2);
       const y = LINE_H - LINE_PAD - (d.value / (max() || 1)) * (LINE_H - LINE_PAD * 2);
       return { x, y, d, i };
-    })
+    }),
   );
 
   const linePath = createMemo(() =>
     linePoints()
       .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-      .join(" ")
+      .join(" "),
   );
 
   const areaPath = createMemo(() => {

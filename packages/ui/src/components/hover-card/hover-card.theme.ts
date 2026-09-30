@@ -8,18 +8,18 @@ export const hoverCardTheme = defineTheme("hover-card", {
     content: [
       "absolute z-50 w-80 rounded-lg border border-default bg-elevated p-4 text-highlighted shadow-md outline-none",
       "transition-all duration-200 invisible opacity-0 scale-95 origin-center pointer-events-none",
-      "group-hover/hover-card:visible group-hover/hover-card:opacity-100 group-hover/hover-card:scale-100 group-hover/hover-card:pointer-events-auto"
-    ]
+      "group-hover/hover-card:visible group-hover/hover-card:opacity-100 group-hover/hover-card:scale-100 group-hover/hover-card:pointer-events-auto",
+    ],
   },
   variants: {
     placement: {
       top: { content: "bottom-full left-1/2 -translate-x-1/2 mb-2" },
       bottom: { content: "top-full left-1/2 -translate-x-1/2 mt-2" },
       left: { content: "right-full top-1/2 -translate-y-1/2 mr-2" },
-      right: { content: "left-full top-1/2 -translate-y-1/2 ml-2" }
-    }
+      right: { content: "left-full top-1/2 -translate-y-1/2 ml-2" },
+    },
   },
   defaultVariants: {
-    placement: "bottom"
-  }
+    placement: "bottom",
+  },
 });

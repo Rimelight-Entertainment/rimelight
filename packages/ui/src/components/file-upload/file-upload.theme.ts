@@ -8,14 +8,14 @@ export const fileUploadTheme = defineTheme("file-upload", {
     content: "flex flex-col items-center justify-center p-6 text-center gap-1.5",
     icon: "size-8 text-muted",
     title: "text-sm font-semibold text-highlighted",
-    description: "text-xs text-muted"
+    description: "text-xs text-muted",
   },
   variants: {
     disabled: {
-      true: { root: "opacity-50 cursor-not-allowed pointer-events-none" }
-    }
+      true: { root: "opacity-50 cursor-not-allowed pointer-events-none" },
+    },
   },
   defaultVariants: {
-    disabled: false
-  }
+    disabled: false,
+  },
 });

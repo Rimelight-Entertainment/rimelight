@@ -17,19 +17,19 @@ function createMockContext(options: {
       url: options.url,
       method: options.method || "GET",
       header: (name: string) => options.headers?.[name.toLowerCase()] || null,
-      param: (name: string) => options.params?.[name] || null
+      param: (name: string) => options.params?.[name] || null,
     },
     env: options.env || {},
     redirect: (path: string, code: number = 302) => {
       redirectedTo = path;
       status = code;
       return { redirectedTo, status };
-    }
+    },
   };
 
   return {
     c,
-    getRedirect: () => ({ redirectedTo, status })
+    getRedirect: () => ({ redirectedTo, status }),
   };
 }
 
@@ -60,7 +60,7 @@ describe("@rimelight/i18n Hono edge middleware", () => {
 
     const { c, getRedirect } = createMockContext({
       url: "https://example.com/en/login",
-      method: "POST"
+      method: "POST",
     });
     await middleware(c, next);
 
@@ -76,7 +76,7 @@ describe("@rimelight/i18n Hono edge middleware", () => {
 
     const { c } = createMockContext({
       url: "https://example.com/en/about",
-      env: { TRANSLATIONS_KV: mockKV }
+      env: { TRANSLATIONS_KV: mockKV },
     });
     await middleware(c, next);
 

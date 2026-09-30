@@ -5,8 +5,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLAvatar } from "../src/components/avatar/RLAvatar";
@@ -74,7 +74,7 @@ describe("RLAvatar Solid Component Suite", () => {
         loading: "lazy",
         decoding: "async",
         width: 40,
-        height: 40
+        height: 40,
       });
 
       expect(html).toContain("<img");
@@ -91,7 +91,7 @@ describe("RLAvatar Solid Component Suite", () => {
       const html = renderSolid(RLAvatar, {
         src: "https://example.com/avatar.png",
         referrerpolicy: "no-referrer",
-        crossorigin: "anonymous"
+        crossorigin: "anonymous",
       });
 
       expect(html).toContain('referrerpolicy="no-referrer"');
@@ -109,7 +109,7 @@ describe("RLAvatar Solid Component Suite", () => {
       { size: "lg", expected: "size-9" },
       { size: "xl", expected: "size-10" },
       { size: "2xl", expected: "size-11" },
-      { size: "3xl", expected: "size-12" }
+      { size: "3xl", expected: "size-12" },
     ] as const;
 
     for (const { size, expected } of sizes) {
@@ -152,7 +152,7 @@ describe("RLAvatar Solid Component Suite", () => {
       const html = renderSolid(RLAvatar, {
         alt: "User",
         badge: true,
-        badgePosition: "bottom-right"
+        badgePosition: "bottom-right",
       });
 
       expect(html).toContain('data-slot="base"');
@@ -163,7 +163,7 @@ describe("RLAvatar Solid Component Suite", () => {
     it("renders chip when chip prop is provided", () => {
       const html = renderSolid(RLAvatar, {
         src: "https://example.com/avatar.png",
-        chip: { inset: true }
+        chip: { inset: true },
       });
 
       expect(html).toContain('data-slot="base"'); // Chip slot
@@ -176,7 +176,7 @@ describe("RLAvatar Solid Component Suite", () => {
       const html = renderSolid(RLAvatar, {
         alt: "Daniel Marchi",
         title: "Daniel Marchi",
-        subtitle: "Lead Developer"
+        subtitle: "Lead Developer",
       });
 
       expect(html).toContain('data-slot="profile-wrapper"');
@@ -213,7 +213,7 @@ describe("RLAvatarGroup Solid Component Suite", () => {
             <RLAvatar alt="Alex" />
             <RLAvatar alt="Sam" />
           </RLAvatarGroup>
-        ))
+        )),
       );
 
       expect(html).toContain('data-slot="avatar-group"');
@@ -226,7 +226,7 @@ describe("RLAvatarGroup Solid Component Suite", () => {
       const items = [
         { alt: "Benjamin Canac", src: "https://example.com/ben.png" },
         { alt: "Hugo Richard", src: "https://example.com/hugo.png" },
-        { alt: "Sebastien Chopin", src: "https://example.com/seb.png" }
+        { alt: "Sebastien Chopin", src: "https://example.com/seb.png" },
       ];
 
       const html = renderSolid(RLAvatarGroup, { items });
@@ -248,7 +248,7 @@ describe("RLAvatarGroup Solid Component Suite", () => {
             <RLAvatar alt="C" />
             <RLAvatar alt="D" />
           </RLAvatarGroup>
-        ))
+        )),
       );
 
       expect(html).toContain('data-slot="more"');
@@ -275,7 +275,7 @@ describe("RLAvatarGroup Solid Component Suite", () => {
     it("applies ui slot overrides to group", () => {
       const html = renderSolid(RLAvatarGroup, {
         items: [{ alt: "A" }],
-        ui: { root: "custom-group-root", base: "custom-base" }
+        ui: { root: "custom-group-root", base: "custom-base" },
       });
 
       expect(html).toContain("custom-group-root");

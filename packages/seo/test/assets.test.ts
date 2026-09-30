@@ -12,7 +12,7 @@ function getPngMetadata(buf: Buffer) {
   return {
     format: isPng ? "png" : "unknown",
     width: buf.readUInt32BE(16),
-    height: buf.readUInt32BE(20)
+    height: buf.readUInt32BE(20),
   };
 }
 
@@ -30,7 +30,7 @@ describe("Asset Generation", () => {
   it("generates maskable PNG buffer with padding and background", async () => {
     const maskableBuffer = await generateMaskablePng(Buffer.from(sampleSvg), {
       size: 512,
-      background: "#123456"
+      background: "#123456",
     });
     expect(maskableBuffer).toBeInstanceOf(Buffer);
 
@@ -68,7 +68,7 @@ describe("Asset Generation", () => {
   it("generates standard 1200x630 OG card buffer", async () => {
     const ogBuffer = await generateOgCard({
       logoBuffer: Buffer.from(sampleSvg),
-      background: "#0a0a0a"
+      background: "#0a0a0a",
     });
     expect(ogBuffer).toBeInstanceOf(Buffer);
 

@@ -11,37 +11,37 @@ export const cardTheme = defineTheme("card", {
     footer: "p-4 sm:px-6 border-default",
     overlay:
       "absolute inset-0 z-10 flex flex-col justify-end p-4 bg-gradient-to-t from-black/80 to-transparent text-white",
-    media: "relative border-default"
+    media: "relative border-default",
   },
   variants: {
     variant: {
       solid: {
         root: "bg-inverted text-inverted",
         title: "text-inverted",
-        description: "text-dimmed"
+        description: "text-dimmed",
       },
       outline: {
-        root: "bg-default border border-default divide-y divide-border"
+        root: "bg-default border border-default divide-y divide-border",
       },
       soft: {
-        root: "bg-elevated/50 divide-y divide-border"
+        root: "bg-elevated/50 divide-y divide-border",
       },
       subtle: {
-        root: "bg-elevated/50 border border-default divide-y divide-border"
-      }
+        root: "bg-elevated/50 border border-default divide-y divide-border",
+      },
     },
     interactive: {
       true: { root: "hover:shadow-md cursor-pointer" },
-      false: { root: "" }
+      false: { root: "" },
     },
     overlay: {
       true: { root: "relative" },
-      false: {}
-    }
+      false: {},
+    },
   },
   defaultVariants: {
     variant: "outline",
     interactive: false,
-    overlay: false
-  }
+    overlay: false,
+  },
 });

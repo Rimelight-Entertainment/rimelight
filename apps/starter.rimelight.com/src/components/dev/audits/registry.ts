@@ -12,7 +12,7 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   audio: audioAudit,
   avatar: avatarAudit,
   badge: badgeAudit,
-  banner: bannerAudit
+  banner: bannerAudit,
 };
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);

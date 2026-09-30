@@ -7,7 +7,7 @@ export const SignInPage: Component = () => {
       if (typeof window !== "undefined") {
         window.location.href = "/";
       }
-    }
+    },
   );
   return null;
 };

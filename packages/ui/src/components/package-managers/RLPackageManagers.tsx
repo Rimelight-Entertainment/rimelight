@@ -23,7 +23,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     install: "npm install",
     run: "npm run",
     remove: "npm uninstall",
-    dev: "-D"
+    dev: "-D",
   },
   yarn: {
     add: "yarn add",
@@ -33,7 +33,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     install: "yarn install",
     run: "yarn run",
     remove: "yarn remove",
-    dev: "-D"
+    dev: "-D",
   },
   pnpm: {
     add: "pnpm add",
@@ -43,7 +43,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     install: "pnpm install",
     run: "pnpm run",
     remove: "pnpm remove",
-    dev: "-D"
+    dev: "-D",
   },
   deno: {
     add: "deno add",
@@ -53,7 +53,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     install: "deno install",
     run: "deno task",
     remove: "deno remove",
-    dev: "--dev"
+    dev: "--dev",
   },
   bun: {
     add: "bun add",
@@ -61,7 +61,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     install: "bun install",
     run: "bun run",
     remove: "bun remove",
-    dev: "-d"
+    dev: "-d",
   },
   vp: {
     add: "vp add",
@@ -71,8 +71,8 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     install: "vp install",
     run: "vp run",
     remove: "vp remove",
-    dev: "-D"
-  }
+    dev: "-D",
+  },
 };
 
 const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
@@ -105,7 +105,7 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
   const tabs = createMemo(() =>
     ((props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"]) as Manager[])
       .map((mgr) => ({ mgr, cmd: getCommand(mgr, props.type ?? "add") }))
-      .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined)
+      .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined),
   );
 
   const [activeIdx, setActiveIdx] = createSignal(0);

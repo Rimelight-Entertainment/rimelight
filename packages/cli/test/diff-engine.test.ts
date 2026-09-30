@@ -8,7 +8,7 @@ import {
   reorderKeys,
   resolveDomainInLine,
   getStructuredJsonDiffs,
-  getStructuredLineDiffs
+  getStructuredLineDiffs,
 } from "../src/index";
 
 describe("@rimelight/cli diff and synchronization engine", () => {

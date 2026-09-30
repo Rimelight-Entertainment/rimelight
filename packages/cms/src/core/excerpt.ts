@@ -34,7 +34,7 @@ function extractTextFromProperty(prop: unknown, locale: string = "en"): string {
  */
 export function extractTextFromBlocks(
   blocks: BaseBlock[] | undefined | null,
-  locale: string = "en"
+  locale: string = "en",
 ): string {
   if (!blocks || !Array.isArray(blocks)) return "";
 
@@ -109,7 +109,7 @@ export function createPageExcerpt(
       }
     | null
     | undefined,
-  options: ExcerptOptions = {}
+  options: ExcerptOptions = {},
 ): string {
   const { maxLength = 160, locale = "en", fallback = "" } = options;
 

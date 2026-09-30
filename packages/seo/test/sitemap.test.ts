@@ -3,7 +3,7 @@ import {
   buildSitemapUrls,
   buildSitemapXml,
   buildSitemapIndexXml,
-  chunkSitemapUrls
+  chunkSitemapUrls,
 } from "../src/sitemap.js";
 import type { LocaleConfig, SeoEntry } from "../src/types.js";
 
@@ -11,7 +11,7 @@ describe("buildSitemapUrls", () => {
   const config: LocaleConfig = {
     site: "https://example.com",
     locales: { en: "en-US", pt: "pt-BR" },
-    defaultLocale: "en"
+    defaultLocale: "en",
   };
 
   it("builds URLs for a single entry in multiple locales", () => {
@@ -45,7 +45,7 @@ describe("buildSitemapUrls", () => {
   it("handles prefixDefaultLocale option", () => {
     const configWithPrefix: LocaleConfig = {
       ...config,
-      prefixDefaultLocale: true
+      prefixDefaultLocale: true,
     };
     const entries: SeoEntry[] = [{ path: "/about" }];
     const urls = buildSitemapUrls(entries, configWithPrefix);
@@ -57,7 +57,7 @@ describe("buildSitemapUrls", () => {
   it("handles trailingSlash option", () => {
     const configWithSlash: LocaleConfig = {
       ...config,
-      trailingSlash: "always"
+      trailingSlash: "always",
     };
     const entries: SeoEntry[] = [{ path: "/about" }];
     const urls = buildSitemapUrls(entries, configWithSlash);
@@ -98,8 +98,8 @@ describe("buildSitemapXml", () => {
         loc: "https://example.com/about",
         lastmod: "2024-01-01T00:00:00.000Z",
         changefreq: "weekly" as const,
-        priority: 0.8
-      }
+        priority: 0.8,
+      },
     ];
 
     const xml = buildSitemapXml(urls);
@@ -118,9 +118,9 @@ describe("buildSitemapXml", () => {
         loc: "https://example.com/about",
         alternates: [
           { hreflang: "pt-BR", href: "https://example.com/pt/about" },
-          { hreflang: "x-default", href: "https://example.com/about" }
-        ]
-      }
+          { hreflang: "x-default", href: "https://example.com/about" },
+        ],
+      },
     ];
 
     const xml = buildSitemapXml(urls);
@@ -133,8 +133,8 @@ describe("buildSitemapXml", () => {
   it("escapes XML special characters", () => {
     const urls = [
       {
-        loc: "https://example.com/about?query=test&amp;other=value"
-      }
+        loc: "https://example.com/about?query=test&amp;other=value",
+      },
     ];
 
     const xml = buildSitemapXml(urls);
@@ -159,7 +159,7 @@ describe("buildSitemapIndexXml", () => {
 describe("chunkSitemapUrls", () => {
   it("chunks URLs at default limit", () => {
     const urls = Array.from({ length: 50000 }, (_, i) => ({
-      loc: `https://example.com/page-${i}`
+      loc: `https://example.com/page-${i}`,
     }));
 
     const chunks = chunkSitemapUrls(urls);
@@ -171,7 +171,7 @@ describe("chunkSitemapUrls", () => {
 
   it("handles custom limit", () => {
     const urls = Array.from({ length: 100 }, (_, i) => ({
-      loc: `https://example.com/page-${i}`
+      loc: `https://example.com/page-${i}`,
     }));
 
     const chunks = chunkSitemapUrls(urls, 25);

@@ -8,7 +8,7 @@ import {
   resolveWebFontsPreset,
   rimelightFontsVitePlugin,
   DEFAULT_UI_FONTS,
-  type LocalFontProcessorOptions
+  type LocalFontProcessorOptions,
 } from "./fonts";
 
 export {
@@ -18,7 +18,7 @@ export {
   resolveWebFontsPreset,
   rimelightFontsVitePlugin,
   DEFAULT_UI_FONTS,
-  type LocalFontProcessorOptions
+  type LocalFontProcessorOptions,
 };
 
 export const PALETTES = {
@@ -31,7 +31,7 @@ export const PALETTES = {
   error: [0.24, 25],
   commentary: [0.29, 322],
   ideation: [0.28, 293],
-  source: [0.13, 215]
+  source: [0.13, 215],
 } as const;
 
 const SHADES = {
@@ -45,7 +45,7 @@ const SHADES = {
   "700": [0.35, 0.75, 0.69, 0.7],
   "800": [0.27, 0.6, 0.77, 0.55],
   "900": [0.2, 0.45, 0.86, 0.4],
-  "950": [0.145, 0.3, 0.93, 0.25]
+  "950": [0.145, 0.3, 0.93, 0.25],
 } as const;
 
 const SHADE_ENTRIES = Object.entries(SHADES);
@@ -58,19 +58,19 @@ export const INTENTS: Record<string, Record<string, string>> = {
   dimmed: { text: "500", bg: "100", border: "200", ring: "400" },
   toned: { text: "800", bg: "200", border: "300", ring: "600" },
   highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
-  inverted: { text: "50", bg: "950", border: "800", ring: "700" }
+  inverted: { text: "50", bg: "950", border: "800", ring: "700" },
 };
 
 const createThemeShades = (name: string) => ({
   DEFAULT: `var(--rl-${name}-500)`,
-  ...Object.fromEntries(SHADE_ENTRIES.map(([s]) => [s, `var(--rl-${name}-${s})`]))
+  ...Object.fromEntries(SHADE_ENTRIES.map(([s]) => [s, `var(--rl-${name}-${s})`])),
 });
 
 const createOklchShadeGetter = ([c, h]: readonly [number, number]) => {
   const oklch = (l: number, factor: number) => `oklch(${l} ${(factor * c).toFixed(3)} ${h})`;
   return (_: string, [l1, c1, l2, c2]: readonly [number, number, number, number]) => [
     oklch(l1, c1),
-    oklch(l2, c2)
+    oklch(l2, c2),
   ];
 };
 
@@ -105,7 +105,7 @@ export default function rimelightUiPreset({
   colors,
   icons,
   fonts,
-  presets = {}
+  presets = {},
 }: UIConfig = {}): Preset {
   const { themeColors, tokenVarLines } = resolveTokens(colors);
   const webFontsPreset =
@@ -117,8 +117,8 @@ export default function rimelightUiPreset({
     safelist: [
       ...Object.keys(themeColors).map((c) => `rl-color-${c}`),
       ...Object.values(icons ?? {}).filter(
-        (v): v is string => typeof v === "string" && v.startsWith("i-")
-      )
+        (v): v is string => typeof v === "string" && v.startsWith("i-"),
+      ),
     ],
     presets: [
       presets.wind !== false && presetWind4(),
@@ -129,9 +129,9 @@ export default function rimelightUiPreset({
         name: "rimelight-theme",
         theme: {
           spacing: { md: "1rem" },
-          colors: themeColors
-        }
-      }
+          colors: themeColors,
+        },
+      },
     ].filter(Boolean) as Preset[],
     shortcuts: [
       [
@@ -141,8 +141,8 @@ export default function rimelightUiPreset({
           if (!s) return;
           const base = `${p}-neutral-${s}${o ? `/${o}` : ""}`;
           return p === "bg" && n === "inverted" ? `${base} text-neutral-50` : base;
-        }
-      ]
+        },
+      ],
     ],
     rules: [
       [
@@ -155,10 +155,10 @@ export default function rimelightUiPreset({
             "--rl-ring": v500,
             "--rl-border": v500,
             "--rl-bg-hover": v600,
-            "--rl-text": v600
+            "--rl-text": v600,
           };
-        }
-      ]
+        },
+      ],
     ],
     preflights: [
       {
@@ -242,8 +242,8 @@ summary {
   0% { transform: scaleX(0.1) translateX(-100%); }
   50% { transform: scaleX(0.7) translateX(100%); }
   100% { transform: scaleX(0.1) translateX(350%); }
-}`
-      }
-    ]
+}`,
+      },
+    ],
   };
 }

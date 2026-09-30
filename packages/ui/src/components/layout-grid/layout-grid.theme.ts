@@ -6,8 +6,8 @@ export const layoutGridTheme = defineTheme("layout-grid", {
     root: "",
     overlay: "fixed top-0 left-0 w-full h-full pointer-events-none",
     container: "h-full mx-auto",
-    columns: "grid h-full"
+    columns: "grid h-full",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

@@ -204,7 +204,7 @@ export const badgeAudit: ComponentAuditDefinition = {
             )}
           </For>
         </div>
-      )
+      ),
     },
     {
       id: "sizes",
@@ -215,7 +215,7 @@ export const badgeAudit: ComponentAuditDefinition = {
         <div class="flex items-center gap-3 flex-wrap">
           <For each={SIZES}>{(s) => <RLBadge size={s} icon="rocket" label={`Size ${s}`} />}</For>
         </div>
-      )
+      ),
     },
     {
       id: "icons-and-positions",
@@ -229,7 +229,7 @@ export const badgeAudit: ComponentAuditDefinition = {
           <RLBadge icon="star" trailingIcon="check" label="Both Icons" />
           <RLBadge icon="bell" square aria-label="Notifications" />
         </div>
-      )
+      ),
     },
     {
       id: "avatar",
@@ -251,7 +251,7 @@ export const badgeAudit: ComponentAuditDefinition = {
           />
           <RLBadge avatar={{ alt: "John Doe" }} color="success" variant="subtle" label="John Doe" />
         </div>
-      )
+      ),
     },
     {
       id: "shapes-and-square",
@@ -267,7 +267,7 @@ export const badgeAudit: ComponentAuditDefinition = {
           <RLBadge square icon="star" color="warning" shape="pill" />
           <RLBadge square icon="check" color="success" shape="square" />
         </div>
-      )
+      ),
     },
     {
       id: "polymorphic-as",
@@ -278,52 +278,52 @@ export const badgeAudit: ComponentAuditDefinition = {
           <RLBadge as="a" href="#badge-link" label="Link Badge" color="info" />
           <RLBadge as="button" type="button" label="Interactive Badge" color="secondary" />
         </div>
-      )
-    }
+      ),
+    },
   ],
   checklist: [
     {
       criterion: "Nuxt UI v4 API parity (Badge)",
       status: "pass",
       notes:
-        "Supports as, label, color, variant, size, square, icon, avatar, leading, leadingIcon, trailing, trailingIcon, ui, class."
+        "Supports as, label, color, variant, size, square, icon, avatar, leading, leadingIcon, trailing, trailingIcon, ui, class.",
     },
     {
       criterion: "Slot pattern parity (leading, default, trailing)",
       status: "pass",
-      notes: "Full JSX slot support for leading, default label/children, and trailing."
+      notes: "Full JSX slot support for leading, default label/children, and trailing.",
     },
     {
       criterion: "Custom user defined colors support",
       status: "pass",
       notes:
-        "Supports theme colors (primary, secondary, success, info, warning, error, neutral) and custom user color ramps via color: 'auto' CSS variable tokens."
+        "Supports theme colors (primary, secondary, success, info, warning, error, neutral) and custom user color ramps via color: 'auto' CSS variable tokens.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "Forwards all aria attributes; automatically sets aria-hidden='true' on decorative leading/trailing icons."
+        "Forwards all aria attributes; automatically sets aria-hidden='true' on decorative leading/trailing icons.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
       status: "pass",
-      notes: "All styling encapsulated in badge.theme.ts without inline style attributes."
+      notes: "All styling encapsulated in badge.theme.ts without inline style attributes.",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
       status: "pass",
-      notes: "Pure Solid JSX reactive rendering."
+      notes: "Pure Solid JSX reactive rendering.",
     },
     {
       criterion: "No hydration mismatches",
       status: "pass",
-      notes: "Deterministic dynamic() tag and createMemo() class resolution."
+      notes: "Deterministic dynamic() tag and createMemo() class resolution.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",
       status: "pass",
-      notes: "All scenario renders return bare components directly."
-    }
-  ]
+      notes: "All scenario renders return bare components directly.",
+    },
+  ],
 };

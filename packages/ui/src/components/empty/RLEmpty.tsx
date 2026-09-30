@@ -40,7 +40,7 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
     "descriptionSlot",
     "bodySlot",
     "actionsSlot",
-    "footerSlot"
+    "footerSlot",
   );
 
   const activeIcon = props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
@@ -52,8 +52,8 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
       size: props.size ?? "md",
       loading: props.loading ?? false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

@@ -14,8 +14,8 @@ const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
   const classes = createMemo(() =>
     placeholderTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

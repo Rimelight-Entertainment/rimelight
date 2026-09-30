@@ -11,7 +11,7 @@ export interface RLDateProps {
 const defaultOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "short",
-  day: "numeric"
+  day: "numeric",
 };
 
 const RLDate: Component<RLDateProps> = (allProps) => {

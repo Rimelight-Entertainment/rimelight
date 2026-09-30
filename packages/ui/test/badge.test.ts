@@ -4,8 +4,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLBadge } from "../src/components/badge/RLBadge";
@@ -22,7 +22,7 @@ describe("RLBadge Solid Component Suite", () => {
     "info",
     "warning",
     "error",
-    "neutral"
+    "neutral",
   ] as const;
 
   describe("Basic & Label Rendering", () => {
@@ -159,7 +159,7 @@ describe("RLBadge Solid Component Suite", () => {
     it("renders avatar when avatar string is provided", () => {
       const html = renderSolid(RLBadge, {
         avatar: "https://github.com/nuxt.png",
-        label: "Nuxt"
+        label: "Nuxt",
       });
       expect(html).toContain('data-slot="leading-avatar"');
       expect(html).toContain("Nuxt");
@@ -168,7 +168,7 @@ describe("RLBadge Solid Component Suite", () => {
     it("renders avatar when avatar object is provided", () => {
       const html = renderSolid(RLBadge, {
         avatar: { src: "https://github.com/nuxt.png", alt: "Nuxt Logo" },
-        label: "Nuxt"
+        label: "Nuxt",
       });
       expect(html).toContain('data-slot="leading-avatar"');
       expect(html).toContain('alt="Nuxt Logo"');
@@ -191,9 +191,9 @@ describe("RLBadge Solid Component Suite", () => {
         class: "my-custom-badge",
         ui: {
           root: "custom-root-class",
-          label: "custom-label-class"
+          label: "custom-label-class",
         },
-        label: "Custom UI"
+        label: "Custom UI",
       });
       expect(html).toContain("my-custom-badge");
       expect(html).toContain("custom-root-class");
@@ -203,9 +203,9 @@ describe("RLBadge Solid Component Suite", () => {
     it("supports ui.base alias for root slot override", () => {
       const html = renderSolid(RLBadge, {
         ui: {
-          base: "base-slot-override"
+          base: "base-slot-override",
         },
-        label: "Base Override"
+        label: "Base Override",
       });
       expect(html).toContain("base-slot-override");
     });
@@ -216,7 +216,7 @@ describe("RLBadge Solid Component Suite", () => {
       const html = renderSolid(RLBadge, {
         "aria-label": "Status Active",
         role: "status",
-        label: "Active"
+        label: "Active",
       });
       expect(html).toContain('aria-label="Status Active"');
       expect(html).toContain('role="status"');
@@ -226,7 +226,7 @@ describe("RLBadge Solid Component Suite", () => {
       const html = renderSolid(RLBadge, {
         icon: "star",
         trailingIcon: "arrow-right",
-        label: "Rated"
+        label: "Rated",
       });
       expect(html).toContain('aria-hidden="true"');
     });

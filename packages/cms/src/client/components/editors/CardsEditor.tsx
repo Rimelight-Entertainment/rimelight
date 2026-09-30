@@ -19,7 +19,7 @@ const COLUMN_OPTIONS = [
   { label: "1 Column", value: "1" },
   { label: "2 Columns", value: "2" },
   { label: "3 Columns", value: "3" },
-  { label: "4 Columns", value: "4" }
+  { label: "4 Columns", value: "4" },
 ];
 
 export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
@@ -60,7 +60,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 
@@ -72,7 +72,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
   const setColumns = (colStr: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      columns: Number.parseInt(colStr, 10) || 2
+      columns: Number.parseInt(colStr, 10) || 2,
     });
   };
 

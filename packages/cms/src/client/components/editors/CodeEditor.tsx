@@ -21,7 +21,7 @@ const LANGUAGES = [
   "go",
   "c",
   "cpp",
-  "other"
+  "other",
 ];
 
 export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
@@ -32,7 +32,7 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
       ...componentProps.props,
       language: lang !== undefined ? lang : componentProps.props["language"] || "typescript",
       code: code !== undefined ? code : codeTextarea?.value || "",
-      caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
+      caption: caption !== undefined ? caption : componentProps.props["caption"] || "",
     });
   };
 

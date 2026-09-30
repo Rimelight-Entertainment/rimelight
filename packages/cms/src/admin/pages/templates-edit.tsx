@@ -49,8 +49,8 @@ export const TemplatesEditPage: Component<TemplatesEditPageProps> = (props) => {
         body: JSON.stringify({
           title: title(),
           description: description(),
-          initialBlocks: blocks()
-        })
+          initialBlocks: blocks(),
+        }),
       });
       if (!res.ok) throw new Error(`Save failed (${res.status})`);
       setStatus("Template saved");

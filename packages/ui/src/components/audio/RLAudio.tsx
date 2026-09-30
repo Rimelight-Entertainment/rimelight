@@ -6,7 +6,7 @@ import {
   onSettled,
   Show,
   omit,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { AudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio";
@@ -56,7 +56,7 @@ function generateDefaultPeaks(count = 36): number[] {
   // Regular, clean WhatsApp-style voice note rhythmic wave pattern
   const voicePattern = [
     22, 36, 58, 42, 74, 52, 86, 64, 46, 78, 56, 90, 68, 40, 64, 82, 48, 74, 92, 58, 44, 70, 86, 50,
-    78, 62, 88, 66, 42, 72, 54, 80, 46, 60, 34, 22
+    78, 62, 88, 66, 42, 72, 54, 80, 46, 60, 34, 22,
   ];
   if (count === voicePattern.length) return voicePattern;
   const peaks: number[] = [];
@@ -124,7 +124,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
     "onTrackChange",
     "onTimeUpdate",
     "onVolumeChange",
-    "onRepeatModeChange"
+    "onRepeatModeChange",
   );
 
   const titleId = createUniqueId();
@@ -146,7 +146,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
         description: props.description,
         artwork: props.artwork,
         transcript: typeof props.transcript === "string" ? props.transcript : undefined,
-        tracks: props.tracks
+        tracks: props.tracks,
       };
       return [singleTrack];
     }
@@ -169,7 +169,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
   const [isEditingSpeed, setIsEditingSpeed] = createSignal(false);
   const [isTranscriptOpen, setIsTranscriptOpen] = createSignal(false);
   const [repeatMode, setRepeatMode] = createSignal<AudioRepeatMode>(
-    props.repeatMode ?? (props.loop ? "all" : "off")
+    props.repeatMode ?? (props.loop ? "all" : "off"),
   );
 
   const orientation = () => props.orientation ?? "horizontal";
@@ -193,8 +193,8 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
       color: props.color ?? "primary",
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const progressColorClass = createMemo(() => {
@@ -527,7 +527,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
           ui={{
             root: "!size-full !h-full !w-full !block",
             trigger: "!size-full !h-full !w-full !block",
-            triggerImage: "!size-full !h-full !w-full !max-w-none !object-cover"
+            triggerImage: "!size-full !h-full !w-full !max-w-none !object-cover",
           }}
           lightbox
         />
@@ -810,7 +810,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                       ui={{
                         root: () => "relative inline-flex items-center justify-center",
                         trigger: () => "inline-flex items-center justify-center",
-                        content: () => resolvedClasses().volumePopover
+                        content: () => resolvedClasses().volumePopover,
                       }}
                       trigger={
                         <button

@@ -14,8 +14,8 @@ const RLDock: Component<RLDockProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     dockTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

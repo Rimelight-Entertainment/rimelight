@@ -32,7 +32,7 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             role,
             permissions: session.permissions,
             metadata: session.metadata || existing[0]!.metadata,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           })
           .where(eq(employees.id, existing[0]!.id))
           .returning();
@@ -47,7 +47,7 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             avatar: session.avatar || null,
             role,
             permissions: session.permissions,
-            metadata: session.metadata || {}
+            metadata: session.metadata || {},
           })
           .returning();
         return { type: "employee", record: inserted };
@@ -67,7 +67,7 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             name: session.name || existing[0]!.name,
             avatar: session.avatar || existing[0]!.avatar,
             emailVerified: true,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           })
           .where(eq(users.id, existing[0]!.id))
           .returning();
@@ -81,7 +81,7 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             name: session.name || session.email.split("@")[0] || "User",
             tag: "0000",
             avatar: session.avatar || null,
-            emailVerified: true
+            emailVerified: true,
           })
           .returning();
         return { type: "user", record: inserted };

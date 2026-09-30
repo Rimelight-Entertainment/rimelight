@@ -2,7 +2,7 @@ export type ComponentsJSON = Record<string, Record<string, any>>;
 export type Translations = Record<string, any>;
 export type TranslationLoader = (
   locale: string,
-  components: string[]
+  components: string[],
 ) => Promise<ComponentsJSON | Record<string, any>>;
 
 export interface ReadableAtom<T> {

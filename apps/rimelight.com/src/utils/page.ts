@@ -5,7 +5,7 @@ import type {
   BasePageProperties,
   PageDefinition,
   Property,
-  PropertyGroup
+  PropertyGroup,
 } from "#types/pages";
 import type { Block, SectionBlock } from "#types/blocks";
 
@@ -21,7 +21,7 @@ function getValue(value: object, key: string): unknown {
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | T | undefined,
-  currentLocale: MaybeRefOrGetter<string>
+  currentLocale: MaybeRefOrGetter<string>,
 ): T | string => {
   if (field === undefined || field === null) return "";
 
@@ -68,7 +68,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
     if (!existingGroup) {
       const lowerGroupId = groupId.toLowerCase();
       const foundGroupKey = Object.keys(existingProperties).find(
-        (k) => k.toLowerCase() === lowerGroupId
+        (k) => k.toLowerCase() === lowerGroupId,
       );
       if (foundGroupKey) {
         existingGroup = existingProperties[foundGroupKey];
@@ -99,13 +99,13 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
 
       updatedGroupFields[fieldId] = {
         ...JSON.parse(JSON.stringify(definitionField)),
-        defaultValue: value
+        defaultValue: value,
       };
     }
 
     updatedProperties[groupId] = {
       ...definitionGroup,
-      fields: updatedGroupFields
+      fields: updatedGroupFields,
     };
   }
 
@@ -141,8 +141,8 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
             ...db,
             props: {
               ...db.props,
-              children: existing.props.children || db.props.children || []
-            }
+              children: existing.props.children || db.props.children || [],
+            },
           };
           updatedBlocks[existingIdx] = updated;
         } else {
@@ -203,7 +203,7 @@ export function convertVersionToPage(version: PageVersion): Page {
     slug: version.slug || "",
     description: version.description || { en: "" },
     tags: version.tags || [],
-    links: version.links || []
+    links: version.links || [],
   };
 }
 

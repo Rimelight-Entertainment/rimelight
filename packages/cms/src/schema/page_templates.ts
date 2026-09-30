@@ -23,5 +23,5 @@ export const pageTemplates = pgTable("page_templates", {
   defaultProperties: jsonb("default_properties").default({}).notNull(),
   initialBlocks: jsonb("initial_blocks").$type<BaseBlock[]>().default([]).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
 });

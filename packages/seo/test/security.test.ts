@@ -4,7 +4,7 @@ import { buildSecurityTxt } from "../src/security.js";
 describe("buildSecurityTxt", () => {
   it("generates RFC 9116 compliant security.txt with single contact and default expires", () => {
     const output = buildSecurityTxt({
-      contact: "mailto:security@example.com"
+      contact: "mailto:security@example.com",
     });
 
     expect(output).toContain("Contact: mailto:security@example.com");
@@ -20,7 +20,7 @@ describe("buildSecurityTxt", () => {
       canonical: "https://example.com/.well-known/security.txt",
       policy: "https://example.com/legal/security",
       hiring: "https://example.com/careers",
-      acknowledgments: "https://example.com/security/acknowledgments"
+      acknowledgments: "https://example.com/security/acknowledgments",
     });
 
     expect(output).toContain("Contact: mailto:security@example.com");
@@ -37,7 +37,7 @@ describe("buildSecurityTxt", () => {
     const output = buildSecurityTxt({
       contact: "mailto:security@example.com",
       encryption: "https://example.com/pgp-key.txt",
-      csaf: "https://example.com/.well-known/csaf/provider-metadata.json"
+      csaf: "https://example.com/.well-known/csaf/provider-metadata.json",
     });
 
     expect(output).toContain("Encryption: https://example.com/pgp-key.txt");

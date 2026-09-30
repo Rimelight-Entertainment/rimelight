@@ -36,13 +36,13 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   }>({
     items: [],
     scopes: [],
-    activeScope: null
+    activeScope: null,
   });
 
   createEffect(
     () => ({
       activeVersion: props.activeVersion,
-      includeVersionInUrl: props.includeVersionInUrl
+      includeVersionInUrl: props.includeVersionInUrl,
     }),
     (snapshot) => {
       const { activeVersion, includeVersionInUrl } = snapshot;
@@ -55,12 +55,12 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
             locale,
             currentPath,
             activeVersion,
-            includeVersionInUrl
+            includeVersionInUrl,
           );
           setSidebarData(data as { items: any[]; scopes: any[]; activeScope: any });
         } catch {}
       })();
-    }
+    },
   );
 
   const currentPath = () => (typeof window !== "undefined" ? window.location.pathname : "");
@@ -70,7 +70,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
 
   const globalToc = (docsConfig as any).tableOfContents ?? {
     minHeadingLevel: 2,
-    maxHeadingLevel: 3
+    maxHeadingLevel: 3,
   };
   const resolvedToc = () =>
     props.tableOfContents !== undefined ? props.tableOfContents : globalToc;

@@ -29,16 +29,16 @@ export const pages = pgTable(
       }>()
       .notNull(),
     publishedVersionId: uuid("published_version_id").references(() => pageVersions.id, {
-      onDelete: "set null"
+      onDelete: "set null",
     }),
     postedAt: timestamp("posted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
-    deletedAt: timestamp("deleted_at", { withTimezone: true })
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
     uniqueIndex("pages_slug_active_unique_idx")
       .on(table.slug)
-      .where(sql`deleted_at IS NULL`)
-  ]
+      .where(sql`deleted_at IS NULL`),
+  ],
 );

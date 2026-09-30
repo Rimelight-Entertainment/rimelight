@@ -12,7 +12,7 @@ export async function invalidatePageCache(options: CachePurgeOptions): Promise<b
     locales,
     domain = "rimelight.com",
     basePath = "",
-    isEnterpriseCloudflare
+    isEnterpriseCloudflare,
   } = options;
   const zoneId = process.env["CLOUDFLARE_ZONE_ID"];
   const apiToken = process.env["CLOUDFLARE_API_TOKEN"];
@@ -32,9 +32,9 @@ export async function invalidatePageCache(options: CachePurgeOptions): Promise<b
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiToken}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return res.ok;
   } catch {

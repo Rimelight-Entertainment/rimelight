@@ -28,9 +28,9 @@ export const pageVersions = pgTable(
     approvedBy: jsonb("approved_by").$type<string[]>().default([]).notNull(),
     approvedAt: timestamp("approved_at", { withTimezone: true }),
     changeSummary: text("change_summary"),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
-    uniqueIndex("page_versions_page_id_version_idx").on(table.pageId, table.versionNumber)
-  ]
+    uniqueIndex("page_versions_page_id_version_idx").on(table.pageId, table.versionNumber),
+  ],
 );

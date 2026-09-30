@@ -3,7 +3,7 @@ import {
   type Block,
   type Localized,
   type PageType,
-  type RegisterPageTypes
+  type RegisterPageTypes,
 } from "../../../types/pages.ts";
 
 export const pages = pgTable("pages", {
@@ -22,8 +22,8 @@ export const pages = pgTable("pages", {
     .notNull(),
   postedAt: timestamp("posted_at", { withTimezone: true }),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });

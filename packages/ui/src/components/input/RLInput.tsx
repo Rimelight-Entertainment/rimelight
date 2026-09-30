@@ -42,7 +42,7 @@ const RLInput: Component<RLInputProps> = (allProps) => {
     "onKeyDown",
     "ref",
     "leading",
-    "trailing"
+    "trailing",
   );
 
   const hasLeading = () => !!(props.leadingIcon || props.leading);
@@ -57,8 +57,8 @@ const RLInput: Component<RLInputProps> = (allProps) => {
       error: !!props.error,
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

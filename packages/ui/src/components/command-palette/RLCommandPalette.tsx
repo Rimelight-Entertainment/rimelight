@@ -14,8 +14,8 @@ const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     commandPaletteTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

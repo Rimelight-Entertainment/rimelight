@@ -14,8 +14,8 @@ const RLPricingTable: Component<RLPricingTableProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     pricingTableTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

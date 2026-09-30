@@ -76,7 +76,7 @@ export function createUiHead(options: UiHeadOptions = {}): HeadResult {
     tags.push({
       tag: "script",
       ...(scriptProps ? { props: scriptProps } : {}),
-      children: THEME_FLASH_SCRIPT
+      children: THEME_FLASH_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${THEME_FLASH_SCRIPT}</script>`);
   }
@@ -85,13 +85,13 @@ export function createUiHead(options: UiHeadOptions = {}): HeadResult {
     tags.push({
       tag: "script",
       ...(scriptProps ? { props: scriptProps } : {}),
-      children: HEADER_STACK_SCRIPT
+      children: HEADER_STACK_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${HEADER_STACK_SCRIPT}</script>`);
   }
 
   return {
     html: htmlParts.join("\n"),
-    tags
+    tags,
   };
 }

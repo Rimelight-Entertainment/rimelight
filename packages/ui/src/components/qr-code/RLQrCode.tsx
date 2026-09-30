@@ -14,8 +14,8 @@ const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     qrCodeTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

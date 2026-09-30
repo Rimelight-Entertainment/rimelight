@@ -27,8 +27,8 @@ export const Page500: Component<Page500Props> = (props) => {
             href: "/",
             variant: "solid",
             color: "primary",
-            icon: "home"
-          }
+            icon: "home",
+          },
         ]}
       />
     </AppLayout>

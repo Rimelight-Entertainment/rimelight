@@ -6,7 +6,7 @@ declare module "virtual:rimelight/i18n" {
   export const translations: Record<string, Record<string, any>> | undefined;
   export default {
     locales: [] as string[],
-    defaultLocale: ""
+    defaultLocale: "",
   };
 }
 

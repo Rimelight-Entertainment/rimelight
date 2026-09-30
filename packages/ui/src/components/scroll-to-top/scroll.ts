@@ -5,7 +5,7 @@ export interface ScrollState {
 
 export function trackScroll(
   options: { threshold?: number } = {},
-  onUpdate: (state: ScrollState) => void
+  onUpdate: (state: ScrollState) => void,
 ): () => void {
   if (typeof window === "undefined") {
     onUpdate({ isVisible: false, scrollPercentage: 0 });
@@ -24,7 +24,7 @@ export function trackScroll(
         const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
         onUpdate({
           isVisible: scrollTop > threshold,
-          scrollPercentage: scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
+          scrollPercentage: scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0,
         });
         ticking = false;
         rafId = null;
@@ -48,7 +48,7 @@ export function scrollToTop() {
   if (typeof window !== "undefined") {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
   }
 }

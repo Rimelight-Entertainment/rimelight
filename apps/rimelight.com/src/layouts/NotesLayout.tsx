@@ -19,26 +19,26 @@ export const NotesLayout: Component<NotesLayoutProps> = (props) => {
       label: "Notes",
       icon: "i-lucide-sticky-note",
       href: getRelativeLocaleUrl("/dashboard/notes"),
-      active: props.activeTab === "notes"
+      active: props.activeTab === "notes",
     },
     {
       label: "Todos",
       icon: "i-lucide-check-square",
       href: getRelativeLocaleUrl("/dashboard/notes/todos"),
-      active: props.activeTab === "todos"
+      active: props.activeTab === "todos",
     },
     {
       label: "Archive",
       icon: "i-lucide-archive",
       href: getRelativeLocaleUrl("/dashboard/notes/archive"),
-      active: props.activeTab === "archive"
+      active: props.activeTab === "archive",
     },
     {
       label: "Trash",
       icon: "i-lucide-trash-2",
       href: getRelativeLocaleUrl("/dashboard/notes/trash"),
-      active: props.activeTab === "trash"
-    }
+      active: props.activeTab === "trash",
+    },
   ];
 
   return (

@@ -15,8 +15,8 @@ const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allP
   const resolvedClasses = createMemo(() =>
     dashboardSidebarToggleTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

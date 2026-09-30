@@ -25,7 +25,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     "ui",
     "class",
     "children",
-    "trigger"
+    "trigger",
   );
 
   const [isOpen, setIsOpen] = createSignal(false);
@@ -34,7 +34,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     left?: number | undefined;
     right?: number | undefined;
   }>({
-    top: 0
+    top: 0,
   });
   let menuContainer: HTMLDivElement | undefined;
   let menuContentRef: HTMLDivElement | undefined;
@@ -86,8 +86,8 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     dropdownMenuTheme({
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const itemGroups = createMemo<DropdownMenuItem[][]>(() => {
@@ -163,7 +163,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
               ...(coords().right !== undefined
                 ? { right: `${coords().right}px`, left: "auto" }
                 : {}),
-              ...(coords().left !== undefined ? { left: `${coords().left}px` } : {})
+              ...(coords().left !== undefined ? { left: `${coords().left}px` } : {}),
             }}
             data-slot="content"
             role="menu"

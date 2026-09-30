@@ -25,9 +25,9 @@ const api = new Hono().post("/", async (c) => {
       return c.json(
         {
           success: false,
-          error: "Only PNG, JPEG, WEBP, or PDF files are allowed."
+          error: "Only PNG, JPEG, WEBP, or PDF files are allowed.",
         },
-        400
+        400,
       );
     }
 
@@ -44,7 +44,7 @@ const api = new Hono().post("/", async (c) => {
           success: true,
           key: fakeKey,
           filename: file.name,
-          size: file.size
+          size: file.size,
         });
       }
       console.error("[upload API] R2 bucket binding not available");
@@ -55,14 +55,14 @@ const api = new Hono().post("/", async (c) => {
     const key = `uploads/${crypto.randomUUID()}.${ext}`;
 
     await bucket.put(key, await file.arrayBuffer(), {
-      httpMetadata: { contentType: file.type }
+      httpMetadata: { contentType: file.type },
     });
 
     return c.json({
       success: true,
       key,
       filename: file.name,
-      size: file.size
+      size: file.size,
     });
   } catch (err: unknown) {
     console.error("[upload API error]", err);

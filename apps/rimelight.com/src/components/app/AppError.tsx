@@ -35,39 +35,39 @@ const statusConfig: Record<number, StatusThemeConfig> = {
     icon: "i-lucide-alert-circle",
     iconBoxClass: "border-warning/30 bg-warning/10 text-warning",
     dotClass: "bg-warning",
-    badgeColor: "warning"
+    badgeColor: "warning",
   },
   401: {
     icon: "i-lucide-lock",
     iconBoxClass: "border-warning/30 bg-warning/10 text-warning",
     dotClass: "bg-warning",
-    badgeColor: "warning"
+    badgeColor: "warning",
   },
   403: {
     icon: "i-lucide-shield-alert",
     iconBoxClass: "border-error/30 bg-error/10 text-error",
     dotClass: "bg-error",
-    badgeColor: "error"
+    badgeColor: "error",
   },
   404: {
     icon: "i-lucide-file-question",
     iconBoxClass: "border-primary/30 bg-primary/10 text-primary",
     dotClass: "bg-primary",
-    badgeColor: "primary"
+    badgeColor: "primary",
   },
   500: {
     icon: "i-lucide-server-crash",
     iconBoxClass: "border-error/30 bg-error/10 text-error",
     dotClass: "bg-error",
-    badgeColor: "error"
-  }
+    badgeColor: "error",
+  },
 };
 
 const defaultConfig: StatusThemeConfig = {
   icon: "i-lucide-shield-alert",
   iconBoxClass: "border-error/30 bg-error/10 text-error",
   dotClass: "bg-error",
-  badgeColor: "error"
+  badgeColor: "error",
 };
 
 export const AppError: Component<AppErrorProps> = (props) => {
@@ -79,8 +79,8 @@ export const AppError: Component<AppErrorProps> = (props) => {
         href: "/",
         variant: "solid" as const,
         color: "primary" as const,
-        icon: "i-lucide-home"
-      }
+        icon: "i-lucide-home",
+      },
     ];
 
   return (

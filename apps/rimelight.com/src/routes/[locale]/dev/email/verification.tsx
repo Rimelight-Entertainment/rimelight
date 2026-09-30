@@ -13,7 +13,7 @@ export const VerificationEmailPreview: Component = () => {
     async (loc) => {
       return await renderVerificationEmail(url, loc);
     },
-    ""
+    "",
   );
 
   return (

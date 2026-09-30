@@ -30,7 +30,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
     "hoverable",
     "ui",
     "class",
-    "onValueChange"
+    "onValueChange",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -41,8 +41,8 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       readonly: !!props.readonly,
       disabled: !!props.disabled,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const step = () => props.step ?? 1;
@@ -55,7 +55,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       sm: "size-4",
       md: "size-5",
       lg: "size-6",
-      xl: "size-7"
+      xl: "size-7",
     };
     return map[props.size ?? "md"] || "size-5";
   };
@@ -65,7 +65,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       ? props.value
       : props.modelValue !== undefined
         ? props.modelValue
-        : (props.defaultValue ?? 0)
+        : (props.defaultValue ?? 0),
   );
   const value = () =>
     props.value !== undefined

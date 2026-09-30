@@ -12,10 +12,10 @@ async function main(): Promise<void> {
       install: { type: "boolean", short: "i" },
       "package-manager": { type: "string" },
       help: { type: "boolean", short: "h" },
-      version: { type: "boolean", short: "v" }
+      version: { type: "boolean", short: "v" },
     },
     allowPositionals: true,
-    strict: false
+    strict: false,
   });
 
   if (values.version) {
@@ -63,7 +63,7 @@ Options:
       domain: values.domain as string | undefined,
       git: values.git as boolean | undefined,
       install: values.install as boolean | undefined,
-      packageManager: values["package-manager"] as string | undefined
+      packageManager: values["package-manager"] as string | undefined,
     });
   } else {
     console.error(`Unknown command: ${command}. Use "rimelight --help" to see all options.`);

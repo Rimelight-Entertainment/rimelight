@@ -14,7 +14,7 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
       character: character !== undefined ? character : componentProps.props["character"] || "",
       parenthetical:
         parenthetical !== undefined ? parenthetical : componentProps.props["parenthetical"] || "",
-      line: line !== undefined ? line : componentProps.props["line"] || ""
+      line: line !== undefined ? line : componentProps.props["line"] || "",
     });
   };
 

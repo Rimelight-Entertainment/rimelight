@@ -7,7 +7,7 @@ import {
   RLThemeSelector,
   RLLocaleSelector,
   type RLButtonProps,
-  type RLLinkGroupProps
+  type RLLinkGroupProps,
 } from "@rimelight/ui";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
@@ -18,43 +18,43 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app_footer.links_resources_branding"),
-          href: getRelativeLocaleUrl("/branding")
-        }
-      ]
+          href: getRelativeLocaleUrl("/branding"),
+        },
+      ],
     },
     {
       label: t("app_footer.links_legal_label"),
       links: [
         {
           label: t("app_footer.links_legal_privacy-policy"),
-          href: getRelativeLocaleUrl("/legal/privacy-policy")
+          href: getRelativeLocaleUrl("/legal/privacy-policy"),
         },
         {
           label: t("app_footer.links_legal_cookie-policy"),
-          href: getRelativeLocaleUrl("/legal/cookie-policy")
+          href: getRelativeLocaleUrl("/legal/cookie-policy"),
         },
         {
           label: t("app_footer.links_legal_other-documents"),
-          href: getRelativeLocaleUrl("/legal")
-        }
-      ]
-    }
+          href: getRelativeLocaleUrl("/legal"),
+        },
+      ],
+    },
   ];
 
   const socials = (): RLButtonProps[] => [
     {
       leadingIcon: "i-logos-solidjs-icon?mask text-white group-hover:text-primary-500",
-      href: "https://solidjs.com/"
+      href: "https://solidjs.com/",
     },
     {
       leadingIcon: "i-logos-github-icon?mask text-white group-hover:text-primary-500",
-      href: "https://github.com/Rimelight-Entertainment/rimelight"
-    }
+      href: "https://github.com/Rimelight-Entertainment/rimelight",
+    },
   ];
 
   const targetLanguages = () => [
     { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
-    { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") }
+    { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") },
   ];
 
   return (

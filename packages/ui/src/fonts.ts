@@ -49,24 +49,24 @@ export const DEFAULT_UI_FONTS = {
       {
         name: "Noto Sans",
         weights: [400, 500, 600, 700],
-        subsets: ["latin", "latin-ext"]
-      }
+        subsets: ["latin", "latin-ext"],
+      },
     ],
     serif: [
       {
         name: "Noto Serif",
         weights: [400, 700],
-        subsets: ["latin", "latin-ext"]
-      }
+        subsets: ["latin", "latin-ext"],
+      },
     ],
     mono: [
       {
         name: "JetBrains Mono",
         weights: [400, 500, 700],
-        subsets: ["latin", "latin-ext"]
-      }
-    ]
-  }
+        subsets: ["latin", "latin-ext"],
+      },
+    ],
+  },
 };
 
 const fontUrlRegex = /[-\w@:%+.~#?&/=]+\.(?:woff2?|eot|ttf|otf|svg)/gi;
@@ -155,10 +155,10 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
           else if (!emittedFonts.has(filename))
             emittedFonts.set(filename, await fsp.readFile(assetPath));
           replacements.set(url, `${fontServeBaseUrl}/${filename}`);
-        })
+        }),
       );
       return css.replace(fontUrlRegex, (match) => replacements.get(match) || match);
-    }
+    },
   };
 }
 
@@ -168,7 +168,7 @@ const FONT_MIME_TYPES: Record<string, string> = {
   ttf: "font/ttf",
   otf: "font/otf",
   eot: "application/vnd.ms-fontobject",
-  svg: "image/svg+xml"
+  svg: "image/svg+xml",
 };
 
 /**
@@ -232,7 +232,7 @@ export function rimelightFontsVitePlugin(options?: LocalFontProcessorOptions) {
                 // ignore unreadable cache entries
               }
             }
-          })
+          }),
         );
       } catch {
         // no cache yet — nothing to emit
@@ -240,7 +240,7 @@ export function rimelightFontsVitePlugin(options?: LocalFontProcessorOptions) {
       for (const [filename, source] of emittedFonts) {
         this.emitFile({ type: "asset", fileName: `assets/fonts/${filename}`, source });
       }
-    }
+    },
   };
 }
 
@@ -282,7 +282,7 @@ export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
   } = userOpts;
   const mergedFonts = {
     ...DEFAULT_UI_FONTS.fonts,
-    ...fonts
+    ...fonts,
   };
 
   const resolvedProcessors = processors ?? [createLocalFontProcessor(processorOptions)];
@@ -291,6 +291,6 @@ export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
     ...restPresetOpts,
     provider: (provider || DEFAULT_UI_FONTS.provider) as any,
     fonts: mergedFonts,
-    processors: Array.isArray(resolvedProcessors) ? resolvedProcessors : [resolvedProcessors]
+    processors: Array.isArray(resolvedProcessors) ? resolvedProcessors : [resolvedProcessors],
   });
 }

@@ -64,7 +64,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           nodes.push({
             type: "link",
             url: a.href,
-            children: parseDOM(el)
+            children: parseDOM(el),
           });
         } else {
           const childNodes = parseDOM(el);
@@ -95,7 +95,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
     const parsedNodes = parseDOM(editableDiv);
     componentProps.onPropsChange({
       ...componentProps.props,
-      text: parsedNodes
+      text: parsedNodes,
     });
   };
 

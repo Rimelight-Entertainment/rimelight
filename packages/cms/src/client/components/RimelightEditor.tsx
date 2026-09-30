@@ -39,7 +39,7 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 

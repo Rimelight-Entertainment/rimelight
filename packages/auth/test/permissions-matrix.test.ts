@@ -8,7 +8,7 @@ import {
   defaultStatements,
   ownerAc,
   adminAc,
-  memberAc
+  memberAc,
 } from "../src/permissions";
 import type { UserSessionContext } from "../src/types";
 
@@ -16,25 +16,25 @@ describe("@rimelight/auth - Permissions and Access Control Strict Matrix", () =>
   const adminSession: UserSessionContext = {
     userId: "user_admin",
     roles: ["admin", "staff"],
-    permissions: ["*"]
+    permissions: ["*"],
   };
 
   const editorSession: UserSessionContext = {
     userId: "user_editor",
     roles: ["editor"],
-    permissions: ["posts:*", "comments:read", "comments:write"]
+    permissions: ["posts:*", "comments:read", "comments:write"],
   };
 
   const readerSession: UserSessionContext = {
     userId: "user_reader",
     roles: ["reader", "guest"],
-    permissions: ["posts:read", "comments:read"]
+    permissions: ["posts:read", "comments:read"],
   };
 
   const emptySession: UserSessionContext = {
     userId: "user_empty",
     roles: [],
-    permissions: []
+    permissions: [],
   };
 
   describe("hasRole strict checks", () => {
@@ -94,22 +94,22 @@ describe("@rimelight/auth - Permissions and Access Control Strict Matrix", () =>
       expect(
         evaluateAccess(editorSession, {
           roles: ["editor", "admin"],
-          permission: "posts:edit"
-        })
+          permission: "posts:edit",
+        }),
       ).toBe(true);
 
       expect(
         evaluateAccess(editorSession, {
           roles: ["admin"],
-          permission: "posts:edit"
-        })
+          permission: "posts:edit",
+        }),
       ).toBe(false);
 
       expect(
         evaluateAccess(editorSession, {
           roles: ["editor"],
-          permission: "users:ban"
-        })
+          permission: "users:ban",
+        }),
       ).toBe(false);
     });
 
@@ -123,12 +123,12 @@ describe("@rimelight/auth - Permissions and Access Control Strict Matrix", () =>
     it("creates custom AC with statement types and permissions", () => {
       const { ac } = createPermissions({
         document: ["create", "edit", "publish", "delete"],
-        billing: ["view", "charge"]
+        billing: ["view", "charge"],
       });
 
       const customEditor = ac.newRole({
         document: ["create", "edit"],
-        billing: ["view"]
+        billing: ["view"],
       });
 
       expect(customEditor.can("document", "create")).toBe(true);
@@ -141,11 +141,11 @@ describe("@rimelight/auth - Permissions and Access Control Strict Matrix", () =>
 
     it("supports wildcard actions in role statements", () => {
       const ac = createAccessControl({
-        media: ["upload", "delete", "view"] as const
+        media: ["upload", "delete", "view"] as const,
       });
 
       const mediaAdmin = ac.newRole({
-        media: ["*"]
+        media: ["*"],
       });
 
       expect(mediaAdmin.can("media", "upload")).toBe(true);

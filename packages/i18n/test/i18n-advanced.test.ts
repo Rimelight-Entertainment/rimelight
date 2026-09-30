@@ -21,15 +21,15 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
         en: {
           items: {
             count: "You have {count} items in your {container}.",
-            welcome: "Hello, {name}!"
-          }
-        }
-      }
+            welcome: "Hello, {name}!",
+          },
+        },
+      },
     });
 
     currentLocale.set("en");
     expect(t("items.count", { count: 3, container: "cart" })).toBe(
-      "You have 3 items in your cart."
+      "You have 3 items in your cart.",
     );
     expect(t("items.welcome", { name: "Alice" })).toBe("Hello, Alice!");
   });
@@ -42,11 +42,11 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           messages: {
             unread: {
               one: "1 new message",
-              other: "{count} new messages"
-            }
-          }
-        }
-      }
+              other: "{count} new messages",
+            },
+          },
+        },
+      },
     });
 
     currentLocale.set("en");
@@ -58,7 +58,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     const alternates = getLanguageAlternates("/pricing", "https://rimelight.com");
     expect(alternates).toContainEqual({
       hreflang: "x-default",
-      href: "https://rimelight.com/en/pricing"
+      href: "https://rimelight.com/en/pricing",
     });
   });
 
@@ -67,12 +67,12 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       defaultLocale: "en",
       translations: {
         en: {
-          common: { button: "Submit", cancel: "Cancel" }
+          common: { button: "Submit", cancel: "Cancel" },
         },
         "pt-BR": {
-          common: { button: "Enviar" }
-        }
-      }
+          common: { button: "Enviar" },
+        },
+      },
     });
 
     currentLocale.set("pt-BR");
@@ -86,21 +86,21 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       defaultLocale: "es-MX",
       translations: {
         "pt-BR": {
-          shop: { checkout: "Finalizar Compra" }
+          shop: { checkout: "Finalizar Compra" },
         },
         pt: {
-          shop: { cart: "Carrinho" }
+          shop: { cart: "Carrinho" },
         },
         "es-MX": {
-          shop: { currency: "MXN$" }
+          shop: { currency: "MXN$" },
         },
         es: {
-          shop: { search: "Buscar", help: "Ayuda" }
+          shop: { search: "Buscar", help: "Ayuda" },
         },
         en: {
-          shop: { help: "Help", fallbackOnly: "Fallback Only" }
-        }
-      }
+          shop: { help: "Help", fallbackOnly: "Fallback Only" },
+        },
+      },
     });
 
     currentLocale.set("pt-BR");
@@ -123,10 +123,10 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       translations: {
         en: {
           computed: {
-            dynamic: (p: { val: number }) => `Result is ${p.val * 2}`
-          }
-        }
-      }
+            dynamic: (p: { val: number }) => `Result is ${p.val * 2}`,
+          },
+        },
+      },
     });
 
     currentLocale.set("en");
@@ -212,15 +212,15 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
             emptyStr: "",
             numericVal: 42,
             boolVal: true,
-            objectVal: { a: 1, b: "two" }
-          }
-        }
-      }
+            objectVal: { a: 1, b: "two" },
+          },
+        },
+      },
     });
 
     currentLocale.set("en");
     expect(t("misc.details", { user: "Ada", isActive: true, score: 9.8 })).toBe(
-      "User Ada is active: true, rating: 9.8, missing: {missingVar}"
+      "User Ada is active: true, rating: 9.8, missing: {missingVar}",
     );
 
     expect(t("misc.emptyStr")).toBe("");

@@ -12,9 +12,9 @@ describe("buildRssXml", () => {
           title: "Post 1 & More",
           link: "/blog/post-1",
           pubDate: new Date("2026-01-01T00:00:00Z"),
-          description: "Hello & welcome"
-        }
-      ]
+          description: "Hello & welcome",
+        },
+      ],
     });
 
     expect(xml).toContain('<rss version="2.0"');

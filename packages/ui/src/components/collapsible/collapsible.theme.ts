@@ -5,15 +5,15 @@ export const collapsibleTheme = defineTheme("collapsible", {
   base: {
     root: "w-full",
     trigger: "flex items-center justify-between w-full font-medium transition-all",
-    content: "overflow-hidden transition-all duration-300"
+    content: "overflow-hidden transition-all duration-300",
   },
   variants: {
     open: {
       true: { trigger: "", content: "h-auto" },
-      false: { trigger: "", content: "h-0 invisible" }
-    }
+      false: { trigger: "", content: "h-0 invisible" },
+    },
   },
   defaultVariants: {
-    open: false
-  }
+    open: false,
+  },
 });

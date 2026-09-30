@@ -20,7 +20,7 @@ export const shortcutsTheme = defineTheme("shortcuts", {
     "kbd",
     "empty",
     "footer",
-    "kbdFooter"
+    "kbdFooter",
   ],
   base: {
     root: "relative inline-block",
@@ -46,8 +46,8 @@ export const shortcutsTheme = defineTheme("shortcuts", {
     footer:
       "bg-muted/50 border-t border-default px-5 py-3 flex items-center justify-end text-xs text-muted",
     kbdFooter:
-      "bg-muted border border-default rounded px-1.5 py-0.5 text-[11px] text-muted font-mono ml-1 mr-1"
+      "bg-muted border border-default rounded px-1.5 py-0.5 text-[11px] text-muted font-mono ml-1 mr-1",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

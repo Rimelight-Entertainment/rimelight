@@ -33,29 +33,29 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
         return c.json(
           {
             error: "Too Many Requests",
-            message: "Rate limit exceeded. Please try again later."
+            message: "Rate limit exceeded. Please try again later.",
           },
           429,
           {
-            "Retry-After": String(retry)
-          }
+            "Retry-After": String(retry),
+          },
         );
       }
 
       return new Response(
         JSON.stringify({
           error: "Too Many Requests",
-          message: "Rate limit exceeded. Please try again later."
+          message: "Rate limit exceeded. Please try again later.",
         }),
         {
           status: 429,
           headers: {
             "Content-Type": "application/json",
-            "Retry-After": String(retry)
-          }
-        }
+            "Retry-After": String(retry),
+          },
+        },
       );
-    }
+    },
   } = options;
 
   return async (c: any, next: () => Promise<any>): Promise<any> => {
@@ -66,7 +66,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
       typeof routes === "function"
         ? routes(c)
         : routes.some((route) =>
-            typeof route === "string" ? path.includes(route) : route.test(path)
+            typeof route === "string" ? path.includes(route) : route.test(path),
           );
 
     if (!matchesRoute) {
@@ -90,7 +90,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
       }
       return new Response(JSON.stringify({ error: "Rate limiter not configured" }), {
         status: 500,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -110,7 +110,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
         }
         return new Response(JSON.stringify({ error: "Rate limit check failed" }), {
           status: 500,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
     }

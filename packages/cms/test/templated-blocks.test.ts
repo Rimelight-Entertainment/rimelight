@@ -9,8 +9,8 @@ describe("templated-blocks", () => {
         id: "11111111-1111-4111-8111-111111111111",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "Header" }
-      }
+        props: { title: "Header" },
+      },
     ];
     const incoming: BaseBlock[] = [];
 
@@ -25,28 +25,28 @@ describe("templated-blocks", () => {
         id: "11111111-1111-4111-8111-111111111111",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "First" }
+        props: { title: "First" },
       },
       {
         id: "22222222-2222-4222-8222-222222222222",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "Second" }
-      }
+        props: { title: "Second" },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
         id: "22222222-2222-4222-8222-222222222222",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "Second" }
+        props: { title: "Second" },
       },
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "First" }
-      }
+        props: { title: "First" },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);
@@ -60,8 +60,8 @@ describe("templated-blocks", () => {
         type: "ParagraphBlock",
         isTemplated: true,
         templatedProps: true,
-        props: { text: "Original text" }
-      }
+        props: { text: "Original text" },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
@@ -69,8 +69,8 @@ describe("templated-blocks", () => {
         type: "ParagraphBlock",
         isTemplated: true,
         templatedProps: true,
-        props: { text: "Modified text" }
-      }
+        props: { text: "Modified text" },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);
@@ -87,9 +87,9 @@ describe("templated-blocks", () => {
         templatedProps: ["disclaimer"],
         props: {
           disclaimer: "Official disclaimer",
-          text: "Editable text"
-        }
-      }
+          text: "Editable text",
+        },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
@@ -99,9 +99,9 @@ describe("templated-blocks", () => {
         templatedProps: ["disclaimer"],
         props: {
           disclaimer: "Modified disclaimer",
-          text: "Editable text"
-        }
-      }
+          text: "Editable text",
+        },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);
@@ -118,9 +118,9 @@ describe("templated-blocks", () => {
         templatedProps: ["disclaimer"],
         props: {
           disclaimer: "Official disclaimer",
-          text: "Original text"
-        }
-      }
+          text: "Original text",
+        },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
@@ -130,9 +130,9 @@ describe("templated-blocks", () => {
         templatedProps: ["disclaimer"],
         props: {
           disclaimer: "Official disclaimer",
-          text: "Modified text"
-        }
-      }
+          text: "Modified text",
+        },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);
@@ -145,26 +145,26 @@ describe("templated-blocks", () => {
         id: "11111111-1111-4111-8111-111111111111",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "Header" }
-      }
+        props: { title: "Header" },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
         id: "99999999-9999-4999-8999-999999999999",
         type: "ParagraphBlock",
-        props: { text: "Custom intro" }
+        props: { text: "Custom intro" },
       },
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "SectionBlock",
         isTemplated: true,
-        props: { title: "Header" }
+        props: { title: "Header" },
       },
       {
         id: "88888888-8888-4888-8888-888888888888",
         type: "ParagraphBlock",
-        props: { text: "Custom outro" }
-      }
+        props: { text: "Custom outro" },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);
@@ -176,15 +176,15 @@ describe("templated-blocks", () => {
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "ParagraphBlock",
-        props: { text: "Original" }
-      }
+        props: { text: "Original" },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "ParagraphBlock",
-        props: { text: "Modified" }
-      }
+        props: { text: "Modified" },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);

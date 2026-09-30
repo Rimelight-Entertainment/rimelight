@@ -21,7 +21,7 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
     "trailingSlot",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const labelText = () => props.label ?? "Search";
@@ -31,8 +31,8 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
     dashboardSearchButtonTheme({
       collapsed: props.collapsed ?? false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

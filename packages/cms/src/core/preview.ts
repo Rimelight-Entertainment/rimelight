@@ -9,7 +9,7 @@ async function getCryptoKey(secret: string): Promise<CryptoKey> {
     enc.encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign", "verify"]
+    ["sign", "verify"],
   );
 }
 
@@ -31,7 +31,7 @@ function hexDecode(hex: string): Uint8Array {
 export async function generatePreviewToken(
   pageId: string,
   secret: string,
-  ttlSeconds = 86400
+  ttlSeconds = 86400,
 ): Promise<{ token: string; expiresAt: number }> {
   const expiresAt = Math.floor(Date.now() / 1000) + ttlSeconds;
   const payload = `${pageId}:${expiresAt}`;
@@ -52,7 +52,7 @@ export async function generatePreviewToken(
 export async function verifyPreviewToken(
   pageId: string,
   token: string,
-  secret: string
+  secret: string,
 ): Promise<boolean> {
   try {
     const parts = token.split(".");
@@ -79,7 +79,7 @@ export async function verifyPreviewToken(
       "HMAC",
       key,
       signatureBytes as unknown as BufferSource,
-      enc.encode(payload)
+      enc.encode(payload),
     );
   } catch {
     return false;

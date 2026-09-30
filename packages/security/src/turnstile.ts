@@ -92,7 +92,7 @@ export function getTurnstileSiteKey(env?: any): string | undefined {
 export async function verifyTurnstile(
   tokenOrOptions: string | null | undefined | TurnstileVerifyOptions,
   legacyEnv?: any,
-  legacyRemoteIp?: string
+  legacyRemoteIp?: string,
 ): Promise<TurnstileVerifyResult> {
   const options: TurnstileVerifyOptions =
     typeof tokenOrOptions === "object" && tokenOrOptions !== null
@@ -100,7 +100,7 @@ export async function verifyTurnstile(
       : {
           token: tokenOrOptions,
           env: legacyEnv,
-          remoteIp: legacyRemoteIp
+          remoteIp: legacyRemoteIp,
         };
 
   const failOpen = options.failOpen ?? true;
@@ -129,8 +129,8 @@ export async function verifyTurnstile(
       body: JSON.stringify({
         secret: secretKey,
         response: token,
-        remoteip: options.remoteIp
-      })
+        remoteip: options.remoteIp,
+      }),
     });
 
     if (!response.ok) {
@@ -140,7 +140,7 @@ export async function verifyTurnstile(
       }
       return {
         success: false,
-        error: `Cloudflare Turnstile API returned status ${response.status}`
+        error: `Cloudflare Turnstile API returned status ${response.status}`,
       };
     }
 
@@ -165,7 +165,7 @@ export async function verifyTurnstile(
     }
     return {
       success: false,
-      error: err?.message || "Turnstile verification encountered an exception."
+      error: err?.message || "Turnstile verification encountered an exception.",
     };
   }
 }

@@ -14,7 +14,7 @@ export const TemplatesIndexPage: Component<TemplatesIndexPageProps> = (props) =>
   const base = () => props.basePath ?? "/cms";
   const apiBase = () => props.apiBase ?? "/api/cms";
   const remote = useCmsApi<{ templates: any[] }>(() =>
-    props.initialTemplates ? null : `${apiBase()}/templates`
+    props.initialTemplates ? null : `${apiBase()}/templates`,
   );
   const templates = () => props.initialTemplates ?? remote.data()?.templates ?? [];
 

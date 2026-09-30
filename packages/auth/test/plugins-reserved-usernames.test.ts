@@ -2,7 +2,7 @@ import { describe, it, expect } from "vite-plus/test";
 import {
   normalizeUsername,
   createRestrictedUsernameSet,
-  RESTRICTED_SET
+  RESTRICTED_SET,
 } from "../src/plugins/reserved-usernames/index";
 
 describe("@rimelight/auth reserved-usernames plugin", () => {

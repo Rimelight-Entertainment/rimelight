@@ -14,7 +14,7 @@ export const SignUpPage: Component = () => {
           : "/api/auth/register";
         window.location.href = target;
       }
-    }
+    },
   );
   return (
     <div class="flex items-center justify-center min-h-screen">

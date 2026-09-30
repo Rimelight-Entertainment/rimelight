@@ -12,32 +12,32 @@ export const dashboardSidebarTheme = defineTheme("dashboard-sidebar", {
     toggle: "",
     handle: "",
     content: "lg:hidden",
-    overlay: "lg:hidden"
+    overlay: "lg:hidden",
   },
   variants: {
     menu: {
       true: {
         header: "sm:px-6",
         body: "sm:px-6",
-        footer: "sm:px-6"
-      }
+        footer: "sm:px-6",
+      },
     },
     side: {
       left: {
-        root: "border-e border-default"
+        root: "border-e border-default",
       },
       right: {
-        root: ""
-      }
+        root: "",
+      },
     },
     collapsed: {
       true: {
         root: "w-16 min-w-16 max-w-16 overflow-hidden",
-        body: "overflow-hidden"
-      }
-    }
+        body: "overflow-hidden",
+      },
+    },
   },
   defaultVariants: {
-    side: "left"
-  }
+    side: "left",
+  },
 });

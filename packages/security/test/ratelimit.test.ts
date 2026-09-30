@@ -9,13 +9,13 @@ describe("Rate Limit Middleware", () => {
     const ctx = {
       req: {
         path: "/about",
-        header: () => "1.2.3.4"
+        header: () => "1.2.3.4",
       },
       env: {
         MY_RATE_LIMITER: {
-          limit: limitMock
-        }
-      }
+          limit: limitMock,
+        },
+      },
     };
 
     let nextCalled = false;
@@ -35,13 +35,13 @@ describe("Rate Limit Middleware", () => {
     const ctx = {
       req: {
         path: "/auth/sign-in",
-        header: (name: string) => (name === "CF-Connecting-IP" ? "1.2.3.4" : undefined)
+        header: (name: string) => (name === "CF-Connecting-IP" ? "1.2.3.4" : undefined),
       },
       env: {
         MY_RATE_LIMITER: {
-          limit: limitMock
-        }
-      }
+          limit: limitMock,
+        },
+      },
     };
 
     let nextCalled = false;
@@ -61,20 +61,20 @@ describe("Rate Limit Middleware", () => {
     const jsonMock = vi.fn((data: any, status: number, headers: any) => ({
       data,
       status,
-      headers
+      headers,
     }));
 
     const ctx = {
       req: {
         path: "/api/chat",
-        header: (name: string) => (name === "CF-Connecting-IP" ? "9.9.9.9" : undefined)
+        header: (name: string) => (name === "CF-Connecting-IP" ? "9.9.9.9" : undefined),
       },
       env: {
         MY_RATE_LIMITER: {
-          limit: limitMock
-        }
+          limit: limitMock,
+        },
       },
-      json: jsonMock
+      json: jsonMock,
     };
 
     let nextCalled = false;
@@ -88,10 +88,10 @@ describe("Rate Limit Middleware", () => {
     expect(jsonMock).toHaveBeenCalledWith(
       {
         error: "Too Many Requests",
-        message: "Rate limit exceeded. Please try again later."
+        message: "Rate limit exceeded. Please try again later.",
       },
       429,
-      { "Retry-After": "60" }
+      { "Retry-After": "60" },
     );
   });
 
@@ -100,27 +100,27 @@ describe("Rate Limit Middleware", () => {
       routes: ["/api/custom-endpoint"],
       bindingName: "CUSTOM_LIMITER",
       retryAfter: 120,
-      keyGenerator: (c) => c.req.header("Authorization") || "anonymous"
+      keyGenerator: (c) => c.req.header("Authorization") || "anonymous",
     });
 
     const limitMock = vi.fn().mockResolvedValue({ success: false });
     const jsonMock = vi.fn((data: any, status: number, headers: any) => ({
       data,
       status,
-      headers
+      headers,
     }));
 
     const ctx = {
       req: {
         path: "/api/custom-endpoint",
-        header: (name: string) => (name === "Authorization" ? "Bearer token-123" : undefined)
+        header: (name: string) => (name === "Authorization" ? "Bearer token-123" : undefined),
       },
       env: {
         CUSTOM_LIMITER: {
-          limit: limitMock
-        }
+          limit: limitMock,
+        },
       },
-      json: jsonMock
+      json: jsonMock,
     };
 
     await middleware(ctx, async () => {});
@@ -134,9 +134,9 @@ describe("Rate Limit Middleware", () => {
     const ctx = {
       req: {
         path: "/auth/sign-in",
-        header: () => "1.2.3.4"
+        header: () => "1.2.3.4",
       },
-      env: {}
+      env: {},
     };
 
     let nextCalled = false;
@@ -150,17 +150,17 @@ describe("Rate Limit Middleware", () => {
 
   it("fails closed when fallback is set to block and binding is missing", async () => {
     const middleware = ratelimit({
-      fallback: "block"
+      fallback: "block",
     });
 
     const jsonMock = vi.fn((data: any, status: number) => ({ data, status }));
     const ctx = {
       req: {
         path: "/auth/sign-in",
-        header: () => "1.2.3.4"
+        header: () => "1.2.3.4",
       },
       env: {},
-      json: jsonMock
+      json: jsonMock,
     };
 
     let nextCalled = false;

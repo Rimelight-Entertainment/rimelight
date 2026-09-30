@@ -26,7 +26,7 @@ api.get("/:key{.*}", async (c) => {
   if (!obj) return c.text("Not Found", 404);
 
   return new Response(obj.body, {
-    headers: { "Content-Type": obj.httpMetadata?.contentType || "application/octet-stream" }
+    headers: { "Content-Type": obj.httpMetadata?.contentType || "application/octet-stream" },
   });
 });
 

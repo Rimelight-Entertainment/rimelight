@@ -7,8 +7,8 @@ export const linkGroupTheme = defineTheme("link-group", {
     title: "font-bold text-sm uppercase tracking-wider text-dimmed",
     list: "flex flex-col gap-2",
     item: "",
-    link: "text-sm text-muted hover:text-highlighted transition-colors"
+    link: "text-sm text-muted hover:text-highlighted transition-colors",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

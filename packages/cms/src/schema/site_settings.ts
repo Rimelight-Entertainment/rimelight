@@ -34,7 +34,7 @@ export const siteSettings = pgTable("site_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date())
-    .notNull()
+    .notNull(),
 });
 
 export type SiteSettings = typeof siteSettings.$inferSelect;

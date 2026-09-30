@@ -17,8 +17,8 @@ const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
     fieldGroupTheme({
       size: props["size"] ?? "md",
       ui: props["ui"],
-      class: props["class"]
-    })
+      class: props["class"],
+    }),
   );
 
   return (

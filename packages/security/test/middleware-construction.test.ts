@@ -12,7 +12,7 @@ describe("@rimelight/security construction middleware", () => {
       mode?: boolean | string;
       passphraseVal?: string;
       body?: any;
-    } = {}
+    } = {},
   ) => {
     let redirected: string | null = null;
     let jsonResp: any = null;
@@ -27,11 +27,11 @@ describe("@rimelight/security construction middleware", () => {
         method: options.method || "GET",
         raw: { headers: reqHeaders },
         url: `http://localhost${options.path || "/"}`,
-        json: async () => options.body || {}
+        json: async () => options.body || {},
       },
       env: {
         CONSTRUCTION_MODE: options.mode !== undefined ? options.mode : "true",
-        CONSTRUCTION_PASSPHRASE: options.passphraseVal || passphrase
+        CONSTRUCTION_PASSPHRASE: options.passphraseVal || passphrase,
       },
       redirect: (target: string) => {
         redirected = target;
@@ -42,7 +42,7 @@ describe("@rimelight/security construction middleware", () => {
         return jsonResp;
       },
       getRedirected: () => redirected,
-      getJson: () => jsonResp
+      getJson: () => jsonResp,
     };
   };
 
@@ -70,7 +70,7 @@ describe("@rimelight/security construction middleware", () => {
     for (const path of [
       "/assets/virtual_solid-ssr-entry-client-BZC9SKbh.js",
       "/assets/virtual_solid-ssr-entry-client-Cg2ujBbw.css",
-      "/assets/fonts/inter.woff2"
+      "/assets/fonts/inter.woff2",
     ]) {
       const ctx = createMockContext({ path, mode: "true" });
       const next = vi.fn().mockResolvedValue("next-called");
@@ -89,10 +89,10 @@ describe("@rimelight/security construction middleware", () => {
         path: "/stale-chunk-1234.js",
         method: "GET",
         raw: { headers },
-        url: "http://localhost/"
+        url: "http://localhost/",
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
-      redirect: vi.fn()
+      redirect: vi.fn(),
     };
     const next = vi.fn();
 
@@ -112,13 +112,13 @@ describe("@rimelight/security construction middleware", () => {
         path: "/en/dashboard",
         method: "GET",
         raw: { headers },
-        url: "http://localhost/en/dashboard"
+        url: "http://localhost/en/dashboard",
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
       redirect: (target: string) => {
         redirectedTo = target;
         return { status: 302, headers: { Location: target } };
-      }
+      },
     };
     const next = vi.fn();
 
@@ -142,7 +142,7 @@ describe("@rimelight/security construction middleware", () => {
     const ctx = createMockContext({
       path: "/api/construction-guest",
       method: "POST",
-      body: { passphrase }
+      body: { passphrase },
     });
     const next = vi.fn();
 
@@ -155,7 +155,7 @@ describe("@rimelight/security construction middleware", () => {
     const ctx = createMockContext({
       path: "/api/construction-guest",
       method: "POST",
-      body: { passphrase: "wrong" }
+      body: { passphrase: "wrong" },
     });
     const next = vi.fn();
 
@@ -172,13 +172,13 @@ describe("@rimelight/security construction middleware", () => {
       req: {
         path: "/api/construction-guest",
         method: "POST",
-        json: async () => ({ passphrase })
+        json: async () => ({ passphrase }),
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
       header: (name: string, value: string) => {
         if (name === "Set-Cookie") setCookieVal = value;
       },
-      json: (data: any, status = 200) => ({ data, status })
+      json: (data: any, status = 200) => ({ data, status }),
     };
 
     await middleware(honoCtx, vi.fn());
@@ -192,10 +192,10 @@ describe("@rimelight/security construction middleware", () => {
     const astroCtx = {
       req: { path: "/protected" },
       cookies: {
-        get: (name: string) => (name === CONSTRUCTION_GUEST_COOKIE ? { value: token } : undefined)
+        get: (name: string) => (name === CONSTRUCTION_GUEST_COOKIE ? { value: token } : undefined),
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
-      redirect: vi.fn()
+      redirect: vi.fn(),
     };
     const nextAstro = vi.fn();
     await middleware(astroCtx, nextAstro);
@@ -206,10 +206,10 @@ describe("@rimelight/security construction middleware", () => {
       req: {
         path: "/protected",
         header: (name: string) =>
-          name === "cookie" ? `${CONSTRUCTION_GUEST_COOKIE}=${token}` : undefined
+          name === "cookie" ? `${CONSTRUCTION_GUEST_COOKIE}=${token}` : undefined,
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
-      redirect: vi.fn()
+      redirect: vi.fn(),
     };
     const nextHono = vi.fn();
     await middleware(honoReqCtx, nextHono);
@@ -224,7 +224,7 @@ describe("@rimelight/security construction middleware", () => {
       const ctx = createMockContext({
         path: "/api/construction-guest",
         method: "POST",
-        body: { passphrase: testPass }
+        body: { passphrase: testPass },
       });
       await middleware(ctx, vi.fn());
       expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 });
@@ -245,13 +245,13 @@ describe("@rimelight/security construction middleware", () => {
         method: "POST",
         header: (name: string) =>
           name.toLowerCase() === "content-type" ? "application/x-www-form-urlencoded" : undefined,
-        formData: async () => formData
+        formData: async () => formData,
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
       redirect: (target: string) => {
         redirectedTo = target;
         return { status: 303, headers: { Location: target } };
-      }
+      },
     };
 
     await middleware(formCtx, vi.fn());
@@ -271,13 +271,13 @@ describe("@rimelight/security construction middleware", () => {
         method: "POST",
         header: (name: string) =>
           name.toLowerCase() === "content-type" ? "application/x-www-form-urlencoded" : undefined,
-        formData: async () => formData
+        formData: async () => formData,
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
       redirect: (target: string) => {
         redirectedTo = target;
         return { status: 303, headers: { Location: target } };
-      }
+      },
     };
 
     await middleware(formCtx, vi.fn());

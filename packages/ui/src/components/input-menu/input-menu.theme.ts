@@ -13,7 +13,7 @@ export const inputMenuTheme = defineTheme("input-menu", {
       "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-elevated p-1 text-highlighted shadow-md transition-all w-full mt-1 max-h-60 overflow-y-auto",
     item: "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accented hover:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     itemText: "truncate",
-    itemIcon: "ml-auto size-4"
+    itemIcon: "ml-auto size-4",
   },
   variants: {
     size: {
@@ -22,11 +22,11 @@ export const inputMenuTheme = defineTheme("input-menu", {
       lg: {
         trigger: "h-10 px-4 text-base",
         input: "h-10 text-base",
-        item: "py-2 px-2.5 text-base"
-      }
-    }
+        item: "py-2 px-2.5 text-base",
+      },
+    },
   },
   defaultVariants: {
-    size: "md"
-  }
+    size: "md",
+  },
 });

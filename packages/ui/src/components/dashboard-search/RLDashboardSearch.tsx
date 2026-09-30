@@ -5,7 +5,7 @@ import {
   onSettled,
   Show,
   omit,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { DashboardSearchProps } from "./dashboard-search";
@@ -31,7 +31,7 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
       if (open !== undefined) {
         setIsOpen(open);
       }
-    }
+    },
   );
 
   const setOpenState = (open: boolean) => {
@@ -76,8 +76,8 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
       ui: props.ui,
       class: props.class,
       fullscreen: false,
-      size: "md"
-    })
+      size: "md",
+    }),
   );
 
   return (

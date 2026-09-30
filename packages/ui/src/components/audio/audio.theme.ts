@@ -60,7 +60,7 @@ export const audioTheme = defineTheme("audio", {
     "playlistItemDuration",
     "transcript",
     "transcriptToggle",
-    "transcriptContent"
+    "transcriptContent",
   ],
   base: {
     root: "relative w-full rounded-2xl transition-all select-none overflow-visible",
@@ -142,35 +142,35 @@ export const audioTheme = defineTheme("audio", {
     transcriptToggle:
       "inline-flex items-center gap-1 text-xs font-medium text-toned hover:text-highlighted cursor-pointer transition-colors self-start outline-none focus-visible:underline",
     transcriptContent:
-      "text-xs leading-relaxed text-toned bg-elevated/20 p-3 rounded-lg border border-default/40"
+      "text-xs leading-relaxed text-toned bg-elevated/20 p-3 rounded-lg border border-default/40",
   },
   variants: {
     variant: {
       solid: {
-        root: "bg-inverted text-inverted"
+        root: "bg-inverted text-inverted",
       },
       outline: {
-        root: "bg-default border border-default shadow-xs"
+        root: "bg-default border border-default shadow-xs",
       },
       soft: {
-        root: "bg-elevated/40"
+        root: "bg-elevated/40",
       },
       subtle: {
-        root: "bg-elevated/40 border border-default"
-      }
+        root: "bg-elevated/40 border border-default",
+      },
     },
     orientation: {
       horizontal: {
         header: "flex items-center gap-4 w-full",
-        artwork: "aspect-square shrink-0 rounded-xl"
+        artwork: "aspect-square shrink-0 rounded-xl",
       },
       vertical: {
         header: "flex flex-col items-center gap-4 text-center w-full",
         artwork:
           "w-full !size-auto max-w-xs sm:max-w-sm aspect-square rounded-2xl overflow-hidden shadow-lg border border-default/30",
         details: "items-center text-center w-full",
-        metaBadge: "mx-auto self-center"
-      }
+        metaBadge: "mx-auto self-center",
+      },
     },
     color: "auto",
     size: {
@@ -179,29 +179,29 @@ export const audioTheme = defineTheme("audio", {
         artwork: "size-12",
         title: "text-xs",
         playButton: "size-9",
-        playIcon: "size-4"
+        playIcon: "size-4",
       },
       md: {
         container: "p-5 gap-3.5",
         artwork: "size-16",
         title: "text-sm",
         playButton: "size-11",
-        playIcon: "size-5"
+        playIcon: "size-5",
       },
       lg: {
         container: "p-6 gap-4.5",
         artwork: "size-20",
         title: "text-base",
         playButton: "size-13",
-        playIcon: "size-6"
-      }
-    }
+        playIcon: "size-6",
+      },
+    },
   },
   compoundVariants: [],
   defaultVariants: {
     variant: "outline",
     orientation: "horizontal",
     color: "primary",
-    size: "md"
-  }
+    size: "md",
+  },
 });

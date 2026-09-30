@@ -55,7 +55,7 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
         blockId: newBlock.id,
         type: newBlock.type,
         status: "added",
-        newBlock
+        newBlock,
       });
     } else {
       const oldBlock = oldEntry.block;
@@ -82,7 +82,7 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
           status: "modified",
           oldBlock,
           newBlock,
-          fieldChanges
+          fieldChanges,
         });
       } else {
         diffs.push({
@@ -90,7 +90,7 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
           type: newBlock.type,
           status: "unchanged",
           oldBlock,
-          newBlock
+          newBlock,
         });
       }
     }
@@ -103,7 +103,7 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
         blockId: oldBlock.id,
         type: oldBlock.type,
         status: "removed",
-        oldBlock
+        oldBlock,
       });
     }
   }
@@ -134,12 +134,12 @@ export function diffPageSnapshots(oldSnapshot: any, newSnapshot: any): PageVersi
     addedCount: blockDiffs.filter((d) => d.status === "added").length,
     removedCount: blockDiffs.filter((d) => d.status === "removed").length,
     modifiedCount: blockDiffs.filter((d) => d.status === "modified").length,
-    unchangedCount: blockDiffs.filter((d) => d.status === "unchanged").length
+    unchangedCount: blockDiffs.filter((d) => d.status === "unchanged").length,
   };
 
   return {
     blocks: blockDiffs,
     metaChanges,
-    summary
+    summary,
   };
 }

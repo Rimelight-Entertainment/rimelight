@@ -6,7 +6,7 @@ export { ICONS, svg };
 export const getSvgIcon = (k: string): string => getIconSvg(k) ?? "";
 
 export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = Object.fromEntries(
-  Object.keys(ICONS).map((k) => [k, getSvgIcon(k)])
+  Object.keys(ICONS).map((k) => [k, getSvgIcon(k)]),
 ) as Record<keyof typeof ICONS, string>;
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>;
@@ -27,7 +27,7 @@ export const resolveIcon = (name = "", custom?: string) => {
           ? { isClass: true, content: raw }
           : {
               isClass: false,
-              content: raw.startsWith("<svg") ? raw : raw.startsWith("<") ? svg(raw) : ""
+              content: raw.startsWith("<svg") ? raw : raw.startsWith("<") ? svg(raw) : "",
             };
     cache.set(raw, res);
   }

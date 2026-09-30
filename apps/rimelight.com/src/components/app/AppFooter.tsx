@@ -7,7 +7,7 @@ import {
   RLThemeSelector,
   RLLocaleSelector,
   type RLButtonProps,
-  type RLLinkGroupProps
+  type RLLinkGroupProps,
 } from "@rimelight/ui";
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 import NewsletterSignup from "./NewsletterSignup";
@@ -19,68 +19,68 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app_footer.links_resources_branding"),
-          href: getRelativeLocaleUrl("/branding")
-        }
-      ]
+          href: getRelativeLocaleUrl("/branding"),
+        },
+      ],
     },
     {
       label: t("app_footer.links_legal_label"),
       links: [
         {
           label: t("app_footer.links_legal_terms-of-service"),
-          href: getRelativeLocaleUrl("/legal/terms-of-service")
+          href: getRelativeLocaleUrl("/legal/terms-of-service"),
         },
         {
           label: t("app_footer.links_legal_code-of-conduct"),
-          href: getRelativeLocaleUrl("/legal/code-of-conduct")
+          href: getRelativeLocaleUrl("/legal/code-of-conduct"),
         },
         {
           label: t("app_footer.links_legal_privacy-policy"),
-          href: getRelativeLocaleUrl("/legal/privacy-policy")
+          href: getRelativeLocaleUrl("/legal/privacy-policy"),
         },
         {
           label: t("app_footer.links_legal_cookie-policy"),
-          href: getRelativeLocaleUrl("/legal/cookie-policy")
+          href: getRelativeLocaleUrl("/legal/cookie-policy"),
         },
         {
           label: t("app_footer.links_legal_shipping-policy"),
-          href: getRelativeLocaleUrl("/legal/shipping-policy")
+          href: getRelativeLocaleUrl("/legal/shipping-policy"),
         },
         {
           label: t("app_footer.links_legal_other-documents"),
-          href: getRelativeLocaleUrl("/legal")
-        }
-      ]
-    }
+          href: getRelativeLocaleUrl("/legal"),
+        },
+      ],
+    },
   ];
 
   const socials = (): RLButtonProps[] => [
     {
       leadingIcon: "i-logos-instagram-icon?mask text-white hover:text-primary-500",
-      href: "https://www.instagram.com/idantity.me"
+      href: "https://www.instagram.com/idantity.me",
     },
     {
       leadingIcon: "i-logos-discord-icon?mask text-white hover:text-primary-500",
-      href: "https://discord.com/users/682049695173836979"
+      href: "https://discord.com/users/682049695173836979",
     },
     {
       leadingIcon: "i-logos-spotify-icon?mask text-white hover:text-primary-500",
-      href: "https://open.spotify.com/user/v5m4qoc9j35ccc6nbzqcookvj?si=d795f9bc1cb34222"
+      href: "https://open.spotify.com/user/v5m4qoc9j35ccc6nbzqcookvj?si=d795f9bc1cb34222",
     },
     {
       leadingIcon: "i-logos-github-icon?mask text-white hover:text-primary-500",
-      href: "https://www.github.com/idantitydotme"
+      href: "https://www.github.com/idantitydotme",
     },
     {
       leadingIcon: "i-logos-linkedin-icon?mask text-white hover:text-primary-500",
-      href: "https://www.linkedin.com/daniel-marchi"
-    }
+      href: "https://www.linkedin.com/daniel-marchi",
+    },
   ];
 
   const targetLanguages = () => [
     { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
     { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") },
-    { code: "es", label: "Español", href: getRelativeLocaleUrl("/es") }
+    { code: "es", label: "Español", href: getRelativeLocaleUrl("/es") },
   ];
 
   return (

@@ -53,7 +53,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 
@@ -66,7 +66,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
     componentProps.onPropsChange({
       ...componentProps.props,
       label,
-      value: componentProps.props["value"] || label.toLowerCase().replace(/\s+/g, "-")
+      value: componentProps.props["value"] || label.toLowerCase().replace(/\s+/g, "-"),
     });
   };
 

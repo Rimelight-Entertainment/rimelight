@@ -115,7 +115,7 @@ export const BannerSandbox = (): JSX.Element => {
             hasActions()
               ? [
                   { label: "Documentation", variant: "outline", href: "#docs" },
-                  { label: "Get Started", trailingIcon: "arrow-right" }
+                  { label: "Get Started", trailingIcon: "arrow-right" },
                 ]
               : undefined
           }
@@ -153,7 +153,7 @@ export const bannerAudit: ComponentAuditDefinition = {
             )}
           </For>
         </div>
-      )
+      ),
     },
     {
       id: "actions-and-slots",
@@ -168,7 +168,7 @@ export const bannerAudit: ComponentAuditDefinition = {
             color="secondary"
             actions={[
               { label: "Read Press Release", variant: "solid", href: "#press" },
-              { label: "View Open Roles", variant: "outline", trailingIcon: "arrow-right" }
+              { label: "View Open Roles", variant: "outline", trailingIcon: "arrow-right" },
             ]}
             close
           />
@@ -184,7 +184,7 @@ export const bannerAudit: ComponentAuditDefinition = {
             close
           />
         </div>
-      )
+      ),
     },
     {
       id: "link-mode",
@@ -201,7 +201,7 @@ export const bannerAudit: ComponentAuditDefinition = {
             title="Rimelight Entertainment releases Next-Gen UI toolkit — Click to explore!"
           />
         </div>
-      )
+      ),
     },
     {
       id: "closable-and-persistence",
@@ -218,7 +218,7 @@ export const bannerAudit: ComponentAuditDefinition = {
             close
           />
         </div>
-      )
+      ),
     },
     {
       id: "header-stack-integration",
@@ -235,53 +235,53 @@ export const bannerAudit: ComponentAuditDefinition = {
             actions={[{ label: "Configure Stack", variant: "outline" }]}
           />
         </div>
-      )
-    }
+      ),
+    },
   ],
   checklist: [
     {
       criterion: "Nuxt UI v4 API parity (Banner)",
       status: "pass",
       notes:
-        "Full support for as, id, icon, title, actions, color, close, closeIcon, to, target, rel, ui, class, and onClose."
+        "Full support for as, id, icon, title, actions, color, close, closeIcon, to, target, rel, ui, class, and onClose.",
     },
     {
       criterion: "Slot pattern parity (leading, title, actions, close, left, center, right)",
       status: "pass",
-      notes: "Full Solid JSX slot pattern support for all banner areas."
+      notes: "Full Solid JSX slot pattern support for all banner areas.",
     },
     {
       criterion: "Header Stack & Scroll Integration (Rimelight Exclusive)",
       status: "pass",
       notes:
-        "Seamless integration with useHeaderStack composable (stackIndex, hideOnScroll, sticky, fixed, dynamic top offset calculation)."
+        "Seamless integration with useHeaderStack composable (stackIndex, hideOnScroll, sticky, fixed, dynamic top offset calculation).",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "role='region' or role='link', aria-label automatically derived or forwarded, decorative icons have aria-hidden='true'."
+        "role='region' or role='link', aria-label automatically derived or forwarded, decorative icons have aria-hidden='true'.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
       status: "pass",
       notes:
-        "All CSS classes encapsulated within banner.theme.ts without static inline styles (only dynamic top offset in header stack)."
+        "All CSS classes encapsulated within banner.theme.ts without static inline styles (only dynamic top offset in header stack).",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
       status: "pass",
-      notes: "Pure Solid JSX reactive rendering."
+      notes: "Pure Solid JSX reactive rendering.",
     },
     {
       criterion: "No hydration mismatches",
       status: "pass",
-      notes: "Deterministic dynamic element rendering and SSR safe localStorage reads."
+      notes: "Deterministic dynamic element rendering and SSR safe localStorage reads.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",
       status: "pass",
-      notes: "All scenario renders return bare components directly."
-    }
-  ]
+      notes: "All scenario renders return bare components directly.",
+    },
+  ],
 };

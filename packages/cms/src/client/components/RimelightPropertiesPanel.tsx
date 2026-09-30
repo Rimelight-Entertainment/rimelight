@@ -2,7 +2,7 @@ import { createSignal, onSettled, For, Show, type Component } from "solid-js";
 import {
   getPageDefinition,
   type PageDefinition,
-  type FieldDefinition
+  type FieldDefinition,
 } from "../../core/page-definitions.ts";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
@@ -38,24 +38,24 @@ export interface RimelightPropertiesPanelProps {
 }
 
 export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> = (
-  componentProps
+  componentProps,
 ) => {
   const pageType = () => componentProps.pageType || "blog";
   const definition = (): PageDefinition | null => getPageDefinition(pageType());
 
   const [properties, setProperties] = createSignal<Record<string, any>>(
-    componentProps.initialProperties || {}
+    componentProps.initialProperties || {},
   );
   const [expandedGroups, setExpandedGroups] = createSignal<Record<string, boolean>>({});
   const [arrayInputs, setArrayInputs] = createSignal<Record<string, string>>({});
   const [links, setLinks] = createSignal<Array<{ label: string; to: string; icon?: string }>>(
-    componentProps.initialProperties?.["links"] || []
+    componentProps.initialProperties?.["links"] || [],
   );
 
   // Bylines state
   const [availableBylines, setAvailableBylines] = createSignal<BylineItem[]>([]);
   const [bylines, setBylines] = createSignal<BylineItem[]>(
-    componentProps.bylines || componentProps.initialProperties?.["bylines"] || []
+    componentProps.bylines || componentProps.initialProperties?.["bylines"] || [],
   );
   const [isBylineModalOpen, setIsBylineModalOpen] = createSignal(false);
   const [editingBylineIndex, setEditingBylineIndex] = createSignal<number | null>(null);
@@ -63,7 +63,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     name: "",
     avatar: "",
     role: "",
-    url: ""
+    url: "",
   });
 
   // Taxonomies state
@@ -71,10 +71,10 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     Array<{ id: string; name: string; slug: string }>
   >([]);
   const [selectedCategory, setSelectedCategory] = createSignal<string>(
-    componentProps.initialProperties?.["category"] || ""
+    componentProps.initialProperties?.["category"] || "",
   );
   const [tagsList, setTagsList] = createSignal<string[]>(
-    componentProps.tags || componentProps.initialProperties?.["tags"] || []
+    componentProps.tags || componentProps.initialProperties?.["tags"] || [],
   );
   const [newTagInput, setNewTagInput] = createSignal("");
 
@@ -129,8 +129,8 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                 name: b.name,
                 avatar: b.avatar || "",
                 role: b.bio || "",
-                url: b.websiteUrl || ""
-              }))
+                url: b.websiteUrl || "",
+              })),
             );
           }
         }
@@ -146,7 +146,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     componentProps.onPropertiesChange?.(updated);
     if (typeof document !== "undefined") {
       document.dispatchEvent(
-        new CustomEvent("properties-change", { detail: { properties: updated }, bubbles: true })
+        new CustomEvent("properties-change", { detail: { properties: updated }, bubbles: true }),
       );
     }
     if (typeof window !== "undefined") {
@@ -167,7 +167,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         name: b.name,
         avatar: b.avatar || "",
         role: b.role || "",
-        url: b.url || ""
+        url: b.url || "",
       });
     } else {
       setBylineDraft({ name: "", avatar: "", role: "", url: "" });

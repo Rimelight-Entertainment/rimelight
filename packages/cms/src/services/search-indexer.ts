@@ -9,7 +9,7 @@ export async function indexPageForSearch(
     title: any;
     content: any;
   },
-  locales: string[] = ["en", "pt"]
+  locales: string[] = ["en", "pt"],
 ) {
   if (!db) return;
 
@@ -40,7 +40,7 @@ export async function indexPageForSearch(
 
       const updatePayload: Record<string, any> = {
         titleText,
-        contentText
+        contentText,
       };
       if (hasSearchVector) {
         updatePayload["searchVector"] =
@@ -57,7 +57,7 @@ export async function indexPageForSearch(
           pageId: page.id,
           locale,
           titleText,
-          contentText
+          contentText,
         };
         if (hasSearchVector) {
           insertPayload["searchVector"] =

@@ -14,8 +14,8 @@ const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     colorPickerTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

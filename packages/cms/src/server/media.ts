@@ -10,14 +10,14 @@ export interface MediaRouteContext {
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   });
 }
 
 async function resolveBucket(
   request: Request,
   ctx: MediaRouteContext,
-  bindingName: string
+  bindingName: string,
 ): Promise<any> {
   if (ctx.getBucket) return ctx.getBucket(bindingName);
   const locals = (request as any).locals ?? (ctx as any).locals;
@@ -26,7 +26,7 @@ async function resolveBucket(
 
 async function requireSession(
   request: Request,
-  ctx: MediaRouteContext
+  ctx: MediaRouteContext,
 ): Promise<{ session: any; error?: undefined } | { session?: undefined; error: Response }> {
   if (!ctx.getSession) return { session: { userId: "system" } };
   const session = await ctx.getSession(request);
@@ -56,9 +56,9 @@ export async function handleMediaList(request: Request, ctx: MediaRouteContext =
       return json(
         {
           success: false,
-          error: `Storage binding "${bindingName}" not found in runtime environment. Ensure R2 bucket is configured.`
+          error: `Storage binding "${bindingName}" not found in runtime environment. Ensure R2 bucket is configured.`,
         },
-        500
+        500,
       );
     }
 
@@ -68,13 +68,13 @@ export async function handleMediaList(request: Request, ctx: MediaRouteContext =
       cursor,
       limit,
       publicUrl: ctx.storage?.publicUrl,
-      apiBasePath
+      apiBasePath,
     });
 
     let files = result.files;
     if (search) {
       files = files.filter(
-        (f) => f.name.toLowerCase().includes(search) || f.key.toLowerCase().includes(search)
+        (f) => f.name.toLowerCase().includes(search) || f.key.toLowerCase().includes(search),
       );
     }
     if (typeFilter && typeFilter !== "all") {
@@ -99,8 +99,8 @@ export async function handleMediaList(request: Request, ctx: MediaRouteContext =
         truncated: result.truncated,
         cursor: result.cursor,
         provider: ctx.storage?.provider ?? "r2",
-        binding: bindingName
-      }
+        binding: bindingName,
+      },
     });
   } catch (error: any) {
     return json({ success: false, error: error.message || "Failed to list media files" }, 500);
@@ -128,7 +128,7 @@ export async function handleMediaUpload(request: Request, ctx: MediaRouteContext
     if (!file || !(file instanceof File)) {
       return json(
         { success: false, error: "No file found in form data payload (field name 'file')." },
-        400
+        400,
       );
     }
 
@@ -137,7 +137,7 @@ export async function handleMediaUpload(request: Request, ctx: MediaRouteContext
     const uploaded = await uploadR2File(bucket, file, {
       prefix: ctx.storage?.prefix ?? "media/",
       publicUrl: ctx.storage?.publicUrl,
-      apiBasePath
+      apiBasePath,
     });
 
     return json({ success: true, data: { file: uploaded } }, 201);
@@ -209,31 +209,31 @@ export function registerCmsMediaRoutes(
     delete: (path: string, handler: (c: any) => Promise<Response>) => void;
   },
   basePath: string,
-  ctx: MediaRouteContext = {}
+  ctx: MediaRouteContext = {},
 ) {
   const toHandler =
     (fn: (request: Request, extra?: any) => Promise<Response>) => async (c: any) => {
       const request: Request = c.req?.raw ?? c.request ?? c;
       const params = {
-        key: c.req?.param?.("key") ?? c.params?.["key"]
+        key: c.req?.param?.("key") ?? c.params?.["key"],
       };
       return fn(request, params);
     };
 
   router.get(
     `${basePath}`,
-    toHandler((req) => handleMediaList(req, ctx))
+    toHandler((req) => handleMediaList(req, ctx)),
   );
   router.post(
     `${basePath}`,
-    toHandler((req) => handleMediaUpload(req, ctx))
+    toHandler((req) => handleMediaUpload(req, ctx)),
   );
   router.delete(
     `${basePath}`,
-    toHandler((req) => handleMediaDelete(req, ctx))
+    toHandler((req) => handleMediaDelete(req, ctx)),
   );
   router.get(
     `${basePath}/file/:key`,
-    toHandler((req, params) => handleMediaFile(req, params?.key, ctx))
+    toHandler((req, params) => handleMediaFile(req, params?.key, ctx)),
   );
 }

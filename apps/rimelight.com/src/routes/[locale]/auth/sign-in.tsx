@@ -14,7 +14,7 @@ export const SignInPage: Component = () => {
           : "/api/auth/login";
         window.location.href = target;
       }
-    }
+    },
   );
   return (
     <div class="flex items-center justify-center min-h-screen">

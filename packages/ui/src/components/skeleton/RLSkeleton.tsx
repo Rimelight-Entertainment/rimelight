@@ -12,8 +12,8 @@ const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
     skeletonTheme({
       shape: props.shape ?? "rounded",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return <div class={classes()["root"]} data-slot="root" {...rest} />;

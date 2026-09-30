@@ -8,9 +8,9 @@ export const videoTheme = defineTheme("video", {
     image: "h-full w-full object-cover",
     icon: "absolute inset-0 m-auto h-24 w-24 text-white opacity-75 transition-opacity group-hover:opacity-100",
     iframe: "w-full h-full absolute inset-0 border-0",
-    transcript: "mt-2 text-sm text-muted"
+    transcript: "mt-2 text-sm text-muted",
   },
   variants: {},
   compoundVariants: [],
-  defaultVariants: {}
+  defaultVariants: {},
 });

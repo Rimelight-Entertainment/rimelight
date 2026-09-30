@@ -16,10 +16,10 @@ export const todo = pgTable("todo", {
   completedAt: timestamp("completed_at"),
   isArchived: boolean("is_archived").default(false).notNull(),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export const note = pgTable("note", {
@@ -30,10 +30,10 @@ export const note = pgTable("note", {
   isPinned: boolean("is_pinned").default(false).notNull(),
   isArchived: boolean("is_archived").default(false).notNull(),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export const noteLabel = pgTable("noteLabel", {
@@ -41,10 +41,10 @@ export const noteLabel = pgTable("noteLabel", {
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export const note_noteLabel = pgTable(
@@ -55,9 +55,9 @@ export const note_noteLabel = pgTable(
       .references(() => note.id, { onDelete: "cascade" }),
     labelId: uuid("label_id")
       .notNull()
-      .references(() => noteLabel.id, { onDelete: "cascade" })
+      .references(() => noteLabel.id, { onDelete: "cascade" }),
   },
-  (t) => [primaryKey({ columns: [t.noteId, t.labelId] })]
+  (t) => [primaryKey({ columns: [t.noteId, t.labelId] })],
 );
 
 // ============================================================================
@@ -67,35 +67,35 @@ export const note_noteLabel = pgTable(
 export const noteRelations = relations(note, ({ one, many }) => ({
   user: one(users, {
     fields: [note.userId],
-    references: [users.auth0Id]
+    references: [users.auth0Id],
   }),
-  noteLabels: many(note_noteLabel)
+  noteLabels: many(note_noteLabel),
 }));
 
 export const noteLabelRelations = relations(noteLabel, ({ one, many }) => ({
   user: one(users, {
     fields: [noteLabel.userId],
-    references: [users.auth0Id]
+    references: [users.auth0Id],
   }),
-  noteLabels: many(note_noteLabel)
+  noteLabels: many(note_noteLabel),
 }));
 
 export const note_noteLabelRelations = relations(note_noteLabel, ({ one }) => ({
   note: one(note, {
     fields: [note_noteLabel.noteId],
-    references: [note.id]
+    references: [note.id],
   }),
   label: one(noteLabel, {
     fields: [note_noteLabel.labelId],
-    references: [noteLabel.id]
-  })
+    references: [noteLabel.id],
+  }),
 }));
 
 export const todoRelations = relations(todo, ({ one }) => ({
   user: one(users, {
     fields: [todo.userId],
-    references: [users.auth0Id]
-  })
+    references: [users.auth0Id],
+  }),
 }));
 
 // ============================================================================

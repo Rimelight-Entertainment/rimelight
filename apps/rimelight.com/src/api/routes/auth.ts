@@ -9,7 +9,7 @@ import {
   loginWithAuth0Password,
   refreshAuth0Token,
   mapAuth0PayloadToSession,
-  decodeJwt
+  decodeJwt,
 } from "@rimelight/auth/auth0";
 import { syncAuth0UserToDb } from "#auth/sync-user";
 
@@ -49,7 +49,7 @@ api.get("/login", (c) => {
     audience: auth0Config.audience,
     scope: "openid profile email",
     state,
-    screenHint
+    screenHint,
   });
 
   return c.redirect(authorizeUrl);
@@ -69,7 +69,7 @@ const handleHeadlessLogin = async (c: any) => {
     if (!username || !password) {
       return c.json(
         { error: "Bad Request", message: "Username/email and password are required." },
-        400
+        400,
       );
     }
 
@@ -80,7 +80,7 @@ const handleHeadlessLogin = async (c: any) => {
       username,
       password,
       audience: auth0Config.audience,
-      scope: "openid profile email offline_access"
+      scope: "openid profile email offline_access",
     });
 
     const rawJwt = tokens.id_token || tokens.access_token;
@@ -90,7 +90,7 @@ const handleHeadlessLogin = async (c: any) => {
       rolesClaim: auth0Config.rolesClaim || "https://rimelight.com/roles",
       userTypeClaim: auth0Config.userTypeClaim || "https://rimelight.com/user_type",
       permissionsClaim: auth0Config.permissionsClaim || "permissions",
-      defaultRole: auth0Config.defaultRole || "user"
+      defaultRole: auth0Config.defaultRole || "user",
     });
 
     // Sync user to database
@@ -102,7 +102,7 @@ const handleHeadlessLogin = async (c: any) => {
       refresh_token: tokens.refresh_token,
       token_type: tokens.token_type,
       expires_in: tokens.expires_in,
-      user: session
+      user: session,
     });
   } catch (err: any) {
     console.error("Headless login failed:", err);
@@ -130,7 +130,7 @@ api.post("/refresh", async (c) => {
       domain: auth0Config.domain,
       clientId: auth0Config.clientId || "",
       clientSecret: auth0Config.clientSecret,
-      refreshToken
+      refreshToken,
     });
 
     let session = null;
@@ -140,7 +140,7 @@ api.post("/refresh", async (c) => {
         rolesClaim: auth0Config.rolesClaim || "https://rimelight.com/roles",
         userTypeClaim: auth0Config.userTypeClaim || "https://rimelight.com/user_type",
         permissionsClaim: auth0Config.permissionsClaim || "permissions",
-        defaultRole: auth0Config.defaultRole || "user"
+        defaultRole: auth0Config.defaultRole || "user",
       });
     }
 
@@ -150,13 +150,13 @@ api.post("/refresh", async (c) => {
       refresh_token: tokens.refresh_token || refreshToken,
       token_type: tokens.token_type,
       expires_in: tokens.expires_in,
-      user: session
+      user: session,
     });
   } catch (err: any) {
     console.error("Token refresh failed:", err);
     return c.json(
       { error: "Unauthorized", message: err?.message || "Invalid refresh token." },
-      401
+      401,
     );
   }
 });
@@ -200,7 +200,7 @@ api.get("/callback", async (c) => {
       clientId: auth0Config.clientId || "",
       clientSecret: auth0Config.clientSecret,
       code,
-      redirectUri
+      redirectUri,
     });
 
     // Decode user payload from ID token or Access token
@@ -211,7 +211,7 @@ api.get("/callback", async (c) => {
       rolesClaim: auth0Config.rolesClaim || "https://rimelight.com/roles",
       userTypeClaim: auth0Config.userTypeClaim || "https://rimelight.com/user_type",
       permissionsClaim: auth0Config.permissionsClaim || "permissions",
-      defaultRole: auth0Config.defaultRole || "user"
+      defaultRole: auth0Config.defaultRole || "user",
     });
 
     // Sync profile to database (employees or users table)
@@ -250,7 +250,7 @@ api.get("/logout", (c) => {
     const logoutUrl = createAuth0LogoutUrl({
       domain: auth0Config.domain,
       clientId: auth0Config.clientId,
-      returnTo
+      returnTo,
     });
     return c.redirect(logoutUrl);
   }
@@ -272,8 +272,8 @@ api.get("/session", async (c) => {
       id: session.userId,
       userId: session.userId,
       roles: session.roles,
-      userType: session.userType
-    }
+      userType: session.userType,
+    },
   });
 });
 

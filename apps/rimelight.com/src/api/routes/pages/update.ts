@@ -20,7 +20,7 @@ api.put("/id/:id", async (c) => {
         ...(slug ? { slug } : {}),
         ...(type ? { type } : {}),
         content: { blocks: blocks || [], properties: properties || {} },
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(pages.id, id));
 

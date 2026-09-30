@@ -29,15 +29,15 @@ const api = new Hono().get("/", async (c) => {
           url: searchIndex.url,
           sourceType: searchIndex.sourceType,
           rank: sql<number>`ts_rank(${searchIndex.searchableText}, ${querySql})`,
-          snippet: sql<string>`ts_headline('english', ${searchIndex.bodyContent}, ${querySql}, 'StartSel=<mark>, StopSel=</mark>, MaxWords=20')`
+          snippet: sql<string>`ts_headline('english', ${searchIndex.bodyContent}, ${querySql}, 'StartSel=<mark>, StopSel=</mark>, MaxWords=20')`,
         })
         .from(searchIndex)
         .where(
-          sql`${searchIndex.searchableText} @@ ${querySql} or ${searchIndex.title} ilike ${`%${q}%`}`
+          sql`${searchIndex.searchableText} @@ ${querySql} or ${searchIndex.title} ilike ${`%${q}%`}`,
         )
         .orderBy(
           desc(sql`ts_rank(${searchIndex.searchableText}, ${querySql})`),
-          desc(searchIndex.updatedAt)
+          desc(searchIndex.updatedAt),
         )
         .limit(10);
     } catch (dbErr: any) {
@@ -48,7 +48,7 @@ const api = new Hono().get("/", async (c) => {
           url: searchIndex.url,
           sourceType: searchIndex.sourceType,
           rank: sql<number>`1`,
-          snippet: sql<string>`substring(${searchIndex.bodyContent} from 1 for 150)`
+          snippet: sql<string>`substring(${searchIndex.bodyContent} from 1 for 150)`,
         })
         .from(searchIndex)
         .where(or(like(searchIndex.title, `%${q}%`), like(searchIndex.bodyContent, `%${q}%`)))

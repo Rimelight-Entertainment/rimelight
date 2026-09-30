@@ -14,8 +14,8 @@ const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     contextMenuTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

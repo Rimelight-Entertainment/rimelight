@@ -9,8 +9,8 @@ describe("validateServerBlockPayload", () => {
         id: "11111111-1111-4111-8111-111111111111",
         type: "SectionBlock",
         isTemplated: true,
-        props: {}
-      }
+        props: {},
+      },
     ];
     const incoming: BaseBlock[] = [];
 
@@ -26,8 +26,8 @@ describe("validateServerBlockPayload", () => {
         type: "ParagraphBlock",
         isTemplated: true,
         templatedProps: true,
-        props: { text: "Original" }
-      }
+        props: { text: "Original" },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
@@ -35,8 +35,8 @@ describe("validateServerBlockPayload", () => {
         type: "ParagraphBlock",
         isTemplated: true,
         templatedProps: true,
-        props: { text: "Modified" }
-      }
+        props: { text: "Modified" },
+      },
     ];
 
     const result = validateServerBlockPayload(existing, incoming);
@@ -50,8 +50,8 @@ describe("validateServerBlockPayload", () => {
         id: "22222222-2222-4222-8222-222222222222",
         type: "ParagraphBlock",
         allowedRoles: ["admin"],
-        props: { text: "Admin-only Note" }
-      }
+        props: { text: "Admin-only Note" },
+      },
     ];
     const incoming: BaseBlock[] = [];
     const memberSession = { userId: "m1", roles: ["member"], permissions: [] };
@@ -67,16 +67,16 @@ describe("validateServerBlockPayload", () => {
         id: "22222222-2222-4222-8222-222222222222",
         type: "ParagraphBlock",
         allowedRoles: ["admin"],
-        props: { text: "Admin-only Note" }
-      }
+        props: { text: "Admin-only Note" },
+      },
     ];
     const incoming: BaseBlock[] = [
       {
         id: "22222222-2222-4222-8222-222222222222",
         type: "ParagraphBlock",
         allowedRoles: ["admin"],
-        props: { text: "Updated Admin-only Note" }
-      }
+        props: { text: "Updated Admin-only Note" },
+      },
     ];
     const adminSession = { userId: "a1", roles: ["admin"], permissions: [] };
 

@@ -29,7 +29,7 @@ export function resolveSecurityDomain(value: string | undefined): string | undef
   if (!DOMAIN_PATTERN.test(normalized)) {
     throw new Error(
       `Invalid security domain ${JSON.stringify(value)}: expected a bare host such as ` +
-        `"example.com" (optionally with a port), not a URL or path.`
+        `"example.com" (optionally with a port), not a URL or path.`,
     );
   }
   return normalized;
@@ -48,8 +48,8 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       "data:",
       ...(domain ? [`https://cdn.${domain}`] : []),
       ...allowedDomains,
-      ...(options.imgSrc || [])
-    ])
+      ...(options.imgSrc || []),
+    ]),
   );
 
   const allowTurnstile = options.turnstile === true;
@@ -59,8 +59,8 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       "'self'",
       ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
       ...allowedDomains,
-      ...(options.connectSrc || [])
-    ])
+      ...(options.connectSrc || []),
+    ]),
   );
 
   const frameSources = Array.from(
@@ -68,8 +68,8 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       "'self'",
       ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
       ...allowedDomains,
-      ...(options.frameSrc || [])
-    ])
+      ...(options.frameSrc || []),
+    ]),
   );
 
   const useStrictDynamic = nonce && options.strictDynamic !== false;
@@ -80,8 +80,8 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       ...(nonce ? [`'nonce-${nonce}'`] : []),
       ...(useStrictDynamic ? ["'strict-dynamic'", "https:"] : []),
       "'inline-speculation-rules'",
-      ...(options.scriptResources || [])
-    ])
+      ...(options.scriptResources || []),
+    ]),
   );
 
   const styleSources = Array.from(new Set(["'self'", ...(options.styleResources || [])]));
@@ -100,7 +100,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     "form-action": ["'self'"],
     "object-src": ["'none'"],
     "manifest-src": ["'self'"],
-    "upgrade-insecure-requests": []
+    "upgrade-insecure-requests": [],
   };
 
   if (options.trustedTypes) {

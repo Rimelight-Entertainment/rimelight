@@ -9,14 +9,14 @@ import { pc } from "./prompts";
 function runCommand(cmd: string, args: string[], options: SpawnSyncOptions = {}) {
   return spawnSync(cmd, args, {
     ...options,
-    shell: process.platform === "win32"
+    shell: process.platform === "win32",
   });
 }
 
 const candidateStarterPaths = [
   path.resolve(import.meta.dirname, "../../../apps/starter.rimelight.com"),
   path.resolve(import.meta.dirname, "../../starter"),
-  path.resolve(import.meta.dirname, "../starter")
+  path.resolve(import.meta.dirname, "../starter"),
 ];
 export const starterPath: string =
   candidateStarterPaths.find((p) => existsSync(p)) || candidateStarterPaths[0]!;
@@ -66,7 +66,7 @@ export function toWorkerName(value: string): string {
 export async function updateDomainConfigs(
   resolvedTargetDir: string,
   domain: string,
-  displayProjectName: string
+  displayProjectName: string,
 ): Promise<void> {
   // Without a domain there is nothing to derive a worker name from, so fall back
   // to the project name. The starter domain is left untouched in that case.
@@ -123,7 +123,7 @@ export async function runCreate(options: CreateOptions): Promise<void> {
             return "Directory is not empty";
           }
           return undefined;
-        }
+        },
       });
 
       if (prompts.isCancel(response)) {
@@ -149,7 +149,7 @@ export async function runCreate(options: CreateOptions): Promise<void> {
             return "Please enter a valid domain name (e.g. example.com)";
           }
           return undefined;
-        }
+        },
       });
 
       if (prompts.isCancel(response)) {
@@ -167,8 +167,8 @@ export async function runCreate(options: CreateOptions): Promise<void> {
           message: `Target directory "${targetDir}" is not empty. Overwrite?`,
           options: [
             { value: "cancel", label: "No, cancel scaffolding" },
-            { value: "overwrite", label: "Yes, delete existing files and continue" }
-          ]
+            { value: "overwrite", label: "Yes, delete existing files and continue" },
+          ],
         });
 
         if (prompts.isCancel(overwrite) || overwrite === "cancel") {
@@ -180,8 +180,8 @@ export async function runCreate(options: CreateOptions): Promise<void> {
         spinner.start("Clearing target directory");
         await Promise.all(
           files.map((file) =>
-            fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true })
-          )
+            fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true }),
+          ),
         );
         spinner.stop("Target directory cleared");
       }
@@ -196,9 +196,9 @@ export async function runCreate(options: CreateOptions): Promise<void> {
           { value: "pnpm", label: "pnpm (Recommended)", hint: "Fast, disk space efficient" },
           { value: "npm", label: "npm", hint: "Default package manager" },
           { value: "yarn", label: "yarn", hint: "Classic package manager" },
-          { value: "bun", label: "bun", hint: "Ultra-fast runner & installer" }
+          { value: "bun", label: "bun", hint: "Ultra-fast runner & installer" },
         ],
-        initialValue: "pnpm"
+        initialValue: "pnpm",
       });
 
       if (prompts.isCancel(response)) {
@@ -213,7 +213,7 @@ export async function runCreate(options: CreateOptions): Promise<void> {
     if (initGit === undefined) {
       const response = await prompts.confirm({
         message: "Initialize a new Git repository?",
-        initialValue: true
+        initialValue: true,
       });
 
       if (prompts.isCancel(response)) {
@@ -228,7 +228,7 @@ export async function runCreate(options: CreateOptions): Promise<void> {
     if (installDeps === undefined) {
       const response = await prompts.confirm({
         message: `Install dependencies automatically using ${packageManager}?`,
-        initialValue: true
+        initialValue: true,
       });
 
       if (prompts.isCancel(response)) {
@@ -285,7 +285,7 @@ export async function runCreate(options: CreateOptions): Promise<void> {
 
       const install = runCommand(packageManager, ["install"], {
         cwd: resolvedTargetDir,
-        stdio: "ignore"
+        stdio: "ignore",
       });
 
       if (install.status === 0) {
@@ -293,8 +293,8 @@ export async function runCreate(options: CreateOptions): Promise<void> {
       } else {
         installSpinner.stop(
           pc.red(
-            `✖ Dependency installation failed. Please run "${packageManager} install" manually.`
-          )
+            `✖ Dependency installation failed. Please run "${packageManager} install" manually.`,
+          ),
         );
       }
     }
@@ -326,8 +326,8 @@ export async function runCreate(options: CreateOptions): Promise<void> {
         console.log(pc.yellow(`Target directory is not empty. Overwriting existing files...`));
         await Promise.all(
           files.map((file) =>
-            fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true })
-          )
+            fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true }),
+          ),
         );
       }
     }
@@ -363,13 +363,13 @@ export async function runCreate(options: CreateOptions): Promise<void> {
       console.log(`Installing dependencies using ${packageManager}...`);
       const install = runCommand(packageManager, ["install"], {
         cwd: resolvedTargetDir,
-        stdio: "ignore"
+        stdio: "ignore",
       });
       if (install.status === 0) {
         console.log(pc.green("✔ Dependencies successfully installed!"));
       } else {
         console.log(
-          pc.red(`✖ Dependency installation failed. Run "${packageManager} install" manually.`)
+          pc.red(`✖ Dependency installation failed. Run "${packageManager} install" manually.`),
         );
       }
     }
@@ -459,7 +459,7 @@ const cleanLine = (l: string) => l.trim().replace(/\s+/g, "");
 export function injectIntoLines(
   targetLines: string[],
   starterLines: string[],
-  value: string
+  value: string,
 ): string[] {
   const valueClean = cleanLine(value);
 
@@ -508,7 +508,7 @@ export function injectIntoLines(
 // Reorder target object keys to cleanly match starter template order, preserving custom keys
 export function reorderKeys(
   targetObj: Record<string, any>,
-  starterObj: Record<string, any>
+  starterObj: Record<string, any>,
 ): Record<string, any> {
   const ordered: Record<string, any> = {};
   for (const key of Object.keys(starterObj)) {
@@ -559,7 +559,7 @@ export interface ConfigDiff {
 // Helper to structurally diff JSON/JSONC
 export function getStructuredJsonDiffs(
   starterContent: string,
-  targetContent: string
+  targetContent: string,
 ): ConfigDiff[] {
   const starterObj = parseJsonc(starterContent);
   const targetObj = parseJsonc(targetContent);
@@ -575,7 +575,7 @@ export function getStructuredJsonDiffs(
       diffs.push({
         type: "out_of_order_keys",
         path: prefix || ".",
-        message: `[Out of Order] keys in "${prefix || "root"}" differ from starter order`
+        message: `[Out of Order] keys in "${prefix || "root"}" differ from starter order`,
       });
     }
 
@@ -587,7 +587,7 @@ export function getStructuredJsonDiffs(
           type: "missing",
           path: nestedPath,
           value: val,
-          message: `missing key "${nestedPath}"`
+          message: `missing key "${nestedPath}"`,
         });
       } else if (Array.isArray(val) && Array.isArray(tObj[key])) {
         // Element-level list checking
@@ -601,7 +601,7 @@ export function getStructuredJsonDiffs(
               type: "array_missing",
               path: nestedPath,
               value: item,
-              message: `missing array entry ${itemString} in "${nestedPath}"`
+              message: `missing array entry ${itemString} in "${nestedPath}"`,
             });
           }
         }
@@ -609,10 +609,10 @@ export function getStructuredJsonDiffs(
         // Element ordering checking
         if (!arrayMissing && val.length > 0) {
           const tFiltered = tObj[key].filter((tItem) =>
-            val.some((sItem) => JSON.stringify(sItem) === JSON.stringify(tItem))
+            val.some((sItem) => JSON.stringify(sItem) === JSON.stringify(tItem)),
           );
           const orderDiffers = val.some(
-            (sItem, idx) => JSON.stringify(sItem) !== JSON.stringify(tFiltered[idx])
+            (sItem, idx) => JSON.stringify(sItem) !== JSON.stringify(tFiltered[idx]),
           );
           if (orderDiffers) {
             const reordered = [];
@@ -628,7 +628,7 @@ export function getStructuredJsonDiffs(
               type: "out_of_order_array",
               path: nestedPath,
               value: reordered,
-              message: `[Out of Order] array elements in "${nestedPath}" differ from starter order`
+              message: `[Out of Order] array elements in "${nestedPath}" differ from starter order`,
             });
           }
         }
@@ -645,7 +645,7 @@ export function getStructuredJsonDiffs(
           path: nestedPath,
           value: val,
           currentValue: tObj[key],
-          message: `differing key "${nestedPath}":\n      ├─ Current:   ${JSON.stringify(tObj[key])}\n      └─ Reference: ${JSON.stringify(val)}`
+          message: `differing key "${nestedPath}":\n      ├─ Current:   ${JSON.stringify(tObj[key])}\n      └─ Reference: ${JSON.stringify(val)}`,
         });
       }
     }
@@ -671,7 +671,7 @@ export interface LineDiff {
 export function getStructuredLineDiffs(
   starterContent: string,
   targetContent: string,
-  file: string
+  file: string,
 ): LineDiff[] {
   let normalizedTarget = targetContent;
   let normalizedStarter = starterContent;
@@ -706,7 +706,7 @@ export function getStructuredLineDiffs(
       diffs.push({
         type: "missing_line",
         line,
-        message: `missing config entry: "${line}"`
+        message: `missing config entry: "${line}"`,
       });
     }
   }
@@ -717,7 +717,7 @@ export function getStructuredLineDiffs(
 export function getDiffLines(
   starterContent: string,
   targetContent: string,
-  file: string
+  file: string,
 ): string[] {
   // Parse JSONC config structurally (tsconfig, knip, lunaria, etc.)
   if (file.endsWith(".json") || file.endsWith(".jsonc")) {
@@ -762,7 +762,7 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
     "tsconfig.json",
     "vite.config.ts",
     ".dev.vars.example",
-    "pnpm-workspace.yaml"
+    "pnpm-workspace.yaml",
   ];
 
   let totalDiffs = 0;
@@ -779,13 +779,13 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
       try {
         const [starterContent, targetContent] = await Promise.all([
           fs.readFile(starterFilePath, "utf-8"),
-          fs.readFile(targetFilePath, "utf-8")
+          fs.readFile(targetFilePath, "utf-8"),
         ]);
         return { file, exists: true, starterContent, targetContent };
       } catch (err) {
         return { file, exists: true, error: err };
       }
-    })
+    }),
   );
 
   for (const data of filesData) {
@@ -799,7 +799,7 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
 
     if (error) {
       console.log(
-        `${pc.red("✖")} ${pc.bold(file)}: ${pc.red("ERROR")} (${(error as Error).message})`
+        `${pc.red("✖")} ${pc.bold(file)}: ${pc.red("ERROR")} (${(error as Error).message})`,
       );
       totalDiffs++;
       continue;
@@ -818,14 +818,14 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
         // Engines Node
         if (starterPkg.engines?.node !== targetPkg.engines?.node) {
           pkgDiffs.push(
-            `engines.node:\n    ├─ Current:   "${targetPkg.engines?.node || ""}"\n    └─ Reference: "${starterPkg.engines?.node || ""}"`
+            `engines.node:\n    ├─ Current:   "${targetPkg.engines?.node || ""}"\n    └─ Reference: "${starterPkg.engines?.node || ""}"`,
           );
         }
 
         // Package Manager
         if (starterPkg.packageManager !== targetPkg.packageManager) {
           pkgDiffs.push(
-            `packageManager:\n    ├─ Current:   "${targetPkg.packageManager || ""}"\n    └─ Reference: "${starterPkg.packageManager || ""}"`
+            `packageManager:\n    ├─ Current:   "${targetPkg.packageManager || ""}"\n    └─ Reference: "${starterPkg.packageManager || ""}"`,
           );
         }
 
@@ -835,7 +835,7 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
             pkgDiffs.push(`missing script "${key}":\n    └─ Reference: "${val}"`);
           } else if (targetPkg.scripts[key] !== val) {
             pkgDiffs.push(
-              `differing script "${key}":\n    ├─ Current:   "${targetPkg.scripts[key]}"\n    └─ Reference: "${val}"`
+              `differing script "${key}":\n    ├─ Current:   "${targetPkg.scripts[key]}"\n    └─ Reference: "${val}"`,
             );
           }
         }
@@ -848,7 +848,7 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
             pkgDiffs.push(`missing dependency "${key}":\n    └─ Reference: "${val}"`);
           } else if (targetPkg.dependencies[key] !== val) {
             pkgDiffs.push(
-              `differing dependency "${key}":\n    ├─ Current:   "${targetPkg.dependencies[key]}"\n    └─ Reference: "${val}"`
+              `differing dependency "${key}":\n    ├─ Current:   "${targetPkg.dependencies[key]}"\n    └─ Reference: "${val}"`,
             );
           }
         }
@@ -861,7 +861,7 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
             pkgDiffs.push(`missing devDependency "${key}":\n    └─ Reference: "${val}"`);
           } else if (targetPkg.devDependencies[key] !== val) {
             pkgDiffs.push(
-              `differing devDependency "${key}":\n    ├─ Current:   "${targetPkg.devDependencies[key]}"\n    └─ Reference: "${val}"`
+              `differing devDependency "${key}":\n    ├─ Current:   "${targetPkg.devDependencies[key]}"\n    └─ Reference: "${val}"`,
             );
           }
         }
@@ -877,7 +877,7 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
         }
       } catch (err) {
         console.log(
-          `${pc.red("✖")} ${pc.bold(file)}: ${pc.red("INVALID JSON")} (${(err as Error).message})`
+          `${pc.red("✖")} ${pc.bold(file)}: ${pc.red("INVALID JSON")} (${(err as Error).message})`,
         );
         totalDiffs++;
       }
@@ -900,8 +900,8 @@ export async function runCompare(options: { targetDir: string }): Promise<void> 
   if (totalDiffs > 0) {
     console.log(
       pc.yellow(
-        `Found ${totalDiffs} differences. Run "rimelight update [path]" to standardize them.`
-      )
+        `Found ${totalDiffs} differences. Run "rimelight update [path]" to standardize them.`,
+      ),
     );
   } else {
     console.log(pc.green("✔ All configuration files are up to date with the starter template!"));
@@ -934,7 +934,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
     "pnpm-workspace.yaml",
     "cloudflare.config.ts",
     "drizzle.config.ts",
-    ".dev.vars.example"
+    ".dev.vars.example",
   ];
 
   const pendingWrites: Array<{ filePath: string; content: string; actionDescription: string }> = []; // Accumulate in-memory changes: { filePath, content, actionDescription }
@@ -946,15 +946,15 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
 
     const preReadStarter = await Promise.all(
       files.map((file, i) =>
-        starterExists[i] ? fs.readFile(path.join(starterPath, file), "utf-8") : Promise.resolve("")
-      )
+        starterExists[i] ? fs.readFile(path.join(starterPath, file), "utf-8") : Promise.resolve(""),
+      ),
     );
     const preReadTarget = await Promise.all(
       files.map((file, i) =>
         starterExists[i] && targetExists[i]
           ? fs.readFile(path.join(targetDir, file), "utf-8")
-          : Promise.resolve("")
-      )
+          : Promise.resolve(""),
+      ),
     );
 
     // Pre-read package.json files
@@ -964,7 +964,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
 
     const [starterPkgContent, targetPkgContent] = await Promise.all([
       fs.readFile(starterPkgPath, "utf-8").catch(() => "{}"),
-      targetPkgExists ? fs.readFile(targetPkgPath, "utf-8") : Promise.resolve("{}")
+      targetPkgExists ? fs.readFile(targetPkgPath, "utf-8") : Promise.resolve("{}"),
     ]);
 
     const starterPkg = JSON.parse(starterPkgContent);
@@ -974,7 +974,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
     const handleJsonDiff = async (
       currentTargetContent: string,
       starterContent: string,
-      file: string
+      file: string,
     ): Promise<string> => {
       let diffs: ConfigDiff[] = [];
       try {
@@ -996,9 +996,9 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
           message: `Select keys to update in ${file} (Select none to finish):`,
           options: diffs.map((diff) => ({
             value: diff.message,
-            label: diff.message
+            label: diff.message,
           })),
-          required: false
+          required: false,
         });
 
         if (prompts.isCancel(selection)) {
@@ -1036,7 +1036,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
 
       const nextContent = JSON.stringify(targetObj, null, 2);
       console.log(
-        pc.green(`✔ Staged ${selectedDiffMessages.length} updates for "${file}" in memory.\n`)
+        pc.green(`✔ Staged ${selectedDiffMessages.length} updates for "${file}" in memory.\n`),
       );
 
       if (!isInteractive) return nextContent;
@@ -1046,7 +1046,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
     const handleLineDiff = async (
       currentTargetContent: string,
       starterContent: string,
-      file: string
+      file: string,
     ): Promise<string> => {
       const diffs = getStructuredLineDiffs(starterContent, currentTargetContent, file);
       if (diffs.length === 0) return currentTargetContent;
@@ -1062,9 +1062,9 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
           message: `Select entries to add to ${file} (Select none to finish):`,
           options: diffs.map((diff) => ({
             value: diff.line,
-            label: diff.line
+            label: diff.line,
           })),
-          required: false
+          required: false,
         });
 
         if (prompts.isCancel(selection)) {
@@ -1114,7 +1114,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
           if (isInteractive) {
             shouldCreate = await prompts.confirm({
               message: `Create missing file "${file}" from starter template?`,
-              initialValue: true
+              initialValue: true,
             });
             if (prompts.isCancel(shouldCreate)) {
               prompts.cancel("Update cancelled.");
@@ -1125,7 +1125,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             pendingWrites.push({
               filePath: targetFilePath,
               content: preReadStarter[index]!,
-              actionDescription: `Create missing file "${file}"`
+              actionDescription: `Create missing file "${file}"`,
             });
             console.log(pc.green(`✔ Scheduled creation of "${file}".`));
           } else {
@@ -1145,7 +1145,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             pendingWrites.push({
               filePath: targetFilePath,
               content: finalContent,
-              actionDescription: `Standardize JSON structures in "${file}"`
+              actionDescription: `Standardize JSON structures in "${file}"`,
             });
             console.log(pc.green(`✔ Scheduled batch updates for "${file}".`));
           }
@@ -1162,7 +1162,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             pendingWrites.push({
               filePath: targetFilePath,
               content: finalContent,
-              actionDescription: `Standardize entry list in "${file}"`
+              actionDescription: `Standardize entry list in "${file}"`,
             });
             console.log(pc.green(`✔ Scheduled batch updates for "${file}".`));
           }
@@ -1181,7 +1181,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
       if (starterPkg.engines?.node !== targetPkg.engines?.node) {
         pkgOptions.push({
           value: { type: "engines", key: "node", value: starterPkg.engines.node },
-          label: `Update engines.node: "${starterPkg.engines.node}" (Current: "${targetPkg.engines?.node || ""}")`
+          label: `Update engines.node: "${starterPkg.engines.node}" (Current: "${targetPkg.engines?.node || ""}")`,
         });
       }
 
@@ -1189,7 +1189,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
       if (starterPkg.packageManager !== targetPkg.packageManager) {
         pkgOptions.push({
           value: { type: "packageManager", value: starterPkg.packageManager },
-          label: `Update packageManager: "${starterPkg.packageManager}" (Current: "${targetPkg.packageManager || ""}")`
+          label: `Update packageManager: "${starterPkg.packageManager}" (Current: "${targetPkg.packageManager || ""}")`,
         });
       }
 
@@ -1202,7 +1202,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             value: { type: "scripts", key, value: val },
             label: isMissing
               ? `Add script "${key}": "${val}"`
-              : `Update script "${key}": "${val}" (Current: "${targetPkg.scripts[key]}")`
+              : `Update script "${key}": "${val}" (Current: "${targetPkg.scripts[key]}")`,
           });
         }
       }
@@ -1218,7 +1218,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             value: { type: "dependencies", key, value: val },
             label: isMissing
               ? `Add dependency "${key}": "${val}"`
-              : `Update dependency "${key}": "${val}" (Current: "${targetPkg.dependencies[key]}")`
+              : `Update dependency "${key}": "${val}" (Current: "${targetPkg.dependencies[key]}")`,
           });
         }
       }
@@ -1234,7 +1234,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             value: { type: "devDependencies", key, value: val },
             label: isMissing
               ? `Add devDependency "${key}": "${val}"`
-              : `Update devDependency "${key}": "${val}" (Current: "${targetPkg.devDependencies[key]}")`
+              : `Update devDependency "${key}": "${val}" (Current: "${targetPkg.devDependencies[key]}")`,
           });
         }
       }
@@ -1247,7 +1247,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
           const selection = await prompts.multiselect({
             message: "Select updates to apply to package.json:",
             options: pkgOptions,
-            required: false
+            required: false,
           });
 
           if (prompts.isCancel(selection)) {
@@ -1275,7 +1275,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             const orderedScripts: Record<string, any> = {};
             const allScriptKeys = new Set([
               ...Object.keys(starterPkg.scripts || {}),
-              ...Object.keys(targetPkg.scripts || {})
+              ...Object.keys(targetPkg.scripts || {}),
             ]);
             const standardOrder = [
               "prepare",
@@ -1287,7 +1287,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
               "preview",
               "db:generate",
               "db:migrate",
-              "db:migrate:remote"
+              "db:migrate:remote",
             ];
             for (const key of standardOrder) {
               if (allScriptKeys.has(key)) {
@@ -1303,7 +1303,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
             pendingWrites.push({
               filePath: targetPkgPath,
               content: JSON.stringify(targetPkg, null, 2),
-              actionDescription: `Standardize ${selectedOpts.length} entries in "package.json"`
+              actionDescription: `Standardize ${selectedOpts.length} entries in "package.json"`,
             });
             console.log(pc.green('✔ Scheduled updates for "package.json".'));
           }
@@ -1327,7 +1327,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
       if (isInteractive) {
         confirmApply = await prompts.confirm({
           message: `Apply all ${pendingWrites.length} scheduled changes to disk? (Files will not be modified if cancelled)`,
-          initialValue: true
+          initialValue: true,
         });
 
         if (prompts.isCancel(confirmApply) || !confirmApply) {
@@ -1340,7 +1340,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
         const writeSpinner = prompts.spinner();
         writeSpinner.start("Writing changes to configuration files...");
         await Promise.all(
-          pendingWrites.map((item) => fs.writeFile(item.filePath, item.content, "utf-8"))
+          pendingWrites.map((item) => fs.writeFile(item.filePath, item.content, "utf-8")),
         );
         writeSpinner.stop(pc.green(`✔ Successfully wrote ${pendingWrites.length} files to disk!`));
       }
@@ -1354,7 +1354,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
     if (isInteractive) {
       runInstall = await prompts.confirm({
         message: "Run 'vp install' now?",
-        initialValue: true
+        initialValue: true,
       });
       if (prompts.isCancel(runInstall)) {
         process.exit(0);
@@ -1369,7 +1369,7 @@ export async function runUpdate(options: { targetDir: string }): Promise<void> {
         runVpInstall.stop(pc.green("✔ vp install completed successfully!"));
       } else {
         runVpInstall.stop(
-          pc.yellow("⚠ vp install failed. Please run it manually in the directory.")
+          pc.yellow("⚠ vp install failed. Please run it manually in the directory."),
         );
       }
     }

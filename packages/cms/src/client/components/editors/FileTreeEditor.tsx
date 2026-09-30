@@ -12,7 +12,7 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
   const tree = (): FileTreeNode[] =>
     componentProps.props["tree"] || [
       { name: "src", isDir: true, children: [{ name: "index.ts", isDir: false }] },
-      { name: "package.json", isDir: false }
+      { name: "package.json", isDir: false },
     ];
 
   onSettled(() => {
@@ -27,7 +27,7 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
       if (Array.isArray(parsed)) {
         componentProps.onPropsChange({
           ...componentProps.props,
-          tree: parsed
+          tree: parsed,
         });
       }
     } catch {

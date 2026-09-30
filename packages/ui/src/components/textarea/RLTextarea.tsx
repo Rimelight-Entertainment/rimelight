@@ -33,7 +33,7 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
     "onBlur",
     "onFocus",
     "onKeyDown",
-    "ref"
+    "ref",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -41,8 +41,8 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
       size: props.size ?? "md",
       error: !!props.error,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

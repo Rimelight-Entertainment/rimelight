@@ -17,8 +17,8 @@ const RLGrid: Component<RLGridProps> = (allProps) => {
       gap: props.gap ?? "md",
       stagger: props.stagger ?? false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

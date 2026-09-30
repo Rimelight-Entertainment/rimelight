@@ -14,8 +14,8 @@ const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
   const classes = createMemo(() =>
     spoilerTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

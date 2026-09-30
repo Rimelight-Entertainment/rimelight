@@ -4,8 +4,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLAudio } from "../src/components/audio/RLAudio";
@@ -21,7 +21,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
     duration: 184,
     format: "MP3",
     fileSize: "4.2 MB",
-    bitrate: "320 kbps"
+    bitrate: "320 kbps",
   };
 
   const samplePlaylist = [
@@ -34,14 +34,14 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
         "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80",
       duration: 215,
       format: "WAV",
-      fileSize: "36.2 MB"
+      fileSize: "36.2 MB",
     },
     {
       src: "https://example.com/audio/track3.mp3",
       title: "Solar Winds",
       description: "Deep space ambient",
-      duration: 152
-    }
+      duration: 152,
+    },
   ];
 
   describe("Core Track & Layout Rendering", () => {
@@ -49,7 +49,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         showVolume: true,
-        showSpeed: true
+        showSpeed: true,
       });
 
       expect(html).toContain("Echoes of Eternity");
@@ -62,7 +62,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
     it("renders artwork with 1:1 aspect ratio and object-cover", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
-        artworkZoomable: false
+        artworkZoomable: false,
       });
 
       expect(html).toContain('data-slot="artwork"');
@@ -73,7 +73,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
 
     it("renders metadata badge with format, file size, and bitrate", () => {
       const html = renderSolid(RLAudio, {
-        ...sampleTrack
+        ...sampleTrack,
       });
 
       expect(html).toContain('data-slot="meta-badge"');
@@ -92,7 +92,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       it(`renders orientation=${orientation}`, () => {
         const html = renderSolid(RLAudio, {
           ...sampleTrack,
-          orientation
+          orientation,
         });
         expect(html).toContain('data-slot="root"');
         expect(html).toContain(sampleTrack.title);
@@ -105,7 +105,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
           const html = renderSolid(RLAudio, {
             ...sampleTrack,
             variant,
-            size
+            size,
           });
           expect(html).toContain('data-slot="root"');
           expect(html).toContain('data-slot="play-button"');
@@ -119,7 +119,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         progressVariant: "bar",
-        progressColor: "primary"
+        progressColor: "primary",
       });
 
       expect(html).toContain('data-slot="progress-track"');
@@ -133,7 +133,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         progressVariant: "waveform",
-        progressColor: "success"
+        progressColor: "success",
       });
 
       expect(html).toContain('data-slot="waveform-container"');
@@ -149,7 +149,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
         ...sampleTrack,
         showVolume: true,
         showVolumeNumber: true,
-        volume: 0.75
+        volume: 0.75,
       });
 
       expect(html).toContain('data-slot="volume-container"');
@@ -165,7 +165,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         showSkip: true,
-        skipSeconds: 15
+        skipSeconds: 15,
       });
 
       expect(html).toContain('data-slot="skip-button-back"');
@@ -178,7 +178,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         showRepeat: true,
-        repeatMode: "all"
+        repeatMode: "all",
       });
 
       expect(html).toContain('data-slot="repeat-button"');
@@ -189,7 +189,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         showSpeed: true,
-        playbackRate: 1.5
+        playbackRate: 1.5,
       });
 
       expect(html).toContain('data-slot="speed-container"');
@@ -202,7 +202,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
     it("renders multi-track playlist list with active track highlight and next/prev buttons", () => {
       const html = renderSolid(RLAudio, {
         playlist: samplePlaylist,
-        showPlaylist: true
+        showPlaylist: true,
       });
 
       expect(html).toContain('data-slot="playlist-container"');
@@ -222,7 +222,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         showDownload: true,
-        showExternalLink: true
+        showExternalLink: true,
       });
 
       expect(html).toContain('data-slot="download-button"');
@@ -235,7 +235,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       const transcriptText = "This is a full transcript of the audio recording.";
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
-        transcript: transcriptText
+        transcript: transcriptText,
       });
 
       expect(html).toContain('data-slot="transcript"');

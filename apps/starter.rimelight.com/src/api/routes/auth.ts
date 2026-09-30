@@ -9,7 +9,7 @@ const api = new Hono()
     }
     return c.json({
       user: session,
-      session: { id: session.userId, userId: session.userId }
+      session: { id: session.userId, userId: session.userId },
     });
   })
   .get("/me", async (c) => {

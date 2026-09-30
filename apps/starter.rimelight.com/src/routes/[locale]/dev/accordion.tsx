@@ -9,20 +9,20 @@ const standardItems: AccordionItem[] = [
     label: "Getting Started with Rimelight",
     icon: "i-lucide-rocket",
     content:
-      "Rimelight provides pre-built components designed for high performance, zero-runtime overhead, and full accessibility."
+      "Rimelight provides pre-built components designed for high performance, zero-runtime overhead, and full accessibility.",
   },
   {
     label: "Is SSR supported out of the box?",
     icon: "i-lucide-server",
     content:
-      "Yes! RLAccordion renders semantic HTML5 <details> and <summary> elements which work seamlessly on the server and client with zero JS required for basic toggling."
+      "Yes! RLAccordion renders semantic HTML5 <details> and <summary> elements which work seamlessly on the server and client with zero JS required for basic toggling.",
   },
   {
     label: "Can I customize styling?",
     icon: "i-lucide-palette",
     content:
-      "You can pass custom classes via the `class` prop or target individual internal slots with the `ui` prop."
-  }
+      "You can pass custom classes via the `class` prop or target individual internal slots with the `ui` prop.",
+  },
 ];
 
 const iconItems: AccordionItem[] = [
@@ -30,39 +30,39 @@ const iconItems: AccordionItem[] = [
     label: "Account Security & 2FA",
     icon: "i-lucide-shield-check",
     trailingIcon: "i-lucide-lock",
-    content: "Configure multi-factor authentication, security keys, and active login sessions."
+    content: "Configure multi-factor authentication, security keys, and active login sessions.",
   },
   {
     label: "Billing & Subscriptions",
     icon: "i-lucide-credit-card",
     trailingIcon: "i-lucide-external-link",
-    content: "Manage payment methods, invoices, and active tier subscriptions."
+    content: "Manage payment methods, invoices, and active tier subscriptions.",
   },
   {
     label: "Notification Preferences",
     icon: "i-lucide-bell",
     trailingIcon: "i-lucide-sliders",
-    content: "Set push, email, and SMS alert preferences."
-  }
+    content: "Set push, email, and SMS alert preferences.",
+  },
 ];
 
 const mixedDisabledItems: AccordionItem[] = [
   {
     label: "Active Item 1",
     icon: "i-lucide-check-circle",
-    content: "This item is active and can be expanded or collapsed freely."
+    content: "This item is active and can be expanded or collapsed freely.",
   },
   {
     label: "Disabled Item 2 (disabled: true)",
     icon: "i-lucide-ban",
     disabled: true,
-    content: "This content should not be accessible via click."
+    content: "This content should not be accessible via click.",
   },
   {
     label: "Active Item 3",
     icon: "i-lucide-check-circle",
-    content: "Another normal active item to verify grouping behavior around disabled items."
-  }
+    content: "Another normal active item to verify grouping behavior around disabled items.",
+  },
 ];
 
 export const DevAccordionPage: Component = () => {

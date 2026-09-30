@@ -44,7 +44,7 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
         return [];
       }
     },
-    []
+    [],
   );
 
   const changelogLoading = () => changelogData() === undefined;

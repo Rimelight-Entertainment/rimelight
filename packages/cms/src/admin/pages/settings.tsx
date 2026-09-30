@@ -12,7 +12,7 @@ export interface SettingsPageProps {
 export const SettingsPage: Component<SettingsPageProps> = (props) => {
   const apiBase = () => props.apiBase ?? "/api/cms";
   const remote = useCmsApi<{ settings: any }>(() =>
-    props.initialSettings ? null : `${apiBase()}/settings`
+    props.initialSettings ? null : `${apiBase()}/settings`,
   );
   const settings = () => props.initialSettings ?? remote.data()?.settings ?? {};
 
@@ -42,7 +42,7 @@ export const SettingsPage: Component<SettingsPageProps> = (props) => {
       const res = await fetch(`${apiBase()}/settings`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name(), description: description(), url: url() })
+        body: JSON.stringify({ name: name(), description: description(), url: url() }),
       });
       if (!res.ok) throw new Error(`Save failed (${res.status})`);
       setStatus("Settings saved");

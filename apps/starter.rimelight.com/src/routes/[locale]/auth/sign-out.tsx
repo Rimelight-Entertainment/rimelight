@@ -7,7 +7,7 @@ export const SignOutPage: Component = () => {
       if (typeof window !== "undefined") {
         window.location.href = "/";
       }
-    }
+    },
   );
   return null;
 };

@@ -16,7 +16,7 @@ import type { FromJsxOptions } from "@takumi-rs/helpers/jsx";
 import type {
   ImagesInput,
   Renderer as WasmRenderer,
-  RenderOptions as WasmRenderOptions
+  RenderOptions as WasmRenderOptions,
 } from "@takumi-rs/wasm";
 
 /**
@@ -81,7 +81,7 @@ async function getRenderer(): Promise<WasmRenderer> {
 
     // Same call `takumi-js` makes; `undefined` keeps self-initialized backends as-is.
     await wasm.default(
-      (input ? { module_or_path: input } : undefined) as Parameters<typeof wasm.default>[0]
+      (input ? { module_or_path: input } : undefined) as Parameters<typeof wasm.default>[0],
     );
     return new wasm.Renderer();
   })().catch((error: unknown) => {
@@ -103,7 +103,7 @@ function isTakumiNode(element: unknown): element is Node {
  */
 export async function renderTakumi(
   element: TakumiInput,
-  options: TakumiRenderOptions = {}
+  options: TakumiRenderOptions = {},
 ): Promise<Uint8Array> {
   options.signal?.throwIfAborted();
   const renderer = await getRenderer();
@@ -154,7 +154,7 @@ export async function renderTakumi(
   const images: ImagesInput = cache
     ? prepared.map((image) => ({
         ...image,
-        cache: ("cache" in image ? image.cache : undefined) ?? cache
+        cache: ("cache" in image ? image.cache : undefined) ?? cache,
       }))
     : prepared;
 
@@ -164,6 +164,6 @@ export async function renderTakumi(
   return renderer.render(node, {
     ...forward,
     images,
-    css: [...(css !== undefined ? (Array.isArray(css) ? css : [css]) : []), ...extractedCss]
+    css: [...(css !== undefined ? (Array.isArray(css) ? css : [css]) : []), ...extractedCss],
   });
 }

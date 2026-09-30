@@ -30,14 +30,14 @@ export interface AuthClient<TUser = UserSessionContext> {
  * Universal browser-side Auth Client factory.
  */
 export function createAuthClient<TUser = UserSessionContext>(
-  options: AuthClientOptions = {}
+  options: AuthClientOptions = {},
 ): AuthClient<TUser> {
   const {
     sessionEndpoint = "/api/auth/session",
     meEndpoint = "/api/auth/me",
     loginEndpoint = "/api/auth/login",
     logoutEndpoint = "/api/auth/logout",
-    fetch: customFetch = typeof fetch !== "undefined" ? fetch : undefined
+    fetch: customFetch = typeof fetch !== "undefined" ? fetch : undefined,
   } = options;
 
   return {
@@ -90,7 +90,7 @@ export function createAuthClient<TUser = UserSessionContext>(
       const url = new URL(logoutEndpoint, window.location.origin);
       url.searchParams.set("returnTo", returnTo);
       window.location.href = url.toString();
-    }
+    },
   };
 }
 

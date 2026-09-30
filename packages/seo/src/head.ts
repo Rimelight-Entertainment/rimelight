@@ -7,7 +7,7 @@ import {
   buildRobotsMetaContent,
   buildSafeDescription,
   buildWebSiteSchema,
-  deepMerge
+  deepMerge,
 } from "./meta.js";
 import { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js";
 import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize.js";
@@ -183,17 +183,17 @@ const DEFAULT_SITE_CONFIG: SiteConfig = {
   email: "support@rimelight.com",
   branding: {
     logo: {
-      alt: "Rimelight Logo"
+      alt: "Rimelight Logo",
     },
     colors: {
       themeColor: "#ffffff",
-      backgroundColor: "#0a0a0a"
-    }
+      backgroundColor: "#0a0a0a",
+    },
   },
   seo: {
     titleTemplate: "%s | Rimelight",
-    maxDescriptionLength: 160
-  }
+    maxDescriptionLength: 160,
+  },
 };
 
 /**
@@ -226,7 +226,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     twitterCard,
     openGraph,
     twitter,
-    nonce
+    nonce,
   } = props;
 
   const config: SiteConfig = deepMerge(DEFAULT_SITE_CONFIG, baseConfig || {}, propsConfig || {});
@@ -267,7 +267,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     siteName,
     titleTemplate,
     ...(is404 !== undefined && { is404 }),
-    ...(absolute !== undefined && { absolute })
+    ...(absolute !== undefined && { absolute }),
   }).slice(0, 200);
 
   const finalDescription = description || siteDescription;
@@ -278,7 +278,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   const defaultDynamicOg = buildDefaultOgImageUrl({
     title,
     description: finalDescription,
-    siteName
+    siteName,
   });
   const ogImageFallback = config.seo?.ogImageFallback || config.ogImage || defaultDynamicOg;
 
@@ -315,7 +315,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   const robotsContent = buildRobotsMetaContent({
     noindex,
     is404,
-    ...(robots !== undefined && { override: robots })
+    ...(robots !== undefined && { override: robots }),
   });
 
   // Deep-merged OpenGraph
@@ -326,10 +326,10 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     title: title || siteName,
     ...(safeDescription && { description: safeDescription }),
     ...(absoluteOgImage && {
-      images: [{ src: absoluteOgImage, alt: finalOgImage?.alt || siteName }]
+      images: [{ src: absoluteOgImage, alt: finalOgImage?.alt || siteName }],
     }),
     siteName,
-    ...config.openGraph
+    ...config.openGraph,
   };
   const resolvedOpenGraph = deepMerge(defaultOpenGraph, openGraph || {});
   if (ogImage) {
@@ -371,7 +371,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     title: resolvedOpenGraph.title || title || siteName,
     ...(safeDescription && { description: safeDescription }),
     ...(absoluteResolvedOgImage && { images: absoluteResolvedOgImage }),
-    ...config.twitter
+    ...config.twitter,
   };
   const resolvedTwitter = deepMerge(defaultTwitter, twitter || {});
   if (twitterCard) {
@@ -402,8 +402,8 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
         rel: "alternate",
         type: "application/rss+xml",
         href: sanitizeUrl(rssFeed.href),
-        title: rssFeed.title || "RSS"
-      }
+        title: rssFeed.title || "RSS",
+      },
     });
   }
 
@@ -416,7 +416,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   if (finalCanonical) {
     tags.push({
       tag: "link",
-      props: { rel: "canonical", href: sanitizeUrl(finalCanonical) }
+      props: { rel: "canonical", href: sanitizeUrl(finalCanonical) },
     });
   }
 
@@ -428,8 +428,8 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
         props: {
           rel: "alternate",
           hreflang: alt.hreflang,
-          href: sanitizeUrl(alt.href)
-        }
+          href: sanitizeUrl(alt.href),
+        },
       });
     }
   }
@@ -442,8 +442,8 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
         rel: "alternate",
         type: "text/markdown",
         href: sanitizeUrl(markdownUrl),
-        title: "Markdown Format"
-      }
+        title: "Markdown Format",
+      },
     });
   }
   for (const alt of versionAlternates) {
@@ -453,8 +453,8 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
         props: {
           rel: "alternate",
           "data-version": alt.version,
-          href: sanitizeUrl(alt.href)
-        }
+          href: sanitizeUrl(alt.href),
+        },
       });
     }
   }
@@ -462,50 +462,53 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   // Open Graph
   tags.push({
     tag: "meta",
-    props: { property: "og:type", content: String(resolvedOpenGraph.type || "website") }
+    props: { property: "og:type", content: String(resolvedOpenGraph.type || "website") },
   });
   tags.push({
     tag: "meta",
-    props: { property: "og:locale", content: String(resolvedOpenGraph.locale || "en_US") }
+    props: { property: "og:locale", content: String(resolvedOpenGraph.locale || "en_US") },
   });
   tags.push({
     tag: "meta",
-    props: { property: "og:url", content: sanitizeUrl(String(resolvedOpenGraph.url || currentUrl)) }
+    props: {
+      property: "og:url",
+      content: sanitizeUrl(String(resolvedOpenGraph.url || currentUrl)),
+    },
   });
   tags.push({
     tag: "meta",
     props: {
       property: "og:title",
-      content: String(resolvedOpenGraph.title || title || siteName).slice(0, 200)
-    }
+      content: String(resolvedOpenGraph.title || title || siteName).slice(0, 200),
+    },
   });
   if (resolvedOpenGraph.description) {
     tags.push({
       tag: "meta",
       props: {
         property: "og:description",
-        content: String(resolvedOpenGraph.description).slice(0, 300)
-      }
+        content: String(resolvedOpenGraph.description).slice(0, 300),
+      },
     });
   }
   if (absoluteResolvedOgImage) {
     tags.push({
       tag: "meta",
-      props: { property: "og:image", content: sanitizeUrl(absoluteResolvedOgImage) }
+      props: { property: "og:image", content: sanitizeUrl(absoluteResolvedOgImage) },
     });
   }
   if (ogImgAlt) {
     tags.push({
       tag: "meta",
-      props: { property: "og:image:alt", content: String(ogImgAlt) }
+      props: { property: "og:image:alt", content: String(ogImgAlt) },
     });
   }
   tags.push({
     tag: "meta",
     props: {
       property: "og:site_name",
-      content: String(resolvedOpenGraph.siteName || siteName)
-    }
+      content: String(resolvedOpenGraph.siteName || siteName),
+    },
   });
 
   // Twitter
@@ -513,12 +516,12 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tag: "meta",
     props: {
       property: "twitter:card",
-      content: String(resolvedTwitter.card || "summary_large_image")
-    }
+      content: String(resolvedTwitter.card || "summary_large_image"),
+    },
   });
   tags.push({
     tag: "meta",
-    props: { property: "twitter:url", content: sanitizeUrl(currentUrl) }
+    props: { property: "twitter:url", content: sanitizeUrl(currentUrl) },
   });
   tags.push({
     tag: "meta",
@@ -526,67 +529,67 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
       property: "twitter:title",
       content: String(resolvedTwitter.title || resolvedOpenGraph.title || title || siteName).slice(
         0,
-        200
-      )
-    }
+        200,
+      ),
+    },
   });
   if (resolvedTwitter.description) {
     tags.push({
       tag: "meta",
       props: {
         property: "twitter:description",
-        content: String(resolvedTwitter.description).slice(0, 300)
-      }
+        content: String(resolvedTwitter.description).slice(0, 300),
+      },
     });
   }
   if (absoluteResolvedOgImage) {
     tags.push({
       tag: "meta",
-      props: { property: "twitter:image", content: sanitizeUrl(absoluteResolvedOgImage) }
+      props: { property: "twitter:image", content: sanitizeUrl(absoluteResolvedOgImage) },
     });
   }
   if (ogImgAlt) {
     tags.push({
       tag: "meta",
-      props: { property: "twitter:image:alt", content: String(ogImgAlt) }
+      props: { property: "twitter:image:alt", content: String(ogImgAlt) },
     });
   }
   if (resolvedTwitter.site) {
     tags.push({
       tag: "meta",
-      props: { property: "twitter:site", content: String(resolvedTwitter.site) }
+      props: { property: "twitter:site", content: String(resolvedTwitter.site) },
     });
   }
   if (resolvedTwitter.creator) {
     tags.push({
       tag: "meta",
-      props: { property: "twitter:creator", content: String(resolvedTwitter.creator) }
+      props: { property: "twitter:creator", content: String(resolvedTwitter.creator) },
     });
   }
 
   // Icons & Manifest
   tags.push({
     tag: "link",
-    props: { rel: "icon", type: faviconType, href: sanitizeUrl(favicon) }
+    props: { rel: "icon", type: faviconType, href: sanitizeUrl(favicon) },
   });
   if (rawFaviconIco) {
     tags.push({
       tag: "link",
-      props: { rel: "icon", href: sanitizeUrl(rawFaviconIco), sizes: "32x32" }
+      props: { rel: "icon", href: sanitizeUrl(rawFaviconIco), sizes: "32x32" },
     });
   } else if (!customFavicon) {
     tags.push({
       tag: "link",
-      props: { rel: "icon", href: "/favicon.ico", sizes: "32x32" }
+      props: { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
     });
   }
   tags.push({
     tag: "link",
-    props: { rel: "apple-touch-icon", href: sanitizeUrl(appleTouchIcon) }
+    props: { rel: "apple-touch-icon", href: sanitizeUrl(appleTouchIcon) },
   });
   tags.push({
     tag: "link",
-    props: { rel: "manifest", href: "/site.webmanifest" }
+    props: { rel: "manifest", href: "/site.webmanifest" },
   });
 
   // Theme Metadata
@@ -596,16 +599,16 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     props: {
       name: "theme-color",
       media: "(prefers-color-scheme: light)",
-      content: themeColor
-    }
+      content: themeColor,
+    },
   });
   tags.push({
     tag: "meta",
     props: {
       name: "theme-color",
       media: "(prefers-color-scheme: dark)",
-      content: darkThemeColor
-    }
+      content: darkThemeColor,
+    },
   });
 
   // Structured Data (JSON-LD) with serializeJsonLd
@@ -618,7 +621,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tags.push({
       tag: "script",
       props: scriptProps,
-      children: serializeJsonLd(websiteSchema)
+      children: serializeJsonLd(websiteSchema),
     });
   }
 
@@ -627,7 +630,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tags.push({
       tag: "script",
       props: scriptProps,
-      children: serializeJsonLd(article)
+      children: serializeJsonLd(article),
     });
   }
 
@@ -636,7 +639,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tags.push({
       tag: "script",
       props: scriptProps,
-      children: serializeJsonLd(breadcrumb)
+      children: serializeJsonLd(breadcrumb),
     });
   }
 
@@ -648,7 +651,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
  */
 export function createSeoHead(
   props: HeadProps = {},
-  boundConfig?: Partial<SiteConfig>
+  boundConfig?: Partial<SiteConfig>,
 ): HeadResult {
   const tags = generateTags(props, boundConfig);
   const html = renderTagsToHtml(tags);
@@ -659,7 +662,7 @@ export function createSeoHead(
     extend(overrides: HeadProps): HeadResult {
       const mergedProps = deepMerge(props, overrides);
       return createSeoHead(mergedProps, boundConfig);
-    }
+    },
   };
 }
 

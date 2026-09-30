@@ -3,7 +3,7 @@ import { customType, pgTable, text, timestamp, uuid, unique, index } from "drizz
 const tsvector = customType<{ data: string }>({
   dataType() {
     return "tsvector";
-  }
+  },
 });
 
 export const searchIndex = pgTable(
@@ -16,12 +16,12 @@ export const searchIndex = pgTable(
     url: text("url").notNull(),
     bodyContent: text("body_content").notNull(),
     searchableText: tsvector("searchable_text"),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [
     unique("search_index_source_type_source_id_key").on(t.sourceType, t.sourceId),
-    index("idx_search_index_text").using("gin", t.searchableText)
-  ]
+    index("idx_search_index_text").using("gin", t.searchableText),
+  ],
 );
 export type SearchIndex = typeof searchIndex.$inferSelect;
 export type NewSearchIndex = typeof searchIndex.$inferInsert;

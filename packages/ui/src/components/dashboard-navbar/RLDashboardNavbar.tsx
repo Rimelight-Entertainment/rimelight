@@ -32,7 +32,7 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     "centerSlot",
     "titleSlot",
     "leadingSlot",
-    "trailingSlot"
+    "trailingSlot",
   );
 
   const showToggle = () => props.toggle ?? true;
@@ -42,8 +42,8 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     dashboardNavbarTheme({
       toggleSide: toggleSide(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const leftToggle = () =>

@@ -17,7 +17,7 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
     defaultRole = "admin",
     adminEmails = [],
     verifyJwt = false,
-    loginUrl
+    loginUrl,
   } = options;
 
   const certsUrl =
@@ -48,7 +48,7 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
 
           const payload = await verifyJwtRs256(jwtAssertion, certsUrl, {
             audience: aud,
-            issuer: expectedIssuer
+            issuer: expectedIssuer,
           });
           if (!payload) {
             return null;
@@ -78,7 +78,7 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
         roles: isAdmin ? [defaultRole] : ["viewer"],
         permissions: isAdmin ? ["*"] : [],
         userType: "employee",
-        metadata: customClaims
+        metadata: customClaims,
       };
     },
     handleUnauthorized(req?: Request) {
@@ -95,12 +95,12 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
         } catch {
           return new Response(null, {
             status: 302,
-            headers: { Location: loginUrl }
+            headers: { Location: loginUrl },
           });
         }
       }
       return new Response("Unauthorized Cloudflare Access Identity", { status: 401 });
-    }
+    },
   };
 }
 
@@ -116,7 +116,7 @@ function getEnv(key: string, fallback = ""): string {
  * Creates a Cloudflare Access auth adapter automatically configured from environment variables.
  */
 export function createCfAccessFromEnv(
-  overrides: Partial<CfAccessAdapterOptions> = {}
+  overrides: Partial<CfAccessAdapterOptions> = {},
 ): AuthAdapter {
   return cfAccessAuth({
     teamDomain: overrides.teamDomain || getEnv("CF_ACCESS_TEAM_DOMAIN"),
@@ -134,6 +134,6 @@ export function createCfAccessFromEnv(
             .map((e) => e.trim())
         : []),
     defaultRole: overrides.defaultRole || "admin",
-    ...overrides
+    ...overrides,
   });
 }

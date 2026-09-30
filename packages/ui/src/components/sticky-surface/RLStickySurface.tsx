@@ -16,7 +16,7 @@ const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
   const id = `sticky-${Math.random().toString(36).substring(2, 9)}`;
 
   const resolvedClasses = createMemo(() =>
-    stickySurfaceTheme({ ui: props.ui, class: props.class })
+    stickySurfaceTheme({ ui: props.ui, class: props.class }),
   );
 
   return (

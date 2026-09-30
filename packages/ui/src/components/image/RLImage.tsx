@@ -47,7 +47,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     "class",
     "trigger",
     "captionSlot",
-    "children"
+    "children",
   );
 
   const isInteractive = props.lightbox ?? props.interactive ?? true;
@@ -88,7 +88,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG");
 
   const resolvedClasses = createMemo(() =>
-    imageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class })
+    imageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
   );
 
   const alt = props.alt ?? "";
@@ -100,7 +100,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
   const [open, setOpen] = createSignal(Boolean(props.open));
   const [zoom, setZoom] = createSignal(false);
   const [metaSizeTxt, setMetaSizeTxt] = createSignal<string>(
-    props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : "fetching..."
+    props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : "fetching...",
   );
   const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(fileExtension);
 
@@ -156,11 +156,11 @@ const RLImage: Component<RLImageProps> = (allProps) => {
             io.disconnect();
           }
         },
-        { rootMargin: "200px" }
+        { rootMargin: "200px" },
       );
       io.observe(el);
       return () => io.disconnect();
-    }
+    },
   );
 
   createEffect(
@@ -186,7 +186,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
       } else if (dialog.open) {
         dialog.close();
       }
-    }
+    },
   );
 
   onSettled(() => {

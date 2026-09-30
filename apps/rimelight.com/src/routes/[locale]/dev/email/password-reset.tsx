@@ -13,7 +13,7 @@ export const PasswordResetEmailPreview: Component = () => {
     async (loc) => {
       return await renderPasswordResetEmail(url, loc);
     },
-    ""
+    "",
   );
 
   return (

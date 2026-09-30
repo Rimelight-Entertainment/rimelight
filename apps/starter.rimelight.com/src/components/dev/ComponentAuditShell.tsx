@@ -13,7 +13,7 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
   const [selectedId, setSelectedId] = createSignal<string>(
     props.initialComponentId && COMPONENT_AUDITS[props.initialComponentId]
       ? props.initialComponentId
-      : (allAudits[0]?.id ?? "accordion")
+      : (allAudits[0]?.id ?? "accordion"),
   );
   const [activeTab, setActiveTab] = createSignal<TabType>("sandbox");
 
@@ -104,7 +104,7 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
                   <h1 class="text-xl font-black tracking-tight text-highlighted">{audit().name}</h1>
                   <span
                     class={`text-[11px] font-mono px-2 py-0.5 rounded-full border font-semibold ${getStatusBadge(
-                      audit().status
+                      audit().status,
                     )}`}
                   >
                     {audit().status}

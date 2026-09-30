@@ -31,18 +31,18 @@ export const BlogIndexPage: Component = () => {
         return [];
       }
     },
-    []
+    [],
   );
 
   const categoryMessages = () => ({
     "development-log": t("blog.categories_development-log"),
-    other: t("blog.categories_other")
+    other: t("blog.categories_other"),
   });
 
   const tabsItems = () => [
     { label: "All", value: "all" },
     { label: categoryMessages()["development-log"] || "Dev Log", value: "development-log" },
-    { label: categoryMessages()["other"] || "Other", value: "other" }
+    { label: categoryMessages()["other"] || "Other", value: "other" },
   ];
 
   const filteredPosts = () => {

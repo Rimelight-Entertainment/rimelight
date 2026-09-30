@@ -26,7 +26,7 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     "class",
     "children",
     "onOpenMobileChange",
-    "onCollapseChange"
+    "onCollapseChange",
   );
 
   const side = () => props.side ?? "left";
@@ -40,7 +40,7 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
       if (collapsed !== undefined) {
         setIsCollapsed(collapsed);
       }
-    }
+    },
   );
 
   createEffect(
@@ -49,7 +49,7 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
       if (openMobile !== undefined) {
         setIsMobileOpen(openMobile);
       }
-    }
+    },
   );
 
   const setCollapsedState = (collapsed: boolean) => {
@@ -108,8 +108,8 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
       side: side(),
       collapsed: isCollapsible() && isCollapsed(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const headerContent = () =>

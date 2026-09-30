@@ -18,12 +18,12 @@ export async function handleCmsCron(
   _event: any,
   _env: any,
   _ctx: any,
-  db: any
+  db: any,
 ): Promise<CmsCronResult> {
   const result: CmsCronResult = {
     expiredLocksCleaned: 0,
     scheduledPagesActive: 0,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   if (!db) return result;
@@ -44,7 +44,7 @@ export async function handleCmsCron(
       .select({ id: pages.id, slug: pages.slug })
       .from(pages)
       .where(
-        and(isNull(pages.deletedAt), isNotNull(pages.publishedVersionId), lte(pages.postedAt, now))
+        and(isNull(pages.deletedAt), isNotNull(pages.publishedVersionId), lte(pages.postedAt, now)),
       )
       .limit(10);
 

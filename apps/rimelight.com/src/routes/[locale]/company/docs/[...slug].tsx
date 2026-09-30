@@ -13,7 +13,7 @@ import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-co
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob(
   "../../../../../../../packages/ui/src/components/*/RL*.tsx",
-  { eager: true }
+  { eager: true },
 );
 const componentRegistry: Record<string, any> = {};
 for (const [p, mod] of Object.entries(componentModules)) {
@@ -26,7 +26,7 @@ for (const [p, mod] of Object.entries(componentModules)) {
 // Load theme modules
 const themeModules: Record<string, any> = import.meta.glob(
   "../../../../../../../packages/ui/src/components/*/*.theme.ts",
-  { eager: true }
+  { eager: true },
 );
 const themeRegistry: Record<string, any> = {};
 for (const [p, mod] of Object.entries(themeModules)) {
@@ -42,7 +42,7 @@ for (const [p, mod] of Object.entries(themeModules)) {
 function generateCombinationClasses(
   themeFn: any,
   propsConfig: Record<string, string[]>,
-  defaultProps: Record<string, any>
+  defaultProps: Record<string, any>,
 ): Record<string, any> {
   const allKeys = Object.keys(propsConfig);
   const allValues = allKeys.map((k) => propsConfig[k] || []);
@@ -144,7 +144,7 @@ export const DocPage: Component = () => {
             : activeVersion
               ? `${activeVersion}/${contentPath}`
               : contentPath,
-          contentPath
+          contentPath,
         ].filter(Boolean) as string[];
 
         let dbPage = null;
@@ -161,7 +161,7 @@ export const DocPage: Component = () => {
         return null;
       }
     },
-    null
+    null,
   );
 
   const docPage = () => docsData()?.dbPage;
@@ -223,10 +223,10 @@ export const DocPage: Component = () => {
         const { combinationClasses, initialThemeClasses } = generateCombinationClasses(
           themeFn,
           block.props.propsConfig,
-          block.props.defaultProps || {}
+          block.props.defaultProps || {},
         );
         const themeSlots = Object.keys(initialThemeClasses).filter(
-          (k) => k !== "class" && k !== "className"
+          (k) => k !== "class" && k !== "className",
         );
         return { combinationClasses, initialThemeClasses, themeSlots };
       } catch {

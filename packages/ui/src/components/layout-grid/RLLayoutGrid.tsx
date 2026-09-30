@@ -5,7 +5,7 @@ import {
   omit,
   Show,
   onSettled,
-  type Component
+  type Component,
 } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import type { LayoutGridProps } from "./layout-grid";
@@ -68,7 +68,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     "shortcut",
     "devOnly",
     "ui",
-    "class"
+    "class",
   );
 
   const resolvedClasses = createMemo(() => layoutGridTheme({ ui: props.ui, class: props.class }));
@@ -129,8 +129,8 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         },
         label: "Toggle Layout Grid",
         description: "Show or hide the development layout grid guide overlay",
-        category: "development"
-      }
+        category: "development",
+      },
     });
 
     return () => {
@@ -143,7 +143,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     bp: "base" | "sm" | "md" | "lg" | "xl",
     gutters: number[],
     margins: number[],
-    isVisible: boolean
+    isVisible: boolean,
   ) => {
     const columnsContainer = columnsRef;
     const indicatorElement = indicatorRef;
@@ -283,7 +283,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         height: "100%",
         borderInline: `1px solid ${color}`,
         boxSizing: "border-box",
-        backgroundColor: bg ? hexToRgba(color, opacity) : "transparent"
+        backgroundColor: bg ? hexToRgba(color, opacity) : "transparent",
       });
       gridWrapper.appendChild(col);
     }
@@ -304,7 +304,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
           boxSizing: "border-box",
           backgroundColor: showFullWidthBackground
             ? hexToRgba(fullWidthColor, fullWidthOpacity)
-            : "transparent"
+            : "transparent",
         });
         columnsContainer.appendChild(col);
       };
@@ -340,7 +340,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
         overlayRef.classList.toggle("block", isVisible);
       }
       updateGrid(bp, gutters, margins, isVisible);
-    }
+    },
   );
 
   // Custom z-index via CSSOM only (never SSR-rendered as a style attribute).
@@ -348,7 +348,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     () => props.zIndex,
     (zIndex) => {
       if (overlayRef) overlayRef.style.zIndex = String(zIndex ?? 1000);
-    }
+    },
   );
 
   return (

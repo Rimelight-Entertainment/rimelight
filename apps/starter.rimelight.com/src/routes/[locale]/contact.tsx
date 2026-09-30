@@ -9,10 +9,10 @@ import { api } from "#api/client";
 
 export const ContactPage: Component = () => {
   const [contactStatus, setContactStatus] = createSignal<{ text: string; error?: boolean } | null>(
-    null
+    null,
   );
   const [uploadStatus, setUploadStatus] = createSignal<{ text: string; error?: boolean } | null>(
-    null
+    null,
   );
 
   let contactFormRef!: HTMLFormElement;
@@ -26,7 +26,7 @@ export const ContactPage: Component = () => {
 
     try {
       const res = await api.contact.$post({
-        form: new FormData(contactFormRef) as any
+        form: new FormData(contactFormRef) as any,
       });
       const result = await res.json();
 
@@ -37,7 +37,7 @@ export const ContactPage: Component = () => {
             : "Please check form fields and try again.";
         setContactStatus({
           text: errorMsg || "Please check form fields and try again.",
-          error: true
+          error: true,
         });
         return;
       }
@@ -59,7 +59,7 @@ export const ContactPage: Component = () => {
 
     try {
       const res = await api.upload.$post({
-        form: new FormData(uploadFormRef) as any
+        form: new FormData(uploadFormRef) as any,
       });
       const result = await res.json();
 

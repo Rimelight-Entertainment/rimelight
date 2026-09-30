@@ -3,7 +3,7 @@ import type { UserSessionContext } from "./permissions";
 
 export function canUserCreateFromTemplate(
   template: PageTemplate,
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): boolean {
   const allowedCreate = template.rolePermissions?.whoCanCreate?.length
     ? template.rolePermissions.whoCanCreate
@@ -26,7 +26,7 @@ export function canUserCreateFromTemplate(
 
 export function canUserEditFromTemplate(
   template: PageTemplate,
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): boolean {
   const allowedEdit = template.rolePermissions?.whoCanEdit;
   if (allowedEdit && allowedEdit.length > 0) {
@@ -39,7 +39,7 @@ export function canUserEditFromTemplate(
 
 export function canUserReviewFromTemplate(
   template: PageTemplate,
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): boolean {
   const allowedReview = template.rolePermissions?.whoCanReview?.length
     ? template.rolePermissions.whoCanReview
@@ -55,7 +55,7 @@ export function canUserReviewFromTemplate(
 
 export function canUserViewFromTemplate(
   template: PageTemplate,
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): boolean {
   const allowedView = template.rolePermissions?.whoCanView;
   if (allowedView && allowedView.length > 0) {
@@ -68,14 +68,14 @@ export function canUserViewFromTemplate(
 
 export function canUserInstantiateTemplate(
   template: PageTemplate,
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): boolean {
   return canUserCreateFromTemplate(template, session);
 }
 
 export function filterTemplatesForUser(
   templates: PageTemplate[],
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): PageTemplate[] {
   return templates.filter((t) => canUserInstantiateTemplate(t, session));
 }

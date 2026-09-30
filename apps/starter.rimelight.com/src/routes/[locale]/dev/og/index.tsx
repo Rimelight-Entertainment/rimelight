@@ -7,29 +7,29 @@ const samplePages = [
     title: "Rimelight Starter Template",
     description: "Look around, test, and play with interactive technologies.",
     type: "",
-    isDocs: false
+    isDocs: false,
   },
   {
     label: "Docs — Overview",
     title: "Getting Started",
     description: "Everything you need to get up and running.",
     type: "Documentation",
-    isDocs: true
+    isDocs: true,
   },
   {
     label: "Docs — API Reference",
     title: "API Reference",
     description: "Complete API reference for integrations.",
     type: "Documentation",
-    isDocs: true
+    isDocs: true,
   },
   {
     label: "Blog Post",
     title: "Announcing Starter v2",
     description: "A look at what's new in our update.",
     type: "Blog Post",
-    isDocs: false
-  }
+    isDocs: false,
+  },
 ];
 
 export const DevOgPage: Component = () => {
@@ -48,7 +48,7 @@ export const DevOgPage: Component = () => {
       description: page.description,
       ...(page.type ? { type: page.type } : {}),
       ...(page.isDocs ? { isDocs: "true" } : {}),
-      _t: bust
+      _t: bust,
     });
     return `/open-graph/page.png?${params.toString()}`;
   };
@@ -66,7 +66,7 @@ export const DevOgPage: Component = () => {
   const handleRenderSandbox = () => {
     const params = new URLSearchParams({
       title: sandboxTitle().trim(),
-      description: sandboxDesc().trim()
+      description: sandboxDesc().trim(),
     });
     if (sandboxType().trim()) params.set("type", sandboxType().trim());
     if (sandboxDocs()) params.set("isDocs", "true");

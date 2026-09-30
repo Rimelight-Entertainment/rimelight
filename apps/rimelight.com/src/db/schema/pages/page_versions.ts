@@ -4,7 +4,7 @@ import {
   type Block,
   type Localized,
   type PageType,
-  type RegisterPageTypes
+  type RegisterPageTypes,
 } from "../../../types/pages.ts";
 
 import { pages } from "./pages.ts";
@@ -34,15 +34,15 @@ export const pageVersions = pgTable("page_versions", {
   approvedBy: uuid("approved_by"),
   approvedAt: timestamp("approved_at", { withTimezone: true }),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export const pageVersionsRelations = relations(pageVersions, ({ one }) => ({
   page: one(pages, {
     fields: [pageVersions.pageId],
-    references: [pages.id]
-  })
+    references: [pages.id],
+  }),
 }));

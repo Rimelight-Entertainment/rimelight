@@ -9,7 +9,7 @@ export const rimelightCustomBlocks: Record<string, any> = {
   SceneBlock,
   DialogueBlock,
   ApiDocumentationBlock,
-  LivePreviewBlock
+  LivePreviewBlock,
 };
 
 export { ScriptBlock, SceneBlock, DialogueBlock, ApiDocumentationBlock, LivePreviewBlock };

@@ -49,14 +49,14 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
     "onBlur",
     "onFocus",
     "onKeyDown",
-    "onValueChange"
+    "onValueChange",
   );
 
   const resolvedClasses = createMemo(() =>
     inputNumberTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const inputClasses = createMemo(() =>
@@ -64,14 +64,14 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
       variant: "default",
       size: props.size ?? "md",
       error: false,
-      ui: props.ui
-    })
+      ui: props.ui,
+    }),
   );
 
   const clamp = (value: number) =>
     Math.min(
       props.max ?? Number.POSITIVE_INFINITY,
-      Math.max(props.min ?? Number.NEGATIVE_INFINITY, value)
+      Math.max(props.min ?? Number.NEGATIVE_INFINITY, value),
     );
 
   const [internalValue, setInternalValue] = createSignal<number | undefined>(props.defaultValue);

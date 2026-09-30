@@ -53,7 +53,7 @@ const RLSelect: Component<RLSelectProps> = (allProps) => {
     "theme",
     "ui",
     "onChange",
-    "onBlur"
+    "onBlur",
   );
 
   const resolvedVariant = () =>
@@ -67,8 +67,8 @@ const RLSelect: Component<RLSelectProps> = (allProps) => {
       size: props.size,
       variant: resolvedVariant(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const normalizedItems = createMemo(() => {
@@ -89,14 +89,14 @@ const RLSelect: Component<RLSelectProps> = (allProps) => {
         value: String(i.value ?? ""),
         disabled: !!i.disabled,
         icon: i.icon,
-        avatar: i.avatar
+        avatar: i.avatar,
       };
     });
   });
 
   const [internalValue, setInternalValue] = createSignal(props.defaultValue);
   const currentValue = createMemo(() =>
-    props.value !== undefined ? props.value : internalValue()
+    props.value !== undefined ? props.value : internalValue(),
   );
 
   const currentLabel = createMemo(() => {
@@ -120,7 +120,7 @@ const RLSelect: Component<RLSelectProps> = (allProps) => {
       "aria-hidden": "true",
       tabIndex: -1,
       "data-slot": "trigger",
-      type: "button"
+      type: "button",
     };
     if (props.size) p.size = props.size;
     if (props.disabled !== undefined) p.disabled = props.disabled;

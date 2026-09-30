@@ -6,7 +6,7 @@ import {
   Show,
   onSettled,
   createEffect,
-  type Component
+  type Component,
 } from "solid-js";
 import type { InputMenuProps } from "./input-menu";
 import { inputMenuTheme } from "./input-menu.theme";
@@ -34,7 +34,7 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     "color",
     "ui",
     "class",
-    "onValueChange"
+    "onValueChange",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -42,14 +42,14 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
       size: props.size ?? "md",
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const normalizedItems = createMemo<InputMenuItem[]>(() =>
     (props.items ?? []).map((item) =>
-      typeof item === "string" ? { label: item, value: item } : item
-    )
+      typeof item === "string" ? { label: item, value: item } : item,
+    ),
   );
 
   const [selectedValue, setSelectedValue] = createSignal<string>(
@@ -57,12 +57,12 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
       ? String(props.value)
       : props.defaultValue !== undefined
         ? String(props.defaultValue)
-        : ""
+        : "",
   );
   const currentValue = () => (props.value !== undefined ? String(props.value) : selectedValue());
 
   const selectedItem = createMemo(() =>
-    normalizedItems().find((item) => String(item.value) === String(currentValue()))
+    normalizedItems().find((item) => String(item.value) === String(currentValue())),
   );
 
   const visibleLabel = createMemo(() => {
@@ -107,7 +107,7 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     () => open(),
     (isOpen) => {
       if (isOpen) searchRef?.focus();
-    }
+    },
   );
 
   onSettled(() => {

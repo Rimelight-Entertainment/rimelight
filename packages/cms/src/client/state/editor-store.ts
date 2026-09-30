@@ -10,7 +10,7 @@ const cloneBlocks = (b: BaseBlock[]): BaseBlock[] => JSON.parse(JSON.stringify(b
 function findBlockInfo(
   list: BaseBlock[],
   targetId: string,
-  currentDepth: number = 0
+  currentDepth: number = 0,
 ): { block: BaseBlock; depth: number; parentId: string | null } | null {
   for (const b of list) {
     if (!b) continue;
@@ -49,10 +49,10 @@ function getMaxSubtreeSectionHeight(b: BaseBlock | null): number {
 
 export function createEditorState(
   initialBlocks: BaseBlock[] = [],
-  pageId: string = "default-page"
+  pageId: string = "default-page",
 ) {
   const [blocks, setBlocksStore] = createStore<BaseBlock[]>(
-    JSON.parse(JSON.stringify(initialBlocks))
+    JSON.parse(JSON.stringify(initialBlocks)),
   );
   const [status, setStatus] = createSignal<AutosaveStatus>("saved");
   const [previewVisible, setPreviewVisible] = createSignal<boolean>(false);
@@ -69,7 +69,7 @@ export function createEditorState(
     position: "after",
     sectionDepth: 0,
     parentId: null,
-    containerType: null
+    containerType: null,
   });
 
   let historyStack = new HistoryStack(initialBlocks);
@@ -77,7 +77,7 @@ export function createEditorState(
     pageId,
     onStatusChange: (newStatus: AutosaveStatus) => {
       setStatus(newStatus);
-    }
+    },
   });
 
   const notifyChange = (immediate = false) => {
@@ -217,7 +217,7 @@ export function createEditorState(
     type: string,
     targetId: string | null = null,
     position: "before" | "after" = "after",
-    parentId: string | null = null
+    parentId: string | null = null,
   ) => {
     const updated = cloneBlocks(blocks);
 
@@ -239,7 +239,7 @@ export function createEditorState(
       if (targetSectionDepth > MAX_SECTION_DEPTH) {
         toast.error(
           "Invalid Section Nesting",
-          "Sections cannot be nested inside an H6 section. H6 is the maximum heading level."
+          "Sections cannot be nested inside an H6 section. H6 is the maximum heading level.",
         );
         return;
       }
@@ -297,7 +297,7 @@ export function createEditorState(
     position: "before" | "after" = "after",
     sectionDepth = 0,
     parentId: string | null = null,
-    containerType: string | null = null
+    containerType: string | null = null,
   ) => {
     setPickerTarget({ open: true, targetId, position, sectionDepth, parentId, containerType });
   };
@@ -347,7 +347,7 @@ export function createEditorState(
       if (maxResultDepth > MAX_SECTION_DEPTH) {
         toast.error(
           "Invalid Section Nesting",
-          "Cannot move section here because it would exceed the maximum heading depth (H6)."
+          "Cannot move section here because it would exceed the maximum heading depth (H6).",
         );
         return;
       }
@@ -403,7 +403,7 @@ export function createEditorState(
     relocateBlock,
     openPicker,
     closePicker,
-    saveDraft
+    saveDraft,
   };
 }
 

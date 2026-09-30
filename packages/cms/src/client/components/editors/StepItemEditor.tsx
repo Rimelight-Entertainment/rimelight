@@ -53,7 +53,7 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 
@@ -67,7 +67,7 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
       ...componentProps.props,
       title: title !== undefined ? title : componentProps.props["title"] || "",
       description:
-        description !== undefined ? description : componentProps.props["description"] || ""
+        description !== undefined ? description : componentProps.props["description"] || "",
     });
   };
 

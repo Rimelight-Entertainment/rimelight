@@ -27,8 +27,8 @@ export const Error404Page: Component = () => {
             href: "/",
             variant: "solid",
             color: "primary",
-            icon: "i-lucide-home"
-          }
+            icon: "i-lucide-home",
+          },
         ]}
       />
     </AppLayout>

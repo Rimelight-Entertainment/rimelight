@@ -106,13 +106,13 @@ export function buildDefaultOgImageUrl(opts: {
  */
 export function buildWebSiteSchema(
   config: Pick<SiteConfig, "name" | "url" | "description">,
-  site?: string
+  site?: string,
 ): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: config.name,
     url: site ?? config.url,
-    description: config.description
+    description: config.description,
   };
 }

@@ -23,9 +23,9 @@ describe("@rimelight/cms Model Context Protocol (MCP) server", () => {
     const response = await handleCmsMcpRequest(
       {
         method: "tools/list",
-        id: 123
+        id: 123,
       },
-      null
+      null,
     );
 
     expect(response.jsonrpc).toBe("2.0");
@@ -38,10 +38,10 @@ describe("@rimelight/cms Model Context Protocol (MCP) server", () => {
       select: () => ({
         from: () => ({
           where: () => ({
-            limit: async () => []
-          })
-        })
-      })
+            limit: async () => [],
+          }),
+        }),
+      }),
     };
 
     const response = await handleCmsMcpRequest(
@@ -49,10 +49,10 @@ describe("@rimelight/cms Model Context Protocol (MCP) server", () => {
         method: "tools/call",
         params: {
           name: "cms_get_page",
-          arguments: { slugOrId: "non-existent-page" }
-        }
+          arguments: { slugOrId: "non-existent-page" },
+        },
       },
-      mockDb
+      mockDb,
     );
 
     expect(response.error).toBeDefined();

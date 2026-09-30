@@ -4,7 +4,7 @@ import { pages } from "./pages.ts";
 const tsvector = customType<{ data: string }>({
   dataType() {
     return "tsvector";
-  }
+  },
 });
 
 export const contentSearchIndex = pgTable(
@@ -17,7 +17,7 @@ export const contentSearchIndex = pgTable(
     locale: text("locale").notNull(),
     titleText: text("title_text").notNull(),
     contentText: text("content_text").notNull(),
-    searchVector: tsvector("search_vector")
+    searchVector: tsvector("search_vector"),
   },
-  (table) => [index("search_vector_gin_idx").using("gin", table.searchVector)]
+  (table) => [index("search_vector_gin_idx").using("gin", table.searchVector)],
 );

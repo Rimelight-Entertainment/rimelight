@@ -19,7 +19,7 @@ import {
   getByline,
   createByline,
   updateByline,
-  deleteByline
+  deleteByline,
 } from "@rimelight/cms";
 import { handleCmsMcpRequest } from "@rimelight/cms/mcp";
 import { auth } from "@rimelight/auth";
@@ -37,7 +37,7 @@ cms.put("/settings", async (c) => {
   const session = await auth.getSession(c.req.raw);
   if (!session) return c.json({ error: "Unauthorized" }, 401);
   const isOwnerOrAdmin = (session.roles || []).some((r: string) =>
-    ["owner", "admin"].includes(r.toLowerCase())
+    ["owner", "admin"].includes(r.toLowerCase()),
   );
   if (!isOwnerOrAdmin) return c.json({ error: "Forbidden" }, 403);
 
@@ -61,7 +61,7 @@ cms.post("/pages/:id/preview-token", async (c) => {
   return c.json({
     token,
     expiresAt,
-    previewUrl: `/en/cms/pages/${id}/preview?token=${encodeURIComponent(token)}`
+    previewUrl: `/en/cms/pages/${id}/preview?token=${encodeURIComponent(token)}`,
   });
 });
 
@@ -85,8 +85,8 @@ cms.get("/pages/:id/diff", async (c) => {
       .where(
         and(
           eq(pageVersions.pageId, id),
-          eq(pageVersions.versionNumber, parseInt(fromVersionNum, 10))
-        )
+          eq(pageVersions.versionNumber, parseInt(fromVersionNum, 10)),
+        ),
       )
       .limit(1);
     if (v[0]) fromSnapshot = v[0];
@@ -98,7 +98,10 @@ cms.get("/pages/:id/diff", async (c) => {
       .select()
       .from(pageVersions)
       .where(
-        and(eq(pageVersions.pageId, id), eq(pageVersions.versionNumber, parseInt(toVersionNum, 10)))
+        and(
+          eq(pageVersions.pageId, id),
+          eq(pageVersions.versionNumber, parseInt(toVersionNum, 10)),
+        ),
       )
       .limit(1);
     if (v[0]) toSnapshot = v[0];
@@ -250,9 +253,9 @@ cms.post("/mcp", async (c) => {
       {
         jsonrpc: "2.0",
         id: null,
-        error: { code: -32000, message: "Unauthorized: Invalid or missing API key / session" }
+        error: { code: -32000, message: "Unauthorized: Invalid or missing API key / session" },
       },
-      401
+      401,
     );
   }
 

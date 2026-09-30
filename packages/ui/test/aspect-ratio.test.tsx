@@ -5,8 +5,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLAspectRatio } from "../src/components/aspect-ratio/RLAspectRatio";
@@ -57,44 +57,44 @@ describe("RLAspectRatio Solid Component Suite", () => {
         name: "widescreen 16:9",
         ratio: 16 / 9,
         expectedRatioAttr: (16 / 9).toString(),
-        expectedViewBox: `0 0 100 ${56.25}`
+        expectedViewBox: `0 0 100 ${56.25}`,
       },
       {
         name: "standard 4:3",
         ratio: 4 / 3,
         expectedRatioAttr: (4 / 3).toString(),
-        expectedViewBox: `0 0 100 ${75}`
+        expectedViewBox: `0 0 100 ${75}`,
       },
       {
         name: "square 1:1",
         ratio: 1,
         expectedRatioAttr: "1",
-        expectedViewBox: "0 0 100 100"
+        expectedViewBox: "0 0 100 100",
       },
       {
         name: "portrait 9:16",
         ratio: 9 / 16,
         expectedRatioAttr: (9 / 16).toString(),
-        expectedViewBox: `0 0 100 ${(1 / (9 / 16)) * 100}`
+        expectedViewBox: `0 0 100 ${(1 / (9 / 16)) * 100}`,
       },
       {
         name: "cinema ultrawide 21:9",
         ratio: 21 / 9,
         expectedRatioAttr: (21 / 9).toString(),
-        expectedViewBox: `0 0 100 ${(1 / (21 / 9)) * 100}`
+        expectedViewBox: `0 0 100 ${(1 / (21 / 9)) * 100}`,
       },
       {
         name: "double width 2:1",
         ratio: 2,
         expectedRatioAttr: "2",
-        expectedViewBox: "0 0 100 50"
+        expectedViewBox: "0 0 100 50",
       },
       {
         name: "tall strip 1:2",
         ratio: 0.5,
         expectedRatioAttr: "0.5",
-        expectedViewBox: "0 0 100 200"
-      }
+        expectedViewBox: "0 0 100 200",
+      },
     ];
 
     for (const { name, ratio, expectedRatioAttr, expectedViewBox } of testCases) {
@@ -130,7 +130,7 @@ describe("RLAspectRatio Solid Component Suite", () => {
       const html = renderSolid(
         RLAspectRatio,
         { ratio: Number.POSITIVE_INFINITY },
-        "Infinity Ratio"
+        "Infinity Ratio",
       );
       expect(html).toContain('data-ratio="1"');
       expect(html).toContain('viewBox="0 0 100 100"');
@@ -140,7 +140,7 @@ describe("RLAspectRatio Solid Component Suite", () => {
       const html = renderSolid(
         RLAspectRatio,
         { ratio: Number.NEGATIVE_INFINITY },
-        "Negative Infinity Ratio"
+        "Negative Infinity Ratio",
       );
       expect(html).toContain('data-ratio="1"');
       expect(html).toContain('viewBox="0 0 100 100"');
@@ -165,7 +165,7 @@ describe("RLAspectRatio Solid Component Suite", () => {
       const html = renderSolid(
         RLAspectRatio,
         { class: "shadow-2xl rounded-xl custom-aspect" },
-        "Custom Class"
+        "Custom Class",
       );
       expect(html).toContain("custom-aspect");
       expect(html).toContain("shadow-2xl");
@@ -180,10 +180,10 @@ describe("RLAspectRatio Solid Component Suite", () => {
           ui: {
             root: "border-4 border-primary",
             spacer: "opacity-50",
-            content: "bg-elevated/80"
-          }
+            content: "bg-elevated/80",
+          },
         },
-        "Slot Overrides"
+        "Slot Overrides",
       );
 
       expect(html).toContain("border-4");
@@ -198,10 +198,10 @@ describe("RLAspectRatio Solid Component Suite", () => {
         {
           ui: {
             root: ["ring-1", "ring-emerald-500"],
-            content: "p-4 flex items-center justify-center"
-          }
+            content: "p-4 flex items-center justify-center",
+          },
         },
-        "Nested UI"
+        "Nested UI",
       );
 
       expect(html).toContain("ring-1");
@@ -219,9 +219,9 @@ describe("RLAspectRatio Solid Component Suite", () => {
           "data-testid": "aspect-ratio-test",
           role: "region",
           "aria-label": "Video container",
-          tabindex: "0"
+          tabindex: "0",
         },
-        "Accessible Frame"
+        "Accessible Frame",
       );
 
       expect(html).toContain('id="custom-media-frame"');
@@ -237,9 +237,9 @@ describe("RLAspectRatio Solid Component Suite", () => {
         {
           ratio: 16 / 9,
           ui: { root: "custom" },
-          class: "my-class"
+          class: "my-class",
         },
-        "Omitted Props"
+        "Omitted Props",
       );
 
       expect(html).not.toContain('ui="');
@@ -254,7 +254,7 @@ describe("RLAspectRatio Solid Component Suite", () => {
           <RLAspectRatio ratio={16 / 9}>
             <img src="https://example.com/banner.webp" alt="Banner Image" class="object-cover" />
           </RLAspectRatio>
-        ))
+        )),
       );
 
       expect(html).toContain('data-slot="content"');
@@ -269,7 +269,7 @@ describe("RLAspectRatio Solid Component Suite", () => {
           <RLAspectRatio ratio={16 / 9}>
             <video src="https://example.com/trailer.mp4" controls autoplay />
           </RLAspectRatio>
-        ))
+        )),
       );
 
       expect(html).toContain("<video");

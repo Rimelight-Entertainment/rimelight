@@ -33,8 +33,8 @@ export const PagesNewPage: Component<PagesNewPageProps> = (props) => {
           slug: slug(),
           type: type(),
           title: title(),
-          templateId: templateId() || null
-        })
+          templateId: templateId() || null,
+        }),
       });
       if (!res.ok) throw new Error(`Create failed (${res.status})`);
       const data = (await res.json()) as any;

@@ -29,7 +29,7 @@ export const LegalSlugPage: Component = () => {
       } catch {
         return null;
       }
-    }
+    },
   );
 
   const title = () => (pageData() ? getLocalizedText(pageData()!.title, activeLocale()) : "Legal");
@@ -51,7 +51,7 @@ export const LegalSlugPage: Component = () => {
                 <div class="date text-neutral-400 mb-2 text-sm">
                   <time>
                     {new Date(pageData()!.postedAt || pageData()!.createdAt).toLocaleDateString(
-                      activeLocale()
+                      activeLocale(),
                     )}
                   </time>
                   <Show when={pageData()!.updatedAt}>

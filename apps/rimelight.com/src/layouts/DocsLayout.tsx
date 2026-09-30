@@ -40,7 +40,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
       loc: locale(),
       path: currentPath(),
       v: props.activeVersion,
-      inc: props.includeVersionInUrl
+      inc: props.includeVersionInUrl,
     }),
     async ({ loc, path, v, inc }) => {
       const { items, scopes, activeScope } = await getDocsSidebar(docsConfig, loc, path, v, inc);
@@ -50,9 +50,9 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
         scopes,
         activeScope,
         prev: props.prevOverride ?? sidebarPrev ?? null,
-        next: props.nextOverride ?? sidebarNext ?? null
+        next: props.nextOverride ?? sidebarNext ?? null,
       };
-    }
+    },
   );
 
   const rawGlobalToc = (docsConfig as DocsConfig).tableOfContents;

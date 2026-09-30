@@ -20,7 +20,7 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
     "color",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const maxCount = () => {
@@ -42,8 +42,8 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
       size: size(),
       color: color(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const Root = dynamic(() => props.as ?? "div");

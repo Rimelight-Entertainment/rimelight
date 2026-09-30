@@ -18,15 +18,15 @@ app.use(
     roleGuards: {
       "/internal": {
         roles: ["employee", "staff", "admin", "owner"],
-        userTypes: ["employee"]
+        userTypes: ["employee"],
       },
       "/api/internal": {
         roles: ["employee", "staff", "admin", "owner"],
-        userTypes: ["employee"]
+        userTypes: ["employee"],
       },
-      "/admin": ["admin", "owner"]
-    }
-  })
+      "/admin": ["admin", "owner"],
+    },
+  }),
 );
 
 // Hono API Routing
@@ -49,5 +49,5 @@ app.onError((err, c) => {
 });
 
 export default {
-  fetch: app.fetch
+  fetch: app.fetch,
 };

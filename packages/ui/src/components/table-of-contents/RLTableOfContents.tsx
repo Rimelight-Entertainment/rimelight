@@ -15,7 +15,7 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
     "tableOfContents",
     "as",
     "ui",
-    "class"
+    "class",
   );
 
   const [activeId, setActiveId] = createSignal("");
@@ -27,30 +27,30 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
   const containerSelector = () => props.containerSelector ?? ".markdown-content";
 
   const minLevel = createMemo(() =>
-    props.tableOfContents ? (props.tableOfContents.minHeadingLevel ?? 2) : 2
+    props.tableOfContents ? (props.tableOfContents.minHeadingLevel ?? 2) : 2,
   );
   const maxLevel = createMemo(() =>
-    props.tableOfContents ? (props.tableOfContents.maxHeadingLevel ?? 3) : 3
+    props.tableOfContents ? (props.tableOfContents.maxHeadingLevel ?? 3) : 3,
   );
 
   const filteredHeadings = createMemo(() =>
     props.tableOfContents !== false
       ? props.headings.filter((h) => h.depth >= minLevel() && h.depth <= maxLevel())
-      : []
+      : [],
   );
 
   const headingSelector = createMemo(() =>
     Array.from(
       { length: maxLevel() - minLevel() + 1 },
-      (_, i) => `:scope > h${minLevel() + i}`
-    ).join(", ")
+      (_, i) => `:scope > h${minLevel() + i}`,
+    ).join(", "),
   );
 
   const resolvedClasses = createMemo(() =>
     tableOfContentsTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   onSettled(() => {

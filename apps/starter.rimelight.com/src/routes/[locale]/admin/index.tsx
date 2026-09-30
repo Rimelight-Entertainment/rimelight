@@ -30,10 +30,10 @@ export const AdminIndexPage: Component = () => {
         totalPages,
         totalBylines,
         totalCategories,
-        totalTags
+        totalTags,
       };
     },
-    { totalPages: 0, totalBylines: 0, totalCategories: 0, totalTags: 0 }
+    { totalPages: 0, totalBylines: 0, totalCategories: 0, totalTags: 0 },
   );
 
   return (

@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import {
   siteSettings,
   type InsertSiteSettings,
-  type SiteSettings
+  type SiteSettings,
 } from "../schema/site_settings.ts";
 
 export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
@@ -15,21 +15,21 @@ export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   email: "",
   branding: {
     logo: {
-      alt: "Rimelight"
+      alt: "Rimelight",
     },
     favicon: {
-      svg: "/favicon.svg"
+      svg: "/favicon.svg",
     },
     colors: {
       themeColor: "#ffffff",
-      backgroundColor: "#ffffff"
-    }
+      backgroundColor: "#ffffff",
+    },
   },
   seo: {
     titleTemplate: "%s | Rimelight",
     ogImageFallback: "https://cdn.rimelight.com/Images/og-placeholder.webp",
-    maxDescriptionLength: 160
-  }
+    maxDescriptionLength: 160,
+  },
 };
 
 function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings {
@@ -44,7 +44,7 @@ function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings
     branding: overrides?.branding ?? DEFAULT_SITE_SETTINGS.branding,
     seo: overrides?.seo ?? DEFAULT_SITE_SETTINGS.seo,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 }
 
@@ -54,7 +54,7 @@ function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings
  */
 export async function getSiteSettings(
   db: any,
-  fallbackDefaults?: Partial<InsertSiteSettings>
+  fallbackDefaults?: Partial<InsertSiteSettings>,
 ): Promise<SiteSettings> {
   if (!db) {
     return fallbackSettings(fallbackDefaults);
@@ -74,7 +74,7 @@ export async function getSiteSettings(
     const initial: InsertSiteSettings = {
       ...DEFAULT_SITE_SETTINGS,
       ...fallbackDefaults,
-      id: "default"
+      id: "default",
     };
 
     const inserted = await db.insert(siteSettings).values(initial).returning();
@@ -91,7 +91,7 @@ export async function getSiteSettings(
 export async function updateSiteSettings(
   db: any,
   updates: Partial<InsertSiteSettings>,
-  id: string = "default"
+  id: string = "default",
 ): Promise<SiteSettings> {
   const current = await getSiteSettings(db);
 
@@ -99,7 +99,7 @@ export async function updateSiteSettings(
     ...updates,
     branding: updates.branding ? { ...current.branding, ...updates.branding } : current.branding,
     seo: updates.seo ? { ...current.seo, ...updates.seo } : current.seo,
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   const result = await db

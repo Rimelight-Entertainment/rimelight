@@ -4,8 +4,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLBanner } from "../src/components/banner/RLBanner";
@@ -19,7 +19,7 @@ describe("RLBanner Solid Component Suite", () => {
     "info",
     "warning",
     "error",
-    "neutral"
+    "neutral",
   ] as const;
 
   beforeEach(() => {
@@ -74,7 +74,7 @@ describe("RLBanner Solid Component Suite", () => {
     it("renders custom leading slot", () => {
       const html = renderSolid(RLBanner, {
         leading: '<span class="custom-leading">🚀 Custom</span>' as any,
-        title: "Custom Leading Slot"
+        title: "Custom Leading Slot",
       });
       expect(html).toContain("custom-leading");
       expect(html).toContain("Custom Leading Slot");
@@ -87,8 +87,8 @@ describe("RLBanner Solid Component Suite", () => {
         title: "New feature released!",
         actions: [
           { label: "Learn More", href: "/docs" },
-          { label: "Dismiss", variant: "outline" }
-        ]
+          { label: "Dismiss", variant: "outline" },
+        ],
       });
       expect(html).toContain('data-slot="actions"');
       expect(html).toContain("Learn More");
@@ -98,7 +98,7 @@ describe("RLBanner Solid Component Suite", () => {
     it("renders custom actions slot", () => {
       const html = renderSolid(RLBanner, {
         title: "Actions Slot Test",
-        actionsSlot: '<button type="button" class="btn-custom">Click Me</button>' as any
+        actionsSlot: '<button type="button" class="btn-custom">Click Me</button>' as any,
       });
       expect(html).toContain('data-slot="actions"');
       expect(html).toContain("btn-custom");
@@ -109,7 +109,7 @@ describe("RLBanner Solid Component Suite", () => {
     it("renders close button when close=true", () => {
       const html = renderSolid(RLBanner, {
         title: "Dismissible Banner",
-        close: true
+        close: true,
       });
       expect(html).toContain('data-slot="close"');
       expect(html).toContain("data-banner-close");
@@ -119,7 +119,7 @@ describe("RLBanner Solid Component Suite", () => {
     it("supports backward compatible dismissable=true prop", () => {
       const html = renderSolid(RLBanner, {
         title: "Legacy dismissable prop",
-        dismissable: true
+        dismissable: true,
       });
       expect(html).toContain('data-slot="close"');
       expect(html).toContain("data-banner-close");
@@ -129,7 +129,7 @@ describe("RLBanner Solid Component Suite", () => {
       const html = renderSolid(RLBanner, {
         title: "Custom Close Icon",
         close: true,
-        closeIcon: "trash"
+        closeIcon: "trash",
       });
       expect(html).toContain('data-slot="close"');
     });
@@ -140,8 +140,8 @@ describe("RLBanner Solid Component Suite", () => {
         close: {
           variant: "outline",
           color: "error",
-          ariaLabel: "Custom dismiss label"
-        }
+          ariaLabel: "Custom dismiss label",
+        },
       });
       expect(html).toContain('data-slot="close"');
       expect(html).toContain('aria-label="Custom dismiss label"');
@@ -153,7 +153,7 @@ describe("RLBanner Solid Component Suite", () => {
       const html = renderSolid(RLBanner, {
         to: "https://rimelight.com",
         target: "_blank",
-        title: "Visit Rimelight"
+        title: "Visit Rimelight",
       });
       expect(html).toContain("<a");
       expect(html).toContain('href="https://rimelight.com"');
@@ -164,7 +164,7 @@ describe("RLBanner Solid Component Suite", () => {
     it("renders anchor tag when `href` prop is provided", () => {
       const html = renderSolid(RLBanner, {
         href: "/announcement",
-        title: "Read announcement"
+        title: "Read announcement",
       });
       expect(html).toContain("<a");
       expect(html).toContain('href="/announcement"');
@@ -179,8 +179,8 @@ describe("RLBanner Solid Component Suite", () => {
         ui: {
           root: "custom-root",
           title: "custom-title",
-          container: "custom-container"
-        }
+          container: "custom-container",
+        },
       });
       expect(html).toContain("my-custom-banner");
       expect(html).toContain("custom-root");
@@ -195,7 +195,7 @@ describe("RLBanner Solid Component Suite", () => {
         title: "Header Stack Banner",
         contain: true,
         stackIndex: 2,
-        fixed: true
+        fixed: true,
       });
       expect(html).toContain('data-rl-banner="true"');
       expect(html).toContain('data-contain="true"');

@@ -21,14 +21,14 @@ const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
     "theme",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const resolvedClasses = createMemo(() =>
     linkGroupTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const normalizedLinks = createMemo(() => {

@@ -28,7 +28,7 @@ const shoulderButtons: GamepadButton[] = [
   { id: "L2", label: "LT", x: 65, y: 10, w: 80, h: 22 },
   { id: "L1", label: "LB", x: 65, y: 42, w: 80, h: 22 },
   { id: "R2", label: "RT", x: 255, y: 10, w: 80, h: 22 },
-  { id: "R1", label: "RB", x: 255, y: 42, w: 80, h: 22 }
+  { id: "R1", label: "RB", x: 255, y: 42, w: 80, h: 22 },
 ];
 
 const mainButtons: GamepadButton[] = [
@@ -43,7 +43,7 @@ const mainButtons: GamepadButton[] = [
   { id: "LS", x: 155, y: 215, r: 24 },
   { id: "RS", x: 245, y: 215, r: 24 },
   { id: "View", label: "⧉", x: 145, y: 105, w: 16, h: 10 },
-  { id: "Menu", label: "≡", x: 239, y: 105, w: 16, h: 10 }
+  { id: "Menu", label: "≡", x: 239, y: 105, w: 16, h: 10 },
 ];
 
 const RLGamepad: Component<RLGamepadProps> = (allProps) => {

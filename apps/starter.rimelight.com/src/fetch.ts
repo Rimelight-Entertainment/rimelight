@@ -21,9 +21,9 @@ app.use(construction());
 app.use(
   auth({
     roleGuards: {
-      "/admin": ["admin", "owner"]
-    }
-  })
+      "/admin": ["admin", "owner"],
+    },
+  }),
 );
 
 // Hono API Routing
@@ -76,5 +76,5 @@ export default {
 
   async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(handleCmsCron(event, env, ctx, db));
-  }
+  },
 };

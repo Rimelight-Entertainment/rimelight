@@ -16,7 +16,7 @@ export type {
   Transition,
   ScriptBlockProps,
   SceneBlockProps,
-  DialogueBlockProps
+  DialogueBlockProps,
 } from "./core/types/blocks.ts";
 
 // Core Services & Registries
@@ -36,7 +36,7 @@ export type {
   AuthAdapter as CmsAuthAdapter,
   AuthAdapter,
   UserSessionContext,
-  UserType
+  UserType,
 } from "@rimelight/auth";
 
 // Edge Cache & Search

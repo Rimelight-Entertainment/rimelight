@@ -9,7 +9,7 @@ import {
   LOCATION_DEFINITION,
   ITEM_DEFINITION,
   SPECIES_DEFINITION,
-  SKILL_DEFINITION
+  SKILL_DEFINITION,
 } from "../core/page-definitions.ts";
 
 export interface BuiltinTemplate {
@@ -39,7 +39,7 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       slug: "blog-post",
       title: { en: "Blog Post" },
       description: {
-        en: "Standard blog article with category metadata, author attribution, and formatted headings"
+        en: "Standard blog article with category metadata, author attribution, and formatted headings",
       },
       pageType: "blog",
       version: 1,
@@ -52,21 +52,21 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
           id: crypto.randomUUID(),
           type: "HeadingBlock",
           props: { level: 2, text: "Introduction" },
-          isTemplated: false
+          isTemplated: false,
         },
         {
           id: crypto.randomUUID(),
           type: "ParagraphBlock",
           props: { content: "Start writing your blog article here..." },
-          isTemplated: false
-        }
-      ]
+          isTemplated: false,
+        },
+      ],
     },
     {
       slug: "documentation",
       title: { en: "Documentation Guide" },
       description: {
-        en: "Technical documentation page with structured sections, callouts, and code blocks"
+        en: "Technical documentation page with structured sections, callouts, and code blocks",
       },
       pageType: "doc",
       version: 1,
@@ -79,27 +79,27 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
           id: crypto.randomUUID(),
           type: "HeadingBlock",
           props: { level: 2, text: "Overview" },
-          isTemplated: false
+          isTemplated: false,
         },
         {
           id: crypto.randomUUID(),
           type: "CalloutBlock",
           props: { variant: "info", content: "Key guide details and prerequisites go here." },
-          isTemplated: false
+          isTemplated: false,
         },
         {
           id: crypto.randomUUID(),
           type: "HeadingBlock",
           props: { level: 2, text: "Usage" },
-          isTemplated: false
-        }
-      ]
+          isTemplated: false,
+        },
+      ],
     },
     {
       slug: "character-profile",
       title: { en: "Character Profile" },
       description: {
-        en: "Franchise character sheet with identity, characteristics, inventory, and backstory lore"
+        en: "Franchise character sheet with identity, characteristics, inventory, and backstory lore",
       },
       pageType: "character",
       version: 1,
@@ -107,13 +107,13 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: CHARACTER_DEFINITION.properties,
-      initialBlocks: CHARACTER_DEFINITION.initialBlocks ? CHARACTER_DEFINITION.initialBlocks() : []
+      initialBlocks: CHARACTER_DEFINITION.initialBlocks ? CHARACTER_DEFINITION.initialBlocks() : [],
     },
     {
       slug: "hero-sheet",
       title: { en: "Hero Combat Sheet" },
       description: {
-        en: "Hero character with combat stats, progression mechanics, and playstyle lore"
+        en: "Hero character with combat stats, progression mechanics, and playstyle lore",
       },
       pageType: "hero",
       version: 1,
@@ -121,13 +121,13 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: HERO_DEFINITION.properties,
-      initialBlocks: HERO_DEFINITION.initialBlocks ? HERO_DEFINITION.initialBlocks() : []
+      initialBlocks: HERO_DEFINITION.initialBlocks ? HERO_DEFINITION.initialBlocks() : [],
     },
     {
       slug: "series-overview",
       title: { en: "Series Overview" },
       description: {
-        en: "Media show / series page with genre, season metadata, and episode overviews"
+        en: "Media show / series page with genre, season metadata, and episode overviews",
       },
       pageType: "series",
       version: 1,
@@ -135,13 +135,13 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: SERIES_DEFINITION.properties,
-      initialBlocks: SERIES_DEFINITION.initialBlocks ? SERIES_DEFINITION.initialBlocks() : []
+      initialBlocks: SERIES_DEFINITION.initialBlocks ? SERIES_DEFINITION.initialBlocks() : [],
     },
     {
       slug: "patch-note",
       title: { en: "Release / Patch Note" },
       description: {
-        en: "Version changelog, release highlights, balance adjustments, and bug fixes"
+        en: "Version changelog, release highlights, balance adjustments, and bug fixes",
       },
       pageType: "patchnote",
       version: 1,
@@ -154,15 +154,15 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
           id: crypto.randomUUID(),
           type: "HeadingBlock",
           props: { level: 2, text: "Release Highlights" },
-          isTemplated: false
+          isTemplated: false,
         },
         {
           id: crypto.randomUUID(),
           type: "HeadingBlock",
           props: { level: 3, text: "Bug Fixes & Improvements" },
-          isTemplated: false
-        }
-      ]
+          isTemplated: false,
+        },
+      ],
     },
     {
       slug: "location-guide",
@@ -174,7 +174,7 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: LOCATION_DEFINITION.properties,
-      initialBlocks: []
+      initialBlocks: [],
     },
     {
       slug: "game-item",
@@ -186,7 +186,7 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: ITEM_DEFINITION.properties,
-      initialBlocks: []
+      initialBlocks: [],
     },
     {
       slug: "species-entry",
@@ -198,7 +198,7 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: SPECIES_DEFINITION.properties,
-      initialBlocks: []
+      initialBlocks: [],
     },
     {
       slug: "skill-entry",
@@ -210,8 +210,8 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       rolePermissions: { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
       approvalRules: { allowSelfApproval: true, minApprovals: 1 },
       defaultProperties: SKILL_DEFINITION.properties,
-      initialBlocks: []
-    }
+      initialBlocks: [],
+    },
   ];
 }
 
@@ -221,7 +221,7 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
  */
 export async function ensureDefaultTemplates(
   dbInstance: any,
-  templateTable = pageTemplates
+  templateTable = pageTemplates,
 ): Promise<number> {
   if (!dbInstance) return 0;
 

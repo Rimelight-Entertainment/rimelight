@@ -10,49 +10,49 @@ const quickNavItems = [
     title: "Getting Started",
     description: "New to Grand Tale? Start here to learn the basics.",
     href: "/franchises/grand-tale/wiki/getting-started",
-    icon: "i-lucide-book-open"
+    icon: "i-lucide-book-open",
   },
   {
     title: "Characters",
     description: "Explore the heroes, villains, and legends of the world.",
     href: "/franchises/grand-tale/wiki/lore/characters",
-    icon: "i-lucide-users"
+    icon: "i-lucide-users",
   },
   {
     title: "Locations",
     description: "Discover the regions, cities, and landmarks.",
     href: "/franchises/grand-tale/wiki/lore/locations",
-    icon: "i-lucide-map-pin"
+    icon: "i-lucide-map-pin",
   },
   {
     title: "Heroes",
     description: "Master the playable heroes and their abilities.",
     href: "/franchises/grand-tale/wiki/lore/heroes",
-    icon: "i-lucide-shield-check"
-  }
+    icon: "i-lucide-shield-check",
+  },
 ];
 
 const trendingArticles = [
   {
     title: "Chronicles of the Cataclysm",
     category: "Lore",
-    summary: "A deep dive into the cataclysmic events that reshaped Aethelgard."
+    summary: "A deep dive into the cataclysmic events that reshaped Aethelgard.",
   },
   {
     title: "Soulstone Resonance Mechanics",
     category: "Guides",
-    summary: "How to maximize your character's combat efficiency using Soulstone resonance."
+    summary: "How to maximize your character's combat efficiency using Soulstone resonance.",
   },
   {
     title: "The Nine Factions Overview",
     category: "Lore",
-    summary: "Learn about the origins, motives, and leaders of the Nine Factions."
+    summary: "Learn about the origins, motives, and leaders of the Nine Factions.",
   },
   {
     title: "Elemental Weakness & Rotations",
     category: "Strategy",
-    summary: "Mastering elemental synergy to defeat raid bosses."
-  }
+    summary: "Mastering elemental synergy to defeat raid bosses.",
+  },
 ];
 
 export const WikiIndexPage: Component = () => {

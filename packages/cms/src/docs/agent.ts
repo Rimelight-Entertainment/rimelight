@@ -24,7 +24,7 @@ function resolveLocalized(val: unknown, locale: string = "en"): string {
 export function renderPageAsMarkdown(
   page: any,
   locale: string = "en",
-  options: AgentMarkdownOptions = {}
+  options: AgentMarkdownOptions = {},
 ): string {
   const { siteUrl = "https://rimelight.com", llmsUrl = "/llms.txt", sourceUrl } = options;
 
@@ -62,7 +62,7 @@ export function renderPageAsMarkdown(
     `# ${title}`,
     "",
     markdownBody,
-    ""
+    "",
   ];
 
   if (sourceUrl) {
@@ -83,14 +83,14 @@ export async function renderCorpusMarkdown(
     siteUrl?: string;
     title?: string;
     description?: string;
-  } = {}
+  } = {},
 ): Promise<string> {
   const {
     type = "doc",
     locale = "en",
     siteUrl = "https://rimelight.com",
     title = "Rimelight Documentation Corpus",
-    description = "Complete single-corpus documentation for AI agents."
+    description = "Complete single-corpus documentation for AI agents.",
   } = options;
 
   if (!db) return `# ${title}\n\n${description}`;
@@ -113,7 +113,7 @@ export async function renderCorpusMarkdown(
     `Generated for site: ${siteUrl}`,
     "",
     "---",
-    ""
+    "",
   ];
 
   for (const page of rows) {

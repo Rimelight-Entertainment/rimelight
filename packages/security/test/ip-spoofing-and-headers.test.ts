@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 
 vi.mock("virtual:sri-manifest", () => ({
-  manifest: {}
+  manifest: {},
 }));
 
 vi.mock("virtual:rimelight-security-config", () => ({
-  config: {}
+  config: {},
 }));
 
 import { security } from "../src/middleware/security";
@@ -17,7 +17,7 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
     const req = new Request("https://rimelight.com/secure");
     const ctx = {
       req: { raw: req },
-      res: new Response('{"ok":true}', { headers: { "content-type": "application/json" } })
+      res: new Response('{"ok":true}', { headers: { "content-type": "application/json" } }),
     };
     await middleware(ctx, async () => {});
 
@@ -36,20 +36,20 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
       bindingName: "TEST_LIMITER",
       keyGenerator: (c: any) => {
         return c.req.header("CF-Connecting-IP") || "anonymous";
-      }
+      },
     });
 
     const createCtx = (ip: string) => ({
       req: {
         path: "/api/test",
-        header: (name: string) => (name === "CF-Connecting-IP" ? ip : undefined)
+        header: (name: string) => (name === "CF-Connecting-IP" ? ip : undefined),
       },
       env: {
         TEST_LIMITER: {
-          limit: limitMock
-        }
+          limit: limitMock,
+        },
       },
-      json: (data: any, status: number) => ({ data, status })
+      json: (data: any, status: number) => ({ data, status }),
     });
 
     const ctxAllowed = createCtx("198.51.100.22");

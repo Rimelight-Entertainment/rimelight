@@ -5,7 +5,7 @@ import {
   omit,
   Show,
   onSettled,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { DrawerProps } from "./drawer";
@@ -49,7 +49,7 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     "onOpenChange",
     "closeOnClickOutside",
     "closeOnEscape",
-    "lockScroll"
+    "lockScroll",
   );
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
@@ -77,7 +77,7 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
         document.body.style.overflow = "";
         if (dialogRef && dialogRef.open) dialogRef.close();
       }
-    }
+    },
   );
 
   onSettled(() => {
@@ -104,8 +104,8 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     drawerTheme({
       direction: props.direction ?? "bottom",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const triggerContent = () => props.trigger ?? props.triggerSlot;

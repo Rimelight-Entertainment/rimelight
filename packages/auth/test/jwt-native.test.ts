@@ -9,7 +9,7 @@ import {
   decodeJwtHeader,
   parseDuration,
   verifyJwtRs256,
-  verifySessionToken
+  verifySessionToken,
 } from "../src/jwt";
 import { verifyAuth0Jwt } from "../src/adapters/auth0";
 
@@ -20,10 +20,10 @@ async function generateTestRsaKeyPair(kid = "test-key-1") {
       name: "RSASSA-PKCS1-v1_5",
       modulusLength: 2048,
       publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-      hash: "SHA-256"
+      hash: "SHA-256",
     },
     true,
-    ["sign", "verify"]
+    ["sign", "verify"],
   )) as CryptoKeyPair;
 
   const jwk = (await crypto.subtle.exportKey("jwk", keyPair.publicKey)) as Record<string, any>;
@@ -38,13 +38,13 @@ async function signTestRs256Jwt(
   payload: Record<string, any>,
   privateKey: CryptoKey,
   headerOverrides: Record<string, any> = {},
-  kid = "test-key-1"
+  kid = "test-key-1",
 ): Promise<string> {
   const header = {
     alg: "RS256",
     typ: "JWT",
     kid,
-    ...headerOverrides
+    ...headerOverrides,
   };
 
   const headerB64 = base64UrlEncode(JSON.stringify(header));
@@ -54,7 +54,7 @@ async function signTestRs256Jwt(
   const signature = await crypto.subtle.sign(
     "RSASSA-PKCS1-v1_5",
     privateKey,
-    new TextEncoder().encode(data)
+    new TextEncoder().encode(data),
   );
 
   const sigB64 = base64UrlEncode(new Uint8Array(signature));
@@ -125,7 +125,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
       const session = {
         userId: "user-789",
         email: "alice@rimelight.com",
-        roles: ["admin"]
+        roles: ["admin"],
       };
 
       const token = await createSessionToken(session, secret, "1h");
@@ -193,7 +193,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
 
       // -2 seconds with strict clockTolerance: 0 should be rejected
       const verifiedStrict = await verifySessionToken(recentExpiredToken, secret, {
-        clockTolerance: 0
+        clockTolerance: 0,
       });
       expect(verifiedStrict).toBeNull();
     });
@@ -219,7 +219,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         iss: "https://rimelight.eu.auth0.com/",
         aud: "https://api.rimelight.com",
         iat: now,
-        exp: now + 3600
+        exp: now + 3600,
       };
 
       const token = await signTestRs256Jwt(payload, keyPair.privateKey, {}, "auth0-key-1");
@@ -231,7 +231,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
           expect(urlStr).toBe("https://rimelight.eu.auth0.com/.well-known/jwks.json");
           return new Response(JSON.stringify({ keys: [jwk] }), {
             status: 200,
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
           });
         };
 
@@ -240,8 +240,8 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
           "https://rimelight.eu.auth0.com/.well-known/jwks.json",
           {
             issuer: "https://rimelight.eu.auth0.com",
-            audience: "https://api.rimelight.com"
-          }
+            audience: "https://api.rimelight.com",
+          },
         );
 
         expect(verified).not.toBeNull();
@@ -260,7 +260,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         sub: "auth0|expired",
         iss: "https://rimelight.eu.auth0.com/",
         aud: "https://api.rimelight.com",
-        exp: now - 300 // Expired 5 min ago
+        exp: now - 300, // Expired 5 min ago
       };
 
       const token = await signTestRs256Jwt(payload, keyPair.privateKey, {}, "auth0-key-expired");
@@ -272,7 +272,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         const verified = await verifyJwtRs256(
           token,
           "https://rimelight.eu.auth0.com/.well-known/jwks.json",
-          { clockTolerance: 10 }
+          { clockTolerance: 10 },
         );
         expect(verified).toBeNull();
       } finally {
@@ -288,7 +288,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         sub: "auth0|123",
         iss: "https://rogue-issuer.com/",
         aud: "https://api.rimelight.com",
-        exp: now + 3600
+        exp: now + 3600,
       };
 
       const token = await signTestRs256Jwt(payload, keyPair.privateKey, {}, "auth0-key-iss");
@@ -300,7 +300,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         const verified = await verifyJwtRs256(
           token,
           "https://rimelight.eu.auth0.com/.well-known/jwks.json",
-          { issuer: "https://rimelight.eu.auth0.com" }
+          { issuer: "https://rimelight.eu.auth0.com" },
         );
         expect(verified).toBeNull();
       } finally {
@@ -316,7 +316,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         sub: "auth0|123",
         iss: "https://rimelight.eu.auth0.com/",
         aud: "https://other-audience.com",
-        exp: now + 3600
+        exp: now + 3600,
       };
 
       const token = await signTestRs256Jwt(payload, keyPair.privateKey, {}, "auth0-key-aud");
@@ -328,7 +328,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         const verified = await verifyJwtRs256(
           token,
           "https://rimelight.eu.auth0.com/.well-known/jwks.json",
-          { audience: "https://api.rimelight.com" }
+          { audience: "https://api.rimelight.com" },
         );
         expect(verified).toBeNull();
       } finally {
@@ -359,12 +359,12 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
           { sub: "rotated-user", exp: now + 3600 },
           key2.keyPair.privateKey,
           {},
-          "key-rotated-new"
+          "key-rotated-new",
         );
 
         const verified = await verifyJwtRs256(
           tokenNew,
-          "https://rimelight.eu.auth0.com/.well-known/jwks.json"
+          "https://rimelight.eu.auth0.com/.well-known/jwks.json",
         );
 
         expect(verified).not.toBeNull();
@@ -384,7 +384,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
         email: "dev@rimelight.com",
         iss: "https://rimelight.eu.auth0.com/",
         aud: "https://api.rimelight.com",
-        exp: now + 3600
+        exp: now + 3600,
       };
 
       const token = await signTestRs256Jwt(payload, keyPair.privateKey, {}, "auth0-adapter-key");
@@ -395,7 +395,7 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
 
         const result = await verifyAuth0Jwt(token, {
           domain: "rimelight.eu.auth0.com",
-          audience: "https://api.rimelight.com"
+          audience: "https://api.rimelight.com",
         });
 
         expect(result).not.toBeNull();

@@ -24,7 +24,7 @@ const DEFAULT_GUEST_ONLY_ROUTES = ["/auth/sign-in", "/auth/sign-up"];
 
 function matchesPattern(
   path: string,
-  pattern: string | RegExp | ((path: string) => boolean)
+  pattern: string | RegExp | ((path: string) => boolean),
 ): boolean {
   if (typeof pattern === "function") return pattern(path);
   if (typeof pattern === "string") return path.startsWith(pattern) || path.includes(pattern);
@@ -58,7 +58,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     signInUrl = "/auth/sign-in",
     homeUrl = "/",
     onUnauthorized,
-    onForbidden
+    onForbidden,
   } = options;
 
   return async (c: any, next: () => Promise<any>): Promise<any> => {
@@ -115,7 +115,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
             id: sessionCtx.userId,
             userId: sessionCtx.userId,
             roles: sessionCtx.roles,
-            userType: sessionCtx.userType
+            userType: sessionCtx.userType,
           }
         : null;
 
@@ -155,7 +155,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
         }
         return new Response(
           JSON.stringify({ error: "Unauthorized", message: "Authentication required." }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
+          { status: 401, headers: { "Content-Type": "application/json" } },
         );
       }
       return c.redirect(signInUrl);
@@ -174,7 +174,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
             }
             return new Response(
               JSON.stringify({ error: "Unauthorized", message: "Authentication required." }),
-              { status: 401, headers: { "Content-Type": "application/json" } }
+              { status: 401, headers: { "Content-Type": "application/json" } },
             );
           }
           return c.redirect(signInUrl);
@@ -214,15 +214,15 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
             if (typeof c.json === "function") {
               return c.json(
                 { error: "Forbidden", message: "Forbidden: insufficient permissions." },
-                403
+                403,
               );
             }
             return new Response(
               JSON.stringify({
                 error: "Forbidden",
-                message: "Forbidden: insufficient permissions."
+                message: "Forbidden: insufficient permissions.",
               }),
-              { status: 403, headers: { "Content-Type": "application/json" } }
+              { status: 403, headers: { "Content-Type": "application/json" } },
             );
           }
           return c.redirect(homeUrl);

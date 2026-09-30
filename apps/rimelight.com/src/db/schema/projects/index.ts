@@ -10,10 +10,10 @@ export const board = pgTable("kanban_board", {
   description: text("description"),
   isArchived: boolean("is_archived").default(false).notNull(),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export type Board = typeof board.$inferSelect;
@@ -21,10 +21,10 @@ export type Board = typeof board.$inferSelect;
 export const boardRelations = relations(board, ({ one, many }) => ({
   user: one(users, {
     fields: [board.userId],
-    references: [users.auth0Id]
+    references: [users.auth0Id],
   }),
   lists: many(list),
-  customFields: many(customFieldDefinition)
+  customFields: many(customFieldDefinition),
 }));
 
 // --- Custom Fields ---
@@ -37,10 +37,10 @@ export const customFieldDefinition = pgTable("kanban_custom_field", {
   type: text("type", { enum: ["TEXT", "NUMBER", "DATE", "SELECT", "CHECKBOX", "URL"] }).notNull(),
   options: jsonb("options").$type<{ label: string; value: string; color?: string }[]>().default([]),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export type CustomFieldDefinition = typeof customFieldDefinition.$inferSelect;
@@ -48,8 +48,8 @@ export type CustomFieldDefinition = typeof customFieldDefinition.$inferSelect;
 export const customFieldDefinitionRelations = relations(customFieldDefinition, ({ one }) => ({
   board: one(board, {
     fields: [customFieldDefinition.boardId],
-    references: [board.id]
-  })
+    references: [board.id],
+  }),
 }));
 
 // --- Lists ---
@@ -61,10 +61,10 @@ export const list = pgTable("kanban_list", {
   title: text("title").notNull(),
   order: integer("order").notNull().default(0),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export type List = typeof list.$inferSelect;
@@ -72,9 +72,9 @@ export type List = typeof list.$inferSelect;
 export const listRelations = relations(list, ({ one, many }) => ({
   board: one(board, {
     fields: [list.boardId],
-    references: [board.id]
+    references: [board.id],
   }),
-  cards: many(card)
+  cards: many(card),
 }));
 
 // --- Cards ---
@@ -89,10 +89,10 @@ export const card = pgTable("kanban_card", {
   dueDate: timestamp("due_date"),
   customFields: jsonb("custom_fields").$type<Record<string, any>>().default({}),
   updatedAt: timestamp("updated_at", {
-    withTimezone: true
+    withTimezone: true,
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export type Card = typeof card.$inferSelect;
@@ -100,6 +100,6 @@ export type Card = typeof card.$inferSelect;
 export const cardRelations = relations(card, ({ one }) => ({
   list: one(list, {
     fields: [card.listId],
-    references: [list.id]
-  })
+    references: [list.id],
+  }),
 }));

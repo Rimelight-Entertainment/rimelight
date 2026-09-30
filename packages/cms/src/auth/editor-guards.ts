@@ -39,7 +39,7 @@ export function hasLockedDescendants(block: BaseBlock, session?: UserSessionCont
 export function validateServerBlockPayload(
   existingTree: BaseBlock[],
   incomingTree: BaseBlock[],
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): { valid: boolean; reason?: string } {
   const existingTemplated = extractTemplatedBlocks(existingTree);
   const incomingTemplated = extractTemplatedBlocks(incomingTree);
@@ -58,12 +58,12 @@ export function validateServerBlockPayload(
 
   for (const existingBlock of existingTemplated) {
     const incomingBlock = incomingTemplated.find(
-      (b) => b.type === existingBlock.type && b.id === existingBlock.id
+      (b) => b.type === existingBlock.type && b.id === existingBlock.id,
     );
     if (!incomingBlock) {
       return {
         valid: false,
-        reason: `Forbidden: Templated block ${existingBlock.type} (ID: ${existingBlock.id}) missing in payload.`
+        reason: `Forbidden: Templated block ${existingBlock.type} (ID: ${existingBlock.id}) missing in payload.`,
       };
     }
 
@@ -71,7 +71,7 @@ export function validateServerBlockPayload(
       if (JSON.stringify(existingBlock.props) !== JSON.stringify(incomingBlock.props)) {
         return {
           valid: false,
-          reason: `Forbidden: Cannot modify locked properties on ${existingBlock.type}.`
+          reason: `Forbidden: Cannot modify locked properties on ${existingBlock.type}.`,
         };
       }
     } else if (Array.isArray(existingBlock.templatedProps)) {
@@ -79,7 +79,7 @@ export function validateServerBlockPayload(
         if (JSON.stringify(existingBlock.props[key]) !== JSON.stringify(incomingBlock.props[key])) {
           return {
             valid: false,
-            reason: `Forbidden: Cannot modify locked property '${key}' on ${existingBlock.type}.`
+            reason: `Forbidden: Cannot modify locked property '${key}' on ${existingBlock.type}.`,
           };
         }
       }
@@ -96,13 +96,13 @@ export function validateServerBlockPayload(
         if (!incomingBlock) {
           return {
             valid: false,
-            reason: `Forbidden: Cannot delete protected block ${existingBlock.type} (ID: ${existingBlock.id}).`
+            reason: `Forbidden: Cannot delete protected block ${existingBlock.type} (ID: ${existingBlock.id}).`,
           };
         }
         if (JSON.stringify(existingBlock.props) !== JSON.stringify(incomingBlock.props)) {
           return {
             valid: false,
-            reason: `Forbidden: Cannot modify protected block ${existingBlock.type} (ID: ${existingBlock.id}).`
+            reason: `Forbidden: Cannot modify protected block ${existingBlock.type} (ID: ${existingBlock.id}).`,
           };
         }
       }
@@ -143,6 +143,6 @@ function extractTemplatedBlocks(blocks: BaseBlock[]): BaseBlock[] {
 
 function extractProtectedBlocks(blocks: BaseBlock[]): BaseBlock[] {
   return flattenBlocks(blocks).filter(
-    (b) => (b.allowedRoles && b.allowedRoles.length > 0) || !!b.requiredPermission
+    (b) => (b.allowedRoles && b.allowedRoles.length > 0) || !!b.requiredPermission,
   );
 }

@@ -14,8 +14,8 @@ const RLUser: Component<RLUserProps> = (allProps) => {
   const classes = createMemo(() =>
     userTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

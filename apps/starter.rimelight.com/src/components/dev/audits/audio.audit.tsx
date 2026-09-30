@@ -16,7 +16,7 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     bitrate: "320 kbps",
     fileSize: "4.7 MB",
     transcript:
-      "00:00 — Relaxing soft piano chords begin to loop gently with background vinyl crackle..."
+      "00:00 — Relaxing soft piano chords begin to loop gently with background vinyl crackle...",
   },
   {
     src: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3",
@@ -28,7 +28,7 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     format: "MP3",
     bitrate: "320 kbps",
     fileSize: "3.5 MB",
-    transcript: "00:00 — Smooth Rhodes progression with melodic jazzy saxophone overlay..."
+    transcript: "00:00 — Smooth Rhodes progression with melodic jazzy saxophone overlay...",
   },
   {
     src: "https://cdn.pixabay.com/audio/2022/10/14/audio_9939f792cb.mp3",
@@ -40,8 +40,8 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     format: "MP3",
     bitrate: "320 kbps",
     fileSize: "5.5 MB",
-    transcript: "00:00 — Minimal electronic pulse synth layered over deep sub-bass frequencies..."
-  }
+    transcript: "00:00 — Minimal electronic pulse synth layered over deep sub-bass frequencies...",
+  },
 ];
 
 export const AudioSandbox = (): JSX.Element => {
@@ -72,7 +72,7 @@ export const AudioSandbox = (): JSX.Element => {
     "info",
     "warning",
     "error",
-    "neutral"
+    "neutral",
   ] as const;
 
   return (
@@ -315,7 +315,7 @@ export const audioAudit: ComponentAuditDefinition = {
           showDownload
           showExternalLink
         />
-      )
+      ),
     },
     {
       id: "vertical-poster",
@@ -338,7 +338,7 @@ export const audioAudit: ComponentAuditDefinition = {
           showDownload
           showExternalLink
         />
-      )
+      ),
     },
     {
       id: "waveform-vs-bar",
@@ -354,7 +354,7 @@ export const audioAudit: ComponentAuditDefinition = {
           progressVariant="waveform"
           progressColor="success"
         />
-      )
+      ),
     },
     {
       id: "repeat-modes",
@@ -370,7 +370,7 @@ export const audioAudit: ComponentAuditDefinition = {
           repeatMode="one"
           showRepeat
         />
-      )
+      ),
     },
     {
       id: "with-transcript",
@@ -384,7 +384,7 @@ export const audioAudit: ComponentAuditDefinition = {
           artwork={SAMPLE_TRACKS[0]?.artwork}
           transcript="Speaker 1: Welcome to the episode! Today we are discussing accessible web audio players. Speaker 2: Thanks for having me, glad to be here!"
         />
-      )
+      ),
     },
     {
       id: "custom-icon-overrides",
@@ -400,55 +400,55 @@ export const audioAudit: ComponentAuditDefinition = {
             play: "sun",
             pause: "moon",
             skipBack: "arrowLeft",
-            skipForward: "arrowRight"
+            skipForward: "arrowRight",
           }}
         />
-      )
-    }
+      ),
+    },
   ],
   checklist: [
     {
       criterion: "Double-triangle fast forward / rewind skip icons",
       status: "pass",
       notes:
-        "Skip buttons now use fastForward and rewind double triangles (>>) with second count badges."
+        "Skip buttons now use fastForward and rewind double triangles (>>) with second count badges.",
     },
     {
       criterion: "Reliable interactive progress scrub & seeking",
       status: "pass",
       notes:
-        "Seek scrub inputs and waveform clicks update currentTime and preserve position without restarting."
+        "Seek scrub inputs and waveform clicks update currentTime and preserve position without restarting.",
     },
     {
       criterion: "Refined SVG dynamic waveform with progress fill",
       status: "pass",
-      notes: "Dynamic curved soundwave geometry with active progress fill and interactive seeking."
+      notes: "Dynamic curved soundwave geometry with active progress fill and interactive seeking.",
     },
     {
       criterion: "Controls layout placement (Volume bottom-left, Repeat bottom-right)",
       status: "pass",
       notes:
-        "Controls placed logically: Volume bottom-left, Playback center, Repeat & Speed bottom-right."
+        "Controls placed logically: Volume bottom-left, Playback center, Repeat & Speed bottom-right.",
     },
     {
       criterion: "Top right Download & External Link buttons",
       status: "pass",
-      notes: "Optional showDownload and showExternalLink buttons in the header action bar."
+      notes: "Optional showDownload and showExternalLink buttons in the header action bar.",
     },
     {
       criterion: "Dedicated progressColor token prop",
       status: "pass",
-      notes: "Allows independent color theming for the scrub bar and waveform."
+      notes: "Allows independent color theming for the scrub bar and waveform.",
     },
     {
       criterion: "Uncapped playback speed multiplier",
       status: "pass",
-      notes: "Direct numerical speed input allows any multiplier > 0.1x."
+      notes: "Direct numerical speed input allows any multiplier > 0.1x.",
     },
     {
       criterion: "Multi-track playlist with working audio URLs",
       status: "pass",
-      notes: "All 3 sample audio tracks verified with accessible media CDN URLs."
-    }
-  ]
+      notes: "All 3 sample audio tracks verified with accessible media CDN URLs.",
+    },
+  ],
 };

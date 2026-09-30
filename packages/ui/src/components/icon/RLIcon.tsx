@@ -13,8 +13,8 @@ const RLIcon: Component<RLIconProps> = (allProps) => {
     iconTheme({
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
   return (
     <span

@@ -53,7 +53,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
     "prefetch",
     "raw",
     "ariaLabel",
-    "ariaCurrentValue"
+    "ariaCurrentValue",
   );
 
   const href = () => props.href || (props["to"] as string | undefined);
@@ -91,8 +91,8 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
       active: props.active,
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const renderLeading = () => {

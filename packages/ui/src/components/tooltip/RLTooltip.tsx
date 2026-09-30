@@ -18,8 +18,8 @@ const RLTooltip: Component<RLTooltipProps> = (allProps) => {
     tooltipTheme({
       placement: placement(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

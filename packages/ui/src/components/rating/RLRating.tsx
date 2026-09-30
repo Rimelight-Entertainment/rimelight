@@ -15,8 +15,8 @@ const RLRating: Component<RLRatingProps> = (allProps) => {
     ratingTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

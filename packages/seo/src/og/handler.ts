@@ -3,7 +3,7 @@ import {
   defaultOgLayout,
   loadOgFonts,
   type OgFontConfig,
-  type OgLayoutOptions
+  type OgLayoutOptions,
 } from "../og.js";
 import type { OgRouteOptions } from "../types.js";
 
@@ -18,7 +18,7 @@ export interface OgHandlerOptions extends OgRouteOptions {
  */
 export async function handleOgRequest(
   request: Request,
-  options: OgHandlerOptions = {}
+  options: OgHandlerOptions = {},
 ): Promise<Response> {
   try {
     const url = new URL(request.url);
@@ -45,7 +45,7 @@ export async function handleOgRequest(
       background,
       preview,
       ...(description !== undefined && { description }),
-      ...(badge !== undefined && { badge })
+      ...(badge !== undefined && { badge }),
     };
 
     const font = options.font || NOTO_SANS;
@@ -60,8 +60,8 @@ export async function handleOgRequest(
       height: 630,
       fonts: [
         { name: font.name, data: regular, weight: 400, style: "normal" },
-        { name: font.name, data: bold, weight: 700, style: "normal" }
-      ]
+        { name: font.name, data: bold, weight: 700, style: "normal" },
+      ],
     });
 
     return new Response(new Blob([new Uint8Array(pngBuffer)], { type: "image/png" }), {
@@ -69,23 +69,23 @@ export async function handleOgRequest(
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
-        "CDN-Cache-Control": "public, max-age=604800"
-      }
+        "CDN-Cache-Control": "public, max-age=604800",
+      },
     });
   } catch (error) {
     console.error("[OG Handler Error]:", error);
     return new Response(
       JSON.stringify({
         error: "Failed to render Open Graph image",
-        message: error instanceof Error ? error.message : String(error)
+        message: error instanceof Error ? error.message : String(error),
       }),
       {
         status: 500,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
-      }
+          "Cache-Control": "no-store",
+        },
+      },
     );
   }
 }

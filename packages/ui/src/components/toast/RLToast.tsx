@@ -17,7 +17,7 @@ const variantIcons: Record<string, string> = {
   error: "i-rl-circleCheck",
   success: "i-rl-circleCheck",
   warning: "i-rl-alertTriangle",
-  info: "i-rl-info"
+  info: "i-rl-info",
 };
 
 const RLToast: Component<RLToastProps> = (allProps) => {
@@ -36,7 +36,7 @@ const RLToast: Component<RLToastProps> = (allProps) => {
     "children",
     "titleSlot",
     "descriptionSlot",
-    "actionsSlot"
+    "actionsSlot",
   );
 
   const [leaving, setLeaving] = createSignal(false);
@@ -54,8 +54,8 @@ const RLToast: Component<RLToastProps> = (allProps) => {
         ? (props.variant as "success" | "error" | "warning" | "info")
         : "default",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const icon = () => variantIcons[props.variant ?? ""] ?? variantIcons["default"]!;

@@ -38,14 +38,14 @@ const RLInputPin: Component<RLInputPinProps> = (allProps) => {
     "onInput",
     "onChange",
     "onKeyDown",
-    "onComplete"
+    "onComplete",
   );
 
   const resolvedClasses = createMemo(() =>
     inputPinTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const cellsClasses = createMemo(() =>
@@ -53,8 +53,8 @@ const RLInputPin: Component<RLInputPinProps> = (allProps) => {
       variant: "default",
       size: props.size ?? "md",
       error: false,
-      ui: props.ui
-    })
+      ui: props.ui,
+    }),
   );
 
   const length = () => props.length ?? 4;

@@ -79,7 +79,7 @@ function objectLiteralToJson(literal: string): string {
     b: "\b",
     f: "\f",
     v: "\v",
-    "0": "\0"
+    "0": "\0",
   };
 
   while (i < n) {
@@ -161,7 +161,7 @@ function objectLiteralToJson(literal: string): string {
 
 export async function extractAllThemesMeta(
   componentNames: string[],
-  componentsDir: string
+  componentsDir: string,
 ): Promise<Record<string, ThemeMeta>> {
   const results: Record<string, ThemeMeta> = {};
 

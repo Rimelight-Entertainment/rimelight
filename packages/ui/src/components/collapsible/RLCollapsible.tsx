@@ -25,7 +25,7 @@ const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
     "class",
     "children",
     "triggerSlot",
-    "onOpenChange"
+    "onOpenChange",
   );
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
@@ -34,7 +34,7 @@ const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
     () => props.open,
     (open) => {
       if (open !== undefined) setIsOpen(open);
-    }
+    },
   );
 
   const resolvedClasses = createMemo(() =>
@@ -43,8 +43,8 @@ const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
       size: props.size,
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const handleToggle = (e: Event) => {

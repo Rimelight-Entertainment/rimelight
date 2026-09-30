@@ -23,7 +23,7 @@ describe("rimelight token architecture", () => {
 
   it("utilities reference the canonical --rl-* vars directly, no --colors-* layer", async () => {
     const { css } = await uno.generate("text-highlighted text-muted bg-inverted", {
-      preflights: true
+      preflights: true,
     });
     expect(css).toContain(".text-highlighted{color:color-mix(in srgb, var(--rl-neutral-950)");
     expect(css).toContain(".text-muted{color:color-mix(in srgb, var(--rl-neutral-600)");
@@ -57,7 +57,7 @@ describe("rimelight token architecture", () => {
       "--success:",
       "--border:",
       "--popover",
-      "--colors-"
+      "--colors-",
     ]) {
       expect(css).not.toContain(ghost);
     }
@@ -70,7 +70,7 @@ describe("custom palettes", () => {
 
   it("accepts mechanical [chroma, hue] arrays", async () => {
     const uno = await createGenerator({
-      presets: [rimelightUiPreset({ colors: { brand: [0.2, 30] } })]
+      presets: [rimelightUiPreset({ colors: { brand: [0.2, 30] } })],
     });
     const { css } = await uno.generate("text-brand-500", { preflights: true });
     expect(css).toContain("--rl-brand-500:");
@@ -83,10 +83,10 @@ describe("custom palettes", () => {
         rimelightUiPreset({
           colors: {
             flat: ramp("#123456"),
-            split: { light: ramp("#e6f0ff"), dark: ramp("#0a1a33") }
-          }
-        })
-      ]
+            split: { light: ramp("#e6f0ff"), dark: ramp("#0a1a33") },
+          },
+        }),
+      ],
     });
     const { css } = await uno.generate("text-flat-500 text-split-950", { preflights: true });
     expect(css).toContain("--rl-flat-500: light-dark(#123456, #123456);");

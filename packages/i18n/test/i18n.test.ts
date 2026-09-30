@@ -7,34 +7,34 @@ import {
   findStaleKeys,
   verifyTranslations,
   formatAuditReport,
-  fixTranslations
+  fixTranslations,
 } from "../src/utils";
 import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
 import {
   getHtmlLang,
   getOgLocale,
   getRelativeLocaleUrl,
-  getLanguageAlternates
+  getLanguageAlternates,
 } from "../src/index";
 
 describe("translation dictionary utils", () => {
   const source = {
     hero: { title: "Hello", subtitle: "Welcome" },
-    nav: { home: "Home" }
+    nav: { home: "Home" },
   };
 
   it("flattens nested translations into dotted keys", () => {
     expect(flatten(source)).toEqual({
       "hero.title": "Hello",
       "hero.subtitle": "Welcome",
-      "nav.home": "Home"
+      "nav.home": "Home",
     });
   });
 
   it("unflattens dotted keys back into components", () => {
     expect(unflatten({ "hero.title": "Hello", "nav.home": "Home" })).toEqual({
       hero: { title: "Hello" },
-      nav: { home: "Home" }
+      nav: { home: "Home" },
     });
   });
 
@@ -54,7 +54,7 @@ describe("translation dictionary utils", () => {
   it("finds stale keys between dictionaries", () => {
     const stale = findStaleKeys(source, {
       hero: { title: "Hello", old_cta: "Legacy" },
-      legacy_nav: { item: "Old" }
+      legacy_nav: { item: "Old" },
     });
     expect(stale).toEqual(["hero.old_cta", "legacy_nav.item"]);
   });
@@ -63,12 +63,12 @@ describe("translation dictionary utils", () => {
     const translations = {
       en: {
         nav: { home: "Home", welcome: "Hello {name}" },
-        footer: { text: "© 2026" }
+        footer: { text: "© 2026" },
       },
       pt: {
         nav: { home: "Início", welcome: "Olá {name}", old_item: "Velho" },
-        footer: { text: "" }
-      }
+        footer: { text: "" },
+      },
     };
 
     const report = verifyTranslations(translations, { defaultLocale: "en" });
@@ -84,11 +84,11 @@ describe("translation dictionary utils", () => {
   it("auto-fixes translations by pruning stale keys and filling missing keys", () => {
     const translations = {
       en: {
-        nav: { home: "Home", contact: "Contact" }
+        nav: { home: "Home", contact: "Contact" },
       },
       pt: {
-        nav: { home: "Início", stale_button: "Remover" }
-      }
+        nav: { home: "Início", stale_button: "Remover" },
+      },
     };
 
     const fixed = fixTranslations(translations, "en");
@@ -145,7 +145,7 @@ describe("language alternates", () => {
     const alternates = getLanguageAlternates("/about", "https://example.com");
     expect(alternates).toEqual([
       { hreflang: "en", href: "https://example.com/en/about" },
-      { hreflang: "x-default", href: "https://example.com/en/about" }
+      { hreflang: "x-default", href: "https://example.com/en/about" },
     ]);
   });
 });
@@ -161,9 +161,9 @@ describe("translation runtime", () => {
       defaultLocale: "en",
       translations: {
         en: {
-          hero: { title: "Hello", greeting: "Hi {name}" }
-        }
-      }
+          hero: { title: "Hello", greeting: "Hi {name}" },
+        },
+      },
     });
     currentLocale.set("en");
     expect(t("hero.title")).toBe("Hello");
@@ -176,7 +176,7 @@ describe("translation loader & KV binding", () => {
   it("loads translations statically when KV is not set", async () => {
     const { createTranslationLoader } = await import("../src/index");
     const loader = createTranslationLoader({
-      en: { nav: { home: "Home" } }
+      en: { nav: { home: "Home" } },
     });
     const loaded = await loader("en", ["nav"]);
     expect(loaded).toEqual({ nav: { home: "Home" } });
@@ -190,21 +190,21 @@ describe("translation loader & KV binding", () => {
           return { home: "Homepage (KV)" };
         }
         return null;
-      }
+      },
     };
     setKVBinding(mockKV as any);
 
     const loader = createTranslationLoader({
       en: {
         nav: { home: "Home" },
-        footer: { copyright: "© 2026" }
-      }
+        footer: { copyright: "© 2026" },
+      },
     });
 
     const loaded = await loader("en", ["nav", "footer"]);
     expect(loaded).toEqual({
       nav: { home: "Homepage (KV)" },
-      footer: { copyright: "© 2026" }
+      footer: { copyright: "© 2026" },
     });
   });
 });

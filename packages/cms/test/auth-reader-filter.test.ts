@@ -8,14 +8,14 @@ describe("filterBlocksForReader", () => {
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "ParagraphBlock",
-        props: { text: { en: "Public" } }
+        props: { text: { en: "Public" } },
       },
       {
         id: "22222222-2222-4222-8222-222222222222",
         type: "ParagraphBlock",
         allowedRoles: ["admin"],
-        props: { text: { en: "Classified" } }
-      }
+        props: { text: { en: "Classified" } },
+      },
     ];
 
     const readerSession = { userId: "user-1", roles: ["member"], permissions: [] };
@@ -31,8 +31,8 @@ describe("filterBlocksForReader", () => {
         id: "22222222-2222-4222-8222-222222222222",
         type: "ParagraphBlock",
         allowedRoles: ["admin"],
-        props: { text: { en: "Admin Secret" } }
-      }
+        props: { text: { en: "Admin Secret" } },
+      },
     ];
 
     const adminSession = { userId: "admin-1", roles: ["admin"], permissions: [] };

@@ -10,5 +10,5 @@ export const pageVersionComments = pgTable("page_version_comments", {
   userRole: text("user_role").notNull(),
   content: text("content").notNull(),
   blockId: text("block_id"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

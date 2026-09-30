@@ -30,7 +30,7 @@ export const WikiSlugPage: Component = () => {
         return null;
       }
     },
-    null
+    null,
   );
 
   const title = () =>

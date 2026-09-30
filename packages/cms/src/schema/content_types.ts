@@ -55,5 +55,5 @@ export const contentTypes = pgTable("content_types", {
   isSystem: boolean("is_system").default(false).notNull(),
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
 });

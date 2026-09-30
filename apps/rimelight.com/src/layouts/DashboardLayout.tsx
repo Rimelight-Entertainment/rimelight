@@ -9,7 +9,7 @@ import {
   RLDashboardNavbar,
   RLDashboardSidebarCollapse,
   RLDashboardSidebarToggle,
-  RLButton
+  RLButton,
 } from "@rimelight/ui";
 import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
 
@@ -31,7 +31,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
     { label: "Home", icon: "i-lucide-home", to: "/dashboard" },
     { label: "Inbox", icon: "i-lucide-inbox", to: "/dashboard/inbox" },
     { label: "Notes", icon: "i-lucide-notebook", to: "/dashboard/notes" },
-    { label: "Projects", icon: "i-lucide-square-kanban", to: "/dashboard/projects" }
+    { label: "Projects", icon: "i-lucide-square-kanban", to: "/dashboard/projects" },
   ];
 
   const footerLinks = [{ label: "CMS Content", icon: "i-lucide-file-text", to: "/cms" }];

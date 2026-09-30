@@ -11,7 +11,7 @@ export default defineConfig({
       // rather than be resolved by the bundler.
       neverBundle: [/^(?:virtual|cloudflare):/],
       // Be explicit so the bundler does not emit its "onlyBundle" hint.
-      onlyBundle: false
-    }
-  }
+      onlyBundle: false,
+    },
+  },
 });

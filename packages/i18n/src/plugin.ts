@@ -77,7 +77,7 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
           for (const [component, componentData] of Object.entries(localeData)) {
             seedData.keys.push({
               key: `locale:${locale}:${component}`,
-              value: JSON.stringify(componentData)
+              value: JSON.stringify(componentData),
             });
           }
         }
@@ -93,14 +93,14 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
             const { execSync } = await import("node:child_process");
             execSync(`npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"`, {
               stdio: "pipe",
-              timeout: 30_000
+              timeout: 30_000,
             });
           }
         } catch {
           // Ignore if directory cannot be written or during watch mode
         }
-      }
-    }
+      },
+    },
   ];
 }
 

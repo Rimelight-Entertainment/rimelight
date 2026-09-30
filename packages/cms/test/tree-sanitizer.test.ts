@@ -7,7 +7,7 @@ describe("sanitizeBlockTree", () => {
     const childBlock: BaseBlock = {
       id: "child-1",
       type: "ParagraphBlock",
-      props: { text: "TEST" }
+      props: { text: "TEST" },
     };
 
     const sectionBlock: BaseBlock = {
@@ -16,8 +16,8 @@ describe("sanitizeBlockTree", () => {
       children: [],
       props: {
         title: "New Section",
-        children: [childBlock]
-      }
+        children: [childBlock],
+      },
     };
 
     const inputBlocks: BaseBlock[] = [sectionBlock, childBlock];
@@ -34,13 +34,13 @@ describe("sanitizeBlockTree", () => {
     const childBlock: BaseBlock = {
       id: "child-1",
       type: "ParagraphBlock",
-      props: { text: "Inside Section" }
+      props: { text: "Inside Section" },
     };
 
     const outsideBlock: BaseBlock = {
       id: "outside-1",
       type: "ParagraphBlock",
-      props: { text: "Outside Section" }
+      props: { text: "Outside Section" },
     };
 
     const sectionBlock: BaseBlock = {
@@ -49,8 +49,8 @@ describe("sanitizeBlockTree", () => {
       children: [],
       props: {
         title: "Section",
-        children: [childBlock]
-      }
+        children: [childBlock],
+      },
     };
 
     const inputBlocks: BaseBlock[] = [sectionBlock, outsideBlock];

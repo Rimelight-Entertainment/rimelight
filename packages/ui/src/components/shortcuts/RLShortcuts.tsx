@@ -73,8 +73,8 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
         label: "Show Keyboard Shortcuts",
         description: "Display this shortcuts help cheat sheet modal",
         category: "system",
-        order: 0
-      }
+        order: 0,
+      },
     });
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -99,8 +99,8 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     shortcutsTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const sections = createMemo<CategorySection[]>(() => {

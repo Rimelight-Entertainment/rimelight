@@ -12,8 +12,8 @@ export const chartTheme = defineTheme("chart", {
     line: "stroke-2 fill-none",
     tooltip:
       "absolute z-50 bg-default text-highlighted border border-default rounded shadow p-2 text-xs",
-    legend: "flex items-center justify-center gap-4 text-xs text-muted"
+    legend: "flex items-center justify-center gap-4 text-xs text-muted",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

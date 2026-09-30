@@ -30,7 +30,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     "left",
     "center",
     "right",
-    "children"
+    "children",
   );
 
   const contain = () => props.contain ?? true;
@@ -52,8 +52,8 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
       sticky: fixed() ? false : sticky(),
       fixed: fixed(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const { registerHeader } = useHeaderStack();
@@ -64,7 +64,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     sticky: sticky(),
     fixed: fixed(),
     hideOnScroll: hideOnScroll(),
-    visible: true
+    visible: true,
   });
 
   const dynamicStyles = () => {
@@ -75,7 +75,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
       top: `${topOffset()}px`,
       transform: isCollapsed() ? "translateY(-100%)" : "translateY(0)",
       transition:
-        "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+        "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     };
 
     if (typeof props["style"] === "object" && props["style"] !== null) {

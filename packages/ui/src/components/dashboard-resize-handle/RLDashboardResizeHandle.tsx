@@ -17,8 +17,8 @@ const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allPro
   const resolvedClasses = createMemo(() =>
     dashboardResizeHandleTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

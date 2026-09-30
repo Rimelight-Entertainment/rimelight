@@ -45,7 +45,7 @@ export function parseDocsSlug(slug: string | undefined, versions: string[]) {
     return {
       activeVersion: "",
       contentPath: slug || "index",
-      includeVersionInUrl: false
+      includeVersionInUrl: false,
     };
   }
 
@@ -56,7 +56,7 @@ export function parseDocsSlug(slug: string | undefined, versions: string[]) {
     return {
       activeVersion: defaultVersion,
       contentPath: "index",
-      includeVersionInUrl: isMultiVersion
+      includeVersionInUrl: isMultiVersion,
     };
   }
 
@@ -67,14 +67,14 @@ export function parseDocsSlug(slug: string | undefined, versions: string[]) {
     return {
       activeVersion: firstPart,
       contentPath: parts.slice(1).join("/") || "index",
-      includeVersionInUrl: isMultiVersion
+      includeVersionInUrl: isMultiVersion,
     };
   }
 
   return {
     activeVersion: defaultVersion,
     contentPath: slug || "index",
-    includeVersionInUrl: isMultiVersion
+    includeVersionInUrl: isMultiVersion,
   };
 }
 
@@ -82,7 +82,7 @@ export function formatDocsUrl(
   href: string,
   locale: string,
   activeVersion?: string,
-  includeVersionInUrl?: boolean
+  includeVersionInUrl?: boolean,
 ): string {
   let url = href.replace("{locale}", locale);
   if (activeVersion && includeVersionInUrl) {

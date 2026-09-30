@@ -6,7 +6,7 @@ import {
   onSettled,
   Show,
   omit,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { TabItem, TabsProps } from "./tabs";
@@ -39,7 +39,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     "onChange",
     "class",
     "ui",
-    "children"
+    "children",
   );
 
   const items = () => props.items ?? [];
@@ -74,7 +74,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
       if (val !== undefined) {
         setInternalValue(val);
       }
-    }
+    },
   );
 
   const currentValue = () => (props.value !== undefined ? props.value : internalValue());
@@ -93,8 +93,8 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
       size: size(),
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   let listRef: HTMLDivElement | null = null;
@@ -149,7 +149,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     () => currentValue(),
     () => {
       requestAnimationFrame(() => updateIndicator());
-    }
+    },
   );
 
   const effectiveMax = () =>

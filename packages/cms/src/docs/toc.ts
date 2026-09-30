@@ -19,7 +19,7 @@ export function slugifyHeading(text: string): string {
 
 export function extractHeadingsFromBlocks(
   blocks: any[] = [],
-  currentDepth = 2
+  currentDepth = 2,
 ): TableOfContentsHeading[] {
   if (!Array.isArray(blocks)) return [];
   const headings: TableOfContentsHeading[] = [];
@@ -33,7 +33,7 @@ export function extractHeadingsFromBlocks(
         headings.push({
           depth: level,
           slug: slugifyHeading(title),
-          text: title
+          text: title,
         });
       }
       const children = block.children || block.props?.children || [];

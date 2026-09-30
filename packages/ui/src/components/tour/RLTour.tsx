@@ -14,8 +14,8 @@ const RLTour: Component<RLTourProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     tourTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

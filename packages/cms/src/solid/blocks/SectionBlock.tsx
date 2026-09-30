@@ -21,7 +21,7 @@ const headingClasses: Record<HeadingLevel, string> = {
   3: "text-2xl font-semibold text-neutral-900 mt-5 mb-2.5",
   4: "text-xl font-medium text-neutral-900 mt-4 mb-2",
   5: "text-lg font-medium text-neutral-800 mt-3 mb-1.5",
-  6: "text-base font-normal text-neutral-700 mt-2 mb-1"
+  6: "text-base font-normal text-neutral-700 mt-2 mb-1",
 };
 
 export const SectionBlock: Component<BlockViewProps> = (props) => {

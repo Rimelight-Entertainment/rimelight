@@ -37,7 +37,7 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     "footerSlot",
     "onOpenChange",
     "onConfirm",
-    "onCancel"
+    "onCancel",
   );
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? false);
@@ -47,8 +47,8 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     confirmTheme({
       variant: props.variant ?? "default",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   createEffect(
@@ -60,7 +60,7 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
       } else {
         if (dialogRef.open) dialogRef.close();
       }
-    }
+    },
   );
 
   createEffect(
@@ -69,7 +69,7 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
       if (open !== undefined) {
         setIsOpen(open);
       }
-    }
+    },
   );
 
   const openDialog = () => {

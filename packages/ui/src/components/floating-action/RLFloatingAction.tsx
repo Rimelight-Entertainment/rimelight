@@ -14,8 +14,8 @@ const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     floatingActionTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

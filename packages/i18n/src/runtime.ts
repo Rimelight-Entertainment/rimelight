@@ -29,7 +29,7 @@ export function atom<T>(initialValue: T): WritableAtom<T> {
       return () => {
         listeners.delete(listener);
       };
-    }
+    },
   };
 }
 
@@ -136,7 +136,7 @@ function getLocaleCandidateChain(activeLocale: string, defaultLocale: string): s
 
 function getCachedComponent(
   locale: string,
-  componentName: string
+  componentName: string,
 ): Record<string, any> | undefined {
   const candidates = getLocaleCandidateChain(locale, baseLocaleDefault);
 

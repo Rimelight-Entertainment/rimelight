@@ -43,7 +43,7 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
     "leading",
     "leadingIcon",
     "onSelect",
-    "onChange"
+    "onChange",
   );
 
   const currentCode = (): string => props.currentLocale ?? "en";
@@ -52,8 +52,8 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
     (props.locales ?? []).map((item) =>
       typeof item === "string"
         ? { code: item, label: getLocaleDisplayName(item) }
-        : { ...item, label: item.label || getLocaleDisplayName(item.code) }
-    )
+        : { ...item, label: item.label || getLocaleDisplayName(item.code) },
+    ),
   );
 
   const items = createMemo(() =>
@@ -78,14 +78,14 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
         }
       }
       return { label: item.label, value: item.code, href: targetUrl };
-    })
+    }),
   );
 
   const resolvedClasses = createMemo(() =>
     localeSelectorTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const isIconMode = () => props.mode === "icon" || props.variant === "icon";

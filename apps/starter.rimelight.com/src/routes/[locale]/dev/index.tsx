@@ -8,7 +8,7 @@ const sections = [
     tag: "Modular Test Suite",
     description:
       "Interactive sandbox, edge-case scenarios, and quality checklists for Rimelight UI components starting with Accordion.",
-    icon: "i-lucide-component"
+    icon: "i-lucide-component",
   },
   {
     title: "Data Table Benchmark",
@@ -16,15 +16,15 @@ const sections = [
     tag: "Data Display",
     description:
       "Benchmarking RLTable across SSR HTML streaming and SolidJS high-performance virtualization.",
-    icon: "i-lucide-table"
+    icon: "i-lucide-table",
   },
   {
     title: "OpenGraph Previewer",
     href: "/dev/og",
     tag: "SEO & Social",
     description: "Live preview and validation tool for dynamic OG banner generation.",
-    icon: "i-lucide-image"
-  }
+    icon: "i-lucide-image",
+  },
 ];
 
 export const DevIndexPage: Component = () => {

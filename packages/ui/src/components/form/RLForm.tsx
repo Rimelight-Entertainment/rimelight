@@ -15,8 +15,8 @@ const RLForm: Component<RLFormProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     formTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

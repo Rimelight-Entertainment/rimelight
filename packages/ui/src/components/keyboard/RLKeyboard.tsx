@@ -50,7 +50,7 @@ const mainRows: Key[][] = [
     { label: "F9", width: 1 },
     { label: "F10", width: 1 },
     { label: "F11", width: 1 },
-    { label: "F12", width: 1 }
+    { label: "F12", width: 1 },
   ],
   [
     { label: "`", width: 1 },
@@ -66,7 +66,7 @@ const mainRows: Key[][] = [
     { label: "0", width: 1, code: "Digit0" },
     { label: "-", width: 1, code: "Minus" },
     { label: "=", width: 1, code: "Equal" },
-    { label: "Bkspc", width: 2, code: "Backspace" }
+    { label: "Bkspc", width: 2, code: "Backspace" },
   ],
   [
     { label: "Tab", width: 1.5 },
@@ -82,7 +82,7 @@ const mainRows: Key[][] = [
     { label: "P", width: 1 },
     { label: "[", width: 1 },
     { label: "]", width: 1 },
-    { label: "\\", width: 1.5 }
+    { label: "\\", width: 1.5 },
   ],
   [
     { label: "Caps", width: 1.75, code: "CapsLock" },
@@ -97,7 +97,7 @@ const mainRows: Key[][] = [
     { label: "L", width: 1 },
     { label: ";", width: 1 },
     { label: "'", width: 1 },
-    { label: "Enter", width: 2.25, code: "Enter" }
+    { label: "Enter", width: 2.25, code: "Enter" },
   ],
   [
     { label: "Shift", width: 2.5, code: "ShiftLeft" },
@@ -111,7 +111,7 @@ const mainRows: Key[][] = [
     { label: ",", width: 1 },
     { label: ".", width: 1, code: "Period" },
     { label: "/", width: 1, code: "Slash" },
-    { label: "Shift", width: 2.5, code: "ShiftRight" }
+    { label: "Shift", width: 2.5, code: "ShiftRight" },
   ],
   [
     { label: "Ctrl", width: 1.25, code: "ControlLeft" },
@@ -121,37 +121,37 @@ const mainRows: Key[][] = [
     { label: "Alt", width: 1.25, code: "AltRight" },
     { label: "Fn", width: 1.25 },
     { label: "Menu", width: 1.25, code: "ContextMenu" },
-    { label: "Ctrl", width: 1.25, code: "ControlRight" }
-  ]
+    { label: "Ctrl", width: 1.25, code: "ControlRight" },
+  ],
 ];
 
 const functionRows: Key[][] = [
   [
     { label: "PrtSc", width: 1, code: "PrintScreen" },
     { label: "ScrLk", width: 1, code: "ScrollLock" },
-    { label: "Pause", width: 1, code: "Pause" }
+    { label: "Pause", width: 1, code: "Pause" },
   ],
   [
     { label: "Ins", width: 1 },
     { label: "Home", width: 1 },
-    { label: "PgUp", width: 1 }
+    { label: "PgUp", width: 1 },
   ],
   [
     { label: "Del", width: 1 },
     { label: "End", width: 1 },
-    { label: "PgDn", width: 1 }
+    { label: "PgDn", width: 1 },
   ],
   [{ type: "spacer", width: 3 }],
   [
     { type: "spacer", width: 1 },
     { label: "↑", width: 1, code: "ArrowUp" },
-    { type: "spacer", width: 1 }
+    { type: "spacer", width: 1 },
   ],
   [
     { label: "←", width: 1, code: "ArrowLeft" },
     { label: "↓", width: 1, code: "ArrowDown" },
-    { label: "→", width: 1, code: "ArrowRight" }
-  ]
+    { label: "→", width: 1, code: "ArrowRight" },
+  ],
 ];
 
 const numpadKeys: Key[] = [
@@ -171,7 +171,7 @@ const numpadKeys: Key[] = [
   { label: "3", width: 1, code: "Numpad3" },
   { label: "Enter", width: 1, height: 2, code: "NumpadEnter" },
   { label: "0", width: 2, code: "Numpad0" },
-  { label: ".", width: 1, code: "NumpadDecimal" }
+  { label: ".", width: 1, code: "NumpadDecimal" },
 ];
 
 const numpadPositions: [number, number][] = [
@@ -191,7 +191,7 @@ const numpadPositions: [number, number][] = [
   [2, 3],
   [3, 3],
   [0, 4],
-  [2, 4]
+  [2, 4],
 ];
 
 const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
@@ -220,7 +220,7 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
       Shift: "shift",
       Menu: "option",
       Tab: "tab",
-      Esc: "esc"
+      Esc: "esc",
     };
 
     const label = (key.label && macMap[key.label]) || key.label;
@@ -267,9 +267,9 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
     variant() === "60"
       ? [
           [{ label: "Esc", width: 1, code: "Escape" }, ...(mainRows[1] || []).slice(1)],
-          ...mainRows.slice(2)
+          ...mainRows.slice(2),
         ]
-      : mainRows
+      : mainRows,
   );
 
   const processRows = (rows: Key[][], startX: number, startY: number): RenderKey[] => {
@@ -298,7 +298,7 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
   const mainHeight = (): number => displayMainRows().length * (keySize() + keyGap());
 
   const secondaryRenderKeys = createMemo<RenderKey[]>(() =>
-    variant() === "full" ? processRows(functionRows, 0, mainHeight() + sectionGap()) : []
+    variant() === "full" ? processRows(functionRows, 0, mainHeight() + sectionGap()) : [],
   );
 
   const numpadRenderKeys = createMemo<RenderKey[]>(() => {
@@ -320,7 +320,7 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
         x: px,
         y: py,
         w: w * keySize() + (w - 1) * keyGap(),
-        h: h * keySize() + (h - 1) * keyGap()
+        h: h * keySize() + (h - 1) * keyGap(),
       });
     });
 
@@ -347,7 +347,7 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
   const allKeys = createMemo<RenderKey[]>(() => [
     ...mainRenderKeys(),
     ...secondaryRenderKeys(),
-    ...numpadRenderKeys()
+    ...numpadRenderKeys(),
   ]);
 
   return (

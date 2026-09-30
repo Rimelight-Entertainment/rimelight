@@ -21,7 +21,7 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
     "left",
     "center",
     "right",
-    "children"
+    "children",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -29,8 +29,8 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
       contain: props.contain,
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

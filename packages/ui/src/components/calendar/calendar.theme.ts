@@ -3,8 +3,8 @@ import { defineTheme } from "../../resolver";
 export const calendarTheme = defineTheme("calendar", {
   slots: ["root"],
   base: {
-    root: ""
+    root: "",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

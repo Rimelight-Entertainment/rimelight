@@ -14,21 +14,21 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
             bullets: ["Training in Unreal Engine", "Implemented gameplay mechanics"],
             details: {
               location: "Curitiba",
-              remote: true
-            }
+              remote: true,
+            },
           },
           {
             role: "Customer Service",
             company: "Concentrix",
-            bullets: ["Supervision support"]
-          }
+            bullets: ["Supervision support"],
+          },
         ],
         settings: {
           nested: {
-            deep: "Found value"
-          }
-        }
-      }
+            deep: "Found value",
+          },
+        },
+      },
     },
     pt: {
       resume: {
@@ -41,17 +41,17 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
             bullets: ["Treinamento na Unreal Engine", "Implementação de mecânicas de gameplay"],
             details: {
               location: "Curitiba",
-              remote: true
-            }
-          }
-        ]
-      }
-    }
+              remote: true,
+            },
+          },
+        ],
+      },
+    },
   };
 
   initializeI18n({
     defaultLocale: "en",
-    translations
+    translations,
   });
 
   it("retrieves flat translations as strings via t()", () => {
@@ -79,7 +79,7 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     expect(tArray("resume.tags")).toEqual(["TypeScript", "Astro", "Unreal Engine"]);
     expect(t.array("resume.experiences.0.bullets")).toEqual([
       "Training in Unreal Engine",
-      "Implemented gameplay mechanics"
+      "Implemented gameplay mechanics",
     ]);
   });
 

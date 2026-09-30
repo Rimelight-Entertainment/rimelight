@@ -17,8 +17,8 @@ const RLKbd: Component<RLKbdProps> = (allProps) => {
       variant: props.variant ?? "outline",
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

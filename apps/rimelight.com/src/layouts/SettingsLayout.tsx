@@ -19,20 +19,20 @@ export const SettingsLayout: Component<SettingsLayoutProps> = (props) => {
       label: "General",
       icon: "i-lucide-user",
       href: getRelativeLocaleUrl("/dashboard/settings"),
-      active: props.activeTab === "general"
+      active: props.activeTab === "general",
     },
     {
       label: "Notifications",
       icon: "i-lucide-bell",
       href: getRelativeLocaleUrl("/dashboard/settings/notifications"),
-      active: props.activeTab === "notifications"
+      active: props.activeTab === "notifications",
     },
     {
       label: "Security",
       icon: "i-lucide-shield",
       href: getRelativeLocaleUrl("/dashboard/settings/security"),
-      active: props.activeTab === "security"
-    }
+      active: props.activeTab === "security",
+    },
   ];
 
   return (

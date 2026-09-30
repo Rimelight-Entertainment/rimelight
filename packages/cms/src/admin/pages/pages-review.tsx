@@ -29,7 +29,7 @@ export const PagesReviewPage: Component<PagesReviewPageProps> = (props) => {
       const res = await fetch(`${apiBase()}/pages/${props.pageId}/publish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ changeSummary: "Approved from review" })
+        body: JSON.stringify({ changeSummary: "Approved from review" }),
       });
       if (!res.ok) throw new Error(`Publish failed (${res.status})`);
       setStatus("Published successfully");

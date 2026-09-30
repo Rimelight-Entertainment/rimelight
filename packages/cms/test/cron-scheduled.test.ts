@@ -13,16 +13,16 @@ describe("@rimelight/cms cron scheduled tasks", () => {
     const mockDb = {
       delete: () => ({
         where: () => ({
-          returning: async () => [{ pageId: "page-1" }, { pageId: "page-2" }]
-        })
+          returning: async () => [{ pageId: "page-1" }, { pageId: "page-2" }],
+        }),
       }),
       select: () => ({
         from: () => ({
           where: () => ({
-            limit: async () => [{ id: "page-100", slug: "published-post" }]
-          })
-        })
-      })
+            limit: async () => [{ id: "page-100", slug: "published-post" }],
+          }),
+        }),
+      }),
     };
 
     const result = await handleCmsCron({}, {}, {}, mockDb);

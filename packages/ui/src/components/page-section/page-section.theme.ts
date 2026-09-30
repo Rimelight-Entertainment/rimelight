@@ -14,7 +14,7 @@ export const pageSectionTheme = defineTheme("page-section", {
     "description",
     "body",
     "footer",
-    "links"
+    "links",
   ],
   base: {
     root: "relative",
@@ -30,7 +30,7 @@ export const pageSectionTheme = defineTheme("page-section", {
     description: "text-muted",
     body: "",
     footer: "",
-    links: "flex flex-wrap"
+    links: "flex flex-wrap",
   },
   variants: {
     variant: {
@@ -41,7 +41,7 @@ export const pageSectionTheme = defineTheme("page-section", {
         description: "text-base sm:text-lg",
         body: "mt-8",
         footer: "mt-8",
-        links: "gap-x-6 gap-y-3"
+        links: "gap-x-6 gap-y-3",
       },
       hero: {
         container: "py-24 sm:py-32 lg:py-40 gap-16 sm:gap-y-24",
@@ -52,7 +52,7 @@ export const pageSectionTheme = defineTheme("page-section", {
         body: "mt-10",
         footer: "mt-10",
         links: "gap-x-6 gap-y-3",
-        wrapper: "order-1"
+        wrapper: "order-1",
       },
       cta: {
         root: "rounded-xl overflow-hidden",
@@ -62,34 +62,34 @@ export const pageSectionTheme = defineTheme("page-section", {
         description: "text-base sm:text-lg",
         body: "mt-8",
         footer: "mt-8",
-        links: "gap-x-6 gap-y-3"
-      }
+        links: "gap-x-6 gap-y-3",
+      },
     },
     ctaVariant: {
       solid: {
         root: "bg-inverted text-inverted",
-        description: "text-dimmed"
+        description: "text-dimmed",
       },
       outline: {
         root: "bg-default ring ring-default",
-        description: "text-muted"
+        description: "text-muted",
       },
       soft: {
         root: "bg-elevated/50",
-        description: "text-toned"
+        description: "text-toned",
       },
       subtle: {
         root: "bg-elevated/50 ring ring-default",
-        description: "text-toned"
+        description: "text-toned",
       },
       naked: {
-        description: "text-muted"
-      }
+        description: "text-muted",
+      },
     },
     orientation: {
       horizontal: {
         container: "lg:grid-cols-2 lg:items-center",
-        description: "text-pretty"
+        description: "text-pretty",
       },
       vertical: {
         container: "",
@@ -97,81 +97,81 @@ export const pageSectionTheme = defineTheme("page-section", {
         leading: "justify-center",
         title: "text-center",
         description: "text-center text-balance",
-        links: "justify-center"
-      }
+        links: "justify-center",
+      },
     },
     reverse: {
-      true: {}
+      true: {},
     },
     headline: {
       true: {
-        headline: "font-semibold text-primary flex items-center gap-1.5"
-      }
+        headline: "font-semibold text-primary flex items-center gap-1.5",
+      },
     },
     title: {
       true: {
-        description: "mt-6"
-      }
+        description: "mt-6",
+      },
     },
     description: {
-      true: {}
+      true: {},
     },
     body: {
-      true: {}
-    }
+      true: {},
+    },
   },
   compoundVariants: [
     {
       variant: "hero",
       reverse: true,
       classNames: {
-        wrapper: "order-first"
-      }
+        wrapper: "order-first",
+      },
     },
     {
       variant: "default",
       reverse: true,
       classNames: {
-        wrapper: "order-last"
-      }
+        wrapper: "order-last",
+      },
     },
     {
       variant: "cta",
       reverse: true,
       classNames: {
-        wrapper: "order-last"
-      }
+        wrapper: "order-last",
+      },
     },
     {
       variant: "default",
       orientation: "vertical",
       title: true,
       classNames: {
-        body: "mt-16"
-      }
+        body: "mt-16",
+      },
     },
     {
       variant: "default",
       orientation: "vertical",
       description: true,
       classNames: {
-        body: "mt-16"
-      }
+        body: "mt-16",
+      },
     },
     {
       variant: "default",
       orientation: "vertical",
       body: true,
       classNames: {
-        footer: "mt-16"
-      }
+        footer: "mt-16",
+      },
     },
     {
       variant: "cta",
       ctaVariant: "outline",
       classNames: {
-        root: "bg-default ring ring-default"
-      }
+        root: "bg-default ring ring-default",
+      },
     },
     {
       variant: "cta",
@@ -179,28 +179,28 @@ export const pageSectionTheme = defineTheme("page-section", {
       classNames: {
         root: "bg-inverted text-inverted",
         title: "text-inverted",
-        description: "text-dimmed"
-      }
+        description: "text-dimmed",
+      },
     },
     {
       variant: "cta",
       ctaVariant: "soft",
       classNames: {
         root: "bg-elevated/50",
-        description: "text-toned"
-      }
+        description: "text-toned",
+      },
     },
     {
       variant: "cta",
       ctaVariant: "subtle",
       classNames: {
         root: "bg-elevated/50 ring ring-default",
-        description: "text-toned"
-      }
-    }
+        description: "text-toned",
+      },
+    },
   ],
   defaultVariants: {
     variant: "default",
-    orientation: "vertical"
-  }
+    orientation: "vertical",
+  },
 });

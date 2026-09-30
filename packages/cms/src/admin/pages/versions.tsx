@@ -11,7 +11,7 @@ export interface VersionsPageProps {
 
 export const VersionsPage: Component<VersionsPageProps> = (props) => {
   const remote = useCmsApi<{ versions: any[] }>(() =>
-    props.initialVersions ? null : `${props.apiBase ?? "/api/cms"}/versions`
+    props.initialVersions ? null : `${props.apiBase ?? "/api/cms"}/versions`,
   );
   const versions = () => props.initialVersions ?? remote.data()?.versions ?? [];
 

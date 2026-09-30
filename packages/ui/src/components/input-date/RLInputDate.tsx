@@ -46,14 +46,14 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
     "onChange",
     "onBlur",
     "onFocus",
-    "onKeyDown"
+    "onKeyDown",
   );
 
   const resolvedClasses = createMemo(() =>
     inputDateTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const inputClasses = createMemo(() =>
@@ -61,8 +61,8 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
       variant: "default",
       size: props.size ?? "md",
       error: false,
-      ui: props.ui
-    })
+      ui: props.ui,
+    }),
   );
 
   return (

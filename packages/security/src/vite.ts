@@ -63,7 +63,7 @@ export function security(options: SecurityPluginOptions = {}): RimelightSecurity
           } catch {
             // Silently ignore unreachable external resources during build
           }
-        })
+        }),
       );
     },
 
@@ -102,7 +102,7 @@ export function security(options: SecurityPluginOptions = {}): RimelightSecurity
         return `export const config = ${JSON.stringify(options)};`;
       }
       return null;
-    }
+    },
   };
 }
 

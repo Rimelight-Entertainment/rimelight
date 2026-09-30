@@ -30,7 +30,7 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
     "class",
     "children",
     "avatarSlot",
-    "iconSlot"
+    "iconSlot",
   );
 
   const classes = createMemo(() =>
@@ -41,8 +41,8 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
       position: props.position,
       orientation: props.orientation ?? "horizontal",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const decorative = props.decorative ?? true;

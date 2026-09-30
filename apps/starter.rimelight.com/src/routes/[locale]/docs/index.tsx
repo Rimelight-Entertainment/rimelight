@@ -28,7 +28,7 @@ export const DocsIndexPage: Component = () => {
       } catch {
         return null;
       }
-    }
+    },
   );
 
   const title = () =>

@@ -16,8 +16,8 @@ const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
     dashboardSidebarCollapseTheme({
       side: props.side ?? "left",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

@@ -8,17 +8,17 @@ export const paginationTheme = defineTheme("pagination", {
     item: "",
     link: [
       "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all size-9 cursor-pointer border border-default bg-default hover:bg-muted text-highlighted decoration-none",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
     ],
-    ellipsis: "flex size-9 items-center justify-center text-muted"
+    ellipsis: "flex size-9 items-center justify-center text-muted",
   },
   variants: {
     active: {
       true: { link: "border-primary bg-primary text-neutral-50 hover:bg-primary/95" },
-      false: { link: "" }
-    }
+      false: { link: "" },
+    },
   },
   defaultVariants: {
-    active: false
-  }
+    active: false,
+  },
 });

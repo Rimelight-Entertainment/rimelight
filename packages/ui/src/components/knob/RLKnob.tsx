@@ -15,8 +15,8 @@ const RLKnob: Component<RLKnobProps> = (allProps) => {
     knobTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

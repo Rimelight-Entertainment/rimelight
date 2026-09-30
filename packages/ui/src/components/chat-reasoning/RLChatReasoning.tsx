@@ -15,8 +15,8 @@ const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
     chatReasoningTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

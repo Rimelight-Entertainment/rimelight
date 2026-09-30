@@ -18,7 +18,7 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
     "baseUrl",
     "onPageChange",
     "ui",
-    "class"
+    "class",
   );
 
   const currentPage = () => props.page ?? props.currentPage ?? 1;
@@ -27,8 +27,8 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     paginationTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const pageNumbers = createMemo<(number | "ellipsis")[]>(() => {

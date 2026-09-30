@@ -11,7 +11,7 @@ import {
   RLAvatar,
   RLDropdownMenu,
   type RLButtonProps,
-  type RLLinkGroupProps
+  type RLLinkGroupProps,
 } from "@rimelight/ui";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts";
 import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts";
@@ -41,17 +41,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_foundations_links_tokens"),
-        href: getRelativeLocaleUrl("/docs/tokens")
+        href: getRelativeLocaleUrl("/docs/tokens"),
       },
       {
         label: t("app_header.link-groups_center_foundations_links_colors"),
-        href: getRelativeLocaleUrl("/docs/colors")
+        href: getRelativeLocaleUrl("/docs/colors"),
       },
       {
         label: t("app_header.link-groups_center_foundations_links_typography"),
-        href: getRelativeLocaleUrl("/docs/typography")
-      }
-    ]
+        href: getRelativeLocaleUrl("/docs/typography"),
+      },
+    ],
   });
 
   const componentsLinkGroup = (): RLLinkGroupProps => ({
@@ -60,17 +60,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_components_links_astro"),
-        href: getRelativeLocaleUrl("/docs/astro")
+        href: getRelativeLocaleUrl("/docs/astro"),
       },
       {
         label: t("app_header.link-groups_center_components_links_solid"),
-        href: getRelativeLocaleUrl("/docs/solid")
+        href: getRelativeLocaleUrl("/docs/solid"),
       },
       {
         label: t("app_header.link-groups_center_components_links_integrations"),
-        href: getRelativeLocaleUrl("/docs/integrations")
-      }
-    ]
+        href: getRelativeLocaleUrl("/docs/integrations"),
+      },
+    ],
   });
 
   const resourcesLinkGroup = (): RLLinkGroupProps => ({
@@ -80,14 +80,14 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app_header.link-groups_right_resources_links_docs"),
         href: "/docs",
-        leadingIcon: "i-lucide-file-text size-4"
+        leadingIcon: "i-lucide-file-text size-4",
       },
       {
         label: t("app_header.link-groups_right_resources_links_github"),
         href: "https://github.com/Rimelight-Entertainment/rimelight",
-        leadingIcon: "i-logos-github-icon size-4"
-      }
-    ]
+        leadingIcon: "i-logos-github-icon size-4",
+      },
+    ],
   });
 
   const leftLinks = (): NavigationMenuItem[] => [
@@ -98,42 +98,42 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       children: [
         {
           label: t("app_header.link-groups_center_foundations_label"),
-          description: t("app_header.link-groups_center_foundations_description")
+          description: t("app_header.link-groups_center_foundations_description"),
         },
         {
           label: t("app_header.link-groups_center_components_label"),
-          description: t("app_header.link-groups_center_components_description")
+          description: t("app_header.link-groups_center_components_description"),
         },
         {
           label: t("app_header.link-groups_center_integrations_label"),
-          description: t("app_header.link-groups_center_integrations_description")
-        }
-      ]
+          description: t("app_header.link-groups_center_integrations_description"),
+        },
+      ],
     },
     {
       label: t("app_header.left-links_about_label"),
-      to: getRelativeLocaleUrl("/about")
+      to: getRelativeLocaleUrl("/about"),
     },
     {
       label: t("app_header.left-links_blog_label"),
-      to: getRelativeLocaleUrl("/blog")
+      to: getRelativeLocaleUrl("/blog"),
     },
     {
       label: t("app_header.left-links_docs_label"),
-      to: getRelativeLocaleUrl("/docs")
+      to: getRelativeLocaleUrl("/docs"),
     },
     {
       label: t("app_header.left-links_dashboard_label"),
-      to: getRelativeLocaleUrl("/dashboard")
+      to: getRelativeLocaleUrl("/dashboard"),
     },
     {
       label: t("app_header.left-links_chat_label"),
-      to: getRelativeLocaleUrl("/chat")
+      to: getRelativeLocaleUrl("/chat"),
     },
     {
       label: "Contact",
-      to: getRelativeLocaleUrl("/contact")
-    }
+      to: getRelativeLocaleUrl("/contact"),
+    },
   ];
 
   const actions = (): RLButtonProps[] => [
@@ -141,14 +141,14 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       color: "neutral",
       variant: "outline",
       href: getRelativeLocaleUrl("/auth/sign-up"),
-      label: t("app_header.actions_sign-up")
+      label: t("app_header.actions_sign-up"),
     },
     {
       variant: "solid",
       color: "primary",
       href: getRelativeLocaleUrl("/auth/sign-in"),
-      label: t("app_header.actions_sign-in")
-    }
+      label: t("app_header.actions_sign-in"),
+    },
   ];
 
   const userDropdownItems = (): DropdownMenuItem[] =>
@@ -159,32 +159,32 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             label:
               props.session?.tag && props.session?.tag !== "0000"
                 ? `${props.session?.name} #${props.session?.tag}`
-                : `${props.session?.name || props.session?.email || "User"}`
+                : `${props.session?.name || props.session?.email || "User"}`,
           },
           {
             label: "Dashboard",
             icon: "i-lucide-layout-dashboard",
-            to: getRelativeLocaleUrl("/dashboard")
+            to: getRelativeLocaleUrl("/dashboard"),
           },
           {
             label: "Profile",
             icon: "i-lucide-user",
-            to: getRelativeLocaleUrl("/dashboard/profile")
+            to: getRelativeLocaleUrl("/dashboard/profile"),
           },
           {
             label: "Settings",
             icon: "i-lucide-cog",
-            to: getRelativeLocaleUrl("/dashboard/settings")
+            to: getRelativeLocaleUrl("/dashboard/settings"),
           },
           {
-            type: "separator"
+            type: "separator",
           },
           {
             label: "Sign Out",
             icon: "i-lucide-log-out",
             to: getRelativeLocaleUrl("/auth/sign-out"),
-            color: "error"
-          }
+            color: "error",
+          },
         ]
       : [];
 
@@ -206,7 +206,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                   "top-[var(--rl-total-header-height,64px)] flex justify-center fixed left-0 right-0 z-[150] mt-0 bg-transparent",
                 viewport:
                   "w-full rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden",
-                link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+                link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
               }}
             >
               {/* Features Mega Menu */}
@@ -256,7 +256,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 orientation="vertical"
                 variant="link"
                 ui={{
-                  link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+                  link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
                 }}
               >
                 {/* Features Mega Menu (Mobile/Vertical) */}
@@ -271,7 +271,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                       alt=""
                       ui={{
                         trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
-                        triggerImage: "w-full h-full object-cover"
+                        triggerImage: "w-full h-full object-cover",
                       }}
                     />
 

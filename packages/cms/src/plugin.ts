@@ -40,7 +40,7 @@ const LEGACY_IDS = [
   "virtual:rimelight-cms/parent-layout",
   "virtual:rimelight-cms/db",
   "virtual:rimelight-cms/storage",
-  "virtual:rimelight-cms/auth"
+  "virtual:rimelight-cms/auth",
 ];
 
 /**
@@ -61,7 +61,7 @@ export function cms(options: RimelightCmsPluginOptions = {}): RimelightCmsPlugin
     provider: options.storage?.provider ?? "r2",
     binding: options.storage?.binding ?? "BLOB",
     publicUrl: options.storage?.publicUrl,
-    prefix: options.storage?.prefix ?? "media/"
+    prefix: options.storage?.prefix ?? "media/",
   };
   const routePrefix = options.routePrefix ?? "/[locale]/cms";
 
@@ -96,7 +96,7 @@ export function cms(options: RimelightCmsPluginOptions = {}): RimelightCmsPlugin
       : [
           path.resolve(rootDir, "src/db/index.ts"),
           path.resolve(rootDir, "src/db/index.js"),
-          path.resolve(rootDir, "src/db")
+          path.resolve(rootDir, "src/db"),
         ];
     for (const candidate of candidates) {
       if (fs.existsSync(candidate)) return `export * from ${JSON.stringify(candidate)};`;
@@ -141,7 +141,7 @@ export function cms(options: RimelightCmsPluginOptions = {}): RimelightCmsPlugin
         return resolveDbCode();
       }
       return null;
-    }
+    },
   };
 }
 

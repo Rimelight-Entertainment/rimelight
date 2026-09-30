@@ -8,8 +8,8 @@ describe("HistoryStack", () => {
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "ParagraphBlock",
-        props: { text: "Step 1" }
-      }
+        props: { text: "Step 1" },
+      },
     ];
     const history = new HistoryStack(initial);
 
@@ -17,8 +17,8 @@ describe("HistoryStack", () => {
       {
         id: "11111111-1111-4111-8111-111111111111",
         type: "ParagraphBlock",
-        props: { text: "Step 2" }
-      }
+        props: { text: "Step 2" },
+      },
     ];
     history.push(step2, true);
 

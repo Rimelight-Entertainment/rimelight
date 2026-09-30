@@ -29,7 +29,7 @@ const api = new Hono().post("/", async (c) => {
     if (!message || message.length < 10) {
       return c.json(
         { success: false, error: "Your message should be at least 10 characters." },
-        400
+        400,
       );
     }
 
@@ -44,9 +44,9 @@ const api = new Hono().post("/", async (c) => {
       return c.json(
         {
           success: false,
-          error: verification.error || "Anti-bot verification failed. Please try again."
+          error: verification.error || "Anti-bot verification failed. Please try again.",
         },
-        400
+        400,
       );
     }
 
@@ -89,7 +89,7 @@ ${sanitize(message)}
       if (import.meta.env.DEV) {
         console.warn(
           "[contact] Dev mode: EMAIL binding missing. Message logged to console:\n",
-          textBody
+          textBody,
         );
         return c.json({ success: true });
       }
@@ -103,7 +103,7 @@ ${sanitize(message)}
       subject: mailSubject,
       text: textBody,
       html: htmlBody,
-      replyTo: email
+      replyTo: email,
     });
 
     return c.json({ success: true });
@@ -112,9 +112,9 @@ ${sanitize(message)}
     return c.json(
       {
         success: false,
-        error: "Could not send your contact message. Please try again later."
+        error: "Could not send your contact message. Please try again later.",
       },
-      500
+      500,
     );
   }
 });

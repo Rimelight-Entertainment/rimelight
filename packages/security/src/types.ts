@@ -196,7 +196,7 @@ export interface ConstructionOptions {
    */
   onUnauthorized?: (
     c: any,
-    meta: { locale: string; path: string; redirectUrl: string }
+    meta: { locale: string; path: string; redirectUrl: string },
   ) => Response | Promise<Response>;
 }
 

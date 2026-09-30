@@ -22,7 +22,7 @@ export interface RimelightTaxonomyMasterDetailProps {
 }
 
 export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDetailProps> = (
-  props
+  props,
 ) => {
   const taxType = () => props.taxonomy || "category";
   const isCategory = () => taxType() === "category";
@@ -49,7 +49,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
     name: "",
     slug: "",
     parentId: "",
-    description: ""
+    description: "",
   });
 
   const loadTerms = async () => {
@@ -85,7 +85,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
       (t) =>
         t.name.toLowerCase().includes(q) ||
         t.slug.toLowerCase().includes(q) ||
-        (t.description && t.description.toLowerCase().includes(q))
+        (t.description && t.description.toLowerCase().includes(q)),
     );
   });
 
@@ -95,7 +95,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
       name: term.name || "",
       slug: term.slug || "",
       parentId: term.parentId || "",
-      description: term.description || ""
+      description: term.description || "",
     });
   };
 
@@ -105,7 +105,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
       name: "",
       slug: "",
       parentId: "",
-      description: ""
+      description: "",
     });
   };
 
@@ -121,7 +121,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
     setForm((prev) => ({
       ...prev,
       name,
-      slug: isNew ? autoSlug : prev.slug
+      slug: isNew ? autoSlug : prev.slug,
     }));
   };
 
@@ -144,7 +144,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
       name: f.name.trim(),
       slug,
       parentId: isCategory() && f.parentId ? f.parentId : null,
-      description: f.description.trim()
+      description: f.description.trim(),
     };
 
     setIsSaving(true);
@@ -153,7 +153,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
         const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms/${selectedId()}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error(`Failed to update ${taxType()}`);
         const updated = await res.json();
@@ -162,7 +162,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
         const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error(`Failed to create ${taxType()}`);
         const created = await res.json();
@@ -365,7 +365,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
                 ui={{
                   root: () => "",
                   textarea: () =>
-                    "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]"
+                    "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]",
                 }}
               />
             </div>

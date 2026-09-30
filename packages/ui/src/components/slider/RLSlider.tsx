@@ -24,7 +24,7 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
     "ui",
     "class",
     "children",
-    "onChange"
+    "onChange",
   );
 
   const min = () => props.min ?? 0;
@@ -39,7 +39,7 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
       if (val !== undefined) {
         setInternalVal(val);
       }
-    }
+    },
   );
 
   const currentVal = () => (props.value !== undefined ? props.value : internalVal());
@@ -65,8 +65,8 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
     sliderTheme({
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

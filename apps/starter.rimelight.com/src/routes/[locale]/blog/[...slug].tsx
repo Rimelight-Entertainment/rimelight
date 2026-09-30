@@ -29,7 +29,7 @@ export const BlogPostPage: Component = () => {
       } catch {
         return null;
       }
-    }
+    },
   );
 
   const title = () =>
@@ -81,7 +81,7 @@ export const BlogPostPage: Component = () => {
                   {new Date(postDate()!).toLocaleDateString(activeLocale(), {
                     year: "numeric",
                     month: "long",
-                    day: "numeric"
+                    day: "numeric",
                   })}
                 </time>
               </div>

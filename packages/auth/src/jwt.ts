@@ -104,7 +104,7 @@ export function decodeJwt<T = Record<string, any>>(token: string): T {
 export async function createSessionToken(
   session: Record<string, any>,
   secret: string,
-  expiresIn: string | number = "7d"
+  expiresIn: string | number = "7d",
 ): Promise<string> {
   const enc = new TextEncoder();
   const header = { alg: "HS256", typ: "JWT" };
@@ -114,7 +114,7 @@ export async function createSessionToken(
   const payload = {
     ...session,
     iat: now,
-    exp: now + expSeconds
+    exp: now + expSeconds,
   };
 
   const headerB64 = base64UrlEncode(JSON.stringify(header));
@@ -126,7 +126,7 @@ export async function createSessionToken(
     enc.encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"]
+    ["sign"],
   );
 
   const signature = await crypto.subtle.sign("HMAC", key, enc.encode(data));
@@ -138,7 +138,7 @@ export async function createSessionToken(
 export async function verifySessionToken<T = Record<string, any>>(
   token: string,
   secret: string,
-  options: { clockTolerance?: number } = {}
+  options: { clockTolerance?: number } = {},
 ): Promise<T | null> {
   try {
     if (!token || typeof token !== "string") return null;
@@ -162,14 +162,14 @@ export async function verifySessionToken<T = Record<string, any>>(
       enc.encode(secret),
       { name: "HMAC", hash: "SHA-256" },
       false,
-      ["verify"]
+      ["verify"],
     );
 
     const isValid = await crypto.subtle.verify(
       "HMAC",
       key,
       signatureBytes as unknown as BufferSource,
-      enc.encode(data)
+      enc.encode(data),
     );
     if (!isValid) return null;
 
@@ -253,7 +253,7 @@ export interface VerifyJwtRs256Options {
 export async function verifyJwtRs256<T = Record<string, any>>(
   token: string,
   jwksUrl: string,
-  options: VerifyJwtRs256Options = {}
+  options: VerifyJwtRs256Options = {},
 ): Promise<T | null> {
   try {
     if (!token || typeof token !== "string") return null;
@@ -292,7 +292,7 @@ export async function verifyJwtRs256<T = Record<string, any>>(
         matchingJwk,
         { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
         false,
-        ["verify"]
+        ["verify"],
       );
       cryptoKeyCache.set(cacheKey, cryptoKey);
     }
@@ -306,7 +306,7 @@ export async function verifyJwtRs256<T = Record<string, any>>(
       "RSASSA-PKCS1-v1_5",
       cryptoKey,
       signatureBytes as unknown as BufferSource,
-      enc.encode(data)
+      enc.encode(data),
     );
     if (!isValid) return null;
 

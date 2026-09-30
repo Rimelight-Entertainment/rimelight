@@ -35,7 +35,7 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
     "class",
     "children",
     "leading",
-    "trailing"
+    "trailing",
   );
 
   const attrs = createMemo(() => resolveLinkAttrs(props));
@@ -50,7 +50,7 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
       ...(props.active !== undefined ? { active: props.active } : {}),
       disabled: !!props.disabled,
       ui: props.ui,
-      class: props.class
+      class: props.class,
     });
   });
 

@@ -3,8 +3,8 @@ import { defineTheme } from "../../resolver";
 export const passwordTheme = defineTheme("password", {
   slots: ["root"],
   base: {
-    root: ""
+    root: "",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

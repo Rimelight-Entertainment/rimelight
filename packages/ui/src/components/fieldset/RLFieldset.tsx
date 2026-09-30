@@ -14,8 +14,8 @@ const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     fieldsetTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

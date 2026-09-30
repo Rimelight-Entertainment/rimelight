@@ -8,5 +8,5 @@ export const pageVersionApprovals = pgTable("page_version_approvals", {
     .references(() => pageVersions.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   userRole: text("user_role").notNull(),
-  approvedAt: timestamp("approved_at", { withTimezone: true }).defaultNow().notNull()
+  approvedAt: timestamp("approved_at", { withTimezone: true }).defaultNow().notNull(),
 });

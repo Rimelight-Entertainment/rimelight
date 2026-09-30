@@ -42,7 +42,7 @@ const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAg
     arrowup: "↑",
     arrowdown: "↓",
     arrowleft: "←",
-    arrowright: "→"
+    arrowright: "→",
   };
 
 const MODS: Record<string, string> = {
@@ -50,7 +50,7 @@ const MODS: Record<string, string> = {
   command: "meta",
   control: "ctrl",
   opt: "alt",
-  option: "alt"
+  option: "alt",
 };
 
 export const normalizeModifier = (m: string) => MODS[m.toLowerCase()] || m.toLowerCase();
@@ -62,7 +62,7 @@ export const formatShortcutKeys = (k: string): string[] =>
   });
 
 export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<RegisteredShortcut[]>(
-  []
+  [],
 );
 
 const isUsingInput = (el: Element | null): boolean | string => {
@@ -93,7 +93,7 @@ const normalizeCombo = (combo: string) => {
 
 export function defineShortcuts(
   config: ShortcutsConfig,
-  options: ShortcutsOptions = {}
+  options: ShortcutsOptions = {},
 ): () => void {
   if (typeof window === "undefined") return () => {};
 
@@ -117,7 +117,7 @@ export function defineShortcuts(
         category: obj.category || "system",
         label: obj.label,
         description: obj.description,
-        order: obj.order
+        order: obj.order,
       });
     }
   }

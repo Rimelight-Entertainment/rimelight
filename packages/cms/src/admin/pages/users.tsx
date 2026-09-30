@@ -10,7 +10,7 @@ const users = [
     email: "admin@rimelight.com",
     role: "owner",
     status: "active",
-    lastActive: "2 min ago"
+    lastActive: "2 min ago",
   },
   {
     id: "2",
@@ -18,7 +18,7 @@ const users = [
     email: "sarah@rimelight.com",
     role: "admin",
     status: "active",
-    lastActive: "1 hr ago"
+    lastActive: "1 hr ago",
   },
   {
     id: "3",
@@ -26,7 +26,7 @@ const users = [
     email: "alex@rimelight.com",
     role: "editor",
     status: "active",
-    lastActive: "3 hrs ago"
+    lastActive: "3 hrs ago",
   },
   {
     id: "4",
@@ -34,8 +34,8 @@ const users = [
     email: "elena@rimelight.com",
     role: "viewer",
     status: "invited",
-    lastActive: "never"
-  }
+    lastActive: "never",
+  },
 ];
 
 export const UsersPage: Component<{ basePath?: string | undefined }> = (props) => {

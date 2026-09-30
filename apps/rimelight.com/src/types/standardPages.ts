@@ -11,12 +11,12 @@ export const DOCUMENT_DEFINITION = definePageDefinition({
           defaultValue: { en: "Policy" },
           label: { en: "Category" },
           type: "enum",
-          options: [{ en: "Policy" }, { en: "Other" }]
+          options: [{ en: "Policy" }, { en: "Other" }],
         },
-        readingTime: { defaultValue: 5, label: { en: "Est. Reading Time" }, type: "number" }
-      }
-    }
-  }
+        readingTime: { defaultValue: 5, label: { en: "Est. Reading Time" }, type: "number" },
+      },
+    },
+  },
 });
 
 export const BLOG_POST_DEFINITION = definePageDefinition({
@@ -30,10 +30,10 @@ export const BLOG_POST_DEFINITION = definePageDefinition({
           defaultValue: { en: "News" },
           label: { en: "Category" },
           type: "enum",
-          options: []
+          options: [],
         },
-        readingTime: { defaultValue: 5, label: { en: "Est. Reading Time" }, type: "number" }
-      }
-    }
-  }
+        readingTime: { defaultValue: 5, label: { en: "Est. Reading Time" }, type: "number" },
+      },
+    },
+  },
 });

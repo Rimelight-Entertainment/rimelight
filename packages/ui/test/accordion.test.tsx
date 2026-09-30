@@ -5,8 +5,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLAccordion } from "../src/components/accordion/RLAccordion";
@@ -17,18 +17,18 @@ const SAMPLE_ITEMS: AccordionItem[] = [
   {
     label: "Getting Started",
     icon: "i-lucide-rocket",
-    content: "Installation and quick start guide for Rimelight UI."
+    content: "Installation and quick start guide for Rimelight UI.",
   },
   {
     label: "Component Architecture",
     icon: "i-lucide-layers",
-    content: "Deep dive into reactive primitives and design tokens."
+    content: "Deep dive into reactive primitives and design tokens.",
   },
   {
     label: "Accessibility Standards",
     icon: "i-lucide-accessibility",
-    content: "ARIA patterns, keyboard focus management, and screen reader support."
-  }
+    content: "ARIA patterns, keyboard focus management, and screen reader support.",
+  },
 ];
 
 describe("RLAccordion Solid Component Suite", () => {
@@ -39,7 +39,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion summary="System Information">
             <p>Version 2.0.0 (Production Build)</p>
           </RLAccordion>
-        ))
+        )),
       );
 
       expect(html.startsWith("<details")).toBe(true);
@@ -59,7 +59,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion summary="Diagnostics" trailingIcon="i-lucide-settings">
             <span>Diagnostics Output</span>
           </RLAccordion>
-        ))
+        )),
       );
       expect(htmlIcon).toContain("i-lucide-settings");
 
@@ -71,7 +71,7 @@ describe("RLAccordion Solid Component Suite", () => {
           >
             <span>Diagnostics Output</span>
           </RLAccordion>
-        ))
+        )),
       );
       expect(htmlSlot).toContain("custom-badge-icon");
       expect(htmlSlot).toContain("PLUS");
@@ -83,7 +83,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion summary="Locked Panel" disabled>
             <span>Secret Content</span>
           </RLAccordion>
-        ))
+        )),
       );
 
       expect(html).toContain('aria-disabled="true"');
@@ -97,7 +97,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion as="section" summary="Section Summary">
             <span>Section Content</span>
           </RLAccordion>
-        ))
+        )),
       );
 
       expect(html.startsWith("<section")).toBe(true);
@@ -111,7 +111,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion summary="Grouped Details" name="native-summary-group">
             <span>Grouped Item Body</span>
           </RLAccordion>
-        ))
+        )),
       );
 
       expect(html).toContain('name="native-summary-group"');
@@ -152,7 +152,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("uses explicit item.value when provided", () => {
       const items: AccordionItem[] = [
         { label: "Tab A", value: "tab-a", content: "Content A" },
-        { label: "Tab B", value: "tab-b", content: "Content B" }
+        { label: "Tab B", value: "tab-b", content: "Content B" },
       ];
       const html = renderSolid(RLAccordion, { items });
 
@@ -175,7 +175,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("opens single item via defaultValue (uncontrolled)", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        defaultValue: "1"
+        defaultValue: "1",
       });
 
       expect(html).toContain('data-value="1" data-state="open"');
@@ -187,7 +187,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("respects controlled value prop", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        value: "2"
+        value: "2",
       });
 
       expect(html).toContain('data-slot="root" data-value="2"');
@@ -199,7 +199,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("handles controlled undefined value keeping all items closed", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        value: undefined
+        value: undefined,
       });
 
       const closedMatches = html.match(/data-state="closed"/g);
@@ -213,7 +213,7 @@ describe("RLAccordion Solid Component Suite", () => {
       const html = renderSolid(RLAccordion, {
         type: "multiple",
         items: SAMPLE_ITEMS,
-        defaultValue: ["0", "2"]
+        defaultValue: ["0", "2"],
       });
 
       expect(html).toContain('data-slot="root" data-value="0 2"');
@@ -231,12 +231,12 @@ describe("RLAccordion Solid Component Suite", () => {
     it("supports multiple alias prop (multiple={true})", () => {
       const items: AccordionItem[] = [
         { label: "First", value: "first", content: "First Body" },
-        { label: "Second", value: "second", content: "Second Body" }
+        { label: "Second", value: "second", content: "Second Body" },
       ];
       const html = renderSolid(RLAccordion, {
         multiple: true,
         items,
-        defaultValue: ["first", "second"]
+        defaultValue: ["first", "second"],
       });
 
       expect(html).toContain('data-value="first second"');
@@ -248,12 +248,12 @@ describe("RLAccordion Solid Component Suite", () => {
       const items: AccordionItem[] = [
         { label: "M1", value: "m1", content: "M1 Content" },
         { label: "M2", value: "m2", content: "M2 Content" },
-        { label: "M3", value: "m3", content: "M3 Content" }
+        { label: "M3", value: "m3", content: "M3 Content" },
       ];
       const html = renderSolid(RLAccordion, {
         type: "multiple",
         items,
-        value: ["m2", "m3"]
+        value: ["m2", "m3"],
       });
 
       expect(html).toContain('data-slot="root" data-value="m2 m3"');
@@ -267,7 +267,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("unmounts collapsed item content from DOM by default (unmountOnHide=true)", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        defaultValue: "0"
+        defaultValue: "0",
       });
 
       // Item 0 is open -> content is present
@@ -281,7 +281,7 @@ describe("RLAccordion Solid Component Suite", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
         defaultValue: "0",
-        unmountOnHide: false
+        unmountOnHide: false,
       });
 
       // All item contents are mounted in the DOM
@@ -299,14 +299,14 @@ describe("RLAccordion Solid Component Suite", () => {
     it("resolves top-level custom keys", () => {
       const customItems = [
         { id: "alpha", title: "Alpha Title", content: "Alpha Body" },
-        { id: "beta", title: "Beta Title", content: "Beta Body" }
+        { id: "beta", title: "Beta Title", content: "Beta Body" },
       ];
 
       const html = renderSolid(RLAccordion, {
         items: customItems as any,
         valueKey: "id",
         labelKey: "title",
-        defaultValue: "beta"
+        defaultValue: "beta",
       });
 
       expect(html).toContain('data-value="alpha"');
@@ -319,14 +319,14 @@ describe("RLAccordion Solid Component Suite", () => {
     it("resolves nested dot paths for valueKey and labelKey", () => {
       const nestedItems = [
         { meta: { id: "n1", header: { title: "Nested One" } }, content: "Nested Body 1" },
-        { meta: { id: "n2", header: { title: "Nested Two" } }, content: "Nested Body 2" }
+        { meta: { id: "n2", header: { title: "Nested Two" } }, content: "Nested Body 2" },
       ];
 
       const html = renderSolid(RLAccordion, {
         items: nestedItems as any,
         valueKey: "meta.id",
         labelKey: "meta.header.title",
-        defaultValue: "n1"
+        defaultValue: "n1",
       });
 
       expect(html).toContain('data-value="n1" data-state="open"');
@@ -349,7 +349,7 @@ describe("RLAccordion Solid Component Suite", () => {
               </span>
             )}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("custom-badge-leading");
@@ -364,7 +364,7 @@ describe("RLAccordion Solid Component Suite", () => {
             items={SAMPLE_ITEMS}
             trailing={(_item, index) => <span class="custom-trailing-action">Action {index}</span>}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("custom-trailing-action");
@@ -378,13 +378,13 @@ describe("RLAccordion Solid Component Suite", () => {
         {
           label: "Custom Arrow",
           trailingIcon: "i-lucide-arrow-right",
-          content: "Uses item icon"
-        }
+          content: "Uses item icon",
+        },
       ];
 
       const html = renderSolid(RLAccordion, {
         items,
-        trailingIcon: "i-lucide-plus"
+        trailingIcon: "i-lucide-plus",
       });
 
       expect(html).toContain("i-lucide-plus");
@@ -398,7 +398,7 @@ describe("RLAccordion Solid Component Suite", () => {
             items={SAMPLE_ITEMS}
             trailingIconSlot={<span class="global-trailing-slot">SLOT</span>}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("global-trailing-slot");
@@ -419,7 +419,7 @@ describe("RLAccordion Solid Component Suite", () => {
               </p>
             )}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("custom-body-renderer");
@@ -439,7 +439,7 @@ describe("RLAccordion Solid Component Suite", () => {
               </article>
             )}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("custom-content-wrapper");
@@ -454,8 +454,8 @@ describe("RLAccordion Solid Component Suite", () => {
           label: "Special Item",
           value: "special",
           slot: "specialSlot",
-          content: "Special text"
-        }
+          content: "Special text",
+        },
       ];
 
       const html = cleanHtml(
@@ -464,10 +464,10 @@ describe("RLAccordion Solid Component Suite", () => {
             items={items}
             defaultValue="special"
             slots={{
-              specialSlot: (item) => <div class="named-slot-output">SPECIAL: {item.content}</div>
+              specialSlot: (item) => <div class="named-slot-output">SPECIAL: {item.content}</div>,
             }}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("named-slot-output");
@@ -480,8 +480,8 @@ describe("RLAccordion Solid Component Suite", () => {
           label: "Target Item",
           value: "target",
           slot: "targetSlot",
-          content: "Target text"
-        }
+          content: "Target text",
+        },
       ];
 
       const html = cleanHtml(
@@ -491,10 +491,10 @@ describe("RLAccordion Solid Component Suite", () => {
             defaultValue="target"
             slots={{
               targetSlot: () => <div>Fallback Slot</div>,
-              "targetSlot-body": (item) => <div>Specific Body Slot: {item.content}</div>
+              "targetSlot-body": (item) => <div>Specific Body Slot: {item.content}</div>,
             }}
           />
-        ))
+        )),
       );
 
       expect(html).toContain("Specific Body Slot: Target text");
@@ -510,8 +510,8 @@ describe("RLAccordion Solid Component Suite", () => {
         ui: {
           root: "shadow-lg",
           trigger: "hover:bg-elevated/50",
-          label: "font-semibold"
-        }
+          label: "font-semibold",
+        },
       });
 
       expect(html).toContain("my-accordion-root");
@@ -523,7 +523,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("merges per-item item.class into the item slot", () => {
       const items: AccordionItem[] = [
         { label: "Normal Item", content: "Normal" },
-        { label: "Highlighted Item", class: "bg-primary/10 border-primary", content: "Highlight" }
+        { label: "Highlighted Item", class: "bg-primary/10 border-primary", content: "Highlight" },
       ];
 
       const html = renderSolid(RLAccordion, { items });
@@ -540,9 +540,9 @@ describe("RLAccordion Solid Component Suite", () => {
           content: "Content 2",
           ui: {
             label: "text-rose-500 font-bold",
-            trigger: "bg-rose-500/10"
-          }
-        }
+            trigger: "bg-rose-500/10",
+          },
+        },
       ];
 
       const html = renderSolid(RLAccordion, { items });
@@ -557,7 +557,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("disables all triggers when root disabled=true", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        disabled: true
+        disabled: true,
       });
 
       const disabledTriggers = html.match(/aria-disabled="true"/g);
@@ -570,7 +570,7 @@ describe("RLAccordion Solid Component Suite", () => {
       const items: AccordionItem[] = [
         { label: "Enabled 1", content: "Can open" },
         { label: "Disabled 2", disabled: true, content: "Cannot open" },
-        { label: "Enabled 3", content: "Can open" }
+        { label: "Enabled 3", content: "Can open" },
       ];
 
       const html = renderSolid(RLAccordion, { items });
@@ -585,7 +585,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("forwards explicit name prop to all <details> elements", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        name: "faq-accordion-group"
+        name: "faq-accordion-group",
       });
 
       const nameMatches = html.match(/name="faq-accordion-group"/g);
@@ -602,7 +602,7 @@ describe("RLAccordion Solid Component Suite", () => {
     it("renders custom items root element when as='section'", () => {
       const html = renderSolid(RLAccordion, {
         items: SAMPLE_ITEMS,
-        as: "section"
+        as: "section",
       });
 
       expect(html.startsWith("<section")).toBe(true);
@@ -616,7 +616,7 @@ describe("RLAccordion Solid Component Suite", () => {
         id: "faq-section",
         "data-testid": "accordion-test-id",
         role: "region",
-        "aria-label": "Frequently Asked Questions"
+        "aria-label": "Frequently Asked Questions",
       });
 
       expect(html).toContain('id="faq-section"');

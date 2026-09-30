@@ -21,20 +21,20 @@ describe("draft-lock-ttl", () => {
               success: false,
               lockedByUserId: activeLock.userId,
               lockedByUserName: activeLock.userName,
-              expiresAt: new Date(activeLock.expiresAt).toISOString()
+              expiresAt: new Date(activeLock.expiresAt).toISOString(),
             }),
-            { status: 423, headers: { "Content-Type": "application/json" } }
+            { status: 423, headers: { "Content-Type": "application/json" } },
           );
         }
 
         activeLock = {
           userId: body.userId,
           userName: body.userName,
-          expiresAt: now + ttlMs
+          expiresAt: now + ttlMs,
         };
         return new Response(JSON.stringify({ success: true }), {
           status: 200,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
 
@@ -44,7 +44,7 @@ describe("draft-lock-ttl", () => {
         }
         return new Response(JSON.stringify({ success: true }), {
           status: 200,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
 
@@ -54,7 +54,7 @@ describe("draft-lock-ttl", () => {
         }
         return new Response(JSON.stringify({ success: true }), {
           status: 200,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
 

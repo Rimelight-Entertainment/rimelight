@@ -10,7 +10,7 @@ import { eq, and, isNull, asc, sql } from "drizzle-orm";
 export async function getTaxonomyTerms(
   db: any,
   taxonomy: string,
-  options: TaxonomyQueryOptions = {}
+  options: TaxonomyQueryOptions = {},
 ): Promise<TaxonomyTerm[]> {
   if (!db) return [];
 
@@ -31,7 +31,7 @@ export async function getTaxonomyTerms(
       const counts = await db
         .select({
           termId: pageTaxonomyTerms.termId,
-          count: sql<number>`count(${pageTaxonomyTerms.pageId})::int`
+          count: sql<number>`count(${pageTaxonomyTerms.pageId})::int`,
         })
         .from(pageTaxonomyTerms)
         .innerJoin(pages, eq(pages.id, pageTaxonomyTerms.pageId))
@@ -57,7 +57,7 @@ export async function getTaxonomyTerms(
     count: countsMap.get(t.id) ?? 0,
     children: [],
     createdAt: t.createdAt,
-    updatedAt: t.updatedAt
+    updatedAt: t.updatedAt,
   }));
 
   // Determine if this taxonomy is hierarchical (any term has parentId)
@@ -93,7 +93,7 @@ export async function getTaxonomyTerms(
 export async function getTerm(
   db: any,
   taxonomy: string,
-  slug: string
+  slug: string,
 ): Promise<TaxonomyTerm | null> {
   if (!db) return null;
 
@@ -121,7 +121,7 @@ export async function getTerm(
   return {
     ...results[0],
     count,
-    children: []
+    children: [],
   };
 }
 
@@ -131,7 +131,7 @@ export async function getTerm(
 export async function getEntryTerms(
   db: any,
   pageId: string,
-  taxonomy?: string
+  taxonomy?: string,
 ): Promise<TaxonomyTerm[]> {
   if (!db || !pageId) return [];
 
@@ -148,7 +148,7 @@ export async function getEntryTerms(
       label: taxonomyTerms.label,
       description: taxonomyTerms.description,
       parentId: taxonomyTerms.parentId,
-      displayOrder: taxonomyTerms.displayOrder
+      displayOrder: taxonomyTerms.displayOrder,
     })
     .from(pageTaxonomyTerms)
     .innerJoin(taxonomyTerms, eq(taxonomyTerms.id, pageTaxonomyTerms.termId))
@@ -165,7 +165,7 @@ export async function getEntriesByTerm(
   db: any,
   taxonomy: string,
   slug: string,
-  options: { limit?: number; offset?: number; type?: string } = {}
+  options: { limit?: number; offset?: number; type?: string } = {},
 ) {
   if (!db) return { entries: [], total: 0 };
 
@@ -201,7 +201,7 @@ export async function assignEntryTerms(
   db: any,
   pageId: string,
   taxonomy: string,
-  termIds: string[]
+  termIds: string[],
 ) {
   if (!db || !pageId) return;
 
@@ -239,7 +239,7 @@ export async function createTerm(
     description?: any;
     parentId?: string | null;
     displayOrder?: number;
-  }
+  },
 ) {
   const result = await db.insert(taxonomyTerms).values(data).returning();
   return result[0];
@@ -257,7 +257,7 @@ export async function updateTerm(
     description: any;
     parentId: string | null;
     displayOrder: number;
-  }>
+  }>,
 ) {
   const result = await db
     .update(taxonomyTerms)

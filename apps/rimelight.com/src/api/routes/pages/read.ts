@@ -17,7 +17,7 @@ api.get("/id/:id", async (c) => {
     return c.json({
       ...row,
       blocks: row.content?.blocks || [],
-      properties: row.content?.properties || {}
+      properties: row.content?.properties || {},
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 500);
@@ -32,14 +32,17 @@ api.get("/find/:slug{.*}", async (c) => {
       .select()
       .from(pages)
       .where(
-        and(or(eq(pages.slug, cleanSlug), eq(pages.slug, `/${cleanSlug}`)), isNull(pages.deletedAt))
+        and(
+          or(eq(pages.slug, cleanSlug), eq(pages.slug, `/${cleanSlug}`)),
+          isNull(pages.deletedAt),
+        ),
       )
       .limit(1);
     if (!row) return c.json({ error: "Page not found" }, 404);
     return c.json({
       ...row,
       blocks: row.content?.blocks || [],
-      properties: row.content?.properties || {}
+      properties: row.content?.properties || {},
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 500);

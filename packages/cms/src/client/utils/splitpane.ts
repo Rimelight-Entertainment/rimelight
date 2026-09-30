@@ -6,7 +6,7 @@ export function initSplitPane(
   leftPane: HTMLElement,
   rightPane: HTMLElement,
   handle: HTMLElement,
-  onResize?: (leftPct: number) => void
+  onResize?: (leftPct: number) => void,
 ) {
   let isDragging = false;
   let animationFrameId: number | null = null;

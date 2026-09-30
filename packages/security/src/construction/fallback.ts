@@ -22,7 +22,7 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackOptions
     signInButtonLabel = "Unlock Site",
     error,
     redirect = "/",
-    endpoint = "/api/construction-guest"
+    endpoint = "/api/construction-guest",
   } = options;
 
   const isError = Boolean(error);

@@ -16,7 +16,7 @@ export const dropdownMenuTheme = defineTheme("dropdown-menu", {
     "shortcut",
     "separator",
     "label",
-    "arrow"
+    "arrow",
   ],
   base: {
     root: "relative inline-block text-left",
@@ -36,7 +36,7 @@ export const dropdownMenuTheme = defineTheme("dropdown-menu", {
     shortcut: "ml-auto text-xs tracking-widest text-muted",
     separator: "-mx-1 my-1 h-px border-t border-default",
     label: "px-2 py-1.5 text-xs font-semibold tracking-wider text-muted uppercase",
-    arrow: "absolute -top-1.5 left-4 size-3 rotate-45 border-l border-t border-default bg-elevated"
+    arrow: "absolute -top-1.5 left-4 size-3 rotate-45 border-l border-t border-default bg-elevated",
   },
   variants: {
     size: {
@@ -44,10 +44,10 @@ export const dropdownMenuTheme = defineTheme("dropdown-menu", {
       sm: { trigger: "px-2.5 py-1.5 text-xs gap-1.5", item: "px-2 py-1 text-xs gap-1.5" },
       md: { trigger: "px-3 py-2 text-sm gap-2", item: "px-2 py-1.5 text-sm gap-2" },
       lg: { trigger: "px-4 py-2.5 text-base gap-2", item: "px-3 py-2 text-base gap-2" },
-      xl: { trigger: "px-5 py-3 text-lg gap-2.5", item: "px-3.5 py-2.5 text-lg gap-2.5" }
-    }
+      xl: { trigger: "px-5 py-3 text-lg gap-2.5", item: "px-3.5 py-2.5 text-lg gap-2.5" },
+    },
   },
   defaultVariants: {
-    size: "md"
-  }
+    size: "md",
+  },
 });

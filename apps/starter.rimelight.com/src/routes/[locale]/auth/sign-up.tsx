@@ -7,7 +7,7 @@ export const SignUpPage: Component = () => {
       if (typeof window !== "undefined") {
         window.location.href = "/";
       }
-    }
+    },
   );
   return null;
 };

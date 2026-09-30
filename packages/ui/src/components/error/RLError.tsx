@@ -14,8 +14,8 @@ const RLError: Component<RLErrorProps> = (allProps) => {
   const classes = createMemo(() =>
     errorTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

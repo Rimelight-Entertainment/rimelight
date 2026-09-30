@@ -20,7 +20,7 @@ export { RLChatPalette, type RLChatPaletteProps } from "./chat-palette/RLChatPal
 export { RLChatPrompt, type RLChatPromptProps } from "./chat-prompt/RLChatPrompt";
 export {
   RLChatPromptSubmit,
-  type RLChatPromptSubmitProps
+  type RLChatPromptSubmitProps,
 } from "./chat-prompt-submit/RLChatPromptSubmit";
 export { RLChatReasoning, type RLChatReasoningProps } from "./chat-reasoning/RLChatReasoning";
 export { RLChatShimmer, type RLChatShimmerProps } from "./chat-shimmer/RLChatShimmer";
@@ -41,36 +41,36 @@ export { RLCopyMarkdown, type RLCopyMarkdownProps } from "./copy-markdown/RLCopy
 export { RLDashboardGroup, type RLDashboardGroupProps } from "./dashboard-group/RLDashboardGroup";
 export {
   RLDashboardNavbar,
-  type RLDashboardNavbarProps
+  type RLDashboardNavbarProps,
 } from "./dashboard-navbar/RLDashboardNavbar";
 export { RLDashboardPanel, type RLDashboardPanelProps } from "./dashboard-panel/RLDashboardPanel";
 export {
   RLDashboardResizeHandle,
-  type RLDashboardResizeHandleProps
+  type RLDashboardResizeHandleProps,
 } from "./dashboard-resize-handle/RLDashboardResizeHandle";
 export {
   RLDashboardSearch,
-  type RLDashboardSearchProps
+  type RLDashboardSearchProps,
 } from "./dashboard-search/RLDashboardSearch";
 export {
   RLDashboardSearchButton,
-  type RLDashboardSearchButtonProps
+  type RLDashboardSearchButtonProps,
 } from "./dashboard-search-button/RLDashboardSearchButton";
 export {
   RLDashboardSidebar,
-  type RLDashboardSidebarProps
+  type RLDashboardSidebarProps,
 } from "./dashboard-sidebar/RLDashboardSidebar";
 export {
   RLDashboardSidebarCollapse,
-  type RLDashboardSidebarCollapseProps
+  type RLDashboardSidebarCollapseProps,
 } from "./dashboard-sidebar-collapse/RLDashboardSidebarCollapse";
 export {
   RLDashboardSidebarToggle,
-  type RLDashboardSidebarToggleProps
+  type RLDashboardSidebarToggleProps,
 } from "./dashboard-sidebar-toggle/RLDashboardSidebarToggle";
 export {
   RLDashboardToolbar,
-  type RLDashboardToolbarProps
+  type RLDashboardToolbarProps,
 } from "./dashboard-toolbar/RLDashboardToolbar";
 export { RLDate, type RLDateProps } from "./date/RLDate";
 export { RLDock, type RLDockProps } from "./dock/RLDock";
@@ -94,7 +94,7 @@ export {
   useHeaderStack,
   getHeaderStack,
   type HeaderLayer,
-  type RegisterHeaderOptions
+  type RegisterHeaderOptions,
 } from "./header/useHeaderStack";
 export { RLHoverCard, type RLHoverCardProps } from "./hover-card/RLHoverCard";
 export { RLIcon, type RLIconProps } from "./icon/RLIcon";
@@ -124,7 +124,7 @@ export { RLModal, type RLModalProps } from "./modal/RLModal";
 export { RLNavigationMenu, type RLNavigationMenuProps } from "./navigation-menu/RLNavigationMenu";
 export {
   RLPackageManagers,
-  type RLPackageManagersProps
+  type RLPackageManagersProps,
 } from "./package-managers/RLPackageManagers";
 export { RLPage, type RLPageProps } from "./page/RLPage";
 export { RLPageAside, type RLPageAsideProps } from "./page-aside/RLPageAside";
@@ -169,7 +169,7 @@ export { RLTable, type RLTableProps } from "./table/RLTable";
 export * from "./table/table";
 export {
   RLTableOfContents,
-  type RLTableOfContentsProps
+  type RLTableOfContentsProps,
 } from "./table-of-contents/RLTableOfContents";
 export { RLTabs, type RLTabsProps } from "./tabs/RLTabs";
 export { RLTextarea, type RLTextareaProps } from "./textarea/RLTextarea";

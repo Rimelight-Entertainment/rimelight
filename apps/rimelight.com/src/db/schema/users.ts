@@ -23,7 +23,7 @@ export const users = pgTable("users", {
   metadata: jsonb("metadata").$type<Record<string, any>>().default({}).notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true })
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export type AppUser = typeof users.$inferSelect;

@@ -10,7 +10,7 @@ const HOMOGLYPH_MAP: Record<string, string> = {
   "@": "a",
   "!": "i",
   $: "s",
-  "|": "i"
+  "|": "i",
 };
 
 export const normalizeUsername = (input: string): string => {
@@ -65,7 +65,7 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "council",
     "ceo",
     "founder",
-    "owner"
+    "owner",
   ],
   LEGAL_FINANCIAL: [
     "checkout",
@@ -98,7 +98,7 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "trademark",
     "dmca",
     "abuse",
-    "report"
+    "report",
   ],
   TECHNICAL: [
     "null",
@@ -163,7 +163,7 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "security-alert",
     "mail",
     "email",
-    "postmaster"
+    "postmaster",
   ],
   LEETSPEAK: [
     "4dmin",
@@ -186,8 +186,8 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "d3veloper",
     "@dministrator",
     "adm1n",
-    "adm1nistrator"
-  ]
+    "adm1nistrator",
+  ],
 };
 
 export const createRestrictedUsernameSet = (customBlacklist: string[] = []): Set<string> => {

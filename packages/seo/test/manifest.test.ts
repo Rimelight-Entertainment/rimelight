@@ -4,7 +4,7 @@ import { buildWebManifest } from "../src/manifest.js";
 describe("buildWebManifest", () => {
   it("generates standard web manifest with sensible defaults", () => {
     const manifest = buildWebManifest({
-      name: "My Application"
+      name: "My Application",
     });
 
     expect(manifest.name).toBe("My Application");
@@ -26,9 +26,9 @@ describe("buildWebManifest", () => {
       shortcuts: [
         {
           name: "Dashboard",
-          url: "/dashboard"
-        }
-      ]
+          url: "/dashboard",
+        },
+      ],
     });
 
     expect(manifest.name).toBe("Custom App");
@@ -47,15 +47,15 @@ describe("buildWebManifest", () => {
           src: "https://cdn.example.com/icons/icon-192.png",
           sizes: "192x192",
           type: "image/png",
-          purpose: "any"
+          purpose: "any",
         },
         {
           src: "https://cdn.example.com/icons/icon-512.png",
           sizes: "512x512",
           type: "image/png",
-          purpose: "maskable"
-        }
-      ]
+          purpose: "maskable",
+        },
+      ],
     });
 
     expect(manifest.icons).toHaveLength(2);

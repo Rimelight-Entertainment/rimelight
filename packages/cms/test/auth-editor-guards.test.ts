@@ -13,9 +13,9 @@ describe("editor-guards", () => {
           id: "22222222-2222-4222-8222-222222222222",
           type: "ParagraphBlock",
           allowedRoles: ["admin"],
-          props: { text: "Restricted" }
-        }
-      ]
+          props: { text: "Restricted" },
+        },
+      ],
     };
 
     const memberSession = { userId: "m1", roles: ["member"], permissions: [] };
@@ -31,9 +31,9 @@ describe("editor-guards", () => {
         {
           id: "22222222-2222-4222-8222-222222222222",
           type: "ParagraphBlock",
-          props: { text: "Public" }
-        }
-      ]
+          props: { text: "Public" },
+        },
+      ],
     };
 
     const memberSession = { userId: "m1", roles: ["member"], permissions: [] };

@@ -19,10 +19,10 @@ describe(`@rimelight/ui SolidJS Component Suite (${componentFolders.length} Comp
 
     const solidFile = files.find(
       (f) =>
-        f.startsWith("RL") && (f.endsWith(".tsx") || f.endsWith(".ts")) && !f.endsWith(".theme.ts")
+        f.startsWith("RL") && (f.endsWith(".tsx") || f.endsWith(".ts")) && !f.endsWith(".theme.ts"),
     );
     const typesFile = files.find(
-      (f) => f.endsWith(".ts") && !f.endsWith(".theme.ts") && f !== "index.ts"
+      (f) => f.endsWith(".ts") && !f.endsWith(".theme.ts") && f !== "index.ts",
     );
     const themeFile = files.find((f) => f.endsWith(".theme.ts"));
     const hasTypes =
@@ -48,7 +48,7 @@ describe(`@rimelight/ui SolidJS Component Suite (${componentFolders.length} Comp
             const isSolidValid = solidContent.includes(themeName) || solidContent.includes("RL");
             expect(
               isSolidValid,
-              `Solid component (${solidFile}) must invoke shared theme ${themeName} or composite component`
+              `Solid component (${solidFile}) must invoke shared theme ${themeName} or composite component`,
             ).toBe(true);
           });
         }
@@ -68,7 +68,7 @@ describe(`@rimelight/ui SolidJS Component Suite (${componentFolders.length} Comp
 
         expect(
           hasSolidBinding,
-          `Solid component ${solidFile} must bind classes or forward attributes`
+          `Solid component ${solidFile} must bind classes or forward attributes`,
         ).toBe(true);
       });
     }

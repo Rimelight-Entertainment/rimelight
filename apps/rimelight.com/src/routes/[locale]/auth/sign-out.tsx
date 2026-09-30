@@ -7,7 +7,7 @@ export const SignOutPage: Component = () => {
       if (typeof window !== "undefined") {
         window.location.href = "/api/auth/logout";
       }
-    }
+    },
   );
   return (
     <div class="flex items-center justify-center min-h-screen">

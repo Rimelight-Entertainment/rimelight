@@ -8,14 +8,14 @@ describe("buildApiCatalog", () => {
         {
           rel: "self",
           href: "/.well-known/api-catalog",
-          type: "application/linkset+json"
+          type: "application/linkset+json",
         },
         {
           rel: "alternate",
           href: "/sitemap.xml",
-          type: "application/xml"
-        }
-      ]
+          type: "application/xml",
+        },
+      ],
     });
 
     const items = catalog["api-catalog"];

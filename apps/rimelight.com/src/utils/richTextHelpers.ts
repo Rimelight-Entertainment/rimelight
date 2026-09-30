@@ -33,8 +33,8 @@ export function parseHtmlToRichText(html: string): RichTextContent {
         : Math.random().toString(36).substring(2, 15),
     type: "text",
     props: {
-      content: html.trim()
-    }
+      content: html.trim(),
+    },
   };
 
   return [newTextNode];

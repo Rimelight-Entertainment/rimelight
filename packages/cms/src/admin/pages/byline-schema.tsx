@@ -10,43 +10,43 @@ const schemaFields = [
     label: "Display Name",
     type: "string",
     required: true,
-    description: "Primary author attribution name"
+    description: "Primary author attribution name",
   },
   {
     key: "avatarUrl",
     label: "Avatar Image",
     type: "image",
     required: false,
-    description: "Author headshot or logo URL"
+    description: "Author headshot or logo URL",
   },
   {
     key: "role",
     label: "Role / Job Title",
     type: "string",
     required: false,
-    description: "e.g. Lead Designer, Staff Writer"
+    description: "e.g. Lead Designer, Staff Writer",
   },
   {
     key: "bio",
     label: "Biography",
     type: "rich_text",
     required: false,
-    description: "Short author profile description"
+    description: "Short author profile description",
   },
   {
     key: "socialLinks",
     label: "Social Links",
     type: "array",
     required: false,
-    description: "Twitter, GitHub, LinkedIn, Website URLs"
+    description: "Twitter, GitHub, LinkedIn, Website URLs",
   },
   {
     key: "organization",
     label: "Organization",
     type: "relation",
     required: false,
-    description: "Associated company or team entity"
-  }
+    description: "Associated company or team entity",
+  },
 ];
 
 export const BylineSchemaPage: Component<{ basePath?: string | undefined }> = (props) => {

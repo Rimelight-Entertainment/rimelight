@@ -31,8 +31,8 @@ export const Page403: Component = () => {
             href: "/",
             variant: "solid",
             color: "primary",
-            icon: "home"
-          }
+            icon: "home",
+          },
         ]}
       />
     </AppLayout>

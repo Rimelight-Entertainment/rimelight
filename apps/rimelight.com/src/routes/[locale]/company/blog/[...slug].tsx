@@ -30,7 +30,7 @@ export const BlogPostPage: Component = () => {
         return null;
       }
     },
-    null
+    null,
   );
 
   const docBlocks = () => {

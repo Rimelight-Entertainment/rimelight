@@ -52,7 +52,7 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     "linksSlot",
     "content",
     "bottom",
-    "children"
+    "children",
   );
 
   const resolvedVariant = () =>
@@ -71,8 +71,8 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       description: !!(props.descriptionSlot || props.description),
       body: !!props.body,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const tag = () => props.as ?? "section";

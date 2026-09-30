@@ -12,7 +12,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
       ...componentProps.props,
       src: src !== undefined ? src : componentProps.props["src"] || "",
       alt: alt !== undefined ? alt : componentProps.props["alt"] || "",
-      caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
+      caption: caption !== undefined ? caption : componentProps.props["caption"] || "",
     });
   };
 

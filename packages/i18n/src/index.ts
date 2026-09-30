@@ -6,7 +6,7 @@ import type {
   CustomTranslations,
   NestedTranslationKeys,
   ReadableAtom,
-  WritableAtom
+  WritableAtom,
 } from "./types";
 import {
   atom,
@@ -16,7 +16,7 @@ import {
   getRawTranslation,
   currentLocale,
   initializeI18n,
-  getPluralCategory
+  getPluralCategory,
 } from "./runtime";
 // Only the *types* from `./plugin` are imported here. The `i18n` Vite plugin
 // factory is Node-only (it uses `node:fs` / `node:path` / `node:child_process`),
@@ -47,7 +47,7 @@ if (translations && Object.keys(translations).length > 0) {
   initializeI18n({
     defaultLocale: defaultLocale || "en",
     translations,
-    get: createTranslationLoader(translations)
+    get: createTranslationLoader(translations),
   });
 }
 
@@ -61,7 +61,7 @@ export {
   baseTRaw as tRaw,
   baseTArray as tArray,
   getRawTranslation,
-  getPluralCategory
+  getPluralCategory,
 };
 export type { RimelightI18nOptions, RimelightI18nPlugins };
 export type {
@@ -69,13 +69,13 @@ export type {
   CustomTranslations,
   NestedTranslationKeys,
   ReadableAtom,
-  WritableAtom
+  WritableAtom,
 };
 
 export interface TFunction {
   <K extends string = TranslationKey>(
     key: K | TranslationKey,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): string;
   raw: <T = unknown>(key: string, fallback?: T) => T;
   array: <T = string>(key: string, fallback?: T[]) => T[];
@@ -89,14 +89,14 @@ export interface TFunction {
 export const t: TFunction = Object.assign(
   function <K extends string = TranslationKey>(
     key: K | TranslationKey,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): string {
     return baseT(key, params);
   },
   {
     raw: baseTRaw,
-    array: baseTArray
-  }
+    array: baseTArray,
+  },
 );
 
 export function getLocale(): string {
@@ -112,7 +112,7 @@ export function getHtmlLang(): string {
   const langMap: Record<string, string> = {
     en: "en-US",
     pt: "pt-BR",
-    es: "es-ES"
+    es: "es-ES",
   };
   return langMap[loc] || loc;
 }
@@ -125,7 +125,7 @@ export function getOgLocale(): string {
   const ogMap: Record<string, string> = {
     en: "en_US",
     pt: "pt_BR",
-    es: "es-ES"
+    es: "es-ES",
   };
   return ogMap[loc] || `${loc}_${loc.toUpperCase()}`;
 }
@@ -197,12 +197,12 @@ export function getLanguageAlternates(pathname: string, siteUrl: string = ""): L
   const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
   const alternates: LanguageAlternate[] = locales.map((loc) => ({
     hreflang: loc,
-    href: `${normalizedSiteUrl}${getRelativeLocaleUrl(loc, pathname)}`
+    href: `${normalizedSiteUrl}${getRelativeLocaleUrl(loc, pathname)}`,
   }));
 
   alternates.push({
     hreflang: "x-default",
-    href: `${normalizedSiteUrl}${getRelativeLocaleUrl(defaultLocale, pathname)}`
+    href: `${normalizedSiteUrl}${getRelativeLocaleUrl(defaultLocale, pathname)}`,
   });
 
   return alternates;
@@ -215,7 +215,7 @@ export function setKVBinding(kv: KVNamespaceBinding) {
 }
 
 export function createTranslationLoader(
-  translations: Record<string, ComponentsJSON>
+  translations: Record<string, ComponentsJSON>,
 ): TranslationLoader {
   return async (locale, components) => {
     const localeTranslations = translations[locale] || {};
@@ -237,7 +237,7 @@ export function createTranslationLoader(
               return { [name]: localeTranslations[name] ?? {} };
             }
             return { [name]: data };
-          })
+          }),
         );
         return Object.assign({}, ...results);
       } catch {
@@ -249,7 +249,7 @@ export function createTranslationLoader(
       components.map(async (name) => {
         const data = localeTranslations[name];
         return { [name]: data ?? {} };
-      })
+      }),
     );
     return Object.assign({}, ...results);
   };

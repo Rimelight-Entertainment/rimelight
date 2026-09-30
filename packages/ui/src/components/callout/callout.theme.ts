@@ -11,7 +11,7 @@ export const calloutTheme = defineTheme("callout", {
     avatar: "shrink-0",
     avatarSize: "2xl",
     actions: "flex flex-wrap gap-1.5",
-    close: "p-0 ml-auto"
+    close: "p-0 ml-auto",
   },
   variants: {
     variant: {
@@ -19,43 +19,43 @@ export const calloutTheme = defineTheme("callout", {
       outline: { root: "text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25" },
       soft: { root: "bg-[var(--rl-bg)]/10 text-[var(--rl-text)]" },
       subtle: {
-        root: "bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
-      }
+        root: "bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25",
+      },
     },
-    color: "auto"
+    color: "auto",
   },
   compoundVariants: [
     {
       color: "neutral",
       variant: "solid",
       classNames: {
-        root: "text-inverted bg-inverted"
-      }
+        root: "text-inverted bg-inverted",
+      },
     },
     {
       color: "neutral",
       variant: "outline",
       classNames: {
-        root: "text-highlighted bg-default ring ring-inset ring-default"
-      }
+        root: "text-highlighted bg-default ring ring-inset ring-default",
+      },
     },
     {
       color: "neutral",
       variant: "soft",
       classNames: {
-        root: "text-highlighted bg-elevated/50"
-      }
+        root: "text-highlighted bg-elevated/50",
+      },
     },
     {
       color: "neutral",
       variant: "subtle",
       classNames: {
-        root: "text-highlighted bg-elevated/50 ring ring-inset ring-accented"
-      }
-    }
+        root: "text-highlighted bg-elevated/50 ring ring-inset ring-accented",
+      },
+    },
   ],
   defaultVariants: {
     color: "primary",
-    variant: "solid"
-  }
+    variant: "solid",
+  },
 });

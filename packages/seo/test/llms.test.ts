@@ -13,27 +13,27 @@ describe("seo-llms", () => {
           url: "https://rimelight.com/en/docs/overview/introduction",
           markdownUrl: "https://rimelight.com/en/docs/overview/introduction.md",
           description: "Getting started guide",
-          section: "Overview"
+          section: "Overview",
         },
         {
           title: "Architecture",
           url: "https://rimelight.com/en/docs/overview/architecture",
           markdownUrl: "https://rimelight.com/en/docs/overview/architecture.md",
-          section: "Overview"
-        }
-      ]
+          section: "Overview",
+        },
+      ],
     });
 
     expect(output).toContain("# Rimelight Documentation");
     expect(output).toContain(
-      "Full corpus (all pages, one document): https://rimelight.com/llms-full.txt"
+      "Full corpus (all pages, one document): https://rimelight.com/llms-full.txt",
     );
     expect(output).toContain("### Overview");
     expect(output).toContain(
-      "- [Introduction](https://rimelight.com/en/docs/overview/introduction.md) — Getting started guide"
+      "- [Introduction](https://rimelight.com/en/docs/overview/introduction.md) — Getting started guide",
     );
     expect(output).toContain(
-      "- [Architecture](https://rimelight.com/en/docs/overview/architecture.md)"
+      "- [Architecture](https://rimelight.com/en/docs/overview/architecture.md)",
     );
   });
 
@@ -47,9 +47,9 @@ describe("seo-llms", () => {
           url: "https://rimelight.com/en/docs/quickstart",
           description: "Step-by-step tutorial",
           version: "v1",
-          markdown: "Run `vp dev` to start the development server."
-        }
-      ]
+          markdown: "Run `vp dev` to start the development server.",
+        },
+      ],
     });
 
     expect(output).toContain("# Rimelight Docs — Full Documentation Corpus");

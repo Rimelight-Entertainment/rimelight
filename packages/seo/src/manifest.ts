@@ -17,27 +17,27 @@ export function buildWebManifest(options: WebManifestOptions): WebManifest {
         src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "any"
+        purpose: "any",
       },
       {
         src: "/icon-512.png",
         sizes: "512x512",
         type: "image/png",
-        purpose: "any"
+        purpose: "any",
       },
       {
         src: "/icon-maskable-512.png",
         sizes: "512x512",
         type: "image/png",
-        purpose: "maskable"
-      }
+        purpose: "maskable",
+      },
     ],
     shortcuts,
     categories,
     lang,
     dir,
     orientation,
-    scope
+    scope,
   } = options;
 
   return {
@@ -54,6 +54,6 @@ export function buildWebManifest(options: WebManifestOptions): WebManifest {
     ...(lang ? { lang } : {}),
     ...(dir ? { dir } : {}),
     ...(orientation ? { orientation } : {}),
-    ...(scope ? { scope } : {})
+    ...(scope ? { scope } : {}),
   };
 }

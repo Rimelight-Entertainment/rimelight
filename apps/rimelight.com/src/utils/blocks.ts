@@ -25,10 +25,10 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     category: "Layout",
     description: "blocks.SectionBlock.description",
     allowedChildren: {
-      types: ["SectionBlock", "ParagraphBlock", "CalloutBlock", "ImageBlock", "ScriptBlock"]
+      types: ["SectionBlock", "ParagraphBlock", "CalloutBlock", "ImageBlock", "ScriptBlock"],
     },
     nestable: true,
-    draggable: true
+    draggable: true,
   },
   {
     type: "ParagraphBlock",
@@ -38,7 +38,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "blocks.ParagraphBlock.description",
     allowedChildren: { types: [] },
     nestable: false,
-    draggable: true
+    draggable: true,
   },
   {
     type: "ImageBlock",
@@ -48,7 +48,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "blocks.ImageBlock.description",
     allowedChildren: { types: [] },
     nestable: false,
-    draggable: true
+    draggable: true,
   },
   {
     type: "CalloutBlock",
@@ -58,7 +58,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "blocks.CalloutBlock.description",
     allowedChildren: { types: ["ParagraphBlock", "CalloutBlock", "ImageBlock"] },
     nestable: true,
-    draggable: true
+    draggable: true,
   },
   {
     type: "ScriptBlock",
@@ -68,7 +68,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "blocks.ScriptBlock.description",
     allowedChildren: { types: ["SceneBlock"] },
     nestable: true,
-    draggable: true
+    draggable: true,
   },
   {
     type: "SceneBlock",
@@ -78,7 +78,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "blocks.SceneBlock.description",
     allowedChildren: { types: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"] },
     nestable: true,
-    draggable: true
+    draggable: true,
   },
   {
     type: "DialogueBlock",
@@ -88,6 +88,6 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "blocks.DialogueBlock.description",
     allowedChildren: { types: [] },
     nestable: false,
-    draggable: true
-  }
+    draggable: true,
+  },
 ];

@@ -18,8 +18,8 @@ export const Page401: Component = () => {
             href: "/",
             variant: "solid",
             color: "primary",
-            icon: "home"
-          }
+            icon: "home",
+          },
         ]}
       />
     </AppLayout>

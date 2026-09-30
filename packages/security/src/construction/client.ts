@@ -6,26 +6,26 @@ export interface SubmitConstructionPassphraseOptions {
 }
 
 export async function submitConstructionPassphrase(
-  options: SubmitConstructionPassphraseOptions
+  options: SubmitConstructionPassphraseOptions,
 ): Promise<{ success: boolean; error?: string }> {
   const {
     passphrase,
     rememberMe = true,
     endpoint = "/api/construction-guest",
-    redirect = "/"
+    redirect = "/",
   } = options;
 
   try {
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         passphrase,
         rememberMe,
-        redirect
-      })
+        redirect,
+      }),
     });
 
     const data = (await response.json().catch(() => ({}))) as {
@@ -36,7 +36,7 @@ export async function submitConstructionPassphrase(
     if (!response.ok || !data.success) {
       return {
         success: false,
-        error: data.error || "Invalid passphrase"
+        error: data.error || "Invalid passphrase",
       };
     }
 
@@ -44,7 +44,7 @@ export async function submitConstructionPassphrase(
   } catch (err: any) {
     return {
       success: false,
-      error: err?.message || "An unexpected error occurred."
+      error: err?.message || "An unexpected error occurred.",
     };
   }
 }

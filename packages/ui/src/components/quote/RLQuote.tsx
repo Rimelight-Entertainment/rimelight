@@ -17,8 +17,8 @@ const RLQuote: Component<RLQuoteProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     quoteTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

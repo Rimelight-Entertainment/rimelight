@@ -19,8 +19,8 @@ const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     dashboardToolbarTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

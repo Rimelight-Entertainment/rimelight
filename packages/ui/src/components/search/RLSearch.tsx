@@ -34,7 +34,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     "ui",
     "class",
     "children",
-    "triggerSlot"
+    "triggerSlot",
   );
 
   const endpoint = () => props.endpoint ?? "/api/search";
@@ -97,7 +97,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
         label: "Search",
         description: "Open site search",
         category: "navigation",
-        order: 0
+        order: 0,
       },
       "/": {
         handler: () => {
@@ -106,8 +106,8 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
         label: "Quick Search",
         description: "Focus site search",
         category: "navigation",
-        order: 1
-      }
+        order: 1,
+      },
     });
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -164,8 +164,8 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     searchTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (
@@ -244,7 +244,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
                     input:
                       "w-full bg-transparent px-3 py-1 text-sm outline-none text-highlighted placeholder:text-muted",
                     leading: "flex items-center justify-center text-muted",
-                    trailing: "flex items-center gap-2"
+                    trailing: "flex items-center gap-2",
                   }}
                 />
               </div>

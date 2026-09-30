@@ -14,8 +14,8 @@ const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     calendarTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

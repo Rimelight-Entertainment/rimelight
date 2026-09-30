@@ -5,7 +5,7 @@ export const GuidesSidebar: Component = () => {
   const sections = [
     {
       label: "Guides Explorer",
-      items: [{ label: "Featured Guides", to: "/franchises/grand-tale/guides" }]
+      items: [{ label: "Featured Guides", to: "/franchises/grand-tale/guides" }],
     },
     {
       label: "Categories",
@@ -13,20 +13,20 @@ export const GuidesSidebar: Component = () => {
         { label: "New Players", to: "/franchises/grand-tale/guides/getting-started" },
         { label: "Hero Builds", to: "/franchises/grand-tale/guides/builds" },
         { label: "Endgame Content", to: "/franchises/grand-tale/guides/endgame" },
-        { label: "Resources & Crafting", to: "/franchises/grand-tale/guides/crafting" }
-      ]
+        { label: "Resources & Crafting", to: "/franchises/grand-tale/guides/crafting" },
+      ],
     },
     {
       label: "Media",
-      items: [{ label: "Video Guides", to: "/franchises/grand-tale/guides/videos" }]
+      items: [{ label: "Video Guides", to: "/franchises/grand-tale/guides/videos" }],
     },
     {
       label: "Tools",
       items: [
         { label: "Build Planners", to: "/franchises/grand-tale/guides/build-planners" },
-        { label: "Calculators", to: "/franchises/grand-tale/guides/calculators" }
-      ]
-    }
+        { label: "Calculators", to: "/franchises/grand-tale/guides/calculators" },
+      ],
+    },
   ];
 
   return (

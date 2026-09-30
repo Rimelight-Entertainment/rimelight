@@ -6,7 +6,7 @@ import type { UserSessionContext } from "./permissions";
  */
 export function filterBlocksForReader(
   blocks: BaseBlock[],
-  session?: UserSessionContext
+  session?: UserSessionContext,
 ): BaseBlock[] {
   const filtered: BaseBlock[] = [];
 
@@ -29,7 +29,7 @@ export function filterBlocksForReader(
     const newBlock: BaseBlock = {
       id: block.id,
       type: block.type,
-      props: block.props
+      props: block.props,
     };
     if (filteredChildren !== undefined) newBlock.children = filteredChildren;
     if (block.isTemplated !== undefined) newBlock.isTemplated = block.isTemplated;

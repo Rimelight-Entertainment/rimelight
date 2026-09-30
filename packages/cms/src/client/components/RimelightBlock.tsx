@@ -35,7 +35,7 @@ export interface RimelightBlockProps {
         position: "before" | "after",
         sectionDepth: number,
         parentId?: string | null,
-        containerType?: string | null
+        containerType?: string | null,
       ) => void)
     | undefined;
 }

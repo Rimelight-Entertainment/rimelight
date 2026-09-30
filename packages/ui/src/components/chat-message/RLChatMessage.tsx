@@ -15,8 +15,8 @@ const RLChatMessage: Component<RLChatMessageProps> = (allProps) => {
     chatMessageTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

@@ -107,6 +107,6 @@ export default auth;
       }
 
       return null;
-    }
+    },
   };
 }

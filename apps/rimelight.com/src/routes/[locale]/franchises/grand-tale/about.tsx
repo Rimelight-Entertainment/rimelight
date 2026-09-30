@@ -6,22 +6,22 @@ const faqItems = [
   {
     label: "What is Grand Tale?",
     content:
-      "Grand Tale is a high-fantasy social life-sim RPG hosting sub-games of multiple genres."
+      "Grand Tale is a high-fantasy social life-sim RPG hosting sub-games of multiple genres.",
   },
   {
     label: "When is the game launching?",
     content:
-      "We are currently running private alpha trials. Full details will be shared on our forums."
+      "We are currently running private alpha trials. Full details will be shared on our forums.",
   },
   {
     label: "What platforms will be supported?",
-    content: "Grand Tale is coming to PC, Mac, and mobile platforms with full cross-play."
+    content: "Grand Tale is coming to PC, Mac, and mobile platforms with full cross-play.",
   },
   {
     label: "Is Grand Tale free to play?",
     content:
-      "Grand Tale is free to download and play, with cosmetic and community-driven customizations."
-  }
+      "Grand Tale is free to download and play, with cosmetic and community-driven customizations.",
+  },
 ];
 
 export const GrandTaleAboutPage: Component = () => {

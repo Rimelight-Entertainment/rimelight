@@ -42,9 +42,9 @@ api.get("/", async (c) => {
       results.map((row) =>
         Object.assign({}, row, {
           blocks: row.content?.blocks || [],
-          properties: row.content?.properties || {}
-        })
-      )
+          properties: row.content?.properties || {},
+        }),
+      ),
     );
   } catch (err: any) {
     return c.json({ error: err.message }, 500);

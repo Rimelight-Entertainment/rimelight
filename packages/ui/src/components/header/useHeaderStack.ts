@@ -94,7 +94,7 @@ export function useHeaderStack() {
             fixed: options.fixed ?? false,
             hideOnScroll: options.hideOnScroll ?? false,
             visible,
-            element: el
+            element: el,
           };
 
           if (index !== -1) {
@@ -151,7 +151,7 @@ export function useHeaderStack() {
             }
             return copy;
           });
-        }
+        },
       );
     }
 
@@ -191,7 +191,7 @@ export function useHeaderStack() {
         el = node;
       },
       topOffset,
-      isCollapsed
+      isCollapsed,
     };
   };
 
@@ -214,7 +214,7 @@ export function useHeaderStack() {
     () => totalOffset(),
     (offset) => {
       syncTotalHeaderHeight(offset);
-    }
+    },
   );
 
   return {
@@ -222,7 +222,7 @@ export function useHeaderStack() {
     scrollDirection,
     headers,
     registerHeader,
-    totalOffset
+    totalOffset,
   };
 }
 

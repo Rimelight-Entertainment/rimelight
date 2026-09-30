@@ -98,8 +98,8 @@ function transformPageToEntry(rawPage: any, locale: string = "en"): CmsEntry {
       publishedVersionId: rawPage.publishedVersionId,
       postedAt: rawPage.postedAt ? new Date(rawPage.postedAt) : null,
       createdAt: new Date(rawPage.createdAt),
-      updatedAt: rawPage.updatedAt ? new Date(rawPage.updatedAt) : null
-    }
+      updatedAt: rawPage.updatedAt ? new Date(rawPage.updatedAt) : null,
+    },
   };
 }
 
@@ -112,7 +112,7 @@ export async function getCmsCollection(
     limit?: number | undefined;
     offset?: number | undefined;
     where?: SQL | undefined;
-  } = {}
+  } = {},
 ): Promise<{ entries: CmsEntry[]; cacheHint: CacheHint }> {
   const {
     type,
@@ -121,7 +121,7 @@ export async function getCmsCollection(
     includeScheduled = false,
     limit,
     offset,
-    where: customWhere
+    where: customWhere,
   } = options;
 
   if (!db) {
@@ -154,7 +154,7 @@ export async function getCmsCollection(
             SELECT ${pageTaxonomyTerms.pageId} FROM ${pageTaxonomyTerms}
             INNER JOIN ${taxonomyTerms} ON ${taxonomyTerms.id} = ${pageTaxonomyTerms.termId}
             WHERE ${taxonomyTerms.taxonomy} = ${taxName} AND ${taxonomyTerms.slug} = ${termSlug}
-          )`
+          )`,
         );
       }
     }
@@ -191,8 +191,8 @@ export async function getCmsCollection(
     entries,
     cacheHint: {
       tags,
-      lastModified: lastModified.getTime() > 0 ? lastModified : new Date()
-    }
+      lastModified: lastModified.getTime() > 0 ? lastModified : new Date(),
+    },
   };
 }
 
@@ -202,12 +202,12 @@ export async function getCmsCollection(
 export async function getCmsEntry(
   db: any,
   slugOrId: string,
-  options: CmsLoaderOptions = {}
+  options: CmsLoaderOptions = {},
 ): Promise<{ entry: CmsEntry | null; cacheHint: CacheHint }> {
   const { entries, cacheHint } = await getCmsCollection(db, {
     ...options,
     limit: 1,
-    where: eq(pages.slug, slugOrId)
+    where: eq(pages.slug, slugOrId),
   });
 
   const entry = entries[0] || null;
@@ -251,7 +251,7 @@ export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}): CmsLoa
       return getCmsCollection(db, {
         ...loaderOptions,
         limit,
-        offset
+        offset,
       });
     },
     loadEntry: async (context: { filter: { id: string }; collection?: string | undefined }) => {
@@ -261,9 +261,9 @@ export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}): CmsLoa
       return {
         id: entry.id,
         data: entry.data,
-        cacheHint
+        cacheHint,
       };
-    }
+    },
   };
 }
 

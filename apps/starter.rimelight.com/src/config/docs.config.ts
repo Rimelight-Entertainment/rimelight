@@ -4,7 +4,7 @@ import type { DocsConfig } from "@rimelight/cms";
 const config: DocsConfig = {
   editLink: {
     baseUrl:
-      "https://github.com/Rimelight-Entertainment/rimelight/edit/main/packages/starter.rimelight.com/src/content/docs/"
+      "https://github.com/Rimelight-Entertainment/rimelight/edit/main/packages/starter.rimelight.com/src/content/docs/",
   },
   sidebar: [
     {
@@ -13,8 +13,8 @@ const config: DocsConfig = {
       icon: "i-lucide-book-open",
       items: [
         { label: "Introduction", href: "/{locale}/docs/" },
-        { label: "Getting Started", href: "/{locale}/docs/getting-started" }
-      ]
+        { label: "Getting Started", href: "/{locale}/docs/getting-started" },
+      ],
     },
     {
       id: "features",
@@ -26,8 +26,8 @@ const config: DocsConfig = {
         { label: "Database", href: "/{locale}/docs/database" },
         { label: "Open Graph Images", href: "/{locale}/docs/open-graph" },
         { label: "Docs System", href: "/{locale}/docs/docs-system" },
-        { label: "Deployment", href: "/{locale}/docs/deployment" }
-      ]
+        { label: "Deployment", href: "/{locale}/docs/deployment" },
+      ],
     },
     {
       id: "components",
@@ -37,8 +37,8 @@ const config: DocsConfig = {
         { label: "Overview", href: "/{locale}/docs/components" },
         { label: "Astro Components", href: "/{locale}/docs/astro" },
         { label: "Solid Components", href: "/{locale}/docs/solid" },
-        { label: "Integrations", href: "/{locale}/docs/integrations" }
-      ]
+        { label: "Integrations", href: "/{locale}/docs/integrations" },
+      ],
     },
     {
       id: "foundation",
@@ -48,10 +48,10 @@ const config: DocsConfig = {
         { label: "Design Tokens", href: "/{locale}/docs/tokens" },
         { label: "Color Palettes", href: "/{locale}/docs/colors" },
         { label: "Fluid Typography", href: "/{locale}/docs/typography" },
-        { label: "Search & Database", href: "/{locale}/docs/search-db" }
-      ]
-    }
-  ]
+        { label: "Search & Database", href: "/{locale}/docs/search-db" },
+      ],
+    },
+  ],
 };
 
 export default defineDocsConfig(config);

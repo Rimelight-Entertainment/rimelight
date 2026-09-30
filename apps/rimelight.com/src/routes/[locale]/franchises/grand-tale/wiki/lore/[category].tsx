@@ -10,7 +10,7 @@ const categoryToType: Record<string, string> = {
   locations: "Location",
   species: "Species",
   objects: "Object",
-  groups: "Group"
+  groups: "Group",
 };
 
 export const LoreCategoryPage: Component = () => {
@@ -27,7 +27,7 @@ export const LoreCategoryPage: Component = () => {
       const type = categoryToType[cat] || "Character";
       try {
         const res = await fetch(
-          `/api/pages?type=${encodeURIComponent(type)}&limit=1000&orderBy=title&order=asc`
+          `/api/pages?type=${encodeURIComponent(type)}&limit=1000&orderBy=title&order=asc`,
         );
         if (!res.ok) return [];
         return (await res.json()) as any[];
@@ -35,7 +35,7 @@ export const LoreCategoryPage: Component = () => {
         return [];
       }
     },
-    []
+    [],
   );
 
   return (

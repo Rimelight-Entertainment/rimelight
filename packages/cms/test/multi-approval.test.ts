@@ -6,7 +6,7 @@ describe("multi-approval", () => {
     const approvalRules: TemplateApprovalRules = {
       minApprovals: 2,
       allowSelfApproval: false,
-      requiredRolesForApproval: ["admin"]
+      requiredRolesForApproval: ["admin"],
     };
 
     const approvals = [{ userId: "user-1", userRole: "admin", approvedAt: new Date() }];
@@ -20,12 +20,12 @@ describe("multi-approval", () => {
     const approvalRules: TemplateApprovalRules = {
       minApprovals: 2,
       allowSelfApproval: false,
-      requiredRolesForApproval: ["admin"]
+      requiredRolesForApproval: ["admin"],
     };
 
     const approvals = [
       { userId: "user-1", userRole: "admin", approvedAt: new Date() },
-      { userId: "user-2", userRole: "admin", approvedAt: new Date() }
+      { userId: "user-2", userRole: "admin", approvedAt: new Date() },
     ];
 
     // 2 approvals, minApprovals is 2
@@ -37,7 +37,7 @@ describe("multi-approval", () => {
     const approvalRules: TemplateApprovalRules = {
       minApprovals: 1,
       allowSelfApproval: true,
-      requiredRolesForApproval: ["admin"]
+      requiredRolesForApproval: ["admin"],
     };
 
     const createdBy = "user-1";
@@ -58,14 +58,14 @@ describe("multi-approval", () => {
     const approvalRules: TemplateApprovalRules = {
       minApprovals: 1,
       allowSelfApproval: true,
-      requiredRolesForApproval: ["admin"]
+      requiredRolesForApproval: ["admin"],
     };
 
     const approvals = [{ userId: "user-1", userRole: "member", approvedAt: new Date() }];
 
     // User doesn't have required role
     const validApprovals = approvals.filter((a) =>
-      approvalRules.requiredRolesForApproval?.includes(a.userRole)
+      approvalRules.requiredRolesForApproval?.includes(a.userRole),
     );
 
     expect(validApprovals.length).toBe(0);
@@ -74,7 +74,7 @@ describe("multi-approval", () => {
   it("verifies minApprovals of 0 allows immediate publish", () => {
     const approvalRules: TemplateApprovalRules = {
       minApprovals: 0,
-      allowSelfApproval: true
+      allowSelfApproval: true,
     };
 
     const approvals: any[] = [];

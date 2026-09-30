@@ -11,7 +11,7 @@ export interface ExistingUserSignUpNotificationOptions {
 
 export async function sendExistingUserSignUpNotification({
   user,
-  locale
+  locale,
 }: ExistingUserSignUpNotificationOptions) {
   const messages = getEmailMessages(locale);
   const subject = messages.signupNotification.subject;
@@ -22,6 +22,6 @@ export async function sendExistingUserSignUpNotification({
     to: user.email,
     subject,
     text: `${messages.signupNotification.description} ${messages.signupNotification.sign_in_prefix} ${messages.signupNotification.sign_in} ${messages.signupNotification.sign_in_suffix}`,
-    html
+    html,
   });
 }

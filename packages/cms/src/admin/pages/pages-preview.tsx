@@ -20,7 +20,7 @@ export const PagesPreviewPage: Component<PagesPreviewPageProps> = (props) => {
   const [shareState, setShareState] = createSignal("Share Preview Link");
 
   const remote = useCmsApi<{ page: any; draft: any }>(() =>
-    props.initialPage ? null : `${apiBase()}/pages/${props.pageId}`
+    props.initialPage ? null : `${apiBase()}/pages/${props.pageId}`,
   );
   const page = () => props.initialPage ?? remote.data()?.page;
   const draft = () => props.initialDraft ?? remote.data()?.draft;
@@ -31,7 +31,7 @@ export const PagesPreviewPage: Component<PagesPreviewPageProps> = (props) => {
     setShareState("Generating…");
     try {
       const res = await fetch(`${apiBase()}/pages/${props.pageId}/preview-token`, {
-        method: "POST"
+        method: "POST",
       });
       if (!res.ok) throw new Error("token failed");
       const data = (await res.json()) as any;

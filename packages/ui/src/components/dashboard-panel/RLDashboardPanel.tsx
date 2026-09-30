@@ -30,7 +30,7 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
     "footer",
     "footerSlot",
     "resizeHandle",
-    "resizeHandleSlot"
+    "resizeHandleSlot",
   );
 
   const resizable = () => props.resizable ?? false;
@@ -39,8 +39,8 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
     dashboardPanelTheme({
       size: false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const headerContent = () => props.header ?? props.headerSlot;

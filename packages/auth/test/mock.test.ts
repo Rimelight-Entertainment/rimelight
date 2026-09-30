@@ -18,7 +18,7 @@ describe("mockAuth Adapter", () => {
       userId: "custom-123",
       email: "custom@example.com",
       roles: ["editor"],
-      userType: "user"
+      userType: "user",
     });
     const session = await adapter.getSession(new Request("https://rimelight.com"));
 

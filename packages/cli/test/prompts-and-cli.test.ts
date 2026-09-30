@@ -13,7 +13,7 @@ import {
   text,
   confirm,
   select,
-  multiselect
+  multiselect,
 } from "../src/prompts";
 import {
   injectIntoArray,
@@ -21,7 +21,7 @@ import {
   reorderKeys,
   getNested,
   setNested,
-  runCreate
+  runCreate,
 } from "../src/index";
 
 describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
@@ -77,9 +77,9 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
         message: "Select package manager",
         options: [
           { value: "pnpm", label: "pnpm" },
-          { value: "npm", label: "npm" }
+          { value: "npm", label: "npm" },
         ],
-        initialValue: "pnpm"
+        initialValue: "pnpm",
       });
       expect(selectVal).toBe("pnpm");
 
@@ -87,9 +87,9 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
         message: "Select items",
         options: [
           { value: "opt1", label: "Option 1" },
-          { value: "opt2", label: "Option 2" }
+          { value: "opt2", label: "Option 2" },
         ],
-        initialValues: ["opt1"]
+        initialValues: ["opt1"],
       });
       expect(multiVal).toEqual(["opt1"]);
     });
@@ -134,7 +134,7 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
         dependencies: { a: "1" },
         name: "my-app",
         scripts: { test: "vp test" },
-        version: "1.0.0"
+        version: "1.0.0",
       };
 
       const reordered = reorderKeys(target, starter) as Record<string, any>;
@@ -143,7 +143,7 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
         "version",
         "scripts",
         "dependencies",
-        "customField"
+        "customField",
       ]);
       expect(reordered["customField"]).toBe(true);
     });
@@ -160,7 +160,7 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
           domain: "test.example.com",
           git: false,
           install: false,
-          packageManager: "pnpm"
+          packageManager: "pnpm",
         });
 
         // Verify package.json was written
@@ -172,11 +172,11 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
         // Verify cloudflare.config.ts was updated
         const cloudflareContent = await fs.readFile(
           path.join(projectDir, "cloudflare.config.ts"),
-          "utf-8"
+          "utf-8",
         );
         expect(cloudflareContent).toContain('name: "test-dot-example-dot-com"');
         expect(cloudflareContent).toContain(
-          'domains: ["test.example.com", "www.test.example.com"]'
+          'domains: ["test.example.com", "www.test.example.com"]',
         );
         expect(cloudflareContent).not.toContain("starter.rimelight.com");
 

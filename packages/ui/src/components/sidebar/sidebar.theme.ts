@@ -13,33 +13,33 @@ export const sidebarTheme = defineTheme("sidebar", {
       "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted transition-colors cursor-pointer",
     itemIcon: "size-4 text-current",
     itemBadge:
-      "ml-auto flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold"
+      "ml-auto flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold",
   },
   variants: {
     side: {
       left: { root: "left-0 border-r" },
-      right: { root: "right-0 border-l" }
+      right: { root: "right-0 border-l" },
     },
     collapsible: {
       icon: {
-        root: "w-16 [&_[data-slot=item-text]]:hidden [&_[data-slot=item-badge]]:hidden [&_[data-slot=sidebar-logo]]:hidden"
+        root: "w-16 [&_[data-slot=item-text]]:hidden [&_[data-slot=item-badge]]:hidden [&_[data-slot=sidebar-logo]]:hidden",
       },
       offcanvas: { root: "-translate-x-full" },
-      none: {}
+      none: {},
     },
     variant: {
       sidebar: {},
       floating: {
-        root: "m-4 rounded-xl border border-default shadow-md h-[calc(100vh-2rem)] bg-default/95 backdrop-blur"
+        root: "m-4 rounded-xl border border-default shadow-md h-[calc(100vh-2rem)] bg-default/95 backdrop-blur",
       },
       inset: {
-        root: "bg-muted/40 border-none p-2"
-      }
-    }
+        root: "bg-muted/40 border-none p-2",
+      },
+    },
   },
   defaultVariants: {
     side: "left",
     collapsible: "none",
-    variant: "sidebar"
-  }
+    variant: "sidebar",
+  },
 });

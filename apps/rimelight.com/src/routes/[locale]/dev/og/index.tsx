@@ -15,50 +15,50 @@ const pages: PageItem[] = [
     title: "Rimelight Entertainment",
     description: "Tell your story.",
     type: "",
-    isDocs: false
+    isDocs: false,
   },
   {
     label: "Company",
     title: "About Rimelight",
     description: "Creating interactive entertainment and software tools.",
     type: "Company",
-    isDocs: false
+    isDocs: false,
   },
   {
     label: "Products",
     title: "Rimelight Products & Games",
     description: "Explore Grand Tale and our ecosystem of open-source tools.",
     type: "Products",
-    isDocs: false
+    isDocs: false,
   },
   {
     label: "Docs — Overview",
     title: "Getting Started",
     description: "Everything you need to get up and running with Rimelight.",
     type: "Documentation",
-    isDocs: true
+    isDocs: true,
   },
   {
     label: "Docs — API Reference",
     title: "API Reference",
     description: "Complete API reference for Rimelight integrations.",
     type: "Documentation",
-    isDocs: true
+    isDocs: true,
   },
   {
     label: "Blog Post",
     title: "Announcing Grand Tale v2",
     description: "A look at what's new in our biggest update yet.",
     type: "Blog Post",
-    isDocs: false
+    isDocs: false,
   },
   {
     label: "User Profile (Dynamic)",
     title: "idant",
     description: "View idant's profile on Rimelight.",
     type: "Profile",
-    isDocs: false
-  }
+    isDocs: false,
+  },
 ];
 
 function ogUrl(page: PageItem) {
@@ -66,7 +66,7 @@ function ogUrl(page: PageItem) {
     title: page.title,
     description: page.description,
     ...(page.type ? { type: page.type } : {}),
-    ...(page.isDocs ? { isDocs: "true" } : {})
+    ...(page.isDocs ? { isDocs: "true" } : {}),
   });
   return `/open-graph/page.png?${params.toString()}`;
 }
@@ -149,7 +149,7 @@ export const DevOgPage: Component = () => {
                       class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-md text-xs font-medium text-neutral-200 transition-colors"
                       style={{
                         color: isCopied() ? "#4ade80" : undefined,
-                        "border-color": isCopied() ? "rgba(74, 222, 128, 0.4)" : undefined
+                        "border-color": isCopied() ? "rgba(74, 222, 128, 0.4)" : undefined,
                       }}
                     >
                       {isCopied() ? "Copied!" : "Copy URL"}

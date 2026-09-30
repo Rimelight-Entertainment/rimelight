@@ -32,7 +32,7 @@ export const AssetsPage: Component<AssetsPageProps> = (props) => {
   const [uploading, setUploading] = createSignal(false);
 
   const remote = useCmsApi<{ success: boolean; data: { files: StorageFile[] } }>(() =>
-    props.initialFiles ? null : mediaBase()
+    props.initialFiles ? null : mediaBase(),
   );
   const files = () => props.initialFiles ?? remote.data()?.data.files ?? [];
 

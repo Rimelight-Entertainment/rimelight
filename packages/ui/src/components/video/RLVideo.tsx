@@ -76,17 +76,17 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
     "transcriptSlot",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const [isPlaying, setIsPlaying] = createSignal(false);
 
   const videoId = createMemo(() => extractYoutubeVideoId(props.src || ""));
   const embedUrl = createMemo(() =>
-    videoId() ? `${YOUTUBE_EMBED_BASE}${videoId()}?autoplay=1` : null
+    videoId() ? `${YOUTUBE_EMBED_BASE}${videoId()}?autoplay=1` : null,
   );
   const defaultThumbnail = createMemo(() =>
-    videoId() ? `${YOUTUBE_THUMB_BASE}${videoId()}/hqdefault.jpg` : PLACEHOLDER_THUMBNAIL
+    videoId() ? `${YOUTUBE_THUMB_BASE}${videoId()}/hqdefault.jpg` : PLACEHOLDER_THUMBNAIL,
   );
 
   const titleText = () => props.title || "YouTube Video Player";
@@ -98,8 +98,8 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
       title: !!props.title,
       icon: !!props.icon,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

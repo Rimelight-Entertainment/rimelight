@@ -13,7 +13,7 @@ export const navigationMenuTheme = defineTheme("navigation-menu", {
       "absolute left-0 top-full z-50 mt-1.5 w-56 rounded-md border bg-elevated p-1 text-highlighted shadow-md origin-top-left",
     viewportWrapper: "absolute left-0 top-full flex justify-center w-full",
     viewport:
-      "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md bg-default text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90"
+      "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md bg-default text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90",
   },
   variants: {
     orientation: {
@@ -21,17 +21,17 @@ export const navigationMenuTheme = defineTheme("navigation-menu", {
         root: "max-w-max flex-1 items-center justify-center",
         list: "items-center justify-center space-x-1",
         link: "justify-center w-max",
-        trigger: "w-max"
+        trigger: "w-max",
       },
       vertical: {
         root: "flex-col w-full items-stretch justify-start",
         list: "flex-col flex-1 items-stretch justify-start space-y-2 w-full",
         link: "justify-start w-full px-4 py-2 text-lg",
-        trigger: "justify-start w-full h-10 px-4 py-2 text-lg"
-      }
-    }
+        trigger: "justify-start w-full h-10 px-4 py-2 text-lg",
+      },
+    },
   },
   defaultVariants: {
-    orientation: "horizontal"
-  }
+    orientation: "horizontal",
+  },
 });

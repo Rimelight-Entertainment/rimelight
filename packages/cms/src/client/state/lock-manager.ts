@@ -17,13 +17,13 @@ export class LockManager {
 
   async acquireCheckout(
     userId: string,
-    userName: string
+    userName: string,
   ): Promise<{ success: boolean; lockState: LockState }> {
     try {
       const res = await fetch(`/api/cms/pages/${this.pageId}/lock/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, userName })
+        body: JSON.stringify({ userId, userName }),
       });
 
       const data = await res.json();
@@ -31,7 +31,7 @@ export class LockManager {
         this.startHeartbeat(userId);
         return {
           success: true,
-          lockState: { isLocked: false }
+          lockState: { isLocked: false },
         };
       } else {
         return {
@@ -40,14 +40,14 @@ export class LockManager {
             isLocked: true,
             lockedByUserId: data.lockedByUserId,
             lockedByUserName: data.lockedByUserName,
-            expiresAt: data.expiresAt
-          }
+            expiresAt: data.expiresAt,
+          },
         };
       }
     } catch {
       return {
         success: false,
-        lockState: { isLocked: true, lockedByUserName: "Unknown (Network Error)" }
+        lockState: { isLocked: true, lockedByUserName: "Unknown (Network Error)" },
       };
     }
   }
@@ -59,7 +59,7 @@ export class LockManager {
         await fetch(`/api/cms/pages/${this.pageId}/lock/heartbeat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId })
+          body: JSON.stringify({ userId }),
         });
       } catch {
         // Silently retry on next heartbeat interval
@@ -80,7 +80,7 @@ export class LockManager {
       await fetch(`/api/cms/pages/${this.pageId}/lock/release`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId })
+        body: JSON.stringify({ userId }),
       });
     } catch {
       // Ignore cleanup error

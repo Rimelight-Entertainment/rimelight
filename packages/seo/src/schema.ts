@@ -32,7 +32,7 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
     authorUrl,
     image,
     publisherName = "Rimelight Entertainment",
-    publisherLogo
+    publisherLogo,
   } = options;
 
   const schema: Record<string, any> = {
@@ -41,8 +41,8 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
     headline: title,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": url
-    }
+      "@id": url,
+    },
   };
 
   if (description) schema["description"] = description;
@@ -64,7 +64,7 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
     schema["author"] = {
       "@type": "Person",
       name: authorName,
-      ...(authorUrl ? { url: authorUrl } : {})
+      ...(authorUrl ? { url: authorUrl } : {}),
     };
   }
 
@@ -72,7 +72,7 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
     schema["publisher"] = {
       "@type": "Organization",
       name: publisherName,
-      ...(publisherLogo ? { logo: { "@type": "ImageObject", url: publisherLogo } } : {})
+      ...(publisherLogo ? { logo: { "@type": "ImageObject", url: publisherLogo } } : {}),
     };
   }
 
@@ -90,7 +90,7 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]): Record<string, a
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.url
-    }))
+      item: item.url,
+    })),
   };
 }

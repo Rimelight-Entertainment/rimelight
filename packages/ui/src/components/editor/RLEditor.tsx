@@ -14,8 +14,8 @@ const RLEditor: Component<RLEditorProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     editorTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

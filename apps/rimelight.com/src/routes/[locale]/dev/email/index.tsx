@@ -5,13 +5,13 @@ import { getLocale } from "@rimelight/i18n";
 const links = [
   ["verification", "Verify Email"],
   ["password-reset", "Password Reset"],
-  ["signup-notification", "Sign-up Notification"]
+  ["signup-notification", "Sign-up Notification"],
 ];
 
 export const DevEmailIndexPage: Component = () => {
   const locale = getLocale();
   const [statusMap, setStatusMap] = createSignal<Record<string, { text: string; error?: boolean }>>(
-    {}
+    {},
   );
   const [loadingMap, setLoadingMap] = createSignal<Record<string, boolean>>({});
 
@@ -23,7 +23,7 @@ export const DevEmailIndexPage: Component = () => {
       const response = await fetch("/api/dev/email/preview/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ template, locale })
+        body: JSON.stringify({ template, locale }),
       });
       const raw = await response.text();
       let result: { ok?: boolean; error?: string };
@@ -39,8 +39,8 @@ export const DevEmailIndexPage: Component = () => {
         ...prev,
         [template]: {
           text: err instanceof Error ? err.message : "Unable to send test email",
-          error: true
-        }
+          error: true,
+        },
       }));
     } finally {
       setLoadingMap((prev) => ({ ...prev, [template]: false }));
@@ -76,7 +76,7 @@ export const DevEmailIndexPage: Component = () => {
                 <p
                   class="min-h-5 mt-3 text-xs"
                   style={{
-                    color: statusMap()[pathKey]?.error ? "#ef4444" : "#22c55e"
+                    color: statusMap()[pathKey]?.error ? "#ef4444" : "#22c55e",
                   }}
                 >
                   {statusMap()[pathKey]?.text || ""}

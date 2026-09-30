@@ -24,7 +24,7 @@ export const DocsOgPage: Component = () => {
         class="w-[1200px] h-[630px] flex flex-col p-14 relative overflow-hidden text-[#e5e5e5]"
         style={{
           "font-family": "'Noto Sans', system-ui, sans-serif",
-          background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)"
+          background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)",
         }}
       >
         <div class="flex items-center gap-3">

@@ -48,7 +48,7 @@ export function r2(options: R2StorageOptions = {}): StorageConfig {
     provider: "r2",
     binding: options.binding ?? "BLOB",
     publicUrl: options.publicUrl,
-    prefix: options.prefix ?? "media/"
+    prefix: options.prefix ?? "media/",
   };
 }
 
@@ -82,7 +82,7 @@ export async function getR2Bucket(locals?: any, bindingName = "BLOB"): Promise<a
  */
 export async function listR2Files(
   bucket: any,
-  options: StorageListOptions = {}
+  options: StorageListOptions = {},
 ): Promise<StorageListResult> {
   if (!bucket || typeof bucket.list !== "function") {
     return { files: [], truncated: false };
@@ -94,7 +94,7 @@ export async function listR2Files(
   const result = await bucket.list({
     prefix,
     cursor: options.cursor,
-    limit
+    limit,
   });
 
   const files: StorageFile[] = (result.objects || []).map((obj: any) => {
@@ -127,14 +127,14 @@ export async function listR2Files(
       uploadedAt: obj.uploaded ? new Date(obj.uploaded).toISOString() : new Date().toISOString(),
       url,
       etag: obj.etag,
-      customMetadata: obj.customMetadata
+      customMetadata: obj.customMetadata,
     };
   });
 
   return {
     files,
     truncated: result.truncated,
-    cursor: result.cursor
+    cursor: result.cursor,
   };
 }
 
@@ -144,7 +144,7 @@ export async function listR2Files(
 export async function uploadR2File(
   bucket: any,
   file: File,
-  options: StorageUploadOptions = {}
+  options: StorageUploadOptions = {},
 ): Promise<StorageFile> {
   if (!bucket || typeof bucket.put !== "function") {
     throw new Error("R2 bucket binding is not available in runtime environment.");
@@ -161,12 +161,12 @@ export async function uploadR2File(
   const r2Object = await bucket.put(key, arrayBuffer, {
     httpMetadata: {
       contentType: file.type || guessMimeType(safeName),
-      contentDisposition: `inline; filename="${safeName}"`
+      contentDisposition: `inline; filename="${safeName}"`,
     },
     customMetadata: {
       originalName: file.name,
-      uploadedAt: new Date().toISOString()
-    }
+      uploadedAt: new Date().toISOString(),
+    },
   });
 
   let url = "";
@@ -191,7 +191,7 @@ export async function uploadR2File(
     mimeType: file.type || guessMimeType(safeName),
     uploadedAt: new Date().toISOString(),
     url,
-    etag: r2Object?.etag
+    etag: r2Object?.etag,
   };
 }
 

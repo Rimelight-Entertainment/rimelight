@@ -16,7 +16,7 @@ const COLOR_SHADES = [
   "700",
   "800",
   "900",
-  "950"
+  "950",
 ] as const;
 
 const PALETTE_NAMES = [
@@ -29,7 +29,7 @@ const PALETTE_NAMES = [
   "error",
   "commentary",
   "ideation",
-  "source"
+  "source",
 ] as const;
 
 export const TestPage: Component = () => {
@@ -180,7 +180,7 @@ export const TestPage: Component = () => {
               variant="outline"
               ui={{
                 root: "border-2 shadow-lg hover:scale-105 transition-transform",
-                label: "tracking-widest uppercase font-mono font-bold"
+                label: "tracking-widest uppercase font-mono font-bold",
               }}
             />
 
@@ -189,7 +189,7 @@ export const TestPage: Component = () => {
               color="secondary"
               ui={{
                 root: (def: string) => `${def} ring-2 ring-secondary-400 rounded-full px-6`,
-                label: () => "text-xs italic font-semibold"
+                label: () => "text-xs italic font-semibold",
               }}
             />
 
@@ -198,7 +198,7 @@ export const TestPage: Component = () => {
               color="warning"
               ui={{
                 root: "shadow-md ring-2 ring-warning-500/40",
-                label: "font-mono font-bold uppercase"
+                label: "font-mono font-bold uppercase",
               }}
             />
           </div>
@@ -209,7 +209,7 @@ export const TestPage: Component = () => {
             ui={{
               root: "border-2 border-primary-500/30 bg-primary-50/50 dark:bg-primary-950/20 shadow-xl",
               title: "text-primary-600 font-extrabold text-lg",
-              description: "italic text-neutral-600 dark:text-neutral-400"
+              description: "italic text-neutral-600 dark:text-neutral-400",
             }}
           >
             <p class="text-sm text-neutral-500">Body content within styled container slot.</p>

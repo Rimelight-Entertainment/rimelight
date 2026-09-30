@@ -14,5 +14,5 @@ export const pageDrafts = pgTable("page_drafts", {
     }>()
     .notNull(),
   updatedBy: text("updated_by").notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });

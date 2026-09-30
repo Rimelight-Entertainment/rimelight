@@ -20,32 +20,32 @@ export const AdminLayout: Component<AdminLayoutProps> = (props) => {
       label: "Overview",
       icon: "i-lucide-layout-dashboard",
       href: getRelativeLocaleUrl("/admin"),
-      active: props.activeTab === "overview"
+      active: props.activeTab === "overview",
     },
     {
       label: "Categories",
       icon: "i-lucide-folder",
       href: getRelativeLocaleUrl("/admin/categories"),
-      active: props.activeTab === "categories"
+      active: props.activeTab === "categories",
     },
     {
       label: "Tags",
       icon: "i-lucide-tag",
       href: getRelativeLocaleUrl("/admin/tags"),
-      active: props.activeTab === "tags"
+      active: props.activeTab === "tags",
     },
     {
       label: "Bylines",
       icon: "i-lucide-pen-tool",
       href: getRelativeLocaleUrl("/admin/bylines"),
-      active: props.activeTab === "bylines"
+      active: props.activeTab === "bylines",
     },
     {
       label: "CMS Dashboard",
       icon: "i-lucide-file-text",
       href: getRelativeLocaleUrl("/cms"),
-      active: false
-    }
+      active: false,
+    },
   ];
 
   return (

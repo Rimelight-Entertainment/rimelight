@@ -10,7 +10,7 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
   const save = (field: string, value: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      [field]: value
+      [field]: value,
     });
   };
 

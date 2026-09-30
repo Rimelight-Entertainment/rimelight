@@ -20,14 +20,14 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
     "separator",
     "children",
     "ui",
-    "class"
+    "class",
   );
 
   const classes = createMemo(() =>
     breadcrumbTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const allItems = () => props.items ?? [];
@@ -72,8 +72,10 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
         "@type": "ListItem",
         position: idx + 1,
         name: item.label,
-        item: item.href ? new URL(item.href, "https://starter.rimelight.com").toString() : undefined
-      }))
+        item: item.href
+          ? new URL(item.href, "https://starter.rimelight.com").toString()
+          : undefined,
+      })),
     });
 
   return (

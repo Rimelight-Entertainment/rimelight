@@ -16,7 +16,7 @@ api.post("/", async (c) => {
         slug: slug || `page-${Date.now()}`,
         type: type || "Default",
         description: description || { en: "" },
-        content: { blocks: blocks || [], properties: properties || {} }
+        content: { blocks: blocks || [], properties: properties || {} },
       })
       .returning();
 

@@ -6,7 +6,7 @@ describe("sanitize helpers", () => {
   describe("escapeHtml", () => {
     it("escapes special HTML characters", () => {
       expect(escapeHtml("<script>alert(\"XSS & 'attack'\")</script>")).toBe(
-        "&lt;script&gt;alert(&quot;XSS &amp; &#039;attack&#039;&quot;)&lt;/script&gt;"
+        "&lt;script&gt;alert(&quot;XSS &amp; &#039;attack&#039;&quot;)&lt;/script&gt;",
       );
     });
   });
@@ -15,7 +15,7 @@ describe("sanitize helpers", () => {
     it("neutralizes </script> tag breakouts and HTML comments", () => {
       const payload = {
         name: '</script><script>alert("hacked")</script>',
-        comment: "--> <script>"
+        comment: "--> <script>",
       };
       const serialized = serializeJsonLd(payload);
       expect(serialized).not.toContain("<");
@@ -53,12 +53,12 @@ describe("createSeoHead", () => {
     const result = createSeoHead({
       title: "Pricing Plans",
       description: "Transparent pricing for all teams.",
-      canonical: "https://rimelight.com/pricing"
+      canonical: "https://rimelight.com/pricing",
     });
 
     expect(result.html).toContain("<title>Pricing Plans | Rimelight</title>");
     expect(result.html).toContain(
-      '<meta name="description" content="Transparent pricing for all teams." />'
+      '<meta name="description" content="Transparent pricing for all teams." />',
     );
     expect(result.html).toContain('<link rel="canonical" href="https://rimelight.com/pricing/" />');
     expect(result.html).toContain('<link rel="sitemap" href="/sitemap.xml" />');
@@ -69,7 +69,7 @@ describe("createSeoHead", () => {
     const result = createSeoHead({
       title: 'Malicious <script>alert("xss")</script>',
       description: 'Quote " & <tag>',
-      canonical: "https://rimelight.com/test"
+      canonical: "https://rimelight.com/test",
     });
 
     expect(result.html).not.toContain('<script>alert("xss")</script>');
@@ -81,7 +81,7 @@ describe("createSeoHead", () => {
     const result = createSeoHead({
       title: "Security Test",
       canonical: "javascript:alert(1)",
-      languageAlternates: [{ hreflang: "es", href: "javascript:alert(2)" }]
+      languageAlternates: [{ hreflang: "es", href: "javascript:alert(2)" }],
     });
 
     expect(result.html).not.toContain("javascript:alert");
@@ -93,12 +93,12 @@ describe("createSeoHead", () => {
     const result = createSeoHead({
       title: "Nonce Test",
       nonce: "secret-nonce-12345",
-      breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }]
+      breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }],
     });
 
     expect(result.html).toContain('<script type="application/ld+json" nonce="secret-nonce-12345">');
     const jsonLdTag = result.tags.find(
-      (t) => t.tag === "script" && t.props?.type === "application/ld+json"
+      (t) => t.tag === "script" && t.props?.type === "application/ld+json",
     );
     expect(jsonLdTag?.props?.nonce).toBe("secret-nonce-12345");
   });
@@ -108,14 +108,14 @@ describe("createSeoHead", () => {
       title: "Base Page",
       description: "Base description",
       canonical: "https://rimelight.com/base",
-      breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }]
+      breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }],
     });
 
     const child = base.extend({
       title: "Child Page",
       description: "Child description",
       canonical: "https://rimelight.com/child",
-      breadcrumbs: [{ name: "Child", url: "https://rimelight.com/child" }]
+      breadcrumbs: [{ name: "Child", url: "https://rimelight.com/child" }],
     });
 
     expect(child.html).toContain("<title>Child Page | Rimelight</title>");
@@ -126,7 +126,7 @@ describe("createSeoHead", () => {
 
     // Multiple JSON-LD script tags accumulate
     const scriptTags = child.tags.filter(
-      (t) => t.tag === "script" && t.props?.type === "application/ld+json"
+      (t) => t.tag === "script" && t.props?.type === "application/ld+json",
     );
     expect(scriptTags.length).toBeGreaterThanOrEqual(2);
   });
@@ -135,12 +135,12 @@ describe("createSeoHead", () => {
     const customCreateHead = defineSeoConfig({
       name: "Acme Corp",
       url: "https://acme.org",
-      seo: { titleTemplate: "%s — Acme Platform", maxDescriptionLength: 160 }
+      seo: { titleTemplate: "%s — Acme Platform", maxDescriptionLength: 160 },
     });
 
     const result = customCreateHead({
       title: "Features",
-      canonical: "https://acme.org/features"
+      canonical: "https://acme.org/features",
     });
 
     expect(result.html).toContain("<title>Features — Acme Platform</title>");

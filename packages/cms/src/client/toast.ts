@@ -9,5 +9,5 @@ export {
   showSuccessToast,
   type ToastItem,
   type Toast,
-  type ToastInput
+  type ToastInput,
 } from "@rimelight/ui/components/toast/store.ts";

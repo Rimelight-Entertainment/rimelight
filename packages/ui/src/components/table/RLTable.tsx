@@ -16,7 +16,7 @@ import type {
   TableColumnSizingState,
   TableColumnOrderState,
   TableEditingCellState,
-  TableExportOptions
+  TableExportOptions,
 } from "./table";
 import { tableTheme } from "./table.theme";
 export * from "./table";
@@ -54,37 +54,37 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
   // ─── Controlled / Uncontrolled State Store ──────────────────────────────────
   const [internalSorting, setInternalSorting] = createSignal<SortingState>(props.sorting ?? []);
   const [internalGlobalFilter, setInternalGlobalFilter] = createSignal<string>(
-    props.globalFilter ?? ""
+    props.globalFilter ?? "",
   );
   const [internalColumnFilters, setInternalColumnFilters] = createSignal<ColumnFiltersState>(
-    props.columnFilters ?? []
+    props.columnFilters ?? [],
   );
   const [internalColumnVisibility, setInternalColumnVisibility] = createSignal<
     Record<string, boolean>
   >(props.columnVisibility ?? {});
   const [internalColumnPinning, setInternalColumnPinning] = createSignal<TableColumnPinningState>(
-    props.columnPinning ?? {}
+    props.columnPinning ?? {},
   );
   const [internalRowSelection, setInternalRowSelection] = createSignal<Record<string, boolean>>(
-    props.rowSelection ?? {}
+    props.rowSelection ?? {},
   );
   const [internalExpanded, setInternalExpanded] = createSignal<Record<string, boolean>>(
-    props.expanded ?? {}
+    props.expanded ?? {},
   );
   const [internalRowPinning, setInternalRowPinning] = createSignal<TableRowPinningState>(
-    props.rowPinning ?? {}
+    props.rowPinning ?? {},
   );
   const [internalPagination, setInternalPagination] = createSignal<
     TablePaginationState | undefined
   >(props.pagination);
   const [internalColumnSizing, setInternalColumnSizing] = createSignal<TableColumnSizingState>(
-    props.columnSizing ?? {}
+    props.columnSizing ?? {},
   );
   const [internalColumnOrder, setInternalColumnOrder] = createSignal<TableColumnOrderState>(
-    props.columnOrder ?? []
+    props.columnOrder ?? [],
   );
   const [internalEditingCell, setInternalEditingCell] = createSignal<TableEditingCellState>(
-    props.editingCell ?? null
+    props.editingCell ?? null,
   );
 
   // Drag & drop indicator states
@@ -188,7 +188,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           id: key,
           accessorKey: key as any,
           header: key.charAt(0).toUpperCase() + key.slice(1),
-          enableSorting: true
+          enableSorting: true,
         }));
       }
     }
@@ -227,7 +227,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               <span class="i-lucide-grip-vertical size-4" />
             </span>
           </div>
-        )
+        ),
       };
       return [reorderCol, ...cols];
     }
@@ -245,10 +245,10 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         meta: {
           class: {
             th: "text-right",
-            td: "text-right"
-          }
+            td: "text-right",
+          },
         },
-        actions: actionsDef
+        actions: actionsDef,
       });
     }
 
@@ -265,8 +265,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
             class: {
               ...c.meta?.class,
               th: c.meta?.class?.th || "text-right",
-              td: c.meta?.class?.td || "text-right"
-            }
+              td: c.meta?.class?.td || "text-right",
+            },
           };
         }
       }
@@ -291,7 +291,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     col: TableColumn<T>,
     cellValue: () => any,
     isEditing: () => boolean,
-    setEditing: (e: boolean) => void
+    setEditing: (e: boolean) => void,
   ) {
     const actions = getCellActions(row, col);
     if (Array.isArray(actions) && actions.length > 0) {
@@ -319,7 +319,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         isEditing,
         setEditing,
         column: col,
-        table: tableApi
+        table: tableApi,
       });
       if (Array.isArray(rendered) && rendered.length > 0) {
         const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" });
@@ -385,7 +385,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     e: PointerEvent,
     colId: string,
     minSize?: number | string,
-    maxSize?: number | string
+    maxSize?: number | string,
   ) => {
     e.preventDefault();
     e.stopPropagation();
@@ -404,7 +404,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       if (props.columnResizeMode !== "onEnd") {
         updateColumnSizing({
           ...currentColumnSizing(),
-          [colId]: liveWidth
+          [colId]: liveWidth,
         });
       }
     };
@@ -413,7 +413,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       if (props.columnResizeMode === "onEnd") {
         updateColumnSizing({
           ...currentColumnSizing(),
-          [colId]: liveWidth
+          [colId]: liveWidth,
         });
       }
       setResizingColId(null);
@@ -541,7 +541,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           }
           return !!(subRowsList && subRowsList.length > 0);
         },
-        ...(subRowsList ? { subRows: subRowsList } : {})
+        ...(subRowsList ? { subRows: subRowsList } : {}),
       };
       return rowObj;
     });
@@ -560,7 +560,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           Object.values(r.original as AnyData).some((val) =>
             String(val ?? "")
               .toLowerCase()
-              .includes(q)
+              .includes(q),
           ) ||
           resolvedColumns().some((col) => {
             const v = col.accessorFn
@@ -588,7 +588,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         rows = rows.filter((r) =>
           String(r.getValue(filter.id) ?? "")
             .toLowerCase()
-            .includes(fVal)
+            .includes(fVal),
         );
       }
     }
@@ -636,7 +636,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     rows: TableRow<T>[],
     groupCols: string[],
     depth = 0,
-    parentPath = ""
+    parentPath = "",
   ): GroupedItem[] {
     if (depth >= groupCols.length || rows.length === 0) {
       return rows.map((r) => ({ type: "row", row: r }));
@@ -666,7 +666,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         columnId: colId,
         value: val,
         depth,
-        rows: subRows
+        rows: subRows,
       };
       result.push({ type: "group", group, depth });
       result.push(...groupRowsRecursively(subRows, groupCols, depth + 1, `${groupId}/`));
@@ -753,7 +753,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         items,
         padTop: 0,
         padBottom: 0,
-        startIndex: 0
+        startIndex: 0,
       };
     }
 
@@ -775,7 +775,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       items: sliced,
       padTop,
       padBottom,
-      startIndex
+      startIndex,
     };
   });
 
@@ -865,12 +865,12 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       const flatSelected = getAllFlatRows(filteredRows()).filter((r) => r.getIsSelected());
       return {
         rows: filteredRows().filter((r) => r.getIsSelected()),
-        flatRows: flatSelected
+        flatRows: flatSelected,
       };
     },
     getFilteredRowModel: () => ({
       rows: filteredRows(),
-      flatRows: getAllFlatRows(filteredRows())
+      flatRows: getAllFlatRows(filteredRows()),
     }),
     getAllColumns: () => resolvedColumns(),
     getColumn: (id: string) => resolvedColumns().find((c) => (c.id || c.accessorKey) === id),
@@ -1093,8 +1093,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       expanded: currentExpanded(),
       rowPinning: currentRowPinning(),
       pagination: currentPagination() || { pageIndex: 0, pageSize: 10 },
-      editingCell: currentEditingCell()
-    })
+      editingCell: currentEditingCell(),
+    }),
   };
 
   if (typeof props.ref === "function") {
@@ -1113,8 +1113,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       hoverable: props.hoverable,
       ui: props.ui,
       class: props.class,
-      externalScroll: false
-    })
+      externalScroll: false,
+    }),
   );
 
   const showToolbar = createMemo(
@@ -1123,7 +1123,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       props.showColumnsToggle ||
       props.exportable ||
       !!props.toolbar ||
-      !!props.slots?.["toolbar"]
+      !!props.slots?.["toolbar"],
   );
 
   const columnDropdownItems = createMemo(() =>
@@ -1139,9 +1139,9 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           checked: currentColumnVisibility()[colId] !== false,
           onUpdateChecked: (checked: boolean) => {
             tableApi.setColumnVisibility(colId, checked);
-          }
+          },
         };
-      })
+      }),
   );
 
   const exportDropdownItems = createMemo(() => [
@@ -1151,7 +1151,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       icon: "i-lucide-file-spreadsheet",
       onSelect: () => {
         tableApi.exportToCsv({ filename: props.exportFilename ?? "export" });
-      }
+      },
     },
     {
       id: "json",
@@ -1159,8 +1159,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       icon: "i-lucide-file-json",
       onSelect: () => {
         tableApi.exportToJson({ filename: props.exportFilename ?? "export" });
-      }
-    }
+      },
+    },
   ]);
 
   const hasFooters = createMemo(() =>
@@ -1168,8 +1168,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       (col) =>
         typeof col.footer === "function" ||
         col.footer ||
-        props.slots?.[`${String(col.id || col.accessorKey || "")}-footer`]
-    )
+        props.slots?.[`${String(col.id || col.accessorKey || "")}-footer`],
+    ),
   );
 
   return (
@@ -1233,12 +1233,12 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                 else if (sizeVal()) styles.push(`width: ${sizeVal()};`);
                 if (col.minSize) {
                   styles.push(
-                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                   );
                 }
                 if (col.maxSize) {
                   styles.push(
-                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                   );
                 }
                 return <col data-col-id={colId()} style={styles.join(" ") || undefined} />;
@@ -1281,12 +1281,12 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                       else if (sizeVal) styles.push(`width: ${sizeVal};`);
                       if (col.minSize) {
                         styles.push(
-                          `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                          `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                         );
                       }
                       if (col.maxSize) {
                         styles.push(
-                          `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                          `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                         );
                       }
                       return styles.join(" ");
@@ -1370,7 +1370,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                           if (!target || sourceId === target.id) return;
 
                           const cols = resolvedColumns().map((c) =>
-                            String(c.id || c.accessorKey || "")
+                            String(c.id || c.accessorKey || ""),
                           );
                           const fromIdx = cols.indexOf(sourceId);
                           if (fromIdx === -1) return;
@@ -1565,7 +1565,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                 ? groupHeaderSlot({
                                     group,
                                     colSpan: visibleColumns().length,
-                                    table: tableApi
+                                    table: tableApi,
                                   })
                                 : props.groupHeader?.(group, visibleColumns().length)}
                             </Show>
@@ -1694,12 +1694,12 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                 else if (sizeVal) styles.push(`width: ${sizeVal};`);
                                 if (col.minSize) {
                                   styles.push(
-                                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                                   );
                                 }
                                 if (col.maxSize) {
                                   styles.push(
-                                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                                   );
                                 }
                                 return styles.join(" ");
@@ -1720,7 +1720,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                 currentEditingCell()?.columnId === colId();
                               const setEditing = (editing: boolean) => {
                                 tableApi.setEditingCell(
-                                  editing ? { rowId: row.id, columnId: colId() } : null
+                                  editing ? { rowId: row.id, columnId: colId() } : null,
                                 );
                               };
 
@@ -1745,7 +1745,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                       renderValue: cellValue,
                                       isEditing,
                                       setEditing,
-                                      table: tableApi
+                                      table: tableApi,
                                     })}
                                   >
                                     {renderCellContent(row, col, cellValue, isEditing, setEditing)}
@@ -1802,7 +1802,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                     const target = e.target as HTMLElement;
                                     if (
                                       target.closest(
-                                        "a, button, input, select, textarea, [role=button]"
+                                        "a, button, input, select, textarea, [role=button]",
                                       )
                                     )
                                       return;
@@ -1851,12 +1851,12 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                         else if (sizeVal) styles.push(`width: ${sizeVal};`);
                                         if (col.minSize) {
                                           styles.push(
-                                            `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                                            `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                                           );
                                         }
                                         if (col.maxSize) {
                                           styles.push(
-                                            `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                                            `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                                           );
                                         }
                                         return styles.join(" ");
@@ -1877,7 +1877,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                         currentEditingCell()?.columnId === colId();
                                       const setEditing = (editing: boolean) => {
                                         tableApi.setEditingCell(
-                                          editing ? { rowId: subRow.id, columnId: colId() } : null
+                                          editing ? { rowId: subRow.id, columnId: colId() } : null,
                                         );
                                       };
 
@@ -1902,7 +1902,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                               renderValue: cellValue,
                                               isEditing,
                                               setEditing,
-                                              table: tableApi
+                                              table: tableApi,
                                             })}
                                           >
                                             {renderCellContent(
@@ -1910,7 +1910,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                               col,
                                               cellValue,
                                               isEditing,
-                                              setEditing
+                                              setEditing,
                                             )}
                                           </Show>
                                         </td>

@@ -386,7 +386,7 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "FileTreeBlock",
     "ComponentShowcaseBlock",
     "ApiDocumentationBlock",
-    "LivePreviewBlock"
+    "LivePreviewBlock",
   ],
   SectionBlock: [
     "SectionBlock",
@@ -402,7 +402,7 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "FileTreeBlock",
     "ComponentShowcaseBlock",
     "ApiDocumentationBlock",
-    "LivePreviewBlock"
+    "LivePreviewBlock",
   ],
   CalloutBlock: [
     "ParagraphBlock",
@@ -416,7 +416,7 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "FileTreeBlock",
     "ComponentShowcaseBlock",
     "ApiDocumentationBlock",
-    "LivePreviewBlock"
+    "LivePreviewBlock",
   ],
   TabsBlock: ["TabItemBlock"],
   TabItemBlock: [
@@ -430,7 +430,7 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "FileTreeBlock",
     "ComponentShowcaseBlock",
     "ApiDocumentationBlock",
-    "LivePreviewBlock"
+    "LivePreviewBlock",
   ],
   StepsBlock: ["StepItemBlock"],
   StepItemBlock: [
@@ -444,9 +444,9 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "FileTreeBlock",
     "ComponentShowcaseBlock",
     "ApiDocumentationBlock",
-    "LivePreviewBlock"
+    "LivePreviewBlock",
   ],
   CardsBlock: ["CardBlock"],
   ScriptBlock: ["SceneBlock"],
-  SceneBlock: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"]
+  SceneBlock: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"],
 };

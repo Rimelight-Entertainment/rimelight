@@ -23,7 +23,7 @@ export interface RimelightTaxonomyManagerProps {
 
 export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> = (props) => {
   const [activeTaxonomy, setActiveTaxonomy] = createSignal<string>(
-    props.initialTaxonomy || "category"
+    props.initialTaxonomy || "category",
   );
   const [terms, setTerms] = createSignal<TaxonomyTermRecord[]>([]);
   const [isLoading, setIsLoading] = createSignal(false);
@@ -41,7 +41,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
     name: "",
     slug: "",
     parentId: "",
-    description: ""
+    description: "",
   });
 
   const loadTerms = async () => {
@@ -80,7 +80,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
       name: term.name,
       slug: term.slug,
       parentId: term.parentId || "",
-      description: term.description || ""
+      description: term.description || "",
     });
     setIsModalOpen(true);
   };
@@ -100,7 +100,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
       name: form.name.trim(),
       slug,
       parentId: form.parentId ? form.parentId : null,
-      description: form.description.trim()
+      description: form.description.trim(),
     };
 
     try {
@@ -110,15 +110,15 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          }
+            body: JSON.stringify(payload),
+          },
         );
         if (!res.ok) throw new Error("Failed to update term");
       } else {
         const res = await fetch(`/api/cms/taxonomies/${activeTaxonomy()}/terms`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error("Failed to create term");
       }
@@ -135,7 +135,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
 
     try {
       const res = await fetch(`/api/cms/taxonomies/${activeTaxonomy()}/terms/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete term");
       void loadTerms();
@@ -363,7 +363,7 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
               ui={{
                 root: () => "",
                 textarea: () =>
-                  "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]"
+                  "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]",
               }}
             />
           </div>

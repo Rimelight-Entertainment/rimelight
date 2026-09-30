@@ -2,7 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   ALLOWED_CHILDREN_MAP,
   MAX_SECTION_DEPTH,
-  calculateHeadingLevel
+  calculateHeadingLevel,
 } from "../src/core/types/blocks";
 import { toast, toasts, clearToasts } from "../src/client/toast";
 import { createEditorState } from "../src/client/state/editor-store";
@@ -32,7 +32,7 @@ describe("block-hierarchy-and-rules", () => {
       "FileTreeBlock",
       "ComponentShowcaseBlock",
       "ApiDocumentationBlock",
-      "LivePreviewBlock"
+      "LivePreviewBlock",
     ]);
   });
 
@@ -52,7 +52,7 @@ describe("block-hierarchy-and-rules", () => {
       "FileTreeBlock",
       "ComponentShowcaseBlock",
       "ApiDocumentationBlock",
-      "LivePreviewBlock"
+      "LivePreviewBlock",
     ]);
   });
 
@@ -133,7 +133,7 @@ describe("block-hierarchy-and-rules", () => {
       // Insert nested section (depth 3 -> H5)
       state.insertBlock("SectionBlock", null, "after", secH4Id);
       expect(
-        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"]
+        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"],
       ).toHaveLength(1);
       const secH5Id =
         state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.id;
@@ -143,7 +143,7 @@ describe("block-hierarchy-and-rules", () => {
       expect(
         state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.props[
           "children"
-        ]
+        ],
       ).toHaveLength(1);
       const secH6Id =
         state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.props[
@@ -155,7 +155,7 @@ describe("block-hierarchy-and-rules", () => {
       expect(
         state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.props[
           "children"
-        ][0]!.props["children"] || []
+        ][0]!.props["children"] || [],
       ).toHaveLength(0);
 
       // Toast error should have been dispatched
@@ -163,8 +163,8 @@ describe("block-hierarchy-and-rules", () => {
       expect(activeToasts.length).toBeGreaterThan(0);
       expect(
         activeToasts.some(
-          (t: any) => t.variant === "error" && t.title.includes("Invalid Section Nesting")
-        )
+          (t: any) => t.variant === "error" && t.title.includes("Invalid Section Nesting"),
+        ),
       ).toBe(true);
     });
   });

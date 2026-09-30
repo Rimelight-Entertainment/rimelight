@@ -9,8 +9,8 @@ describe("@rimelight/seo - XML Escaping and Injection Hardening", () => {
         loc: "https://rimelight.com/search?q=test<script>alert(1)</script>&type=doc",
         lastmod: "2026-09-01T00:00:00.000Z",
         changefreq: "daily",
-        priority: 0.8
-      }
+        priority: 0.8,
+      },
     ]);
 
     expect(sitemap).not.toContain("<script>");
@@ -28,9 +28,9 @@ describe("@rimelight/seo - XML Escaping and Injection Hardening", () => {
           title: "Post with <bold> tag & ampersand",
           link: "https://rimelight.com/posts/1?param=1&other=2",
           description: "Dangerous CDATA content",
-          pubDate: "2026-09-01T00:00:00.000Z"
-        }
-      ]
+          pubDate: "2026-09-01T00:00:00.000Z",
+        },
+      ],
     });
 
     expect(rss).toContain("Rimelight News &amp; Updates &lt;Injection&gt;");

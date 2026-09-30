@@ -48,8 +48,8 @@ const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
       direction: props.direction ?? "left",
       pauseOnHover: props.pauseOnHover ?? true,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const trackStyle = () => ({ "animation-duration": `${props.speed ?? 40}s` });

@@ -2,7 +2,7 @@ import type { BaseBlock, HeadingLevel } from "../core/types/blocks";
 import type { InlineNode, TextInlineNode, LinkInlineNode } from "../core/types/inline";
 
 export function inlinesToMarkdown(
-  inlines: InlineNode[] | { en?: string } | string | undefined
+  inlines: InlineNode[] | { en?: string } | string | undefined,
 ): string {
   if (!inlines) return "";
   if (typeof inlines === "string") return inlines;
@@ -37,7 +37,7 @@ export function inlinesToMarkdown(
 
 export function blocksToMarkdown(
   blocks: BaseBlock[] = [],
-  options: { sectionLevel?: number } = {}
+  options: { sectionLevel?: number } = {},
 ): string {
   if (!Array.isArray(blocks) || blocks.length === 0) return "";
 
@@ -108,7 +108,7 @@ export function blocksToMarkdown(
             })
             .join(" | ")} |`;
           const bodyRows = rows.map(
-            (r: any) => `| ${columns.map((c: any) => r[c.key] || "").join(" | ")} |`
+            (r: any) => `| ${columns.map((c: any) => r[c.key] || "").join(" | ")} |`,
           );
           const tableMd = [headerRow, alignRow, ...bodyRows].join("\n");
           const caption = block.props?.["caption"] ? `\n_${block.props["caption"]}_` : "";

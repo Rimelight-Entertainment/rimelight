@@ -46,14 +46,14 @@ const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
     "onChange",
     "onBlur",
     "onFocus",
-    "onKeyDown"
+    "onKeyDown",
   );
 
   const resolvedClasses = createMemo(() =>
     inputTimeTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const inputClasses = createMemo(() =>
@@ -61,8 +61,8 @@ const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
       variant: "default",
       size: props.size ?? "md",
       error: false,
-      ui: props.ui
-    })
+      ui: props.ui,
+    }),
   );
 
   return (

@@ -25,7 +25,7 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
     "class",
     "onChange",
     "children",
-    "iconSlot"
+    "iconSlot",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -33,8 +33,8 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
       color: props.color,
       disabled: !!props.disabled,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const [dragging, setDragging] = createSignal(false);

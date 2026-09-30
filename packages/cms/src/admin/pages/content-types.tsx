@@ -12,7 +12,7 @@ const contentTypes = [
     icon: "i-lucide-file-text",
     description: "Standard standalone marketing and dynamic landing pages",
     count: 12,
-    system: true
+    system: true,
   },
   {
     id: "blog",
@@ -21,7 +21,7 @@ const contentTypes = [
     icon: "i-lucide-newspaper",
     description: "Articles and editorial news posts with bylines and dates",
     count: 8,
-    system: false
+    system: false,
   },
   {
     id: "doc",
@@ -30,7 +30,7 @@ const contentTypes = [
     icon: "i-lucide-book-open",
     description: "Hierarchical product documentation and API references",
     count: 24,
-    system: false
+    system: false,
   },
   {
     id: "legal",
@@ -39,8 +39,8 @@ const contentTypes = [
     icon: "i-lucide-scale",
     description: "Version-controlled Terms of Service, Privacy Policies",
     count: 4,
-    system: false
-  }
+    system: false,
+  },
 ];
 
 export const ContentTypesPage: Component<{ basePath?: string | undefined }> = (props) => {

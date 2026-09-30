@@ -22,7 +22,7 @@ const DEFAULT_WHITELISTED_PATTERNS = [
   "/sitemap",
   "/rss.xml",
   "/llms.txt",
-  "/.well-known/"
+  "/.well-known/",
 ];
 
 const getPassphrase = (c: any, options?: ConstructionOptions): string | undefined => {
@@ -80,11 +80,11 @@ const signHmac = async (payload: string, secret: string) => {
     new TextEncoder().encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign", "verify"]
+    ["sign", "verify"],
   );
   return {
     key,
-    signature: await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload))
+    signature: await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload)),
   };
 };
 
@@ -112,7 +112,7 @@ const getContextHelpers = (c: any) => {
     }
     return new Response(JSON.stringify(data), {
       status,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   };
 
@@ -161,7 +161,7 @@ const getContextHelpers = (c: any) => {
         secure: true,
         sameSite: "lax",
         path: "/",
-        ...(typeof maxAge === "number" ? { maxAge } : {})
+        ...(typeof maxAge === "number" ? { maxAge } : {}),
       });
     }
 
@@ -180,7 +180,7 @@ const getContextHelpers = (c: any) => {
  */
 const isDocumentNavigation = (
   getHeader: (name: string) => string | undefined,
-  path: string
+  path: string,
 ): boolean => {
   // A path with a file extension is never a top-level page (e.g. a missing hashed chunk).
   if (/\.[a-z0-9]{2,8}$/i.test(path)) return false;
@@ -200,7 +200,7 @@ const isDocumentNavigation = (
  */
 export const isConstructionGuest = async (
   c: any,
-  options?: ConstructionOptions
+  options?: ConstructionOptions,
 ): Promise<boolean> => {
   const cookieName = options?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
   const helpers = getContextHelpers(c);
@@ -219,7 +219,7 @@ export const isConstructionGuest = async (
       "HMAC",
       key,
       signatureBuffer as unknown as BufferSource,
-      new TextEncoder().encode(payload)
+      new TextEncoder().encode(payload),
     );
     return valid && JSON.parse(payload).expiresAt > Date.now();
   } catch {
@@ -234,7 +234,7 @@ export const signInConstructionGuest = async (
   c: any,
   passphrase: string,
   rememberMe = true,
-  options?: ConstructionOptions
+  options?: ConstructionOptions,
 ): Promise<boolean> => {
   const expectedPassphrase = getPassphrase(c, options);
   if (!expectedPassphrase || !passphrase) {
@@ -250,7 +250,7 @@ export const signInConstructionGuest = async (
   const maxAge = options?.cookieMaxAge ?? 60 * 60 * 24 * 7; // 7 days
 
   const payload = JSON.stringify({
-    expiresAt: Date.now() + maxAge * 1000
+    expiresAt: Date.now() + maxAge * 1000,
   });
 
   const { signature } = await signHmac(payload, expectedPassphrase);
@@ -271,7 +271,7 @@ const resolveLocale = (path: string, options?: ConstructionOptions): string => {
   }
   if (options?.locales && options.locales.length > 0) {
     const matched = options.locales.find(
-      (loc) => path === `/${loc}` || path.startsWith(`/${loc}/`)
+      (loc) => path === `/${loc}` || path.startsWith(`/${loc}/`),
     );
     if (matched) return matched;
   }
@@ -406,7 +406,7 @@ export function construction(options: ConstructionOptions = {}) {
         if (options.whitelist(path)) return next();
       } else if (Array.isArray(options.whitelist)) {
         const match = options.whitelist.some((pattern) =>
-          typeof pattern === "string" ? path.includes(pattern) : pattern.test(path)
+          typeof pattern === "string" ? path.includes(pattern) : pattern.test(path),
         );
         if (match) return next();
       }
@@ -425,8 +425,8 @@ export function construction(options: ConstructionOptions = {}) {
         status: 404,
         headers: {
           "Content-Type": "text/plain; charset=utf-8",
-          "Cache-Control": "no-store"
-        }
+          "Cache-Control": "no-store",
+        },
       });
     }
 
@@ -438,7 +438,7 @@ export function construction(options: ConstructionOptions = {}) {
       return options.onUnauthorized(c, {
         locale,
         path,
-        redirectUrl: targetUrl
+        redirectUrl: targetUrl,
       });
     }
 
@@ -448,7 +448,7 @@ export function construction(options: ConstructionOptions = {}) {
       const fallbackOpts = {
         redirect: redirectTarget,
         endpoint: typeof apiPath === "string" ? apiPath : "/api/construction-guest",
-        ...(error ? { error } : {})
+        ...(error ? { error } : {}),
       };
       const html = getConstructionFallbackHtml(fallbackOpts);
       return new Response(html, {
@@ -456,8 +456,8 @@ export function construction(options: ConstructionOptions = {}) {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
           "Cache-Control": "no-store, no-cache, must-revalidate",
-          "Retry-After": "3600"
-        }
+          "Retry-After": "3600",
+        },
       });
     }
 

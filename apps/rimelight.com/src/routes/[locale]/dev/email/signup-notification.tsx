@@ -13,7 +13,7 @@ export const SignupNotificationEmailPreview: Component = () => {
     async (loc) => {
       return await renderSignupNotificationEmail(url, loc);
     },
-    ""
+    "",
   );
 
   return (

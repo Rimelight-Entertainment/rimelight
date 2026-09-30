@@ -5,7 +5,7 @@ import {
   onSettled,
   Show,
   omit,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { ScrollAreaProps } from "./scroll-area";
@@ -24,7 +24,7 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     "height",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const orientation = () => props.orientation ?? "vertical";
@@ -83,7 +83,7 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     scrollProp: "scrollTop" | "scrollLeft",
     clientProp: "clientY" | "clientX",
     sizeProp: "scrollHeight" | "scrollWidth",
-    clientSizeProp: "clientHeight" | "clientWidth"
+    clientSizeProp: "clientHeight" | "clientWidth",
   ) => {
     if (!thumb) return () => {};
     let startPos = 0;
@@ -124,7 +124,7 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
       "scrollTop",
       "clientY",
       "scrollHeight",
-      "clientHeight"
+      "clientHeight",
     );
     const cleanH = setupDraggable(hThumbRef, "scrollLeft", "clientX", "scrollWidth", "clientWidth");
 
@@ -139,15 +139,15 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     () => props.children,
     () => {
       requestAnimationFrame(() => updateThumbs());
-    }
+    },
   );
 
   const resolvedClasses = createMemo(() =>
     scrollAreaTheme({
       orientation: orientation(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const heightClass = () =>

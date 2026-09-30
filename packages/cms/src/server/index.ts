@@ -4,5 +4,5 @@ export {
   handleMediaDelete,
   handleMediaFile,
   registerCmsMediaRoutes,
-  type MediaRouteContext
+  type MediaRouteContext,
 } from "./media.ts";

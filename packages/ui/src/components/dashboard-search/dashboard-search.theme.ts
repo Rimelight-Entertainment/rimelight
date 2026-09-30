@@ -4,23 +4,23 @@ export const dashboardSearchTheme = defineTheme("dashboard-search", {
   slots: ["modal", "input"],
   base: {
     modal: "",
-    input: ""
+    input: "",
   },
   variants: {
     fullscreen: {
       false: {
-        modal: "sm:max-w-3xl h-full sm:h-[28rem]"
-      }
+        modal: "sm:max-w-3xl h-full sm:h-[28rem]",
+      },
     },
     size: {
       xs: {},
       sm: {},
       md: {},
       lg: {},
-      xl: {}
-    }
+      xl: {},
+    },
   },
   defaultVariants: {
-    size: "md"
-  }
+    size: "md",
+  },
 });

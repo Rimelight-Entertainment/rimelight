@@ -27,7 +27,7 @@ const TIMES_OF_DAY = [
   "NIGHT",
   "CONTINUOUS",
   "LATER",
-  "OTHER"
+  "OTHER",
 ];
 const TRANSITIONS = ["NONE", "CUT_TO", "FADE_TO", "DISSOLVE_TO"];
 
@@ -55,7 +55,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
     componentProps.onPropsChange({
       ...componentProps.props,
       ...partial,
-      children: childrenBlocks()
+      children: childrenBlocks(),
     });
   };
 
@@ -86,7 +86,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 

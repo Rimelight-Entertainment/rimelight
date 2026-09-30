@@ -19,7 +19,7 @@ export function mockAuth(options: MockAuthOptions | Partial<UserSessionContext> 
     roles: ["admin", "editor"],
     permissions: ["*"],
     userType: "employee",
-    metadata: { isMock: true }
+    metadata: { isMock: true },
   };
 
   return {
@@ -31,7 +31,7 @@ export function mockAuth(options: MockAuthOptions | Partial<UserSessionContext> 
       }
       return {
         ...defaultSession,
-        ...opts.session
+        ...opts.session,
       };
     },
     handleUnauthorized() {
@@ -39,6 +39,6 @@ export function mockAuth(options: MockAuthOptions | Partial<UserSessionContext> 
         return opts.unauthorizedResponse;
       }
       return new Response("Unauthorized Mock Session", { status: 401 });
-    }
+    },
   };
 }

@@ -52,7 +52,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 

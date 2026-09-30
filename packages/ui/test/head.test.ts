@@ -16,7 +16,7 @@ describe("createUiHead", () => {
     const result = createUiHead({ nonce: "test-nonce" });
     expect(result.html).toContain('nonce="test-nonce"');
     const scripts = result.tags.filter(
-      (t): t is Extract<HeadTag, { tag: "script" }> => t.tag === "script"
+      (t): t is Extract<HeadTag, { tag: "script" }> => t.tag === "script",
     );
     expect(scripts[0]?.props?.nonce).toBe("test-nonce");
     expect(scripts[1]?.props?.nonce).toBe("test-nonce");

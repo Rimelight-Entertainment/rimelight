@@ -30,18 +30,18 @@ export function rimelightSecurity(options: RimelightSecurityOptions = {}): any {
           const pattern = options.construction?.routePattern || "/[locale]/construction";
           injectRoute({
             pattern,
-            entrypoint: options.construction.entrypoint
+            entrypoint: options.construction.entrypoint,
           });
         }
 
         // 2. Add Vite security plugin
         updateConfig({
           vite: {
-            plugins: [security(options)]
-          }
+            plugins: [security(options)],
+          },
         });
-      }
-    }
+      },
+    },
   };
 }
 

@@ -6,7 +6,7 @@ export {
   renderDefaultOg,
   type OgFontConfig,
   type OgLayoutOptions,
-  type OgRenderConfig
+  type OgRenderConfig,
 } from "../og.js";
 
 export { handleOgRequest, type OgHandlerOptions } from "./handler.js";

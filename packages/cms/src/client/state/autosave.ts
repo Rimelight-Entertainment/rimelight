@@ -71,7 +71,7 @@ export class AutosaveController {
       const res = await fetch(this.saveEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content })
+        body: JSON.stringify({ content }),
       });
 
       if (res.ok) {
@@ -108,7 +108,7 @@ export class AutosaveController {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: this.lastContent }),
-          keepalive: true
+          keepalive: true,
         });
       } catch {}
     }

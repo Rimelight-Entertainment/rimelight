@@ -4,8 +4,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { tableTheme } from "../src/components/table/table.theme";
@@ -33,7 +33,7 @@ describe("RLTable Theme & Logic Suite", () => {
       sticky: true,
       striped: true,
       bordered: true,
-      hoverable: true
+      hoverable: true,
     });
     expect(classes.thead).toContain("sticky top-0");
     expect(classes.tfoot).toContain("sticky bottom-0");
@@ -46,7 +46,7 @@ describe("RLTable Theme & Logic Suite", () => {
     const classes = tableTheme({
       loading: true,
       loadingColor: "primary",
-      loadingAnimation: "carousel"
+      loadingAnimation: "carousel",
     });
     expect(classes.thead).toContain("after:absolute");
     expect(classes.thead).toContain("after:bg-primary");
@@ -56,7 +56,7 @@ describe("RLTable Theme & Logic Suite", () => {
     const sampleData = [
       { id: "1", name: "Alice", role: "Admin", score: 95, details: { team: "Core" } },
       { id: "2", name: "Bob", role: "Developer", score: 82, details: { team: "UI" } },
-      { id: "3", name: "Charlie", role: "Developer", score: 88, details: { team: "UI" } }
+      { id: "3", name: "Charlie", role: "Developer", score: 88, details: { team: "UI" } },
     ];
 
     const columns: TableColumn<(typeof sampleData)[0]>[] = [
@@ -67,14 +67,14 @@ describe("RLTable Theme & Logic Suite", () => {
       {
         id: "team",
         header: "Team",
-        accessorFn: (row) => row.details.team
-      }
+        accessorFn: (row) => row.details.team,
+      },
     ];
 
     it("renders table data with auto-inferred and explicit columns", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
-        columns
+        columns,
       });
 
       expect(html).toContain("Alice");
@@ -89,7 +89,7 @@ describe("RLTable Theme & Logic Suite", () => {
       const filteredHtml = renderSolid(RLTable, {
         data: sampleData,
         columns,
-        globalFilter: "Alice"
+        globalFilter: "Alice",
       });
       expect(filteredHtml).toContain("Alice");
       expect(filteredHtml).not.toContain("Bob");
@@ -97,7 +97,7 @@ describe("RLTable Theme & Logic Suite", () => {
       const emptyHtml = renderSolid(RLTable, {
         data: [],
         columns,
-        empty: "Custom empty message"
+        empty: "Custom empty message",
       });
       expect(emptyHtml).toContain("Custom empty message");
     });
@@ -106,7 +106,7 @@ describe("RLTable Theme & Logic Suite", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
         columns,
-        grouping: ["role", "name"]
+        grouping: ["role", "name"],
       });
 
       expect(html).toContain("Admin");
@@ -122,8 +122,8 @@ describe("RLTable Theme & Logic Suite", () => {
         columns,
         slots: {
           "name-cell": ({ row }: { row: { original: { name: string } } }) =>
-            `<span class="custom-name-slot">${row.original.name.toUpperCase()}</span>`
-        }
+            `<span class="custom-name-slot">${row.original.name.toUpperCase()}</span>`,
+        },
       });
 
       expect(html).toContain("custom-name-slot");
@@ -138,20 +138,20 @@ describe("RLTable Theme & Logic Suite", () => {
           name: "Parent 1",
           role: "Lead",
           score: 100,
-          children: [{ id: "c1", name: "Child 1", role: "Dev", score: 80 }]
-        }
+          children: [{ id: "c1", name: "Child 1", role: "Dev", score: 80 }],
+        },
       ];
 
       const html = renderSolid(RLTable, {
         data: treeData,
         columns: [
           { accessorKey: "id", header: "ID" },
-          { accessorKey: "name", header: "Name" }
+          { accessorKey: "name", header: "Name" },
         ],
         expanded: { p1: true },
         getSubRows: (r: {
           children?: Array<{ id: string; name: string; role: string; score: number }>;
-        }) => r.children
+        }) => r.children,
       });
 
       expect(html).toContain("Parent 1");
@@ -166,7 +166,7 @@ describe("RLTable Theme & Logic Suite", () => {
         columns,
         ref: (a: TableApi) => {
           api = a;
-        }
+        },
       });
 
       expect(api).not.toBeNull();
@@ -189,13 +189,13 @@ describe("RLTable Theme & Logic Suite", () => {
           name: "Parent 1",
           children: [
             { id: "c1", name: "Child 1" },
-            { id: "c2", name: "Child 2" }
-          ]
+            { id: "c2", name: "Child 2" },
+          ],
         },
         {
           id: "p2",
-          name: "Parent 2"
-        }
+          name: "Parent 2",
+        },
       ];
 
       renderSolid(RLTable, {
@@ -204,7 +204,7 @@ describe("RLTable Theme & Logic Suite", () => {
         getSubRows: (r: { children?: Array<{ id: string; name: string }> }) => r.children,
         ref: (a: TableApi) => {
           api = a;
-        }
+        },
       });
 
       expect(api!.getFilteredRows().length).toBe(2);
@@ -234,7 +234,7 @@ describe("RLTable Theme & Logic Suite", () => {
         columns,
         ref: (a: TableApi) => {
           api = a;
-        }
+        },
       });
 
       expect(api).not.toBeNull();
@@ -265,7 +265,7 @@ describe("RLTable Theme & Logic Suite", () => {
         columns,
         ref: (a: TableApi) => {
           api = a;
-        }
+        },
       });
 
       expect(api).not.toBeNull();
@@ -292,7 +292,7 @@ describe("RLTable Theme & Logic Suite", () => {
         columns,
         ref: (a: TableApi) => {
           api = a;
-        }
+        },
       });
 
       expect(api).not.toBeNull();
@@ -311,14 +311,14 @@ describe("RLTable Theme & Logic Suite", () => {
       const htmlCols = renderSolid(RLTable, {
         data: sampleData,
         columns,
-        enableColumnReordering: true
+        enableColumnReordering: true,
       });
       expect(htmlCols).toContain('data-slot="drag-handle"');
 
       const htmlRows = renderSolid(RLTable, {
         data: sampleData,
         columns,
-        enableRowReordering: true
+        enableRowReordering: true,
       });
       expect(htmlRows).toContain('data-col-id="reorder"');
       expect(htmlRows).toContain('data-slot="drag-handle"');
@@ -332,13 +332,13 @@ describe("RLTable Theme & Logic Suite", () => {
           actions: (row) => [
             { label: "Edit", icon: "i-lucide-pencil", to: `/edit/${row.original.id}` },
             { type: "separator" },
-            { label: "Delete", icon: "i-lucide-trash-2", color: "error" }
-          ]
-        }
+            { label: "Delete", icon: "i-lucide-trash-2", color: "error" },
+          ],
+        },
       ];
       const html = renderSolid(RLTable, {
         data: sampleData,
-        columns: actionsCols
+        columns: actionsCols,
       });
       expect(html).toContain('data-col-id="actions"');
       expect(html).toContain('data-slot="trigger"');
@@ -348,7 +348,7 @@ describe("RLTable Theme & Logic Suite", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
         columns: [{ accessorKey: "name", header: "Name" }],
-        rowActions: (row: any) => [{ label: "View Profile", to: `/profile/${row.original.id}` }]
+        rowActions: (row: any) => [{ label: "View Profile", to: `/profile/${row.original.id}` }],
       });
       expect(html).toContain('data-col-id="actions"');
       expect(html).toContain('data-slot="trigger"');

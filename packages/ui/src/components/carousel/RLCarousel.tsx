@@ -6,7 +6,7 @@ import {
   onSettled,
   Show,
   omit,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { CarouselProps, CarouselSlide } from "./carousel";
@@ -46,16 +46,16 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
     carouselTheme({
       active: false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const dotActiveClasses = createMemo(() =>
     carouselTheme({
       active: true,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const carouselId = `rl-carousel-${Math.random().toString(36).substring(2, 9)}`;
@@ -195,7 +195,7 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
             data-slot="container"
             style={{
               transform: `translate3d(${-index() * 100 + dragOffset()}%, 0px, 0px)`,
-              transition: isDragging() && hasDragged ? "none" : SLIDE_TRANSITION
+              transition: isDragging() && hasDragged ? "none" : SLIDE_TRANSITION,
             }}
           >
             {props.slides && props.slides.length > 0 ? (

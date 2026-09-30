@@ -14,9 +14,9 @@ export const bylines = pgTable(
     metadata: jsonb("metadata").$type<Record<string, any>>().default({}),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
-    deletedAt: timestamp("deleted_at")
+    deletedAt: timestamp("deleted_at"),
   },
-  (table) => [uniqueIndex("bylines_slug_idx").on(table.slug)]
+  (table) => [uniqueIndex("bylines_slug_idx").on(table.slug)],
 );
 
 export type Byline = typeof bylines.$inferSelect;

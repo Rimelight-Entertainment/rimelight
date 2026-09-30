@@ -34,7 +34,7 @@ export interface SortableOptions {
     blockId: string,
     newIndex: number,
     fromContainerId?: string,
-    itemEl?: HTMLElement
+    itemEl?: HTMLElement,
   ) => void;
   onRemove?: (blockId: string, oldIndex: number) => void;
   handle?: string;
@@ -63,7 +63,7 @@ export function initBlockSortable(container: HTMLElement, options: SortableOptio
         // Prevent a container block from being dropped into itself or its own descendants
         if (dragEl === to.el || dragEl.contains(to.el)) return false;
         return true;
-      }
+      },
     },
     animation: 150,
     handle: options.handle || ".cms-drag-handle, .cms-grip-btn",
@@ -128,7 +128,7 @@ export function initBlockSortable(container: HTMLElement, options: SortableOptio
       if (blockId && evt.oldIndex !== undefined && options.onRemove) {
         options.onRemove(blockId, evt.oldIndex);
       }
-    }
+    },
   });
 }
 
@@ -138,7 +138,7 @@ function cleanElement(el: Element) {
       "cms-sortable-ghost",
       "cms-sortable-chosen",
       "cms-sortable-drag",
-      "sortable-fallback"
+      "sortable-fallback",
     );
     el.style.pointerEvents = "";
     el.style.opacity = "";
@@ -158,7 +158,7 @@ export function cleanAllSortableClasses(specificItem?: HTMLElement | Element) {
   if (typeof document !== "undefined") {
     document
       .querySelectorAll(
-        ".cms-sortable-ghost, .cms-sortable-chosen, .cms-sortable-drag, .sortable-fallback"
+        ".cms-sortable-ghost, .cms-sortable-chosen, .cms-sortable-drag, .sortable-fallback",
       )
       .forEach((el) => {
         cleanElement(el);

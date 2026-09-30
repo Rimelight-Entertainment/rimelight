@@ -22,7 +22,7 @@ const api = new Hono().get("/", async (c) => {
         title: searchIndex.title,
         url: searchIndex.url,
         sourceType: searchIndex.sourceType,
-        snippet: searchIndex.bodyContent
+        snippet: searchIndex.bodyContent,
       })
       .from(searchIndex)
       .where(or(like(searchIndex.title, `%${q}%`), like(searchIndex.bodyContent, `%${q}%`)))

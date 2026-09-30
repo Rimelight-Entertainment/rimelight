@@ -16,8 +16,8 @@ const RLSteps: Component<RLStepsProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     stepsTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

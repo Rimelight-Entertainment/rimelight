@@ -112,7 +112,7 @@ describe("rimelight-i18n CLI", () => {
         tmpDir,
         "--base",
         "en",
-        "--allow-empty"
+        "--allow-empty",
       ]);
       expect(exitAllowEmpty).toBe(0);
     } finally {

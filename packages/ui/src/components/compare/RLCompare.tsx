@@ -14,8 +14,8 @@ const RLCompare: Component<RLCompareProps> = (allProps) => {
   const classes = createMemo(() =>
     compareTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

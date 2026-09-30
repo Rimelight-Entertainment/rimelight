@@ -18,14 +18,14 @@ const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
     hoverCardTheme({
       placement: props.placement ?? "bottom",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const contentClass = () =>
     resolvedClasses()["content"].replace(
       /\s*(invisible|opacity-0|scale-95|pointer-events-none|group-hover\/hover-card:(visible|opacity-100|scale-100|pointer-events-auto))/g,
-      ""
+      "",
     );
 
   return (

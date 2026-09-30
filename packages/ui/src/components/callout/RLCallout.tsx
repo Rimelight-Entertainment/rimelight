@@ -29,7 +29,7 @@ const colorToIcon: Record<string, string | undefined> = {
   commentary: undefined,
   ideation: undefined,
   source: undefined,
-  neutral: undefined
+  neutral: undefined,
 };
 
 const RLCallout: Component<RLCalloutProps> = (allProps) => {
@@ -54,7 +54,7 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
     "avatarSlot",
     "closeSlot",
     "actionsSlot",
-    "onClose"
+    "onClose",
   );
 
   const resolvedColor = props.variant === "destructive" ? "error" : (props.color ?? "primary");
@@ -82,8 +82,8 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
       color: resolvedColor as any,
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

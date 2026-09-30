@@ -50,20 +50,20 @@ function normalizeToastInput(
   input: ToastInput,
   description?: string,
   variant?: ToastItem["variant"],
-  extra?: Partial<ToastItem>
+  extra?: Partial<ToastItem>,
 ): Omit<ToastItem, "id"> & { id?: string } {
   if (typeof input === "string") {
     return {
       title: input,
       ...(description !== undefined ? { description } : {}),
       ...(variant ? { variant } : {}),
-      ...extra
+      ...extra,
     };
   }
   return {
     ...input,
     ...(variant && !input.variant ? { variant } : {}),
-    ...extra
+    ...extra,
   };
 }
 
@@ -82,8 +82,8 @@ export const toast = Object.assign(
       addToast(normalizeToastInput(input, description, "info", options)),
     add: addToast,
     remove: removeToast,
-    clear: clearToasts
-  }
+    clear: clearToasts,
+  },
 );
 
 export const showErrorToast = (title: string, description?: string, options?: Partial<ToastItem>) =>
@@ -92,5 +92,5 @@ export const showErrorToast = (title: string, description?: string, options?: Pa
 export const showSuccessToast = (
   title: string,
   description?: string,
-  options?: Partial<ToastItem>
+  options?: Partial<ToastItem>,
 ) => toast.success(title, description, options);

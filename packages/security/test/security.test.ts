@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 
 vi.mock("virtual:sri-manifest", () => ({
-  manifest: {}
+  manifest: {},
 }));
 
 vi.mock("virtual:rimelight-security-config", () => ({
-  config: {}
+  config: {},
 }));
 
 import { security } from "../src/middleware/security";
@@ -15,12 +15,12 @@ describe("Security Middleware Headers", () => {
     const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
 
     const ctx = {
       req: { raw: req },
-      res
+      res,
     };
 
     const next = async () => {};
@@ -38,11 +38,11 @@ describe("Security Middleware Headers", () => {
 
   it("supports custom Cross-Origin-Embedder-Policy configuration", async () => {
     const middleware = security({
-      crossOriginEmbedderPolicy: "require-corp"
+      crossOriginEmbedderPolicy: "require-corp",
     });
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -52,11 +52,11 @@ describe("Security Middleware Headers", () => {
 
   it("supports custom Cross-Origin-Opener-Policy configuration", async () => {
     const middleware = security({
-      crossOriginOpenerPolicy: "same-origin-allow-popups"
+      crossOriginOpenerPolicy: "same-origin-allow-popups",
     });
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -68,11 +68,11 @@ describe("Security Middleware Headers", () => {
     const middleware = security({
       crossOriginEmbedderPolicy: false,
       crossOriginOpenerPolicy: false,
-      crossOriginResourcePolicy: false
+      crossOriginResourcePolicy: false,
     });
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -86,12 +86,12 @@ describe("Security Middleware Headers", () => {
     const middleware = security({
       headers: {
         "Cross-Origin-Embedder-Policy": "unsafe-none",
-        "Cross-Origin-Opener-Policy": "noopener-allow-popups"
-      }
+        "Cross-Origin-Opener-Policy": "noopener-allow-popups",
+      },
     });
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -104,7 +104,7 @@ describe("Security Middleware Headers", () => {
     const middleware = security();
     const req = new Request("https://rimelight.com/");
     const res = new Response("<!DOCTYPE html><html><head></head><body>Hello</body></html>", {
-      headers: { "content-type": "text/html; charset=utf-8" }
+      headers: { "content-type": "text/html; charset=utf-8" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -122,8 +122,8 @@ describe("Security Middleware Headers", () => {
         "x-powered-by": "Express/Next",
         server: "cloudflare",
         "x-aspnet-version": "4.0.30319",
-        "public-key-pins": "max-age=5184000"
-      }
+        "public-key-pins": "max-age=5184000",
+      },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -139,7 +139,7 @@ describe("Security Middleware Headers", () => {
     const req = new Request("https://rimelight.com/api/test");
     (req as any).cf = { tlsVersion: "TLSv1.1" };
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -156,8 +156,8 @@ describe("Security Middleware Headers", () => {
     const res = new Response(
       "<!DOCTYPE html><html><head></head><body><script>console.log(1)</script></body></html>",
       {
-        headers: { "content-type": "text/html; charset=utf-8" }
-      }
+        headers: { "content-type": "text/html; charset=utf-8" },
+      },
     );
     const ctx = { req: { raw: req }, res };
 
@@ -176,12 +176,12 @@ describe("Security Middleware Headers", () => {
   it("supports explicit SRI manifest in middleware options", async () => {
     const customManifest = {
       "/app.js": "sha384-abc123custom",
-      "/styles.css": "sha384-xyz789custom"
+      "/styles.css": "sha384-xyz789custom",
     };
     const middleware = security({ manifest: customManifest });
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
-      headers: { "content-type": "application/json" }
+      headers: { "content-type": "application/json" },
     });
     const ctx = { req: { raw: req }, res };
 
@@ -191,7 +191,7 @@ describe("Security Middleware Headers", () => {
 
   it("transforms HTML via HTMLRewriter when available", async () => {
     const customManifest = {
-      "/main.js": "sha384-customMainHash"
+      "/main.js": "sha384-customMainHash",
     };
 
     // Mock HTMLRewriter
@@ -213,8 +213,8 @@ describe("Security Middleware Headers", () => {
     const res = new Response(
       '<html><head></head><body><script src="/main.js"></script></body></html>',
       {
-        headers: { "content-type": "text/html" }
-      }
+        headers: { "content-type": "text/html" },
+      },
     );
     const ctx = { req: { raw: req }, res };
 
@@ -232,7 +232,7 @@ describe("Security Middleware Headers", () => {
       getAttribute: (name: string) => mockEl.attrs[name],
       setAttribute: (name: string, val: string) => {
         mockEl.attrs[name] = val;
-      }
+      },
     };
     handlers["script[src]"]?.(mockEl);
     expect(mockEl.attrs["integrity"]).toBe("sha384-customMainHash");
@@ -248,7 +248,7 @@ describe("Security Middleware Headers", () => {
       const middleware = security({ domain: "example.com" });
       const req = new Request("http://localhost:5173/");
       const res = new Response("<html><head></head><body>Hello</body></html>", {
-        headers: { "content-type": "text/html" }
+        headers: { "content-type": "text/html" },
       });
       const ctx = { req: { raw: req }, res };
 
@@ -260,7 +260,7 @@ describe("Security Middleware Headers", () => {
       expect(activeCsp).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'");
       expect(reportOnlyCsp).toBeDefined();
       expect(reportOnlyCsp).toContain(
-        "script-src 'self' 'unsafe-inline' 'inline-speculation-rules'"
+        "script-src 'self' 'unsafe-inline' 'inline-speculation-rules'",
       );
       expect(reportOnlyCsp).toContain("style-src 'self' 'unsafe-inline'");
     } finally {

@@ -14,8 +14,8 @@ const RLTree: Component<RLTreeProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     treeTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

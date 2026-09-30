@@ -19,8 +19,8 @@ const RLProgress: Component<RLProgressProps> = (allProps) => {
     progressTheme({
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const widthClass = () => {

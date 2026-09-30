@@ -23,8 +23,8 @@ describe("@rimelight/i18n Vite plugin", () => {
       prefixDefaultLocale: false,
       translations: {
         en: { nav: { home: "Home" } },
-        pt: { nav: { home: "Início" } }
-      }
+        pt: { nav: { home: "Início" } },
+      },
     });
 
     expect(plugins.length).toBeGreaterThan(0);
@@ -32,10 +32,10 @@ describe("@rimelight/i18n Vite plugin", () => {
 
     // Resolve IDs
     expect(await callHook(configPlugin.resolveId, "virtual:rimelight-i18n-config")).toBe(
-      "\0virtual:rimelight-i18n-config"
+      "\0virtual:rimelight-i18n-config",
     );
     expect(await callHook(configPlugin.resolveId, "virtual:rimelight/i18n")).toBe(
-      "\0virtual:rimelight/i18n"
+      "\0virtual:rimelight/i18n",
     );
     expect(await callHook(configPlugin.resolveId, "other-module")).toBeNull();
 
@@ -66,8 +66,8 @@ describe("@rimelight/i18n Vite plugin", () => {
         defaultLocale: "en",
         translations: {
           en: { nav: { home: "Home" } },
-          pt: { nav: { home: "Início" } }
-        }
+          pt: { nav: { home: "Início" } },
+        },
       });
 
       const configPlugin = plugins[0]!;
@@ -79,11 +79,11 @@ describe("@rimelight/i18n Vite plugin", () => {
       const seedContent = JSON.parse(fs.readFileSync(seedPath, "utf-8"));
       expect(seedContent.keys).toContainEqual({
         key: "locale:en:nav",
-        value: JSON.stringify({ home: "Home" })
+        value: JSON.stringify({ home: "Home" }),
       });
       expect(seedContent.keys).toContainEqual({
         key: "locale:pt:nav",
-        value: JSON.stringify({ home: "Início" })
+        value: JSON.stringify({ home: "Início" }),
       });
     } finally {
       delete process.env["WRANGLER_OUT_DIR"];

@@ -26,7 +26,7 @@ const RLCard: Component<RLCardProps> = (allProps) => {
     "children",
     "header",
     "footer",
-    "media"
+    "media",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -36,8 +36,8 @@ const RLCard: Component<RLCardProps> = (allProps) => {
       overlay: !!props.overlay,
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const content = () => (

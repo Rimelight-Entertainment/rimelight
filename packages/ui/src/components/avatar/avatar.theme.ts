@@ -10,82 +10,82 @@ export const avatarTheme = defineTheme("avatar", {
     badge: "absolute rounded-full ring-2 ring-bg",
     wrapper: "inline-flex items-center gap-3",
     title: "font-medium text-sm text-default leading-tight",
-    subtitle: "text-xs text-muted leading-tight"
+    subtitle: "text-xs text-muted leading-tight",
   },
   variants: {
     color: "auto",
     size: {
       "3xs": {
         root: "size-4 text-[8px]",
-        badge: "size-1.5"
+        badge: "size-1.5",
       },
       "2xs": {
         root: "size-5 text-[10px]",
-        badge: "size-2"
+        badge: "size-2",
       },
       xs: {
         root: "size-6 text-xs",
-        badge: "size-2"
+        badge: "size-2",
       },
       sm: {
         root: "size-7 text-sm",
-        badge: "size-2.5"
+        badge: "size-2.5",
       },
       md: {
         root: "size-8 text-base",
-        badge: "size-3"
+        badge: "size-3",
       },
       lg: {
         root: "size-9 text-lg",
-        badge: "size-3"
+        badge: "size-3",
       },
       xl: {
         root: "size-10 text-xl",
-        badge: "size-3.5"
+        badge: "size-3.5",
       },
       "2xl": {
         root: "size-11 text-[22px]",
-        badge: "size-4"
+        badge: "size-4",
       },
       "3xl": {
         root: "size-12 text-2xl",
-        badge: "size-4"
+        badge: "size-4",
       },
       "4xl": {
         root: "size-14 text-3xl",
-        badge: "size-4.5"
+        badge: "size-4.5",
       },
       "5xl": {
         root: "size-16 text-3xl",
-        badge: "size-5"
+        badge: "size-5",
       },
       "6xl": {
         root: "size-20 text-4xl",
-        badge: "size-6"
+        badge: "size-6",
       },
       "7xl": {
         root: "size-24 text-5xl",
-        badge: "size-7"
+        badge: "size-7",
       },
       "8xl": {
         root: "size-28 text-6xl",
-        badge: "size-8"
+        badge: "size-8",
       },
       "9xl": {
         root: "size-32 text-7xl",
-        badge: "size-9"
+        badge: "size-9",
       },
       "10xl": {
         root: "size-36 text-7xl",
-        badge: "size-10"
+        badge: "size-10",
       },
       "11xl": {
         root: "size-40 text-8xl",
-        badge: "size-10"
+        badge: "size-10",
       },
       "12xl": {
         root: "size-48 text-9xl",
-        badge: "size-12"
+        badge: "size-12",
       },
       "4": { root: "size-4 text-[8px]", badge: "size-1.5" },
       "5": { root: "size-5 text-[10px]", badge: "size-2" },
@@ -107,14 +107,14 @@ export const avatarTheme = defineTheme("avatar", {
       "48": { root: "size-48 text-9xl", badge: "size-12" },
       "56": { root: "size-56 text-9xl", badge: "size-14" },
       "64": { root: "size-64 text-9xl", badge: "size-16" },
-      "128": { root: "size-32 text-7xl", badge: "size-9" }
+      "128": { root: "size-32 text-7xl", badge: "size-9" },
     },
     badgePosition: {
       "top-right": { badge: "top-0 right-0" },
       "bottom-right": { badge: "bottom-0 right-0" },
       "top-left": { badge: "top-0 left-0" },
-      "bottom-left": { badge: "bottom-0 left-0" }
-    }
+      "bottom-left": { badge: "bottom-0 left-0" },
+    },
   },
   compoundVariants: [
     {
@@ -122,13 +122,13 @@ export const avatarTheme = defineTheme("avatar", {
       classNames: {
         root: "bg-elevated text-highlighted",
         fallback: "text-muted",
-        icon: "text-muted"
-      }
-    }
+        icon: "text-muted",
+      },
+    },
   ],
   defaultVariants: {
     size: "md",
     color: "neutral",
-    badgePosition: "bottom-right"
-  }
+    badgePosition: "bottom-right",
+  },
 });

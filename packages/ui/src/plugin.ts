@@ -28,18 +28,18 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins =
             /[\\/](@rimelight\/(ui|cms)|packages\/(ui|cms))[\\/]/,
             ...[unocss.content?.pipeline?.include]
               .flat()
-              .filter((v): v is string | RegExp => Boolean(v))
-          ]
-        }
-      }
+              .filter((v): v is string | RegExp => Boolean(v)),
+          ],
+        },
+      },
     }) as unknown as Plugin[]),
     ...(fontsPlugin ? [fontsPlugin as Plugin] : []),
     {
       name: "rimelight/ui",
       enforce: "pre",
       resolveId: (id: string) => (id === ID ? `\0${ID}` : null),
-      load: (id: string) => (id === `\0${ID}` ? `export default ${JSON.stringify(cfg)};` : null)
-    }
+      load: (id: string) => (id === `\0${ID}` ? `export default ${JSON.stringify(cfg)};` : null),
+    },
   ];
 };
 

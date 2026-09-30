@@ -6,7 +6,7 @@ import {
   onSettled,
   Show,
   omit,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { Portal } from "@solidjs/web";
@@ -46,7 +46,7 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     "descriptionSlot",
     "footer",
     "footerSlot",
-    "onOpenChange"
+    "onOpenChange",
   );
 
   const side = () => props.side ?? "left";
@@ -60,7 +60,7 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
       if (open !== undefined) {
         setIsOpen(open);
       }
-    }
+    },
   );
 
   const setOpenState = (open: boolean) => {
@@ -92,8 +92,8 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     slideoverTheme({
       side: side(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const resolvedChildren = resolveChildren(() => props.children);

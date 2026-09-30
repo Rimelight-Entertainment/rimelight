@@ -207,7 +207,7 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
       error: "🛑",
       commentary: "💬",
       ideation: "💡",
-      source: "💻"
+      source: "💻",
     };
     const icon = icons[variant] || icons["info"];
 
@@ -293,7 +293,7 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     const settingLabels: Record<string, string> = {
       INTERIOR: "INT.",
       EXTERIOR: "EXT.",
-      OTHER: "Other"
+      OTHER: "Other",
     };
     const timeOfDayLabels: Record<string, string> = {
       MORNING: "Morning",
@@ -301,13 +301,13 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
       AFTERNOON: "Afternoon",
       EVENING: "Evening",
       NIGHT: "Night",
-      OTHER: "Other"
+      OTHER: "Other",
     };
     const transitionLabels: Record<string, string> = {
       CUT_TO: "CUT TO",
       CUT_BACK_TO: "CUT BACK TO",
       FADE_TO: "FADE TO",
-      NONE: ""
+      NONE: "",
     };
 
     const setting = settingLabels[props["setting"]] || props["setting"] || "INT.";

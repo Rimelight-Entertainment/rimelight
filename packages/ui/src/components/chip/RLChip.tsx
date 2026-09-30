@@ -26,7 +26,7 @@ const RLChip: Component<RLChipProps> = (allProps) => {
     "ui",
     "class",
     "children",
-    "content"
+    "content",
   );
 
   const classes = createMemo(() =>
@@ -37,8 +37,8 @@ const RLChip: Component<RLChipProps> = (allProps) => {
       inset: props.inset,
       standalone: props.standalone ?? false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const isVisible = () => props.show ?? true;

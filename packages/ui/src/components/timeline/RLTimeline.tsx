@@ -37,7 +37,7 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     "wrapper",
     "date",
     "title",
-    "description"
+    "description",
   );
 
   const items = (): TimelineItem[] => props.items ?? [];
@@ -74,15 +74,15 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
       orientation: props.orientation ?? "vertical",
       reverse: props.reverse ?? false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const renderSlot = (
     slotFn: any,
     item: TimelineItem,
     index: number,
-    fallback?: () => JSX.Element
+    fallback?: () => JSX.Element,
   ) => {
     if (typeof slotFn === "function") {
       const ctx = { ...item, item, index };
@@ -127,7 +127,7 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
                     ui={{
                       icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
                       fallback:
-                        "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted"
+                        "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
                     }}
                   >
                     {props.indicator ? (

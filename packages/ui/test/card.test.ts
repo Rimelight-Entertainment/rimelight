@@ -4,8 +4,8 @@ vi.mock("virtual:rimelight/ui", () => ({
   default: {
     unstyled: false,
     components: { themes: {} },
-    icons: {}
-  }
+    icons: {},
+  },
 }));
 
 import { RLCard } from "../src/components/card/RLCard";
@@ -18,7 +18,7 @@ describe("RLCard Solid Component Rendering", () => {
     const solid = renderSolid(
       RLCard,
       { title: "Card Title", description: "Card Description" },
-      "Card Body"
+      "Card Body",
     );
 
     expect(solid).toContain("Card Title");
@@ -49,7 +49,7 @@ describe("RLCard Solid Component Rendering", () => {
     const solid = renderSolid(RLCard, {
       overlay: true,
       title: "Overlay Title",
-      mediaSrc: "/test.jpg"
+      mediaSrc: "/test.jpg",
     });
 
     expect(solid).toContain("Overlay Title");

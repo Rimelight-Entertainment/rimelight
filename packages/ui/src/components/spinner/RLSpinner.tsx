@@ -13,8 +13,8 @@ const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
       size: props.size ?? "md",
       color: props.color ?? "current",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return <div class={classes()["root"]} data-slot="root" data-theme={props.theme} {...rest} />;

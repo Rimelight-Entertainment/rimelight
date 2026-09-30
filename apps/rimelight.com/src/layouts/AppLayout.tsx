@@ -11,7 +11,7 @@ import {
   RLLayoutGrid,
   RLToaster,
   RLToast,
-  RLButton
+  RLButton,
 } from "@rimelight/ui";
 import { t, getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
 

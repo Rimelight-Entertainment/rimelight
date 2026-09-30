@@ -6,6 +6,6 @@ import type { ApiCatalog, ApiCatalogOptions } from "./types.js";
 export function buildApiCatalog(options: ApiCatalogOptions): ApiCatalog {
   const { items } = options;
   return {
-    "api-catalog": items
+    "api-catalog": items,
   };
 }

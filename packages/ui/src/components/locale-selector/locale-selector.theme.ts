@@ -5,6 +5,6 @@ export const localeSelectorTheme = defineTheme("locale-selector", {
   base: {
     root: "inline-flex flex-col gap-1.5",
     wrapper: "relative inline-block",
-    select: ""
-  }
+    select: "",
+  },
 });

@@ -9,7 +9,7 @@ export function kebabToPascal(name: string): string {
 
 export function filterProps(
   props: PropMeta[],
-  options: { hide?: string[]; show?: string[] }
+  options: { hide?: string[]; show?: string[] },
 ): PropMeta[] {
   if (options.show?.length) {
     return props.filter((p) => options.show!.includes(p.name));
@@ -25,7 +25,9 @@ export function generateThemeCode(componentName: string, theme: ThemeMeta): stri
     ...(Object.keys(theme.base).length ? { base: theme.base } : {}),
     ...(Object.keys(theme.variants).length ? { variants: theme.variants } : {}),
     ...(theme.compoundVariants.length ? { compoundVariants: theme.compoundVariants } : {}),
-    ...(Object.keys(theme.defaultVariants).length ? { defaultVariants: theme.defaultVariants } : {})
+    ...(Object.keys(theme.defaultVariants).length
+      ? { defaultVariants: theme.defaultVariants }
+      : {}),
   };
 
   return `// astro.config.ts

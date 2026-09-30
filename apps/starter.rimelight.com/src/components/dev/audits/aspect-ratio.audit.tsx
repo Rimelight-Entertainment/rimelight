@@ -7,7 +7,7 @@ const RATIOS: Array<{ label: string; value: number }> = [
   { label: "16 / 9", value: 16 / 9 },
   { label: "4 / 3", value: 4 / 3 },
   { label: "1 / 1", value: 1 },
-  { label: "9 / 16", value: 9 / 16 }
+  { label: "9 / 16", value: 9 / 16 },
 ];
 
 const Placeholder = (props: { label: string }): JSX.Element => (
@@ -69,7 +69,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
         <RLAspectRatio ratio={16 / 9}>
           <Placeholder label="16 / 9" />
         </RLAspectRatio>
-      )
+      ),
     },
     {
       id: "default-ratio",
@@ -79,7 +79,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
         <RLAspectRatio>
           <Placeholder label="default 1 / 1" />
         </RLAspectRatio>
-      )
+      ),
     },
     {
       id: "portrait",
@@ -89,7 +89,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
         <RLAspectRatio ratio={9 / 16}>
           <Placeholder label="9 / 16" />
         </RLAspectRatio>
-      )
+      ),
     },
     {
       id: "invalid-ratio",
@@ -100,7 +100,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
         <RLAspectRatio ratio={0}>
           <Placeholder label="0 → 1 / 1" />
         </RLAspectRatio>
-      )
+      ),
     },
     {
       id: "as-prop",
@@ -110,7 +110,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
         <RLAspectRatio as="section" ratio={4 / 3}>
           <Placeholder label="section 4 / 3" />
         </RLAspectRatio>
-      )
+      ),
     },
     {
       id: "ui-override",
@@ -120,69 +120,69 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
         <RLAspectRatio ratio={16 / 9} ui={{ root: "rounded-2xl border-2 border-primary" }}>
           <Placeholder label="ui rounded" />
         </RLAspectRatio>
-      )
-    }
+      ),
+    },
   ],
   checklist: [
     {
       criterion: "Ratio prop with square default (Radix: ratio, default 1)",
       status: "pass",
-      notes: "ratio?: number, defaults to 1 when omitted. data-ratio reflects the guarded value."
+      notes: "ratio?: number, defaults to 1 when omitted. data-ratio reflects the guarded value.",
     },
     {
       criterion: "Nuxt UI v4 API parity",
       status: "warn",
       notes:
-        "No v4 docs page exists (ui.nuxt.com/docs/components/aspect-ratio 404s); audited against the underlying Radix primitive instead. Provide a reference if one is canonical."
+        "No v4 docs page exists (ui.nuxt.com/docs/components/aspect-ratio 404s); audited against the underlying Radix primitive instead. Provide a reference if one is canonical.",
     },
     {
       criterion: "Invalid ratio guard (0, negative, NaN, Infinity)",
       status: "pass",
       notes:
-        "safeRatio() falls back to 1; spacer viewBox can never be invalid. See invalid-ratio scenario."
+        "safeRatio() falls back to 1; spacer viewBox can never be invalid. See invalid-ratio scenario.",
     },
     {
       criterion: "Polymorphic as prop",
       status: "pass",
       notes:
-        "Renders via dynamic() (<Dynamic> is deprecated); plain div default. See as-prop scenario."
+        "Renders via dynamic() (<Dynamic> is deprecated); plain div default. See as-prop scenario.",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
       status: "pass",
-      notes: "Children render as Solid nodes; spacer is a static SVG element."
+      notes: "Children render as Solid nodes; spacer is a static SVG element.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
       status: "pass",
       notes:
-        "Ratio sizing via SVG viewBox, not style bindings; all visuals in aspect-ratio.theme.ts."
+        "Ratio sizing via SVG viewBox, not style bindings; all visuals in aspect-ratio.theme.ts.",
     },
     {
       criterion: "No Uno/CSS class strings inside the component file",
       status: "pass",
-      notes: "Spacer classes moved to a theme spacer slot; component references only theme output."
+      notes: "Spacer classes moved to a theme spacer slot; component references only theme output.",
     },
     {
       criterion: "No hydration mismatch",
       status: "pass",
       notes:
-        "viewBox derives deterministically from props; no ids, memos only at top level, no effects."
+        "viewBox derives deterministically from props; no ids, memos only at top level, no effects.",
     },
     {
       criterion: "Solid 2 strict-mode clean (no STRICT_READ_UNTRACKED)",
       status: "pass",
-      notes: "Sandbox ratio derivation in createMemo; reads only in JSX/memos."
+      notes: "Sandbox ratio derivation in createMemo; reads only in JSX/memos.",
     },
     {
       criterion: "Spacer hidden from assistive tech",
       status: "pass",
-      notes: "Spacer SVG carries aria-hidden; content keeps its own semantics."
+      notes: "Spacer SVG carries aria-hidden; content keeps its own semantics.",
     },
     {
       criterion: "Audited component renders bare (no harness wrappers)",
       status: "pass",
-      notes: "Scenario renders return <RLAspectRatio/> directly."
-    }
-  ]
+      notes: "Scenario renders return <RLAspectRatio/> directly.",
+    },
+  ],
 };

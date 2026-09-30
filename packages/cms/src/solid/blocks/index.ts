@@ -39,7 +39,7 @@ export {
   ScriptBlock,
   SceneBlock,
   DialogueBlock,
-  LivePreviewBlock
+  LivePreviewBlock,
 };
 export type { BlockViewProps };
 export { InlineNodes, InlineNodeView, resolveInlineText } from "./inlines.tsx";
@@ -63,7 +63,7 @@ export const defaultBlockComponents: Record<string, Component<BlockViewProps>> =
   ScriptBlock,
   SceneBlock,
   DialogueBlock,
-  LivePreviewBlock
+  LivePreviewBlock,
 };
 
 export default defaultBlockComponents;

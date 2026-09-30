@@ -6,7 +6,7 @@ import {
   buildRobotsMetaContent,
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
-  deepMerge
+  deepMerge,
 } from "../src/meta.js";
 
 const BASE = "https://example.com";
@@ -26,7 +26,7 @@ describe("buildCanonicalUrl", () => {
 
   it("resolves relative paths against base", () => {
     expect(buildCanonicalUrl(new URL("https://example.com/docs"), BASE)).toBe(
-      "https://example.com/docs/"
+      "https://example.com/docs/",
     );
   });
 });
@@ -48,7 +48,7 @@ describe("buildPageTitle", () => {
 
   it("404 overrides title if both provided", () => {
     expect(buildPageTitle({ ...opts, title: "Oops", is404: true })).toBe(
-      "404 - Not Found | My Site"
+      "404 - Not Found | My Site",
     );
   });
 
@@ -61,11 +61,11 @@ describe("deepMerge", () => {
   it("deep merges nested objects", () => {
     const base = {
       openGraph: { type: "website", siteName: "Base", locale: "en_US" },
-      twitter: { card: "summary", site: "@base" }
+      twitter: { card: "summary", site: "@base" },
     };
     const override = {
       openGraph: { siteName: "Override" },
-      twitter: { card: "summary_large_image" }
+      twitter: { card: "summary_large_image" },
     };
     const result = deepMerge(base, override);
     expect(result.openGraph.type).toBe("website");
@@ -138,7 +138,7 @@ describe("buildDefaultOgImageUrl", () => {
   it("builds query params for title and description", () => {
     const url = buildDefaultOgImageUrl({
       title: "My Page",
-      description: "My description"
+      description: "My description",
     });
     expect(url).toBe("/open-graph/page.png?title=My+Page&description=My+description");
   });
@@ -146,7 +146,7 @@ describe("buildDefaultOgImageUrl", () => {
   it("falls back to siteName if title is missing", () => {
     const url = buildDefaultOgImageUrl({
       siteName: "Rimelight",
-      description: "Welcome"
+      description: "Welcome",
     });
     expect(url).toBe("/open-graph/page.png?title=Rimelight&description=Welcome");
   });

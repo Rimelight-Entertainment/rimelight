@@ -63,7 +63,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     "raw",
     "ariaLabel",
     "ariaCurrentValue",
-    "theme"
+    "theme",
   );
 
   const isLink = () => Boolean(props.href || props.to);
@@ -111,8 +111,8 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
       fixed: fixed(),
       to: isLink(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const { registerHeader } = useHeaderStack();
@@ -123,7 +123,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     sticky: sticky(),
     fixed: fixed(),
     hideOnScroll: hideOnScroll(),
-    visible: () => !dismissed()
+    visible: () => !dismissed(),
   });
 
   const dynamicStyles = () => {
@@ -134,7 +134,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
       top: `${topOffset()}px`,
       transform: isCollapsed() ? "translateY(-100%)" : "translateY(0)",
       transition:
-        "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+        "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     };
 
     if (typeof props["style"] === "object" && props["style"] !== null) {
@@ -147,7 +147,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     if (!isLink()) return {};
     return resolveLinkAttrs({
       ...props,
-      href: props.href || (props.to as string | undefined)
+      href: props.href || (props.to as string | undefined),
     });
   });
 
@@ -158,7 +158,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
       variant: "ghost",
       square: true,
       leadingIcon: props.closeIcon || "close",
-      ariaLabel: "Close banner"
+      ariaLabel: "Close banner",
     };
 
     if (typeof props.close === "object" && props.close !== null) {

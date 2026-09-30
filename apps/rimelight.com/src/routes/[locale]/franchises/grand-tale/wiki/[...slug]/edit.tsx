@@ -40,7 +40,7 @@ export const WikiEditPage: Component = () => {
         return null;
       }
     },
-    null
+    null,
   );
 
   const handleSave = async () => {
@@ -53,8 +53,8 @@ export const WikiEditPage: Component = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: { [currentLocale()]: titleVal() },
-          description: { [currentLocale()]: descVal() }
-        })
+          description: { [currentLocale()]: descVal() },
+        }),
       });
       if (res.ok) alert("Saved!");
       else alert("Failed to save");

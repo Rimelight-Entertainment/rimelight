@@ -14,8 +14,8 @@ const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     pricingPlanTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

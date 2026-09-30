@@ -17,7 +17,7 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
     "showProgress",
     "theme",
     "ui",
-    "class"
+    "class",
   );
 
   const [isVisible, setIsVisible] = createSignal(false);
@@ -35,8 +35,8 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
     scrollToTopTheme({
       color: props.color ?? "primary",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const color = () => props.color ?? "primary";
@@ -46,13 +46,13 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
   const progressStyle = () => ({
     background: `conic-gradient(from 0deg, var(--rl-${color()}-500) 0deg, var(--rl-${color()}-500) ${scrollPercentage() * 3.6}deg, transparent ${scrollPercentage() * 3.6}deg)`,
     "-webkit-mask": `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`,
-    mask: `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`
+    mask: `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`,
   });
 
   const trackStyle = () => ({
     "border-width": `${gaugeBorderWidth()}px`,
     "border-color": `var(--rl-${color()}-900)`,
-    "background-color": "#000"
+    "background-color": "#000",
   });
 
   return (

@@ -31,8 +31,8 @@ export const Error500Page: Component<Props> = (props) => {
             href: "/",
             variant: "solid",
             color: "primary",
-            icon: "i-lucide-home"
-          }
+            icon: "i-lucide-home",
+          },
         ]}
       />
     </AppLayout>

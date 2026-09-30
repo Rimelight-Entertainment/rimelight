@@ -30,7 +30,7 @@ api.post("/:key{.*}", async (c) => {
   if (!obj.body) return c.text("Source object has no body", 500);
 
   await BLOB.put(newKey, obj.body, {
-    httpMetadata: { contentType: obj.httpMetadata?.contentType || "application/octet-stream" }
+    httpMetadata: { contentType: obj.httpMetadata?.contentType || "application/octet-stream" },
   });
   await BLOB.delete(key);
 

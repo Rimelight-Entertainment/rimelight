@@ -7,17 +7,17 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
     en: {
       nav: {
         home: "Home",
-        nested: "Nested Value"
+        nested: "Nested Value",
       },
       messages: {
-        welcome: "Welcome, {user}!"
-      }
+        welcome: "Welcome, {user}!",
+      },
     },
     fr: {
       nav: {
-        home: "Accueil"
-      }
-    }
+        home: "Accueil",
+      },
+    },
   };
 
   it("flattens and extracts component translation keys", () => {
@@ -31,7 +31,7 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
     const flat = {
       "nav.home": "Home",
       "nav.about": "About",
-      "footer.contact": "Contact Us"
+      "footer.contact": "Contact Us",
     };
 
     const unflattened = unflatten(flat) as Record<string, Record<string, string>>;
@@ -49,7 +49,7 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
   it("handles runtime translations and interpolation", () => {
     initializeI18n({
       defaultLocale: "en",
-      translations
+      translations,
     });
     currentLocale.set("en");
     expect(t("nav.home")).toBe("Home");

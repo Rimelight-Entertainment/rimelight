@@ -26,7 +26,7 @@ api.post("/:id/approve", async (c) => {
         slug: version.slug,
         type: version.type,
         content: version.content,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(pages.id, version.pageId));
 

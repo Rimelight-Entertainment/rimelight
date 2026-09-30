@@ -156,7 +156,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLAvatar icon="star" />
           <RLAvatar />
         </div>
-      )
+      ),
     },
     {
       id: "sizes",
@@ -166,7 +166,7 @@ export const avatarAudit: ComponentAuditDefinition = {
         <div class="flex items-center gap-3 flex-wrap">
           <For each={SIZES}>{(s) => <RLAvatar alt="Size Test" size={s} />}</For>
         </div>
-      )
+      ),
     },
     {
       id: "colors",
@@ -177,7 +177,7 @@ export const avatarAudit: ComponentAuditDefinition = {
         <div class="flex items-center gap-3 flex-wrap">
           <For each={COLORS}>{(c) => <RLAvatar alt={c} color={c} />}</For>
         </div>
-      )
+      ),
     },
     {
       id: "chip-and-badge",
@@ -196,7 +196,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLAvatar alt="Sam" chip={{ color: "primary", position: "top-right" }} />
           <RLAvatar alt="Taylor" badge="3" badgeColor="primary" badgePosition="top-right" />
         </div>
-      )
+      ),
     },
     {
       id: "profile-wrapper",
@@ -209,7 +209,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           title="Daniel Marchi"
           subtitle="Lead Developer"
         />
-      )
+      ),
     },
     {
       id: "avatar-group-popover",
@@ -261,7 +261,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLAvatar alt="Anthony Fu" />
           <RLAvatar alt="Pooya Parsa" />
         </RLAvatarGroup>
-      )
+      ),
     },
     {
       id: "avatar-group-sizes",
@@ -289,7 +289,7 @@ export const avatarAudit: ComponentAuditDefinition = {
             <RLAvatar alt="Anthony Fu" />
           </RLAvatarGroup>
         </div>
-      )
+      ),
     },
     {
       id: "avatar-group",
@@ -308,7 +308,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLAvatar alt="Anthony Fu" />
           <RLAvatar alt="Pooya Parsa" />
         </RLAvatarGroup>
-      )
+      ),
     },
     {
       id: "avatar-group-items",
@@ -320,55 +320,55 @@ export const avatarAudit: ComponentAuditDefinition = {
           items={[
             { src: "https://github.com/benjamincanac.png", alt: "Benjamin Canac" },
             { alt: "Hugo Richard" },
-            { alt: "Sebastien Chopin" }
+            { alt: "Sebastien Chopin" },
           ]}
         />
-      )
-    }
+      ),
+    },
   ],
   checklist: [
     {
       criterion: "Nuxt UI v4 API parity (Avatar & AvatarGroup)",
       status: "pass",
       notes:
-        "Matches src, alt, icon, text, size, color, chip, loading, referrerpolicy, crossorigin, decoding, width, height, as, max, items, ui."
+        "Matches src, alt, icon, text, size, color, chip, loading, referrerpolicy, crossorigin, decoding, width, height, as, max, items, ui.",
     },
     {
       criterion: "Fallback resolution cascade",
       status: "pass",
-      notes: "Resolves text -> fallback -> initials -> alt initials -> icon -> default user icon."
+      notes: "Resolves text -> fallback -> initials -> alt initials -> icon -> default user icon.",
     },
     {
       criterion: "Custom user defined colors support",
       status: "pass",
       notes:
-        "Uses color: 'auto' in avatarTheme with CSS variables (--rl-bg, --rl-text) and rl-color-* classes for full custom palette support."
+        "Uses color: 'auto' in avatarTheme with CSS variables (--rl-bg, --rl-text) and rl-color-* classes for full custom palette support.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "Accessible role='img' and aria-label derived from alt/label/title for visual fallbacks; aria-hidden on decorative icons and counters."
+        "Accessible role='img' and aria-label derived from alt/label/title for visual fallbacks; aria-hidden on decorative icons and counters.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
       status: "pass",
-      notes: "All styling encapsulated in theme files (avatar.theme.ts, avatar-group.theme.ts)."
+      notes: "All styling encapsulated in theme files (avatar.theme.ts, avatar-group.theme.ts).",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
       status: "pass",
-      notes: "Clean Solid JSX rendering throughout."
+      notes: "Clean Solid JSX rendering throughout.",
     },
     {
       criterion: "No hydration mismatches",
       status: "pass",
-      notes: "Deterministic signals, createMemo, and dynamic() primitives."
+      notes: "Deterministic signals, createMemo, and dynamic() primitives.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",
       status: "pass",
-      notes: "All scenario renders return bare components directly."
-    }
-  ]
+      notes: "All scenario renders return bare components directly.",
+    },
+  ],
 };

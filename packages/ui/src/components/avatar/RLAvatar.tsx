@@ -57,7 +57,7 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     "children",
     "fallbackSlot",
     "badgeSlot",
-    "imgProps"
+    "imgProps",
   );
 
   const [imageError, setImageError] = createSignal(false);
@@ -68,8 +68,8 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
       color: props.color ?? "neutral",
       badgePosition: props.badgePosition ?? "bottom-right",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const fallbackText = () =>

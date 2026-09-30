@@ -21,7 +21,7 @@ export const TableBlock: Component<BlockViewProps> = (props) => {
       return {
         accessorKey: key,
         header,
-        ...(align ? { meta: { class: { th: alignClass, td: alignClass } } } : {})
+        ...(align ? { meta: { class: { th: alignClass, td: alignClass } } } : {}),
       };
     });
 

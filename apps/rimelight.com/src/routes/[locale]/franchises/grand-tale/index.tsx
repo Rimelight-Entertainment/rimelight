@@ -13,8 +13,8 @@ export const GrandTaleIndexPage: Component = () => {
       color: "primary",
       variant: "solid",
       class:
-        "px-8 py-4 text-xl font-bold bg-primary-500 hover:bg-primary-600 rounded-md transition-all uppercase"
-    }
+        "px-8 py-4 text-xl font-bold bg-primary-500 hover:bg-primary-600 rounded-md transition-all uppercase",
+    },
   ];
 
   const overviewLinks = (): ButtonProps[] => [
@@ -24,8 +24,8 @@ export const GrandTaleIndexPage: Component = () => {
       color: "primary",
       variant: "solid",
       class:
-        "px-6 py-3 rounded-md font-bold transition-all text-white bg-primary-500 hover:bg-primary-600"
-    }
+        "px-6 py-3 rounded-md font-bold transition-all text-white bg-primary-500 hover:bg-primary-600",
+    },
   ];
 
   return (
@@ -40,7 +40,7 @@ export const GrandTaleIndexPage: Component = () => {
         links={heroLinks()}
         ui={{
           title: "text-white text-5xl lg:text-7xl font-black uppercase tracking-tight",
-          description: "text-neutral-300 max-w-2xl text-lg md:text-xl"
+          description: "text-neutral-300 max-w-2xl text-lg md:text-xl",
         }}
       >
         <div slot="background" class="w-full h-full">
@@ -61,7 +61,7 @@ export const GrandTaleIndexPage: Component = () => {
         links={overviewLinks()}
         ui={{
           title: "text-white text-4xl font-extrabold uppercase",
-          description: "text-neutral-400"
+          description: "text-neutral-400",
         }}
       >
         <div slot="body" class="grid grid-cols-2 gap-8 mt-8 max-w-xl">

@@ -19,13 +19,13 @@ const navItems = [
   { icon: "i-lucide-users", label: () => t("dashboard.nav_users"), id: "users" },
   { icon: "i-lucide-shopping-cart", label: () => t("dashboard.nav_orders"), id: "orders" },
   { icon: "i-lucide-package", label: () => t("dashboard.nav_products"), id: "products" },
-  { icon: "i-lucide-bar-chart-3", label: () => t("dashboard.nav_analytics"), id: "analytics" }
+  { icon: "i-lucide-bar-chart-3", label: () => t("dashboard.nav_analytics"), id: "analytics" },
 ];
 
 const settingsNavItem = {
   icon: "i-lucide-settings",
   label: () => t("dashboard.nav_settings"),
-  id: "settings"
+  id: "settings",
 };
 
 const overviewStats = [
@@ -34,29 +34,29 @@ const overviewStats = [
     value: "$45,231",
     change: "+20.1%",
     icon: "i-lucide-circle-dollar-sign",
-    changeColor: "text-success"
+    changeColor: "text-success",
   },
   {
     label: () => t("dashboard.overview_stats_active_users"),
     value: "+2,350",
     change: "+18%",
     icon: "i-lucide-users",
-    changeColor: "text-success"
+    changeColor: "text-success",
   },
   {
     label: () => t("dashboard.overview_stats_conversion_rate"),
     value: "+12.3%",
     change: "+2.1%",
     icon: "i-lucide-trending-up",
-    changeColor: "text-success"
+    changeColor: "text-success",
   },
   {
     label: () => t("dashboard.overview_stats_avg_order"),
     value: "$48.00",
     change: "+$5.00",
     icon: "i-lucide-shopping-bag",
-    changeColor: "text-success"
-  }
+    changeColor: "text-success",
+  },
 ];
 
 const overviewRecentOrders = [
@@ -66,7 +66,7 @@ const overviewRecentOrders = [
     email: "john@example.com",
     status: "Completed",
     amount: "$99.00",
-    statusColor: "success" as const
+    statusColor: "success" as const,
   },
   {
     id: "#001235",
@@ -74,7 +74,7 @@ const overviewRecentOrders = [
     email: "jane@example.com",
     status: "Processing",
     amount: "$149.00",
-    statusColor: "warning" as const
+    statusColor: "warning" as const,
   },
   {
     id: "#001236",
@@ -82,7 +82,7 @@ const overviewRecentOrders = [
     email: "bob@example.com",
     status: "Pending",
     amount: "$75.00",
-    statusColor: "info" as const
+    statusColor: "info" as const,
   },
   {
     id: "#001237",
@@ -90,7 +90,7 @@ const overviewRecentOrders = [
     email: "alice@example.com",
     status: "Cancelled",
     amount: "$200.00",
-    statusColor: "error" as const
+    statusColor: "error" as const,
   },
   {
     id: "#001238",
@@ -98,8 +98,8 @@ const overviewRecentOrders = [
     email: "charlie@example.com",
     status: "Completed",
     amount: "$150.00",
-    statusColor: "success" as const
-  }
+    statusColor: "success" as const,
+  },
 ];
 
 const overviewMessages = [
@@ -107,20 +107,20 @@ const overviewMessages = [
     user: "Sarah Miller",
     message: "Need access to admin dashboard",
     time: "5 min ago",
-    avatar: "https://i.pravatar.cc/100?u=sarah"
+    avatar: "https://i.pravatar.cc/100?u=sarah",
   },
   {
     user: "Mike Johnson",
     message: "Server maintenance scheduled",
     time: "1 hour ago",
-    avatar: "https://i.pravatar.cc/100?u=mike"
+    avatar: "https://i.pravatar.cc/100?u=mike",
   },
   {
     user: "Emily Davis",
     message: "New feature request submitted",
     time: "2 hours ago",
-    avatar: "https://i.pravatar.cc/100?u=emily"
-  }
+    avatar: "https://i.pravatar.cc/100?u=emily",
+  },
 ];
 
 const overviewRecentActivity = [
@@ -129,15 +129,15 @@ const overviewRecentActivity = [
     action: "API rate limit exceeded",
     time: "1 hour ago",
     icon: "i-lucide-alert-triangle",
-    type: "error"
+    type: "error",
   },
   {
     action: "Database backup completed",
     time: "3 hours ago",
     icon: "i-lucide-database",
-    type: "success"
+    type: "success",
   },
-  { action: "System update installed", time: "6 hours ago", icon: "i-lucide-server", type: "info" }
+  { action: "System update installed", time: "6 hours ago", icon: "i-lucide-server", type: "info" },
 ];
 
 const usersList = [
@@ -146,36 +146,36 @@ const usersList = [
     email: "john@example.com",
     role: "Admin",
     status: "Active",
-    joined: "Jan 15, 2023"
+    joined: "Jan 15, 2023",
   },
   {
     name: "Jane Smith",
     email: "jane@example.com",
     role: "Editor",
     status: "Active",
-    joined: "Feb 3, 2023"
+    joined: "Feb 3, 2023",
   },
   {
     name: "Bob Johnson",
     email: "bob@example.com",
     role: "Viewer",
     status: "Pending",
-    joined: "Mar 10, 2023"
+    joined: "Mar 10, 2023",
   },
   {
     name: "Alice Brown",
     email: "alice@example.com",
     role: "Admin",
     status: "Suspended",
-    joined: "Apr 5, 2023"
+    joined: "Apr 5, 2023",
   },
   {
     name: "Charlie Wilson",
     email: "charlie@example.com",
     role: "Editor",
     status: "Active",
-    joined: "May 12, 2023"
-  }
+    joined: "May 12, 2023",
+  },
 ];
 
 const ordersList = [
@@ -186,7 +186,7 @@ const ordersList = [
     date: "Dec 15, 2023",
     total: "$99.00",
     status: "Completed",
-    method: "Credit Card"
+    method: "Credit Card",
   },
   {
     id: "#001235",
@@ -195,7 +195,7 @@ const ordersList = [
     date: "Dec 14, 2023",
     total: "$149.00",
     status: "Processing",
-    method: "PayPal"
+    method: "PayPal",
   },
   {
     id: "#001236",
@@ -204,7 +204,7 @@ const ordersList = [
     date: "Dec 13, 2023",
     total: "$75.00",
     status: "Shipped",
-    method: "Credit Card"
+    method: "Credit Card",
   },
   {
     id: "#001237",
@@ -213,8 +213,8 @@ const ordersList = [
     date: "Dec 12, 2023",
     total: "$200.00",
     status: "Cancelled",
-    method: "Credit Card"
-  }
+    method: "Credit Card",
+  },
 ];
 
 const productsList = [
@@ -225,16 +225,16 @@ const productsList = [
     price: "$99.99",
     sales: 8,
     status: "Limited",
-    category: "Subscription"
+    category: "Subscription",
   },
-  { name: "Starter Pack", price: "$0.00", sales: 156, status: "Active", category: "Free" }
+  { name: "Starter Pack", price: "$0.00", sales: 156, status: "Active", category: "Free" },
 ];
 
 const analyticsData = {
   revenue: "$45,231",
   growth: "+20.1%",
   users: "+2,350",
-  conversion: "+12.3%"
+  conversion: "+12.3%",
 };
 
 export const DashboardPage: Component = () => {
@@ -246,7 +246,7 @@ export const DashboardPage: Component = () => {
     orders: () => "Order History",
     products: () => "Product Catalog",
     analytics: () => "Analytics & Reports",
-    settings: () => "Application Settings"
+    settings: () => "Application Settings",
   };
 
   const currentTitle = () => navTitles[activeSection()]?.() || "Dashboard";
@@ -742,7 +742,7 @@ export const DashboardPage: Component = () => {
                           each={[
                             t("dashboard.settings_site_name"),
                             t("dashboard.settings_site_description"),
-                            t("dashboard.settings_time_zone")
+                            t("dashboard.settings_time_zone"),
                           ]}
                         >
                           {(item) => (

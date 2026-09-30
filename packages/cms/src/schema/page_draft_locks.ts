@@ -9,5 +9,5 @@ export const pageDraftLocks = pgTable("page_draft_locks", {
   lockedByUserId: text("locked_by_user_id").notNull(),
   lockedByUserName: text("locked_by_user_name").notNull(),
   acquiredAt: timestamp("acquired_at", { withTimezone: true }).defaultNow().notNull(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull()
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 });

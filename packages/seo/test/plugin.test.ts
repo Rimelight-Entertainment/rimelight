@@ -20,7 +20,7 @@ describe("seo Vite Plugin", () => {
   it("resolves virtual modules correctly", () => {
     const plugin = seo({
       name: "Test Site",
-      url: "https://test.rimelight.com"
+      url: "https://test.rimelight.com",
     });
 
     const resolvedSeo = (plugin.resolveId as any)("virtual:rimelight/seo");
@@ -33,7 +33,7 @@ describe("seo Vite Plugin", () => {
   it("loads virtual:rimelight/seo with normalized config and pre-bound createHead", () => {
     const plugin = seo({
       name: "Plugin Test Site",
-      url: "https://plugintest.com"
+      url: "https://plugintest.com",
     });
 
     const loaded = (plugin.load as any)("\0virtual:rimelight/seo");
@@ -50,13 +50,13 @@ describe("seo Vite Plugin", () => {
       url: "https://bundle.com",
       robots: true,
       sitemap: true,
-      security: true
+      security: true,
     });
 
     const mockContext = {
       emitFile(file: any) {
         emitted.push(file);
-      }
+      },
     };
 
     await (plugin.generateBundle as any).call(mockContext);
@@ -76,9 +76,9 @@ describe("seo Vite Plugin", () => {
       url: "https://icon.com",
       branding: {
         favicon: {
-          svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#00f"/></svg>`
-        }
-      }
+          svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#00f"/></svg>`,
+        },
+      },
     });
 
     (plugin.configResolved as any)({ root: process.cwd() });
@@ -86,7 +86,7 @@ describe("seo Vite Plugin", () => {
     const mockContext = {
       emitFile(file: any) {
         emitted.push(file);
-      }
+      },
     };
 
     await (plugin.generateBundle as any).call(mockContext);

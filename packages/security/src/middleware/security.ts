@@ -22,16 +22,16 @@ function applySecurityHeaders(
   options: SecurityOptions,
   origin?: string,
   nonce?: string,
-  reportOnlyOptions?: SecurityOptions
+  reportOnlyOptions?: SecurityOptions,
 ): Response {
   const cspHeader = buildCspHeader(options, nonce);
   const reportOnlyHeader = reportOnlyOptions
     ? buildCspHeader(
         {
           ...reportOnlyOptions,
-          directives: { ...reportOnlyOptions.directives, "upgrade-insecure-requests": false }
+          directives: { ...reportOnlyOptions.directives, "upgrade-insecure-requests": false },
         },
-        nonce
+        nonce,
       )
     : undefined;
 
@@ -55,7 +55,7 @@ function applySecurityHeaders(
       "Cross-Origin-Resource-Policy",
       typeof options.crossOriginResourcePolicy === "string"
         ? options.crossOriginResourcePolicy
-        : "same-origin"
+        : "same-origin",
     );
   }
 
@@ -64,7 +64,7 @@ function applySecurityHeaders(
       "Cross-Origin-Opener-Policy",
       typeof options.crossOriginOpenerPolicy === "string"
         ? options.crossOriginOpenerPolicy
-        : "same-origin"
+        : "same-origin",
     );
   }
 
@@ -73,7 +73,7 @@ function applySecurityHeaders(
       "Cross-Origin-Embedder-Policy",
       typeof options.crossOriginEmbedderPolicy === "string"
         ? options.crossOriginEmbedderPolicy
-        : "credentialless"
+        : "credentialless",
     );
   }
 
@@ -96,8 +96,8 @@ function applySecurityHeaders(
         `<${origin}/sitemap-index.xml>; rel="sitemap"`,
         `<${origin}/llms.txt>; rel="llms"`,
         `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
-        `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`
-      ].join(", ")
+        `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
+      ].join(", "),
     );
   }
 
@@ -110,7 +110,7 @@ function applySecurityHeaders(
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers
+    headers,
   });
 }
 
@@ -124,30 +124,30 @@ export function security(options: SecurityOptions = {}) {
     ...options,
     allowedDomains: [
       ...(defaultPluginConfig.allowedDomains || []),
-      ...(options.allowedDomains || [])
+      ...(options.allowedDomains || []),
     ],
     imgSrc: [...(defaultPluginConfig.imgSrc || []), ...(options.imgSrc || [])],
     connectSrc: [...(defaultPluginConfig.connectSrc || []), ...(options.connectSrc || [])],
     frameSrc: [...(defaultPluginConfig.frameSrc || []), ...(options.frameSrc || [])],
     scriptResources: [
       ...(defaultPluginConfig.scriptResources || []),
-      ...(options.scriptResources || [])
+      ...(options.scriptResources || []),
     ],
     styleResources: [
       ...(defaultPluginConfig.styleResources || []),
-      ...(options.styleResources || [])
+      ...(options.styleResources || []),
     ],
     directives: {
       ...defaultPluginConfig.directives,
-      ...options.directives
+      ...options.directives,
     },
     strictDynamic: options.strictDynamic ?? defaultPluginConfig.strictDynamic ?? true,
     enforceTls: options.enforceTls ?? defaultPluginConfig.enforceTls ?? true,
     stripHeaders: options.stripHeaders ?? defaultPluginConfig.stripHeaders,
     headers: {
       ...defaultPluginConfig.headers,
-      ...options.headers
-    }
+      ...options.headers,
+    },
   };
 
   return async (c: any, next: any): Promise<Response | void> => {
@@ -209,12 +209,12 @@ export function security(options: SecurityOptions = {}) {
           "https:",
           "http:",
           "ws:",
-          "wss:"
+          "wss:",
         ],
         "script-src-attr": ["'unsafe-inline'"],
         "style-src": ["'self'", "'unsafe-inline'", "https:", "http:"],
         "connect-src": ["'self'", "ws:", "wss:", "http:", "https:"],
-        "img-src": ["'self'", "data:", "blob:", "https:", "http:"]
+        "img-src": ["'self'", "data:", "blob:", "https:", "http:"],
       };
 
       // Prod simulation: check strict production directives in Report-Only mode
@@ -231,8 +231,8 @@ export function security(options: SecurityOptions = {}) {
               "'self'",
               "'unsafe-inline'",
               "'inline-speculation-rules'",
-              ...(mergedOptions.scriptResources || [])
-            ])
+              ...(mergedOptions.scriptResources || []),
+            ]),
           );
 
       const userStyleSrc = mergedOptions.directives?.["style-src"];
@@ -241,7 +241,7 @@ export function security(options: SecurityOptions = {}) {
           ? Array.from(new Set([...userStyleSrc, "'unsafe-inline'"]))
           : userStyleSrc
         : Array.from(
-            new Set(["'self'", "'unsafe-inline'", ...(mergedOptions.styleResources || [])])
+            new Set(["'self'", "'unsafe-inline'", ...(mergedOptions.styleResources || [])]),
           );
 
       const reportOnlySimulation: SecurityOptions = {
@@ -250,8 +250,8 @@ export function security(options: SecurityOptions = {}) {
           ...mergedOptions.directives,
           "script-src": reportScriptSrc,
           "script-src-attr": ["'unsafe-inline'"],
-          "style-src": reportStyleSrc
-        }
+          "style-src": reportStyleSrc,
+        },
       };
 
       c.res = applySecurityHeaders(
@@ -259,7 +259,7 @@ export function security(options: SecurityOptions = {}) {
         { ...mergedOptions, directives: devDirectives },
         origin,
         undefined,
-        reportOnlySimulation
+        reportOnlySimulation,
       );
       return c.res;
     }
@@ -282,7 +282,7 @@ export function security(options: SecurityOptions = {}) {
               el.setAttribute("integrity", activeManifest[src]);
               el.setAttribute("crossorigin", "anonymous");
             }
-          }
+          },
         })
         .on('link[rel="stylesheet"][href]', {
           element(el: any) {
@@ -291,22 +291,22 @@ export function security(options: SecurityOptions = {}) {
               el.setAttribute("integrity", activeManifest[href]);
               el.setAttribute("crossorigin", "anonymous");
             }
-          }
+          },
         })
         .on("script", {
           element(el: any) {
             el.setAttribute("nonce", nonce);
-          }
+          },
         })
         .on("style", {
           element(el: any) {
             el.setAttribute("nonce", nonce);
-          }
+          },
         })
         .on("head", {
           element(el: any) {
             el.append(`<meta name="csp-nonce" content="${nonce}">`, { html: true });
-          }
+          },
         });
 
       c.res = applySecurityHeaders(rewriter.transform(response), mergedOptions, origin, nonce);

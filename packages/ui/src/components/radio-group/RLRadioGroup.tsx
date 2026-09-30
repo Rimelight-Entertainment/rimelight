@@ -19,15 +19,15 @@ const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
     "name",
     "label",
     "value",
-    "trailing"
+    "trailing",
   );
 
   const resolvedClasses = createMemo(() =>
     radioGroupTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

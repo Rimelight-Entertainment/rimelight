@@ -9,16 +9,16 @@ export const scrollAreaTheme = defineTheme("scroll-area", {
     scrollbar:
       "absolute flex user-select-none touch-action-none p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-muted/10",
     thumb:
-      "relative flex-1 rounded-full bg-muted border border-default/50 transition-colors hover:bg-accented"
+      "relative flex-1 rounded-full bg-muted border border-default/50 transition-colors hover:bg-accented",
   },
   variants: {
     orientation: {
       vertical: { scrollbar: "right-0 top-0 bottom-0 w-2.5 flex-col" },
       horizontal: { scrollbar: "bottom-0 left-0 right-0 h-2.5 flex-row" },
-      both: { scrollbar: "" }
-    }
+      both: { scrollbar: "" },
+    },
   },
   defaultVariants: {
-    orientation: "vertical"
-  }
+    orientation: "vertical",
+  },
 });

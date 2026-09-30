@@ -20,7 +20,7 @@ export const tableTheme = defineTheme("table", {
     "tdExpanded",
     "toolbar",
     "resizer",
-    "dragHandle"
+    "dragHandle",
   ],
   base: {
     root: "relative block w-full overflow-hidden rounded-lg border border-default shadow-sm outline-primary/25 focus-visible:outline-3",
@@ -47,62 +47,62 @@ export const tableTheme = defineTheme("table", {
     resizer:
       "absolute top-0 end-0 h-full w-1.5 cursor-col-resize select-none touch-none hover:bg-primary/50 transition-colors opacity-0 group-hover/th:opacity-60",
     dragHandle:
-      "inline-flex items-center justify-center cursor-grab active:cursor-grabbing text-muted/50 hover:text-highlighted touch-none select-none p-1 rounded hover:bg-muted/40 transition-colors"
+      "inline-flex items-center justify-center cursor-grab active:cursor-grabbing text-muted/50 hover:text-highlighted touch-none select-none p-1 rounded hover:bg-muted/40 transition-colors",
   },
   variants: {
     pinned: {
       true: {
         th: "sticky bg-muted z-10",
-        td: "sticky bg-default z-10"
-      }
+        td: "sticky bg-default z-10",
+      },
     },
     sticky: {
       true: {
         thead: "sticky top-0 inset-x-0 bg-default z-10",
-        tfoot: "sticky bottom-0 inset-x-0 bg-default z-10"
+        tfoot: "sticky bottom-0 inset-x-0 bg-default z-10",
       },
       header: {
-        thead: "sticky top-0 inset-x-0 bg-default z-10"
+        thead: "sticky top-0 inset-x-0 bg-default z-10",
       },
       footer: {
-        tfoot: "sticky bottom-0 inset-x-0 bg-default z-10"
-      }
+        tfoot: "sticky bottom-0 inset-x-0 bg-default z-10",
+      },
     },
     loading: {
       true: {
         thead:
-          "after:absolute after:bottom-0 after:start-0 after:z-10 after:h-0.5 after:w-full motion-reduce:after:w-full motion-reduce:after:animate-pulse"
-      }
+          "after:absolute after:bottom-0 after:start-0 after:z-10 after:h-0.5 after:w-full motion-reduce:after:w-full motion-reduce:after:animate-pulse",
+      },
     },
     externalScroll: {
       true: {
-        root: "overflow-visible"
-      }
+        root: "overflow-visible",
+      },
     },
     striped: {
       true: {
         tbody:
-          "[&>tr:nth-child(even):not([data-slot=tr-group]):not([data-slot=tr-expanded])]:bg-muted/25 [&>tr:nth-child(even):not([data-slot=tr-group]):not([data-slot=tr-expanded])>td]:bg-muted/25"
-      }
+          "[&>tr:nth-child(even):not([data-slot=tr-group]):not([data-slot=tr-expanded])]:bg-muted/25 [&>tr:nth-child(even):not([data-slot=tr-group]):not([data-slot=tr-expanded])>td]:bg-muted/25",
+      },
     },
     hoverable: {
       true: {
-        tr: "hover:bg-muted/30 cursor-pointer"
-      }
+        tr: "hover:bg-muted/30 cursor-pointer",
+      },
     },
     bordered: {
       true: {
         root: "border-2 border-default shadow-sm",
         tr: "border-b border-default",
         th: "border-r border-default last:border-r-0",
-        td: "border-r border-default last:border-r-0"
-      }
+        td: "border-r border-default last:border-r-0",
+      },
     },
     loadingAnimation: {
       carousel: {},
       "carousel-inverse": {},
       swing: {},
-      elastic: {}
+      elastic: {},
     },
     loadingColor: {
       primary: {},
@@ -111,8 +111,8 @@ export const tableTheme = defineTheme("table", {
       info: {},
       warning: {},
       error: {},
-      neutral: {}
-    }
+      neutral: {},
+    },
   },
   compoundVariants: [
     // Loading color variants
@@ -127,28 +127,28 @@ export const tableTheme = defineTheme("table", {
     {
       loading: true,
       loadingAnimation: "carousel",
-      classNames: { thead: "motion-safe:after:animate-[carousel_2s_linear_infinite]" }
+      classNames: { thead: "motion-safe:after:animate-[carousel_2s_linear_infinite]" },
     },
     {
       loading: true,
       loadingAnimation: "carousel-inverse",
-      classNames: { thead: "motion-safe:after:animate-[carousel-inverse_2s_linear_infinite]" }
+      classNames: { thead: "motion-safe:after:animate-[carousel-inverse_2s_linear_infinite]" },
     },
     {
       loading: true,
       loadingAnimation: "swing",
-      classNames: { thead: "motion-safe:after:animate-[swing_2s_ease-in-out_infinite]" }
+      classNames: { thead: "motion-safe:after:animate-[swing_2s_ease-in-out_infinite]" },
     },
     {
       loading: true,
       loadingAnimation: "elastic",
-      classNames: { thead: "motion-safe:after:animate-[elastic_2s_ease-in-out_infinite]" }
-    }
+      classNames: { thead: "motion-safe:after:animate-[elastic_2s_ease-in-out_infinite]" },
+    },
   ],
   defaultVariants: {
     striped: false,
     bordered: false,
     loadingColor: "primary",
-    loadingAnimation: "carousel"
-  }
+    loadingAnimation: "carousel",
+  },
 });

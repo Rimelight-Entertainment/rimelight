@@ -46,7 +46,7 @@ function normalizeBadge(badge: any) {
     text: badge.text || badge.label || "",
     color,
     variant: badgeVariant as "solid" | "outline" | "soft" | "ghost",
-    class: badge.class || ""
+    class: badge.class || "",
   };
 }
 
@@ -179,7 +179,7 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
     "header",
     "headerSlot",
     "footer",
-    "footerSlot"
+    "footerSlot",
   );
 
   const t = () => props.t ?? ((key: string) => key);
@@ -192,8 +192,8 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
       collapsible: props.collapsible,
       variant: props.variant,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   let sidebarRef: HTMLElement | null = null;

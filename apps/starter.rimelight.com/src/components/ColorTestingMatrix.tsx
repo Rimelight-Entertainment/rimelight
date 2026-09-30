@@ -10,7 +10,7 @@ export const PALETTES = [
   "error",
   "commentary",
   "ideation",
-  "source"
+  "source",
 ] as const;
 
 export const SHADES = [
@@ -24,7 +24,7 @@ export const SHADES = [
   "700",
   "800",
   "900",
-  "950"
+  "950",
 ] as const;
 
 export const INTENTS = [
@@ -35,7 +35,7 @@ export const INTENTS = [
   "dimmed",
   "toned",
   "highlighted",
-  "inverted"
+  "inverted",
 ] as const;
 
 export default function ColorTestingMatrix() {
@@ -724,11 +724,11 @@ export default function ColorTestingMatrix() {
                               class="h-10 flex flex-col justify-between items-center p-1 text-center cursor-pointer transition-transform hover:scale-105"
                               style={{
                                 background: `var(--rl-${selectedMatrixPalette()}-${bgShade})`,
-                                color: `var(--rl-${selectedMatrixPalette()}-${txtShade})`
+                                color: `var(--rl-${selectedMatrixPalette()}-${txtShade})`,
                               }}
                               onClick={() =>
                                 copyToClipboard(
-                                  `bg-${selectedMatrixPalette()}-${bgShade} text-${selectedMatrixPalette()}-${txtShade}`
+                                  `bg-${selectedMatrixPalette()}-${bgShade} text-${selectedMatrixPalette()}-${txtShade}`,
                                 )
                               }
                               title={`bg-${selectedMatrixPalette()}-${bgShade} text-${selectedMatrixPalette()}-${txtShade}`}

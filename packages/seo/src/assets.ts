@@ -39,7 +39,7 @@ function toDataUrl(source: Buffer | Uint8Array | string): string {
  */
 export async function generatePng(
   source: Buffer | Uint8Array | string,
-  options: { width: number; height: number; background?: string }
+  options: { width: number; height: number; background?: string },
 ): Promise<Buffer> {
   const { renderTakumi } = await import("./takumi.js");
   const src = toDataUrl(source);
@@ -53,7 +53,7 @@ export async function generatePng(
         height: `${options.height}px`,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: options.background || "transparent"
+        backgroundColor: options.background || "transparent",
       },
       children: {
         type: "img",
@@ -62,16 +62,16 @@ export async function generatePng(
           style: {
             width: "100%",
             height: "100%",
-            objectFit: "contain"
-          }
-        }
-      }
-    }
+            objectFit: "contain",
+          },
+        },
+      },
+    },
   };
 
   const png = await renderTakumi(vnode, {
     width: options.width,
-    height: options.height
+    height: options.height,
   });
 
   return Buffer.from(png);
@@ -83,7 +83,7 @@ export async function generatePng(
  */
 export async function generateMaskablePng(
   source: Buffer | Uint8Array | string,
-  options: GenerateMaskableOptions = {}
+  options: GenerateMaskableOptions = {},
 ): Promise<Buffer> {
   const { size = 512, background = "#ffffff", paddingRatio = 0.15 } = options;
   const { renderTakumi } = await import("./takumi.js");
@@ -99,7 +99,7 @@ export async function generateMaskablePng(
         height: `${size}px`,
         backgroundColor: background,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
       },
       children: {
         type: "img",
@@ -108,16 +108,16 @@ export async function generateMaskablePng(
           style: {
             width: innerPercent,
             height: innerPercent,
-            objectFit: "contain"
-          }
-        }
-      }
-    }
+            objectFit: "contain",
+          },
+        },
+      },
+    },
   };
 
   const png = await renderTakumi(vnode, {
     width: size,
-    height: size
+    height: size,
   });
 
   return Buffer.from(png);
@@ -129,7 +129,7 @@ export async function generateMaskablePng(
  */
 export async function generateIco(
   source: Buffer | Uint8Array | string,
-  size = 32
+  size = 32,
 ): Promise<Buffer> {
   const pngBuffer = await generatePng(source, { width: size, height: size });
 
@@ -177,9 +177,9 @@ export async function generateOgCard(options: GenerateOgCardOptions = {}): Promi
         style: {
           width: `${logoSize}px`,
           height: `${logoSize}px`,
-          objectFit: "contain"
-        }
-      }
+          objectFit: "contain",
+        },
+      },
     };
   }
 
@@ -192,10 +192,10 @@ export async function generateOgCard(options: GenerateOgCardOptions = {}): Promi
         height: `${height}px`,
         alignItems: "center",
         justifyContent: "center",
-        ...bgStyle
+        ...bgStyle,
       },
-      ...(children ? { children } : {})
-    }
+      ...(children ? { children } : {}),
+    },
   };
 
   const png = await renderTakumi(vnode, { width, height });

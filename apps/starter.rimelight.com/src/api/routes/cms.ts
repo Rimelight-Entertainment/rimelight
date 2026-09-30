@@ -9,7 +9,7 @@ import {
   pageVersions,
   pageVersionApprovals,
   bylines,
-  taxonomyTerms
+  taxonomyTerms,
 } from "#db/schema";
 import { count, eq, and, desc, isNull } from "drizzle-orm";
 import {
@@ -31,7 +31,7 @@ import {
   getByline,
   createByline,
   updateByline,
-  deleteByline
+  deleteByline,
 } from "@rimelight/cms";
 
 const cms = new Hono();
@@ -101,7 +101,7 @@ async function checkApprovalRequirements(pageId: string, userId: string, userRol
     if (otherApprovals.length < minApprovals) {
       return {
         canPublish: false,
-        reason: `Self-approval not allowed. Need ${minApprovals} distinct approvers.`
+        reason: `Self-approval not allowed. Need ${minApprovals} distinct approvers.`,
       };
     }
   }
@@ -114,7 +114,7 @@ async function checkApprovalRequirements(pageId: string, userId: string, userRol
   if (effectiveApprovals < minApprovals) {
     return {
       canPublish: false,
-      reason: `Need ${minApprovals} approvals, currently have ${effectiveApprovals}`
+      reason: `Need ${minApprovals} approvals, currently have ${effectiveApprovals}`,
     };
   }
 
@@ -139,7 +139,7 @@ cms.post("/templates", async (c) => {
     whoCanCreate: body.allowedRoles || [],
     whoCanEdit: [],
     whoCanReview: [],
-    whoCanView: []
+    whoCanView: [],
   };
   const allowedRoles = rolePermissions.whoCanCreate || body.allowedRoles || [];
 
@@ -151,7 +151,7 @@ cms.post("/templates", async (c) => {
       rolePermissions,
       version: 1,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .returning();
 
@@ -210,9 +210,9 @@ cms.get("/versions", async (c) => {
         .limit(1);
       return Object.assign({}, version, {
         pageTitle: page[0]?.title || "Unknown Page",
-        slug: page[0]?.slug || ""
+        slug: page[0]?.slug || "",
       });
-    })
+    }),
   );
 
   return c.json({ versions: versionsWithPage });
@@ -232,8 +232,8 @@ cms.get("/pages", async (c) => {
   // Ensure content is returned as an object, not a string
   const pagesData = pagesList.map((page: any) =>
     Object.assign({}, page, {
-      content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
-    })
+      content: typeof page.content === "string" ? JSON.parse(page.content) : page.content,
+    }),
   );
 
   return c.json({ pages: pagesData });
@@ -253,14 +253,14 @@ cms.get("/pages/:id", async (c) => {
   // Ensure content is returned as an object, not a string
   const pageData = {
     ...page[0],
-    content: typeof page[0].content === "string" ? JSON.parse(page[0].content) : page[0].content
+    content: typeof page[0].content === "string" ? JSON.parse(page[0].content) : page[0].content,
   };
 
   const draftData = draft[0]
     ? {
         ...draft[0],
         content:
-          typeof draft[0].content === "string" ? JSON.parse(draft[0].content) : draft[0].content
+          typeof draft[0].content === "string" ? JSON.parse(draft[0].content) : draft[0].content,
       }
     : null;
 
@@ -281,7 +281,7 @@ cms.get("/stats", async (c) => {
     totalPages: pRes?.count ?? 0,
     totalBylines: bRes?.count ?? 0,
     totalCategories: cRes?.count ?? 0,
-    totalTags: tRes?.count ?? 0
+    totalTags: tRes?.count ?? 0,
   });
 });
 
@@ -326,14 +326,14 @@ cms.post("/pages", async (c) => {
       {
         id: crypto.randomUUID(),
         type: "ParagraphBlock",
-        props: { text: { en: "Start writing your content..." } }
-      }
+        props: { text: { en: "Start writing your content..." } },
+      },
     ];
   }
 
   const pageContent = {
     blocks: initialBlocks,
-    properties: body.content?.properties || {}
+    properties: body.content?.properties || {},
   };
 
   const page = await db
@@ -348,7 +348,7 @@ cms.post("/pages", async (c) => {
       content: pageContent,
       authorIds: [session.userId],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .returning();
 
@@ -359,7 +359,7 @@ cms.post("/pages", async (c) => {
     pageId: page[0].id,
     content: pageContent,
     updatedBy: session.userId,
-    updatedAt: new Date()
+    updatedAt: new Date(),
   });
 
   return c.json({ page: page[0] });
@@ -387,13 +387,13 @@ cms.put("/pages/:id", async (c) => {
     const userSession = {
       userId: session.userId,
       roles: session.roles || ["member"],
-      permissions: []
+      permissions: [],
     };
 
     const validation = validateServerBlockPayload(
       existingContent.blocks || [],
       incomingContent.blocks || [],
-      userSession
+      userSession,
     );
     if (!validation.valid) {
       return c.json({ error: validation.reason }, 403);
@@ -446,13 +446,13 @@ cms.post("/pages/:id/draft", async (c) => {
     const userSession = {
       userId: session.userId,
       roles: session.roles || ["member"],
-      permissions: []
+      permissions: [],
     };
 
     const validation = validateServerBlockPayload(
       existingContent?.blocks || [],
       incomingContent.blocks || [],
-      userSession
+      userSession,
     );
     if (!validation.valid) {
       console.warn(`[Draft Save Rejected] ${validation.reason}`);
@@ -470,7 +470,7 @@ cms.post("/pages/:id/draft", async (c) => {
   if (!draftPayload || !Array.isArray(draftPayload.blocks)) {
     draftPayload = {
       blocks: incomingContent?.blocks || [],
-      properties: incomingContent?.properties || {}
+      properties: incomingContent?.properties || {},
     };
   }
 
@@ -480,15 +480,15 @@ cms.post("/pages/:id/draft", async (c) => {
       pageId: id,
       content: draftPayload,
       updatedBy: session.userId,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .onConflictDoUpdate({
       target: pageDrafts.pageId,
       set: {
         content: draftPayload,
         updatedBy: session.userId,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
 
   return c.json({ success: true });
@@ -514,7 +514,7 @@ cms.post("/pages/:id/lock/checkout", async (c) => {
         success: false,
         lockedByUserId: existingLock[0].lockedByUserId,
         lockedByUserName: existingLock[0].lockedByUserName,
-        expiresAt: existingLock[0].expiresAt
+        expiresAt: existingLock[0].expiresAt,
       });
     }
   }
@@ -528,7 +528,7 @@ cms.post("/pages/:id/lock/checkout", async (c) => {
       lockedByUserId: session.userId,
       lockedByUserName: session.name || "User",
       acquiredAt: new Date(),
-      expiresAt
+      expiresAt,
     })
     .onConflictDoUpdate({
       target: pageDraftLocks.pageId,
@@ -536,8 +536,8 @@ cms.post("/pages/:id/lock/checkout", async (c) => {
         lockedByUserId: session.userId,
         lockedByUserName: session.name || "User",
         acquiredAt: new Date(),
-        expiresAt
-      }
+        expiresAt,
+      },
     });
 
   return c.json({ success: true });
@@ -569,7 +569,7 @@ cms.post("/pages/:id/lock/heartbeat", async (c) => {
     .set({
       lockedByUserId: session.userId,
       lockedByUserName: session.name || "User",
-      expiresAt
+      expiresAt,
     })
     .where(eq(pageDraftLocks.pageId, id));
 
@@ -634,7 +634,7 @@ cms.post("/pages/:id/publish", async (c) => {
       approvedBy: [session.userId],
       approvedAt: new Date(),
       changeSummary: body.changeSummary,
-      createdAt: new Date()
+      createdAt: new Date(),
     })
     .returning();
 
@@ -645,7 +645,7 @@ cms.post("/pages/:id/publish", async (c) => {
     versionId: version[0].id,
     userId: session.userId,
     userRole: session.roles?.[0] || "member",
-    approvedAt: new Date()
+    approvedAt: new Date(),
   });
 
   // Update page with published version
@@ -655,7 +655,7 @@ cms.post("/pages/:id/publish", async (c) => {
       content: body.content,
       publishedVersionId: version[0].id,
       postedAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .where(eq(pages.id, id));
 
@@ -663,7 +663,7 @@ cms.post("/pages/:id/publish", async (c) => {
   await indexPageForSearch(db, { id, title: page[0].title, content: body.content }, [
     "en",
     "pt",
-    "es"
+    "es",
   ]);
 
   return c.json({ version: version[0] });
@@ -679,7 +679,7 @@ cms.post("/pages/:id/unpublish", async (c) => {
 
   const userRoles = session.roles || ["member"];
   const isOwnerOrAdmin = userRoles.some((role: string) =>
-    ["owner", "admin"].includes(role.toLowerCase())
+    ["owner", "admin"].includes(role.toLowerCase()),
   );
   if (!isOwnerOrAdmin && page[0].authorIds && !page[0].authorIds.includes(session.userId)) {
     return c.json({ error: "Forbidden: insufficient permissions to unpublish page" }, 403);
@@ -690,7 +690,7 @@ cms.post("/pages/:id/unpublish", async (c) => {
     .set({
       postedAt: null,
       publishedVersionId: null,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .where(eq(pages.id, id));
 
@@ -712,7 +712,7 @@ cms.post("/pages/:id/preview-token", async (c) => {
   return c.json({
     token,
     expiresAt,
-    previewUrl: `/en/cms/pages/${id}/preview?token=${encodeURIComponent(token)}`
+    previewUrl: `/en/cms/pages/${id}/preview?token=${encodeURIComponent(token)}`,
   });
 });
 
@@ -736,8 +736,8 @@ cms.get("/pages/:id/diff", async (c) => {
       .where(
         and(
           eq(pageVersions.pageId, id),
-          eq(pageVersions.versionNumber, parseInt(fromVersionNum, 10))
-        )
+          eq(pageVersions.versionNumber, parseInt(fromVersionNum, 10)),
+        ),
       )
       .limit(1);
     if (v[0]) fromSnapshot = v[0];
@@ -749,7 +749,10 @@ cms.get("/pages/:id/diff", async (c) => {
       .select()
       .from(pageVersions)
       .where(
-        and(eq(pageVersions.pageId, id), eq(pageVersions.versionNumber, parseInt(toVersionNum, 10)))
+        and(
+          eq(pageVersions.pageId, id),
+          eq(pageVersions.versionNumber, parseInt(toVersionNum, 10)),
+        ),
       )
       .limit(1);
     if (v[0]) toSnapshot = v[0];
@@ -789,8 +792,8 @@ cms.post("/versions/:versionId/approve", async (c) => {
     .where(
       and(
         eq(pageVersionApprovals.versionId, versionId),
-        eq(pageVersionApprovals.userId, session.userId)
-      )
+        eq(pageVersionApprovals.userId, session.userId),
+      ),
     )
     .limit(1);
 
@@ -803,7 +806,7 @@ cms.post("/versions/:versionId/approve", async (c) => {
     versionId,
     userId: session.userId,
     userRole: session.roles?.[0] || "member",
-    approvedAt: new Date()
+    approvedAt: new Date(),
   });
 
   // Update version's approvedBy array
@@ -816,7 +819,7 @@ cms.post("/versions/:versionId/approve", async (c) => {
     .update(pageVersions)
     .set({
       approvedBy: allApprovals.map((a: any) => a.userId),
-      approvedAt: new Date()
+      approvedAt: new Date(),
     })
     .where(eq(pageVersions.id, versionId));
 
@@ -833,7 +836,7 @@ cms.put("/settings", async (c) => {
   const session = await auth.getSession(c.req.raw);
   if (!session) return c.json({ error: "Unauthorized" }, 401);
   const isOwnerOrAdmin = ["owner", "admin"].includes(
-    (session.roles?.[0] || "member")?.toLowerCase() || ""
+    (session.roles?.[0] || "member")?.toLowerCase() || "",
   );
   if (!isOwnerOrAdmin) return c.json({ error: "Forbidden" }, 403);
 
@@ -977,9 +980,9 @@ cms.post("/mcp", async (c) => {
       {
         jsonrpc: "2.0",
         id: null,
-        error: { code: -32000, message: "Unauthorized: Invalid or missing API key / session" }
+        error: { code: -32000, message: "Unauthorized: Invalid or missing API key / session" },
       },
-      401
+      401,
     );
   }
 

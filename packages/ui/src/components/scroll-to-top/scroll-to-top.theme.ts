@@ -8,26 +8,26 @@ export const scrollToTopTheme = defineTheme("scroll-to-top", {
     progressBase: "progress-circle-base size-full",
     svg: "size-full",
     iconContainer: "absolute inset-0 flex items-center justify-center text-center",
-    icon: "size-6 text-white"
+    icon: "size-6 text-white",
   },
   variants: {
-    color: "auto"
+    color: "auto",
   },
   compoundVariants: [
     {
       color: "primary",
       classNames: {
-        icon: "text-neutral-50"
-      }
+        icon: "text-neutral-50",
+      },
     },
     {
       color: "secondary",
       classNames: {
-        icon: "text-neutral-50"
-      }
-    }
+        icon: "text-neutral-50",
+      },
+    },
   ],
   defaultVariants: {
-    color: "primary"
-  }
+    color: "primary",
+  },
 });

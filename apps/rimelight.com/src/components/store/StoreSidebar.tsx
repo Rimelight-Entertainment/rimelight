@@ -4,12 +4,12 @@ import { getRelativeLocaleUrl } from "@rimelight/i18n";
 export const StoreSidebar: Component = () => {
   const categories = [
     { label: "All Products", icon: "i-lucide-grid-3x3", to: "/store" },
-    { label: "Digital Goods", icon: "i-lucide-zap", to: "/store/digital" }
+    { label: "Digital Goods", icon: "i-lucide-zap", to: "/store/digital" },
   ];
 
   const supportLinks = [
     { label: "Shipping Policy", to: "/legal/shipping-policy" },
-    { label: "Contact Support", to: "/franchises/grand-tale/support" }
+    { label: "Contact Support", to: "/franchises/grand-tale/support" },
   ];
 
   return (

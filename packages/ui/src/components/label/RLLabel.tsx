@@ -15,8 +15,8 @@ const RLLabel: Component<RLLabelProps> = (allProps) => {
     labelTheme({
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

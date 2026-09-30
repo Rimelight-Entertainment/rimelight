@@ -29,12 +29,12 @@ const TEMPLATE_BLOCK_OPTIONS = [
   { label: "Image", value: "ImageBlock" },
   { label: "Script", value: "ScriptBlock" },
   { label: "Scene", value: "SceneBlock" },
-  { label: "Dialogue", value: "DialogueBlock" }
+  { label: "Dialogue", value: "DialogueBlock" },
 ];
 
 export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = (props) => {
   const [blocks, setBlocks] = createSignal<BaseBlock[]>(
-    props.initialBlocks ? JSON.parse(JSON.stringify(props.initialBlocks)) : []
+    props.initialBlocks ? JSON.parse(JSON.stringify(props.initialBlocks)) : [],
   );
   const [selectedType, setSelectedType] = createSignal("ParagraphBlock");
   let canvasContainer: HTMLDivElement | undefined;
@@ -59,13 +59,13 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
           requestAnimationFrame(() => cleanAllSortableClasses());
           setTimeout(cleanAllSortableClasses, 50);
           setTimeout(cleanAllSortableClasses, 200);
-        }
+        },
       });
     }
 
     const publicMethods = {
       getBlocks: () => JSON.parse(JSON.stringify(blocks())),
-      setBlocks: (newBlocks: BaseBlock[]) => updateBlocks(JSON.parse(JSON.stringify(newBlocks)))
+      setBlocks: (newBlocks: BaseBlock[]) => updateBlocks(JSON.parse(JSON.stringify(newBlocks))),
     };
 
     if (props.ref) props.ref(publicMethods);
@@ -99,7 +99,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
       id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2),
       type,
       isTemplated: false,
-      props: blockProps
+      props: blockProps,
     };
 
     updateBlocks([...blocks(), newBlock]);

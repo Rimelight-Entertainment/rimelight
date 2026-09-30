@@ -4,5 +4,5 @@ export {
   CONSTRUCTION_GUEST_COOKIE,
   isConstructionGuest,
   signInConstructionGuest,
-  construction
+  construction,
 } from "../middleware/construction";

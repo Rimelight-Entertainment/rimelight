@@ -41,7 +41,7 @@ export const HomePage: Component = () => {
         return [];
       }
     },
-    []
+    [],
   );
 
   const heroLinks = (): ButtonProps[] => [
@@ -49,27 +49,27 @@ export const HomePage: Component = () => {
       variant: "outline",
       leadingIcon: "i-lucide-github",
       label: t("page_home.section_hero_link_github_label"),
-      href: "https://github.com/Rimelight-Entertainment/rimelight/tree/main/packages/starter.rimelight.com"
+      href: "https://github.com/Rimelight-Entertainment/rimelight/tree/main/packages/starter.rimelight.com",
     },
     {
       variant: "solid",
       label: t("page_home.section_hero_link_use-template_label"),
       trailingIcon: "i-lucide-arrow-right",
-      href: getRelativeLocaleUrl("/docs/")
-    }
+      href: getRelativeLocaleUrl("/docs/"),
+    },
   ];
 
   const featureLinks = (): ButtonProps[] => [
     {
       variant: "outline",
       label: t("page_home.section_features_link_browse-components_label"),
-      href: `https://rimelight.com/${getLocale()}/company/docs/packages/rimelight-ui/components/`
+      href: `https://rimelight.com/${getLocale()}/company/docs/packages/rimelight-ui/components/`,
     },
     {
       label: t("page_home.section_features_link_read-the-docs_label"),
       trailingIcon: "i-lucide-arrow-right",
-      href: "/docs"
-    }
+      href: "/docs",
+    },
   ];
 
   const ctaLinks = (): ButtonProps[] => [
@@ -77,13 +77,13 @@ export const HomePage: Component = () => {
       variant: "outline",
       leadingIcon: "i-lucide-github",
       label: t("page_home.section_cta_view-on-github"),
-      href: "https://github.com/Rimelight-Entertainment/rimelight"
+      href: "https://github.com/Rimelight-Entertainment/rimelight",
     },
     {
       label: t("page_home.section_cta_learn-how"),
       trailingIcon: "i-lucide-square-arrow-out-up-right",
-      href: `https://rimelight.com/${getLocale()}/company/docs/overview/contributing/introduction`
-    }
+      href: `https://rimelight.com/${getLocale()}/company/docs/overview/contributing/introduction`,
+    },
   ];
 
   return (

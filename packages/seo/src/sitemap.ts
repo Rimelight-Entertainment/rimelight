@@ -42,7 +42,7 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
     // Add alternates if multiple locales
     if (entryUrls.length > 1) {
       const defaultUrl = entryUrls.find(
-        (u) => u.loc === `${site}${prefixDefaultLocale ? `/${defaultLocale}` : ""}${entry.path}`
+        (u) => u.loc === `${site}${prefixDefaultLocale ? `/${defaultLocale}` : ""}${entry.path}`,
       );
 
       for (const url of entryUrls) {
@@ -50,7 +50,7 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
           .filter((u) => u.loc !== url.loc)
           .map((u) => ({
             hreflang: extractHreflang(u.loc, locales, defaultLocale),
-            href: u.loc
+            href: u.loc,
           }));
 
         // Add x-default pointing to default locale
@@ -58,7 +58,7 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
         if (defaultUrl && url.loc === defaultUrl.loc) {
           url.alternates.push({
             hreflang: "x-default",
-            href: defaultUrl.loc
+            href: defaultUrl.loc,
           });
         }
       }
@@ -115,7 +115,7 @@ export function buildSitemapIndexXml(sitemapUrls: string[]): string {
     .map(
       (url) => `  <sitemap>
     <loc>${escapeXml(url)}</loc>
-  </sitemap>`
+  </sitemap>`,
     )
     .join("\n");
 
@@ -142,7 +142,7 @@ export function chunkSitemapUrls(urls: SitemapUrl[], limit: number = 45000): Sit
 function extractHreflang(
   url: string,
   locales: Record<string, string>,
-  defaultLocale: string
+  defaultLocale: string,
 ): string {
   for (const [segment, hreflang] of Object.entries(locales)) {
     if (url.includes(`/${segment}/`) || url.endsWith(`/${segment}`)) {

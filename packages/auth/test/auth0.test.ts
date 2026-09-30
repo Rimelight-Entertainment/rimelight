@@ -7,7 +7,7 @@ import {
   loginWithAuth0Password,
   mapAuth0PayloadToSession,
   refreshAuth0Token,
-  verifySessionToken
+  verifySessionToken,
 } from "../src/adapters/auth0";
 import type { UserSessionContext } from "../src/types";
 
@@ -18,7 +18,7 @@ describe("auth0Auth Adapter & Helpers", () => {
       clientId: "client123",
       redirectUri: "https://rimelight.com/api/auth/callback",
       audience: "https://api.rimelight.com",
-      state: "xyzState"
+      state: "xyzState",
     });
 
     const parsed = new URL(url);
@@ -34,7 +34,7 @@ describe("auth0Auth Adapter & Helpers", () => {
     const url = createAuth0LogoutUrl({
       domain: "rimelight.us.auth0.com",
       clientId: "client123",
-      returnTo: "https://rimelight.com/"
+      returnTo: "https://rimelight.com/",
     });
 
     const parsed = new URL(url);
@@ -52,7 +52,7 @@ describe("auth0Auth Adapter & Helpers", () => {
       avatar: "https://cdn.rimelight.com/avatar.png",
       roles: ["admin"],
       permissions: ["cms:manage"],
-      userType: "employee"
+      userType: "employee",
     };
 
     const token = await createSessionToken(session, secret, "1h");
@@ -73,14 +73,14 @@ describe("auth0Auth Adapter & Helpers", () => {
       name: "Software Engineer",
       "https://rimelight.com/roles": ["editor", "employee"],
       "https://rimelight.com/user_type": "employee",
-      permissions: ["page:create", "page:update"]
+      permissions: ["page:create", "page:update"],
     };
 
     const session = mapAuth0PayloadToSession(payload, {
       rolesClaim: "https://rimelight.com/roles",
       userTypeClaim: "https://rimelight.com/user_type",
       permissionsClaim: "permissions",
-      defaultRole: "user"
+      defaultRole: "user",
     });
 
     expect(session.userId).toBe("auth0|999");
@@ -95,7 +95,7 @@ describe("auth0Auth Adapter & Helpers", () => {
     const adapter = auth0Auth({
       domain: "rimelight.us.auth0.com",
       sessionCookieName: "rimelight_session",
-      sessionSecret: secret
+      sessionSecret: secret,
     });
 
     const sessionData: UserSessionContext = {
@@ -104,14 +104,14 @@ describe("auth0Auth Adapter & Helpers", () => {
       name: "Staff",
       roles: ["admin"],
       permissions: ["*"],
-      userType: "employee"
+      userType: "employee",
     };
 
     const token = await createSessionToken(sessionData, secret);
     const req = new Request("https://rimelight.com/dashboard", {
       headers: {
-        cookie: `rimelight_session=${token}; other_cookie=123`
-      }
+        cookie: `rimelight_session=${token}; other_cookie=123`,
+      },
     });
 
     const session = await adapter.getSession(req);
@@ -141,9 +141,9 @@ describe("auth0Auth Adapter & Helpers", () => {
             id_token: "mock_ue5_id_token",
             refresh_token: "mock_ue5_refresh_token",
             token_type: "Bearer",
-            expires_in: 86400
+            expires_in: 86400,
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       };
 
@@ -153,7 +153,7 @@ describe("auth0Auth Adapter & Helpers", () => {
         clientSecret: "ue5_secret",
         username: "player1",
         password: "secret123",
-        audience: "https://api.rimelight.com"
+        audience: "https://api.rimelight.com",
       });
 
       expect(res.access_token).toBe("mock_ue5_jwt_access");
@@ -179,16 +179,16 @@ describe("auth0Auth Adapter & Helpers", () => {
           JSON.stringify({
             access_token: "new_ue5_access_token",
             token_type: "Bearer",
-            expires_in: 86400
+            expires_in: 86400,
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       };
 
       const res = await refreshAuth0Token({
         domain: "rimelight.us.auth0.com",
         clientId: "ue5_client",
-        refreshToken: "mock_ue5_refresh_token"
+        refreshToken: "mock_ue5_refresh_token",
       });
 
       expect(res.access_token).toBe("new_ue5_access_token");

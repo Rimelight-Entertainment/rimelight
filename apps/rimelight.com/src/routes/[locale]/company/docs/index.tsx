@@ -33,7 +33,7 @@ export const DocsIndexPage: Component = () => {
           "overview/getting-started",
           "index",
           activeVersion ? `${activeVersion}/overview/getting-started` : "overview/getting-started",
-          activeVersion ? `${activeVersion}/index` : "index"
+          activeVersion ? `${activeVersion}/index` : "index",
         ];
 
         let dbPage = null;
@@ -51,11 +51,11 @@ export const DocsIndexPage: Component = () => {
           docPage: null,
           versions: [],
           activeVersion: undefined,
-          includeVersionInUrl: false
+          includeVersionInUrl: false,
         };
       }
     },
-    { docPage: null, versions: [], activeVersion: undefined, includeVersionInUrl: false }
+    { docPage: null, versions: [], activeVersion: undefined, includeVersionInUrl: false },
   );
 
   const docPage = () => docsData()?.docPage;

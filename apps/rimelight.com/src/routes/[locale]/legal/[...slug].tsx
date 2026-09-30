@@ -30,7 +30,7 @@ export const LegalDocumentPage: Component = () => {
         return null;
       }
     },
-    null
+    null,
   );
 
   const docBlocks = () => {

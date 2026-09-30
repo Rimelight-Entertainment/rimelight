@@ -29,15 +29,15 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
     "labelSlot",
     "descriptionSlot",
     "errorSlot",
-    "helpSlot"
+    "helpSlot",
   );
 
   const resolvedClasses = createMemo(() =>
     formFieldTheme({
       size: props.size ?? "md",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

@@ -43,7 +43,7 @@ export const HomePage: Component = () => {
         return [];
       }
     },
-    []
+    [],
   );
 
   const heroLinks = (): ButtonProps[] => [
@@ -53,7 +53,7 @@ export const HomePage: Component = () => {
       color: "blurple",
       variant: "solid",
       class:
-        "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
+        "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
     },
     {
       label: t("page_home.section_hero_actions_learn-more"),
@@ -62,8 +62,8 @@ export const HomePage: Component = () => {
       variant: "outline",
       trailingIcon: "i-lucide-arrow-right",
       class:
-        "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
-    }
+        "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
+    },
   ];
 
   const ctaLinks = (): ButtonProps[] => [
@@ -73,7 +73,7 @@ export const HomePage: Component = () => {
       color: "blurple",
       variant: "solid",
       class:
-        "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
+        "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
     },
     {
       label: t("page_home.section_cta_actions_explore-careers"),
@@ -81,8 +81,8 @@ export const HomePage: Component = () => {
       color: "neutral",
       variant: "outline",
       class:
-        "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
-    }
+        "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
+    },
   ];
 
   return (
@@ -95,7 +95,7 @@ export const HomePage: Component = () => {
         links={heroLinks()}
         ui={{
           title: "text-white",
-          description: "text-neutral-300"
+          description: "text-neutral-300",
         }}
       >
         <div slot="background" class="w-full h-full">
@@ -123,7 +123,7 @@ export const HomePage: Component = () => {
         description={t("page_home.section_company_description")}
         ui={{
           title: "text-white",
-          description: "text-neutral-300"
+          description: "text-neutral-300",
         }}
       >
         <div slot="background" class="w-full h-full">
@@ -171,7 +171,7 @@ export const HomePage: Component = () => {
         ui={{
           title:
             "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
-          description: "hidden"
+          description: "hidden",
         }}
       >
         <div slot="background" class="w-full h-full">
@@ -252,7 +252,7 @@ export const HomePage: Component = () => {
         ui={{
           title:
             "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
-          description: "text-neutral-400 text-center max-w-2xl mx-auto mt-4"
+          description: "text-neutral-400 text-center max-w-2xl mx-auto mt-4",
         }}
       >
         <div slot="background" class="w-full h-full">
@@ -318,7 +318,7 @@ export const HomePage: Component = () => {
         ui={{
           title:
             "text-white text-5xl lg:text-6xl font-black uppercase tracking-tight text-center leading-none",
-          description: "text-neutral-300 text-lg md:text-xl text-center max-w-xl mx-auto mt-4"
+          description: "text-neutral-300 text-lg md:text-xl text-center max-w-xl mx-auto mt-4",
         }}
       >
         <div slot="background" class="w-full h-full">

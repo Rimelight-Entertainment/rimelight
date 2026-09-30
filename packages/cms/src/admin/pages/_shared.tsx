@@ -16,7 +16,7 @@ export function parseContent(content: unknown): { blocks: any[]; properties: Rec
   if (!raw || typeof raw !== "object") return { blocks: [], properties: {} };
   return {
     blocks: Array.isArray((raw as any).blocks) ? (raw as any).blocks : [],
-    properties: (raw as any).properties ?? {}
+    properties: (raw as any).properties ?? {},
   };
 }
 

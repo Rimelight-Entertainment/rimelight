@@ -10,7 +10,7 @@ describe("seo-schema", () => {
       url: "https://rimelight.com/blog/cloudflare-workers",
       datePublished: new Date("2026-08-01T12:00:00Z"),
       authorName: "Idan",
-      image: "https://rimelight.com/og/article.png"
+      image: "https://rimelight.com/og/article.png",
     });
 
     expect(schema["@context"]).toBe("https://schema.org");
@@ -24,7 +24,7 @@ describe("seo-schema", () => {
     const schema = buildBreadcrumbSchema([
       { name: "Home", url: "https://rimelight.com" },
       { name: "Docs", url: "https://rimelight.com/en/docs" },
-      { name: "Installation", url: "https://rimelight.com/en/docs/installation" }
+      { name: "Installation", url: "https://rimelight.com/en/docs/installation" },
     ]);
 
     expect(schema["@type"]).toBe("BreadcrumbList");
@@ -33,13 +33,13 @@ describe("seo-schema", () => {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://rimelight.com"
+      item: "https://rimelight.com",
     });
     expect(schema["itemListElement"][2]).toEqual({
       "@type": "ListItem",
       position: 3,
       name: "Installation",
-      item: "https://rimelight.com/en/docs/installation"
+      item: "https://rimelight.com/en/docs/installation",
     });
   });
 });

@@ -147,6 +147,6 @@ export interface AuthMiddlewareOptions {
    */
   onForbidden?: (
     c: any,
-    meta: { isApi: boolean; path: string; requiredRoles?: string[] | undefined }
+    meta: { isApi: boolean; path: string; requiredRoles?: string[] | undefined },
   ) => Response | Promise<Response>;
 }

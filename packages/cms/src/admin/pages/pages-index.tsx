@@ -30,7 +30,7 @@ export const PagesIndexPage: Component<PagesIndexPageProps> = (props) => {
   const [confirmDelete, setConfirmDelete] = createSignal<string | null>(null);
 
   const remote = useCmsApi<{ pages: CmsPageListItem[] }>(() =>
-    props.initialPages ? null : `${apiBase()}/pages`
+    props.initialPages ? null : `${apiBase()}/pages`,
   );
   const pages = () => props.initialPages ?? remote.data()?.pages ?? [];
 

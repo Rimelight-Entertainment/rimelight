@@ -5,7 +5,7 @@ import {
   integer,
   uniqueIndex,
   index,
-  type AnySQLiteColumn
+  type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 import type { BaseBlock } from "../core/types/blocks";
 import type { Localized, PageType } from "../core/types/pages";
@@ -67,7 +67,7 @@ export const pageTemplates = sqliteTable("page_templates", {
   createdAt: integer("created_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date())
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
 });
 
 // 2. Page Versions
@@ -110,11 +110,11 @@ export const pageVersions = sqliteTable(
     changeSummary: text("change_summary"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
-      .notNull()
+      .notNull(),
   },
   (table) => [
-    uniqueIndex("page_versions_page_id_version_idx").on(table.pageId, table.versionNumber)
-  ]
+    uniqueIndex("page_versions_page_id_version_idx").on(table.pageId, table.versionNumber),
+  ],
 );
 
 // 3. Pages
@@ -148,20 +148,20 @@ export const pages = sqliteTable(
       }>()
       .notNull(),
     publishedVersionId: text("published_version_id").references(() => pageVersions.id, {
-      onDelete: "set null"
+      onDelete: "set null",
     }),
     postedAt: integer("posted_at", { mode: "timestamp" }),
     createdAt: integer("created_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
       .notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
-    deletedAt: integer("deleted_at", { mode: "timestamp" })
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
   },
   (table) => [
     uniqueIndex("pages_slug_active_unique_idx")
       .on(table.slug)
-      .where(sql`deleted_at IS NULL`)
-  ]
+      .where(sql`deleted_at IS NULL`),
+  ],
 );
 
 // 4. Page Drafts
@@ -179,7 +179,7 @@ export const pageDrafts = sqliteTable("page_drafts", {
   updatedBy: text("updated_by").notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
-    .notNull()
+    .notNull(),
 });
 
 // 5. Page Draft Locks
@@ -193,7 +193,7 @@ export const pageDraftLocks = sqliteTable("page_draft_locks", {
   acquiredAt: integer("acquired_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
-  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull()
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
 });
 
 // 6. Page Version Approvals
@@ -209,7 +209,7 @@ export const pageVersionApprovals = sqliteTable("page_version_approvals", {
   userRole: text("user_role").notNull(),
   approvedAt: integer("approved_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
-    .notNull()
+    .notNull(),
 });
 
 // 7. Page Version Comments
@@ -227,7 +227,7 @@ export const pageVersionComments = sqliteTable("page_version_comments", {
   blockId: text("block_id"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
-    .notNull()
+    .notNull(),
 });
 
 // 8. Search
@@ -243,9 +243,9 @@ export const contentSearchIndex = sqliteTable(
       .references(() => pages.id, { onDelete: "cascade" }),
     locale: text("locale").notNull(),
     titleText: text("title_text").notNull(),
-    contentText: text("content_text").notNull()
+    contentText: text("content_text").notNull(),
   },
-  (table) => [index("content_search_index_page_id_idx").on(table.pageId)]
+  (table) => [index("content_search_index_page_id_idx").on(table.pageId)],
 );
 
 // 9. Site Settings
@@ -265,7 +265,7 @@ export const siteSettings = sqliteTable("site_settings", {
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .$onUpdate(() => new Date())
-    .notNull()
+    .notNull(),
 });
 
 // 10. Taxonomies
@@ -281,15 +281,15 @@ export const taxonomyTerms = sqliteTable(
     label: text("label", { mode: "json" }).$type<Localized | string>().notNull(),
     description: text("description", { mode: "json" }).$type<Localized | string>(),
     parentId: text("parent_id").references((): AnySQLiteColumn => taxonomyTerms.id, {
-      onDelete: "cascade"
+      onDelete: "cascade",
     }),
     displayOrder: integer("display_order").default(0).notNull(),
     createdAt: integer("created_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
       .notNull(),
-    updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date())
+    updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
   },
-  (table) => [uniqueIndex("taxonomy_terms_tax_slug_idx").on(table.taxonomy, table.slug)]
+  (table) => [uniqueIndex("taxonomy_terms_tax_slug_idx").on(table.taxonomy, table.slug)],
 );
 
 export const pageTaxonomyTerms = sqliteTable(
@@ -303,9 +303,9 @@ export const pageTaxonomyTerms = sqliteTable(
       .references(() => taxonomyTerms.id, { onDelete: "cascade" }),
     assignedAt: integer("assigned_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
-      .notNull()
+      .notNull(),
   },
-  (table) => [uniqueIndex("page_taxonomy_terms_page_term_idx").on(table.pageId, table.termId)]
+  (table) => [uniqueIndex("page_taxonomy_terms_page_term_idx").on(table.pageId, table.termId)],
 );
 
 // 11. Bylines
@@ -333,9 +333,9 @@ export const bylines = sqliteTable(
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
       .notNull(),
-    deletedAt: integer("deleted_at", { mode: "timestamp" })
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
   },
-  (table) => [uniqueIndex("bylines_slug_idx").on(table.slug)]
+  (table) => [uniqueIndex("bylines_slug_idx").on(table.slug)],
 );
 
 export type Byline = typeof bylines.$inferSelect;
@@ -370,9 +370,9 @@ export const contentTypes = sqliteTable(
       .notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
-      .$onUpdate(() => new Date())
+      .$onUpdate(() => new Date()),
   },
-  (table) => [uniqueIndex("content_types_slug_idx").on(table.slug)]
+  (table) => [uniqueIndex("content_types_slug_idx").on(table.slug)],
 );
 
 export type ContentType = typeof contentTypes.$inferSelect;

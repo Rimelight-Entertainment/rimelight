@@ -47,7 +47,7 @@ function defaultNav(basePath: string): {
       icon: "i-lucide-layout-dashboard",
       label: "Dashboard",
       href: basePath,
-      id: "dashboard"
+      id: "dashboard",
     },
     groups: [
       {
@@ -58,9 +58,9 @@ function defaultNav(basePath: string): {
             icon: "i-lucide-layout-template",
             label: "Templates",
             href: `${basePath}/templates`,
-            id: "templates"
-          }
-        ]
+            id: "templates",
+          },
+        ],
       },
       {
         title: "Manage",
@@ -70,22 +70,22 @@ function defaultNav(basePath: string): {
             icon: "i-lucide-folder",
             label: "Categories",
             href: `${basePath}/categories`,
-            id: "categories"
+            id: "categories",
           },
           { icon: "i-lucide-tag", label: "Tags", href: `${basePath}/tags`, id: "tags" },
           {
             icon: "i-lucide-pen-tool",
             label: "Bylines",
             href: `${basePath}/bylines`,
-            id: "bylines"
+            id: "bylines",
           },
           {
             icon: "i-lucide-git-branch",
             label: "Versions",
             href: `${basePath}/versions`,
-            id: "versions"
-          }
-        ]
+            id: "versions",
+          },
+        ],
       },
       {
         title: "Admin",
@@ -94,24 +94,24 @@ function defaultNav(basePath: string): {
             icon: "i-lucide-database",
             label: "Content Types",
             href: `${basePath}/content-types`,
-            id: "content-types"
+            id: "content-types",
           },
           {
             icon: "i-lucide-file-cog",
             label: "Byline Schema",
             href: `${basePath}/byline-schema`,
-            id: "byline-schema"
+            id: "byline-schema",
           },
-          { icon: "i-lucide-users", label: "Users", href: `${basePath}/users`, id: "users" }
-        ]
-      }
+          { icon: "i-lucide-users", label: "Users", href: `${basePath}/users`, id: "users" },
+        ],
+      },
     ],
     settings: {
       icon: "i-lucide-settings",
       label: "Settings",
       href: `${basePath}/settings`,
-      id: "settings"
-    }
+      id: "settings",
+    },
   };
 }
 
@@ -139,7 +139,7 @@ export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) =>
         "min-height": "4rem",
         display: "flex",
         "align-items": "center",
-        gap: "0.75rem"
+        gap: "0.75rem",
       }}
     >
       <RLIcon

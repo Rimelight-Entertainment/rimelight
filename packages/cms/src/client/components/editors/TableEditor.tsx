@@ -12,7 +12,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
   const columns = (): TableColumnDef[] =>
     componentProps.props["columns"] || [
       { key: "col1", header: "Header 1", align: "left" },
-      { key: "col2", header: "Header 2", align: "left" }
+      { key: "col2", header: "Header 2", align: "left" },
     ];
 
   const rows = (): Record<string, string>[] =>
@@ -23,7 +23,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
       ...componentProps.props,
       columns: newCols,
       rows: newRows,
-      caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
+      caption: caption !== undefined ? caption : componentProps.props["caption"] || "",
     });
   };
 
@@ -59,7 +59,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
     if (rows().length <= 1) return;
     save(
       columns(),
-      rows().filter((_, i) => i !== rowIdx)
+      rows().filter((_, i) => i !== rowIdx),
     );
   };
 

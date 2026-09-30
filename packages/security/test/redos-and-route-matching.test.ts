@@ -12,17 +12,17 @@ describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
         path: evilPath,
         method: "GET",
         raw: { headers: new Headers() },
-        url: "http://localhost" + evilPath
+        url: "http://localhost" + evilPath,
       },
       env: {
         CONSTRUCTION_MODE: "true",
-        CONSTRUCTION_PASSPHRASE: "secret"
+        CONSTRUCTION_PASSPHRASE: "secret",
       },
       redirect: () => {
         redirected = true;
         return { status: 302 };
       },
-      json: () => {}
+      json: () => {},
     };
 
     const startTime = Date.now();
@@ -45,14 +45,14 @@ describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
         path: evilPath,
         method: "GET",
         raw: { headers: new Headers() },
-        url: "http://localhost" + evilPath
+        url: "http://localhost" + evilPath,
       },
       env: {
         CONSTRUCTION_MODE: "true",
-        CONSTRUCTION_PASSPHRASE: "secret"
+        CONSTRUCTION_PASSPHRASE: "secret",
       },
       redirect: () => ({ status: 302 }),
-      json: () => {}
+      json: () => {},
     };
 
     const startTime = Date.now();
@@ -64,7 +64,7 @@ describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
   it("evaluates guest cookie verification correctly", async () => {
     const mockContext = {
       req: { raw: { headers: new Headers() } },
-      env: { CONSTRUCTION_PASSPHRASE: "pass" }
+      env: { CONSTRUCTION_PASSPHRASE: "pass" },
     };
     const isGuest = await isConstructionGuest(mockContext);
     expect(isGuest).toBe(false);

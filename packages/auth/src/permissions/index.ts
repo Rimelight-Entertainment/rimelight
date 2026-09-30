@@ -6,11 +6,11 @@ import type { UserSessionContext } from "../types";
 
 export function hasRole(
   session: UserSessionContext | null | undefined,
-  requiredRoles: string | string[]
+  requiredRoles: string | string[],
 ): boolean {
   if (!session || !session.roles || session.roles.length === 0) return false;
   const normalized = (Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles]).map((r) =>
-    r.toLowerCase()
+    r.toLowerCase(),
   );
   if (normalized.includes("*")) return true;
   return session.roles.some((r) => normalized.includes(r.toLowerCase()));
@@ -18,7 +18,7 @@ export function hasRole(
 
 export function hasPermission(
   session: UserSessionContext | null | undefined,
-  requiredPermission: string
+  requiredPermission: string,
 ): boolean {
   if (!session || !session.permissions || session.permissions.length === 0) return false;
   if (session.permissions.includes("*") || session.permissions.includes("admin")) return true;
@@ -30,7 +30,7 @@ export function hasPermission(
 
 export function evaluateAccess(
   session: UserSessionContext | null | undefined,
-  constraints: { roles?: string[]; permission?: string }
+  constraints: { roles?: string[]; permission?: string },
 ): boolean {
   if (constraints.roles && constraints.roles.length > 0) {
     if (!hasRole(session, constraints.roles)) return false;
@@ -60,7 +60,7 @@ export class AccessControl<TStatements extends StatementMap> {
   }
 
   newRole(
-    permissions: Partial<{ [K in keyof TStatements]: (TStatements[K][number] | "*")[] }>
+    permissions: Partial<{ [K in keyof TStatements]: (TStatements[K][number] | "*")[] }>,
   ): AccessRole<TStatements> {
     const stmts = permissions;
     return {
@@ -68,29 +68,29 @@ export class AccessControl<TStatements extends StatementMap> {
       can(statement: string, action: string): boolean {
         const allowed = (stmts as any)[statement] ?? [];
         return allowed.includes(action) || allowed.includes("*");
-      }
+      },
     };
   }
 }
 
 export function createAccessControl<const TStatements extends StatementMap>(
-  statements: TStatements
+  statements: TStatements,
 ): AccessControl<TStatements> {
   return new AccessControl(statements);
 }
 
 export const defaultStatements = {
-  user: ["create", "list", "set-role", "ban", "impersonate", "delete", "setRole"] as const
+  user: ["create", "list", "set-role", "ban", "impersonate", "delete", "setRole"] as const,
 } satisfies StatementMap;
 
 export const ownerAc = {
-  statements: { user: ["create", "list", "set-role", "ban", "impersonate", "delete", "setRole"] }
+  statements: { user: ["create", "list", "set-role", "ban", "impersonate", "delete", "setRole"] },
 };
 export const adminAc = {
-  statements: { user: ["create", "list", "set-role", "ban", "impersonate", "delete", "setRole"] }
+  statements: { user: ["create", "list", "set-role", "ban", "impersonate", "delete", "setRole"] },
 };
 export const memberAc = {
-  statements: { user: ["create", "list"] }
+  statements: { user: ["create", "list"] },
 };
 
 export function createPermissions<const TStatements extends StatementMap>(statements: TStatements) {

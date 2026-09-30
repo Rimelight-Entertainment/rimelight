@@ -11,7 +11,7 @@ import {
   RLLayoutGrid,
   RLToaster,
   RLToast,
-  RLButton
+  RLButton,
 } from "@rimelight/ui";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
@@ -64,7 +64,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
           class="bg-primary text-neutral-50 font-medium"
           actions={[
             { label: "Learn more", href: "/docs", variant: "solid" },
-            { label: "What's new", href: "/changelog", variant: "outline" }
+            { label: "What's new", href: "/changelog", variant: "outline" },
           ]}
         >
           New: Rimelight v2 is out

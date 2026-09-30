@@ -9,7 +9,7 @@ import {
   RLScrollToTop,
   RLShortcuts,
   RLLayoutGrid,
-  RLToaster
+  RLToaster,
 } from "@rimelight/ui";
 
 export interface DashboardLayoutProps {
@@ -38,7 +38,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
             class="bg-primary text-neutral-50 font-medium"
             actions={[
               { label: "Learn more", href: "/docs", variant: "solid" },
-              { label: "What's new", href: "/changelog", variant: "outline" }
+              { label: "What's new", href: "/changelog", variant: "outline" },
             ]}
           >
             New: Rimelight v2 is out

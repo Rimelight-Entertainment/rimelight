@@ -7,7 +7,7 @@ describe("@rimelight/cli - JSONC Parser Fuzz and Strict Recovery", () => {
     expect(parseJsonc(input)).toEqual({
       name: "@rimelight/starter",
       version: "1.0.0",
-      active: true
+      active: true,
     });
   });
 

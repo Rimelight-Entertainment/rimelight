@@ -3,8 +3,8 @@ import { defineTheme } from "../../resolver";
 export const fieldsetTheme = defineTheme("fieldset", {
   slots: ["root"],
   base: {
-    root: ""
+    root: "",
   },
   variants: {},
-  defaultVariants: {}
+  defaultVariants: {},
 });

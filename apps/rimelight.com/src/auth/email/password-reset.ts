@@ -19,6 +19,6 @@ export async function sendPasswordResetEmail({ user, url, locale }: PasswordRese
     to: user.email,
     subject,
     text: `${messages.passwordReset.description} ${url}`,
-    html
+    html,
   });
 }

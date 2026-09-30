@@ -33,7 +33,7 @@ export const PagesEditPage: Component<PagesEditPageProps> = (props) => {
       const res = await fetch(`${apiBase()}/pages/${props.pageId}/draft`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: { blocks: initialBlocks(), properties: {} } })
+        body: JSON.stringify({ content: { blocks: initialBlocks(), properties: {} } }),
       });
       if (!res.ok) throw new Error(`Save failed (${res.status})`);
       setStatus("Draft saved");
@@ -54,8 +54,8 @@ export const PagesEditPage: Component<PagesEditPageProps> = (props) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: { blocks: initialBlocks(), properties: {} },
-          changeSummary: "Published from CMS admin"
-        })
+          changeSummary: "Published from CMS admin",
+        }),
       });
       if (!res.ok) throw new Error(`Publish failed (${res.status})`);
       setStatus("Published");

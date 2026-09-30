@@ -11,13 +11,13 @@ describe("cfAccessAuth Adapter", () => {
   it("resolves session from cf-access-authenticated-user-email header", async () => {
     const adapter = cfAccessAuth({
       adminEmails: ["admin@idantity.me"],
-      defaultRole: "admin"
+      defaultRole: "admin",
     });
 
     const req = new Request("https://idantity.me/cms", {
       headers: {
-        "cf-access-authenticated-user-email": "admin@idantity.me"
-      }
+        "cf-access-authenticated-user-email": "admin@idantity.me",
+      },
     });
 
     const session = await adapter.getSession(req);
@@ -32,13 +32,13 @@ describe("cfAccessAuth Adapter", () => {
   it("assigns viewer role if email is not in adminEmails list", async () => {
     const adapter = cfAccessAuth({
       adminEmails: ["owner@idantity.me"],
-      defaultRole: "admin"
+      defaultRole: "admin",
     });
 
     const req = new Request("https://idantity.me/cms", {
       headers: {
-        "cf-access-authenticated-user-email": "guest@example.com"
-      }
+        "cf-access-authenticated-user-email": "guest@example.com",
+      },
     });
 
     const session = await adapter.getSession(req);

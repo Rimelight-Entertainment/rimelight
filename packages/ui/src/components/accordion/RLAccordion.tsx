@@ -128,7 +128,7 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     "content",
     "body",
     "slots",
-    "onChange"
+    "onChange",
   );
 
   const valueKey = () => props.valueKey ?? "value";
@@ -146,10 +146,10 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
   // `name` renders only when explicitly passed (native grouping opt-in).
 
   const [internalSingle, setInternalSingle] = createSignal<string | undefined>(
-    normalizeSingle(props.defaultValue)
+    normalizeSingle(props.defaultValue),
   );
   const [internalMultiple, setInternalMultiple] = createSignal<string[]>(
-    normalizeMultiple(props.defaultValue)
+    normalizeMultiple(props.defaultValue),
   );
 
   // NOTE: no createEffect syncing props.value -> internal signals. Effects are
@@ -159,10 +159,10 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
   // from controlled back to uncontrolled keeps the last controlled value as
   // its uncontrolled seed — acceptable; RLTabs keeps an effect for that edge.)
   const currentSingle = createMemo((): string | undefined =>
-    !isMultiple() && props.value !== undefined ? normalizeSingle(props.value) : internalSingle()
+    !isMultiple() && props.value !== undefined ? normalizeSingle(props.value) : internalSingle(),
   );
   const currentMultiple = createMemo((): string[] =>
-    isMultiple() && props.value !== undefined ? normalizeMultiple(props.value) : internalMultiple()
+    isMultiple() && props.value !== undefined ? normalizeMultiple(props.value) : internalMultiple(),
   );
 
   const isOpen = (itemVal: string): boolean =>
@@ -203,8 +203,8 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     accordionTheme({
       disabled: props.disabled ? true : false,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const defaultTrailingIcon = () => props.trailingIcon ?? "chevronDown";
@@ -293,7 +293,7 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
         const itemTheme = () =>
           accordionTheme({
             disabled: disabled(),
-            ui: mergeUi(props.ui, item.ui, item.class)
+            ui: mergeUi(props.ui, item.ui, item.class),
           });
         const open = () => isOpen(val());
         return (

@@ -56,7 +56,7 @@ docs.post("/metadata/extract", async (c) => {
       props,
       slots,
       emits,
-      theme: {}
+      theme: {},
     };
 
     const result = await db
@@ -71,8 +71,8 @@ docs.post("/metadata/extract", async (c) => {
           slots: record.slots,
           emits: record.emits,
           theme: record.theme,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       })
       .returning();
 
@@ -142,8 +142,8 @@ docs.post("/render", async (c) => {
         framework,
         height,
         width,
-        error: null
-      }
+        error: null,
+      },
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 500);

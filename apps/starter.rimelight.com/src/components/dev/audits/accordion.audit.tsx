@@ -9,26 +9,26 @@ const BASE_ITEMS: AccordionItem[] = [
     label: "What is Rimelight UI?",
     icon: "i-lucide-sparkles",
     content:
-      "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS and Astro."
+      "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS and Astro.",
   },
   {
     label: "How does Accordion grouping work?",
     icon: "i-lucide-folder-tree",
     content:
-      "When `multiple={false}`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS."
+      "When `multiple={false}`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
   },
   {
     label: "Can items be individually disabled?",
     icon: "i-lucide-shield-alert",
     disabled: true,
-    content: "This item is disabled (disabled: true) and should not respond to user clicks."
+    content: "This item is disabled (disabled: true) and should not respond to user clicks.",
   },
   {
     label: "Custom trailing icon support",
     icon: "i-lucide-settings",
     trailingIcon: "i-lucide-arrow-down-circle",
-    content: "This item overrides the default chevron trailing icon."
-  }
+    content: "This item overrides the default chevron trailing icon.",
+  },
 ];
 
 export const AccordionSandbox = (): JSX.Element => {
@@ -46,7 +46,7 @@ export const AccordionSandbox = (): JSX.Element => {
         res.trailingIcon = "i-lucide-plus";
       }
       return res;
-    })
+    }),
   );
 
   return (
@@ -146,7 +146,7 @@ export const accordionAudit: ComponentAuditDefinition = {
             </div>
           </div>
         </RLAccordion>
-      )
+      ),
     },
     {
       id: "custom-icons",
@@ -160,18 +160,18 @@ export const accordionAudit: ComponentAuditDefinition = {
               label: "Security & Permissions",
               icon: "i-lucide-shield-check",
               trailingIcon: "i-lucide-lock",
-              content: "Role-based access controls and token expirations."
+              content: "Role-based access controls and token expirations.",
             },
             {
               label: "Payment & Invoices",
               icon: "i-lucide-credit-card",
               trailingIcon: "i-lucide-external-link",
-              content: "Subscription management, payment gateways, and tax history."
-            }
+              content: "Subscription management, payment gateways, and tax history.",
+            },
           ]}
           multiple
         />
-      )
+      ),
     },
     {
       id: "disabled-handling",
@@ -184,22 +184,22 @@ export const accordionAudit: ComponentAuditDefinition = {
             {
               label: "Enabled Section 1",
               icon: "i-lucide-check",
-              content: "Can be opened and closed freely."
+              content: "Can be opened and closed freely.",
             },
             {
               label: "Disabled Section 2 (disabled: true)",
               icon: "i-lucide-ban",
               disabled: true,
-              content: "Should not be clickable or expandable."
+              content: "Should not be clickable or expandable.",
             },
             {
               label: "Enabled Section 3",
               icon: "i-lucide-check",
-              content: "Another enabled section."
-            }
+              content: "Another enabled section.",
+            },
           ]}
         />
-      )
+      ),
     },
     {
       id: "multiple-mode",
@@ -214,21 +214,21 @@ export const accordionAudit: ComponentAuditDefinition = {
             {
               label: "Icons",
               icon: "i-lucide-smile",
-              content: "You have nothing to do, @nuxt/icon will handle it automatically."
+              content: "You have nothing to do, @nuxt/icon will handle it automatically.",
             },
             {
               label: "Colors",
               icon: "i-lucide-swatch-book",
-              content: "Choose a primary and a neutral color from your Tailwind CSS theme."
+              content: "Choose a primary and a neutral color from your Tailwind CSS theme.",
             },
             {
               label: "Components",
               icon: "i-lucide-box",
-              content: "Customize via the `class` / `ui` props or in your app config."
-            }
+              content: "Customize via the `class` / `ui` props or in your app config.",
+            },
           ]}
         />
-      )
+      ),
     },
     {
       id: "single-exclusive-grouping",
@@ -241,18 +241,18 @@ export const accordionAudit: ComponentAuditDefinition = {
             name="audit-group-a"
             items={[
               { label: "Group A — Item 1", content: "First item of group A." },
-              { label: "Group A — Item 2", content: "Second item of group A." }
+              { label: "Group A — Item 2", content: "Second item of group A." },
             ]}
           />
           <RLAccordion
             name="audit-group-b"
             items={[
               { label: "Group B — Item 1", content: "First item of group B." },
-              { label: "Group B — Item 2", content: "Second item of group B." }
+              { label: "Group B — Item 2", content: "Second item of group B." },
             ]}
           />
         </>
-      )
+      ),
     },
     {
       id: "trailing-icon-prop",
@@ -266,17 +266,17 @@ export const accordionAudit: ComponentAuditDefinition = {
             {
               label: "Global plus icon",
               icon: "i-lucide-smile",
-              content: "Uses the root trailingIcon."
+              content: "Uses the root trailingIcon.",
             },
             {
               label: "Per-item override wins",
               icon: "i-lucide-swatch-book",
               trailingIcon: "i-lucide-arrow-down",
-              content: "Uses its own trailingIcon."
-            }
+              content: "Uses its own trailingIcon.",
+            },
           ]}
         />
-      )
+      ),
     },
     {
       id: "root-disabled",
@@ -288,10 +288,10 @@ export const accordionAudit: ComponentAuditDefinition = {
           disabled
           items={[
             { label: "Section 1", content: "Should not be clickable." },
-            { label: "Section 2", content: "Should not be clickable." }
+            { label: "Section 2", content: "Should not be clickable." },
           ]}
         />
-      )
+      ),
     },
     {
       id: "per-item-ui-override",
@@ -305,11 +305,11 @@ export const accordionAudit: ComponentAuditDefinition = {
             {
               label: "Item with ui override",
               content: "This label is styled by item.ui.",
-              ui: { label: "text-rose-500 font-black" }
-            }
+              ui: { label: "text-rose-500 font-black" },
+            },
           ]}
         />
-      )
+      ),
     },
     {
       id: "controlled-value",
@@ -351,12 +351,12 @@ export const accordionAudit: ComponentAuditDefinition = {
               items={[
                 { label: "Controlled 0", value: "0", content: "First panel." },
                 { label: "Controlled 1", value: "1", content: "Second panel." },
-                { label: "Controlled 2", value: "2", content: "Third panel." }
+                { label: "Controlled 2", value: "2", content: "Third panel." },
               ]}
             />
           </>
         );
-      }
+      },
     },
     {
       id: "default-value",
@@ -369,10 +369,10 @@ export const accordionAudit: ComponentAuditDefinition = {
           items={[
             { label: "Item 0", value: "0", content: "Starts closed." },
             { label: "Item 1", value: "1", content: "Starts open via defaultValue." },
-            { label: "Item 2", value: "2", content: "Starts closed." }
+            { label: "Item 2", value: "2", content: "Starts closed." },
           ]}
         />
-      )
+      ),
     },
     {
       id: "type-multiple",
@@ -386,10 +386,10 @@ export const accordionAudit: ComponentAuditDefinition = {
           items={[
             { label: "M0 open", value: "m0", content: "Starts open." },
             { label: "M1 closed", value: "m1", content: "Starts closed." },
-            { label: "M2 open", value: "m2", content: "Starts open." }
+            { label: "M2 open", value: "m2", content: "Starts open." },
           ]}
         />
-      )
+      ),
     },
     {
       id: "collapsible-false",
@@ -402,10 +402,10 @@ export const accordionAudit: ComponentAuditDefinition = {
           defaultValue="c0"
           items={[
             { label: "Pinned open at start", value: "c0", content: "Clicking me keeps me open." },
-            { label: "Switch target", value: "c1", content: "Clicking me switches here." }
+            { label: "Switch target", value: "c1", content: "Clicking me switches here." },
           ]}
         />
-      )
+      ),
     },
     {
       id: "unmount-behavior",
@@ -424,12 +424,12 @@ export const accordionAudit: ComponentAuditDefinition = {
               {
                 label: "Collapsed but mounted",
                 value: "u1",
-                content: "This node exists in the DOM even while collapsed."
-              }
+                content: "This node exists in the DOM even while collapsed.",
+              },
             ]}
           />
         </>
-      )
+      ),
     },
     {
       id: "value-label-keys",
@@ -442,10 +442,10 @@ export const accordionAudit: ComponentAuditDefinition = {
           defaultValue="k2"
           items={[
             { meta: { key: "k1", title: "Nested one" }, content: "Resolved via dot paths." },
-            { meta: { key: "k2", title: "Nested two (open)" }, content: "Starts open." }
+            { meta: { key: "k2", title: "Nested two (open)" }, content: "Starts open." },
           ]}
         />
-      )
+      ),
     },
     {
       id: "render-slots",
@@ -481,10 +481,10 @@ export const accordionAudit: ComponentAuditDefinition = {
           items={[
             { label: "Alpha", content: "first" },
             { label: "Beta", content: "second" },
-            { label: "Gamma", content: "third" }
+            { label: "Gamma", content: "third" },
           ]}
         />
-      )
+      ),
     },
     {
       id: "named-item-slot",
@@ -496,14 +496,14 @@ export const accordionAudit: ComponentAuditDefinition = {
           type="multiple"
           defaultValue={["s0", "s1"]}
           slots={{
-            featured: (item) => <p class="text-sm text-primary font-medium">{item.content} ★</p>
+            featured: (item) => <p class="text-sm text-primary font-medium">{item.content} ★</p>,
           }}
           items={[
             { label: "Standard", value: "s0", content: "Default body." },
-            { label: "Featured", value: "s1", slot: "featured", content: "Named slot body." }
+            { label: "Featured", value: "s1", slot: "featured", content: "Named slot body." },
           ]}
         />
-      )
+      ),
     },
     {
       id: "nested-accordions",
@@ -517,147 +517,147 @@ export const accordionAudit: ComponentAuditDefinition = {
             items={[
               {
                 label: "Sub-Section A",
-                content: "Nested child accordion item A content."
+                content: "Nested child accordion item A content.",
               },
               {
                 label: "Sub-Section B",
-                content: "Nested child accordion item B content."
-              }
+                content: "Nested child accordion item B content.",
+              },
             ]}
           />
         </RLAccordion>
-      )
-    }
+      ),
+    },
   ],
   checklist: [
     {
       criterion: "Native HTML5 <details> and <summary> semantics",
       status: "pass",
-      notes: "Zero JS required for basic open/close toggling."
+      notes: "Zero JS required for basic open/close toggling.",
     },
     {
       criterion: "Single-item exclusive open grouping",
       status: "pass",
       notes:
-        "Enforced by component state (toggleValue), not native grouping. No auto name: identical accordions previously merged into one native group and fought Solid state (all-closed). name renders only when explicitly passed."
+        "Enforced by component state (toggleValue), not native grouping. No auto name: identical accordions previously merged into one native group and fought Solid state (all-closed). name renders only when explicitly passed.",
     },
     {
       criterion: "Keyboard navigation (Space/Enter to toggle, Tab to focus)",
       status: "pass",
-      notes: "Native browser summary keyboard accessibility preserved."
+      notes: "Native browser summary keyboard accessibility preserved.",
     },
     {
       criterion: "Disabled item state and accessibility",
       status: "pass",
       notes:
-        "Theme disabled variant + aria-disabled; clicks (mouse and keyboard) are intercepted so disabled items never toggle."
+        "Theme disabled variant + aria-disabled; clicks (mouse and keyboard) are intercepted so disabled items never toggle.",
     },
     {
       criterion: "Design tokens & theme slot consistency",
       status: "pass",
       notes:
-        "Slots: root, item, trigger, content, body, leadingIcon, trailingIcon, label. (header removed: a wrapper div would break native <summary> toggling.)"
+        "Slots: root, item, trigger, content, body, leadingIcon, trailingIcon, label. (header removed: a wrapper div would break native <summary> toggling.)",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML in RLAccordion",
       status: "pass",
       notes:
-        "Item label/content render as Solid children. (RLIcon itself uses innerHTML for SVG icons — tracked in the Icon audit.)"
+        "Item label/content render as Solid children. (RLIcon itself uses innerHTML for SVG icons — tracked in the Icon audit.)",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
       status: "pass",
       notes:
-        "No style prop or <style> in the component; all visuals resolve via accordion.theme.ts."
+        "No style prop or <style> in the component; all visuals resolve via accordion.theme.ts.",
     },
     {
       criterion: "No Uno/CSS class strings inside the component file",
       status: "pass",
       notes:
-        "Zero cx/concatenation in the component: disabled flows through the theme variant, item.class folds into mergeUi as a ui.item entry, icons render via RLIcon."
+        "Zero cx/concatenation in the component: disabled flows through the theme variant, item.class folds into mergeUi as a ui.item entry, icons render via RLIcon.",
     },
     {
       criterion: "No hydration mismatch (keys + auto group name)",
       status: "pass",
       notes:
-        "Data-derived name hash (no random/child-id consumption); render path uses plain tags + ternaries only — no <Show>/<Dynamic>/effects, no per-row memos. as still works via isolated <Dynamic> branches."
+        "Data-derived name hash (no random/child-id consumption); render path uses plain tags + ternaries only — no <Show>/<Dynamic>/effects, no per-row memos. as still works via isolated <Dynamic> branches.",
     },
     {
       criterion: "Summary disclosure marker hidden cross-browser",
       status: "pass",
       notes:
-        "Was webkit-only; added [&::marker]:hidden so Firefox shows no stray triangle offsetting the label."
+        "Was webkit-only; added [&::marker]:hidden so Firefox shows no stray triangle offsetting the label.",
     },
     {
       criterion: "Controlled value (Nuxt: v-model / update:modelValue)",
       status: "pass",
       notes:
-        "value + defaultValue + onChange implemented (Solid idiom per RLTabs). Item value falls back to index string. See controlled-value scenario."
+        "value + defaultValue + onChange implemented (Solid idiom per RLTabs). Item value falls back to index string. See controlled-value scenario.",
     },
     {
       criterion: "Non-collapsible single mode (Nuxt: collapsible={false})",
       status: "pass",
-      notes: "Implemented; active trigger clicks are swallowed. See collapsible-false scenario."
+      notes: "Implemented; active trigger clicks are swallowed. See collapsible-false scenario.",
     },
     {
       criterion: "Slots: leading / trailing / content / body + per-item slot",
       status: "pass",
       notes:
-        "Render props map to Nuxt #leading #trailing #content #body; slots record + item.slot maps to #{{ item.slot }}(-body). See render-slots + named-item-slot scenarios."
+        "Render props map to Nuxt #leading #trailing #content #body; slots record + item.slot maps to #{{ item.slot }}(-body). See render-slots + named-item-slot scenarios.",
     },
     {
       criterion: "Per-item class / ui overrides",
       status: "pass",
       notes:
-        "item.class folds into mergeUi as ui.item; item.ui merges per slot over root ui. See per-item-ui-override scenario."
+        "item.class folds into mergeUi as ui.item; item.ui merges per slot over root ui. See per-item-ui-override scenario.",
     },
     {
       criterion: 'Single/multiple API shape (Nuxt: type="single" | "multiple")',
       status: "pass",
       notes:
-        "type union implemented; boolean multiple kept as Rimelight alias (type wins when set)."
+        "type union implemented; boolean multiple kept as Rimelight alias (type wins when set).",
     },
     {
       criterion: "Unmount-on-hide semantics (Nuxt default true)",
       status: "pass",
       notes:
-        "unmountOnHide implemented, defaults true via <Show>. See unmount-behavior matrix scenario."
+        "unmountOnHide implemented, defaults true via <Show>. See unmount-behavior matrix scenario.",
     },
     {
       criterion: "valueKey / labelKey + as prop",
       status: "pass",
       notes:
-        "Both keys implemented with dot-path support; as renders via dynamic() (div default in items mode, details default in summary mode). See value-label-keys scenario."
+        "Both keys implemented with dot-path support; as renders via dynamic() (div default in items mode, details default in summary mode). See value-label-keys scenario.",
     },
     {
       criterion: "Solid 2 strict-mode clean (no STRICT_READ_UNTRACKED)",
       status: "pass",
       notes:
-        "Sandbox items derivation moved into createMemo; component reads signals only in JSX/memos, handler snapshots via untrack()."
+        "Sandbox items derivation moved into createMemo; component reads signals only in JSX/memos, handler snapshots via untrack().",
     },
     {
       criterion: "Audited component renders bare (no harness wrappers)",
       status: "pass",
       notes:
-        "Scenario renders return <RLAccordion/> directly (fragments only for multi-root); shell cards excluded from this criterion."
+        "Scenario renders return <RLAccordion/> directly (fragments only for multi-root); shell cards excluded from this criterion.",
     },
     {
       criterion: "Disabled visuals match Nuxt theme",
       status: "warn",
       notes:
-        "Uses opacity-50, Nuxt uses opacity-75. aria-disabled is now emitted; summary stays focusable (clicks blocked for mouse and keyboard)."
+        "Uses opacity-50, Nuxt uses opacity-75. aria-disabled is now emitted; summary stays focusable (clicks blocked for mouse and keyboard).",
     },
     {
       criterion: "v-model naming (Nuxt: modelValue)",
       status: "warn",
       notes:
-        "Intentional mapping: Solid codebase idiom is value + onChange (RLTabs precedent), not modelValue / update:modelValue. Document the mapping."
+        "Intentional mapping: Solid codebase idiom is value + onChange (RLTabs precedent), not modelValue / update:modelValue. Document the mapping.",
     },
     {
       criterion: "Open/close keyframe animations (Nuxt content slot)",
       status: "warn",
       notes:
-        "Not implemented: no accordion-down/up keyframes exist in the Uno preset. Needs preset-level keyframes (permission-gated CSS work)."
-    }
-  ]
+        "Not implemented: no accordion-down/up keyframes exist in the Uno preset. Needs preset-level keyframes (permission-gated CSS work).",
+    },
+  ],
 };

@@ -38,7 +38,7 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
     "wrapper",
     "onChange",
     "onNext",
-    "onPrev"
+    "onPrev",
   );
 
   const items = (): StepperItem[] => props.items ?? [];
@@ -85,8 +85,8 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
       color: props.color ?? "primary",
       orientation: props.orientation ?? "horizontal",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

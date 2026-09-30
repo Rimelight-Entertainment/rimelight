@@ -6,13 +6,13 @@ import {
   For,
   Show,
   onSettled,
-  type Component
+  type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type {
   NavigationMenuItem,
   NavigationMenuChildItem,
-  NavigationMenuProps
+  NavigationMenuProps,
 } from "./navigation-menu";
 import { navigationMenuTheme } from "./navigation-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
@@ -39,8 +39,8 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
       color: props.color ?? "primary",
       orientation: orientation(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const resolvedChildren = resolveChildren(() => props.children);

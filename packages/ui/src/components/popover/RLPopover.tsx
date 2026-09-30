@@ -23,7 +23,7 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
     "class",
     "children",
     "trigger",
-    "onOpenChange"
+    "onOpenChange",
   );
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
@@ -62,8 +62,8 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
       size: props.size ?? "md",
       placement: props.placement ?? "bottom",
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

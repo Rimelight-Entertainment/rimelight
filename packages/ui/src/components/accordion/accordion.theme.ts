@@ -12,14 +12,14 @@ export const accordionTheme = defineTheme("accordion", {
     leadingIcon: "shrink-0 size-5 text-astro-gray-300",
     trailingIcon:
       "shrink-0 size-5 ms-auto rotate-0 transition-transform duration-200 group-open:rotate-180 text-astro-gray-300",
-    label: "text-start break-words text-astro-gray-100"
+    label: "text-start break-words text-astro-gray-100",
   },
   variants: {
     disabled: {
       true: {
-        trigger: "pointer-events-none cursor-not-allowed opacity-50 select-none"
-      }
-    }
+        trigger: "pointer-events-none cursor-not-allowed opacity-50 select-none",
+      },
+    },
   },
-  defaultVariants: {}
+  defaultVariants: {},
 });

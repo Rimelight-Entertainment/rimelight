@@ -14,8 +14,8 @@ const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     dashboardGroupTheme({
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh

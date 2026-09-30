@@ -38,7 +38,7 @@ export function isContained(rootDir: string, requestedPath: string): boolean {
 function createDefaultIconSvg(
   name = "App",
   background = "#0a0a0a",
-  foreground = "#ffffff"
+  foreground = "#ffffff",
 ): string {
   const initial = (name.trim()[0] || "A").toUpperCase();
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
@@ -78,7 +78,7 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
           siteOpt.name ||
           "Logo",
         ...siteOpt.branding?.logo,
-        ...options.branding?.logo
+        ...options.branding?.logo,
       },
       colors: {
         themeColor:
@@ -86,10 +86,10 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
         backgroundColor:
           options.branding?.colors?.backgroundColor ||
           siteOpt.branding?.colors?.backgroundColor ||
-          "#0a0a0a"
+          "#0a0a0a",
       },
       ...siteOpt.branding,
-      ...options.branding
+      ...options.branding,
     },
     seo: {
       ...siteOpt.seo,
@@ -99,14 +99,14 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
         (options.name ? `%s | ${options.name}` : "%s | Rimelight"),
       maxDescriptionLength:
         options.maxDescriptionLength || siteOpt.seo?.maxDescriptionLength || 160,
-      ...(authorHandle !== undefined && { authorHandle })
+      ...(authorHandle !== undefined && { authorHandle }),
     },
     ...(siteOpt.openGraph || options.openGraph
       ? { openGraph: { ...siteOpt.openGraph, ...options.openGraph } }
       : {}),
     ...(siteOpt.twitter || options.twitter
       ? { twitter: { ...siteOpt.twitter, ...options.twitter } }
-      : {})
+      : {}),
   };
 
   const seoLocales = options.locales;
@@ -181,7 +181,7 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
           "src/assets/icon.svg",
           "src/assets/logo.svg",
           "src/assets/icon.png",
-          "public/favicon.svg"
+          "public/favicon.svg",
         ]);
 
         if (masterIconPath && fs.existsSync(masterIconPath)) {
@@ -196,7 +196,7 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
         masterIconSource = createDefaultIconSvg(
           normalizedSiteConfig.name,
           bgColor,
-          normalizedSiteConfig.branding.colors.themeColor || "#ffffff"
+          normalizedSiteConfig.branding.colors.themeColor || "#ffffff",
         );
         isSvg = true;
       }
@@ -243,7 +243,7 @@ export default siteConfig;`;
         const corpusPath = findFile([
           "src/config/llms.corpus.ts",
           "src/config/llms.corpus.js",
-          "src/config/llms.corpus.mjs"
+          "src/config/llms.corpus.mjs",
         ]);
         const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
 
@@ -286,7 +286,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
         const corpusPath = findFile([
           "src/config/llms.corpus.ts",
           "src/config/llms.corpus.js",
-          "src/config/llms.corpus.mjs"
+          "src/config/llms.corpus.mjs",
         ]);
         if (corpusPath) return `export * from ${JSON.stringify(corpusPath)};`;
         return `export const corpusPages = [];`;
@@ -305,7 +305,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
           const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
           const robotsTxt = buildRobotsTxt({
             sitemapUrl: `${siteUrl.replace(/\/$/, "")}/sitemap.xml`,
-            ...robotsOpts
+            ...robotsOpts,
           });
           res.setHeader("Content-Type", "text/plain; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -331,7 +331,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
                         ? options.locales
                         : { en: "en" },
                     defaultLocale: "en",
-                    prefixDefaultLocale: false
+                    prefixDefaultLocale: false,
                   });
             if (entries.length > 0 && locCfg) {
               urls = buildSitemapUrls(entries, locCfg as any);
@@ -350,7 +350,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
         if (rawUrl === "/sitemap-index.xml" && options.sitemap !== false) {
           const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
           const sitemapIndexXml = buildSitemapIndexXml([
-            `${siteUrl.replace(/\/$/, "")}/sitemap.xml`
+            `${siteUrl.replace(/\/$/, "")}/sitemap.xml`,
           ]);
           res.setHeader("Content-Type", "application/xml; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -368,7 +368,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
             title: rssOpts.title || normalizedSiteConfig.name,
             description: rssOpts.description || normalizedSiteConfig.description,
             site: rssOpts.site || normalizedSiteConfig.url,
-            items
+            items,
           });
           res.setHeader("Content-Type", "application/xml; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -385,7 +385,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
             title: llmsOpts.title || normalizedSiteConfig.name,
             description: llmsOpts.description || normalizedSiteConfig.description,
             pages: llmsOpts.pages || [],
-            sections: llmsOpts.sections || []
+            sections: llmsOpts.sections || [],
           });
           res.setHeader("Content-Type", "text/plain; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -401,7 +401,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
             site: llmsFullOpts.site || normalizedSiteConfig.url,
             title: llmsFullOpts.title || normalizedSiteConfig.name,
             description: llmsFullOpts.description || normalizedSiteConfig.description,
-            pages: llmsFullOpts.pages || []
+            pages: llmsFullOpts.pages || [],
           });
           res.setHeader("Content-Type", "text/plain; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -417,7 +417,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
           const secOpts = typeof options.security === "object" ? options.security : {};
           const securityTxt = buildSecurityTxt({
             contact: secOpts.contact || `mailto:${normalizedSiteConfig.email}`,
-            ...secOpts
+            ...secOpts,
           });
           res.setHeader("Content-Type", "text/plain; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -429,7 +429,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
         if (rawUrl === "/.well-known/api-catalog" && options.apiCatalog !== false) {
           const apiOpts = typeof options.apiCatalog === "object" ? options.apiCatalog : {};
           const apiCatalog = buildApiCatalog({
-            items: apiOpts.items || []
+            items: apiOpts.items || [],
           });
           res.setHeader("Content-Type", "application/json; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -455,10 +455,10 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
                 src: "/icon-maskable-512.png",
                 sizes: "512x512",
                 type: "image/png",
-                purpose: "maskable"
-              }
+                purpose: "maskable",
+              },
             ],
-            ...manOpts
+            ...manOpts,
           });
           res.setHeader("Content-Type", "application/manifest+json; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
@@ -500,7 +500,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
             if (rawUrl === "/icon-maskable-512.png" && assetOpts.iconMaskable !== false) {
               const png = await generateMaskablePng(masterIconSource, {
                 size: 512,
-                background: bgColor
+                background: bgColor,
               });
               res.setHeader("Content-Type", "image/png");
               res.setHeader("Cache-Control", "no-cache");
@@ -527,7 +527,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
             if (rawUrl === "/og.png" && assetOpts.ogImage !== false) {
               const og = await generateOgCard({
                 logoBuffer: masterIconSource,
-                background: bgColor
+                background: bgColor,
               });
               res.setHeader("Content-Type", "image/png");
               res.setHeader("Cache-Control", "no-cache");
@@ -550,7 +550,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
         const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
         const robotsTxt = buildRobotsTxt({
           sitemapUrl: `${siteUrl.replace(/\/$/, "")}/sitemap.xml`,
-          ...robotsOpts
+          ...robotsOpts,
         });
         this.emitFile({ type: "asset", fileName: "robots.txt", source: robotsTxt });
       }
@@ -572,7 +572,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
                       ? options.locales
                       : { en: "en" },
                   defaultLocale: "en",
-                  prefixDefaultLocale: false
+                  prefixDefaultLocale: false,
                 });
           if (entries.length > 0 && locCfg) {
             urls = buildSitemapUrls(entries, locCfg as any);
@@ -597,7 +597,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
             title: rssOpts.title || normalizedSiteConfig.name,
             description: rssOpts.description || normalizedSiteConfig.description,
             site: rssOpts.site || normalizedSiteConfig.url,
-            items
+            items,
           });
           this.emitFile({ type: "asset", fileName: "rss.xml", source: rssXml });
         }
@@ -611,7 +611,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
           title: llmsOpts.title || normalizedSiteConfig.name,
           description: llmsOpts.description || normalizedSiteConfig.description,
           pages: llmsOpts.pages || [],
-          sections: llmsOpts.sections || []
+          sections: llmsOpts.sections || [],
         });
         this.emitFile({ type: "asset", fileName: "llms.txt", source: llmsTxt });
       }
@@ -623,7 +623,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
           site: llmsFullOpts.site || normalizedSiteConfig.url,
           title: llmsFullOpts.title || normalizedSiteConfig.name,
           description: llmsFullOpts.description || normalizedSiteConfig.description,
-          pages: llmsFullOpts.pages || []
+          pages: llmsFullOpts.pages || [],
         });
         this.emitFile({ type: "asset", fileName: "llms-full.txt", source: llmsFullTxt });
       }
@@ -632,7 +632,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
         const secOpts = typeof options.security === "object" ? options.security : {};
         const securityTxt = buildSecurityTxt({
           contact: secOpts.contact || `mailto:${normalizedSiteConfig.email}`,
-          ...secOpts
+          ...secOpts,
         });
         this.emitFile({ type: "asset", fileName: ".well-known/security.txt", source: securityTxt });
         if (secOpts.legacyRoute !== false) {
@@ -643,12 +643,12 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
       if (options.apiCatalog !== false && typeof options.apiCatalog === "object") {
         const apiOpts = options.apiCatalog;
         const apiCatalog = buildApiCatalog({
-          items: apiOpts.items || []
+          items: apiOpts.items || [],
         });
         this.emitFile({
           type: "asset",
           fileName: ".well-known/api-catalog",
-          source: JSON.stringify(apiCatalog, null, 2)
+          source: JSON.stringify(apiCatalog, null, 2),
         });
       }
 
@@ -669,15 +669,15 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
               src: "/icon-maskable-512.png",
               sizes: "512x512",
               type: "image/png",
-              purpose: "maskable"
-            }
+              purpose: "maskable",
+            },
           ],
-          ...manOpts
+          ...manOpts,
         });
         this.emitFile({
           type: "asset",
           fileName: "site.webmanifest",
-          source: JSON.stringify(manifest, null, 2)
+          source: JSON.stringify(manifest, null, 2),
         });
       }
 
@@ -703,14 +703,14 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
           if (assetOpts.iconMaskable !== false) {
             const png = await generateMaskablePng(masterIconSource, {
               size: 512,
-              background: bgColor
+              background: bgColor,
             });
             this.emitFile({ type: "asset", fileName: "icon-maskable-512.png", source: png });
           }
           if (assetOpts.ogImage !== false) {
             const og = await generateOgCard({
               logoBuffer: masterIconSource,
-              background: bgColor
+              background: bgColor,
             });
             this.emitFile({ type: "asset", fileName: "og.png", source: og });
           }
@@ -732,7 +732,7 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`;
           console.error("[@rimelight/seo] Error emitting bundle assets:", err);
         }
       }
-    }
+    },
   };
 }
 

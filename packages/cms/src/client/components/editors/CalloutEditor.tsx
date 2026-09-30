@@ -23,17 +23,17 @@ const VARIANTS: Record<string, { icon: string; label: string }> = {
   error: { icon: "circleAlert", label: "Error" },
   commentary: { icon: "messageSquare", label: "Commentary" },
   ideation: { icon: "lightbulb", label: "Ideation" },
-  source: { icon: "code", label: "Source" }
+  source: { icon: "code", label: "Source" },
 };
 
 const VARIANT_OPTIONS = Object.entries(VARIANTS).map(([key, item]) => ({
   label: item.label,
-  value: key
+  value: key,
 }));
 
 const TARGET_OPTIONS = [
   { label: "Same tab", value: "_self" },
-  { label: "New tab (_blank)", value: "_blank" }
+  { label: "New tab (_blank)", value: "_blank" },
 ];
 
 export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => {
@@ -77,7 +77,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 
@@ -90,14 +90,14 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
     componentProps.onPropsChange({
       ...componentProps.props,
       to: to !== undefined ? to : componentProps.props["to"],
-      target: target !== undefined ? target : componentProps.props["target"]
+      target: target !== undefined ? target : componentProps.props["target"],
     });
   };
 
   const setVariant = (v: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      variant: v
+      variant: v,
     });
   };
 

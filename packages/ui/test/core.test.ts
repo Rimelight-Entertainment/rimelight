@@ -8,15 +8,15 @@ vi.mock("virtual:rimelight/ui", () => ({
         testOverride: {
           base: { label: "overridden-label" },
           variants: {
-            size: { sm: { root: "override-sm" } }
-          }
-        }
-      }
+            size: { sm: { root: "override-sm" } },
+          },
+        },
+      },
     },
     icons: {
-      customIcon: "i-custom-icon"
-    }
-  }
+      customIcon: "i-custom-icon",
+    },
+  },
 }));
 
 import { defineTheme } from "../src/resolver";
@@ -29,22 +29,22 @@ describe("@rimelight/ui core resolver", () => {
       base: {
         root: "flex items-center",
         label: "text-sm",
-        icon: "size-4"
+        icon: "size-4",
       },
       variants: {
         variant: {
           solid: { root: "bg-blue-500 text-white" },
-          outline: { root: "border border-blue-500" }
+          outline: { root: "border border-blue-500" },
         },
         size: {
           sm: { root: "p-2", label: "text-xs" },
-          md: { root: "p-4", label: "text-base" }
-        }
+          md: { root: "p-4", label: "text-base" },
+        },
       },
       defaultVariants: {
         variant: "solid",
-        size: "md"
-      }
+        size: "md",
+      },
     };
 
     const themeFn = defineTheme("testComponent", baseTheme);
@@ -65,14 +65,14 @@ describe("@rimelight/ui core resolver", () => {
       base: {
         root: "flex items-center",
         label: "text-sm",
-        icon: "size-4"
+        icon: "size-4",
       },
       variants: {
         size: {
           sm: { root: "p-2", label: "text-xs" },
-          md: { root: "p-4", label: "text-base" }
-        }
-      }
+          md: { root: "p-4", label: "text-base" },
+        },
+      },
     };
 
     const themeFn = defineTheme("testOverride", baseTheme);
@@ -127,20 +127,20 @@ describe("@rimelight/ui core icon resolution", () => {
       variants: {
         color: "auto",
         variant: {
-          solid: { root: "btn-solid" }
-        }
+          solid: { root: "btn-solid" },
+        },
       },
       compoundVariants: [
         {
           color: "neutral",
           variant: "solid",
-          classNames: { root: "btn-neutral-solid" }
-        }
+          classNames: { root: "btn-neutral-solid" },
+        },
       ],
       defaultVariants: {
         color: "primary",
-        variant: "solid"
-      }
+        variant: "solid",
+      },
     };
 
     const themeFn = defineTheme("testAutoColor", baseTheme);
@@ -160,11 +160,11 @@ describe("@rimelight/ui preset intent shortcuts", () => {
     const { createGenerator } = await import("unocss");
     const rimelightUiPreset = (await import("../src/preset")).default;
     const uno = await createGenerator({
-      presets: [rimelightUiPreset()]
+      presets: [rimelightUiPreset()],
     });
 
     const { css } = await uno.generate(
-      "text-muted bg-elevated border-accented ring-dimmed bg-inverted text-muted/50"
+      "text-muted bg-elevated border-accented ring-dimmed bg-inverted text-muted/50",
     );
     expect(css).toContain("var(--rl-neutral-600)");
     expect(css).toContain("var(--rl-neutral-200)");
@@ -193,8 +193,8 @@ describe("@rimelight/ui shortcuts system", () => {
         meta_k: {
           handler: () => {},
           label: "Open Search",
-          category: "navigation"
-        }
+          category: "navigation",
+        },
       });
 
       expect(activeShortcutsStore.some((s) => s.label === "Open Search")).toBe(true);
@@ -214,7 +214,7 @@ describe("@rimelight/ui shortcuts system", () => {
       },
       removeEventListener: () => {
         listener = null;
-      }
+      },
     };
 
     try {
@@ -223,7 +223,7 @@ describe("@rimelight/ui shortcuts system", () => {
       const cleanup = defineShortcuts({
         meta_alt_t: () => {
           triggered = true;
-        }
+        },
       });
 
       expect(listener).toBeDefined();
@@ -235,7 +235,7 @@ describe("@rimelight/ui shortcuts system", () => {
         altKey: true,
         metaKey: false,
         shiftKey: false,
-        preventDefault: () => {}
+        preventDefault: () => {},
       });
 
       expect(triggered).toBe(true);
@@ -254,7 +254,7 @@ describe("@rimelight/ui shortcuts system", () => {
       },
       removeEventListener: () => {
         listener = null;
-      }
+      },
     };
 
     try {
@@ -263,7 +263,7 @@ describe("@rimelight/ui shortcuts system", () => {
       const cleanup = defineShortcuts({
         meta_alt_t: () => {
           triggered = true;
-        }
+        },
       });
 
       expect(listener).toBeDefined();
@@ -275,7 +275,7 @@ describe("@rimelight/ui shortcuts system", () => {
         altKey: true,
         metaKey: false,
         shiftKey: false,
-        preventDefault: () => {}
+        preventDefault: () => {},
       });
 
       expect(triggered).toBe(true);
@@ -291,7 +291,7 @@ describe("@rimelight/ui inlined cx", () => {
     const { cx } = await import("../src/resolver");
     const isFalse = false;
     expect(cx("a", isFalse && "b", null, undefined, ["c", ["d"]], { e: true, f: false })).toBe(
-      "a c d e"
+      "a c d e",
     );
   });
 });
@@ -303,7 +303,7 @@ describe("@rimelight/ui unstyled mode", () => {
 
     const themeFn = defineTheme("testUnstyled", {
       slots: ["root", "label"],
-      base: { root: "base-root", label: "base-label" }
+      base: { root: "base-root", label: "base-label" },
     });
 
     const slots = themeFn({ class: "custom-class", ui: { label: "custom-ui-label" } });

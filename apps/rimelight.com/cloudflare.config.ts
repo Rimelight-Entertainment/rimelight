@@ -6,18 +6,18 @@ const config = defineConfig({
     compatibilityDate: "2026-08-27",
     entrypoint: "./src/fetch.ts",
     cache: {
-      enabled: true
+      enabled: true,
     },
     observability: {
       enabled: true,
       logs: {
         enabled: true,
         headSamplingRate: 1,
-        invocationLogs: true
+        invocationLogs: true,
       },
       traces: {
-        enabled: true
-      }
+        enabled: true,
+      },
     },
     domains: ["rimelight.com", "www.rimelight.com"],
     env: {
@@ -31,30 +31,30 @@ const config = defineConfig({
       "rimelight-dot-com_translations": bindings.kv({
         id: "e1ae79418e4c4532a9344102bf663861",
         dev: {
-          remote: true
-        }
+          remote: true,
+        },
       }),
       BLOB: bindings.r2({
         name: "rimelight-dot-com",
         dev: {
-          remote: true
-        }
+          remote: true,
+        },
       }),
       EMAIL: bindings.sendEmail({
         dev: {
-          remote: true
-        }
+          remote: true,
+        },
       }),
       MY_RATE_LIMITER: bindings.rateLimit({
         namespace: "1001",
         simple: {
           limit: 100,
-          period: 60
-        }
+          period: 60,
+        },
       }),
-      ASSETS: bindings.assets()
-    }
-  }
+      ASSETS: bindings.assets(),
+    },
+  },
 });
 
 export type Env = InferEnv<typeof config>;

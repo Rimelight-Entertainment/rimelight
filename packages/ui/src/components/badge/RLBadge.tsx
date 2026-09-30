@@ -36,7 +36,7 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
     "class",
     "children",
     "leadingSlot",
-    "trailingSlot"
+    "trailingSlot",
   );
 
   const leadingIconProp = () => props.leadingIcon ?? (props as any)["leading-icon"];
@@ -51,7 +51,7 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
       (iconProp() && !trailingProp()) ||
       leadingIconProp() ||
       props.avatar ||
-      props.leadingSlot
+      props.leadingSlot,
     );
 
   const leadingIconName = () =>
@@ -59,7 +59,7 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
 
   const isTrailing = () =>
     Boolean(
-      trailingProp() || (iconProp() && trailingProp()) || trailingIconProp() || props.trailingSlot
+      trailingProp() || (iconProp() && trailingProp()) || trailingIconProp() || props.trailingSlot,
     );
 
   const trailingIconName = () =>
@@ -79,11 +79,11 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
       ui: props.ui
         ? {
             ...props.ui,
-            root: props.ui.root ?? props.ui.base
+            root: props.ui.root ?? props.ui.base,
           }
         : undefined,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const Root = dynamic(() => props.as ?? "span");

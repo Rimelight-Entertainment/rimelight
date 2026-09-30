@@ -15,8 +15,8 @@ const RLChatPrompt: Component<RLChatPromptProps> = (allProps) => {
     chatPromptTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

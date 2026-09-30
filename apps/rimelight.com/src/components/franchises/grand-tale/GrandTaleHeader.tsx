@@ -10,7 +10,7 @@ export const GrandTaleHeader: Component = () => {
     { label: "Wiki", to: "/franchises/grand-tale/wiki" },
     { label: "Guides", to: "/franchises/grand-tale/guides" },
     { label: "Forums", to: "/franchises/grand-tale/forums" },
-    { label: "Leaderboards", to: "/franchises/grand-tale/leaderboards" }
+    { label: "Leaderboards", to: "/franchises/grand-tale/leaderboards" },
   ];
 
   const rightLinks = [{ label: "Support", to: "/franchises/grand-tale/support" }];

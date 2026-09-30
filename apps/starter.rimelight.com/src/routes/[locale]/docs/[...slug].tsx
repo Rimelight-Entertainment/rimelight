@@ -6,7 +6,7 @@ import {
   getDocsVersions,
   parseDocsSlug,
   extractHeadingsFromBlocks,
-  blocksToMarkdown
+  blocksToMarkdown,
 } from "@rimelight/cms";
 import PageRenderer from "#components/cms/PageRenderer";
 import { createAsyncData } from "#utils/async";
@@ -50,13 +50,13 @@ export const DocsSlugPage: Component = () => {
           : activeVersion
             ? `${activeVersion}/${contentPath}`
             : contentPath,
-        contentPath
+        contentPath,
       ].filter(Boolean) as string[];
 
       let dbPage: any = null;
       try {
         const res = await fetch(
-          `/api/content/docs?slugs=${candidateSlugs.map(encodeURIComponent).join(",")}`
+          `/api/content/docs?slugs=${candidateSlugs.map(encodeURIComponent).join(",")}`,
         );
         if (res.ok) {
           const data = (await res.json()) as any;
@@ -79,9 +79,9 @@ export const DocsSlugPage: Component = () => {
         dbPage,
         activeVersion,
         versions,
-        includeVersionInUrl
+        includeVersionInUrl,
       };
-    }
+    },
   );
 
   const dbPage = () => docData()?.dbPage;

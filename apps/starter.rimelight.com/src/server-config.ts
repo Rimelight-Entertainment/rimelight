@@ -4,5 +4,5 @@ import { createFlightDataCollector } from "@solidjs/router/server";
 import { Router } from "./router";
 
 configureServerFunctionsServer({
-  collectFlightData: createFlightDataCollector(Router)
+  collectFlightData: createFlightDataCollector(Router),
 });

@@ -22,7 +22,7 @@ function formatDocsUrl(
   href: string,
   locale: string,
   activeVersion?: string,
-  includeVersionInUrl?: boolean
+  includeVersionInUrl?: boolean,
 ): string {
   let url = href.replace("{locale}", locale);
   if (activeVersion && includeVersionInUrl) {
@@ -47,7 +47,7 @@ function findFirstHref(
   items: SidebarItem[],
   locale: string,
   activeVersion?: string,
-  includeVersionInUrl?: boolean
+  includeVersionInUrl?: boolean,
 ): string | undefined {
   for (const item of items) {
     if (item.href) return formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl);
@@ -64,7 +64,7 @@ function getScopePrefix(
   items: SidebarItem[],
   locale: string,
   activeVersion?: string,
-  includeVersionInUrl?: boolean
+  includeVersionInUrl?: boolean,
 ): string {
   const allHrefs: string[] = [];
 
@@ -95,7 +95,7 @@ function hasPath(
   locale: string,
   normPath: string,
   activeVersion?: string,
-  includeVersionInUrl?: boolean
+  includeVersionInUrl?: boolean,
 ): boolean {
   for (const item of items) {
     if (
@@ -119,7 +119,7 @@ export async function getDocsSidebar(
   locale: string,
   currentPath: string,
   activeVersion?: string,
-  includeVersionInUrl?: boolean
+  includeVersionInUrl?: boolean,
 ): Promise<{
   items: ResolvedSidebarItem[];
   scopes: ResolvedScope[];
@@ -141,12 +141,12 @@ export async function getDocsSidebar(
       id,
       label: scope.label,
       href: formatDocsUrl(href, locale, activeVersion, includeVersionInUrl),
-      icon: scope.icon
+      icon: scope.icon,
     };
   });
 
   const scopePrefixes: string[] = sidebarScopes.map((scope) =>
-    scope.items ? getScopePrefix(scope.items, locale, activeVersion, includeVersionInUrl) : ""
+    scope.items ? getScopePrefix(scope.items, locale, activeVersion, includeVersionInUrl) : "",
   );
 
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase());
@@ -181,7 +181,7 @@ export async function getDocsSidebar(
   if (activeScope) activeScope.active = true;
 
   const sidebarConfig = sidebarScopes.find(
-    (item) => activeScope && (item.id === activeScope.id || item.label === activeScope.id)
+    (item) => activeScope && (item.id === activeScope.id || item.label === activeScope.id),
   );
 
   const items = sidebarConfig?.items || [];
@@ -194,7 +194,7 @@ export async function getDocsSidebar(
         : undefined,
       icon: item.icon,
       badge: item.badge,
-      collapsed: item.collapsed
+      collapsed: item.collapsed,
     };
 
     if (resolved.href) {
@@ -240,12 +240,12 @@ export function getSurroundItems(sidebar: ResolvedSidebarItem[], currentPath: st
 
   const normPath = currentPath.replace(/\/$/, "").toLowerCase();
   const currentIndex = flatItems.findIndex(
-    (item) => item.href.replace(/\/$/, "").toLowerCase() === normPath
+    (item) => item.href.replace(/\/$/, "").toLowerCase() === normPath,
   );
 
   return {
     prev: currentIndex > 0 ? flatItems[currentIndex - 1] : null,
     next:
-      currentIndex >= 0 && currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null
+      currentIndex >= 0 && currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null,
   };
 }

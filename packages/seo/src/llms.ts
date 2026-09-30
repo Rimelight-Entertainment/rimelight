@@ -38,7 +38,7 @@ export function buildLlmsTxt(options: LlmsTxtOptions): string {
     description,
     fullCorpusUrl = `${site.replace(/\/$/, "")}/llms-full.txt`,
     pages,
-    sections = []
+    sections = [],
   } = options;
 
   const lines = [
@@ -47,7 +47,7 @@ export function buildLlmsTxt(options: LlmsTxtOptions): string {
     description || "Documentation index for AI agents.",
     "",
     `Full corpus (all pages, one document): ${fullCorpusUrl}`,
-    ""
+    "",
   ];
 
   if (sections.length > 0) {
@@ -101,7 +101,7 @@ export function buildLlmsFullTxt(options: LlmsFullTxtOptions): string {
     description || "Complete documentation corpus for AI agents.",
     "",
     "---",
-    ""
+    "",
   ];
 
   for (const page of pages) {
@@ -115,7 +115,7 @@ export function buildLlmsFullTxt(options: LlmsFullTxtOptions): string {
       page.markdown.trim(),
       "",
       "---",
-      ""
+      "",
     ];
     parts.push(...metaHeader);
   }

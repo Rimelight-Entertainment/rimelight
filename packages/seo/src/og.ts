@@ -22,7 +22,7 @@ export interface OgFontConfig {
 export const NOTO_SANS: OgFontConfig = {
   name: "Noto Sans",
   regularUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-400-normal.ttf",
-  boldUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-700-normal.ttf"
+  boldUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-700-normal.ttf",
 };
 
 /**
@@ -110,14 +110,14 @@ async function fetchArrayBuffer(url: string, timeoutMs = 5000): Promise<ArrayBuf
  */
 export async function loadOgFonts(
   config: OgFontConfig = NOTO_SANS,
-  timeoutMs = 5000
+  timeoutMs = 5000,
 ): Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> {
   const cached = fontCaches.get(config.regularUrl);
   if (cached) return cached;
 
   const [regular, bold] = await Promise.all([
     fetchArrayBuffer(config.regularUrl, timeoutMs),
-    fetchArrayBuffer(config.boldUrl, timeoutMs)
+    fetchArrayBuffer(config.boldUrl, timeoutMs),
   ]);
   const result = { regular, bold };
   fontCaches.set(config.regularUrl, result);
@@ -164,10 +164,10 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
               fontSize: "28px",
               fontWeight: 700,
               color: "#ffffff",
-              letterSpacing: "-0.02em"
+              letterSpacing: "-0.02em",
             },
-            children: brand ?? ""
-          }
+            children: brand ?? "",
+          },
         };
 
   const accentBar: object | null = isGradient
@@ -179,9 +179,9 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
             height: "4px",
             backgroundColor: "#60a5fa",
             borderRadius: "2px",
-            marginBottom: "16px"
-          }
-        }
+            marginBottom: "16px",
+          },
+        },
       }
     : null;
 
@@ -201,10 +201,10 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
               border: "1px solid rgba(96,165,250,0.3)",
               fontSize: "14px",
               fontWeight: 600,
-              color: "#93c5fd"
+              color: "#93c5fd",
             },
-            children: badge
-          }
+            children: badge,
+          },
         }
       : {
           type: "div",
@@ -215,10 +215,10 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
               border: "1px solid #333333",
               fontSize: "16px",
               fontWeight: 600,
-              color: "#e5e5e5"
+              color: "#e5e5e5",
             },
-            children: badge
-          }
+            children: badge,
+          },
         }
     : null;
 
@@ -227,8 +227,8 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
         type: "div",
         props: {
           style: { fontSize: "16px", color: "#666666" },
-          children: date
-        }
+          children: date,
+        },
       }
     : null;
 
@@ -240,9 +240,9 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
             position: "absolute",
             inset: 0,
             border: "6px dashed #ff4444",
-            pointerEvents: "none"
-          }
-        }
+            pointerEvents: "none",
+          },
+        },
       }
     : null;
 
@@ -260,10 +260,10 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
             fontWeight: 700,
             padding: "6px 16px",
             borderRadius: "4px",
-            letterSpacing: "0.05em"
+            letterSpacing: "0.05em",
           },
-          children: "PREVIEW"
-        }
+          children: "PREVIEW",
+        },
       }
     : null;
 
@@ -280,15 +280,15 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
         fontFamily: font.name,
         position: "relative",
         overflow: "hidden",
-        ...bg
+        ...bg,
       },
       children: [
         {
           type: "div",
           props: {
             style: { display: "flex", alignItems: "center" },
-            children: [brandNode]
-          }
+            children: [brandNode],
+          },
         },
         {
           type: "div",
@@ -298,7 +298,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
               flexDirection: "column",
               justifyContent: "center",
               flexGrow: 1,
-              paddingTop: "24px"
+              paddingTop: "24px",
             },
             children: [
               accentBar,
@@ -310,10 +310,10 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
                     fontWeight: 700,
                     color: "#ffffff",
                     lineHeight: 1.15,
-                    maxWidth: "950px"
+                    maxWidth: "950px",
                   },
-                  children: safeTitle
-                }
+                  children: safeTitle,
+                },
               },
               safeDescription
                 ? {
@@ -325,14 +325,14 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
                         color: descColor,
                         marginTop: isGradient ? "12px" : "16px",
                         lineHeight: 1.4,
-                        maxWidth: isGradient ? "800px" : "850px"
+                        maxWidth: isGradient ? "800px" : "850px",
                       },
-                      children: safeDescription
-                    }
+                      children: safeDescription,
+                    },
                   }
-                : null
-            ].filter(Boolean)
-          }
+                : null,
+            ].filter(Boolean),
+          },
         },
         {
           type: "div",
@@ -342,15 +342,15 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
               alignItems: "center",
               justifyContent: isGradient ? "flex-start" : "space-between",
               gap: "12px",
-              marginTop: "auto"
+              marginTop: "auto",
             },
-            children: [badgeNode, dateNode].filter(Boolean)
-          }
+            children: [badgeNode, dateNode].filter(Boolean),
+          },
         },
         previewOverlay,
-        previewLabel
-      ].filter(Boolean)
-    }
+        previewLabel,
+      ].filter(Boolean),
+    },
   };
 }
 
@@ -368,7 +368,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
  */
 export async function renderOgResponse(
   vnode: object,
-  config: OgRenderConfig = {}
+  config: OgRenderConfig = {},
 ): Promise<Response> {
   const { font = NOTO_SANS, width = 1200, height = 630 } = config;
 
@@ -381,8 +381,8 @@ export async function renderOgResponse(
       height,
       fonts: [
         { name: font.name, data: regular, weight: 400, style: "normal" },
-        { name: font.name, data: bold, weight: 700, style: "normal" }
-      ]
+        { name: font.name, data: bold, weight: 700, style: "normal" },
+      ],
     });
 
     return new Response(new Blob([new Uint8Array(pngBuffer)], { type: "image/png" }), {
@@ -390,23 +390,23 @@ export async function renderOgResponse(
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "public, max-age=31536000, immutable",
-        "CDN-Cache-Control": "public, max-age=31536000"
-      }
+        "CDN-Cache-Control": "public, max-age=31536000",
+      },
     });
   } catch (error) {
     console.error("[OG Render Error]:", error);
     return new Response(
       JSON.stringify({
         error: "Failed to render Open Graph image",
-        message: error instanceof Error ? error.message : String(error)
+        message: error instanceof Error ? error.message : String(error),
       }),
       {
         status: 500,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
-      }
+          "Cache-Control": "no-store",
+        },
+      },
     );
   }
 }
@@ -428,7 +428,7 @@ export async function renderOgResponse(
  */
 export async function renderDefaultOg(
   options: OgLayoutOptions,
-  config: OgRenderConfig = {}
+  config: OgRenderConfig = {},
 ): Promise<Response> {
   const { font = NOTO_SANS } = config;
   const vnode = defaultOgLayout(options, font);

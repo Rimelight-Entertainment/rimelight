@@ -9,8 +9,8 @@ export default defineConfig({
       "src/integration.ts",
       "src/plugin.ts",
       "src/storage/index.ts",
-      "src/server/index.ts"
+      "src/server/index.ts",
     ],
-    dts: true
-  }
+    dts: true,
+  },
 });

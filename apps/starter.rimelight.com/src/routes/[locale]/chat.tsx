@@ -31,7 +31,7 @@ const COLORS = [
   "from-purple-500 to-violet-600",
   "from-pink-500 to-fuchsia-600",
   "from-teal-500 to-cyan-600",
-  "from-orange-500 to-red-600"
+  "from-orange-500 to-red-600",
 ];
 
 function getAvatarGradientClass(name: string): string {
@@ -51,7 +51,7 @@ export const ChatPage: Component = () => {
   const [nickInputValue, setNickInputValue] = createSignal("");
   const [messageInput, setMessageInput] = createSignal("");
   const [status, setStatus] = createSignal<"connecting" | "connected" | "disconnected">(
-    "connecting"
+    "connecting",
   );
   const [messages, setMessages] = createSignal<ChatMsgPayload[]>([]);
   const [presenceUsers, setPresenceUsers] = createSignal<PresenceUser[]>([]);
@@ -64,7 +64,7 @@ export const ChatPage: Component = () => {
       setTimeout(() => {
         messagesContainerRef?.scrollTo({
           top: messagesContainerRef.scrollHeight,
-          behavior: "smooth"
+          behavior: "smooth",
         });
       }, 50);
     }
@@ -162,8 +162,8 @@ export const ChatPage: Component = () => {
       socket.send(
         JSON.stringify({
           type: "message",
-          content
-        })
+          content,
+        }),
       );
       setMessageInput("");
     }
@@ -285,7 +285,7 @@ export const ChatPage: Component = () => {
                   if (msg.type === "join" || msg.type === "leave") {
                     const time = new Date(msg.timestamp).toLocaleTimeString([], {
                       hour: "2-digit",
-                      minute: "2-digit"
+                      minute: "2-digit",
                     });
                     return (
                       <div class="self-center py-1.5 px-3 bg-white/5 rounded-full border border-white/5 text-[10px] text-zinc-400 flex items-center gap-1.5">
@@ -304,7 +304,7 @@ export const ChatPage: Component = () => {
                   const isMe = msg.userId === userId();
                   const time = new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
-                    minute: "2-digit"
+                    minute: "2-digit",
                   });
 
                   return (
@@ -315,7 +315,7 @@ export const ChatPage: Component = () => {
                     >
                       <div
                         class={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white uppercase bg-gradient-to-br ${getAvatarGradientClass(
-                          msg.username
+                          msg.username,
                         )} select-none shrink-0 mb-1`}
                       >
                         {msg.username.charAt(0)}

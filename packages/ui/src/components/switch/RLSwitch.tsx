@@ -20,15 +20,15 @@ const RLSwitch: Component<RLSwitchProps> = (allProps) => {
     "label",
     "value",
     "trailing",
-    "theme"
+    "theme",
   );
 
   const resolvedClasses = createMemo(() =>
     switchTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

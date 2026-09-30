@@ -15,8 +15,8 @@ const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {
     phoneMockupTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps
-    })
+      ...allProps,
+    }),
   );
 
   return (

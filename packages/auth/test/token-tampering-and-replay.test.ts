@@ -7,7 +7,7 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
   describe("Cloudflare Access Adapter Edge and Hostile Cases", () => {
     const adapter = cfAccessAuth({
       adminEmails: ["security-lead@rimelight.com"],
-      defaultRole: "superadmin"
+      defaultRole: "superadmin",
     });
 
     it("rejects when both identity headers are missing", async () => {
@@ -19,8 +19,8 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
     it("assigns viewer role and non-admin permissions for non-admin email", async () => {
       const req = new Request("https://rimelight.com/admin", {
         headers: {
-          "cf-access-authenticated-user-email": "random-attacker@evil.com"
-        }
+          "cf-access-authenticated-user-email": "random-attacker@evil.com",
+        },
       });
       const session = await adapter.getSession(req);
       expect(session).not.toBeNull();
@@ -32,8 +32,8 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
     it("assigns configured admin role for exact whitelisted admin emails", async () => {
       const req = new Request("https://rimelight.com/admin", {
         headers: {
-          "cf-access-authenticated-user-email": "SECURITY-LEAD@rimelight.com "
-        }
+          "cf-access-authenticated-user-email": "SECURITY-LEAD@rimelight.com ",
+        },
       });
       const session = await adapter.getSession(req);
       expect(session).not.toBeNull();
@@ -44,7 +44,7 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
 
     it("handles unauthorized redirect with absolute vs relative URLs properly", async () => {
       const unauthAdapter = cfAccessAuth({
-        loginUrl: "/auth/login"
+        loginUrl: "/auth/login",
       });
       const req = new Request("https://rimelight.com/dashboard/settings");
       const res = await unauthAdapter.handleUnauthorized!(req);
@@ -58,8 +58,8 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
       const auth0 = auth0Auth({ domain: "test.auth0.com", clientId: "xyz" });
       const req = new Request("https://rimelight.com/profile", {
         headers: {
-          cookie: "appSession=corrupted.jwt.payload; other_cookie=123"
-        }
+          cookie: "appSession=corrupted.jwt.payload; other_cookie=123",
+        },
       });
       const session = await auth0.getSession(req);
       expect(session).toBeNull();
@@ -70,8 +70,8 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
         session: {
           userId: "custom-agent-id",
           roles: ["editor"],
-          email: "agent@rimelight.com"
-        }
+          email: "agent@rimelight.com",
+        },
       });
 
       const session = await customMock.getSession(new Request("https://rimelight.com"));

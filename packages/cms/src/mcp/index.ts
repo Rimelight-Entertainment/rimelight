@@ -24,13 +24,13 @@ export const CMS_MCP_TOOLS = [
       properties: {
         type: {
           type: "string",
-          description: "Filter by page type (e.g. 'blog', 'doc', 'legal', 'wiki')"
+          description: "Filter by page type (e.g. 'blog', 'doc', 'legal', 'wiki')",
         },
         includeDrafts: { type: "boolean", description: "Whether to include unpublished drafts" },
         limit: { type: "number", description: "Maximum number of pages to return (default 20)" },
-        offset: { type: "number", description: "Offset for pagination (default 0)" }
-      }
-    }
+        offset: { type: "number", description: "Offset for pagination (default 0)" },
+      },
+    },
   },
   {
     name: "cms_get_page",
@@ -39,10 +39,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        slugOrId: { type: "string", description: "Page slug or UUID" }
+        slugOrId: { type: "string", description: "Page slug or UUID" },
       },
-      required: ["slugOrId"]
-    }
+      required: ["slugOrId"],
+    },
   },
   {
     name: "cms_create_page",
@@ -53,28 +53,28 @@ export const CMS_MCP_TOOLS = [
         slug: { type: "string", description: "Unique URL slug for the page" },
         type: {
           type: "string",
-          description: "Page type (e.g. 'blog', 'doc', 'legal', 'wiki', 'character')"
+          description: "Page type (e.g. 'blog', 'doc', 'legal', 'wiki', 'character')",
         },
         title: { type: "object", description: "Localized title object, e.g. { en: 'Page Title' }" },
         description: {
           type: "object",
-          description: "Localized description object, e.g. { en: 'Page description' }"
+          description: "Localized description object, e.g. { en: 'Page description' }",
         },
         templateId: {
           type: "string",
-          description: "Optional UUID of the template to base the page on"
+          description: "Optional UUID of the template to base the page on",
         },
         tags: { type: "array", description: "Array of localized tags or strings" },
         authorIds: { type: "array", description: "Array of author user IDs" },
         bylines: {
           type: "array",
-          description: "Array of structured byline credits [{ bylineId, role, customCredit }]"
+          description: "Array of structured byline credits [{ bylineId, role, customCredit }]",
         },
         blocks: { type: "array", description: "Initial structured CMS blocks array" },
-        properties: { type: "object", description: "Content type specific custom properties" }
+        properties: { type: "object", description: "Content type specific custom properties" },
       },
-      required: ["slug", "type", "title"]
-    }
+      required: ["slug", "type", "title"],
+    },
   },
   {
     name: "cms_update_page",
@@ -89,10 +89,10 @@ export const CMS_MCP_TOOLS = [
         tags: { type: "array", description: "Array of localized tags" },
         bylines: { type: "array", description: "Array of structured byline credits" },
         blocks: { type: "array", description: "Updated structured CMS blocks array" },
-        properties: { type: "object", description: "Updated custom properties object" }
+        properties: { type: "object", description: "Updated custom properties object" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
   {
     name: "cms_create_draft",
@@ -103,10 +103,10 @@ export const CMS_MCP_TOOLS = [
         pageId: { type: "string", description: "Page UUID" },
         userId: { type: "string", description: "User or Agent ID creating the draft" },
         blocks: { type: "array", description: "Array of structured CMS blocks" },
-        properties: { type: "object", description: "Page properties object" }
+        properties: { type: "object", description: "Page properties object" },
       },
-      required: ["pageId", "userId", "blocks"]
-    }
+      required: ["pageId", "userId", "blocks"],
+    },
   },
   {
     name: "cms_publish_page",
@@ -116,10 +116,10 @@ export const CMS_MCP_TOOLS = [
       properties: {
         pageId: { type: "string", description: "Page UUID" },
         userId: { type: "string", description: "User or Agent ID publishing the page" },
-        changeSummary: { type: "string", description: "Summary of changes in this version" }
+        changeSummary: { type: "string", description: "Summary of changes in this version" },
       },
-      required: ["pageId", "userId"]
-    }
+      required: ["pageId", "userId"],
+    },
   },
   {
     name: "cms_unpublish_page",
@@ -127,10 +127,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        pageId: { type: "string", description: "Page UUID to unpublish" }
+        pageId: { type: "string", description: "Page UUID to unpublish" },
       },
-      required: ["pageId"]
-    }
+      required: ["pageId"],
+    },
   },
   {
     name: "cms_delete_page",
@@ -138,10 +138,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        pageId: { type: "string", description: "Page UUID to delete" }
+        pageId: { type: "string", description: "Page UUID to delete" },
       },
-      required: ["pageId"]
-    }
+      required: ["pageId"],
+    },
   },
 
   // ─── 2. Page Versions & Approvals ───────────────────────────────────────────
@@ -152,10 +152,10 @@ export const CMS_MCP_TOOLS = [
       type: "object",
       properties: {
         pageId: { type: "string", description: "Page UUID" },
-        limit: { type: "number", description: "Max versions to return (default 20)" }
+        limit: { type: "number", description: "Max versions to return (default 20)" },
       },
-      required: ["pageId"]
-    }
+      required: ["pageId"],
+    },
   },
   {
     name: "cms_get_page_version",
@@ -163,10 +163,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        versionId: { type: "string", description: "Version UUID" }
+        versionId: { type: "string", description: "Version UUID" },
       },
-      required: ["versionId"]
-    }
+      required: ["versionId"],
+    },
   },
   {
     name: "cms_rollback_page_version",
@@ -176,10 +176,10 @@ export const CMS_MCP_TOOLS = [
       properties: {
         pageId: { type: "string", description: "Page UUID" },
         versionId: { type: "string", description: "Target Version UUID to rollback to" },
-        userId: { type: "string", description: "User or Agent ID performing rollback" }
+        userId: { type: "string", description: "User or Agent ID performing rollback" },
       },
-      required: ["pageId", "versionId", "userId"]
-    }
+      required: ["pageId", "versionId", "userId"],
+    },
   },
   {
     name: "cms_approve_page_version",
@@ -189,10 +189,10 @@ export const CMS_MCP_TOOLS = [
       properties: {
         versionId: { type: "string", description: "Version UUID" },
         userId: { type: "string", description: "Approver user or agent ID" },
-        userRole: { type: "string", description: "Approver role, e.g. 'Editor', 'Admin'" }
+        userRole: { type: "string", description: "Approver role, e.g. 'Editor', 'Admin'" },
       },
-      required: ["versionId", "userId", "userRole"]
-    }
+      required: ["versionId", "userId", "userRole"],
+    },
   },
   {
     name: "cms_add_version_comment",
@@ -204,10 +204,10 @@ export const CMS_MCP_TOOLS = [
         userId: { type: "string", description: "Author user or agent ID" },
         userRole: { type: "string", description: "Author role" },
         content: { type: "string", description: "Comment body text" },
-        blockId: { type: "string", description: "Optional specific block ID target" }
+        blockId: { type: "string", description: "Optional specific block ID target" },
       },
-      required: ["versionId", "userId", "userRole", "content"]
-    }
+      required: ["versionId", "userId", "userRole", "content"],
+    },
   },
 
   // ─── 3. Templates ───────────────────────────────────────────────────────────
@@ -217,9 +217,9 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        pageType: { type: "string", description: "Optional filter by page type" }
-      }
-    }
+        pageType: { type: "string", description: "Optional filter by page type" },
+      },
+    },
   },
   {
     name: "cms_get_template",
@@ -227,10 +227,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        slugOrId: { type: "string", description: "Template slug or UUID" }
+        slugOrId: { type: "string", description: "Template slug or UUID" },
       },
-      required: ["slugOrId"]
-    }
+      required: ["slugOrId"],
+    },
   },
   {
     name: "cms_create_template",
@@ -247,10 +247,10 @@ export const CMS_MCP_TOOLS = [
         rolePermissions: { type: "object", description: "Granular template role permissions" },
         approvalRules: { type: "object", description: "Approval workflow configuration" },
         defaultProperties: { type: "object", description: "Default property schema groups" },
-        initialBlocks: { type: "array", description: "Starter structured CMS blocks" }
+        initialBlocks: { type: "array", description: "Starter structured CMS blocks" },
       },
-      required: ["slug", "title", "pageType"]
-    }
+      required: ["slug", "title", "pageType"],
+    },
   },
   {
     name: "cms_update_template",
@@ -267,10 +267,10 @@ export const CMS_MCP_TOOLS = [
         defaultProperties: { type: "object" },
         initialBlocks: { type: "array" },
         rolePermissions: { type: "object" },
-        approvalRules: { type: "object" }
+        approvalRules: { type: "object" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
   {
     name: "cms_delete_template",
@@ -278,10 +278,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        id: { type: "string", description: "Template UUID" }
+        id: { type: "string", description: "Template UUID" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
 
   // ─── 4. Taxonomies (Categories & Tags) ──────────────────────────────────────
@@ -291,10 +291,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        taxonomy: { type: "string", description: "Taxonomy type, e.g. 'category', 'tag'" }
+        taxonomy: { type: "string", description: "Taxonomy type, e.g. 'category', 'tag'" },
       },
-      required: ["taxonomy"]
-    }
+      required: ["taxonomy"],
+    },
   },
   {
     name: "cms_create_taxonomy_term",
@@ -307,10 +307,10 @@ export const CMS_MCP_TOOLS = [
         label: { type: "object", description: "Localized label or string, e.g. { en: 'Guides' }" },
         description: { type: "object", description: "Localized description" },
         parentId: { type: "string", description: "Optional parent category UUID for hierarchy" },
-        displayOrder: { type: "number", description: "Display sort order" }
+        displayOrder: { type: "number", description: "Display sort order" },
       },
-      required: ["taxonomy", "slug", "label"]
-    }
+      required: ["taxonomy", "slug", "label"],
+    },
   },
   {
     name: "cms_update_taxonomy_term",
@@ -323,10 +323,10 @@ export const CMS_MCP_TOOLS = [
         label: { type: "object" },
         description: { type: "object" },
         parentId: { type: "string" },
-        displayOrder: { type: "number" }
+        displayOrder: { type: "number" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
   {
     name: "cms_delete_taxonomy_term",
@@ -334,10 +334,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        id: { type: "string", description: "Taxonomy term UUID" }
+        id: { type: "string", description: "Taxonomy term UUID" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
   {
     name: "cms_assign_page_taxonomy",
@@ -348,11 +348,11 @@ export const CMS_MCP_TOOLS = [
         pageId: { type: "string", description: "Page UUID" },
         termIds: {
           type: "array",
-          description: "Array of taxonomy term UUIDs to assign to the page"
-        }
+          description: "Array of taxonomy term UUIDs to assign to the page",
+        },
       },
-      required: ["pageId", "termIds"]
-    }
+      required: ["pageId", "termIds"],
+    },
   },
 
   // ─── 5. Bylines & Author Schemas ────────────────────────────────────────────
@@ -361,8 +361,8 @@ export const CMS_MCP_TOOLS = [
     description: "List all registered author and contributor bylines.",
     inputSchema: {
       type: "object",
-      properties: {}
-    }
+      properties: {},
+    },
   },
   {
     name: "cms_get_byline",
@@ -370,10 +370,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        slugOrId: { type: "string", description: "Byline slug or UUID" }
+        slugOrId: { type: "string", description: "Byline slug or UUID" },
       },
-      required: ["slugOrId"]
-    }
+      required: ["slugOrId"],
+    },
   },
   {
     name: "cms_create_byline",
@@ -389,12 +389,12 @@ export const CMS_MCP_TOOLS = [
         userId: { type: "string", description: "Linked user ID if applicable" },
         socials: {
           type: "object",
-          description: "Social links, e.g. { twitter: '...', github: '...' }"
+          description: "Social links, e.g. { twitter: '...', github: '...' }",
         },
-        metadata: { type: "object", description: "Custom author metadata" }
+        metadata: { type: "object", description: "Custom author metadata" },
       },
-      required: ["name", "slug"]
-    }
+      required: ["name", "slug"],
+    },
   },
   {
     name: "cms_update_byline",
@@ -410,10 +410,10 @@ export const CMS_MCP_TOOLS = [
         avatar: { type: "string" },
         userId: { type: "string" },
         socials: { type: "object" },
-        metadata: { type: "object" }
+        metadata: { type: "object" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
   {
     name: "cms_delete_byline",
@@ -421,10 +421,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        id: { type: "string", description: "Byline UUID" }
+        id: { type: "string", description: "Byline UUID" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
 
   // ─── 6. Dynamic Content Types & E-Commerce Collections ──────────────────────
@@ -433,8 +433,8 @@ export const CMS_MCP_TOOLS = [
     description: "List all dynamic content types, collections, and e-commerce models.",
     inputSchema: {
       type: "object",
-      properties: {}
-    }
+      properties: {},
+    },
   },
   {
     name: "cms_get_content_type",
@@ -442,10 +442,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        slugOrId: { type: "string", description: "Content type slug or UUID" }
+        slugOrId: { type: "string", description: "Content type slug or UUID" },
       },
-      required: ["slugOrId"]
-    }
+      required: ["slugOrId"],
+    },
   },
   {
     name: "cms_create_content_type",
@@ -455,29 +455,29 @@ export const CMS_MCP_TOOLS = [
       properties: {
         slug: {
           type: "string",
-          description: "Unique slug identifier (e.g. 'products', 'characters')"
+          description: "Unique slug identifier (e.g. 'products', 'characters')",
         },
         name: { type: "object", description: "Localized name, e.g. { en: 'Products' }" },
         description: { type: "object", description: "Localized description" },
         icon: { type: "string", description: "Icon name (e.g. 'i-lucide-shopping-bag')" },
         mode: {
           type: "string",
-          description: "'document' (blocks), 'data' (structured table), or 'singleton'"
+          description: "'document' (blocks), 'data' (structured table), or 'singleton'",
         },
         fieldSchema: {
           type: "object",
-          description: "Dynamic property field schemas and validation rules"
+          description: "Dynamic property field schemas and validation rules",
         },
         ecomSettings: {
           type: "object",
           description:
-            "E-commerce settings { enabled, currencyDefault, trackInventory, hasVariants, allowDigitalDownloads, stripeSync }"
+            "E-commerce settings { enabled, currencyDefault, trackInventory, hasVariants, allowDigitalDownloads, stripeSync }",
         },
         initialBlocks: { type: "array", description: "Starter blocks for document mode" },
-        isSystem: { type: "boolean", description: "Whether this is a protected system schema" }
+        isSystem: { type: "boolean", description: "Whether this is a protected system schema" },
       },
-      required: ["slug", "name"]
-    }
+      required: ["slug", "name"],
+    },
   },
   {
     name: "cms_update_content_type",
@@ -493,10 +493,10 @@ export const CMS_MCP_TOOLS = [
         mode: { type: "string" },
         fieldSchema: { type: "object" },
         ecomSettings: { type: "object" },
-        initialBlocks: { type: "array" }
+        initialBlocks: { type: "array" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
   {
     name: "cms_delete_content_type",
@@ -504,10 +504,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        id: { type: "string", description: "Content type UUID" }
+        id: { type: "string", description: "Content type UUID" },
       },
-      required: ["id"]
-    }
+      required: ["id"],
+    },
   },
 
   // ─── 7. Site Settings ───────────────────────────────────────────────────────
@@ -516,8 +516,8 @@ export const CMS_MCP_TOOLS = [
     description: "Retrieve current dynamic site settings including branding and SEO defaults.",
     inputSchema: {
       type: "object",
-      properties: {}
-    }
+      properties: {},
+    },
   },
   {
     name: "cms_update_site_settings",
@@ -530,9 +530,9 @@ export const CMS_MCP_TOOLS = [
         author: { type: "string" },
         email: { type: "string" },
         branding: { type: "object" },
-        seo: { type: "object" }
-      }
-    }
+        seo: { type: "object" },
+      },
+    },
   },
 
   // ─── 8. Search ──────────────────────────────────────────────────────────────
@@ -544,11 +544,11 @@ export const CMS_MCP_TOOLS = [
       properties: {
         query: { type: "string", description: "Search query text" },
         type: { type: "string", description: "Optional filter by page type" },
-        limit: { type: "number", description: "Max results to return (default 10)" }
+        limit: { type: "number", description: "Max results to return (default 10)" },
       },
-      required: ["query"]
-    }
-  }
+      required: ["query"],
+    },
+  },
 ];
 
 /**
@@ -561,7 +561,7 @@ export async function handleCmsMcpRequest(
     method: string;
     params?: any;
   },
-  db: any
+  db: any,
 ): Promise<any> {
   const { id = 1, method, params = {} } = body;
 
@@ -570,8 +570,8 @@ export async function handleCmsMcpRequest(
       jsonrpc: "2.0",
       id,
       result: {
-        tools: CMS_MCP_TOOLS
-      }
+        tools: CMS_MCP_TOOLS,
+      },
     };
   }
 
@@ -601,7 +601,7 @@ export async function handleCmsMcpRequest(
             postedAt: pages.postedAt,
             publishedVersionId: pages.publishedVersionId,
             createdAt: pages.createdAt,
-            updatedAt: pages.updatedAt
+            updatedAt: pages.updatedAt,
           })
           .from(pages)
           .where(and(...conditions))
@@ -613,14 +613,14 @@ export async function handleCmsMcpRequest(
           jsonrpc: "2.0",
           id,
           result: {
-            content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
-          }
+            content: [{ type: "text", text: JSON.stringify(rows, null, 2) }],
+          },
         };
       }
 
       case "cms_get_page": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-          args.slugOrId
+          args.slugOrId,
         );
         const condition = isUuid ? eq(pages.id, args.slugOrId) : eq(pages.slug, args.slugOrId);
 
@@ -634,7 +634,7 @@ export async function handleCmsMcpRequest(
           return {
             jsonrpc: "2.0",
             id,
-            error: { code: -32004, message: `Page '${args.slugOrId}' not found` }
+            error: { code: -32004, message: `Page '${args.slugOrId}' not found` },
           };
         }
 
@@ -651,7 +651,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ page, draft }, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify({ page, draft }, null, 2) }] },
         };
       }
 
@@ -677,8 +677,8 @@ export async function handleCmsMcpRequest(
             bylines: args.bylines || [],
             content: {
               blocks: blocksPayload,
-              properties: propertiesPayload
-            }
+              properties: propertiesPayload,
+            },
           })
           .returning();
 
@@ -690,7 +690,7 @@ export async function handleCmsMcpRequest(
               .values({
                 pageId: newPage.id,
                 updatedBy: args.authorIds?.[0] || "agent",
-                content: { blocks: blocksPayload, properties: propertiesPayload }
+                content: { blocks: blocksPayload, properties: propertiesPayload },
               })
               .onConflictDoNothing();
           } catch {}
@@ -699,7 +699,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(newPage, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(newPage, null, 2) }] },
         };
       }
 
@@ -720,7 +720,7 @@ export async function handleCmsMcpRequest(
           const existingContent = current[0]?.content || { blocks: [], properties: {} };
           updateData["content"] = {
             blocks: args.blocks || existingContent.blocks || [],
-            properties: args.properties || existingContent.properties || {}
+            properties: args.properties || existingContent.properties || {},
           };
         }
 
@@ -732,14 +732,16 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
+          result: {
+            content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }],
+          },
         };
       }
 
       case "cms_create_draft": {
         const contentPayload = {
           blocks: args.blocks as BaseBlock[],
-          properties: args.properties || {}
+          properties: args.properties || {},
         };
 
         const draft = await db
@@ -747,22 +749,22 @@ export async function handleCmsMcpRequest(
           .values({
             pageId: args.pageId,
             updatedBy: args.userId,
-            content: contentPayload
+            content: contentPayload,
           })
           .onConflictDoUpdate({
             target: [pageDrafts.pageId],
             set: {
               content: contentPayload,
               updatedBy: args.userId,
-              updatedAt: new Date()
-            }
+              updatedAt: new Date(),
+            },
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(draft[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(draft[0], null, 2) }] },
         };
       }
 
@@ -773,7 +775,7 @@ export async function handleCmsMcpRequest(
           return {
             jsonrpc: "2.0",
             id,
-            error: { code: -32004, message: `Page '${args.pageId}' not found` }
+            error: { code: -32004, message: `Page '${args.pageId}' not found` },
           };
         }
 
@@ -811,7 +813,7 @@ export async function handleCmsMcpRequest(
             approvedBy: [args.userId],
             approvedAt: new Date(),
             changeSummary: args.changeSummary || "Published via MCP",
-            createdAt: new Date()
+            createdAt: new Date(),
           })
           .returning();
 
@@ -823,7 +825,7 @@ export async function handleCmsMcpRequest(
             content,
             publishedVersionId: version.id,
             postedAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           })
           .where(eq(pages.id, args.pageId));
 
@@ -832,7 +834,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(version, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(version, null, 2) }] },
         };
       }
 
@@ -850,10 +852,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, page: updated[0] || null }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, page: updated[0] || null }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -871,10 +873,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, page: deleted[0] || null }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, page: deleted[0] || null }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -891,7 +893,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] },
         };
       }
 
@@ -904,7 +906,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] },
         };
       }
 
@@ -919,7 +921,7 @@ export async function handleCmsMcpRequest(
           return {
             jsonrpc: "2.0",
             id,
-            error: { code: -32004, message: "Version snapshot not found" }
+            error: { code: -32004, message: "Version snapshot not found" },
           };
         }
 
@@ -928,15 +930,15 @@ export async function handleCmsMcpRequest(
           .values({
             pageId: args.pageId,
             updatedBy: args.userId,
-            content: targetVersion.content
+            content: targetVersion.content,
           })
           .onConflictDoUpdate({
             target: [pageDrafts.pageId],
             set: {
               content: targetVersion.content,
               updatedBy: args.userId,
-              updatedAt: new Date()
-            }
+              updatedAt: new Date(),
+            },
           })
           .returning();
 
@@ -951,14 +953,14 @@ export async function handleCmsMcpRequest(
                   {
                     success: true,
                     rolledBackToVersion: targetVersion.versionNumber,
-                    draft: draft[0]
+                    draft: draft[0],
                   },
                   null,
-                  2
-                )
-              }
-            ]
-          }
+                  2,
+                ),
+              },
+            ],
+          },
         };
       }
 
@@ -969,14 +971,14 @@ export async function handleCmsMcpRequest(
             versionId: args.versionId,
             userId: args.userId,
             userRole: args.userRole,
-            approvedAt: new Date()
+            approvedAt: new Date(),
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(approval[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(approval[0], null, 2) }] },
         };
       }
 
@@ -989,14 +991,14 @@ export async function handleCmsMcpRequest(
             userRole: args.userRole,
             content: args.content,
             blockId: args.blockId || null,
-            createdAt: new Date()
+            createdAt: new Date(),
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(comment[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(comment[0], null, 2) }] },
         };
       }
 
@@ -1015,13 +1017,13 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] },
         };
       }
 
       case "cms_get_template": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-          args.slugOrId
+          args.slugOrId,
         );
         const condition = isUuid
           ? eq(pageTemplates.id, args.slugOrId)
@@ -1031,7 +1033,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] },
         };
       }
 
@@ -1055,18 +1057,18 @@ export async function handleCmsMcpRequest(
               whoCanCreate: [],
               whoCanEdit: [],
               whoCanReview: [],
-              whoCanView: []
+              whoCanView: [],
             },
             approvalRules: args.approvalRules || { allowSelfApproval: true, minApprovals: 1 },
             defaultProperties: args.defaultProperties || {},
-            initialBlocks: args.initialBlocks || []
+            initialBlocks: args.initialBlocks || [],
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(tmpl[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(tmpl[0], null, 2) }] },
         };
       }
 
@@ -1094,7 +1096,9 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
+          result: {
+            content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }],
+          },
         };
       }
 
@@ -1110,10 +1114,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, template: deleted[0] || null }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, template: deleted[0] || null }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -1123,7 +1127,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(terms, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(terms, null, 2) }] },
         };
       }
 
@@ -1142,14 +1146,14 @@ export async function handleCmsMcpRequest(
             label: labelPayload,
             description: descPayload,
             parentId: args.parentId || null,
-            displayOrder: args.displayOrder || 0
+            displayOrder: args.displayOrder || 0,
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(term[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(term[0], null, 2) }] },
         };
       }
 
@@ -1173,7 +1177,9 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
+          result: {
+            content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }],
+          },
         };
       }
 
@@ -1189,10 +1195,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, term: deleted[0] || null }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, term: deleted[0] || null }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -1216,10 +1222,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, assignedCount: assigned.length }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, assignedCount: assigned.length }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -1234,13 +1240,13 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] },
         };
       }
 
       case "cms_get_byline": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-          args.slugOrId
+          args.slugOrId,
         );
         const condition = isUuid ? eq(bylines.id, args.slugOrId) : eq(bylines.slug, args.slugOrId);
         const row = await db
@@ -1252,7 +1258,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] },
         };
       }
 
@@ -1267,14 +1273,14 @@ export async function handleCmsMcpRequest(
             avatar: args.avatar || null,
             userId: args.userId || null,
             socials: args.socials || {},
-            metadata: args.metadata || {}
+            metadata: args.metadata || {},
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(row[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(row[0], null, 2) }] },
         };
       }
 
@@ -1297,7 +1303,9 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
+          result: {
+            content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }],
+          },
         };
       }
 
@@ -1314,10 +1322,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, byline: deleted[0] || null }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, byline: deleted[0] || null }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -1327,13 +1335,13 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] },
         };
       }
 
       case "cms_get_content_type": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-          args.slugOrId
+          args.slugOrId,
         );
         const condition = isUuid
           ? eq(contentTypes.id, args.slugOrId)
@@ -1343,7 +1351,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] },
         };
       }
 
@@ -1365,14 +1373,14 @@ export async function handleCmsMcpRequest(
             fieldSchema: args.fieldSchema || {},
             ecomSettings: args.ecomSettings || null,
             initialBlocks: args.initialBlocks || [],
-            isSystem: Boolean(args.isSystem)
+            isSystem: Boolean(args.isSystem),
           })
           .returning();
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(row[0], null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(row[0], null, 2) }] },
         };
       }
 
@@ -1399,7 +1407,9 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
+          result: {
+            content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }],
+          },
         };
       }
 
@@ -1415,10 +1425,10 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, contentType: deleted[0] || null }, null, 2)
-              }
-            ]
-          }
+                text: JSON.stringify({ success: true, contentType: deleted[0] || null }, null, 2),
+              },
+            ],
+          },
         };
       }
 
@@ -1428,7 +1438,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(settings, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(settings, null, 2) }] },
         };
       }
 
@@ -1437,7 +1447,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(updated, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(updated, null, 2) }] },
         };
       }
 
@@ -1456,7 +1466,7 @@ export async function handleCmsMcpRequest(
             type: pages.type,
             title: pages.title,
             description: pages.description,
-            postedAt: pages.postedAt
+            postedAt: pages.postedAt,
           })
           .from(pages)
           .where(
@@ -1464,16 +1474,16 @@ export async function handleCmsMcpRequest(
               ...conditions,
               or(
                 like(pages.slug, `%${args.query}%`),
-                sql`CAST(${pages.title} AS TEXT) ILIKE ${`%${args.query}%`}`
-              )
-            )
+                sql`CAST(${pages.title} AS TEXT) ILIKE ${`%${args.query}%`}`,
+              ),
+            ),
           )
           .limit(queryLimit);
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
+          result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] },
         };
       }
 
@@ -1481,7 +1491,7 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          error: { code: -32601, message: `Method or tool '${name}' not found` }
+          error: { code: -32601, message: `Method or tool '${name}' not found` },
         };
     }
   }
@@ -1489,6 +1499,6 @@ export async function handleCmsMcpRequest(
   return {
     jsonrpc: "2.0",
     id,
-    error: { code: -32601, message: `Unknown method: ${method}` }
+    error: { code: -32601, message: `Unknown method: ${method}` },
   };
 }

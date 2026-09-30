@@ -47,9 +47,9 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
       base: { type: "string", short: "b", default: "en" },
       fix: { type: "boolean", short: "f", default: false },
       "allow-empty": { type: "boolean", default: false },
-      help: { type: "boolean", short: "h", default: false }
+      help: { type: "boolean", short: "h", default: false },
     },
-    allowPositionals: true
+    allowPositionals: true,
   });
 
   if (values.help) {
@@ -66,7 +66,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
   const localesDir = findLocalesDir(values.dir);
   if (!localesDir) {
     console.error(
-      `✖ [i18n] Could not find translation directory. Pass --dir <path> (e.g. --dir src/i18n)`
+      `✖ [i18n] Could not find translation directory. Pass --dir <path> (e.g. --dir src/i18n)`,
     );
     return 1;
   }
@@ -93,14 +93,14 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
   const baseLocale = values.base || "en";
   if (!translations[baseLocale]) {
     console.error(
-      `✖ [i18n] Base locale '${baseLocale}' not found in ${localesDir} (found: ${Object.keys(translations).join(", ")})`
+      `✖ [i18n] Base locale '${baseLocale}' not found in ${localesDir} (found: ${Object.keys(translations).join(", ")})`,
     );
     return 1;
   }
 
   let report = verifyTranslations(translations, {
     defaultLocale: baseLocale,
-    allowEmpty: values["allow-empty"]
+    allowEmpty: values["allow-empty"],
   });
 
   if (!report.isValid && values.fix) {
@@ -112,7 +112,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     }
     report = verifyTranslations(fixed, {
       defaultLocale: baseLocale,
-      allowEmpty: values["allow-empty"]
+      allowEmpty: values["allow-empty"],
     });
     console.log(`✔ [i18n] Successfully updated translation files.`);
   }
@@ -125,7 +125,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     console.error(formatted);
     if (!values.fix) {
       console.error(
-        `\nRun with --fix to automatically prune stale keys and generate missing skeletons.`
+        `\nRun with --fix to automatically prune stale keys and generate missing skeletons.`,
       );
     }
     return 1;

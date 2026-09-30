@@ -7,21 +7,21 @@ describe("RBAC Permissions and Role Evaluator", () => {
     userId: "u1",
     roles: ["admin"],
     permissions: ["*"],
-    userType: "employee"
+    userType: "employee",
   };
 
   const editorSession: UserSessionContext = {
     userId: "u2",
     roles: ["editor"],
     permissions: ["page:create", "page:update", "page:read"],
-    userType: "employee"
+    userType: "employee",
   };
 
   const viewerSession: UserSessionContext = {
     userId: "u3",
     roles: ["viewer"],
     permissions: ["page:read"],
-    userType: "user"
+    userType: "user",
   };
 
   it("evaluates hasRole correctly", () => {
@@ -43,14 +43,14 @@ describe("RBAC Permissions and Role Evaluator", () => {
 
   it("evaluates combined access constraints", () => {
     expect(evaluateAccess(adminSession, { roles: ["admin"], permission: "page:create" })).toBe(
-      true
+      true,
     );
     expect(evaluateAccess(editorSession, { roles: ["admin"] })).toBe(false);
     expect(evaluateAccess(editorSession, { roles: ["editor"], permission: "page:create" })).toBe(
-      true
+      true,
     );
     expect(evaluateAccess(viewerSession, { roles: ["editor"], permission: "page:read" })).toBe(
-      false
+      false,
     );
   });
 });

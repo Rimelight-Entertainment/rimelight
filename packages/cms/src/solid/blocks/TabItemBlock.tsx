@@ -2,7 +2,7 @@ import { Show, type Component } from "solid-js";
 import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const TabItemBlock: Component<BlockViewProps & { active?: boolean | undefined }> = (
-  props
+  props,
 ) => {
   return (
     <Show when={props.active ?? true}>

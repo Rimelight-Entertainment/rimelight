@@ -52,7 +52,7 @@ export const StepsEditor: Component<StepsEditorProps> = (componentProps) => {
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 

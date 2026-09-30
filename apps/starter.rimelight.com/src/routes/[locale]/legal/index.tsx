@@ -26,7 +26,7 @@ export const LegalIndexPage: Component = () => {
         return [];
       }
     },
-    []
+    [],
   );
 
   return (

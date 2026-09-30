@@ -2,7 +2,7 @@ import {
   locales as configLocales,
   defaultLocale as configDefaultLocale,
   prefixDefaultLocale as configPrefixDefaultLocale,
-  setKVBinding
+  setKVBinding,
 } from "./index";
 import { currentLocale } from "./runtime";
 
@@ -28,7 +28,7 @@ export interface HonoI18nOptions {
 function getPreferredLocale(
   acceptLanguage: string | null,
   supportedLocales: Set<string>,
-  defaultLocale: string
+  defaultLocale: string,
 ): string {
   if (!acceptLanguage) return defaultLocale;
 

@@ -42,6 +42,6 @@ export function resolveLinkAttrs(props: Partial<LinkProps>) {
     ariaCurrent,
     prefetchAttr,
     href,
-    ariaDisabled
+    ariaDisabled,
   };
 }

@@ -10,7 +10,7 @@ import {
   hsbToRgb,
   rgbToHex,
   rgbToHsb,
-  rgbToHsl
+  rgbToHsl,
 } from "../color-picker/color";
 
 export interface RLColorFieldProps extends ColorFieldProps {
@@ -43,7 +43,7 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     "class",
     "children",
     "onChange",
-    "onUpdate:modelValue"
+    "onUpdate:modelValue",
   );
 
   const colorSpace = () => props.colorSpace ?? "hsl";
@@ -58,7 +58,7 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
       if (controlled !== undefined) {
         setCurrentHex(controlled);
       }
-    }
+    },
   );
 
   const getDisplayValue = () => {
@@ -87,7 +87,7 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     () => currentHex(),
     () => {
       setDisplayValue(getDisplayValue());
-    }
+    },
   );
 
   const updateColor = (newHex: string) => {
@@ -191,8 +191,8 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     colorFieldTheme({
       color: props.color,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

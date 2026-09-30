@@ -7,12 +7,12 @@ export const colorSliderTheme = defineTheme("color-slider", {
     track:
       "relative h-3 w-full grow rounded-full border border-default bg-muted cursor-pointer outline-none",
     thumb:
-      "absolute block size-5 rounded-full border-2 border-white shadow-md cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50"
+      "absolute block size-5 rounded-full border-2 border-white shadow-md cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50",
   },
   variants: {
-    color: "auto"
+    color: "auto",
   },
   defaultVariants: {
-    color: "primary"
-  }
+    color: "primary",
+  },
 });

@@ -14,7 +14,7 @@ export const formatShowcaseDate = (dateStr: string) => {
     month: "short",
     day: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 };
 
@@ -37,9 +37,9 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
         status: "paid",
         category: "Subscriptions",
         email: "james.sub1@example.com",
-        amount: 94
-      }
-    ]
+        amount: 94,
+      },
+    ],
   },
   {
     id: "PAY-1002",
@@ -47,7 +47,7 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "failed",
     category: "Infrastructure",
     email: "mia.white@example.com",
-    amount: 276
+    amount: 276,
   },
   {
     id: "PAY-1003",
@@ -55,7 +55,7 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "refunded",
     category: "Subscriptions",
     email: "william.brown@example.com",
-    amount: 315
+    amount: 315,
   },
   {
     id: "PAY-1004",
@@ -63,7 +63,7 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "paid",
     category: "Hardware",
     email: "emma.davis@example.com",
-    amount: 1529
+    amount: 1529,
   },
   {
     id: "PAY-1005",
@@ -71,7 +71,7 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "paid",
     category: "Infrastructure",
     email: "ethan.harris@example.com",
-    amount: 639
+    amount: 639,
   },
   {
     id: "PAY-1006",
@@ -79,7 +79,7 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "paid",
     category: "Hardware",
     email: "noah.clark@example.com",
-    amount: 873
+    amount: 873,
   },
   {
     id: "PAY-1007",
@@ -87,7 +87,7 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "refunded",
     category: "Subscriptions",
     email: "liam.walker@example.com",
-    amount: 701
+    amount: 701,
   },
   {
     id: "PAY-1008",
@@ -95,6 +95,6 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     status: "failed",
     category: "Infrastructure",
     email: "amelia.king@example.com",
-    amount: 437
-  }
+    amount: 437,
+  },
 ];

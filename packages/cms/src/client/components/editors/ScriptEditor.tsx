@@ -57,7 +57,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 
@@ -70,7 +70,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
     componentProps.onPropsChange({
       ...componentProps.props,
       ...partial,
-      children: childrenBlocks()
+      children: childrenBlocks(),
     });
   };
 

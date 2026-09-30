@@ -45,7 +45,7 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
   const defaultVariants = { ...themeConfig.defaultVariants, ...custom?.defaultVariants };
   const compoundVariants = [
     ...(themeConfig.compoundVariants ?? []),
-    ...(custom?.compoundVariants ?? [])
+    ...(custom?.compoundVariants ?? []),
   ];
 
   const compiledCV = compoundVariants.map((cv) => {

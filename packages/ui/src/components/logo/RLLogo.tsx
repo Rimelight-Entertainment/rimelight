@@ -21,7 +21,7 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
     "src",
     "ui",
     "class",
-    "children"
+    "children",
   );
 
   const variant = () => props.variant || "logomark";
@@ -73,8 +73,8 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
     logoTheme({
       variant: variant(),
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const renderContent = () => {

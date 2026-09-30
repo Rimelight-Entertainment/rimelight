@@ -18,7 +18,7 @@ export const AboutPage: Component = () => {
           ui={{
             root: "w-full aspect-video relative block",
             trigger: "absolute inset-0 w-full h-full block",
-            triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg"
+            triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg",
           }}
         />
       </RLPageSection>

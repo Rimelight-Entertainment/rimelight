@@ -13,7 +13,7 @@ const ANSI_CODES: Record<TextStyleFormat, [string, string]> = {
   green: ["\x1b[32m", "\x1b[39m"],
   yellow: ["\x1b[33m", "\x1b[39m"],
   magenta: ["\x1b[35m", "\x1b[39m"],
-  cyan: ["\x1b[36m", "\x1b[39m"]
+  cyan: ["\x1b[36m", "\x1b[39m"],
 };
 
 export const pc: Record<TextStyleFormat, (text: unknown) => string> = {
@@ -23,7 +23,7 @@ export const pc: Record<TextStyleFormat, (text: unknown) => string> = {
   cyan: (text) => styleTextSafe("cyan", text),
   yellow: (text) => styleTextSafe("yellow", text),
   red: (text) => styleTextSafe("red", text),
-  dim: (text) => styleTextSafe("dim", text)
+  dim: (text) => styleTextSafe("dim", text),
 };
 
 function styleTextSafe(format: TextStyleFormat, text: unknown): string {
@@ -112,7 +112,7 @@ export async function text(options: TextOptions): Promise<string | symbol> {
   while (true) {
     const rl = readlinePromises.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
     try {
@@ -148,7 +148,7 @@ export async function confirm(options: ConfirmOptions): Promise<boolean | symbol
 
   const rl = readlinePromises.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
 
   try {
@@ -165,7 +165,7 @@ export async function confirm(options: ConfirmOptions): Promise<boolean | symbol
 }
 
 export async function select<TValue = string>(
-  options: SelectOptions<TValue>
+  options: SelectOptions<TValue>,
 ): Promise<TValue | symbol | undefined> {
   const { message, options: choices, initialValue } = options;
   const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY);
@@ -176,7 +176,7 @@ export async function select<TValue = string>(
 
   let selectedIndex = Math.max(
     0,
-    choices.findIndex((c) => c.value === initialValue)
+    choices.findIndex((c) => c.value === initialValue),
   );
 
   return new Promise<TValue | symbol | undefined>((resolve) => {
@@ -258,7 +258,7 @@ export async function select<TValue = string>(
 }
 
 export async function multiselect<TValue = string>(
-  options: MultiselectOptions<TValue>
+  options: MultiselectOptions<TValue>,
 ): Promise<TValue[] | symbol> {
   const { message, options: choices, initialValues = [], required = false } = options;
   const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY);
@@ -280,7 +280,7 @@ export async function multiselect<TValue = string>(
         stdout.write(`\x1b[${choices.length + 2}A\r\x1b[J`);
       }
       stdout.write(
-        `${pc.magenta("?")} ${pc.bold(message)} ${pc.dim("(Space to toggle, Enter to submit)")}\n`
+        `${pc.magenta("?")} ${pc.bold(message)} ${pc.dim("(Space to toggle, Enter to submit)")}\n`,
       );
       choices.forEach((choice, idx) => {
         const isCurrent = idx === selectedIndex;
@@ -419,6 +419,6 @@ export function spinner(): Spinner {
       if (finalMessage) {
         console.log(finalMessage);
       }
-    }
+    },
   };
 }

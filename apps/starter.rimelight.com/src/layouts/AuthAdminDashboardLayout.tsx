@@ -9,7 +9,7 @@ import {
   RLDashboardToolbar,
   RLDashboardSidebarCollapse,
   RLDashboardSidebarToggle,
-  RLIcon
+  RLIcon,
 } from "@rimelight/ui";
 
 const navItems = [
@@ -18,7 +18,7 @@ const navItems = [
   { icon: "tag", label: "Tags", href: "/admin/tags", id: "tags" },
   { icon: "penTool", label: "Bylines", href: "/admin/bylines", id: "bylines" },
   { icon: "network", label: "Taxonomies", href: "/admin/taxonomies", id: "taxonomies" },
-  { icon: "fileText", label: "CMS Content", href: "/cms", id: "cms" }
+  { icon: "fileText", label: "CMS Content", href: "/cms", id: "cms" },
 ];
 
 export interface AuthAdminDashboardLayoutProps {

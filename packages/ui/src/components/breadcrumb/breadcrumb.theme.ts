@@ -8,6 +8,6 @@ export const breadcrumbTheme = defineTheme("breadcrumb", {
     item: "flex items-center gap-1.5",
     link: "transition-colors hover:text-highlighted cursor-pointer decoration-none text-current",
     separator: "flex size-3.5 items-center justify-center [&_svg]:size-3.5 opacity-60",
-    page: "font-normal text-highlighted"
-  }
+    page: "font-normal text-highlighted",
+  },
 });

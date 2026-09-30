@@ -20,8 +20,8 @@ export async function getByline(db: any, idOrSlug: string): Promise<Byline | nul
     .where(
       and(
         isNull(bylines.deletedAt),
-        or(eq(bylines.id, idOrSlug as any), eq(bylines.slug, idOrSlug))
-      )
+        or(eq(bylines.id, idOrSlug as any), eq(bylines.slug, idOrSlug)),
+      ),
     )
     .limit(1);
 
@@ -36,7 +36,7 @@ export async function createByline(db: any, data: NewByline): Promise<Byline> {
     .insert(bylines)
     .values({
       ...data,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .returning();
   return created;
@@ -48,13 +48,13 @@ export async function createByline(db: any, data: NewByline): Promise<Byline> {
 export async function updateByline(
   db: any,
   id: string,
-  data: Partial<NewByline>
+  data: Partial<NewByline>,
 ): Promise<Byline | null> {
   const [updated] = await db
     .update(bylines)
     .set({
       ...data,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .where(and(eq(bylines.id, id as any), isNull(bylines.deletedAt)))
     .returning();

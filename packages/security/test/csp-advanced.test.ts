@@ -37,7 +37,7 @@ describe("@rimelight/security CSP header generator", () => {
 
   it("should support allowedDomains across img-src, connect-src and frame-src", () => {
     const csp = buildCspHeader({
-      allowedDomains: ["https://api.example.com", "https://ws.example.com"]
+      allowedDomains: ["https://api.example.com", "https://ws.example.com"],
     });
 
     expect(csp).toContain("img-src 'self' data: https://api.example.com https://ws.example.com");
@@ -51,7 +51,7 @@ describe("@rimelight/security CSP header generator", () => {
     expect(csp).toContain("script-src 'self' 'inline-speculation-rules'");
     expect(csp).toContain("style-src 'self'");
     expect(csp).not.toContain(
-      "script-src 'self' 'inline-speculation-rules' https://cdn.example.com"
+      "script-src 'self' 'inline-speculation-rules' https://cdn.example.com",
     );
   });
 
@@ -59,7 +59,7 @@ describe("@rimelight/security CSP header generator", () => {
     const csp = buildCspHeader({
       domain: "example.com",
       allowedDomains: ["https://cdn.example.com", "https://api.example.com"],
-      imgSrc: ["https://api.example.com"]
+      imgSrc: ["https://api.example.com"],
     });
 
     expect(csp).toContain("img-src 'self' data: https://cdn.example.com https://api.example.com");
@@ -69,8 +69,8 @@ describe("@rimelight/security CSP header generator", () => {
     const csp = buildCspHeader({
       directives: {
         "frame-ancestors": false,
-        "connect-src": ["'self'", "https://api.example.com"]
-      }
+        "connect-src": ["'self'", "https://api.example.com"],
+      },
     });
 
     expect(csp).not.toContain("frame-ancestors");
@@ -89,10 +89,10 @@ describe("security domain validation", () => {
       "example.com/path",
       "example.com/",
       "EXAMPLE.COM",
-      "example.com:8080"
+      "example.com:8080",
     ]) {
       expect(resolveSecurityDomain(input), input).toBe(
-        input === "example.com:8080" ? "example.com:8080" : "example.com"
+        input === "example.com:8080" ? "example.com:8080" : "example.com",
       );
     }
   });

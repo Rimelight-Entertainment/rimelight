@@ -9,113 +9,113 @@ const BLOCK_DEFS = [
     type: "ParagraphBlock",
     label: "Paragraph",
     desc: "Rich text paragraph",
-    icon: "paragraph"
+    icon: "paragraph",
   },
   {
     group: "Text",
     type: "SectionBlock",
     label: "Section",
     desc: "Collapsible section with heading",
-    icon: "heading"
+    icon: "heading",
   },
   {
     group: "Media",
     type: "ImageBlock",
     label: "Image",
     desc: "Embed an image with caption",
-    icon: "image"
+    icon: "image",
   },
   {
     group: "Media",
     type: "CodeBlock",
     label: "Code",
     desc: "Code block with syntax highlighting",
-    icon: "code"
+    icon: "code",
   },
   {
     group: "Callout",
     type: "CalloutBlock",
     label: "Callout",
     desc: "Highlighted info/warning/note box",
-    icon: "info"
+    icon: "info",
   },
   {
     group: "Documentation",
     type: "TableBlock",
     label: "Table",
     desc: "Structured data table with columns and rows",
-    icon: "table"
+    icon: "table",
   },
   {
     group: "Documentation",
     type: "TabsBlock",
     label: "Tabs",
     desc: "Tabbed content container",
-    icon: "layers"
+    icon: "layers",
   },
   {
     group: "Documentation",
     type: "TabItemBlock",
     label: "Tab Item",
     desc: "Individual tab page",
-    icon: "fileText"
+    icon: "fileText",
   },
   {
     group: "Documentation",
     type: "StepsBlock",
     label: "Steps",
     desc: "Step-by-step walkthrough sequence",
-    icon: "listOrdered"
+    icon: "listOrdered",
   },
   {
     group: "Documentation",
     type: "StepItemBlock",
     label: "Step Item",
     desc: "Individual step",
-    icon: "check"
+    icon: "check",
   },
   {
     group: "Documentation",
     type: "CardsBlock",
     label: "Cards Grid",
     desc: "Grid container for link cards",
-    icon: "grid"
+    icon: "grid",
   },
   {
     group: "Documentation",
     type: "CardBlock",
     label: "Card",
     desc: "Interactive doc/link card",
-    icon: "file"
+    icon: "file",
   },
   {
     group: "Documentation",
     type: "FileTreeBlock",
     label: "File Tree",
     desc: "Directory and file structure visualizer",
-    icon: "folder"
+    icon: "folder",
   },
   {
     group: "Screenplay",
     type: "ScriptBlock",
     label: "Script",
     desc: "Script container with plot tracking",
-    icon: "fileText"
+    icon: "fileText",
   },
   {
     group: "Screenplay",
     type: "SceneBlock",
     label: "Scene",
     desc: "Scene with location and time-of-day",
-    icon: "video"
+    icon: "video",
   },
   {
     group: "Screenplay",
     type: "DialogueBlock",
     label: "Dialogue",
     desc: "Character dialogue line",
-    icon: "messageSquare"
-  }
+    icon: "messageSquare",
+  },
 ];
 
 import { ALLOWED_CHILDREN_MAP, MAX_SECTION_DEPTH } from "../../core/types/blocks";
@@ -162,7 +162,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
     if (type === "SectionBlock" && depth > MAX_SECTION_DEPTH) {
       toast.error(
         "Invalid Section Nesting",
-        "Sections cannot be nested inside an H6 section. H6 is the maximum heading level."
+        "Sections cannot be nested inside an H6 section. H6 is the maximum heading level.",
       );
       return;
     }

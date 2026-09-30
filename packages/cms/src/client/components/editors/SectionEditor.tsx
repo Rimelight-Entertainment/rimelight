@@ -56,7 +56,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
           cleanAllSortableClasses();
-        }
+        },
       });
     }
 
@@ -71,7 +71,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       title: titleInput?.value || "",
       description: descInput?.value || "",
       level: headingLevel(),
-      children: childrenBlocks()
+      children: childrenBlocks(),
     });
   };
 

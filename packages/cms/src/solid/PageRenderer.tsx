@@ -18,7 +18,7 @@ export const PageRenderer: Component<PageRendererProps> = (props) => {
   const overrides = () => props.components ?? {};
 
   const sanitizedBlocks = createMemo(() =>
-    filterBlocksForReader(props.blocks ?? [], props.session)
+    filterBlocksForReader(props.blocks ?? [], props.session),
   );
 
   return (

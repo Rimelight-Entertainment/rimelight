@@ -40,7 +40,7 @@ export const RimelightBylinesManager: Component = () => {
     websiteUrl: "",
     bio: "",
     avatar: "",
-    userId: ""
+    userId: "",
   });
 
   const loadBylines = async () => {
@@ -76,7 +76,7 @@ export const RimelightBylinesManager: Component = () => {
       (b) =>
         b.name.toLowerCase().includes(q) ||
         b.slug.toLowerCase().includes(q) ||
-        (b.bio && b.bio.toLowerCase().includes(q))
+        (b.bio && b.bio.toLowerCase().includes(q)),
     );
   });
 
@@ -88,7 +88,7 @@ export const RimelightBylinesManager: Component = () => {
       websiteUrl: byline.websiteUrl || "",
       bio: byline.bio || "",
       avatar: byline.avatar || "",
-      userId: byline.userId || ""
+      userId: byline.userId || "",
     });
   };
 
@@ -100,7 +100,7 @@ export const RimelightBylinesManager: Component = () => {
       websiteUrl: "",
       bio: "",
       avatar: "",
-      userId: ""
+      userId: "",
     });
   };
 
@@ -116,7 +116,7 @@ export const RimelightBylinesManager: Component = () => {
     setForm((prev) => ({
       ...prev,
       name,
-      slug: isNew ? autoSlug : prev.slug
+      slug: isNew ? autoSlug : prev.slug,
     }));
   };
 
@@ -141,7 +141,7 @@ export const RimelightBylinesManager: Component = () => {
       websiteUrl: f.websiteUrl.trim() || null,
       bio: f.bio.trim() || null,
       avatar: f.avatar.trim() || null,
-      userId: f.userId.trim() || null
+      userId: f.userId.trim() || null,
     };
 
     setIsSaving(true);
@@ -150,7 +150,7 @@ export const RimelightBylinesManager: Component = () => {
         const res = await fetch(`/api/cms/bylines/${selectedId()}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error("Failed to update byline");
         const updated = await res.json();
@@ -159,7 +159,7 @@ export const RimelightBylinesManager: Component = () => {
         const res = await fetch("/api/cms/bylines", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error("Failed to create byline");
         const created = await res.json();
@@ -355,7 +355,7 @@ export const RimelightBylinesManager: Component = () => {
                 ui={{
                   root: () => "",
                   textarea: () =>
-                    "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]"
+                    "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]",
                 }}
               />
             </div>

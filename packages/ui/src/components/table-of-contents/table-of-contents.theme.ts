@@ -19,7 +19,7 @@ export const tableOfContentsTheme = defineTheme("table-of-contents", {
     "linkText",
     "indicator",
     "indicatorLine",
-    "indicatorActive"
+    "indicatorActive",
   ],
   base: {
     root: "sticky top-(--rl-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 sm:-mx-6 lg:ms-0 xl:mx-0 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-var(--rl-header-height))]",
@@ -43,22 +43,22 @@ export const tableOfContentsTheme = defineTheme("table-of-contents", {
     linkText: "truncate",
     indicator: "",
     indicatorLine: "",
-    indicatorActive: ""
+    indicatorActive: "",
   },
   variants: {
     interactive: {
       true: {
-        root: "hover:shadow-md hover:-translate-y-0.5 cursor-pointer hover:border-primary/30"
+        root: "hover:shadow-md hover:-translate-y-0.5 cursor-pointer hover:border-primary/30",
       },
-      false: { root: "" }
+      false: { root: "" },
     },
     overlay: {
       true: { root: "relative aspect-square", content: "absolute inset-0 z-10" },
-      false: { root: "" }
-    }
+      false: { root: "" },
+    },
   },
   defaultVariants: {
     interactive: false,
-    overlay: false
-  }
+    overlay: false,
+  },
 });

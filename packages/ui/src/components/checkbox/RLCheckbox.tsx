@@ -25,7 +25,7 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     "ui",
     "class",
     "onChange",
-    "children"
+    "children",
   );
 
   const resolvedClasses = createMemo(() =>
@@ -34,8 +34,8 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
       size: props.size ?? "md",
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   return (

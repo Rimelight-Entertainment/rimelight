@@ -31,7 +31,7 @@ export function buildRssXml(options: RssFeedOptions): string {
       `      <title>${escapeXml(item.title)}</title>`,
       `      <link>${escapeXml(itemLink)}</link>`,
       `      <guid isPermaLink="${guid.startsWith("http") ? "true" : "false"}">${escapeXml(guid)}</guid>`,
-      `      <pubDate>${pubDate}</pubDate>`
+      `      <pubDate>${pubDate}</pubDate>`,
     ];
 
     if (item.description) {

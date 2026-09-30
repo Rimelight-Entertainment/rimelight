@@ -7,7 +7,7 @@ describe("@rimelight/seo defaultOgLayout", () => {
       title: "My Amazing Blog Post",
       brand: "Rimelight",
       badge: "Blog",
-      description: "A deep dive into testing and safety."
+      description: "A deep dive into testing and safety.",
     });
 
     expect(vnode.type).toBe("div");
@@ -22,7 +22,7 @@ describe("@rimelight/seo defaultOgLayout", () => {
 
     const vnode: any = defaultOgLayout({
       title: longTitle,
-      description: longDesc
+      description: longDesc,
     });
 
     const titleNode = vnode.props.children[1].props.children[0];
@@ -38,7 +38,7 @@ describe("@rimelight/seo defaultOgLayout", () => {
     const vnode: any = defaultOgLayout({
       title: "Preview Post",
       background: "gradient",
-      preview: true
+      preview: true,
     });
 
     expect(vnode.props.style.background).toContain("linear-gradient");

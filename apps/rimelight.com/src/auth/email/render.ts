@@ -10,7 +10,7 @@ export interface EmailTemplateProps {
 export function renderEmailTemplate({
   bannerAlt = "Rimelight Entertainment",
   common,
-  contentHtml
+  contentHtml,
 }: EmailTemplateProps): string {
   const bannerSrc = "https://cdn.rimelight.com/Images/email-banner.webp";
   const year = new Date().getFullYear();
@@ -76,7 +76,7 @@ export async function renderVerificationEmail(url: string, locale = "en"): Promi
   return renderEmailTemplate({
     bannerAlt: "Verify your email",
     common: messages.common,
-    contentHtml
+    contentHtml,
   });
 }
 
@@ -102,13 +102,13 @@ export async function renderPasswordResetEmail(url: string, locale = "en"): Prom
   return renderEmailTemplate({
     bannerAlt: "Reset your Rimelight password",
     common: messages.common,
-    contentHtml
+    contentHtml,
   });
 }
 
 export async function renderSignupNotificationEmail(
   signInUrl: string,
-  locale = "en"
+  locale = "en",
 ): Promise<string> {
   const messages = getEmailMessages(locale);
   const contentHtml = `
@@ -128,7 +128,7 @@ export async function renderSignupNotificationEmail(
   return renderEmailTemplate({
     bannerAlt: "Rimelight security notice",
     common: messages.common,
-    contentHtml
+    contentHtml,
   });
 }
 
@@ -136,7 +136,7 @@ export async function renderContactEmail({
   name,
   email,
   subject,
-  message
+  message,
 }: {
   name: string;
   email: string;
@@ -173,6 +173,6 @@ export async function renderContactEmail({
   return renderEmailTemplate({
     bannerAlt: "Contact Submission",
     common: messages.common,
-    contentHtml
+    contentHtml,
   });
 }

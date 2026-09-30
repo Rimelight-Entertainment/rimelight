@@ -112,7 +112,7 @@ export function createDefaultBlock(type: string): BaseBlock {
         id,
         type,
         children: [],
-        props: { level: 2, title: "New Section", description: "", children: [] }
+        props: { level: 2, title: "New Section", description: "", children: [] },
       };
     case "ParagraphBlock":
       return { id, type, props: { text: [] } };
@@ -133,8 +133,8 @@ export function createDefaultBlock(type: string): BaseBlock {
           bPlot: "",
           cPlot: "",
           stinger: "",
-          children: []
-        }
+          children: [],
+        },
       };
     case "SceneBlock":
       return {
@@ -147,8 +147,8 @@ export function createDefaultBlock(type: string): BaseBlock {
           setting: "OTHER",
           transition: "NONE",
           description: "",
-          children: []
-        }
+          children: [],
+        },
       };
     case "DialogueBlock":
       return { id, type, props: { character: "", parenthetical: "", line: "" } };
@@ -161,11 +161,11 @@ export function createDefaultBlock(type: string): BaseBlock {
         props: {
           columns: [
             { key: "col1", header: "Header 1", align: "left" },
-            { key: "col2", header: "Header 2", align: "left" }
+            { key: "col2", header: "Header 2", align: "left" },
           ],
           rows: [{ col1: "Cell 1", col2: "Cell 2" }],
-          caption: ""
-        }
+          caption: "",
+        },
       };
     case "TabsBlock":
       return {
@@ -174,8 +174,8 @@ export function createDefaultBlock(type: string): BaseBlock {
         children: [],
         props: {
           defaultValue: "tab-1",
-          children: []
-        }
+          children: [],
+        },
       };
     case "TabItemBlock":
       return {
@@ -185,8 +185,8 @@ export function createDefaultBlock(type: string): BaseBlock {
         props: {
           label: "Tab 1",
           value: "tab-1",
-          children: []
-        }
+          children: [],
+        },
       };
     case "StepsBlock":
       return {
@@ -194,8 +194,8 @@ export function createDefaultBlock(type: string): BaseBlock {
         type,
         children: [],
         props: {
-          children: []
-        }
+          children: [],
+        },
       };
     case "StepItemBlock":
       return {
@@ -205,8 +205,8 @@ export function createDefaultBlock(type: string): BaseBlock {
         props: {
           title: "Step 1",
           description: "",
-          children: []
-        }
+          children: [],
+        },
       };
     case "CardsBlock":
       return {
@@ -215,8 +215,8 @@ export function createDefaultBlock(type: string): BaseBlock {
         children: [],
         props: {
           columns: 2,
-          children: []
-        }
+          children: [],
+        },
       };
     case "CardBlock":
       return {
@@ -227,8 +227,8 @@ export function createDefaultBlock(type: string): BaseBlock {
           description: "Card description text",
           icon: "i-lucide-book-open",
           href: "",
-          badge: ""
-        }
+          badge: "",
+        },
       };
     case "FileTreeBlock":
       return {
@@ -239,11 +239,11 @@ export function createDefaultBlock(type: string): BaseBlock {
             {
               name: "src",
               isDir: true,
-              children: [{ name: "index.ts", isDir: false }]
+              children: [{ name: "index.ts", isDir: false }],
             },
-            { name: "package.json", isDir: false }
-          ]
-        }
+            { name: "package.json", isDir: false },
+          ],
+        },
       };
     default:
       return { id, type, props: { text: [] } };

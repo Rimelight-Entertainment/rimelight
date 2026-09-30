@@ -213,7 +213,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     "onChange",
     "onValueChange",
     "onChangeEnd",
-    "children"
+    "children",
   );
 
   const colorSpace = props.colorSpace ?? "hsl";
@@ -231,7 +231,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     bright: 100,
     red: 255,
     green: 0,
-    blue: 0
+    blue: 0,
   });
   let areaRef: HTMLDivElement | undefined;
 
@@ -248,7 +248,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
       bright: hsb[2],
       red: rgb[0],
       green: rgb[1],
-      blue: rgb[2]
+      blue: rgb[2],
     };
   };
 
@@ -256,7 +256,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     () => value(),
     (hex) => {
       setState((prev) => syncChannelsFromValue(hex, prev));
-    }
+    },
   );
 
   const resolvedClasses = createMemo(() =>
@@ -264,8 +264,8 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
       color: props.color ?? "primary",
       theme: props.theme,
       ui: props.ui,
-      class: props.class
-    })
+      class: props.class,
+    }),
   );
 
   const channelValue = (ch: Channel, s: ChannelState): number => {
@@ -323,7 +323,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     return {
       background,
       backgroundRepeat: "no-repeat",
-      backgroundSize: "100% 100%"
+      backgroundSize: "100% 100%",
     };
   });
 
@@ -386,7 +386,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
         bright: brightness,
         red: newRgb[0],
         green: newRgb[1],
-        blue: newRgb[2]
+        blue: newRgb[2],
       });
       setValue(newValue);
       props.onChange?.(newValue);
@@ -495,7 +495,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
           bright: brightness,
           red: newRgb[0],
           green: newRgb[1],
-          blue: newRgb[2]
+          blue: newRgb[2],
         });
         setValue(newValue);
         props.onChange?.(newValue);
@@ -535,7 +535,7 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
           style={{
             left: `${pctX()}%`,
             top: `${pctY()}%`,
-            "background-color": value()
+            "background-color": value(),
           }}
           onKeyDown={handleKeyDown}
         />

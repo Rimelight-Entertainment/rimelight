@@ -33,39 +33,39 @@ const statusConfig: Record<number, StatusThemeConfig> = {
     icon: "alertCircle",
     iconBoxClass: "border-warning/30 bg-warning/10 text-warning",
     dotClass: "bg-warning",
-    badgeColor: "warning"
+    badgeColor: "warning",
   },
   401: {
     icon: "lock",
     iconBoxClass: "border-warning/30 bg-warning/10 text-warning",
     dotClass: "bg-warning",
-    badgeColor: "warning"
+    badgeColor: "warning",
   },
   403: {
     icon: "shieldAlert",
     iconBoxClass: "border-error/30 bg-error/10 text-error",
     dotClass: "bg-error",
-    badgeColor: "error"
+    badgeColor: "error",
   },
   404: {
     icon: "fileQuestion",
     iconBoxClass: "border-primary/30 bg-primary/10 text-primary",
     dotClass: "bg-primary",
-    badgeColor: "primary"
+    badgeColor: "primary",
   },
   500: {
     icon: "serverCrash",
     iconBoxClass: "border-error/30 bg-error/10 text-error",
     dotClass: "bg-error",
-    badgeColor: "error"
-  }
+    badgeColor: "error",
+  },
 };
 
 const defaultConfig: StatusThemeConfig = {
   icon: "shieldAlert",
   iconBoxClass: "border-error/30 bg-error/10 text-error",
   dotClass: "bg-error",
-  badgeColor: "error"
+  badgeColor: "error",
 };
 
 export const AppError: Component<AppErrorProps> = (props) => {
@@ -77,8 +77,8 @@ export const AppError: Component<AppErrorProps> = (props) => {
         href: "/",
         variant: "solid",
         color: "primary",
-        icon: "home"
-      }
+        icon: "home",
+      },
     ];
 
   return (

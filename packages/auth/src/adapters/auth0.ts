@@ -3,7 +3,7 @@ import {
   decodeJwt,
   createSessionToken as createSessionTokenJwt,
   verifySessionToken as verifySessionTokenJwt,
-  verifyJwtRs256
+  verifyJwtRs256,
 } from "../jwt";
 
 export { decodeJwt };
@@ -11,14 +11,14 @@ export { decodeJwt };
 export async function createSessionToken(
   session: UserSessionContext,
   secret: string,
-  expiresIn: string | number = "7d"
+  expiresIn: string | number = "7d",
 ): Promise<string> {
   return createSessionTokenJwt(session, secret, expiresIn);
 }
 
 export async function verifySessionToken(
   token: string,
-  secret: string
+  secret: string,
 ): Promise<UserSessionContext | null> {
   return verifySessionTokenJwt<UserSessionContext>(token, secret);
 }
@@ -32,7 +32,7 @@ export async function verifyAuth0Jwt(
     domain: string;
     audience?: string | undefined;
     issuer?: string | undefined;
-  }
+  },
 ): Promise<Record<string, any> | null> {
   try {
     const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -41,7 +41,7 @@ export async function verifyAuth0Jwt(
 
     return await verifyJwtRs256(token, jwksUrl, {
       issuer: expectedIssuer,
-      audience: options.audience
+      audience: options.audience,
     });
   } catch {
     return null;
@@ -148,7 +148,7 @@ export function createAuth0AuthorizeUrl(options: Auth0AuthorizeUrlOptions): stri
  * Exchanges an authorization code for Auth0 tokens
  */
 export async function exchangeAuth0Code(
-  options: Auth0CodeExchangeOptions
+  options: Auth0CodeExchangeOptions,
 ): Promise<Auth0TokenResponse> {
   const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const tokenUrl = `https://${cleanDomain}/oauth/token`;
@@ -157,7 +157,7 @@ export async function exchangeAuth0Code(
     grant_type: "authorization_code",
     client_id: options.clientId,
     code: options.code,
-    redirect_uri: options.redirectUri
+    redirect_uri: options.redirectUri,
   };
 
   if (options.clientSecret) {
@@ -170,9 +170,9 @@ export async function exchangeAuth0Code(
   const response = await fetch(tokenUrl, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -188,7 +188,7 @@ export async function exchangeAuth0Code(
  * headless clients (e.g., Unreal Engine 5) to authenticate without browser redirects.
  */
 export async function loginWithAuth0Password(
-  options: Auth0PasswordLoginOptions
+  options: Auth0PasswordLoginOptions,
 ): Promise<Auth0TokenResponse> {
   const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const tokenUrl = `https://${cleanDomain}/oauth/token`;
@@ -198,7 +198,7 @@ export async function loginWithAuth0Password(
     client_id: options.clientId,
     username: options.username,
     password: options.password,
-    scope: options.scope || "openid profile email offline_access"
+    scope: options.scope || "openid profile email offline_access",
   };
 
   if (options.realm) {
@@ -214,9 +214,9 @@ export async function loginWithAuth0Password(
   const response = await fetch(tokenUrl, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -232,7 +232,7 @@ export async function loginWithAuth0Password(
  * native game clients.
  */
 export async function refreshAuth0Token(
-  options: Auth0RefreshTokenOptions
+  options: Auth0RefreshTokenOptions,
 ): Promise<Auth0TokenResponse> {
   const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const tokenUrl = `https://${cleanDomain}/oauth/token`;
@@ -240,7 +240,7 @@ export async function refreshAuth0Token(
   const body: Record<string, string> = {
     grant_type: "refresh_token",
     client_id: options.clientId,
-    refresh_token: options.refreshToken
+    refresh_token: options.refreshToken,
   };
 
   if (options.clientSecret) {
@@ -253,9 +253,9 @@ export async function refreshAuth0Token(
   const response = await fetch(tokenUrl, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -306,7 +306,7 @@ export function auth0Auth(options: Auth0AdapterOptions): AuthAdapter {
     sessionCookieName = "rimelight_session",
     sessionSecret,
     loginUrl = "/api/auth/login",
-    defaultRole = "user"
+    defaultRole = "user",
   } = options;
 
   return {
@@ -340,7 +340,7 @@ export function auth0Auth(options: Auth0AdapterOptions): AuthAdapter {
             rolesClaim,
             userTypeClaim,
             permissionsClaim,
-            defaultRole
+            defaultRole,
           });
         }
       }
@@ -360,7 +360,7 @@ export function auth0Auth(options: Auth0AdapterOptions): AuthAdapter {
               rolesClaim,
               userTypeClaim,
               permissionsClaim,
-              defaultRole
+              defaultRole,
             });
           }
         }
@@ -382,12 +382,12 @@ export function auth0Auth(options: Auth0AdapterOptions): AuthAdapter {
         } catch {
           return new Response(null, {
             status: 302,
-            headers: { Location: loginUrl }
+            headers: { Location: loginUrl },
           });
         }
       }
       return new Response("Unauthorized Auth0 Identity", { status: 401 });
-    }
+    },
   };
 }
 
@@ -398,7 +398,7 @@ export function mapAuth0PayloadToSession(
     userTypeClaim: string;
     permissionsClaim: string;
     defaultRole: string;
-  }
+  },
 ): UserSessionContext {
   const roles: string[] = Array.isArray(payload[options.rolesClaim])
     ? payload[options.rolesClaim]
@@ -413,7 +413,7 @@ export function mapAuth0PayloadToSession(
       : [];
 
   const isStaff = roles.some((r) =>
-    ["owner", "admin", "editor", "employee", "superadmin"].includes(r.toLowerCase())
+    ["owner", "admin", "editor", "employee", "superadmin"].includes(r.toLowerCase()),
   );
 
   const explicitUserType = payload[options.userTypeClaim] || payload["user_type"];
@@ -427,7 +427,7 @@ export function mapAuth0PayloadToSession(
     roles,
     permissions,
     userType,
-    metadata: payload
+    metadata: payload,
   };
 }
 
@@ -440,7 +440,7 @@ function getEnv(key: string, fallback = ""): string {
 }
 
 export function getAuth0ConfigFromEnv(
-  overrides: Partial<Auth0AdapterOptions> = {}
+  overrides: Partial<Auth0AdapterOptions> = {},
 ): Auth0AdapterOptions {
   return {
     domain: overrides.domain || getEnv("AUTH0_DOMAIN", "rimelight.eu.auth0.com"),
@@ -461,7 +461,7 @@ export function getAuth0ConfigFromEnv(
       getEnv("AUTH0_SECRET", "rimelight_default_development_secret_key_32bytes_minimum_length"),
     loginUrl: overrides.loginUrl || "/api/auth/login",
     defaultRole: overrides.defaultRole || "user",
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -469,7 +469,7 @@ export function getAuth0ConfigFromEnv(
  * Creates an Auth0 auth adapter automatically configured from environment variables.
  */
 export function createAuth0FromEnv(
-  overrides: Partial<Auth0AdapterOptions> & { devFallback?: boolean } = {}
+  overrides: Partial<Auth0AdapterOptions> & { devFallback?: boolean } = {},
 ): AuthAdapter {
   const config = getAuth0ConfigFromEnv(overrides);
 
@@ -501,13 +501,13 @@ export function createAuth0FromEnv(
           roles: ["admin", "owner", "editor"],
           permissions: ["*"],
           userType: "employee",
-          metadata: { isDev: true }
+          metadata: { isDev: true },
         };
       }
       return null;
     },
     handleUnauthorized(req: Request) {
       return baseAdapter.handleUnauthorized?.(req) ?? new Response("Unauthorized", { status: 401 });
-    }
+    },
   };
 }

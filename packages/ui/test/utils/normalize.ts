@@ -39,7 +39,7 @@ export function parseHtmlElement(html: string) {
         tag,
         attributes: parseAttributes(rawAttrs),
         classes: extractClasses(rawAttrs),
-        innerHtml: ""
+        innerHtml: "",
       };
     }
     return { tag: "", attributes: {}, classes: [] as string[], innerHtml: cleaned };
@@ -53,7 +53,7 @@ export function parseHtmlElement(html: string) {
     tag,
     attributes: parseAttributes(rawAttrs),
     classes: extractClasses(rawAttrs),
-    innerHtml
+    innerHtml,
   };
 }
 
@@ -83,14 +83,14 @@ function extractClasses(raw: string): string[] {
 export function renderSolid(
   component: any,
   props: Record<string, any> = {},
-  children?: any
+  children?: any,
 ): string {
   return cleanHtml(
     renderSolidToString(() =>
       createComponent(component, {
         ...props,
-        children: children ?? props["children"]
-      })
-    )
+        children: children ?? props["children"],
+      }),
+    ),
   );
 }

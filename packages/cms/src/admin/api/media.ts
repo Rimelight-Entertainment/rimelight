@@ -10,5 +10,5 @@ export {
   handleMediaUpload as POST,
   handleMediaDelete as DELETE,
   registerCmsMediaRoutes,
-  type MediaRouteContext
+  type MediaRouteContext,
 } from "../../server/media.ts";

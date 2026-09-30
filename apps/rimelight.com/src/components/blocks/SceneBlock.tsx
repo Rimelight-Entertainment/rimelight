@@ -20,20 +20,20 @@ export const SceneBlock: Component<SceneBlockProps> = (props) => {
     AFTERNOON: "Afternoon",
     EVENING: "Evening",
     NIGHT: "Night",
-    OTHER: "Other"
+    OTHER: "Other",
   };
 
   const settingLabels: Record<string, string> = {
     INTERIOR: "INT.",
     EXTERIOR: "EXT.",
-    OTHER: "Other"
+    OTHER: "Other",
   };
 
   const transitionLabels: Record<string, string> = {
     CUT_TO: "CUT TO",
     CUT_BACK_TO: "CUT BACK TO",
     FADE_TO: "FADE TO",
-    NONE: ""
+    NONE: "",
   };
 
   const settingLabel = () => settingLabels[setting()] || "Other";

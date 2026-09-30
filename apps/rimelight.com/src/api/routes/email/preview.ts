@@ -32,19 +32,19 @@ api.post("/test", async (c) => {
         user: { email: recipient },
         url: "https://rimelight.com/en/api/auth/verify-email?token=test-token",
         token: "test-token",
-        locale
+        locale,
       });
     } else if (body.template === "password-reset") {
       await sendPasswordResetEmail({
         user: { email: recipient },
         url: "https://rimelight.com/en/auth/reset-password?token=test-token",
         token: "test-token",
-        locale
+        locale,
       });
     } else if (body.template === "signup-notification") {
       await sendExistingUserSignUpNotification({
         user: { email: recipient },
-        locale
+        locale,
       });
     } else {
       return c.json({ error: "Unknown email template." }, 400);
@@ -54,7 +54,7 @@ api.post("/test", async (c) => {
   } catch (error) {
     return c.json(
       { error: error instanceof Error ? error.message : "Unable to send test email." },
-      500
+      500,
     );
   }
 });

@@ -5,7 +5,7 @@ import type { RobotsOptions } from "../src/types.js";
 describe("buildRobotsTxt", () => {
   it("generates basic robots.txt with sitemap", () => {
     const options: RobotsOptions = {
-      sitemapUrl: "https://example.com/sitemap.xml"
+      sitemapUrl: "https://example.com/sitemap.xml",
     };
 
     const robots = buildRobotsTxt(options);
@@ -17,7 +17,7 @@ describe("buildRobotsTxt", () => {
   it("includes disallow rules", () => {
     const options: RobotsOptions = {
       sitemapUrl: "https://example.com/sitemap.xml",
-      disallow: ["/admin/", "/dashboard/"]
+      disallow: ["/admin/", "/dashboard/"],
     };
 
     const robots = buildRobotsTxt(options);
@@ -29,7 +29,7 @@ describe("buildRobotsTxt", () => {
   it("includes allow rules", () => {
     const options: RobotsOptions = {
       sitemapUrl: "https://example.com/sitemap.xml",
-      allow: ["/api/public/"]
+      allow: ["/api/public/"],
     };
 
     const robots = buildRobotsTxt(options);
@@ -43,9 +43,9 @@ describe("buildRobotsTxt", () => {
       userAgentRules: [
         {
           userAgent: "GPTBot",
-          disallow: ["/admin/"]
-        }
-      ]
+          disallow: ["/admin/"],
+        },
+      ],
     };
 
     const robots = buildRobotsTxt(options);
@@ -60,9 +60,9 @@ describe("buildRobotsTxt", () => {
       userAgentRules: [
         {
           userAgent: "GPTBot",
-          disallow: ["/admin/"]
-        }
-      ]
+          disallow: ["/admin/"],
+        },
+      ],
     };
 
     const robots = buildRobotsTxt(options);
