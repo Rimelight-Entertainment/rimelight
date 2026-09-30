@@ -1,19 +1,8 @@
 import { describe, it, expect } from "vite-plus/test";
 import path from "node:path";
 import fs from "node:fs";
-import { rimelightConfig } from "../vite-plus/base";
 
-describe("@rimelight/config vite-plus helpers", () => {
-  describe("rimelightConfig", () => {
-    it("should return base configuration for lint, formatting, and staged files", () => {
-      const config = rimelightConfig();
-      expect(config.lint?.options?.typeAware).toBe(true);
-      expect(config.lint?.options?.typeCheck).toBe(true);
-      expect(config.fmt?.trailingComma).toBe("none");
-      expect(config.staged).toEqual({ "*": "vp check --fix" });
-    });
-  });
-
+describe("@rimelight/config package", () => {
   describe("package integrity utils", () => {
     it("should not ship exports or files entries that do not exist on disk", () => {
       const pkgDir = path.resolve(import.meta.dirname, "..");
@@ -34,14 +23,9 @@ describe("@rimelight/config vite-plus helpers", () => {
 
       expect(targets.length).toBeGreaterThan(0);
 
-      // A `files` entry that is absent entirely is build output that has not been
-      // generated yet, so its export targets are not expected on a clean checkout.
-      const pending = new Set(files.filter((entry) => !fs.existsSync(path.join(pkgDir, entry))));
-
       const missing = targets
         .filter((t) => t.startsWith("./"))
         .map((t) => t.replace(/^\.\//, ""))
-        .filter((rel) => ![...pending].some((entry) => rel.startsWith(`${entry}/`)))
         .filter((rel) => !fs.existsSync(path.join(pkgDir, rel)));
       expect(missing).toEqual([]);
     });

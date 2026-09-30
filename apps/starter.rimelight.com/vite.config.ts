@@ -1,6 +1,5 @@
 import { defineConfig } from "vite-plus";
 import { fileRoutes } from "filesystem-routing/vite";
-import { rimelightConfig } from "@rimelight/config/vite-plus/base";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import solid from "@solidjs/vite-plugin";
 import { ui } from "@rimelight/ui/plugin";
@@ -13,23 +12,31 @@ import es from "./src/i18n/es.json";
 import pt from "./src/i18n/pt.json";
 
 export default defineConfig({
-  ...rimelightConfig(),
+  lint: {
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
+  },
+  staged: {
+    "*": "vp check --fix",
+  },
   plugins: [
     cloudflare({
       viteEnvironment: {
-        name: "ssr"
+        name: "ssr",
       },
       experimental: {
-        newConfig: true
-      }
+        newConfig: true,
+      },
     }),
 
     solid({
       start: {
-        devtools: false
+        devtools: false,
       },
       ssr: true,
-      extensions: [".jsx", ".tsx"]
+      extensions: [".jsx", ".tsx"],
     }),
 
     fileRoutes({ types: true }),
@@ -39,14 +46,14 @@ export default defineConfig({
         logomark: {
           color: "https://cdn.rimelight.com/logos/logomark_color.svg",
           white: "https://cdn.rimelight.com/logos/logomark_white.svg",
-          black: "https://cdn.rimelight.com/logos/logomark_black.svg"
+          black: "https://cdn.rimelight.com/logos/logomark_black.svg",
         },
         logotype: {
           color: "https://cdn.rimelight.com/logos/logotype_color.svg",
           white: "https://cdn.rimelight.com/logos/logotype_white.svg",
-          black: "https://cdn.rimelight.com/logos/logotype_black.svg"
-        }
-      }
+          black: "https://cdn.rimelight.com/logos/logotype_black.svg",
+        },
+      },
     }),
 
     seo({
@@ -59,20 +66,20 @@ export default defineConfig({
         logo: { alt: "Rimelight Starter" },
         favicon: { svg: "https://cdn.rimelight.com/logos/logomark_color.svg" },
         appleTouchIcon: "https://cdn.rimelight.com/logos/logomark_color.svg",
-        colors: { themeColor: "#ffffff", backgroundColor: "#ffffff" }
+        colors: { themeColor: "#ffffff", backgroundColor: "#ffffff" },
       },
       titleTemplate: "%s | Rimelight Starter",
       locales: {
         en: "en-US",
         pt: "pt-BR",
-        es: "es-ES"
+        es: "es-ES",
       },
-      privatePathPrefixes: ["/api", "/cdn-cgi"]
+      privatePathPrefixes: ["/api", "/cdn-cgi"],
     }),
 
     security({
       domain: "starter.rimelight.com",
-      imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
+      imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"],
     }),
 
     auth(),
@@ -80,7 +87,7 @@ export default defineConfig({
     i18n({
       locales: ["en", "pt", "es"],
       defaultLocale: "en",
-      translations: { en, es, pt }
-    })
-  ]
+      translations: { en, es, pt },
+    }),
+  ],
 });
