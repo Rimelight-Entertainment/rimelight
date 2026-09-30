@@ -11,7 +11,6 @@ export default defineConfig({
       "src/storage/index.ts",
       "src/server/index.ts"
     ],
-    dts: true,
-    checks: { pluginTimings: false }
+    dts: true
   }
 })

@@ -15,7 +15,6 @@ export default defineConfig({
       "src/icons.ts",
       "src/fonts.ts"
     ],
-    dts: true,
-    checks: { pluginTimings: false }
+    dts: true
   }
 })
