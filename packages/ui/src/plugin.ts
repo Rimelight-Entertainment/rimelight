@@ -1,5 +1,5 @@
 import UnoCSS from "@unocss/vite";
-import type { Plugin } from "vite-plus";
+import type { Plugin, PluginOption } from "vite-plus";
 import rimelightUiPreset from "./preset";
 import { rimelightFontsVitePlugin } from "./fonts";
 import type { UIConfig } from "./types";
@@ -8,7 +8,7 @@ const ID = "virtual:rimelight/ui";
 
 export type RimelightUIPlugin = Plugin;
 
-export type RimelightUIPlugins = Plugin[];
+export type RimelightUIPlugins = PluginOption;
 
 export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins => {
   const fontsOpts = cfg.fonts && typeof cfg.fonts === "object" ? cfg.fonts : undefined;
