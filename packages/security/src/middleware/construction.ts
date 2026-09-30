@@ -363,15 +363,17 @@ export function construction(options: ConstructionOptions = {}) {
 
     const enabled = isModeEnabled(c, options);
     const locale = resolveLocale(path, options);
+    const isDocNav = isDocumentNavigation(getHeader, path);
 
-    const cleanPath = path.replace(/\.[a-zA-Z0-9]+$/, "");
+    const normalizedConstructionPath = constructionPath.startsWith("/")
+      ? constructionPath.replace(/\/+$/, "")
+      : "/" + constructionPath.replace(/\/+$/, "");
+    const normalizedPath = path.length > 1 ? path.replace(/\/+$/, "") : path;
+
     const isConstructionPage =
-      path === constructionPath ||
-      path === `/${locale}${constructionPath}` ||
-      cleanPath === constructionPath ||
-      cleanPath === `/${locale}${constructionPath}` ||
-      path.endsWith(constructionPath) ||
-      cleanPath.endsWith(constructionPath);
+      isDocNav &&
+      (normalizedPath === normalizedConstructionPath ||
+        normalizedPath === `/${locale}${normalizedConstructionPath}`);
 
     // Helper to check user authorization
     const isAuthorized = async (): Promise<boolean> => {
@@ -420,7 +422,7 @@ export function construction(options: ConstructionOptions = {}) {
     // 5b. Subresource requests must never be redirected to the construction page. A .css/.js
     // request answered with text/html fails strict MIME checking and breaks hydration, so a
     // missing asset gets a plain 404 instead.
-    if (!isDocumentNavigation(getHeader, path)) {
+    if (!isDocNav) {
       return new Response("Not Found", {
         status: 404,
         headers: {

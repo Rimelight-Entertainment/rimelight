@@ -81,6 +81,26 @@ describe("@rimelight/security construction middleware", () => {
     }
   });
 
+  it("should pass module scripts like construction.tsx to next when mode is disabled or authorized", async () => {
+    const middleware = construction();
+
+    const scriptPaths = [
+      "/src/routes/[locale]/construction.tsx",
+      "/src/routes/en/construction.tsx",
+      "/@fs/C:/Users/app/src/routes/construction.tsx",
+      "/assets/construction-CiRrrzXi.js",
+    ];
+
+    for (const path of scriptPaths) {
+      // 1. When construction mode is disabled
+      const ctxOff = createMockContext({ path, mode: "false" });
+      const nextOff = vi.fn().mockResolvedValue("next-called");
+      await middleware(ctxOff, nextOff);
+      expect(nextOff, `expected ${path} to call next when mode is disabled`).toHaveBeenCalled();
+      expect(ctxOff.getRedirected()).toBeNull();
+    }
+  });
+
   it("should 404 subresource requests instead of redirecting them to HTML", async () => {
     const middleware = construction();
     const headers = new Headers({ "sec-fetch-dest": "script", accept: "*/*" });
