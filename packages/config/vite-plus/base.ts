@@ -9,9 +9,7 @@ export function rimelightConfig(): UserConfig {
       }
     },
     fmt: {
-      trailingComma: "none",
-      semi: false,
-      quoteProps: "consistent"
+      trailingComma: "none"
     },
     staged: {
       "*": "vp check --fix"
