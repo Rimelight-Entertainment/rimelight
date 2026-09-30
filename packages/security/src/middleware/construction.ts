@@ -7,10 +7,6 @@ const DEFAULT_WHITELISTED_PATTERNS = [
   "/construction",
   "/api/auth",
   "/api/construction-guest",
-  "/_astro/",
-  // Vite/Vite+ emits hashed client chunks into /assets/ (Astro used /_astro/).
-  // Without this, a stale or missing chunk is redirected to the construction page
-  // and the browser rejects it on MIME type instead of getting a 404.
   "/assets/",
   "/_image",
   "/favicon.",
@@ -368,10 +364,14 @@ export function construction(options: ConstructionOptions = {}) {
     const enabled = isModeEnabled(c, options);
     const locale = resolveLocale(path, options);
 
+    const cleanPath = path.replace(/\.[a-zA-Z0-9]+$/, "");
     const isConstructionPage =
       path === constructionPath ||
       path === `/${locale}${constructionPath}` ||
-      path.endsWith(constructionPath);
+      cleanPath === constructionPath ||
+      cleanPath === `/${locale}${constructionPath}` ||
+      path.endsWith(constructionPath) ||
+      cleanPath.endsWith(constructionPath);
 
     // Helper to check user authorization
     const isAuthorized = async (): Promise<boolean> => {

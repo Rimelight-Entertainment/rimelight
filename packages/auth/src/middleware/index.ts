@@ -70,7 +70,6 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     // 1. Skip static assets
     if (skipStaticAssets) {
       const isStatic =
-        pathname.startsWith("/_astro/") ||
         pathname.startsWith("/assets/") ||
         pathname === "/favicon.ico" ||
         pathname.startsWith("/open-graph/") ||

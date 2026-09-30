@@ -57,7 +57,7 @@ describe("@rimelight/security construction middleware", () => {
 
   it("should pass whitelisted static and auth assets when enabled", async () => {
     const middleware = construction();
-    const ctx = createMockContext({ path: "/_astro/styles.css", mode: "true" });
+    const ctx = createMockContext({ path: "/favicon.ico", mode: "true" });
     const next = vi.fn().mockResolvedValue("next-called");
 
     await middleware(ctx, next);
