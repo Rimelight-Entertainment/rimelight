@@ -8,9 +8,6 @@ export function rimelightConfig(): UserConfig {
         typeCheck: true
       }
     },
-    fmt: {
-      trailingComma: "none"
-    },
     staged: {
       "*": "vp check --fix"
     }
