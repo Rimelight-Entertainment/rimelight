@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const labelTheme = defineTheme("label", {
   slots: ["root"],
@@ -15,4 +15,4 @@ export const labelTheme = defineTheme("label", {
   defaultVariants: {
     size: "md"
   }
-})
+});

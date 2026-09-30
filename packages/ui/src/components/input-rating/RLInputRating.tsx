@@ -1,14 +1,14 @@
-import { createMemo, createSignal, omit, For, type Component } from "solid-js"
-import type { InputRatingProps } from "./input-rating"
-import { inputRatingTheme } from "./input-rating.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, createSignal, omit, For, type Component } from "solid-js";
+import type { InputRatingProps } from "./input-rating";
+import { inputRatingTheme } from "./input-rating.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLInputRatingProps extends InputRatingProps {
-  onValueChange?: (value: number) => void
+  onValueChange?: (value: number) => void;
 }
 
 const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "id",
@@ -31,7 +31,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
     "ui",
     "class",
     "onValueChange"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     inputRatingTheme({
@@ -43,12 +43,12 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const step = () => props.step ?? 1
-  const length = () => props.length ?? 5
-  const hoverable = () => !!props.hoverable
-  const clearable = () => !!props.clearable
+  const step = () => props.step ?? 1;
+  const length = () => props.length ?? 5;
+  const hoverable = () => !!props.hoverable;
+  const clearable = () => !!props.clearable;
   const itemSizeClass = () => {
     const map: Record<string, string> = {
       xs: "size-3",
@@ -56,9 +56,9 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       md: "size-5",
       lg: "size-6",
       xl: "size-7"
-    }
-    return map[props.size ?? "md"] || "size-5"
-  }
+    };
+    return map[props.size ?? "md"] || "size-5";
+  };
 
   const [internalValue, setInternalValue] = createSignal<number>(
     props.value !== undefined
@@ -66,75 +66,75 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       : props.modelValue !== undefined
         ? props.modelValue
         : (props.defaultValue ?? 0)
-  )
+  );
   const value = () =>
     props.value !== undefined
       ? props.value
       : props.modelValue !== undefined
         ? props.modelValue
-        : internalValue()
+        : internalValue();
 
-  const [hoverValue, setHoverValue] = createSignal<number | null>(null)
-  const display = (): number => (hoverValue() !== null ? hoverValue()! : value())
+  const [hoverValue, setHoverValue] = createSignal<number | null>(null);
+  const display = (): number => (hoverValue() !== null ? hoverValue()! : value());
 
-  const items = createMemo(() => Array.from({ length: length() }, (_, idx) => idx + 1))
+  const items = createMemo(() => Array.from({ length: length() }, (_, idx) => idx + 1));
 
   const getWidthClass = (val: number, itemIndex: number) => {
-    if (val >= itemIndex) return "w-full"
-    if (val <= itemIndex - 1) return "w-0"
-    const pct = Math.round((val - (itemIndex - 1)) * 100)
-    return pct === 75 ? "w-3/4" : pct === 50 ? "w-1/2" : pct === 25 ? "w-1/4" : `w-[${pct}%]`
-  }
+    if (val >= itemIndex) return "w-full";
+    if (val <= itemIndex - 1) return "w-0";
+    const pct = Math.round((val - (itemIndex - 1)) * 100);
+    return pct === 75 ? "w-3/4" : pct === 50 ? "w-1/2" : pct === 25 ? "w-1/4" : `w-[${pct}%]`;
+  };
 
   const getValueFromEvent = (e: MouseEvent, el: HTMLElement, index: number) => {
-    const rect = el.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width
-    const steppedX = Math.ceil(x / step()) * step()
-    return Math.min(Math.max(index - 1 + steppedX, 0), length())
-  }
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const steppedX = Math.ceil(x / step()) * step();
+    return Math.min(Math.max(index - 1 + steppedX, 0), length());
+  };
 
   const handleMouseMove = (e: MouseEvent, el: HTMLElement, index: number) => {
-    if (!hoverable()) return
-    const val = getValueFromEvent(e, el, index)
-    setHoverValue(val)
-  }
+    if (!hoverable()) return;
+    const val = getValueFromEvent(e, el, index);
+    setHoverValue(val);
+  };
 
   const handleMouseLeave = () => {
-    setHoverValue(null)
-  }
+    setHoverValue(null);
+  };
 
   const handleClick = (e: MouseEvent, el: HTMLElement, index: number) => {
-    const val = getValueFromEvent(e, el, index)
-    let next = val
+    const val = getValueFromEvent(e, el, index);
+    let next = val;
     if (clearable() && value() === val) {
-      next = 0
+      next = 0;
     }
-    setInternalValue(next)
-    props.onValueChange?.(next)
-    setHoverValue(null)
-  }
+    setInternalValue(next);
+    props.onValueChange?.(next);
+    setHoverValue(null);
+  };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (props.disabled || props.readonly) return
-    let next = value()
+    if (props.disabled || props.readonly) return;
+    let next = value();
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-      next = Math.min(value() + step(), length())
-      e.preventDefault()
+      next = Math.min(value() + step(), length());
+      e.preventDefault();
     } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-      next = Math.max(value() - step(), 0)
-      e.preventDefault()
+      next = Math.max(value() - step(), 0);
+      e.preventDefault();
     } else if (e.key === "Home") {
-      next = 0
-      e.preventDefault()
+      next = 0;
+      e.preventDefault();
     } else if (e.key === "End") {
-      next = length()
-      e.preventDefault()
+      next = length();
+      e.preventDefault();
     }
     if (next !== value()) {
-      setInternalValue(next)
-      props.onValueChange?.(next)
+      setInternalValue(next);
+      props.onValueChange?.(next);
     }
-  }
+  };
 
   return (
     <div
@@ -201,7 +201,7 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
         )}
       </For>
     </div>
-  )
-}
+  );
+};
 
-export { RLInputRating }
+export { RLInputRating };

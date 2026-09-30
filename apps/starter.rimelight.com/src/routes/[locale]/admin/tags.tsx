@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout"
-import { RimelightTaxonomyMasterDetail } from "@rimelight/cms/client/components"
+import { type Component } from "solid-js";
+import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout";
+import { RimelightTaxonomyMasterDetail } from "@rimelight/cms/client/components";
 
 export const TagsPage: Component = () => {
   return (
@@ -17,7 +17,7 @@ export const TagsPage: Component = () => {
         />
       </div>
     </AuthAdminDashboardLayout>
-  )
-}
+  );
+};
 
-export default TagsPage
+export default TagsPage;

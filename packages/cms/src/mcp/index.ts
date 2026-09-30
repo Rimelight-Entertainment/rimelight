@@ -1,18 +1,18 @@
-import { and, desc, eq, isNotNull, isNull, like, or, sql } from "drizzle-orm"
-import { pages } from "../schema/pages.ts"
-import { pageDrafts } from "../schema/page_drafts.ts"
-import { pageVersions } from "../schema/page_versions.ts"
-import { pageTemplates } from "../schema/page_templates.ts"
-import { contentTypes } from "../schema/content_types.ts"
-import { bylines } from "../schema/bylines.ts"
-import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies.ts"
-import { pageVersionApprovals } from "../schema/page_version_approvals.ts"
-import { pageVersionComments } from "../schema/page_version_comments.ts"
-import { getSiteSettings, updateSiteSettings } from "../services/site-settings.ts"
-import { getTaxonomyTerms } from "../services/taxonomies.ts"
-import { indexPageForSearch } from "../services/search-indexer.ts"
-import type { PageType } from "../core/types/pages.ts"
-import type { BaseBlock } from "../core/types/blocks.ts"
+import { and, desc, eq, isNotNull, isNull, like, or, sql } from "drizzle-orm";
+import { pages } from "../schema/pages.ts";
+import { pageDrafts } from "../schema/page_drafts.ts";
+import { pageVersions } from "../schema/page_versions.ts";
+import { pageTemplates } from "../schema/page_templates.ts";
+import { contentTypes } from "../schema/content_types.ts";
+import { bylines } from "../schema/bylines.ts";
+import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies.ts";
+import { pageVersionApprovals } from "../schema/page_version_approvals.ts";
+import { pageVersionComments } from "../schema/page_version_comments.ts";
+import { getSiteSettings, updateSiteSettings } from "../services/site-settings.ts";
+import { getTaxonomyTerms } from "../services/taxonomies.ts";
+import { indexPageForSearch } from "../services/search-indexer.ts";
+import type { PageType } from "../core/types/pages.ts";
+import type { BaseBlock } from "../core/types/blocks.ts";
 
 export const CMS_MCP_TOOLS = [
   // ─── 1. Pages & Drafts ──────────────────────────────────────────────────────
@@ -549,21 +549,21 @@ export const CMS_MCP_TOOLS = [
       required: ["query"]
     }
   }
-]
+];
 
 /**
  * Handles Model Context Protocol (MCP) JSON-RPC requests for CMS tools.
  */
 export async function handleCmsMcpRequest(
   body: {
-    jsonrpc?: string
-    id?: string | number
-    method: string
-    params?: any
+    jsonrpc?: string;
+    id?: string | number;
+    method: string;
+    params?: any;
   },
   db: any
 ): Promise<any> {
-  const { id = 1, method, params = {} } = body
+  const { id = 1, method, params = {} } = body;
 
   if (method === "tools/list") {
     return {
@@ -572,25 +572,25 @@ export async function handleCmsMcpRequest(
       result: {
         tools: CMS_MCP_TOOLS
       }
-    }
+    };
   }
 
   if (method === "tools/call") {
-    const { name, arguments: args = {} } = params
+    const { name, arguments: args = {} } = params;
 
     switch (name) {
       // ─── Pages ───────────────────────────────────────────────────────────────
       case "cms_list_pages": {
-        const conditions = [isNull(pages.deletedAt)]
+        const conditions = [isNull(pages.deletedAt)];
         if (args.type) {
-          conditions.push(eq(pages.type, args.type as PageType))
+          conditions.push(eq(pages.type, args.type as PageType));
         }
         if (!args.includeDrafts) {
-          conditions.push(isNotNull(pages.publishedVersionId))
+          conditions.push(isNotNull(pages.publishedVersionId));
         }
 
-        const queryLimit = typeof args.limit === "number" ? args.limit : 20
-        const queryOffset = typeof args.offset === "number" ? args.offset : 0
+        const queryLimit = typeof args.limit === "number" ? args.limit : 20;
+        const queryOffset = typeof args.offset === "number" ? args.offset : 0;
         const rows = await db
           .select({
             id: pages.id,
@@ -607,7 +607,7 @@ export async function handleCmsMcpRequest(
           .where(and(...conditions))
           .orderBy(desc(pages.postedAt), desc(pages.createdAt))
           .limit(queryLimit)
-          .offset(queryOffset)
+          .offset(queryOffset);
 
         return {
           jsonrpc: "2.0",
@@ -615,52 +615,54 @@ export async function handleCmsMcpRequest(
           result: {
             content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
           }
-        }
+        };
       }
 
       case "cms_get_page": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
           args.slugOrId
-        )
-        const condition = isUuid ? eq(pages.id, args.slugOrId) : eq(pages.slug, args.slugOrId)
+        );
+        const condition = isUuid ? eq(pages.id, args.slugOrId) : eq(pages.slug, args.slugOrId);
 
         const row = await db
           .select()
           .from(pages)
           .where(and(isNull(pages.deletedAt), condition))
-          .limit(1)
-        const page = row[0] || null
+          .limit(1);
+        const page = row[0] || null;
         if (!page) {
           return {
             jsonrpc: "2.0",
             id,
             error: { code: -32004, message: `Page '${args.slugOrId}' not found` }
-          }
+          };
         }
 
-        let draft = null
+        let draft = null;
         try {
           const draftRow = await db
             .select()
             .from(pageDrafts)
             .where(eq(pageDrafts.pageId, page.id))
-            .limit(1)
-          draft = draftRow[0] || null
+            .limit(1);
+          draft = draftRow[0] || null;
         } catch {}
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify({ page, draft }, null, 2) }] }
-        }
+        };
       }
 
       case "cms_create_page": {
-        const titlePayload = typeof args.title === "string" ? { en: args.title } : args.title
+        const titlePayload = typeof args.title === "string" ? { en: args.title } : args.title;
         const descPayload =
-          typeof args.description === "string" ? { en: args.description } : args.description || null
-        const blocksPayload = Array.isArray(args.blocks) ? args.blocks : []
-        const propertiesPayload = args.properties || {}
+          typeof args.description === "string"
+            ? { en: args.description }
+            : args.description || null;
+        const blocksPayload = Array.isArray(args.blocks) ? args.blocks : [];
+        const propertiesPayload = args.properties || {};
 
         const inserted = await db
           .insert(pages)
@@ -678,9 +680,9 @@ export async function handleCmsMcpRequest(
               properties: propertiesPayload
             }
           })
-          .returning()
+          .returning();
 
-        const newPage = inserted[0]
+        const newPage = inserted[0];
         if (newPage) {
           try {
             await db
@@ -690,7 +692,7 @@ export async function handleCmsMcpRequest(
                 updatedBy: args.authorIds?.[0] || "agent",
                 content: { blocks: blocksPayload, properties: propertiesPayload }
               })
-              .onConflictDoNothing()
+              .onConflictDoNothing();
           } catch {}
         }
 
@@ -698,47 +700,47 @@ export async function handleCmsMcpRequest(
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(newPage, null, 2) }] }
-        }
+        };
       }
 
       case "cms_update_page": {
-        const updateData: Record<string, any> = { updatedAt: new Date() }
-        if (args.slug) updateData["slug"] = args.slug
+        const updateData: Record<string, any> = { updatedAt: new Date() };
+        if (args.slug) updateData["slug"] = args.slug;
         if (args.title)
-          updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title
+          updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title;
         if (args.description !== undefined) {
           updateData["description"] =
-            typeof args.description === "string" ? { en: args.description } : args.description
+            typeof args.description === "string" ? { en: args.description } : args.description;
         }
-        if (args.tags) updateData["tags"] = args.tags
-        if (args.bylines) updateData["bylines"] = args.bylines
+        if (args.tags) updateData["tags"] = args.tags;
+        if (args.bylines) updateData["bylines"] = args.bylines;
 
         if (args.blocks || args.properties) {
-          const current = await db.select().from(pages).where(eq(pages.id, args.id)).limit(1)
-          const existingContent = current[0]?.content || { blocks: [], properties: {} }
+          const current = await db.select().from(pages).where(eq(pages.id, args.id)).limit(1);
+          const existingContent = current[0]?.content || { blocks: [], properties: {} };
           updateData["content"] = {
             blocks: args.blocks || existingContent.blocks || [],
             properties: args.properties || existingContent.properties || {}
-          }
+          };
         }
 
         const updated = await db
           .update(pages)
           .set(updateData)
           .where(eq(pages.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_create_draft": {
         const contentPayload = {
           blocks: args.blocks as BaseBlock[],
           properties: args.properties || {}
-        }
+        };
 
         const draft = await db
           .insert(pageDrafts)
@@ -755,41 +757,41 @@ export async function handleCmsMcpRequest(
               updatedAt: new Date()
             }
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(draft[0], null, 2) }] }
-        }
+        };
       }
 
       case "cms_publish_page": {
-        const pageResult = await db.select().from(pages).where(eq(pages.id, args.pageId)).limit(1)
-        const page = pageResult[0]
+        const pageResult = await db.select().from(pages).where(eq(pages.id, args.pageId)).limit(1);
+        const page = pageResult[0];
         if (!page) {
           return {
             jsonrpc: "2.0",
             id,
             error: { code: -32004, message: `Page '${args.pageId}' not found` }
-          }
+          };
         }
 
         const draftResult = await db
           .select()
           .from(pageDrafts)
           .where(eq(pageDrafts.pageId, args.pageId))
-          .limit(1)
-        const content = draftResult[0]?.content || page.content
+          .limit(1);
+        const content = draftResult[0]?.content || page.content;
 
         const lastVersion = await db
           .select()
           .from(pageVersions)
           .where(eq(pageVersions.pageId, args.pageId))
           .orderBy(desc(pageVersions.versionNumber))
-          .limit(1)
+          .limit(1);
 
-        const nextVersionNumber = (lastVersion[0]?.versionNumber || 0) + 1
+        const nextVersionNumber = (lastVersion[0]?.versionNumber || 0) + 1;
 
         const versionResult = await db
           .insert(pageVersions)
@@ -811,9 +813,9 @@ export async function handleCmsMcpRequest(
             changeSummary: args.changeSummary || "Published via MCP",
             createdAt: new Date()
           })
-          .returning()
+          .returning();
 
-        const version = versionResult[0]
+        const version = versionResult[0];
 
         await db
           .update(pages)
@@ -823,15 +825,15 @@ export async function handleCmsMcpRequest(
             postedAt: new Date(),
             updatedAt: new Date()
           })
-          .where(eq(pages.id, args.pageId))
+          .where(eq(pages.id, args.pageId));
 
-        await indexPageForSearch(db, { id: args.pageId, title: page.title, content }, ["en", "pt"])
+        await indexPageForSearch(db, { id: args.pageId, title: page.title, content }, ["en", "pt"]);
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(version, null, 2) }] }
-        }
+        };
       }
 
       case "cms_unpublish_page": {
@@ -839,7 +841,7 @@ export async function handleCmsMcpRequest(
           .update(pages)
           .set({ postedAt: null, publishedVersionId: null, updatedAt: new Date() })
           .where(eq(pages.id, args.pageId))
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
@@ -852,7 +854,7 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       case "cms_delete_page": {
@@ -860,7 +862,7 @@ export async function handleCmsMcpRequest(
           .update(pages)
           .set({ deletedAt: new Date() })
           .where(eq(pages.id, args.pageId))
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
@@ -873,24 +875,24 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       // ─── Versions & Reviews ───────────────────────────────────────────────────
       case "cms_list_page_versions": {
-        const vLimit = typeof args.limit === "number" ? args.limit : 20
+        const vLimit = typeof args.limit === "number" ? args.limit : 20;
         const rows = await db
           .select()
           .from(pageVersions)
           .where(eq(pageVersions.pageId, args.pageId))
           .orderBy(desc(pageVersions.versionNumber))
-          .limit(vLimit)
+          .limit(vLimit);
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
-        }
+        };
       }
 
       case "cms_get_page_version": {
@@ -898,12 +900,12 @@ export async function handleCmsMcpRequest(
           .select()
           .from(pageVersions)
           .where(eq(pageVersions.id, args.versionId))
-          .limit(1)
+          .limit(1);
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_rollback_page_version": {
@@ -911,14 +913,14 @@ export async function handleCmsMcpRequest(
           .select()
           .from(pageVersions)
           .where(eq(pageVersions.id, args.versionId))
-          .limit(1)
-        const targetVersion = vRow[0]
+          .limit(1);
+        const targetVersion = vRow[0];
         if (!targetVersion) {
           return {
             jsonrpc: "2.0",
             id,
             error: { code: -32004, message: "Version snapshot not found" }
-          }
+          };
         }
 
         const draft = await db
@@ -936,7 +938,7 @@ export async function handleCmsMcpRequest(
               updatedAt: new Date()
             }
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
@@ -957,7 +959,7 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       case "cms_approve_page_version": {
@@ -969,13 +971,13 @@ export async function handleCmsMcpRequest(
             userRole: args.userRole,
             approvedAt: new Date()
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(approval[0], null, 2) }] }
-        }
+        };
       }
 
       case "cms_add_version_comment": {
@@ -989,54 +991,56 @@ export async function handleCmsMcpRequest(
             blockId: args.blockId || null,
             createdAt: new Date()
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(comment[0], null, 2) }] }
-        }
+        };
       }
 
       // ─── Templates ───────────────────────────────────────────────────────────
       case "cms_list_templates": {
-        const conditions = []
+        const conditions = [];
         if (args.pageType) {
-          conditions.push(eq(pageTemplates.pageType, args.pageType))
+          conditions.push(eq(pageTemplates.pageType, args.pageType));
         }
         const rows = await db
           .select()
           .from(pageTemplates)
           .where(conditions.length > 0 ? and(...conditions) : undefined)
-          .orderBy(desc(pageTemplates.createdAt))
+          .orderBy(desc(pageTemplates.createdAt));
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
-        }
+        };
       }
 
       case "cms_get_template": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
           args.slugOrId
-        )
+        );
         const condition = isUuid
           ? eq(pageTemplates.id, args.slugOrId)
-          : eq(pageTemplates.slug, args.slugOrId)
-        const row = await db.select().from(pageTemplates).where(condition).limit(1)
+          : eq(pageTemplates.slug, args.slugOrId);
+        const row = await db.select().from(pageTemplates).where(condition).limit(1);
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_create_template": {
-        const titlePayload = typeof args.title === "string" ? { en: args.title } : args.title
+        const titlePayload = typeof args.title === "string" ? { en: args.title } : args.title;
         const descPayload =
-          typeof args.description === "string" ? { en: args.description } : args.description || null
+          typeof args.description === "string"
+            ? { en: args.description }
+            : args.description || null;
 
         const tmpl = await db
           .insert(pageTemplates)
@@ -1057,48 +1061,48 @@ export async function handleCmsMcpRequest(
             defaultProperties: args.defaultProperties || {},
             initialBlocks: args.initialBlocks || []
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(tmpl[0], null, 2) }] }
-        }
+        };
       }
 
       case "cms_update_template": {
-        const updateData: Record<string, any> = { updatedAt: new Date() }
-        if (args.slug) updateData["slug"] = args.slug
+        const updateData: Record<string, any> = { updatedAt: new Date() };
+        if (args.slug) updateData["slug"] = args.slug;
         if (args.title)
-          updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title
+          updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title;
         if (args.description !== undefined) {
           updateData["description"] =
-            typeof args.description === "string" ? { en: args.description } : args.description
+            typeof args.description === "string" ? { en: args.description } : args.description;
         }
-        if (args.pageType) updateData["pageType"] = args.pageType
-        if (args.version) updateData["version"] = args.version
-        if (args.defaultProperties) updateData["defaultProperties"] = args.defaultProperties
-        if (args.initialBlocks) updateData["initialBlocks"] = args.initialBlocks
-        if (args.rolePermissions) updateData["rolePermissions"] = args.rolePermissions
-        if (args.approvalRules) updateData["approvalRules"] = args.approvalRules
+        if (args.pageType) updateData["pageType"] = args.pageType;
+        if (args.version) updateData["version"] = args.version;
+        if (args.defaultProperties) updateData["defaultProperties"] = args.defaultProperties;
+        if (args.initialBlocks) updateData["initialBlocks"] = args.initialBlocks;
+        if (args.rolePermissions) updateData["rolePermissions"] = args.rolePermissions;
+        if (args.approvalRules) updateData["approvalRules"] = args.approvalRules;
 
         const updated = await db
           .update(pageTemplates)
           .set(updateData)
           .where(eq(pageTemplates.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_delete_template": {
         const deleted = await db
           .delete(pageTemplates)
           .where(eq(pageTemplates.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
@@ -1110,23 +1114,25 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       // ─── Taxonomies ───────────────────────────────────────────────────────────
       case "cms_list_taxonomies": {
-        const terms = await getTaxonomyTerms(db, args.taxonomy)
+        const terms = await getTaxonomyTerms(db, args.taxonomy);
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(terms, null, 2) }] }
-        }
+        };
       }
 
       case "cms_create_taxonomy_term": {
-        const labelPayload = typeof args.label === "string" ? { en: args.label } : args.label
+        const labelPayload = typeof args.label === "string" ? { en: args.label } : args.label;
         const descPayload =
-          typeof args.description === "string" ? { en: args.description } : args.description || null
+          typeof args.description === "string"
+            ? { en: args.description }
+            : args.description || null;
 
         const term = await db
           .insert(taxonomyTerms)
@@ -1138,44 +1144,44 @@ export async function handleCmsMcpRequest(
             parentId: args.parentId || null,
             displayOrder: args.displayOrder || 0
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(term[0], null, 2) }] }
-        }
+        };
       }
 
       case "cms_update_taxonomy_term": {
-        const updateData: Record<string, any> = { updatedAt: new Date() }
-        if (args.slug) updateData["slug"] = args.slug
+        const updateData: Record<string, any> = { updatedAt: new Date() };
+        if (args.slug) updateData["slug"] = args.slug;
         if (args.label)
-          updateData["label"] = typeof args.label === "string" ? { en: args.label } : args.label
+          updateData["label"] = typeof args.label === "string" ? { en: args.label } : args.label;
         if (args.description !== undefined) {
           updateData["description"] =
-            typeof args.description === "string" ? { en: args.description } : args.description
+            typeof args.description === "string" ? { en: args.description } : args.description;
         }
-        if (args.parentId !== undefined) updateData["parentId"] = args.parentId || null
-        if (args.displayOrder !== undefined) updateData["displayOrder"] = args.displayOrder
+        if (args.parentId !== undefined) updateData["parentId"] = args.parentId || null;
+        if (args.displayOrder !== undefined) updateData["displayOrder"] = args.displayOrder;
 
         const updated = await db
           .update(taxonomyTerms)
           .set(updateData)
           .where(eq(taxonomyTerms.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_delete_taxonomy_term": {
         const deleted = await db
           .delete(taxonomyTerms)
           .where(eq(taxonomyTerms.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
@@ -1187,20 +1193,20 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       case "cms_assign_page_taxonomy": {
         // Clear current assignments and re-assign
-        await db.delete(pageTaxonomyTerms).where(eq(pageTaxonomyTerms.pageId, args.pageId))
-        const termIds = Array.isArray(args.termIds) ? args.termIds : []
-        const assigned = []
+        await db.delete(pageTaxonomyTerms).where(eq(pageTaxonomyTerms.pageId, args.pageId));
+        const termIds = Array.isArray(args.termIds) ? args.termIds : [];
+        const assigned = [];
         for (const termId of termIds) {
           const row = await db
             .insert(pageTaxonomyTerms)
             .values({ pageId: args.pageId, termId })
-            .returning()
-          assigned.push(row[0])
+            .returning();
+          assigned.push(row[0]);
         }
 
         return {
@@ -1214,7 +1220,7 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       // ─── Bylines ─────────────────────────────────────────────────────────────
@@ -1223,31 +1229,31 @@ export async function handleCmsMcpRequest(
           .select()
           .from(bylines)
           .where(isNull(bylines.deletedAt))
-          .orderBy(desc(bylines.createdAt))
+          .orderBy(desc(bylines.createdAt));
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
-        }
+        };
       }
 
       case "cms_get_byline": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
           args.slugOrId
-        )
-        const condition = isUuid ? eq(bylines.id, args.slugOrId) : eq(bylines.slug, args.slugOrId)
+        );
+        const condition = isUuid ? eq(bylines.id, args.slugOrId) : eq(bylines.slug, args.slugOrId);
         const row = await db
           .select()
           .from(bylines)
           .where(and(isNull(bylines.deletedAt), condition))
-          .limit(1)
+          .limit(1);
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_create_byline": {
@@ -1263,36 +1269,36 @@ export async function handleCmsMcpRequest(
             socials: args.socials || {},
             metadata: args.metadata || {}
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(row[0], null, 2) }] }
-        }
+        };
       }
 
       case "cms_update_byline": {
-        const updateData: Record<string, any> = { updatedAt: new Date() }
-        if (args.name) updateData["name"] = args.name
-        if (args.slug) updateData["slug"] = args.slug
-        if (args.websiteUrl !== undefined) updateData["websiteUrl"] = args.websiteUrl
-        if (args.bio !== undefined) updateData["bio"] = args.bio
-        if (args.avatar !== undefined) updateData["avatar"] = args.avatar
-        if (args.userId !== undefined) updateData["userId"] = args.userId
-        if (args.socials) updateData["socials"] = args.socials
-        if (args.metadata) updateData["metadata"] = args.metadata
+        const updateData: Record<string, any> = { updatedAt: new Date() };
+        if (args.name) updateData["name"] = args.name;
+        if (args.slug) updateData["slug"] = args.slug;
+        if (args.websiteUrl !== undefined) updateData["websiteUrl"] = args.websiteUrl;
+        if (args.bio !== undefined) updateData["bio"] = args.bio;
+        if (args.avatar !== undefined) updateData["avatar"] = args.avatar;
+        if (args.userId !== undefined) updateData["userId"] = args.userId;
+        if (args.socials) updateData["socials"] = args.socials;
+        if (args.metadata) updateData["metadata"] = args.metadata;
 
         const updated = await db
           .update(bylines)
           .set(updateData)
           .where(eq(bylines.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_delete_byline": {
@@ -1300,7 +1306,7 @@ export async function handleCmsMcpRequest(
           .update(bylines)
           .set({ deletedAt: new Date() })
           .where(eq(bylines.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
@@ -1312,39 +1318,41 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       // ─── Dynamic Content Types & E-Commerce ───────────────────────────────────
       case "cms_list_content_types": {
-        const rows = await db.select().from(contentTypes).orderBy(desc(contentTypes.createdAt))
+        const rows = await db.select().from(contentTypes).orderBy(desc(contentTypes.createdAt));
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
-        }
+        };
       }
 
       case "cms_get_content_type": {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
           args.slugOrId
-        )
+        );
         const condition = isUuid
           ? eq(contentTypes.id, args.slugOrId)
-          : eq(contentTypes.slug, args.slugOrId)
-        const row = await db.select().from(contentTypes).where(condition).limit(1)
+          : eq(contentTypes.slug, args.slugOrId);
+        const row = await db.select().from(contentTypes).where(condition).limit(1);
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(row[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_create_content_type": {
-        const namePayload = typeof args.name === "string" ? { en: args.name } : args.name
+        const namePayload = typeof args.name === "string" ? { en: args.name } : args.name;
         const descPayload =
-          typeof args.description === "string" ? { en: args.description } : args.description || null
+          typeof args.description === "string"
+            ? { en: args.description }
+            : args.description || null;
 
         const row = await db
           .insert(contentTypes)
@@ -1359,47 +1367,47 @@ export async function handleCmsMcpRequest(
             initialBlocks: args.initialBlocks || [],
             isSystem: Boolean(args.isSystem)
           })
-          .returning()
+          .returning();
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(row[0], null, 2) }] }
-        }
+        };
       }
 
       case "cms_update_content_type": {
-        const updateData: Record<string, any> = { updatedAt: new Date() }
-        if (args.slug) updateData["slug"] = args.slug
+        const updateData: Record<string, any> = { updatedAt: new Date() };
+        if (args.slug) updateData["slug"] = args.slug;
         if (args.name)
-          updateData["name"] = typeof args.name === "string" ? { en: args.name } : args.name
+          updateData["name"] = typeof args.name === "string" ? { en: args.name } : args.name;
         if (args.description !== undefined) {
           updateData["description"] =
-            typeof args.description === "string" ? { en: args.description } : args.description
+            typeof args.description === "string" ? { en: args.description } : args.description;
         }
-        if (args.icon) updateData["icon"] = args.icon
-        if (args.mode) updateData["mode"] = args.mode
-        if (args.fieldSchema) updateData["fieldSchema"] = args.fieldSchema
-        if (args.ecomSettings !== undefined) updateData["ecomSettings"] = args.ecomSettings
-        if (args.initialBlocks) updateData["initialBlocks"] = args.initialBlocks
+        if (args.icon) updateData["icon"] = args.icon;
+        if (args.mode) updateData["mode"] = args.mode;
+        if (args.fieldSchema) updateData["fieldSchema"] = args.fieldSchema;
+        if (args.ecomSettings !== undefined) updateData["ecomSettings"] = args.ecomSettings;
+        if (args.initialBlocks) updateData["initialBlocks"] = args.initialBlocks;
 
         const updated = await db
           .update(contentTypes)
           .set(updateData)
           .where(eq(contentTypes.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(updated[0] || null, null, 2) }] }
-        }
+        };
       }
 
       case "cms_delete_content_type": {
         const deleted = await db
           .delete(contentTypes)
           .where(eq(contentTypes.id, args.id))
-          .returning()
+          .returning();
         return {
           jsonrpc: "2.0",
           id,
@@ -1411,34 +1419,34 @@ export async function handleCmsMcpRequest(
               }
             ]
           }
-        }
+        };
       }
 
       // ─── Site Settings ────────────────────────────────────────────────────────
       case "cms_get_site_settings": {
-        const settings = await getSiteSettings(db)
+        const settings = await getSiteSettings(db);
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(settings, null, 2) }] }
-        }
+        };
       }
 
       case "cms_update_site_settings": {
-        const updated = await updateSiteSettings(db, args)
+        const updated = await updateSiteSettings(db, args);
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(updated, null, 2) }] }
-        }
+        };
       }
 
       // ─── Search ───────────────────────────────────────────────────────────────
       case "cms_search_content": {
-        const queryLimit = typeof args.limit === "number" ? args.limit : 10
-        const conditions = [isNull(pages.deletedAt)]
+        const queryLimit = typeof args.limit === "number" ? args.limit : 10;
+        const conditions = [isNull(pages.deletedAt)];
         if (args.type) {
-          conditions.push(eq(pages.type, args.type as PageType))
+          conditions.push(eq(pages.type, args.type as PageType));
         }
 
         const rows = await db
@@ -1460,13 +1468,13 @@ export async function handleCmsMcpRequest(
               )
             )
           )
-          .limit(queryLimit)
+          .limit(queryLimit);
 
         return {
           jsonrpc: "2.0",
           id,
           result: { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] }
-        }
+        };
       }
 
       default:
@@ -1474,7 +1482,7 @@ export async function handleCmsMcpRequest(
           jsonrpc: "2.0",
           id,
           error: { code: -32601, message: `Method or tool '${name}' not found` }
-        }
+        };
     }
   }
 
@@ -1482,5 +1490,5 @@ export async function handleCmsMcpRequest(
     jsonrpc: "2.0",
     id,
     error: { code: -32601, message: `Unknown method: ${method}` }
-  }
+  };
 }

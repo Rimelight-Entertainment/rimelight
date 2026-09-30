@@ -1,4 +1,4 @@
-import type { ButtonProps } from "../button/button"
+import type { ButtonProps } from "../button/button";
 
 export interface PageSectionProps {
   /**
@@ -6,66 +6,66 @@ export interface PageSectionProps {
    *
    * @default "section"
    */
-  as?: any
+  as?: any;
   /**
    * The variant of the section.
    *
    * @default "default"
    */
-  variant?: "default" | "hero" | "cta" | "none"
+  variant?: "default" | "hero" | "cta" | "none";
   /**
    * The variant of the section when it's a CTA.
    *
    * @default "solid"
    */
-  ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "naked"
+  ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "naked";
   /**
    * The headline displayed above the title.
    */
-  headline?: string
+  headline?: string;
   /**
    * The icon displayed above the title.
    */
-  icon?: string
+  icon?: string;
   /**
    * The section's title, displayed as a <h1> for the hero variant or <h2> otherwise.
    */
-  title?: string
+  title?: string;
   /**
    * The section's description, displayed under the title.
    */
-  description?: string
+  description?: string;
   /**
    * Display a list of buttons under the description.
    */
-  links?: ButtonProps[]
+  links?: ButtonProps[];
   /**
    * The orientation of the section.
    *
    * @default "vertical"
    */
-  orientation?: "vertical" | "horizontal"
+  orientation?: "vertical" | "horizontal";
   /**
    * Reverse the order of the default slot.
    *
    * @default false
    */
-  reverse?: boolean
+  reverse?: boolean;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
+  class?: any;
   /**
    * Set content-visibility for offscreen render painting optimization.
    */
-  contentVisibility?: "auto" | "visible"
+  contentVisibility?: "auto" | "visible";
   /**
    * Dynamic intrinsic size fallback for content-visibility layout stability.
    */
-  containIntrinsicSize?: string
-  [key: string]: unknown
+  containIntrinsicSize?: string;
+  [key: string]: unknown;
 }

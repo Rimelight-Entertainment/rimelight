@@ -1,26 +1,26 @@
 export interface PaymentItem {
-  id: string
-  date: string
-  status: "paid" | "failed" | "refunded"
-  category: "Subscriptions" | "Infrastructure" | "Hardware"
-  email: string
-  amount: number
-  children?: PaymentItem[]
+  id: string;
+  date: string;
+  status: "paid" | "failed" | "refunded";
+  category: "Subscriptions" | "Infrastructure" | "Hardware";
+  email: string;
+  amount: number;
+  children?: PaymentItem[];
 }
 
 export const formatShowcaseDate = (dateStr: string) => {
-  const d = new Date(dateStr)
+  const d = new Date(dateStr);
   return d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit"
-  })
-}
+  });
+};
 
 export const formatShowcaseCurrency = (amount: number) => {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount)
-}
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+};
 
 export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
   {
@@ -97,4 +97,4 @@ export const SHOWCASE_PAYMENTS_DATA: PaymentItem[] = [
     email: "amelia.king@example.com",
     amount: 437
   }
-]
+];

@@ -1,15 +1,15 @@
-import { children, createMemo, omit, For, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { AvatarGroupProps } from "./avatar-group"
-import { avatarGroupTheme } from "./avatar-group.theme"
-import { RLAvatar } from "../avatar/RLAvatar"
+import { children, createMemo, omit, For, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { AvatarGroupProps } from "./avatar-group";
+import { avatarGroupTheme } from "./avatar-group.theme";
+import { RLAvatar } from "../avatar/RLAvatar";
 
 export interface RLAvatarGroupProps extends AvatarGroupProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -21,21 +21,21 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
     "ui",
     "class",
     "children"
-  )
+  );
 
   const maxCount = () => {
     if (props.max !== undefined) {
-      const parsed = Number(props.max)
-      return Number.isFinite(parsed) ? parsed : undefined
+      const parsed = Number(props.max);
+      return Number.isFinite(parsed) ? parsed : undefined;
     }
     if (props.displayLimit !== undefined) {
-      return props.displayLimit
+      return props.displayLimit;
     }
-    return undefined
-  }
+    return undefined;
+  };
 
-  const size = () => props.size ?? "md"
-  const color = () => props.color ?? "neutral"
+  const size = () => props.size ?? "md";
+  const color = () => props.color ?? "neutral";
 
   const resolvedClasses = createMemo(() =>
     avatarGroupTheme({
@@ -44,41 +44,41 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const Root = dynamic(() => props.as ?? "div")
+  const Root = dynamic(() => props.as ?? "div");
 
   // For props.items mode
-  const normalizedItems = () => props.items ?? []
+  const normalizedItems = () => props.items ?? [];
   const renderedItems = () => {
-    const limit = maxCount()
-    return limit !== undefined ? normalizedItems().slice(0, limit) : normalizedItems()
-  }
+    const limit = maxCount();
+    return limit !== undefined ? normalizedItems().slice(0, limit) : normalizedItems();
+  };
   const hiddenItemCount = () => {
-    const limit = maxCount()
-    if (limit === undefined) return 0
-    return Math.max(0, normalizedItems().length - limit)
-  }
+    const limit = maxCount();
+    if (limit === undefined) return 0;
+    return Math.max(0, normalizedItems().length - limit);
+  };
 
   // For children mode
-  const resolvedChildren = children(() => props.children)
+  const resolvedChildren = children(() => props.children);
   const childArray = createMemo(() => {
-    const ch = resolvedChildren()
-    if (!ch) return []
-    return Array.isArray(ch) ? ch : [ch]
-  })
+    const ch = resolvedChildren();
+    if (!ch) return [];
+    return Array.isArray(ch) ? ch : [ch];
+  });
 
   const visibleChildren = () => {
-    const limit = maxCount()
-    const arr = childArray()
-    return limit !== undefined ? arr.slice(0, limit) : arr
-  }
+    const limit = maxCount();
+    const arr = childArray();
+    return limit !== undefined ? arr.slice(0, limit) : arr;
+  };
 
   const hiddenChildCount = () => {
-    const limit = maxCount()
-    if (limit === undefined) return 0
-    return Math.max(0, childArray().length - limit)
-  }
+    const limit = maxCount();
+    if (limit === undefined) return 0;
+    return Math.max(0, childArray().length - limit);
+  };
 
   return (
     <Root class={resolvedClasses().root} data-slot="avatar-group" {...rest}>
@@ -125,7 +125,7 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
         </>
       )}
     </Root>
-  )
-}
+  );
+};
 
-export { RLAvatarGroup }
+export { RLAvatarGroup };

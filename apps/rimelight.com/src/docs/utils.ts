@@ -1,10 +1,10 @@
-import type { PropMeta, ThemeMeta } from "./types.ts"
+import type { PropMeta, ThemeMeta } from "./types.ts";
 
 export function kebabToPascal(name: string): string {
   return name
     .split("-")
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join("")
+    .join("");
 }
 
 export function filterProps(
@@ -12,12 +12,12 @@ export function filterProps(
   options: { hide?: string[]; show?: string[] }
 ): PropMeta[] {
   if (options.show?.length) {
-    return props.filter((p) => options.show!.includes(p.name))
+    return props.filter((p) => options.show!.includes(p.name));
   }
   if (options.hide?.length) {
-    return props.filter((p) => !options.hide!.includes(p.name))
+    return props.filter((p) => !options.hide!.includes(p.name));
   }
-  return props
+  return props;
 }
 
 export function generateThemeCode(componentName: string, theme: ThemeMeta): string {
@@ -26,7 +26,7 @@ export function generateThemeCode(componentName: string, theme: ThemeMeta): stri
     ...(Object.keys(theme.variants).length ? { variants: theme.variants } : {}),
     ...(theme.compoundVariants.length ? { compoundVariants: theme.compoundVariants } : {}),
     ...(Object.keys(theme.defaultVariants).length ? { defaultVariants: theme.defaultVariants } : {})
-  }
+  };
 
   return `// astro.config.ts
 import { ui } from "@rimelight/ui"
@@ -44,5 +44,5 @@ export default defineConfig({
       })
     ]
   }
-})`
+})`;
 }

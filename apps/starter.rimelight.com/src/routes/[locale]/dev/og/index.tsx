@@ -1,5 +1,5 @@
-import { type Component, createSignal, For } from "solid-js"
-import BlankLayout from "#layouts/BlankLayout"
+import { type Component, createSignal, For } from "solid-js";
+import BlankLayout from "#layouts/BlankLayout";
 
 const samplePages = [
   {
@@ -30,17 +30,17 @@ const samplePages = [
     type: "Blog Post",
     isDocs: false
   }
-]
+];
 
 export const DevOgPage: Component = () => {
-  const [copiedUrl, setCopiedUrl] = createSignal<string | null>(null)
-  const [sandboxTitle, setSandboxTitle] = createSignal("My Custom Page Title")
-  const [sandboxDesc, setSandboxDesc] = createSignal("A short description of this page.")
-  const [sandboxType, setSandboxType] = createSignal("")
-  const [sandboxDocs, setSandboxDocs] = createSignal(false)
-  const [sandboxImgSrc, setSandboxImgSrc] = createSignal("")
+  const [copiedUrl, setCopiedUrl] = createSignal<string | null>(null);
+  const [sandboxTitle, setSandboxTitle] = createSignal("My Custom Page Title");
+  const [sandboxDesc, setSandboxDesc] = createSignal("A short description of this page.");
+  const [sandboxType, setSandboxType] = createSignal("");
+  const [sandboxDocs, setSandboxDocs] = createSignal(false);
+  const [sandboxImgSrc, setSandboxImgSrc] = createSignal("");
 
-  const bust = Date.now().toString()
+  const bust = Date.now().toString();
 
   const getOgUrl = (page: (typeof samplePages)[0]) => {
     const params = new URLSearchParams({
@@ -49,31 +49,31 @@ export const DevOgPage: Component = () => {
       ...(page.type ? { type: page.type } : {}),
       ...(page.isDocs ? { isDocs: "true" } : {}),
       _t: bust
-    })
-    return `/open-graph/page.png?${params.toString()}`
-  }
+    });
+    return `/open-graph/page.png?${params.toString()}`;
+  };
 
   const copyUrl = async (url: string) => {
-    if (typeof window === "undefined") return
-    const full = new URL(url, window.location.origin).toString()
-    await navigator.clipboard.writeText(full)
-    setCopiedUrl(url)
+    if (typeof window === "undefined") return;
+    const full = new URL(url, window.location.origin).toString();
+    await navigator.clipboard.writeText(full);
+    setCopiedUrl(url);
     setTimeout(() => {
-      setCopiedUrl(null)
-    }, 2000)
-  }
+      setCopiedUrl(null);
+    }, 2000);
+  };
 
   const handleRenderSandbox = () => {
     const params = new URLSearchParams({
       title: sandboxTitle().trim(),
       description: sandboxDesc().trim()
-    })
-    if (sandboxType().trim()) params.set("type", sandboxType().trim())
-    if (sandboxDocs()) params.set("isDocs", "true")
-    params.set("_t", Date.now().toString())
+    });
+    if (sandboxType().trim()) params.set("type", sandboxType().trim());
+    if (sandboxDocs()) params.set("isDocs", "true");
+    params.set("_t", Date.now().toString());
 
-    setSandboxImgSrc(`/open-graph/page.png?${params.toString()}`)
-  }
+    setSandboxImgSrc(`/open-graph/page.png?${params.toString()}`);
+  };
 
   return (
     <BlankLayout title="OG Image Preview" description="Preview Open Graph images for all pages">
@@ -91,7 +91,7 @@ export const DevOgPage: Component = () => {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <For each={samplePages}>
             {(page) => {
-              const url = getOgUrl(page)
+              const url = getOgUrl(page);
               return (
                 <article class="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
                   <div class="flex items-center gap-2.5 px-5 py-3">
@@ -135,7 +135,7 @@ export const DevOgPage: Component = () => {
                     </button>
                   </div>
                 </article>
-              )
+              );
             }}
           </For>
         </div>
@@ -152,7 +152,7 @@ export const DevOgPage: Component = () => {
                 type="text"
                 value={sandboxTitle()}
                 onInput={(e) => {
-                  setSandboxTitle(e.currentTarget.value)
+                  setSandboxTitle(e.currentTarget.value);
                 }}
                 maxlength={80}
                 class="px-3 py-2 bg-[#111] border border-[#333] rounded-md text-sm text-neutral-200 outline-none focus:border-blue-400"
@@ -164,7 +164,7 @@ export const DevOgPage: Component = () => {
                 type="text"
                 value={sandboxDesc()}
                 onInput={(e) => {
-                  setSandboxDesc(e.currentTarget.value)
+                  setSandboxDesc(e.currentTarget.value);
                 }}
                 maxlength={160}
                 class="px-3 py-2 bg-[#111] border border-[#333] rounded-md text-sm text-neutral-200 outline-none focus:border-blue-400"
@@ -176,7 +176,7 @@ export const DevOgPage: Component = () => {
                 type="text"
                 value={sandboxType()}
                 onInput={(e) => {
-                  setSandboxType(e.currentTarget.value)
+                  setSandboxType(e.currentTarget.value);
                 }}
                 placeholder="e.g. Blog Post"
                 maxlength={40}
@@ -214,7 +214,7 @@ export const DevOgPage: Component = () => {
         </section>
       </main>
     </BlankLayout>
-  )
-}
+  );
+};
 
-export default DevOgPage
+export default DevOgPage;

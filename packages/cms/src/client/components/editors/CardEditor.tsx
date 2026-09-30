@@ -1,9 +1,9 @@
-import { type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 
 export interface CardEditorProps {
-  props: Record<string, any>
-  onPropsChange: (newProps: Record<string, any>) => void
+  props: Record<string, any>;
+  onPropsChange: (newProps: Record<string, any>) => void;
 }
 
 export const CardEditor: Component<CardEditorProps> = (componentProps) => {
@@ -11,8 +11,8 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
     componentProps.onPropsChange({
       ...componentProps.props,
       [field]: value
-    })
-  }
+    });
+  };
 
   return (
     <div class="rimelight-card-editor flex flex-col gap-2 p-3 rounded-xl border border-default bg-muted/10 w-full">
@@ -56,5 +56,5 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
         />
       </div>
     </div>
-  )
-}
+  );
+};

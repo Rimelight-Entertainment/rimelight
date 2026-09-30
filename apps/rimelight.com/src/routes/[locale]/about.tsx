@@ -1,8 +1,8 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
-import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx"
-import { t } from "@rimelight/i18n"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
+import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
+import { t } from "@rimelight/i18n";
 
 export const AboutPage: Component = () => {
   return (
@@ -28,7 +28,7 @@ export const AboutPage: Component = () => {
         </div>
       </article>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default AboutPage
+export default AboutPage;

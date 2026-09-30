@@ -1,39 +1,39 @@
-import { type Component, For, Show } from "solid-js"
-import { useParams } from "@solidjs/router"
-import type { JSX } from "@solidjs/web"
-import AppLayout from "./AppLayout"
-import { RLSidebar, RLTableOfContents, RLSurround, RLSelect, RLInput } from "@rimelight/ui"
-import { getDocsSidebar, getSurroundItems } from "@rimelight/cms"
-import docsConfig from "#config/docs.config"
-import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms"
-import { t, getLocale, currentLocale } from "@rimelight/i18n"
-import { createAsyncData } from "#utils/async"
+import { type Component, For, Show } from "solid-js";
+import { useParams } from "@solidjs/router";
+import type { JSX } from "@solidjs/web";
+import AppLayout from "./AppLayout";
+import { RLSidebar, RLTableOfContents, RLSurround, RLSelect, RLInput } from "@rimelight/ui";
+import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
+import docsConfig from "#config/docs.config";
+import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
+import { t, getLocale, currentLocale } from "@rimelight/i18n";
+import { createAsyncData } from "#utils/async";
 
 export interface DocsLayoutProps {
-  title: string
-  description?: string | undefined
-  headings?: { depth: number; slug: string; text: string }[] | undefined
-  tableOfContents?: false | TableOfContentsConfig | undefined
-  editUrl?: string | false | undefined
-  rawMarkdown?: string | undefined
-  prevOverride?: any
-  nextOverride?: any
-  activeVersion?: string | undefined
-  versions?: string[] | undefined
-  includeVersionInUrl?: boolean | undefined
-  favicon?: string | undefined
-  children?: JSX.Element | undefined
+  title: string;
+  description?: string | undefined;
+  headings?: { depth: number; slug: string; text: string }[] | undefined;
+  tableOfContents?: false | TableOfContentsConfig | undefined;
+  editUrl?: string | false | undefined;
+  rawMarkdown?: string | undefined;
+  prevOverride?: any;
+  nextOverride?: any;
+  activeVersion?: string | undefined;
+  versions?: string[] | undefined;
+  includeVersionInUrl?: boolean | undefined;
+  favicon?: string | undefined;
+  children?: JSX.Element | undefined;
 }
 
 export const DocsLayout: Component<DocsLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string; slug?: string }>()
+  const params = useParams<{ locale?: string; slug?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
-  const locale = () => getLocale()
+  const locale = () => getLocale();
   const currentPath = () =>
-    typeof window !== "undefined" ? window.location.pathname : `/${locale()}/docs`
+    typeof window !== "undefined" ? window.location.pathname : `/${locale()}/docs`;
 
   const sidebarData = createAsyncData(
     () => ({
@@ -43,43 +43,43 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
       inc: props.includeVersionInUrl
     }),
     async ({ loc, path, v, inc }) => {
-      const { items, scopes, activeScope } = await getDocsSidebar(docsConfig, loc, path, v, inc)
-      const { prev: sidebarPrev, next: sidebarNext } = getSurroundItems(items, path)
+      const { items, scopes, activeScope } = await getDocsSidebar(docsConfig, loc, path, v, inc);
+      const { prev: sidebarPrev, next: sidebarNext } = getSurroundItems(items, path);
       return {
         sidebarItems: items,
         scopes,
         activeScope,
         prev: props.prevOverride ?? sidebarPrev ?? null,
         next: props.nextOverride ?? sidebarNext ?? null
-      }
+      };
     }
-  )
+  );
 
-  const rawGlobalToc = (docsConfig as DocsConfig).tableOfContents
+  const rawGlobalToc = (docsConfig as DocsConfig).tableOfContents;
   const globalToc: TableOfContentsConfig =
     rawGlobalToc && typeof rawGlobalToc === "object"
       ? rawGlobalToc
-      : { minHeadingLevel: 2, maxHeadingLevel: 3 }
+      : { minHeadingLevel: 2, maxHeadingLevel: 3 };
   const resolvedToc = () =>
-    props.tableOfContents !== undefined ? props.tableOfContents : globalToc
+    props.tableOfContents !== undefined ? props.tableOfContents : globalToc;
   const tocConfig = (): TableOfContentsConfig | null =>
-    resolvedToc() === false ? null : (resolvedToc() as TableOfContentsConfig)
-  const headings = () => props.headings || []
-  const hasToc = () => tocConfig() !== null && headings().length > 0
+    resolvedToc() === false ? null : (resolvedToc() as TableOfContentsConfig);
+  const headings = () => props.headings || [];
+  const hasToc = () => tocConfig() !== null && headings().length > 0;
   const tocHeadings = () =>
     hasToc()
       ? headings().filter((h) => {
-          const cfg = tocConfig()
-          return h.depth >= (cfg?.minHeadingLevel ?? 2) && h.depth <= (cfg?.maxHeadingLevel ?? 3)
+          const cfg = tocConfig();
+          return h.depth >= (cfg?.minHeadingLevel ?? 2) && h.depth <= (cfg?.maxHeadingLevel ?? 3);
         })
-      : []
+      : [];
 
-  const versions = () => props.versions || []
+  const versions = () => props.versions || [];
 
   const getVersionHomeUrl = (v: string) => {
-    const isCompany = currentPath().includes("/company/docs")
-    return isCompany ? `/${locale()}/company/docs/${v}/` : `/${locale()}/docs/${v}/`
-  }
+    const isCompany = currentPath().includes("/company/docs");
+    return isCompany ? `/${locale()}/company/docs/${v}/` : `/${locale()}/docs/${v}/`;
+  };
 
   return (
     <AppLayout
@@ -122,7 +122,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
                   value={getVersionHomeUrl(props.activeVersion || "")}
                   size="sm"
                   onChange={(val: any) => {
-                    if (typeof window !== "undefined" && val) window.location.href = val
+                    if (typeof window !== "undefined" && val) window.location.href = val;
                   }}
                 />
               </div>
@@ -191,7 +191,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
                 value={getVersionHomeUrl(props.activeVersion || "")}
                 size="sm"
                 onChange={(val: any) => {
-                  if (typeof window !== "undefined" && val) window.location.href = val
+                  if (typeof window !== "undefined" && val) window.location.href = val;
                 }}
               />
             </div>
@@ -266,7 +266,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
         </Show>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DocsLayout
+export default DocsLayout;

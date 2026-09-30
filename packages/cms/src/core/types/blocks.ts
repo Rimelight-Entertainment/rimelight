@@ -1,4 +1,4 @@
-import type { InlineNode } from "./inline"
+import type { InlineNode } from "./inline";
 
 export type BlockType =
   | "SectionBlock"
@@ -20,73 +20,73 @@ export type BlockType =
   | "ComponentShowcaseBlock"
   | "ApiDocumentationBlock"
   | "LivePreviewBlock"
-  | (string & {})
+  | (string & {});
 
-export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER"
-export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER"
-export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE"
+export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER";
+export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER";
+export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE";
 
 export interface ScriptBlockProps {
-  title: string
-  synopsis: string
-  characters: string[]
-  aPlot: string
-  bPlot: string
-  cPlot: string
-  stinger: string
+  title: string;
+  synopsis: string;
+  characters: string[];
+  aPlot: string;
+  bPlot: string;
+  cPlot: string;
+  stinger: string;
 }
 
 export interface SceneBlockProps {
-  location: string
-  timeOfDay: TimeOfDay
-  setting: Setting
-  transition: Transition
-  description: string
+  location: string;
+  timeOfDay: TimeOfDay;
+  setting: Setting;
+  transition: Transition;
+  description: string;
 }
 
 export interface DialogueBlockProps {
-  character: string
-  parenthetical?: string
-  line: string
+  character: string;
+  parenthetical?: string;
+  line: string;
 }
 
 export interface BaseBlock {
   /**
    * Unique UUID v4 identifier
    */
-  id: string
-  type: BlockType
+  id: string;
+  type: BlockType;
 
   /**
    * Structural Template Lock: If true, this block is a permanent template anchor and can NEVER be
    * deleted, reordered, or removed.
    */
-  isTemplated?: boolean
+  isTemplated?: boolean;
 
   /**
    * Property Content Lock: Controls whether block prop content can be edited. - boolean true: ALL
    * properties of this block are locked from editing. - string[]: Specific property keys locked
    * from editing (e.g. ["title", "disclaimer"]).
    */
-  templatedProps?: boolean | string[]
+  templatedProps?: boolean | string[];
 
-  allowedRoles?: string[]
-  requiredPermission?: string
-  props: Record<string, any>
-  children?: BaseBlock[]
+  allowedRoles?: string[];
+  requiredPermission?: string;
+  props: Record<string, any>;
+  children?: BaseBlock[];
 }
 
 // ─── Typed block prop interfaces ─────────────────────────────────────────────
 
-export type HeadingLevel = 2 | 3 | 4 | 5 | 6
+export type HeadingLevel = 2 | 3 | 4 | 5 | 6;
 
-export const MIN_SECTION_HEADING_LEVEL: HeadingLevel = 2
-export const MAX_SECTION_HEADING_LEVEL: HeadingLevel = 6
-export const MAX_SECTION_DEPTH = 4 // Depth 0 -> H2, Depth 4 -> H6
+export const MIN_SECTION_HEADING_LEVEL: HeadingLevel = 2;
+export const MAX_SECTION_HEADING_LEVEL: HeadingLevel = 6;
+export const MAX_SECTION_DEPTH = 4; // Depth 0 -> H2, Depth 4 -> H6
 
 export function calculateHeadingLevel(sectionDepth: number): HeadingLevel {
-  const depth = Math.max(0, Math.floor(sectionDepth || 0))
-  return Math.min(MAX_SECTION_HEADING_LEVEL, depth + MIN_SECTION_HEADING_LEVEL) as HeadingLevel
+  const depth = Math.max(0, Math.floor(sectionDepth || 0));
+  return Math.min(MAX_SECTION_HEADING_LEVEL, depth + MIN_SECTION_HEADING_LEVEL) as HeadingLevel;
 }
 
 export type CalloutVariant =
@@ -96,256 +96,256 @@ export type CalloutVariant =
   | "error"
   | "commentary"
   | "ideation"
-  | "source"
+  | "source";
 
 export interface SectionBlockProps {
-  title: string
-  description?: string
-  level?: HeadingLevel
-  mainArticleSlug?: string
-  children: BaseBlock[]
+  title: string;
+  description?: string;
+  level?: HeadingLevel;
+  mainArticleSlug?: string;
+  children: BaseBlock[];
 }
 
 export interface ParagraphBlockProps {
   /**
    * Stored as an InlineNode array (structured AST). Fallback: { en: string } or plain string.
    */
-  text: InlineNode[] | { en: string } | string
+  text: InlineNode[] | { en: string } | string;
 }
 
 export interface CalloutBlockProps {
-  variant: CalloutVariant
-  to?: string
-  target?: string
-  children: BaseBlock[]
+  variant: CalloutVariant;
+  to?: string;
+  target?: string;
+  children: BaseBlock[];
 }
 
-import type { MediaValue } from "./media"
+import type { MediaValue } from "./media";
 
 export interface ImageBlockProps {
-  src: string | MediaValue
-  alt: string
-  caption?: string
-  width?: number
-  height?: number
-  aspectRatio?: string
+  src: string | MediaValue;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  aspectRatio?: string;
 }
 
 export interface CodeBlockProps {
-  code: string
-  language: string
-  caption?: string
-  title?: string
-  filename?: string
-  showLineNumbers?: boolean
-  highlightLines?: number[]
+  code: string;
+  language: string;
+  caption?: string;
+  title?: string;
+  filename?: string;
+  showLineNumbers?: boolean;
+  highlightLines?: number[];
 }
 
 export interface TableColumnDef {
-  key: string
-  header: string
-  align?: "left" | "center" | "right"
+  key: string;
+  header: string;
+  align?: "left" | "center" | "right";
 }
 
 export interface TableBlockProps {
-  columns: TableColumnDef[]
-  rows: Record<string, string>[]
-  caption?: string
+  columns: TableColumnDef[];
+  rows: Record<string, string>[];
+  caption?: string;
 }
 
 export interface TabItemBlockProps {
-  label: string
-  value?: string
-  icon?: string
-  children: BaseBlock[]
+  label: string;
+  value?: string;
+  icon?: string;
+  children: BaseBlock[];
 }
 
 export interface TabsBlockProps {
-  defaultValue?: string
-  children: BaseBlock[]
+  defaultValue?: string;
+  children: BaseBlock[];
 }
 
 export interface StepItemBlockProps {
-  title: string
-  description?: string
-  children: BaseBlock[]
+  title: string;
+  description?: string;
+  children: BaseBlock[];
 }
 
 export interface StepsBlockProps {
-  children: BaseBlock[]
+  children: BaseBlock[];
 }
 
 export interface CardBlockProps {
-  title: string
-  description?: string
-  icon?: string
-  href?: string
-  badge?: string
+  title: string;
+  description?: string;
+  icon?: string;
+  href?: string;
+  badge?: string;
 }
 
 export interface CardsBlockProps {
-  columns?: 1 | 2 | 3 | 4
-  children: BaseBlock[]
+  columns?: 1 | 2 | 3 | 4;
+  children: BaseBlock[];
 }
 
 export interface FileTreeNode {
-  name: string
-  isDir?: boolean
-  children?: FileTreeNode[]
-  comment?: string
+  name: string;
+  isDir?: boolean;
+  children?: FileTreeNode[];
+  comment?: string;
 }
 
 export interface FileTreeBlockProps {
-  tree: FileTreeNode[]
+  tree: FileTreeNode[];
 }
 
 export interface ComponentShowcaseBlockProps {
-  componentName: string
-  componentPath: string
+  componentName: string;
+  componentPath: string;
   /**
    * UI framework the showcased component targets. Always `"solid"` — `"astro"` is deprecated.
    */
-  framework: "solid" | "astro"
-  defaultProps: Record<string, any>
-  propsConfig: Record<string, string[]>
-  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
+  framework: "solid" | "astro";
+  defaultProps: Record<string, any>;
+  propsConfig: Record<string, string[]>;
+  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
   codeExamples: {
-    solid?: string
+    solid?: string;
     /**
      * @deprecated Astro is no longer supported — use `solid`.
      */
-    astro?: string
-  }
-  playgroundUrl: string | undefined
+    astro?: string;
+  };
+  playgroundUrl: string | undefined;
 }
 
 export interface ApiDocumentationBlockProps {
-  componentName: string
+  componentName: string;
   sections: {
-    props?: boolean
-    slots?: boolean
-    emits?: boolean
-    theme?: boolean
-    changelog?: boolean
-  }
-  hide?: string[]
-  show?: string[]
+    props?: boolean;
+    slots?: boolean;
+    emits?: boolean;
+    theme?: boolean;
+    changelog?: boolean;
+  };
+  hide?: string[];
+  show?: string[];
 }
 
 export interface LivePreviewBlockProps {
-  componentCode: string
+  componentCode: string;
   /**
    * Preview framework. Always `"solid"` — `"astro"` is deprecated.
    */
-  framework: "solid" | "astro"
-  height?: string
-  width?: string
-  editable?: boolean
+  framework: "solid" | "astro";
+  height?: string;
+  width?: string;
+  editable?: boolean;
 }
 
 export interface TypedScriptBlockProps extends ScriptBlockProps {
-  children: BaseBlock[]
+  children: BaseBlock[];
 }
 
 export interface TypedSceneBlockProps extends SceneBlockProps {
-  children: BaseBlock[]
+  children: BaseBlock[];
 }
 
 // ─── Typed block discriminated union ─────────────────────────────────────────
 
 export interface SectionBlock extends BaseBlock {
-  type: "SectionBlock"
-  props: SectionBlockProps
+  type: "SectionBlock";
+  props: SectionBlockProps;
 }
 
 export interface ParagraphBlock extends BaseBlock {
-  type: "ParagraphBlock"
-  props: ParagraphBlockProps
+  type: "ParagraphBlock";
+  props: ParagraphBlockProps;
 }
 
 export interface CalloutBlock extends BaseBlock {
-  type: "CalloutBlock"
-  props: CalloutBlockProps
+  type: "CalloutBlock";
+  props: CalloutBlockProps;
 }
 
 export interface ImageBlock extends BaseBlock {
-  type: "ImageBlock"
-  props: ImageBlockProps
+  type: "ImageBlock";
+  props: ImageBlockProps;
 }
 
 export interface ScriptBlock extends BaseBlock {
-  type: "ScriptBlock"
-  props: TypedScriptBlockProps
+  type: "ScriptBlock";
+  props: TypedScriptBlockProps;
 }
 
 export interface SceneBlock extends BaseBlock {
-  type: "SceneBlock"
-  props: TypedSceneBlockProps
+  type: "SceneBlock";
+  props: TypedSceneBlockProps;
 }
 
 export interface DialogueBlock extends BaseBlock {
-  type: "DialogueBlock"
-  props: DialogueBlockProps
+  type: "DialogueBlock";
+  props: DialogueBlockProps;
 }
 
 export interface CodeBlock extends BaseBlock {
-  type: "CodeBlock"
-  props: CodeBlockProps
+  type: "CodeBlock";
+  props: CodeBlockProps;
 }
 
 export interface TableBlock extends BaseBlock {
-  type: "TableBlock"
-  props: TableBlockProps
+  type: "TableBlock";
+  props: TableBlockProps;
 }
 
 export interface TabsBlock extends BaseBlock {
-  type: "TabsBlock"
-  props: TabsBlockProps
+  type: "TabsBlock";
+  props: TabsBlockProps;
 }
 
 export interface TabItemBlock extends BaseBlock {
-  type: "TabItemBlock"
-  props: TabItemBlockProps
+  type: "TabItemBlock";
+  props: TabItemBlockProps;
 }
 
 export interface StepsBlock extends BaseBlock {
-  type: "StepsBlock"
-  props: StepsBlockProps
+  type: "StepsBlock";
+  props: StepsBlockProps;
 }
 
 export interface StepItemBlock extends BaseBlock {
-  type: "StepItemBlock"
-  props: StepItemBlockProps
+  type: "StepItemBlock";
+  props: StepItemBlockProps;
 }
 
 export interface CardsBlock extends BaseBlock {
-  type: "CardsBlock"
-  props: CardsBlockProps
+  type: "CardsBlock";
+  props: CardsBlockProps;
 }
 
 export interface CardBlock extends BaseBlock {
-  type: "CardBlock"
-  props: CardBlockProps
+  type: "CardBlock";
+  props: CardBlockProps;
 }
 
 export interface FileTreeBlock extends BaseBlock {
-  type: "FileTreeBlock"
-  props: FileTreeBlockProps
+  type: "FileTreeBlock";
+  props: FileTreeBlockProps;
 }
 
 export interface ComponentShowcaseBlock extends BaseBlock {
-  type: "ComponentShowcaseBlock"
-  props: ComponentShowcaseBlockProps
+  type: "ComponentShowcaseBlock";
+  props: ComponentShowcaseBlockProps;
 }
 
 export interface ApiDocumentationBlock extends BaseBlock {
-  type: "ApiDocumentationBlock"
-  props: ApiDocumentationBlockProps
+  type: "ApiDocumentationBlock";
+  props: ApiDocumentationBlockProps;
 }
 
 export interface LivePreviewBlock extends BaseBlock {
-  type: "LivePreviewBlock"
-  props: LivePreviewBlockProps
+  type: "LivePreviewBlock";
+  props: LivePreviewBlockProps;
 }
 
 export type TypedBlock =
@@ -367,7 +367,7 @@ export type TypedBlock =
   | FileTreeBlock
   | ComponentShowcaseBlock
   | ApiDocumentationBlock
-  | LivePreviewBlock
+  | LivePreviewBlock;
 
 export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
   Root: [
@@ -449,4 +449,4 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
   CardsBlock: ["CardBlock"],
   ScriptBlock: ["SceneBlock"],
   SceneBlock: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"]
-}
+};

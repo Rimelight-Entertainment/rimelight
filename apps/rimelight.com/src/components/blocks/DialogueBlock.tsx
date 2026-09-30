@@ -1,16 +1,16 @@
-import type { Component } from "solid-js"
-import type { BaseBlock } from "@rimelight/cms"
+import type { Component } from "solid-js";
+import type { BaseBlock } from "@rimelight/cms";
 
 export interface DialogueBlockProps {
-  block: BaseBlock
-  locale?: string
+  block: BaseBlock;
+  locale?: string;
 }
 
 export const DialogueBlock: Component<DialogueBlockProps> = (props) => {
-  const p = () => (props.block.props || {}) as any
-  const character = () => p().character
-  const parenthetical = () => p().parenthetical
-  const line = () => p().line
+  const p = () => (props.block.props || {}) as any;
+  const character = () => p().character;
+  const parenthetical = () => p().parenthetical;
+  const line = () => p().line;
 
   return (
     <div class="my-3 mx-8 max-w-md">
@@ -20,7 +20,7 @@ export const DialogueBlock: Component<DialogueBlockProps> = (props) => {
       )}
       <div class="text-sm text-center text-neutral-700 mt-1">{line()}</div>
     </div>
-  )
-}
+  );
+};
 
-export default DialogueBlock
+export default DialogueBlock;

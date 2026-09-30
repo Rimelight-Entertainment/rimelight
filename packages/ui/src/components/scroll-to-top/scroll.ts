@@ -1,6 +1,6 @@
 export interface ScrollState {
-  isVisible: boolean
-  scrollPercentage: number
+  isVisible: boolean;
+  scrollPercentage: number;
 }
 
 export function trackScroll(
@@ -8,40 +8,40 @@ export function trackScroll(
   onUpdate: (state: ScrollState) => void
 ): () => void {
   if (typeof window === "undefined") {
-    onUpdate({ isVisible: false, scrollPercentage: 0 })
-    return () => {}
+    onUpdate({ isVisible: false, scrollPercentage: 0 });
+    return () => {};
   }
 
-  const { threshold = 200 } = options
+  const { threshold = 200 } = options;
 
-  let ticking = false
-  let rafId: number | null = null
+  let ticking = false;
+  let rafId: number | null = null;
 
   function update() {
     if (!ticking) {
       rafId = requestAnimationFrame(() => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
         onUpdate({
           isVisible: scrollTop > threshold,
           scrollPercentage: scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
-        })
-        ticking = false
-        rafId = null
-      })
-      ticking = true
+        });
+        ticking = false;
+        rafId = null;
+      });
+      ticking = true;
     }
   }
 
-  window.addEventListener("scroll", update, { passive: true })
-  update()
+  window.addEventListener("scroll", update, { passive: true });
+  update();
 
   return () => {
-    window.removeEventListener("scroll", update)
+    window.removeEventListener("scroll", update);
     if (rafId !== null) {
-      cancelAnimationFrame(rafId)
+      cancelAnimationFrame(rafId);
     }
-  }
+  };
 }
 
 export function scrollToTop() {
@@ -49,6 +49,6 @@ export function scrollToTop() {
     window.scrollTo({
       top: 0,
       behavior: "smooth"
-    })
+    });
   }
 }

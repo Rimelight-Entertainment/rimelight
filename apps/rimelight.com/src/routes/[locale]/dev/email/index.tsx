@@ -1,39 +1,39 @@
-import { type Component, For, createSignal } from "solid-js"
-import BlankLayout from "#layouts/BlankLayout"
-import { getLocale } from "@rimelight/i18n"
+import { type Component, For, createSignal } from "solid-js";
+import BlankLayout from "#layouts/BlankLayout";
+import { getLocale } from "@rimelight/i18n";
 
 const links = [
   ["verification", "Verify Email"],
   ["password-reset", "Password Reset"],
   ["signup-notification", "Sign-up Notification"]
-]
+];
 
 export const DevEmailIndexPage: Component = () => {
-  const locale = getLocale()
+  const locale = getLocale();
   const [statusMap, setStatusMap] = createSignal<Record<string, { text: string; error?: boolean }>>(
     {}
-  )
-  const [loadingMap, setLoadingMap] = createSignal<Record<string, boolean>>({})
+  );
+  const [loadingMap, setLoadingMap] = createSignal<Record<string, boolean>>({});
 
   const sendTest = async (template: string) => {
-    setLoadingMap((prev) => ({ ...prev, [template]: true }))
-    setStatusMap((prev) => ({ ...prev, [template]: { text: "Sending..." } }))
+    setLoadingMap((prev) => ({ ...prev, [template]: true }));
+    setStatusMap((prev) => ({ ...prev, [template]: { text: "Sending..." } }));
 
     try {
       const response = await fetch("/api/dev/email/preview/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ template, locale })
-      })
-      const raw = await response.text()
-      let result: { ok?: boolean; error?: string }
+      });
+      const raw = await response.text();
+      let result: { ok?: boolean; error?: string };
       try {
-        result = JSON.parse(raw)
+        result = JSON.parse(raw);
       } catch {
-        throw new Error(raw || `Request failed with status ${response.status}`)
+        throw new Error(raw || `Request failed with status ${response.status}`);
       }
-      if (!response.ok) throw new Error(result.error ?? "Unable to send test email")
-      setStatusMap((prev) => ({ ...prev, [template]: { text: "Test email sent." } }))
+      if (!response.ok) throw new Error(result.error ?? "Unable to send test email");
+      setStatusMap((prev) => ({ ...prev, [template]: { text: "Test email sent." } }));
     } catch (err) {
       setStatusMap((prev) => ({
         ...prev,
@@ -41,11 +41,11 @@ export const DevEmailIndexPage: Component = () => {
           text: err instanceof Error ? err.message : "Unable to send test email",
           error: true
         }
-      }))
+      }));
     } finally {
-      setLoadingMap((prev) => ({ ...prev, [template]: false }))
+      setLoadingMap((prev) => ({ ...prev, [template]: false }));
     }
-  }
+  };
 
   return (
     <BlankLayout title="Email Templates Preview" description="Preview Rimelight email templates">
@@ -53,7 +53,7 @@ export const DevEmailIndexPage: Component = () => {
         <h1 class="text-2xl font-bold text-neutral-100 mb-6">Email Templates Preview</h1>
         <For each={links}>
           {([tplPath, title]) => {
-            const pathKey = tplPath || ""
+            const pathKey = tplPath || "";
             return (
               <article class="bg-neutral-900 border border-neutral-800 rounded-lg p-6 my-4 shadow-sm">
                 <h2 class="text-lg font-bold text-white mb-4">{title}</h2>
@@ -82,12 +82,12 @@ export const DevEmailIndexPage: Component = () => {
                   {statusMap()[pathKey]?.text || ""}
                 </p>
               </article>
-            )
+            );
           }}
         </For>
       </main>
     </BlankLayout>
-  )
-}
+  );
+};
 
-export default DevEmailIndexPage
+export default DevEmailIndexPage;

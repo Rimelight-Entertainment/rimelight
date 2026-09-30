@@ -1,26 +1,26 @@
-import { createMemo, createSignal, For } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { RLAspectRatio } from "@rimelight/ui/components/aspect-ratio/RLAspectRatio.tsx"
-import type { ComponentAuditDefinition } from "./types"
+import { createMemo, createSignal, For } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLAspectRatio } from "@rimelight/ui/components/aspect-ratio/RLAspectRatio.tsx";
+import type { ComponentAuditDefinition } from "./types";
 
 const RATIOS: Array<{ label: string; value: number }> = [
   { label: "16 / 9", value: 16 / 9 },
   { label: "4 / 3", value: 4 / 3 },
   { label: "1 / 1", value: 1 },
   { label: "9 / 16", value: 9 / 16 }
-]
+];
 
 const Placeholder = (props: { label: string }): JSX.Element => (
   <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/40 to-secondary/40">
     <span class="text-xs font-mono font-bold text-inverted">{props.label}</span>
   </div>
-)
+);
 
 export const AspectRatioSandbox = (): JSX.Element => {
-  const [ratioIndex, setRatioIndex] = createSignal(0)
+  const [ratioIndex, setRatioIndex] = createSignal(0);
 
-  const ratio = createMemo(() => RATIOS[ratioIndex()]!.value)
-  const label = createMemo(() => RATIOS[ratioIndex()]!.label)
+  const ratio = createMemo(() => RATIOS[ratioIndex()]!.value);
+  const label = createMemo(() => RATIOS[ratioIndex()]!.label);
 
   return (
     <>
@@ -48,8 +48,8 @@ export const AspectRatioSandbox = (): JSX.Element => {
         <Placeholder label={label()} />
       </RLAspectRatio>
     </>
-  )
-}
+  );
+};
 
 export const aspectRatioAudit: ComponentAuditDefinition = {
   id: "aspect-ratio",
@@ -185,4 +185,4 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
       notes: "Scenario renders return <RLAspectRatio/> directly."
     }
   ]
-}
+};

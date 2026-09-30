@@ -1,17 +1,17 @@
-import { createSignal, createMemo, omit, onSettled, For, Show, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Portal } from "@solidjs/web"
-import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
-import { dropdownMenuTheme } from "./dropdown-menu.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createSignal, createMemo, omit, onSettled, For, Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
+import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu";
+import { dropdownMenuTheme } from "./dropdown-menu.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLDropdownMenuProps extends DropdownMenuProps {
-  children?: JSX.Element
-  trigger?: JSX.Element
+  children?: JSX.Element;
+  trigger?: JSX.Element;
 }
 
 const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "items",
@@ -26,61 +26,61 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     "class",
     "children",
     "trigger"
-  )
+  );
 
-  const [isOpen, setIsOpen] = createSignal(false)
+  const [isOpen, setIsOpen] = createSignal(false);
   const [coords, setCoords] = createSignal<{
-    top: number
-    left?: number | undefined
-    right?: number | undefined
+    top: number;
+    left?: number | undefined;
+    right?: number | undefined;
   }>({
     top: 0
-  })
-  let menuContainer: HTMLDivElement | undefined
-  let menuContentRef: HTMLDivElement | undefined
-  let triggerBtn: HTMLButtonElement | undefined
+  });
+  let menuContainer: HTMLDivElement | undefined;
+  let menuContentRef: HTMLDivElement | undefined;
+  let triggerBtn: HTMLButtonElement | undefined;
 
   const updatePosition = () => {
-    if (!triggerBtn) return
-    const rect = triggerBtn.getBoundingClientRect()
-    const align = props.content?.align || "start"
-    const top = rect.bottom + 4
+    if (!triggerBtn) return;
+    const rect = triggerBtn.getBoundingClientRect();
+    const align = props.content?.align || "start";
+    const top = rect.bottom + 4;
     if (align === "end") {
-      const right = Math.max(0, window.innerWidth - rect.right)
-      setCoords({ top, right, left: undefined })
+      const right = Math.max(0, window.innerWidth - rect.right);
+      setCoords({ top, right, left: undefined });
     } else if (align === "center") {
-      const left = rect.left + rect.width / 2
-      setCoords({ top, left, right: undefined })
+      const left = rect.left + rect.width / 2;
+      setCoords({ top, left, right: undefined });
     } else {
-      setCoords({ top, left: rect.left, right: undefined })
+      setCoords({ top, left: rect.left, right: undefined });
     }
-  }
+  };
 
   onSettled(() => {
-    if (typeof window === "undefined" || typeof document === "undefined") return
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     const handleOutsideClick = (e: MouseEvent) => {
-      const target = e.target as Node
+      const target = e.target as Node;
       if (
         isOpen() &&
         menuContainer &&
         !menuContainer.contains(target) &&
         (!menuContentRef || !menuContentRef.contains(target))
       ) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
     const handleScroll = () => {
-      if (isOpen()) updatePosition()
-    }
-    document.addEventListener("click", handleOutsideClick)
-    window.addEventListener("scroll", handleScroll, true)
-    window.addEventListener("resize", handleScroll)
+      if (isOpen()) updatePosition();
+    };
+    document.addEventListener("click", handleOutsideClick);
+    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleScroll);
     return () => {
-      document.removeEventListener("click", handleOutsideClick)
-      window.removeEventListener("scroll", handleScroll, true)
-      window.removeEventListener("resize", handleScroll)
-    }
-  })
+      document.removeEventListener("click", handleOutsideClick);
+      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleScroll);
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     dropdownMenuTheme({
@@ -88,22 +88,22 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const itemGroups = createMemo<DropdownMenuItem[][]>(() => {
-    if (!props.items) return []
+    if (!props.items) return [];
     if (props.items.length > 0 && Array.isArray(props.items[0])) {
-      return props.items as DropdownMenuItem[][]
+      return props.items as DropdownMenuItem[][];
     }
-    return [props.items as DropdownMenuItem[]]
-  })
+    return [props.items as DropdownMenuItem[]];
+  });
 
-  const triggerElement = () => props.trigger || (props as any)["slot:trigger"] || props.children
+  const triggerElement = () => props.trigger || (props as any)["slot:trigger"] || props.children;
 
   return (
     <div
       ref={(el) => {
-        menuContainer = el
+        menuContainer = el;
       }}
       class={resolvedClasses().root}
       data-slot="root"
@@ -111,15 +111,15 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     >
       <button
         ref={(el) => {
-          triggerBtn = el
+          triggerBtn = el;
         }}
         type="button"
         disabled={props.disabled}
         onClick={(e) => {
-          e.stopPropagation()
-          const next = !isOpen()
-          if (next) updatePosition()
-          setIsOpen(next)
+          e.stopPropagation();
+          const next = !isOpen();
+          if (next) updatePosition();
+          setIsOpen(next);
         }}
         class={`${resolvedClasses().trigger} ${!props.label && !triggerElement() ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
         data-slot="trigger"
@@ -153,13 +153,13 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
         <Portal>
           <div
             ref={(el) => {
-              menuContentRef = el
+              menuContentRef = el;
             }}
             class={resolvedClasses().content}
             style={{
-              "position": "fixed",
+              position: "fixed",
               "z-index": "99999",
-              "top": `${coords().top}px`,
+              top: `${coords().top}px`,
               ...(coords().right !== undefined
                 ? { right: `${coords().right}px`, left: "auto" }
                 : {}),
@@ -177,10 +177,10 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                     <For each={group}>
                       {(item) => {
                         if (item.type === "separator") {
-                          return <div class={resolvedClasses().separator} />
+                          return <div class={resolvedClasses().separator} />;
                         }
                         if (item.type === "label") {
-                          return <div class={resolvedClasses().label}>{item.label}</div>
+                          return <div class={resolvedClasses().label}>{item.label}</div>;
                         }
 
                         const itemColor = () =>
@@ -188,7 +188,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                             ? "text-destructive hover:bg-destructive/10"
                             : item.color === "primary"
                               ? "text-primary hover:bg-primary/10"
-                              : ""
+                              : "";
 
                         const renderLeadingContent = () => {
                           if (item.avatar) {
@@ -198,7 +198,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                                 alt={item.avatar.alt || item.label || ""}
                                 class={resolvedClasses().itemLeadingAvatar}
                               />
-                            )
+                            );
                           }
                           if (item.icon) {
                             return (
@@ -207,13 +207,13 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                                 size="sm"
                                 class={resolvedClasses().itemLeadingIcon}
                               />
-                            )
+                            );
                           }
-                          return null
-                        }
+                          return null;
+                        };
 
                         const renderTrailingContent = () => {
-                          if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null
+                          if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null;
                           return (
                             <span class={resolvedClasses().itemTrailing}>
                               {item.shortcut && (
@@ -227,8 +227,8 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                                 </For>
                               )}
                             </span>
-                          )
-                        }
+                          );
+                        };
 
                         if (item.to) {
                           return (
@@ -239,19 +239,19 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               data-slot="item"
                               role="menuitem"
                               onClick={(e) => {
-                                setIsOpen(false)
-                                item.onSelect?.(e)
+                                setIsOpen(false);
+                                item.onSelect?.(e);
                               }}
                             >
                               {renderLeadingContent()}
                               <span class={resolvedClasses().itemLabel}>{item.label}</span>
                               {renderTrailingContent()}
                             </a>
-                          )
+                          );
                         }
 
                         if (item.type === "checkbox") {
-                          const isChecked = () => !!item.checked
+                          const isChecked = () => !!item.checked;
                           return (
                             <button
                               type="button"
@@ -261,9 +261,9 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               role="menuitemcheckbox"
                               aria-checked={isChecked() ? "true" : "false"}
                               onClick={(e) => {
-                                const next = !isChecked()
-                                item.onUpdateChecked?.(next)
-                                item.onSelect?.(e)
+                                const next = !isChecked();
+                                item.onUpdateChecked?.(next);
+                                item.onSelect?.(e);
                               }}
                             >
                               <span class="shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default">
@@ -275,7 +275,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               <span class={resolvedClasses().itemLabel}>{item.label}</span>
                               {renderTrailingContent()}
                             </button>
-                          )
+                          );
                         }
 
                         return (
@@ -286,15 +286,15 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                             data-slot="item"
                             role="menuitem"
                             onClick={(e) => {
-                              setIsOpen(false)
-                              item.onSelect?.(e)
+                              setIsOpen(false);
+                              item.onSelect?.(e);
                             }}
                           >
                             {renderLeadingContent()}
                             <span class={resolvedClasses().itemLabel}>{item.label}</span>
                             {renderTrailingContent()}
                           </button>
-                        )
+                        );
                       }}
                     </For>
                   </div>
@@ -305,7 +305,7 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
         </Portal>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLDropdownMenu }
+export { RLDropdownMenu };

@@ -1,55 +1,55 @@
-import type { BadgeProps } from "../badge/badge"
+import type { BadgeProps } from "../badge/badge";
 
 export interface SidebarItem {
-  label: string
-  href?: string | undefined
-  icon?: string | undefined
-  badge?: string | BadgeProps | undefined
-  active?: boolean | undefined
-  children?: SidebarItem[] | undefined
-  items?: SidebarItem[] | undefined
-  collapsed?: boolean | undefined
+  label: string;
+  href?: string | undefined;
+  icon?: string | undefined;
+  badge?: string | BadgeProps | undefined;
+  active?: boolean | undefined;
+  children?: SidebarItem[] | undefined;
+  items?: SidebarItem[] | undefined;
+  collapsed?: boolean | undefined;
 }
 
 export interface SidebarScope {
-  id?: string | undefined
-  label: string
-  href?: string | undefined
-  icon?: string | undefined
-  items?: SidebarItem[] | undefined
-  collapsed?: boolean | undefined
+  id?: string | undefined;
+  label: string;
+  href?: string | undefined;
+  icon?: string | undefined;
+  items?: SidebarItem[] | undefined;
+  collapsed?: boolean | undefined;
 }
 
 export interface SidebarProps {
-  t?: (key: string) => string
-  _depth?: number
+  t?: (key: string) => string;
+  _depth?: number;
   /**
    * The navigation links array.
    */
-  items?: SidebarItem[]
+  items?: SidebarItem[];
   /**
    * Side of the page.
    */
-  side?: "left" | "right"
+  side?: "left" | "right";
   /**
    * Collapsible mode.
    */
-  collapsible?: "icon" | "offcanvas" | "none"
+  collapsible?: "icon" | "offcanvas" | "none";
   /**
    * The visual style variant of the sidebar.
    */
-  variant?: "sidebar" | "floating" | "inset"
+  variant?: "sidebar" | "floating" | "inset";
   /**
    * Header logo or text.
    */
-  logo?: string
+  logo?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

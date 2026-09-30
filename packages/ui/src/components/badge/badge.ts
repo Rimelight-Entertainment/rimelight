@@ -1,5 +1,5 @@
-import type { Theme, ThemeColor } from "../../types"
-import type { AvatarProps } from "../avatar/avatar"
+import type { Theme, ThemeColor } from "../../types";
+import type { AvatarProps } from "../avatar/avatar";
 
 export interface BadgeProps {
   /**
@@ -7,11 +7,11 @@ export interface BadgeProps {
    *
    * @default "span"
    */
-  as?: any
+  as?: any;
   /**
    * Text label to display.
    */
-  label?: string | number | undefined
+  label?: string | number | undefined;
   /**
    * Color scheme applied.
    *
@@ -26,77 +26,77 @@ export interface BadgeProps {
     | "info"
     | "warning"
     | "neutral"
-    | undefined
+    | undefined;
   /**
    * Visual style variant.
    *
    * @default "solid"
    */
-  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | undefined
+  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | undefined;
   /**
    * The size scale of the badge.
    *
    * @default "md"
    */
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
   /**
    * The shape corner rounding.
    */
-  shape?: "square" | "rounded" | "pill" | undefined
+  shape?: "square" | "rounded" | "pill" | undefined;
   /**
    * Render the badge with equal padding on all sides.
    */
-  square?: boolean | undefined
+  square?: boolean | undefined;
   /**
    * Field group orientation styling when placed inside a field group.
    */
-  fieldGroup?: "horizontal" | "vertical" | undefined
+  fieldGroup?: "horizontal" | "vertical" | undefined;
   /**
    * Display an icon based on the `leading` and `trailing` props.
    */
-  icon?: any
+  icon?: any;
   /**
    * Display an avatar on the left side.
    */
-  avatar?: AvatarProps | string | undefined
+  avatar?: AvatarProps | string | undefined;
   /**
    * When `true`, the icon will be displayed on the left side.
    */
-  leading?: boolean | undefined
+  leading?: boolean | undefined;
   /**
    * Display an icon on the left side.
    */
-  leadingIcon?: any
+  leadingIcon?: any;
   /**
    * When `true`, the icon will be displayed on the right side.
    */
-  trailing?: boolean | undefined
+  trailing?: boolean | undefined;
   /**
    * Display an icon on the right side.
    */
-  trailingIcon?: any
+  trailingIcon?: any;
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: Theme | undefined
+  theme?: Theme | undefined;
   /**
    * Slot-specific CSS class overrides.
    */
   ui?:
     | {
-        root?: any
-        base?: any
-        label?: any
-        leadingIcon?: any
-        leadingAvatar?: any
-        leadingAvatarSize?: any
-        trailingIcon?: any
-        [key: string]: any
+        root?: any;
+        base?: any;
+        label?: any;
+        leadingIcon?: any;
+        leadingAvatar?: any;
+        leadingAvatarSize?: any;
+        trailingIcon?: any;
+        [key: string]: any;
       }
-    | undefined
+    | undefined;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,24 +1,24 @@
-import { createMemo, For, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Dynamic } from "@solidjs/web"
-import type { TimelineProps, TimelineItem } from "./timeline"
-import { timelineTheme } from "./timeline.theme"
-import { RLAvatar } from "../avatar/RLAvatar"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, For, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Dynamic } from "@solidjs/web";
+import type { TimelineProps, TimelineItem } from "./timeline";
+import { timelineTheme } from "./timeline.theme";
+import { RLAvatar } from "../avatar/RLAvatar";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLTimelineProps extends TimelineProps {
   children?:
     | JSX.Element
-    | ((ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element)
-  indicator?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
-  wrapper?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
-  date?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
-  title?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
-  description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
+    | ((ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element);
+  indicator?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  wrapper?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  date?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  title?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
 }
 
 const RLTimeline: Component<RLTimelineProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -38,34 +38,34 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     "date",
     "title",
     "description"
-  )
+  );
 
-  const items = (): TimelineItem[] => props.items ?? []
-  const valueKey = (): string => props.valueKey ?? "value"
-  const reverse = (): boolean => props.reverse === true
-  const orientation = (): string => props.orientation ?? "vertical"
+  const items = (): TimelineItem[] => props.items ?? [];
+  const valueKey = (): string => props.valueKey ?? "value";
+  const reverse = (): boolean => props.reverse === true;
+  const orientation = (): string => props.orientation ?? "vertical";
 
   const getItemValue = (item: TimelineItem, index: number): string | number =>
-    item[valueKey()] !== undefined ? item[valueKey()] : index
+    item[valueKey()] !== undefined ? item[valueKey()] : index;
 
   const getItemState = (_item: TimelineItem, index: number): "active" | "completed" | undefined => {
-    const activeVal = props.modelValue !== undefined ? props.modelValue : props.defaultValue
-    if (activeVal === undefined) return undefined
+    const activeVal = props.modelValue !== undefined ? props.modelValue : props.defaultValue;
+    if (activeVal === undefined) return undefined;
 
-    let currentIndex = -1
+    let currentIndex = -1;
     if (items().length > 0) {
       if (typeof activeVal === "string") {
-        currentIndex = items().findIndex((i) => getItemValue(i, items().indexOf(i)) === activeVal)
+        currentIndex = items().findIndex((i) => getItemValue(i, items().indexOf(i)) === activeVal);
       } else if (typeof activeVal === "number") {
-        currentIndex = reverse() ? items().length - 1 - activeVal : activeVal
+        currentIndex = reverse() ? items().length - 1 - activeVal : activeVal;
       }
     }
 
-    if (currentIndex === -1) return undefined
-    if (index === currentIndex) return "active"
-    if (reverse()) return index > currentIndex ? "completed" : undefined
-    return index < currentIndex ? "completed" : undefined
-  }
+    if (currentIndex === -1) return undefined;
+    if (index === currentIndex) return "active";
+    if (reverse()) return index > currentIndex ? "completed" : undefined;
+    return index < currentIndex ? "completed" : undefined;
+  };
 
   const resolvedClasses = createMemo(() =>
     timelineTheme({
@@ -76,7 +76,7 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const renderSlot = (
     slotFn: any,
@@ -85,11 +85,11 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     fallback?: () => JSX.Element
   ) => {
     if (typeof slotFn === "function") {
-      const ctx = { ...item, item, index }
-      return slotFn(ctx)
+      const ctx = { ...item, item, index };
+      return slotFn(ctx);
     }
-    return fallback ? fallback() : null
-  }
+    return fallback ? fallback() : null;
+  };
 
   return (
     <Dynamic
@@ -102,10 +102,10 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
       {items().length > 0 ? (
         <For each={items()}>
           {(item, index) => {
-            const state = getItemState(item, index())
-            const isLast = index() === items().length - 1
+            const state = getItemState(item, index());
+            const isLast = index() === items().length - 1;
             const avatar =
-              typeof item.avatar === "object" && item.avatar !== null ? item.avatar : undefined
+              typeof item.avatar === "object" && item.avatar !== null ? item.avatar : undefined;
 
             return (
               <div
@@ -186,14 +186,14 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
                   )}
                 </div>
               </div>
-            )
+            );
           }}
         </For>
       ) : typeof props.children !== "function" ? (
         props.children
       ) : null}
     </Dynamic>
-  )
-}
+  );
+};
 
-export { RLTimeline }
+export { RLTimeline };

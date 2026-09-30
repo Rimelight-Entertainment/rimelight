@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardPanelTheme = defineTheme("dashboard-panel", {
   slots: ["root", "body", "handle"],
@@ -20,4 +20,4 @@ export const dashboardPanelTheme = defineTheme("dashboard-panel", {
   defaultVariants: {
     size: false
   }
-})
+});

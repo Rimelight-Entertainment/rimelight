@@ -2,30 +2,30 @@ export interface PopoverProps {
   /**
    * Controlled open state.
    */
-  open?: boolean
+  open?: boolean;
   /**
    * The trigger label to render.
    */
-  triggerLabel?: string
+  triggerLabel?: string;
   /**
    * The placement of the popover relative to trigger.
    */
-  placement?: "top" | "bottom" | "bottom-end" | "bottom-start" | "left" | "right"
+  placement?: "top" | "bottom" | "bottom-end" | "bottom-start" | "left" | "right";
   /**
    * Trigger mode: 'click', 'hover', or 'both'.
    */
-  mode?: "click" | "hover" | "both"
+  mode?: "click" | "hover" | "both";
   /**
    * Size variant for padding.
    */
-  size?: "xs" | "sm" | "md" | "lg" | (string & {}) | undefined
+  size?: "xs" | "sm" | "md" | "lg" | (string & {}) | undefined;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

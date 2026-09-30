@@ -1,8 +1,8 @@
-import { type Component, Show, createSignal, onSettled } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Title, Meta } from "@solidjs/meta"
-import AppHeader from "#components/app/AppHeader"
-import AppFooter from "#components/app/AppFooter"
+import { type Component, Show, createSignal, onSettled } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Title, Meta } from "@solidjs/meta";
+import AppHeader from "#components/app/AppHeader";
+import AppFooter from "#components/app/AppFooter";
 import {
   RLBanner,
   RLMain,
@@ -12,32 +12,32 @@ import {
   RLToaster,
   RLToast,
   RLButton
-} from "@rimelight/ui"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+} from "@rimelight/ui";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export interface AppLayoutProps {
-  title?: string | undefined
-  description?: string | undefined
-  children?: JSX.Element | undefined
-  session?: any
+  title?: string | undefined;
+  description?: string | undefined;
+  children?: JSX.Element | undefined;
+  session?: any;
 }
 
 export const AppLayout: Component<AppLayoutProps> = (props) => {
-  const [hasConsent, setHasConsent] = createSignal(true)
+  const [hasConsent, setHasConsent] = createSignal(true);
 
   onSettled(() => {
     if (typeof document !== "undefined") {
-      setHasConsent(document.cookie.includes("cookie-consent="))
+      setHasConsent(document.cookie.includes("cookie-consent="));
     }
-  })
+  });
 
   const setCookieAndDismiss = (consentValue: string) => {
     if (typeof document !== "undefined") {
-      const maxAge = 365 * 24 * 60 * 60
-      document.cookie = `cookie-consent=${consentValue}; path=/; max-age=${maxAge}; SameSite=Lax`
-      setHasConsent(true)
+      const maxAge = 365 * 24 * 60 * 60;
+      document.cookie = `cookie-consent=${consentValue}; path=/; max-age=${maxAge}; SameSite=Lax`;
+      setHasConsent(true);
     }
-  }
+  };
 
   return (
     <>
@@ -128,7 +128,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
         </Show>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default AppLayout
+export default AppLayout;

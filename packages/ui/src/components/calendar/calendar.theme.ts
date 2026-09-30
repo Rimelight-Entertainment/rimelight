@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const calendarTheme = defineTheme("calendar", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const calendarTheme = defineTheme("calendar", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

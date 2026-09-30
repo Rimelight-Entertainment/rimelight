@@ -1,18 +1,18 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { TextareaProps } from "./textarea"
-import { textareaTheme } from "./textarea.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { TextareaProps } from "./textarea";
+import { textareaTheme } from "./textarea.theme";
 
 export interface RLTextareaProps extends TextareaProps {
-  onInput?: (e: InputEvent & { currentTarget: HTMLTextAreaElement }) => void
-  onChange?: (e: Event & { currentTarget: HTMLTextAreaElement }) => void
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLTextAreaElement }) => void
-  ref?: HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void)
+  onInput?: (e: InputEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLTextAreaElement }) => void;
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  onFocus?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  ref?: HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void);
 }
 
 const RLTextarea: Component<RLTextareaProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "value",
@@ -34,7 +34,7 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
     "onFocus",
     "onKeyDown",
     "ref"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     textareaTheme({
@@ -43,7 +43,7 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} data-slot="root">
@@ -67,7 +67,7 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
         {...rest}
       />
     </div>
-  )
-}
+  );
+};
 
-export { RLTextarea }
+export { RLTextarea };

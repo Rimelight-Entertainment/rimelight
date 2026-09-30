@@ -1,31 +1,31 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { InputDateProps } from "./input-date"
-import { inputDateTheme } from "./input-date.theme"
-import { inputTheme } from "../input/input.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { InputDateProps } from "./input-date";
+import { inputDateTheme } from "./input-date.theme";
+import { inputTheme } from "../input/input.theme";
 
 export interface RLInputDateProps extends InputDateProps {
-  children?: JSX.Element
-  value?: string
-  defaultValue?: string
-  name?: string
-  placeholder?: string
-  disabled?: boolean
-  readonly?: boolean
-  required?: boolean
-  min?: string
-  max?: string
-  step?: number
-  size?: "sm" | "md" | "lg"
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void
+  children?: JSX.Element;
+  value?: string;
+  defaultValue?: string;
+  name?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  readonly?: boolean;
+  required?: boolean;
+  min?: string;
+  max?: string;
+  step?: number;
+  size?: "sm" | "md" | "lg";
+  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
 }
 
 const RLInputDate: Component<RLInputDateProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "children",
@@ -47,14 +47,14 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
     "onBlur",
     "onFocus",
     "onKeyDown"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     inputDateTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const inputClasses = createMemo(() =>
     inputTheme({
@@ -63,7 +63,7 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
       error: false,
       ui: props.ui
     })
-  )
+  );
 
   return (
     <div class={`${resolvedClasses().root} ${inputClasses().root}`} data-slot="root">
@@ -89,7 +89,7 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
       />
       {props.children}
     </div>
-  )
-}
+  );
+};
 
-export { RLInputDate }
+export { RLInputDate };

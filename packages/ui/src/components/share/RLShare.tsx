@@ -1,6 +1,6 @@
-import { createSignal, onCleanup, omit, type Component } from "solid-js"
-import type { ButtonProps } from "../button/button"
-import { RLButton } from "../button/RLButton"
+import { createSignal, onCleanup, omit, type Component } from "solid-js";
+import type { ButtonProps } from "../button/button";
+import { RLButton } from "../button/RLButton";
 
 export interface RLShareProps extends Omit<
   ButtonProps,
@@ -17,36 +17,36 @@ export interface RLShareProps extends Omit<
 > {}
 
 const RLShare: Component<RLShareProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "class", "ui")
-  const [copied, setCopied] = createSignal(false)
-  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  const props = allProps;
+  const rest = omit(allProps, "class", "ui");
+  const [copied, setCopied] = createSignal(false);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   onCleanup(() => {
-    if (timeoutId !== undefined) clearTimeout(timeoutId)
-  })
+    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  });
 
   const handleShare = async () => {
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: document.title, url: window.location.href })
+        await navigator.share({ title: document.title, url: window.location.href });
       } catch (err) {
-        const error = err as { name?: string }
+        const error = err as { name?: string };
         if (error.name !== "AbortError") {
-          console.error("Share failed:", err)
+          console.error("Share failed:", err);
         }
       }
-      return
+      return;
     }
     try {
-      await navigator.clipboard.writeText(window.location.href)
-      setCopied(true)
-      if (timeoutId !== undefined) clearTimeout(timeoutId)
-      timeoutId = setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy link:", err)
+      console.error("Failed to copy link:", err);
     }
-  }
+  };
 
   return (
     <RLButton
@@ -61,7 +61,7 @@ const RLShare: Component<RLShareProps> = (allProps) => {
       onClick={handleShare}
       {...rest}
     />
-  )
-}
+  );
+};
 
-export { RLShare }
+export { RLShare };

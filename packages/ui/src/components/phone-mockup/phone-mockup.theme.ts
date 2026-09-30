@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const phoneMockupTheme = defineTheme("phone-mockup", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const phoneMockupTheme = defineTheme("phone-mockup", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

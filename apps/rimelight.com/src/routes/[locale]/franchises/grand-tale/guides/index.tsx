@@ -1,7 +1,7 @@
-import { type Component } from "solid-js"
-import GuidesLayout from "#layouts/GuidesLayout"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+import { type Component } from "solid-js";
+import GuidesLayout from "#layouts/GuidesLayout";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const GuidesIndexPage: Component = () => {
   return (
@@ -48,7 +48,7 @@ export const GuidesIndexPage: Component = () => {
         </div>
       </div>
     </GuidesLayout>
-  )
-}
+  );
+};
 
-export default GuidesIndexPage
+export default GuidesIndexPage;

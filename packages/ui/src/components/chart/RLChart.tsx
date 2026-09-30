@@ -1,10 +1,10 @@
-import { createMemo, For, Show, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ChartProps, ChartDataPoint } from "./chart"
-import { chartTheme } from "./chart.theme"
+import { createMemo, For, Show, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ChartProps, ChartDataPoint } from "./chart";
+import { chartTheme } from "./chart.theme";
 
 export interface RLChartProps extends ChartProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const palette = [
@@ -14,34 +14,44 @@ const palette = [
   "hsl(32 95% 44%)",
   "hsl(0 84% 60%)",
   "hsl(187 85% 43%)"
-]
+];
 
-const PIE_R = 80
-const PIE_CX = 100
-const PIE_CY = 100
-const DONUT_INNER_R = 45
-const LINE_W = 400
-const LINE_H = 160
-const LINE_PAD = 32
+const PIE_R = 80;
+const PIE_CX = 100;
+const PIE_CY = 100;
+const DONUT_INNER_R = 45;
+const LINE_W = 400;
+const LINE_H = 160;
+const LINE_PAD = 32;
 
 const polarToCartesian = (cx: number, cy: number, r: number, angleDeg: number) => {
-  const rad = (angleDeg - 90) * (Math.PI / 180)
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }
-}
+  const rad = (angleDeg - 90) * (Math.PI / 180);
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+};
 
 const describeArc = (cx: number, cy: number, r: number, start: number, end: number) => {
-  const s = polarToCartesian(cx, cy, r, start)
-  const e = polarToCartesian(cx, cy, r, end)
-  const largeArc = end - start > 180 ? 1 : 0
-  return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`
-}
+  const s = polarToCartesian(cx, cy, r, start);
+  const e = polarToCartesian(cx, cy, r, end);
+  const largeArc = end - start > 180 ? 1 : 0;
+  return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`;
+};
 
 const RLChart: Component<RLChartProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "type", "data", "title", "height", "color", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(
+    allProps,
+    "type",
+    "data",
+    "title",
+    "height",
+    "color",
+    "ui",
+    "class",
+    "children"
+  );
 
-  const data = createMemo(() => props.data ?? [])
-  const chartType = () => props.type ?? "bar"
+  const data = createMemo(() => props.data ?? []);
+  const chartType = () => props.type ?? "bar";
 
   const resolvedClasses = createMemo(() =>
     chartTheme({
@@ -49,60 +59,62 @@ const RLChart: Component<RLChartProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const max = createMemo(() => {
-    const items = data()
-    return items.length > 0 ? Math.max(...items.map((d) => d.value)) : 1
-  })
+    const items = data();
+    return items.length > 0 ? Math.max(...items.map((d) => d.value)) : 1;
+  });
 
-  const total = createMemo(() => data().reduce((sum, d) => sum + d.value, 0))
+  const total = createMemo(() => data().reduce((sum, d) => sum + d.value, 0));
 
   const getColor = (item: ChartDataPoint, index: number) => {
-    const res = item.color ?? palette[index % palette.length]
-    return res ?? "#000000"
-  }
+    const res = item.color ?? palette[index % palette.length];
+    return res ?? "#000000";
+  };
 
   const pieSlices = createMemo(() => {
-    let cursor = 0
+    let cursor = 0;
     return data().map((item, i) => {
-      const angle = (item.value / (total() || 1)) * 360
-      const start = cursor
-      const end = cursor + angle
-      cursor = end
-      return { item, i, start, end }
-    })
-  })
+      const angle = (item.value / (total() || 1)) * 360;
+      const start = cursor;
+      const end = cursor + angle;
+      cursor = end;
+      return { item, i, start, end };
+    });
+  });
 
   const linePoints = createMemo(() =>
     data().map((d, i) => {
       const x =
         data().length < 2
           ? LINE_PAD
-          : LINE_PAD + (i / (data().length - 1)) * (LINE_W - LINE_PAD * 2)
-      const y = LINE_H - LINE_PAD - (d.value / (max() || 1)) * (LINE_H - LINE_PAD * 2)
-      return { x, y, d, i }
+          : LINE_PAD + (i / (data().length - 1)) * (LINE_W - LINE_PAD * 2);
+      const y = LINE_H - LINE_PAD - (d.value / (max() || 1)) * (LINE_H - LINE_PAD * 2);
+      return { x, y, d, i };
     })
-  )
+  );
 
   const linePath = createMemo(() =>
     linePoints()
       .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
       .join(" ")
-  )
+  );
 
   const areaPath = createMemo(() => {
-    const pts = linePoints()
-    if (pts.length === 0) return ""
-    const last = pts[pts.length - 1]!
-    const first = pts[0]!
-    return linePath() + ` L ${last.x} ${LINE_H - LINE_PAD}` + ` L ${first.x} ${LINE_H - LINE_PAD} Z`
-  })
+    const pts = linePoints();
+    if (pts.length === 0) return "";
+    const last = pts[pts.length - 1]!;
+    const first = pts[0]!;
+    return (
+      linePath() + ` L ${last.x} ${LINE_H - LINE_PAD}` + ` L ${first.x} ${LINE_H - LINE_PAD} Z`
+    );
+  });
 
-  const gridLines = [0, 0.25, 0.5, 0.75, 1]
+  const gridLines = [0, 0.25, 0.5, 0.75, 1];
 
-  const id = `chart-${Math.random().toString(36).substring(2, 9)}`
-  const height = props.height ?? 280
+  const id = `chart-${Math.random().toString(36).substring(2, 9)}`;
+  const height = props.height ?? 280;
 
   return (
     <>
@@ -124,7 +136,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
           <div class={resolvedClasses().container} data-slot="container">
             <For each={data()}>
               {(item, i) => {
-                const pct = max() > 0 ? (item.value / max()) * 100 : 0
+                const pct = max() > 0 ? (item.value / max()) * 100 : 0;
                 return (
                   <div class="flex flex-col items-center gap-1 flex-1 group">
                     <span class="text-[10px] text-muted font-mono opacity-0 group-hover:opacity-100 transition-opacity">
@@ -151,7 +163,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
                     </div>
                     <span class={resolvedClasses().axis}>{item.label}</span>
                   </div>
-                )
+                );
               }}
             </For>
           </div>
@@ -167,7 +179,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
             >
               <For each={gridLines}>
                 {(t) => {
-                  const y = LINE_PAD + t * (LINE_H - LINE_PAD * 2)
+                  const y = LINE_PAD + t * (LINE_H - LINE_PAD * 2);
                   return (
                     <line
                       x1={LINE_PAD}
@@ -177,7 +189,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
                       stroke="currentColor"
                       stroke-opacity={0.08}
                     />
-                  )
+                  );
                 }}
               </For>
 
@@ -229,10 +241,10 @@ const RLChart: Component<RLChartProps> = (allProps) => {
             >
               <For each={pieSlices()}>
                 {({ item, i, start, end }) => {
-                  const isFullCircle = Math.abs(end - start - 360) < 0.01
+                  const isFullCircle = Math.abs(end - start - 360) < 0.01;
                   const d = isFullCircle
                     ? `M ${PIE_CX} ${PIE_CY - PIE_R} A ${PIE_R} ${PIE_R} 0 1 1 ${PIE_CX - 0.001} ${PIE_CY - PIE_R} Z`
-                    : describeArc(PIE_CX, PIE_CY, PIE_R, start, end) + ` L ${PIE_CX} ${PIE_CY} Z`
+                    : describeArc(PIE_CX, PIE_CY, PIE_R, start, end) + ` L ${PIE_CX} ${PIE_CY} Z`;
                   return (
                     <path
                       d={d}
@@ -243,7 +255,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
                         {item.label}: {item.value}
                       </title>
                     </path>
-                  )
+                  );
                 }}
               </For>
               <Show when={chartType() === "donut"}>
@@ -286,7 +298,7 @@ const RLChart: Component<RLChartProps> = (allProps) => {
         ) : null}
       </div>
     </>
-  )
-}
+  );
+};
 
-export { RLChart }
+export { RLChart };

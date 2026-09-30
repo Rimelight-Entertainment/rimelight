@@ -5,43 +5,43 @@
  * groups with field schemas and optional initial template blocks seeded on page creation.
  */
 
-import type { BaseBlock } from "./types/blocks"
+import type { BaseBlock } from "./types/blocks";
 
 // ─── Field type definitions ───────────────────────────────────────────────────
 
-export type FieldType = "text" | "number" | "enum" | "text-array" | "page" | "page-array"
+export type FieldType = "text" | "number" | "enum" | "text-array" | "page" | "page-array";
 
 export interface FieldDefinition {
-  type: FieldType
-  label: { en: string }
-  defaultValue: any
-  options?: { en: string }[]
-  allowedPageTypes?: string[]
+  type: FieldType;
+  label: { en: string };
+  defaultValue: any;
+  options?: { en: string }[];
+  allowedPageTypes?: string[];
 }
 
 export interface PropertyGroup {
-  label: { en: string }
-  defaultOpen: boolean
-  fields: Record<string, FieldDefinition>
+  label: { en: string };
+  defaultOpen: boolean;
+  fields: Record<string, FieldDefinition>;
 }
 
 export interface PageDefinition {
-  typeLabelKey: string
-  properties: Record<string, PropertyGroup>
+  typeLabelKey: string;
+  properties: Record<string, PropertyGroup>;
   /**
    * Factory that returns the initial blocks seeded when a page of this type is created
    */
-  initialBlocks?: () => BaseBlock[]
+  initialBlocks?: () => BaseBlock[];
 }
 
 function uuid(): string {
   return typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()
-    : Math.random().toString(36).slice(2, 11)
+    : Math.random().toString(36).slice(2, 11);
 }
 
 export function definePageDefinition(def: PageDefinition): PageDefinition {
-  return def
+  return def;
 }
 
 // ─── Standard base definitions ────────────────────────────────────────────────
@@ -49,7 +49,7 @@ export function definePageDefinition(def: PageDefinition): PageDefinition {
 export const DOCUMENT_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.document",
   properties: {}
-})
+});
 
 export const BLOG_POST_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.blogPost",
@@ -77,7 +77,7 @@ export const BLOG_POST_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const PATCH_NOTE_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.patchNote",
@@ -99,7 +99,7 @@ export const PATCH_NOTE_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const LOCATION_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.location",
@@ -113,7 +113,7 @@ export const LOCATION_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const SPECIES_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.species",
@@ -132,7 +132,7 @@ export const SPECIES_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const CHARACTER_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.character",
@@ -260,7 +260,7 @@ export const CHARACTER_DEFINITION = definePageDefinition({
       isTemplated: true
     }
   ]
-})
+});
 
 export const SKILL_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.skill",
@@ -280,7 +280,7 @@ export const SKILL_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const ITEM_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.item",
@@ -311,7 +311,7 @@ export const ITEM_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const OBJECT_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.object",
@@ -324,7 +324,7 @@ export const OBJECT_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const GROUP_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.group",
@@ -348,7 +348,7 @@ export const GROUP_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const HERO_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.hero",
@@ -395,13 +395,13 @@ export const HERO_DEFINITION = definePageDefinition({
       isTemplated: true
     }
   ]
-})
+});
 
 export const CARD_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.card",
   properties: {},
   initialBlocks: () => []
-})
+});
 
 export const SERIES_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.series",
@@ -440,7 +440,7 @@ export const SERIES_DEFINITION = definePageDefinition({
       isTemplated: true
     }
   ]
-})
+});
 
 // ─── Page Map ─────────────────────────────────────────────────────────────────
 
@@ -461,16 +461,16 @@ export const PAGE_MAP: Record<string, PageDefinition> = {
   Tale: definePageDefinition({ typeLabelKey: "page.type.tale", properties: {} }),
   Episode: definePageDefinition({ typeLabelKey: "page.type.episode", properties: {} }),
   Default: definePageDefinition({ typeLabelKey: "page.type.default", properties: {} })
-}
+};
 
 export function getPageDefinition(type: string): PageDefinition {
-  if (!type) return PAGE_MAP["Default"]!
+  if (!type) return PAGE_MAP["Default"]!;
 
   // Exact match
-  if (PAGE_MAP[type]) return PAGE_MAP[type]
+  if (PAGE_MAP[type]) return PAGE_MAP[type];
 
   // Case-insensitive / normalized lookup
-  const normalized = type.toLowerCase().replace(/[^a-z0-9]/g, "")
+  const normalized = type.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   const ALIAS_MAP: Record<string, PageDefinition> = {
     blog: BLOG_POST_DEFINITION,
@@ -489,14 +489,14 @@ export function getPageDefinition(type: string): PageDefinition {
     card: CARD_DEFINITION,
     hero: HERO_DEFINITION,
     series: SERIES_DEFINITION
-  }
+  };
 
-  if (ALIAS_MAP[normalized]) return ALIAS_MAP[normalized]
+  if (ALIAS_MAP[normalized]) return ALIAS_MAP[normalized];
 
   // Fallback scan
   for (const [key, def] of Object.entries(PAGE_MAP)) {
-    if (key.toLowerCase() === normalized) return def
+    if (key.toLowerCase() === normalized) return def;
   }
 
-  return PAGE_MAP["Default"]!
+  return PAGE_MAP["Default"]!;
 }

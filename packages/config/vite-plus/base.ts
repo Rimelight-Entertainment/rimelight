@@ -1,4 +1,4 @@
-import type { UserConfig } from "vite-plus"
+import type { UserConfig } from "vite-plus";
 
 export function rimelightConfig(): UserConfig {
   return {
@@ -14,5 +14,5 @@ export function rimelightConfig(): UserConfig {
     staged: {
       "*": "vp check --fix"
     }
-  }
+  };
 }

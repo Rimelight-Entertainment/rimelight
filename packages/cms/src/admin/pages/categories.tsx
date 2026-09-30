@@ -1,9 +1,9 @@
-import { type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RimelightTaxonomyMasterDetail } from "../../client/components/index.ts"
+import { type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RimelightTaxonomyMasterDetail } from "../../client/components/index.ts";
 
 export interface CategoriesPageProps {
-  basePath?: string | undefined
+  basePath?: string | undefined;
 }
 
 export const CategoriesPage: Component<CategoriesPageProps> = (props) => {
@@ -22,7 +22,7 @@ export const CategoriesPage: Component<CategoriesPageProps> = (props) => {
         />
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default CategoriesPage
+export default CategoriesPage;

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const imageTheme = defineTheme("image", {
   slots: [
@@ -31,16 +31,16 @@ export const imageTheme = defineTheme("image", {
   },
   variants: {
     fit: {
-      "cover": { triggerImage: "object-cover", image: "object-cover" },
-      "contain": { triggerImage: "object-contain", image: "object-contain" },
-      "fill": { triggerImage: "object-fill", image: "object-fill" },
-      "none": { triggerImage: "object-none", image: "object-none" },
+      cover: { triggerImage: "object-cover", image: "object-cover" },
+      contain: { triggerImage: "object-contain", image: "object-contain" },
+      fill: { triggerImage: "object-fill", image: "object-fill" },
+      none: { triggerImage: "object-none", image: "object-none" },
       "scale-down": { triggerImage: "object-scale-down", image: "object-scale-down" },
-      "inside": { triggerImage: "object-contain", image: "object-contain" },
-      "outside": { triggerImage: "object-cover", image: "object-cover" }
+      inside: { triggerImage: "object-contain", image: "object-contain" },
+      outside: { triggerImage: "object-cover", image: "object-cover" }
     }
   },
   defaultVariants: {
     fit: "cover"
   }
-})
+});

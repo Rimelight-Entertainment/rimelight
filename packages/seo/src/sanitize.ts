@@ -8,7 +8,7 @@ export function escapeHtml(str: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;")
+    .replace(/'/g, "&#039;");
 }
 
 /**
@@ -20,10 +20,10 @@ export function serializeJsonLd(schema: unknown): string {
   return JSON.stringify(schema)
     .replace(/</g, "\\u003c")
     .replace(/>/g, "\\u003e")
-    .replace(/\//g, "\\u002f")
+    .replace(/\//g, "\\u002f");
 }
 
-const SAFE_URL_PROTOCOLS = /^(?:https?:\/\/|(?:mailto|tel):|\/(?!\/)|(?:\.\.?\/))/i
+const SAFE_URL_PROTOCOLS = /^(?:https?:\/\/|(?:mailto|tel):|\/(?!\/)|(?:\.\.?\/))/i;
 
 /**
  * Allowlist URL protocols for href/src attributes to block javascript: and protocol-relative
@@ -33,7 +33,7 @@ const SAFE_URL_PROTOCOLS = /^(?:https?:\/\/|(?:mailto|tel):|\/(?!\/)|(?:\.\.?\/)
  * Returns an empty string for any URL that does not match the allowlist.
  */
 export function sanitizeUrl(url: string | undefined | null): string {
-  if (!url) return ""
-  const trimmed = url.trim()
-  return SAFE_URL_PROTOCOLS.test(trimmed) ? trimmed : ""
+  if (!url) return "";
+  const trimmed = url.trim();
+  return SAFE_URL_PROTOCOLS.test(trimmed) ? trimmed : "";
 }

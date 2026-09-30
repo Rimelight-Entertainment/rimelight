@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const colorAreaTheme = defineTheme("color-area", {
   slots: ["root", "area", "thumb"],
@@ -14,4 +14,4 @@ export const colorAreaTheme = defineTheme("color-area", {
   defaultVariants: {
     color: "primary"
   }
-})
+});

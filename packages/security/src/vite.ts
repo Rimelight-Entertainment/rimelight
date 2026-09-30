@@ -1,23 +1,23 @@
-import { createHash } from "node:crypto"
-import type { Plugin } from "vite-plus"
+import { createHash } from "node:crypto";
+import type { Plugin } from "vite-plus";
 
-import type { SecurityOptions } from "./types"
-import { resolveSecurityDomain } from "./csp"
+import type { SecurityOptions } from "./types";
+import { resolveSecurityDomain } from "./csp";
 
-export type RimelightSecurityPlugin = Plugin
+export type RimelightSecurityPlugin = Plugin;
 
 export interface SecurityPluginOptions extends SecurityOptions {
   /**
    * Additional external script/style URLs to fetch and hash for SRI at build time.
    */
-  resources?: string[]
+  resources?: string[];
 }
 
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")
     .update(buffer as any)
-    .digest("base64")
-  return `sha384-${hash}`
+    .digest("base64");
+  return `sha384-${hash}`;
 }
 
 /**
@@ -28,16 +28,16 @@ function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string
  */
 export function security(options: SecurityPluginOptions = {}): RimelightSecurityPlugin {
   // Fail fast at build/dev time on a malformed domain rather than silently emitting a dead CSP source.
-  resolveSecurityDomain(options.domain)
+  resolveSecurityDomain(options.domain);
 
-  const sriManifest: Record<string, string> = {}
-  const externalUrls = Array.from(new Set(options.resources || []))
+  const sriManifest: Record<string, string> = {};
+  const externalUrls = Array.from(new Set(options.resources || []));
 
-  const sriVirtualId = "virtual:sri-manifest"
-  const resolvedSriVirtualId = "\0" + sriVirtualId
+  const sriVirtualId = "virtual:sri-manifest";
+  const resolvedSriVirtualId = "\0" + sriVirtualId;
 
-  const configVirtualId = "virtual:rimelight-security-config"
-  const resolvedConfigVirtualId = "\0" + configVirtualId
+  const configVirtualId = "virtual:rimelight-security-config";
+  const resolvedConfigVirtualId = "\0" + configVirtualId;
 
   return {
     name: "vite-plugin-rimelight-security",
@@ -45,65 +45,65 @@ export function security(options: SecurityPluginOptions = {}): RimelightSecurity
 
     async buildStart() {
       // 1. Fetch & Hash External Resources (3rd-party SRI)
-      if (process.env["NODE_ENV"] === "development") return
+      if (process.env["NODE_ENV"] === "development") return;
 
       await Promise.all(
         externalUrls.map(async (url) => {
-          if (!url.startsWith("https://")) return
+          if (!url.startsWith("https://")) return;
           try {
-            const parsed = new URL(url)
-            if (parsed.hostname.includes("*")) return
-            const pathname = parsed.pathname
-            if (pathname === "/" || pathname === "" || pathname.endsWith("/")) return
+            const parsed = new URL(url);
+            if (parsed.hostname.includes("*")) return;
+            const pathname = parsed.pathname;
+            if (pathname === "/" || pathname === "" || pathname.endsWith("/")) return;
 
-            const response = await fetch(url)
-            if (!response.ok) return
-            const buffer = await response.arrayBuffer()
-            sriManifest[url] = hashContent(buffer)
+            const response = await fetch(url);
+            if (!response.ok) return;
+            const buffer = await response.arrayBuffer();
+            sriManifest[url] = hashContent(buffer);
           } catch {
             // Silently ignore unreachable external resources during build
           }
         })
-      )
+      );
     },
 
     generateBundle(_outputOptions, bundle) {
       // 2. Hash Emitted Bundle Chunks & Assets (1st-party SRI)
       for (const [fileName, chunk] of Object.entries(bundle)) {
-        if (!fileName.endsWith(".js") && !fileName.endsWith(".css")) continue
+        if (!fileName.endsWith(".js") && !fileName.endsWith(".css")) continue;
 
-        let content: string | Uint8Array | undefined
+        let content: string | Uint8Array | undefined;
         if (chunk.type === "chunk") {
-          content = chunk.code
+          content = chunk.code;
         } else if (chunk.type === "asset") {
-          content = chunk.source
+          content = chunk.source;
         }
 
         if (content) {
-          const hash = hashContent(content)
+          const hash = hashContent(content);
           // Store both absolute leading slash path and relative file name
-          sriManifest[`/${fileName.replace(/^\/+/, "")}`] = hash
-          sriManifest[fileName] = hash
+          sriManifest[`/${fileName.replace(/^\/+/, "")}`] = hash;
+          sriManifest[fileName] = hash;
         }
       }
     },
 
     resolveId(id: string) {
-      if (id === sriVirtualId) return resolvedSriVirtualId
-      if (id === configVirtualId) return resolvedConfigVirtualId
-      return null
+      if (id === sriVirtualId) return resolvedSriVirtualId;
+      if (id === configVirtualId) return resolvedConfigVirtualId;
+      return null;
     },
 
     load(id: string) {
       if (id === resolvedSriVirtualId) {
-        return `export const manifest = ${JSON.stringify(sriManifest)};`
+        return `export const manifest = ${JSON.stringify(sriManifest)};`;
       }
       if (id === resolvedConfigVirtualId) {
-        return `export const config = ${JSON.stringify(options)};`
+        return `export const config = ${JSON.stringify(options)};`;
       }
-      return null
+      return null;
     }
-  }
+  };
 }
 
-export { security as sri }
+export { security as sri };

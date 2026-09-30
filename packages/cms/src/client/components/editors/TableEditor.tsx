@@ -1,11 +1,11 @@
-import { For, type Component } from "solid-js"
-import type { TableColumnDef } from "../../../core/types/blocks"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { For, type Component } from "solid-js";
+import type { TableColumnDef } from "../../../core/types/blocks";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface TableEditorProps {
-  props: Record<string, any>
-  onPropsChange: (newProps: Record<string, any>) => void
+  props: Record<string, any>;
+  onPropsChange: (newProps: Record<string, any>) => void;
 }
 
 export const TableEditor: Component<TableEditorProps> = (componentProps) => {
@@ -13,10 +13,10 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
     componentProps.props["columns"] || [
       { key: "col1", header: "Header 1", align: "left" },
       { key: "col2", header: "Header 2", align: "left" }
-    ]
+    ];
 
   const rows = (): Record<string, string>[] =>
-    componentProps.props["rows"] || [{ col1: "Cell 1", col2: "Cell 2" }]
+    componentProps.props["rows"] || [{ col1: "Cell 1", col2: "Cell 2" }];
 
   const save = (newCols: TableColumnDef[], newRows: Record<string, string>[], caption?: string) => {
     componentProps.onPropsChange({
@@ -24,56 +24,56 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
       columns: newCols,
       rows: newRows,
       caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
-    })
-  }
+    });
+  };
 
   const addColumn = () => {
-    const nextIdx = columns().length + 1
-    const key = `col${nextIdx}`
-    const newCols = [...columns(), { key, header: `Header ${nextIdx}`, align: "left" as const }]
-    const newRows = rows().map((r) => ({ ...r, [key]: "" }))
-    save(newCols, newRows)
-  }
+    const nextIdx = columns().length + 1;
+    const key = `col${nextIdx}`;
+    const newCols = [...columns(), { key, header: `Header ${nextIdx}`, align: "left" as const }];
+    const newRows = rows().map((r) => ({ ...r, [key]: "" }));
+    save(newCols, newRows);
+  };
 
   const removeColumn = (colIdx: number) => {
-    if (columns().length <= 1) return
-    const targetKey = columns()[colIdx]!.key
-    const newCols = columns().filter((_, i) => i !== colIdx)
+    if (columns().length <= 1) return;
+    const targetKey = columns()[colIdx]!.key;
+    const newCols = columns().filter((_, i) => i !== colIdx);
     const newRows = rows().map((r) => {
-      const next = { ...r }
-      delete next[targetKey]
-      return next
-    })
-    save(newCols, newRows)
-  }
+      const next = { ...r };
+      delete next[targetKey];
+      return next;
+    });
+    save(newCols, newRows);
+  };
 
   const addRow = () => {
-    const newRow: Record<string, string> = {}
+    const newRow: Record<string, string> = {};
     for (const col of columns()) {
-      newRow[col.key] = ""
+      newRow[col.key] = "";
     }
-    save(columns(), [...rows(), newRow])
-  }
+    save(columns(), [...rows(), newRow]);
+  };
 
   const removeRow = (rowIdx: number) => {
-    if (rows().length <= 1) return
+    if (rows().length <= 1) return;
     save(
       columns(),
       rows().filter((_, i) => i !== rowIdx)
-    )
-  }
+    );
+  };
 
   const updateHeader = (colIdx: number, val: string) => {
-    const newCols = [...columns()]
-    newCols[colIdx] = { ...newCols[colIdx]!, header: val }
-    save(newCols, rows())
-  }
+    const newCols = [...columns()];
+    newCols[colIdx] = { ...newCols[colIdx]!, header: val };
+    save(newCols, rows());
+  };
 
   const updateCell = (rowIdx: number, colKey: string, val: string) => {
-    const newRows = [...rows()]
-    newRows[rowIdx] = { ...newRows[rowIdx], [colKey]: val }
-    save(columns(), newRows)
-  }
+    const newRows = [...rows()];
+    newRows[rowIdx] = { ...newRows[rowIdx], [colKey]: val };
+    save(columns(), newRows);
+  };
 
   return (
     <div class="rimelight-table-editor flex flex-col gap-3 p-3 rounded-xl border border-default/70 w-full overflow-x-auto">
@@ -177,5 +177,5 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
         size="sm"
       />
     </div>
-  )
-}
+  );
+};

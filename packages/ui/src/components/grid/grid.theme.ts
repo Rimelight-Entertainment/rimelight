@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const gridTheme = defineTheme("grid", {
   slots: ["root"],
@@ -32,4 +32,4 @@ export const gridTheme = defineTheme("grid", {
     gap: "md",
     stagger: false
   }
-})
+});

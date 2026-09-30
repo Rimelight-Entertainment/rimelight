@@ -1,59 +1,59 @@
-import { DurableObject } from "cloudflare:workers"
+import { DurableObject } from "cloudflare:workers";
 
 interface SessionAttachment {
-  id: string
-  userId: string
-  username: string
+  id: string;
+  userId: string;
+  username: string;
 }
 
 interface ChatMessage {
-  id: string
-  type: "message" | "join" | "leave" | "presence"
-  userId: string
-  username: string
-  content?: string
-  timestamp: number
+  id: string;
+  type: "message" | "join" | "leave" | "presence";
+  userId: string;
+  username: string;
+  content?: string;
+  timestamp: number;
 }
 
 function isSessionAttachment(value: unknown): value is SessionAttachment {
-  if (typeof value !== "object" || value === null) return false
+  if (typeof value !== "object" || value === null) return false;
   return (
     typeof Reflect.get(value, "id") === "string" &&
     typeof Reflect.get(value, "userId") === "string" &&
     typeof Reflect.get(value, "username") === "string"
-  )
+  );
 }
 
 export class ChatRoom extends DurableObject<Env> {
   // Map of WebSocket -> session data
   // When the DO hibernates, this gets reconstructed in the constructor
-  private sessions: Map<WebSocket, SessionAttachment>
-  private messageHistory: ChatMessage[]
+  private sessions: Map<WebSocket, SessionAttachment>;
+  private messageHistory: ChatMessage[];
 
   constructor(ctx: DurableObjectState, env: Env) {
-    super(ctx, env)
+    super(ctx, env);
 
-    this.sessions = new Map()
-    this.messageHistory = []
+    this.sessions = new Map();
+    this.messageHistory = [];
 
     // Restore hibernating WebSocket connections
     // When the DO wakes up, we need to restore session data from attachments
     this.ctx.getWebSockets().forEach((ws) => {
-      const raw = ws.deserializeAttachment()
+      const raw = ws.deserializeAttachment();
       if (isSessionAttachment(raw)) {
-        this.sessions.set(ws, raw)
+        this.sessions.set(ws, raw);
       }
-    })
+    });
 
     // Set up automatic ping/pong responses
     // This keeps connections alive without waking the DO
-    this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"))
+    this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"));
 
     // Load message history from storage on initialization
     void this.ctx.blockConcurrencyWhile(async () => {
-      const stored = await this.ctx.storage.get<ChatMessage[]>("messages")
-      if (stored) this.messageHistory = stored
-    })
+      const stored = await this.ctx.storage.get<ChatMessage[]>("messages");
+      if (stored) this.messageHistory = stored;
+    });
   }
 
   /**
@@ -62,37 +62,37 @@ export class ChatRoom extends DurableObject<Env> {
    */
   override async fetch(request: Request): Promise<Response> {
     // Parse the URL to get query parameters (userId and username)
-    const url = new URL(request.url)
-    const userId = url.searchParams.get("userId")
-    const username = url.searchParams.get("username")
-    if (!userId || !username) return new Response("Missing userId or username", { status: 400 })
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
+    const username = url.searchParams.get("username");
+    if (!userId || !username) return new Response("Missing userId or username", { status: 400 });
     // Expect a WebSocket upgrade request
-    const upgradeHeader = request.headers.get("Upgrade")
+    const upgradeHeader = request.headers.get("Upgrade");
     if (upgradeHeader?.toLowerCase() !== "websocket")
-      return new Response("Expected WebSocket upgrade", { status: 426 })
+      return new Response("Expected WebSocket upgrade", { status: 426 });
     // Create a WebSocket pair (client and server)
-    const { 0: client, 1: server } = new WebSocketPair()
+    const { 0: client, 1: server } = new WebSocketPair();
 
     // Accept the WebSocket connection using the Hibernation API
     // Unlike server.accept(), this allows the DO to hibernate while
     // keeping the WebSocket connection open
-    this.ctx.acceptWebSocket(server)
+    this.ctx.acceptWebSocket(server);
 
     // Generate a unique session ID
-    const id = crypto.randomUUID()
+    const id = crypto.randomUUID();
 
     // Create session attachment data
-    const attachment: SessionAttachment = { id, userId, username }
+    const attachment: SessionAttachment = { id, userId, username };
 
     // Serialize the attachment to the WebSocket
     // This data persists across hibernation cycles
-    server.serializeAttachment(attachment)
+    server.serializeAttachment(attachment);
 
     // Add to active sessions
-    this.sessions.set(server, attachment)
+    this.sessions.set(server, attachment);
 
     // Send message history to the newly connected client
-    this.sendMessageHistory(server)
+    this.sendMessageHistory(server);
 
     // Broadcast join notification to all clients
     this.broadcast({
@@ -101,16 +101,16 @@ export class ChatRoom extends DurableObject<Env> {
       userId,
       username,
       timestamp: Date.now()
-    })
+    });
 
     // Send current presence to the new user
-    this.sendPresence(server)
+    this.sendPresence(server);
 
     // Return the client WebSocket in the response
     return new Response(null, {
       status: 101,
       webSocket: client
-    })
+    });
   }
 
   /**
@@ -119,19 +119,19 @@ export class ChatRoom extends DurableObject<Env> {
    */
   override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string): Promise<void> {
     // Get session data from the map (or deserialize if just woken)
-    let session = this.sessions.get(ws)
+    let session = this.sessions.get(ws);
     if (!session) {
-      const raw = ws.deserializeAttachment()
+      const raw = ws.deserializeAttachment();
       if (isSessionAttachment(raw)) {
-        session = raw
-        this.sessions.set(ws, session)
+        session = raw;
+        this.sessions.set(ws, session);
       }
     }
-    if (!session) return
+    if (!session) return;
 
-    if (typeof message !== "string") return
+    if (typeof message !== "string") return;
     try {
-      const parsed = JSON.parse(message)
+      const parsed = JSON.parse(message);
       if (parsed.type === "message" && parsed.content) {
         // Create a chat message
         const chatMessage: ChatMessage = {
@@ -141,19 +141,19 @@ export class ChatRoom extends DurableObject<Env> {
           username: session.username,
           content: parsed.content,
           timestamp: Date.now()
-        }
+        };
 
         // Add to history
-        this.messageHistory.push(chatMessage)
+        this.messageHistory.push(chatMessage);
         // Persist to storage (limit to last 100 messages)
-        if (this.messageHistory.length > 100) this.messageHistory = this.messageHistory.slice(-100)
-        void this.ctx.storage.put("messages", this.messageHistory)
+        if (this.messageHistory.length > 100) this.messageHistory = this.messageHistory.slice(-100);
+        void this.ctx.storage.put("messages", this.messageHistory);
 
         // Broadcast to all connected clients
-        this.broadcast(chatMessage)
+        this.broadcast(chatMessage);
       }
     } catch (error) {
-      console.error("Error handling message:", error)
+      console.error("Error handling message:", error);
     }
   }
 
@@ -167,11 +167,11 @@ export class ChatRoom extends DurableObject<Env> {
     _wasClean: boolean
   ): Promise<void> {
     // Get session data
-    const raw = ws.deserializeAttachment()
-    const session = this.sessions.get(ws) || (isSessionAttachment(raw) ? raw : null)
+    const raw = ws.deserializeAttachment();
+    const session = this.sessions.get(ws) || (isSessionAttachment(raw) ? raw : null);
 
     // Remove from sessions
-    this.sessions.delete(ws)
+    this.sessions.delete(ws);
 
     // Broadcast leave notification
     if (session) {
@@ -181,37 +181,37 @@ export class ChatRoom extends DurableObject<Env> {
         userId: session.userId,
         username: session.username,
         timestamp: Date.now()
-      })
+      });
     }
 
     // Close the WebSocket
-    ws.close(code, "Durable Object is closing WebSocket")
+    ws.close(code, "Durable Object is closing WebSocket");
   }
 
   /**
    * Handle WebSocket errors (Hibernation API)
    */
   override async webSocketError(ws: WebSocket, error: unknown): Promise<void> {
-    console.error("WebSocket error:", error)
+    console.error("WebSocket error:", error);
     // Treat errors as disconnections
-    await this.webSocketClose(ws, 1011, "WebSocket error", false)
+    await this.webSocketClose(ws, 1011, "WebSocket error", false);
   }
 
   /**
    * Broadcast a message to all connected clients
    */
   private broadcast(message: ChatMessage): void {
-    const messageStr = JSON.stringify(message)
+    const messageStr = JSON.stringify(message);
 
     // Send to all active sessions
     this.sessions.forEach((_, ws) => {
       try {
-        ws.send(messageStr)
+        ws.send(messageStr);
       } catch (error) {
         // Connection might be closed, will be cleaned up by close handler
-        console.error("Error broadcasting to session:", error)
+        console.error("Error broadcasting to session:", error);
       }
-    })
+    });
   }
 
   /**
@@ -221,11 +221,11 @@ export class ChatRoom extends DurableObject<Env> {
     const historyMessage = JSON.stringify({
       type: "history",
       messages: this.messageHistory
-    })
+    });
     try {
-      ws.send(historyMessage)
+      ws.send(historyMessage);
     } catch (error) {
-      console.error("Error sending history:", error)
+      console.error("Error sending history:", error);
     }
   }
 
@@ -236,16 +236,16 @@ export class ChatRoom extends DurableObject<Env> {
     const users = Array.from(this.sessions.values()).map((s) => ({
       userId: s.userId,
       username: s.username
-    }))
+    }));
     const presenceMessage = JSON.stringify({
       type: "presence",
       users
-    })
+    });
 
     try {
-      ws.send(presenceMessage)
+      ws.send(presenceMessage);
     } catch (error) {
-      console.error("Error sending presence:", error)
+      console.error("Error sending presence:", error);
     }
   }
 
@@ -254,16 +254,16 @@ export class ChatRoom extends DurableObject<Env> {
    */
   override async alarm(): Promise<void> {
     // Clean up old messages (older than 24 hours)
-    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000
-    this.messageHistory = this.messageHistory.filter((msg) => msg.timestamp > oneDayAgo)
-    await this.ctx.storage.put("messages", this.messageHistory)
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    this.messageHistory = this.messageHistory.filter((msg) => msg.timestamp > oneDayAgo);
+    await this.ctx.storage.put("messages", this.messageHistory);
     // Schedule next cleanup in 1 hour
-    await this.ctx.storage.setAlarm(Date.now() + 60 * 60 * 1000)
+    await this.ctx.storage.setAlarm(Date.now() + 60 * 60 * 1000);
   }
 }
 
 export class Document extends DurableObject<Env> {
   override async fetch(_request: Request): Promise<Response> {
-    return new Response("Obsolete Document DO", { status: 410 })
+    return new Response("Obsolete Document DO", { status: 410 });
   }
 }

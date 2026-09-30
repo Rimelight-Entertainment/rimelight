@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const slideoverTheme = defineTheme("slideover", {
   slots: [
@@ -52,4 +52,4 @@ export const slideoverTheme = defineTheme("slideover", {
   defaultVariants: {
     side: "left"
   }
-})
+});

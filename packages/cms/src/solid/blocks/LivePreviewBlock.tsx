@@ -1,12 +1,12 @@
-import { Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const LivePreviewBlock: Component<BlockViewProps> = (props) => {
-  const componentCode = () => (props.block.props?.["componentCode"] as string) ?? ""
-  const framework = () => (props.block.props?.["framework"] as string) ?? "solid"
-  const height = () => (props.block.props?.["height"] as string) ?? "300px"
-  const width = () => (props.block.props?.["width"] as string) ?? "100%"
-  const editable = () => (props.block.props?.["editable"] as boolean) ?? false
+  const componentCode = () => (props.block.props?.["componentCode"] as string) ?? "";
+  const framework = () => (props.block.props?.["framework"] as string) ?? "solid";
+  const height = () => (props.block.props?.["height"] as string) ?? "300px";
+  const width = () => (props.block.props?.["width"] as string) ?? "100%";
+  const editable = () => (props.block.props?.["editable"] as boolean) ?? false;
 
   return (
     <div
@@ -36,7 +36,7 @@ export const LivePreviewBlock: Component<BlockViewProps> = (props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LivePreviewBlock
+export default LivePreviewBlock;

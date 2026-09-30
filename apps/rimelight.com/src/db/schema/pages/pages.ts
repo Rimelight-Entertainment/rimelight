@@ -1,10 +1,10 @@
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import {
   type Block,
   type Localized,
   type PageType,
   type RegisterPageTypes
-} from "../../../types/pages.ts"
+} from "../../../types/pages.ts";
 
 export const pages = pgTable("pages", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -16,8 +16,8 @@ export const pages = pgTable("pages", {
   authorIds: jsonb("author_ids").$type<string[]>().default([]),
   content: jsonb("content")
     .$type<{
-      blocks: Block[]
-      properties: RegisterPageTypes[PageType]
+      blocks: Block[];
+      properties: RegisterPageTypes[PageType];
     }>()
     .notNull(),
   postedAt: timestamp("posted_at", { withTimezone: true }),
@@ -26,4 +26,4 @@ export const pages = pgTable("pages", {
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});

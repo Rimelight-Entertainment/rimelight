@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const stepperTheme = defineTheme("stepper", {
   slots: [
@@ -211,4 +211,4 @@ export const stepperTheme = defineTheme("stepper", {
     color: "primary",
     orientation: "horizontal"
   }
-})
+});

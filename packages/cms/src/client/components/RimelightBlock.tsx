@@ -1,34 +1,34 @@
-import { createSignal, onSettled, onCleanup, Show, type Component } from "solid-js"
-import type { BaseBlock } from "../../core/types/blocks"
-import { ParagraphEditor } from "./editors/ParagraphEditor"
-import { SectionEditor } from "./editors/SectionEditor"
-import { CalloutEditor } from "./editors/CalloutEditor"
-import { ImageEditor } from "./editors/ImageEditor"
-import { CodeEditor } from "./editors/CodeEditor"
-import { ScriptEditor } from "./editors/ScriptEditor"
-import { SceneEditor } from "./editors/SceneEditor"
-import { DialogueEditor } from "./editors/DialogueEditor"
-import { TableEditor } from "./editors/TableEditor"
-import { TabsEditor } from "./editors/TabsEditor"
-import { TabItemEditor } from "./editors/TabItemEditor"
-import { StepsEditor } from "./editors/StepsEditor"
-import { StepItemEditor } from "./editors/StepItemEditor"
-import { CardsEditor } from "./editors/CardsEditor"
-import { CardEditor } from "./editors/CardEditor"
-import { FileTreeEditor } from "./editors/FileTreeEditor"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx"
+import { createSignal, onSettled, onCleanup, Show, type Component } from "solid-js";
+import type { BaseBlock } from "../../core/types/blocks";
+import { ParagraphEditor } from "./editors/ParagraphEditor";
+import { SectionEditor } from "./editors/SectionEditor";
+import { CalloutEditor } from "./editors/CalloutEditor";
+import { ImageEditor } from "./editors/ImageEditor";
+import { CodeEditor } from "./editors/CodeEditor";
+import { ScriptEditor } from "./editors/ScriptEditor";
+import { SceneEditor } from "./editors/SceneEditor";
+import { DialogueEditor } from "./editors/DialogueEditor";
+import { TableEditor } from "./editors/TableEditor";
+import { TabsEditor } from "./editors/TabsEditor";
+import { TabItemEditor } from "./editors/TabItemEditor";
+import { StepsEditor } from "./editors/StepsEditor";
+import { StepItemEditor } from "./editors/StepItemEditor";
+import { CardsEditor } from "./editors/CardsEditor";
+import { CardEditor } from "./editors/CardEditor";
+import { FileTreeEditor } from "./editors/FileTreeEditor";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
 
 export interface RimelightBlockProps {
-  block: BaseBlock
-  sectionDepth?: number | undefined
-  onPropsChange: (id: string, props: Record<string, any>) => void
-  onMove: (id: string, direction: -1 | 1) => void
-  onDelete: (id: string) => void
-  onDuplicate: (id: string) => void
-  onAddAdjacent: (targetId: string, position: "before" | "after") => void
-  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined
+  block: BaseBlock;
+  sectionDepth?: number | undefined;
+  onPropsChange: (id: string, props: Record<string, any>) => void;
+  onMove: (id: string, direction: -1 | 1) => void;
+  onDelete: (id: string) => void;
+  onDuplicate: (id: string) => void;
+  onAddAdjacent: (targetId: string, position: "before" | "after") => void;
+  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined;
   onOpenPicker?:
     | ((
         targetId: string | null,
@@ -37,38 +37,38 @@ export interface RimelightBlockProps {
         parentId?: string | null,
         containerType?: string | null
       ) => void)
-    | undefined
+    | undefined;
 }
 
 export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
-  const [menuOpen, setMenuOpen] = createSignal(false)
-  const [toolbarMenuOpen, setToolbarMenuOpen] = createSignal(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = createSignal(false)
-  let menuWrapEl: HTMLDivElement | undefined = undefined
-  let toolbarMenuWrapEl: HTMLDivElement | undefined = undefined
+  const [menuOpen, setMenuOpen] = createSignal(false);
+  const [toolbarMenuOpen, setToolbarMenuOpen] = createSignal(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = createSignal(false);
+  let menuWrapEl: HTMLDivElement | undefined = undefined;
+  let toolbarMenuWrapEl: HTMLDivElement | undefined = undefined;
 
-  const isLocked = () => !!props.block.isTemplated || props.block.templatedProps === true
+  const isLocked = () => !!props.block.isTemplated || props.block.templatedProps === true;
 
   onSettled(() => {
     const handleOutside = (e: MouseEvent) => {
-      const target = e.target instanceof Node ? e.target : null
+      const target = e.target instanceof Node ? e.target : null;
       if (menuOpen() && menuWrapEl && target && !menuWrapEl.contains(target)) {
-        setMenuOpen(false)
+        setMenuOpen(false);
       }
       if (toolbarMenuOpen() && toolbarMenuWrapEl && target && !toolbarMenuWrapEl.contains(target)) {
-        setToolbarMenuOpen(false)
+        setToolbarMenuOpen(false);
       }
-    }
+    };
     if (typeof document !== "undefined") {
-      document.addEventListener("click", handleOutside)
-      onCleanup(() => document.removeEventListener("click", handleOutside))
+      document.addEventListener("click", handleOutside);
+      onCleanup(() => document.removeEventListener("click", handleOutside));
     }
-  })
+  });
 
   const renderEditorComponent = (blockItem: BaseBlock, depth: number) => {
     const handleProps = (newProps: Record<string, any>) => {
-      props.onPropsChange(blockItem.id, newProps)
-    }
+      props.onPropsChange(blockItem.id, newProps);
+    };
 
     const renderChildBlock = (childBlock: BaseBlock, childDepth: number) => (
       <RimelightBlock
@@ -82,17 +82,17 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         onRelocate={props.onRelocate}
         onOpenPicker={props.onOpenPicker}
       />
-    )
+    );
 
     const childrenList = () => {
-      if (Array.isArray(blockItem.children)) return blockItem.children
-      if (Array.isArray(blockItem.props?.["children"])) return blockItem.props["children"]
-      return []
-    }
+      if (Array.isArray(blockItem.children)) return blockItem.children;
+      if (Array.isArray(blockItem.props?.["children"])) return blockItem.props["children"];
+      return [];
+    };
 
     switch (blockItem.type) {
       case "ParagraphBlock":
-        return <ParagraphEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <ParagraphEditor props={blockItem.props} onPropsChange={handleProps} />;
       case "SectionBlock":
         return (
           <SectionEditor
@@ -107,7 +107,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "CalloutBlock":
         return (
           <CalloutEditor
@@ -122,13 +122,13 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "ImageBlock":
-        return <ImageEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <ImageEditor props={blockItem.props} onPropsChange={handleProps} />;
       case "CodeBlock":
-        return <CodeEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <CodeEditor props={blockItem.props} onPropsChange={handleProps} />;
       case "TableBlock":
-        return <TableEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <TableEditor props={blockItem.props} onPropsChange={handleProps} />;
       case "TabsBlock":
         return (
           <TabsEditor
@@ -143,7 +143,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "TabItemBlock":
         return (
           <TabItemEditor
@@ -158,7 +158,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "StepsBlock":
         return (
           <StepsEditor
@@ -173,7 +173,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "StepItemBlock":
         return (
           <StepItemEditor
@@ -188,7 +188,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "CardsBlock":
         return (
           <CardsEditor
@@ -203,11 +203,11 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "CardBlock":
-        return <CardEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <CardEditor props={blockItem.props} onPropsChange={handleProps} />;
       case "FileTreeBlock":
-        return <FileTreeEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <FileTreeEditor props={blockItem.props} onPropsChange={handleProps} />;
       case "ScriptBlock":
         return (
           <ScriptEditor
@@ -222,7 +222,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "SceneBlock":
         return (
           <SceneEditor
@@ -237,13 +237,13 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             }
             renderChildBlock={renderChildBlock}
           />
-        )
+        );
       case "DialogueBlock":
-        return <DialogueEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <DialogueEditor props={blockItem.props} onPropsChange={handleProps} />;
       default:
-        return <ParagraphEditor props={blockItem.props} onPropsChange={handleProps} />
+        return <ParagraphEditor props={blockItem.props} onPropsChange={handleProps} />;
     }
-  }
+  };
 
   return (
     <div
@@ -263,8 +263,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
           size="xs"
           square={true}
           onClick={(e: MouseEvent) => {
-            e.stopPropagation()
-            setMenuOpen(!menuOpen())
+            e.stopPropagation();
+            setMenuOpen(!menuOpen());
           }}
           aria-label="Drag handle and options menu"
           class="cms-drag-handle !p-1 text-muted hover:text-highlighted cursor-grab active:cursor-grabbing"
@@ -282,8 +282,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    props.onMove(props.block.id, -1)
-                    setMenuOpen(false)
+                    props.onMove(props.block.id, -1);
+                    setMenuOpen(false);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
@@ -293,8 +293,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    props.onMove(props.block.id, 1)
-                    setMenuOpen(false)
+                    props.onMove(props.block.id, 1);
+                    setMenuOpen(false);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
@@ -305,8 +305,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    props.onAddAdjacent(props.block.id, "before")
-                    setMenuOpen(false)
+                    props.onAddAdjacent(props.block.id, "before");
+                    setMenuOpen(false);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
@@ -316,8 +316,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    props.onAddAdjacent(props.block.id, "after")
-                    setMenuOpen(false)
+                    props.onAddAdjacent(props.block.id, "after");
+                    setMenuOpen(false);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
@@ -328,8 +328,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    props.onDuplicate(props.block.id)
-                    setMenuOpen(false)
+                    props.onDuplicate(props.block.id);
+                    setMenuOpen(false);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
@@ -339,8 +339,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    setMenuOpen(false)
-                    setIsDeleteModalOpen(true)
+                    setMenuOpen(false);
+                    setIsDeleteModalOpen(true);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-error-50 text-error-500 hover:text-error-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
                 >
@@ -415,8 +415,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
               size="xs"
               square={true}
               onClick={(e: MouseEvent) => {
-                e.stopPropagation()
-                setToolbarMenuOpen(!toolbarMenuOpen())
+                e.stopPropagation();
+                setToolbarMenuOpen(!toolbarMenuOpen());
               }}
               aria-label="More actions"
               title="More actions"
@@ -427,8 +427,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    setToolbarMenuOpen(false)
-                    setIsDeleteModalOpen(true)
+                    setToolbarMenuOpen(false);
+                    setIsDeleteModalOpen(true);
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-error-50 text-error-500 hover:text-error-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
                 >
@@ -472,8 +472,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
               color="error"
               size="sm"
               onClick={() => {
-                setIsDeleteModalOpen(false)
-                props.onDelete(props.block.id)
+                setIsDeleteModalOpen(false);
+                props.onDelete(props.block.id);
               }}
               label="Delete"
             />
@@ -485,5 +485,5 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         </p>
       </RLModal>
     </div>
-  )
-}
+  );
+};

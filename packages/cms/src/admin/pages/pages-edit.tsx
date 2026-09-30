@@ -1,53 +1,53 @@
-import { Show, createSignal, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RimelightEditorLayout } from "../../client/components/RimelightEditorLayout.tsx"
-import { parseContent, useCmsApi } from "./_shared.tsx"
+import { Show, createSignal, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RimelightEditorLayout } from "../../client/components/RimelightEditorLayout.tsx";
+import { parseContent, useCmsApi } from "./_shared.tsx";
 
 export interface PagesEditPageProps {
-  pageId: string
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  locale?: string | undefined
+  pageId: string;
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  locale?: string | undefined;
 }
 
 export const PagesEditPage: Component<PagesEditPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
-  const [saving, setSaving] = createSignal(false)
-  const [publishing, setPublishing] = createSignal(false)
-  const [status, setStatus] = createSignal<string | null>(null)
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
+  const [saving, setSaving] = createSignal(false);
+  const [publishing, setPublishing] = createSignal(false);
+  const [status, setStatus] = createSignal<string | null>(null);
 
-  const pageData = useCmsApi<{ page: any; draft: any }>(() => `${apiBase()}/pages/${props.pageId}`)
+  const pageData = useCmsApi<{ page: any; draft: any }>(() => `${apiBase()}/pages/${props.pageId}`);
   const initialBlocks = () => {
-    const draft = pageData.data()?.draft
-    const page = pageData.data()?.page
-    const content = draft?.content ?? page?.content
-    return parseContent(content).blocks
-  }
+    const draft = pageData.data()?.draft;
+    const page = pageData.data()?.page;
+    const content = draft?.content ?? page?.content;
+    return parseContent(content).blocks;
+  };
 
   const saveDraft = async () => {
-    setSaving(true)
-    setStatus(null)
+    setSaving(true);
+    setStatus(null);
     try {
       const res = await fetch(`${apiBase()}/pages/${props.pageId}/draft`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: { blocks: initialBlocks(), properties: {} } })
-      })
-      if (!res.ok) throw new Error(`Save failed (${res.status})`)
-      setStatus("Draft saved")
-      await pageData.refetch()
+      });
+      if (!res.ok) throw new Error(`Save failed (${res.status})`);
+      setStatus("Draft saved");
+      await pageData.refetch();
     } catch (e: any) {
-      setStatus(e?.message ?? "Save failed")
+      setStatus(e?.message ?? "Save failed");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const publish = async () => {
-    setPublishing(true)
-    setStatus(null)
+    setPublishing(true);
+    setStatus(null);
     try {
       const res = await fetch(`${apiBase()}/pages/${props.pageId}/publish`, {
         method: "POST",
@@ -56,16 +56,16 @@ export const PagesEditPage: Component<PagesEditPageProps> = (props) => {
           content: { blocks: initialBlocks(), properties: {} },
           changeSummary: "Published from CMS admin"
         })
-      })
-      if (!res.ok) throw new Error(`Publish failed (${res.status})`)
-      setStatus("Published")
-      await pageData.refetch()
+      });
+      if (!res.ok) throw new Error(`Publish failed (${res.status})`);
+      setStatus("Published");
+      await pageData.refetch();
     } catch (e: any) {
-      setStatus(e?.message ?? "Publish failed")
+      setStatus(e?.message ?? "Publish failed");
     } finally {
-      setPublishing(false)
+      setPublishing(false);
     }
-  }
+  };
 
   return (
     <CMSDashboardLayout
@@ -108,7 +108,7 @@ export const PagesEditPage: Component<PagesEditPageProps> = (props) => {
         <RimelightEditorLayout pageId={props.pageId} initialBlocks={initialBlocks()} />
       </Show>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default PagesEditPage
+export default PagesEditPage;

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const radioGroupTheme = defineTheme("radio-group", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const radioGroupTheme = defineTheme("radio-group", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

@@ -1,5 +1,5 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { pageVersions } from "./page_versions.ts"
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pageVersions } from "./page_versions.ts";
 
 export const pageVersionApprovals = pgTable("page_version_approvals", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -9,4 +9,4 @@ export const pageVersionApprovals = pgTable("page_version_approvals", {
   userId: text("user_id").notNull(),
   userRole: text("user_role").notNull(),
   approvedAt: timestamp("approved_at", { withTimezone: true }).defaultNow().notNull()
-})
+});

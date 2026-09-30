@@ -4,11 +4,11 @@ export type BylineRole =
   | "edited_by"
   | "illustrated_by"
   | "translated_by"
-  | "curated_by"
+  | "curated_by";
 
 export interface BylineCredit {
-  userId: string
-  role: BylineRole
-  customTitle?: string
-  displayOrder?: number
+  userId: string;
+  role: BylineRole;
+  customTitle?: string;
+  displayOrder?: number;
 }

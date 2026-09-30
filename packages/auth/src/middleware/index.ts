@@ -1,34 +1,34 @@
-import type { AuthMiddlewareOptions, RoleGuard, UserSessionContext } from "../types"
-import type { AuthAdapter } from "../types"
-import { createCfAccessFromEnv } from "../adapters/cf-access"
-import { createAuth0FromEnv } from "../adapters/auth0"
+import type { AuthMiddlewareOptions, RoleGuard, UserSessionContext } from "../types";
+import type { AuthAdapter } from "../types";
+import { createCfAccessFromEnv } from "../adapters/cf-access";
+import { createAuth0FromEnv } from "../adapters/auth0";
 
-let _defaultAuth: AuthAdapter | null = null
+let _defaultAuth: AuthAdapter | null = null;
 
 function getDefaultAuth(): AuthAdapter {
   if (!_defaultAuth) {
     const isAuth0 =
       (typeof process !== "undefined" && Boolean(process.env?.["AUTH0_DOMAIN"])) ||
-      (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.["AUTH0_DOMAIN"]))
-    _defaultAuth = isAuth0 ? createAuth0FromEnv({ devFallback: true }) : createCfAccessFromEnv()
+      (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.["AUTH0_DOMAIN"]));
+    _defaultAuth = isAuth0 ? createAuth0FromEnv({ devFallback: true }) : createCfAccessFromEnv();
   }
-  return _defaultAuth
+  return _defaultAuth;
 }
 
 const STATIC_ASSET_REGEX =
-  /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico|json|webmanifest)$/i
+  /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico|json|webmanifest)$/i;
 
-const DEFAULT_IGNORED_ROUTES = ["/docs/"]
-const DEFAULT_PROTECTED_ROUTES = ["/internal"]
-const DEFAULT_GUEST_ONLY_ROUTES = ["/auth/sign-in", "/auth/sign-up"]
+const DEFAULT_IGNORED_ROUTES = ["/docs/"];
+const DEFAULT_PROTECTED_ROUTES = ["/internal"];
+const DEFAULT_GUEST_ONLY_ROUTES = ["/auth/sign-in", "/auth/sign-up"];
 
 function matchesPattern(
   path: string,
   pattern: string | RegExp | ((path: string) => boolean)
 ): boolean {
-  if (typeof pattern === "function") return pattern(path)
-  if (typeof pattern === "string") return path.startsWith(pattern) || path.includes(pattern)
-  return pattern.test(path)
+  if (typeof pattern === "function") return pattern(path);
+  if (typeof pattern === "string") return path.startsWith(pattern) || path.includes(pattern);
+  return pattern.test(path);
 }
 
 /**
@@ -59,13 +59,13 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     homeUrl = "/",
     onUnauthorized,
     onForbidden
-  } = options
+  } = options;
 
   return async (c: any, next: () => Promise<any>): Promise<any> => {
-    const rawUrl = c?.req?.url || "http://localhost/"
-    const url = new URL(rawUrl)
-    const pathname = url.pathname
-    const isApi = pathname.startsWith("/api/")
+    const rawUrl = c?.req?.url || "http://localhost/";
+    const url = new URL(rawUrl);
+    const pathname = url.pathname;
+    const isApi = pathname.startsWith("/api/");
 
     // 1. Skip static assets
     if (skipStaticAssets) {
@@ -74,10 +74,10 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
         pathname.startsWith("/assets/") ||
         pathname === "/favicon.ico" ||
         pathname.startsWith("/open-graph/") ||
-        STATIC_ASSET_REGEX.test(pathname)
+        STATIC_ASSET_REGEX.test(pathname);
 
       if (isStatic) {
-        return await next()
+        return await next();
       }
     }
 
@@ -85,31 +85,31 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     const isIgnored =
       typeof ignoredRoutes === "function"
         ? ignoredRoutes(pathname)
-        : ignoredRoutes.some((pattern) => matchesPattern(pathname, pattern))
+        : ignoredRoutes.some((pattern) => matchesPattern(pathname, pattern));
 
     if (isIgnored) {
       if (typeof c?.set === "function") {
-        c.set("user", null)
-        c.set("session", null)
+        c.set("user", null);
+        c.set("session", null);
       }
     } else {
       // 3. Resolve session from adapter or custom resolver
-      let sessionCtx: UserSessionContext | null = null
+      let sessionCtx: UserSessionContext | null = null;
       if (auth) {
         try {
           if (typeof auth === "function") {
-            sessionCtx = await auth(c)
+            sessionCtx = await auth(c);
           } else if (typeof auth.getSession === "function") {
             const req =
-              c.req?.raw instanceof Request ? c.req.raw : new Request(c.req?.url || rawUrl)
-            sessionCtx = await auth.getSession(req)
+              c.req?.raw instanceof Request ? c.req.raw : new Request(c.req?.url || rawUrl);
+            sessionCtx = await auth.getSession(req);
           }
         } catch (err) {
-          console.error("[authMiddleware] Failed to resolve session:", err)
+          console.error("[authMiddleware] Failed to resolve session:", err);
         }
       }
 
-      const user: UserSessionContext | null = sessionCtx
+      const user: UserSessionContext | null = sessionCtx;
       const session = sessionCtx
         ? {
             id: sessionCtx.userId,
@@ -117,48 +117,48 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
             roles: sessionCtx.roles,
             userType: sessionCtx.userType
           }
-        : null
+        : null;
 
       if (typeof c?.set === "function") {
-        c.set("user", user)
-        c.set("session", session)
+        c.set("user", user);
+        c.set("session", session);
       }
     }
 
-    const session = typeof c?.get === "function" ? c.get("session") : null
-    const user: UserSessionContext | null = typeof c?.get === "function" ? c.get("user") : null
+    const session = typeof c?.get === "function" ? c.get("session") : null;
+    const user: UserSessionContext | null = typeof c?.get === "function" ? c.get("user") : null;
 
     // 4. Handle direct /auth path
     if (pathname === "/auth") {
-      return c.redirect(authRedirectUrl)
+      return c.redirect(authRedirectUrl);
     }
 
     // 5. Guest-only routes: redirect if already signed in
-    const isGuestOnly = guestOnlyRoutes.some((route) => matchesPattern(pathname, route))
+    const isGuestOnly = guestOnlyRoutes.some((route) => matchesPattern(pathname, route));
     if (isGuestOnly && session) {
-      return c.redirect(homeUrl)
+      return c.redirect(homeUrl);
     }
 
     // 7. Protected routes: ensure session exists
     const isProtected =
       typeof protectedRoutes === "function"
         ? protectedRoutes(pathname)
-        : protectedRoutes.some((pattern) => matchesPattern(pathname, pattern))
+        : protectedRoutes.some((pattern) => matchesPattern(pathname, pattern));
 
     if (isProtected && !session) {
       if (onUnauthorized) {
-        return onUnauthorized(c, { isApi, path: pathname })
+        return onUnauthorized(c, { isApi, path: pathname });
       }
       if (isApi) {
         if (typeof c.json === "function") {
-          return c.json({ error: "Unauthorized", message: "Authentication required." }, 401)
+          return c.json({ error: "Unauthorized", message: "Authentication required." }, 401);
         }
         return new Response(
           JSON.stringify({ error: "Unauthorized", message: "Authentication required." }),
           { status: 401, headers: { "Content-Type": "application/json" } }
-        )
+        );
       }
-      return c.redirect(signInUrl)
+      return c.redirect(signInUrl);
     }
 
     // 8. Role / Permission Guards
@@ -166,40 +166,40 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
       if (matchesPattern(pathname, guardPath)) {
         if (!session) {
           if (onUnauthorized) {
-            return onUnauthorized(c, { isApi, path: pathname })
+            return onUnauthorized(c, { isApi, path: pathname });
           }
           if (isApi) {
             if (typeof c.json === "function") {
-              return c.json({ error: "Unauthorized", message: "Authentication required." }, 401)
+              return c.json({ error: "Unauthorized", message: "Authentication required." }, 401);
             }
             return new Response(
               JSON.stringify({ error: "Unauthorized", message: "Authentication required." }),
               { status: 401, headers: { "Content-Type": "application/json" } }
-            )
+            );
           }
-          return c.redirect(signInUrl)
+          return c.redirect(signInUrl);
         }
 
-        let isAllowed = false
-        const userRoles = (user?.roles || []).map((r) => r.toLowerCase())
-        const userType = user?.userType
+        let isAllowed = false;
+        const userRoles = (user?.roles || []).map((r) => r.toLowerCase());
+        const userType = user?.userType;
 
         if (Array.isArray(guardConfig)) {
-          const allowedRoles = guardConfig.map((r) => r.toLowerCase())
-          isAllowed = userRoles.includes("*") || allowedRoles.some((r) => userRoles.includes(r))
+          const allowedRoles = guardConfig.map((r) => r.toLowerCase());
+          isAllowed = userRoles.includes("*") || allowedRoles.some((r) => userRoles.includes(r));
         } else if (typeof guardConfig === "object" && guardConfig !== null) {
-          const { roles, userTypes, check } = guardConfig as RoleGuard
+          const { roles, userTypes, check } = guardConfig as RoleGuard;
 
           if (check) {
-            isAllowed = await check(user, c)
+            isAllowed = await check(user, c);
           } else {
             const roleMatch = roles
               ? userRoles.includes("*") || roles.some((r) => userRoles.includes(r.toLowerCase()))
-              : true
+              : true;
 
-            const typeMatch = userTypes ? (userType ? userTypes.includes(userType) : false) : true
+            const typeMatch = userTypes ? (userType ? userTypes.includes(userType) : false) : true;
 
-            isAllowed = roleMatch && typeMatch
+            isAllowed = roleMatch && typeMatch;
           }
         }
 
@@ -207,15 +207,15 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
           if (onForbidden) {
             const requiredRoles = Array.isArray(guardConfig)
               ? guardConfig
-              : (guardConfig as RoleGuard).roles
-            return onForbidden(c, { isApi, path: pathname, requiredRoles })
+              : (guardConfig as RoleGuard).roles;
+            return onForbidden(c, { isApi, path: pathname, requiredRoles });
           }
           if (isApi) {
             if (typeof c.json === "function") {
               return c.json(
                 { error: "Forbidden", message: "Forbidden: insufficient permissions." },
                 403
-              )
+              );
             }
             return new Response(
               JSON.stringify({
@@ -223,18 +223,18 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
                 message: "Forbidden: insufficient permissions."
               }),
               { status: 403, headers: { "Content-Type": "application/json" } }
-            )
+            );
           }
-          return c.redirect(homeUrl)
+          return c.redirect(homeUrl);
         }
       }
     }
 
-    return await next()
-  }
-}
+    return await next();
+  };
+};
 
 /**
  * Canonical alias — preferred over `authMiddleware`
  */
-export const auth = authMiddleware
+export const auth = authMiddleware;

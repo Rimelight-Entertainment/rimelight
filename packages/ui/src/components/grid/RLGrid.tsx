@@ -1,15 +1,15 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { GridProps } from "./grid"
-import { gridTheme } from "./grid.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { GridProps } from "./grid";
+import { gridTheme } from "./grid.theme";
 
 export interface RLGridProps extends GridProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLGrid: Component<RLGridProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "cols", "stagger", "gap", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "cols", "stagger", "gap", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
     gridTheme({
@@ -19,13 +19,13 @@ const RLGrid: Component<RLGridProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} {...rest}>
       {props.children}
     </div>
-  )
-}
+  );
+};
 
-export { RLGrid }
+export { RLGrid };

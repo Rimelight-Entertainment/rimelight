@@ -1,7 +1,7 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { t } from "@rimelight/i18n"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { t } from "@rimelight/i18n";
 
 export const CareersPage: Component = () => {
   return (
@@ -76,7 +76,7 @@ export const CareersPage: Component = () => {
         </section>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default CareersPage
+export default CareersPage;

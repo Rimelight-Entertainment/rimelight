@@ -9,9 +9,9 @@ const HOMOGLYPH_MAP: Record<string, string> = {
   "9": "g",
   "@": "a",
   "!": "i",
-  "$": "s",
+  $: "s",
   "|": "i"
-}
+};
 
 export const normalizeUsername = (input: string): string => {
   return input
@@ -19,8 +19,8 @@ export const normalizeUsername = (input: string): string => {
     .split("")
     .map((char) => HOMOGLYPH_MAP[char] || char)
     .join("")
-    .replace(/[^a-z0-9]/g, "")
-}
+    .replace(/[^a-z0-9]/g, "");
+};
 
 export const STANDARD_RESTRICTED_GROUPS = {
   STAFF_ROLES: [
@@ -188,11 +188,11 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "adm1n",
     "adm1nistrator"
   ]
-}
+};
 
 export const createRestrictedUsernameSet = (customBlacklist: string[] = []): Set<string> => {
-  const base = Object.values(STANDARD_RESTRICTED_GROUPS).flat().concat(customBlacklist)
-  return new Set(base.map((name) => normalizeUsername(name)))
-}
+  const base = Object.values(STANDARD_RESTRICTED_GROUPS).flat().concat(customBlacklist);
+  return new Set(base.map((name) => normalizeUsername(name)));
+};
 
-export const RESTRICTED_SET = createRestrictedUsernameSet()
+export const RESTRICTED_SET = createRestrictedUsernameSet();

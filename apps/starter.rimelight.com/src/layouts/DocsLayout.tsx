@@ -1,43 +1,43 @@
-import { type Component, Show, createSignal, createEffect } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import AppLayout from "./AppLayout"
-import { RLSidebar } from "@rimelight/ui/components/sidebar/RLSidebar.tsx"
-import { RLTableOfContents } from "@rimelight/ui/components/table-of-contents/RLTableOfContents.tsx"
-import { RLSurround } from "@rimelight/ui/components/surround/RLSurround.tsx"
-import { RLCopyMarkdown } from "@rimelight/ui/components/copy-markdown/RLCopyMarkdown.tsx"
-import { RLShare } from "@rimelight/ui/components/share/RLShare.tsx"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { getDocsSidebar, getSurroundItems } from "@rimelight/cms"
-import type { TableOfContentsConfig } from "@rimelight/cms"
-import docsConfig from "#config/docs.config"
-import { getLocale } from "@rimelight/i18n"
+import { type Component, Show, createSignal, createEffect } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import AppLayout from "./AppLayout";
+import { RLSidebar } from "@rimelight/ui/components/sidebar/RLSidebar.tsx";
+import { RLTableOfContents } from "@rimelight/ui/components/table-of-contents/RLTableOfContents.tsx";
+import { RLSurround } from "@rimelight/ui/components/surround/RLSurround.tsx";
+import { RLCopyMarkdown } from "@rimelight/ui/components/copy-markdown/RLCopyMarkdown.tsx";
+import { RLShare } from "@rimelight/ui/components/share/RLShare.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
+import type { TableOfContentsConfig } from "@rimelight/cms";
+import docsConfig from "#config/docs.config";
+import { getLocale } from "@rimelight/i18n";
 
 export interface DocsLayoutProps {
-  title: string
-  description?: string | undefined
-  headings?: { depth: number; slug: string; text: string }[] | undefined
-  tableOfContents?: false | TableOfContentsConfig | undefined
-  editUrl?: string | false | undefined
-  prevOverride?: { label: string; href: string } | null | undefined
-  nextOverride?: { label: string; href: string } | null | undefined
-  rawMarkdown?: string | undefined
-  activeVersion?: string | undefined
-  versions?: string[] | undefined
-  includeVersionInUrl?: boolean | undefined
-  children?: JSX.Element
-  session?: any
+  title: string;
+  description?: string | undefined;
+  headings?: { depth: number; slug: string; text: string }[] | undefined;
+  tableOfContents?: false | TableOfContentsConfig | undefined;
+  editUrl?: string | false | undefined;
+  prevOverride?: { label: string; href: string } | null | undefined;
+  nextOverride?: { label: string; href: string } | null | undefined;
+  rawMarkdown?: string | undefined;
+  activeVersion?: string | undefined;
+  versions?: string[] | undefined;
+  includeVersionInUrl?: boolean | undefined;
+  children?: JSX.Element;
+  session?: any;
 }
 
 export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   const [sidebarData, setSidebarData] = createSignal<{
-    items: any[]
-    scopes: any[]
-    activeScope: any
+    items: any[];
+    scopes: any[];
+    activeScope: any;
   }>({
     items: [],
     scopes: [],
     activeScope: null
-  })
+  });
 
   createEffect(
     () => ({
@@ -45,10 +45,10 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
       includeVersionInUrl: props.includeVersionInUrl
     }),
     (snapshot) => {
-      const { activeVersion, includeVersionInUrl } = snapshot
+      const { activeVersion, includeVersionInUrl } = snapshot;
       void (async () => {
-        const locale = getLocale()
-        const currentPath = typeof window !== "undefined" ? window.location.pathname : ""
+        const locale = getLocale();
+        const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
         try {
           const data = await getDocsSidebar(
             docsConfig as any,
@@ -56,26 +56,26 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
             currentPath,
             activeVersion,
             includeVersionInUrl
-          )
-          setSidebarData(data as { items: any[]; scopes: any[]; activeScope: any })
+          );
+          setSidebarData(data as { items: any[]; scopes: any[]; activeScope: any });
         } catch {}
-      })()
+      })();
     }
-  )
+  );
 
-  const currentPath = () => (typeof window !== "undefined" ? window.location.pathname : "")
-  const surround = () => getSurroundItems(sidebarData().items, currentPath())
-  const prev = () => props.prevOverride ?? surround().prev
-  const next = () => props.nextOverride ?? surround().next
+  const currentPath = () => (typeof window !== "undefined" ? window.location.pathname : "");
+  const surround = () => getSurroundItems(sidebarData().items, currentPath());
+  const prev = () => props.prevOverride ?? surround().prev;
+  const next = () => props.nextOverride ?? surround().next;
 
   const globalToc = (docsConfig as any).tableOfContents ?? {
     minHeadingLevel: 2,
     maxHeadingLevel: 3
-  }
+  };
   const resolvedToc = () =>
-    props.tableOfContents !== undefined ? props.tableOfContents : globalToc
-  const headings = () => props.headings || []
-  const hasToc = () => resolvedToc() !== false && headings().length > 0
+    props.tableOfContents !== undefined ? props.tableOfContents : globalToc;
+  const headings = () => props.headings || [];
+  const hasToc = () => resolvedToc() !== false && headings().length > 0;
 
   return (
     <AppLayout title={props.title} description={props.description} session={props.session}>
@@ -123,7 +123,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
         </Show>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DocsLayout
+export default DocsLayout;

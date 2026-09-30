@@ -1,4 +1,4 @@
-import { type Component, For } from "solid-js"
+import { type Component, For } from "solid-js";
 import {
   RLFooter,
   RLLogo,
@@ -8,9 +8,9 @@ import {
   RLLocaleSelector,
   type RLButtonProps,
   type RLLinkGroupProps
-} from "@rimelight/ui"
-import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import NewsletterSignup from "./NewsletterSignup"
+} from "@rimelight/ui";
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import NewsletterSignup from "./NewsletterSignup";
 
 export const AppFooter: Component = () => {
   const columns = (): RLLinkGroupProps[] => [
@@ -52,7 +52,7 @@ export const AppFooter: Component = () => {
         }
       ]
     }
-  ]
+  ];
 
   const socials = (): RLButtonProps[] => [
     {
@@ -75,13 +75,13 @@ export const AppFooter: Component = () => {
       leadingIcon: "i-logos-linkedin-icon?mask text-white hover:text-primary-500",
       href: "https://www.linkedin.com/daniel-marchi"
     }
-  ]
+  ];
 
   const targetLanguages = () => [
     { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
     { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") },
     { code: "es", label: "Español", href: getRelativeLocaleUrl("/es") }
-  ]
+  ];
 
   return (
     <RLFooter
@@ -121,7 +121,7 @@ export const AppFooter: Component = () => {
         </div>
       }
     />
-  )
-}
+  );
+};
 
-export default AppFooter
+export default AppFooter;

@@ -1,9 +1,9 @@
-import { type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const CodeBlock: Component<BlockViewProps> = (props) => {
-  const code = () => (props.block.props?.["code"] as string) ?? ""
-  const language = () => (props.block.props?.["language"] as string) ?? "text"
+  const code = () => (props.block.props?.["code"] as string) ?? "";
+  const language = () => (props.block.props?.["language"] as string) ?? "text";
 
   return (
     <div
@@ -15,7 +15,7 @@ export const CodeBlock: Component<BlockViewProps> = (props) => {
         <code>{code()}</code>
       </pre>
     </div>
-  )
-}
+  );
+};
 
-export default CodeBlock
+export default CodeBlock;

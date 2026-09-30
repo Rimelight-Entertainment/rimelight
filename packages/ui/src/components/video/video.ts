@@ -2,26 +2,26 @@ export interface VideoProps {
   /**
    * The URL of the YouTube video to embed.
    */
-  src: string
+  src: string;
   /**
    * The title of the video to display.
    *
    * @default "YouTube Video Player"
    */
-  title?: string
+  title?: string;
   /**
    * The name of the icon to display in the play trigger overlay.
    *
    * @default "i-lucide-play"
    */
-  icon?: string
+  icon?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

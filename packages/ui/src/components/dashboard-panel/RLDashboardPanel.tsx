@@ -1,22 +1,22 @@
-import { createMemo, Show, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { DashboardPanelProps } from "./dashboard-panel"
-import { dashboardPanelTheme } from "./dashboard-panel.theme"
+import { createMemo, Show, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { DashboardPanelProps } from "./dashboard-panel";
+import { dashboardPanelTheme } from "./dashboard-panel.theme";
 
 export interface RLDashboardPanelProps extends DashboardPanelProps {
-  children?: JSX.Element
-  header?: JSX.Element
-  headerSlot?: JSX.Element
-  body?: JSX.Element
-  bodySlot?: JSX.Element
-  footer?: JSX.Element
-  footerSlot?: JSX.Element
-  resizeHandle?: JSX.Element
-  resizeHandleSlot?: JSX.Element
+  children?: JSX.Element;
+  header?: JSX.Element;
+  headerSlot?: JSX.Element;
+  body?: JSX.Element;
+  bodySlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  resizeHandle?: JSX.Element;
+  resizeHandleSlot?: JSX.Element;
 }
 
 const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "resizable",
@@ -31,9 +31,9 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
     "footerSlot",
     "resizeHandle",
     "resizeHandleSlot"
-  )
+  );
 
-  const resizable = () => props.resizable ?? false
+  const resizable = () => props.resizable ?? false;
 
   const resolvedClasses = createMemo(() =>
     dashboardPanelTheme({
@@ -41,17 +41,17 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const headerContent = () => props.header ?? props.headerSlot
+  const headerContent = () => props.header ?? props.headerSlot;
   const bodyContent = () =>
     props.body !== undefined
       ? props.body
       : props.bodySlot !== undefined
         ? props.bodySlot
-        : props.children
-  const footerContent = () => props.footer ?? props.footerSlot
-  const resizeHandleContent = () => props.resizeHandle ?? props.resizeHandleSlot
+        : props.children;
+  const footerContent = () => props.footer ?? props.footerSlot;
+  const resizeHandleContent = () => props.resizeHandle ?? props.resizeHandleSlot;
 
   return (
     <>
@@ -76,7 +76,7 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
         )}
       </Show>
     </>
-  )
-}
+  );
+};
 
-export { RLDashboardPanel }
+export { RLDashboardPanel };

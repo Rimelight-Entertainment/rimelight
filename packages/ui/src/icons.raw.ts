@@ -1,18 +1,18 @@
 export const svg = (inner: string) =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="100%" height="100%">${inner}</svg>`
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="100%" height="100%">${inner}</svg>`;
 
-const toCamelCase = (str: string): string => str.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase())
+const toCamelCase = (str: string): string => str.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 
 export const getIconSvg = (name: string): string | undefined => {
   if (Object.prototype.hasOwnProperty.call(ICONS, name)) {
-    return svg(ICONS[name as keyof typeof ICONS])
+    return svg(ICONS[name as keyof typeof ICONS]);
   }
-  const camel = toCamelCase(name)
+  const camel = toCamelCase(name);
   if (Object.prototype.hasOwnProperty.call(ICONS, camel)) {
-    return svg(ICONS[camel as keyof typeof ICONS])
+    return svg(ICONS[camel as keyof typeof ICONS]);
   }
-  return undefined
-}
+  return undefined;
+};
 
 export const ICONS = {
   alertTriangle: `<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>`,
@@ -87,4 +87,4 @@ export const ICONS = {
   ellipsisVertical: `<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>`,
   arrowUpFromLine: `<path d="m18 9-6-6-6 6"/><path d="M12 3v14"/><path d="M5 21h14"/>`,
   arrowDownToLine: `<path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/>`
-} as const
+} as const;

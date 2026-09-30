@@ -2,28 +2,28 @@ export interface SearchProps {
   /**
    * API endpoint to query results from.
    */
-  endpoint?: string
+  endpoint?: string;
   /**
    * Search input placeholder.
    */
-  placeholder?: string
+  placeholder?: string;
   /**
    * Custom labels and localization text.
    */
   messages?: {
-    searchButtonLabel?: string
-    searchPlaceholder?: string
-    noResultsLabel?: string
-    footerCloseHint?: string
-    footerBackendHint?: string
-  }
+    searchButtonLabel?: string;
+    searchPlaceholder?: string;
+    noResultsLabel?: string;
+    footerCloseHint?: string;
+    footerBackendHint?: string;
+  };
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,22 +1,22 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { CalloutProps } from "./callout"
-import { calloutTheme } from "./callout.theme"
-import { RLAvatar } from "../avatar/RLAvatar"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { CalloutProps } from "./callout";
+import { calloutTheme } from "./callout.theme";
+import { RLAvatar } from "../avatar/RLAvatar";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLCalloutProps extends CalloutProps {
-  children?: JSX.Element
-  iconSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  headerSlot?: JSX.Element
-  avatarSlot?: JSX.Element
-  closeSlot?: JSX.Element
-  actionsSlot?: JSX.Element
-  avatar?: string | Record<string, any>
-  close?: boolean
-  actions?: boolean
-  onClose?: () => void
+  children?: JSX.Element;
+  iconSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  headerSlot?: JSX.Element;
+  avatarSlot?: JSX.Element;
+  closeSlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
+  avatar?: string | Record<string, any>;
+  close?: boolean;
+  actions?: boolean;
+  onClose?: () => void;
 }
 
 const colorToIcon: Record<string, string | undefined> = {
@@ -30,10 +30,10 @@ const colorToIcon: Record<string, string | undefined> = {
   ideation: undefined,
   source: undefined,
   neutral: undefined
-}
+};
 
 const RLCallout: Component<RLCalloutProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "variant",
@@ -55,17 +55,17 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
     "closeSlot",
     "actionsSlot",
     "onClose"
-  )
+  );
 
-  const resolvedColor = props.variant === "destructive" ? "error" : (props.color ?? "primary")
+  const resolvedColor = props.variant === "destructive" ? "error" : (props.color ?? "primary");
   const resolvedVariant =
     props.variant === "solid" ||
     props.variant === "outline" ||
     props.variant === "soft" ||
     props.variant === "subtle"
       ? props.variant
-      : "solid"
-  const resolvedIcon = props.icon ?? colorToIcon[resolvedColor]
+      : "solid";
+  const resolvedIcon = props.icon ?? colorToIcon[resolvedColor];
   const hasTitleRow = !!(
     props.title ||
     props.titleSlot ||
@@ -74,7 +74,7 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
     props.avatarSlot ||
     props.close ||
     props.closeSlot
-  )
+  );
 
   const classes = createMemo(() =>
     calloutTheme({
@@ -84,7 +84,7 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={classes()["root"]} data-slot="root" role="alert" data-theme={props.theme} {...rest}>
@@ -148,7 +148,7 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLCallout }
+export { RLCallout };

@@ -1,48 +1,48 @@
-import { createSignal, createMemo, For, Show, type Component } from "solid-js"
-import { COMPONENT_AUDITS, getAllAudits, getAuditById } from "./audits/registry"
-import type { ComponentCategory, AuditStatus } from "./audits/types"
+import { createSignal, createMemo, For, Show, type Component } from "solid-js";
+import { COMPONENT_AUDITS, getAllAudits, getAuditById } from "./audits/registry";
+import type { ComponentCategory, AuditStatus } from "./audits/types";
 
 interface ComponentAuditShellProps {
-  initialComponentId?: string
+  initialComponentId?: string;
 }
 
-type TabType = "sandbox" | "scenarios" | "checklist" | "code"
+type TabType = "sandbox" | "scenarios" | "checklist" | "code";
 
 export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) => {
-  const allAudits = getAllAudits()
+  const allAudits = getAllAudits();
   const [selectedId, setSelectedId] = createSignal<string>(
     props.initialComponentId && COMPONENT_AUDITS[props.initialComponentId]
       ? props.initialComponentId
       : (allAudits[0]?.id ?? "accordion")
-  )
-  const [activeTab, setActiveTab] = createSignal<TabType>("sandbox")
+  );
+  const [activeTab, setActiveTab] = createSignal<TabType>("sandbox");
 
-  const activeAudit = createMemo(() => getAuditById(selectedId()) ?? allAudits[0])
+  const activeAudit = createMemo(() => getAuditById(selectedId()) ?? allAudits[0]);
 
   // Group audits by category
   const categories = createMemo(() => {
-    const list = allAudits
-    const map = new Map<ComponentCategory, typeof list>()
+    const list = allAudits;
+    const map = new Map<ComponentCategory, typeof list>();
     for (const item of list) {
-      const existing = map.get(item.category) ?? []
-      existing.push(item)
-      map.set(item.category, existing)
+      const existing = map.get(item.category) ?? [];
+      existing.push(item);
+      map.set(item.category, existing);
     }
-    return Array.from(map.entries())
-  })
+    return Array.from(map.entries());
+  });
 
   const getStatusBadge = (status: AuditStatus) => {
     switch (status) {
       case "Auditing":
-        return "bg-amber-500/10 text-amber-500 border-amber-500/30"
+        return "bg-amber-500/10 text-amber-500 border-amber-500/30";
       case "Passed":
-        return "bg-emerald-500/10 text-emerald-500 border-emerald-500/30"
+        return "bg-emerald-500/10 text-emerald-500 border-emerald-500/30";
       case "Needs Attention":
-        return "bg-rose-500/10 text-rose-500 border-rose-500/30"
+        return "bg-rose-500/10 text-rose-500 border-rose-500/30";
       default:
-        return "bg-muted/10 text-muted border-default"
+        return "bg-muted/10 text-muted border-default";
     }
-  }
+  };
 
   return (
     <div class="flex flex-col lg:flex-row gap-6 items-start w-full">
@@ -58,13 +58,13 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
                 <div class="flex flex-col gap-0.5">
                   <For each={items}>
                     {(item) => {
-                      const isSelected = () => selectedId() === item.id
+                      const isSelected = () => selectedId() === item.id;
                       return (
                         <button
                           type="button"
                           onClick={() => {
-                            setSelectedId(item.id)
-                            window.history.replaceState(null, "", `?comp=${item.id}`)
+                            setSelectedId(item.id);
+                            window.history.replaceState(null, "", `?comp=${item.id}`);
                           }}
                           class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-left transition-all ${
                             isSelected()
@@ -83,7 +83,7 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
                             {item.status}
                           </span>
                         </button>
-                      )
+                      );
                     }}
                   </For>
                 </div>
@@ -228,7 +228,7 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
         </Show>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default ComponentAuditShell
+export default ComponentAuditShell;

@@ -1,83 +1,83 @@
-import { createSignal, createMemo, Show, For } from "solid-js"
-import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx"
-import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
-import { RLDropdownMenu } from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx"
+import { createSignal, createMemo, Show, For } from "solid-js";
+import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx";
+import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLDropdownMenu } from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx";
 import {
   SHOWCASE_PAYMENTS_DATA,
   formatShowcaseDate,
   formatShowcaseCurrency,
   type PaymentItem
-} from "./showcase-table-data"
+} from "./showcase-table-data";
 
 export default function TableShowcase() {
-  const [data, setData] = createSignal<PaymentItem[]>(SHOWCASE_PAYMENTS_DATA)
-  const [loading, setLoading] = createSignal<boolean>(false)
-  const [striped, setStriped] = createSignal<boolean>(true)
-  const [bordered, setBordered] = createSignal<boolean>(false)
-  const [hoverable, setHoverable] = createSignal<boolean>(true)
-  const [groupingLevel, setGroupingLevel] = createSignal<"none" | "category" | "multi">("category")
-  const [enableResizing, setEnableResizing] = createSignal<boolean>(true)
-  const [enableColumnReordering, setEnableColumnReordering] = createSignal<boolean>(true)
-  const [enableRowReordering, setEnableRowReordering] = createSignal<boolean>(false)
-  const [selectedRows, setSelectedRows] = createSignal<Record<string, boolean>>({})
-  const [lastClickedRow, setLastClickedRow] = createSignal<string>("None")
-  const [isVirtual, setIsVirtual] = createSignal<boolean>(false)
+  const [data, setData] = createSignal<PaymentItem[]>(SHOWCASE_PAYMENTS_DATA);
+  const [loading, setLoading] = createSignal<boolean>(false);
+  const [striped, setStriped] = createSignal<boolean>(true);
+  const [bordered, setBordered] = createSignal<boolean>(false);
+  const [hoverable, setHoverable] = createSignal<boolean>(true);
+  const [groupingLevel, setGroupingLevel] = createSignal<"none" | "category" | "multi">("category");
+  const [enableResizing, setEnableResizing] = createSignal<boolean>(true);
+  const [enableColumnReordering, setEnableColumnReordering] = createSignal<boolean>(true);
+  const [enableRowReordering, setEnableRowReordering] = createSignal<boolean>(false);
+  const [selectedRows, setSelectedRows] = createSignal<Record<string, boolean>>({});
+  const [lastClickedRow, setLastClickedRow] = createSignal<string>("None");
+  const [isVirtual, setIsVirtual] = createSignal<boolean>(false);
   const [loadingAnimation, setLoadingAnimation] = createSignal<
     "carousel" | "carousel-inverse" | "swing" | "elastic"
-  >("carousel")
+  >("carousel");
 
   const grouping = createMemo(() => {
-    if (groupingLevel() === "multi") return ["category", "status"]
-    if (groupingLevel() === "category") return ["category"]
-    return []
-  })
+    if (groupingLevel() === "multi") return ["category", "status"];
+    if (groupingLevel() === "category") return ["category"];
+    return [];
+  });
 
   const facetedStatusCounts = createMemo(() => {
-    const map = new Map<string, number>()
+    const map = new Map<string, number>();
     const scan = (items: PaymentItem[]) => {
       for (const item of items) {
-        map.set(item.status, (map.get(item.status) ?? 0) + 1)
-        if (item.children) scan(item.children)
+        map.set(item.status, (map.get(item.status) ?? 0) + 1);
+        if (item.children) scan(item.children);
       }
-    }
-    scan(data())
-    return Array.from(map.entries())
-  })
+    };
+    scan(data());
+    return Array.from(map.entries());
+  });
 
   const facetedAmountRange = createMemo(() => {
-    let min = Infinity
-    let max = -Infinity
+    let min = Infinity;
+    let max = -Infinity;
     const scan = (items: PaymentItem[]) => {
       for (const item of items) {
-        const val = Number(item.amount) || 0
-        if (val < min) min = val
-        if (val > max) max = val
-        if (item.children) scan(item.children)
+        const val = Number(item.amount) || 0;
+        if (val < min) min = val;
+        if (val > max) max = val;
+        if (item.children) scan(item.children);
       }
-    }
-    scan(data())
-    if (min === Infinity) return "N/A"
-    return `$${min} - $${max}`
-  })
+    };
+    scan(data());
+    if (min === Infinity) return "N/A";
+    return `$${min} - $${max}`;
+  });
 
   const totalRowCount = createMemo(() => {
-    let count = 0
+    let count = 0;
     const scan = (items: PaymentItem[]) => {
       for (const item of items) {
-        count += 1
-        if (item.children) scan(item.children)
+        count += 1;
+        if (item.children) scan(item.children);
       }
-    }
-    scan(data())
-    return count
-  })
+    };
+    scan(data());
+    return count;
+  });
 
   const selectedCount = createMemo(() => {
-    return Object.values(selectedRows()).filter(Boolean).length
-  })
+    return Object.values(selectedRows()).filter(Boolean).length;
+  });
 
   const largeDataset = Array.from({ length: 500 }, (_, i) => ({
     id: `PAY-VIRT-${2000 + i}`,
@@ -92,37 +92,37 @@ export default function TableShowcase() {
       | "Hardware",
     email: `customer.${i + 1}@example.com`,
     amount: 100 + ((i * 17) % 900)
-  }))
+  }));
 
   const toggleVirtualize = () => {
     if (!isVirtual()) {
-      setIsVirtual(true)
-      setData(largeDataset)
-      setGroupingLevel("none")
+      setIsVirtual(true);
+      setData(largeDataset);
+      setGroupingLevel("none");
     } else {
-      setIsVirtual(false)
-      setData(SHOWCASE_PAYMENTS_DATA)
-      setGroupingLevel("category")
+      setIsVirtual(false);
+      setData(SHOWCASE_PAYMENTS_DATA);
+      setGroupingLevel("category");
     }
-  }
+  };
 
   const columns = createMemo<TableColumn<PaymentItem>[]>(() => [
     {
       id: "select",
       size: 44,
       header: ({ table }: { table: TableApi<PaymentItem> }) => {
-        const isAll = () => table?.getIsAllRowsSelected() ?? false
-        const isSome = () => table?.getIsSomeRowsSelected() ?? false
+        const isAll = () => table?.getIsAllRowsSelected() ?? false;
+        const isSome = () => table?.getIsSomeRowsSelected() ?? false;
 
         return (
           <RLCheckbox
             checked={isAll()}
             indeterminate={isSome()}
             onChange={() => {
-              table?.toggleAllRowsSelected()
+              table?.toggleAllRowsSelected();
             }}
           />
-        )
+        );
       },
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <RLCheckbox
@@ -145,8 +145,8 @@ export default function TableShowcase() {
               type="button"
               class="size-5 rounded border border-default flex items-center justify-center text-muted hover:text-highlighted bg-muted/20"
               onClick={(e) => {
-                e.stopPropagation()
-                row.toggleExpanded()
+                e.stopPropagation();
+                row.toggleExpanded();
               }}
             >
               <span
@@ -179,13 +179,13 @@ export default function TableShowcase() {
       header: "Status",
       size: 120,
       cell: ({ row }: { row: TableRow<PaymentItem> }) => {
-        const val = row.getValue("status")
-        const badgeColor = val === "paid" ? "success" : val === "failed" ? "error" : "warning"
+        const val = row.getValue("status");
+        const badgeColor = val === "paid" ? "success" : val === "failed" ? "error" : "warning";
         return (
           <RLBadge size="sm" color={badgeColor} variant="soft" class="capitalize">
             {val}
           </RLBadge>
-        )
+        );
       }
     },
     {
@@ -216,12 +216,12 @@ export default function TableShowcase() {
             .reduce(
               (sum: number, r: TableRow<PaymentItem>) => sum + (Number(r.getValue("amount")) || 0),
               0
-            ) ?? 0
+            ) ?? 0;
         return (
           <div class="text-right font-mono font-bold text-highlighted">
             {formatShowcaseCurrency(total())}
           </div>
-        )
+        );
       }
     },
     {
@@ -267,11 +267,11 @@ export default function TableShowcase() {
               icon: "trash",
               color: "error" as const,
               onSelect: () => {
-                setData(data().filter((item) => item.id !== row.id))
+                setData(data().filter((item) => item.id !== row.id));
               }
             }
           ]
-        ]
+        ];
 
         return (
           <RLDropdownMenu
@@ -280,10 +280,10 @@ export default function TableShowcase() {
             color="neutral"
             content={{ align: "end" }}
           />
-        )
+        );
       }
     }
-  ])
+  ]);
 
   return (
     <div class="flex flex-col gap-6 w-full">
@@ -378,8 +378,8 @@ export default function TableShowcase() {
           color="neutral"
           variant="outline"
           onClick={() => {
-            setLoading(true)
-            setTimeout(() => setLoading(false), 2000)
+            setLoading(true);
+            setTimeout(() => setLoading(false), 2000);
           }}
         >
           Test Loading Bar
@@ -429,7 +429,7 @@ export default function TableShowcase() {
         pagination={isVirtual() ? undefined : { pageIndex: 0, pageSize: 6 }}
         getSubRows={(row: PaymentItem) => row.children}
         onSelect={(_e: Event, row: TableRow<PaymentItem>) => {
-          setLastClickedRow(`${row.id} (${row.original.email})`)
+          setLastClickedRow(`${row.id} (${row.original.email})`);
         }}
         expandedContent={(row: TableRow<PaymentItem>) => (
           <div class="p-4 rounded bg-muted/40 text-xs font-mono flex flex-col gap-1 border border-default/50">
@@ -471,5 +471,5 @@ export default function TableShowcase() {
         </div>
       </div>
     </div>
-  )
+  );
 }

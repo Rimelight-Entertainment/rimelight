@@ -1,22 +1,22 @@
-import { type Component, Show } from "solid-js"
-import { useSearchParams } from "@solidjs/router"
-import OgLayout from "#layouts/OgLayout"
+import { type Component, Show } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
+import OgLayout from "#layouts/OgLayout";
 
 export const DocsOgPage: Component = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
 
   const title = () => {
-    const t = searchParams["title"]
-    return Array.isArray(t) ? t[0] || "Untitled" : t || "Untitled"
-  }
+    const t = searchParams["title"];
+    return Array.isArray(t) ? t[0] || "Untitled" : t || "Untitled";
+  };
   const description = () => {
-    const d = searchParams["description"]
-    return Array.isArray(d) ? d[0] || "" : d || ""
-  }
+    const d = searchParams["description"];
+    return Array.isArray(d) ? d[0] || "" : d || "";
+  };
   const isPreview = () => {
-    const p = searchParams["preview"]
-    return (Array.isArray(p) ? p[0] : p) === "1"
-  }
+    const p = searchParams["preview"];
+    return (Array.isArray(p) ? p[0] : p) === "1";
+  };
 
   return (
     <OgLayout title={`${title()} — Rimelight`} description={description()}>
@@ -24,7 +24,7 @@ export const DocsOgPage: Component = () => {
         class="w-[1200px] h-[630px] flex flex-col p-14 relative overflow-hidden text-[#e5e5e5]"
         style={{
           "font-family": "'Noto Sans', system-ui, sans-serif",
-          "background": "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)"
+          background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)"
         }}
       >
         <div class="flex items-center gap-3">
@@ -59,7 +59,7 @@ export const DocsOgPage: Component = () => {
         </Show>
       </div>
     </OgLayout>
-  )
-}
+  );
+};
 
-export default DocsOgPage
+export default DocsOgPage;

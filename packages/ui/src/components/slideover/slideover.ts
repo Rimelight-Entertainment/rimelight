@@ -2,34 +2,34 @@ export interface SlideoverProps {
   /**
    * The edge the sheet slides in from.
    */
-  side?: "top" | "right" | "bottom" | "left"
+  side?: "top" | "right" | "bottom" | "left";
   /**
    * Controlled open state.
    */
-  open?: boolean
+  open?: boolean;
   /**
    * Title of the sheet.
    */
-  title?: string
+  title?: string;
   /**
    * Description of the sheet contents.
    */
-  description?: string
+  description?: string;
   /**
    * Label of the trigger button.
    */
-  triggerLabel?: string
+  triggerLabel?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
+  class?: any;
   /**
    * Keep content mounted in the DOM when hidden.
    */
-  unmountOnHide?: boolean
-  [key: string]: unknown
+  unmountOnHide?: boolean;
+  [key: string]: unknown;
 }

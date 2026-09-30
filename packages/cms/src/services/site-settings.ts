@@ -1,9 +1,9 @@
-import { eq } from "drizzle-orm"
+import { eq } from "drizzle-orm";
 import {
   siteSettings,
   type InsertSiteSettings,
   type SiteSettings
-} from "../schema/site_settings.ts"
+} from "../schema/site_settings.ts";
 
 export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   id: "default",
@@ -30,7 +30,7 @@ export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
     ogImageFallback: "https://cdn.rimelight.com/Images/og-placeholder.webp",
     maxDescriptionLength: 160
   }
-}
+};
 
 function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings {
   return {
@@ -45,7 +45,7 @@ function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings
     seo: overrides?.seo ?? DEFAULT_SITE_SETTINGS.seo,
     createdAt: new Date(),
     updatedAt: new Date()
-  }
+  };
 }
 
 /**
@@ -57,7 +57,7 @@ export async function getSiteSettings(
   fallbackDefaults?: Partial<InsertSiteSettings>
 ): Promise<SiteSettings> {
   if (!db) {
-    return fallbackSettings(fallbackDefaults)
+    return fallbackSettings(fallbackDefaults);
   }
 
   try {
@@ -65,23 +65,23 @@ export async function getSiteSettings(
       .select()
       .from(siteSettings)
       .where(eq(siteSettings.id, "default"))
-      .limit(1)
+      .limit(1);
 
     if (records.length > 0) {
-      return records[0]
+      return records[0];
     }
 
     const initial: InsertSiteSettings = {
       ...DEFAULT_SITE_SETTINGS,
       ...fallbackDefaults,
       id: "default"
-    }
+    };
 
-    const inserted = await db.insert(siteSettings).values(initial).returning()
-    return inserted[0]
+    const inserted = await db.insert(siteSettings).values(initial).returning();
+    return inserted[0];
   } catch (error) {
-    console.warn("Failed to fetch site settings from DB, using fallback:", error)
-    return fallbackSettings(fallbackDefaults)
+    console.warn("Failed to fetch site settings from DB, using fallback:", error);
+    return fallbackSettings(fallbackDefaults);
   }
 }
 
@@ -93,20 +93,20 @@ export async function updateSiteSettings(
   updates: Partial<InsertSiteSettings>,
   id: string = "default"
 ): Promise<SiteSettings> {
-  const current = await getSiteSettings(db)
+  const current = await getSiteSettings(db);
 
   const updatedValues = {
     ...updates,
     branding: updates.branding ? { ...current.branding, ...updates.branding } : current.branding,
     seo: updates.seo ? { ...current.seo, ...updates.seo } : current.seo,
     updatedAt: new Date()
-  }
+  };
 
   const result = await db
     .update(siteSettings)
     .set(updatedValues)
     .where(eq(siteSettings.id, id))
-    .returning()
+    .returning();
 
-  return result[0]
+  return result[0];
 }

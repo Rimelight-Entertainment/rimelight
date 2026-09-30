@@ -1,10 +1,10 @@
-import { Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const StepItemBlock: Component<BlockViewProps> = (props) => {
-  const title = () => (props.block.props?.["title"] as string) ?? ""
-  const description = () => (props.block.props?.["description"] as string) ?? ""
-  const index = () => props.index ?? 0
+  const title = () => (props.block.props?.["title"] as string) ?? "";
+  const description = () => (props.block.props?.["description"] as string) ?? "";
+  const index = () => props.index ?? 0;
 
   return (
     <div class="cms-step-item relative" data-block-id={props.block.id}>
@@ -21,7 +21,7 @@ export const StepItemBlock: Component<BlockViewProps> = (props) => {
         <div class="mt-3">{props.children}</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default StepItemBlock
+export default StepItemBlock;

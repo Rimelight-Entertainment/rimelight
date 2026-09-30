@@ -1,39 +1,39 @@
-import { createSignal, onSettled, For, Show, createMemo, type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import { createSignal, onSettled, For, Show, createMemo, type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 
 export interface BylineEntity {
-  id: string
-  name: string
-  slug: string
-  websiteUrl?: string | null
-  bio?: string | null
-  avatar?: string | null
-  userId?: string | null
-  socials?: Record<string, string>
-  metadata?: Record<string, any>
-  createdAt?: string
+  id: string;
+  name: string;
+  slug: string;
+  websiteUrl?: string | null;
+  bio?: string | null;
+  avatar?: string | null;
+  userId?: string | null;
+  socials?: Record<string, string>;
+  metadata?: Record<string, any>;
+  createdAt?: string;
 }
 
 export const RimelightBylinesManager: Component = () => {
-  const [bylines, setBylines] = createSignal<BylineEntity[]>([])
-  const [selectedId, setSelectedId] = createSignal<string | null>(null)
-  const [searchQuery, setSearchQuery] = createSignal("")
-  const [isLoading, setIsLoading] = createSignal(false)
-  const [isSaving, setIsSaving] = createSignal(false)
-  const [error, setError] = createSignal<string | null>(null)
+  const [bylines, setBylines] = createSignal<BylineEntity[]>([]);
+  const [selectedId, setSelectedId] = createSignal<string | null>(null);
+  const [searchQuery, setSearchQuery] = createSignal("");
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [isSaving, setIsSaving] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
 
   // Form State
   const [form, setForm] = createSignal<{
-    name: string
-    slug: string
-    websiteUrl: string
-    bio: string
-    avatar: string
-    userId: string
+    name: string;
+    slug: string;
+    websiteUrl: string;
+    bio: string;
+    avatar: string;
+    userId: string;
   }>({
     name: "",
     slug: "",
@@ -41,47 +41,47 @@ export const RimelightBylinesManager: Component = () => {
     bio: "",
     avatar: "",
     userId: ""
-  })
+  });
 
   const loadBylines = async () => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
     try {
-      const res = await fetch("/api/cms/bylines")
-      if (!res.ok) throw new Error("Failed to load bylines")
-      const data = await res.json()
-      const list: BylineEntity[] = Array.isArray(data) ? data : []
-      setBylines(list)
+      const res = await fetch("/api/cms/bylines");
+      if (!res.ok) throw new Error("Failed to load bylines");
+      const data = await res.json();
+      const list: BylineEntity[] = Array.isArray(data) ? data : [];
+      setBylines(list);
 
       if (list.length > 0 && !selectedId()) {
-        selectByline(list[0]!)
+        selectByline(list[0]!);
       } else if (list.length === 0) {
-        startNewByline()
+        startNewByline();
       }
     } catch (err: any) {
-      setError(err.message || "Failed to load bylines")
+      setError(err.message || "Failed to load bylines");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   onSettled(() => {
-    void loadBylines()
-  })
+    void loadBylines();
+  });
 
   const filteredBylines = createMemo(() => {
-    const q = searchQuery().toLowerCase().trim()
-    if (!q) return bylines()
+    const q = searchQuery().toLowerCase().trim();
+    if (!q) return bylines();
     return bylines().filter(
       (b) =>
         b.name.toLowerCase().includes(q) ||
         b.slug.toLowerCase().includes(q) ||
         (b.bio && b.bio.toLowerCase().includes(q))
-    )
-  })
+    );
+  });
 
   const selectByline = (byline: BylineEntity) => {
-    setSelectedId(byline.id)
+    setSelectedId(byline.id);
     setForm({
       name: byline.name || "",
       slug: byline.slug || "",
@@ -89,11 +89,11 @@ export const RimelightBylinesManager: Component = () => {
       bio: byline.bio || "",
       avatar: byline.avatar || "",
       userId: byline.userId || ""
-    })
-  }
+    });
+  };
 
   const startNewByline = () => {
-    setSelectedId(null)
+    setSelectedId(null);
     setForm({
       name: "",
       slug: "",
@@ -101,31 +101,31 @@ export const RimelightBylinesManager: Component = () => {
       bio: "",
       avatar: "",
       userId: ""
-    })
-  }
+    });
+  };
 
   const handleNameChange = (name: string) => {
-    const isNew = !selectedId()
+    const isNew = !selectedId();
     const autoSlug = isNew
       ? name
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/(^-|-$)/g, "")
-      : form().slug
+      : form().slug;
 
     setForm((prev) => ({
       ...prev,
       name,
       slug: isNew ? autoSlug : prev.slug
-    }))
-  }
+    }));
+  };
 
   const handleSave = async (e?: Event) => {
-    e?.preventDefault()
-    const f = form()
+    e?.preventDefault();
+    const f = form();
     if (!f.name.trim()) {
-      alert("Display name is required")
-      return
+      alert("Display name is required");
+      return;
     }
 
     const slug =
@@ -133,7 +133,7 @@ export const RimelightBylinesManager: Component = () => {
       f.name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
+        .replace(/(^-|-$)/g, "");
 
     const payload = {
       name: f.name.trim(),
@@ -142,57 +142,57 @@ export const RimelightBylinesManager: Component = () => {
       bio: f.bio.trim() || null,
       avatar: f.avatar.trim() || null,
       userId: f.userId.trim() || null
-    }
+    };
 
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       if (selectedId()) {
         const res = await fetch(`/api/cms/bylines/${selectedId()}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        })
-        if (!res.ok) throw new Error("Failed to update byline")
-        const updated = await res.json()
-        setBylines((prev) => prev.map((b) => (b.id === updated.id ? updated : b)))
+        });
+        if (!res.ok) throw new Error("Failed to update byline");
+        const updated = await res.json();
+        setBylines((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
       } else {
         const res = await fetch("/api/cms/bylines", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        })
-        if (!res.ok) throw new Error("Failed to create byline")
-        const created = await res.json()
-        setBylines((prev) => [created, ...prev])
-        setSelectedId(created.id)
+        });
+        if (!res.ok) throw new Error("Failed to create byline");
+        const created = await res.json();
+        setBylines((prev) => [created, ...prev]);
+        setSelectedId(created.id);
       }
     } catch (err: any) {
-      alert(err.message || "Failed to save byline")
+      alert(err.message || "Failed to save byline");
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    const id = selectedId()
-    if (!id) return
-    const current = bylines().find((b) => b.id === id)
-    if (!confirm(`Are you sure you want to delete byline "${current?.name || id}"?`)) return
+    const id = selectedId();
+    if (!id) return;
+    const current = bylines().find((b) => b.id === id);
+    if (!confirm(`Are you sure you want to delete byline "${current?.name || id}"?`)) return;
 
     try {
-      const res = await fetch(`/api/cms/bylines/${id}`, { method: "DELETE" })
-      if (!res.ok) throw new Error("Failed to delete byline")
-      setBylines((prev) => prev.filter((b) => b.id !== id))
-      const remaining = bylines().filter((b) => b.id !== id)
+      const res = await fetch(`/api/cms/bylines/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete byline");
+      setBylines((prev) => prev.filter((b) => b.id !== id));
+      const remaining = bylines().filter((b) => b.id !== id);
       if (remaining.length > 0) {
-        selectByline(remaining[0]!)
+        selectByline(remaining[0]!);
       } else {
-        startNewByline()
+        startNewByline();
       }
     } catch (err: any) {
-      alert(err.message || "Failed to delete byline")
+      alert(err.message || "Failed to delete byline");
     }
-  }
+  };
 
   return (
     <div class="flex flex-col gap-6 w-full max-w-7xl mx-auto py-2">
@@ -252,7 +252,7 @@ export const RimelightBylinesManager: Component = () => {
           <div class="flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
             <For each={filteredBylines()}>
               {(item) => {
-                const isSelected = () => selectedId() === item.id
+                const isSelected = () => selectedId() === item.id;
                 return (
                   <button
                     type="button"
@@ -288,7 +288,7 @@ export const RimelightBylinesManager: Component = () => {
                       <span class="text-xs font-mono text-muted truncate">{item.slug}</span>
                     </div>
                   </button>
-                )
+                );
               }}
             </For>
           </div>
@@ -439,5 +439,5 @@ export const RimelightBylinesManager: Component = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

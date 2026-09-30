@@ -1,20 +1,20 @@
 export interface StickySurfaceProps {
-  stuckShadow?: boolean
+  stuckShadow?: boolean;
   /**
    * Pixels offset from top when sticky.
    */
-  offsetTop?: number
+  offsetTop?: number;
   /**
    * Z-index layer depth.
    */
-  zIndex?: number
+  zIndex?: number;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import WikiLayout from "#layouts/WikiLayout"
+import { type Component } from "solid-js";
+import WikiLayout from "#layouts/WikiLayout";
 
 export const WikiGettingStartedPage: Component = () => {
   return (
@@ -19,7 +19,7 @@ export const WikiGettingStartedPage: Component = () => {
         </p>
       </article>
     </WikiLayout>
-  )
-}
+  );
+};
 
-export default WikiGettingStartedPage
+export default WikiGettingStartedPage;

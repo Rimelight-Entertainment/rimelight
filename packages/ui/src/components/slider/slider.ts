@@ -1,41 +1,41 @@
-import type { Theme, ThemeColor } from "../../types"
+import type { Theme, ThemeColor } from "../../types";
 
 export interface SliderProps {
   /**
    * The value of the range input.
    */
-  value?: number
+  value?: number;
   /**
    * Minimum boundary.
    */
-  min?: number
+  min?: number;
   /**
    * Maximum boundary.
    */
-  max?: number
+  max?: number;
   /**
    * Steps size.
    */
-  step?: number
+  step?: number;
   /**
    * Form element input name.
    */
-  name?: string
+  name?: string;
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,17 +1,17 @@
-import type { Component, ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
-import DashboardLayout from "./DashboardLayout"
-import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n"
+import type { Component, ParentProps } from "solid-js";
+import { useParams } from "@solidjs/router";
+import DashboardLayout from "./DashboardLayout";
+import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
 
 export interface SettingsLayoutProps extends ParentProps {
-  title?: string | undefined
-  activeTab: "general" | "notifications" | "security"
+  title?: string | undefined;
+  activeTab: "general" | "notifications" | "security";
 }
 
 export const SettingsLayout: Component<SettingsLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   const links = [
@@ -33,7 +33,7 @@ export const SettingsLayout: Component<SettingsLayoutProps> = (props) => {
       href: getRelativeLocaleUrl("/dashboard/settings/security"),
       active: props.activeTab === "security"
     }
-  ]
+  ];
 
   return (
     <DashboardLayout title={props.title || "Settings"}>
@@ -66,7 +66,7 @@ export const SettingsLayout: Component<SettingsLayoutProps> = (props) => {
         </div>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default SettingsLayout
+export default SettingsLayout;

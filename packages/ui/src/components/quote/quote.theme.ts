@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const quoteTheme = defineTheme("quote", {
   slots: ["root", "icon", "quote", "caption"],
@@ -11,4 +11,4 @@ export const quoteTheme = defineTheme("quote", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

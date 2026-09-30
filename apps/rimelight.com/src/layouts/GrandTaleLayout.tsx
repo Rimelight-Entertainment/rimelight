@@ -1,19 +1,19 @@
-import type { Component, ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
-import AppLayout from "./AppLayout"
-import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader"
-import { currentLocale } from "@rimelight/i18n"
+import type { Component, ParentProps } from "solid-js";
+import { useParams } from "@solidjs/router";
+import AppLayout from "./AppLayout";
+import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
+import { currentLocale } from "@rimelight/i18n";
 
 export interface GrandTaleLayoutProps extends ParentProps {
-  title?: string | undefined
-  description?: string | undefined
-  favicon?: string | undefined
+  title?: string | undefined;
+  description?: string | undefined;
+  favicon?: string | undefined;
 }
 
 export const GrandTaleLayout: Component<GrandTaleLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   return (
@@ -25,7 +25,7 @@ export const GrandTaleLayout: Component<GrandTaleLayoutProps> = (props) => {
       <GrandTaleHeader />
       <div class="bg-grand-tale-primary-900 min-h-screen">{props.children}</div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default GrandTaleLayout
+export default GrandTaleLayout;

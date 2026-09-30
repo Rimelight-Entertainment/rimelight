@@ -1,37 +1,37 @@
-import type { Theme, ThemeColor } from "../../types"
+import type { Theme, ThemeColor } from "../../types";
 
 export interface CalloutProps {
   /**
    * The visual variant of the callout.
    */
-  variant?: "default" | "destructive" | "outline" | "solid" | "soft" | "subtle"
+  variant?: "default" | "destructive" | "outline" | "solid" | "soft" | "subtle";
   /**
    * The color scheme of the callout.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * The main title text of the callout.
    */
-  title?: string
+  title?: string;
   /**
    * The secondary description text of the callout.
    */
-  description?: string
+  description?: string;
   /**
    * An optional leading icon.
    */
-  icon?: string
+  icon?: string;
   /**
    * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

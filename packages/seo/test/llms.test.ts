@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vite-plus/test"
-import { buildLlmsTxt, buildLlmsFullTxt } from "../src/llms.js"
+import { describe, expect, it } from "vite-plus/test";
+import { buildLlmsTxt, buildLlmsFullTxt } from "../src/llms.js";
 
 describe("seo-llms", () => {
   it("builds standard /llms.txt with sections and pages", () => {
@@ -22,20 +22,20 @@ describe("seo-llms", () => {
           section: "Overview"
         }
       ]
-    })
+    });
 
-    expect(output).toContain("# Rimelight Documentation")
+    expect(output).toContain("# Rimelight Documentation");
     expect(output).toContain(
       "Full corpus (all pages, one document): https://rimelight.com/llms-full.txt"
-    )
-    expect(output).toContain("### Overview")
+    );
+    expect(output).toContain("### Overview");
     expect(output).toContain(
       "- [Introduction](https://rimelight.com/en/docs/overview/introduction.md) — Getting started guide"
-    )
+    );
     expect(output).toContain(
       "- [Architecture](https://rimelight.com/en/docs/overview/architecture.md)"
-    )
-  })
+    );
+  });
 
   it("builds full corpus /llms-full.txt", () => {
     const output = buildLlmsFullTxt({
@@ -50,12 +50,12 @@ describe("seo-llms", () => {
           markdown: "Run `vp dev` to start the development server."
         }
       ]
-    })
+    });
 
-    expect(output).toContain("# Rimelight Docs — Full Documentation Corpus")
-    expect(output).toContain("## Quickstart")
-    expect(output).toContain("URL: https://rimelight.com/en/docs/quickstart")
-    expect(output).toContain("Version: v1")
-    expect(output).toContain("Run `vp dev` to start the development server.")
-  })
-})
+    expect(output).toContain("# Rimelight Docs — Full Documentation Corpus");
+    expect(output).toContain("## Quickstart");
+    expect(output).toContain("URL: https://rimelight.com/en/docs/quickstart");
+    expect(output).toContain("Version: v1");
+    expect(output).toContain("Run `vp dev` to start the development server.");
+  });
+});

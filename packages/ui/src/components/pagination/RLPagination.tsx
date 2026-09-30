@@ -1,15 +1,15 @@
-import { createMemo, omit, For, type Component } from "solid-js"
-import type { PaginationProps } from "./pagination"
-import { paginationTheme } from "./pagination.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, For, type Component } from "solid-js";
+import type { PaginationProps } from "./pagination";
+import { paginationTheme } from "./pagination.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLPaginationProps extends PaginationProps {
-  page?: number
-  onPageChange?: (page: number) => void
+  page?: number;
+  onPageChange?: (page: number) => void;
 }
 
 const RLPagination: Component<RLPaginationProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "currentPage",
@@ -19,40 +19,40 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
     "onPageChange",
     "ui",
     "class"
-  )
+  );
 
-  const currentPage = () => props.page ?? props.currentPage ?? 1
-  const totalPages = () => props.totalPages ?? 1
+  const currentPage = () => props.page ?? props.currentPage ?? 1;
+  const totalPages = () => props.totalPages ?? 1;
 
   const resolvedClasses = createMemo(() =>
     paginationTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const pageNumbers = createMemo<(number | "ellipsis")[]>(() => {
-    const total = totalPages()
-    const current = currentPage()
-    const pages: (number | "ellipsis")[] = []
-    const maxVisible = 5
+    const total = totalPages();
+    const current = currentPage();
+    const pages: (number | "ellipsis")[] = [];
+    const maxVisible = 5;
     if (total <= maxVisible) {
-      for (let i = 1; i <= total; i++) pages.push(i)
+      for (let i = 1; i <= total; i++) pages.push(i);
     } else {
-      pages.push(1)
-      if (current > 3) pages.push("ellipsis")
-      const start = Math.max(2, current - 1)
-      const end = Math.min(total - 1, current + 1)
+      pages.push(1);
+      if (current > 3) pages.push("ellipsis");
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
       for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) pages.push(i)
+        if (!pages.includes(i)) pages.push(i);
       }
-      if (current < total - 2) pages.push("ellipsis")
-      if (!pages.includes(total)) pages.push(total)
+      if (current < total - 2) pages.push("ellipsis");
+      if (!pages.includes(total)) pages.push(total);
     }
-    return pages
-  })
+    return pages;
+  });
 
-  const itemLinkClasses = (isActive: boolean) => paginationTheme({ active: isActive }).link
+  const itemLinkClasses = (isActive: boolean) => paginationTheme({ active: isActive }).link;
 
   return (
     <nav
@@ -70,7 +70,7 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
             aria-disabled={currentPage() === 1 ? "true" : "false"}
             disabled={currentPage() === 1}
             onClick={() => {
-              props.onPageChange?.(currentPage() - 1)
+              props.onPageChange?.(currentPage() - 1);
             }}
           >
             <RLIcon name="chevronLeft" size="sm" aria-hidden="true" />
@@ -90,7 +90,7 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
                   class={itemLinkClasses(p === currentPage())}
                   aria-current={p === currentPage() ? "page" : undefined}
                   onClick={() => {
-                    if (typeof p === "number") props.onPageChange?.(p)
+                    if (typeof p === "number") props.onPageChange?.(p);
                   }}
                 >
                   {p}
@@ -108,7 +108,7 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
             aria-disabled={currentPage() === totalPages() ? "true" : "false"}
             disabled={currentPage() === totalPages()}
             onClick={() => {
-              props.onPageChange?.(currentPage() + 1)
+              props.onPageChange?.(currentPage() + 1);
             }}
           >
             <RLIcon name="chevronRight" size="sm" aria-hidden="true" />
@@ -116,7 +116,7 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
         </li>
       </ul>
     </nav>
-  )
-}
+  );
+};
 
-export { RLPagination }
+export { RLPagination };

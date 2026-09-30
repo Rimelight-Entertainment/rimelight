@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const watermarkTheme = defineTheme("watermark", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const watermarkTheme = defineTheme("watermark", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

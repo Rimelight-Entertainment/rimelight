@@ -1,5 +1,5 @@
-import type { ThemeColor } from "../../types"
-import type { ChipProps } from "../chip/chip"
+import type { ThemeColor } from "../../types";
+import type { ChipProps } from "../chip/chip";
 
 export interface AvatarProps {
   /**
@@ -7,19 +7,19 @@ export interface AvatarProps {
    *
    * @default "span"
    */
-  as?: any
-  src?: string | undefined
-  alt?: string | undefined
-  icon?: any
-  text?: string | undefined
+  as?: any;
+  src?: string | undefined;
+  alt?: string | undefined;
+  icon?: any;
+  text?: string | undefined;
   /**
    * Fallback text (alias for text / initials).
    */
-  fallback?: string | undefined
+  fallback?: string | undefined;
   /**
    * Compact initials displayed inside the avatar (alias for text / fallback).
    */
-  initials?: string | undefined
+  initials?: string | undefined;
   /**
    * Avatar size.
    *
@@ -45,7 +45,7 @@ export interface AvatarProps {
     | "11xl"
     | "12xl"
     | (string & {})
-    | undefined
+    | undefined;
   /**
    * Color variant.
    *
@@ -60,12 +60,12 @@ export interface AvatarProps {
     | "warning"
     | "neutral"
     | ThemeColor
-    | undefined
-  chip?: boolean | ChipProps | undefined
-  badge?: boolean | string | number | undefined
-  badgeColor?: string | undefined
-  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined
-  loading?: "lazy" | "eager" | undefined
+    | undefined;
+  chip?: boolean | ChipProps | undefined;
+  badge?: boolean | string | number | undefined;
+  badgeColor?: string | undefined;
+  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined;
+  loading?: "lazy" | "eager" | undefined;
   referrerpolicy?:
     | ""
     | "no-referrer"
@@ -76,42 +76,42 @@ export interface AvatarProps {
     | "strict-origin"
     | "strict-origin-when-cross-origin"
     | "unsafe-url"
-    | undefined
-  crossorigin?: "" | "anonymous" | "use-credentials" | undefined
-  decoding?: "async" | "auto" | "sync" | undefined
-  height?: string | number | undefined
-  width?: string | number | undefined
-  sizes?: string | undefined
-  srcset?: string | undefined
-  usemap?: string | undefined
+    | undefined;
+  crossorigin?: "" | "anonymous" | "use-credentials" | undefined;
+  decoding?: "async" | "auto" | "sync" | undefined;
+  height?: string | number | undefined;
+  width?: string | number | undefined;
+  sizes?: string | undefined;
+  srcset?: string | undefined;
+  usemap?: string | undefined;
   /**
    * Display name rendered adjacent to the avatar (e.g. "Daniel Marchi")
    */
-  title?: string | undefined
+  title?: string | undefined;
   /**
    * Secondary description rendered below the title (e.g. "Lead Developer")
    */
-  subtitle?: string | undefined
+  subtitle?: string | undefined;
   /**
    * Accessible aria-label fallback for screen readers when avatar is purely visual
    */
-  label?: string
+  label?: string;
   /**
    * Slot-specific CSS class overrides.
    */
   ui?: {
-    root?: any
-    image?: any
-    fallback?: any
-    icon?: any
-    badge?: any
-    wrapper?: any
-    title?: any
-    subtitle?: any
-  }
+    root?: any;
+    image?: any;
+    fallback?: any;
+    icon?: any;
+    badge?: any;
+    wrapper?: any;
+    title?: any;
+    subtitle?: any;
+  };
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

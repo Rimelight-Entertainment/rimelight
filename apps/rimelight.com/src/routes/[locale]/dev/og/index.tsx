@@ -1,12 +1,12 @@
-import { type Component, For, createSignal } from "solid-js"
-import BlankLayout from "#layouts/BlankLayout"
+import { type Component, For, createSignal } from "solid-js";
+import BlankLayout from "#layouts/BlankLayout";
 
 interface PageItem {
-  label: string
-  title: string
-  description: string
-  type: string
-  isDocs: boolean
+  label: string;
+  title: string;
+  description: string;
+  type: string;
+  isDocs: boolean;
 }
 
 const pages: PageItem[] = [
@@ -59,7 +59,7 @@ const pages: PageItem[] = [
     type: "Profile",
     isDocs: false
   }
-]
+];
 
 function ogUrl(page: PageItem) {
   const params = new URLSearchParams({
@@ -67,30 +67,30 @@ function ogUrl(page: PageItem) {
     description: page.description,
     ...(page.type ? { type: page.type } : {}),
     ...(page.isDocs ? { isDocs: "true" } : {})
-  })
-  return `/open-graph/page.png?${params.toString()}`
+  });
+  return `/open-graph/page.png?${params.toString()}`;
 }
 
 export const DevOgPage: Component = () => {
-  const [sandboxTitle, setSandboxTitle] = createSignal("My Custom Page Title")
-  const [sandboxDesc, setSandboxDesc] = createSignal("A short description of this page.")
-  const [sandboxType, setSandboxType] = createSignal("")
-  const [sandboxDocs, setSandboxDocs] = createSignal(false)
-  const [copiedUrl, setCopiedUrl] = createSignal<string | null>(null)
+  const [sandboxTitle, setSandboxTitle] = createSignal("My Custom Page Title");
+  const [sandboxDesc, setSandboxDesc] = createSignal("A short description of this page.");
+  const [sandboxType, setSandboxType] = createSignal("");
+  const [sandboxDocs, setSandboxDocs] = createSignal(false);
+  const [copiedUrl, setCopiedUrl] = createSignal<string | null>(null);
 
   const sandboxUrl = () => {
-    const params = new URLSearchParams({ title: sandboxTitle(), description: sandboxDesc() })
-    if (sandboxType()) params.set("type", sandboxType())
-    if (sandboxDocs()) params.set("isDocs", "true")
-    return `/open-graph/page.png?${params.toString()}`
-  }
+    const params = new URLSearchParams({ title: sandboxTitle(), description: sandboxDesc() });
+    if (sandboxType()) params.set("type", sandboxType());
+    if (sandboxDocs()) params.set("isDocs", "true");
+    return `/open-graph/page.png?${params.toString()}`;
+  };
 
   const copyUrl = async (url: string) => {
-    const full = new URL(url, window.location.origin).toString()
-    await navigator.clipboard.writeText(full)
-    setCopiedUrl(url)
-    setTimeout(() => setCopiedUrl(null), 2000)
-  }
+    const full = new URL(url, window.location.origin).toString();
+    await navigator.clipboard.writeText(full);
+    setCopiedUrl(url);
+    setTimeout(() => setCopiedUrl(null), 2000);
+  };
 
   return (
     <BlankLayout title="OG Image Preview" description="Preview Open Graph images for all pages">
@@ -108,8 +108,8 @@ export const DevOgPage: Component = () => {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <For each={pages}>
             {(page) => {
-              const url = ogUrl(page)
-              const isCopied = () => copiedUrl() === url
+              const url = ogUrl(page);
+              const isCopied = () => copiedUrl() === url;
               return (
                 <article class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
                   <div class="flex items-center gap-3 px-5 py-3">
@@ -148,7 +148,7 @@ export const DevOgPage: Component = () => {
                       onClick={() => copyUrl(url)}
                       class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-md text-xs font-medium text-neutral-200 transition-colors"
                       style={{
-                        "color": isCopied() ? "#4ade80" : undefined,
+                        color: isCopied() ? "#4ade80" : undefined,
                         "border-color": isCopied() ? "rgba(74, 222, 128, 0.4)" : undefined
                       }}
                     >
@@ -156,7 +156,7 @@ export const DevOgPage: Component = () => {
                     </button>
                   </div>
                 </article>
-              )
+              );
             }}
           </For>
         </div>
@@ -217,7 +217,7 @@ export const DevOgPage: Component = () => {
         </section>
       </main>
     </BlankLayout>
-  )
-}
+  );
+};
 
-export default DevOgPage
+export default DevOgPage;

@@ -1,55 +1,55 @@
-import { For, onSettled, omit, type Component } from "solid-js"
-import { toasts, removeToast, addToast, type ToastItem } from "../toast/store"
-import { RLToast } from "../toast/RLToast"
+import { For, onSettled, omit, type Component } from "solid-js";
+import { toasts, removeToast, addToast, type ToastItem } from "../toast/store";
+import { RLToast } from "../toast/RLToast";
 
 export interface RLToasterProps {
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }
 
 const RLToaster: Component<RLToasterProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "class")
+  const props = allProps;
+  const rest = omit(allProps, "class");
 
   onSettled(() => {
-    const stored = sessionStorage.getItem("pending_toast")
+    const stored = sessionStorage.getItem("pending_toast");
     if (stored) {
-      sessionStorage.removeItem("pending_toast")
+      sessionStorage.removeItem("pending_toast");
       try {
-        const parsed = JSON.parse(stored)
+        const parsed = JSON.parse(stored);
         if (parsed && parsed.title) {
-          addToast(parsed)
+          addToast(parsed);
         }
       } catch {}
     }
 
-    const url = new URL(window.location.href)
-    let toastTitle = url.searchParams.get("toast_title")
-    const toastDesc = url.searchParams.get("toast_desc") ?? undefined
-    let toastVariant = url.searchParams.get("toast_variant") || "success"
+    const url = new URL(window.location.href);
+    let toastTitle = url.searchParams.get("toast_title");
+    const toastDesc = url.searchParams.get("toast_desc") ?? undefined;
+    let toastVariant = url.searchParams.get("toast_variant") || "success";
 
     if (!toastTitle) {
       if (url.searchParams.has("signed_in")) {
-        toastTitle = "Signed in successfully"
+        toastTitle = "Signed in successfully";
       } else if (url.searchParams.has("new")) {
-        toastTitle = "Account created successfully"
+        toastTitle = "Account created successfully";
       }
     }
 
     if (toastTitle) {
-      url.searchParams.delete("toast_title")
-      url.searchParams.delete("toast_desc")
-      url.searchParams.delete("toast_variant")
-      url.searchParams.delete("signed_in")
-      url.searchParams.delete("new")
-      const cleanUrl = url.pathname + (url.search ? url.search : "")
-      window.history.replaceState({}, "", cleanUrl)
+      url.searchParams.delete("toast_title");
+      url.searchParams.delete("toast_desc");
+      url.searchParams.delete("toast_variant");
+      url.searchParams.delete("signed_in");
+      url.searchParams.delete("new");
+      const cleanUrl = url.pathname + (url.search ? url.search : "");
+      window.history.replaceState({}, "", cleanUrl);
 
-      const payload: Record<string, unknown> = { title: toastTitle, variant: toastVariant }
-      if (toastDesc) payload["description"] = toastDesc
-      addToast(payload as Omit<ToastItem, "id">)
+      const payload: Record<string, unknown> = { title: toastTitle, variant: toastVariant };
+      if (toastDesc) payload["description"] = toastDesc;
+      addToast(payload as Omit<ToastItem, "id">);
     }
-  })
+  });
 
   return (
     <div
@@ -72,7 +72,7 @@ const RLToaster: Component<RLToasterProps> = (allProps) => {
         )}
       </For>
     </div>
-  )
-}
+  );
+};
 
-export { RLToaster }
+export { RLToaster };

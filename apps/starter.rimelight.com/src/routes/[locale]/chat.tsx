@@ -1,27 +1,27 @@
-import { type Component, createSignal, onSettled, onCleanup, For, Show } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import { t } from "@rimelight/i18n"
+import { type Component, createSignal, onSettled, onCleanup, For, Show } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import { t } from "@rimelight/i18n";
 
 interface ChatMsgPayload {
-  id: string
-  type: "message" | "join" | "leave" | "presence"
-  userId: string
-  username: string
-  content?: string
-  timestamp: number
+  id: string;
+  type: "message" | "join" | "leave" | "presence";
+  userId: string;
+  username: string;
+  content?: string;
+  timestamp: number;
 }
 
 interface PresenceUser {
-  userId: string
-  username: string
+  userId: string;
+  username: string;
 }
 
 interface HistoryPayload {
-  type: "history"
-  messages: ChatMsgPayload[]
+  type: "history";
+  messages: ChatMsgPayload[];
 }
 
-type ServerMessage = ChatMsgPayload | HistoryPayload
+type ServerMessage = ChatMsgPayload | HistoryPayload;
 
 const COLORS = [
   "from-red-500 to-rose-600",
@@ -32,32 +32,32 @@ const COLORS = [
   "from-pink-500 to-fuchsia-600",
   "from-teal-500 to-cyan-600",
   "from-orange-500 to-red-600"
-]
+];
 
 function getAvatarGradientClass(name: string): string {
-  let hash = 0
+  let hash = 0;
   for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const index = Math.abs(hash) % COLORS.length
-  return COLORS[index] ?? "from-blue-500 to-indigo-600"
+  const index = Math.abs(hash) % COLORS.length;
+  return COLORS[index] ?? "from-blue-500 to-indigo-600";
 }
 
 export const ChatPage: Component = () => {
-  const [activeChannel, setActiveChannel] = createSignal("general")
-  const [userId, setUserId] = createSignal("")
-  const [nickname, setNickname] = createSignal("")
-  const [showNickModal, setShowNickModal] = createSignal(false)
-  const [nickInputValue, setNickInputValue] = createSignal("")
-  const [messageInput, setMessageInput] = createSignal("")
+  const [activeChannel, setActiveChannel] = createSignal("general");
+  const [userId, setUserId] = createSignal("");
+  const [nickname, setNickname] = createSignal("");
+  const [showNickModal, setShowNickModal] = createSignal(false);
+  const [nickInputValue, setNickInputValue] = createSignal("");
+  const [messageInput, setMessageInput] = createSignal("");
   const [status, setStatus] = createSignal<"connecting" | "connected" | "disconnected">(
     "connecting"
-  )
-  const [messages, setMessages] = createSignal<ChatMsgPayload[]>([])
-  const [presenceUsers, setPresenceUsers] = createSignal<PresenceUser[]>([])
+  );
+  const [messages, setMessages] = createSignal<ChatMsgPayload[]>([]);
+  const [presenceUsers, setPresenceUsers] = createSignal<PresenceUser[]>([]);
 
-  let socket: WebSocket | null = null
-  let messagesContainerRef!: HTMLDivElement
+  let socket: WebSocket | null = null;
+  let messagesContainerRef!: HTMLDivElement;
 
   const scrollToBottom = () => {
     if (messagesContainerRef) {
@@ -65,116 +65,116 @@ export const ChatPage: Component = () => {
         messagesContainerRef?.scrollTo({
           top: messagesContainerRef.scrollHeight,
           behavior: "smooth"
-        })
-      }, 50)
+        });
+      }, 50);
     }
-  }
+  };
 
   const connectWebSocket = () => {
-    if (typeof window === "undefined") return
+    if (typeof window === "undefined") return;
     if (socket) {
-      socket.close(1000, "Reconnecting with new settings")
+      socket.close(1000, "Reconnecting with new settings");
     }
 
-    setStatus("connecting")
-    const uId = userId()
-    const nick = nickname()
-    if (!nick) return
+    setStatus("connecting");
+    const uId = userId();
+    const nick = nickname();
+    if (!nick) return;
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    const socketUrl = `${protocol}//${window.location.host}/api/chat/${activeChannel()}?userId=${encodeURIComponent(uId)}&username=${encodeURIComponent(nick)}`
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const socketUrl = `${protocol}//${window.location.host}/api/chat/${activeChannel()}?userId=${encodeURIComponent(uId)}&username=${encodeURIComponent(nick)}`;
 
-    socket = new WebSocket(socketUrl)
+    socket = new WebSocket(socketUrl);
 
     socket.addEventListener("open", () => {
-      setStatus("connected")
-    })
+      setStatus("connected");
+    });
 
     socket.addEventListener("message", (event) => {
       try {
-        const data: ServerMessage = JSON.parse(event.data)
+        const data: ServerMessage = JSON.parse(event.data);
         if (data.type === "history") {
-          setMessages((data as HistoryPayload).messages || [])
-          scrollToBottom()
+          setMessages((data as HistoryPayload).messages || []);
+          scrollToBottom();
         } else if (data.type === "message" || data.type === "join" || data.type === "leave") {
-          setMessages((prev) => [...prev, data as ChatMsgPayload])
-          scrollToBottom()
+          setMessages((prev) => [...prev, data as ChatMsgPayload]);
+          scrollToBottom();
         } else if (data.type === "presence") {
-          const payload = data as any
-          setPresenceUsers(payload.users || [])
+          const payload = data as any;
+          setPresenceUsers(payload.users || []);
         }
       } catch (err) {
-        console.error("Error parsing WebSocket message:", err)
+        console.error("Error parsing WebSocket message:", err);
       }
-    })
+    });
 
     socket.addEventListener("close", (event) => {
-      setStatus("disconnected")
+      setStatus("disconnected");
       if (event.code !== 1000) {
-        setTimeout(connectWebSocket, 3000)
+        setTimeout(connectWebSocket, 3000);
       }
-    })
+    });
 
     socket.addEventListener("error", () => {
-      setStatus("disconnected")
-    })
-  }
+      setStatus("disconnected");
+    });
+  };
 
   onSettled(() => {
-    if (typeof window === "undefined") return
-    let id = localStorage.getItem("chat_user_id")
+    if (typeof window === "undefined") return;
+    let id = localStorage.getItem("chat_user_id");
     if (!id) {
-      id = crypto.randomUUID()
-      localStorage.setItem("chat_user_id", id)
+      id = crypto.randomUUID();
+      localStorage.setItem("chat_user_id", id);
     }
-    setUserId(id)
+    setUserId(id);
 
-    const savedNick = localStorage.getItem("chat_nickname")
+    const savedNick = localStorage.getItem("chat_nickname");
     if (!savedNick) {
-      setShowNickModal(true)
+      setShowNickModal(true);
     } else {
-      setNickname(savedNick)
-      connectWebSocket()
+      setNickname(savedNick);
+      connectWebSocket();
     }
-  })
+  });
 
   onCleanup(() => {
     if (socket) {
-      socket.close(1000, "Component unmounted")
+      socket.close(1000, "Component unmounted");
     }
-  })
+  });
 
   const handleNicknameSubmit = (e: Event) => {
-    e.preventDefault()
-    const entered = nickInputValue().trim()
+    e.preventDefault();
+    const entered = nickInputValue().trim();
     if (entered) {
-      setNickname(entered)
-      localStorage.setItem("chat_nickname", entered)
-      setShowNickModal(false)
-      connectWebSocket()
+      setNickname(entered);
+      localStorage.setItem("chat_nickname", entered);
+      setShowNickModal(false);
+      connectWebSocket();
     }
-  }
+  };
 
   const handleSendMessage = (e: Event) => {
-    e.preventDefault()
-    const content = messageInput().trim()
+    e.preventDefault();
+    const content = messageInput().trim();
     if (content && socket && socket.readyState === WebSocket.OPEN) {
       socket.send(
         JSON.stringify({
           type: "message",
           content
         })
-      )
-      setMessageInput("")
+      );
+      setMessageInput("");
     }
-  }
+  };
 
   const switchChannel = (channel: string) => {
-    if (channel === activeChannel()) return
-    setActiveChannel(channel)
-    setMessages([])
-    connectWebSocket()
-  }
+    if (channel === activeChannel()) return;
+    setActiveChannel(channel);
+    setMessages([]);
+    connectWebSocket();
+  };
 
   return (
     <AppLayout title={t("chat_page.title")} description={t("chat_page.description")}>
@@ -225,8 +225,8 @@ export const ChatPage: Component = () => {
               </div>
               <button
                 onClick={() => {
-                  setNickInputValue(nickname())
-                  setShowNickModal(true)
+                  setNickInputValue(nickname());
+                  setShowNickModal(true);
                 }}
                 class="w-full text-center py-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 bg-white/5 hover:bg-white/10 rounded-md border border-white/5 transition-all cursor-pointer"
               >
@@ -286,7 +286,7 @@ export const ChatPage: Component = () => {
                     const time = new Date(msg.timestamp).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit"
-                    })
+                    });
                     return (
                       <div class="self-center py-1.5 px-3 bg-white/5 rounded-full border border-white/5 text-[10px] text-zinc-400 flex items-center gap-1.5">
                         <span
@@ -298,14 +298,14 @@ export const ChatPage: Component = () => {
                         {msg.type === "join" ? " joined the room " : " left "}
                         <span class="text-zinc-500">{time}</span>
                       </div>
-                    )
+                    );
                   }
 
-                  const isMe = msg.userId === userId()
+                  const isMe = msg.userId === userId();
                   const time = new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit"
-                  })
+                  });
 
                   return (
                     <div
@@ -340,7 +340,7 @@ export const ChatPage: Component = () => {
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 }}
               </For>
             </div>
@@ -384,8 +384,8 @@ export const ChatPage: Component = () => {
               >
                 <For each={presenceUsers()}>
                   {(user) => {
-                    const isMe = user.userId === userId()
-                    const gradient = getAvatarGradientClass(user.username)
+                    const isMe = user.userId === userId();
+                    const gradient = getAvatarGradientClass(user.username);
                     return (
                       <div class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/5 transition-all">
                         <div
@@ -398,7 +398,7 @@ export const ChatPage: Component = () => {
                           {isMe && <span class="text-[9px] text-indigo-400">(you)</span>}
                         </span>
                       </div>
-                    )
+                    );
                   }}
                 </For>
               </Show>
@@ -442,7 +442,7 @@ export const ChatPage: Component = () => {
         </div>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default ChatPage
+export default ChatPage;

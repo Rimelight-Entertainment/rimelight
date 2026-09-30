@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const marqueeTheme = defineTheme("marquee", {
   slots: ["root", "track"],
@@ -22,4 +22,4 @@ export const marqueeTheme = defineTheme("marquee", {
     direction: "left",
     pauseOnHover: true
   }
-})
+});

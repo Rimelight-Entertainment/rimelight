@@ -1,54 +1,54 @@
-import type { BaseBlock } from "./types/blocks"
+import type { BaseBlock } from "./types/blocks";
 
-export type DiffChangeType = "added" | "removed" | "modified" | "unchanged"
+export type DiffChangeType = "added" | "removed" | "modified" | "unchanged";
 
 export interface BlockDiff {
-  blockId: string
-  type: string
-  status: DiffChangeType
-  oldBlock?: BaseBlock
-  newBlock?: BaseBlock
+  blockId: string;
+  type: string;
+  status: DiffChangeType;
+  oldBlock?: BaseBlock;
+  newBlock?: BaseBlock;
   fieldChanges?: {
-    field: string
-    oldValue: any
-    newValue: any
-  }[]
+    field: string;
+    oldValue: any;
+    newValue: any;
+  }[];
 }
 
 export interface PageVersionDiff {
-  blocks: BlockDiff[]
+  blocks: BlockDiff[];
   metaChanges: {
-    field: string
-    oldValue: any
-    newValue: any
-  }[]
+    field: string;
+    oldValue: any;
+    newValue: any;
+  }[];
   summary: {
-    addedCount: number
-    removedCount: number
-    modifiedCount: number
-    unchangedCount: number
-  }
+    addedCount: number;
+    removedCount: number;
+    modifiedCount: number;
+    unchangedCount: number;
+  };
 }
 
 /**
  * Calculates a detailed diff between an old list of blocks and a new list of blocks.
  */
 export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] = []): BlockDiff[] {
-  const diffs: BlockDiff[] = []
-  const oldMap = new Map<string, { block: BaseBlock; index: number }>()
-  const newMap = new Map<string, { block: BaseBlock; index: number }>()
+  const diffs: BlockDiff[] = [];
+  const oldMap = new Map<string, { block: BaseBlock; index: number }>();
+  const newMap = new Map<string, { block: BaseBlock; index: number }>();
 
   oldBlocks.forEach((block, index) => {
-    oldMap.set(block.id, { block, index })
-  })
+    oldMap.set(block.id, { block, index });
+  });
 
   newBlocks.forEach((block, index) => {
-    newMap.set(block.id, { block, index })
-  })
+    newMap.set(block.id, { block, index });
+  });
 
   // Check new blocks (added or modified/unchanged)
   for (const newBlock of newBlocks) {
-    const oldEntry = oldMap.get(newBlock.id)
+    const oldEntry = oldMap.get(newBlock.id);
 
     if (!oldEntry) {
       diffs.push({
@@ -56,22 +56,22 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
         type: newBlock.type,
         status: "added",
         newBlock
-      })
+      });
     } else {
-      const oldBlock = oldEntry.block
-      const fieldChanges: { field: string; oldValue: any; newValue: any }[] = []
+      const oldBlock = oldEntry.block;
+      const fieldChanges: { field: string; oldValue: any; newValue: any }[] = [];
 
-      const oldProps = (oldBlock as any).props || (oldBlock as any).properties || {}
-      const newProps = (newBlock as any).props || (newBlock as any).properties || {}
+      const oldProps = (oldBlock as any).props || (oldBlock as any).properties || {};
+      const newProps = (newBlock as any).props || (newBlock as any).properties || {};
 
       // Compare properties
-      const allPropKeys = new Set([...Object.keys(oldProps), ...Object.keys(newProps)])
+      const allPropKeys = new Set([...Object.keys(oldProps), ...Object.keys(newProps)]);
 
       for (const key of allPropKeys) {
-        const oldVal = oldProps[key]
-        const newVal = newProps[key]
+        const oldVal = oldProps[key];
+        const newVal = newProps[key];
         if (JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
-          fieldChanges.push({ field: `props.${key}`, oldValue: oldVal, newValue: newVal })
+          fieldChanges.push({ field: `props.${key}`, oldValue: oldVal, newValue: newVal });
         }
       }
 
@@ -83,7 +83,7 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
           oldBlock,
           newBlock,
           fieldChanges
-        })
+        });
       } else {
         diffs.push({
           blockId: newBlock.id,
@@ -91,7 +91,7 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
           status: "unchanged",
           oldBlock,
           newBlock
-        })
+        });
       }
     }
   }
@@ -104,29 +104,29 @@ export function diffBlocks(oldBlocks: BaseBlock[] = [], newBlocks: BaseBlock[] =
         type: oldBlock.type,
         status: "removed",
         oldBlock
-      })
+      });
     }
   }
 
-  return diffs
+  return diffs;
 }
 
 /**
  * Compares two page snapshots (metadata + content blocks).
  */
 export function diffPageSnapshots(oldSnapshot: any, newSnapshot: any): PageVersionDiff {
-  const oldBlocks = oldSnapshot?.content?.blocks || []
-  const newBlocks = newSnapshot?.content?.blocks || []
-  const blockDiffs = diffBlocks(oldBlocks, newBlocks)
+  const oldBlocks = oldSnapshot?.content?.blocks || [];
+  const newBlocks = newSnapshot?.content?.blocks || [];
+  const blockDiffs = diffBlocks(oldBlocks, newBlocks);
 
-  const metaFields = ["title", "slug", "description", "tags", "type", "authorIds", "bylines"]
-  const metaChanges: { field: string; oldValue: any; newValue: any }[] = []
+  const metaFields = ["title", "slug", "description", "tags", "type", "authorIds", "bylines"];
+  const metaChanges: { field: string; oldValue: any; newValue: any }[] = [];
 
   for (const field of metaFields) {
-    const oldVal = oldSnapshot?.[field]
-    const newVal = newSnapshot?.[field]
+    const oldVal = oldSnapshot?.[field];
+    const newVal = newSnapshot?.[field];
     if (JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
-      metaChanges.push({ field, oldValue: oldVal, newValue: newVal })
+      metaChanges.push({ field, oldValue: oldVal, newValue: newVal });
     }
   }
 
@@ -135,11 +135,11 @@ export function diffPageSnapshots(oldSnapshot: any, newSnapshot: any): PageVersi
     removedCount: blockDiffs.filter((d) => d.status === "removed").length,
     modifiedCount: blockDiffs.filter((d) => d.status === "modified").length,
     unchangedCount: blockDiffs.filter((d) => d.status === "unchanged").length
-  }
+  };
 
   return {
     blocks: blockDiffs,
     metaChanges,
     summary
-  }
+  };
 }

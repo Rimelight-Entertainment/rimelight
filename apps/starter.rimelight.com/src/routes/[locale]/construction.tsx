@@ -1,18 +1,18 @@
-import { type Component, Show } from "solid-js"
-import { useSearchParams } from "@solidjs/router"
-import BlankLayout from "#layouts/BlankLayout"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx"
-import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx"
-import { t } from "@rimelight/i18n"
+import { type Component, Show } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
+import BlankLayout from "#layouts/BlankLayout";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
+import { t } from "@rimelight/i18n";
 
 export const ConstructionPage: Component = () => {
-  const [searchParams] = useSearchParams()
-  const redirect = () => searchParams["redirect"] || "/"
-  const isError = () => searchParams["error"] === "invalid"
+  const [searchParams] = useSearchParams();
+  const redirect = () => searchParams["redirect"] || "/";
+  const isError = () => searchParams["error"] === "invalid";
 
   return (
     <BlankLayout
@@ -72,7 +72,7 @@ export const ConstructionPage: Component = () => {
         </div>
       </div>
     </BlankLayout>
-  )
-}
+  );
+};
 
-export default ConstructionPage
+export default ConstructionPage;

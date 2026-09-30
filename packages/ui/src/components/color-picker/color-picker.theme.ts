@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const colorPickerTheme = defineTheme("color-picker", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const colorPickerTheme = defineTheme("color-picker", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

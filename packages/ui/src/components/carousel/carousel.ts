@@ -1,25 +1,25 @@
 export interface CarouselSlide {
-  imageSrc?: string
-  title?: string
-  description?: string
+  imageSrc?: string;
+  title?: string;
+  description?: string;
 }
 
 export interface CarouselProps {
   /**
    * The list of slide items to render.
    */
-  slides?: CarouselSlide[]
+  slides?: CarouselSlide[];
   /**
    * Controlled autoplay.
    */
-  autoplay?: boolean
+  autoplay?: boolean;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

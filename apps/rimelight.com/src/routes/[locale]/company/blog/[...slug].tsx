@@ -1,56 +1,56 @@
-import { type Component, Show } from "solid-js"
-import { useParams } from "@solidjs/router"
-import { createAsyncData } from "#utils/async"
-import AppLayout from "#layouts/AppLayout"
-import PageRenderer from "#components/cms/PageRenderer"
-import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx"
-import { getLocale } from "@rimelight/i18n"
+import { type Component, Show } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { createAsyncData } from "#utils/async";
+import AppLayout from "#layouts/AppLayout";
+import PageRenderer from "#components/cms/PageRenderer";
+import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
+import { getLocale } from "@rimelight/i18n";
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>
-    return record[locale] || record["en"] || ""
+    const record = val as Record<string, string>;
+    return record[locale] || record["en"] || "";
   }
-  return typeof val === "string" ? val : ""
+  return typeof val === "string" ? val : "";
 }
 
 export const BlogPostPage: Component = () => {
-  const params = useParams<{ locale: string; slug?: string }>()
-  const activeLocale = () => getLocale()
+  const params = useParams<{ locale: string; slug?: string }>();
+  const activeLocale = () => getLocale();
 
   const pageData = createAsyncData(
     () => params.slug,
     async (slug) => {
-      if (!slug) return null
+      if (!slug) return null;
       try {
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=blog`)
-        if (!res.ok) return null
-        return (await res.json()) as any
+        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=blog`);
+        if (!res.ok) return null;
+        return (await res.json()) as any;
       } catch {
-        return null
+        return null;
       }
     },
     null
-  )
+  );
 
   const docBlocks = () => {
-    const p = pageData()
-    if (!p) return []
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {}
-    return content.blocks || []
-  }
+    const p = pageData();
+    if (!p) return [];
+    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
+    return content.blocks || [];
+  };
 
   const title = () => {
-    const p = pageData()
-    return p ? getLocalizedText(p.title, activeLocale()) || "Blog Post" : "Blog Post"
-  }
+    const p = pageData();
+    return p ? getLocalizedText(p.title, activeLocale()) || "Blog Post" : "Blog Post";
+  };
 
   const description = () => {
-    const p = pageData()
-    if (!p) return ""
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {}
-    return getLocalizedText(p.description, activeLocale()) || content.properties?.description || ""
-  }
+    const p = pageData();
+    if (!p) return "";
+    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
+    return getLocalizedText(p.description, activeLocale()) || content.properties?.description || "";
+  };
 
   return (
     <AppLayout title={title()} description={description()}>
@@ -73,7 +73,7 @@ export const BlogPostPage: Component = () => {
         </article>
       </Show>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default BlogPostPage
+export default BlogPostPage;

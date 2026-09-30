@@ -1,40 +1,40 @@
-import type { ThemeColor } from "../../types"
+import type { ThemeColor } from "../../types";
 export interface FileUploadProps {
   /**
    * Accepted file types (e.g. 'image/*', 'application/pdf').
    */
-  accept?: string
+  accept?: string;
   /**
    * Allow multiple file selection.
    */
-  multiple?: boolean
+  multiple?: boolean;
   /**
    * Disabled state.
    */
-  disabled?: boolean
+  disabled?: boolean;
   /**
    * Title text shown inside the file upload area.
    */
-  title?: string
+  title?: string;
   /**
    * Description text shown inside.
    */
-  description?: string
+  description?: string;
   /**
    * Icon shown inside.
    */
-  icon?: string
+  icon?: string;
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

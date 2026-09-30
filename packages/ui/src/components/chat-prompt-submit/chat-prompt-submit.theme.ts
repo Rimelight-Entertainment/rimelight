@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const chatPromptSubmitTheme = defineTheme("chat-prompt-submit", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const chatPromptSubmitTheme = defineTheme("chat-prompt-submit", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

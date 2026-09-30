@@ -1,10 +1,10 @@
-import type { EmailMessages } from "#auth/email/messages"
-import { getEmailMessages } from "./messages"
+import type { EmailMessages } from "#auth/email/messages";
+import { getEmailMessages } from "./messages";
 
 export interface EmailTemplateProps {
-  bannerAlt?: string
-  common: EmailMessages["common"]
-  contentHtml: string
+  bannerAlt?: string;
+  common: EmailMessages["common"];
+  contentHtml: string;
 }
 
 export function renderEmailTemplate({
@@ -12,8 +12,8 @@ export function renderEmailTemplate({
   common,
   contentHtml
 }: EmailTemplateProps): string {
-  const bannerSrc = "https://cdn.rimelight.com/Images/email-banner.webp"
-  const year = new Date().getFullYear()
+  const bannerSrc = "https://cdn.rimelight.com/Images/email-banner.webp";
+  const year = new Date().getFullYear();
 
   return `<!DOCTYPE html>
 <html>
@@ -50,11 +50,11 @@ export function renderEmailTemplate({
     </tr>
   </table>
 </body>
-</html>`
+</html>`;
 }
 
 export async function renderVerificationEmail(url: string, locale = "en"): Promise<string> {
-  const messages = getEmailMessages(locale)
+  const messages = getEmailMessages(locale);
   const contentHtml = `
   <div style="font-family: Arial, sans-serif; color: #333;">
     <h1 style="color: #333; font-size: 22px; margin-bottom: 16px;">${messages.verification.title}</h1>
@@ -71,17 +71,17 @@ export async function renderVerificationEmail(url: string, locale = "en"): Promi
     <p style="word-break: break-all; color: #9ca3af; font-size: 11px; font-family: monospace; background: #f3f4f6; padding: 8px; border-radius: 4px;">
       ${url}
     </p>
-  </div>`
+  </div>`;
 
   return renderEmailTemplate({
     bannerAlt: "Verify your email",
     common: messages.common,
     contentHtml
-  })
+  });
 }
 
 export async function renderPasswordResetEmail(url: string, locale = "en"): Promise<string> {
-  const messages = getEmailMessages(locale)
+  const messages = getEmailMessages(locale);
   const contentHtml = `
   <div style="font-family: Arial, sans-serif; color: #333;">
     <h1 style="color: #333; font-size: 22px; margin-bottom: 16px;">${messages.passwordReset.title}</h1>
@@ -97,20 +97,20 @@ export async function renderPasswordResetEmail(url: string, locale = "en"): Prom
     <p style="color: #888; font-size: 13px; margin-top: 24px; border-top: 1px solid #eee; padding-top: 16px;">
       ${messages.passwordReset.ignore}
     </p>
-  </div>`
+  </div>`;
 
   return renderEmailTemplate({
     bannerAlt: "Reset your Rimelight password",
     common: messages.common,
     contentHtml
-  })
+  });
 }
 
 export async function renderSignupNotificationEmail(
   signInUrl: string,
   locale = "en"
 ): Promise<string> {
-  const messages = getEmailMessages(locale)
+  const messages = getEmailMessages(locale);
   const contentHtml = `
   <div style="font-family: Arial, sans-serif; color: #333;">
     <h1 style="color: #dc2626; font-size: 22px; margin-bottom: 16px;">${messages.signupNotification.title}</h1>
@@ -123,13 +123,13 @@ export async function renderSignupNotificationEmail(
     <p style="color: #888; font-size: 13px; margin-top: 24px; border-top: 1px solid #eee; padding-top: 16px;">
       ${messages.signupNotification.ignore}
     </p>
-  </div>`
+  </div>`;
 
   return renderEmailTemplate({
     bannerAlt: "Rimelight security notice",
     common: messages.common,
     contentHtml
-  })
+  });
 }
 
 export async function renderContactEmail({
@@ -138,12 +138,12 @@ export async function renderContactEmail({
   subject,
   message
 }: {
-  name: string
-  email: string
-  subject?: string
-  message: string
+  name: string;
+  email: string;
+  subject?: string;
+  message: string;
 }): Promise<string> {
-  const messages = getEmailMessages()
+  const messages = getEmailMessages();
   const contentHtml = `
   <div style="font-family: Arial, sans-serif; color: #333;">
     <h1 style="color: #111; font-size: 22px; margin-bottom: 16px;">New Contact Message</h1>
@@ -168,11 +168,11 @@ export async function renderContactEmail({
     <div style="white-space: pre-wrap; font-family: inherit; font-size: 15px; line-height: 1.6; color: #1f2937; background: #ffffff; padding: 16px; border-left: 4px solid #0064d7; border-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
       ${message}
     </div>
-  </div>`
+  </div>`;
 
   return renderEmailTemplate({
     bannerAlt: "Contact Submission",
     common: messages.common,
     contentHtml
-  })
+  });
 }

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const chartTheme = defineTheme("chart", {
   slots: ["root", "title", "container", "svg", "axis", "bar", "line", "tooltip", "legend"],
@@ -16,4 +16,4 @@ export const chartTheme = defineTheme("chart", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

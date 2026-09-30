@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const spoilerTheme = defineTheme("spoiler", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const spoilerTheme = defineTheme("spoiler", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

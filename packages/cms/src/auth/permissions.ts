@@ -3,7 +3,7 @@ export const cmsStatements = {
   template: ["create", "read", "update", "delete", "instantiate"],
   draft: ["checkout", "edit", "release", "force_unlock"],
   version: ["create", "review", "approve", "publish"]
-} as const
+} as const;
 
 export const cmsAc = {
   page: {
@@ -31,10 +31,10 @@ export const cmsAc = {
     approve: ["admin"],
     publish: ["admin"]
   }
-} as const
+} as const;
 
 export interface UserSessionContext {
-  userId: string
-  roles: string[]
-  permissions: string[]
+  userId: string;
+  roles: string[];
+  permissions: string[];
 }

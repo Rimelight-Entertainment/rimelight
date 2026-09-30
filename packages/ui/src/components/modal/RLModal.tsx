@@ -6,25 +6,25 @@ import {
   Show,
   onSettled,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ModalProps } from "./modal"
-import { modalTheme } from "./modal.theme"
-import { RLButton } from "../button/RLButton"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ModalProps } from "./modal";
+import { modalTheme } from "./modal.theme";
+import { RLButton } from "../button/RLButton";
 
 export interface RLModalProps extends ModalProps {
-  onClose?: () => void
-  children?: JSX.Element
-  trigger?: JSX.Element
-  triggerSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  footer?: JSX.Element
-  footerSlot?: JSX.Element
+  onClose?: () => void;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
 }
 
 const RLModal: Component<RLModalProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "open",
@@ -46,58 +46,58 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     "descriptionSlot",
     "footer",
     "footerSlot"
-  )
+  );
 
-  const [internalOpen, setInternalOpen] = createSignal(props.open ?? false)
-  const isControlled = () => props.open !== undefined
-  const isOpen = () => (isControlled() ? !!props.open : internalOpen())
+  const [internalOpen, setInternalOpen] = createSignal(props.open ?? false);
+  const isControlled = () => props.open !== undefined;
+  const isOpen = () => (isControlled() ? !!props.open : internalOpen());
 
   createEffect(
     () => props.open,
     (open) => {
       if (open !== undefined) {
-        setInternalOpen(open)
+        setInternalOpen(open);
       }
     }
-  )
+  );
 
-  const closeOnClickOutside = () => props.closeOnClickOutside !== false
-  const closeOnEscape = () => props.closeOnEscape !== false
-  const unmountOnHide = () => props.unmountOnHide !== false
+  const closeOnClickOutside = () => props.closeOnClickOutside !== false;
+  const closeOnEscape = () => props.closeOnEscape !== false;
+  const unmountOnHide = () => props.unmountOnHide !== false;
 
   const handleClose = () => {
-    if (!isControlled()) setInternalOpen(false)
-    props.onClose?.()
-  }
+    if (!isControlled()) setInternalOpen(false);
+    props.onClose?.();
+  };
 
   const handleOpen = () => {
-    if (!isControlled()) setInternalOpen(true)
-  }
+    if (!isControlled()) setInternalOpen(true);
+  };
 
-  let dialogRef: HTMLDialogElement | undefined
+  let dialogRef: HTMLDialogElement | undefined;
 
   onSettled(() => {
     const handleCancel = (e: Event) => {
-      if (e.target !== dialogRef) return
+      if (e.target !== dialogRef) return;
       if (!closeOnEscape()) {
-        e.preventDefault()
-        return
+        e.preventDefault();
+        return;
       }
-      e.preventDefault()
-      handleClose()
-    }
+      e.preventDefault();
+      handleClose();
+    };
     const handleClick = (e: MouseEvent) => {
       if (closeOnClickOutside() && e.target === dialogRef) {
-        handleClose()
+        handleClose();
       }
-    }
-    document.addEventListener("cancel", handleCancel)
-    document.addEventListener("click", handleClick)
+    };
+    document.addEventListener("cancel", handleCancel);
+    document.addEventListener("click", handleClick);
     return () => {
-      document.removeEventListener("cancel", handleCancel)
-      document.removeEventListener("click", handleClick)
-    }
-  })
+      document.removeEventListener("cancel", handleCancel);
+      document.removeEventListener("click", handleClick);
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     modalTheme({
@@ -105,32 +105,32 @@ const RLModal: Component<RLModalProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   createEffect(
     () => isOpen(),
     (open) => {
-      if (!dialogRef) return
+      if (!dialogRef) return;
       if (open) {
         if (!dialogRef.open && typeof dialogRef.showModal === "function") {
-          dialogRef.showModal()
+          dialogRef.showModal();
           if (props.lockScroll !== false) {
-            document.body.style.overflow = "hidden"
+            document.body.style.overflow = "hidden";
           }
         }
       } else {
         if (dialogRef.open && typeof dialogRef.close === "function") {
-          dialogRef.close()
+          dialogRef.close();
           if (props.lockScroll !== false) {
-            document.body.style.overflow = ""
+            document.body.style.overflow = "";
           }
         }
       }
     }
-  )
+  );
 
-  const triggerContent = () => props.trigger ?? props.triggerSlot
-  const footerContent = () => props.footer ?? props.footerSlot
+  const triggerContent = () => props.trigger ?? props.triggerSlot;
+  const footerContent = () => props.footer ?? props.footerSlot;
 
   return (
     <div class={resolvedClasses().root} data-slot="root">
@@ -199,7 +199,7 @@ const RLModal: Component<RLModalProps> = (allProps) => {
         </dialog>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLModal }
+export { RLModal };

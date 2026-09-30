@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const skeletonTheme = defineTheme("skeleton", {
   slots: ["root"],
@@ -15,4 +15,4 @@ export const skeletonTheme = defineTheme("skeleton", {
   defaultVariants: {
     shape: "rounded"
   }
-})
+});

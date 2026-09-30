@@ -1,13 +1,13 @@
 import {
   BLOG_POST_DEFINITION as BASE_BLOG_POST_DEFINITION,
   DOCUMENT_DEFINITION
-} from "./standardPages"
-import { definePageDefinition } from "./pages"
+} from "./standardPages";
+import { definePageDefinition } from "./pages";
 
 // Use native node crypto to avoid external dependency issues
-import { randomUUID } from "node:crypto"
+import { randomUUID } from "node:crypto";
 
-export { DOCUMENT_DEFINITION }
+export { DOCUMENT_DEFINITION };
 
 export const BLOG_POST_DEFINITION = definePageDefinition({
   ...BASE_BLOG_POST_DEFINITION,
@@ -24,7 +24,7 @@ export const BLOG_POST_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const PATCH_NOTE_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.patchNote",
@@ -42,7 +42,7 @@ export const PATCH_NOTE_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const LOCATION_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.location",
@@ -56,7 +56,7 @@ export const LOCATION_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const SPECIES_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.species",
@@ -79,7 +79,7 @@ export const SPECIES_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const CHARACTER_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.character",
@@ -207,7 +207,7 @@ export const CHARACTER_DEFINITION = definePageDefinition({
       isTemplated: true
     }
   ]
-})
+});
 
 export const SKILL_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.skill",
@@ -227,7 +227,7 @@ export const SKILL_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const ITEM_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.item",
@@ -258,7 +258,7 @@ export const ITEM_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const OBJECT_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.object",
@@ -275,7 +275,7 @@ export const OBJECT_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const GROUP_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.group",
@@ -299,7 +299,7 @@ export const GROUP_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const HERO_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.hero",
@@ -346,13 +346,13 @@ export const HERO_DEFINITION = definePageDefinition({
       isTemplated: true
     }
   ]
-})
+});
 
 export const CARD_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.card",
   properties: {},
   initialBlocks: () => []
-})
+});
 
 export const SERIES_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.series",
@@ -391,23 +391,23 @@ export const SERIES_DEFINITION = definePageDefinition({
       isTemplated: true
     }
   ]
-})
+});
 
 declare global {
   interface RimelightRegisterPageTypes {
-    Document: typeof DOCUMENT_DEFINITION.properties
-    BlogPost: typeof BLOG_POST_DEFINITION.properties
-    PatchNote: typeof PATCH_NOTE_DEFINITION.properties
-    Location: typeof LOCATION_DEFINITION.properties
-    Species: typeof SPECIES_DEFINITION.properties
-    Character: typeof CHARACTER_DEFINITION.properties
-    Skill: typeof SKILL_DEFINITION.properties
-    Item: typeof ITEM_DEFINITION.properties
-    Object: typeof OBJECT_DEFINITION.properties
-    Group: typeof GROUP_DEFINITION.properties
-    Card: typeof CARD_DEFINITION.properties
-    Hero: typeof HERO_DEFINITION.properties
-    Series: typeof SERIES_DEFINITION.properties
+    Document: typeof DOCUMENT_DEFINITION.properties;
+    BlogPost: typeof BLOG_POST_DEFINITION.properties;
+    PatchNote: typeof PATCH_NOTE_DEFINITION.properties;
+    Location: typeof LOCATION_DEFINITION.properties;
+    Species: typeof SPECIES_DEFINITION.properties;
+    Character: typeof CHARACTER_DEFINITION.properties;
+    Skill: typeof SKILL_DEFINITION.properties;
+    Item: typeof ITEM_DEFINITION.properties;
+    Object: typeof OBJECT_DEFINITION.properties;
+    Group: typeof GROUP_DEFINITION.properties;
+    Card: typeof CARD_DEFINITION.properties;
+    Hero: typeof HERO_DEFINITION.properties;
+    Series: typeof SERIES_DEFINITION.properties;
   }
 }
 
@@ -428,4 +428,4 @@ export const PAGE_MAP = {
   Tale: definePageDefinition({ typeLabelKey: "page.type.tale", properties: {} }),
   Episode: definePageDefinition({ typeLabelKey: "page.type.episode", properties: {} }),
   Default: definePageDefinition({ typeLabelKey: "page.type.default", properties: {} })
-}
+};

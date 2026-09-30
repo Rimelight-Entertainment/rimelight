@@ -63,35 +63,35 @@ We introduce a dedicated table to persist dynamic collection schemas:
 
 ```typescript
 // packages/cms/src/schema/content_types.ts
-import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import type { Localized } from "../core/types/pages"
-import type { BaseBlock } from "../core/types/blocks"
+import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import type { Localized } from "../core/types/pages";
+import type { BaseBlock } from "../core/types/blocks";
 
-export type CollectionMode = "document" | "data" | "singleton"
+export type CollectionMode = "document" | "data" | "singleton";
 
 export interface DynamicFieldDefinition {
   type:
-    "text" | "number" | "boolean" | "enum" | "media" | "relation" | "currency" | "array" | "json"
-  label: Localized
-  description?: Localized
-  required?: boolean
-  defaultValue?: any
-  options?: { label: Localized; value: string }[]
-  allowedCollections?: string[] // For relation fields (e.g. ['characters', 'locations'])
+    "text" | "number" | "boolean" | "enum" | "media" | "relation" | "currency" | "array" | "json";
+  label: Localized;
+  description?: Localized;
+  required?: boolean;
+  defaultValue?: any;
+  options?: { label: Localized; value: string }[];
+  allowedCollections?: string[]; // For relation fields (e.g. ['characters', 'locations'])
   validation?: {
-    min?: number
-    max?: number
-    pattern?: string
-  }
+    min?: number;
+    max?: number;
+    pattern?: string;
+  };
 }
 
 export interface EcomSettings {
-  enabled: boolean
-  currencyDefault: string
-  trackInventory: boolean
-  hasVariants: boolean
-  allowDigitalDownloads: boolean
-  stripeSync?: boolean
+  enabled: boolean;
+  currencyDefault: string;
+  trackInventory: boolean;
+  hasVariants: boolean;
+  allowDigitalDownloads: boolean;
+  stripeSync?: boolean;
 }
 
 export const contentTypes = pgTable("content_types", {
@@ -118,7 +118,7 @@ export const contentTypes = pgTable("content_types", {
   isSystem: boolean("is_system").default(false).notNull(), // System types (blog, legal) cannot be deleted
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date())
-})
+});
 ```
 
 ---

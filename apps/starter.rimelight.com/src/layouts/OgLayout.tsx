@@ -1,11 +1,11 @@
-import { type Component, Show } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Title, Meta } from "@solidjs/meta"
+import { type Component, Show } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Title, Meta } from "@solidjs/meta";
 
 export interface OgLayoutProps {
-  title?: string
-  description?: string
-  children?: JSX.Element
+  title?: string;
+  description?: string;
+  children?: JSX.Element;
 }
 
 export const OgLayout: Component<OgLayoutProps> = (props) => {
@@ -22,7 +22,7 @@ export const OgLayout: Component<OgLayoutProps> = (props) => {
         {props.children}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default OgLayout
+export default OgLayout;

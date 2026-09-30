@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout"
-import { RimelightBylinesManager } from "@rimelight/cms/client/components"
+import { type Component } from "solid-js";
+import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout";
+import { RimelightBylinesManager } from "@rimelight/cms/client/components";
 
 export const BylinesPage: Component = () => {
   return (
@@ -13,7 +13,7 @@ export const BylinesPage: Component = () => {
         <RimelightBylinesManager />
       </div>
     </AuthAdminDashboardLayout>
-  )
-}
+  );
+};
 
-export default BylinesPage
+export default BylinesPage;

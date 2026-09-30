@@ -1,4 +1,4 @@
-import { defineDocsConfig } from "@rimelight/cms"
+import { defineDocsConfig } from "@rimelight/cms";
 
 export default defineDocsConfig({
   editLink: {
@@ -1750,4 +1750,4 @@ export default defineDocsConfig({
       }
     ]
   }
-})
+});

@@ -1,44 +1,44 @@
-import { children, createMemo, createSignal, For, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { SplitterProps } from "./splitter"
-import { splitterTheme } from "./splitter.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { children, createMemo, createSignal, For, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { SplitterProps } from "./splitter";
+import { splitterTheme } from "./splitter.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLSplitterProps extends SplitterProps {
-  children?: JSX.Element
-  panels?: JSX.Element[]
+  children?: JSX.Element;
+  panels?: JSX.Element[];
 }
 
 interface DragState {
-  i: number
-  startPos: number
-  startA: number
-  startB: number
+  i: number;
+  startPos: number;
+  startA: number;
+  startB: number;
 }
 
 const RLSplitter: Component<RLSplitterProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "direction", "defaultSizes", "ui", "class", "children", "panels")
+  const props = allProps;
+  const rest = omit(allProps, "direction", "defaultSizes", "ui", "class", "children", "panels");
 
-  const childContent = children(() => props.children)
+  const childContent = children(() => props.children);
 
-  const isHorizontal = () => (props.direction ?? "horizontal") === "horizontal"
+  const isHorizontal = () => (props.direction ?? "horizontal") === "horizontal";
 
   const [sizes, setSizes] = createSignal<number[]>(
     (() => {
-      const ds = props.defaultSizes ?? [50, 50]
-      const totalSize = ds.reduce((s, v) => s + v, 0)
-      return ds.map((s) => (s / (totalSize || 100)) * 100)
+      const ds = props.defaultSizes ?? [50, 50];
+      const totalSize = ds.reduce((s, v) => s + v, 0);
+      return ds.map((s) => (s / (totalSize || 100)) * 100);
     })()
-  )
+  );
 
-  const [drag, setDrag] = createSignal<DragState | null>(null)
-  let rootRef: HTMLDivElement | undefined
+  const [drag, setDrag] = createSignal<DragState | null>(null);
+  let rootRef: HTMLDivElement | undefined;
 
   const panelContents = createMemo<JSX.Element[]>(() => {
-    if (props.panels && props.panels.length > 0) return props.panels
-    return childContent.toArray()
-  })
+    if (props.panels && props.panels.length > 0) return props.panels;
+    return childContent.toArray();
+  });
 
   const resolvedClasses = createMemo(() =>
     splitterTheme({
@@ -46,69 +46,69 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const containerSize = () =>
-    isHorizontal() ? (rootRef?.clientWidth ?? 0) : (rootRef?.clientHeight ?? 0)
+    isHorizontal() ? (rootRef?.clientWidth ?? 0) : (rootRef?.clientHeight ?? 0);
 
   const handlePointerDown = (i: number, e: PointerEvent) => {
-    const current = sizes()
-    if (current[i + 1] === undefined) return
-    e.preventDefault()
-    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+    const current = sizes();
+    if (current[i + 1] === undefined) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     setDrag({
       i,
       startPos: isHorizontal() ? e.clientX : e.clientY,
       startA: current[i] ?? 0,
       startB: current[i + 1] ?? 0
-    })
-  }
+    });
+  };
 
   const handlePointerMove = (i: number, e: PointerEvent) => {
-    const state = drag()
-    if (!state || state.i !== i) return
-    const delta = isHorizontal() ? e.clientX - state.startPos : e.clientY - state.startPos
-    const size = containerSize()
-    if (!size) return
-    const deltaPct = (delta / size) * 100
-    const minPct = (48 / size) * 100
-    const newA = Math.max(minPct, state.startA + deltaPct)
-    const newB = Math.max(minPct, state.startB - deltaPct)
+    const state = drag();
+    if (!state || state.i !== i) return;
+    const delta = isHorizontal() ? e.clientX - state.startPos : e.clientY - state.startPos;
+    const size = containerSize();
+    if (!size) return;
+    const deltaPct = (delta / size) * 100;
+    const minPct = (48 / size) * 100;
+    const newA = Math.max(minPct, state.startA + deltaPct);
+    const newB = Math.max(minPct, state.startB - deltaPct);
     setSizes((prev) => {
-      const next = [...prev]
-      next[state.i] = newA
-      if (next[state.i + 1] !== undefined) next[state.i + 1] = newB
-      return next
-    })
-  }
+      const next = [...prev];
+      next[state.i] = newA;
+      if (next[state.i + 1] !== undefined) next[state.i + 1] = newB;
+      return next;
+    });
+  };
 
   const handlePointerUp = (_i: number, e: PointerEvent) => {
-    if (!drag()) return
+    if (!drag()) return;
     if ((e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId)) {
-      ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
     }
-    setDrag(null)
-  }
+    setDrag(null);
+  };
 
   const handleKeyDown = (i: number, e: KeyboardEvent) => {
-    const current = sizes()
-    if (current[i + 1] === undefined) return
-    const forward = isHorizontal() ? e.key === "ArrowRight" : e.key === "ArrowDown"
-    const backward = isHorizontal() ? e.key === "ArrowLeft" : e.key === "ArrowUp"
-    if (!forward && !backward) return
-    e.preventDefault()
-    const stepPct = 2
-    const delta = forward ? stepPct : -stepPct
-    const next = [...current]
-    const a = (next[i] ?? 0) + delta
-    const b = (next[i + 1] ?? 0) - delta
-    if (a < 0 || b < 0) return
-    next[i] = a
-    if (next[i + 1] !== undefined) next[i + 1] = b
-    setSizes(next)
-  }
+    const current = sizes();
+    if (current[i + 1] === undefined) return;
+    const forward = isHorizontal() ? e.key === "ArrowRight" : e.key === "ArrowDown";
+    const backward = isHorizontal() ? e.key === "ArrowLeft" : e.key === "ArrowUp";
+    if (!forward && !backward) return;
+    e.preventDefault();
+    const stepPct = 2;
+    const delta = forward ? stepPct : -stepPct;
+    const next = [...current];
+    const a = (next[i] ?? 0) + delta;
+    const b = (next[i + 1] ?? 0) - delta;
+    if (a < 0 || b < 0) return;
+    next[i] = a;
+    if (next[i + 1] !== undefined) next[i + 1] = b;
+    setSizes(next);
+  };
 
-  const panelClass = (size: number) => (isHorizontal() ? `w-[${size}%]` : `h-[${size}%]`)
+  const panelClass = (size: number) => (isHorizontal() ? `w-[${size}%]` : `h-[${size}%]`);
 
   return (
     <div
@@ -155,7 +155,7 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
         )}
       </For>
     </div>
-  )
-}
+  );
+};
 
-export { RLSplitter }
+export { RLSplitter };

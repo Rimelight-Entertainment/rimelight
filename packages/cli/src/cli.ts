@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 
-import { parseArgs } from "node:util"
-import { runCreate, runCompare, runUpdate } from "./index"
+import { parseArgs } from "node:util";
+import { runCreate, runCompare, runUpdate } from "./index";
 
 async function main(): Promise<void> {
   const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
     options: {
-      "domain": { type: "string", short: "d" },
-      "git": { type: "boolean", short: "g" },
-      "install": { type: "boolean", short: "i" },
+      domain: { type: "string", short: "d" },
+      git: { type: "boolean", short: "g" },
+      install: { type: "boolean", short: "i" },
       "package-manager": { type: "string" },
-      "help": { type: "boolean", short: "h" },
-      "version": { type: "boolean", short: "v" }
+      help: { type: "boolean", short: "h" },
+      version: { type: "boolean", short: "v" }
     },
     allowPositionals: true,
     strict: false
-  })
+  });
 
   if (values.version) {
-    console.log("rimelight v0.1.0")
-    process.exit(0)
+    console.log("rimelight v0.1.0");
+    process.exit(0);
   }
 
   if (values.help) {
@@ -44,34 +44,34 @@ Options:
   --package-manager     Force a package manager (npm, pnpm, yarn, bun)
   -h, --help            Show this help screen
   -v, --version         Show CLI version
-    `)
-    process.exit(0)
+    `);
+    process.exit(0);
   }
 
-  const command = positionals[0]
+  const command = positionals[0];
 
   if (command === "compare") {
-    const targetDir = positionals[1] || "."
-    await runCompare({ targetDir })
+    const targetDir = positionals[1] || ".";
+    await runCompare({ targetDir });
   } else if (command === "update") {
-    const targetDir = positionals[1] || "."
-    await runUpdate({ targetDir })
+    const targetDir = positionals[1] || ".";
+    await runUpdate({ targetDir });
   } else if (!command || command === "create") {
-    const projectName = command === "create" ? positionals[1] : positionals[0]
+    const projectName = command === "create" ? positionals[1] : positionals[0];
     await runCreate({
       projectName,
       domain: values.domain as string | undefined,
       git: values.git as boolean | undefined,
       install: values.install as boolean | undefined,
       packageManager: values["package-manager"] as string | undefined
-    })
+    });
   } else {
-    console.error(`Unknown command: ${command}. Use "rimelight --help" to see all options.`)
-    process.exit(1)
+    console.error(`Unknown command: ${command}. Use "rimelight --help" to see all options.`);
+    process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error("An unexpected error occurred:", err)
-  process.exit(1)
-})
+  console.error("An unexpected error occurred:", err);
+  process.exit(1);
+});

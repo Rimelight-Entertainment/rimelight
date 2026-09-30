@@ -1,13 +1,13 @@
 export interface LocaleItem {
-  code: string
-  label: string
+  code: string;
+  label: string;
   /**
    * The URL to navigate to when this locale is selected.
    *
    * Supply this to make the component fully routing-agnostic: it will use `href` directly. When
    * omitted, the component falls back to updating the first URL segment to match the locale code.
    */
-  href?: string
+  href?: string;
 }
 
 export interface LocaleSelectorProps {
@@ -21,7 +21,7 @@ export interface LocaleSelectorProps {
    * When omitted the component auto-detects available locales from `getRelativeLocaleUrlList()`
    * (requires Astro i18n).
    */
-  locales?: string[] | LocaleItem[]
+  locales?: string[] | LocaleItem[];
   /**
    * The currently active locale code. Used to pre-select the right option in the dropdown.
    *
@@ -29,36 +29,36 @@ export interface LocaleSelectorProps {
    * middleware to be running. Pass this prop explicitly when your project manages locale state
    * outside of Astro's built-in routing.
    */
-  currentLocale?: string
+  currentLocale?: string;
   /**
    * The display mode of the locale selector.
    *
    * @default "select"
    */
-  mode?: "select" | "icon"
+  mode?: "select" | "icon";
   /**
    * The styling variant of the language selection element.
    *
    * @default "default"
    */
-  variant?: "default" | "outline" | "ghost" | "icon"
+  variant?: "default" | "outline" | "ghost" | "icon";
   /**
    * The size scale of typography and spacing metrics.
    *
    * @default "md"
    */
-  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   /**
    * The color theme mode override for this component.
    */
-  theme?: "light" | "dark"
+  theme?: "light" | "dark";
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

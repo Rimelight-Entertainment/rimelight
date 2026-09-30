@@ -1,25 +1,25 @@
-import { Buffer } from "node:buffer"
-import { createHash } from "node:crypto"
-import fs from "node:fs"
-import fsp from "node:fs/promises"
-import { join, resolve } from "node:path"
-import process from "node:process"
-import { presetWebFonts } from "unocss"
+import { Buffer } from "node:buffer";
+import { createHash } from "node:crypto";
+import fs from "node:fs";
+import fsp from "node:fs/promises";
+import { join, resolve } from "node:path";
+import process from "node:process";
+import { presetWebFonts } from "unocss";
 
 export interface LocalFontProcessorOptions {
-  cwd?: string
-  cacheDir?: string
-  fontAssetsDir?: string
-  fontServeBaseUrl?: string
-  fetch?: (url: string) => Promise<ArrayBuffer | Response>
-  onDownload?: (filename: string, buf: Buffer) => void | Promise<void>
+  cwd?: string;
+  cacheDir?: string;
+  fontAssetsDir?: string;
+  fontServeBaseUrl?: string;
+  fetch?: (url: string) => Promise<ArrayBuffer | Response>;
+  onDownload?: (filename: string, buf: Buffer) => void | Promise<void>;
 }
 
 export interface ResolvedFontPaths {
-  cwd: string
-  cacheDir: string
-  fontAssetsDir: string
-  fontServeBaseUrl: string
+  cwd: string;
+  cacheDir: string;
+  fontAssetsDir: string;
+  fontServeBaseUrl: string;
 }
 
 /**
@@ -28,11 +28,11 @@ export interface ResolvedFontPaths {
  * build (Astro-style).
  */
 export function resolveFontPaths(options?: LocalFontProcessorOptions): ResolvedFontPaths {
-  const cwd = options?.cwd || process.cwd()
-  const cacheDir = resolve(cwd, options?.cacheDir || "node_modules/.cache/unocss/fonts")
-  const fontAssetsDir = resolve(cwd, options?.fontAssetsDir || join(cacheDir, "files"))
-  const fontServeBaseUrl = options?.fontServeBaseUrl || "/assets/fonts"
-  return { cwd, cacheDir, fontAssetsDir, fontServeBaseUrl }
+  const cwd = options?.cwd || process.cwd();
+  const cacheDir = resolve(cwd, options?.cacheDir || "node_modules/.cache/unocss/fonts");
+  const fontAssetsDir = resolve(cwd, options?.fontAssetsDir || join(cacheDir, "files"));
+  const fontServeBaseUrl = options?.fontServeBaseUrl || "/assets/fonts";
+  return { cwd, cacheDir, fontAssetsDir, fontServeBaseUrl };
 }
 
 /**
@@ -40,7 +40,7 @@ export function resolveFontPaths(options?: LocalFontProcessorOptions): ResolvedF
  * (`rimelightFontsVitePlugin`) serves/emits from it, so dev and build stay in sync within a single
  * Vite process.
  */
-export const emittedFonts = new Map<string, Buffer>()
+export const emittedFonts = new Map<string, Buffer>();
 
 export const DEFAULT_UI_FONTS = {
   provider: "fontsource" as WebFontsProviders,
@@ -67,21 +67,21 @@ export const DEFAULT_UI_FONTS = {
       }
     ]
   }
-}
+};
 
-const fontUrlRegex = /[-\w@:%+.~#?&/=]+\.(?:woff2?|eot|ttf|otf|svg)/gi
-const urlProtocolRegex = /^[\s\w\0+.-]{2,}:[/\\]{1,2}/
+const fontUrlRegex = /[-\w@:%+.~#?&/=]+\.(?:woff2?|eot|ttf|otf|svg)/gi;
+const urlProtocolRegex = /^[\s\w\0+.-]{2,}:[/\\]{1,2}/;
 
 function getHash(input: string, length = 8) {
-  return createHash("sha256").update(input).digest("hex").slice(0, length)
+  return createHash("sha256").update(input).digest("hex").slice(0, length);
 }
 
 function hasProtocol(input: string) {
-  return urlProtocolRegex.test(input)
+  return urlProtocolRegex.test(input);
 }
 
 function withProtocol(input: string) {
-  return input.startsWith("//") ? `https:${input}` : `https://${input}`
+  return input.startsWith("//") ? `https:${input}` : `https://${input}`;
 }
 
 /**
@@ -90,75 +90,76 @@ function withProtocol(input: string) {
  * via `rimelightFontsVitePlugin` in dev / emitted as bundle assets in build.
  */
 export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
-  const { cacheDir, fontAssetsDir, fontServeBaseUrl } = resolveFontPaths(options)
+  const { cacheDir, fontAssetsDir, fontServeBaseUrl } = resolveFontPaths(options);
 
   async function remember(filename: string, buf: Buffer) {
-    emittedFonts.set(filename, buf)
+    emittedFonts.set(filename, buf);
     if (options?.onDownload) {
-      await options.onDownload(filename, buf)
+      await options.onDownload(filename, buf);
     }
   }
 
   async function _downloadFont(url: string, assetPath: string) {
-    let buf: Buffer
+    let buf: Buffer;
     if (options?.fetch) {
-      const res = await options.fetch(url)
+      const res = await options.fetch(url);
       if (res instanceof ArrayBuffer) {
-        buf = Buffer.from(res)
+        buf = Buffer.from(res);
       } else if ("arrayBuffer" in res && typeof res.arrayBuffer === "function") {
-        buf = Buffer.from(await res.arrayBuffer())
+        buf = Buffer.from(await res.arrayBuffer());
       } else {
-        buf = Buffer.from(res as any)
+        buf = Buffer.from(res as any);
       }
     } else {
-      const res = await fetch(url)
-      buf = Buffer.from(await res.arrayBuffer())
+      const res = await fetch(url);
+      buf = Buffer.from(await res.arrayBuffer());
     }
 
-    const filename = assetPath.split(/[\\/]/).pop()!
-    await remember(filename, buf)
-    await fsp.mkdir(fontAssetsDir, { recursive: true })
-    await fsp.writeFile(assetPath, buf)
+    const filename = assetPath.split(/[\\/]/).pop()!;
+    await remember(filename, buf);
+    await fsp.mkdir(fontAssetsDir, { recursive: true });
+    await fsp.writeFile(assetPath, buf);
   }
 
-  const cache = new Map<string, Promise<void>>()
+  const cache = new Map<string, Promise<void>>();
   function downloadFont(url: string, assetPath: string) {
-    if (!cache.has(url)) cache.set(url, _downloadFont(url, assetPath))
-    return cache.get(url)!
+    if (!cache.has(url)) cache.set(url, _downloadFont(url, assetPath));
+    return cache.get(url)!;
   }
 
   return {
     async getCSS(fonts: any, providers: any, getCSSDefault: any) {
-      const hash = getHash(JSON.stringify(fonts))
-      const cachePath = join(cacheDir, `${hash}.css`)
-      if (fs.existsSync(cachePath)) return fsp.readFile(cachePath, "utf-8")
-      const css = await getCSSDefault(fonts, providers)
-      await fsp.mkdir(cacheDir, { recursive: true })
-      await fsp.writeFile(cachePath, css, "utf-8")
-      return css
+      const hash = getHash(JSON.stringify(fonts));
+      const cachePath = join(cacheDir, `${hash}.css`);
+      if (fs.existsSync(cachePath)) return fsp.readFile(cachePath, "utf-8");
+      const css = await getCSSDefault(fonts, providers);
+      await fsp.mkdir(cacheDir, { recursive: true });
+      await fsp.writeFile(cachePath, css, "utf-8");
+      return css;
     },
     async transformCSS(css: string) {
-      const matches = css.match(fontUrlRegex) || []
-      const replacements = new Map<string, string>()
+      const matches = css.match(fontUrlRegex) || [];
+      const replacements = new Map<string, string>();
       await Promise.all(
         Array.from(new Set(matches)).map(async (url) => {
-          const hash = getHash(url)
-          const ext = url.split(".").pop()
-          let name = ""
-          const match1 = url.match(/\/s\/([^/]+)\//)
-          if (match1) name = match1[1]!.replace(/\W/g, " ").trim().replace(/\s+/, "-").toLowerCase()
-          const filename = `${[name, hash].filter(Boolean).join("-")}.${ext}`
-          const assetPath = join(fontAssetsDir, filename)
+          const hash = getHash(url);
+          const ext = url.split(".").pop();
+          let name = "";
+          const match1 = url.match(/\/s\/([^/]+)\//);
+          if (match1)
+            name = match1[1]!.replace(/\W/g, " ").trim().replace(/\s+/, "-").toLowerCase();
+          const filename = `${[name, hash].filter(Boolean).join("-")}.${ext}`;
+          const assetPath = join(fontAssetsDir, filename);
           if (!fs.existsSync(assetPath))
-            await downloadFont(hasProtocol(url) ? url : withProtocol(url), assetPath)
+            await downloadFont(hasProtocol(url) ? url : withProtocol(url), assetPath);
           else if (!emittedFonts.has(filename))
-            emittedFonts.set(filename, await fsp.readFile(assetPath))
-          replacements.set(url, `${fontServeBaseUrl}/${filename}`)
+            emittedFonts.set(filename, await fsp.readFile(assetPath));
+          replacements.set(url, `${fontServeBaseUrl}/${filename}`);
         })
-      )
-      return css.replace(fontUrlRegex, (match) => replacements.get(match) || match)
+      );
+      return css.replace(fontUrlRegex, (match) => replacements.get(match) || match);
     }
-  }
+  };
 }
 
 const FONT_MIME_TYPES: Record<string, string> = {
@@ -168,25 +169,25 @@ const FONT_MIME_TYPES: Record<string, string> = {
   otf: "font/otf",
   eot: "application/vnd.ms-fontobject",
   svg: "image/svg+xml"
-}
+};
 
 /**
  * Vite plugin companion to `createLocalFontProcessor`. Serves cached fonts from memory/disk in dev
  * and emits them as bundle assets in build, so no font files ever need to live in `public/`.
  */
 export function rimelightFontsVitePlugin(options?: LocalFontProcessorOptions) {
-  const { fontAssetsDir, fontServeBaseUrl } = resolveFontPaths(options)
-  const basePrefix = fontServeBaseUrl.endsWith("/") ? fontServeBaseUrl : `${fontServeBaseUrl}/`
+  const { fontAssetsDir, fontServeBaseUrl } = resolveFontPaths(options);
+  const basePrefix = fontServeBaseUrl.endsWith("/") ? fontServeBaseUrl : `${fontServeBaseUrl}/`;
 
   async function readFont(filename: string): Promise<Buffer | null> {
-    const cached = emittedFonts.get(filename)
-    if (cached) return cached
+    const cached = emittedFonts.get(filename);
+    if (cached) return cached;
     try {
-      const buf = await fsp.readFile(join(fontAssetsDir, filename))
-      emittedFonts.set(filename, buf)
-      return buf
+      const buf = await fsp.readFile(join(fontAssetsDir, filename));
+      emittedFonts.set(filename, buf);
+      return buf;
     } catch {
-      return null
+      return null;
     }
   }
 
@@ -195,52 +196,52 @@ export function rimelightFontsVitePlugin(options?: LocalFontProcessorOptions) {
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
         try {
-          const rawUrl = typeof req.url === "string" ? req.url.split("?")[0]! : ""
-          const pathname = decodeURIComponent(rawUrl)
-          if (!pathname.startsWith(basePrefix)) return next()
-          if (req.method && req.method !== "GET" && req.method !== "HEAD") return next()
-          const filename = pathname.slice(basePrefix.length)
+          const rawUrl = typeof req.url === "string" ? req.url.split("?")[0]! : "";
+          const pathname = decodeURIComponent(rawUrl);
+          if (!pathname.startsWith(basePrefix)) return next();
+          if (req.method && req.method !== "GET" && req.method !== "HEAD") return next();
+          const filename = pathname.slice(basePrefix.length);
           if (
             !filename ||
             filename.includes("/") ||
             filename.includes("\\") ||
             filename.includes("..")
           )
-            return next()
-          const buf = await readFont(filename)
-          if (!buf) return next()
-          const ext = filename.split(".").pop()?.toLowerCase() || ""
-          res.setHeader("Content-Type", FONT_MIME_TYPES[ext] || "application/octet-stream")
-          res.setHeader("Cache-Control", "public, max-age=31536000, immutable")
-          res.setHeader("Content-Length", buf.length)
-          res.end(req.method === "HEAD" ? undefined : buf)
+            return next();
+          const buf = await readFont(filename);
+          if (!buf) return next();
+          const ext = filename.split(".").pop()?.toLowerCase() || "";
+          res.setHeader("Content-Type", FONT_MIME_TYPES[ext] || "application/octet-stream");
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          res.setHeader("Content-Length", buf.length);
+          res.end(req.method === "HEAD" ? undefined : buf);
         } catch {
-          next()
+          next();
         }
-      })
+      });
     },
     async generateBundle(this: any) {
       try {
-        const entries = await fsp.readdir(fontAssetsDir).catch(() => [])
+        const entries = await fsp.readdir(fontAssetsDir).catch(() => []);
         await Promise.all(
           entries.map(async (filename) => {
             if (!emittedFonts.has(filename)) {
               try {
-                emittedFonts.set(filename, await fsp.readFile(join(fontAssetsDir, filename)))
+                emittedFonts.set(filename, await fsp.readFile(join(fontAssetsDir, filename)));
               } catch {
                 // ignore unreadable cache entries
               }
             }
           })
-        )
+        );
       } catch {
         // no cache yet — nothing to emit
       }
       for (const [filename, source] of emittedFonts) {
-        this.emitFile({ type: "asset", fileName: `assets/fonts/${filename}`, source })
+        this.emitFile({ type: "asset", fileName: `assets/fonts/${filename}`, source });
       }
     }
-  }
+  };
 }
 
 export type WebFontsProviders =
@@ -249,14 +250,14 @@ export type WebFontsProviders =
   | "fontshare"
   | "none"
   | "fontsource"
-  | (string & {})
+  | (string & {});
 
 export interface WebFontsOptions {
-  provider?: WebFontsProviders
-  fonts?: Record<string, any>
-  processors?: any
-  processorOptions?: LocalFontProcessorOptions
-  [key: string]: any
+  provider?: WebFontsProviders;
+  fonts?: Record<string, any>;
+  processors?: any;
+  processorOptions?: LocalFontProcessorOptions;
+  [key: string]: any;
 }
 
 /**
@@ -265,9 +266,9 @@ export interface WebFontsOptions {
  * assets in build — `public/` stays untouched.
  */
 export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
-  if (options === false) return null
+  if (options === false) return null;
 
-  const userOpts: WebFontsOptions = typeof options === "object" && options !== null ? options : {}
+  const userOpts: WebFontsOptions = typeof options === "object" && options !== null ? options : {};
   // `local` was the old opt-in flag; local serving is now unconditional.
   // `processors`/`processorOptions` are ours — strip them so they don't leak
   // into presetWebFonts (`processors` is re-attached resolved below).
@@ -278,18 +279,18 @@ export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
     provider,
     fonts,
     ...restPresetOpts
-  } = userOpts
+  } = userOpts;
   const mergedFonts = {
     ...DEFAULT_UI_FONTS.fonts,
     ...fonts
-  }
+  };
 
-  const resolvedProcessors = processors ?? [createLocalFontProcessor(processorOptions)]
+  const resolvedProcessors = processors ?? [createLocalFontProcessor(processorOptions)];
 
   return presetWebFonts({
     ...restPresetOpts,
     provider: (provider || DEFAULT_UI_FONTS.provider) as any,
     fonts: mergedFonts,
     processors: Array.isArray(resolvedProcessors) ? resolvedProcessors : [resolvedProcessors]
-  })
+  });
 }

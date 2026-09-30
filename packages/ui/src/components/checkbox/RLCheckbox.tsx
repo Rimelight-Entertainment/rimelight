@@ -1,17 +1,17 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { CheckboxProps } from "./checkbox"
-import { checkboxTheme } from "./checkbox.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { CheckboxProps } from "./checkbox";
+import { checkboxTheme } from "./checkbox.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLCheckboxProps extends CheckboxProps {
-  id?: string
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
-  children?: JSX.Element
+  id?: string;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  children?: JSX.Element;
 }
 
 const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "id",
@@ -26,7 +26,7 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     "class",
     "onChange",
     "children"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     checkboxTheme({
@@ -36,7 +36,7 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <label class={resolvedClasses().root} data-slot="root" data-theme={props.theme}>
@@ -62,7 +62,7 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
         </span>
       ) : null}
     </label>
-  )
-}
+  );
+};
 
-export { RLCheckbox }
+export { RLCheckbox };

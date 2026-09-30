@@ -1,9 +1,9 @@
-import { type Component } from "solid-js"
-import GrandTaleLayout from "#layouts/GrandTaleLayout"
-import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx"
-import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts"
+import { type Component } from "solid-js";
+import GrandTaleLayout from "#layouts/GrandTaleLayout";
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 export const GrandTaleIndexPage: Component = () => {
   const heroLinks = (): ButtonProps[] => [
@@ -15,7 +15,7 @@ export const GrandTaleIndexPage: Component = () => {
       class:
         "px-8 py-4 text-xl font-bold bg-primary-500 hover:bg-primary-600 rounded-md transition-all uppercase"
     }
-  ]
+  ];
 
   const overviewLinks = (): ButtonProps[] => [
     {
@@ -26,7 +26,7 @@ export const GrandTaleIndexPage: Component = () => {
       class:
         "px-6 py-3 rounded-md font-bold transition-all text-white bg-primary-500 hover:bg-primary-600"
     }
-  ]
+  ];
 
   return (
     <GrandTaleLayout
@@ -119,7 +119,7 @@ export const GrandTaleIndexPage: Component = () => {
         </div>
       </section>
     </GrandTaleLayout>
-  )
-}
+  );
+};
 
-export default GrandTaleIndexPage
+export default GrandTaleIndexPage;

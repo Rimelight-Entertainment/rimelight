@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const spinnerTheme = defineTheme("spinner", {
   slots: ["root"],
@@ -25,4 +25,4 @@ export const spinnerTheme = defineTheme("spinner", {
     size: "md",
     color: "current"
   }
-})
+});

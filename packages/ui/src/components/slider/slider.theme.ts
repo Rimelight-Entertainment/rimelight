@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const sliderTheme = defineTheme("slider", {
   slots: ["root", "track", "range", "thumb"],
@@ -15,4 +15,4 @@ export const sliderTheme = defineTheme("slider", {
   defaultVariants: {
     color: "primary"
   }
-})
+});

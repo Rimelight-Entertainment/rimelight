@@ -1,33 +1,33 @@
-import { type Component, For } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import { createAsyncData } from "#utils/async"
+import { type Component, For } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { createAsyncData } from "#utils/async";
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>
-    return record[locale] || record["en"] || ""
+    const record = val as Record<string, string>;
+    return record[locale] || record["en"] || "";
   }
-  return typeof val === "string" ? val : ""
+  return typeof val === "string" ? val : "";
 }
 
 export const LegalIndexPage: Component = () => {
-  const activeLocale = () => getLocale()
+  const activeLocale = () => getLocale();
 
   const legalPages = createAsyncData(
     () => true,
     async () => {
       try {
-        const res = await fetch("/api/content/pages?type=legal")
-        if (!res.ok) return []
-        const data = (await res.json()) as any
-        return (data.pages || []) as any[]
+        const res = await fetch("/api/content/pages?type=legal");
+        if (!res.ok) return [];
+        const data = (await res.json()) as any;
+        return (data.pages || []) as any[];
       } catch {
-        return []
+        return [];
       }
     },
     []
-  )
+  );
 
   return (
     <AppLayout title={t("legal.title")} description="Legal information and documentation.">
@@ -37,9 +37,9 @@ export const LegalIndexPage: Component = () => {
           <ul class="legal-list flex flex-col gap-6">
             <For each={legalPages() || []}>
               {(doc) => {
-                const title = getLocalizedText(doc.title, activeLocale())
-                const description = getLocalizedText(doc.description, activeLocale())
-                const pubDate = doc.postedAt || doc.createdAt
+                const title = getLocalizedText(doc.title, activeLocale());
+                const description = getLocalizedText(doc.description, activeLocale());
+                const pubDate = doc.postedAt || doc.createdAt;
                 return (
                   <li class="legal-item border-b border-neutral-800 pb-6 last:border-b-0">
                     <h3 class="text-xl font-bold text-white mb-2">
@@ -55,14 +55,14 @@ export const LegalIndexPage: Component = () => {
                       {t("legal.lastUpdated")} {new Date(pubDate).toLocaleDateString()}
                     </span>
                   </li>
-                )
+                );
               }}
             </For>
           </ul>
         </section>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default LegalIndexPage
+export default LegalIndexPage;

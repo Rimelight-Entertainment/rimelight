@@ -1,73 +1,73 @@
-import uiConfig from "virtual:rimelight/ui"
-import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js"
-import { Portal } from "@solidjs/web"
-import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts"
-import { shortcutsTheme } from "./shortcuts.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLKbd } from "../kbd/RLKbd"
+import uiConfig from "virtual:rimelight/ui";
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
+import { Portal } from "@solidjs/web";
+import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts";
+import { shortcutsTheme } from "./shortcuts.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLKbd } from "../kbd/RLKbd";
 
 export interface RLShortcutsProps {
-  categories?: Record<string, string>
-  ui?: any
-  class?: string
+  categories?: Record<string, string>;
+  ui?: any;
+  class?: string;
 }
 
 interface CategorySection {
-  key: string
-  label: string
-  items: RegisteredShortcut[]
+  key: string;
+  label: string;
+  items: RegisteredShortcut[];
 }
 
-const modalId = `rl-shortcuts-${Math.random().toString(36).substring(2, 9)}`
+const modalId = `rl-shortcuts-${Math.random().toString(36).substring(2, 9)}`;
 
 const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "categories", "ui", "class")
+  const props = allProps;
+  const rest = omit(allProps, "categories", "ui", "class");
 
   const configCategories = (): Record<string, { label: string }> =>
-    uiConfig.shortcuts?.categories || {}
+    uiConfig.shortcuts?.categories || {};
 
   const resolvedCategories = createMemo<Record<string, string>>(() => {
-    const configKeys = Object.keys(configCategories())
-    const allKeys = [...new Set([...configKeys, ...Object.keys(props.categories || {})])]
-    const resolved: Record<string, string> = {}
+    const configKeys = Object.keys(configCategories());
+    const allKeys = [...new Set([...configKeys, ...Object.keys(props.categories || {})])];
+    const resolved: Record<string, string> = {};
     allKeys.forEach((key) => {
-      resolved[key] = props.categories?.[key] || configCategories()[key]?.label || key
-    })
-    return resolved
-  })
+      resolved[key] = props.categories?.[key] || configCategories()[key]?.label || key;
+    });
+    return resolved;
+  });
 
-  const categoryOrder = createMemo(() => Object.keys(configCategories()))
+  const categoryOrder = createMemo(() => Object.keys(configCategories()));
 
-  const [isOpen, setIsOpen] = createSignal(false)
+  const [isOpen, setIsOpen] = createSignal(false);
 
   const openHelp = () => {
-    setIsOpen(true)
+    setIsOpen(true);
     if (typeof document !== "undefined") {
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     }
-  }
+  };
 
   const closeHelp = () => {
-    setIsOpen(false)
+    setIsOpen(false);
     if (typeof document !== "undefined") {
-      document.body.style.overflow = ""
+      document.body.style.overflow = "";
     }
-  }
+  };
 
   onSettled(() => {
-    const handleOpenHelp = () => openHelp()
-    document.addEventListener("rl-shortcuts:open", handleOpenHelp)
-    document.addEventListener("rla-shortcuts:open", handleOpenHelp)
-    document.addEventListener("shortcuts:open", handleOpenHelp)
+    const handleOpenHelp = () => openHelp();
+    document.addEventListener("rl-shortcuts:open", handleOpenHelp);
+    document.addEventListener("rla-shortcuts:open", handleOpenHelp);
+    document.addEventListener("shortcuts:open", handleOpenHelp);
 
     const qShortcutCleanup = defineShortcuts({
       "?": {
         handler: () => {
           if (isOpen()) {
-            closeHelp()
+            closeHelp();
           } else {
-            openHelp()
+            openHelp();
           }
         },
         label: "Show Keyboard Shortcuts",
@@ -75,75 +75,75 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
         category: "system",
         order: 0
       }
-    })
+    });
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen()) {
-        closeHelp()
+        closeHelp();
       }
-    }
-    window.addEventListener("keydown", onKeyDown)
+    };
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.removeEventListener("rl-shortcuts:open", handleOpenHelp)
-      document.removeEventListener("rla-shortcuts:open", handleOpenHelp)
-      document.removeEventListener("shortcuts:open", handleOpenHelp)
-      window.removeEventListener("keydown", onKeyDown)
+      document.removeEventListener("rl-shortcuts:open", handleOpenHelp);
+      document.removeEventListener("rla-shortcuts:open", handleOpenHelp);
+      document.removeEventListener("shortcuts:open", handleOpenHelp);
+      window.removeEventListener("keydown", onKeyDown);
       if (typeof document !== "undefined") {
-        document.body.style.overflow = ""
+        document.body.style.overflow = "";
       }
-      qShortcutCleanup()
-    }
-  })
+      qShortcutCleanup();
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     shortcutsTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const sections = createMemo<CategorySection[]>(() => {
-    const list = activeShortcutsStore
-    if (list.length === 0) return []
+    const list = activeShortcutsStore;
+    if (list.length === 0) return [];
 
-    const grouped: Record<string, RegisteredShortcut[]> = {}
+    const grouped: Record<string, RegisteredShortcut[]> = {};
     list.forEach((shortcut) => {
-      const cat = (shortcut.category || "system").toLowerCase()
-      const arr = grouped[cat]
+      const cat = (shortcut.category || "system").toLowerCase();
+      const arr = grouped[cat];
       if (arr) {
-        arr.push(shortcut)
+        arr.push(shortcut);
       } else {
-        grouped[cat] = [shortcut]
+        grouped[cat] = [shortcut];
       }
-    })
+    });
 
     const sortedKeys = Object.keys(grouped).sort((keyA, keyB) => {
-      const indexA = categoryOrder().indexOf(keyA)
-      const indexB = categoryOrder().indexOf(keyB)
+      const indexA = categoryOrder().indexOf(keyA);
+      const indexB = categoryOrder().indexOf(keyB);
 
-      if (indexA !== -1 && indexB !== -1) return indexA - indexB
-      if (indexA !== -1) return -1
-      if (indexB !== -1) return 1
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
 
-      const labelA = resolvedCategories()[keyA] || keyA
-      const labelB = resolvedCategories()[keyB] || keyB
-      return labelA.localeCompare(labelB)
-    })
+      const labelA = resolvedCategories()[keyA] || keyA;
+      const labelB = resolvedCategories()[keyB] || keyB;
+      return labelA.localeCompare(labelB);
+    });
 
     return sortedKeys.map((key) => {
-      const group = grouped[key] || []
+      const group = grouped[key] || [];
       group.sort((a, b) => {
-        const orderA = a.order ?? -1
-        const orderB = b.order ?? -1
-        if (orderA !== orderB) return orderB - orderA
-        const labelA = a.label || a.id
-        const labelB = b.label || b.id
-        return labelA.localeCompare(labelB)
-      })
-      return { key, label: resolvedCategories()[key] || key, items: group }
-    })
-  })
+        const orderA = a.order ?? -1;
+        const orderB = b.order ?? -1;
+        if (orderA !== orderB) return orderB - orderA;
+        const labelA = a.label || a.id;
+        const labelB = b.label || b.id;
+        return labelA.localeCompare(labelB);
+      });
+      return { key, label: resolvedCategories()[key] || key, items: group };
+    });
+  });
 
   return (
     <Show when={isOpen()}>
@@ -152,7 +152,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
           class={resolvedClasses().modal}
           data-slot="modal"
           onClick={(e) => {
-            if (e.target === e.currentTarget) closeHelp()
+            if (e.target === e.currentTarget) closeHelp();
           }}
           {...rest}
         >
@@ -232,7 +232,7 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
         </div>
       </Portal>
     </Show>
-  )
-}
+  );
+};
 
-export { RLShortcuts }
+export { RLShortcuts };

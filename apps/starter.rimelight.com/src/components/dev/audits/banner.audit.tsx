@@ -1,18 +1,18 @@
-import { createSignal, For } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { RLBanner } from "@rimelight/ui/components/banner/RLBanner.tsx"
-import type { ComponentAuditDefinition } from "./types"
+import { createSignal, For } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLBanner } from "@rimelight/ui/components/banner/RLBanner.tsx";
+import type { ComponentAuditDefinition } from "./types";
 
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const
+const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
 
 export const BannerSandbox = (): JSX.Element => {
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary")
-  const [hasIcon, setHasIcon] = createSignal(true)
-  const [hasActions, setHasActions] = createSignal(true)
-  const [isClosable, setIsClosable] = createSignal(true)
-  const [contain, setContain] = createSignal(true)
-  const [title, setTitle] = createSignal("Nuxt UI v4 & Rimelight UI banner parity achieved!")
-  const [isLink, setIsLink] = createSignal(false)
+  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [hasIcon, setHasIcon] = createSignal(true);
+  const [hasActions, setHasActions] = createSignal(true);
+  const [isClosable, setIsClosable] = createSignal(true);
+  const [contain, setContain] = createSignal(true);
+  const [title, setTitle] = createSignal("Nuxt UI v4 & Rimelight UI banner parity achieved!");
+  const [isLink, setIsLink] = createSignal(false);
 
   return (
     <div class="flex flex-col gap-6">
@@ -122,8 +122,8 @@ export const BannerSandbox = (): JSX.Element => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const bannerAudit: ComponentAuditDefinition = {
   id: "banner",
@@ -284,4 +284,4 @@ export const bannerAudit: ComponentAuditDefinition = {
       notes: "All scenario renders return bare components directly."
     }
   ]
-}
+};

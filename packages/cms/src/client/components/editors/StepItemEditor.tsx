@@ -1,66 +1,66 @@
-import { onSettled, onCleanup, For, type Component } from "solid-js"
-import type { BaseBlock } from "../../../core/types/blocks"
-import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { onSettled, onCleanup, For, type Component } from "solid-js";
+import type { BaseBlock } from "../../../core/types/blocks";
+import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface StepItemEditorProps {
-  blockId?: string
-  props: Record<string, any>
-  children?: BaseBlock[] | (() => BaseBlock[])
-  sectionDepth?: number
-  onPropsChange: (newProps: Record<string, any>) => void
-  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined
-  onOpenPicker?: () => void
-  renderChildBlock?: (block: BaseBlock, depth: number) => any
+  blockId?: string;
+  props: Record<string, any>;
+  children?: BaseBlock[] | (() => BaseBlock[]);
+  sectionDepth?: number;
+  onPropsChange: (newProps: Record<string, any>) => void;
+  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined;
+  onOpenPicker?: () => void;
+  renderChildBlock?: (block: BaseBlock, depth: number) => any;
 }
 
 export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) => {
-  let childrenContainer: HTMLDivElement | undefined = undefined
-  let sortableInstance: any = null
+  let childrenContainer: HTMLDivElement | undefined = undefined;
+  let sortableInstance: any = null;
 
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
-      return componentProps.children() || []
+      return componentProps.children() || [];
     }
-    return componentProps.children || componentProps.props["children"] || []
-  }
+    return componentProps.children || componentProps.props["children"] || [];
+  };
 
   onSettled(() => {
     if (childrenContainer) {
       sortableInstance = initBlockSortable(childrenContainer, {
         filter: ".cms-empty-placeholder, .locked",
         onReorder: (oldIdx: number, newIdx: number) => {
-          cleanAllSortableClasses()
-          const list = [...childrenBlocks()]
-          const item = list.splice(oldIdx, 1)[0]
+          cleanAllSortableClasses();
+          const list = [...childrenBlocks()];
+          const item = list.splice(oldIdx, 1)[0];
           if (item) {
-            list.splice(newIdx, 0, item)
-            componentProps.onPropsChange({ ...componentProps.props, children: list })
+            list.splice(newIdx, 0, item);
+            componentProps.onPropsChange({ ...componentProps.props, children: list });
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onAdd: (blockId: string, newIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
           if (componentProps.onRelocate && componentProps.blockId) {
-            componentProps.onRelocate(blockId, newIdx, componentProps.blockId)
+            componentProps.onRelocate(blockId, newIdx, componentProps.blockId);
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
         }
-      })
+      });
     }
 
     onCleanup(() => {
-      if (sortableInstance) sortableInstance.destroy()
-    })
-  })
+      if (sortableInstance) sortableInstance.destroy();
+    });
+  });
 
   const saveMeta = (title?: string, description?: string) => {
     componentProps.onPropsChange({
@@ -68,8 +68,8 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
       title: title !== undefined ? title : componentProps.props["title"] || "",
       description:
         description !== undefined ? description : componentProps.props["description"] || ""
-    })
-  }
+    });
+  };
 
   return (
     <div class="rimelight-step-item-editor flex flex-col gap-2 p-3 rounded-lg border border-default bg-muted/10 w-full">
@@ -114,5 +114,5 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
         )}
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const chatShimmerTheme = defineTheme("chat-shimmer", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const chatShimmerTheme = defineTheme("chat-shimmer", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

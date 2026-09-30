@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const tableTheme = defineTheme("table", {
   slots: [
@@ -99,10 +99,10 @@ export const tableTheme = defineTheme("table", {
       }
     },
     loadingAnimation: {
-      "carousel": {},
+      carousel: {},
       "carousel-inverse": {},
-      "swing": {},
-      "elastic": {}
+      swing: {},
+      elastic: {}
     },
     loadingColor: {
       primary: {},
@@ -151,4 +151,4 @@ export const tableTheme = defineTheme("table", {
     loadingColor: "primary",
     loadingAnimation: "carousel"
   }
-})
+});

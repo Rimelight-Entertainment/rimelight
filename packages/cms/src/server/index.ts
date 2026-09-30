@@ -5,4 +5,4 @@ export {
   handleMediaFile,
   registerCmsMediaRoutes,
   type MediaRouteContext
-} from "./media.ts"
+} from "./media.ts";

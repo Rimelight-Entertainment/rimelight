@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const layoutGridTheme = defineTheme("layout-grid", {
   slots: ["root", "overlay", "container", "columns"],
@@ -10,4 +10,4 @@ export const layoutGridTheme = defineTheme("layout-grid", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

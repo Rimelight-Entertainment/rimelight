@@ -1,31 +1,31 @@
-import { For, Show, type Component } from "solid-js"
-import { Dynamic } from "@solidjs/web"
-import type { BaseBlock } from "../core/types/blocks.ts"
-import { defaultBlockComponents } from "./blocks/index.ts"
+import { For, Show, type Component } from "solid-js";
+import { Dynamic } from "@solidjs/web";
+import type { BaseBlock } from "../core/types/blocks.ts";
+import { defaultBlockComponents } from "./blocks/index.ts";
 
 export interface BlockRendererProps {
-  block: BaseBlock
-  locale?: string | undefined
-  sectionDepth?: number | undefined
-  index?: number | undefined
-  components?: Record<string, Component<any>> | undefined
+  block: BaseBlock;
+  locale?: string | undefined;
+  sectionDepth?: number | undefined;
+  index?: number | undefined;
+  components?: Record<string, Component<any>> | undefined;
 }
 
 export const BlockRenderer: Component<BlockRendererProps> = (props) => {
-  const block = () => props.block
-  const locale = () => props.locale ?? "en"
-  const sectionDepth = () => props.sectionDepth ?? 0
-  const index = () => props.index ?? 0
-  const overrides = () => props.components ?? {}
+  const block = () => props.block;
+  const locale = () => props.locale ?? "en";
+  const sectionDepth = () => props.sectionDepth ?? 0;
+  const index = () => props.index ?? 0;
+  const overrides = () => props.components ?? {};
 
   const Resolved = () =>
     (overrides()[block().type] as Component<any> | undefined) ??
-    defaultBlockComponents[block().type]
+    defaultBlockComponents[block().type];
 
-  const rawChildren = () => block().children ?? block().props?.["children"] ?? []
-  const children = () => (Array.isArray(rawChildren()) ? rawChildren() : []) as BaseBlock[]
+  const rawChildren = () => block().children ?? block().props?.["children"] ?? [];
+  const children = () => (Array.isArray(rawChildren()) ? rawChildren() : []) as BaseBlock[];
   const nextDepth = () =>
-    block().type === "SectionBlock" ? Math.min(6, (sectionDepth() || 2) + 1) : sectionDepth()
+    block().type === "SectionBlock" ? Math.min(6, (sectionDepth() || 2) + 1) : sectionDepth();
 
   const childNodes = (depth: number) => (
     <For each={children()}>
@@ -39,7 +39,7 @@ export const BlockRenderer: Component<BlockRendererProps> = (props) => {
         />
       )}
     </For>
-  )
+  );
 
   return (
     <Show when={block()?.type}>
@@ -63,7 +63,7 @@ export const BlockRenderer: Component<BlockRendererProps> = (props) => {
         </Dynamic>
       </Show>
     </Show>
-  )
-}
+  );
+};
 
-export default BlockRenderer
+export default BlockRenderer;

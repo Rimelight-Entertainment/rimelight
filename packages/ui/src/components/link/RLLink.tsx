@@ -1,18 +1,18 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { LinkProps } from "./link"
-import { linkTheme } from "./link.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { resolveLinkAttrs } from "./helpers"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { LinkProps } from "./link";
+import { linkTheme } from "./link.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { resolveLinkAttrs } from "./helpers";
 
 export interface RLLinkProps extends LinkProps {
-  children?: JSX.Element
-  leading?: JSX.Element
-  trailing?: JSX.Element
+  children?: JSX.Element;
+  leading?: JSX.Element;
+  trailing?: JSX.Element;
 }
 
 const RLLink: Component<RLLinkProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "label",
@@ -36,13 +36,13 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
     "children",
     "leading",
     "trailing"
-  )
+  );
 
-  const attrs = createMemo(() => resolveLinkAttrs(props))
+  const attrs = createMemo(() => resolveLinkAttrs(props));
 
   const classes = createMemo<Record<string, string>>(() => {
     if (props.raw) {
-      return { root: props.class || "" }
+      return { root: props.class || "" };
     }
 
     return linkTheme({
@@ -51,8 +51,8 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
       disabled: !!props.disabled,
       ui: props.ui,
       class: props.class
-    })
-  })
+    });
+  });
 
   return (
     <a
@@ -98,7 +98,7 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
         </span>
       )}
     </a>
-  )
-}
+  );
+};
 
-export { RLLink }
+export { RLLink };

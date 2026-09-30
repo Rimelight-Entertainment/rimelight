@@ -1,4 +1,4 @@
-import { index, jsonb, pgTable, text, timestamp, uuid, uniqueIndex } from "drizzle-orm/pg-core"
+import { index, jsonb, pgTable, text, timestamp, uuid, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const componentMetadata = pgTable(
   "component_metadata",
@@ -18,7 +18,7 @@ export const componentMetadata = pgTable(
   (table) => [
     uniqueIndex("component_metadata_name_version_idx").on(table.componentName, table.version)
   ]
-)
+);
 
 export const componentVersions = pgTable(
   "component_versions",
@@ -33,7 +33,7 @@ export const componentVersions = pgTable(
   (table) => [
     uniqueIndex("component_versions_name_version_idx").on(table.componentName, table.version)
   ]
-)
+);
 
 export const componentMetadataCache = pgTable(
   "component_metadata_cache",
@@ -44,7 +44,7 @@ export const componentMetadataCache = pgTable(
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull()
   },
   (table) => [index("component_metadata_cache_expires_idx").on(table.expiresAt)]
-)
+);
 
 export const componentDependencies = pgTable(
   "component_dependencies",
@@ -61,4 +61,4 @@ export const componentDependencies = pgTable(
       table.dependencyType
     )
   ]
-)
+);

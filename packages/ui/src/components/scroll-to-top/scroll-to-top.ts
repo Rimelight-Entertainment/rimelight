@@ -1,37 +1,37 @@
-import type { Theme, ThemeColor } from "../../types"
+import type { Theme, ThemeColor } from "../../types";
 
 export interface ScrollToTopProps {
   /**
    * The color scheme applied to the scroll-to-top button.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * The width of the progress indicator line.
    */
-  progressWidth?: number
+  progressWidth?: number;
   /**
    * The duration of the scroll-to-top animation in milliseconds.
    */
-  duration?: number
+  duration?: number;
   /**
    * The scroll threshold in pixels before showing the button.
    */
-  threshold?: number
+  threshold?: number;
   /**
    * Whether to show the scroll progress indicator.
    */
-  showProgress?: boolean
+  showProgress?: boolean;
   /**
    * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

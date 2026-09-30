@@ -1,16 +1,16 @@
-import { createMemo, omit, For, Show, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { LinkGroupProps } from "./link-group"
-import { linkGroupTheme } from "./link-group.theme"
-import { RLLink } from "../link/RLLink"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, For, Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { LinkGroupProps } from "./link-group";
+import { linkGroupTheme } from "./link-group.theme";
+import { RLLink } from "../link/RLLink";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLLinkGroupProps extends LinkGroupProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "label",
@@ -22,19 +22,19 @@ const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
     "ui",
     "class",
     "children"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     linkGroupTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const normalizedLinks = createMemo(() => {
-    if (!props.links) return []
-    return Array.isArray(props.links) ? props.links : [props.links]
-  })
+    if (!props.links) return [];
+    return Array.isArray(props.links) ? props.links : [props.links];
+  });
 
   return (
     <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
@@ -73,7 +73,7 @@ const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
         </Show>
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export { RLLinkGroup }
+export { RLLinkGroup };

@@ -1,23 +1,23 @@
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ConfirmProps } from "./confirm"
-import { confirmTheme } from "./confirm.theme"
-import { RLButton } from "../button/RLButton"
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ConfirmProps } from "./confirm";
+import { confirmTheme } from "./confirm.theme";
+import { RLButton } from "../button/RLButton";
 
 export interface RLConfirmProps extends ConfirmProps {
-  children?: JSX.Element
-  trigger?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  footer?: JSX.Element
-  footerSlot?: JSX.Element
-  onOpenChange?: (open: boolean) => void
-  onConfirm?: () => void
-  onCancel?: () => void
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  onOpenChange?: (open: boolean) => void;
+  onConfirm?: () => void;
+  onCancel?: () => void;
 }
 
 const RLConfirm: Component<RLConfirmProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "variant",
@@ -38,10 +38,10 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     "onOpenChange",
     "onConfirm",
     "onCancel"
-  )
+  );
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? false)
-  let dialogRef: HTMLDialogElement | undefined
+  const [isOpen, setIsOpen] = createSignal(props.open ?? false);
+  let dialogRef: HTMLDialogElement | undefined;
 
   const resolvedClasses = createMemo(() =>
     confirmTheme({
@@ -49,47 +49,47 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   createEffect(
     () => isOpen(),
     (open) => {
-      if (!dialogRef) return
+      if (!dialogRef) return;
       if (open) {
-        if (!dialogRef.open) dialogRef.showModal()
+        if (!dialogRef.open) dialogRef.showModal();
       } else {
-        if (dialogRef.open) dialogRef.close()
+        if (dialogRef.open) dialogRef.close();
       }
     }
-  )
+  );
 
   createEffect(
     () => props.open,
     (open) => {
       if (open !== undefined) {
-        setIsOpen(open)
+        setIsOpen(open);
       }
     }
-  )
+  );
 
   const openDialog = () => {
-    setIsOpen(true)
-    props.onOpenChange?.(true)
-  }
+    setIsOpen(true);
+    props.onOpenChange?.(true);
+  };
 
   const handleCancel = () => {
-    setIsOpen(false)
-    props.onOpenChange?.(false)
-    props.onCancel?.()
-  }
+    setIsOpen(false);
+    props.onOpenChange?.(false);
+    props.onCancel?.();
+  };
 
   const handleAction = () => {
-    setIsOpen(false)
-    props.onOpenChange?.(false)
-    props.onConfirm?.()
-  }
+    setIsOpen(false);
+    props.onOpenChange?.(false);
+    props.onConfirm?.();
+  };
 
-  const isDestructive = () => props.variant === "destructive"
+  const isDestructive = () => props.variant === "destructive";
 
   return (
     <div class={resolvedClasses().root} data-slot="alert-dialog-container">
@@ -114,11 +114,11 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
         data-lock-scroll="true"
         data-state={isOpen() ? "open" : "closed"}
         onCancel={(e) => {
-          e.preventDefault()
-          handleCancel()
+          e.preventDefault();
+          handleCancel();
         }}
         onClick={(e) => {
-          if (e.target === dialogRef) handleCancel()
+          if (e.target === dialogRef) handleCancel();
         }}
         {...rest}
       >
@@ -169,7 +169,7 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
         </div>
       </dialog>
     </div>
-  )
-}
+  );
+};
 
-export { RLConfirm }
+export { RLConfirm };

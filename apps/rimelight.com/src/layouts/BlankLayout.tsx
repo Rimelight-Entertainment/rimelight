@@ -1,22 +1,22 @@
-import { type Component, Show } from "solid-js"
-import { useParams } from "@solidjs/router"
-import type { JSX } from "@solidjs/web"
-import { Title, Meta } from "@solidjs/meta"
-import { RLMain } from "@rimelight/ui"
-import { currentLocale } from "@rimelight/i18n"
+import { type Component, Show } from "solid-js";
+import { useParams } from "@solidjs/router";
+import type { JSX } from "@solidjs/web";
+import { Title, Meta } from "@solidjs/meta";
+import { RLMain } from "@rimelight/ui";
+import { currentLocale } from "@rimelight/i18n";
 
 export interface BlankLayoutProps {
-  title?: string | undefined
-  description?: string | undefined
-  noindex?: boolean | undefined
-  favicon?: string | undefined
-  children?: JSX.Element | undefined
+  title?: string | undefined;
+  description?: string | undefined;
+  noindex?: boolean | undefined;
+  favicon?: string | undefined;
+  children?: JSX.Element | undefined;
 }
 
 export const BlankLayout: Component<BlankLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   return (
@@ -35,7 +35,7 @@ export const BlankLayout: Component<BlankLayoutProps> = (props) => {
         {props.children}
       </RLMain>
     </>
-  )
-}
+  );
+};
 
-export default BlankLayout
+export default BlankLayout;

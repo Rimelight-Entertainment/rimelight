@@ -1,16 +1,16 @@
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { SliderProps } from "./slider"
-import { sliderTheme } from "./slider.theme"
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { SliderProps } from "./slider";
+import { sliderTheme } from "./slider.theme";
 
 export interface RLSliderProps extends SliderProps {
-  children?: JSX.Element
-  defaultValue?: number
-  onChange?: (val: number) => void
+  children?: JSX.Element;
+  defaultValue?: number;
+  onChange?: (val: number) => void;
 }
 
 const RLSlider: Component<RLSliderProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "value",
@@ -25,41 +25,41 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
     "class",
     "children",
     "onChange"
-  )
+  );
 
-  const min = () => props.min ?? 0
-  const max = () => props.max ?? 100
-  const step = () => props.step ?? 1
+  const min = () => props.min ?? 0;
+  const max = () => props.max ?? 100;
+  const step = () => props.step ?? 1;
 
-  const [internalVal, setInternalVal] = createSignal(props.value ?? props.defaultValue ?? min())
+  const [internalVal, setInternalVal] = createSignal(props.value ?? props.defaultValue ?? min());
 
   createEffect(
     () => props.value,
     (val) => {
       if (val !== undefined) {
-        setInternalVal(val)
+        setInternalVal(val);
       }
     }
-  )
+  );
 
-  const currentVal = () => (props.value !== undefined ? props.value : internalVal())
+  const currentVal = () => (props.value !== undefined ? props.value : internalVal());
 
   const percentage = createMemo(() => {
-    const v = currentVal()
-    const mn = min()
-    const mx = max()
-    return Math.min(100, Math.max(0, ((v - mn) / (mx - mn)) * 100))
-  })
+    const v = currentVal();
+    const mn = min();
+    const mx = max();
+    return Math.min(100, Math.max(0, ((v - mn) / (mx - mn)) * 100));
+  });
 
   const handleInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (e) => {
-    const num = parseFloat(e.currentTarget.value)
+    const num = parseFloat(e.currentTarget.value);
     if (!isNaN(num)) {
       if (props.value === undefined) {
-        setInternalVal(num)
+        setInternalVal(num);
       }
-      props.onChange?.(num)
+      props.onChange?.(num);
     }
-  }
+  };
 
   const resolvedClasses = createMemo(() =>
     sliderTheme({
@@ -67,7 +67,7 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} data-slot="slider-root" data-theme={props.theme} {...rest}>
@@ -105,7 +105,7 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
         />
       </svg>
     </div>
-  )
-}
+  );
+};
 
-export { RLSlider }
+export { RLSlider };

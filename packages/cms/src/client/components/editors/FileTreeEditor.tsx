@@ -1,39 +1,39 @@
-import { onSettled, type Component } from "solid-js"
-import type { FileTreeNode } from "../../../core/types/blocks"
+import { onSettled, type Component } from "solid-js";
+import type { FileTreeNode } from "../../../core/types/blocks";
 
 export interface FileTreeEditorProps {
-  props: Record<string, any>
-  onPropsChange: (newProps: Record<string, any>) => void
+  props: Record<string, any>;
+  onPropsChange: (newProps: Record<string, any>) => void;
 }
 
 export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) => {
-  let jsonTextarea: HTMLTextAreaElement | undefined
+  let jsonTextarea: HTMLTextAreaElement | undefined;
 
   const tree = (): FileTreeNode[] =>
     componentProps.props["tree"] || [
       { name: "src", isDir: true, children: [{ name: "index.ts", isDir: false }] },
       { name: "package.json", isDir: false }
-    ]
+    ];
 
   onSettled(() => {
     if (jsonTextarea) {
-      jsonTextarea.value = JSON.stringify(tree(), null, 2)
+      jsonTextarea.value = JSON.stringify(tree(), null, 2);
     }
-  })
+  });
 
   const saveJson = (val: string) => {
     try {
-      const parsed = JSON.parse(val)
+      const parsed = JSON.parse(val);
       if (Array.isArray(parsed)) {
         componentProps.onPropsChange({
           ...componentProps.props,
           tree: parsed
-        })
+        });
       }
     } catch {
       // Ignore invalid JSON on intermediate typing
     }
-  }
+  };
 
   return (
     <div class="rimelight-file-tree-editor flex flex-col gap-2 p-3 rounded-xl border border-default w-full">
@@ -51,5 +51,5 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
         onBlur={(e) => saveJson(e.currentTarget.value)}
       />
     </div>
-  )
-}
+  );
+};

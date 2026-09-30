@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const splitterTheme = defineTheme("splitter", {
   slots: ["root", "panel", "handle"],
@@ -17,4 +17,4 @@ export const splitterTheme = defineTheme("splitter", {
   defaultVariants: {
     direction: "horizontal"
   }
-})
+});

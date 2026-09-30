@@ -1,10 +1,10 @@
-import { customType, pgTable, text, timestamp, uuid, unique, index } from "drizzle-orm/pg-core"
+import { customType, pgTable, text, timestamp, uuid, unique, index } from "drizzle-orm/pg-core";
 
 const tsvector = customType<{ data: string }>({
   dataType() {
-    return "tsvector"
+    return "tsvector";
   }
-})
+});
 
 export const searchIndex = pgTable(
   "search_index",
@@ -22,6 +22,6 @@ export const searchIndex = pgTable(
     unique("search_index_source_type_source_id_key").on(t.sourceType, t.sourceId),
     index("idx_search_index_text").using("gin", t.searchableText)
   ]
-)
-export type SearchIndex = typeof searchIndex.$inferSelect
-export type NewSearchIndex = typeof searchIndex.$inferInsert
+);
+export type SearchIndex = typeof searchIndex.$inferSelect;
+export type NewSearchIndex = typeof searchIndex.$inferInsert;

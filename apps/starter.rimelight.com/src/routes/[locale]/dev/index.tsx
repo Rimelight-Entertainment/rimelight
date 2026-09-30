@@ -1,5 +1,5 @@
-import { type Component, For } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
+import { type Component, For } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
 
 const sections = [
   {
@@ -25,7 +25,7 @@ const sections = [
     description: "Live preview and validation tool for dynamic OG banner generation.",
     icon: "i-lucide-image"
   }
-]
+];
 
 export const DevIndexPage: Component = () => {
   return (
@@ -71,7 +71,7 @@ export const DevIndexPage: Component = () => {
         </div>
       </main>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DevIndexPage
+export default DevIndexPage;

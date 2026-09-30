@@ -1,5 +1,5 @@
-import type { Component } from "solid-js"
-import { getRelativeLocaleUrl } from "@rimelight/i18n"
+import type { Component } from "solid-js";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const GuidesSidebar: Component = () => {
   const sections = [
@@ -27,7 +27,7 @@ export const GuidesSidebar: Component = () => {
         { label: "Calculators", to: "/franchises/grand-tale/guides/calculators" }
       ]
     }
-  ]
+  ];
 
   return (
     <div class="flex flex-col gap-6 px-4 py-6 bg-indigo-950/20 rounded-2xl border border-indigo-900/30">
@@ -49,7 +49,7 @@ export const GuidesSidebar: Component = () => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default GuidesSidebar
+export default GuidesSidebar;

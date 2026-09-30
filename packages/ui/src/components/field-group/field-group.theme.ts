@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const fieldGroupTheme = defineTheme("field-group", {
   slots: ["root", "prepend", "append"],
@@ -17,4 +17,4 @@ export const fieldGroupTheme = defineTheme("field-group", {
   defaultVariants: {
     size: "md"
   }
-})
+});

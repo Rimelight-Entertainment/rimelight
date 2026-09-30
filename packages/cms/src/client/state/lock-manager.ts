@@ -1,18 +1,18 @@
 export interface LockState {
-  isLocked: boolean
-  lockedByUserId?: string
-  lockedByUserName?: string
-  expiresAt?: string
+  isLocked: boolean;
+  lockedByUserId?: string;
+  lockedByUserName?: string;
+  expiresAt?: string;
 }
 
 export class LockManager {
-  private pageId: string
-  private heartbeatInterval: ReturnType<typeof setInterval> | null = null
-  private heartbeatMs: number
+  private pageId: string;
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
+  private heartbeatMs: number;
 
   constructor(pageId: string, heartbeatMs = 30000) {
-    this.pageId = pageId
-    this.heartbeatMs = heartbeatMs
+    this.pageId = pageId;
+    this.heartbeatMs = heartbeatMs;
   }
 
   async acquireCheckout(
@@ -24,15 +24,15 @@ export class LockManager {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, userName })
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (res.ok && data.success) {
-        this.startHeartbeat(userId)
+        this.startHeartbeat(userId);
         return {
           success: true,
           lockState: { isLocked: false }
-        }
+        };
       } else {
         return {
           success: false,
@@ -42,46 +42,46 @@ export class LockManager {
             lockedByUserName: data.lockedByUserName,
             expiresAt: data.expiresAt
           }
-        }
+        };
       }
     } catch {
       return {
         success: false,
         lockState: { isLocked: true, lockedByUserName: "Unknown (Network Error)" }
-      }
+      };
     }
   }
 
   private startHeartbeat(userId: string): void {
-    this.stopHeartbeat()
+    this.stopHeartbeat();
     this.heartbeatInterval = setInterval(async () => {
       try {
         await fetch(`/api/cms/pages/${this.pageId}/lock/heartbeat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId })
-        })
+        });
       } catch {
         // Silently retry on next heartbeat interval
       }
-    }, this.heartbeatMs)
+    }, this.heartbeatMs);
   }
 
   stopHeartbeat(): void {
     if (this.heartbeatInterval !== null) {
-      clearInterval(this.heartbeatInterval)
-      this.heartbeatInterval = null
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
     }
   }
 
   async releaseCheckout(userId: string): Promise<void> {
-    this.stopHeartbeat()
+    this.stopHeartbeat();
     try {
       await fetch(`/api/cms/pages/${this.pageId}/lock/release`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId })
-      })
+      });
     } catch {
       // Ignore cleanup error
     }

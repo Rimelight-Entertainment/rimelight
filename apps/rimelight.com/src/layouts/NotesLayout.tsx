@@ -1,17 +1,17 @@
-import type { Component, ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
-import DashboardLayout from "./DashboardLayout"
-import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n"
+import type { Component, ParentProps } from "solid-js";
+import { useParams } from "@solidjs/router";
+import DashboardLayout from "./DashboardLayout";
+import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
 
 export interface NotesLayoutProps extends ParentProps {
-  title?: string | undefined
-  activeTab: "notes" | "todos" | "archive" | "trash"
+  title?: string | undefined;
+  activeTab: "notes" | "todos" | "archive" | "trash";
 }
 
 export const NotesLayout: Component<NotesLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   const links = [
@@ -39,7 +39,7 @@ export const NotesLayout: Component<NotesLayoutProps> = (props) => {
       href: getRelativeLocaleUrl("/dashboard/notes/trash"),
       active: props.activeTab === "trash"
     }
-  ]
+  ];
 
   return (
     <DashboardLayout title={props.title || "Notes"}>
@@ -75,7 +75,7 @@ export const NotesLayout: Component<NotesLayoutProps> = (props) => {
         <div class="flex-1">{props.children}</div>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default NotesLayout
+export default NotesLayout;

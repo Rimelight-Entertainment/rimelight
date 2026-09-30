@@ -1,6 +1,6 @@
-import type { RateLimitOptions, RateLimiterBinding } from "../types"
+import type { RateLimitOptions, RateLimiterBinding } from "../types";
 
-const DEFAULT_SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"]
+const DEFAULT_SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"];
 
 /**
  * Middleware to enforce rate limits on sensitive endpoints using Cloudflare Rate Limiting bindings.
@@ -39,7 +39,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
           {
             "Retry-After": String(retry)
           }
-        )
+        );
       }
 
       return new Response(
@@ -54,12 +54,12 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
             "Retry-After": String(retry)
           }
         }
-      )
+      );
     }
-  } = options
+  } = options;
 
   return async (c: any, next: () => Promise<any>): Promise<any> => {
-    const path = c?.req?.path || ""
+    const path = c?.req?.path || "";
 
     // 1. Check if the current request matches the rate-limited routes
     const matchesRoute =
@@ -67,54 +67,54 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
         ? routes(c)
         : routes.some((route) =>
             typeof route === "string" ? path.includes(route) : route.test(path)
-          )
+          );
 
     if (!matchesRoute) {
-      return next()
+      return next();
     }
 
     // 2. Resolve the rate limiter binding
-    const bindings = c?.env
+    const bindings = c?.env;
     const limiter: RateLimiterBinding | undefined = options.limiter
       ? options.limiter(c)
-      : bindings?.[bindingName]
+      : bindings?.[bindingName];
 
     if (!limiter || typeof limiter.limit !== "function") {
       // Falls back (fails open/closed according to fallback option)
       if (fallback === "pass") {
-        return next()
+        return next();
       }
 
       if (typeof c.json === "function") {
-        return c.json({ error: "Rate limiter not configured" }, 500)
+        return c.json({ error: "Rate limiter not configured" }, 500);
       }
       return new Response(JSON.stringify({ error: "Rate limiter not configured" }), {
         status: 500,
         headers: { "Content-Type": "application/json" }
-      })
+      });
     }
 
     // 3. Extract key and perform rate limit check
     try {
-      const clientKey = await keyGenerator(c)
-      const { success } = await limiter.limit({ key: clientKey })
+      const clientKey = await keyGenerator(c);
+      const { success } = await limiter.limit({ key: clientKey });
 
       if (!success) {
-        return onRateLimited(c, retryAfter)
+        return onRateLimited(c, retryAfter);
       }
     } catch (error) {
-      console.error("[Rate Limit Error]", error)
+      console.error("[Rate Limit Error]", error);
       if (fallback !== "pass") {
         if (typeof c.json === "function") {
-          return c.json({ error: "Rate limit check failed" }, 500)
+          return c.json({ error: "Rate limit check failed" }, 500);
         }
         return new Response(JSON.stringify({ error: "Rate limit check failed" }), {
           status: 500,
           headers: { "Content-Type": "application/json" }
-        })
+        });
       }
     }
 
-    return next()
-  }
-}
+    return next();
+  };
+};

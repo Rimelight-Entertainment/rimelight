@@ -1,8 +1,8 @@
-import { For, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { For, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 const contentTypes = [
   {
@@ -41,7 +41,7 @@ const contentTypes = [
     count: 4,
     system: false
   }
-]
+];
 
 export const ContentTypesPage: Component<{ basePath?: string | undefined }> = (props) => {
   return (
@@ -93,7 +93,7 @@ export const ContentTypesPage: Component<{ basePath?: string | undefined }> = (p
         </For>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default ContentTypesPage
+export default ContentTypesPage;

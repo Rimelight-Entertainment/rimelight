@@ -1,9 +1,9 @@
-import { Hono } from "hono"
-import { db } from "#db"
-import { pageVersions, pages } from "#db/schema"
-import { eq } from "drizzle-orm"
+import { Hono } from "hono";
+import { db } from "#db";
+import { pageVersions, pages } from "#db/schema";
+import { eq } from "drizzle-orm";
 
-const api = new Hono()
+const api = new Hono();
 
 api.post("/:id/approve", async (c) => {
   try {
@@ -11,13 +11,13 @@ api.post("/:id/approve", async (c) => {
       .select()
       .from(pageVersions)
       .where(eq(pageVersions.id, c.req.param("id")))
-      .limit(1)
-    if (!version) return c.json({ error: "Version not found" }, 404)
+      .limit(1);
+    if (!version) return c.json({ error: "Version not found" }, 404);
 
     await db
       .update(pageVersions)
       .set({ status: "approved", approvedAt: new Date() })
-      .where(eq(pageVersions.id, c.req.param("id")))
+      .where(eq(pageVersions.id, c.req.param("id")));
     await db
       .update(pages)
       .set({
@@ -28,24 +28,24 @@ api.post("/:id/approve", async (c) => {
         content: version.content,
         updatedAt: new Date()
       })
-      .where(eq(pages.id, version.pageId))
+      .where(eq(pages.id, version.pageId));
 
-    return c.json({ success: true })
+    return c.json({ success: true });
   } catch (err: any) {
-    return c.json({ error: err.message }, 500)
+    return c.json({ error: err.message }, 500);
   }
-})
+});
 
 api.post("/:id/reject", async (c) => {
   try {
     await db
       .update(pageVersions)
       .set({ status: "rejected" })
-      .where(eq(pageVersions.id, c.req.param("id")))
-    return c.json({ success: true })
+      .where(eq(pageVersions.id, c.req.param("id")));
+    return c.json({ success: true });
   } catch (err: any) {
-    return c.json({ error: err.message }, 500)
+    return c.json({ error: err.message }, 500);
   }
-})
+});
 
-export default api
+export default api;

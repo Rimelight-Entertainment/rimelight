@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const passwordTheme = defineTheme("password", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const passwordTheme = defineTheme("password", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

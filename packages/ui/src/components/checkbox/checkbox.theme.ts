@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const checkboxTheme = defineTheme("checkbox", {
   slots: ["root", "input", "box", "indicator", "label"],
@@ -31,4 +31,4 @@ export const checkboxTheme = defineTheme("checkbox", {
     size: "md",
     checked: false
   }
-})
+});

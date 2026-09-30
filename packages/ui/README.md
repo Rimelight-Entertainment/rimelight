@@ -40,10 +40,10 @@ npm install @rimelight/ui solid-js
 ### In SolidJS
 
 ```tsx
-import { RLButton } from "@rimelight/ui/components"
+import { RLButton } from "@rimelight/ui/components";
 
 export default function MyComponent() {
-  return <RLButton label="Click Me" color="primary" variant="solid" />
+  return <RLButton label="Click Me" color="primary" variant="solid" />;
 }
 ```
 

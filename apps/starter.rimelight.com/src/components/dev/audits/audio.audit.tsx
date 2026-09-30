@@ -1,8 +1,8 @@
-import { createSignal, For } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { RLAudio } from "@rimelight/ui/components/audio/RLAudio.tsx"
-import type { AudioTrackItem } from "@rimelight/ui/components/audio/audio.ts"
-import type { ComponentAuditDefinition } from "./types"
+import { createSignal, For } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLAudio } from "@rimelight/ui/components/audio/RLAudio.tsx";
+import type { AudioTrackItem } from "@rimelight/ui/components/audio/audio.ts";
+import type { ComponentAuditDefinition } from "./types";
 
 const SAMPLE_TRACKS: AudioTrackItem[] = [
   {
@@ -42,30 +42,38 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
     fileSize: "5.5 MB",
     transcript: "00:00 — Minimal electronic pulse synth layered over deep sub-bass frequencies..."
   }
-]
+];
 
 export const AudioSandbox = (): JSX.Element => {
-  const [variant, setVariant] = createSignal<"solid" | "outline" | "soft" | "subtle">("outline")
-  const [size, setSize] = createSignal<"sm" | "md" | "lg">("md")
-  const [orientation, setOrientation] = createSignal<"horizontal" | "vertical">("horizontal")
-  const [progressVariant, setProgressVariant] = createSignal<"bar" | "waveform">("waveform")
-  const [color, setColor] = createSignal<string>("primary")
-  const [progressColor, setProgressColor] = createSignal<string>("primary")
-  const [showSkip, setShowSkip] = createSignal(true)
-  const [showSpeed, setShowSpeed] = createSignal(true)
-  const [showVolume, setShowVolume] = createSignal(true)
-  const [showVolumeNumber, setShowVolumeNumber] = createSignal(true)
-  const [showRepeat, setShowRepeat] = createSignal(true)
-  const [showDownload, setShowDownload] = createSignal(true)
-  const [showExternalLink, setShowExternalLink] = createSignal(true)
-  const [showPlaylist, setShowPlaylist] = createSignal(true)
-  const [artworkZoomable, setArtworkZoomable] = createSignal(true)
+  const [variant, setVariant] = createSignal<"solid" | "outline" | "soft" | "subtle">("outline");
+  const [size, setSize] = createSignal<"sm" | "md" | "lg">("md");
+  const [orientation, setOrientation] = createSignal<"horizontal" | "vertical">("horizontal");
+  const [progressVariant, setProgressVariant] = createSignal<"bar" | "waveform">("waveform");
+  const [color, setColor] = createSignal<string>("primary");
+  const [progressColor, setProgressColor] = createSignal<string>("primary");
+  const [showSkip, setShowSkip] = createSignal(true);
+  const [showSpeed, setShowSpeed] = createSignal(true);
+  const [showVolume, setShowVolume] = createSignal(true);
+  const [showVolumeNumber, setShowVolumeNumber] = createSignal(true);
+  const [showRepeat, setShowRepeat] = createSignal(true);
+  const [showDownload, setShowDownload] = createSignal(true);
+  const [showExternalLink, setShowExternalLink] = createSignal(true);
+  const [showPlaylist, setShowPlaylist] = createSignal(true);
+  const [artworkZoomable, setArtworkZoomable] = createSignal(true);
 
-  const variants = ["outline", "subtle", "soft", "solid"] as const
-  const sizes = ["sm", "md", "lg"] as const
-  const orientations = ["horizontal", "vertical"] as const
-  const progressTypes = ["bar", "waveform"] as const
-  const colors = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const
+  const variants = ["outline", "subtle", "soft", "solid"] as const;
+  const sizes = ["sm", "md", "lg"] as const;
+  const orientations = ["horizontal", "vertical"] as const;
+  const progressTypes = ["bar", "waveform"] as const;
+  const colors = [
+    "primary",
+    "secondary",
+    "success",
+    "info",
+    "warning",
+    "error",
+    "neutral"
+  ] as const;
 
   return (
     <>
@@ -280,8 +288,8 @@ export const AudioSandbox = (): JSX.Element => {
         artworkZoomable={artworkZoomable()}
       />
     </>
-  )
-}
+  );
+};
 
 export const audioAudit: ComponentAuditDefinition = {
   id: "audio",
@@ -443,4 +451,4 @@ export const audioAudit: ComponentAuditDefinition = {
       notes: "All 3 sample audio tracks verified with accessible media CDN URLs."
     }
   ]
-}
+};

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const ratingTheme = defineTheme("rating", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const ratingTheme = defineTheme("rating", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

@@ -1,13 +1,13 @@
 export interface BreadcrumbItem {
-  label: string
-  href?: string
+  label: string;
+  href?: string;
 }
 
 export interface BreadcrumbProps {
   /**
    * Quick-prop array to render breadcrumb items automatically.
    */
-  items?: BreadcrumbItem[]
+  items?: BreadcrumbItem[];
   /**
    * Maximum number of items to show at full container width (including first and last which are
    * always visible). Middle items beyond this cap are pre-hidden server-side and counted in the
@@ -19,25 +19,25 @@ export interface BreadcrumbProps {
    * When undefined, all items are shown at full width and only container queries produce the
    * responsive collapse.
    */
-  maxVisible?: number
+  maxVisible?: number;
   /**
    * Approximate width in pixels of each breadcrumb item (text + separator). Used to compute
    * container-query breakpoints for the responsive collapse. Increase for longer labels.
    *
    * @default 120
    */
-  estimatedItemWidth?: number
+  estimatedItemWidth?: number;
   /**
    * The icon separating the breadcrumbs.
    */
-  separatorIcon?: string
+  separatorIcon?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

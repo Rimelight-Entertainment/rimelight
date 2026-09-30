@@ -10,7 +10,7 @@
  */
 export const devOnly = async (c: any, next: any): Promise<Response> => {
   if (!import.meta.env.DEV && c.req.path.includes("/dev/")) {
-    return c.notFound()
+    return c.notFound();
   }
-  return next()
-}
+  return next();
+};

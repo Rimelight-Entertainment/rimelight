@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const timelineTheme = defineTheme("timeline", {
   slots: [
@@ -64,11 +64,11 @@ export const timelineTheme = defineTheme("timeline", {
     size: {
       "3xs": {},
       "2xs": {},
-      "xs": {},
-      "sm": {},
-      "md": {},
-      "lg": {},
-      "xl": {},
+      xs: {},
+      sm: {},
+      md: {},
+      lg: {},
+      xl: {},
       "2xl": {},
       "3xl": {}
     },
@@ -308,4 +308,4 @@ export const timelineTheme = defineTheme("timeline", {
     size: "md",
     color: "primary"
   }
-})
+});

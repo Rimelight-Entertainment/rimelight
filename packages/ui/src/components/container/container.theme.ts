@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const containerTheme = defineTheme("container", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const containerTheme = defineTheme("container", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

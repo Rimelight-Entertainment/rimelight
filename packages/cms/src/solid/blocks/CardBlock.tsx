@@ -1,12 +1,12 @@
-import { Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const CardBlock: Component<BlockViewProps> = (props) => {
-  const title = () => (props.block.props?.["title"] as string) ?? ""
-  const description = () => (props.block.props?.["description"] as string) ?? ""
-  const icon = () => (props.block.props?.["icon"] as string) ?? "i-lucide-book-open"
-  const href = () => props.block.props?.["href"] as string | undefined
-  const badge = () => props.block.props?.["badge"] as string | undefined
+  const title = () => (props.block.props?.["title"] as string) ?? "";
+  const description = () => (props.block.props?.["description"] as string) ?? "";
+  const icon = () => (props.block.props?.["icon"] as string) ?? "i-lucide-book-open";
+  const href = () => props.block.props?.["href"] as string | undefined;
+  const badge = () => props.block.props?.["badge"] as string | undefined;
 
   return (
     <Show
@@ -28,14 +28,14 @@ export const CardBlock: Component<BlockViewProps> = (props) => {
         <CardBody title={title()} description={description()} icon={icon()} badge={badge()} />
       </a>
     </Show>
-  )
-}
+  );
+};
 
 function CardBody(props: {
-  title: string
-  description: string
-  icon: string
-  badge?: string | undefined
+  title: string;
+  description: string;
+  icon: string;
+  badge?: string | undefined;
 }) {
   return (
     <>
@@ -62,7 +62,7 @@ function CardBody(props: {
         <p class="mt-3 text-sm text-neutral-600 m-0">{props.description}</p>
       </Show>
     </>
-  )
+  );
 }
 
-export default CardBlock
+export default CardBlock;

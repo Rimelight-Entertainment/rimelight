@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const badgeTheme = defineTheme("badge", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
@@ -180,4 +180,4 @@ export const badgeTheme = defineTheme("badge", {
     shape: "rounded",
     square: false
   }
-})
+});

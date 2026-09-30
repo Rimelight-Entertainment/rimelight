@@ -1,45 +1,45 @@
-import { type Component, Show } from "solid-js"
-import { useParams } from "@solidjs/router"
-import AppLayout from "#layouts/AppLayout"
-import PageRenderer from "#components/cms/PageRenderer"
-import { createAsyncData } from "#utils/async"
-import { t, getLocale } from "@rimelight/i18n"
+import { type Component, Show } from "solid-js";
+import { useParams } from "@solidjs/router";
+import AppLayout from "#layouts/AppLayout";
+import PageRenderer from "#components/cms/PageRenderer";
+import { createAsyncData } from "#utils/async";
+import { t, getLocale } from "@rimelight/i18n";
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>
-    return record[locale] || record["en"] || ""
+    const record = val as Record<string, string>;
+    return record[locale] || record["en"] || "";
   }
-  return typeof val === "string" ? val : ""
+  return typeof val === "string" ? val : "";
 }
 
 export const LegalSlugPage: Component = () => {
-  const params = useParams<{ locale: string; slug: string }>()
-  const activeLocale = () => getLocale()
+  const params = useParams<{ locale: string; slug: string }>();
+  const activeLocale = () => getLocale();
 
   const pageData = createAsyncData(
     () => params["slug"],
     async (slug) => {
-      if (!slug) return null
+      if (!slug) return null;
       try {
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=legal`)
-        if (!res.ok) return null
-        const data = (await res.json()) as any
-        return data.page || null
+        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=legal`);
+        if (!res.ok) return null;
+        const data = (await res.json()) as any;
+        return data.page || null;
       } catch {
-        return null
+        return null;
       }
     }
-  )
+  );
 
-  const title = () => (pageData() ? getLocalizedText(pageData()!.title, activeLocale()) : "Legal")
+  const title = () => (pageData() ? getLocalizedText(pageData()!.title, activeLocale()) : "Legal");
   const description = () =>
-    pageData() ? getLocalizedText(pageData()!.description, activeLocale()) : ""
+    pageData() ? getLocalizedText(pageData()!.description, activeLocale()) : "";
   const content = () => {
-    const p = pageData()
-    if (!p) return {}
-    return typeof p.content === "string" ? JSON.parse(p.content) : p.content || {}
-  }
+    const p = pageData();
+    if (!p) return {};
+    return typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
+  };
 
   return (
     <AppLayout title={title()} description={description()}>
@@ -72,7 +72,7 @@ export const LegalSlugPage: Component = () => {
         </Show>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default LegalSlugPage
+export default LegalSlugPage;

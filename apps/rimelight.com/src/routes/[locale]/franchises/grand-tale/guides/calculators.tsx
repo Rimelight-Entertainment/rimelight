@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import GuidesLayout from "#layouts/GuidesLayout"
+import { type Component } from "solid-js";
+import GuidesLayout from "#layouts/GuidesLayout";
 
 export const CalculatorsPage: Component = () => {
   return (
@@ -17,7 +17,7 @@ export const CalculatorsPage: Component = () => {
         </div>
       </div>
     </GuidesLayout>
-  )
-}
+  );
+};
 
-export default CalculatorsPage
+export default CalculatorsPage;

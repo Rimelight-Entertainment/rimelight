@@ -1,10 +1,10 @@
-import { sql } from "drizzle-orm"
-import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core"
-import type { BaseBlock } from "../core/types/blocks"
-import type { Localized, PageType } from "../core/types/pages"
-import type { BylineCredit } from "../core/types/bylines"
-import { pageVersions } from "./page_versions.ts"
-import { pageTemplates } from "./page_templates.ts"
+import { sql } from "drizzle-orm";
+import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import type { BaseBlock } from "../core/types/blocks";
+import type { Localized, PageType } from "../core/types/pages";
+import type { BylineCredit } from "../core/types/bylines";
+import { pageVersions } from "./page_versions.ts";
+import { pageTemplates } from "./page_templates.ts";
 
 export const pages = pgTable(
   "pages",
@@ -24,8 +24,8 @@ export const pages = pgTable(
      */
     content: jsonb("content")
       .$type<{
-        blocks: BaseBlock[]
-        properties: Record<string, any>
+        blocks: BaseBlock[];
+        properties: Record<string, any>;
       }>()
       .notNull(),
     publishedVersionId: uuid("published_version_id").references(() => pageVersions.id, {
@@ -41,4 +41,4 @@ export const pages = pgTable(
       .on(table.slug)
       .where(sql`deleted_at IS NULL`)
   ]
-)
+);

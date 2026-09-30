@@ -1,25 +1,25 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { QuoteProps } from "./quote"
-import { quoteTheme } from "./quote.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { QuoteProps } from "./quote";
+import { quoteTheme } from "./quote.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLQuoteProps extends QuoteProps {
-  children?: JSX.Element
-  quote?: JSX.Element
-  caption?: JSX.Element
+  children?: JSX.Element;
+  quote?: JSX.Element;
+  caption?: JSX.Element;
 }
 
 const RLQuote: Component<RLQuoteProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "quote", "caption", "children", "ui", "class")
+  const props = allProps;
+  const rest = omit(allProps, "quote", "caption", "children", "ui", "class");
 
   const resolvedClasses = createMemo(() =>
     quoteTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <figure class={resolvedClasses().root} data-slot="root" {...rest}>
@@ -33,7 +33,7 @@ const RLQuote: Component<RLQuoteProps> = (allProps) => {
         </figcaption>
       ) : null}
     </figure>
-  )
-}
+  );
+};
 
-export { RLQuote }
+export { RLQuote };

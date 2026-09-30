@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const fieldsetTheme = defineTheme("fieldset", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const fieldsetTheme = defineTheme("fieldset", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

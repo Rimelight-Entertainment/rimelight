@@ -1,6 +1,6 @@
-import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-export type AppUserAvailability = "available" | "busy" | "away" | "offline" | (string & {})
+export type AppUserAvailability = "available" | "busy" | "away" | "offline" | (string & {});
 
 /**
  * Public & Consumer Platform Users table. Decoupled from enterprise staff and internal employee
@@ -24,7 +24,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
-export type AppUser = typeof users.$inferSelect
-export type NewAppUser = typeof users.$inferInsert
+export type AppUser = typeof users.$inferSelect;
+export type NewAppUser = typeof users.$inferInsert;

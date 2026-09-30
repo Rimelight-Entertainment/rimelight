@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const shortcutsTheme = defineTheme("shortcuts", {
   slots: [
@@ -50,4 +50,4 @@ export const shortcutsTheme = defineTheme("shortcuts", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

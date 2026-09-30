@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const tabsTheme = defineTheme("tabs", {
   slots: [
@@ -84,4 +84,4 @@ export const tabsTheme = defineTheme("tabs", {
     orientation: "horizontal",
     size: "md"
   }
-})
+});

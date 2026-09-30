@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const inputTimeTheme = defineTheme("input-time", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const inputTimeTheme = defineTheme("input-time", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

@@ -1,4 +1,4 @@
-import { type Component, For, Show, onSettled } from "solid-js"
+import { type Component, For, Show, onSettled } from "solid-js";
 import {
   RLHeader,
   RLLogo,
@@ -12,30 +12,30 @@ import {
   RLImage,
   type RLButtonProps,
   type RLLinkGroupProps
-} from "@rimelight/ui"
-import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
-import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+} from "@rimelight/ui";
+import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts";
+import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export interface AppHeaderProps {
-  session?: any
-  stackIndex?: number
+  session?: any;
+  stackIndex?: number;
 }
 
 export const AppHeader: Component<AppHeaderProps> = (props) => {
   onSettled(() => {
-    const btn = document.getElementById("rla-shortcuts-btn")
+    const btn = document.getElementById("rla-shortcuts-btn");
     const handler = () => {
-      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"))
-      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"))
-    }
-    btn?.addEventListener("click", handler)
+      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"));
+      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"));
+    };
+    btn?.addEventListener("click", handler);
     return () => {
-      btn?.removeEventListener("click", handler)
-    }
-  })
+      btn?.removeEventListener("click", handler);
+    };
+  });
 
-  const currentUser = () => props.session?.user ?? props.session
+  const currentUser = () => props.session?.user ?? props.session;
 
   const grandTaleLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_grand-tale_main_title"),
@@ -65,7 +65,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/franchises/grand-tale/leaderboards")
       }
     ]
-  })
+  });
 
   const grandTaleSeriesLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_grand-tale_series_title"),
@@ -83,7 +83,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures")
       }
     ]
-  })
+  });
 
   const grandTaleBooksLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_grand-tale_books_title"),
@@ -93,7 +93,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale")
       }
     ]
-  })
+  });
 
   const grandTaleComicsLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_grand-tale_comics_title"),
@@ -103,7 +103,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends")
       }
     ]
-  })
+  });
 
   const grandTaleResourcesGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_right_grand-tale_resources_title"),
@@ -119,7 +119,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-lucide-headset"
       }
     ]
-  })
+  });
 
   const grandTaleSocialsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_right_grand-tale_socials_title"),
@@ -140,7 +140,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-mdi-instagram"
       }
     ]
-  })
+  });
 
   const commForumsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_community_forums_title"),
@@ -154,7 +154,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/forums/grand-tale")
       }
     ]
-  })
+  });
 
   const commEventsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_community_events_title"),
@@ -164,7 +164,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/events/lightcon")
       }
     ]
-  })
+  });
 
   const commSocialsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_right_grand-tale_socials_title"),
@@ -185,7 +185,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-mdi-spotify"
       }
     ]
-  })
+  });
 
   const compStudioGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_company_main_studio_title"),
@@ -199,7 +199,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/company/studio/partnerships")
       }
     ]
-  })
+  });
 
   const compCareersGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_company_main_careers_title"),
@@ -213,7 +213,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/company/careers")
       }
     ]
-  })
+  });
 
   const compNewsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_company_main_news_title"),
@@ -223,7 +223,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/company/blog")
       }
     ]
-  })
+  });
 
   const compResourcesGroup = (): RLLinkGroupProps => ({
     label: t("app_header.links_company_resources_title"),
@@ -249,7 +249,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-lucide-mail"
       }
     ]
-  })
+  });
 
   const compSocialsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_right_company_socials_title"),
@@ -265,7 +265,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-logos-github-icon"
       }
     ]
-  })
+  });
 
   const storeDealsGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_store_main_deals_title"),
@@ -283,7 +283,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/store/deals/bundles")
       }
     ]
-  })
+  });
 
   const storeClothingGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_store_main_clothing_title"),
@@ -301,7 +301,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/store/clothing/bottoms")
       }
     ]
-  })
+  });
 
   const storeAccessoriesGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_store_main_accessories_title"),
@@ -319,7 +319,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/store/accessories/keychains")
       }
     ]
-  })
+  });
 
   const storeApparelGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_store_main_apparel_title"),
@@ -329,7 +329,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/store/apparel/bottles-mugs")
       }
     ]
-  })
+  });
 
   const storeCollectiblesGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_store_main_collectibles_title"),
@@ -343,7 +343,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/store/merch/plushies")
       }
     ]
-  })
+  });
 
   const storeArtGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_store_main_art_title"),
@@ -361,7 +361,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/store/art/games")
       }
     ]
-  })
+  });
 
   const storeAssistanceGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_right_store_assistance_title"),
@@ -377,7 +377,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-lucide-help-circle"
       }
     ]
-  })
+  });
 
   const leftLinks = (): NavigationMenuItem[] => [
     {
@@ -631,7 +631,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         }
       ]
     }
-  ]
+  ];
 
   const actions = (): RLButtonProps[] => [
     {
@@ -648,7 +648,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       label: t("app_header.actions_sign-in"),
       prefetch: false
     }
-  ]
+  ];
 
   const userDropdownItems = (): DropdownMenuItem[] =>
     props.session
@@ -686,7 +686,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             prefetch: false
           }
         ]
-      : []
+      : [];
 
   return (
     <RLHeader
@@ -971,7 +971,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         </div>
       }
     />
-  )
-}
+  );
+};
 
-export default AppHeader
+export default AppHeader;

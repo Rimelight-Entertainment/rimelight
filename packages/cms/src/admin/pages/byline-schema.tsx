@@ -1,8 +1,8 @@
-import { For, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { For, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 const schemaFields = [
   {
@@ -47,7 +47,7 @@ const schemaFields = [
     required: false,
     description: "Associated company or team entity"
   }
-]
+];
 
 export const BylineSchemaPage: Component<{ basePath?: string | undefined }> = (props) => {
   return (
@@ -103,7 +103,7 @@ export const BylineSchemaPage: Component<{ basePath?: string | undefined }> = (p
         </For>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default BylineSchemaPage
+export default BylineSchemaPage;

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const hoverCardTheme = defineTheme("hover-card", {
   slots: ["root", "trigger", "content"],
@@ -22,4 +22,4 @@ export const hoverCardTheme = defineTheme("hover-card", {
   defaultVariants: {
     placement: "bottom"
   }
-})
+});

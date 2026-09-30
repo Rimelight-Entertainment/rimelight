@@ -1,21 +1,21 @@
-import type { BlockType } from "#types/blocks"
+import type { BlockType } from "#types/blocks";
 
 export interface AllowedChildren {
-  types: BlockType[]
+  types: BlockType[];
 }
 
 export interface BlockDefinition {
-  type: BlockType
-  label: string
-  icon: string
-  category: string
-  description?: string
-  allowedChildren?: AllowedChildren
-  nestable?: boolean
-  draggable?: boolean
+  type: BlockType;
+  label: string;
+  icon: string;
+  category: string;
+  description?: string;
+  allowedChildren?: AllowedChildren;
+  nestable?: boolean;
+  draggable?: boolean;
 }
 
-export const CATEGORY_ORDER = ["Layout", "Text", "Media", "Screenwriting", "Special"]
+export const CATEGORY_ORDER = ["Layout", "Text", "Media", "Screenwriting", "Special"];
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   {
@@ -90,4 +90,4 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     nestable: false,
     draggable: true
   }
-]
+];

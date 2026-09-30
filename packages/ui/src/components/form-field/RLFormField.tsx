@@ -1,19 +1,19 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { FormFieldProps } from "./form-field"
-import { formFieldTheme } from "./form-field.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { FormFieldProps } from "./form-field";
+import { formFieldTheme } from "./form-field.theme";
 
 export interface RLFormFieldProps extends FormFieldProps {
-  children?: JSX.Element
-  hint?: JSX.Element
-  labelSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  errorSlot?: JSX.Element
-  helpSlot?: JSX.Element
+  children?: JSX.Element;
+  hint?: JSX.Element;
+  labelSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  errorSlot?: JSX.Element;
+  helpSlot?: JSX.Element;
 }
 
 const RLFormField: Component<RLFormFieldProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "id",
@@ -30,7 +30,7 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
     "descriptionSlot",
     "errorSlot",
     "helpSlot"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     formFieldTheme({
@@ -38,7 +38,7 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
@@ -68,7 +68,7 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
 
       {props.helpSlot ? <div class="mt-1">{props.helpSlot}</div> : null}
     </div>
-  )
-}
+  );
+};
 
-export { RLFormField }
+export { RLFormField };

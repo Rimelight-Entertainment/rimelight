@@ -1,33 +1,33 @@
-import { type Component, Show, For } from "solid-js"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts"
-import type { BadgeProps } from "@rimelight/ui/components/badge/badge.ts"
-import type { ThemeColor } from "@rimelight/ui/types.ts"
+import { type Component, Show, For } from "solid-js";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { BadgeProps } from "@rimelight/ui/components/badge/badge.ts";
+import type { ThemeColor } from "@rimelight/ui/types.ts";
 
 export interface Action {
-  label: string
-  href: string
-  variant?: ButtonProps["variant"]
-  color?: ThemeColor
-  icon?: string
+  label: string;
+  href: string;
+  variant?: ButtonProps["variant"];
+  color?: ThemeColor;
+  icon?: string;
 }
 
 export interface AppErrorProps {
-  code: number
-  title: string
-  description: string
-  userEmail?: string
-  requiredRole?: string
-  actions?: Action[]
+  code: number;
+  title: string;
+  description: string;
+  userEmail?: string;
+  requiredRole?: string;
+  actions?: Action[];
 }
 
 interface StatusThemeConfig {
-  icon: string
-  iconBoxClass: string
-  dotClass: string
-  badgeColor: BadgeProps["color"]
+  icon: string;
+  iconBoxClass: string;
+  dotClass: string;
+  badgeColor: BadgeProps["color"];
 }
 
 const statusConfig: Record<number, StatusThemeConfig> = {
@@ -61,17 +61,17 @@ const statusConfig: Record<number, StatusThemeConfig> = {
     dotClass: "bg-error",
     badgeColor: "error"
   }
-}
+};
 
 const defaultConfig: StatusThemeConfig = {
   icon: "i-lucide-shield-alert",
   iconBoxClass: "border-error/30 bg-error/10 text-error",
   dotClass: "bg-error",
   badgeColor: "error"
-}
+};
 
 export const AppError: Component<AppErrorProps> = (props) => {
-  const config = () => statusConfig[props.code] || defaultConfig
+  const config = () => statusConfig[props.code] || defaultConfig;
   const actionsList = () =>
     props.actions || [
       {
@@ -81,7 +81,7 @@ export const AppError: Component<AppErrorProps> = (props) => {
         color: "primary" as const,
         icon: "i-lucide-home"
       }
-    ]
+    ];
 
   return (
     <div class="relative min-h-[calc(100vh-8rem)] w-full flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
@@ -159,7 +159,7 @@ export const AppError: Component<AppErrorProps> = (props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AppError
+export default AppError;

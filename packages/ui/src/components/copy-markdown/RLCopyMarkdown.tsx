@@ -1,6 +1,6 @@
-import { createSignal, onCleanup, omit, type Component } from "solid-js"
-import type { ButtonProps } from "../button/button"
-import { RLButton } from "../button/RLButton"
+import { createSignal, onCleanup, omit, type Component } from "solid-js";
+import type { ButtonProps } from "../button/button";
+import { RLButton } from "../button/RLButton";
 
 export interface RLCopyMarkdownProps extends Omit<
   ButtonProps,
@@ -15,31 +15,31 @@ export interface RLCopyMarkdownProps extends Omit<
   | "activeColor"
   | "activeVariant"
 > {
-  raw: string
-  class?: any
-  ui?: any
+  raw: string;
+  class?: any;
+  ui?: any;
 }
 
 const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "raw", "class", "ui")
-  const [copied, setCopied] = createSignal(false)
-  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  const props = allProps;
+  const rest = omit(allProps, "raw", "class", "ui");
+  const [copied, setCopied] = createSignal(false);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   onCleanup(() => {
-    if (timeoutId !== undefined) clearTimeout(timeoutId)
-  })
+    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  });
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(props.raw)
-      setCopied(true)
-      if (timeoutId !== undefined) clearTimeout(timeoutId)
-      timeoutId = setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(props.raw);
+      setCopied(true);
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err)
+      console.error("Failed to copy:", err);
     }
-  }
+  };
 
   return (
     <RLButton
@@ -54,7 +54,7 @@ const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
       onClick={handleCopy}
       {...rest}
     />
-  )
-}
+  );
+};
 
-export { RLCopyMarkdown }
+export { RLCopyMarkdown };

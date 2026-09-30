@@ -1,94 +1,94 @@
-import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
-import type { BaseBlock } from "../../../core/types/blocks"
-import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js";
+import type { BaseBlock } from "../../../core/types/blocks";
+import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface ScriptEditorProps {
-  blockId?: string
-  props: Record<string, any>
-  children?: BaseBlock[] | (() => BaseBlock[])
-  sectionDepth?: number
-  onPropsChange: (newProps: Record<string, any>) => void
-  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined
-  onOpenPicker?: () => void
-  renderChildBlock?: (block: BaseBlock, depth: number) => any
+  blockId?: string;
+  props: Record<string, any>;
+  children?: BaseBlock[] | (() => BaseBlock[]);
+  sectionDepth?: number;
+  onPropsChange: (newProps: Record<string, any>) => void;
+  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined;
+  onOpenPicker?: () => void;
+  renderChildBlock?: (block: BaseBlock, depth: number) => any;
 }
 
 export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
-  const [charInputVal, setCharInputVal] = createSignal("")
-  let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null
-  let sortableInstance: any = null
+  const [charInputVal, setCharInputVal] = createSignal("");
+  let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null;
+  let sortableInstance: any = null;
 
-  const characters = (): string[] => componentProps.props["characters"] || []
+  const characters = (): string[] => componentProps.props["characters"] || [];
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
-      return componentProps.children() || []
+      return componentProps.children() || [];
     }
-    return componentProps.children || componentProps.props["children"] || []
-  }
+    return componentProps.children || componentProps.props["children"] || [];
+  };
 
   onSettled(() => {
     if (childrenContainer) {
       sortableInstance = initBlockSortable(childrenContainer, {
         filter: ".cms-empty-placeholder, .locked",
         onReorder: (oldIdx: number, newIdx: number) => {
-          cleanAllSortableClasses()
-          const list = [...childrenBlocks()]
-          const item = list.splice(oldIdx, 1)[0]
+          cleanAllSortableClasses();
+          const list = [...childrenBlocks()];
+          const item = list.splice(oldIdx, 1)[0];
           if (item) {
-            list.splice(newIdx, 0, item)
-            componentProps.onPropsChange({ ...componentProps.props, children: list })
+            list.splice(newIdx, 0, item);
+            componentProps.onPropsChange({ ...componentProps.props, children: list });
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onAdd: (blockId: string, newIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
           if (componentProps.onRelocate && componentProps.blockId) {
-            componentProps.onRelocate(blockId, newIdx, componentProps.blockId)
+            componentProps.onRelocate(blockId, newIdx, componentProps.blockId);
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
         }
-      })
+      });
     }
 
     onCleanup(() => {
-      if (sortableInstance) sortableInstance.destroy()
-    })
-  })
+      if (sortableInstance) sortableInstance.destroy();
+    });
+  });
 
   const saveProps = (partial: Record<string, any>) => {
     componentProps.onPropsChange({
       ...componentProps.props,
       ...partial,
       children: childrenBlocks()
-    })
-  }
+    });
+  };
 
   const addCharacter = (name: string) => {
-    const trimmed = name.trim()
-    if (!trimmed) return
-    const currentChars = characters()
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const currentChars = characters();
     if (!currentChars.includes(trimmed)) {
-      const updated = [...currentChars, trimmed]
-      setCharInputVal("")
-      componentProps.onPropsChange({ ...componentProps.props, characters: updated })
+      const updated = [...currentChars, trimmed];
+      setCharInputVal("");
+      componentProps.onPropsChange({ ...componentProps.props, characters: updated });
     }
-  }
+  };
 
   const removeCharacter = (name: string) => {
-    const updated = characters().filter((c) => c !== name)
-    componentProps.onPropsChange({ ...componentProps.props, characters: updated })
-  }
+    const updated = characters().filter((c) => c !== name);
+    componentProps.onPropsChange({ ...componentProps.props, characters: updated });
+  };
 
   return (
     <div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-2 border-primary/50 w-full">
@@ -144,8 +144,8 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
               onInput={(e) => setCharInputVal(e.currentTarget.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  e.preventDefault()
-                  addCharacter(charInputVal())
+                  e.preventDefault();
+                  addCharacter(charInputVal());
                 }
               }}
               placeholder="New character name"
@@ -216,8 +216,8 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
                 color="neutral"
                 size="xs"
                 onClick={(e: MouseEvent) => {
-                  e.stopPropagation()
-                  componentProps.onOpenPicker?.()
+                  e.stopPropagation();
+                  componentProps.onOpenPicker?.();
                 }}
                 leadingIcon="plus"
                 label="Add Block"
@@ -233,5 +233,5 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

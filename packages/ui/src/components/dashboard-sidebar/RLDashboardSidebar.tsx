@@ -1,19 +1,19 @@
-import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { DashboardSidebarProps } from "./dashboard-sidebar"
-import { dashboardSidebarTheme } from "./dashboard-sidebar.theme"
+import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { DashboardSidebarProps } from "./dashboard-sidebar";
+import { dashboardSidebarTheme } from "./dashboard-sidebar.theme";
 
 export interface RLDashboardSidebarProps extends DashboardSidebarProps {
-  children?: JSX.Element
-  headerSlot?: JSX.Element
-  footerSlot?: JSX.Element
-  openMobile?: boolean
-  onOpenMobileChange?: (open: boolean) => void
-  onCollapseChange?: (collapsed: boolean) => void
+  children?: JSX.Element;
+  headerSlot?: JSX.Element;
+  footerSlot?: JSX.Element;
+  openMobile?: boolean;
+  onOpenMobileChange?: (open: boolean) => void;
+  onCollapseChange?: (collapsed: boolean) => void;
 }
 
 const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "side",
@@ -27,81 +27,81 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     "children",
     "onOpenMobileChange",
     "onCollapseChange"
-  )
+  );
 
-  const side = () => props.side ?? "left"
-  const isCollapsible = () => props.collapsible ?? false
-  const [isCollapsed, setIsCollapsed] = createSignal(props.collapsed ?? false)
-  const [isMobileOpen, setIsMobileOpen] = createSignal(props.openMobile ?? false)
+  const side = () => props.side ?? "left";
+  const isCollapsible = () => props.collapsible ?? false;
+  const [isCollapsed, setIsCollapsed] = createSignal(props.collapsed ?? false);
+  const [isMobileOpen, setIsMobileOpen] = createSignal(props.openMobile ?? false);
 
   createEffect(
     () => props.collapsed,
     (collapsed) => {
       if (collapsed !== undefined) {
-        setIsCollapsed(collapsed)
+        setIsCollapsed(collapsed);
       }
     }
-  )
+  );
 
   createEffect(
     () => props.openMobile,
     (openMobile) => {
       if (openMobile !== undefined) {
-        setIsMobileOpen(openMobile)
+        setIsMobileOpen(openMobile);
       }
     }
-  )
+  );
 
   const setCollapsedState = (collapsed: boolean) => {
     if (props.collapsed === undefined) {
-      setIsCollapsed(collapsed)
+      setIsCollapsed(collapsed);
     }
-    props.onCollapseChange?.(collapsed)
-  }
+    props.onCollapseChange?.(collapsed);
+  };
 
   const setMobileOpenState = (open: boolean) => {
     if (props.openMobile === undefined) {
-      setIsMobileOpen(open)
+      setIsMobileOpen(open);
     }
-    props.onOpenMobileChange?.(open)
-  }
+    props.onOpenMobileChange?.(open);
+  };
 
   onSettled(() => {
     const handleClick = (e: MouseEvent) => {
-      const target = e.target as Element | null
-      if (!target) return
+      const target = e.target as Element | null;
+      if (!target) return;
 
-      const toggle = target.closest<HTMLElement>("[data-dashboard-toggle]")
+      const toggle = target.closest<HTMLElement>("[data-dashboard-toggle]");
       if (toggle) {
-        const toggleType = toggle.dataset["dashboardToggle"]
+        const toggleType = toggle.dataset["dashboardToggle"];
         if (toggleType === "mobile") {
-          setMobileOpenState(!isMobileOpen())
+          setMobileOpenState(!isMobileOpen());
         }
         if (toggleType === "collapse" && isCollapsible()) {
-          setCollapsedState(!isCollapsed())
+          setCollapsedState(!isCollapsed());
         }
-        return
+        return;
       }
 
       if (target.closest("[data-dashboard-sidebar-mobile] a")) {
-        setMobileOpenState(false)
+        setMobileOpenState(false);
       }
-    }
+    };
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isMobileOpen()) {
-        setMobileOpenState(false)
+        setMobileOpenState(false);
       }
-    }
+    };
 
-    document.addEventListener("click", handleClick)
-    document.addEventListener("keydown", handleKey)
+    document.addEventListener("click", handleClick);
+    document.addEventListener("keydown", handleKey);
 
     return () => {
-      document.removeEventListener("click", handleClick)
-      document.removeEventListener("keydown", handleKey)
-    }
-  })
+      document.removeEventListener("click", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     dashboardSidebarTheme({
@@ -110,21 +110,21 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const headerContent = () =>
     props.headerSlot !== undefined ? (
       <div data-slot="header" class={resolvedClasses().header}>
         {props.headerSlot}
       </div>
-    ) : null
+    ) : null;
 
   const footerContent = () =>
     props.footerSlot !== undefined ? (
       <div data-slot="footer" class={resolvedClasses().footer}>
         {props.footerSlot}
       </div>
-    ) : null
+    ) : null;
 
   return (
     <>
@@ -160,7 +160,7 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
         {footerContent()}
       </div>
     </>
-  )
-}
+  );
+};
 
-export { RLDashboardSidebar }
+export { RLDashboardSidebar };

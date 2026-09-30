@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const videoTheme = defineTheme("video", {
   slots: ["root", "trigger", "image", "icon", "iframe", "transcript"],
@@ -13,4 +13,4 @@ export const videoTheme = defineTheme("video", {
   variants: {},
   compoundVariants: [],
   defaultVariants: {}
-})
+});

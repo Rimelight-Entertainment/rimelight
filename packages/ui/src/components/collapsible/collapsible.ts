@@ -1,32 +1,32 @@
-import type { ThemeColor } from "../../types"
+import type { ThemeColor } from "../../types";
 export interface CollapsibleProps {
   /**
    * Controlled open state.
    */
-  open?: boolean
+  open?: boolean;
   /**
    * The trigger button label (or use 'trigger' slot)
    */
-  label?: string
+  label?: string;
   /**
    * An optional leading icon for the trigger button
    */
-  icon?: string
+  icon?: string;
   /**
    * Size scale of the trigger.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Color theme of the trigger.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

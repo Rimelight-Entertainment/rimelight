@@ -1,15 +1,15 @@
-import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ToastProps } from "./toast"
-import { toastTheme } from "./toast.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ToastProps } from "./toast";
+import { toastTheme } from "./toast.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLToastProps extends ToastProps {
-  onDismiss?: () => void
-  children?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  actionsSlot?: JSX.Element
+  onDismiss?: () => void;
+  children?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
 }
 
 const variantIcons: Record<string, string> = {
@@ -18,10 +18,10 @@ const variantIcons: Record<string, string> = {
   success: "i-rl-circleCheck",
   warning: "i-rl-alertTriangle",
   info: "i-rl-info"
-}
+};
 
 const RLToast: Component<RLToastProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "title",
@@ -37,16 +37,16 @@ const RLToast: Component<RLToastProps> = (allProps) => {
     "titleSlot",
     "descriptionSlot",
     "actionsSlot"
-  )
+  );
 
-  const [leaving, setLeaving] = createSignal(false)
-  let rootRef: HTMLDivElement | undefined
-  let timerId: ReturnType<typeof setTimeout> | null = null
-  let dismissTimerId: ReturnType<typeof setTimeout> | undefined
-  let startTime = 0
-  let remaining = props.duration ?? 6000
+  const [leaving, setLeaving] = createSignal(false);
+  let rootRef: HTMLDivElement | undefined;
+  let timerId: ReturnType<typeof setTimeout> | null = null;
+  let dismissTimerId: ReturnType<typeof setTimeout> | undefined;
+  let startTime = 0;
+  let remaining = props.duration ?? 6000;
 
-  const isError = () => props.variant === "error"
+  const isError = () => props.variant === "error";
 
   const resolvedClasses = createMemo(() =>
     toastTheme({
@@ -56,58 +56,58 @@ const RLToast: Component<RLToastProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const icon = () => variantIcons[props.variant ?? ""] ?? variantIcons["default"]!
+  const icon = () => variantIcons[props.variant ?? ""] ?? variantIcons["default"]!;
 
   const dismiss = () => {
-    if (leaving()) return
-    setLeaving(true)
+    if (leaving()) return;
+    setLeaving(true);
     if (props.onDismiss) {
-      if (dismissTimerId !== undefined) clearTimeout(dismissTimerId)
-      dismissTimerId = setTimeout(props.onDismiss, 300)
+      if (dismissTimerId !== undefined) clearTimeout(dismissTimerId);
+      dismissTimerId = setTimeout(props.onDismiss, 300);
     }
-  }
+  };
 
   const startTimer = () => {
-    const duration = props.duration ?? 6000
+    const duration = props.duration ?? 6000;
     if (duration > 0 && remaining > 0 && timerId === null) {
-      startTime = Date.now()
-      timerId = setTimeout(dismiss, remaining)
+      startTime = Date.now();
+      timerId = setTimeout(dismiss, remaining);
     }
-  }
+  };
 
   const pauseTimer = () => {
     if (timerId !== null) {
-      clearTimeout(timerId)
-      timerId = null
-      remaining -= Date.now() - startTime
+      clearTimeout(timerId);
+      timerId = null;
+      remaining -= Date.now() - startTime;
     }
-  }
+  };
 
   onSettled(() => {
-    const root = rootRef
-    if (!root) return
+    const root = rootRef;
+    if (!root) return;
 
-    const duration = props.duration ?? 6000
+    const duration = props.duration ?? 6000;
     if (duration > 0) {
-      startTimer()
-      root.addEventListener("mouseenter", pauseTimer)
-      root.addEventListener("mouseleave", startTimer)
-      root.addEventListener("focusin", pauseTimer)
+      startTimer();
+      root.addEventListener("mouseenter", pauseTimer);
+      root.addEventListener("mouseleave", startTimer);
+      root.addEventListener("focusin", pauseTimer);
       root.addEventListener("focusout", (e) => {
-        if (!root.contains(e.relatedTarget as Node)) startTimer()
-      })
+        if (!root.contains(e.relatedTarget as Node)) startTimer();
+      });
     }
 
     return () => {
-      if (timerId !== null) clearTimeout(timerId)
-      if (dismissTimerId !== undefined) clearTimeout(dismissTimerId)
-      root.removeEventListener("mouseenter", pauseTimer)
-      root.removeEventListener("mouseleave", startTimer)
-      root.removeEventListener("focusin", pauseTimer)
-    }
-  })
+      if (timerId !== null) clearTimeout(timerId);
+      if (dismissTimerId !== undefined) clearTimeout(dismissTimerId);
+      root.removeEventListener("mouseenter", pauseTimer);
+      root.removeEventListener("mouseleave", startTimer);
+      root.removeEventListener("focusin", pauseTimer);
+    };
+  });
 
   return (
     <div
@@ -168,7 +168,7 @@ const RLToast: Component<RLToastProps> = (allProps) => {
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { RLToast }
+export { RLToast };

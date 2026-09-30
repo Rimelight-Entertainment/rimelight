@@ -1,10 +1,10 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { MarqueeProps } from "./marquee"
-import { marqueeTheme } from "./marquee.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { MarqueeProps } from "./marquee";
+import { marqueeTheme } from "./marquee.theme";
 
 export interface RLMarqueeProps extends MarqueeProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const MARQUEE_KEYFRAMES = `
@@ -37,11 +37,11 @@ const MARQUEE_KEYFRAMES = `
 .animate-marquee-down {
   animation: marquee-down 30s linear infinite;
 }
-`
+`;
 
 const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "speed", "direction", "pauseOnHover", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "speed", "direction", "pauseOnHover", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
     marqueeTheme({
@@ -50,9 +50,9 @@ const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const trackStyle = () => ({ "animation-duration": `${props.speed ?? 40}s` })
+  const trackStyle = () => ({ "animation-duration": `${props.speed ?? 40}s` });
 
   return (
     <div class={resolvedClasses().root} data-slot="marquee-root" {...rest}>
@@ -69,7 +69,7 @@ const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
       </div>
       <style>{MARQUEE_KEYFRAMES}</style>
     </div>
-  )
-}
+  );
+};
 
-export { RLMarquee }
+export { RLMarquee };

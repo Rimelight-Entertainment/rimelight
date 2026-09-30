@@ -1,22 +1,22 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { PlaceholderProps } from "./placeholder"
-import { placeholderTheme } from "./placeholder.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { PlaceholderProps } from "./placeholder";
+import { placeholderTheme } from "./placeholder.theme";
 
 export interface RLPlaceholderProps extends PlaceholderProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "ui", "class", "children");
 
   const classes = createMemo(() =>
     placeholderTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={classes()["base"]} {...rest}>
@@ -43,7 +43,7 @@ const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
 
       {props.children}
     </div>
-  )
-}
+  );
+};
 
-export { RLPlaceholder }
+export { RLPlaceholder };

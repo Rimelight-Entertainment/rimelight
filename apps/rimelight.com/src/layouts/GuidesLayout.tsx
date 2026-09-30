@@ -1,20 +1,20 @@
-import type { Component, ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
-import AppLayout from "./AppLayout"
-import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader"
-import GuidesSidebar from "#components/franchises/grand-tale/GuidesSidebar"
-import { currentLocale } from "@rimelight/i18n"
+import type { Component, ParentProps } from "solid-js";
+import { useParams } from "@solidjs/router";
+import AppLayout from "./AppLayout";
+import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
+import GuidesSidebar from "#components/franchises/grand-tale/GuidesSidebar";
+import { currentLocale } from "@rimelight/i18n";
 
 export interface GuidesLayoutProps extends ParentProps {
-  title?: string | undefined
-  description?: string | undefined
-  favicon?: string | undefined
+  title?: string | undefined;
+  description?: string | undefined;
+  favicon?: string | undefined;
 }
 
 export const GuidesLayout: Component<GuidesLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   return (
@@ -31,7 +31,7 @@ export const GuidesLayout: Component<GuidesLayoutProps> = (props) => {
         <main class="flex-1 min-w-0">{props.children}</main>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default GuidesLayout
+export default GuidesLayout;

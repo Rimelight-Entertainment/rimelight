@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardSearchTheme = defineTheme("dashboard-search", {
   slots: ["modal", "input"],
@@ -23,4 +23,4 @@ export const dashboardSearchTheme = defineTheme("dashboard-search", {
   defaultVariants: {
     size: "md"
   }
-})
+});

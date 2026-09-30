@@ -38,20 +38,20 @@ export type {
   AssetRouteOptions,
   RimelightSeoOptions,
   OgRouteOptions
-} from "./types.js"
+} from "./types.js";
 
-export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize.js"
+export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize.js";
 
 export {
   buildSitemapUrls,
   buildSitemapXml,
   buildSitemapIndexXml,
   chunkSitemapUrls
-} from "./sitemap.js"
+} from "./sitemap.js";
 
-export { buildRobotsTxt } from "./robots.js"
+export { buildRobotsTxt } from "./robots.js";
 
-export { buildRssXml, escapeXml } from "./rss.js"
+export { buildRssXml, escapeXml } from "./rss.js";
 
 export {
   buildCanonicalUrl,
@@ -61,14 +61,14 @@ export {
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
   deepMerge
-} from "./meta.js"
+} from "./meta.js";
 
-export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
-export { buildSecurityTxt } from "./security.js"
-export { buildWebManifest } from "./manifest.js"
-export { buildApiCatalog } from "./catalog.js"
-export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
-export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js"
+export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js";
+export { buildSecurityTxt } from "./security.js";
+export { buildWebManifest } from "./manifest.js";
+export { buildApiCatalog } from "./catalog.js";
+export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js";
+export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js";
 
 export {
   NOTO_SANS,
@@ -79,10 +79,10 @@ export {
   type OgFontConfig,
   type OgLayoutOptions,
   type OgRenderConfig
-} from "./og.js"
+} from "./og.js";
 
-export { handleOgRequest, createHonoOgHandler } from "./og/index.js"
+export { handleOgRequest, createHonoOgHandler } from "./og/index.js";
 
-import { seo } from "./plugin.js"
-export { seo }
-export default seo
+import { seo } from "./plugin.js";
+export { seo };
+export default seo;

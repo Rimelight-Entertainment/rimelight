@@ -1,48 +1,48 @@
-import { type Component, For, Show } from "solid-js"
-import { createAsyncData } from "#utils/async"
-import AppLayout from "#layouts/AppLayout"
-import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n"
-import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx"
-import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx"
-import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx"
-import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx"
-import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx"
-import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx"
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts"
+import { type Component, For, Show } from "solid-js";
+import { createAsyncData } from "#utils/async";
+import AppLayout from "#layouts/AppLayout";
+import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
+import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
+import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
+import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>
-    return record[locale] || record["en"] || ""
+    const record = val as Record<string, string>;
+    return record[locale] || record["en"] || "";
   }
-  return typeof val === "string" ? val : ""
+  return typeof val === "string" ? val : "";
 }
 
 export const HomePage: Component = () => {
-  const activeLocale = () => getLocale()
+  const activeLocale = () => getLocale();
 
   const latestPosts = createAsyncData(
     () => activeLocale(),
     async (loc) => {
       try {
-        const res = await fetch("/api/content/pages?type=blog")
-        if (!res.ok) return []
-        const data = (await res.json()) as any
-        const blogPages = (data.pages || []) as any[]
+        const res = await fetch("/api/content/pages?type=blog");
+        if (!res.ok) return [];
+        const data = (await res.json()) as any;
+        const blogPages = (data.pages || []) as any[];
 
         return blogPages
           .filter((post) => {
             const content =
-              typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
-            return (content.properties?.locale || "en") === loc
+              typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
+            return (content.properties?.locale || "en") === loc;
           })
-          .slice(0, 3)
+          .slice(0, 3);
       } catch {
-        return []
+        return [];
       }
     },
     []
-  )
+  );
 
   const heroLinks = (): ButtonProps[] => [
     {
@@ -57,7 +57,7 @@ export const HomePage: Component = () => {
       trailingIcon: "i-lucide-arrow-right",
       href: getRelativeLocaleUrl("/docs/")
     }
-  ]
+  ];
 
   const featureLinks = (): ButtonProps[] => [
     {
@@ -70,7 +70,7 @@ export const HomePage: Component = () => {
       trailingIcon: "i-lucide-arrow-right",
       href: "/docs"
     }
-  ]
+  ];
 
   const ctaLinks = (): ButtonProps[] => [
     {
@@ -84,7 +84,7 @@ export const HomePage: Component = () => {
       trailingIcon: "i-lucide-square-arrow-out-up-right",
       href: `https://rimelight.com/${getLocale()}/company/docs/overview/contributing/introduction`
     }
-  ]
+  ];
 
   return (
     <AppLayout title={t("page_home.meta_title")} description={t("page_home.meta_description")}>
@@ -115,11 +115,11 @@ export const HomePage: Component = () => {
             <For each={latestPosts() || []}>
               {(post) => {
                 const content =
-                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
-                const title = getLocalizedText(post.title, activeLocale())
-                const description = content.properties?.description || ""
-                const heroImage = content.properties?.heroImage
-                const postDate = post.postedAt || post.createdAt
+                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
+                const title = getLocalizedText(post.title, activeLocale());
+                const description = content.properties?.description || "";
+                const heroImage = content.properties?.heroImage;
+                const postDate = post.postedAt || post.createdAt;
                 return (
                   <RLPost
                     variant="ghost"
@@ -129,7 +129,7 @@ export const HomePage: Component = () => {
                     date={postDate}
                     to={getRelativeLocaleUrl(`/blog/${post.slug}/`)}
                   />
-                )
+                );
               }}
             </For>
           </RLGrid>
@@ -152,7 +152,7 @@ export const HomePage: Component = () => {
         links={ctaLinks()}
       />
     </AppLayout>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

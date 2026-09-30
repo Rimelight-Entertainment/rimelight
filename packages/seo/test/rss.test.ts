@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vite-plus/test"
-import { buildRssXml } from "../src/rss.js"
+import { describe, expect, it } from "vite-plus/test";
+import { buildRssXml } from "../src/rss.js";
 
 describe("buildRssXml", () => {
   it("should generate valid RSS XML with channel and items", () => {
@@ -15,14 +15,14 @@ describe("buildRssXml", () => {
           description: "Hello & welcome"
         }
       ]
-    })
+    });
 
-    expect(xml).toContain('<rss version="2.0"')
-    expect(xml).toContain("<title>My Site</title>")
-    expect(xml).toContain("<description>My site description</description>")
-    expect(xml).toContain("<link>https://example.com</link>")
-    expect(xml).toContain("<title>Post 1 &amp; More</title>")
-    expect(xml).toContain("<link>https://example.com/blog/post-1</link>")
-    expect(xml).toContain("<description>Hello &amp; welcome</description>")
-  })
-})
+    expect(xml).toContain('<rss version="2.0"');
+    expect(xml).toContain("<title>My Site</title>");
+    expect(xml).toContain("<description>My site description</description>");
+    expect(xml).toContain("<link>https://example.com</link>");
+    expect(xml).toContain("<title>Post 1 &amp; More</title>");
+    expect(xml).toContain("<link>https://example.com/blog/post-1</link>");
+    expect(xml).toContain("<description>Hello &amp; welcome</description>");
+  });
+});

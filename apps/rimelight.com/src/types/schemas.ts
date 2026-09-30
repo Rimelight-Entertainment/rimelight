@@ -1,6 +1,6 @@
-export type Localized<T = string> = Record<string, T>
+export type Localized<T = string> = Record<string, T>;
 
-export type LinkVariant = "solid" | "outline" | "subtle" | "soft" | "ghost" | "link"
+export type LinkVariant = "solid" | "outline" | "subtle" | "soft" | "ghost" | "link";
 
 export type LinkColor =
   | "primary"
@@ -9,21 +9,21 @@ export type LinkColor =
   | "error"
   | "warning"
   | "success"
-  | "info"
+  | "info";
 
 export interface Image {
-  src: string
-  alt: string
-  width?: number
-  height?: number
-  name?: Localized<string>
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  name?: Localized<string>;
 }
 
 export interface Link {
-  label: string
-  to: string
-  icon?: string
-  trailing?: boolean
-  color?: LinkColor
-  variant?: LinkVariant
+  label: string;
+  to: string;
+  icon?: string;
+  trailing?: boolean;
+  color?: LinkColor;
+  variant?: LinkVariant;
 }

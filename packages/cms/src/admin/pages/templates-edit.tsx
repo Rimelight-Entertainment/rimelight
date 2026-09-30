@@ -1,47 +1,47 @@
-import { createSignal, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RimelightTemplateEditor } from "../../client/components/RimelightTemplateEditor.tsx"
-import { useCmsApi } from "./_shared.tsx"
+import { createSignal, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RimelightTemplateEditor } from "../../client/components/RimelightTemplateEditor.tsx";
+import { useCmsApi } from "./_shared.tsx";
 
 export interface TemplatesEditPageProps {
-  templateId: string
-  basePath?: string | undefined
-  apiBase?: string | undefined
+  templateId: string;
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
 }
 
 export const TemplatesEditPage: Component<TemplatesEditPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
-  const [title, setTitle] = createSignal("")
-  const [description, setDescription] = createSignal("")
-  const [blocks, setBlocks] = createSignal<any[]>([])
-  const [loaded, setLoaded] = createSignal(false)
-  const [saving, setSaving] = createSignal(false)
-  const [status, setStatus] = createSignal<string | null>(null)
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
+  const [title, setTitle] = createSignal("");
+  const [description, setDescription] = createSignal("");
+  const [blocks, setBlocks] = createSignal<any[]>([]);
+  const [loaded, setLoaded] = createSignal(false);
+  const [saving, setSaving] = createSignal(false);
+  const [status, setStatus] = createSignal<string | null>(null);
 
-  const remote = useCmsApi<{ template: any }>(() => `${apiBase()}/templates/${props.templateId}`)
+  const remote = useCmsApi<{ template: any }>(() => `${apiBase()}/templates/${props.templateId}`);
 
   const template = () => {
-    const t = remote.data()?.template
-    return Array.isArray(t) ? t[0] : t
-  }
+    const t = remote.data()?.template;
+    return Array.isArray(t) ? t[0] : t;
+  };
 
   const hydrate = () => {
     if (!loaded() && template()) {
-      const t = template()
-      setTitle(t.title ?? "")
-      setDescription(t.description ?? "")
-      setBlocks(t.initialBlocks ?? [])
-      setLoaded(true)
+      const t = template();
+      setTitle(t.title ?? "");
+      setDescription(t.description ?? "");
+      setBlocks(t.initialBlocks ?? []);
+      setLoaded(true);
     }
-  }
-  hydrate()
+  };
+  hydrate();
 
   const submit = async (e: Event) => {
-    e.preventDefault()
-    setSaving(true)
-    setStatus(null)
+    e.preventDefault();
+    setSaving(true);
+    setStatus(null);
     try {
       const res = await fetch(`${apiBase()}/templates/${props.templateId}`, {
         method: "PUT",
@@ -51,15 +51,15 @@ export const TemplatesEditPage: Component<TemplatesEditPageProps> = (props) => {
           description: description(),
           initialBlocks: blocks()
         })
-      })
-      if (!res.ok) throw new Error(`Save failed (${res.status})`)
-      setStatus("Template saved")
+      });
+      if (!res.ok) throw new Error(`Save failed (${res.status})`);
+      setStatus("Template saved");
     } catch (e: any) {
-      setStatus(e?.message ?? "Save failed")
+      setStatus(e?.message ?? "Save failed");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <CMSDashboardLayout
@@ -101,7 +101,7 @@ export const TemplatesEditPage: Component<TemplatesEditPageProps> = (props) => {
         </form>
       </Show>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default TemplatesEditPage
+export default TemplatesEditPage;

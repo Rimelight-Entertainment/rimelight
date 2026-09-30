@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardResizeHandleTheme = defineTheme("dashboard-resize-handle", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const dashboardResizeHandleTheme = defineTheme("dashboard-resize-handle",
   },
   variants: {},
   defaultVariants: {}
-})
+});

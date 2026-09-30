@@ -1,4 +1,4 @@
-import type { Plugin } from "vite-plus"
+import type { Plugin } from "vite-plus";
 
 export interface RimelightAuthPluginOptions {
   /**
@@ -6,20 +6,20 @@ export interface RimelightAuthPluginOptions {
    *
    * @default "cf-access"
    */
-  adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {})
+  adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {});
 
   /**
    * Path to custom auth module if adapter is set to "custom".
    */
-  customModule?: string
+  customModule?: string;
 
   /**
    * Additional adapter-specific configuration overrides.
    */
-  [key: string]: any
+  [key: string]: any;
 }
 
-export type RimelightAuthPlugin = Plugin
+export type RimelightAuthPlugin = Plugin;
 
 /**
  * Pure Vite Auth Plugin for Rimelight applications.
@@ -31,36 +31,36 @@ export type RimelightAuthPlugin = Plugin
  * - `virtual:rimelight-auth-config`
  */
 export function auth(options: RimelightAuthPluginOptions = {}): RimelightAuthPlugin {
-  const adapter = options.adapter || "cf-access"
+  const adapter = options.adapter || "cf-access";
 
-  const virtualAuthId = "virtual:rimelight-auth"
-  const resolvedVirtualAuthId = "\0" + virtualAuthId
+  const virtualAuthId = "virtual:rimelight-auth";
+  const resolvedVirtualAuthId = "\0" + virtualAuthId;
 
-  const virtualClientId = "virtual:rimelight-auth-client"
-  const resolvedVirtualClientId = "\0" + virtualClientId
+  const virtualClientId = "virtual:rimelight-auth-client";
+  const resolvedVirtualClientId = "\0" + virtualClientId;
 
-  const virtualConfigId = "virtual:rimelight-auth-config"
-  const resolvedVirtualConfigId = "\0" + virtualConfigId
+  const virtualConfigId = "virtual:rimelight-auth-config";
+  const resolvedVirtualConfigId = "\0" + virtualConfigId;
 
   return {
     name: "vite-plugin-rimelight-auth",
 
     resolveId(id: string) {
       if (id === virtualAuthId || id === "#auth" || id === "#auth/auth") {
-        return resolvedVirtualAuthId
+        return resolvedVirtualAuthId;
       }
       if (id === virtualClientId || id === "#auth/auth-client") {
-        return resolvedVirtualClientId
+        return resolvedVirtualClientId;
       }
       if (id === virtualConfigId) {
-        return resolvedVirtualConfigId
+        return resolvedVirtualConfigId;
       }
-      return null
+      return null;
     },
 
     load(id: string) {
       if (id === resolvedVirtualConfigId) {
-        return `export const config = ${JSON.stringify(options)};`
+        return `export const config = ${JSON.stringify(options)};`;
       }
 
       if (id === resolvedVirtualClientId) {
@@ -68,7 +68,7 @@ export function auth(options: RimelightAuthPluginOptions = {}): RimelightAuthPlu
 import { createAuthClient, authClient } from "@rimelight/auth/client";
 export { createAuthClient, authClient };
 export default authClient;
-`
+`;
       }
 
       if (id === resolvedVirtualAuthId) {
@@ -76,7 +76,7 @@ export default authClient;
           return `
 export * from "${options.customModule}";
 export { default } from "${options.customModule}";
-`
+`;
         }
 
         if (adapter === "auth0") {
@@ -85,7 +85,7 @@ import { createAuth0FromEnv } from "@rimelight/auth/auth0";
 export const auth = createAuth0FromEnv(${JSON.stringify({ devFallback: true, ...options })});
 export const authAdapter = auth;
 export default auth;
-`
+`;
         }
 
         if (adapter === "mock") {
@@ -94,7 +94,7 @@ import { mockAuth } from "@rimelight/auth/mock";
 export const auth = mockAuth(${JSON.stringify(options)});
 export const authAdapter = auth;
 export default auth;
-`
+`;
         }
 
         // Default to Cloudflare Access
@@ -103,10 +103,10 @@ import { createCfAccessFromEnv } from "@rimelight/auth/cf-access";
 export const auth = createCfAccessFromEnv(${JSON.stringify(options)});
 export const authAdapter = auth;
 export default auth;
-`
+`;
       }
 
-      return null
+      return null;
     }
-  }
+  };
 }

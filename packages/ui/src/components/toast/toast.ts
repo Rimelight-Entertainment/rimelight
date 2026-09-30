@@ -1,40 +1,40 @@
-import type { ThemeColor } from "../../types"
+import type { ThemeColor } from "../../types";
 export interface ToastProps {
   /**
    * Main toast title.
    */
-  title?: string
+  title?: string;
   /**
    * Description or message.
    */
-  description?: string
+  description?: string;
   /**
    * Visual variant.
    */
-  variant?: "default" | "error" | "success" | "warning" | "info"
+  variant?: "default" | "error" | "success" | "warning" | "info";
   /**
    * Action button label.
    */
-  actionLabel?: string
+  actionLabel?: string;
   /**
    * Duration in ms.
    */
-  duration?: number
+  duration?: number;
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
+  class?: any;
   /**
    * Whether the toast can be dismissed by user or timeout.
    */
-  dismissable?: boolean
-  [key: string]: unknown
+  dismissable?: boolean;
+  [key: string]: unknown;
 }

@@ -1,7 +1,7 @@
-import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { createSignal, onSettled, onCleanup, For, type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 const BLOCK_DEFS = [
   {
@@ -116,94 +116,94 @@ const BLOCK_DEFS = [
     desc: "Character dialogue line",
     icon: "messageSquare"
   }
-]
+];
 
-import { ALLOWED_CHILDREN_MAP, MAX_SECTION_DEPTH } from "../../core/types/blocks"
-import { toast } from "../toast"
-export { ALLOWED_CHILDREN_MAP }
+import { ALLOWED_CHILDREN_MAP, MAX_SECTION_DEPTH } from "../../core/types/blocks";
+import { toast } from "../toast";
+export { ALLOWED_CHILDREN_MAP };
 
 export interface RimelightBlockPickerProps {
-  open: boolean
-  sectionDepth?: number | undefined
-  containerType?: string | null | undefined
-  onSelect: (type: string) => void
-  onClose: () => void
+  open: boolean;
+  sectionDepth?: number | undefined;
+  containerType?: string | null | undefined;
+  onSelect: (type: string) => void;
+  onClose: () => void;
 }
 
 export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props) => {
-  let searchInput: HTMLInputElement | undefined = undefined
-  const [query, setQuery] = createSignal("")
-  const [selectedIndex, setSelectedIndex] = createSignal(0)
+  let searchInput: HTMLInputElement | undefined = undefined;
+  const [query, setQuery] = createSignal("");
+  const [selectedIndex, setSelectedIndex] = createSignal(0);
 
   const allowedTypes = (): string[] => {
-    const parent = props.containerType || "Root"
-    return ALLOWED_CHILDREN_MAP[parent] || ALLOWED_CHILDREN_MAP["Root"] || []
-  }
+    const parent = props.containerType || "Root";
+    return ALLOWED_CHILDREN_MAP[parent] || ALLOWED_CHILDREN_MAP["Root"] || [];
+  };
 
   const filteredBlocks = () => {
-    const q = query().toLowerCase()
-    const depth = props.sectionDepth || 0
-    const allowed = allowedTypes()
+    const q = query().toLowerCase();
+    const depth = props.sectionDepth || 0;
+    const allowed = allowedTypes();
 
     return BLOCK_DEFS.filter((b) => {
-      if (!allowed.includes(b.type)) return false
-      if (b.type === "SectionBlock" && depth > MAX_SECTION_DEPTH) return false
+      if (!allowed.includes(b.type)) return false;
+      if (b.type === "SectionBlock" && depth > MAX_SECTION_DEPTH) return false;
       return (
         b.label.toLowerCase().includes(q) ||
         b.type.toLowerCase().includes(q) ||
         b.desc.toLowerCase().includes(q) ||
         b.group.toLowerCase().includes(q)
-      )
-    })
-  }
+      );
+    });
+  };
 
   const handleSelectBlock = (type: string) => {
-    const depth = props.sectionDepth || 0
+    const depth = props.sectionDepth || 0;
     if (type === "SectionBlock" && depth > MAX_SECTION_DEPTH) {
       toast.error(
         "Invalid Section Nesting",
         "Sections cannot be nested inside an H6 section. H6 is the maximum heading level."
-      )
-      return
+      );
+      return;
     }
-    props.onSelect(type)
-  }
+    props.onSelect(type);
+  };
 
   onSettled(() => {
     const handleGlobalKeydown = (e: KeyboardEvent) => {
       if (props.open && e.key === "Escape") {
-        props.onClose()
+        props.onClose();
       }
-    }
+    };
     if (typeof document !== "undefined") {
-      document.addEventListener("keydown", handleGlobalKeydown)
-      onCleanup(() => document.removeEventListener("keydown", handleGlobalKeydown))
+      document.addEventListener("keydown", handleGlobalKeydown);
+      onCleanup(() => document.removeEventListener("keydown", handleGlobalKeydown));
     }
-  })
+  });
 
   const handleKeydown = (e: KeyboardEvent) => {
-    const list = filteredBlocks()
+    const list = filteredBlocks();
     if (e.key === "ArrowDown") {
-      e.preventDefault()
-      setSelectedIndex((prev) => Math.min(prev + 1, Math.max(0, list.length - 1)))
+      e.preventDefault();
+      setSelectedIndex((prev) => Math.min(prev + 1, Math.max(0, list.length - 1)));
     } else if (e.key === "ArrowUp") {
-      e.preventDefault()
-      setSelectedIndex((prev) => Math.max(prev - 1, 0))
+      e.preventDefault();
+      setSelectedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
-      e.preventDefault()
-      const selected = list[selectedIndex()]
+      e.preventDefault();
+      const selected = list[selectedIndex()];
       if (selected) {
-        handleSelectBlock(selected.type)
+        handleSelectBlock(selected.type);
       }
     }
-  }
+  };
 
   return (
     <div class={!props.open ? "hidden" : undefined}>
       <div
         role="presentation"
         onClick={(e) => {
-          if (e.target === e.currentTarget) props.onClose()
+          if (e.target === e.currentTarget) props.onClose();
         }}
         class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       >
@@ -227,13 +227,13 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
           <div class="px-4 py-3 border-b border-default/50">
             <RLInput
               ref={(el: HTMLInputElement) => {
-                searchInput = el
-                if (props.open) setTimeout(() => searchInput?.focus(), 10)
+                searchInput = el;
+                if (props.open) setTimeout(() => searchInput?.focus(), 10);
               }}
               value={query()}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => {
-                setQuery(e.currentTarget.value)
-                setSelectedIndex(0)
+                setQuery(e.currentTarget.value);
+                setSelectedIndex(0);
               }}
               onKeyDown={handleKeydown}
               placeholder="Search blocks..."
@@ -247,13 +247,13 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
               <div class="text-center py-4 text-muted text-sm">No compatible blocks found</div>
             ) : (
               (() => {
-                let currentGroup = ""
+                let currentGroup = "";
                 return (
                   <For each={filteredBlocks()}>
                     {(block, index) => {
-                      const showHeader = block.group !== currentGroup
-                      if (showHeader) currentGroup = block.group
-                      const isSelected = index() === selectedIndex()
+                      const showHeader = block.group !== currentGroup;
+                      if (showHeader) currentGroup = block.group;
+                      const isSelected = index() === selectedIndex();
 
                       return (
                         <>
@@ -265,9 +265,9 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                           <button
                             type="button"
                             onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              handleSelectBlock(block.type)
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleSelectBlock(block.type);
                             }}
                             onMouseEnter={() => setSelectedIndex(index())}
                             class={`cms-picker-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-neutral-100 w-full text-left bg-transparent border-none ${isSelected ? "bg-neutral-100" : ""}`}
@@ -288,15 +288,15 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                             </div>
                           </button>
                         </>
-                      )
+                      );
                     }}
                   </For>
-                )
+                );
               })()
             )}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

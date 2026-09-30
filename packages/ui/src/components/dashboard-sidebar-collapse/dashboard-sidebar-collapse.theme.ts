@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardSidebarCollapseTheme = defineTheme("dashboard-sidebar-collapse", {
   slots: ["root"],
@@ -14,4 +14,4 @@ export const dashboardSidebarCollapseTheme = defineTheme("dashboard-sidebar-coll
   defaultVariants: {
     side: "left"
   }
-})
+});

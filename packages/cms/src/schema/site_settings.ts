@@ -1,23 +1,23 @@
-import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export interface SiteSettingsBranding {
   logo: {
-    alt: string
-  }
+    alt: string;
+  };
   favicon: {
-    svg: string
-  }
+    svg: string;
+  };
   colors: {
-    themeColor: string
-    backgroundColor: string
-  }
+    themeColor: string;
+    backgroundColor: string;
+  };
 }
 
 export interface SiteSettingsSeo {
-  titleTemplate: string
-  ogImageFallback: string
-  maxDescriptionLength: number
-  authorHandle?: string
+  titleTemplate: string;
+  ogImageFallback: string;
+  maxDescriptionLength: number;
+  authorHandle?: string;
 }
 
 export const siteSettings = pgTable("site_settings", {
@@ -35,7 +35,7 @@ export const siteSettings = pgTable("site_settings", {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull()
-})
+});
 
-export type SiteSettings = typeof siteSettings.$inferSelect
-export type InsertSiteSettings = typeof siteSettings.$inferInsert
+export type SiteSettings = typeof siteSettings.$inferSelect;
+export type InsertSiteSettings = typeof siteSettings.$inferInsert;

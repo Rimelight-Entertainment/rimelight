@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const placeholderTheme = defineTheme("placeholder", {
   slots: ["base", "svg"],
@@ -9,4 +9,4 @@ export const placeholderTheme = defineTheme("placeholder", {
   variants: {},
   compoundVariants: [],
   defaultVariants: {}
-})
+});

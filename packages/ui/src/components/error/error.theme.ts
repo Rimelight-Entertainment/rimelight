@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const errorTheme = defineTheme("error", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const errorTheme = defineTheme("error", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

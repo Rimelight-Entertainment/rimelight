@@ -1,44 +1,44 @@
 export interface ModalProps {
-  size?: "sm" | "md" | "lg" | "xl"
+  size?: "sm" | "md" | "lg" | "xl";
   /**
    * Controlled open state.
    */
-  open?: boolean
+  open?: boolean;
   /**
    * The trigger label to render a default button.
    */
-  triggerLabel?: string
+  triggerLabel?: string;
   /**
    * Whether to close the dialog when clicking the backdrop.
    */
-  closeOnClickOutside?: boolean
+  closeOnClickOutside?: boolean;
   /**
    * Whether to close on pressing the Escape key.
    */
-  closeOnEscape?: boolean
+  closeOnEscape?: boolean;
   /**
    * Prevents body scrolling when open.
    */
-  lockScroll?: boolean
+  lockScroll?: boolean;
   /**
    * Main heading of the dialog.
    */
-  title?: string
+  title?: string;
   /**
    * Description of the dialog purpose.
    */
-  description?: string
+  description?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
+  class?: any;
   /**
    * Keep content mounted in the DOM when hidden.
    */
-  unmountOnHide?: boolean
-  [key: string]: unknown
+  unmountOnHide?: boolean;
+  [key: string]: unknown;
 }

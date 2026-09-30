@@ -1,18 +1,18 @@
-import type { Component, ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
-import AppLayout from "./AppLayout"
-import StoreSidebar from "#components/store/StoreSidebar"
-import { currentLocale } from "@rimelight/i18n"
+import type { Component, ParentProps } from "solid-js";
+import { useParams } from "@solidjs/router";
+import AppLayout from "./AppLayout";
+import StoreSidebar from "#components/store/StoreSidebar";
+import { currentLocale } from "@rimelight/i18n";
 
 export interface StoreLayoutProps extends ParentProps {
-  title?: string | undefined
-  description?: string | undefined
+  title?: string | undefined;
+  description?: string | undefined;
 }
 
 export const StoreLayout: Component<StoreLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   return (
@@ -29,7 +29,7 @@ export const StoreLayout: Component<StoreLayoutProps> = (props) => {
         </div>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default StoreLayout
+export default StoreLayout;

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardGroupTheme = defineTheme("dashboard-group", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const dashboardGroupTheme = defineTheme("dashboard-group", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

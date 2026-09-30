@@ -1,33 +1,33 @@
-import { type Component, createSignal, For, Show } from "solid-js"
-import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { type Component, createSignal, For, Show } from "solid-js";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 interface ComponentShowcaseProps {
-  "component"?: string
-  "componentName"?: string
-  "slots"?: string[]
-  "props"?: Record<string, any>
-  "class"?: string
-  "playground"?: string
-  "propsConfig"?: Record<string, string[]>
-  "defaultProps"?: Record<string, string>
-  "togglingPattern"?: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
-  "theme"?: any
-  "combinationClasses"?: Record<string, any>
-  "initialThemeClasses"?: Record<string, string>
-  "themeSlots"?: string[]
-  "children"?: any
-  "code-solid"?: any
-  "code-astro"?: any
+  component?: string;
+  componentName?: string;
+  slots?: string[];
+  props?: Record<string, any>;
+  class?: string;
+  playground?: string;
+  propsConfig?: Record<string, string[]>;
+  defaultProps?: Record<string, string>;
+  togglingPattern?: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
+  theme?: any;
+  combinationClasses?: Record<string, any>;
+  initialThemeClasses?: Record<string, string>;
+  themeSlots?: string[];
+  children?: any;
+  "code-solid"?: any;
+  "code-astro"?: any;
 }
 
 export const ComponentShowcase: Component<ComponentShowcaseProps> = (props) => {
-  const isDynamic = () => Boolean(props.propsConfig)
-  const propKeys = () => (props.propsConfig ? Object.keys(props.propsConfig) : [])
+  const isDynamic = () => Boolean(props.propsConfig);
+  const propKeys = () => (props.propsConfig ? Object.keys(props.propsConfig) : []);
   const [selectedProps, setSelectedProps] = createSignal<Record<string, string>>(
     props.defaultProps || {}
-  )
-  const [selectedMode, setSelectedMode] = createSignal<"single" | "compare">("single")
+  );
+  const [selectedMode, setSelectedMode] = createSignal<"single" | "compare">("single");
 
   return (
     <div
@@ -101,7 +101,7 @@ export const ComponentShowcase: Component<ComponentShowcaseProps> = (props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ComponentShowcase
+export default ComponentShowcase;

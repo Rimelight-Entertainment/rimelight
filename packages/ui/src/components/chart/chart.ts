@@ -1,39 +1,39 @@
-import type { ThemeColor } from "../../types"
+import type { ThemeColor } from "../../types";
 export interface ChartDataPoint {
-  label: string
-  value: number
-  color?: string
-  [key: string]: any
+  label: string;
+  value: number;
+  color?: string;
+  [key: string]: any;
 }
 
 export interface ChartProps {
   /**
    * Type of chart.
    */
-  type?: "bar" | "line" | "pie" | "area" | "donut"
+  type?: "bar" | "line" | "pie" | "area" | "donut";
   /**
    * Data points array.
    */
-  data?: ChartDataPoint[]
+  data?: ChartDataPoint[];
   /**
    * Title of the chart.
    */
-  title?: string
+  title?: string;
   /**
    * Height of the chart in pixels.
    */
-  height?: number
+  height?: number;
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

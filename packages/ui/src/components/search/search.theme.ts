@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const searchTheme = defineTheme("search", {
   slots: [
@@ -59,4 +59,4 @@ export const searchTheme = defineTheme("search", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

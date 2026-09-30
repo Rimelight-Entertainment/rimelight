@@ -1,9 +1,9 @@
-import { Hono } from "hono"
-import { db } from "#db"
-import { pageVersions } from "#db/schema"
-import { eq, desc } from "drizzle-orm"
+import { Hono } from "hono";
+import { db } from "#db";
+import { pageVersions } from "#db/schema";
+import { eq, desc } from "drizzle-orm";
 
-const api = new Hono()
+const api = new Hono();
 
 api.get("/page/:pageId", async (c) => {
   try {
@@ -11,12 +11,12 @@ api.get("/page/:pageId", async (c) => {
       .select()
       .from(pageVersions)
       .where(eq(pageVersions.pageId, c.req.param("pageId")))
-      .orderBy(desc(pageVersions.createdAt))
-    return c.json(versions)
+      .orderBy(desc(pageVersions.createdAt));
+    return c.json(versions);
   } catch (err: any) {
-    return c.json({ error: err.message }, 500)
+    return c.json({ error: err.message }, 500);
   }
-})
+});
 
 api.get("/:id", async (c) => {
   try {
@@ -24,12 +24,12 @@ api.get("/:id", async (c) => {
       .select()
       .from(pageVersions)
       .where(eq(pageVersions.id, c.req.param("id")))
-      .limit(1)
-    if (!version) return c.json({ error: "Version not found" }, 404)
-    return c.json(version)
+      .limit(1);
+    if (!version) return c.json({ error: "Version not found" }, 404);
+    return c.json(version);
   } catch (err: any) {
-    return c.json({ error: err.message }, 500)
+    return c.json({ error: err.message }, 500);
   }
-})
+});
 
-export default api
+export default api;

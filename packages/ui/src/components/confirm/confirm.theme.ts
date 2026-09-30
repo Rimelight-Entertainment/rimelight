@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const confirmTheme = defineTheme("confirm", {
   slots: [
@@ -41,4 +41,4 @@ export const confirmTheme = defineTheme("confirm", {
   defaultVariants: {
     variant: "default"
   }
-})
+});

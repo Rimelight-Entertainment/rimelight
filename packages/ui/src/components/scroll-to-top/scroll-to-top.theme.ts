@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const scrollToTopTheme = defineTheme("scroll-to-top", {
   slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],
@@ -30,4 +30,4 @@ export const scrollToTopTheme = defineTheme("scroll-to-top", {
   defaultVariants: {
     color: "primary"
   }
-})
+});

@@ -1,44 +1,44 @@
-import type { ThemeColor } from "../../types"
+import type { ThemeColor } from "../../types";
 export interface InputMenuProps {
   /**
    * The list of items in the input menu.
    */
-  items?: Array<{ label: string; value: string; [key: string]: any } | string>
+  items?: Array<{ label: string; value: string; [key: string]: any } | string>;
   /**
    * Selected value(s).
    */
-  value?: string | string[]
+  value?: string | string[];
   /**
    * Placeholder text.
    */
-  placeholder?: string
+  placeholder?: string;
   /**
    * Disabled state.
    */
-  disabled?: boolean
+  disabled?: boolean;
   /**
    * Form control name.
    */
-  name?: string
+  name?: string;
   /**
    * Form label.
    */
-  label?: string
+  label?: string;
   /**
    * Size scale.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

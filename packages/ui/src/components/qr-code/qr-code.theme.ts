@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const qrCodeTheme = defineTheme("qr-code", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const qrCodeTheme = defineTheme("qr-code", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

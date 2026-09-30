@@ -1,19 +1,19 @@
-import { eq, and, isNull, or } from "drizzle-orm"
-import { bylines, type Byline, type NewByline } from "../schema/bylines.ts"
+import { eq, and, isNull, or } from "drizzle-orm";
+import { bylines, type Byline, type NewByline } from "../schema/bylines.ts";
 
 /**
  * Returns all active (non-deleted) bylines.
  */
 export async function getBylines(db: any): Promise<Byline[]> {
-  if (!db) return []
-  return db.select().from(bylines).where(isNull(bylines.deletedAt)).orderBy(bylines.name)
+  if (!db) return [];
+  return db.select().from(bylines).where(isNull(bylines.deletedAt)).orderBy(bylines.name);
 }
 
 /**
  * Retrieves a single byline by ID or slug.
  */
 export async function getByline(db: any, idOrSlug: string): Promise<Byline | null> {
-  if (!db || !idOrSlug) return null
+  if (!db || !idOrSlug) return null;
   const rows = await db
     .select()
     .from(bylines)
@@ -23,9 +23,9 @@ export async function getByline(db: any, idOrSlug: string): Promise<Byline | nul
         or(eq(bylines.id, idOrSlug as any), eq(bylines.slug, idOrSlug))
       )
     )
-    .limit(1)
+    .limit(1);
 
-  return rows[0] || null
+  return rows[0] || null;
 }
 
 /**
@@ -38,8 +38,8 @@ export async function createByline(db: any, data: NewByline): Promise<Byline> {
       ...data,
       updatedAt: new Date()
     })
-    .returning()
-  return created
+    .returning();
+  return created;
 }
 
 /**
@@ -57,8 +57,8 @@ export async function updateByline(
       updatedAt: new Date()
     })
     .where(and(eq(bylines.id, id as any), isNull(bylines.deletedAt)))
-    .returning()
-  return updated || null
+    .returning();
+  return updated || null;
 }
 
 /**
@@ -69,6 +69,6 @@ export async function deleteByline(db: any, id: string): Promise<boolean> {
     .update(bylines)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
     .where(and(eq(bylines.id, id as any), isNull(bylines.deletedAt)))
-    .returning()
-  return !!deleted
+    .returning();
+  return !!deleted;
 }

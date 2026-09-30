@@ -2,18 +2,18 @@ export interface IconProps {
   /**
    * The name of the icon to display.
    */
-  name: string
+  name: string;
   /**
    * The size scale of the icon.
    */
-  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

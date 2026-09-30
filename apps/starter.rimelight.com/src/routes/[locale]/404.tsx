@@ -1,7 +1,7 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import AppError from "#components/app/AppError"
-import { t } from "@rimelight/i18n"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import AppError from "#components/app/AppError";
+import { t } from "@rimelight/i18n";
 
 export const Page404: Component = () => {
   return (
@@ -27,7 +27,7 @@ export const Page404: Component = () => {
         ]}
       />
     </AppLayout>
-  )
-}
+  );
+};
 
-export default Page404
+export default Page404;

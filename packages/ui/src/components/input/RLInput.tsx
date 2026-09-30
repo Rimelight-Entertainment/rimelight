@@ -1,22 +1,22 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { InputProps } from "./input"
-import { inputTheme } from "./input.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { InputProps } from "./input";
+import { inputTheme } from "./input.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLInputProps extends InputProps {
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void
-  ref?: HTMLInputElement | ((el: HTMLInputElement) => void)
-  leading?: JSX.Element
-  trailing?: JSX.Element
+  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+  ref?: HTMLInputElement | ((el: HTMLInputElement) => void);
+  leading?: JSX.Element;
+  trailing?: JSX.Element;
 }
 
 const RLInput: Component<RLInputProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "type",
@@ -43,10 +43,10 @@ const RLInput: Component<RLInputProps> = (allProps) => {
     "ref",
     "leading",
     "trailing"
-  )
+  );
 
-  const hasLeading = () => !!(props.leadingIcon || props.leading)
-  const hasTrailing = () => !!(props.trailingIcon || props.trailing)
+  const hasLeading = () => !!(props.leadingIcon || props.leading);
+  const hasTrailing = () => !!(props.trailingIcon || props.trailing);
 
   const resolvedClasses = createMemo(() =>
     inputTheme({
@@ -59,7 +59,7 @@ const RLInput: Component<RLInputProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme}>
@@ -98,7 +98,7 @@ const RLInput: Component<RLInputProps> = (allProps) => {
         </span>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export { RLInput }
+export { RLInput };

@@ -1,18 +1,18 @@
-import { type Component, createSignal, For, Show } from "solid-js"
-import DashboardLayout from "#layouts/DashboardLayout"
-import { RLDashboardGroup } from "@rimelight/ui/components/dashboard-group/RLDashboardGroup.tsx"
-import { RLDashboardSidebar } from "@rimelight/ui/components/dashboard-sidebar/RLDashboardSidebar.tsx"
-import { RLDashboardNavbar } from "@rimelight/ui/components/dashboard-navbar/RLDashboardNavbar.tsx"
-import { RLDashboardPanel } from "@rimelight/ui/components/dashboard-panel/RLDashboardPanel.tsx"
-import { RLDashboardToolbar } from "@rimelight/ui/components/dashboard-toolbar/RLDashboardToolbar.tsx"
-import { RLDashboardSidebarCollapse } from "@rimelight/ui/components/dashboard-sidebar-collapse/RLDashboardSidebarCollapse.tsx"
-import { RLSearch } from "@rimelight/ui/components/search/RLSearch.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { RLAvatar } from "@rimelight/ui/components/avatar/RLAvatar.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
-import { t } from "@rimelight/i18n"
+import { type Component, createSignal, For, Show } from "solid-js";
+import DashboardLayout from "#layouts/DashboardLayout";
+import { RLDashboardGroup } from "@rimelight/ui/components/dashboard-group/RLDashboardGroup.tsx";
+import { RLDashboardSidebar } from "@rimelight/ui/components/dashboard-sidebar/RLDashboardSidebar.tsx";
+import { RLDashboardNavbar } from "@rimelight/ui/components/dashboard-navbar/RLDashboardNavbar.tsx";
+import { RLDashboardPanel } from "@rimelight/ui/components/dashboard-panel/RLDashboardPanel.tsx";
+import { RLDashboardToolbar } from "@rimelight/ui/components/dashboard-toolbar/RLDashboardToolbar.tsx";
+import { RLDashboardSidebarCollapse } from "@rimelight/ui/components/dashboard-sidebar-collapse/RLDashboardSidebarCollapse.tsx";
+import { RLSearch } from "@rimelight/ui/components/search/RLSearch.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLAvatar } from "@rimelight/ui/components/avatar/RLAvatar.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { t } from "@rimelight/i18n";
 
 const navItems = [
   { icon: "i-lucide-layout-dashboard", label: () => t("dashboard.nav_overview"), id: "overview" },
@@ -20,13 +20,13 @@ const navItems = [
   { icon: "i-lucide-shopping-cart", label: () => t("dashboard.nav_orders"), id: "orders" },
   { icon: "i-lucide-package", label: () => t("dashboard.nav_products"), id: "products" },
   { icon: "i-lucide-bar-chart-3", label: () => t("dashboard.nav_analytics"), id: "analytics" }
-]
+];
 
 const settingsNavItem = {
   icon: "i-lucide-settings",
   label: () => t("dashboard.nav_settings"),
   id: "settings"
-}
+};
 
 const overviewStats = [
   {
@@ -57,7 +57,7 @@ const overviewStats = [
     icon: "i-lucide-shopping-bag",
     changeColor: "text-success"
   }
-]
+];
 
 const overviewRecentOrders = [
   {
@@ -100,7 +100,7 @@ const overviewRecentOrders = [
     amount: "$150.00",
     statusColor: "success" as const
   }
-]
+];
 
 const overviewMessages = [
   {
@@ -121,7 +121,7 @@ const overviewMessages = [
     time: "2 hours ago",
     avatar: "https://i.pravatar.cc/100?u=emily"
   }
-]
+];
 
 const overviewRecentActivity = [
   { action: "Password reset requested", time: "5 min ago", icon: "i-lucide-key", type: "warning" },
@@ -138,7 +138,7 @@ const overviewRecentActivity = [
     type: "success"
   },
   { action: "System update installed", time: "6 hours ago", icon: "i-lucide-server", type: "info" }
-]
+];
 
 const usersList = [
   {
@@ -176,7 +176,7 @@ const usersList = [
     status: "Active",
     joined: "May 12, 2023"
   }
-]
+];
 
 const ordersList = [
   {
@@ -215,7 +215,7 @@ const ordersList = [
     status: "Cancelled",
     method: "Credit Card"
   }
-]
+];
 
 const productsList = [
   { name: "Basic Plan", price: "$9.99", sales: 45, status: "Active", category: "Subscription" },
@@ -228,17 +228,17 @@ const productsList = [
     category: "Subscription"
   },
   { name: "Starter Pack", price: "$0.00", sales: 156, status: "Active", category: "Free" }
-]
+];
 
 const analyticsData = {
   revenue: "$45,231",
   growth: "+20.1%",
   users: "+2,350",
   conversion: "+12.3%"
-}
+};
 
 export const DashboardPage: Component = () => {
-  const [activeSection, setActiveSection] = createSignal("overview")
+  const [activeSection, setActiveSection] = createSignal("overview");
 
   const navTitles: Record<string, () => string> = {
     overview: () => t("dashboard.navbar_title_overview"),
@@ -247,9 +247,9 @@ export const DashboardPage: Component = () => {
     products: () => "Product Catalog",
     analytics: () => "Analytics & Reports",
     settings: () => "Application Settings"
-  }
+  };
 
-  const currentTitle = () => navTitles[activeSection()]?.() || "Dashboard"
+  const currentTitle = () => navTitles[activeSection()]?.() || "Dashboard";
 
   return (
     <DashboardLayout
@@ -764,7 +764,7 @@ export const DashboardPage: Component = () => {
         </RLDashboardPanel>
       </RLDashboardGroup>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;

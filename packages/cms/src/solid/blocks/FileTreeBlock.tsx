@@ -1,9 +1,9 @@
-import { For, Show, type Component } from "solid-js"
-import type { FileTreeNode } from "../../core/types/blocks.ts"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { For, Show, type Component } from "solid-js";
+import type { FileTreeNode } from "../../core/types/blocks.ts";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 const TreeNode: Component<{ node: FileTreeNode }> = (props) => {
-  const node = () => props.node
+  const node = () => props.node;
   return (
     <div class="cms-tree-item">
       <div class="flex items-center gap-2 py-0.5 text-neutral-800">
@@ -26,11 +26,11 @@ const TreeNode: Component<{ node: FileTreeNode }> = (props) => {
         </div>
       </Show>
     </div>
-  )
-}
+  );
+};
 
 export const FileTreeBlock: Component<BlockViewProps> = (props) => {
-  const tree = () => (props.block.props?.["tree"] as FileTreeNode[]) ?? []
+  const tree = () => (props.block.props?.["tree"] as FileTreeNode[]) ?? [];
 
   return (
     <div
@@ -41,7 +41,7 @@ export const FileTreeBlock: Component<BlockViewProps> = (props) => {
         <For each={tree()}>{(node) => <TreeNode node={node} />}</For>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FileTreeBlock
+export default FileTreeBlock;

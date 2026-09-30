@@ -1,9 +1,9 @@
-import { type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 
 export interface ImageEditorProps {
-  props: Record<string, any>
-  onPropsChange: (newProps: Record<string, any>) => void
+  props: Record<string, any>;
+  onPropsChange: (newProps: Record<string, any>) => void;
 }
 
 export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
@@ -13,8 +13,8 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
       src: src !== undefined ? src : componentProps.props["src"] || "",
       alt: alt !== undefined ? alt : componentProps.props["alt"] || "",
       caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
-    })
-  }
+    });
+  };
 
   return (
     <div class="w-full flex flex-col gap-3 p-2">
@@ -66,5 +66,5 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};

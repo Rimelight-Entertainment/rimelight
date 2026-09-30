@@ -1,8 +1,8 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx"
-import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts"
-import { AccordionSandbox } from "../../../components/dev/audits/accordion.audit.tsx"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
+import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts";
+import { AccordionSandbox } from "../../../components/dev/audits/accordion.audit.tsx";
 
 const standardItems: AccordionItem[] = [
   {
@@ -23,7 +23,7 @@ const standardItems: AccordionItem[] = [
     content:
       "You can pass custom classes via the `class` prop or target individual internal slots with the `ui` prop."
   }
-]
+];
 
 const iconItems: AccordionItem[] = [
   {
@@ -44,7 +44,7 @@ const iconItems: AccordionItem[] = [
     trailingIcon: "i-lucide-sliders",
     content: "Set push, email, and SMS alert preferences."
   }
-]
+];
 
 const mixedDisabledItems: AccordionItem[] = [
   {
@@ -63,7 +63,7 @@ const mixedDisabledItems: AccordionItem[] = [
     icon: "i-lucide-check-circle",
     content: "Another normal active item to verify grouping behavior around disabled items."
   }
-]
+];
 
 export const DevAccordionPage: Component = () => {
   return (
@@ -199,7 +199,7 @@ export const DevAccordionPage: Component = () => {
         </section>
       </main>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DevAccordionPage
+export default DevAccordionPage;

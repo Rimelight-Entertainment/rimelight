@@ -1,15 +1,15 @@
-import { For, Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { For, Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const ScriptBlock: Component<BlockViewProps> = (props) => {
-  const title = () => (props.block.props?.["title"] as string) ?? "Untitled Script"
-  const synopsis = () => (props.block.props?.["synopsis"] as string) ?? ""
-  const characters = () => (props.block.props?.["characters"] as string[]) ?? []
-  const aPlot = () => (props.block.props?.["aPlot"] as string) ?? ""
-  const bPlot = () => (props.block.props?.["bPlot"] as string) ?? ""
-  const cPlot = () => (props.block.props?.["cPlot"] as string) ?? ""
-  const stinger = () => (props.block.props?.["stinger"] as string) ?? ""
-  const hasPlots = () => !!(aPlot() || bPlot() || cPlot() || stinger())
+  const title = () => (props.block.props?.["title"] as string) ?? "Untitled Script";
+  const synopsis = () => (props.block.props?.["synopsis"] as string) ?? "";
+  const characters = () => (props.block.props?.["characters"] as string[]) ?? [];
+  const aPlot = () => (props.block.props?.["aPlot"] as string) ?? "";
+  const bPlot = () => (props.block.props?.["bPlot"] as string) ?? "";
+  const cPlot = () => (props.block.props?.["cPlot"] as string) ?? "";
+  const stinger = () => (props.block.props?.["stinger"] as string) ?? "";
+  const hasPlots = () => !!(aPlot() || bPlot() || cPlot() || stinger());
 
   return (
     <div
@@ -75,7 +75,7 @@ export const ScriptBlock: Component<BlockViewProps> = (props) => {
 
       <div class="script-body font-mono text-sm space-y-4">{props.children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default ScriptBlock
+export default ScriptBlock;

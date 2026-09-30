@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vite-plus/test"
+import { describe, it, expect } from "vite-plus/test";
 import {
   buildCanonicalUrl,
   buildPageTitle,
@@ -7,152 +7,152 @@ import {
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
   deepMerge
-} from "../src/meta.js"
+} from "../src/meta.js";
 
-const BASE = "https://example.com"
+const BASE = "https://example.com";
 
 describe("buildCanonicalUrl", () => {
   it("adds trailing slash to clean paths", () => {
-    expect(buildCanonicalUrl("/about", BASE)).toBe("https://example.com/about/")
-  })
+    expect(buildCanonicalUrl("/about", BASE)).toBe("https://example.com/about/");
+  });
 
   it("strips trailing slash from query-param paths", () => {
-    expect(buildCanonicalUrl("/search?q=hello", BASE)).toBe("https://example.com/search?q=hello")
-  })
+    expect(buildCanonicalUrl("/search?q=hello", BASE)).toBe("https://example.com/search?q=hello");
+  });
 
   it("handles root path", () => {
-    expect(buildCanonicalUrl("/", BASE)).toBe("https://example.com/")
-  })
+    expect(buildCanonicalUrl("/", BASE)).toBe("https://example.com/");
+  });
 
   it("resolves relative paths against base", () => {
     expect(buildCanonicalUrl(new URL("https://example.com/docs"), BASE)).toBe(
       "https://example.com/docs/"
-    )
-  })
-})
+    );
+  });
+});
 
 describe("buildPageTitle", () => {
-  const opts = { siteName: "My Site", titleTemplate: "%s | My Site" }
+  const opts = { siteName: "My Site", titleTemplate: "%s | My Site" };
 
   it("applies title template", () => {
-    expect(buildPageTitle({ ...opts, title: "About" })).toBe("About | My Site")
-  })
+    expect(buildPageTitle({ ...opts, title: "About" })).toBe("About | My Site");
+  });
 
   it("returns siteName when no title", () => {
-    expect(buildPageTitle(opts)).toBe("My Site")
-  })
+    expect(buildPageTitle(opts)).toBe("My Site");
+  });
 
   it("returns 404 label for error pages", () => {
-    expect(buildPageTitle({ ...opts, is404: true })).toBe("404 - Not Found | My Site")
-  })
+    expect(buildPageTitle({ ...opts, is404: true })).toBe("404 - Not Found | My Site");
+  });
 
   it("404 overrides title if both provided", () => {
     expect(buildPageTitle({ ...opts, title: "Oops", is404: true })).toBe(
       "404 - Not Found | My Site"
-    )
-  })
+    );
+  });
 
   it("bypasses title template when absolute is true", () => {
-    expect(buildPageTitle({ ...opts, title: "Landing Page", absolute: true })).toBe("Landing Page")
-  })
-})
+    expect(buildPageTitle({ ...opts, title: "Landing Page", absolute: true })).toBe("Landing Page");
+  });
+});
 
 describe("deepMerge", () => {
   it("deep merges nested objects", () => {
     const base = {
       openGraph: { type: "website", siteName: "Base", locale: "en_US" },
       twitter: { card: "summary", site: "@base" }
-    }
+    };
     const override = {
       openGraph: { siteName: "Override" },
       twitter: { card: "summary_large_image" }
-    }
-    const result = deepMerge(base, override)
-    expect(result.openGraph.type).toBe("website")
-    expect(result.openGraph.siteName).toBe("Override")
-    expect(result.openGraph.locale).toBe("en_US")
-    expect(result.twitter.card).toBe("summary_large_image")
-    expect(result.twitter.site).toBe("@base")
-  })
-})
+    };
+    const result = deepMerge(base, override);
+    expect(result.openGraph.type).toBe("website");
+    expect(result.openGraph.siteName).toBe("Override");
+    expect(result.openGraph.locale).toBe("en_US");
+    expect(result.twitter.card).toBe("summary_large_image");
+    expect(result.twitter.site).toBe("@base");
+  });
+});
 
 describe("buildSafeDescription", () => {
   it("returns description unchanged when within limit", () => {
-    expect(buildSafeDescription("Short desc", 160)).toBe("Short desc")
-  })
+    expect(buildSafeDescription("Short desc", 160)).toBe("Short desc");
+  });
 
   it("truncates and appends ellipsis when over limit", () => {
-    const long = "a".repeat(200)
-    const result = buildSafeDescription(long, 160)
-    expect(result).toHaveLength(160)
-    expect(result.endsWith("...")).toBe(true)
-  })
+    const long = "a".repeat(200);
+    const result = buildSafeDescription(long, 160);
+    expect(result).toHaveLength(160);
+    expect(result.endsWith("...")).toBe(true);
+  });
 
   it("handles empty string", () => {
-    expect(buildSafeDescription("", 160)).toBe("")
-  })
+    expect(buildSafeDescription("", 160)).toBe("");
+  });
 
   it("truncates at exact boundary", () => {
-    const text = "a".repeat(160)
-    expect(buildSafeDescription(text, 160)).toBe(text)
-    expect(buildSafeDescription(text + "b", 160)).toHaveLength(160)
-  })
-})
+    const text = "a".repeat(160);
+    expect(buildSafeDescription(text, 160)).toBe(text);
+    expect(buildSafeDescription(text + "b", 160)).toHaveLength(160);
+  });
+});
 
 describe("buildRobotsMetaContent", () => {
   it("returns indexable string by default", () => {
-    expect(buildRobotsMetaContent({})).toBe("index, follow, max-image-preview:large")
-  })
+    expect(buildRobotsMetaContent({})).toBe("index, follow, max-image-preview:large");
+  });
 
   it("returns noindex for noindex=true", () => {
-    expect(buildRobotsMetaContent({ noindex: true })).toBe("noindex, nofollow")
-  })
+    expect(buildRobotsMetaContent({ noindex: true })).toBe("noindex, nofollow");
+  });
 
   it("returns noindex for is404=true", () => {
-    expect(buildRobotsMetaContent({ is404: true })).toBe("noindex, nofollow")
-  })
+    expect(buildRobotsMetaContent({ is404: true })).toBe("noindex, nofollow");
+  });
 
   it("respects override", () => {
-    expect(buildRobotsMetaContent({ override: "noarchive" })).toBe("noarchive")
-  })
-})
+    expect(buildRobotsMetaContent({ override: "noarchive" })).toBe("noarchive");
+  });
+});
 
 describe("buildWebSiteSchema", () => {
-  const config = { name: "My Site", url: "https://example.com", description: "A test site" }
+  const config = { name: "My Site", url: "https://example.com", description: "A test site" };
 
   it("builds schema.org WebSite object", () => {
-    const schema = buildWebSiteSchema(config)
-    expect(schema["@context"]).toBe("https://schema.org")
-    expect(schema["@type"]).toBe("WebSite")
-    expect(schema["name"]).toBe("My Site")
-    expect(schema["url"]).toBe("https://example.com")
-  })
+    const schema = buildWebSiteSchema(config);
+    expect(schema["@context"]).toBe("https://schema.org");
+    expect(schema["@type"]).toBe("WebSite");
+    expect(schema["name"]).toBe("My Site");
+    expect(schema["url"]).toBe("https://example.com");
+  });
 
   it("prefers site param over config.url", () => {
-    const schema = buildWebSiteSchema(config, "https://override.com")
-    expect(schema["url"]).toBe("https://override.com")
-  })
-})
+    const schema = buildWebSiteSchema(config, "https://override.com");
+    expect(schema["url"]).toBe("https://override.com");
+  });
+});
 
 describe("buildDefaultOgImageUrl", () => {
   it("builds query params for title and description", () => {
     const url = buildDefaultOgImageUrl({
       title: "My Page",
       description: "My description"
-    })
-    expect(url).toBe("/open-graph/page.png?title=My+Page&description=My+description")
-  })
+    });
+    expect(url).toBe("/open-graph/page.png?title=My+Page&description=My+description");
+  });
 
   it("falls back to siteName if title is missing", () => {
     const url = buildDefaultOgImageUrl({
       siteName: "Rimelight",
       description: "Welcome"
-    })
-    expect(url).toBe("/open-graph/page.png?title=Rimelight&description=Welcome")
-  })
+    });
+    expect(url).toBe("/open-graph/page.png?title=Rimelight&description=Welcome");
+  });
 
   it("returns base path when no params provided", () => {
-    const url = buildDefaultOgImageUrl({})
-    expect(url).toBe("/open-graph/page.png")
-  })
-})
+    const url = buildDefaultOgImageUrl({});
+    expect(url).toBe("/open-graph/page.png");
+  });
+});

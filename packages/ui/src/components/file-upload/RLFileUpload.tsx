@@ -1,17 +1,17 @@
-import { createMemo, createSignal, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { FileUploadProps } from "./file-upload"
-import { fileUploadTheme } from "./file-upload.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, createSignal, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { FileUploadProps } from "./file-upload";
+import { fileUploadTheme } from "./file-upload.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLFileUploadProps extends FileUploadProps {
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
-  children?: JSX.Element
-  iconSlot?: JSX.Element
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  children?: JSX.Element;
+  iconSlot?: JSX.Element;
 }
 
 const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "accept",
@@ -26,7 +26,7 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
     "onChange",
     "children",
     "iconSlot"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     fileUploadTheme({
@@ -35,61 +35,61 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const [dragging, setDragging] = createSignal(false)
-  const [fileLabel, setFileLabel] = createSignal("")
+  const [dragging, setDragging] = createSignal(false);
+  const [fileLabel, setFileLabel] = createSignal("");
 
-  let inputRef: HTMLInputElement | undefined
+  let inputRef: HTMLInputElement | undefined;
 
-  const uploadTitle = () => props.title ?? "Drop files here or click to upload"
+  const uploadTitle = () => props.title ?? "Drop files here or click to upload";
 
   const openPicker = () => {
-    if (props.disabled) return
-    inputRef?.click()
-  }
+    if (props.disabled) return;
+    inputRef?.click();
+  };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (props.disabled) return
+    if (props.disabled) return;
     if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault()
-      inputRef?.click()
+      e.preventDefault();
+      inputRef?.click();
     }
-  }
+  };
 
   const showFiles = (files: FileList | null) => {
-    if (!files || files.length === 0) return
-    setFileLabel(files.length === 1 ? files[0]!.name : `${files.length} files selected`)
-  }
+    if (!files || files.length === 0) return;
+    setFileLabel(files.length === 1 ? files[0]!.name : `${files.length} files selected`);
+  };
 
   const handleInputChange = (e: Event & { currentTarget: HTMLInputElement }) => {
-    showFiles(e.currentTarget.files)
-    props.onChange?.(e)
-  }
+    showFiles(e.currentTarget.files);
+    props.onChange?.(e);
+  };
 
   const handleDragOver = (e: DragEvent) => {
-    e.preventDefault()
-    setDragging(true)
-  }
+    e.preventDefault();
+    setDragging(true);
+  };
 
   const handleDragLeave = () => {
-    setDragging(false)
-  }
+    setDragging(false);
+  };
 
   const handleDrop = (e: DragEvent) => {
-    e.preventDefault()
-    setDragging(false)
-    const dt = e.dataTransfer
-    if (!dt) return
+    e.preventDefault();
+    setDragging(false);
+    const dt = e.dataTransfer;
+    if (!dt) return;
     try {
-      const transfer = new DataTransfer()
-      Array.from(dt.files).forEach((f) => transfer.items.add(f))
-      if (inputRef) inputRef.files = transfer.files
+      const transfer = new DataTransfer();
+      Array.from(dt.files).forEach((f) => transfer.items.add(f));
+      if (inputRef) inputRef.files = transfer.files;
     } catch (err) {
-      void err
+      void err;
     }
-    showFiles(dt.files)
-  }
+    showFiles(dt.files);
+  };
 
   return (
     <div
@@ -160,7 +160,7 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLFileUpload }
+export { RLFileUpload };

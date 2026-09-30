@@ -1,16 +1,16 @@
-import { createMemo, omit, For, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { BreadcrumbItem, BreadcrumbProps } from "./breadcrumb"
-import { breadcrumbTheme } from "./breadcrumb.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, For, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { BreadcrumbItem, BreadcrumbProps } from "./breadcrumb";
+import { breadcrumbTheme } from "./breadcrumb.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLBreadcrumbProps extends BreadcrumbProps {
-  children?: JSX.Element
-  separator?: JSX.Element
+  children?: JSX.Element;
+  separator?: JSX.Element;
 }
 
 const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "items",
@@ -21,27 +21,27 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
     "children",
     "ui",
     "class"
-  )
+  );
 
   const classes = createMemo(() =>
     breadcrumbTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const allItems = () => props.items ?? []
-  const firstItem = () => allItems()[0]
-  const lastItem = () => (allItems().length > 1 ? allItems()[allItems().length - 1] : null)
+  const allItems = () => props.items ?? [];
+  const firstItem = () => allItems()[0];
+  const lastItem = () => (allItems().length > 1 ? allItems()[allItems().length - 1] : null);
   const allMidItems = () =>
-    allItems().length > 2 ? allItems().slice(1, allItems().length - 1) : []
+    allItems().length > 2 ? allItems().slice(1, allItems().length - 1) : [];
 
   const effectiveMaxMid = () =>
-    props.maxVisible !== undefined ? Math.max(0, props.maxVisible - 2) : allMidItems().length
+    props.maxVisible !== undefined ? Math.max(0, props.maxVisible - 2) : allMidItems().length;
 
-  const renderedMidItems = () => allMidItems().slice(allMidItems().length - effectiveMaxMid())
-  const hiddenMidCount = () => Math.max(0, allMidItems().length - effectiveMaxMid())
-  const hasMidItems = () => renderedMidItems().length > 0
+  const renderedMidItems = () => allMidItems().slice(allMidItems().length - effectiveMaxMid());
+  const hiddenMidCount = () => Math.max(0, allMidItems().length - effectiveMaxMid());
+  const hasMidItems = () => renderedMidItems().length > 0;
 
   const separatorEl = () => (
     <span class={classes()["separator"]} data-slot="separator" aria-hidden="true">
@@ -51,7 +51,7 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
         <RLIcon name={props.separatorIcon ?? "chevronRight"} />
       )}
     </span>
-  )
+  );
 
   const itemMarker = (item: BreadcrumbItem) =>
     item.href ? (
@@ -62,21 +62,19 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
       <span class={classes()["page"]} data-slot="page">
         {item.label}
       </span>
-    )
+    );
 
   const ldJson = () =>
     JSON.stringify({
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
-      "itemListElement": allItems().map((item, idx) => ({
+      itemListElement: allItems().map((item, idx) => ({
         "@type": "ListItem",
-        "position": idx + 1,
-        "name": item.label,
-        "item": item.href
-          ? new URL(item.href, "https://starter.rimelight.com").toString()
-          : undefined
+        position: idx + 1,
+        name: item.label,
+        item: item.href ? new URL(item.href, "https://starter.rimelight.com").toString() : undefined
       }))
-    })
+    });
 
   return (
     <>
@@ -128,7 +126,7 @@ const RLBreadcrumb: Component<RLBreadcrumbProps> = (allProps) => {
 
       {props.items && <script type="application/ld+json" innerHTML={ldJson()} />}
     </>
-  )
-}
+  );
+};
 
-export { RLBreadcrumb }
+export { RLBreadcrumb };

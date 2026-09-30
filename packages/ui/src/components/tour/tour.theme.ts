@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const tourTheme = defineTheme("tour", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const tourTheme = defineTheme("tour", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

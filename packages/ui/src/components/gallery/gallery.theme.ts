@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const galleryTheme = defineTheme("gallery", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const galleryTheme = defineTheme("gallery", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

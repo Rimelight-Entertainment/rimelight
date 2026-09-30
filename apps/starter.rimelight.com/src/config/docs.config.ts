@@ -1,5 +1,5 @@
-import { defineDocsConfig } from "@rimelight/cms"
-import type { DocsConfig } from "@rimelight/cms"
+import { defineDocsConfig } from "@rimelight/cms";
+import type { DocsConfig } from "@rimelight/cms";
 
 const config: DocsConfig = {
   editLink: {
@@ -52,6 +52,6 @@ const config: DocsConfig = {
       ]
     }
   ]
-}
+};
 
-export default defineDocsConfig(config)
+export default defineDocsConfig(config);

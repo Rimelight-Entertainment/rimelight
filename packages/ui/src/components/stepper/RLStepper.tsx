@@ -1,24 +1,24 @@
-import { createMemo, createSignal, For, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { StepperProps, StepperItem } from "./stepper"
-import { stepperTheme } from "./stepper.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, createSignal, For, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { StepperProps, StepperItem } from "./stepper";
+import { stepperTheme } from "./stepper.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLStepperProps extends StepperProps {
-  children?: JSX.Element
+  children?: JSX.Element;
   indicator?: (ctx: {
-    item: StepperItem
-    index: number
-    state: "completed" | "active" | "inactive"
-  }) => JSX.Element
-  wrapper?: (ctx: { item: StepperItem; index: number }) => JSX.Element
-  onChange?: (ctx: { index: number; value: string | number }) => void
-  onNext?: (ctx: { index: number; value: string | number }) => void
-  onPrev?: (ctx: { index: number; value: string | number }) => void
+    item: StepperItem;
+    index: number;
+    state: "completed" | "active" | "inactive";
+  }) => JSX.Element;
+  wrapper?: (ctx: { item: StepperItem; index: number }) => JSX.Element;
+  onChange?: (ctx: { index: number; value: string | number }) => void;
+  onNext?: (ctx: { index: number; value: string | number }) => void;
+  onPrev?: (ctx: { index: number; value: string | number }) => void;
 }
 
 const RLStepper: Component<RLStepperProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "items",
@@ -39,45 +39,45 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
     "onChange",
     "onNext",
     "onPrev"
-  )
+  );
 
-  const items = (): StepperItem[] => props.items ?? []
-  const valueKey = (): string => props.valueKey ?? "value"
-  const linear = (): boolean => props.linear !== false
-  const isDisabled = (): boolean => props.disabled === true
+  const items = (): StepperItem[] => props.items ?? [];
+  const valueKey = (): string => props.valueKey ?? "value";
+  const linear = (): boolean => props.linear !== false;
+  const isDisabled = (): boolean => props.disabled === true;
 
   const initialActiveValue =
     props.value ??
     props.modelValue ??
     props.defaultValue ??
-    (items().length > 0 ? (items()[0]?.[valueKey()] ?? items()[0]?.value ?? 0) : 0)
+    (items().length > 0 ? (items()[0]?.[valueKey()] ?? items()[0]?.value ?? 0) : 0);
 
   const activeIndex = items().findIndex((item, idx) => {
-    const val = item[valueKey()] ?? item.value ?? idx
-    return String(val) === String(initialActiveValue)
-  })
+    const val = item[valueKey()] ?? item.value ?? idx;
+    return String(val) === String(initialActiveValue);
+  });
 
-  const [currentIndex, setCurrentIndex] = createSignal(activeIndex >= 0 ? activeIndex : 0)
+  const [currentIndex, setCurrentIndex] = createSignal(activeIndex >= 0 ? activeIndex : 0);
 
   const itemValue = (item: StepperItem, index: number): string | number =>
-    item[valueKey()] ?? item.value ?? index
+    item[valueKey()] ?? item.value ?? index;
 
   const goTo = (index: number) => {
-    if (isDisabled()) return
-    if (index < 0 || index >= items().length) return
-    if (linear() && index > currentIndex() + 1) return
+    if (isDisabled()) return;
+    if (index < 0 || index >= items().length) return;
+    if (linear() && index > currentIndex() + 1) return;
 
-    const oldIndex = currentIndex()
-    setCurrentIndex(index)
-    const value = itemValue(items()[index]!, index)
+    const oldIndex = currentIndex();
+    setCurrentIndex(index);
+    const value = itemValue(items()[index]!, index);
 
     if (index > oldIndex) {
-      props.onNext?.({ index, value })
+      props.onNext?.({ index, value });
     } else if (index < oldIndex) {
-      props.onPrev?.({ index, value })
+      props.onPrev?.({ index, value });
     }
-    props.onChange?.({ index, value })
-  }
+    props.onChange?.({ index, value });
+  };
 
   const resolvedClasses = createMemo(() =>
     stepperTheme({
@@ -87,22 +87,22 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
       <div class={resolvedClasses().header} data-slot="header">
         <For each={items()}>
           {(item, index) => {
-            const isCompleted = index() < currentIndex()
-            const isActive = index() === currentIndex()
+            const isCompleted = index() < currentIndex();
+            const isActive = index() === currentIndex();
             const isItemDisabled =
-              isDisabled() || item.disabled || (linear() && index() > currentIndex())
+              isDisabled() || item.disabled || (linear() && index() > currentIndex());
             const state: "completed" | "active" | "inactive" = isCompleted
               ? "completed"
               : isActive
                 ? "active"
-                : "inactive"
+                : "inactive";
 
             return (
               <>
@@ -172,7 +172,7 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
                   />
                 ) : null}
               </>
-            )
+            );
           }}
         </For>
       </div>
@@ -181,7 +181,7 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
         {props.children}
         <For each={items()}>
           {(item, index) => {
-            const panelActive = index() === currentIndex()
+            const panelActive = index() === currentIndex();
             return (
               <div
                 data-stepper-panel={index()}
@@ -191,12 +191,12 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
               >
                 {item.content ? <div>{item.content}</div> : null}
               </div>
-            )
+            );
           }}
         </For>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLStepper }
+export { RLStepper };

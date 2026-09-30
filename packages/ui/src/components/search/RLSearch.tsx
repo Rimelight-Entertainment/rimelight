@@ -1,31 +1,31 @@
-import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Portal } from "@solidjs/web"
-import type { SearchProps } from "./search"
-import { searchTheme } from "./search.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLInput } from "../input/RLInput"
-import { RLKbd } from "../kbd/RLKbd"
-import { RLButton } from "../button/RLButton"
-import { defineShortcuts } from "../../shortcuts"
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
+import type { SearchProps } from "./search";
+import { searchTheme } from "./search.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLInput } from "../input/RLInput";
+import { RLKbd } from "../kbd/RLKbd";
+import { RLButton } from "../button/RLButton";
+import { defineShortcuts } from "../../shortcuts";
 
 export interface SearchResultItem {
-  title?: string
-  url?: string
-  sourceType?: string
-  snippet?: string
-  [key: string]: any
+  title?: string;
+  url?: string;
+  sourceType?: string;
+  snippet?: string;
+  [key: string]: any;
 }
 
 export interface RLSearchProps extends SearchProps {
-  children?: JSX.Element
-  triggerSlot?: JSX.Element
+  children?: JSX.Element;
+  triggerSlot?: JSX.Element;
 }
 
-const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`
+const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`;
 
 const RLSearch: Component<RLSearchProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "endpoint",
@@ -35,64 +35,64 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     "class",
     "children",
     "triggerSlot"
-  )
+  );
 
-  const endpoint = () => props.endpoint ?? "/api/search"
+  const endpoint = () => props.endpoint ?? "/api/search";
   const searchPlaceholder = () =>
-    props.messages?.searchPlaceholder || props.placeholder || "Search..."
-  const noResultsLabel = () => props.messages?.noResultsLabel || "No results found"
-  const footerBackendHint = () => props.messages?.footerBackendHint || "Site Search"
+    props.messages?.searchPlaceholder || props.placeholder || "Search...";
+  const noResultsLabel = () => props.messages?.noResultsLabel || "No results found";
+  const footerBackendHint = () => props.messages?.footerBackendHint || "Site Search";
 
-  const [isOpen, setIsOpen] = createSignal(false)
-  const [query, setQuery] = createSignal("")
-  const [results, setResults] = createSignal<SearchResultItem[]>([])
-  const [hasSearched, setHasSearched] = createSignal(false)
-  const [loading, setLoading] = createSignal(false)
+  const [isOpen, setIsOpen] = createSignal(false);
+  const [query, setQuery] = createSignal("");
+  const [results, setResults] = createSignal<SearchResultItem[]>([]);
+  const [hasSearched, setHasSearched] = createSignal(false);
+  const [loading, setLoading] = createSignal(false);
 
-  let inputRef: HTMLInputElement | null = null
-  let debounceTimer: ReturnType<typeof setTimeout> | undefined
+  let inputRef: HTMLInputElement | null = null;
+  let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
   const openModal = () => {
-    setIsOpen(true)
+    setIsOpen(true);
     if (typeof document !== "undefined") {
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     }
     setTimeout(() => {
-      inputRef?.focus()
-      inputRef?.select()
-    }, 50)
-  }
+      inputRef?.focus();
+      inputRef?.select();
+    }, 50);
+  };
 
   const closeModal = () => {
-    setIsOpen(false)
+    setIsOpen(false);
     if (typeof document !== "undefined") {
-      document.body.style.overflow = ""
+      document.body.style.overflow = "";
     }
-    setQuery("")
-    setResults([])
-    setHasSearched(false)
-    if (debounceTimer) clearTimeout(debounceTimer)
-  }
+    setQuery("");
+    setResults([]);
+    setHasSearched(false);
+    if (debounceTimer) clearTimeout(debounceTimer);
+  };
 
   const toggleModal = () => {
     if (isOpen()) {
-      closeModal()
+      closeModal();
     } else {
-      openModal()
+      openModal();
     }
-  }
+  };
 
   onSettled(() => {
-    const handleOpen = () => openModal()
-    const handleToggle = () => toggleModal()
+    const handleOpen = () => openModal();
+    const handleToggle = () => toggleModal();
 
-    document.addEventListener("rl-search:open", handleOpen)
-    document.addEventListener("rla-search:open", handleOpen)
-    document.addEventListener("search:open", handleOpen)
-    document.addEventListener("rl-search:toggle", handleToggle)
+    document.addEventListener("rl-search:open", handleOpen);
+    document.addEventListener("rla-search:open", handleOpen);
+    document.addEventListener("search:open", handleOpen);
+    document.addEventListener("rl-search:toggle", handleToggle);
 
     const searchShortcutCleanup = defineShortcuts({
-      "meta_k": {
+      meta_k: {
         handler: () => toggleModal(),
         label: "Search",
         description: "Open site search",
@@ -101,72 +101,72 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
       },
       "/": {
         handler: () => {
-          if (!isOpen()) openModal()
+          if (!isOpen()) openModal();
         },
         label: "Quick Search",
         description: "Focus site search",
         category: "navigation",
         order: 1
       }
-    })
+    });
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen()) {
-        closeModal()
+        closeModal();
       }
-    }
-    window.addEventListener("keydown", onKeyDown)
+    };
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.removeEventListener("rl-search:open", handleOpen)
-      document.removeEventListener("rla-search:open", handleOpen)
-      document.removeEventListener("search:open", handleOpen)
-      document.removeEventListener("rl-search:toggle", handleToggle)
-      window.removeEventListener("keydown", onKeyDown)
+      document.removeEventListener("rl-search:open", handleOpen);
+      document.removeEventListener("rla-search:open", handleOpen);
+      document.removeEventListener("search:open", handleOpen);
+      document.removeEventListener("rl-search:toggle", handleToggle);
+      window.removeEventListener("keydown", onKeyDown);
       if (typeof document !== "undefined") {
-        document.body.style.overflow = ""
+        document.body.style.overflow = "";
       }
-      if (debounceTimer) clearTimeout(debounceTimer)
-      searchShortcutCleanup()
-    }
-  })
+      if (debounceTimer) clearTimeout(debounceTimer);
+      searchShortcutCleanup();
+    };
+  });
 
   const handleInput = (val: string) => {
-    setQuery(val)
-    if (debounceTimer) clearTimeout(debounceTimer)
+    setQuery(val);
+    if (debounceTimer) clearTimeout(debounceTimer);
 
-    const trimmed = val.trim()
+    const trimmed = val.trim();
     if (!trimmed) {
-      setResults([])
-      setHasSearched(false)
-      setLoading(false)
-      return
+      setResults([]);
+      setHasSearched(false);
+      setLoading(false);
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     debounceTimer = setTimeout(async () => {
       try {
-        const res = await fetch(`${endpoint()}?q=${encodeURIComponent(trimmed)}`)
-        if (!res.ok) throw new Error(`HTTP status ${res.status}`)
-        const data = await res.json()
-        setResults(Array.isArray(data) ? data : [])
-        setHasSearched(true)
+        const res = await fetch(`${endpoint()}?q=${encodeURIComponent(trimmed)}`);
+        if (!res.ok) throw new Error(`HTTP status ${res.status}`);
+        const data = await res.json();
+        setResults(Array.isArray(data) ? data : []);
+        setHasSearched(true);
       } catch (err) {
-        console.error("[RLSearch] Search query failed:", err)
-        setResults([])
-        setHasSearched(true)
+        console.error("[RLSearch] Search query failed:", err);
+        setResults([]);
+        setHasSearched(true);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }, 200)
-  }
+    }, 200);
+  };
 
   const resolvedClasses = createMemo(() =>
     searchTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={`${resolvedClasses().root} rl-search-wrapper`} data-slot="root" {...rest}>
@@ -195,7 +195,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
             class={resolvedClasses().modal}
             data-slot="modal"
             onClick={(e) => {
-              if (e.target === e.currentTarget) closeModal()
+              if (e.target === e.currentTarget) closeModal();
             }}
           >
             <div
@@ -217,8 +217,8 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
                   onInput={(e) => handleInput(e.currentTarget.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Escape") {
-                      e.stopPropagation()
-                      closeModal()
+                      e.stopPropagation();
+                      closeModal();
                     }
                   }}
                   leading={<RLIcon name="search" class={resolvedClasses().headerIcon} />}
@@ -290,7 +290,7 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
         </Portal>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLSearch }
+export { RLSearch };

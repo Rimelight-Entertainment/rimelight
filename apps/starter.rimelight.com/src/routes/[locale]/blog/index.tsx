@@ -1,58 +1,58 @@
-import { type Component, For, createSignal } from "solid-js"
-import { createAsyncData } from "#utils/async"
-import AppLayout from "#layouts/AppLayout"
-import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx"
-import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx"
-import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx"
-import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx"
+import { type Component, For, createSignal } from "solid-js";
+import { createAsyncData } from "#utils/async";
+import AppLayout from "#layouts/AppLayout";
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 
 function getPageTitle(title: unknown, locale: string): string {
   if (typeof title === "object" && title !== null) {
-    const titleRecord = title as Record<string, string>
-    return titleRecord[locale] || titleRecord["en"] || ""
+    const titleRecord = title as Record<string, string>;
+    return titleRecord[locale] || titleRecord["en"] || "";
   }
-  return typeof title === "string" ? title : ""
+  return typeof title === "string" ? title : "";
 }
 
 export const BlogIndexPage: Component = () => {
-  const activeLocale = () => getLocale()
-  const [activeTab, setActiveTab] = createSignal("all")
+  const activeLocale = () => getLocale();
+  const [activeTab, setActiveTab] = createSignal("all");
 
   const blogPages = createAsyncData(
     () => true,
     async () => {
       try {
-        const res = await fetch("/api/content/pages?type=blog")
-        if (!res.ok) return []
-        const data = (await res.json()) as any
-        return (data.pages || []) as any[]
+        const res = await fetch("/api/content/pages?type=blog");
+        if (!res.ok) return [];
+        const data = (await res.json()) as any;
+        return (data.pages || []) as any[];
       } catch {
-        return []
+        return [];
       }
     },
     []
-  )
+  );
 
   const categoryMessages = () => ({
     "development-log": t("blog.categories_development-log"),
-    "other": t("blog.categories_other")
-  })
+    other: t("blog.categories_other")
+  });
 
   const tabsItems = () => [
     { label: "All", value: "all" },
     { label: categoryMessages()["development-log"] || "Dev Log", value: "development-log" },
     { label: categoryMessages()["other"] || "Other", value: "other" }
-  ]
+  ];
 
   const filteredPosts = () => {
-    const all = blogPages() || []
-    if (activeTab() === "all") return all
+    const all = blogPages() || [];
+    if (activeTab() === "all") return all;
     return all.filter((page) => {
-      const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
-      return (content?.properties?.category || "other") === activeTab()
-    })
-  }
+      const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content;
+      return (content?.properties?.category || "other") === activeTab();
+    });
+  };
 
   return (
     <AppLayout title={t("blog.title")} description={t("blog.description")}>
@@ -69,10 +69,10 @@ export const BlogIndexPage: Component = () => {
             <For each={filteredPosts()}>
               {(page, index) => {
                 const content =
-                  typeof page.content === "string" ? JSON.parse(page.content) : page.content
-                const titleVal = getPageTitle(page.title, activeLocale())
-                const category = content?.properties?.category || "other"
-                const postDate = page.postedAt || page.createdAt
+                  typeof page.content === "string" ? JSON.parse(page.content) : page.content;
+                const titleVal = getPageTitle(page.title, activeLocale());
+                const category = content?.properties?.category || "other";
+                const postDate = page.postedAt || page.createdAt;
                 return (
                   <RLPost
                     variant="ghost"
@@ -89,14 +89,14 @@ export const BlogIndexPage: Component = () => {
                     }
                     badgeColor={category === "development-log" ? "info" : "primary"}
                   />
-                )
+                );
               }}
             </For>
           </RLGrid>
         </div>
       </RLPageSection>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default BlogIndexPage
+export default BlogIndexPage;

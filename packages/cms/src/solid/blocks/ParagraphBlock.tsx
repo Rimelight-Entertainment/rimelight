@@ -1,29 +1,29 @@
-import { Show, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { BaseBlock } from "../../core/types/blocks.ts"
-import { InlineNodes } from "./inlines.tsx"
+import { Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { BaseBlock } from "../../core/types/blocks.ts";
+import { InlineNodes } from "./inlines.tsx";
 
 export interface BlockViewProps {
-  block: BaseBlock
-  locale?: string | undefined
-  sectionDepth?: number | undefined
-  index?: number | undefined
-  components?: Record<string, Component<any>> | undefined
-  children?: JSX.Element | undefined
+  block: BaseBlock;
+  locale?: string | undefined;
+  sectionDepth?: number | undefined;
+  index?: number | undefined;
+  components?: Record<string, Component<any>> | undefined;
+  children?: JSX.Element | undefined;
 }
 
 export const ParagraphBlock: Component<BlockViewProps> = (props) => {
-  const rawText = () => props.block.props?.["text"]
-  const locale = () => props.locale ?? "en"
+  const rawText = () => props.block.props?.["text"];
+  const locale = () => props.locale ?? "en";
 
   const localizedFallback = () => {
-    const v = rawText()
+    const v = rawText();
     if (v != null && !Array.isArray(v) && typeof v === "object") {
-      const rec = v as Record<string, string>
-      return rec[locale()] ?? rec["en"] ?? ""
+      const rec = v as Record<string, string>;
+      return rec[locale()] ?? rec["en"] ?? "";
     }
-    return typeof v === "string" ? v : ""
-  }
+    return typeof v === "string" ? v : "";
+  };
 
   return (
     <p
@@ -34,7 +34,7 @@ export const ParagraphBlock: Component<BlockViewProps> = (props) => {
         <InlineNodes nodes={rawText() as any} />
       </Show>
     </p>
-  )
-}
+  );
+};
 
-export default ParagraphBlock
+export default ParagraphBlock;

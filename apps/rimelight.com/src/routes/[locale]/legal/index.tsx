@@ -1,42 +1,42 @@
-import { type Component, For, Show } from "solid-js"
-import { createAsyncData } from "#utils/async"
-import AppLayout from "#layouts/AppLayout"
-import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
-import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx"
-import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx"
-import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx"
+import { type Component, For, Show } from "solid-js";
+import { createAsyncData } from "#utils/async";
+import AppLayout from "#layouts/AppLayout";
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>
-    return record[locale] || record["en"] || ""
+    const record = val as Record<string, string>;
+    return record[locale] || record["en"] || "";
   }
-  return typeof val === "string" ? val : ""
+  return typeof val === "string" ? val : "";
 }
 
 export const LegalIndexPage: Component = () => {
-  const activeLocale = () => getLocale()
+  const activeLocale = () => getLocale();
 
   const legalPages = createAsyncData(
     () => activeLocale(),
     async (loc) => {
       try {
-        const res = await fetch("/api/content/pages?type=legal")
-        if (!res.ok) return []
-        const data = (await res.json()) as any
-        const allPages = (data.pages || []) as any[]
+        const res = await fetch("/api/content/pages?type=legal");
+        if (!res.ok) return [];
+        const data = (await res.json()) as any;
+        const allPages = (data.pages || []) as any[];
 
         return allPages.filter((post) => {
           const content =
-            typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
-          return (content.properties?.locale || "en") === loc
-        })
+            typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
+          return (content.properties?.locale || "en") === loc;
+        });
       } catch {
-        return []
+        return [];
       }
     },
     []
-  )
+  );
 
   return (
     <AppLayout
@@ -55,13 +55,13 @@ export const LegalIndexPage: Component = () => {
             <For each={legalPages() || []}>
               {(post) => {
                 const content =
-                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
-                const title = getLocalizedText(post.title, activeLocale())
+                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
+                const title = getLocalizedText(post.title, activeLocale());
                 const description =
                   getLocalizedText(post.description, activeLocale()) ||
                   content.properties?.description ||
-                  ""
-                const postDate = post.postedAt || post.createdAt
+                  "";
+                const postDate = post.postedAt || post.createdAt;
                 return (
                   <RLPost
                     title={title}
@@ -70,7 +70,7 @@ export const LegalIndexPage: Component = () => {
                     to={getRelativeLocaleUrl(`/legal/${post.slug}/`)}
                     variant="ghost"
                   />
-                )
+                );
               }}
             </For>
           </RLGrid>
@@ -81,7 +81,7 @@ export const LegalIndexPage: Component = () => {
         </div>
       </RLPageSection>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default LegalIndexPage
+export default LegalIndexPage;

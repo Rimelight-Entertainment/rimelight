@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const progressTheme = defineTheme("progress", {
   slots: ["root", "indicator"],
@@ -18,4 +18,4 @@ export const progressTheme = defineTheme("progress", {
     color: "primary",
     size: "md"
   }
-})
+});

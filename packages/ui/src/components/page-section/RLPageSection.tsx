@@ -1,29 +1,29 @@
-import { createMemo, omit, For, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Dynamic } from "@solidjs/web"
-import type { PageSectionProps } from "./page-section"
-import { pageSectionTheme } from "./page-section.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLButton } from "../button/RLButton"
+import { createMemo, omit, For, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Dynamic } from "@solidjs/web";
+import type { PageSectionProps } from "./page-section";
+import { pageSectionTheme } from "./page-section.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 
 export interface RLPageSectionProps extends PageSectionProps {
-  background?: JSX.Element
-  top?: JSX.Element
-  header?: JSX.Element
-  leading?: JSX.Element
-  headlineSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  body?: JSX.Element
-  footer?: JSX.Element
-  linksSlot?: JSX.Element
-  content?: JSX.Element
-  bottom?: JSX.Element
-  children?: JSX.Element
+  background?: JSX.Element;
+  top?: JSX.Element;
+  header?: JSX.Element;
+  leading?: JSX.Element;
+  headlineSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  body?: JSX.Element;
+  footer?: JSX.Element;
+  linksSlot?: JSX.Element;
+  content?: JSX.Element;
+  bottom?: JSX.Element;
+  children?: JSX.Element;
 }
 
 const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -53,12 +53,12 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     "content",
     "bottom",
     "children"
-  )
+  );
 
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "hero" || props.variant === "cta"
       ? props.variant
-      : "default"
+      : "default";
 
   const resolvedClasses = createMemo(() =>
     pageSectionTheme({
@@ -73,10 +73,10 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const tag = () => props.as ?? "section"
-  const titleTag = () => (resolvedVariant() === "hero" ? "h1" : "h2")
+  const tag = () => props.as ?? "section";
+  const titleTag = () => (resolvedVariant() === "hero" ? "h1" : "h2");
 
   const showHeader = () =>
     !!(
@@ -88,7 +88,7 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       props.titleSlot ||
       props.description ||
       props.descriptionSlot
-    )
+    );
 
   const showWrapper = () =>
     !!(
@@ -97,7 +97,7 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       props.footer ||
       props.linksSlot ||
       (props.links?.length ?? 0) > 0
-    )
+    );
 
   return (
     <Dynamic
@@ -196,7 +196,7 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
 
       {props.bottom}
     </Dynamic>
-  )
-}
+  );
+};
 
-export { RLPageSection }
+export { RLPageSection };

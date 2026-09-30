@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const audioTheme = defineTheme("audio", {
   slots: [
@@ -204,4 +204,4 @@ export const audioTheme = defineTheme("audio", {
     color: "primary",
     size: "md"
   }
-})
+});

@@ -1,37 +1,37 @@
-import { For, Show, type Component } from "solid-js"
-import type { InlineNode } from "../../core/types/inline.ts"
+import { For, Show, type Component } from "solid-js";
+import type { InlineNode } from "../../core/types/inline.ts";
 
 export function resolveLocalizedText(value: unknown, locale = "en"): string {
-  if (value == null) return ""
-  if (typeof value === "string") return value
-  if (typeof value === "number") return String(value)
-  if (Array.isArray(value)) return ""
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  if (Array.isArray(value)) return "";
   if (typeof value === "object") {
-    const rec = value as Record<string, string>
-    return rec[locale] ?? rec["en"] ?? Object.values(rec)[0] ?? ""
+    const rec = value as Record<string, string>;
+    return rec[locale] ?? rec["en"] ?? Object.values(rec)[0] ?? "";
   }
-  return ""
+  return "";
 }
 
 function renderTextWithMarks(text: string, marks: string[] = []) {
-  let node: any = text
-  if (marks.includes("bold")) node = <strong>{node}</strong>
-  if (marks.includes("italic")) node = <em>{node}</em>
-  if (marks.includes("underline")) node = <u>{node}</u>
-  if (marks.includes("strikethrough")) node = <s>{node}</s>
+  let node: any = text;
+  if (marks.includes("bold")) node = <strong>{node}</strong>;
+  if (marks.includes("italic")) node = <em>{node}</em>;
+  if (marks.includes("underline")) node = <u>{node}</u>;
+  if (marks.includes("strikethrough")) node = <s>{node}</s>;
   if (marks.includes("code")) {
     node = (
       <code class="bg-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-sm font-mono">
         {node}
       </code>
-    )
+    );
   }
-  return node
+  return node;
 }
 
 export const InlineNodeView: Component<{ node: InlineNode }> = (props) => {
-  const node = () => props.node as any
-  const type = () => node()?.type
+  const node = () => props.node as any;
+  const type = () => node()?.type;
 
   return (
     <Show when={node()}>
@@ -65,28 +65,28 @@ export const InlineNodeView: Component<{ node: InlineNode }> = (props) => {
         </a>
       </Show>
     </Show>
-  )
-}
+  );
+};
 
 export const InlineNodes: Component<{ nodes: InlineNode[] }> = (props) => {
-  return <For each={props.nodes ?? []}>{(node) => <InlineNodeView node={node} />}</For>
-}
+  return <For each={props.nodes ?? []}>{(node) => <InlineNodeView node={node} />}</For>;
+};
 
 export function resolveInlineText(value: unknown, locale = "en"): string {
-  if (value == null) return ""
-  if (typeof value === "string") return value
-  if (typeof value === "number") return String(value)
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
   if (Array.isArray(value)) {
     return value
       .map((n: any) => {
-        if (!n) return ""
-        if (n.type === "text") return n.text ?? ""
+        if (!n) return "";
+        if (n.type === "text") return n.text ?? "";
         if (n.type === "link")
-          return (n.children ?? []).map((c: any) => c.text ?? "").join("") || n.text || ""
-        if (n.type === "page_mention") return n.displayTitle || n.pageSlug || ""
-        return ""
+          return (n.children ?? []).map((c: any) => c.text ?? "").join("") || n.text || "";
+        if (n.type === "page_mention") return n.displayTitle || n.pageSlug || "";
+        return "";
       })
-      .join("")
+      .join("");
   }
-  return resolveLocalizedText(value, locale)
+  return resolveLocalizedText(value, locale);
 }

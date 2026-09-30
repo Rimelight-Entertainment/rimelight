@@ -1,46 +1,46 @@
-import { For, Show, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { RLDashboardGroup } from "@rimelight/ui/components/dashboard-group/RLDashboardGroup.tsx"
-import { RLDashboardSidebar } from "@rimelight/ui/components/dashboard-sidebar/RLDashboardSidebar.tsx"
-import { RLDashboardNavbar } from "@rimelight/ui/components/dashboard-navbar/RLDashboardNavbar.tsx"
-import { RLDashboardPanel } from "@rimelight/ui/components/dashboard-panel/RLDashboardPanel.tsx"
-import { RLDashboardToolbar } from "@rimelight/ui/components/dashboard-toolbar/RLDashboardToolbar.tsx"
-import { RLDashboardSidebarCollapse } from "@rimelight/ui/components/dashboard-sidebar-collapse/RLDashboardSidebarCollapse.tsx"
-import { RLDashboardSidebarToggle } from "@rimelight/ui/components/dashboard-sidebar-toggle/RLDashboardSidebarToggle.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import "../../client/styles/cms-editor.css"
+import { For, Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLDashboardGroup } from "@rimelight/ui/components/dashboard-group/RLDashboardGroup.tsx";
+import { RLDashboardSidebar } from "@rimelight/ui/components/dashboard-sidebar/RLDashboardSidebar.tsx";
+import { RLDashboardNavbar } from "@rimelight/ui/components/dashboard-navbar/RLDashboardNavbar.tsx";
+import { RLDashboardPanel } from "@rimelight/ui/components/dashboard-panel/RLDashboardPanel.tsx";
+import { RLDashboardToolbar } from "@rimelight/ui/components/dashboard-toolbar/RLDashboardToolbar.tsx";
+import { RLDashboardSidebarCollapse } from "@rimelight/ui/components/dashboard-sidebar-collapse/RLDashboardSidebarCollapse.tsx";
+import { RLDashboardSidebarToggle } from "@rimelight/ui/components/dashboard-sidebar-toggle/RLDashboardSidebarToggle.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import "../../client/styles/cms-editor.css";
 
 export interface CmsNavItem {
-  icon: string
-  label: string
-  href: string
-  id: string
+  icon: string;
+  label: string;
+  href: string;
+  id: string;
 }
 
 export interface CmsNavGroup {
-  title: string
-  items: CmsNavItem[]
+  title: string;
+  items: CmsNavItem[];
 }
 
 export interface CMSDashboardLayoutProps {
-  title: string
-  description?: string | undefined
-  activeSection?: string | undefined
-  locale?: string | undefined
+  title: string;
+  description?: string | undefined;
+  activeSection?: string | undefined;
+  locale?: string | undefined;
   /**
    * Base path for CMS routes, e.g. "/en/cms". Defaults to "/cms".
    */
-  basePath?: string | undefined
-  navigationGroups?: CmsNavGroup[] | undefined
-  toolbarLeft?: JSX.Element | undefined
-  toolbarRight?: JSX.Element | undefined
-  children?: JSX.Element | undefined
+  basePath?: string | undefined;
+  navigationGroups?: CmsNavGroup[] | undefined;
+  toolbarLeft?: JSX.Element | undefined;
+  toolbarRight?: JSX.Element | undefined;
+  children?: JSX.Element | undefined;
 }
 
 function defaultNav(basePath: string): {
-  dashboard: CmsNavItem
-  groups: CmsNavGroup[]
-  settings: CmsNavItem
+  dashboard: CmsNavItem;
+  groups: CmsNavGroup[];
+  settings: CmsNavItem;
 } {
   return {
     dashboard: {
@@ -112,7 +112,7 @@ function defaultNav(basePath: string): {
       href: `${basePath}/settings`,
       id: "settings"
     }
-  }
+  };
 }
 
 /**
@@ -120,26 +120,26 @@ function defaultNav(basePath: string): {
  * in the host's auth guard (e.g. redirect to `/auth/sign-in` when no session exists).
  */
 export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) => {
-  const basePath = () => props.basePath ?? "/cms"
-  const nav = () => defaultNav(basePath())
-  const activeSection = () => props.activeSection ?? "dashboard"
-  const description = () => props.description ?? "Content Management System"
+  const basePath = () => props.basePath ?? "/cms";
+  const nav = () => defaultNav(basePath());
+  const activeSection = () => props.activeSection ?? "dashboard";
+  const description = () => props.description ?? "Content Management System";
 
   const navLinkClass = (id: string) =>
     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0 " +
     (id === activeSection()
       ? "bg-muted text-highlighted font-semibold"
-      : "text-default hover:text-highlighted hover:bg-muted")
+      : "text-default hover:text-highlighted hover:bg-muted");
 
   const sidebarHeader = () => (
     <div
       class="h-16 min-h-16 flex items-center gap-3 w-full shrink-0"
       style={{
-        "height": "4rem",
+        height: "4rem",
         "min-height": "4rem",
-        "display": "flex",
+        display: "flex",
         "align-items": "center",
-        "gap": "0.75rem"
+        gap: "0.75rem"
       }}
     >
       <RLIcon
@@ -154,7 +154,7 @@ export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) =>
         class="shrink-0 group-data-[collapsed=true]:mx-auto"
       />
     </div>
-  )
+  );
 
   const sidebarNav = () => (
     <nav class="flex flex-col gap-4 py-2">
@@ -188,7 +188,7 @@ export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) =>
         )}
       </For>
     </nav>
-  )
+  );
 
   const sidebarFooter = () => (
     <div class="w-full">
@@ -199,7 +199,7 @@ export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) =>
         </span>
       </a>
     </div>
-  )
+  );
 
   return (
     <RLDashboardGroup>
@@ -238,7 +238,7 @@ export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) =>
         }
       />
     </RLDashboardGroup>
-  )
-}
+  );
+};
 
-export default CMSDashboardLayout
+export default CMSDashboardLayout;

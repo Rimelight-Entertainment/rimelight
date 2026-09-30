@@ -71,17 +71,17 @@ flowchart TD
 Add a lightweight script / binary export (e.g., `rimelight-sync` or `rimelight-config prepare`):
 
 ```typescript
-import fs from "node:fs"
-import path from "node:path"
+import fs from "node:fs";
+import path from "node:path";
 
 export interface SyncOptions {
-  hooks?: Record<string, string>
-  editorconfig?: boolean | string
+  hooks?: Record<string, string>;
+  editorconfig?: boolean | string;
 }
 
 export const DEFAULT_HOOKS: Record<string, string> = {
   "pre-commit": "pnpm audit && vp staged\n"
-}
+};
 
 export const DEFAULT_EDITORCONFIG = `root = true
 
@@ -92,36 +92,36 @@ end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
-`
+`;
 
 export function syncHooks(options?: SyncOptions): void {
-  const hooksDir = path.resolve(process.cwd(), ".vite-hooks")
+  const hooksDir = path.resolve(process.cwd(), ".vite-hooks");
   if (!fs.existsSync(hooksDir)) {
-    fs.mkdirSync(hooksDir, { recursive: true })
+    fs.mkdirSync(hooksDir, { recursive: true });
   }
 
-  const hooks = { ...DEFAULT_HOOKS, ...options?.hooks }
+  const hooks = { ...DEFAULT_HOOKS, ...options?.hooks };
   for (const [name, script] of Object.entries(hooks)) {
-    const hookFile = path.join(hooksDir, name)
+    const hookFile = path.join(hooksDir, name);
     if (!fs.existsSync(hookFile) || fs.readFileSync(hookFile, "utf8") !== script) {
-      fs.writeFileSync(hookFile, script, { mode: 0o755 })
+      fs.writeFileSync(hookFile, script, { mode: 0o755 });
     }
   }
 }
 
 export function syncEditorConfig(content = DEFAULT_EDITORCONFIG): void {
-  const target = path.resolve(process.cwd(), ".editorconfig")
+  const target = path.resolve(process.cwd(), ".editorconfig");
   if (!fs.existsSync(target) || fs.readFileSync(target, "utf8") !== content) {
-    fs.writeFileSync(target, content, "utf8")
+    fs.writeFileSync(target, content, "utf8");
   }
 }
 
 export function syncProject(options?: SyncOptions): void {
-  syncHooks(options)
+  syncHooks(options);
   if (options?.editorconfig !== false) {
     syncEditorConfig(
       typeof options?.editorconfig === "string" ? options.editorconfig : DEFAULT_EDITORCONFIG
-    )
+    );
   }
 }
 ```

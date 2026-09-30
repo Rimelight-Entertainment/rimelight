@@ -1,47 +1,47 @@
-import { describe, expect, it, vi } from "vite-plus/test"
-import { authMiddleware } from "../src/middleware/index"
+import { describe, expect, it, vi } from "vite-plus/test";
+import { authMiddleware } from "../src/middleware/index";
 
 describe("Auth Middleware", () => {
   it("skips static assets by default", async () => {
-    const middleware = authMiddleware()
-    let nextCalled = false
+    const middleware = authMiddleware();
+    let nextCalled = false;
     const next = async () => {
-      nextCalled = true
-    }
+      nextCalled = true;
+    };
 
     const ctx = {
       req: {
         url: "https://example.com/assets/logo.png"
       }
-    }
+    };
 
-    await middleware(ctx, next)
-    expect(nextCalled).toBe(true)
-  })
+    await middleware(ctx, next);
+    expect(nextCalled).toBe(true);
+  });
 
   it("sets null session for ignored routes", async () => {
     const middleware = authMiddleware({
       ignoredRoutes: ["/docs/"]
-    })
+    });
 
-    const setMock = vi.fn()
+    const setMock = vi.fn();
     const ctx = {
       req: {
         url: "https://example.com/docs/getting-started"
       },
       set: setMock,
       get: () => null
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     await middleware(ctx, async () => {
-      nextCalled = true
-    })
+      nextCalled = true;
+    });
 
-    expect(setMock).toHaveBeenCalledWith("user", null)
-    expect(setMock).toHaveBeenCalledWith("session", null)
-    expect(nextCalled).toBe(true)
-  })
+    expect(setMock).toHaveBeenCalledWith("user", null);
+    expect(setMock).toHaveBeenCalledWith("session", null);
+    expect(nextCalled).toBe(true);
+  });
 
   it("resolves session from adapter and attaches user and session", async () => {
     const mockAdapter = {
@@ -54,41 +54,41 @@ describe("Auth Middleware", () => {
         permissions: ["read"],
         userType: "user"
       })
-    }
+    };
 
     const middleware = authMiddleware({
       auth: mockAdapter
-    })
+    });
 
-    const state: Record<string, any> = {}
+    const state: Record<string, any> = {};
     const ctx = {
       req: {
         url: "https://example.com/dashboard",
         raw: new Request("https://example.com/dashboard")
       },
       set: (k: string, v: any) => {
-        state[k] = v
+        state[k] = v;
       },
       get: (k: string) => state[k]
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     await middleware(ctx, async () => {
-      nextCalled = true
-    })
+      nextCalled = true;
+    });
 
-    expect(nextCalled).toBe(true)
-    expect(state["user"]?.userId).toBe("user-123")
-    expect(state["session"]?.userId).toBe("user-123")
-  })
+    expect(nextCalled).toBe(true);
+    expect(state["user"]?.userId).toBe("user-123");
+    expect(state["session"]?.userId).toBe("user-123");
+  });
 
   it("redirects unauthenticated user accessing protected route", async () => {
     const middleware = authMiddleware({
       protectedRoutes: ["/dashboard"],
       signInUrl: "/auth/sign-in"
-    })
+    });
 
-    const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }))
+    const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }));
     const ctx = {
       req: {
         url: "https://example.com/dashboard"
@@ -96,19 +96,19 @@ describe("Auth Middleware", () => {
       set: () => {},
       get: () => null,
       redirect: redirectMock
-    }
+    };
 
-    const res = await middleware(ctx, async () => {})
-    expect(redirectMock).toHaveBeenCalledWith("/auth/sign-in")
-    expect(res).toEqual({ redirectedTo: "/auth/sign-in" })
-  })
+    const res = await middleware(ctx, async () => {});
+    expect(redirectMock).toHaveBeenCalledWith("/auth/sign-in");
+    expect(res).toEqual({ redirectedTo: "/auth/sign-in" });
+  });
 
   it("returns 401 for API protected routes when unauthenticated", async () => {
     const middleware = authMiddleware({
       protectedRoutes: ["/api/private"]
-    })
+    });
 
-    const jsonMock = vi.fn((data: any, status: number) => ({ data, status }))
+    const jsonMock = vi.fn((data: any, status: number) => ({ data, status }));
     const ctx = {
       req: {
         url: "https://example.com/api/private/data"
@@ -116,14 +116,14 @@ describe("Auth Middleware", () => {
       set: () => {},
       get: () => null,
       json: jsonMock
-    }
+    };
 
-    await middleware(ctx, async () => {})
+    await middleware(ctx, async () => {});
     expect(jsonMock).toHaveBeenCalledWith(
       { error: "Unauthorized", message: "Authentication required." },
       401
-    )
-  })
+    );
+  });
 
   it("enforces role guards and forbids unauthorized roles", async () => {
     const mockAdapter = {
@@ -135,7 +135,7 @@ describe("Auth Middleware", () => {
         permissions: [],
         userType: "user"
       })
-    }
+    };
 
     const middleware = authMiddleware({
       auth: mockAdapter,
@@ -143,25 +143,25 @@ describe("Auth Middleware", () => {
         "/admin": ["admin", "owner"]
       },
       homeUrl: "/"
-    })
+    });
 
-    const state: Record<string, any> = {}
-    const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }))
+    const state: Record<string, any> = {};
+    const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }));
     const ctx = {
       req: {
         url: "https://example.com/admin/settings"
       },
       set: (k: string, v: any) => {
-        state[k] = v
+        state[k] = v;
       },
       get: (k: string) => state[k],
       redirect: redirectMock
-    }
+    };
 
-    const res = await middleware(ctx, async () => {})
-    expect(redirectMock).toHaveBeenCalledWith("/")
-    expect(res).toEqual({ redirectedTo: "/" })
-  })
+    const res = await middleware(ctx, async () => {});
+    expect(redirectMock).toHaveBeenCalledWith("/");
+    expect(res).toEqual({ redirectedTo: "/" });
+  });
 
   it("redirects authenticated user from guest-only routes to home", async () => {
     const mockAdapter = {
@@ -170,27 +170,27 @@ describe("Auth Middleware", () => {
         userId: "user-123",
         roles: ["user"]
       })
-    }
+    };
 
     const middleware = authMiddleware({
       auth: mockAdapter,
       guestOnlyRoutes: ["/auth/sign-in"]
-    })
+    });
 
-    const state: Record<string, any> = {}
-    const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }))
+    const state: Record<string, any> = {};
+    const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }));
     const ctx = {
       req: {
         url: "https://example.com/auth/sign-in"
       },
       set: (k: string, v: any) => {
-        state[k] = v
+        state[k] = v;
       },
       get: (k: string) => state[k],
       redirect: redirectMock
-    }
+    };
 
-    await middleware(ctx, async () => {})
-    expect(redirectMock).toHaveBeenCalledWith("/")
-  })
-})
+    await middleware(ctx, async () => {});
+    expect(redirectMock).toHaveBeenCalledWith("/");
+  });
+});

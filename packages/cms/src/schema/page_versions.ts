@@ -1,8 +1,8 @@
-import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core"
-import type { BaseBlock } from "../core/types/blocks"
-import type { Localized, PageType } from "../core/types/pages"
-import type { PageVersionStatus } from "../core/types/versioning"
-import type { BylineCredit } from "../core/types/bylines"
+import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import type { BaseBlock } from "../core/types/blocks";
+import type { Localized, PageType } from "../core/types/pages";
+import type { PageVersionStatus } from "../core/types/versioning";
+import type { BylineCredit } from "../core/types/bylines";
 
 export const pageVersions = pgTable(
   "page_versions",
@@ -20,8 +20,8 @@ export const pageVersions = pgTable(
     bylines: jsonb("bylines").$type<BylineCredit[]>().default([]),
     content: jsonb("content")
       .$type<{
-        blocks: BaseBlock[]
-        properties: Record<string, any>
+        blocks: BaseBlock[];
+        properties: Record<string, any>;
       }>()
       .notNull(),
     createdBy: text("created_by").notNull(),
@@ -33,4 +33,4 @@ export const pageVersions = pgTable(
   (table) => [
     uniqueIndex("page_versions_page_id_version_idx").on(table.pageId, table.versionNumber)
   ]
-)
+);

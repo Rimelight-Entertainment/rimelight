@@ -1,10 +1,10 @@
-import { onSettled, type Component } from "solid-js"
-import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
+import { onSettled, type Component } from "solid-js";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 
 export interface CodeEditorProps {
-  props: Record<string, any>
-  onPropsChange: (newProps: Record<string, any>) => void
+  props: Record<string, any>;
+  onPropsChange: (newProps: Record<string, any>) => void;
 }
 
 const LANGUAGES = [
@@ -22,10 +22,10 @@ const LANGUAGES = [
   "c",
   "cpp",
   "other"
-]
+];
 
 export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
-  let codeTextarea: HTMLTextAreaElement | undefined
+  let codeTextarea: HTMLTextAreaElement | undefined;
 
   const saveProps = (lang?: string, code?: string, caption?: string) => {
     componentProps.onPropsChange({
@@ -33,14 +33,14 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
       language: lang !== undefined ? lang : componentProps.props["language"] || "typescript",
       code: code !== undefined ? code : codeTextarea?.value || "",
       caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
-    })
-  }
+    });
+  };
 
   onSettled(() => {
     if (codeTextarea) {
-      codeTextarea.value = componentProps.props["code"] || ""
+      codeTextarea.value = componentProps.props["code"] || "";
     }
-  })
+  });
 
   return (
     <div class="rimelight-code-editor flex flex-col gap-2 p-2 w-full">
@@ -68,12 +68,12 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
           onBlur={() => saveProps()}
           onKeyDown={(e) => {
             if (e.key === "Tab" && codeTextarea) {
-              e.preventDefault()
-              const start = codeTextarea.selectionStart
-              const end = codeTextarea.selectionEnd
-              const val = codeTextarea.value
-              codeTextarea.value = val.substring(0, start) + "  " + val.substring(end)
-              codeTextarea.selectionStart = codeTextarea.selectionEnd = start + 2
+              e.preventDefault();
+              const start = codeTextarea.selectionStart;
+              const end = codeTextarea.selectionEnd;
+              const val = codeTextarea.value;
+              codeTextarea.value = val.substring(0, start) + "  " + val.substring(end);
+              codeTextarea.selectionStart = codeTextarea.selectionEnd = start + 2;
             }
           }}
         />
@@ -87,5 +87,5 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
         placeholder="Caption (optional)"
       />
     </div>
-  )
-}
+  );
+};

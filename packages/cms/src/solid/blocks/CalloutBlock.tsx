@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import type { CalloutVariant } from "../../core/types/blocks.ts"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { type Component } from "solid-js";
+import type { CalloutVariant } from "../../core/types/blocks.ts";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 const variantConfigs: Record<string, { icon: string; classes: string }> = {
   info: { icon: "i-lucide-info", classes: "bg-info-50/50 border-info-200 text-info-800" },
@@ -25,13 +25,13 @@ const variantConfigs: Record<string, { icon: string; classes: string }> = {
     classes: "bg-warning-50/50 border-warning-200 text-warning-800"
   },
   source: { icon: "i-lucide-code", classes: "bg-info-50/50 border-info-200 text-info-800" }
-}
+};
 
 export const CalloutBlock: Component<BlockViewProps> = (props) => {
-  const variant = () => (props.block.props?.["variant"] as CalloutVariant) ?? "info"
-  const to = () => props.block.props?.["to"] as string | undefined
-  const target = () => props.block.props?.["target"] as string | undefined
-  const config = () => variantConfigs[variant()] ?? variantConfigs["info"]!
+  const variant = () => (props.block.props?.["variant"] as CalloutVariant) ?? "info";
+  const to = () => props.block.props?.["to"] as string | undefined;
+  const target = () => props.block.props?.["target"] as string | undefined;
+  const config = () => variantConfigs[variant()] ?? variantConfigs["info"]!;
 
   return (
     <div
@@ -48,7 +48,7 @@ export const CalloutBlock: Component<BlockViewProps> = (props) => {
         ) : null}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CalloutBlock
+export default CalloutBlock;

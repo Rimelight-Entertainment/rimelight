@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout"
-import { RimelightTaxonomyManager } from "@rimelight/cms/client/components"
+import { type Component } from "solid-js";
+import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout";
+import { RimelightTaxonomyManager } from "@rimelight/cms/client/components";
 
 export const TaxonomiesPage: Component = () => {
   return (
@@ -13,7 +13,7 @@ export const TaxonomiesPage: Component = () => {
         <RimelightTaxonomyManager initialTaxonomy="category" />
       </div>
     </AuthAdminDashboardLayout>
-  )
-}
+  );
+};
 
-export default TaxonomiesPage
+export default TaxonomiesPage;

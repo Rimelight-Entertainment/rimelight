@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const formTheme = defineTheme("form", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const formTheme = defineTheme("form", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

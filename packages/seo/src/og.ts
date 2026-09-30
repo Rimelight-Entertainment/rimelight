@@ -5,15 +5,15 @@ export interface OgFontConfig {
   /**
    * Font-family name referenced in layout styles
    */
-  name: string
+  name: string;
   /**
    * URL to the regular-weight TTF
    */
-  regularUrl: string
+  regularUrl: string;
   /**
    * URL to the bold-weight TTF
    */
-  boldUrl: string
+  boldUrl: string;
 }
 
 /**
@@ -23,7 +23,7 @@ export const NOTO_SANS: OgFontConfig = {
   name: "Noto Sans",
   regularUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-400-normal.ttf",
   boldUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-700-normal.ttf"
-}
+};
 
 /**
  * Options for the default OG image layout. Build your own layout instead via `renderOgResponse()`
@@ -33,33 +33,33 @@ export interface OgLayoutOptions {
   /**
    * Main heading -- required
    */
-  title: string
+  title: string;
   /**
    * Subtitle / excerpt beneath the title
    */
-  description?: string
+  description?: string;
   /**
    * Branding shown top-left. Pass a plain string (site name) or a pre-built Takumi VNode for a
    * custom logo treatment.
    */
-  brand?: string | object
+  brand?: string | object;
   /**
    * Pill badge shown bottom-left. e.g. "Blog Post", "Documentation", "Legal"
    */
-  badge?: string
+  badge?: string;
   /**
    * Date string shown bottom-right. e.g. new Date(postedAt).toLocaleDateString()
    */
-  date?: string
+  date?: string;
   /**
    * Background style. "dark" -> solid #0a0a0a (default) "gradient" -> diagonal dark-to-navy
    * gradient any string -> treated as a CSS `background` value
    */
-  background?: "dark" | "gradient" | (string & {})
+  background?: "dark" | "gradient" | (string & {});
   /**
    * When true, overlays a dashed red PREVIEW border. Useful during development.
    */
-  preview?: boolean
+  preview?: boolean;
 }
 
 /**
@@ -69,37 +69,37 @@ export interface OgRenderConfig {
   /**
    * Font to embed -- defaults to `NOTO_SANS`
    */
-  font?: OgFontConfig
+  font?: OgFontConfig;
   /**
    * Image width in px -- defaults to 1200
    */
-  width?: number
+  width?: number;
   /**
    * Image height in px -- defaults to 630
    */
-  height?: number
+  height?: number;
 }
 
 // ---------------------------------------------------------------------------
 // Font loading
 // ---------------------------------------------------------------------------
 
-const fontCaches = new Map<string, { regular: ArrayBuffer; bold: ArrayBuffer }>()
+const fontCaches = new Map<string, { regular: ArrayBuffer; bold: ArrayBuffer }>();
 
 /**
  * Fetches an ArrayBuffer with a timeout.
  */
 async function fetchArrayBuffer(url: string, timeoutMs = 5000): Promise<ArrayBuffer> {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { signal: controller.signal })
+    const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) {
-      throw new Error(`Failed to fetch font from ${url}: status ${res.status}`)
+      throw new Error(`Failed to fetch font from ${url}: status ${res.status}`);
     }
-    return await res.arrayBuffer()
+    return await res.arrayBuffer();
   } finally {
-    clearTimeout(timeoutId)
+    clearTimeout(timeoutId);
   }
 }
 
@@ -112,16 +112,16 @@ export async function loadOgFonts(
   config: OgFontConfig = NOTO_SANS,
   timeoutMs = 5000
 ): Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> {
-  const cached = fontCaches.get(config.regularUrl)
-  if (cached) return cached
+  const cached = fontCaches.get(config.regularUrl);
+  if (cached) return cached;
 
   const [regular, bold] = await Promise.all([
     fetchArrayBuffer(config.regularUrl, timeoutMs),
     fetchArrayBuffer(config.boldUrl, timeoutMs)
-  ])
-  const result = { regular, bold }
-  fontCaches.set(config.regularUrl, result)
-  return result
+  ]);
+  const result = { regular, bold };
+  fontCaches.set(config.regularUrl, result);
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -135,24 +135,24 @@ export async function loadOgFonts(
  * `renderOgResponse()` directly -- this function is just the house style.
  */
 export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = NOTO_SANS): object {
-  const { title, description, brand, badge, date, background = "dark", preview = false } = options
+  const { title, description, brand, badge, date, background = "dark", preview = false } = options;
 
-  const MAX_TITLE_LEN = 160
-  const MAX_DESC_LEN = 240
-  const safeTitle = title.length > MAX_TITLE_LEN ? title.slice(0, MAX_TITLE_LEN - 1) + "…" : title
+  const MAX_TITLE_LEN = 160;
+  const MAX_DESC_LEN = 240;
+  const safeTitle = title.length > MAX_TITLE_LEN ? title.slice(0, MAX_TITLE_LEN - 1) + "…" : title;
   const safeDescription =
     description && description.length > MAX_DESC_LEN
       ? description.slice(0, MAX_DESC_LEN - 1) + "…"
-      : description
+      : description;
 
   const bg =
     background === "dark"
       ? { backgroundColor: "#0a0a0a" }
       : background === "gradient"
         ? { background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)" }
-        : { background }
+        : { background };
 
-  const isGradient = background !== "dark"
+  const isGradient = background !== "dark";
 
   const brandNode: object =
     typeof brand === "object" && brand !== null
@@ -168,7 +168,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
             },
             children: brand ?? ""
           }
-        }
+        };
 
   const accentBar: object | null = isGradient
     ? {
@@ -183,11 +183,11 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
           }
         }
       }
-    : null
+    : null;
 
-  const titleFontSize = isGradient ? "52px" : "56px"
-  const descColor = isGradient ? "#94a3b8" : "#a0a0a0"
-  const descFontSize = isGradient ? "22px" : "24px"
+  const titleFontSize = isGradient ? "52px" : "56px";
+  const descColor = isGradient ? "#94a3b8" : "#a0a0a0";
+  const descFontSize = isGradient ? "22px" : "24px";
 
   const badgeNode: object | null = badge
     ? isGradient
@@ -220,7 +220,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
             children: badge
           }
         }
-    : null
+    : null;
 
   const dateNode: object | null = date
     ? {
@@ -230,7 +230,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
           children: date
         }
       }
-    : null
+    : null;
 
   const previewOverlay: object | null = preview
     ? {
@@ -244,7 +244,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
           }
         }
       }
-    : null
+    : null;
 
   const previewLabel: object | null = preview
     ? {
@@ -265,7 +265,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
           children: "PREVIEW"
         }
       }
-    : null
+    : null;
 
   return {
     type: "div",
@@ -351,7 +351,7 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
         previewLabel
       ].filter(Boolean)
     }
-  }
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -370,11 +370,11 @@ export async function renderOgResponse(
   vnode: object,
   config: OgRenderConfig = {}
 ): Promise<Response> {
-  const { font = NOTO_SANS, width = 1200, height = 630 } = config
+  const { font = NOTO_SANS, width = 1200, height = 630 } = config;
 
   try {
-    const { renderTakumi } = await import("./takumi.js")
-    const { regular, bold } = await loadOgFonts(font)
+    const { renderTakumi } = await import("./takumi.js");
+    const { regular, bold } = await loadOgFonts(font);
 
     const pngBuffer = await renderTakumi(vnode, {
       width,
@@ -383,7 +383,7 @@ export async function renderOgResponse(
         { name: font.name, data: regular, weight: 400, style: "normal" },
         { name: font.name, data: bold, weight: 700, style: "normal" }
       ]
-    })
+    });
 
     return new Response(new Blob([new Uint8Array(pngBuffer)], { type: "image/png" }), {
       status: 200,
@@ -392,9 +392,9 @@ export async function renderOgResponse(
         "Cache-Control": "public, max-age=31536000, immutable",
         "CDN-Cache-Control": "public, max-age=31536000"
       }
-    })
+    });
   } catch (error) {
-    console.error("[OG Render Error]:", error)
+    console.error("[OG Render Error]:", error);
     return new Response(
       JSON.stringify({
         error: "Failed to render Open Graph image",
@@ -407,7 +407,7 @@ export async function renderOgResponse(
           "Cache-Control": "no-store"
         }
       }
-    )
+    );
   }
 }
 
@@ -430,7 +430,7 @@ export async function renderDefaultOg(
   options: OgLayoutOptions,
   config: OgRenderConfig = {}
 ): Promise<Response> {
-  const { font = NOTO_SANS } = config
-  const vnode = defaultOgLayout(options, font)
-  return renderOgResponse(vnode, config)
+  const { font = NOTO_SANS } = config;
+  const vnode = defaultOgLayout(options, font);
+  return renderOgResponse(vnode, config);
 }

@@ -1,11 +1,11 @@
-import { customType, index, pgTable, text, uuid } from "drizzle-orm/pg-core"
-import { pages } from "./pages.ts"
+import { customType, index, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { pages } from "./pages.ts";
 
 const tsvector = customType<{ data: string }>({
   dataType() {
-    return "tsvector"
+    return "tsvector";
   }
-})
+});
 
 export const contentSearchIndex = pgTable(
   "content_search_index",
@@ -20,4 +20,4 @@ export const contentSearchIndex = pgTable(
     searchVector: tsvector("search_vector")
   },
   (table) => [index("search_vector_gin_idx").using("gin", table.searchVector)]
-)
+);

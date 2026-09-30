@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const drawerTheme = defineTheme("drawer", {
   slots: [
@@ -54,4 +54,4 @@ export const drawerTheme = defineTheme("drawer", {
   defaultVariants: {
     direction: "bottom"
   }
-})
+});

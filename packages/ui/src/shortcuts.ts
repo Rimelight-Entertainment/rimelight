@@ -1,30 +1,30 @@
-import { createStore } from "solid-js"
+import { createStore } from "solid-js";
 
-export type Handler = (e: KeyboardEvent) => void
+export type Handler = (e: KeyboardEvent) => void;
 export interface ShortcutConfig {
-  handler: Handler
-  usingInput?: boolean | string | undefined
-  label?: string | undefined
-  description?: string | undefined
-  category?: string | undefined
-  order?: number | undefined
+  handler: Handler;
+  usingInput?: boolean | string | undefined;
+  label?: string | undefined;
+  description?: string | undefined;
+  category?: string | undefined;
+  order?: number | undefined;
 }
-export type ShortcutsConfig = Record<string, ShortcutConfig | Handler | false | null | undefined>
+export type ShortcutsConfig = Record<string, ShortcutConfig | Handler | false | null | undefined>;
 export interface ShortcutsOptions {
-  chainDelay?: number | undefined
+  chainDelay?: number | undefined;
 }
 export interface RegisteredShortcut {
-  id: string
-  keys: string[]
-  label?: string | undefined
-  description?: string | undefined
-  category?: string | undefined
-  order?: number | undefined
+  id: string;
+  keys: string[];
+  label?: string | undefined;
+  description?: string | undefined;
+  category?: string | undefined;
+  order?: number | undefined;
 }
 
 interface Shortcut {
-  handler: Handler
-  usingInput?: boolean | string | undefined
+  handler: Handler;
+  usingInput?: boolean | string | undefined;
 }
 
 const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent),
@@ -43,7 +43,7 @@ const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAg
     arrowdown: "↓",
     arrowleft: "←",
     arrowright: "→"
-  }
+  };
 
 const MODS: Record<string, string> = {
   cmd: "meta",
@@ -51,62 +51,64 @@ const MODS: Record<string, string> = {
   control: "ctrl",
   opt: "alt",
   option: "alt"
-}
+};
 
-export const normalizeModifier = (m: string) => MODS[m.toLowerCase()] || m.toLowerCase()
+export const normalizeModifier = (m: string) => MODS[m.toLowerCase()] || m.toLowerCase();
 
 export const formatShortcutKeys = (k: string): string[] =>
   k.split(/[_-]/).map((p) => {
-    const norm = normalizeModifier(p)
-    return KEYS[norm] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
-  })
+    const norm = normalizeModifier(p);
+    return KEYS[norm] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "");
+  });
 
-export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<RegisteredShortcut[]>([])
+export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<RegisteredShortcut[]>(
+  []
+);
 
 const isUsingInput = (el: Element | null): boolean | string => {
-  const target = (el?.shadowRoot?.activeElement || el) as HTMLElement | null
+  const target = (el?.shadowRoot?.activeElement || el) as HTMLElement | null;
   return target && (/INPUT|TEXTAREA|SELECT/.test(target.tagName) || target.isContentEditable)
     ? target.getAttribute("name") || true
-    : false
-}
+    : false;
+};
 
 const isEnabled = (s: Shortcut, input: boolean | string) =>
-  s.usingInput === true || (s.usingInput ? input === s.usingInput : !input)
+  s.usingInput === true || (s.usingInput ? input === s.usingInput : !input);
 
 const normalizeCombo = (combo: string) => {
-  const parts = combo.toLowerCase().split("_")
-  let meta = ""
-  let ctrl = ""
-  let alt = ""
-  let shift = ""
+  const parts = combo.toLowerCase().split("_");
+  let meta = "";
+  let ctrl = "";
+  let alt = "";
+  let shift = "";
   for (let i = 0; i < parts.length - 1; i++) {
-    const m = MODS[parts[i]!] || parts[i]!
-    if (m === "meta") meta = "meta_"
-    else if (m === "ctrl") ctrl = "ctrl_"
-    else if (m === "alt") alt = "alt_"
-    else if (m === "shift") shift = "shift_"
+    const m = MODS[parts[i]!] || parts[i]!;
+    if (m === "meta") meta = "meta_";
+    else if (m === "ctrl") ctrl = "ctrl_";
+    else if (m === "alt") alt = "alt_";
+    else if (m === "shift") shift = "shift_";
   }
-  return `${meta}${ctrl}${alt}${shift}${parts[parts.length - 1] || ""}`
-}
+  return `${meta}${ctrl}${alt}${shift}${parts[parts.length - 1] || ""}`;
+};
 
 export function defineShortcuts(
   config: ShortcutsConfig,
   options: ShortcutsOptions = {}
 ): () => void {
-  if (typeof window === "undefined") return () => {}
+  if (typeof window === "undefined") return () => {};
 
-  const map = new Map<string, Shortcut>()
-  const reg: RegisteredShortcut[] = []
+  const map = new Map<string, Shortcut>();
+  const reg: RegisteredShortcut[] = [];
 
   for (const [k, cfg] of Object.entries(config)) {
-    if (!cfg) continue
-    const obj = typeof cfg === "object" ? cfg : null
-    const handler = obj ? obj.handler : cfg
-    if (typeof handler !== "function") continue
+    if (!cfg) continue;
+    const obj = typeof cfg === "object" ? cfg : null;
+    const handler = obj ? obj.handler : cfg;
+    if (typeof handler !== "function") continue;
 
     const key =
-      k.includes("-") && k !== "-" && !k.includes("_") ? k.toLowerCase() : normalizeCombo(k)
-    map.set(key, { handler, usingInput: obj?.usingInput })
+      k.includes("-") && k !== "-" && !k.includes("_") ? k.toLowerCase() : normalizeCombo(k);
+    map.set(key, { handler, usingInput: obj?.usingInput });
 
     if (obj?.label || obj?.description) {
       reg.push({
@@ -116,71 +118,71 @@ export function defineShortcuts(
         label: obj.label,
         description: obj.description,
         order: obj.order
-      })
+      });
     }
   }
 
-  const ids = new Set(reg.map((i) => i.id))
+  const ids = new Set(reg.map((i) => i.id));
   if (ids.size) {
-    setActiveShortcutsStore((prev) => [...prev.filter((i) => !ids.has(i.id)), ...reg])
+    setActiveShortcutsStore((prev) => [...prev.filter((i) => !ids.has(i.id)), ...reg]);
   }
 
-  const buffer: string[] = []
-  let timer: ReturnType<typeof setTimeout> | undefined
+  const buffer: string[] = [];
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!e.key || e.isComposing) return
-    const key = e.key === " " ? "space" : e.key.toLowerCase()
+    if (!e.key || e.isComposing) return;
+    const key = e.key === " " ? "space" : e.key.toLowerCase();
     const codeKey = e.code
       ? e.code
           .replace(/^Key/, "")
           .replace(/^Digit/, "")
           .toLowerCase()
-      : ""
-    const input = isUsingInput(typeof document !== "undefined" ? document.activeElement : null)
+      : "";
+    const input = isUsingInput(typeof document !== "undefined" ? document.activeElement : null);
 
-    buffer.push(key)
-    if (buffer.length > 2) buffer.shift()
-    clearTimeout(timer)
+    buffer.push(key);
+    if (buffer.length > 2) buffer.shift();
+    clearTimeout(timer);
 
     // Chained sequence check (e.g. g-d)
     if (buffer.length === 2) {
-      const chainedMatch = map.get(buffer.join("-"))
+      const chainedMatch = map.get(buffer.join("-"));
       if (chainedMatch && isEnabled(chainedMatch, input)) {
-        e.preventDefault()
-        chainedMatch.handler(e)
-        buffer.length = 0
-        return
+        e.preventDefault();
+        chainedMatch.handler(e);
+        buffer.length = 0;
+        return;
       }
     }
 
     // Unified event normalization
-    const keysToCheck = Array.from(new Set([key, codeKey].filter(Boolean)))
+    const keysToCheck = Array.from(new Set([key, codeKey].filter(Boolean)));
     for (const k of keysToCheck) {
-      const sig = `${e.metaKey ? "meta_" : ""}${e.ctrlKey ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`
+      const sig = `${e.metaKey ? "meta_" : ""}${e.ctrlKey ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`;
       const primarySig =
         !isMac && e.ctrlKey && !e.metaKey
           ? `meta_${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`
-          : sig
+          : sig;
 
-      const match = map.get(sig) || map.get(primarySig) || map.get(k)
+      const match = map.get(sig) || map.get(primarySig) || map.get(k);
       if (match && isEnabled(match, input)) {
-        e.preventDefault()
-        match.handler(e)
-        buffer.length = 0
-        return
+        e.preventDefault();
+        match.handler(e);
+        buffer.length = 0;
+        return;
       }
     }
 
-    timer = setTimeout(() => void (buffer.length = 0), options.chainDelay ?? 800)
-  }
+    timer = setTimeout(() => void (buffer.length = 0), options.chainDelay ?? 800);
+  };
 
-  window.addEventListener("keydown", onKeyDown)
+  window.addEventListener("keydown", onKeyDown);
   return () => {
-    window.removeEventListener("keydown", onKeyDown)
-    clearTimeout(timer)
+    window.removeEventListener("keydown", onKeyDown);
+    clearTimeout(timer);
     if (ids.size) {
-      setActiveShortcutsStore((prev) => prev.filter((i) => !ids.has(i.id)))
+      setActiveShortcutsStore((prev) => prev.filter((i) => !ids.has(i.id)));
     }
-  }
+  };
 }

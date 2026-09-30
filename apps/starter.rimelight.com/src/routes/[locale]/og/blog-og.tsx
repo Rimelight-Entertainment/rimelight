@@ -1,39 +1,39 @@
-import { type Component, Show } from "solid-js"
-import { useSearchParams } from "@solidjs/router"
-import OgLayout from "#layouts/OgLayout"
+import { type Component, Show } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
+import OgLayout from "#layouts/OgLayout";
 
 export const BlogOgPage: Component = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
 
   const title = () => {
-    const t = searchParams["title"]
-    return Array.isArray(t) ? t[0] || "Untitled" : t || "Untitled"
-  }
+    const t = searchParams["title"];
+    return Array.isArray(t) ? t[0] || "Untitled" : t || "Untitled";
+  };
   const description = () => {
-    const d = searchParams["description"]
-    return Array.isArray(d) ? d[0] || "" : d || ""
-  }
+    const d = searchParams["description"];
+    return Array.isArray(d) ? d[0] || "" : d || "";
+  };
   const type = () => {
-    const typ = searchParams["type"]
-    return Array.isArray(typ) ? typ[0] || "" : typ || ""
-  }
+    const typ = searchParams["type"];
+    return Array.isArray(typ) ? typ[0] || "" : typ || "";
+  };
   const displayType = () => {
-    const raw = type()
+    const raw = type();
     return raw
       ? raw
           .split("-")
           .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
           .join(" ")
-      : "Blog Post"
-  }
+      : "Blog Post";
+  };
   const date = () => {
-    const dt = searchParams["date"]
-    return Array.isArray(dt) ? dt[0] || "" : dt || ""
-  }
+    const dt = searchParams["date"];
+    return Array.isArray(dt) ? dt[0] || "" : dt || "";
+  };
   const isPreview = () => {
-    const p = searchParams["preview"]
-    return (Array.isArray(p) ? p[0] : p) === "1"
-  }
+    const p = searchParams["preview"];
+    return (Array.isArray(p) ? p[0] : p) === "1";
+  };
 
   return (
     <OgLayout title={`${title()} — Rimelight`} description={description()}>
@@ -77,7 +77,7 @@ export const BlogOgPage: Component = () => {
         </Show>
       </div>
     </OgLayout>
-  )
-}
+  );
+};
 
-export default BlogOgPage
+export default BlogOgPage;

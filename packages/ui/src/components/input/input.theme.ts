@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const inputTheme = defineTheme("input", {
   slots: ["root", "input", "leading", "trailing"],
@@ -38,4 +38,4 @@ export const inputTheme = defineTheme("input", {
     hasTrailing: false,
     error: false
   }
-})
+});

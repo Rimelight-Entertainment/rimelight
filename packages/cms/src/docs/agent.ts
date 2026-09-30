@@ -1,21 +1,21 @@
-import { blocksToMarkdown } from "../markdown/index.ts"
-import { pages } from "../schema/pages.ts"
-import { eq, and, isNull, isNotNull } from "drizzle-orm"
+import { blocksToMarkdown } from "../markdown/index.ts";
+import { pages } from "../schema/pages.ts";
+import { eq, and, isNull, isNotNull } from "drizzle-orm";
 
 export interface AgentMarkdownOptions {
-  siteUrl?: string
-  llmsUrl?: string
-  sourceUrl?: string
+  siteUrl?: string;
+  llmsUrl?: string;
+  sourceUrl?: string;
 }
 
 function resolveLocalized(val: unknown, locale: string = "en"): string {
-  if (!val) return ""
-  if (typeof val === "string") return val
+  if (!val) return "";
+  if (typeof val === "string") return val;
   if (typeof val === "object" && val !== null) {
-    const rec = val as Record<string, string>
-    return rec[locale] || rec["en"] || Object.values(rec)[0] || ""
+    const rec = val as Record<string, string>;
+    return rec[locale] || rec["en"] || Object.values(rec)[0] || "";
   }
-  return typeof val === "number" ? String(val) : ""
+  return typeof val === "number" ? String(val) : "";
 }
 
 /**
@@ -26,26 +26,26 @@ export function renderPageAsMarkdown(
   locale: string = "en",
   options: AgentMarkdownOptions = {}
 ): string {
-  const { siteUrl = "https://rimelight.com", llmsUrl = "/llms.txt", sourceUrl } = options
+  const { siteUrl = "https://rimelight.com", llmsUrl = "/llms.txt", sourceUrl } = options;
 
-  let contentObj = page.content
+  let contentObj = page.content;
   if (typeof contentObj === "string") {
     try {
-      contentObj = JSON.parse(contentObj)
+      contentObj = JSON.parse(contentObj);
     } catch {
-      contentObj = { blocks: [], properties: {} }
+      contentObj = { blocks: [], properties: {} };
     }
   } else if (!contentObj || typeof contentObj !== "object") {
-    contentObj = { blocks: [], properties: {} }
+    contentObj = { blocks: [], properties: {} };
   }
 
-  const blocks = Array.isArray(contentObj.blocks) ? contentObj.blocks : []
-  const properties = contentObj.properties || {}
+  const blocks = Array.isArray(contentObj.blocks) ? contentObj.blocks : [];
+  const properties = contentObj.properties || {};
 
-  const title = resolveLocalized(page.title, locale) || properties.title || "Untitled"
-  const description = resolveLocalized(page.description, locale) || properties.description || ""
-  const version = properties.version || page.templateVersion
-  const markdownBody = blocksToMarkdown(blocks)
+  const title = resolveLocalized(page.title, locale) || properties.title || "Untitled";
+  const description = resolveLocalized(page.description, locale) || properties.description || "";
+  const version = properties.version || page.templateVersion;
+  const markdownBody = blocksToMarkdown(blocks);
 
   const frontmatter = [
     "---",
@@ -63,13 +63,13 @@ export function renderPageAsMarkdown(
     "",
     markdownBody,
     ""
-  ]
+  ];
 
   if (sourceUrl) {
-    frontmatter.push(`Source: ${new URL(sourceUrl, siteUrl).href}`, "")
+    frontmatter.push(`Source: ${new URL(sourceUrl, siteUrl).href}`, "");
   }
 
-  return frontmatter.join("\n")
+  return frontmatter.join("\n");
 }
 
 /**
@@ -78,11 +78,11 @@ export function renderPageAsMarkdown(
 export async function renderCorpusMarkdown(
   db: any,
   options: {
-    type?: string
-    locale?: string
-    siteUrl?: string
-    title?: string
-    description?: string
+    type?: string;
+    locale?: string;
+    siteUrl?: string;
+    title?: string;
+    description?: string;
   } = {}
 ): Promise<string> {
   const {
@@ -91,26 +91,35 @@ export async function renderCorpusMarkdown(
     siteUrl = "https://rimelight.com",
     title = "Rimelight Documentation Corpus",
     description = "Complete single-corpus documentation for AI agents."
-  } = options
+  } = options;
 
-  if (!db) return `# ${title}\n\n${description}`
+  if (!db) return `# ${title}\n\n${description}`;
 
-  const conditions = [isNull(pages.deletedAt), isNotNull(pages.publishedVersionId)]
+  const conditions = [isNull(pages.deletedAt), isNotNull(pages.publishedVersionId)];
   if (type) {
-    conditions.push(eq(pages.type, type))
+    conditions.push(eq(pages.type, type));
   }
 
   const rows = await db
     .select()
     .from(pages)
-    .where(and(...conditions))
+    .where(and(...conditions));
 
-  const parts = [`# ${title}`, "", description, "", `Generated for site: ${siteUrl}`, "", "---", ""]
+  const parts = [
+    `# ${title}`,
+    "",
+    description,
+    "",
+    `Generated for site: ${siteUrl}`,
+    "",
+    "---",
+    ""
+  ];
 
   for (const page of rows) {
-    const pageMd = renderPageAsMarkdown(page, locale, { siteUrl })
-    parts.push(pageMd, "", "---", "")
+    const pageMd = renderPageAsMarkdown(page, locale, { siteUrl });
+    parts.push(pageMd, "", "---", "");
   }
 
-  return parts.join("\n")
+  return parts.join("\n");
 }

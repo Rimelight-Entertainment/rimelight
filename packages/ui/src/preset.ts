@@ -1,6 +1,6 @@
-import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
-import type { ColorModeInput, UIConfig } from "./types"
-import { getIconSvg } from "./icons.raw"
+import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss";
+import type { ColorModeInput, UIConfig } from "./types";
+import { getIconSvg } from "./icons.raw";
 import {
   createLocalFontProcessor,
   emittedFonts,
@@ -9,7 +9,7 @@ import {
   rimelightFontsVitePlugin,
   DEFAULT_UI_FONTS,
   type LocalFontProcessorOptions
-} from "./fonts"
+} from "./fonts";
 
 export {
   createLocalFontProcessor,
@@ -19,7 +19,7 @@ export {
   rimelightFontsVitePlugin,
   DEFAULT_UI_FONTS,
   type LocalFontProcessorOptions
-}
+};
 
 export const PALETTES = {
   neutral: [0, 0],
@@ -32,7 +32,7 @@ export const PALETTES = {
   commentary: [0.29, 322],
   ideation: [0.28, 293],
   source: [0.13, 215]
-} as const
+} as const;
 
 const SHADES = {
   "50": [0.985, 0.1, 0.145, 0.2],
@@ -46,9 +46,9 @@ const SHADES = {
   "800": [0.27, 0.6, 0.77, 0.55],
   "900": [0.2, 0.45, 0.86, 0.4],
   "950": [0.145, 0.3, 0.93, 0.25]
-} as const
+} as const;
 
-const SHADE_ENTRIES = Object.entries(SHADES)
+const SHADE_ENTRIES = Object.entries(SHADES);
 
 export const INTENTS: Record<string, Record<string, string>> = {
   default: { text: "800", bg: "50", border: "200", ring: "300" },
@@ -59,44 +59,46 @@ export const INTENTS: Record<string, Record<string, string>> = {
   toned: { text: "800", bg: "200", border: "300", ring: "600" },
   highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
   inverted: { text: "50", bg: "950", border: "800", ring: "700" }
-}
+};
 
 const createThemeShades = (name: string) => ({
   DEFAULT: `var(--rl-${name}-500)`,
   ...Object.fromEntries(SHADE_ENTRIES.map(([s]) => [s, `var(--rl-${name}-${s})`]))
-})
+});
 
 const createOklchShadeGetter = ([c, h]: readonly [number, number]) => {
-  const oklch = (l: number, factor: number) => `oklch(${l} ${(factor * c).toFixed(3)} ${h})`
+  const oklch = (l: number, factor: number) => `oklch(${l} ${(factor * c).toFixed(3)} ${h})`;
   return (_: string, [l1, c1, l2, c2]: readonly [number, number, number, number]) => [
     oklch(l1, c1),
     oklch(l2, c2)
-  ]
-}
+  ];
+};
 
 const createCustomShadeGetter = (val: any) => {
-  const isSplit = "light" in val || "dark" in val
-  const light = (isSplit ? val.light : val) ?? {}
-  const dark = (isSplit ? val.dark : light) ?? light
-  const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
-  return (s: string) => [light[s] ?? fallback, dark[s] ?? fallback]
-}
+  const isSplit = "light" in val || "dark" in val;
+  const light = (isSplit ? val.light : val) ?? {};
+  const dark = (isSplit ? val.dark : light) ?? light;
+  const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)";
+  return (s: string) => [light[s] ?? fallback, dark[s] ?? fallback];
+};
 
 function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
-  const themeColors: Record<string, Record<string, string>> = {}
-  const tokenVarLines: string[] = []
+  const themeColors: Record<string, Record<string, string>> = {};
+  const tokenVarLines: string[] = [];
 
   for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
-    themeColors[name] = createThemeShades(name)
-    const getShade = Array.isArray(val) ? createOklchShadeGetter(val) : createCustomShadeGetter(val)
+    themeColors[name] = createThemeShades(name);
+    const getShade = Array.isArray(val)
+      ? createOklchShadeGetter(val)
+      : createCustomShadeGetter(val);
 
     for (const [s, coords] of SHADE_ENTRIES) {
-      const [light, dark] = getShade(s, coords as any)
-      tokenVarLines.push(`--rl-${name}-${s}: light-dark(${light}, ${dark});`)
+      const [light, dark] = getShade(s, coords as any);
+      tokenVarLines.push(`--rl-${name}-${s}: light-dark(${light}, ${dark});`);
     }
   }
 
-  return { themeColors, tokenVarLines }
+  return { themeColors, tokenVarLines };
 }
 
 export default function rimelightUiPreset({
@@ -105,9 +107,9 @@ export default function rimelightUiPreset({
   fonts,
   presets = {}
 }: UIConfig = {}): Preset {
-  const { themeColors, tokenVarLines } = resolveTokens(colors)
+  const { themeColors, tokenVarLines } = resolveTokens(colors);
   const webFontsPreset =
-    presets.fonts !== false && fonts !== false ? resolveWebFontsPreset(fonts) : null
+    presets.fonts !== false && fonts !== false ? resolveWebFontsPreset(fonts) : null;
 
   return {
     name: "rimelight-ui",
@@ -135,10 +137,10 @@ export default function rimelightUiPreset({
       [
         /^(text|bg|ring|border)-([a-z-]+)(?:\/(\d+))?$/,
         ([, p, n, o]) => {
-          const s = INTENTS[n!]?.[p!]
-          if (!s) return
-          const base = `${p}-neutral-${s}${o ? `/${o}` : ""}`
-          return p === "bg" && n === "inverted" ? `${base} text-neutral-50` : base
+          const s = INTENTS[n!]?.[p!];
+          if (!s) return;
+          const base = `${p}-neutral-${s}${o ? `/${o}` : ""}`;
+          return p === "bg" && n === "inverted" ? `${base} text-neutral-50` : base;
         }
       ]
     ],
@@ -146,15 +148,15 @@ export default function rimelightUiPreset({
       [
         /^rl-color-([\w-]+)$/,
         ([, c]) => {
-          const v500 = `var(--rl-${c}-500)`
-          const v600 = `var(--rl-${c}-600)`
+          const v500 = `var(--rl-${c}-500)`;
+          const v600 = `var(--rl-${c}-600)`;
           return {
             "--rl-bg": v500,
             "--rl-ring": v500,
             "--rl-border": v500,
             "--rl-bg-hover": v600,
             "--rl-text": v600
-          }
+          };
         }
       ]
     ],
@@ -243,5 +245,5 @@ summary {
 }`
       }
     ]
-  }
+  };
 }

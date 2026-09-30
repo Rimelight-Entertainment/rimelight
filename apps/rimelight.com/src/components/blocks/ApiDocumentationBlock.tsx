@@ -1,53 +1,53 @@
-import { type Component, Show, For, createSignal } from "solid-js"
-import { createAsyncData } from "#utils/async"
-import type { BaseBlock } from "@rimelight/cms"
+import { type Component, Show, For, createSignal } from "solid-js";
+import { createAsyncData } from "#utils/async";
+import type { BaseBlock } from "@rimelight/cms";
 
 function filterProps(props: any[], options: { hide?: string[]; show?: string[] }): any[] {
-  if (options.show?.length) return props.filter((p: any) => options.show!.includes(p.name))
-  if (options.hide?.length) return props.filter((p: any) => !options.hide!.includes(p.name))
-  return props
+  if (options.show?.length) return props.filter((p: any) => options.show!.includes(p.name));
+  if (options.hide?.length) return props.filter((p: any) => !options.hide!.includes(p.name));
+  return props;
 }
 
 export interface ApiDocumentationBlockProps {
-  block: BaseBlock
-  locale?: string
+  block: BaseBlock;
+  locale?: string;
 }
 
 export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (props) => {
-  const p = () => (props.block.props || {}) as any
-  const componentName = () => p().componentName
-  const sections = () => p().sections || {}
-  const hide = () => p().hide || []
-  const show = () => p().show || []
-  const compMeta = () => props.block.props?.["meta"]
-  const themeCode = () => props.block.props?.["themeCode"]
+  const p = () => (props.block.props || {}) as any;
+  const componentName = () => p().componentName;
+  const sections = () => p().sections || {};
+  const hide = () => p().hide || [];
+  const show = () => p().show || [];
+  const compMeta = () => props.block.props?.["meta"];
+  const themeCode = () => props.block.props?.["themeCode"];
 
-  const filterOpts = () => ({ hide: hide(), show: show() })
-  const filteredProps = () => filterProps(compMeta()?.props ?? [], filterOpts())
-  const slots = () => compMeta()?.slots ?? []
-  const emits = () => compMeta()?.emits ?? []
+  const filterOpts = () => ({ hide: hide(), show: show() });
+  const filteredProps = () => filterProps(compMeta()?.props ?? [], filterOpts());
+  const slots = () => compMeta()?.slots ?? [];
+  const emits = () => compMeta()?.emits ?? [];
 
-  const [isThemeExpanded, setIsThemeExpanded] = createSignal(false)
-  const [changelogError, setChangelogError] = createSignal(false)
+  const [isThemeExpanded, setIsThemeExpanded] = createSignal(false);
+  const [changelogError, setChangelogError] = createSignal(false);
 
   const changelogData = createAsyncData(
     () => [sections().changelog, componentName()] as const,
     async ([hasChangelog, name]) => {
-      if (!hasChangelog || !name) return []
+      if (!hasChangelog || !name) return [];
       try {
-        const res = await fetch(`/api/github/changelog?component=${name}`)
-        if (!res.ok) throw new Error()
-        const data = await res.json()
-        return Array.isArray(data) ? data : []
+        const res = await fetch(`/api/github/changelog?component=${name}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
       } catch {
-        setChangelogError(true)
-        return []
+        setChangelogError(true);
+        return [];
       }
     },
     []
-  )
+  );
 
-  const changelogLoading = () => changelogData() === undefined
+  const changelogLoading = () => changelogData() === undefined;
 
   return (
     <div class="api-documentation-wrapper">
@@ -281,7 +281,7 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ApiDocumentationBlock
+export default ApiDocumentationBlock;

@@ -1,18 +1,18 @@
-import { createMemo, omit, Show, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ChipProps } from "./chip"
-import { chipTheme } from "./chip.theme"
+import { createMemo, omit, Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ChipProps } from "./chip";
+import { chipTheme } from "./chip.theme";
 
 export interface RLChipProps extends ChipProps {
-  children?: JSX.Element
-  content?: JSX.Element
-  text?: any
-  standalone?: boolean
-  show?: boolean
+  children?: JSX.Element;
+  content?: JSX.Element;
+  text?: any;
+  standalone?: boolean;
+  show?: boolean;
 }
 
 const RLChip: Component<RLChipProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "text",
@@ -27,7 +27,7 @@ const RLChip: Component<RLChipProps> = (allProps) => {
     "class",
     "children",
     "content"
-  )
+  );
 
   const classes = createMemo(() =>
     chipTheme({
@@ -39,9 +39,9 @@ const RLChip: Component<RLChipProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const isVisible = () => props.show ?? true
+  const isVisible = () => props.show ?? true;
 
   if (props.standalone) {
     return (
@@ -50,10 +50,10 @@ const RLChip: Component<RLChipProps> = (allProps) => {
           {props.children !== undefined ? props.children : props.text}
         </span>
       </Show>
-    )
+    );
   }
 
-  const baseColorClass = () => (props.color ? `rl-color-${props.color}` : "")
+  const baseColorClass = () => (props.color ? `rl-color-${props.color}` : "");
 
   return (
     <div class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
@@ -64,7 +64,7 @@ const RLChip: Component<RLChipProps> = (allProps) => {
         </span>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLChip }
+export { RLChip };

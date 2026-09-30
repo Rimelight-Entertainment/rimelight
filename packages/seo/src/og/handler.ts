@@ -4,12 +4,12 @@ import {
   loadOgFonts,
   type OgFontConfig,
   type OgLayoutOptions
-} from "../og.js"
-import type { OgRouteOptions } from "../types.js"
+} from "../og.js";
+import type { OgRouteOptions } from "../types.js";
 
 export interface OgHandlerOptions extends OgRouteOptions {
-  font?: OgFontConfig
-  allowedImageDomains?: string[]
+  font?: OgFontConfig;
+  allowedImageDomains?: string[];
 }
 
 /**
@@ -21,23 +21,23 @@ export async function handleOgRequest(
   options: OgHandlerOptions = {}
 ): Promise<Response> {
   try {
-    const url = new URL(request.url)
-    const params = url.searchParams
+    const url = new URL(request.url);
+    const params = url.searchParams;
 
-    const rawTitle = params.get("title") || params.get("text") || options.brand || "Rimelight"
-    const rawDescription = params.get("description") || ""
-    const badge = params.get("badge") || params.get("type") || undefined
-    const isDocs = params.get("isDocs") === "true" || url.pathname.includes("docs")
+    const rawTitle = params.get("title") || params.get("text") || options.brand || "Rimelight";
+    const rawDescription = params.get("description") || "";
+    const badge = params.get("badge") || params.get("type") || undefined;
+    const isDocs = params.get("isDocs") === "true" || url.pathname.includes("docs");
 
-    const brand = params.get("brand") || options.brand || "Rimelight"
+    const brand = params.get("brand") || options.brand || "Rimelight";
     const background =
       (params.get("bg") as any) ||
-      (isDocs ? options.docsBackground || "gradient" : options.defaultBackground || "dark")
-    const preview = params.get("preview") === "true"
+      (isDocs ? options.docsBackground || "gradient" : options.defaultBackground || "dark");
+    const preview = params.get("preview") === "true";
 
     // Strict input bounds per RFC (DoS mitigation)
-    const title = rawTitle.slice(0, 200)
-    const description = rawDescription ? rawDescription.slice(0, 300) : undefined
+    const title = rawTitle.slice(0, 200);
+    const description = rawDescription ? rawDescription.slice(0, 300) : undefined;
 
     const layoutOptions: OgLayoutOptions = {
       title,
@@ -46,14 +46,14 @@ export async function handleOgRequest(
       preview,
       ...(description !== undefined && { description }),
       ...(badge !== undefined && { badge })
-    }
+    };
 
-    const font = options.font || NOTO_SANS
-    const vnode = defaultOgLayout(layoutOptions, font)
+    const font = options.font || NOTO_SANS;
+    const vnode = defaultOgLayout(layoutOptions, font);
 
     // Lazy load Takumi renderer
-    const { renderTakumi } = await import("../takumi.js")
-    const { regular, bold } = await loadOgFonts(font)
+    const { renderTakumi } = await import("../takumi.js");
+    const { regular, bold } = await loadOgFonts(font);
 
     const pngBuffer = await renderTakumi(vnode, {
       width: 1200,
@@ -62,7 +62,7 @@ export async function handleOgRequest(
         { name: font.name, data: regular, weight: 400, style: "normal" },
         { name: font.name, data: bold, weight: 700, style: "normal" }
       ]
-    })
+    });
 
     return new Response(new Blob([new Uint8Array(pngBuffer)], { type: "image/png" }), {
       status: 200,
@@ -71,9 +71,9 @@ export async function handleOgRequest(
         "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
         "CDN-Cache-Control": "public, max-age=604800"
       }
-    })
+    });
   } catch (error) {
-    console.error("[OG Handler Error]:", error)
+    console.error("[OG Handler Error]:", error);
     return new Response(
       JSON.stringify({
         error: "Failed to render Open Graph image",
@@ -86,6 +86,6 @@ export async function handleOgRequest(
           "Cache-Control": "no-store"
         }
       }
-    )
+    );
   }
 }

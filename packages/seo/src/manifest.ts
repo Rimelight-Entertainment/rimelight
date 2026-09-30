@@ -1,4 +1,4 @@
-import type { WebManifest, WebManifestOptions } from "./types.js"
+import type { WebManifest, WebManifestOptions } from "./types.js";
 
 /**
  * Build web app manifest (site.webmanifest) compliant with W3C Web App Manifest.
@@ -38,7 +38,7 @@ export function buildWebManifest(options: WebManifestOptions): WebManifest {
     dir,
     orientation,
     scope
-  } = options
+  } = options;
 
   return {
     name,
@@ -55,5 +55,5 @@ export function buildWebManifest(options: WebManifestOptions): WebManifest {
     ...(dir ? { dir } : {}),
     ...(orientation ? { orientation } : {}),
     ...(scope ? { scope } : {})
-  }
+  };
 }

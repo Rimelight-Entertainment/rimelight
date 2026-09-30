@@ -1,19 +1,19 @@
-import { type Component, For, Show } from "solid-js"
-import { inlinesToMarkdown } from "@rimelight/cms"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { type Component, For, Show } from "solid-js";
+import { inlinesToMarkdown } from "@rimelight/cms";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 interface PageRendererProps {
-  blocks?: any[]
-  locale?: string
-  class?: string
+  blocks?: any[];
+  locale?: string;
+  class?: string;
 }
 
 export const BlockRenderer: Component<{ block: any; locale?: string | undefined }> = (props) => {
-  const b = () => props.block || {}
-  const type = () => b().type
-  const p = () => b().props || {}
-  const children = () => b().children || p().children || []
+  const b = () => props.block || {};
+  const type = () => b().type;
+  const p = () => b().props || {};
+  const children = () => b().children || p().children || [];
 
   return (
     <Show when={b().type}>
@@ -112,11 +112,11 @@ export const BlockRenderer: Component<{ block: any; locale?: string | undefined 
         </For>
       </Show>
     </Show>
-  )
-}
+  );
+};
 
 export const PageRenderer: Component<PageRendererProps> = (props) => {
-  const blockList = () => props.blocks || []
+  const blockList = () => props.blocks || [];
 
   return (
     <article class={`rimelight-cms-page ${props.class || ""}`}>
@@ -124,7 +124,7 @@ export const PageRenderer: Component<PageRendererProps> = (props) => {
         {(block) => <BlockRenderer block={block} locale={props.locale} />}
       </For>
     </article>
-  )
-}
+  );
+};
 
-export default PageRenderer
+export default PageRenderer;

@@ -1,58 +1,58 @@
-export type ComponentsJSON = Record<string, Record<string, any>>
-export type Translations = Record<string, any>
+export type ComponentsJSON = Record<string, Record<string, any>>;
+export type Translations = Record<string, any>;
 export type TranslationLoader = (
   locale: string,
   components: string[]
-) => Promise<ComponentsJSON | Record<string, any>>
+) => Promise<ComponentsJSON | Record<string, any>>;
 
 export interface ReadableAtom<T> {
-  get(): T
-  subscribe(listener: (value: T) => void): () => void
-  listen(listener: (value: T) => void): () => void
+  get(): T;
+  subscribe(listener: (value: T) => void): () => void;
+  listen(listener: (value: T) => void): () => void;
 }
 
 export interface WritableAtom<T> extends ReadableAtom<T> {
-  set(value: T): void
+  set(value: T): void;
 }
 
 export interface FlattenedTranslations {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export interface PlaceholderMismatch {
-  key: string
-  basePlaceholders: string[]
-  targetPlaceholders: string[]
+  key: string;
+  basePlaceholders: string[];
+  targetPlaceholders: string[];
 }
 
 export interface TranslationAuditReport {
-  isValid: boolean
-  totalKeys: number
-  locales: string[]
-  defaultLocale: string
-  missingKeys: Record<string, string[]>
-  staleKeys: Record<string, string[]>
-  emptyKeys: Record<string, string[]>
-  placeholderMismatches: Record<string, PlaceholderMismatch[]>
+  isValid: boolean;
+  totalKeys: number;
+  locales: string[];
+  defaultLocale: string;
+  missingKeys: Record<string, string[]>;
+  staleKeys: Record<string, string[]>;
+  emptyKeys: Record<string, string[]>;
+  placeholderMismatches: Record<string, PlaceholderMismatch[]>;
   stats: {
-    completion: Record<string, string>
-  }
+    completion: Record<string, string>;
+  };
 }
 
 export interface VerifyTranslationsOptions {
-  defaultLocale?: string
-  allowEmpty?: boolean
+  defaultLocale?: string;
+  allowEmpty?: boolean;
 }
 
 export interface LocaleFile {
   [component: string]: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
 }
 
 export interface KVNamespaceBinding {
-  get(key: string, type: "json"): Promise<Record<string, string> | null>
-  put(key: string, value: string): Promise<void>
+  get(key: string, type: "json"): Promise<Record<string, string> | null>;
+  put(key: string, value: string): Promise<void>;
 }
 
 /**
@@ -70,9 +70,9 @@ export type NestedTranslationKeys<T> = T extends (infer U)[]
               | (U extends object ? `${K}.${number}.${NestedTranslationKeys<U>}` : never)
           : T[K] extends object
             ? `${K}` | `${K}.${NestedTranslationKeys<T[K]>}`
-            : `${K}`
+            : `${K}`;
       }[keyof T & (string | number)]
-    : never
+    : never;
 
 /**
  * Augmented interface for app-level strongly typed translation keys. Applications can declare:
@@ -87,4 +87,4 @@ export interface CustomTranslations {}
 
 export type TranslationKey = [keyof CustomTranslations] extends [never]
   ? string
-  : NestedTranslationKeys<CustomTranslations>
+  : NestedTranslationKeys<CustomTranslations>;

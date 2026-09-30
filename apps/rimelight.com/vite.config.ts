@@ -1,16 +1,16 @@
-import { defineConfig } from "vite-plus"
-import { fileRoutes } from "filesystem-routing/vite"
-import { rimelightConfig } from "@rimelight/config/vite-plus/base"
-import { cloudflare } from "@cloudflare/vite-plugin"
-import solid from "@solidjs/vite-plugin"
-import { ui } from "@rimelight/ui/plugin"
-import { seo } from "@rimelight/seo/plugin"
-import { security } from "@rimelight/security/plugin"
-import { auth } from "@rimelight/auth/plugin"
-import { i18n } from "@rimelight/i18n/plugin"
-import en from "./src/i18n/en.json"
-import es from "./src/i18n/es.json"
-import pt from "./src/i18n/pt.json"
+import { defineConfig } from "vite-plus";
+import { fileRoutes } from "filesystem-routing/vite";
+import { rimelightConfig } from "@rimelight/config/vite-plus/base";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import solid from "@solidjs/vite-plugin";
+import { ui } from "@rimelight/ui/plugin";
+import { seo } from "@rimelight/seo/plugin";
+import { security } from "@rimelight/security/plugin";
+import { auth } from "@rimelight/auth/plugin";
+import { i18n } from "@rimelight/i18n/plugin";
+import en from "./src/i18n/en.json";
+import es from "./src/i18n/es.json";
+import pt from "./src/i18n/pt.json";
 
 export default defineConfig({
   ...rimelightConfig(),
@@ -18,14 +18,14 @@ export default defineConfig({
     {
       name: "virtual:rimelight-ui-docs-meta",
       resolveId(id: string) {
-        if (id === "virtual:rimelight-ui-docs-meta") return "\0virtual:rimelight-ui-docs-meta"
-        if (id === "cloudflare:workers") return "\0cloudflare:workers"
-        return null
+        if (id === "virtual:rimelight-ui-docs-meta") return "\0virtual:rimelight-ui-docs-meta";
+        if (id === "cloudflare:workers") return "\0cloudflare:workers";
+        return null;
       },
       load(id: string) {
-        if (id === "\0virtual:rimelight-ui-docs-meta") return "export default {};"
-        if (id === "\0cloudflare:workers") return "export const env = {};"
-        return null
+        if (id === "\0virtual:rimelight-ui-docs-meta") return "export default {};";
+        if (id === "\0cloudflare:workers") return "export const env = {};";
+        return null;
       }
     },
     cloudflare({
@@ -105,4 +105,4 @@ export default defineConfig({
       translations: { en, es, pt }
     })
   ]
-})
+});

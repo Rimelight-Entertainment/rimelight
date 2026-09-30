@@ -1,19 +1,19 @@
-import { For, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { formatDate, useCmsApi } from "./_shared.tsx"
+import { For, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { formatDate, useCmsApi } from "./_shared.tsx";
 
 export interface VersionsPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  initialVersions?: any[]
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  initialVersions?: any[];
 }
 
 export const VersionsPage: Component<VersionsPageProps> = (props) => {
   const remote = useCmsApi<{ versions: any[] }>(() =>
     props.initialVersions ? null : `${props.apiBase ?? "/api/cms"}/versions`
-  )
-  const versions = () => props.initialVersions ?? remote.data()?.versions ?? []
+  );
+  const versions = () => props.initialVersions ?? remote.data()?.versions ?? [];
 
   return (
     <CMSDashboardLayout
@@ -46,7 +46,7 @@ export const VersionsPage: Component<VersionsPageProps> = (props) => {
         </Show>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default VersionsPage
+export default VersionsPage;

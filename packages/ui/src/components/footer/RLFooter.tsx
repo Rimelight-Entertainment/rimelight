@@ -1,17 +1,17 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { FooterProps } from "./footer"
-import { footerTheme } from "./footer.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { FooterProps } from "./footer";
+import { footerTheme } from "./footer.theme";
 
 export interface RLFooterProps extends FooterProps {
-  left?: JSX.Element
-  center?: JSX.Element
-  right?: JSX.Element
-  children?: JSX.Element
+  left?: JSX.Element;
+  center?: JSX.Element;
+  right?: JSX.Element;
+  children?: JSX.Element;
 }
 
 const RLFooter: Component<RLFooterProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "contain",
@@ -22,7 +22,7 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
     "center",
     "right",
     "children"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     footerTheme({
@@ -31,7 +31,7 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <footer
@@ -53,7 +53,7 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export { RLFooter }
+export { RLFooter };

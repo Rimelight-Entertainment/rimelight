@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const pageSectionTheme = defineTheme("page-section", {
   slots: [
@@ -203,4 +203,4 @@ export const pageSectionTheme = defineTheme("page-section", {
     variant: "default",
     orientation: "vertical"
   }
-})
+});

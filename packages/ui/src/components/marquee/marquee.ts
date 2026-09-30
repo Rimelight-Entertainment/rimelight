@@ -2,22 +2,22 @@ export interface MarqueeProps {
   /**
    * Direction of marquee motion.
    */
-  direction?: "left" | "right" | "up" | "down"
+  direction?: "left" | "right" | "up" | "down";
   /**
    * Speed of animation in seconds (duration of scroll cycle).
    */
-  speed?: number
+  speed?: number;
   /**
    * Whether to pause scroll animation on mouse hover.
    */
-  pauseOnHover?: boolean
+  pauseOnHover?: boolean;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,26 +1,26 @@
-import { createMemo, createSignal, omit, For, Show, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { BannerProps } from "./banner"
-import { bannerTheme } from "./banner.theme"
-import { RLButton } from "../button/RLButton"
-import { RLIcon } from "../icon/RLIcon"
-import { useHeaderStack } from "../header/useHeaderStack"
-import { resolveLinkAttrs } from "../link/helpers"
-import type { ButtonProps } from "../button/button"
+import { createMemo, createSignal, omit, For, Show, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { BannerProps } from "./banner";
+import { bannerTheme } from "./banner.theme";
+import { RLButton } from "../button/RLButton";
+import { RLIcon } from "../icon/RLIcon";
+import { useHeaderStack } from "../header/useHeaderStack";
+import { resolveLinkAttrs } from "../link/helpers";
+import type { ButtonProps } from "../button/button";
 
 export interface RLBannerProps extends BannerProps {
-  children?: JSX.Element
-  leading?: JSX.Element
-  titleSlot?: JSX.Element
-  actionsSlot?: JSX.Element
-  closeSlot?: JSX.Element
-  left?: JSX.Element
-  center?: JSX.Element
-  right?: JSX.Element
+  children?: JSX.Element;
+  leading?: JSX.Element;
+  titleSlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
+  closeSlot?: JSX.Element;
+  left?: JSX.Element;
+  center?: JSX.Element;
+  right?: JSX.Element;
 }
 
 const RLBanner: Component<RLBannerProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -64,44 +64,44 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     "ariaLabel",
     "ariaCurrentValue",
     "theme"
-  )
+  );
 
-  const isLink = () => Boolean(props.href || props.to)
-  const asTag = () => props.as || (isLink() ? "a" : "div")
+  const isLink = () => Boolean(props.href || props.to);
+  const asTag = () => props.as || (isLink() ? "a" : "div");
 
-  const fixed = () => props.fixed ?? false
-  const sticky = () => (fixed() ? false : (props.sticky ?? false))
-  const hideOnScroll = () => props.hideOnScroll ?? false
-  const stackIndex = () => props.stackIndex ?? 0
-  const color = () => props.color ?? "primary"
+  const fixed = () => props.fixed ?? false;
+  const sticky = () => (fixed() ? false : (props.sticky ?? false));
+  const hideOnScroll = () => props.hideOnScroll ?? false;
+  const stackIndex = () => props.stackIndex ?? 0;
+  const color = () => props.color ?? "primary";
 
-  const bannerId = (allProps.id as string) || (props.dismissId as string) || ""
-  const hasPersistence = () => Boolean(props.id || props.dismissId)
-  const storageKey = `banner-${bannerId}`
+  const bannerId = (allProps.id as string) || (props.dismissId as string) || "";
+  const hasPersistence = () => Boolean(props.id || props.dismissId);
+  const storageKey = `banner-${bannerId}`;
 
-  const isClosable = () => Boolean(props.close !== undefined ? props.close : props.dismissable)
+  const isClosable = () => Boolean(props.close !== undefined ? props.close : props.dismissable);
 
   const readDismissed = () => {
-    if (!hasPersistence() || typeof window === "undefined") return false
+    if (!hasPersistence() || typeof window === "undefined") return false;
     try {
-      return window.localStorage.getItem(storageKey) !== null
+      return window.localStorage.getItem(storageKey) !== null;
     } catch {
-      return false
+      return false;
     }
-  }
+  };
 
-  const [dismissed, setDismissed] = createSignal<boolean>(readDismissed())
+  const [dismissed, setDismissed] = createSignal<boolean>(readDismissed());
 
   const handleClose = (e?: MouseEvent) => {
-    e?.stopPropagation()
+    e?.stopPropagation();
     if (hasPersistence() && typeof window !== "undefined") {
       try {
-        window.localStorage.setItem(storageKey, "1")
+        window.localStorage.setItem(storageKey, "1");
       } catch {}
     }
-    setDismissed(true)
-    props.onClose?.()
-  }
+    setDismissed(true);
+    props.onClose?.();
+  };
 
   const classes = createMemo(() =>
     bannerTheme({
@@ -113,9 +113,9 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const { registerHeader } = useHeaderStack()
+  const { registerHeader } = useHeaderStack();
   const { ref, topOffset, isCollapsed } = registerHeader({
     id: bannerId || `rl-banner-${stackIndex()}`,
     order: stackIndex(),
@@ -124,32 +124,32 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
     fixed: fixed(),
     hideOnScroll: hideOnScroll(),
     visible: () => !dismissed()
-  })
+  });
 
   const dynamicStyles = () => {
     if (!fixed() && !sticky())
-      return typeof props["style"] === "object" ? props["style"] : undefined
+      return typeof props["style"] === "object" ? props["style"] : undefined;
 
     const base: Record<string, any> = {
       top: `${topOffset()}px`,
       transform: isCollapsed() ? "translateY(-100%)" : "translateY(0)",
       transition:
         "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-    }
+    };
 
     if (typeof props["style"] === "object" && props["style"] !== null) {
-      return { ...props["style"], ...base }
+      return { ...props["style"], ...base };
     }
-    return base
-  }
+    return base;
+  };
 
   const linkAttrs = createMemo(() => {
-    if (!isLink()) return {}
+    if (!isLink()) return {};
     return resolveLinkAttrs({
       ...props,
       href: props.href || (props.to as string | undefined)
-    })
-  })
+    });
+  });
 
   const closeButtonProps = createMemo((): ButtonProps => {
     const base: ButtonProps = {
@@ -159,15 +159,15 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
       square: true,
       leadingIcon: props.closeIcon || "close",
       ariaLabel: "Close banner"
-    }
+    };
 
     if (typeof props.close === "object" && props.close !== null) {
-      return { ...base, ...props.close }
+      return { ...base, ...props.close };
     }
-    return base
-  })
+    return base;
+  });
 
-  const Root = dynamic(() => asTag())
+  const Root = dynamic(() => asTag());
 
   return (
     <Show when={!dismissed()}>
@@ -270,7 +270,7 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
         </div>
       </Root>
     </Show>
-  )
-}
+  );
+};
 
-export { RLBanner }
+export { RLBanner };

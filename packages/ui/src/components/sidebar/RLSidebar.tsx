@@ -1,45 +1,45 @@
-import { createMemo, For, Show, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { SidebarItem, SidebarProps } from "./sidebar"
-import { sidebarTheme } from "./sidebar.theme"
-import { RLBadge } from "../badge/RLBadge"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, For, Show, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { SidebarItem, SidebarProps } from "./sidebar";
+import { sidebarTheme } from "./sidebar.theme";
+import { RLBadge } from "../badge/RLBadge";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLSidebarProps extends SidebarProps {
-  children?: JSX.Element
-  header?: JSX.Element
-  headerSlot?: JSX.Element
-  footer?: JSX.Element
-  footerSlot?: JSX.Element
-  _depth?: number
+  children?: JSX.Element;
+  header?: JSX.Element;
+  headerSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  _depth?: number;
 }
 
 function hasActiveChild(item: SidebarItem): boolean {
-  if (item.active) return true
-  return (item.children ?? []).some((c) => hasActiveChild(c))
+  if (item.active) return true;
+  return (item.children ?? []).some((c) => hasActiveChild(c));
 }
 
 function normalizeBadge(badge: any) {
-  if (!badge) return null
+  if (!badge) return null;
   if (typeof badge === "string") {
-    return { text: badge, color: "primary" as const, variant: "soft" as const, class: "" }
+    return { text: badge, color: "primary" as const, variant: "soft" as const, class: "" };
   }
-  let color = badge.color || "primary"
-  let badgeVariant = badge.variant || "soft"
+  let color = badge.color || "primary";
+  let badgeVariant = badge.variant || "soft";
   if (badge.variant) {
-    const v = String(badge.variant).toLowerCase()
+    const v = String(badge.variant).toLowerCase();
     if (v === "tip" || v === "success") {
-      color = "success"
-      badgeVariant = "soft"
+      color = "success";
+      badgeVariant = "soft";
     } else if (v === "caution" || v === "warning") {
-      color = "warning"
-      badgeVariant = "soft"
+      color = "warning";
+      badgeVariant = "soft";
     } else if (v === "error") {
-      color = "error"
-      badgeVariant = "soft"
+      color = "error";
+      badgeVariant = "soft";
     } else if (v === "note" || v === "default") {
-      color = "primary"
-      badgeVariant = "soft"
+      color = "primary";
+      badgeVariant = "soft";
     }
   }
   return {
@@ -47,25 +47,25 @@ function normalizeBadge(badge: any) {
     color,
     variant: badgeVariant as "solid" | "outline" | "soft" | "ghost",
     class: badge.class || ""
-  }
+  };
 }
 
 const RLSidebarItems: Component<{
-  items: SidebarItem[]
-  t: (key: string) => string
-  _depth: number
-  themeClasses: any
+  items: SidebarItem[];
+  t: (key: string) => string;
+  _depth: number;
+  themeClasses: any;
 }> = (props) => {
-  const indentClass = () => (props._depth === 0 ? "ml-6" : props._depth === 1 ? "ml-4" : "ml-3")
-  const textSizeClass = () => (props._depth === 0 ? "" : "text-xs")
+  const indentClass = () => (props._depth === 0 ? "ml-6" : props._depth === 1 ? "ml-4" : "ml-3");
+  const textSizeClass = () => (props._depth === 0 ? "" : "text-xs");
 
   return (
     <div class="flex flex-col gap-0.5">
       <For each={props.items}>
         {(item) => {
-          const hasChildren = () => (item.children?.length ?? 0) > 0
-          const isActive = () => item.active || hasActiveChild(item)
-          const b = () => normalizeBadge(item.badge)
+          const hasChildren = () => (item.children?.length ?? 0) > 0;
+          const isActive = () => item.active || hasActiveChild(item);
+          const b = () => normalizeBadge(item.badge);
 
           return (
             <div
@@ -156,15 +156,15 @@ const RLSidebarItems: Component<{
                 </details>
               </Show>
             </div>
-          )
+          );
         }}
       </For>
     </div>
-  )
-}
+  );
+};
 
 const RLSidebar: Component<RLSidebarProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "items",
@@ -180,12 +180,12 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
     "headerSlot",
     "footer",
     "footerSlot"
-  )
+  );
 
-  const t = () => props.t ?? ((key: string) => key)
-  const depth = () => props._depth ?? 0
-  const items = () => props.items ?? []
-  const isRoot = () => depth() === 0
+  const t = () => props.t ?? ((key: string) => key);
+  const depth = () => props._depth ?? 0;
+  const items = () => props.items ?? [];
+  const isRoot = () => depth() === 0;
 
   const resolvedClasses = createMemo(() =>
     sidebarTheme({
@@ -194,15 +194,15 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  let sidebarRef: HTMLElement | null = null
+  let sidebarRef: HTMLElement | null = null;
 
   const toggleSidebar = () => {
     if (sidebarRef) {
-      sidebarRef.classList.toggle("-translate-x-full")
+      sidebarRef.classList.toggle("-translate-x-full");
     }
-  }
+  };
 
   const headerContent = () =>
     props.header !== undefined ? (
@@ -214,9 +214,9 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
         <RLIcon name="i-rl-layers" class="size-5 text-primary" />
         <span class="truncate">{props.logo}</span>
       </span>
-    ) : null
+    ) : null;
 
-  const footerContent = () => (props.footer !== undefined ? props.footer : props.footerSlot)
+  const footerContent = () => (props.footer !== undefined ? props.footer : props.footerSlot);
 
   return (
     <Show
@@ -263,7 +263,7 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
         </button>
       </Show>
     </Show>
-  )
-}
+  );
+};
 
-export { RLSidebar }
+export { RLSidebar };

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const chatReasoningTheme = defineTheme("chat-reasoning", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const chatReasoningTheme = defineTheme("chat-reasoning", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

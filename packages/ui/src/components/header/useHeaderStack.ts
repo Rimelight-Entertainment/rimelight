@@ -1,56 +1,56 @@
-import { createSignal, createMemo, createEffect, onSettled, type Accessor } from "solid-js"
+import { createSignal, createMemo, createEffect, onSettled, type Accessor } from "solid-js";
 
 export interface HeaderLayer {
-  id: string
-  order: number
-  type: "banner" | "header"
-  height: number
-  sticky: boolean
-  fixed: boolean
-  hideOnScroll: boolean
-  visible: boolean
-  element?: HTMLElement | null | undefined
+  id: string;
+  order: number;
+  type: "banner" | "header";
+  height: number;
+  sticky: boolean;
+  fixed: boolean;
+  hideOnScroll: boolean;
+  visible: boolean;
+  element?: HTMLElement | null | undefined;
 }
 
 export interface RegisterHeaderOptions {
-  id: string
-  order?: number
-  type?: "banner" | "header"
-  sticky?: boolean
-  fixed?: boolean
-  hideOnScroll?: boolean
-  visible?: boolean | Accessor<boolean>
+  id: string;
+  order?: number;
+  type?: "banner" | "header";
+  sticky?: boolean;
+  fixed?: boolean;
+  hideOnScroll?: boolean;
+  visible?: boolean | Accessor<boolean>;
 }
 
 // Global singleton state shared across all header and banner islands
-const [scrollY, setScrollY] = createSignal(0)
-const [scrollDirection, setScrollDirection] = createSignal<"up" | "down">("up")
-const [headers, setHeaders] = createSignal<HeaderLayer[]>([])
+const [scrollY, setScrollY] = createSignal(0);
+const [scrollDirection, setScrollDirection] = createSignal<"up" | "down">("up");
+const [headers, setHeaders] = createSignal<HeaderLayer[]>([]);
 
-let isScrollListening = false
+let isScrollListening = false;
 
 function initGlobalScroll() {
-  if (isScrollListening || typeof window === "undefined") return
-  isScrollListening = true
+  if (isScrollListening || typeof window === "undefined") return;
+  isScrollListening = true;
 
-  let lastScroll = window.scrollY
-  setScrollY(lastScroll)
+  let lastScroll = window.scrollY;
+  setScrollY(lastScroll);
 
   const handleScroll = () => {
-    const current = window.scrollY
+    const current = window.scrollY;
     if (current !== lastScroll) {
-      setScrollDirection(current > lastScroll ? "down" : "up")
-      setScrollY(current)
-      lastScroll = Math.max(0, current)
+      setScrollDirection(current > lastScroll ? "down" : "up");
+      setScrollY(current);
+      lastScroll = Math.max(0, current);
     }
-  }
+  };
 
-  window.addEventListener("scroll", handleScroll, { passive: true })
+  window.addEventListener("scroll", handleScroll, { passive: true });
 }
 
 function syncTotalHeaderHeight(total: number) {
   if (typeof document !== "undefined") {
-    document.documentElement.style.setProperty("--rl-total-header-height", `${total}px`)
+    document.documentElement.style.setProperty("--rl-total-header-height", `${total}px`);
   }
 }
 
@@ -62,29 +62,29 @@ function syncTotalHeaderHeight(total: number) {
  */
 export function useHeaderStack() {
   onSettled(() => {
-    initGlobalScroll()
-  })
+    initGlobalScroll();
+  });
 
   const registerHeader = (options: RegisterHeaderOptions) => {
-    let el: HTMLElement | undefined
-    let observer: ResizeObserver | undefined
+    let el: HTMLElement | undefined;
+    let observer: ResizeObserver | undefined;
 
     const isVisibleAccessor: () => boolean =
       typeof options.visible === "function"
         ? options.visible
-        : () => Boolean(options.visible ?? true)
+        : () => Boolean(options.visible ?? true);
 
     onSettled(() => {
-      initGlobalScroll()
-      if (!el) return
+      initGlobalScroll();
+      if (!el) return;
 
       const updateHeight = () => {
-        if (!el) return
-        const height = Math.round(el.getBoundingClientRect().height)
-        const visible: boolean = isVisibleAccessor()
+        if (!el) return;
+        const height = Math.round(el.getBoundingClientRect().height);
+        const visible: boolean = isVisibleAccessor();
 
         setHeaders((prev) => {
-          const index = prev.findIndex((h) => h.id === options.id)
+          const index = prev.findIndex((h) => h.id === options.id);
           const newEntry: HeaderLayer = {
             id: options.id,
             order: options.order ?? (options.type === "banner" ? 0 : 1),
@@ -95,10 +95,10 @@ export function useHeaderStack() {
             hideOnScroll: options.hideOnScroll ?? false,
             visible,
             element: el
-          }
+          };
 
           if (index !== -1) {
-            const existing = prev[index]
+            const existing = prev[index];
             if (
               existing &&
               existing.height === height &&
@@ -107,115 +107,115 @@ export function useHeaderStack() {
               existing.order === newEntry.order &&
               existing.type === newEntry.type
             ) {
-              return prev
+              return prev;
             }
-            const copy = [...prev]
-            copy[index] = newEntry
-            return copy
+            const copy = [...prev];
+            copy[index] = newEntry;
+            return copy;
           }
-          return [...prev, newEntry]
-        })
-      }
+          return [...prev, newEntry];
+        });
+      };
 
-      updateHeight()
+      updateHeight();
 
       if (typeof ResizeObserver !== "undefined") {
         observer = new ResizeObserver(() => {
-          updateHeight()
-        })
-        observer.observe(el)
+          updateHeight();
+        });
+        observer.observe(el);
       }
 
       return () => {
         if (observer) {
-          observer.disconnect()
+          observer.disconnect();
         }
-        setHeaders((prev) => prev.filter((h) => h.id !== options.id))
-      }
-    })
+        setHeaders((prev) => prev.filter((h) => h.id !== options.id));
+      };
+    });
 
     if (typeof options.visible === "function") {
-      const vis = options.visible
+      const vis = options.visible;
       createEffect(
         () => vis(),
         (visible) => {
-          if (!el) return
-          const height = Math.round(el.getBoundingClientRect().height)
+          if (!el) return;
+          const height = Math.round(el.getBoundingClientRect().height);
           setHeaders((prev) => {
-            const index = prev.findIndex((h) => h.id === options.id)
-            if (index === -1) return prev
-            const copy = [...prev]
-            const existing = copy[index]
+            const index = prev.findIndex((h) => h.id === options.id);
+            if (index === -1) return prev;
+            const copy = [...prev];
+            const existing = copy[index];
             if (existing) {
-              copy[index] = { ...existing, height, visible: Boolean(visible) }
+              copy[index] = { ...existing, height, visible: Boolean(visible) };
             }
-            return copy
-          })
+            return copy;
+          });
         }
-      )
+      );
     }
 
     const isCollapsed = createMemo(() => {
-      const hide = options.hideOnScroll ?? false
-      if (!hide) return false
-      return scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100)
-    })
+      const hide = options.hideOnScroll ?? false;
+      if (!hide) return false;
+      return scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100);
+    });
 
     const topOffset = createMemo(() => {
       const list = headers()
         .slice()
         .sort((a, b) => {
-          if (a.type !== b.type) return a.type === "banner" ? -1 : 1
-          return a.order - b.order
-        })
+          if (a.type !== b.type) return a.type === "banner" ? -1 : 1;
+          return a.order - b.order;
+        });
 
-      const index = list.findIndex((h) => h.id === options.id)
-      if (index <= 0) return 0
+      const index = list.findIndex((h) => h.id === options.id);
+      if (index <= 0) return 0;
 
-      let top = 0
+      let top = 0;
       for (let i = 0; i < index; i++) {
-        const prev = list[i]
-        if (!prev || !prev.visible) continue
+        const prev = list[i];
+        if (!prev || !prev.visible) continue;
 
         const prevCollapsed =
-          prev.hideOnScroll && scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100)
+          prev.hideOnScroll && scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100);
         if (!prevCollapsed) {
-          top += prev.height
+          top += prev.height;
         }
       }
-      return top
-    })
+      return top;
+    });
 
     return {
       ref: (node: HTMLElement) => {
-        el = node
+        el = node;
       },
       topOffset,
       isCollapsed
-    }
-  }
+    };
+  };
 
   const totalOffset = createMemo(() => {
-    const list = headers()
-    let total = 0
+    const list = headers();
+    let total = 0;
     for (const h of list) {
-      if (!h || !h.visible) continue
+      if (!h || !h.visible) continue;
       const isCollapsed =
-        h.hideOnScroll && scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100)
+        h.hideOnScroll && scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100);
       if (!isCollapsed) {
-        total += h.height
+        total += h.height;
       }
     }
-    syncTotalHeaderHeight(total)
-    return total
-  })
+    syncTotalHeaderHeight(total);
+    return total;
+  });
 
   createEffect(
     () => totalOffset(),
     (offset) => {
-      syncTotalHeaderHeight(offset)
+      syncTotalHeaderHeight(offset);
     }
-  )
+  );
 
   return {
     scrollY,
@@ -223,7 +223,7 @@ export function useHeaderStack() {
     headers,
     registerHeader,
     totalOffset
-  }
+  };
 }
 
-export const getHeaderStack = useHeaderStack
+export const getHeaderStack = useHeaderStack;

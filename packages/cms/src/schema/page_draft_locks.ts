@@ -1,5 +1,5 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { pages } from "./pages.ts"
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pages } from "./pages.ts";
 
 export const pageDraftLocks = pgTable("page_draft_locks", {
   pageId: uuid("page_id")
@@ -10,4 +10,4 @@ export const pageDraftLocks = pgTable("page_draft_locks", {
   lockedByUserName: text("locked_by_user_name").notNull(),
   acquiredAt: timestamp("acquired_at", { withTimezone: true }).defaultNow().notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull()
-})
+});

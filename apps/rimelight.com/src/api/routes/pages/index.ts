@@ -1,11 +1,11 @@
-import { Hono } from "hono"
-import pagesList from "./list"
-import pagesRead from "./read"
-import pagesCreate from "./create"
-import pagesUpdate from "./update"
-import pagesPublish from "./publish"
-import pagesUnpublish from "./unpublish"
-import pagesDelete from "./delete"
+import { Hono } from "hono";
+import pagesList from "./list";
+import pagesRead from "./read";
+import pagesCreate from "./create";
+import pagesUpdate from "./update";
+import pagesPublish from "./publish";
+import pagesUnpublish from "./unpublish";
+import pagesDelete from "./delete";
 
 const api = new Hono()
   .route("/", pagesList)
@@ -14,6 +14,6 @@ const api = new Hono()
   .route("/", pagesUpdate)
   .route("/", pagesPublish)
   .route("/", pagesUnpublish)
-  .route("/", pagesDelete)
+  .route("/", pagesDelete);
 
-export default api
+export default api;

@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, jsonb, timestamp, uniqueIndex } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, jsonb, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const bylines = pgTable(
   "bylines",
@@ -17,7 +17,7 @@ export const bylines = pgTable(
     deletedAt: timestamp("deleted_at")
   },
   (table) => [uniqueIndex("bylines_slug_idx").on(table.slug)]
-)
+);
 
-export type Byline = typeof bylines.$inferSelect
-export type NewByline = typeof bylines.$inferInsert
+export type Byline = typeof bylines.$inferSelect;
+export type NewByline = typeof bylines.$inferInsert;

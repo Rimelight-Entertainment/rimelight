@@ -1,22 +1,22 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Dynamic } from "@solidjs/web"
-import type { DashboardNavbarProps } from "./dashboard-navbar"
-import { dashboardNavbarTheme } from "./dashboard-navbar.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Dynamic } from "@solidjs/web";
+import type { DashboardNavbarProps } from "./dashboard-navbar";
+import { dashboardNavbarTheme } from "./dashboard-navbar.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLDashboardNavbarProps extends DashboardNavbarProps {
-  children?: JSX.Element
-  leftSlot?: JSX.Element
-  rightSlot?: JSX.Element
-  centerSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  leadingSlot?: JSX.Element
-  trailingSlot?: JSX.Element
+  children?: JSX.Element;
+  leftSlot?: JSX.Element;
+  rightSlot?: JSX.Element;
+  centerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  leadingSlot?: JSX.Element;
+  trailingSlot?: JSX.Element;
 }
 
 const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -33,10 +33,10 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     "titleSlot",
     "leadingSlot",
     "trailingSlot"
-  )
+  );
 
-  const showToggle = () => props.toggle ?? true
-  const toggleSide = () => props.toggleSide ?? "left"
+  const showToggle = () => props.toggle ?? true;
+  const toggleSide = () => props.toggleSide ?? "left";
 
   const resolvedClasses = createMemo(() =>
     dashboardNavbarTheme({
@@ -44,7 +44,7 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const leftToggle = () =>
     showToggle() && toggleSide() === "left" ? (
@@ -57,7 +57,7 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
       >
         <RLIcon name="menu" class="size-5" />
       </button>
-    ) : null
+    ) : null;
 
   const rightToggle = () =>
     showToggle() && toggleSide() === "right" ? (
@@ -70,11 +70,11 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
       >
         <RLIcon name="menu" class="size-5" />
       </button>
-    ) : null
+    ) : null;
 
   const leftContent = () => {
     if (props.leftSlot !== undefined) {
-      return props.leftSlot
+      return props.leftSlot;
     }
     return (
       <>
@@ -87,15 +87,15 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
         </h1>
         {props.trailingSlot}
       </>
-    )
-  }
+    );
+  };
 
   const centerContent = () =>
     props.centerSlot !== undefined || props.children !== undefined ? (
       <div data-slot="center" class={resolvedClasses().center}>
         {props.centerSlot !== undefined ? props.centerSlot : props.children}
       </div>
-    ) : null
+    ) : null;
 
   const navbarBody = () => (
     <>
@@ -111,21 +111,21 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
         {rightToggle()}
       </div>
     </>
-  )
+  );
 
   if (props.as) {
     return (
       <Dynamic component={props.as} class={resolvedClasses().root} data-slot="root" {...rest}>
         {navbarBody()}
       </Dynamic>
-    )
+    );
   }
 
   return (
     <header class={resolvedClasses().root} data-slot="root" {...rest}>
       {navbarBody()}
     </header>
-  )
-}
+  );
+};
 
-export { RLDashboardNavbar }
+export { RLDashboardNavbar };

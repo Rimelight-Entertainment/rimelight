@@ -1,13 +1,13 @@
-import { type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { RLMain } from "@rimelight/ui/components/main/RLMain.tsx"
-import { RLToaster } from "@rimelight/ui/components/toaster/RLToaster.tsx"
-import "../../client/styles/cms-editor.css"
+import { type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLMain } from "@rimelight/ui/components/main/RLMain.tsx";
+import { RLToaster } from "@rimelight/ui/components/toaster/RLToaster.tsx";
+import "../../client/styles/cms-editor.css";
 
 export interface DefaultParentLayoutProps {
-  title?: string | undefined
-  description?: string | undefined
-  children?: JSX.Element | undefined
+  title?: string | undefined;
+  description?: string | undefined;
+  children?: JSX.Element | undefined;
 }
 
 /**
@@ -21,7 +21,7 @@ export const DefaultParentLayout: Component<DefaultParentLayoutProps> = (props) 
       {props.children}
       <RLToaster />
     </RLMain>
-  )
-}
+  );
+};
 
-export default DefaultParentLayout
+export default DefaultParentLayout;

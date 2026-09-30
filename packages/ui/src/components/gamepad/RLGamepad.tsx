@@ -1,27 +1,27 @@
-import { For, Show, type Component } from "solid-js"
+import { For, Show, type Component } from "solid-js";
 
 interface HighlightGroup {
-  label: string
-  buttons: string[]
-  color: string
+  label: string;
+  buttons: string[];
+  color: string;
 }
 
 export interface RLGamepadProps {
-  highlightedButtons?: string[]
-  groups?: HighlightGroup[]
-  highlightColor?: string
-  backgroundColor?: string
+  highlightedButtons?: string[];
+  groups?: HighlightGroup[];
+  highlightColor?: string;
+  backgroundColor?: string;
 }
 
 interface GamepadButton {
-  id: string
-  label?: string
-  x: number
-  y: number
-  r?: number
-  w?: number
-  h?: number
-  type?: string
+  id: string;
+  label?: string;
+  x: number;
+  y: number;
+  r?: number;
+  w?: number;
+  h?: number;
+  type?: string;
 }
 
 const shoulderButtons: GamepadButton[] = [
@@ -29,7 +29,7 @@ const shoulderButtons: GamepadButton[] = [
   { id: "L1", label: "LB", x: 65, y: 42, w: 80, h: 22 },
   { id: "R2", label: "RT", x: 255, y: 10, w: 80, h: 22 },
   { id: "R1", label: "RB", x: 255, y: 42, w: 80, h: 22 }
-]
+];
 
 const mainButtons: GamepadButton[] = [
   { id: "Y", label: "Y", x: 315, y: 125, r: 12 },
@@ -44,27 +44,27 @@ const mainButtons: GamepadButton[] = [
   { id: "RS", x: 245, y: 215, r: 24 },
   { id: "View", label: "⧉", x: 145, y: 105, w: 16, h: 10 },
   { id: "Menu", label: "≡", x: 239, y: 105, w: 16, h: 10 }
-]
+];
 
 const RLGamepad: Component<RLGamepadProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
 
-  const highlighted = (): string[] => props.highlightedButtons ?? []
-  const groups = (): HighlightGroup[] => props.groups ?? []
-  const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)"
-  const backgroundColor = (): string => props.backgroundColor || "transparent"
+  const highlighted = (): string[] => props.highlightedButtons ?? [];
+  const groups = (): HighlightGroup[] => props.groups ?? [];
+  const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)";
+  const backgroundColor = (): string => props.backgroundColor || "transparent";
 
   const getButtonHighlight = (buttonId: string): { active: boolean; color: string | undefined } => {
     if (highlighted().includes(buttonId)) {
-      return { active: true, color: highlightColor() }
+      return { active: true, color: highlightColor() };
     }
     for (const group of groups()) {
       if (group.buttons.includes(buttonId)) {
-        return { active: true, color: group.color }
+        return { active: true, color: group.color };
       }
     }
-    return { active: false, color: undefined }
-  }
+    return { active: false, color: undefined };
+  };
 
   return (
     <div class="gamepad-wrapper">
@@ -83,10 +83,10 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
 
           <For each={shoulderButtons}>
             {(btn) => {
-              const highlight = getButtonHighlight(btn.id)
-              const w = btn.w || 0
-              const h = btn.h || 0
-              const color = highlight.active ? highlight.color || highlightColor() : "#1e1e30"
+              const highlight = getButtonHighlight(btn.id);
+              const w = btn.w || 0;
+              const h = btn.h || 0;
+              const color = highlight.active ? highlight.color || highlightColor() : "#1e1e30";
               return (
                 <g class={`gp-btn shoulder ${highlight.active ? "active" : ""}`}>
                   <rect
@@ -112,7 +112,7 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
                     </text>
                   ) : null}
                 </g>
-              )
+              );
             }}
           </For>
 
@@ -132,8 +132,8 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
 
           <For each={mainButtons}>
             {(btn) => {
-              const highlight = getButtonHighlight(btn.id)
-              const color = highlight.active ? highlight.color || highlightColor() : "#1e1e30"
+              const highlight = getButtonHighlight(btn.id);
+              const color = highlight.active ? highlight.color || highlightColor() : "#1e1e30";
 
               if (btn.r) {
                 return (
@@ -159,11 +159,11 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
                       </text>
                     ) : null}
                   </g>
-                )
+                );
               }
 
-              const w = btn.w || 0
-              const h = btn.h || 0
+              const w = btn.w || 0;
+              const h = btn.h || 0;
               return (
                 <g class={`gp-btn ${highlight.active ? "active" : ""}`}>
                   <rect
@@ -189,7 +189,7 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
                     </text>
                   ) : null}
                 </g>
-              )
+              );
             }}
           </For>
         </svg>
@@ -258,7 +258,7 @@ const RLGamepad: Component<RLGamepadProps> = (allProps) => {
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-export { RLGamepad }
+export { RLGamepad };

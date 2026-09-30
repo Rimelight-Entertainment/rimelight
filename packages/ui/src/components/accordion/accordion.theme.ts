@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const accordionTheme = defineTheme("accordion", {
   slots: ["root", "item", "trigger", "content", "body", "leadingIcon", "trailingIcon", "label"],
@@ -22,4 +22,4 @@ export const accordionTheme = defineTheme("accordion", {
     }
   },
   defaultVariants: {}
-})
+});

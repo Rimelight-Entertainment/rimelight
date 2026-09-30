@@ -1,7 +1,7 @@
-import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import type { BaseBlock } from "../core/types/blocks"
-import type { Localized, PageType } from "../core/types/pages"
-import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates"
+import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import type { BaseBlock } from "../core/types/blocks";
+import type { Localized, PageType } from "../core/types/pages";
+import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
 
 export const pageTemplates = pgTable("page_templates", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -24,4 +24,4 @@ export const pageTemplates = pgTable("page_templates", {
   initialBlocks: jsonb("initial_blocks").$type<BaseBlock[]>().default([]).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date())
-})
+});

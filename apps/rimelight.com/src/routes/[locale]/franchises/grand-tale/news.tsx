@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import GrandTaleLayout from "#layouts/GrandTaleLayout"
+import { type Component } from "solid-js";
+import GrandTaleLayout from "#layouts/GrandTaleLayout";
 
 export const GrandTaleNewsPage: Component = () => {
   return (
@@ -14,7 +14,7 @@ export const GrandTaleNewsPage: Component = () => {
         <p class="text-neutral-400">Read development updates, patch notes, and community events.</p>
       </div>
     </GrandTaleLayout>
-  )
-}
+  );
+};
 
-export default GrandTaleNewsPage
+export default GrandTaleNewsPage;

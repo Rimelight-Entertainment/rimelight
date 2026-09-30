@@ -1,7 +1,7 @@
-import { For, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
+import { For, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 
 const users = [
   {
@@ -36,7 +36,7 @@ const users = [
     status: "invited",
     lastActive: "never"
   }
-]
+];
 
 export const UsersPage: Component<{ basePath?: string | undefined }> = (props) => {
   return (
@@ -77,7 +77,7 @@ export const UsersPage: Component<{ basePath?: string | undefined }> = (props) =
         </For>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default UsersPage
+export default UsersPage;

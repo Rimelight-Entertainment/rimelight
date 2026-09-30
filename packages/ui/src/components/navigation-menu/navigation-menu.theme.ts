@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const navigationMenuTheme = defineTheme("navigation-menu", {
   slots: ["root", "list", "item", "link", "trigger", "content", "viewport", "viewportWrapper"],
@@ -34,4 +34,4 @@ export const navigationMenuTheme = defineTheme("navigation-menu", {
   defaultVariants: {
     orientation: "horizontal"
   }
-})
+});

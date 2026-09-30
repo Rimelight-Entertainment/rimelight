@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const selectTheme = defineTheme("select", {
   slots: ["root", "select", "icon", "leading", "label"],
@@ -40,4 +40,4 @@ export const selectTheme = defineTheme("select", {
     variant: "default",
     size: "md"
   }
-})
+});

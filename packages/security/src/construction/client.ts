@@ -1,8 +1,8 @@
 export interface SubmitConstructionPassphraseOptions {
-  passphrase: string
-  rememberMe?: boolean
-  endpoint?: string
-  redirect?: string
+  passphrase: string;
+  rememberMe?: boolean;
+  endpoint?: string;
+  redirect?: string;
 }
 
 export async function submitConstructionPassphrase(
@@ -13,7 +13,7 @@ export async function submitConstructionPassphrase(
     rememberMe = true,
     endpoint = "/api/construction-guest",
     redirect = "/"
-  } = options
+  } = options;
 
   try {
     const response = await fetch(endpoint, {
@@ -26,25 +26,25 @@ export async function submitConstructionPassphrase(
         rememberMe,
         redirect
       })
-    })
+    });
 
     const data = (await response.json().catch(() => ({}))) as {
-      success?: boolean
-      error?: string
-    }
+      success?: boolean;
+      error?: string;
+    };
 
     if (!response.ok || !data.success) {
       return {
         success: false,
         error: data.error || "Invalid passphrase"
-      }
+      };
     }
 
-    return { success: true }
+    return { success: true };
   } catch (err: any) {
     return {
       success: false,
       error: err?.message || "An unexpected error occurred."
-    }
+    };
   }
 }

@@ -7,20 +7,20 @@ import {
   Show,
   omit,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { TabItem, TabsProps } from "./tabs"
-import { tabsTheme } from "./tabs.theme"
-import { RLBadge } from "../badge/RLBadge"
-import { RLIcon } from "../icon/RLIcon"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { TabItem, TabsProps } from "./tabs";
+import { tabsTheme } from "./tabs.theme";
+import { RLBadge } from "../badge/RLBadge";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLTabsProps<T extends TabItem = TabItem> extends TabsProps<T> {
-  children?: JSX.Element
-  onChange?: (value: string) => void
+  children?: JSX.Element;
+  onChange?: (value: string) => void;
 }
 
 const RLTabs: Component<RLTabsProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "items",
@@ -40,51 +40,51 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     "class",
     "ui",
     "children"
-  )
+  );
 
-  const items = () => props.items ?? []
-  const valueKey = () => props.valueKey ?? "value"
-  const labelKey = () => props.labelKey ?? "label"
-  const orientation = () => props.orientation ?? "horizontal"
-  const size = () => props.size ?? "md"
-  const showContent = () => props.content ?? true
+  const items = () => props.items ?? [];
+  const valueKey = () => props.valueKey ?? "value";
+  const labelKey = () => props.labelKey ?? "label";
+  const orientation = () => props.orientation ?? "horizontal";
+  const size = () => props.size ?? "md";
+  const showContent = () => props.content ?? true;
 
   const normalizedVariant = createMemo(() => {
-    const v = props.variant ?? "pill"
-    if (v === "solid" || v === "pills") return "pill"
-    if (v === "link") return "underline"
-    return v
-  })
+    const v = props.variant ?? "pill";
+    if (v === "solid" || v === "pills") return "pill";
+    if (v === "link") return "underline";
+    return v;
+  });
 
   const initialVal = createMemo(() => {
-    if (props.value !== undefined) return props.value
-    if (props.defaultValue !== undefined) return props.defaultValue
-    const list = items()
+    if (props.value !== undefined) return props.value;
+    if (props.defaultValue !== undefined) return props.defaultValue;
+    const list = items();
     if (list.length > 0) {
-      return (list[0]?.[valueKey()] ?? list[0]?.value ?? "0") as string
+      return (list[0]?.[valueKey()] ?? list[0]?.value ?? "0") as string;
     }
-    return ""
-  })
+    return "";
+  });
 
-  const [internalValue, setInternalValue] = createSignal(initialVal())
+  const [internalValue, setInternalValue] = createSignal(initialVal());
 
   createEffect(
     () => props.value,
     (val) => {
       if (val !== undefined) {
-        setInternalValue(val)
+        setInternalValue(val);
       }
     }
-  )
+  );
 
-  const currentValue = () => (props.value !== undefined ? props.value : internalValue())
+  const currentValue = () => (props.value !== undefined ? props.value : internalValue());
 
   const handleSelect = (val: string) => {
     if (props.value === undefined) {
-      setInternalValue(val)
+      setInternalValue(val);
     }
-    props.onChange?.(val)
-  }
+    props.onChange?.(val);
+  };
 
   const resolvedClasses = createMemo(() =>
     tabsTheme({
@@ -95,68 +95,68 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  let listRef: HTMLDivElement | null = null
-  let indicatorRef: HTMLDivElement | null = null
-  const [popoverOpen, setPopoverOpen] = createSignal(false)
+  let listRef: HTMLDivElement | null = null;
+  let indicatorRef: HTMLDivElement | null = null;
+  const [popoverOpen, setPopoverOpen] = createSignal(false);
 
   const updateIndicator = () => {
-    const list = listRef
-    const indicator = indicatorRef
-    if (!list || !indicator) return
-    const activeEl = list.querySelector(`[role=tab][data-state=active]`) as HTMLElement | null
+    const list = listRef;
+    const indicator = indicatorRef;
+    if (!list || !indicator) return;
+    const activeEl = list.querySelector(`[role=tab][data-state=active]`) as HTMLElement | null;
     if (!activeEl || getComputedStyle(activeEl).display === "none") {
-      indicator.style.display = "none"
-      return
+      indicator.style.display = "none";
+      return;
     }
 
-    const listRect = list.getBoundingClientRect()
-    const triggerRect = activeEl.getBoundingClientRect()
+    const listRect = list.getBoundingClientRect();
+    const triggerRect = activeEl.getBoundingClientRect();
 
     if (triggerRect.width === 0 && triggerRect.height === 0) {
-      indicator.style.display = "none"
-      return
+      indicator.style.display = "none";
+      return;
     }
 
-    indicator.style.display = "block"
-    const isVert = orientation() === "vertical"
+    indicator.style.display = "block";
+    const isVert = orientation() === "vertical";
 
     if (isVert) {
-      const top = triggerRect.top - listRect.top + list.scrollTop
-      const height = triggerRect.height
-      indicator.style.transform = `translateY(${top}px)`
-      indicator.style.height = `${height}px`
+      const top = triggerRect.top - listRect.top + list.scrollTop;
+      const height = triggerRect.height;
+      indicator.style.transform = `translateY(${top}px)`;
+      indicator.style.height = `${height}px`;
     } else {
-      const left = triggerRect.left - listRect.left + list.scrollLeft
-      const width = triggerRect.width
-      indicator.style.transform = `translateX(${left}px)`
-      indicator.style.width = `${width}px`
+      const left = triggerRect.left - listRect.left + list.scrollLeft;
+      const width = triggerRect.width;
+      indicator.style.transform = `translateX(${left}px)`;
+      indicator.style.width = `${width}px`;
     }
-  }
+  };
 
   onSettled(() => {
-    updateIndicator()
+    updateIndicator();
     if (typeof ResizeObserver !== "undefined" && listRef) {
-      const ro = new ResizeObserver(() => updateIndicator())
-      ro.observe(listRef)
-      return () => ro.disconnect()
+      const ro = new ResizeObserver(() => updateIndicator());
+      ro.observe(listRef);
+      return () => ro.disconnect();
     }
-    return undefined
-  })
+    return undefined;
+  });
 
   createEffect(
     () => currentValue(),
     () => {
-      requestAnimationFrame(() => updateIndicator())
+      requestAnimationFrame(() => updateIndicator());
     }
-  )
+  );
 
   const effectiveMax = () =>
-    props.maxTabs !== undefined ? Math.max(1, props.maxTabs) : items().length
-  const renderedListItems = () => items().slice(0, effectiveMax())
-  const overflowItems = () => items().slice(effectiveMax())
-  const needsOverflow = () => items().length > 1 && orientation() === "horizontal"
+    props.maxTabs !== undefined ? Math.max(1, props.maxTabs) : items().length;
+  const renderedListItems = () => items().slice(0, effectiveMax());
+  const overflowItems = () => items().slice(effectiveMax());
+  const needsOverflow = () => items().length > 1 && orientation() === "horizontal";
 
   return (
     <div
@@ -182,9 +182,9 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
 
         <For each={renderedListItems()}>
           {(item, index) => {
-            const itemVal = () => (item[valueKey()] ?? item.value ?? String(index())) as string
-            const itemLabel = () => item[labelKey()] ?? item.label
-            const active = () => itemVal() === currentValue()
+            const itemVal = () => (item[valueKey()] ?? item.value ?? String(index())) as string;
+            const itemLabel = () => item[labelKey()] ?? item.label;
+            const active = () => itemVal() === currentValue();
 
             return (
               <button
@@ -221,7 +221,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
                   </RLBadge>
                 )}
               </button>
-            )
+            );
           }}
         </For>
 
@@ -246,9 +246,11 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
                 <For each={overflowItems()}>
                   {(item, index) => {
                     const itemVal = () =>
-                      (item[valueKey()] ?? item.value ?? String(effectiveMax() + index())) as string
-                    const itemLabel = () => item[labelKey()] ?? item.label
-                    const active = () => itemVal() === currentValue()
+                      (item[valueKey()] ??
+                        item.value ??
+                        String(effectiveMax() + index())) as string;
+                    const itemLabel = () => item[labelKey()] ?? item.label;
+                    const active = () => itemVal() === currentValue();
 
                     return (
                       <button
@@ -261,7 +263,7 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
                         <span class="truncate">{itemLabel()}</span>
                         {active() && <RLIcon name="check" class="size-4 opacity-100" />}
                       </button>
-                    )
+                    );
                   }}
                 </For>
               </div>
@@ -277,8 +279,8 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
           ) : (
             <For each={items()}>
               {(item, index) => {
-                const itemVal = () => (item[valueKey()] ?? item.value ?? String(index())) as string
-                const active = () => itemVal() === currentValue()
+                const itemVal = () => (item[valueKey()] ?? item.value ?? String(index())) as string;
+                const active = () => itemVal() === currentValue();
 
                 return (
                   <Show when={props.unmountOnHide === false || active()}>
@@ -292,14 +294,14 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
                       {item.content}
                     </div>
                   </Show>
-                )
+                );
               }}
             </For>
           )}
         </div>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLTabs }
+export { RLTabs };

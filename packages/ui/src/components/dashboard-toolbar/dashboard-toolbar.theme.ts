@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardToolbarTheme = defineTheme("dashboard-toolbar", {
   slots: ["root", "left", "right"],
@@ -9,4 +9,4 @@ export const dashboardToolbarTheme = defineTheme("dashboard-toolbar", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

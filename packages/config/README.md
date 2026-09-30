@@ -35,13 +35,13 @@ For Solid Start projects (adds Solid JSX support):
 ### App / Standard Config
 
 ```typescript
-import { defineConfig } from "vite-plus"
-import { rimelightConfig } from "@rimelight/config/vite-plus/base"
+import { defineConfig } from "vite-plus";
+import { rimelightConfig } from "@rimelight/config/vite-plus/base";
 
 export default defineConfig({
   ...rimelightConfig()
   // your custom config
-})
+});
 ```
 
 ### Package Config
@@ -49,8 +49,8 @@ export default defineConfig({
 For library / workspace packages, spread `rimelightConfig()` and declare the pack entry points yourself. `vp pack` accepts globs:
 
 ```typescript
-import { defineConfig } from "vite-plus"
-import { rimelightConfig } from "@rimelight/config/vite-plus/base"
+import { defineConfig } from "vite-plus";
+import { rimelightConfig } from "@rimelight/config/vite-plus/base";
 
 export default defineConfig({
   ...rimelightConfig(),
@@ -59,7 +59,7 @@ export default defineConfig({
     entry: ["src/**/*.ts"],
     dts: true
   }
-})
+});
 ```
 
 Packages that only publish a subset of `src/` can list those paths explicitly instead of using a glob.

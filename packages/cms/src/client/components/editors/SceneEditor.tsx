@@ -1,24 +1,24 @@
-import { createSignal, onSettled, onCleanup, For, Show, type Component } from "solid-js"
-import type { BaseBlock } from "../../../core/types/blocks"
-import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import { createDefaultBlock } from "../../state/history"
-import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { createSignal, onSettled, onCleanup, For, Show, type Component } from "solid-js";
+import type { BaseBlock } from "../../../core/types/blocks";
+import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable";
+import { createDefaultBlock } from "../../state/history";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface SceneEditorProps {
-  blockId?: string
-  props: Record<string, any>
-  children?: BaseBlock[] | (() => BaseBlock[])
-  sectionDepth?: number
-  onPropsChange: (newProps: Record<string, any>) => void
-  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined
-  onOpenPicker?: () => void
-  renderChildBlock?: (block: BaseBlock, depth: number) => any
+  blockId?: string;
+  props: Record<string, any>;
+  children?: BaseBlock[] | (() => BaseBlock[]);
+  sectionDepth?: number;
+  onPropsChange: (newProps: Record<string, any>) => void;
+  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined;
+  onOpenPicker?: () => void;
+  renderChildBlock?: (block: BaseBlock, depth: number) => any;
 }
 
-const SETTINGS = ["INT.", "EXT.", "INT./EXT.", "OTHER"]
+const SETTINGS = ["INT.", "EXT.", "INT./EXT.", "OTHER"];
 const TIMES_OF_DAY = [
   "MORNING",
   "DAY",
@@ -28,79 +28,79 @@ const TIMES_OF_DAY = [
   "CONTINUOUS",
   "LATER",
   "OTHER"
-]
-const TRANSITIONS = ["NONE", "CUT_TO", "FADE_TO", "DISSOLVE_TO"]
+];
+const TRANSITIONS = ["NONE", "CUT_TO", "FADE_TO", "DISSOLVE_TO"];
 
 export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
-  let childrenCanvas: HTMLDivElement | undefined
-  let sortableInstance: any = null
+  let childrenCanvas: HTMLDivElement | undefined;
+  let sortableInstance: any = null;
 
-  const [addMenuOpen, setAddMenuOpen] = createSignal(false)
+  const [addMenuOpen, setAddMenuOpen] = createSignal(false);
 
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
-      return componentProps.children() || []
+      return componentProps.children() || [];
     }
-    return componentProps.children || componentProps.props["children"] || []
-  }
+    return componentProps.children || componentProps.props["children"] || [];
+  };
 
   const slugText = () => {
-    const setting = componentProps.props["setting"] || "INT."
-    const loc = (componentProps.props["location"] || "LOCATION").toUpperCase()
-    const time = componentProps.props["timeOfDay"] || "MORNING"
-    return `${setting} ${loc} - ${time}`
-  }
+    const setting = componentProps.props["setting"] || "INT.";
+    const loc = (componentProps.props["location"] || "LOCATION").toUpperCase();
+    const time = componentProps.props["timeOfDay"] || "MORNING";
+    return `${setting} ${loc} - ${time}`;
+  };
 
   const saveProps = (partial: Record<string, any>) => {
     componentProps.onPropsChange({
       ...componentProps.props,
       ...partial,
       children: childrenBlocks()
-    })
-  }
+    });
+  };
 
   onSettled(() => {
     if (childrenCanvas) {
       sortableInstance = initBlockSortable(childrenCanvas, {
         filter: ".cms-empty-placeholder, .locked",
         onReorder: (oldIdx: number, newIdx: number) => {
-          cleanAllSortableClasses()
-          const list = [...childrenBlocks()]
-          const item = list.splice(oldIdx, 1)[0]
+          cleanAllSortableClasses();
+          const list = [...childrenBlocks()];
+          const item = list.splice(oldIdx, 1)[0];
           if (item) {
-            list.splice(newIdx, 0, item)
-            componentProps.onPropsChange({ ...componentProps.props, children: list })
+            list.splice(newIdx, 0, item);
+            componentProps.onPropsChange({ ...componentProps.props, children: list });
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onAdd: (blockId: string, newIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
           if (componentProps.onRelocate && componentProps.blockId) {
-            componentProps.onRelocate(blockId, newIdx, componentProps.blockId)
+            componentProps.onRelocate(blockId, newIdx, componentProps.blockId);
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
         }
-      })
+      });
     }
 
     onCleanup(() => {
-      if (sortableInstance) sortableInstance.destroy()
-    })
-  })
+      if (sortableInstance) sortableInstance.destroy();
+    });
+  });
 
   const addChildBlock = (type: string) => {
-    const newBlock = createDefaultBlock(type)
-    const list = [...childrenBlocks(), newBlock]
-    componentProps.onPropsChange({ ...componentProps.props, children: list })
-    setAddMenuOpen(false)
-  }
+    const newBlock = createDefaultBlock(type);
+    const list = [...childrenBlocks(), newBlock];
+    componentProps.onPropsChange({ ...componentProps.props, children: list });
+    setAddMenuOpen(false);
+  };
 
   return (
     <div class="rimelight-scene-editor flex flex-col gap-3 p-3 border-l-2 border-primary/50 w-full">
@@ -235,5 +235,5 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         />
       </div>
     </div>
-  )
-}
+  );
+};

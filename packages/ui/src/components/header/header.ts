@@ -2,34 +2,34 @@ export interface HeaderProps {
   /**
    * HTML tag to render for the root element ("header", "div", "aside", etc.).
    */
-  as?: "header" | "div" | "aside" | "section" | (string & {})
+  as?: "header" | "div" | "aside" | "section" | (string & {});
   /**
    * Whether to contain the header content within a max-width container.
    */
-  contain?: boolean
+  contain?: boolean;
   /**
    * Whether the header should be sticky at the top of the viewport.
    */
-  sticky?: boolean
+  sticky?: boolean;
   /**
    * Whether the header should be fixed at the top of the viewport.
    */
-  fixed?: boolean
+  fixed?: boolean;
   /**
    * The z-index stack position of the header.
    */
-  stackIndex?: number
+  stackIndex?: number;
   /**
    * Whether to hide the header when scrolling down and show it when scrolling up.
    */
-  hideOnScroll?: boolean
+  hideOnScroll?: boolean;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

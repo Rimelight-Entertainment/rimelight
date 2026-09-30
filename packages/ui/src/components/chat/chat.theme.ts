@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const chatTheme = defineTheme("chat", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const chatTheme = defineTheme("chat", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

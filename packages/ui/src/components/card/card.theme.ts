@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const cardTheme = defineTheme("card", {
   slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],
@@ -44,4 +44,4 @@ export const cardTheme = defineTheme("card", {
     interactive: false,
     overlay: false
   }
-})
+});

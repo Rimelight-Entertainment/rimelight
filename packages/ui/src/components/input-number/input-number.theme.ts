@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const inputNumberTheme = defineTheme("input-number", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const inputNumberTheme = defineTheme("input-number", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

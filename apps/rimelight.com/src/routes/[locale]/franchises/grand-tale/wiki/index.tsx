@@ -1,9 +1,9 @@
-import { type Component, For } from "solid-js"
-import WikiLayout from "#layouts/WikiLayout"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { getRelativeLocaleUrl } from "@rimelight/i18n"
+import { type Component, For } from "solid-js";
+import WikiLayout from "#layouts/WikiLayout";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const quickNavItems = [
   {
@@ -30,7 +30,7 @@ const quickNavItems = [
     href: "/franchises/grand-tale/wiki/lore/heroes",
     icon: "i-lucide-shield-check"
   }
-]
+];
 
 const trendingArticles = [
   {
@@ -53,7 +53,7 @@ const trendingArticles = [
     category: "Strategy",
     summary: "Mastering elemental synergy to defeat raid bosses."
   }
-]
+];
 
 export const WikiIndexPage: Component = () => {
   return (
@@ -156,7 +156,7 @@ export const WikiIndexPage: Component = () => {
         </section>
       </div>
     </WikiLayout>
-  )
-}
+  );
+};
 
-export default WikiIndexPage
+export default WikiIndexPage;

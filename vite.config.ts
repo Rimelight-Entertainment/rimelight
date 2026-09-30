@@ -1,7 +1,7 @@
-import { defineConfig } from "vite-plus"
-import { rimelightConfig } from "@rimelight/config/vite-plus/base"
+import { defineConfig } from "vite-plus";
+import { rimelightConfig } from "@rimelight/config/vite-plus/base";
 
-const baseConfig = rimelightConfig()
+const baseConfig = rimelightConfig();
 
 export default defineConfig({
   ...baseConfig,
@@ -29,7 +29,9 @@ export default defineConfig({
         dependsOn: [
           "audit",
           "@rimelight/auth#check",
+          "@rimelight/cli#check",
           "@rimelight/cms#check",
+          "@rimelight/config#check",
           "@rimelight/i18n#check",
           "@rimelight/security#check",
           "@rimelight/seo#check",
@@ -41,4 +43,4 @@ export default defineConfig({
       }
     }
   }
-})
+});

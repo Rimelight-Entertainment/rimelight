@@ -1,11 +1,11 @@
-import { handleOgRequest, type OgHandlerOptions } from "./handler.js"
+import { handleOgRequest, type OgHandlerOptions } from "./handler.js";
 
 export interface HonoContext {
   req: {
-    raw: Request
-    [key: string]: unknown
-  }
-  [key: string]: unknown
+    raw: Request;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
 }
 
 /**
@@ -19,6 +19,6 @@ export interface HonoContext {
  */
 export function createHonoOgHandler(options: OgHandlerOptions = {}) {
   return async function handleOg(c: HonoContext): Promise<Response> {
-    return handleOgRequest(c.req.raw, options)
-  }
+    return handleOgRequest(c.req.raw, options);
+  };
 }

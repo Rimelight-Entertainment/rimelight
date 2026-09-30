@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const modalTheme = defineTheme("modal", {
   slots: [
@@ -43,4 +43,4 @@ export const modalTheme = defineTheme("modal", {
   defaultVariants: {
     size: "md"
   }
-})
+});

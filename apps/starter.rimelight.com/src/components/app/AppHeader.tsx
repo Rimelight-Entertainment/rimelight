@@ -1,4 +1,4 @@
-import { type Component, For, Show, onSettled } from "solid-js"
+import { type Component, For, Show, onSettled } from "solid-js";
 import {
   RLHeader,
   RLLogo,
@@ -12,28 +12,28 @@ import {
   RLDropdownMenu,
   type RLButtonProps,
   type RLLinkGroupProps
-} from "@rimelight/ui"
-import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
-import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+} from "@rimelight/ui";
+import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts";
+import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export interface AppHeaderProps {
-  session?: any
-  stackIndex?: number
+  session?: any;
+  stackIndex?: number;
 }
 
 export const AppHeader: Component<AppHeaderProps> = (props) => {
   onSettled(() => {
-    const btn = document.getElementById("rla-shortcuts-btn")
+    const btn = document.getElementById("rla-shortcuts-btn");
     const handler = () => {
-      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"))
-      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"))
-    }
-    btn?.addEventListener("click", handler)
+      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"));
+      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"));
+    };
+    btn?.addEventListener("click", handler);
     return () => {
-      btn?.removeEventListener("click", handler)
-    }
-  })
+      btn?.removeEventListener("click", handler);
+    };
+  });
 
   const foundationLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_foundations_label"),
@@ -52,7 +52,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/docs/typography")
       }
     ]
-  })
+  });
 
   const componentsLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_components_label"),
@@ -71,7 +71,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getRelativeLocaleUrl("/docs/integrations")
       }
     ]
-  })
+  });
 
   const resourcesLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_right_resources_label"),
@@ -88,7 +88,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         leadingIcon: "i-logos-github-icon size-4"
       }
     ]
-  })
+  });
 
   const leftLinks = (): NavigationMenuItem[] => [
     {
@@ -134,7 +134,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       label: "Contact",
       to: getRelativeLocaleUrl("/contact")
     }
-  ]
+  ];
 
   const actions = (): RLButtonProps[] => [
     {
@@ -149,7 +149,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       href: getRelativeLocaleUrl("/auth/sign-in"),
       label: t("app_header.actions_sign-in")
     }
-  ]
+  ];
 
   const userDropdownItems = (): DropdownMenuItem[] =>
     props.session
@@ -186,7 +186,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             color: "error"
           }
         ]
-      : []
+      : [];
 
   return (
     <RLHeader
@@ -407,7 +407,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         </div>
       }
     />
-  )
-}
+  );
+};
 
-export default AppHeader
+export default AppHeader;

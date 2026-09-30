@@ -1,29 +1,29 @@
-import { createSignal, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RimelightTemplateEditor } from "../../client/components/RimelightTemplateEditor.tsx"
+import { createSignal, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RimelightTemplateEditor } from "../../client/components/RimelightTemplateEditor.tsx";
 
 export interface TemplatesNewPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  onCreated?: ((id: string) => void) | undefined
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  onCreated?: ((id: string) => void) | undefined;
 }
 
 export const TemplatesNewPage: Component<TemplatesNewPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
-  const [slug, setSlug] = createSignal("")
-  const [title, setTitle] = createSignal("")
-  const [description, setDescription] = createSignal("")
-  const [pageType, setPageType] = createSignal("blog")
-  const [blocks, setBlocks] = createSignal<any[]>([])
-  const [saving, setSaving] = createSignal(false)
-  const [error, setError] = createSignal<string | null>(null)
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
+  const [slug, setSlug] = createSignal("");
+  const [title, setTitle] = createSignal("");
+  const [description, setDescription] = createSignal("");
+  const [pageType, setPageType] = createSignal("blog");
+  const [blocks, setBlocks] = createSignal<any[]>([]);
+  const [saving, setSaving] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
 
   const submit = async (e: Event) => {
-    e.preventDefault()
-    setSaving(true)
-    setError(null)
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
     try {
       const res = await fetch(`${apiBase()}/templates`, {
         method: "POST",
@@ -35,19 +35,19 @@ export const TemplatesNewPage: Component<TemplatesNewPageProps> = (props) => {
           pageType: pageType(),
           initialBlocks: blocks()
         })
-      })
-      if (!res.ok) throw new Error(`Create failed (${res.status})`)
-      const data = (await res.json()) as any
-      const id = data.template?.[0]?.id ?? data.template?.id
-      if (props.onCreated && id) props.onCreated(id)
+      });
+      if (!res.ok) throw new Error(`Create failed (${res.status})`);
+      const data = (await res.json()) as any;
+      const id = data.template?.[0]?.id ?? data.template?.id;
+      if (props.onCreated && id) props.onCreated(id);
       else if (id && typeof window !== "undefined")
-        window.location.href = `${base()}/templates/${id}/edit`
+        window.location.href = `${base()}/templates/${id}/edit`;
     } catch (e: any) {
-      setError(e?.message ?? "Failed to create template")
+      setError(e?.message ?? "Failed to create template");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <CMSDashboardLayout
@@ -102,7 +102,7 @@ export const TemplatesNewPage: Component<TemplatesNewPageProps> = (props) => {
         </div>
       </form>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default TemplatesNewPage
+export default TemplatesNewPage;

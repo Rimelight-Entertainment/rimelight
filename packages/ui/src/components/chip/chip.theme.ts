@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const chipTheme = defineTheme("chip", {
   slots: ["root", "base"],
@@ -11,11 +11,11 @@ export const chipTheme = defineTheme("chip", {
     size: {
       "3xs": { base: "size-1.5" },
       "2xs": { base: "size-2" },
-      "xs": { base: "size-2" },
-      "sm": { base: "size-2.5" },
-      "md": { base: "size-3" },
-      "lg": { base: "size-3" },
-      "xl": { base: "size-3.5" },
+      xs: { base: "size-2" },
+      sm: { base: "size-2.5" },
+      md: { base: "size-3" },
+      lg: { base: "size-3" },
+      xl: { base: "size-3.5" },
       "2xl": { base: "size-4" },
       "3xl": { base: "size-4" }
     },
@@ -64,4 +64,4 @@ export const chipTheme = defineTheme("chip", {
     position: "top-right",
     inset: false
   }
-})
+});

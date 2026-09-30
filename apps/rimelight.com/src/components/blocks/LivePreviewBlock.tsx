@@ -1,18 +1,18 @@
-import type { Component } from "solid-js"
-import type { BaseBlock } from "@rimelight/cms"
+import type { Component } from "solid-js";
+import type { BaseBlock } from "@rimelight/cms";
 
 export interface LivePreviewBlockProps {
-  block: BaseBlock
-  locale?: string
+  block: BaseBlock;
+  locale?: string;
 }
 
 export const LivePreviewBlock: Component<LivePreviewBlockProps> = (props) => {
-  const p = () => (props.block.props || {}) as any
-  const componentCode = () => p().componentCode || ""
-  const framework = () => p().framework || "solid"
-  const height = () => p().height || "300px"
-  const width = () => p().width || "100%"
-  const editable = () => Boolean(p().editable)
+  const p = () => (props.block.props || {}) as any;
+  const componentCode = () => p().componentCode || "";
+  const framework = () => p().framework || "solid";
+  const height = () => p().height || "300px";
+  const width = () => p().width || "100%";
+  const editable = () => Boolean(p().editable);
 
   return (
     <div
@@ -40,7 +40,7 @@ export const LivePreviewBlock: Component<LivePreviewBlockProps> = (props) => {
         </pre>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LivePreviewBlock
+export default LivePreviewBlock;

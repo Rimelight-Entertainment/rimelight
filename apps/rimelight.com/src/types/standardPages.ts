@@ -1,4 +1,4 @@
-import { definePageDefinition } from "./pages"
+import { definePageDefinition } from "./pages";
 
 export const DOCUMENT_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.document",
@@ -17,7 +17,7 @@ export const DOCUMENT_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});
 
 export const BLOG_POST_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.blogPost",
@@ -36,4 +36,4 @@ export const BLOG_POST_DEFINITION = definePageDefinition({
       }
     }
   }
-})
+});

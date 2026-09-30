@@ -1,4 +1,4 @@
-import { bindings, defineConfig, exports, triggers, type InferEnv } from "cf/config"
+import { bindings, defineConfig, exports, triggers, type InferEnv } from "cf/config";
 
 const config = defineConfig({
   worker: {
@@ -29,11 +29,11 @@ const config = defineConfig({
       ChatRoom: exports.durableObject({ storage: "sqlite" })
     },
     env: {
-      "CONSTRUCTION_MODE": bindings.text("true"),
-      "EMAIL_DOMAIN": bindings.text("rimelight.com"),
-      "CONTACT_OWNER_EMAIL": bindings.text("owner@rimelight.com"),
-      "CONSTRUCTION_PASSPHRASE": bindings.secret(),
-      "DB": bindings.d1({
+      CONSTRUCTION_MODE: bindings.text("true"),
+      EMAIL_DOMAIN: bindings.text("rimelight.com"),
+      CONTACT_OWNER_EMAIL: bindings.text("owner@rimelight.com"),
+      CONSTRUCTION_PASSPHRASE: bindings.secret(),
+      DB: bindings.d1({
         id: "a6610294-e214-4d35-b841-174469da54d2",
         dev: {
           remote: true
@@ -45,33 +45,33 @@ const config = defineConfig({
           remote: true
         }
       }),
-      "BLOB": bindings.r2({
+      BLOB: bindings.r2({
         name: "starter-dot-rimelight-dot-com",
         dev: {
           remote: true
         }
       }),
-      "EMAIL": bindings.sendEmail({
+      EMAIL: bindings.sendEmail({
         dev: {
           remote: true
         }
       }),
-      "ChatRoom": bindings.durableObject({
+      ChatRoom: bindings.durableObject({
         worker: "starter-dot-rimelight-dot-com",
         exportName: "ChatRoom"
       }),
-      "MY_RATE_LIMITER": bindings.rateLimit({
+      MY_RATE_LIMITER: bindings.rateLimit({
         namespace: "1001",
         simple: {
           limit: 100,
           period: 60
         }
       }),
-      "ASSETS": bindings.assets(),
-      "IMAGES": bindings.images()
+      ASSETS: bindings.assets(),
+      IMAGES: bindings.images()
     }
   }
-})
+});
 
-export type Env = InferEnv<typeof config>
-export default config
+export type Env = InferEnv<typeof config>;
+export default config;

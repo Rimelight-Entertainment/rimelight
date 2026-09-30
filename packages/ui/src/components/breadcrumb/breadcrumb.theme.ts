@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const breadcrumbTheme = defineTheme("breadcrumb", {
   slots: ["root", "list", "item", "link", "separator", "page"],
@@ -10,4 +10,4 @@ export const breadcrumbTheme = defineTheme("breadcrumb", {
     separator: "flex size-3.5 items-center justify-center [&_svg]:size-3.5 opacity-60",
     page: "font-normal text-highlighted"
   }
-})
+});

@@ -1,24 +1,24 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { StepsProps } from "./steps"
-import { stepsTheme } from "./steps.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { StepsProps } from "./steps";
+import { stepsTheme } from "./steps.theme";
 
 export interface RLStepsProps extends StepsProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLSteps: Component<RLStepsProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "size", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "size", "ui", "class", "children");
 
-  const size = () => props.size || "md"
+  const size = () => props.size || "md";
 
   const resolvedClasses = createMemo(() =>
     stepsTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={`${resolvedClasses().root} rl-steps`} data-slot="root" data-size={size()} {...rest}>
@@ -104,7 +104,7 @@ const RLSteps: Component<RLStepsProps> = (allProps) => {
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-export { RLSteps }
+export { RLSteps };

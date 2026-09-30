@@ -1,21 +1,21 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { PostProps } from "./post"
-import { postTheme } from "./post.theme"
-import { RLBadge } from "../badge/RLBadge"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { PostProps } from "./post";
+import { postTheme } from "./post.theme";
+import { RLBadge } from "../badge/RLBadge";
 
 export interface RLPostProps extends PostProps {
-  children?: JSX.Element
-  imageSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  badgeSlot?: JSX.Element
-  dateSlot?: JSX.Element
-  footerSlot?: JSX.Element
+  children?: JSX.Element;
+  imageSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  badgeSlot?: JSX.Element;
+  dateSlot?: JSX.Element;
+  footerSlot?: JSX.Element;
 }
 
 const RLPost: Component<RLPostProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "title",
@@ -36,7 +36,7 @@ const RLPost: Component<RLPostProps> = (allProps) => {
     "badgeSlot",
     "dateSlot",
     "footerSlot"
-  )
+  );
 
   const classes = createMemo(() =>
     postTheme({
@@ -45,18 +45,18 @@ const RLPost: Component<RLPostProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const formattedDate = props.date
     ? props.date instanceof Date
       ? props.date.toLocaleDateString()
       : props.date
-    : null
+    : null;
 
   const imageSrc = () =>
     typeof props.image === "string"
       ? props.image
-      : (props.image as { src?: string } | undefined)?.src
+      : (props.image as { src?: string } | undefined)?.src;
 
   const body = () => (
     <>
@@ -121,7 +121,7 @@ const RLPost: Component<RLPostProps> = (allProps) => {
         </div>
       )}
     </>
-  )
+  );
 
   return props.to ? (
     <a href={props.to} class={classes()["root"]} data-slot="root" {...rest}>
@@ -131,7 +131,7 @@ const RLPost: Component<RLPostProps> = (allProps) => {
     <div class={classes()["root"]} data-slot="root" {...rest}>
       {body()}
     </div>
-  )
-}
+  );
+};
 
-export { RLPost }
+export { RLPost };

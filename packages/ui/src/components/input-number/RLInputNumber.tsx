@@ -1,33 +1,33 @@
-import { createMemo, createSignal, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { InputNumberProps } from "./input-number"
-import { inputNumberTheme } from "./input-number.theme"
-import { inputTheme } from "../input/input.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, createSignal, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { InputNumberProps } from "./input-number";
+import { inputNumberTheme } from "./input-number.theme";
+import { inputTheme } from "../input/input.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLInputNumberProps extends InputNumberProps {
-  children?: JSX.Element
-  value?: number
-  defaultValue?: number
-  min?: number
-  max?: number
-  step?: number
-  name?: string
-  placeholder?: string
-  disabled?: boolean
-  readonly?: boolean
-  required?: boolean
-  size?: "sm" | "md" | "lg"
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void
-  onValueChange?: (value: number) => void
+  children?: JSX.Element;
+  value?: number;
+  defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  name?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  readonly?: boolean;
+  required?: boolean;
+  size?: "sm" | "md" | "lg";
+  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+  onValueChange?: (value: number) => void;
 }
 
 const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "children",
@@ -50,14 +50,14 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
     "onFocus",
     "onKeyDown",
     "onValueChange"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     inputNumberTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const inputClasses = createMemo(() =>
     inputTheme({
@@ -66,69 +66,69 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
       error: false,
       ui: props.ui
     })
-  )
+  );
 
   const clamp = (value: number) =>
     Math.min(
       props.max ?? Number.POSITIVE_INFINITY,
       Math.max(props.min ?? Number.NEGATIVE_INFINITY, value)
-    )
+    );
 
-  const [internalValue, setInternalValue] = createSignal<number | undefined>(props.defaultValue)
-  const boundValue = () => (props.value !== undefined ? props.value : internalValue())
+  const [internalValue, setInternalValue] = createSignal<number | undefined>(props.defaultValue);
+  const boundValue = () => (props.value !== undefined ? props.value : internalValue());
 
-  let inputRef: HTMLInputElement | undefined
+  let inputRef: HTMLInputElement | undefined;
 
   const updateValue = (next: number) => {
-    const clamped = clamp(next)
-    if (props.value === undefined) setInternalValue(clamped)
-    props.onValueChange?.(clamped)
-  }
+    const clamped = clamp(next);
+    if (props.value === undefined) setInternalValue(clamped);
+    props.onValueChange?.(clamped);
+  };
 
   const stepBy = (dir: 1 | -1) => {
-    if (props.disabled || props.readonly) return
-    const raw = inputRef ? Number(inputRef.value) : Number(boundValue())
-    const base = Number.isNaN(raw) ? Number(boundValue() || 0) : raw
-    updateValue((Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1))
+    if (props.disabled || props.readonly) return;
+    const raw = inputRef ? Number(inputRef.value) : Number(boundValue());
+    const base = Number.isNaN(raw) ? Number(boundValue() || 0) : raw;
+    updateValue((Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1));
     if (inputRef)
-      inputRef.value = String(clamp((Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1)))
-  }
+      inputRef.value = String(clamp((Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1)));
+  };
 
   const changeEvent = (el: HTMLInputElement): Event & { currentTarget: HTMLInputElement } => {
-    const ev = new Event("change", { bubbles: true })
-    Object.defineProperty(ev, "currentTarget", { value: el })
-    return ev as Event & { currentTarget: HTMLInputElement }
-  }
+    const ev = new Event("change", { bubbles: true });
+    Object.defineProperty(ev, "currentTarget", { value: el });
+    return ev as Event & { currentTarget: HTMLInputElement };
+  };
 
   const commit = () => {
-    const el = inputRef
-    if (!el) return
-    const raw = Number(el.value)
+    const el = inputRef;
+    if (!el) return;
+    const raw = Number(el.value);
     if (el.value !== "" && !Number.isNaN(raw)) {
-      const clamped = clamp(raw)
-      if (props.value === undefined) setInternalValue(clamped)
-      if (clamped !== raw) el.value = String(clamped)
-      props.onValueChange?.(clamped)
+      const clamped = clamp(raw);
+      if (props.value === undefined) setInternalValue(clamped);
+      if (clamped !== raw) el.value = String(clamped);
+      props.onValueChange?.(clamped);
     }
-    props.onChange?.(changeEvent(el))
-  }
+    props.onChange?.(changeEvent(el));
+  };
 
   const handleWheel = (e: WheelEvent) => {
-    if (props.disabled || props.readonly) return
-    e.preventDefault()
-    stepBy(e.deltaY < 0 ? 1 : -1)
-  }
+    if (props.disabled || props.readonly) return;
+    e.preventDefault();
+    stepBy(e.deltaY < 0 ? 1 : -1);
+  };
 
   const handleKeyDown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
-    props.onKeyDown?.(e)
+    props.onKeyDown?.(e);
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-      e.preventDefault()
-      stepBy(e.key === "ArrowUp" ? 1 : -1)
+      e.preventDefault();
+      stepBy(e.key === "ArrowUp" ? 1 : -1);
     } else if (e.key === "Enter") {
-      e.preventDefault()
-      commit()
+      e.preventDefault();
+      commit();
     }
-  }
+  };
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
@@ -181,7 +181,7 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
       </div>
       {props.children}
     </div>
-  )
-}
+  );
+};
 
-export { RLInputNumber }
+export { RLInputNumber };

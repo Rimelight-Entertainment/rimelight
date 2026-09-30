@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const colorFieldTheme = defineTheme("color-field", {
   slots: ["root", "input"],
@@ -13,4 +13,4 @@ export const colorFieldTheme = defineTheme("color-field", {
   defaultVariants: {
     color: "primary"
   }
-})
+});

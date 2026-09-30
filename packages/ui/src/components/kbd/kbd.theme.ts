@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const kbdTheme = defineTheme("kbd", {
   slots: ["root"],
@@ -48,4 +48,4 @@ export const kbdTheme = defineTheme("kbd", {
     color: "neutral",
     size: "md"
   }
-})
+});

@@ -1,12 +1,12 @@
-import { Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const SceneBlock: Component<BlockViewProps> = (props) => {
-  const location = () => (props.block.props?.["location"] as string) ?? "LOCATION"
-  const timeOfDay = () => (props.block.props?.["timeOfDay"] as string) ?? "DAY"
-  const setting = () => (props.block.props?.["setting"] as string) ?? "INT."
-  const transition = () => (props.block.props?.["transition"] as string) ?? "CUT TO:"
-  const description = () => (props.block.props?.["description"] as string) ?? ""
+  const location = () => (props.block.props?.["location"] as string) ?? "LOCATION";
+  const timeOfDay = () => (props.block.props?.["timeOfDay"] as string) ?? "DAY";
+  const setting = () => (props.block.props?.["setting"] as string) ?? "INT.";
+  const transition = () => (props.block.props?.["transition"] as string) ?? "CUT TO:";
+  const description = () => (props.block.props?.["description"] as string) ?? "";
 
   return (
     <div class="cms-scene-block my-6 font-mono text-sm" data-block-id={props.block.id}>
@@ -28,7 +28,7 @@ export const SceneBlock: Component<BlockViewProps> = (props) => {
 
       <div class="scene-content pl-4 space-y-3">{props.children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default SceneBlock
+export default SceneBlock;

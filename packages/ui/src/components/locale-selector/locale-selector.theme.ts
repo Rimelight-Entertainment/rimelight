@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const localeSelectorTheme = defineTheme("locale-selector", {
   slots: ["root", "wrapper", "select"],
@@ -7,4 +7,4 @@ export const localeSelectorTheme = defineTheme("locale-selector", {
     wrapper: "relative inline-block",
     select: ""
   }
-})
+});

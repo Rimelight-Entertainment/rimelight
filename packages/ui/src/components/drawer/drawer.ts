@@ -2,30 +2,30 @@ export interface DrawerProps {
   /**
    * Controlled open state.
    */
-  open?: boolean
+  open?: boolean;
   /**
    * The orientation/side where the drawer anchors.
    */
-  direction?: "bottom" | "top" | "left" | "right"
+  direction?: "bottom" | "top" | "left" | "right";
   /**
    * Main text title.
    */
-  title?: string
+  title?: string;
   /**
    * Explanation subtitle.
    */
-  description?: string
+  description?: string;
   /**
    * Trigger button content.
    */
-  triggerLabel?: string
+  triggerLabel?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

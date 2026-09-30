@@ -1,27 +1,27 @@
-import { For, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { useCmsApi } from "./_shared.tsx"
+import { For, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { useCmsApi } from "./_shared.tsx";
 
 export interface TemplatesIndexPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  initialTemplates?: any[]
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  initialTemplates?: any[];
 }
 
 export const TemplatesIndexPage: Component<TemplatesIndexPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
   const remote = useCmsApi<{ templates: any[] }>(() =>
     props.initialTemplates ? null : `${apiBase()}/templates`
-  )
-  const templates = () => props.initialTemplates ?? remote.data()?.templates ?? []
+  );
+  const templates = () => props.initialTemplates ?? remote.data()?.templates ?? [];
 
   const remove = async (id: string) => {
-    await fetch(`${apiBase()}/templates/${id}`, { method: "DELETE" })
-    await remote.refetch()
-  }
+    await fetch(`${apiBase()}/templates/${id}`, { method: "DELETE" });
+    await remote.refetch();
+  };
 
   return (
     <CMSDashboardLayout
@@ -74,7 +74,7 @@ export const TemplatesIndexPage: Component<TemplatesIndexPageProps> = (props) =>
         </For>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default TemplatesIndexPage
+export default TemplatesIndexPage;

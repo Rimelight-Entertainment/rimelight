@@ -1,4 +1,4 @@
-export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export type BlockType =
   | "SectionBlock"
@@ -19,25 +19,25 @@ export type BlockType =
   | "FileTreeBlock"
   | "ComponentShowcaseBlock"
   | "ApiDocumentationBlock"
-  | "LivePreviewBlock"
+  | "LivePreviewBlock";
 
 export interface BaseBlock {
-  id: string
-  type: BlockType
-  isTemplated?: boolean
-  props: Record<string, any>
+  id: string;
+  type: BlockType;
+  isTemplated?: boolean;
+  props: Record<string, any>;
 }
 
 export interface SectionBlockProps {
-  level: HeadingLevel
-  title: string
-  description?: string
-  mainArticleSlug?: string
-  children: Block[]
+  level: HeadingLevel;
+  title: string;
+  description?: string;
+  mainArticleSlug?: string;
+  children: Block[];
 }
 
 export interface ParagraphBlockProps {
-  text: RichTextContent
+  text: RichTextContent;
 }
 
 export type CalloutVariant =
@@ -47,134 +47,134 @@ export type CalloutVariant =
   | "error"
   | "commentary"
   | "ideation"
-  | "source"
+  | "source";
 
 export interface CalloutBlockProps {
-  variant: CalloutVariant
-  children: Block[]
-  to?: string
-  target?: string
+  variant: CalloutVariant;
+  children: Block[];
+  to?: string;
+  target?: string;
 }
 
 export interface ImageBlockProps {
-  src: string
-  alt: string
-  caption?: string
+  src: string;
+  alt: string;
+  caption?: string;
 }
 
-export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER"
-export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER"
-export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE"
+export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER";
+export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER";
+export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE";
 
 export interface ScriptBlockProps {
-  title: string
-  synopsis: string
-  characters: string[]
-  aPlot: string
-  bPlot: string
-  cPlot: string
-  stinger: string
-  children: Block[]
+  title: string;
+  synopsis: string;
+  characters: string[];
+  aPlot: string;
+  bPlot: string;
+  cPlot: string;
+  stinger: string;
+  children: Block[];
 }
 
 export interface SceneBlockProps {
-  location: string
-  timeOfDay: TimeOfDay
-  setting: Setting
-  transition: Transition
-  description: string
-  children: Block[]
+  location: string;
+  timeOfDay: TimeOfDay;
+  setting: Setting;
+  transition: Transition;
+  description: string;
+  children: Block[];
 }
 
 export interface DialogueBlockProps {
-  character: string
-  parenthetical?: string
-  line: string
+  character: string;
+  parenthetical?: string;
+  line: string;
 }
 
 export interface SectionBlock extends BaseBlock {
-  type: "SectionBlock"
-  props: SectionBlockProps
+  type: "SectionBlock";
+  props: SectionBlockProps;
 }
 
 export interface ParagraphContentBlock extends BaseBlock {
-  type: "ParagraphBlock"
-  props: ParagraphBlockProps
+  type: "ParagraphBlock";
+  props: ParagraphBlockProps;
 }
 
 export interface CalloutContentBlock extends BaseBlock {
-  type: "CalloutBlock"
-  props: CalloutBlockProps
+  type: "CalloutBlock";
+  props: CalloutBlockProps;
 }
 
 export interface ImageContentBlock extends BaseBlock {
-  type: "ImageBlock"
-  props: ImageBlockProps
+  type: "ImageBlock";
+  props: ImageBlockProps;
 }
 
 export interface ScriptContentBlock extends BaseBlock {
-  type: "ScriptBlock"
-  props: ScriptBlockProps
+  type: "ScriptBlock";
+  props: ScriptBlockProps;
 }
 
 export interface SceneContentBlock extends BaseBlock {
-  type: "SceneBlock"
-  props: SceneBlockProps
+  type: "SceneBlock";
+  props: SceneBlockProps;
 }
 
 export interface DialogueContentBlock extends BaseBlock {
-  type: "DialogueBlock"
-  props: DialogueBlockProps
+  type: "DialogueBlock";
+  props: DialogueBlockProps;
 }
 
 export interface ComponentShowcaseBlockProps {
-  componentName: string
-  componentPath: string
-  framework: "astro" | "solid"
-  defaultProps: Record<string, any>
-  propsConfig: Record<string, string[]>
-  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
+  componentName: string;
+  componentPath: string;
+  framework: "astro" | "solid";
+  defaultProps: Record<string, any>;
+  propsConfig: Record<string, string[]>;
+  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
   codeExamples: {
-    astro?: string
-    solid?: string
-  }
-  playgroundUrl?: string
+    astro?: string;
+    solid?: string;
+  };
+  playgroundUrl?: string;
 }
 
 export interface ApiDocumentationBlockProps {
-  componentName: string
+  componentName: string;
   sections: {
-    props?: boolean
-    slots?: boolean
-    emits?: boolean
-    theme?: boolean
-    changelog?: boolean
-  }
-  hide?: string[]
-  show?: string[]
+    props?: boolean;
+    slots?: boolean;
+    emits?: boolean;
+    theme?: boolean;
+    changelog?: boolean;
+  };
+  hide?: string[];
+  show?: string[];
 }
 
 export interface LivePreviewBlockProps {
-  componentCode: string
-  framework: "astro" | "solid"
-  height?: string
-  width?: string
-  editable?: boolean
+  componentCode: string;
+  framework: "astro" | "solid";
+  height?: string;
+  width?: string;
+  editable?: boolean;
 }
 
 export interface ComponentShowcaseContentBlock extends BaseBlock {
-  type: "ComponentShowcaseBlock"
-  props: ComponentShowcaseBlockProps
+  type: "ComponentShowcaseBlock";
+  props: ComponentShowcaseBlockProps;
 }
 
 export interface ApiDocumentationContentBlock extends BaseBlock {
-  type: "ApiDocumentationBlock"
-  props: ApiDocumentationBlockProps
+  type: "ApiDocumentationBlock";
+  props: ApiDocumentationBlockProps;
 }
 
 export interface LivePreviewContentBlock extends BaseBlock {
-  type: "LivePreviewBlock"
-  props: LivePreviewBlockProps
+  type: "LivePreviewBlock";
+  props: LivePreviewBlockProps;
 }
 
 export type Block =
@@ -187,39 +187,39 @@ export type Block =
   | DialogueContentBlock
   | ComponentShowcaseContentBlock
   | ApiDocumentationContentBlock
-  | LivePreviewContentBlock
+  | LivePreviewContentBlock;
 
-export type InlineContentType = "text" | "link" | "mention"
+export type InlineContentType = "text" | "link" | "mention";
 
 export interface BaseInlineContent {
-  type: InlineContentType
-  id: string
-  props: Record<string, any>
+  type: InlineContentType;
+  id: string;
+  props: Record<string, any>;
 }
 
 export interface InlineText extends BaseInlineContent {
-  type: "text"
+  type: "text";
   props: {
-    content: string
-  }
+    content: string;
+  };
 }
 
 export interface InlineLink extends BaseInlineContent {
-  type: "link"
+  type: "link";
   props: {
-    href: string
-    target?: "_blank" | "_self"
-    content: string
-  }
+    href: string;
+    target?: "_blank" | "_self";
+    content: string;
+  };
 }
 
 export interface InlineMention extends BaseInlineContent {
-  type: "mention"
+  type: "mention";
   props: {
-    pageId: string
-  }
+    pageId: string;
+  };
 }
 
-export type InlineContent = InlineText | InlineLink | InlineMention
+export type InlineContent = InlineText | InlineLink | InlineMention;
 
-export type RichTextContent = InlineContent[]
+export type RichTextContent = InlineContent[];

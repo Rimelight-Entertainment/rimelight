@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
 
 export const StudioPartnershipsPage: Component = () => {
   return (
@@ -11,7 +11,7 @@ export const StudioPartnershipsPage: Component = () => {
         </p>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default StudioPartnershipsPage
+export default StudioPartnershipsPage;

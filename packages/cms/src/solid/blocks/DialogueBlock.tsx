@@ -1,10 +1,10 @@
-import { Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const DialogueBlock: Component<BlockViewProps> = (props) => {
-  const character = () => (props.block.props?.["character"] as string) ?? "CHARACTER"
-  const parenthetical = () => props.block.props?.["parenthetical"] as string | undefined
-  const line = () => (props.block.props?.["line"] as string) ?? ""
+  const character = () => (props.block.props?.["character"] as string) ?? "CHARACTER";
+  const parenthetical = () => props.block.props?.["parenthetical"] as string | undefined;
+  const line = () => (props.block.props?.["line"] as string) ?? "";
 
   return (
     <div
@@ -21,7 +21,7 @@ export const DialogueBlock: Component<BlockViewProps> = (props) => {
         {line()}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DialogueBlock
+export default DialogueBlock;

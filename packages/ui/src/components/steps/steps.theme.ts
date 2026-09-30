@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const stepsTheme = defineTheme("steps", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const stepsTheme = defineTheme("steps", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

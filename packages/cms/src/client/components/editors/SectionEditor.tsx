@@ -1,69 +1,69 @@
-import { onSettled, onCleanup, For, type Component } from "solid-js"
-import { type BaseBlock, calculateHeadingLevel } from "../../../core/types/blocks"
-import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { onSettled, onCleanup, For, type Component } from "solid-js";
+import { type BaseBlock, calculateHeadingLevel } from "../../../core/types/blocks";
+import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface SectionEditorProps {
-  blockId?: string
-  props: Record<string, any>
-  children?: BaseBlock[] | (() => BaseBlock[])
-  sectionDepth?: number
-  onPropsChange: (newProps: Record<string, any>) => void
-  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined
-  onOpenPicker?: () => void
-  renderChildBlock?: (block: BaseBlock, depth: number) => any
+  blockId?: string;
+  props: Record<string, any>;
+  children?: BaseBlock[] | (() => BaseBlock[]);
+  sectionDepth?: number;
+  onPropsChange: (newProps: Record<string, any>) => void;
+  onRelocate?: ((id: string, newIndex: number, targetParentId?: string | null) => void) | undefined;
+  onOpenPicker?: () => void;
+  renderChildBlock?: (block: BaseBlock, depth: number) => any;
 }
 
 export const SectionEditor: Component<SectionEditorProps> = (componentProps) => {
-  let titleInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let descInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null
-  let sortableInstance: any = null
+  let titleInput: HTMLInputElement | null = null as HTMLInputElement | null;
+  let descInput: HTMLInputElement | null = null as HTMLInputElement | null;
+  let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null;
+  let sortableInstance: any = null;
 
-  const headingLevel = () => calculateHeadingLevel(componentProps.sectionDepth || 0)
+  const headingLevel = () => calculateHeadingLevel(componentProps.sectionDepth || 0);
 
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
-      return componentProps.children() || []
+      return componentProps.children() || [];
     }
-    return componentProps.children || componentProps.props["children"] || []
-  }
+    return componentProps.children || componentProps.props["children"] || [];
+  };
 
   onSettled(() => {
     if (childrenContainer) {
       sortableInstance = initBlockSortable(childrenContainer, {
         filter: ".cms-empty-placeholder, .locked",
         onReorder: (oldIdx: number, newIdx: number) => {
-          cleanAllSortableClasses()
-          const list = [...childrenBlocks()]
-          const item = list.splice(oldIdx, 1)[0]
+          cleanAllSortableClasses();
+          const list = [...childrenBlocks()];
+          const item = list.splice(oldIdx, 1)[0];
           if (item) {
-            list.splice(newIdx, 0, item)
-            componentProps.onPropsChange({ ...componentProps.props, children: list })
+            list.splice(newIdx, 0, item);
+            componentProps.onPropsChange({ ...componentProps.props, children: list });
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onAdd: (blockId: string, newIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
           if (componentProps.onRelocate && componentProps.blockId) {
-            componentProps.onRelocate(blockId, newIdx, componentProps.blockId)
+            componentProps.onRelocate(blockId, newIdx, componentProps.blockId);
           }
-          requestAnimationFrame(() => cleanAllSortableClasses())
-          setTimeout(cleanAllSortableClasses, 50)
-          setTimeout(cleanAllSortableClasses, 200)
+          requestAnimationFrame(() => cleanAllSortableClasses());
+          setTimeout(cleanAllSortableClasses, 50);
+          setTimeout(cleanAllSortableClasses, 200);
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          cleanAllSortableClasses()
+          cleanAllSortableClasses();
         }
-      })
+      });
     }
 
     onCleanup(() => {
-      if (sortableInstance) sortableInstance.destroy()
-    })
-  })
+      if (sortableInstance) sortableInstance.destroy();
+    });
+  });
 
   const saveProps = () => {
     componentProps.onPropsChange({
@@ -72,8 +72,8 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       description: descInput?.value || "",
       level: headingLevel(),
       children: childrenBlocks()
-    })
-  }
+    });
+  };
 
   return (
     <div class="w-full flex flex-col gap-2 py-0.5">
@@ -135,5 +135,5 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
         />
       </div>
     </div>
-  )
-}
+  );
+};

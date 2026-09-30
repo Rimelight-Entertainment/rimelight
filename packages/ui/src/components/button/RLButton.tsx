@@ -1,21 +1,21 @@
-import { createMemo, omit, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { ButtonProps } from "./button"
-import { buttonTheme } from "./button.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLAvatar } from "../avatar/RLAvatar"
+import { createMemo, omit, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { ButtonProps } from "./button";
+import { buttonTheme } from "./button.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLAvatar } from "../avatar/RLAvatar";
 
 export interface RLButtonProps extends ButtonProps {
-  children?: JSX.Element
-  leading?: JSX.Element
-  trailing?: JSX.Element
-  avatar?: any
-  onClick?: (e: MouseEvent) => void
-  type?: "button" | "submit" | "reset"
+  children?: JSX.Element;
+  leading?: JSX.Element;
+  trailing?: JSX.Element;
+  avatar?: any;
+  onClick?: (e: MouseEvent) => void;
+  type?: "button" | "submit" | "reset";
 }
 
 const RLButton: Component<RLButtonProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "variant",
@@ -54,26 +54,26 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
     "raw",
     "ariaLabel",
     "ariaCurrentValue"
-  )
+  );
 
-  const href = () => props.href || (props["to"] as string | undefined)
-  const isLink = () => Boolean(href())
-  const isLeading = () => !!(props.leadingIcon || props.avatar || props.leading) || !!props.loading
+  const href = () => props.href || (props["to"] as string | undefined);
+  const isLink = () => Boolean(href());
+  const isLeading = () => !!(props.leadingIcon || props.avatar || props.leading) || !!props.loading;
   const isTrailing = () =>
-    !!(props.trailingIcon || props.trailing) || (!!props.loading && !isLeading())
+    !!(props.trailingIcon || props.trailing) || (!!props.loading && !isLeading());
 
   const showLeadingIcon = () => {
-    if (props.loading) return "loaderCircle"
-    return props.leadingIcon
-  }
+    if (props.loading) return "loaderCircle";
+    return props.leadingIcon;
+  };
 
   const showTrailingIcon = () => {
-    if (props.loading) return "loaderCircle"
-    return props.trailingIcon
-  }
+    if (props.loading) return "loaderCircle";
+    return props.trailingIcon;
+  };
 
-  const leadingIconClass = () => (props.loading && isLeading() ? "animate-spin" : "")
-  const trailingIconClass = () => (props.loading && isTrailing() ? "animate-spin" : "")
+  const leadingIconClass = () => (props.loading && isLeading() ? "animate-spin" : "");
+  const trailingIconClass = () => (props.loading && isTrailing() ? "animate-spin" : "");
 
   const classes = createMemo<Record<string, string>>(() =>
     buttonTheme({
@@ -93,11 +93,11 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const renderLeading = () => {
-    if (props.leading) return props.leading
-    if (!isLeading()) return null
+    if (props.leading) return props.leading;
+    if (!isLeading()) return null;
 
     return (
       <span class={`${classes()["leadingIcon"]} ${leadingIconClass()}`} data-slot="leading-icon">
@@ -112,21 +112,21 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
           />
         ) : null}
       </span>
-    )
-  }
+    );
+  };
 
   const renderTrailing = () => {
-    if (props.trailing) return props.trailing
-    if (!isTrailing() || !showTrailingIcon()) return null
+    if (props.trailing) return props.trailing;
+    if (!isTrailing() || !showTrailingIcon()) return null;
 
     return (
       <span class={`${classes()["trailingIcon"]} ${trailingIconClass()}`} data-slot="trailing-icon">
         <RLIcon name={showTrailingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
       </span>
-    )
-  }
+    );
+  };
 
-  const Root = dynamic(() => (isLink() ? "a" : "button"))
+  const Root = dynamic(() => (isLink() ? "a" : "button"));
 
   return (
     <Root
@@ -157,7 +157,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
 
       {isTrailing() ? renderTrailing() : null}
     </Root>
-  )
-}
+  );
+};
 
-export { RLButton }
+export { RLButton };

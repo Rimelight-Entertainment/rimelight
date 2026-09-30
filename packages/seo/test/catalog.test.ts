@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vite-plus/test"
-import { buildApiCatalog } from "../src/catalog.js"
+import { describe, it, expect } from "vite-plus/test";
+import { buildApiCatalog } from "../src/catalog.js";
 
 describe("buildApiCatalog", () => {
   it("builds linkset api-catalog object", () => {
@@ -16,11 +16,11 @@ describe("buildApiCatalog", () => {
           type: "application/xml"
         }
       ]
-    })
+    });
 
-    const items = catalog["api-catalog"]
-    expect(items).toHaveLength(2)
-    expect(items[0]?.rel).toBe("self")
-    expect(items[1]?.href).toBe("/sitemap.xml")
-  })
-})
+    const items = catalog["api-catalog"];
+    expect(items).toHaveLength(2);
+    expect(items[0]?.rel).toBe("self");
+    expect(items[1]?.href).toBe("/sitemap.xml");
+  });
+});

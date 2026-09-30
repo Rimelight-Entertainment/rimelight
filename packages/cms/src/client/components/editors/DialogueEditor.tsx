@@ -1,10 +1,10 @@
-import { type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import { type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 
 export interface DialogueEditorProps {
-  props: Record<string, any>
-  onPropsChange: (newProps: Record<string, any>) => void
+  props: Record<string, any>;
+  onPropsChange: (newProps: Record<string, any>) => void;
 }
 
 export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) => {
@@ -15,8 +15,8 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
       parenthetical:
         parenthetical !== undefined ? parenthetical : componentProps.props["parenthetical"] || "",
       line: line !== undefined ? line : componentProps.props["line"] || ""
-    })
-  }
+    });
+  };
 
   return (
     <div class="rimelight-dialogue-editor flex flex-col gap-2 p-2 border-l-2 border-primary/50 w-full">
@@ -48,5 +48,5 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
         autoGrow
       />
     </div>
-  )
-}
+  );
+};

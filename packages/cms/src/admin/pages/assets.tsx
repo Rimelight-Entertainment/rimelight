@@ -1,83 +1,83 @@
-import { createSignal, For, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { useCmsApi } from "./_shared.tsx"
-import type { StorageFile } from "../../storage/index.ts"
+import { createSignal, For, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { useCmsApi } from "./_shared.tsx";
+import type { StorageFile } from "../../storage/index.ts";
 
 export interface AssetsPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  initialFiles?: StorageFile[] | undefined
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  initialFiles?: StorageFile[] | undefined;
 }
 
 function formatFileSize(bytes: number): string {
-  if (!bytes) return "0 B"
-  const units = ["B", "KB", "MB", "GB"]
-  let size = bytes
-  let unit = 0
+  if (!bytes) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  let size = bytes;
+  let unit = 0;
   while (size >= 1024 && unit < units.length - 1) {
-    size /= 1024
-    unit += 1
+    size /= 1024;
+    unit += 1;
   }
-  return `${size.toFixed(1)} ${units[unit]}`
+  return `${size.toFixed(1)} ${units[unit]}`;
 }
 
 export const AssetsPage: Component<AssetsPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
-  const mediaBase = () => `${apiBase()}/media`
-  const [search, setSearch] = createSignal("")
-  const [typeFilter, setTypeFilter] = createSignal("all")
-  const [uploading, setUploading] = createSignal(false)
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
+  const mediaBase = () => `${apiBase()}/media`;
+  const [search, setSearch] = createSignal("");
+  const [typeFilter, setTypeFilter] = createSignal("all");
+  const [uploading, setUploading] = createSignal(false);
 
   const remote = useCmsApi<{ success: boolean; data: { files: StorageFile[] } }>(() =>
     props.initialFiles ? null : mediaBase()
-  )
-  const files = () => props.initialFiles ?? remote.data()?.data.files ?? []
+  );
+  const files = () => props.initialFiles ?? remote.data()?.data.files ?? [];
 
   const filtered = () => {
-    const q = search().toLowerCase()
+    const q = search().toLowerCase();
     return files().filter((f) => {
-      if (q && !f.name.toLowerCase().includes(q) && !f.key.toLowerCase().includes(q)) return false
-      const t = typeFilter()
-      if (t === "images") return f.mimeType.startsWith("image/")
-      if (t === "videos") return f.mimeType.startsWith("video/")
-      if (t === "audio") return f.mimeType.startsWith("audio/")
+      if (q && !f.name.toLowerCase().includes(q) && !f.key.toLowerCase().includes(q)) return false;
+      const t = typeFilter();
+      if (t === "images") return f.mimeType.startsWith("image/");
+      if (t === "videos") return f.mimeType.startsWith("video/");
+      if (t === "audio") return f.mimeType.startsWith("audio/");
       if (t === "documents")
         return (
           f.mimeType.includes("pdf") ||
           f.mimeType.includes("text") ||
           f.mimeType.includes("document")
-        )
-      return true
-    })
-  }
+        );
+      return true;
+    });
+  };
 
   const upload = async (file: File) => {
-    setUploading(true)
+    setUploading(true);
     try {
-      const form = new FormData()
-      form.append("file", file)
-      await fetch(mediaBase(), { method: "POST", body: form })
-      await remote.refetch()
+      const form = new FormData();
+      form.append("file", file);
+      await fetch(mediaBase(), { method: "POST", body: form });
+      await remote.refetch();
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const remove = async (key: string) => {
-    await fetch(`${mediaBase()}?key=${encodeURIComponent(key)}`, { method: "DELETE" })
-    await remote.refetch()
-  }
+    await fetch(`${mediaBase()}?key=${encodeURIComponent(key)}`, { method: "DELETE" });
+    await remote.refetch();
+  };
 
   const copyUrl = async (url: string) => {
     try {
-      await navigator.clipboard.writeText(url)
+      await navigator.clipboard.writeText(url);
     } catch {
       /* clipboard unavailable */
     }
-  }
+  };
 
   return (
     <CMSDashboardLayout
@@ -92,8 +92,8 @@ export const AssetsPage: Component<AssetsPageProps> = (props) => {
             type="file"
             class="hidden"
             onChange={(e) => {
-              const f = e.currentTarget.files?.[0]
-              if (f) void upload(f)
+              const f = e.currentTarget.files?.[0];
+              if (f) void upload(f);
             }}
           />
         </label>
@@ -152,7 +152,7 @@ export const AssetsPage: Component<AssetsPageProps> = (props) => {
         </For>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default AssetsPage
+export default AssetsPage;

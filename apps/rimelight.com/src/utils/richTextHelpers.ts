@@ -1,4 +1,4 @@
-import type { RichTextContent, InlineText } from "#types/blocks"
+import type { RichTextContent, InlineText } from "#types/blocks";
 
 /**
  * Helper: Converts RichTextContent array into a plain string for a simple contenteditable area.
@@ -7,14 +7,14 @@ export function richTextToHtml(content: RichTextContent): string {
   return content
     .map((item) => {
       if (item.type === "text" || item.type === "link") {
-        return item.props.content
+        return item.props.content;
       }
       if (item.type === "mention") {
-        return ""
+        return "";
       }
-      return ""
+      return "";
     })
-    .join("")
+    .join("");
 }
 
 /**
@@ -23,7 +23,7 @@ export function richTextToHtml(content: RichTextContent): string {
  */
 export function parseHtmlToRichText(html: string): RichTextContent {
   if (html.trim().length === 0) {
-    return []
+    return [];
   }
 
   const newTextNode: InlineText = {
@@ -35,7 +35,7 @@ export function parseHtmlToRichText(html: string): RichTextContent {
     props: {
       content: html.trim()
     }
-  }
+  };
 
-  return [newTextNode]
+  return [newTextNode];
 }

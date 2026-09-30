@@ -1,8 +1,8 @@
-import { createMemo, createSignal, For } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx"
-import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts"
-import type { ComponentAuditDefinition } from "./types"
+import { createMemo, createSignal, For } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
+import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts";
+import type { ComponentAuditDefinition } from "./types";
 
 const BASE_ITEMS: AccordionItem[] = [
   {
@@ -29,25 +29,25 @@ const BASE_ITEMS: AccordionItem[] = [
     trailingIcon: "i-lucide-arrow-down-circle",
     content: "This item overrides the default chevron trailing icon."
   }
-]
+];
 
 export const AccordionSandbox = (): JSX.Element => {
-  const [multiple, setMultiple] = createSignal(false)
-  const [disabled, setDisabled] = createSignal(false)
-  const [useCustomIcon, setUseCustomIcon] = createSignal(false)
-  const [itemCount, setItemCount] = createSignal(4)
+  const [multiple, setMultiple] = createSignal(false);
+  const [disabled, setDisabled] = createSignal(false);
+  const [useCustomIcon, setUseCustomIcon] = createSignal(false);
+  const [itemCount, setItemCount] = createSignal(4);
 
   // Memo: signal reads must live in a tracking scope (Solid 2 strict mode
   // flags eager reads during render with STRICT_READ_UNTRACKED).
   const items = createMemo((): AccordionItem[] =>
     BASE_ITEMS.slice(0, itemCount()).map((item): AccordionItem => {
-      const res: AccordionItem = { ...item }
+      const res: AccordionItem = { ...item };
       if (useCustomIcon()) {
-        res.trailingIcon = "i-lucide-plus"
+        res.trailingIcon = "i-lucide-plus";
       }
-      return res
+      return res;
     })
-  )
+  );
 
   return (
     <>
@@ -111,8 +111,8 @@ export const AccordionSandbox = (): JSX.Element => {
 
       <RLAccordion items={items()} multiple={multiple()} disabled={disabled()} />
     </>
-  )
-}
+  );
+};
 
 export const accordionAudit: ComponentAuditDefinition = {
   id: "accordion",
@@ -317,8 +317,8 @@ export const accordionAudit: ComponentAuditDefinition = {
       description:
         "Maps to Nuxt's v-model / update:modelValue. External buttons drive the open item; clicking triggers reports through onChange.",
       render: () => {
-        const [active, setActive] = createSignal<string | undefined>("0")
-        const ids = ["0", "1", "2"]
+        const [active, setActive] = createSignal<string | undefined>("0");
+        const ids = ["0", "1", "2"];
         return (
           <>
             <div class="flex items-center gap-2 text-xs">
@@ -346,7 +346,7 @@ export const accordionAudit: ComponentAuditDefinition = {
             <RLAccordion
               value={active()}
               onChange={(v) => {
-                setActive(v as string | undefined)
+                setActive(v as string | undefined);
               }}
               items={[
                 { label: "Controlled 0", value: "0", content: "First panel." },
@@ -355,7 +355,7 @@ export const accordionAudit: ComponentAuditDefinition = {
               ]}
             />
           </>
-        )
+        );
       }
     },
     {
@@ -660,4 +660,4 @@ export const accordionAudit: ComponentAuditDefinition = {
         "Not implemented: no accordion-down/up keyframes exist in the Uno preset. Needs preset-level keyframes (permission-gated CSS work)."
     }
   ]
-}
+};

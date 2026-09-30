@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import DashboardLayout from "#layouts/DashboardLayout"
+import { type Component } from "solid-js";
+import DashboardLayout from "#layouts/DashboardLayout";
 
 export const WikiReviewPage: Component = () => {
   return (
@@ -14,7 +14,7 @@ export const WikiReviewPage: Component = () => {
         </div>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default WikiReviewPage
+export default WikiReviewPage;

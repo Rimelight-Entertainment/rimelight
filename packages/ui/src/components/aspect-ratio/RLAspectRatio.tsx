@@ -1,24 +1,24 @@
-import { createMemo, omit, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { AspectRatioProps } from "./aspect-ratio"
-import { aspectRatioTheme } from "./aspect-ratio.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { AspectRatioProps } from "./aspect-ratio";
+import { aspectRatioTheme } from "./aspect-ratio.theme";
 
 export interface RLAspectRatioProps extends AspectRatioProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "as", "ratio", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "as", "ratio", "ui", "class", "children");
 
   const safeRatio = () => {
-    const value = props.ratio ?? 1
-    return Number.isFinite(value) && value > 0 ? value : 1
-  }
+    const value = props.ratio ?? 1;
+    return Number.isFinite(value) && value > 0 ? value : 1;
+  };
 
-  const resolvedClasses = createMemo(() => aspectRatioTheme({ ui: props.ui, class: props.class }))
+  const resolvedClasses = createMemo(() => aspectRatioTheme({ ui: props.ui, class: props.class }));
 
-  const spacerHeight = () => (1 / safeRatio()) * 100
+  const spacerHeight = () => (1 / safeRatio()) * 100;
 
   const inner = () => (
     <>
@@ -32,15 +32,15 @@ const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
         {props.children}
       </div>
     </>
-  )
+  );
 
-  const Root = dynamic(() => props.as ?? "div")
+  const Root = dynamic(() => props.as ?? "div");
 
   return (
     <Root class={resolvedClasses().root} data-slot="root" data-ratio={safeRatio()} {...rest}>
       {inner()}
     </Root>
-  )
-}
+  );
+};
 
-export { RLAspectRatio }
+export { RLAspectRatio };

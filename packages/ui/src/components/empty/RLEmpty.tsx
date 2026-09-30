@@ -1,24 +1,24 @@
-import { createMemo, omit, For, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { EmptyProps } from "./empty"
-import { emptyTheme } from "./empty.theme"
-import { RLButton } from "../button/RLButton"
-import { RLAvatar } from "../avatar/RLAvatar"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, omit, For, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { EmptyProps } from "./empty";
+import { emptyTheme } from "./empty.theme";
+import { RLButton } from "../button/RLButton";
+import { RLAvatar } from "../avatar/RLAvatar";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLEmptyProps extends EmptyProps {
-  children?: JSX.Element
-  headerSlot?: JSX.Element
-  leadingSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  bodySlot?: JSX.Element
-  actionsSlot?: JSX.Element
-  footerSlot?: JSX.Element
+  children?: JSX.Element;
+  headerSlot?: JSX.Element;
+  leadingSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  bodySlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
+  footerSlot?: JSX.Element;
 }
 
 const RLEmpty: Component<RLEmptyProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "icon",
@@ -41,10 +41,10 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
     "bodySlot",
     "actionsSlot",
     "footerSlot"
-  )
+  );
 
-  const activeIcon = props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon
-  const actionList = props.actions ?? []
+  const activeIcon = props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
+  const actionList = props.actions ?? [];
 
   const classes = createMemo(() =>
     emptyTheme({
@@ -54,7 +54,7 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div class={classes()["root"]} data-slot="root" {...rest}>
@@ -105,7 +105,7 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
           ) : (
             <For each={actionList}>
               {(action) => {
-                const { icon, label, color, variant, ...actionRest } = action
+                const { icon, label, color, variant, ...actionRest } = action;
                 return (
                   <RLButton
                     size={props.size === "xs" || props.size === "sm" ? "xs" : "sm"}
@@ -116,7 +116,7 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
                   >
                     {label}
                   </RLButton>
-                )
+                );
               }}
             </For>
           )}
@@ -129,7 +129,7 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { RLEmpty }
+export { RLEmpty };

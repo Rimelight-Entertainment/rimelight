@@ -10,4 +10,4 @@ export {
   type ToastItem,
   type Toast,
   type ToastInput
-} from "@rimelight/ui/components/toast/store.ts"
+} from "@rimelight/ui/components/toast/store.ts";

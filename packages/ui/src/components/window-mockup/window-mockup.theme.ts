@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const windowMockupTheme = defineTheme("window-mockup", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const windowMockupTheme = defineTheme("window-mockup", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

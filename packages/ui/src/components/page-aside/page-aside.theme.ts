@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const pageAsideTheme = defineTheme("page-aside", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const pageAsideTheme = defineTheme("page-aside", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

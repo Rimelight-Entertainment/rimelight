@@ -1,41 +1,41 @@
-import type { Theme, ThemeColor } from "../../types"
+import type { Theme, ThemeColor } from "../../types";
 
 export interface SwitchProps {
   /**
    * Controlled checked state.
    */
-  checked?: boolean
+  checked?: boolean;
   /**
    * Disabled state.
    */
-  disabled?: boolean
+  disabled?: boolean;
   /**
    * Input element name.
    */
-  name?: string
+  name?: string;
   /**
    * Label descriptor.
    */
-  label?: string
+  label?: string;
   /**
    * Size scale.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

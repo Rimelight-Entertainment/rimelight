@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from "vite-plus/test"
-import { ratelimit } from "../src/middleware/ratelimit"
+import { describe, expect, it, vi } from "vite-plus/test";
+import { ratelimit } from "../src/middleware/ratelimit";
 
 describe("Rate Limit Middleware", () => {
   it("skips non-sensitive routes by default", async () => {
-    const middleware = ratelimit()
-    const limitMock = vi.fn().mockResolvedValue({ success: false })
+    const middleware = ratelimit();
+    const limitMock = vi.fn().mockResolvedValue({ success: false });
 
     const ctx = {
       req: {
@@ -16,21 +16,21 @@ describe("Rate Limit Middleware", () => {
           limit: limitMock
         }
       }
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     const next = async () => {
-      nextCalled = true
-    }
+      nextCalled = true;
+    };
 
-    await middleware(ctx, next)
-    expect(nextCalled).toBe(true)
-    expect(limitMock).not.toHaveBeenCalled()
-  })
+    await middleware(ctx, next);
+    expect(nextCalled).toBe(true);
+    expect(limitMock).not.toHaveBeenCalled();
+  });
 
   it("passes when rate limit check succeeds on sensitive route", async () => {
-    const middleware = ratelimit()
-    const limitMock = vi.fn().mockResolvedValue({ success: true })
+    const middleware = ratelimit();
+    const limitMock = vi.fn().mockResolvedValue({ success: true });
 
     const ctx = {
       req: {
@@ -42,27 +42,27 @@ describe("Rate Limit Middleware", () => {
           limit: limitMock
         }
       }
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     const next = async () => {
-      nextCalled = true
-    }
+      nextCalled = true;
+    };
 
-    await middleware(ctx, next)
-    expect(limitMock).toHaveBeenCalledWith({ key: "1.2.3.4" })
-    expect(nextCalled).toBe(true)
-  })
+    await middleware(ctx, next);
+    expect(limitMock).toHaveBeenCalledWith({ key: "1.2.3.4" });
+    expect(nextCalled).toBe(true);
+  });
 
   it("returns 429 when rate limit is exceeded", async () => {
-    const middleware = ratelimit()
-    const limitMock = vi.fn().mockResolvedValue({ success: false })
+    const middleware = ratelimit();
+    const limitMock = vi.fn().mockResolvedValue({ success: false });
 
     const jsonMock = vi.fn((data: any, status: number, headers: any) => ({
       data,
       status,
       headers
-    }))
+    }));
 
     const ctx = {
       req: {
@@ -75,16 +75,16 @@ describe("Rate Limit Middleware", () => {
         }
       },
       json: jsonMock
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     const next = async () => {
-      nextCalled = true
-    }
+      nextCalled = true;
+    };
 
-    await middleware(ctx, next)
-    expect(nextCalled).toBe(false)
-    expect(limitMock).toHaveBeenCalledWith({ key: "9.9.9.9" })
+    await middleware(ctx, next);
+    expect(nextCalled).toBe(false);
+    expect(limitMock).toHaveBeenCalledWith({ key: "9.9.9.9" });
     expect(jsonMock).toHaveBeenCalledWith(
       {
         error: "Too Many Requests",
@@ -92,8 +92,8 @@ describe("Rate Limit Middleware", () => {
       },
       429,
       { "Retry-After": "60" }
-    )
-  })
+    );
+  });
 
   it("supports custom routes, bindingName, retryAfter, and custom keyGenerator", async () => {
     const middleware = ratelimit({
@@ -101,14 +101,14 @@ describe("Rate Limit Middleware", () => {
       bindingName: "CUSTOM_LIMITER",
       retryAfter: 120,
       keyGenerator: (c) => c.req.header("Authorization") || "anonymous"
-    })
+    });
 
-    const limitMock = vi.fn().mockResolvedValue({ success: false })
+    const limitMock = vi.fn().mockResolvedValue({ success: false });
     const jsonMock = vi.fn((data: any, status: number, headers: any) => ({
       data,
       status,
       headers
-    }))
+    }));
 
     const ctx = {
       req: {
@@ -121,15 +121,15 @@ describe("Rate Limit Middleware", () => {
         }
       },
       json: jsonMock
-    }
+    };
 
-    await middleware(ctx, async () => {})
-    expect(limitMock).toHaveBeenCalledWith({ key: "Bearer token-123" })
-    expect(jsonMock).toHaveBeenCalledWith(expect.anything(), 429, { "Retry-After": "120" })
-  })
+    await middleware(ctx, async () => {});
+    expect(limitMock).toHaveBeenCalledWith({ key: "Bearer token-123" });
+    expect(jsonMock).toHaveBeenCalledWith(expect.anything(), 429, { "Retry-After": "120" });
+  });
 
   it("fails open during local dev when no binding is present by default", async () => {
-    const middleware = ratelimit()
+    const middleware = ratelimit();
 
     const ctx = {
       req: {
@@ -137,23 +137,23 @@ describe("Rate Limit Middleware", () => {
         header: () => "1.2.3.4"
       },
       env: {}
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     const next = async () => {
-      nextCalled = true
-    }
+      nextCalled = true;
+    };
 
-    await middleware(ctx, next)
-    expect(nextCalled).toBe(true)
-  })
+    await middleware(ctx, next);
+    expect(nextCalled).toBe(true);
+  });
 
   it("fails closed when fallback is set to block and binding is missing", async () => {
     const middleware = ratelimit({
       fallback: "block"
-    })
+    });
 
-    const jsonMock = vi.fn((data: any, status: number) => ({ data, status }))
+    const jsonMock = vi.fn((data: any, status: number) => ({ data, status }));
     const ctx = {
       req: {
         path: "/auth/sign-in",
@@ -161,15 +161,15 @@ describe("Rate Limit Middleware", () => {
       },
       env: {},
       json: jsonMock
-    }
+    };
 
-    let nextCalled = false
+    let nextCalled = false;
     const next = async () => {
-      nextCalled = true
-    }
+      nextCalled = true;
+    };
 
-    await middleware(ctx, next)
-    expect(nextCalled).toBe(false)
-    expect(jsonMock).toHaveBeenCalledWith({ error: "Rate limiter not configured" }, 500)
-  })
-})
+    await middleware(ctx, next);
+    expect(nextCalled).toBe(false);
+    expect(jsonMock).toHaveBeenCalledWith({ error: "Rate limiter not configured" }, 500);
+  });
+});

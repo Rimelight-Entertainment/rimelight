@@ -156,11 +156,11 @@ Rendered between the "controls area" and the preview area. Only shown when 2+ pr
 const templates = {
   astro: previewWrapper?.querySelector('[data-preview="astro"]')?.cloneNode(true),
   solid: previewWrapper?.querySelector('[data-preview="solid"]')?.cloneNode(true)
-}
+};
 
 function updateComponent() {
-  const activeTpl = templates[previewFramework]
-  if (!activeTpl) return
+  const activeTpl = templates[previewFramework];
+  if (!activeTpl) return;
   // ... existing variant resolution logic, but applied to the cloned activeTpl
 }
 ```

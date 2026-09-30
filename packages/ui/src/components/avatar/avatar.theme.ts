@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const avatarTheme = defineTheme("avatar", {
   slots: ["root", "image", "fallback", "icon", "badge", "wrapper", "title", "subtitle"],
@@ -23,23 +23,23 @@ export const avatarTheme = defineTheme("avatar", {
         root: "size-5 text-[10px]",
         badge: "size-2"
       },
-      "xs": {
+      xs: {
         root: "size-6 text-xs",
         badge: "size-2"
       },
-      "sm": {
+      sm: {
         root: "size-7 text-sm",
         badge: "size-2.5"
       },
-      "md": {
+      md: {
         root: "size-8 text-base",
         badge: "size-3"
       },
-      "lg": {
+      lg: {
         root: "size-9 text-lg",
         badge: "size-3"
       },
-      "xl": {
+      xl: {
         root: "size-10 text-xl",
         badge: "size-3.5"
       },
@@ -131,4 +131,4 @@ export const avatarTheme = defineTheme("avatar", {
     color: "neutral",
     badgePosition: "bottom-right"
   }
-})
+});

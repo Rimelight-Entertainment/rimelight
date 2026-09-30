@@ -1,6 +1,6 @@
-import { relations } from "drizzle-orm"
-import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { users } from "../users.ts"
+import { relations } from "drizzle-orm";
+import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { users } from "../users.ts";
 
 // --- Boards ---
 export const board = pgTable("kanban_board", {
@@ -14,9 +14,9 @@ export const board = pgTable("kanban_board", {
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
-export type Board = typeof board.$inferSelect
+export type Board = typeof board.$inferSelect;
 
 export const boardRelations = relations(board, ({ one, many }) => ({
   user: one(users, {
@@ -25,7 +25,7 @@ export const boardRelations = relations(board, ({ one, many }) => ({
   }),
   lists: many(list),
   customFields: many(customFieldDefinition)
-}))
+}));
 
 // --- Custom Fields ---
 export const customFieldDefinition = pgTable("kanban_custom_field", {
@@ -41,16 +41,16 @@ export const customFieldDefinition = pgTable("kanban_custom_field", {
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
-export type CustomFieldDefinition = typeof customFieldDefinition.$inferSelect
+export type CustomFieldDefinition = typeof customFieldDefinition.$inferSelect;
 
 export const customFieldDefinitionRelations = relations(customFieldDefinition, ({ one }) => ({
   board: one(board, {
     fields: [customFieldDefinition.boardId],
     references: [board.id]
   })
-}))
+}));
 
 // --- Lists ---
 export const list = pgTable("kanban_list", {
@@ -65,9 +65,9 @@ export const list = pgTable("kanban_list", {
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
-export type List = typeof list.$inferSelect
+export type List = typeof list.$inferSelect;
 
 export const listRelations = relations(list, ({ one, many }) => ({
   board: one(board, {
@@ -75,7 +75,7 @@ export const listRelations = relations(list, ({ one, many }) => ({
     references: [board.id]
   }),
   cards: many(card)
-}))
+}));
 
 // --- Cards ---
 export const card = pgTable("kanban_card", {
@@ -93,13 +93,13 @@ export const card = pgTable("kanban_card", {
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
-export type Card = typeof card.$inferSelect
+export type Card = typeof card.$inferSelect;
 
 export const cardRelations = relations(card, ({ one }) => ({
   list: one(list, {
     fields: [card.listId],
     references: [list.id]
   })
-}))
+}));

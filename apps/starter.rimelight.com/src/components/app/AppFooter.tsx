@@ -1,4 +1,4 @@
-import { type Component, For } from "solid-js"
+import { type Component, For } from "solid-js";
 import {
   RLFooter,
   RLLogo,
@@ -8,8 +8,8 @@ import {
   RLLocaleSelector,
   type RLButtonProps,
   type RLLinkGroupProps
-} from "@rimelight/ui"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+} from "@rimelight/ui";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const AppFooter: Component = () => {
   const footerGroups = (): RLLinkGroupProps[] => [
@@ -39,7 +39,7 @@ export const AppFooter: Component = () => {
         }
       ]
     }
-  ]
+  ];
 
   const socials = (): RLButtonProps[] => [
     {
@@ -50,12 +50,12 @@ export const AppFooter: Component = () => {
       leadingIcon: "i-logos-github-icon?mask text-white group-hover:text-primary-500",
       href: "https://github.com/Rimelight-Entertainment/rimelight"
     }
-  ]
+  ];
 
   const targetLanguages = () => [
     { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
     { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") }
-  ]
+  ];
 
   return (
     <RLFooter
@@ -94,7 +94,7 @@ export const AppFooter: Component = () => {
         </div>
       }
     />
-  )
-}
+  );
+};
 
-export default AppFooter
+export default AppFooter;

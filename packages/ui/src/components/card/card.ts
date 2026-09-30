@@ -1,41 +1,41 @@
-import type { Theme } from "../../types"
+import type { Theme } from "../../types";
 
 export interface CardProps {
   /**
    * The visual style variant of the card.
    */
-  variant?: "solid" | "outline" | "soft" | "subtle"
+  variant?: "solid" | "outline" | "soft" | "subtle";
   /**
    * Theme mode override.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Card heading title.
    */
-  title?: string
+  title?: string;
   /**
    * Subtitle description text.
    */
-  description?: string
+  description?: string;
   /**
    * Media source (e.g. image url) displayed at top.
    */
-  mediaSrc?: string
+  mediaSrc?: string;
   /**
    * Link reference makes the entire card interactive.
    */
-  href?: string
+  href?: string;
   /**
    * Glassmorphism or overlay style.
    */
-  overlay?: boolean
+  overlay?: boolean;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

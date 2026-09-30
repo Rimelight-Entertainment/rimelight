@@ -1,7 +1,7 @@
-import type { Component } from "solid-js"
-import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { getRelativeLocaleUrl } from "@rimelight/i18n"
+import type { Component } from "solid-js";
+import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const GrandTaleHeader: Component = () => {
   const links = [
@@ -11,9 +11,9 @@ export const GrandTaleHeader: Component = () => {
     { label: "Guides", to: "/franchises/grand-tale/guides" },
     { label: "Forums", to: "/franchises/grand-tale/forums" },
     { label: "Leaderboards", to: "/franchises/grand-tale/leaderboards" }
-  ]
+  ];
 
-  const rightLinks = [{ label: "Support", to: "/franchises/grand-tale/support" }]
+  const rightLinks = [{ label: "Support", to: "/franchises/grand-tale/support" }];
 
   return (
     <RLHeader
@@ -64,7 +64,7 @@ export const GrandTaleHeader: Component = () => {
         </div>
       }
     />
-  )
-}
+  );
+};
 
-export default GrandTaleHeader
+export default GrandTaleHeader;

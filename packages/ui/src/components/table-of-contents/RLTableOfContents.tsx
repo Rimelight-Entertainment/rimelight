@@ -1,12 +1,12 @@
-import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js"
-import type { TableOfContentsProps, TableOfContentsHeading } from "./table-of-contents"
-import { tableOfContentsTheme } from "./table-of-contents.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js";
+import type { TableOfContentsProps, TableOfContentsHeading } from "./table-of-contents";
+import { tableOfContentsTheme } from "./table-of-contents.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLTableOfContentsProps extends TableOfContentsProps {}
 
 const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "headings",
@@ -16,76 +16,76 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
     "as",
     "ui",
     "class"
-  )
+  );
 
-  const [activeId, setActiveId] = createSignal("")
-  const [open, setOpen] = createSignal(false)
-  let rootRef: HTMLDivElement | undefined
-  let detailsRef: HTMLDetailsElement | undefined
+  const [activeId, setActiveId] = createSignal("");
+  const [open, setOpen] = createSignal(false);
+  let rootRef: HTMLDivElement | undefined;
+  let detailsRef: HTMLDetailsElement | undefined;
 
-  const collapsible = () => props.collapsible === true
-  const containerSelector = () => props.containerSelector ?? ".markdown-content"
+  const collapsible = () => props.collapsible === true;
+  const containerSelector = () => props.containerSelector ?? ".markdown-content";
 
   const minLevel = createMemo(() =>
     props.tableOfContents ? (props.tableOfContents.minHeadingLevel ?? 2) : 2
-  )
+  );
   const maxLevel = createMemo(() =>
     props.tableOfContents ? (props.tableOfContents.maxHeadingLevel ?? 3) : 3
-  )
+  );
 
   const filteredHeadings = createMemo(() =>
     props.tableOfContents !== false
       ? props.headings.filter((h) => h.depth >= minLevel() && h.depth <= maxLevel())
       : []
-  )
+  );
 
   const headingSelector = createMemo(() =>
     Array.from(
       { length: maxLevel() - minLevel() + 1 },
       (_, i) => `:scope > h${minLevel() + i}`
     ).join(", ")
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     tableOfContentsTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   onSettled(() => {
-    if (collapsible() || !rootRef) return
+    if (collapsible() || !rootRef) return;
     const update = () => {
-      const root = rootRef
-      if (!root) return
-      const links = root.querySelectorAll(".toc-link")
-      if (links.length === 0) return
-      const threshold = window.innerHeight * 0.5
-      let active: string | undefined
+      const root = rootRef;
+      if (!root) return;
+      const links = root.querySelectorAll(".toc-link");
+      if (links.length === 0) return;
+      const threshold = window.innerHeight * 0.5;
+      let active: string | undefined;
       links.forEach((link) => {
-        const href = link.getAttribute("href")
-        if (!href || href.charAt(0) !== "#") return
-        const id = href.substring(1)
-        const heading = document.getElementById(id)
+        const href = link.getAttribute("href");
+        if (!href || href.charAt(0) !== "#") return;
+        const id = href.substring(1);
+        const heading = document.getElementById(id);
         if (heading && heading.getBoundingClientRect().top <= threshold) {
-          active = id
+          active = id;
         }
-      })
-      setActiveId(active ?? "")
-    }
-    update()
-    window.addEventListener("scroll", update, { passive: true })
-    return () => window.removeEventListener("scroll", update)
-  })
+      });
+      setActiveId(active ?? "");
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  });
 
   const depthClass = (depth: number) => {
-    if (depth === 2) return "pl-xs"
-    if (depth === 3) return "pl-6"
-    return "pl-9"
-  }
+    if (depth === 2) return "pl-xs";
+    if (depth === 3) return "pl-6";
+    return "pl-9";
+  };
 
   if (props.tableOfContents === false || filteredHeadings().length === 0) {
-    return null
+    return null;
   }
 
   if (collapsible()) {
@@ -124,8 +124,8 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
                     }`}
                     data-rl-toc-link
                     onClick={() => {
-                      if (detailsRef) detailsRef.open = false
-                      setOpen(false)
+                      if (detailsRef) detailsRef.open = false;
+                      setOpen(false);
                     }}
                   >
                     {heading.text}
@@ -136,7 +136,7 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
           </ul>
         </div>
       </details>
-    )
+    );
   }
 
   return (
@@ -184,7 +184,7 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export { RLTableOfContents }
+export { RLTableOfContents };

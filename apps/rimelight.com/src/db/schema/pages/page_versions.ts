@@ -1,15 +1,15 @@
-import { relations } from "drizzle-orm"
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import {
   type Block,
   type Localized,
   type PageType,
   type RegisterPageTypes
-} from "../../../types/pages.ts"
+} from "../../../types/pages.ts";
 
-import { pages } from "./pages.ts"
+import { pages } from "./pages.ts";
 
-export type PageVersionStatus = "pending" | "approved" | "rejected"
+export type PageVersionStatus = "pending" | "approved" | "rejected";
 
 export const pageVersions = pgTable("page_versions", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -25,8 +25,8 @@ export const pageVersions = pgTable("page_versions", {
   authorIds: jsonb("author_ids").$type<string[]>().default([]),
   content: jsonb("content")
     .$type<{
-      blocks: Block[]
-      properties: RegisterPageTypes[PageType]
+      blocks: Block[];
+      properties: RegisterPageTypes[PageType];
     }>()
     .notNull(),
   postedAt: timestamp("posted_at", { withTimezone: true }),
@@ -38,11 +38,11 @@ export const pageVersions = pgTable("page_versions", {
   }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
 export const pageVersionsRelations = relations(pageVersions, ({ one }) => ({
   page: one(pages, {
     fields: [pageVersions.pageId],
     references: [pages.id]
   })
-}))
+}));

@@ -7,32 +7,32 @@ import {
   Show,
   onSettled,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
 import type {
   NavigationMenuItem,
   NavigationMenuChildItem,
   NavigationMenuProps
-} from "./navigation-menu"
-import { navigationMenuTheme } from "./navigation-menu.theme"
-import { RLIcon } from "../icon/RLIcon"
+} from "./navigation-menu";
+import { navigationMenuTheme } from "./navigation-menu.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLNavigationMenuProps extends NavigationMenuProps {
-  children?: JSX.Element
-  [key: string]: any
+  children?: JSX.Element;
+  [key: string]: any;
 }
 
 const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "items", "color", "orientation", "theme", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "items", "color", "orientation", "theme", "ui", "class", "children");
 
-  let navRef: HTMLElement | undefined
-  let viewportRef: HTMLDivElement | undefined
+  let navRef: HTMLElement | undefined;
+  let viewportRef: HTMLDivElement | undefined;
 
-  const [openIndex, setOpenIndex] = createSignal<number | null>(null)
+  const [openIndex, setOpenIndex] = createSignal<number | null>(null);
 
-  const items = createMemo(() => props.items ?? [])
-  const orientation = () => props.orientation ?? "horizontal"
+  const items = createMemo(() => props.items ?? []);
+  const orientation = () => props.orientation ?? "horizontal";
 
   const resolvedClasses = createMemo(() =>
     navigationMenuTheme({
@@ -41,19 +41,19 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const resolvedChildren = resolveChildren(() => props.children)
+  const resolvedChildren = resolveChildren(() => props.children);
 
   const getSlotContent = (slotName?: string) => {
-    if (!slotName) return null
+    if (!slotName) return null;
     // Astro passes slot="name-content" as a prop named "name-content" to SolidJS client:load components
-    const fromProp = allProps[`${slotName}-content`] ?? allProps[slotName]
-    if (fromProp) return fromProp
-    const all = resolvedChildren()
-    const arr = Array.isArray(all) ? all : all ? [all] : []
+    const fromProp = allProps[`${slotName}-content`] ?? allProps[slotName];
+    if (fromProp) return fromProp;
+    const all = resolvedChildren();
+    const arr = Array.isArray(all) ? all : all ? [all] : [];
     const match = arr.find((child: any) => {
-      if (!child) return false
+      if (!child) return false;
       if (typeof child === "object") {
         const s =
           child.slot ??
@@ -62,51 +62,51 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
           child?.props?.["data-slot"] ??
           (typeof child.getAttribute === "function"
             ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined)
-        return s === `${slotName}-content` || s === slotName
+            : undefined);
+        return s === `${slotName}-content` || s === slotName;
       }
-      return false
-    })
-    return match || null
-  }
+      return false;
+    });
+    return match || null;
+  };
 
   const currentPath = () => {
-    if (typeof window === "undefined") return ""
+    if (typeof window === "undefined") return "";
     return (
       window.location.pathname
         .replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "")
         .replace(/\/+$/, "") || "/"
-    )
-  }
+    );
+  };
 
   const isItemActive = (item: NavigationMenuItem) => {
-    if (item["active"] !== undefined) return !!item["active"]
-    const rawPath = (item["href"] ?? (item["to"] as string | undefined) ?? "#") as string
+    if (item["active"] !== undefined) return !!item["active"];
+    const rawPath = (item["href"] ?? (item["to"] as string | undefined) ?? "#") as string;
     const normalizedPath =
-      rawPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "").replace(/\/+$/, "") || "/"
-    const path = currentPath()
-    if (normalizedPath !== "" && normalizedPath !== "/") return path.startsWith(normalizedPath)
-    return path === "/"
-  }
+      rawPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "").replace(/\/+$/, "") || "/";
+    const path = currentPath();
+    if (normalizedPath !== "" && normalizedPath !== "/") return path.startsWith(normalizedPath);
+    return path === "/";
+  };
 
-  let closeTimer: ReturnType<typeof setTimeout> | undefined
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
 
   const openItem = (index: number) => {
-    if (closeTimer) clearTimeout(closeTimer)
-    setOpenIndex(index)
-  }
+    if (closeTimer) clearTimeout(closeTimer);
+    setOpenIndex(index);
+  };
 
   const closeAll = () => {
-    if (closeTimer) clearTimeout(closeTimer)
-    setOpenIndex(null)
-  }
+    if (closeTimer) clearTimeout(closeTimer);
+    setOpenIndex(null);
+  };
 
   const scheduleClose = () => {
-    if (closeTimer) clearTimeout(closeTimer)
+    if (closeTimer) clearTimeout(closeTimer);
     closeTimer = setTimeout(() => {
-      setOpenIndex(null)
-    }, 150)
-  }
+      setOpenIndex(null);
+    }, 150);
+  };
 
   onSettled(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -116,37 +116,41 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
         !navRef.contains(e.target as Node) &&
         (!viewportRef || !viewportRef.contains(e.target as Node))
       ) {
-        closeAll()
+        closeAll();
       }
-    }
-    document.addEventListener("click", handleOutsideClick)
+    };
+    document.addEventListener("click", handleOutsideClick);
 
     return () => {
-      document.removeEventListener("click", handleOutsideClick)
-      if (closeTimer) clearTimeout(closeTimer)
-    }
-  })
+      document.removeEventListener("click", handleOutsideClick);
+      if (closeTimer) clearTimeout(closeTimer);
+    };
+  });
 
   const itemHref = (item: NavigationMenuItem) =>
     typeof item["href"] === "string"
       ? item["href"]
       : typeof item["to"] === "string"
         ? item["to"]
-        : "#"
+        : "#";
 
   const childHref = (child: NavigationMenuChildItem) =>
     typeof child["href"] === "string"
       ? child["href"]
       : typeof child["to"] === "string"
         ? child["to"]
-        : "#"
+        : "#";
 
-  const activeItem = createMemo(() => (openIndex() !== null ? items()[openIndex()!] : null))
+  const activeItem = createMemo(() => (openIndex() !== null ? items()[openIndex()!] : null));
   const activeItemHasContent = createMemo(() => {
-    const item = activeItem()
-    if (!item) return false
-    return !!((item.children && item.children.length > 0) || item.slot || getSlotContent(item.slot))
-  })
+    const item = activeItem();
+    if (!item) return false;
+    return !!(
+      (item.children && item.children.length > 0) ||
+      item.slot ||
+      getSlotContent(item.slot)
+    );
+  });
 
   return (
     <nav
@@ -166,9 +170,9 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
                 (item.children && item.children.length > 0) ||
                 item.slot ||
                 getSlotContent(item.slot)
-              )
-            const isActive = () => isItemActive(item)
-            const isOpen = () => openIndex() === i()
+              );
+            const isActive = () => isItemActive(item);
+            const isOpen = () => openIndex() === i();
 
             return (
               <li
@@ -177,10 +181,10 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
                 data-nav-item
                 data-index={i()}
                 onMouseEnter={() => {
-                  if (orientation() === "horizontal" && hasChildren()) openItem(i())
+                  if (orientation() === "horizontal" && hasChildren()) openItem(i());
                 }}
                 onMouseLeave={() => {
-                  if (orientation() === "horizontal" && hasChildren()) scheduleClose()
+                  if (orientation() === "horizontal" && hasChildren()) scheduleClose();
                 }}
               >
                 {hasChildren() ? (
@@ -193,11 +197,11 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
                     aria-haspopup="true"
                     data-state={isOpen() ? "open" : "closed"}
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                       if (isOpen()) {
-                        closeAll()
+                        closeAll();
                       } else {
-                        openItem(i())
+                        openItem(i());
                       }
                     }}
                   >
@@ -310,7 +314,7 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
                   </div>
                 ) : null}
               </li>
-            )
+            );
           }}
         </For>
       </ul>
@@ -322,10 +326,10 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
         data-nav-viewport-wrapper
         data-state={openIndex() !== null ? "open" : "closed"}
         onMouseEnter={() => {
-          if (closeTimer) clearTimeout(closeTimer)
+          if (closeTimer) clearTimeout(closeTimer);
         }}
         onMouseLeave={() => {
-          scheduleClose()
+          scheduleClose();
         }}
       >
         <div
@@ -337,8 +341,8 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
         >
           <For each={items()}>
             {(item, i) => {
-              const isOpen = () => openIndex() === i()
-              const slotContent = () => getSlotContent(item.slot)
+              const isOpen = () => openIndex() === i();
+              const slotContent = () => getSlotContent(item.slot);
 
               return (
                 <div
@@ -383,13 +387,13 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
                     {slotContent()}
                   </Show>
                 </div>
-              )
+              );
             }}
           </For>
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export { RLNavigationMenu }
+export { RLNavigationMenu };

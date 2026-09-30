@@ -1,18 +1,18 @@
-import { createMemo, createSignal, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { HoverCardProps } from "./hover-card"
-import { hoverCardTheme } from "./hover-card.theme"
+import { createMemo, createSignal, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { HoverCardProps } from "./hover-card";
+import { hoverCardTheme } from "./hover-card.theme";
 
 export interface RLHoverCardProps extends HoverCardProps {
-  children?: JSX.Element
-  trigger?: JSX.Element
+  children?: JSX.Element;
+  trigger?: JSX.Element;
 }
 
 const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "triggerLabel", "placement", "ui", "class", "children", "trigger")
+  const props = allProps;
+  const rest = omit(allProps, "triggerLabel", "placement", "ui", "class", "children", "trigger");
 
-  const [isOpen, setIsOpen] = createSignal(false)
+  const [isOpen, setIsOpen] = createSignal(false);
 
   const resolvedClasses = createMemo(() =>
     hoverCardTheme({
@@ -20,13 +20,13 @@ const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const contentClass = () =>
     resolvedClasses()["content"].replace(
       /\s*(invisible|opacity-0|scale-95|pointer-events-none|group-hover\/hover-card:(visible|opacity-100|scale-100|pointer-events-auto))/g,
       ""
-    )
+    );
 
   return (
     <div
@@ -61,7 +61,7 @@ const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
         {props.children}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLHoverCard }
+export { RLHoverCard };

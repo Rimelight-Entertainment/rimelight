@@ -1,36 +1,36 @@
-import { createMemo, For, Show, type Component } from "solid-js"
+import { createMemo, For, Show, type Component } from "solid-js";
 
 interface HighlightGroup {
-  keys: string[]
-  color?: string
-  label?: string
+  keys: string[];
+  color?: string;
+  label?: string;
 }
 
 export interface RLKeyboardProps {
-  highlightedKeys?: string[]
-  groups?: HighlightGroup[]
-  keyGap?: number
-  sectionGap?: number
-  keySize?: number
-  variant?: "full" | "60"
-  os?: "windows" | "mac"
-  highlightColor?: string
-  backgroundColor?: string
+  highlightedKeys?: string[];
+  groups?: HighlightGroup[];
+  keyGap?: number;
+  sectionGap?: number;
+  keySize?: number;
+  variant?: "full" | "60";
+  os?: "windows" | "mac";
+  highlightColor?: string;
+  backgroundColor?: string;
 }
 
 interface Key {
-  label?: string
-  width: number
-  height?: number
-  code?: string
-  type?: "spacer" | "key"
+  label?: string;
+  width: number;
+  height?: number;
+  code?: string;
+  type?: "spacer" | "key";
 }
 
 interface RenderKey extends Key {
-  x: number
-  y: number
-  w: number
-  h: number
+  x: number;
+  y: number;
+  w: number;
+  h: number;
 }
 
 const mainRows: Key[][] = [
@@ -123,7 +123,7 @@ const mainRows: Key[][] = [
     { label: "Menu", width: 1.25, code: "ContextMenu" },
     { label: "Ctrl", width: 1.25, code: "ControlRight" }
   ]
-]
+];
 
 const functionRows: Key[][] = [
   [
@@ -152,7 +152,7 @@ const functionRows: Key[][] = [
     { label: "↓", width: 1, code: "ArrowDown" },
     { label: "→", width: 1, code: "ArrowRight" }
   ]
-]
+];
 
 const numpadKeys: Key[] = [
   { label: "Num", width: 1, code: "NumLock" },
@@ -172,7 +172,7 @@ const numpadKeys: Key[] = [
   { label: "Enter", width: 1, height: 2, code: "NumpadEnter" },
   { label: "0", width: 2, code: "Numpad0" },
   { label: ".", width: 1, code: "NumpadDecimal" }
-]
+];
 
 const numpadPositions: [number, number][] = [
   [0, 0],
@@ -192,23 +192,23 @@ const numpadPositions: [number, number][] = [
   [3, 3],
   [0, 4],
   [2, 4]
-]
+];
 
 const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
 
-  const keyGap = (): number => props.keyGap ?? 8
-  const sectionGap = (): number => props.sectionGap ?? 40
-  const keySize = (): number => props.keySize ?? 40
-  const variant = (): "full" | "60" => props.variant ?? "full"
-  const os = (): "windows" | "mac" => props.os ?? "windows"
-  const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)"
-  const backgroundColor = (): string => props.backgroundColor || "transparent"
-  const highlightedKeys = (): string[] => props.highlightedKeys ?? []
-  const groups = (): HighlightGroup[] => props.groups ?? []
+  const keyGap = (): number => props.keyGap ?? 8;
+  const sectionGap = (): number => props.sectionGap ?? 40;
+  const keySize = (): number => props.keySize ?? 40;
+  const variant = (): "full" | "60" => props.variant ?? "full";
+  const os = (): "windows" | "mac" => props.os ?? "windows";
+  const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)";
+  const backgroundColor = (): string => props.backgroundColor || "transparent";
+  const highlightedKeys = (): string[] => props.highlightedKeys ?? [];
+  const groups = (): HighlightGroup[] => props.groups ?? [];
 
   const getKeyLabel = (key: Key): string | undefined => {
-    if (os() !== "mac") return key.label
+    if (os() !== "mac") return key.label;
 
     const macMap: Record<string, string> = {
       Ctrl: "control",
@@ -221,47 +221,47 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
       Menu: "option",
       Tab: "tab",
       Esc: "esc"
-    }
+    };
 
-    const label = (key.label && macMap[key.label]) || key.label
+    const label = (key.label && macMap[key.label]) || key.label;
 
-    if (label === "command") return "cmd ⌘"
-    if (label === "option") return "opt ⌥"
-    if (label === "control") return "ctrl ⌃"
-    if (label === "shift") return "shift ⇧"
-    if (label === "return") return "return ↩"
-    if (label === "delete") return "delete ⌫"
+    if (label === "command") return "cmd ⌘";
+    if (label === "option") return "opt ⌥";
+    if (label === "control") return "ctrl ⌃";
+    if (label === "shift") return "shift ⇧";
+    if (label === "return") return "return ↩";
+    if (label === "delete") return "delete ⌫";
 
-    return label
-  }
+    return label;
+  };
 
   const getKeyHighlight = (key: Key): { active: boolean; color: string | undefined } => {
-    const code = key.code || key.label || ""
-    const label = key.label || ""
-    const macLabel = getKeyLabel(key) || ""
+    const code = key.code || key.label || "";
+    const label = key.label || "";
+    const macLabel = getKeyLabel(key) || "";
 
     const isMatch = (list: string[]) => {
-      if (!list || !Array.isArray(list)) return false
-      if (list.includes(code)) return true
+      if (!list || !Array.isArray(list)) return false;
+      if (list.includes(code)) return true;
       if (list.includes(label)) {
-        if (code.startsWith("Numpad") && /^\d$/.test(label)) return false
-        return true
+        if (code.startsWith("Numpad") && /^\d$/.test(label)) return false;
+        return true;
       }
-      return os() === "mac" && list.includes(macLabel)
-    }
+      return os() === "mac" && list.includes(macLabel);
+    };
 
     if (isMatch(highlightedKeys())) {
-      return { active: true, color: highlightColor() }
+      return { active: true, color: highlightColor() };
     }
 
     for (const group of groups()) {
       if (isMatch(group.keys)) {
-        return { active: true, color: group.color || highlightColor() }
+        return { active: true, color: group.color || highlightColor() };
       }
     }
 
-    return { active: false, color: undefined }
-  }
+    return { active: false, color: undefined };
+  };
 
   const displayMainRows = createMemo<Key[][]>(() =>
     variant() === "60"
@@ -270,50 +270,50 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
           ...mainRows.slice(2)
         ]
       : mainRows
-  )
+  );
 
   const processRows = (rows: Key[][], startX: number, startY: number): RenderKey[] => {
-    const result: RenderKey[] = []
-    let currentY = startY
+    const result: RenderKey[] = [];
+    let currentY = startY;
 
     for (const row of rows) {
-      let currentX = startX
+      let currentX = startX;
       for (const key of row) {
-        const w = key.width || 1
-        const h = key.height || 1
-        const widthPx = w * keySize() + (w - 1) * keyGap()
-        const heightPx = h * keySize() + (h - 1) * keyGap()
+        const w = key.width || 1;
+        const h = key.height || 1;
+        const widthPx = w * keySize() + (w - 1) * keyGap();
+        const heightPx = h * keySize() + (h - 1) * keyGap();
 
         if (key.type !== "spacer") {
-          result.push({ ...key, x: currentX, y: currentY, w: widthPx, h: heightPx })
+          result.push({ ...key, x: currentX, y: currentY, w: widthPx, h: heightPx });
         }
-        currentX += widthPx + keyGap()
+        currentX += widthPx + keyGap();
       }
-      currentY += keySize() + keyGap()
+      currentY += keySize() + keyGap();
     }
-    return result
-  }
+    return result;
+  };
 
-  const mainRenderKeys = createMemo<RenderKey[]>(() => processRows(displayMainRows(), 0, 0))
-  const mainHeight = (): number => displayMainRows().length * (keySize() + keyGap())
+  const mainRenderKeys = createMemo<RenderKey[]>(() => processRows(displayMainRows(), 0, 0));
+  const mainHeight = (): number => displayMainRows().length * (keySize() + keyGap());
 
   const secondaryRenderKeys = createMemo<RenderKey[]>(() =>
     variant() === "full" ? processRows(functionRows, 0, mainHeight() + sectionGap()) : []
-  )
+  );
 
   const numpadRenderKeys = createMemo<RenderKey[]>(() => {
-    if (variant() !== "full") return []
-    const result: RenderKey[] = []
-    const secondaryY = mainHeight() + sectionGap()
-    const numpadX = 3 * keySize() + 3 * keyGap() + sectionGap()
+    if (variant() !== "full") return [];
+    const result: RenderKey[] = [];
+    const secondaryY = mainHeight() + sectionGap();
+    const numpadX = 3 * keySize() + 3 * keyGap() + sectionGap();
 
     numpadKeys.forEach((key, i) => {
-      const w = key.width || 1
-      const h = key.height || 1
-      const pxOffset = numpadPositions[i]?.[0] ?? 0
-      const pyOffset = numpadPositions[i]?.[1] ?? 0
-      const px = numpadX + pxOffset * (keySize() + keyGap())
-      const py = secondaryY + (pyOffset + 1) * (keySize() + keyGap())
+      const w = key.width || 1;
+      const h = key.height || 1;
+      const pxOffset = numpadPositions[i]?.[0] ?? 0;
+      const pyOffset = numpadPositions[i]?.[1] ?? 0;
+      const px = numpadX + pxOffset * (keySize() + keyGap());
+      const py = secondaryY + (pyOffset + 1) * (keySize() + keyGap());
 
       result.push({
         ...key,
@@ -321,34 +321,34 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
         y: py,
         w: w * keySize() + (w - 1) * keyGap(),
         h: h * keySize() + (h - 1) * keyGap()
-      })
-    })
+      });
+    });
 
-    return result
-  })
+    return result;
+  });
 
   const totalWidth = createMemo(() => {
-    let width = 15 * keySize() + 14 * keyGap()
+    let width = 15 * keySize() + 14 * keyGap();
     if (variant() === "full") {
-      const numpadX = 3 * keySize() + 3 * keyGap() + sectionGap()
-      width = Math.max(width, numpadX + 4 * keySize() + 3 * keyGap())
+      const numpadX = 3 * keySize() + 3 * keyGap() + sectionGap();
+      width = Math.max(width, numpadX + 4 * keySize() + 3 * keyGap());
     }
-    return width
-  })
+    return width;
+  });
 
   const finalHeight = createMemo(() => {
     if (variant() === "full") {
-      const secondaryY = mainHeight() + sectionGap()
-      return secondaryY + 6 * keySize() + 5 * keyGap()
+      const secondaryY = mainHeight() + sectionGap();
+      return secondaryY + 6 * keySize() + 5 * keyGap();
     }
-    return mainHeight()
-  })
+    return mainHeight();
+  });
 
   const allKeys = createMemo<RenderKey[]>(() => [
     ...mainRenderKeys(),
     ...secondaryRenderKeys(),
     ...numpadRenderKeys()
-  ])
+  ]);
 
   return (
     <div class="keyboard-wrapper">
@@ -371,9 +371,9 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
 
           <For each={allKeys()}>
             {(key) => {
-              const highlight = getKeyHighlight(key)
-              const color = highlight.active ? highlight.color || highlightColor() : "#2a2a3e"
-              const label = getKeyLabel(key)
+              const highlight = getKeyHighlight(key);
+              const color = highlight.active ? highlight.color || highlightColor() : "#2a2a3e";
+              const label = getKeyLabel(key);
 
               return (
                 <g class={`kb-key-group ${highlight.active ? "highlighted" : ""}`}>
@@ -408,7 +408,7 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
                     </text>
                   ) : null}
                 </g>
-              )
+              );
             }}
           </For>
         </svg>
@@ -460,7 +460,7 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-export { RLKeyboard }
+export { RLKeyboard };

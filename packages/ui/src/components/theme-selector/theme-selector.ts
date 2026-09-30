@@ -4,22 +4,22 @@ export interface ThemeSelectorProps {
    *
    * @default "select"
    */
-  mode?: "select" | "icon"
+  mode?: "select" | "icon";
   /**
    * The size of the select/button.
    */
-  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   /**
    * Theme variant/mode.
    */
-  theme?: "light" | "dark"
+  theme?: "light" | "dark";
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

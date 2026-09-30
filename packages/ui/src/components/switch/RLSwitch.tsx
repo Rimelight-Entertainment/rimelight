@@ -1,14 +1,14 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { SwitchProps } from "./switch"
-import { switchTheme } from "./switch.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { SwitchProps } from "./switch";
+import { switchTheme } from "./switch.theme";
 
 export interface RLSwitchProps extends SwitchProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLSwitch: Component<RLSwitchProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "ui",
@@ -21,7 +21,7 @@ const RLSwitch: Component<RLSwitchProps> = (allProps) => {
     "value",
     "trailing",
     "theme"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     switchTheme({
@@ -29,7 +29,7 @@ const RLSwitch: Component<RLSwitchProps> = (allProps) => {
       class: props.class,
       ...allProps
     })
-  )
+  );
 
   return (
     <label class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
@@ -53,7 +53,7 @@ const RLSwitch: Component<RLSwitchProps> = (allProps) => {
         </span>
       ) : null}
     </label>
-  )
-}
+  );
+};
 
-export { RLSwitch }
+export { RLSwitch };

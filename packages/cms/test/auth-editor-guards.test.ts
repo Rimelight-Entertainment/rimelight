@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vite-plus/test"
-import { hasLockedDescendants } from "../src/auth/editor-guards"
-import type { BaseBlock } from "../src/core/types/blocks"
+import { describe, expect, it } from "vite-plus/test";
+import { hasLockedDescendants } from "../src/auth/editor-guards";
+import type { BaseBlock } from "../src/core/types/blocks";
 
 describe("editor-guards", () => {
   it("detects when a block has locked descendants", () => {
@@ -16,11 +16,11 @@ describe("editor-guards", () => {
           props: { text: "Restricted" }
         }
       ]
-    }
+    };
 
-    const memberSession = { userId: "m1", roles: ["member"], permissions: [] }
-    expect(hasLockedDescendants(parentBlock, memberSession)).toBe(true)
-  })
+    const memberSession = { userId: "m1", roles: ["member"], permissions: [] };
+    expect(hasLockedDescendants(parentBlock, memberSession)).toBe(true);
+  });
 
   it("permits editing when all descendants pass authorization", () => {
     const parentBlock: BaseBlock = {
@@ -34,9 +34,9 @@ describe("editor-guards", () => {
           props: { text: "Public" }
         }
       ]
-    }
+    };
 
-    const memberSession = { userId: "m1", roles: ["member"], permissions: [] }
-    expect(hasLockedDescendants(parentBlock, memberSession)).toBe(false)
-  })
-})
+    const memberSession = { userId: "m1", roles: ["member"], permissions: [] };
+    expect(hasLockedDescendants(parentBlock, memberSession)).toBe(false);
+  });
+});

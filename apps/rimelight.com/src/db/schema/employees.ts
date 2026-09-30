@@ -1,5 +1,5 @@
-import { relations } from "drizzle-orm"
-import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
  * Enterprise Employees table. Managed via Enterprise IdP (Auth0) with corporate roles, departments,
@@ -23,9 +23,9 @@ export const employees = pgTable("employees", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true })
-})
+});
 
-export type Employee = typeof employees.$inferSelect
-export type NewEmployee = typeof employees.$inferInsert
+export type Employee = typeof employees.$inferSelect;
+export type NewEmployee = typeof employees.$inferInsert;
 
-export const employeesRelations = relations(employees, () => ({}))
+export const employeesRelations = relations(employees, () => ({}));

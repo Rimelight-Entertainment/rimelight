@@ -88,7 +88,7 @@ A traditional Astro integration registered via `integrations.push(...)`.
 
 ```typescript
 // astro.config.ts
-import { rimelightAnalytics } from "@rimelight/analytics"
+import { rimelightAnalytics } from "@rimelight/analytics";
 
 export default defineConfig({
   integrations: [
@@ -98,7 +98,7 @@ export default defineConfig({
       events: true
     })
   ]
-})
+});
 ```
 
 Implementation shape:
@@ -116,7 +116,7 @@ A framework-agnostic core plus a consolidated Vite plugin, following the shipped
 
 ```typescript
 // vite.config.ts (any Vite app)
-import { rimelightAnalytics } from "@rimelight/analytics/plugin"
+import { rimelightAnalytics } from "@rimelight/analytics/plugin";
 
 export default defineConfig({
   plugins: [
@@ -126,20 +126,20 @@ export default defineConfig({
       events: true
     })
   ]
-})
+});
 ```
 
 With a head generator usable in any SSR context:
 
 ```typescript
-import { defineAnalyticsConfig, generateAnalyticsHead } from "@rimelight/analytics/head"
+import { defineAnalyticsConfig, generateAnalyticsHead } from "@rimelight/analytics/head";
 
 const config = defineAnalyticsConfig({
   scriptUrl: "https://stats.example.com/em.js",
   domain: "example.com"
-})
+});
 
-const head = generateAnalyticsHead(config) // => { html, tags }
+const head = generateAnalyticsHead(config); // => { html, tags }
 ```
 
 Astro consumes it as a plain Vite plugin, consistent with auth/i18n/ui:
@@ -182,8 +182,8 @@ To stay consistent with the accepted Head contract, `generateAnalyticsHead` retu
 
 ```typescript
 interface HeadResult {
-  html: string // sanitized, ready for <Fragment set:html={...} />
-  tags: (HeadTag | AnalyticsTag)[] // typed descriptors
+  html: string; // sanitized, ready for <Fragment set:html={...} />
+  tags: (HeadTag | AnalyticsTag)[]; // typed descriptors
 }
 ```
 
@@ -194,19 +194,19 @@ The `script` tag produced must carry `nonce` support so a Content Security Polic
 `cspAdditions()` returns the exact origins a site must allow:
 
 ```typescript
-cspAdditions({ scriptUrl: "https://stats.example.com/em.js" })
+cspAdditions({ scriptUrl: "https://stats.example.com/em.js" });
 // => { scriptSrc: ["https://stats.example.com"], connectSrc: ["https://stats.example.com"] }
 ```
 
 The keys are named after `@rimelight/security`'s `SecurityOptions` fields, so no composer is needed — the result spreads straight into the site's security options:
 
 ```typescript
-import { cspAdditions } from "@rimelight/analytics/csp"
+import { cspAdditions } from "@rimelight/analytics/csp";
 
 const securityOptions = {
   domain: "example.com",
   ...cspAdditions({ scriptUrl: "https://stats.example.com/em.js" })
-}
+};
 ```
 
 A site enabling both gets a correct, single policy with no extra layer. This supersedes the earlier plan to route the merge through `@rimelight/config`: that layer (`rimelightSolidConfig`, the `@rimelight/config/solid` subpath) has since been deleted, since it derived a CSP that `@rimelight/security` already derives from `domain` alone. `SecurityOptions` is now the single surface for CSP configuration.

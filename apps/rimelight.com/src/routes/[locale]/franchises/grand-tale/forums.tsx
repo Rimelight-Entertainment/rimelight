@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import GrandTaleLayout from "#layouts/GrandTaleLayout"
+import { type Component } from "solid-js";
+import GrandTaleLayout from "#layouts/GrandTaleLayout";
 
 export const GrandTaleForumsRedirectPage: Component = () => {
   return (
@@ -13,7 +13,7 @@ export const GrandTaleForumsRedirectPage: Component = () => {
         </p>
       </div>
     </GrandTaleLayout>
-  )
-}
+  );
+};
 
-export default GrandTaleForumsRedirectPage
+export default GrandTaleForumsRedirectPage;

@@ -1,16 +1,16 @@
-import { createMemo, For, Show, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { DashboardSearchButtonProps } from "./dashboard-search-button"
-import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createMemo, For, Show, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { DashboardSearchButtonProps } from "./dashboard-search-button";
+import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLDashboardSearchButtonProps extends DashboardSearchButtonProps {
-  children?: JSX.Element
-  trailingSlot?: JSX.Element
+  children?: JSX.Element;
+  trailingSlot?: JSX.Element;
 }
 
 const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "icon",
@@ -22,10 +22,10 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
     "ui",
     "class",
     "children"
-  )
+  );
 
-  const labelText = () => props.label ?? "Search"
-  const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }]
+  const labelText = () => props.label ?? "Search";
+  const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }];
 
   const resolvedClasses = createMemo(() =>
     dashboardSearchButtonTheme({
@@ -33,7 +33,7 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <button
@@ -64,13 +64,13 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
             <span class="flex items-center gap-0.5">
               <For each={kbdsList()}>
                 {(kbd) => {
-                  const val = typeof kbd === "string" ? kbd : kbd.value
-                  const txt = val === "meta" ? "⌘" : val === "k" ? "K" : val
+                  const val = typeof kbd === "string" ? kbd : kbd.value;
+                  const txt = val === "meta" ? "⌘" : val === "k" ? "K" : val;
                   return (
                     <kbd class="inline-flex items-center justify-center rounded border border-default bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted min-w-[20px] h-5">
                       {txt}
                     </kbd>
-                  )
+                  );
                 }}
               </For>
             </span>
@@ -79,7 +79,7 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
       </span>
       {props.children}
     </button>
-  )
-}
+  );
+};
 
-export { RLDashboardSearchButton }
+export { RLDashboardSearchButton };

@@ -1,8 +1,8 @@
-import { type Component, For, Show } from "solid-js"
-import { useParams } from "@solidjs/router"
-import { createAsyncData } from "#utils/async"
-import WikiLayout from "#layouts/WikiLayout"
-import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+import { type Component, For, Show } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { createAsyncData } from "#utils/async";
+import WikiLayout from "#layouts/WikiLayout";
+import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 
 const categoryToType: Record<string, string> = {
   timeline: "Timeline",
@@ -11,32 +11,32 @@ const categoryToType: Record<string, string> = {
   species: "Species",
   objects: "Object",
   groups: "Group"
-}
+};
 
 export const LoreCategoryPage: Component = () => {
-  const params = useParams<{ locale: string; category?: string }>()
-  const activeLocale = () => getLocale()
+  const params = useParams<{ locale: string; category?: string }>();
+  const activeLocale = () => getLocale();
 
-  const category = () => params.category || "characters"
-  const categoryLabel = () => category().charAt(0).toUpperCase() + category().slice(1)
-  const pageType = () => categoryToType[category()] || "Character"
+  const category = () => params.category || "characters";
+  const categoryLabel = () => category().charAt(0).toUpperCase() + category().slice(1);
+  const pageType = () => categoryToType[category()] || "Character";
 
   const pagesData = createAsyncData(
     () => [category(), activeLocale()] as const,
     async ([cat]) => {
-      const type = categoryToType[cat] || "Character"
+      const type = categoryToType[cat] || "Character";
       try {
         const res = await fetch(
           `/api/pages?type=${encodeURIComponent(type)}&limit=1000&orderBy=title&order=asc`
-        )
-        if (!res.ok) return []
-        return (await res.json()) as any[]
+        );
+        if (!res.ok) return [];
+        return (await res.json()) as any[];
       } catch {
-        return []
+        return [];
       }
     },
     []
-  )
+  );
 
   return (
     <WikiLayout title={`${categoryLabel()} | Grand Tale Wiki`}>
@@ -70,11 +70,11 @@ export const LoreCategoryPage: Component = () => {
                   const titleStr =
                     typeof page.title === "string"
                       ? page.title
-                      : page.title?.[activeLocale()] || page.title?.en || page.slug
+                      : page.title?.[activeLocale()] || page.title?.en || page.slug;
                   const descStr =
                     typeof page.description === "string"
                       ? page.description
-                      : page.description?.[activeLocale()] || page.description?.en || "---"
+                      : page.description?.[activeLocale()] || page.description?.en || "---";
                   return (
                     <tr class="hover:bg-neutral-900/30 transition-colors">
                       <td class="p-4 flex items-center gap-3">
@@ -96,7 +96,7 @@ export const LoreCategoryPage: Component = () => {
                         </a>
                       </td>
                     </tr>
-                  )
+                  );
                 }}
               </For>
               <Show when={!pagesData() || pagesData()!.length === 0}>
@@ -111,7 +111,7 @@ export const LoreCategoryPage: Component = () => {
         </div>
       </div>
     </WikiLayout>
-  )
-}
+  );
+};
 
-export default LoreCategoryPage
+export default LoreCategoryPage;

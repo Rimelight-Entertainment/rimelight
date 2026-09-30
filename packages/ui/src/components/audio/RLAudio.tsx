@@ -7,49 +7,49 @@ import {
   Show,
   omit,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { AudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio"
-import { audioTheme } from "./audio.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLImage } from "../image/RLImage"
-import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio"
-import { RLPopover } from "../popover/RLPopover"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { AudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio";
+import { audioTheme } from "./audio.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLImage } from "../image/RLImage";
+import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio";
+import { RLPopover } from "../popover/RLPopover";
 
 export interface RLAudioProps extends AudioProps {
-  children?: JSX.Element | undefined
-  transcript?: JSX.Element | undefined
-  headerSlot?: JSX.Element | undefined
-  timelineSlot?: JSX.Element | undefined
-  controlsSlot?: JSX.Element | undefined
-  artworkSlot?: JSX.Element | undefined
-  onPlay?: (() => void) | undefined
-  onPause?: (() => void) | undefined
-  onEnded?: (() => void) | undefined
-  onTrackChange?: ((index: number, track: AudioTrackItem) => void) | undefined
-  onTimeUpdate?: ((currentTime: number, duration: number) => void) | undefined
-  onVolumeChange?: ((volume: number, muted: boolean) => void) | undefined
-  onRepeatModeChange?: ((mode: AudioRepeatMode) => void) | undefined
+  children?: JSX.Element | undefined;
+  transcript?: JSX.Element | undefined;
+  headerSlot?: JSX.Element | undefined;
+  timelineSlot?: JSX.Element | undefined;
+  controlsSlot?: JSX.Element | undefined;
+  artworkSlot?: JSX.Element | undefined;
+  onPlay?: (() => void) | undefined;
+  onPause?: (() => void) | undefined;
+  onEnded?: (() => void) | undefined;
+  onTrackChange?: ((index: number, track: AudioTrackItem) => void) | undefined;
+  onTimeUpdate?: ((currentTime: number, duration: number) => void) | undefined;
+  onVolumeChange?: ((volume: number, muted: boolean) => void) | undefined;
+  onRepeatModeChange?: ((mode: AudioRepeatMode) => void) | undefined;
 }
 
 function formatTime(seconds: number): string {
-  if (isNaN(seconds) || !isFinite(seconds) || seconds < 0) return "0:00"
-  const mins = Math.floor(seconds / 60)
-  const secs = Math.floor(seconds % 60)
-  return `${mins}:${secs < 10 ? "0" : ""}${secs}`
+  if (isNaN(seconds) || !isFinite(seconds) || seconds < 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 }
 
 function formatFileSize(bytes: number | string): string {
-  if (typeof bytes === "string") return bytes
-  if (isNaN(bytes) || bytes <= 0) return ""
-  const units = ["B", "KB", "MB", "GB"]
-  let size = bytes
-  let unitIndex = 0
+  if (typeof bytes === "string") return bytes;
+  if (isNaN(bytes) || bytes <= 0) return "";
+  const units = ["B", "KB", "MB", "GB"];
+  let size = bytes;
+  let unitIndex = 0;
   while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024
-    unitIndex++
+    size /= 1024;
+    unitIndex++;
   }
-  return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
+  return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
 function generateDefaultPeaks(count = 36): number[] {
@@ -57,20 +57,20 @@ function generateDefaultPeaks(count = 36): number[] {
   const voicePattern = [
     22, 36, 58, 42, 74, 52, 86, 64, 46, 78, 56, 90, 68, 40, 64, 82, 48, 74, 92, 58, 44, 70, 86, 50,
     78, 62, 88, 66, 42, 72, 54, 80, 46, 60, 34, 22
-  ]
-  if (count === voicePattern.length) return voicePattern
-  const peaks: number[] = []
+  ];
+  if (count === voicePattern.length) return voicePattern;
+  const peaks: number[] = [];
   for (let i = 0; i < count; i++) {
-    const idx = Math.floor((i / count) * voicePattern.length)
-    peaks.push(voicePattern[idx] ?? 40)
+    const idx = Math.floor((i / count) * voicePattern.length);
+    peaks.push(voicePattern[idx] ?? 40);
   }
-  return peaks
+  return peaks;
 }
 
-const SPEED_OPTIONS = [0.5, 1, 1.25, 1.5, 2, 3, 4]
+const SPEED_OPTIONS = [0.5, 1, 1.25, 1.5, 2, 3, 4];
 
 const RLAudio: Component<RLAudioProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "src",
@@ -125,19 +125,19 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
     "onTimeUpdate",
     "onVolumeChange",
     "onRepeatModeChange"
-  )
+  );
 
-  const titleId = createUniqueId()
-  const descId = createUniqueId()
+  const titleId = createUniqueId();
+  const descId = createUniqueId();
 
-  let audioRef: HTMLAudioElement | undefined
+  let audioRef: HTMLAudioElement | undefined;
 
   // Multi-track Playlist handling
-  const [activeTrackIndex, setActiveTrackIndex] = createSignal(props.currentTrackIndex ?? 0)
+  const [activeTrackIndex, setActiveTrackIndex] = createSignal(props.currentTrackIndex ?? 0);
 
   const playlist = createMemo<AudioTrackItem[]>(() => {
     if (props.playlist && props.playlist.length > 0) {
-      return props.playlist
+      return props.playlist;
     }
     if (props.src) {
       const singleTrack: AudioTrackItem = {
@@ -147,44 +147,44 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
         artwork: props.artwork,
         transcript: typeof props.transcript === "string" ? props.transcript : undefined,
         tracks: props.tracks
-      }
-      return [singleTrack]
+      };
+      return [singleTrack];
     }
-    return []
-  })
+    return [];
+  });
 
   const currentTrack = createMemo<AudioTrackItem | undefined>(() => {
-    const list = playlist()
-    if (list.length === 0) return undefined
-    const idx = Math.max(0, Math.min(list.length - 1, activeTrackIndex()))
-    return list[idx]
-  })
+    const list = playlist();
+    if (list.length === 0) return undefined;
+    const idx = Math.max(0, Math.min(list.length - 1, activeTrackIndex()));
+    return list[idx];
+  });
 
-  const [isPlaying, setIsPlaying] = createSignal(false)
-  const [currentTime, setCurrentTime] = createSignal(0)
-  const [duration, setDuration] = createSignal(0)
-  const [volume, setVolume] = createSignal(props.volume ?? 1)
-  const [isMuted, setIsMuted] = createSignal(props.muted ?? false)
-  const [playbackRate, setPlaybackRate] = createSignal(props.playbackRate ?? 1)
-  const [isEditingSpeed, setIsEditingSpeed] = createSignal(false)
-  const [isTranscriptOpen, setIsTranscriptOpen] = createSignal(false)
+  const [isPlaying, setIsPlaying] = createSignal(false);
+  const [currentTime, setCurrentTime] = createSignal(0);
+  const [duration, setDuration] = createSignal(0);
+  const [volume, setVolume] = createSignal(props.volume ?? 1);
+  const [isMuted, setIsMuted] = createSignal(props.muted ?? false);
+  const [playbackRate, setPlaybackRate] = createSignal(props.playbackRate ?? 1);
+  const [isEditingSpeed, setIsEditingSpeed] = createSignal(false);
+  const [isTranscriptOpen, setIsTranscriptOpen] = createSignal(false);
   const [repeatMode, setRepeatMode] = createSignal<AudioRepeatMode>(
     props.repeatMode ?? (props.loop ? "all" : "off")
-  )
+  );
 
-  const orientation = () => props.orientation ?? "horizontal"
-  const progressVariant = () => props.progressVariant ?? "bar"
-  const showTime = () => props.showTime ?? true
-  const showVolume = () => props.showVolume ?? true
-  const showVolumeNumber = () => props.showVolumeNumber ?? true
-  const showSpeed = () => props.showSpeed ?? true
-  const showSkip = () => props.showSkip ?? true
-  const showRepeat = () => props.showRepeat ?? true
-  const showDownload = () => props.showDownload ?? false
-  const showExternalLink = () => props.showExternalLink ?? false
-  const showPlaylist = () => props.showPlaylist ?? true
-  const artworkZoomable = () => props.artworkZoomable ?? true
-  const skipSecs = () => props.skipSeconds ?? 15
+  const orientation = () => props.orientation ?? "horizontal";
+  const progressVariant = () => props.progressVariant ?? "bar";
+  const showTime = () => props.showTime ?? true;
+  const showVolume = () => props.showVolume ?? true;
+  const showVolumeNumber = () => props.showVolumeNumber ?? true;
+  const showSpeed = () => props.showSpeed ?? true;
+  const showSkip = () => props.showSkip ?? true;
+  const showRepeat = () => props.showRepeat ?? true;
+  const showDownload = () => props.showDownload ?? false;
+  const showExternalLink = () => props.showExternalLink ?? false;
+  const showPlaylist = () => props.showPlaylist ?? true;
+  const artworkZoomable = () => props.artworkZoomable ?? true;
+  const skipSecs = () => props.skipSeconds ?? 15;
 
   const resolvedClasses = createMemo(() =>
     audioTheme({
@@ -195,14 +195,14 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const progressColorClass = createMemo(() => {
-    const pColor = props.progressColor ?? props.color ?? "primary"
-    return `rl-color-${pColor}`
-  })
+    const pColor = props.progressColor ?? props.color ?? "primary";
+    return `rl-color-${pColor}`;
+  });
 
-  const peaks = createMemo(() => props.waveformPeaks ?? generateDefaultPeaks(64))
+  const peaks = createMemo(() => props.waveformPeaks ?? generateDefaultPeaks(64));
 
   const getDuration = () => {
     if (
@@ -211,309 +211,309 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
       isFinite(audioRef.duration) &&
       audioRef.duration > 0
     ) {
-      return audioRef.duration
+      return audioRef.duration;
     }
-    if (duration() > 0) return duration()
-    const trackDur = currentTrack()?.duration
-    if (trackDur && isFinite(trackDur) && trackDur > 0) return trackDur
-    return 0
-  }
+    if (duration() > 0) return duration();
+    const trackDur = currentTrack()?.duration;
+    if (trackDur && isFinite(trackDur) && trackDur > 0) return trackDur;
+    return 0;
+  };
 
   const progressPercent = createMemo(() => {
-    const dur = getDuration()
-    if (!dur || dur <= 0) return 0
-    return Math.min(100, Math.max(0, (currentTime() / dur) * 100))
-  })
+    const dur = getDuration();
+    if (!dur || dur <= 0) return 0;
+    return Math.min(100, Math.max(0, (currentTime() / dur) * 100));
+  });
 
   const volumePercent = createMemo(() => {
-    if (isMuted()) return 0
-    return Math.min(100, Math.max(0, volume() * 100))
-  })
+    if (isMuted()) return 0;
+    return Math.min(100, Math.max(0, volume() * 100));
+  });
 
   const currentMediaSrc = createMemo<string>(() => {
-    const track = currentTrack()
-    if (!track) return ""
-    if (typeof track.src === "string") return track.src
-    if (Array.isArray(track.src) && track.src[0]) return track.src[0].src
-    return ""
-  })
+    const track = currentTrack();
+    if (!track) return "";
+    if (typeof track.src === "string") return track.src;
+    if (Array.isArray(track.src) && track.src[0]) return track.src[0].src;
+    return "";
+  });
 
   const currentTracks = createMemo<AudioTextTrack[]>(() => {
-    const track = currentTrack()
-    return track?.tracks ?? props.tracks ?? []
-  })
+    const track = currentTrack();
+    return track?.tracks ?? props.tracks ?? [];
+  });
 
-  const trackTitle = () => currentTrack()?.title ?? props.title
-  const trackDescription = () => currentTrack()?.description ?? props.description
-  const trackArtwork = () => currentTrack()?.artwork ?? props.artwork
-  const trackTranscript = () => currentTrack()?.transcript ?? props.transcript
-  const trackFormat = () => currentTrack()?.format ?? props.format
-  const trackFileSize = () => currentTrack()?.fileSize ?? props.fileSize
-  const trackBitrate = () => currentTrack()?.bitrate ?? props.bitrate
-  const activeExternalUrl = () => props.externalLink ?? currentMediaSrc()
+  const trackTitle = () => currentTrack()?.title ?? props.title;
+  const trackDescription = () => currentTrack()?.description ?? props.description;
+  const trackArtwork = () => currentTrack()?.artwork ?? props.artwork;
+  const trackTranscript = () => currentTrack()?.transcript ?? props.transcript;
+  const trackFormat = () => currentTrack()?.format ?? props.format;
+  const trackFileSize = () => currentTrack()?.fileSize ?? props.fileSize;
+  const trackBitrate = () => currentTrack()?.bitrate ?? props.bitrate;
+  const activeExternalUrl = () => props.externalLink ?? currentMediaSrc();
 
   const selectTrack = (index: number) => {
-    const list = playlist()
-    if (index < 0 || index >= list.length) return
-    setActiveTrackIndex(index)
-    setCurrentTime(0)
-    const target = list[index]!
+    const list = playlist();
+    if (index < 0 || index >= list.length) return;
+    setActiveTrackIndex(index);
+    setCurrentTime(0);
+    const target = list[index]!;
     if (target.duration) {
-      setDuration(target.duration)
+      setDuration(target.duration);
     }
-    props.onTrackChange?.(index, target)
+    props.onTrackChange?.(index, target);
     if (audioRef) {
-      const targetSrc = typeof target.src === "string" ? target.src : (target.src[0]?.src ?? "")
+      const targetSrc = typeof target.src === "string" ? target.src : (target.src[0]?.src ?? "");
       if (audioRef.src !== targetSrc) {
-        audioRef.src = targetSrc
-        audioRef.load()
+        audioRef.src = targetSrc;
+        audioRef.load();
       }
       if (isPlaying()) {
-        audioRef.play().catch(() => setIsPlaying(false))
+        audioRef.play().catch(() => setIsPlaying(false));
       }
     }
-  }
+  };
 
   const nextTrack = () => {
-    const list = playlist()
-    if (list.length <= 1) return
-    const nextIdx = activeTrackIndex() + 1
+    const list = playlist();
+    if (list.length <= 1) return;
+    const nextIdx = activeTrackIndex() + 1;
     if (nextIdx < list.length) {
-      selectTrack(nextIdx)
+      selectTrack(nextIdx);
     } else if (repeatMode() === "all") {
-      selectTrack(0)
+      selectTrack(0);
     }
-  }
+  };
 
   const prevTrack = () => {
-    const list = playlist()
-    if (list.length <= 1) return
+    const list = playlist();
+    if (list.length <= 1) return;
     if (currentTime() > 3) {
-      if (audioRef) audioRef.currentTime = 0
-      setCurrentTime(0)
-      return
+      if (audioRef) audioRef.currentTime = 0;
+      setCurrentTime(0);
+      return;
     }
-    const prevIdx = activeTrackIndex() - 1
+    const prevIdx = activeTrackIndex() - 1;
     if (prevIdx >= 0) {
-      selectTrack(prevIdx)
+      selectTrack(prevIdx);
     } else if (repeatMode() === "all") {
-      selectTrack(list.length - 1)
+      selectTrack(list.length - 1);
     }
-  }
+  };
 
   const togglePlay = () => {
-    if (!audioRef) return
+    if (!audioRef) return;
     if (isPlaying()) {
-      audioRef.pause()
+      audioRef.pause();
     } else {
-      const srcToPlay = currentMediaSrc()
+      const srcToPlay = currentMediaSrc();
       if (
         !audioRef.src ||
         audioRef.src === "" ||
         (!audioRef.src.includes(srcToPlay) && srcToPlay !== "")
       ) {
-        audioRef.src = srcToPlay
-        audioRef.load()
+        audioRef.src = srcToPlay;
+        audioRef.load();
       }
       audioRef.play().catch((err) => {
-        console.warn("RLAudio playback play() error:", err)
-        setIsPlaying(false)
-      })
+        console.warn("RLAudio playback play() error:", err);
+        setIsPlaying(false);
+      });
     }
-  }
+  };
 
   const handleSkip = (seconds: number) => {
-    if (!audioRef) return
-    const dur = getDuration()
+    if (!audioRef) return;
+    const dur = getDuration();
     const cur =
       !isNaN(audioRef.currentTime) && isFinite(audioRef.currentTime)
         ? audioRef.currentTime
-        : currentTime()
-    const target = cur + seconds
-    const newTime = dur > 0 ? Math.max(0, Math.min(target, dur)) : Math.max(0, target)
+        : currentTime();
+    const target = cur + seconds;
+    const newTime = dur > 0 ? Math.max(0, Math.min(target, dur)) : Math.max(0, target);
     try {
-      audioRef.currentTime = newTime
-      setCurrentTime(newTime)
+      audioRef.currentTime = newTime;
+      setCurrentTime(newTime);
     } catch {
       // ignore
     }
-  }
+  };
 
   const handleProgressChange = (e: Event & { currentTarget: HTMLInputElement }) => {
-    const val = parseFloat(e.currentTarget.value)
+    const val = parseFloat(e.currentTarget.value);
     if (!isNaN(val) && audioRef) {
-      const dur = getDuration()
+      const dur = getDuration();
       if (dur > 0) {
-        const newTime = (val / 100) * dur
+        const newTime = (val / 100) * dur;
         try {
-          audioRef.currentTime = newTime
-          setCurrentTime(newTime)
+          audioRef.currentTime = newTime;
+          setCurrentTime(newTime);
         } catch {
           // ignore
         }
       }
     }
-  }
+  };
 
   const handleWaveformClick = (percent: number) => {
     if (audioRef) {
-      const dur = getDuration()
+      const dur = getDuration();
       if (dur > 0) {
-        const newTime = (percent / 100) * dur
+        const newTime = (percent / 100) * dur;
         try {
-          audioRef.currentTime = newTime
-          setCurrentTime(newTime)
+          audioRef.currentTime = newTime;
+          setCurrentTime(newTime);
         } catch {
           // ignore
         }
       }
     }
-  }
+  };
 
   const handleVolumeChange = (e: Event & { currentTarget: HTMLInputElement }) => {
-    const val = parseFloat(e.currentTarget.value)
+    const val = parseFloat(e.currentTarget.value);
     if (!isNaN(val)) {
-      const v = Math.min(1, Math.max(0, val / 100))
-      setVolume(v)
+      const v = Math.min(1, Math.max(0, val / 100));
+      setVolume(v);
       if (audioRef) {
-        audioRef.volume = v
+        audioRef.volume = v;
         if (v > 0 && isMuted()) {
-          audioRef.muted = false
-          setIsMuted(false)
+          audioRef.muted = false;
+          setIsMuted(false);
         }
       }
-      props.onVolumeChange?.(v, isMuted())
+      props.onVolumeChange?.(v, isMuted());
     }
-  }
+  };
 
   const toggleMute = () => {
-    if (!audioRef) return
-    const newMuted = !isMuted()
-    audioRef.muted = newMuted
-    setIsMuted(newMuted)
-    props.onVolumeChange?.(volume(), newMuted)
-  }
+    if (!audioRef) return;
+    const newMuted = !isMuted();
+    audioRef.muted = newMuted;
+    setIsMuted(newMuted);
+    props.onVolumeChange?.(volume(), newMuted);
+  };
 
   const cycleRepeatMode = () => {
-    const current = repeatMode()
-    const next: AudioRepeatMode = current === "off" ? "all" : current === "all" ? "one" : "off"
-    setRepeatMode(next)
-    props.onRepeatModeChange?.(next)
-  }
+    const current = repeatMode();
+    const next: AudioRepeatMode = current === "off" ? "all" : current === "all" ? "one" : "off";
+    setRepeatMode(next);
+    props.onRepeatModeChange?.(next);
+  };
 
   const cycleSpeed = () => {
-    const current = playbackRate()
-    const currentIndex = SPEED_OPTIONS.indexOf(current)
+    const current = playbackRate();
+    const currentIndex = SPEED_OPTIONS.indexOf(current);
     const nextIndex =
-      currentIndex === -1 || currentIndex === SPEED_OPTIONS.length - 1 ? 0 : currentIndex + 1
-    const nextSpeed = SPEED_OPTIONS[nextIndex] ?? 1
-    setPlaybackRate(nextSpeed)
+      currentIndex === -1 || currentIndex === SPEED_OPTIONS.length - 1 ? 0 : currentIndex + 1;
+    const nextSpeed = SPEED_OPTIONS[nextIndex] ?? 1;
+    setPlaybackRate(nextSpeed);
     if (audioRef) {
-      audioRef.playbackRate = nextSpeed
+      audioRef.playbackRate = nextSpeed;
     }
-  }
+  };
 
   const setCustomSpeed = (val: number) => {
-    if (isNaN(val) || val <= 0) return
-    const clamped = Math.max(0.1, val)
-    setPlaybackRate(clamped)
+    if (isNaN(val) || val <= 0) return;
+    const clamped = Math.max(0.1, val);
+    setPlaybackRate(clamped);
     if (audioRef) {
-      audioRef.playbackRate = clamped
+      audioRef.playbackRate = clamped;
     }
-  }
+  };
 
   // Icons resolution (support custom overrides prop + defaults)
-  const playIconName = () => props.icons?.play ?? "play"
-  const pauseIconName = () => props.icons?.pause ?? "pause"
-  const skipBackIconName = () => props.icons?.skipBack ?? "rewind"
-  const skipForwardIconName = () => props.icons?.skipForward ?? "fastForward"
-  const prevTrackIconName = () => props.icons?.prevTrack ?? "skipBack"
-  const nextTrackIconName = () => props.icons?.nextTrack ?? "skipForward"
-  const downloadIconName = () => props.icons?.download ?? "download"
-  const externalLinkIconName = () => props.icons?.externalLink ?? "externalLink"
+  const playIconName = () => props.icons?.play ?? "play";
+  const pauseIconName = () => props.icons?.pause ?? "pause";
+  const skipBackIconName = () => props.icons?.skipBack ?? "rewind";
+  const skipForwardIconName = () => props.icons?.skipForward ?? "fastForward";
+  const prevTrackIconName = () => props.icons?.prevTrack ?? "skipBack";
+  const nextTrackIconName = () => props.icons?.nextTrack ?? "skipForward";
+  const downloadIconName = () => props.icons?.download ?? "download";
+  const externalLinkIconName = () => props.icons?.externalLink ?? "externalLink";
 
   const repeatIconName = () => {
-    const mode = repeatMode()
-    if (mode === "one") return props.icons?.repeatOne ?? "repeat1"
-    if (mode === "all") return props.icons?.repeat ?? "repeat"
-    return props.icons?.repeatOff ?? "repeat"
-  }
+    const mode = repeatMode();
+    if (mode === "one") return props.icons?.repeatOne ?? "repeat1";
+    if (mode === "all") return props.icons?.repeat ?? "repeat";
+    return props.icons?.repeatOff ?? "repeat";
+  };
 
   const volumeIconName = createMemo(() => {
-    if (isMuted() || volume() === 0) return props.icons?.volumeMuted ?? "volumeX"
-    if (volume() < 0.5) return props.icons?.volumeLow ?? "volume1"
-    return props.icons?.volumeHigh ?? "volume2"
-  })
+    if (isMuted() || volume() === 0) return props.icons?.volumeMuted ?? "volumeX";
+    if (volume() < 0.5) return props.icons?.volumeLow ?? "volume1";
+    return props.icons?.volumeHigh ?? "volume2";
+  });
 
   onSettled(() => {
-    const audio = audioRef
-    if (!audio) return
+    const audio = audioRef;
+    if (!audio) return;
 
-    audio.volume = volume()
-    audio.muted = isMuted()
-    audio.playbackRate = playbackRate()
+    audio.volume = volume();
+    audio.muted = isMuted();
+    audio.playbackRate = playbackRate();
 
     const onPlayEvent = () => {
-      setIsPlaying(true)
-      props.onPlay?.()
-    }
+      setIsPlaying(true);
+      props.onPlay?.();
+    };
 
     const onPauseEvent = () => {
-      setIsPlaying(false)
-      props.onPause?.()
-    }
+      setIsPlaying(false);
+      props.onPause?.();
+    };
 
     const onTimeUpdateEvent = () => {
-      if (!audioRef) return
-      setCurrentTime(audioRef.currentTime)
-      props.onTimeUpdate?.(audioRef.currentTime, audioRef.duration || duration())
-    }
+      if (!audioRef) return;
+      setCurrentTime(audioRef.currentTime);
+      props.onTimeUpdate?.(audioRef.currentTime, audioRef.duration || duration());
+    };
 
     const onLoadedMetadataEvent = () => {
-      if (!audioRef) return
+      if (!audioRef) return;
       if (!isNaN(audioRef.duration) && isFinite(audioRef.duration) && audioRef.duration > 0) {
-        setDuration(audioRef.duration)
+        setDuration(audioRef.duration);
       }
-    }
+    };
 
     const onEndedEvent = () => {
       if (repeatMode() === "one") {
         if (audioRef) {
-          audioRef.currentTime = 0
-          audioRef.play().catch(() => setIsPlaying(false))
+          audioRef.currentTime = 0;
+          audioRef.play().catch(() => setIsPlaying(false));
         }
       } else if (activeTrackIndex() < playlist().length - 1) {
-        nextTrack()
+        nextTrack();
       } else if (repeatMode() === "all") {
-        selectTrack(0)
+        selectTrack(0);
       } else {
-        setIsPlaying(false)
-        props.onEnded?.()
+        setIsPlaying(false);
+        props.onEnded?.();
       }
-    }
+    };
 
-    audio.addEventListener("play", onPlayEvent)
-    audio.addEventListener("pause", onPauseEvent)
-    audio.addEventListener("timeupdate", onTimeUpdateEvent)
-    audio.addEventListener("loadedmetadata", onLoadedMetadataEvent)
-    audio.addEventListener("durationchange", onLoadedMetadataEvent)
-    audio.addEventListener("canplay", onLoadedMetadataEvent)
-    audio.addEventListener("ended", onEndedEvent)
+    audio.addEventListener("play", onPlayEvent);
+    audio.addEventListener("pause", onPauseEvent);
+    audio.addEventListener("timeupdate", onTimeUpdateEvent);
+    audio.addEventListener("loadedmetadata", onLoadedMetadataEvent);
+    audio.addEventListener("durationchange", onLoadedMetadataEvent);
+    audio.addEventListener("canplay", onLoadedMetadataEvent);
+    audio.addEventListener("ended", onEndedEvent);
 
     return () => {
-      audio.removeEventListener("play", onPlayEvent)
-      audio.removeEventListener("pause", onPauseEvent)
-      audio.removeEventListener("timeupdate", onTimeUpdateEvent)
-      audio.removeEventListener("loadedmetadata", onLoadedMetadataEvent)
-      audio.removeEventListener("durationchange", onLoadedMetadataEvent)
-      audio.removeEventListener("canplay", onLoadedMetadataEvent)
-      audio.removeEventListener("ended", onEndedEvent)
-    }
-  })
+      audio.removeEventListener("play", onPlayEvent);
+      audio.removeEventListener("pause", onPauseEvent);
+      audio.removeEventListener("timeupdate", onTimeUpdateEvent);
+      audio.removeEventListener("loadedmetadata", onLoadedMetadataEvent);
+      audio.removeEventListener("durationchange", onLoadedMetadataEvent);
+      audio.removeEventListener("canplay", onLoadedMetadataEvent);
+      audio.removeEventListener("ended", onEndedEvent);
+    };
+  });
 
   const renderArtwork = () => {
-    const art = trackArtwork()
-    if (!art && !props.artworkSlot) return null
+    const art = trackArtwork();
+    if (!art && !props.artworkSlot) return null;
 
     const imageElement = () =>
       props.artworkSlot !== undefined ? (
@@ -539,7 +539,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
           data-slot="artwork-item"
           loading="lazy"
         />
-      )
+      );
 
     if (orientation() === "vertical") {
       return (
@@ -548,15 +548,15 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
             {imageElement()}
           </RLAspectRatio>
         </div>
-      )
+      );
     }
 
     return (
       <div class={resolvedClasses().artwork} data-slot="artwork">
         {imageElement()}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div
@@ -737,10 +737,10 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                     aria-valuenow={Math.round(currentTime())}
                     aria-valuetext={`${formatTime(currentTime())} of ${formatTime(getDuration())}`}
                     onClick={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect()
-                      const clickX = e.clientX - rect.left
-                      const pct = Math.max(0, Math.min(100, (clickX / rect.width) * 100))
-                      handleWaveformClick(pct)
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const clickX = e.clientX - rect.left;
+                      const pct = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
+                      handleWaveformClick(pct);
                     }}
                   >
                     <svg
@@ -752,12 +752,12 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                       <For each={peaks()}>
                         {(peak, idx) => {
                           const isActive = () => {
-                            const total = peaks().length
-                            const barPct = total > 1 ? (idx() / (total - 1)) * 100 : 0
-                            return barPct <= progressPercent()
-                          }
-                          const height = () => Math.max(16, peak)
-                          const y = () => (100 - height()) / 2
+                            const total = peaks().length;
+                            const barPct = total > 1 ? (idx() / (total - 1)) * 100 : 0;
+                            return barPct <= progressPercent();
+                          };
+                          const height = () => Math.max(16, peak);
+                          const y = () => (100 - height()) / 2;
                           return (
                             <rect
                               x={idx() * 6 + 1.5}
@@ -770,7 +770,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                               }`}
                               fill="currentColor"
                             />
-                          )
+                          );
                         }}
                       </For>
                     </svg>
@@ -816,9 +816,9 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                         <button
                           type="button"
                           onContextMenu={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            toggleMute()
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleMute();
                           }}
                           class={resolvedClasses().volumeButton}
                           data-slot="volume-button"
@@ -847,19 +847,19 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                         class={resolvedClasses().volumeSlider}
                         data-slot="volume-slider"
                         onClick={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect()
-                          const clickY = rect.bottom - e.clientY
-                          const pct = Math.max(0, Math.min(100, (clickY / rect.height) * 100))
-                          const v = pct / 100
-                          setVolume(v)
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const clickY = rect.bottom - e.clientY;
+                          const pct = Math.max(0, Math.min(100, (clickY / rect.height) * 100));
+                          const v = pct / 100;
+                          setVolume(v);
                           if (audioRef) {
-                            audioRef.volume = v
+                            audioRef.volume = v;
                             if (v > 0 && isMuted()) {
-                              audioRef.muted = false
-                              setIsMuted(false)
+                              audioRef.muted = false;
+                              setIsMuted(false);
                             }
                           }
-                          props.onVolumeChange?.(v, isMuted())
+                          props.onVolumeChange?.(v, isMuted());
                         }}
                       >
                         <div class={resolvedClasses().volumeTrack} data-slot="volume-track">
@@ -1027,8 +1027,8 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                           type="button"
                           onClick={cycleSpeed}
                           onContextMenu={(e) => {
-                            e.preventDefault()
-                            setIsEditingSpeed(true)
+                            e.preventDefault();
+                            setIsEditingSpeed(true);
                           }}
                           class={resolvedClasses().speedButton}
                           data-slot="speed-button"
@@ -1048,15 +1048,15 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                         data-slot="speed-input"
                         aria-label="Set specific playback speed"
                         onBlur={(e) => {
-                          setCustomSpeed(parseFloat(e.currentTarget.value))
-                          setIsEditingSpeed(false)
+                          setCustomSpeed(parseFloat(e.currentTarget.value));
+                          setIsEditingSpeed(false);
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
-                            setCustomSpeed(parseFloat(e.currentTarget.value))
-                            setIsEditingSpeed(false)
+                            setCustomSpeed(parseFloat(e.currentTarget.value));
+                            setIsEditingSpeed(false);
                           } else if (e.key === "Escape") {
-                            setIsEditingSpeed(false)
+                            setIsEditingSpeed(false);
                           }
                         }}
                       />
@@ -1081,7 +1081,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
             <div class={resolvedClasses().playlistList} data-slot="playlist-list" role="listbox">
               <For each={playlist()}>
                 {(item, idx) => {
-                  const isActive = () => idx() === activeTrackIndex()
+                  const isActive = () => idx() === activeTrackIndex();
                   return (
                     <div
                       role="option"
@@ -1111,7 +1111,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
                         </span>
                       </Show>
                     </div>
-                  )
+                  );
                 }}
               </For>
             </div>
@@ -1149,7 +1149,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
         </Show>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLAudio }
+export { RLAudio };

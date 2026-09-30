@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const headerTheme = defineTheme("header", {
   slots: ["root", "content", "container", "left", "center", "right"],
@@ -40,4 +40,4 @@ export const headerTheme = defineTheme("header", {
     sticky: true,
     fixed: false
   }
-})
+});

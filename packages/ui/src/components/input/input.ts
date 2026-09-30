@@ -1,69 +1,69 @@
-import type { Theme, ThemeColor } from "../../types"
+import type { Theme, ThemeColor } from "../../types";
 
 export interface InputProps {
   /**
    * Type of input element.
    */
-  type?: "text" | "password" | "email" | "number" | "date" | "search" | "tel" | "url"
+  type?: "text" | "password" | "email" | "number" | "date" | "search" | "tel" | "url";
   /**
    * The input value.
    */
-  value?: string | number
+  value?: string | number;
   /**
    * Placeholder text.
    */
-  placeholder?: string
+  placeholder?: string;
   /**
    * Disabled state.
    */
-  disabled?: boolean
+  disabled?: boolean;
   /**
    * Readonly state.
    */
-  readonly?: boolean
+  readonly?: boolean;
   /**
    * Name for forms.
    */
-  name?: string
+  name?: string;
   /**
    * Required field state.
    */
-  required?: boolean
+  required?: boolean;
   /**
    * Error state.
    */
-  error?: boolean | string
+  error?: boolean | string;
   /**
    * Leading icon name.
    */
-  leadingIcon?: string
+  leadingIcon?: string;
   /**
    * Trailing icon name.
    */
-  trailingIcon?: string
+  trailingIcon?: string;
   /**
    * Variant style.
    */
-  variant?: "default" | "ghost"
+  variant?: "default" | "ghost";
   /**
    * Size scale.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

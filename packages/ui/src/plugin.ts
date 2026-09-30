@@ -1,19 +1,19 @@
-import UnoCSS from "@unocss/vite"
-import type { Plugin } from "vite-plus"
-import rimelightUiPreset from "./preset"
-import { rimelightFontsVitePlugin } from "./fonts"
-import type { UIConfig } from "./types"
+import UnoCSS from "@unocss/vite";
+import type { Plugin } from "vite-plus";
+import rimelightUiPreset from "./preset";
+import { rimelightFontsVitePlugin } from "./fonts";
+import type { UIConfig } from "./types";
 
-const ID = "virtual:rimelight/ui"
+const ID = "virtual:rimelight/ui";
 
-export type RimelightUIPlugin = Plugin
+export type RimelightUIPlugin = Plugin;
 
-export type RimelightUIPlugins = Plugin[]
+export type RimelightUIPlugins = Plugin[];
 
 export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins => {
-  const fontsOpts = cfg.fonts && typeof cfg.fonts === "object" ? cfg.fonts : undefined
-  const fontsEnabled = cfg.presets?.fonts !== false && cfg.fonts !== false
-  const fontsPlugin = fontsEnabled ? rimelightFontsVitePlugin(fontsOpts?.processorOptions) : null
+  const fontsOpts = cfg.fonts && typeof cfg.fonts === "object" ? cfg.fonts : undefined;
+  const fontsEnabled = cfg.presets?.fonts !== false && cfg.fonts !== false;
+  const fontsPlugin = fontsEnabled ? rimelightFontsVitePlugin(fontsOpts?.processorOptions) : null;
 
   return [
     ...(UnoCSS({
@@ -40,7 +40,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins =
       resolveId: (id: string) => (id === ID ? `\0${ID}` : null),
       load: (id: string) => (id === `\0${ID}` ? `export default ${JSON.stringify(cfg)};` : null)
     }
-  ]
-}
+  ];
+};
 
-export default ui
+export default ui;

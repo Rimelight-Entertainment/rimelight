@@ -1,30 +1,30 @@
-import { createMemo, createSignal, omit, Show, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { AvatarProps } from "./avatar"
-import { avatarTheme } from "./avatar.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLChip } from "../chip/RLChip"
+import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { AvatarProps } from "./avatar";
+import { avatarTheme } from "./avatar.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLChip } from "../chip/RLChip";
 
 export interface RLAvatarProps extends AvatarProps {
-  children?: JSX.Element
-  fallbackSlot?: JSX.Element
-  badgeSlot?: JSX.Element
-  imgProps?: JSX.ImgHTMLAttributes<HTMLImageElement>
+  children?: JSX.Element;
+  fallbackSlot?: JSX.Element;
+  badgeSlot?: JSX.Element;
+  imgProps?: JSX.ImgHTMLAttributes<HTMLImageElement>;
 }
 
 /**
  * Extract 1-2 initials from alt text, e.g. "Benjamin Canac" -> "BC", "John" -> "J"
  */
 function getInitials(alt?: string): string | undefined {
-  if (!alt) return undefined
-  const parts = alt.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return undefined
-  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase()
-  return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase()
+  if (!alt) return undefined;
+  const parts = alt.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return undefined;
+  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
+  return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
 }
 
 const RLAvatar: Component<RLAvatarProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -58,9 +58,9 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     "fallbackSlot",
     "badgeSlot",
     "imgProps"
-  )
+  );
 
-  const [imageError, setImageError] = createSignal(false)
+  const [imageError, setImageError] = createSignal(false);
 
   const resolvedClasses = createMemo(() =>
     avatarTheme({
@@ -70,17 +70,17 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const fallbackText = () =>
-    props.text || props.fallback || props.initials || getInitials(props.alt)
+    props.text || props.fallback || props.initials || getInitials(props.alt);
 
-  const hasImage = () => Boolean(props.src && !imageError())
+  const hasImage = () => Boolean(props.src && !imageError());
 
-  const Root = dynamic(() => props.as ?? "span")
+  const Root = dynamic(() => props.as ?? "span");
 
   const renderIcon = () => {
-    if (!props.icon) return null
+    if (!props.icon) return null;
     if (typeof props.icon === "string") {
       return (
         <RLIcon
@@ -89,19 +89,19 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
           ui={{ root: resolvedClasses().icon }}
           aria-hidden="true"
         />
-      )
+      );
     }
-    return <span class={resolvedClasses().icon}>{props.icon}</span>
-  }
+    return <span class={resolvedClasses().icon}>{props.icon}</span>;
+  };
 
   const renderFallback = () => {
-    const customSlot = props.fallbackSlot
+    const customSlot = props.fallbackSlot;
     if (customSlot !== undefined && customSlot !== null) {
       return (
         <span class={resolvedClasses().fallback} data-slot="fallback">
           {customSlot}
         </span>
-      )
+      );
     }
 
     if (props.icon) {
@@ -109,16 +109,16 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
         <span class={resolvedClasses().fallback} data-slot="fallback">
           {renderIcon()}
         </span>
-      )
+      );
     }
 
-    const textVal = fallbackText()
+    const textVal = fallbackText();
     if (textVal) {
       return (
         <span class={resolvedClasses().fallback} data-slot="fallback">
           {textVal}
         </span>
-      )
+      );
     }
 
     return (
@@ -130,11 +130,11 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
           aria-hidden="true"
         />
       </span>
-    )
-  }
+    );
+  };
 
   const avatarContent = () => {
-    if (props.children) return props.children
+    if (props.children) return props.children;
     if (hasImage()) {
       return (
         <img
@@ -154,10 +154,10 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
           onError={() => setImageError(true)}
           {...props.imgProps}
         />
-      )
+      );
     }
-    return renderFallback()
-  }
+    return renderFallback();
+  };
 
   const avatarElement = () => (
     <Root
@@ -169,46 +169,46 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     >
       {avatarContent()}
     </Root>
-  )
+  );
 
   const chipConfig = createMemo(() => {
-    const chipProp = props.chip
-    const badgeProp = props.badge || props.badgeSlot
-    if (!chipProp && !badgeProp) return null
+    const chipProp = props.chip;
+    const badgeProp = props.badge || props.badgeSlot;
+    if (!chipProp && !badgeProp) return null;
 
-    let config: Record<string, any> = {}
+    let config: Record<string, any> = {};
 
     if (typeof chipProp === "object" && chipProp !== null) {
-      config = { ...chipProp }
+      config = { ...chipProp };
     } else if (chipProp === true) {
-      config = { inset: true }
+      config = { inset: true };
     }
 
     if (badgeProp) {
-      config["position"] = props.badgePosition ?? config["position"] ?? "bottom-right"
-      config["inset"] = config["inset"] ?? true
-      if (props.badgeColor) config["color"] = props.badgeColor
-      if (props.badgeSlot) config["content"] = props.badgeSlot
+      config["position"] = props.badgePosition ?? config["position"] ?? "bottom-right";
+      config["inset"] = config["inset"] ?? true;
+      if (props.badgeColor) config["color"] = props.badgeColor;
+      if (props.badgeSlot) config["content"] = props.badgeSlot;
       else if (typeof props.badge === "string" || typeof props.badge === "number") {
-        config["text"] = props.badge
+        config["text"] = props.badge;
       }
     }
 
-    return config
-  })
+    return config;
+  });
 
   const withChip = () => {
-    const cfg = chipConfig()
-    if (!cfg) return avatarElement()
+    const cfg = chipConfig();
+    if (!cfg) return avatarElement();
 
     return (
       <RLChip size={props.size as any} {...cfg}>
         {avatarElement()}
       </RLChip>
-    )
-  }
+    );
+  };
 
-  const hasProfile = () => Boolean(props.title || props.subtitle)
+  const hasProfile = () => Boolean(props.title || props.subtitle);
 
   return (
     <Show when={hasProfile()} fallback={withChip()}>
@@ -228,7 +228,7 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
         </div>
       </div>
     </Show>
-  )
-}
+  );
+};
 
-export { RLAvatar }
+export { RLAvatar };

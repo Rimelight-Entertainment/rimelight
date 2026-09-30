@@ -1,8 +1,8 @@
-import type { SecurityOptions } from "./types"
+import type { SecurityOptions } from "./types";
 
 // Hostname (dot-separated labels) with an optional port. Single-label hosts such as "localhost"
 // are rejected: `domain` is used to derive production `cdn.<domain>` origins.
-const DOMAIN_PATTERN = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?$/
+const DOMAIN_PATTERN = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?$/;
 
 /**
  * Coerces a `domain` into a bare lowercase `host[:port]`, dropping any scheme, surrounding
@@ -15,7 +15,7 @@ function normalizeDomain(value: string): string {
     .toLowerCase()
     .replace(/^https?:\/\//, "")
     .split(/[/?#]/)[0]!
-    .replace(/\/+$/, "")
+    .replace(/\/+$/, "");
 }
 
 /**
@@ -24,23 +24,23 @@ function normalizeDomain(value: string): string {
  * absent or blank, and throws when it cannot be repaired into a valid hostname.
  */
 export function resolveSecurityDomain(value: string | undefined): string | undefined {
-  const normalized = value === undefined ? "" : normalizeDomain(value)
-  if (normalized === "") return undefined
+  const normalized = value === undefined ? "" : normalizeDomain(value);
+  if (normalized === "") return undefined;
   if (!DOMAIN_PATTERN.test(normalized)) {
     throw new Error(
       `Invalid security domain ${JSON.stringify(value)}: expected a bare host such as ` +
         `"example.com" (optionally with a port), not a URL or path.`
-    )
+    );
   }
-  return normalized
+  return normalized;
 }
 
 /**
  * Builds the Content-Security-Policy header string dynamically for a given request nonce.
  */
 export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): string {
-  const domain = normalizeDomain(options.domain || "")
-  const allowedDomains = options.allowedDomains || []
+  const domain = normalizeDomain(options.domain || "");
+  const allowedDomains = options.allowedDomains || [];
 
   const imgSources = Array.from(
     new Set([
@@ -50,9 +50,9 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       ...allowedDomains,
       ...(options.imgSrc || [])
     ])
-  )
+  );
 
-  const allowTurnstile = options.turnstile === true
+  const allowTurnstile = options.turnstile === true;
 
   const connectSources = Array.from(
     new Set([
@@ -61,7 +61,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       ...allowedDomains,
       ...(options.connectSrc || [])
     ])
-  )
+  );
 
   const frameSources = Array.from(
     new Set([
@@ -70,9 +70,9 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       ...allowedDomains,
       ...(options.frameSrc || [])
     ])
-  )
+  );
 
-  const useStrictDynamic = nonce && options.strictDynamic !== false
+  const useStrictDynamic = nonce && options.strictDynamic !== false;
 
   const scriptSources = Array.from(
     new Set([
@@ -82,9 +82,9 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       "'inline-speculation-rules'",
       ...(options.scriptResources || [])
     ])
-  )
+  );
 
-  const styleSources = Array.from(new Set(["'self'", ...(options.styleResources || [])]))
+  const styleSources = Array.from(new Set(["'self'", ...(options.styleResources || [])]));
 
   const defaultDirectives: Record<string, string[]> = {
     "default-src": ["'none'"],
@@ -101,31 +101,31 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     "object-src": ["'none'"],
     "manifest-src": ["'self'"],
     "upgrade-insecure-requests": []
-  }
+  };
 
   if (options.trustedTypes) {
-    defaultDirectives["require-trusted-types-for"] = ["'script'"]
+    defaultDirectives["require-trusted-types-for"] = ["'script'"];
   }
 
   // Merge custom directive overrides
   if (options.directives) {
     for (const [key, value] of Object.entries(options.directives)) {
       if (value === false) {
-        delete defaultDirectives[key]
+        delete defaultDirectives[key];
       } else if (value === true) {
-        defaultDirectives[key] = []
+        defaultDirectives[key] = [];
       } else if (Array.isArray(value)) {
-        defaultDirectives[key] = value
+        defaultDirectives[key] = value;
       } else if (typeof value === "string") {
-        defaultDirectives[key] = value.split(" ").filter(Boolean)
+        defaultDirectives[key] = value.split(" ").filter(Boolean);
       }
     }
   }
 
   return Object.entries(defaultDirectives)
     .map(([directive, values]) => {
-      if (!values || values.length === 0) return directive
-      return `${directive} ${values.join(" ")}`
+      if (!values || values.length === 0) return directive;
+      return `${directive} ${values.join(" ")}`;
     })
-    .join("; ")
+    .join("; ");
 }

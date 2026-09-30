@@ -1,30 +1,30 @@
-import { createSignal, For, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { useCmsApi } from "./_shared.tsx"
+import { createSignal, For, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { useCmsApi } from "./_shared.tsx";
 
 export interface PagesNewPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  onCreated?: ((id: string) => void) | undefined
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  onCreated?: ((id: string) => void) | undefined;
 }
 
 export const PagesNewPage: Component<PagesNewPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
-  const [slug, setSlug] = createSignal("")
-  const [type, setType] = createSignal("blog")
-  const [title, setTitle] = createSignal("")
-  const [templateId, setTemplateId] = createSignal("")
-  const [saving, setSaving] = createSignal(false)
-  const [error, setError] = createSignal<string | null>(null)
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
+  const [slug, setSlug] = createSignal("");
+  const [type, setType] = createSignal("blog");
+  const [title, setTitle] = createSignal("");
+  const [templateId, setTemplateId] = createSignal("");
+  const [saving, setSaving] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
 
-  const templates = useCmsApi<{ templates: any[] }>(`${apiBase()}/templates`)
+  const templates = useCmsApi<{ templates: any[] }>(`${apiBase()}/templates`);
 
   const submit = async (e: Event) => {
-    e.preventDefault()
-    setSaving(true)
-    setError(null)
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
     try {
       const res = await fetch(`${apiBase()}/pages`, {
         method: "POST",
@@ -35,19 +35,19 @@ export const PagesNewPage: Component<PagesNewPageProps> = (props) => {
           title: title(),
           templateId: templateId() || null
         })
-      })
-      if (!res.ok) throw new Error(`Create failed (${res.status})`)
-      const data = (await res.json()) as any
-      const id = data.page?.id as string
-      if (props.onCreated && id) props.onCreated(id)
+      });
+      if (!res.ok) throw new Error(`Create failed (${res.status})`);
+      const data = (await res.json()) as any;
+      const id = data.page?.id as string;
+      if (props.onCreated && id) props.onCreated(id);
       else if (id && typeof window !== "undefined")
-        window.location.href = `${base()}/pages/${id}/edit`
+        window.location.href = `${base()}/pages/${id}/edit`;
     } catch (e: any) {
-      setError(e?.message ?? "Failed to create page")
+      setError(e?.message ?? "Failed to create page");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <CMSDashboardLayout
@@ -108,7 +108,7 @@ export const PagesNewPage: Component<PagesNewPageProps> = (props) => {
         </div>
       </form>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default PagesNewPage
+export default PagesNewPage;

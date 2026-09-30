@@ -1,36 +1,36 @@
-import { type Component, For, Show } from "solid-js"
-import { inlinesToMarkdown } from "@rimelight/cms"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { rimelightCustomBlocks } from "#components/blocks"
+import { type Component, For, Show } from "solid-js";
+import { inlinesToMarkdown } from "@rimelight/cms";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { rimelightCustomBlocks } from "#components/blocks";
 
 interface PageRendererProps {
-  blocks?: any[]
-  locale?: string
-  class?: string
+  blocks?: any[];
+  locale?: string;
+  class?: string;
 }
 
 export const BlockRenderer: Component<{ block: any; locale?: string | undefined }> = (props) => {
-  const b = () => props.block || {}
-  const type = () => b().type
-  const p = () => b().props || {}
-  const children = () => b().children || p().children || []
+  const b = () => props.block || {};
+  const type = () => b().type;
+  const p = () => b().props || {};
+  const children = () => b().children || p().children || [];
 
   // Check if this is a registered custom block
-  const CustomBlock = () => rimelightCustomBlocks[type()]
+  const CustomBlock = () => rimelightCustomBlocks[type()];
 
   return (
     <Show when={b().type}>
       <Show when={CustomBlock()}>
         {(() => {
-          const Comp = CustomBlock()
+          const Comp = CustomBlock();
           return (
             <Comp block={b()} locale={props.locale}>
               <For each={children()}>
                 {(child) => <BlockRenderer block={child} locale={props.locale} />}
               </For>
             </Comp>
-          )
+          );
         })()}
       </Show>
 
@@ -131,11 +131,11 @@ export const BlockRenderer: Component<{ block: any; locale?: string | undefined 
         </Show>
       </Show>
     </Show>
-  )
-}
+  );
+};
 
 export const PageRenderer: Component<PageRendererProps> = (props) => {
-  const blockList = () => props.blocks || []
+  const blockList = () => props.blocks || [];
 
   return (
     <article class={`rimelight-cms-page ${props.class || ""}`}>
@@ -143,7 +143,7 @@ export const PageRenderer: Component<PageRendererProps> = (props) => {
         {(block) => <BlockRenderer block={block} locale={props.locale} />}
       </For>
     </article>
-  )
-}
+  );
+};
 
-export default PageRenderer
+export default PageRenderer;

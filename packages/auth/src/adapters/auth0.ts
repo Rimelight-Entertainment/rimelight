@@ -1,26 +1,26 @@
-import type { AuthAdapter, UserSessionContext, UserType } from "../types"
+import type { AuthAdapter, UserSessionContext, UserType } from "../types";
 import {
   decodeJwt,
   createSessionToken as createSessionTokenJwt,
   verifySessionToken as verifySessionTokenJwt,
   verifyJwtRs256
-} from "../jwt"
+} from "../jwt";
 
-export { decodeJwt }
+export { decodeJwt };
 
 export async function createSessionToken(
   session: UserSessionContext,
   secret: string,
   expiresIn: string | number = "7d"
 ): Promise<string> {
-  return createSessionTokenJwt(session, secret, expiresIn)
+  return createSessionTokenJwt(session, secret, expiresIn);
 }
 
 export async function verifySessionToken(
   token: string,
   secret: string
 ): Promise<UserSessionContext | null> {
-  return verifySessionTokenJwt<UserSessionContext>(token, secret)
+  return verifySessionTokenJwt<UserSessionContext>(token, secret);
 }
 
 /**
@@ -29,119 +29,119 @@ export async function verifySessionToken(
 export async function verifyAuth0Jwt(
   token: string,
   options: {
-    domain: string
-    audience?: string | undefined
-    issuer?: string | undefined
+    domain: string;
+    audience?: string | undefined;
+    issuer?: string | undefined;
   }
 ): Promise<Record<string, any> | null> {
   try {
-    const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-    const jwksUrl = `https://${cleanDomain}/.well-known/jwks.json`
-    const expectedIssuer = options.issuer || `https://${cleanDomain}/`
+    const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    const jwksUrl = `https://${cleanDomain}/.well-known/jwks.json`;
+    const expectedIssuer = options.issuer || `https://${cleanDomain}/`;
 
     return await verifyJwtRs256(token, jwksUrl, {
       issuer: expectedIssuer,
       audience: options.audience
-    })
+    });
   } catch {
-    return null
+    return null;
   }
 }
 
 export interface Auth0AdapterOptions {
-  domain: string
-  audience?: string | undefined
-  clientId?: string | undefined
-  clientSecret?: string | undefined
-  rolesClaim?: string | undefined
-  userTypeClaim?: string | undefined
-  permissionsClaim?: string | undefined
-  sessionCookieName?: string | undefined
-  sessionSecret?: string | undefined
-  loginUrl?: string | undefined
-  defaultRole?: string | undefined
+  domain: string;
+  audience?: string | undefined;
+  clientId?: string | undefined;
+  clientSecret?: string | undefined;
+  rolesClaim?: string | undefined;
+  userTypeClaim?: string | undefined;
+  permissionsClaim?: string | undefined;
+  sessionCookieName?: string | undefined;
+  sessionSecret?: string | undefined;
+  loginUrl?: string | undefined;
+  defaultRole?: string | undefined;
 }
 
 export interface Auth0AuthorizeUrlOptions {
-  domain: string
-  clientId: string
-  redirectUri: string
-  audience?: string | undefined
-  scope?: string | undefined
-  state?: string | undefined
-  codeChallenge?: string | undefined
-  codeChallengeMethod?: "S256" | "plain" | undefined
-  prompt?: string | undefined
-  screenHint?: string | undefined
+  domain: string;
+  clientId: string;
+  redirectUri: string;
+  audience?: string | undefined;
+  scope?: string | undefined;
+  state?: string | undefined;
+  codeChallenge?: string | undefined;
+  codeChallengeMethod?: "S256" | "plain" | undefined;
+  prompt?: string | undefined;
+  screenHint?: string | undefined;
 }
 
 export interface Auth0TokenResponse {
-  access_token: string
-  id_token?: string | undefined
-  token_type: string
-  expires_in: number
-  refresh_token?: string | undefined
-  scope?: string | undefined
+  access_token: string;
+  id_token?: string | undefined;
+  token_type: string;
+  expires_in: number;
+  refresh_token?: string | undefined;
+  scope?: string | undefined;
 }
 
 export interface Auth0CodeExchangeOptions {
-  domain: string
-  clientId: string
-  clientSecret?: string | undefined
-  code: string
-  redirectUri: string
-  codeVerifier?: string | undefined
+  domain: string;
+  clientId: string;
+  clientSecret?: string | undefined;
+  code: string;
+  redirectUri: string;
+  codeVerifier?: string | undefined;
 }
 
 export interface Auth0PasswordLoginOptions {
-  domain: string
-  clientId: string
-  clientSecret?: string | undefined
-  username: string
-  password: string
-  audience?: string | undefined
-  scope?: string | undefined
-  realm?: string | undefined
+  domain: string;
+  clientId: string;
+  clientSecret?: string | undefined;
+  username: string;
+  password: string;
+  audience?: string | undefined;
+  scope?: string | undefined;
+  realm?: string | undefined;
 }
 
 export interface Auth0RefreshTokenOptions {
-  domain: string
-  clientId: string
-  clientSecret?: string | undefined
-  refreshToken: string
-  scope?: string | undefined
+  domain: string;
+  clientId: string;
+  clientSecret?: string | undefined;
+  refreshToken: string;
+  scope?: string | undefined;
 }
 
 /**
  * Generates an Auth0 OAuth2 / OIDC authorization URL
  */
 export function createAuth0AuthorizeUrl(options: Auth0AuthorizeUrlOptions): string {
-  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  const url = new URL(`https://${cleanDomain}/authorize`)
+  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const url = new URL(`https://${cleanDomain}/authorize`);
 
-  url.searchParams.set("response_type", "code")
-  url.searchParams.set("client_id", options.clientId)
-  url.searchParams.set("redirect_uri", options.redirectUri)
-  url.searchParams.set("scope", options.scope || "openid profile email")
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("client_id", options.clientId);
+  url.searchParams.set("redirect_uri", options.redirectUri);
+  url.searchParams.set("scope", options.scope || "openid profile email");
 
   if (options.audience) {
-    url.searchParams.set("audience", options.audience)
+    url.searchParams.set("audience", options.audience);
   }
   if (options.state) {
-    url.searchParams.set("state", options.state)
+    url.searchParams.set("state", options.state);
   }
   if (options.codeChallenge) {
-    url.searchParams.set("code_challenge", options.codeChallenge)
-    url.searchParams.set("code_challenge_method", options.codeChallengeMethod || "S256")
+    url.searchParams.set("code_challenge", options.codeChallenge);
+    url.searchParams.set("code_challenge_method", options.codeChallengeMethod || "S256");
   }
   if (options.prompt) {
-    url.searchParams.set("prompt", options.prompt)
+    url.searchParams.set("prompt", options.prompt);
   }
   if (options.screenHint) {
-    url.searchParams.set("screen_hint", options.screenHint)
+    url.searchParams.set("screen_hint", options.screenHint);
   }
 
-  return url.toString()
+  return url.toString();
 }
 
 /**
@@ -150,21 +150,21 @@ export function createAuth0AuthorizeUrl(options: Auth0AuthorizeUrlOptions): stri
 export async function exchangeAuth0Code(
   options: Auth0CodeExchangeOptions
 ): Promise<Auth0TokenResponse> {
-  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  const tokenUrl = `https://${cleanDomain}/oauth/token`
+  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const tokenUrl = `https://${cleanDomain}/oauth/token`;
 
   const body: Record<string, string> = {
     grant_type: "authorization_code",
     client_id: options.clientId,
     code: options.code,
     redirect_uri: options.redirectUri
-  }
+  };
 
   if (options.clientSecret) {
-    body["client_secret"] = options.clientSecret
+    body["client_secret"] = options.clientSecret;
   }
   if (options.codeVerifier) {
-    body["code_verifier"] = options.codeVerifier
+    body["code_verifier"] = options.codeVerifier;
   }
 
   const response = await fetch(tokenUrl, {
@@ -173,14 +173,14 @@ export async function exchangeAuth0Code(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(body)
-  })
+  });
 
   if (!response.ok) {
-    const errText = await response.text()
-    throw new Error(`Auth0 token exchange failed (${response.status}): ${errText}`)
+    const errText = await response.text();
+    throw new Error(`Auth0 token exchange failed (${response.status}): ${errText}`);
   }
 
-  return (await response.json()) as Auth0TokenResponse
+  return (await response.json()) as Auth0TokenResponse;
 }
 
 /**
@@ -190,8 +190,8 @@ export async function exchangeAuth0Code(
 export async function loginWithAuth0Password(
   options: Auth0PasswordLoginOptions
 ): Promise<Auth0TokenResponse> {
-  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  const tokenUrl = `https://${cleanDomain}/oauth/token`
+  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const tokenUrl = `https://${cleanDomain}/oauth/token`;
 
   const body: Record<string, string> = {
     grant_type: options.realm ? "http://auth0.com/oauth/grant-type/password-realm" : "password",
@@ -199,16 +199,16 @@ export async function loginWithAuth0Password(
     username: options.username,
     password: options.password,
     scope: options.scope || "openid profile email offline_access"
-  }
+  };
 
   if (options.realm) {
-    body["realm"] = options.realm
+    body["realm"] = options.realm;
   }
   if (options.clientSecret) {
-    body["client_secret"] = options.clientSecret
+    body["client_secret"] = options.clientSecret;
   }
   if (options.audience) {
-    body["audience"] = options.audience
+    body["audience"] = options.audience;
   }
 
   const response = await fetch(tokenUrl, {
@@ -217,14 +217,14 @@ export async function loginWithAuth0Password(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(body)
-  })
+  });
 
   if (!response.ok) {
-    const errText = await response.text()
-    throw new Error(`Auth0 password login failed (${response.status}): ${errText}`)
+    const errText = await response.text();
+    throw new Error(`Auth0 password login failed (${response.status}): ${errText}`);
   }
 
-  return (await response.json()) as Auth0TokenResponse
+  return (await response.json()) as Auth0TokenResponse;
 }
 
 /**
@@ -234,20 +234,20 @@ export async function loginWithAuth0Password(
 export async function refreshAuth0Token(
   options: Auth0RefreshTokenOptions
 ): Promise<Auth0TokenResponse> {
-  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  const tokenUrl = `https://${cleanDomain}/oauth/token`
+  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const tokenUrl = `https://${cleanDomain}/oauth/token`;
 
   const body: Record<string, string> = {
     grant_type: "refresh_token",
     client_id: options.clientId,
     refresh_token: options.refreshToken
-  }
+  };
 
   if (options.clientSecret) {
-    body["client_secret"] = options.clientSecret
+    body["client_secret"] = options.clientSecret;
   }
   if (options.scope) {
-    body["scope"] = options.scope
+    body["scope"] = options.scope;
   }
 
   const response = await fetch(tokenUrl, {
@@ -256,41 +256,41 @@ export async function refreshAuth0Token(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(body)
-  })
+  });
 
   if (!response.ok) {
-    const errText = await response.text()
-    throw new Error(`Auth0 token refresh failed (${response.status}): ${errText}`)
+    const errText = await response.text();
+    throw new Error(`Auth0 token refresh failed (${response.status}): ${errText}`);
   }
 
-  return (await response.json()) as Auth0TokenResponse
+  return (await response.json()) as Auth0TokenResponse;
 }
 
 /**
  * Generates an Auth0 logout URL
  */
 export function createAuth0LogoutUrl(options: {
-  domain: string
-  clientId: string
-  returnTo: string
+  domain: string;
+  clientId: string;
+  returnTo: string;
 }): string {
-  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  const url = new URL(`https://${cleanDomain}/v2/logout`)
-  url.searchParams.set("client_id", options.clientId)
-  url.searchParams.set("returnTo", options.returnTo)
-  return url.toString()
+  const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const url = new URL(`https://${cleanDomain}/v2/logout`);
+  url.searchParams.set("client_id", options.clientId);
+  url.searchParams.set("returnTo", options.returnTo);
+  return url.toString();
 }
 
 function parseCookie(cookieHeader: string | null, name: string): string | null {
-  if (!cookieHeader) return null
-  const cookies = cookieHeader.split(";")
+  if (!cookieHeader) return null;
+  const cookies = cookieHeader.split(";");
   for (const cookie of cookies) {
-    const [k, v] = cookie.trim().split("=")
+    const [k, v] = cookie.trim().split("=");
     if (k === name && v) {
-      return decodeURIComponent(v)
+      return decodeURIComponent(v);
     }
   }
-  return null
+  return null;
 }
 
 /**
@@ -307,117 +307,117 @@ export function auth0Auth(options: Auth0AdapterOptions): AuthAdapter {
     sessionSecret,
     loginUrl = "/api/auth/login",
     defaultRole = "user"
-  } = options
+  } = options;
 
   return {
     name: "auth0",
     options,
     async getSession(req: Request): Promise<UserSessionContext | null> {
-      if (!req) return null
+      if (!req) return null;
 
       const getHeader = (name: string): string | null => {
         try {
           if (req.headers && typeof req.headers.get === "function") {
-            return req.headers.get(name)
+            return req.headers.get(name);
           }
-          const h = (req as any)?.headers
+          const h = (req as any)?.headers;
           if (h && typeof h === "object") {
-            return h[name] || h[name.toLowerCase()] || null
+            return h[name] || h[name.toLowerCase()] || null;
           }
         } catch {
           // ignore header parse error
         }
-        return null
-      }
+        return null;
+      };
 
       // 1. Check Bearer Token in Authorization header
-      const authHeader = getHeader("authorization")
+      const authHeader = getHeader("authorization");
       if (authHeader?.startsWith("Bearer ")) {
-        const token = authHeader.slice(7).trim()
-        const payload = await verifyAuth0Jwt(token, { domain, audience })
+        const token = authHeader.slice(7).trim();
+        const payload = await verifyAuth0Jwt(token, { domain, audience });
         if (payload) {
           return mapAuth0PayloadToSession(payload, {
             rolesClaim,
             userTypeClaim,
             permissionsClaim,
             defaultRole
-          })
+          });
         }
       }
 
       // 2. Check Session Cookie (encrypted/signed cookie or raw token)
-      const cookieHeader = getHeader("cookie")
-      const sessionCookie = parseCookie(cookieHeader, sessionCookieName)
+      const cookieHeader = getHeader("cookie");
+      const sessionCookie = parseCookie(cookieHeader, sessionCookieName);
       if (sessionCookie) {
         if (sessionSecret) {
-          const verified = await verifySessionToken(sessionCookie, sessionSecret)
-          if (verified) return verified
+          const verified = await verifySessionToken(sessionCookie, sessionSecret);
+          if (verified) return verified;
         } else {
           // Only verify against Auth0 JWKS if no symmetric session secret is configured
-          const payload = await verifyAuth0Jwt(sessionCookie, { domain, audience })
+          const payload = await verifyAuth0Jwt(sessionCookie, { domain, audience });
           if (payload) {
             return mapAuth0PayloadToSession(payload, {
               rolesClaim,
               userTypeClaim,
               permissionsClaim,
               defaultRole
-            })
+            });
           }
         }
       }
 
-      return null
+      return null;
     },
     handleUnauthorized(req?: Request) {
       if (loginUrl) {
         try {
           if (req && req.url) {
-            const origin = new URL(req.url).origin
-            const fullUrl = new URL(loginUrl, origin).toString()
-            return Response.redirect(fullUrl, 302)
+            const origin = new URL(req.url).origin;
+            const fullUrl = new URL(loginUrl, origin).toString();
+            return Response.redirect(fullUrl, 302);
           }
         } catch {}
         try {
-          return Response.redirect(loginUrl, 302)
+          return Response.redirect(loginUrl, 302);
         } catch {
           return new Response(null, {
             status: 302,
             headers: { Location: loginUrl }
-          })
+          });
         }
       }
-      return new Response("Unauthorized Auth0 Identity", { status: 401 })
+      return new Response("Unauthorized Auth0 Identity", { status: 401 });
     }
-  }
+  };
 }
 
 export function mapAuth0PayloadToSession(
   payload: Record<string, any>,
   options: {
-    rolesClaim: string
-    userTypeClaim: string
-    permissionsClaim: string
-    defaultRole: string
+    rolesClaim: string;
+    userTypeClaim: string;
+    permissionsClaim: string;
+    defaultRole: string;
   }
 ): UserSessionContext {
   const roles: string[] = Array.isArray(payload[options.rolesClaim])
     ? payload[options.rolesClaim]
     : Array.isArray(payload["roles"])
       ? payload["roles"]
-      : [options.defaultRole]
+      : [options.defaultRole];
 
   const permissions: string[] = Array.isArray(payload[options.permissionsClaim])
     ? payload[options.permissionsClaim]
     : Array.isArray(payload["permissions"])
       ? payload["permissions"]
-      : []
+      : [];
 
   const isStaff = roles.some((r) =>
     ["owner", "admin", "editor", "employee", "superadmin"].includes(r.toLowerCase())
-  )
+  );
 
-  const explicitUserType = payload[options.userTypeClaim] || payload["user_type"]
-  const userType: UserType = explicitUserType || (isStaff ? "employee" : "user")
+  const explicitUserType = payload[options.userTypeClaim] || payload["user_type"];
+  const userType: UserType = explicitUserType || (isStaff ? "employee" : "user");
 
   return {
     userId: payload["sub"] || "anonymous",
@@ -428,15 +428,15 @@ export function mapAuth0PayloadToSession(
     permissions,
     userType,
     metadata: payload
-  }
+  };
 }
 
 function getEnv(key: string, fallback = ""): string {
-  if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!
+  if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!;
   if (typeof import.meta !== "undefined" && (import.meta as any).env?.[key]) {
-    return (import.meta as any).env[key]
+    return (import.meta as any).env[key];
   }
-  return fallback
+  return fallback;
 }
 
 export function getAuth0ConfigFromEnv(
@@ -462,7 +462,7 @@ export function getAuth0ConfigFromEnv(
     loginUrl: overrides.loginUrl || "/api/auth/login",
     defaultRole: overrides.defaultRole || "user",
     ...overrides
-  }
+  };
 }
 
 /**
@@ -471,23 +471,23 @@ export function getAuth0ConfigFromEnv(
 export function createAuth0FromEnv(
   overrides: Partial<Auth0AdapterOptions> & { devFallback?: boolean } = {}
 ): AuthAdapter {
-  const config = getAuth0ConfigFromEnv(overrides)
+  const config = getAuth0ConfigFromEnv(overrides);
 
-  const baseAdapter = auth0Auth(config)
+  const baseAdapter = auth0Auth(config);
   if (!overrides.devFallback) {
-    return baseAdapter
+    return baseAdapter;
   }
 
   return {
     name: "auth0",
     options: config,
     async getSession(req: Request): Promise<UserSessionContext | null> {
-      const session = await baseAdapter.getSession(req)
-      if (session) return session
+      const session = await baseAdapter.getSession(req);
+      if (session) return session;
 
       const isDev =
         (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
-        (typeof import.meta !== "undefined" && (import.meta as any).env?.DEV)
+        (typeof import.meta !== "undefined" && (import.meta as any).env?.DEV);
 
       if (
         isDev &&
@@ -502,12 +502,12 @@ export function createAuth0FromEnv(
           permissions: ["*"],
           userType: "employee",
           metadata: { isDev: true }
-        }
+        };
       }
-      return null
+      return null;
     },
     handleUnauthorized(req: Request) {
-      return baseAdapter.handleUnauthorized?.(req) ?? new Response("Unauthorized", { status: 401 })
+      return baseAdapter.handleUnauthorized?.(req) ?? new Response("Unauthorized", { status: 401 });
     }
-  }
+  };
 }

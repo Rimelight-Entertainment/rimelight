@@ -1,17 +1,17 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { FieldGroupProps } from "./field-group"
-import { fieldGroupTheme } from "./field-group.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { FieldGroupProps } from "./field-group";
+import { fieldGroupTheme } from "./field-group.theme";
 
 export interface RLFieldGroupProps extends Omit<FieldGroupProps, "prepend" | "append"> {
-  prepend?: JSX.Element
-  append?: JSX.Element
-  children?: JSX.Element
+  prepend?: JSX.Element;
+  append?: JSX.Element;
+  children?: JSX.Element;
 }
 
 const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "prepend", "append", "size", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "prepend", "append", "size", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
     fieldGroupTheme({
@@ -19,7 +19,7 @@ const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
       ui: props["ui"],
       class: props["class"]
     })
-  )
+  );
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
@@ -35,7 +35,7 @@ const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
         </div>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export { RLFieldGroup }
+export { RLFieldGroup };

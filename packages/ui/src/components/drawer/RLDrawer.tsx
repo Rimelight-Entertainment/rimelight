@@ -6,29 +6,29 @@ import {
   Show,
   onSettled,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { DrawerProps } from "./drawer"
-import { drawerTheme } from "./drawer.theme"
-import { RLIcon } from "../icon/RLIcon"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { DrawerProps } from "./drawer";
+import { drawerTheme } from "./drawer.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLDrawerProps extends DrawerProps {
-  children?: JSX.Element
-  trigger?: JSX.Element
-  triggerSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  footer?: JSX.Element
-  footerSlot?: JSX.Element
-  defaultOpen?: boolean
-  onOpenChange?: (open: boolean) => void
-  closeOnClickOutside?: boolean
-  closeOnEscape?: boolean
-  lockScroll?: boolean
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+  lockScroll?: boolean;
 }
 
 const RLDrawer: Component<RLDrawerProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "open",
@@ -50,55 +50,55 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     "closeOnClickOutside",
     "closeOnEscape",
     "lockScroll"
-  )
+  );
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false)
+  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
 
-  const closeOnClickOutside = () => props.closeOnClickOutside !== false
-  const closeOnEscape = () => props.closeOnEscape !== false
-  const lockScroll = () => props.lockScroll !== false
+  const closeOnClickOutside = () => props.closeOnClickOutside !== false;
+  const closeOnEscape = () => props.closeOnEscape !== false;
+  const lockScroll = () => props.lockScroll !== false;
 
   const handleOpenChange = (next: boolean) => {
-    setIsOpen(next)
-    props.onOpenChange?.(next)
-  }
+    setIsOpen(next);
+    props.onOpenChange?.(next);
+  };
 
-  let dialogRef: HTMLDialogElement | undefined
+  let dialogRef: HTMLDialogElement | undefined;
 
   createEffect(
     () => ({ open: isOpen(), lock: lockScroll() }),
     ({ open, lock }) => {
       if (open) {
         if (lock) {
-          document.body.style.overflow = "hidden"
+          document.body.style.overflow = "hidden";
         }
-        if (dialogRef && !dialogRef.open) dialogRef.showModal()
+        if (dialogRef && !dialogRef.open) dialogRef.showModal();
       } else {
-        document.body.style.overflow = ""
-        if (dialogRef && dialogRef.open) dialogRef.close()
+        document.body.style.overflow = "";
+        if (dialogRef && dialogRef.open) dialogRef.close();
       }
     }
-  )
+  );
 
   onSettled(() => {
     const handleCancel = (e: Event) => {
-      if (e.target !== dialogRef) return
-      e.preventDefault()
-      if (closeOnEscape()) handleOpenChange(false)
-    }
+      if (e.target !== dialogRef) return;
+      e.preventDefault();
+      if (closeOnEscape()) handleOpenChange(false);
+    };
     const handleClick = (e: MouseEvent) => {
       if (closeOnClickOutside() && e.target === dialogRef) {
-        handleOpenChange(false)
+        handleOpenChange(false);
       }
-    }
-    document.addEventListener("cancel", handleCancel)
-    document.addEventListener("click", handleClick)
+    };
+    document.addEventListener("cancel", handleCancel);
+    document.addEventListener("click", handleClick);
     return () => {
-      document.removeEventListener("cancel", handleCancel)
-      document.removeEventListener("click", handleClick)
-      document.body.style.overflow = ""
-    }
-  })
+      document.removeEventListener("cancel", handleCancel);
+      document.removeEventListener("click", handleClick);
+      document.body.style.overflow = "";
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     drawerTheme({
@@ -106,10 +106,10 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const triggerContent = () => props.trigger ?? props.triggerSlot
-  const footerContent = () => props.footer ?? props.footerSlot
+  const triggerContent = () => props.trigger ?? props.triggerSlot;
+  const footerContent = () => props.footer ?? props.footerSlot;
 
   return (
     <div class={resolvedClasses().root} data-slot="drawer-container">
@@ -175,7 +175,7 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
         </dialog>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLDrawer }
+export { RLDrawer };

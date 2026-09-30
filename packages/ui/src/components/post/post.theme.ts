@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const postTheme = defineTheme("post", {
   slots: [
@@ -47,4 +47,4 @@ export const postTheme = defineTheme("post", {
     orientation: "vertical",
     variant: "soft"
   }
-})
+});

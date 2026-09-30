@@ -1,67 +1,67 @@
-import type { BaseBlock } from "../../core/types/blocks"
+import type { BaseBlock } from "../../core/types/blocks";
 
 export class HistoryStack {
-  private undoStack: BaseBlock[][] = []
-  private redoStack: BaseBlock[][] = []
-  private debounceTimer: number | null = null
-  private maxDepth: number
-  private paused = false
+  private undoStack: BaseBlock[][] = [];
+  private redoStack: BaseBlock[][] = [];
+  private debounceTimer: number | null = null;
+  private maxDepth: number;
+  private paused = false;
 
   constructor(initialBlocks: BaseBlock[] = [], maxDepth = 100) {
-    this.maxDepth = maxDepth
-    this.undoStack.push(JSON.parse(JSON.stringify(initialBlocks)))
+    this.maxDepth = maxDepth;
+    this.undoStack.push(JSON.parse(JSON.stringify(initialBlocks)));
   }
 
   push(blocks: BaseBlock[], immediate = false): void {
-    if (this.paused) return
-    const clone = JSON.parse(JSON.stringify(blocks))
+    if (this.paused) return;
+    const clone = JSON.parse(JSON.stringify(blocks));
 
     if (immediate) {
-      this.doPush(clone)
-      return
+      this.doPush(clone);
+      return;
     }
 
     if (this.debounceTimer !== null) {
-      clearTimeout(this.debounceTimer)
+      clearTimeout(this.debounceTimer);
     }
 
     this.debounceTimer = window.setTimeout(() => {
-      this.doPush(clone)
-      this.debounceTimer = null
-    }, 500)
+      this.doPush(clone);
+      this.debounceTimer = null;
+    }, 500);
   }
 
   private doPush(snapshot: BaseBlock[]): void {
     if (this.undoStack.length >= this.maxDepth) {
-      this.undoStack.shift()
+      this.undoStack.shift();
     }
-    this.undoStack.push(snapshot)
-    this.redoStack = []
+    this.undoStack.push(snapshot);
+    this.redoStack = [];
   }
 
   undo(): BaseBlock[] | null {
-    if (this.undoStack.length <= 1) return null
-    const current = this.undoStack.pop()!
-    this.redoStack.push(current)
-    const previous = this.undoStack[this.undoStack.length - 1]
-    return JSON.parse(JSON.stringify(previous))
+    if (this.undoStack.length <= 1) return null;
+    const current = this.undoStack.pop()!;
+    this.redoStack.push(current);
+    const previous = this.undoStack[this.undoStack.length - 1];
+    return JSON.parse(JSON.stringify(previous));
   }
 
   redo(): BaseBlock[] | null {
-    if (this.redoStack.length === 0) return null
-    const next = this.redoStack.pop()!
-    this.undoStack.push(next)
-    return JSON.parse(JSON.stringify(next))
+    if (this.redoStack.length === 0) return null;
+    const next = this.redoStack.pop()!;
+    this.undoStack.push(next);
+    return JSON.parse(JSON.stringify(next));
   }
 
   /**
    * Suppress snapshot captures (e.g. during programmatic block loads)
    */
   pause(): void {
-    this.paused = true
+    this.paused = true;
     if (this.debounceTimer !== null) {
-      clearTimeout(this.debounceTimer)
-      this.debounceTimer = null
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
     }
   }
 
@@ -69,31 +69,31 @@ export class HistoryStack {
    * Resume snapshot captures
    */
   resume(): void {
-    this.paused = false
+    this.paused = false;
   }
 
   /**
    * Returns an immutable deep-clone of the current state for persistence
    */
   commit(blocks: BaseBlock[]): BaseBlock[] {
-    return JSON.parse(JSON.stringify(blocks))
+    return JSON.parse(JSON.stringify(blocks));
   }
 
   canUndo(): boolean {
-    return this.undoStack.length > 1
+    return this.undoStack.length > 1;
   }
 
   canRedo(): boolean {
-    return this.redoStack.length > 0
+    return this.redoStack.length > 0;
   }
 
   reset(blocks: BaseBlock[]): void {
-    this.undoStack = [JSON.parse(JSON.stringify(blocks))]
-    this.redoStack = []
-    this.paused = false
+    this.undoStack = [JSON.parse(JSON.stringify(blocks))];
+    this.redoStack = [];
+    this.paused = false;
     if (this.debounceTimer !== null) {
-      clearTimeout(this.debounceTimer)
-      this.debounceTimer = null
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
     }
   }
 }
@@ -104,7 +104,7 @@ export function createDefaultBlock(type: string): BaseBlock {
   const id =
     typeof crypto !== "undefined" && crypto.randomUUID
       ? crypto.randomUUID()
-      : Math.random().toString(36).slice(2, 11)
+      : Math.random().toString(36).slice(2, 11);
 
   switch (type) {
     case "SectionBlock":
@@ -113,13 +113,13 @@ export function createDefaultBlock(type: string): BaseBlock {
         type,
         children: [],
         props: { level: 2, title: "New Section", description: "", children: [] }
-      }
+      };
     case "ParagraphBlock":
-      return { id, type, props: { text: [] } }
+      return { id, type, props: { text: [] } };
     case "CalloutBlock":
-      return { id, type, children: [], props: { variant: "info", children: [] } }
+      return { id, type, children: [], props: { variant: "info", children: [] } };
     case "ImageBlock":
-      return { id, type, props: { src: "", alt: "", caption: "" } }
+      return { id, type, props: { src: "", alt: "", caption: "" } };
     case "ScriptBlock":
       return {
         id,
@@ -135,7 +135,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           stinger: "",
           children: []
         }
-      }
+      };
     case "SceneBlock":
       return {
         id,
@@ -149,11 +149,11 @@ export function createDefaultBlock(type: string): BaseBlock {
           description: "",
           children: []
         }
-      }
+      };
     case "DialogueBlock":
-      return { id, type, props: { character: "", parenthetical: "", line: "" } }
+      return { id, type, props: { character: "", parenthetical: "", line: "" } };
     case "CodeBlock":
-      return { id, type, props: { code: "", language: "typescript", caption: "" } }
+      return { id, type, props: { code: "", language: "typescript", caption: "" } };
     case "TableBlock":
       return {
         id,
@@ -166,7 +166,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           rows: [{ col1: "Cell 1", col2: "Cell 2" }],
           caption: ""
         }
-      }
+      };
     case "TabsBlock":
       return {
         id,
@@ -176,7 +176,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           defaultValue: "tab-1",
           children: []
         }
-      }
+      };
     case "TabItemBlock":
       return {
         id,
@@ -187,7 +187,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           value: "tab-1",
           children: []
         }
-      }
+      };
     case "StepsBlock":
       return {
         id,
@@ -196,7 +196,7 @@ export function createDefaultBlock(type: string): BaseBlock {
         props: {
           children: []
         }
-      }
+      };
     case "StepItemBlock":
       return {
         id,
@@ -207,7 +207,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           description: "",
           children: []
         }
-      }
+      };
     case "CardsBlock":
       return {
         id,
@@ -217,7 +217,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           columns: 2,
           children: []
         }
-      }
+      };
     case "CardBlock":
       return {
         id,
@@ -229,7 +229,7 @@ export function createDefaultBlock(type: string): BaseBlock {
           href: "",
           badge: ""
         }
-      }
+      };
     case "FileTreeBlock":
       return {
         id,
@@ -244,8 +244,8 @@ export function createDefaultBlock(type: string): BaseBlock {
             { name: "package.json", isDir: false }
           ]
         }
-      }
+      };
     default:
-      return { id, type, props: { text: [] } }
+      return { id, type, props: { text: [] } };
   }
 }

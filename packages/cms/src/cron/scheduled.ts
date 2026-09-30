@@ -1,11 +1,11 @@
-import { and, isNotNull, isNull, lt, lte } from "drizzle-orm"
-import { pageDraftLocks } from "../schema/page_draft_locks.ts"
-import { pages } from "../schema/pages.ts"
+import { and, isNotNull, isNull, lt, lte } from "drizzle-orm";
+import { pageDraftLocks } from "../schema/page_draft_locks.ts";
+import { pages } from "../schema/pages.ts";
 
 export interface CmsCronResult {
-  expiredLocksCleaned: number
-  scheduledPagesActive: number
-  timestamp: string
+  expiredLocksCleaned: number;
+  scheduledPagesActive: number;
+  timestamp: string;
 }
 
 /**
@@ -24,20 +24,20 @@ export async function handleCmsCron(
     expiredLocksCleaned: 0,
     scheduledPagesActive: 0,
     timestamp: new Date().toISOString()
-  }
+  };
 
-  if (!db) return result
+  if (!db) return result;
 
   try {
-    const now = new Date()
+    const now = new Date();
 
     // 1. Purge expired draft edit locks
     const deletedLocks = await db
       .delete(pageDraftLocks)
       .where(lt(pageDraftLocks.expiresAt, now))
-      .returning({ pageId: pageDraftLocks.pageId })
+      .returning({ pageId: pageDraftLocks.pageId });
 
-    result.expiredLocksCleaned = deletedLocks.length
+    result.expiredLocksCleaned = deletedLocks.length;
 
     // 2. Query active published pages in current window
     const activeScheduled = await db
@@ -46,12 +46,12 @@ export async function handleCmsCron(
       .where(
         and(isNull(pages.deletedAt), isNotNull(pages.publishedVersionId), lte(pages.postedAt, now))
       )
-      .limit(10)
+      .limit(10);
 
-    result.scheduledPagesActive = activeScheduled.length
+    result.scheduledPagesActive = activeScheduled.length;
   } catch (error) {
-    console.error("[CmsCron] Error executing scheduled tasks:", error)
+    console.error("[CmsCron] Error executing scheduled tasks:", error);
   }
 
-  return result
+  return result;
 }

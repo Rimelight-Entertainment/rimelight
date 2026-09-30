@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const calloutTheme = defineTheme("callout", {
   slots: ["root", "body", "icon", "title", "content", "avatar", "avatarSize", "actions", "close"],
@@ -58,4 +58,4 @@ export const calloutTheme = defineTheme("callout", {
     color: "primary",
     variant: "solid"
   }
-})
+});

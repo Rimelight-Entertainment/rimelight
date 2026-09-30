@@ -1,36 +1,36 @@
 export interface ConfirmProps {
-  variant?: "default" | "destructive"
+  variant?: "default" | "destructive";
   /**
    * Title of the alert confirmation dialog.
    */
-  title?: string
+  title?: string;
   /**
    * Explanatory description.
    */
-  description?: string
+  description?: string;
   /**
    * Label for the confirmation action button.
    */
-  actionLabel?: string
+  actionLabel?: string;
   /**
    * Label for the cancellation/close button.
    */
-  cancelLabel?: string
+  cancelLabel?: string;
   /**
    * Trigger label to automatically open the dialog.
    */
-  triggerLabel?: string
+  triggerLabel?: string;
   /**
    * Controlled open state.
    */
-  open?: boolean
+  open?: boolean;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,107 +1,107 @@
-import { createSignal, onSettled, For, Show, type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import { createSignal, onSettled, For, Show, type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 
 export interface TaxonomyTermRecord {
-  id: string
-  taxonomy: string
-  name: string
-  slug: string
-  description?: string
-  parentId?: string | null
-  postCount?: number
-  children?: TaxonomyTermRecord[]
+  id: string;
+  taxonomy: string;
+  name: string;
+  slug: string;
+  description?: string;
+  parentId?: string | null;
+  postCount?: number;
+  children?: TaxonomyTermRecord[];
 }
 
 export interface RimelightTaxonomyManagerProps {
-  initialTaxonomy?: string
+  initialTaxonomy?: string;
 }
 
 export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> = (props) => {
   const [activeTaxonomy, setActiveTaxonomy] = createSignal<string>(
     props.initialTaxonomy || "category"
-  )
-  const [terms, setTerms] = createSignal<TaxonomyTermRecord[]>([])
-  const [isLoading, setIsLoading] = createSignal(false)
-  const [error, setError] = createSignal<string | null>(null)
+  );
+  const [terms, setTerms] = createSignal<TaxonomyTermRecord[]>([]);
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
 
   // Add / Edit Modal State
-  const [isModalOpen, setIsModalOpen] = createSignal(false)
-  const [editingTermId, setEditingTermId] = createSignal<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = createSignal(false);
+  const [editingTermId, setEditingTermId] = createSignal<string | null>(null);
   const [termForm, setTermForm] = createSignal<{
-    name: string
-    slug: string
-    parentId: string
-    description: string
+    name: string;
+    slug: string;
+    parentId: string;
+    description: string;
   }>({
     name: "",
     slug: "",
     parentId: "",
     description: ""
-  })
+  });
 
   const loadTerms = async () => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
     try {
-      const res = await fetch(`/api/cms/taxonomies/${activeTaxonomy()}/terms?includeCounts=true`)
-      if (!res.ok) throw new Error("Failed to load taxonomy terms")
-      const data = await res.json()
-      setTerms(Array.isArray(data) ? data : [])
+      const res = await fetch(`/api/cms/taxonomies/${activeTaxonomy()}/terms?includeCounts=true`);
+      if (!res.ok) throw new Error("Failed to load taxonomy terms");
+      const data = await res.json();
+      setTerms(Array.isArray(data) ? data : []);
     } catch (err: any) {
-      setError(err.message || "Failed to load terms")
+      setError(err.message || "Failed to load terms");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   onSettled(() => {
-    void loadTerms()
-  })
+    void loadTerms();
+  });
 
   const handleTaxonomyTabChange = (tax: string) => {
-    setActiveTaxonomy(tax)
-    void loadTerms()
-  }
+    setActiveTaxonomy(tax);
+    void loadTerms();
+  };
 
   const openAddModal = (parentId: string = "") => {
-    setEditingTermId(null)
-    setTermForm({ name: "", slug: "", parentId, description: "" })
-    setIsModalOpen(true)
-  }
+    setEditingTermId(null);
+    setTermForm({ name: "", slug: "", parentId, description: "" });
+    setIsModalOpen(true);
+  };
 
   const openEditModal = (term: TaxonomyTermRecord) => {
-    setEditingTermId(term.id)
+    setEditingTermId(term.id);
     setTermForm({
       name: term.name,
       slug: term.slug,
       parentId: term.parentId || "",
       description: term.description || ""
-    })
-    setIsModalOpen(true)
-  }
+    });
+    setIsModalOpen(true);
+  };
 
   const handleSaveTerm = async () => {
-    const form = termForm()
-    if (!form.name.trim()) return
+    const form = termForm();
+    if (!form.name.trim()) return;
 
     const slug =
       form.slug.trim() ||
       form.name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
+        .replace(/(^-|-$)/g, "");
 
     const payload = {
       name: form.name.trim(),
       slug,
       parentId: form.parentId ? form.parentId : null,
       description: form.description.trim()
-    }
+    };
 
     try {
       if (editingTermId()) {
@@ -112,37 +112,37 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           }
-        )
-        if (!res.ok) throw new Error("Failed to update term")
+        );
+        if (!res.ok) throw new Error("Failed to update term");
       } else {
         const res = await fetch(`/api/cms/taxonomies/${activeTaxonomy()}/terms`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        })
-        if (!res.ok) throw new Error("Failed to create term")
+        });
+        if (!res.ok) throw new Error("Failed to create term");
       }
 
-      setIsModalOpen(false)
-      void loadTerms()
+      setIsModalOpen(false);
+      void loadTerms();
     } catch (err: any) {
-      alert(err.message || "Failed to save term")
+      alert(err.message || "Failed to save term");
     }
-  }
+  };
 
   const handleDeleteTerm = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete term "${name}"?`)) return
+    if (!confirm(`Are you sure you want to delete term "${name}"?`)) return;
 
     try {
       const res = await fetch(`/api/cms/taxonomies/${activeTaxonomy()}/terms/${id}`, {
         method: "DELETE"
-      })
-      if (!res.ok) throw new Error("Failed to delete term")
-      void loadTerms()
+      });
+      if (!res.ok) throw new Error("Failed to delete term");
+      void loadTerms();
     } catch (err: any) {
-      alert(err.message || "Failed to delete term")
+      alert(err.message || "Failed to delete term");
     }
-  }
+  };
 
   return (
     <div class="flex flex-col gap-6 w-full">
@@ -370,5 +370,5 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
         </div>
       </RLModal>
     </div>
-  )
-}
+  );
+};

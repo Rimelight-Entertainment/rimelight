@@ -6,70 +6,70 @@ import {
   Show,
   omit,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { DashboardSearchProps } from "./dashboard-search"
-import { dashboardSearchTheme } from "./dashboard-search.theme"
-import { RLIcon } from "../icon/RLIcon"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { DashboardSearchProps } from "./dashboard-search";
+import { dashboardSearchTheme } from "./dashboard-search.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLDashboardSearchProps extends DashboardSearchProps {
-  children?: JSX.Element
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  children?: JSX.Element;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "ui", "class", "children", "open", "onOpenChange")
+  const props = allProps;
+  const rest = omit(allProps, "ui", "class", "children", "open", "onOpenChange");
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? false)
-  let inputRef: HTMLInputElement | null = null
+  const [isOpen, setIsOpen] = createSignal(props.open ?? false);
+  let inputRef: HTMLInputElement | null = null;
 
   createEffect(
     () => props.open,
     (open) => {
       if (open !== undefined) {
-        setIsOpen(open)
+        setIsOpen(open);
       }
     }
-  )
+  );
 
   const setOpenState = (open: boolean) => {
     if (props.open === undefined) {
-      setIsOpen(open)
+      setIsOpen(open);
     }
-    props.onOpenChange?.(open)
+    props.onOpenChange?.(open);
     if (open) {
-      setTimeout(() => inputRef?.focus(), 50)
+      setTimeout(() => inputRef?.focus(), 50);
     }
-  }
+  };
 
   onSettled(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault()
-        setOpenState(!isOpen())
+        e.preventDefault();
+        setOpenState(!isOpen());
       } else if (e.key === "Escape" && isOpen()) {
-        setOpenState(false)
+        setOpenState(false);
       }
-    }
+    };
 
     const onClick = (e: MouseEvent) => {
-      const target = e.target as Element | null
-      const btn = target?.closest("[data-dashboard-search-button]")
+      const target = e.target as Element | null;
+      const btn = target?.closest("[data-dashboard-search-button]");
       if (btn) {
-        setOpenState(!isOpen())
+        setOpenState(!isOpen());
       }
-    }
+    };
 
-    document.addEventListener("keydown", onKeyDown)
-    document.addEventListener("click", onClick)
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("click", onClick);
 
     return () => {
-      document.removeEventListener("keydown", onKeyDown)
-      document.removeEventListener("click", onClick)
-    }
-  })
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("click", onClick);
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     dashboardSearchTheme({
@@ -78,7 +78,7 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
       fullscreen: false,
       size: "md"
     })
-  )
+  );
 
   return (
     <div data-dashboard-search-target data-slot="root" {...rest}>
@@ -90,7 +90,7 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
           data-slot="modal"
           class={`${resolvedClasses().modal} fixed inset-0 z-50 flex items-start justify-center sm:pt-16`}
           onClick={(e) => {
-            if (e.target === e.currentTarget) setOpenState(false)
+            if (e.target === e.currentTarget) setOpenState(false);
           }}
         >
           <div
@@ -122,7 +122,7 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
         </div>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLDashboardSearch }
+export { RLDashboardSearch };

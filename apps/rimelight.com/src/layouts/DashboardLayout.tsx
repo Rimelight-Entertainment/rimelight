@@ -1,7 +1,7 @@
-import { type Component, For } from "solid-js"
-import { useParams } from "@solidjs/router"
-import type { JSX } from "@solidjs/web"
-import AppLayout from "./AppLayout"
+import { type Component, For } from "solid-js";
+import { useParams } from "@solidjs/router";
+import type { JSX } from "@solidjs/web";
+import AppLayout from "./AppLayout";
 import {
   RLDashboardGroup,
   RLDashboardSidebar,
@@ -10,21 +10,21 @@ import {
   RLDashboardSidebarCollapse,
   RLDashboardSidebarToggle,
   RLButton
-} from "@rimelight/ui"
-import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n"
+} from "@rimelight/ui";
+import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
 
 export interface DashboardLayoutProps {
-  title?: string | undefined
-  description?: string | undefined
-  favicon?: string | undefined
-  children?: JSX.Element | undefined
-  session?: any
+  title?: string | undefined;
+  description?: string | undefined;
+  favicon?: string | undefined;
+  children?: JSX.Element | undefined;
+  session?: any;
 }
 
 export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   const links = [
@@ -32,9 +32,9 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
     { label: "Inbox", icon: "i-lucide-inbox", to: "/dashboard/inbox" },
     { label: "Notes", icon: "i-lucide-notebook", to: "/dashboard/notes" },
     { label: "Projects", icon: "i-lucide-square-kanban", to: "/dashboard/projects" }
-  ]
+  ];
 
-  const footerLinks = [{ label: "CMS Content", icon: "i-lucide-file-text", to: "/cms" }]
+  const footerLinks = [{ label: "CMS Content", icon: "i-lucide-file-text", to: "/cms" }];
 
   return (
     <AppLayout
@@ -144,7 +144,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
         </RLDashboardPanel>
       </RLDashboardGroup>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

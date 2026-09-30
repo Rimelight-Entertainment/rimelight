@@ -1,9 +1,9 @@
-import { type Component, For } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx"
+import { type Component, For } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 
 const COLOR_SHADES = [
   "50",
@@ -17,7 +17,7 @@ const COLOR_SHADES = [
   "800",
   "900",
   "950"
-] as const
+] as const;
 
 const PALETTE_NAMES = [
   "neutral",
@@ -30,7 +30,7 @@ const PALETTE_NAMES = [
   "commentary",
   "ideation",
   "source"
-] as const
+] as const;
 
 export const TestPage: Component = () => {
   return (
@@ -217,7 +217,7 @@ export const TestPage: Component = () => {
         </section>
       </main>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default TestPage
+export default TestPage;

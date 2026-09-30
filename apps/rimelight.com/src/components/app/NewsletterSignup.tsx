@@ -1,31 +1,31 @@
-import type { Component } from "solid-js"
-import { RLForm } from "@rimelight/ui/components/form/RLForm.tsx"
-import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx"
-import { RLFieldGroup } from "@rimelight/ui/components/field-group/RLFieldGroup.tsx"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import type { Component } from "solid-js";
+import { RLForm } from "@rimelight/ui/components/form/RLForm.tsx";
+import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
+import { RLFieldGroup } from "@rimelight/ui/components/field-group/RLFieldGroup.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface NewsletterSignupProps {
-  title?: string
-  fieldLabel?: string
-  description?: string
-  placeholder?: string
-  submit?: string
-  buttonLabel?: string
+  title?: string;
+  fieldLabel?: string;
+  description?: string;
+  placeholder?: string;
+  submit?: string;
+  buttonLabel?: string;
   rc?: {
-    group?: string
-    label?: string
-    description?: string
-    input?: string
-    button?: string
-  }
+    group?: string;
+    label?: string;
+    description?: string;
+    input?: string;
+    button?: string;
+  };
 }
 
 export const NewsletterSignup: Component<NewsletterSignupProps> = (props) => {
-  const resolvedFieldLabel = () => props.title ?? props.fieldLabel ?? "Subscribe to our Newsletter"
-  const resolvedButtonLabel = () => props.submit ?? props.buttonLabel ?? "Subscribe"
+  const resolvedFieldLabel = () => props.title ?? props.fieldLabel ?? "Subscribe to our Newsletter";
+  const resolvedButtonLabel = () => props.submit ?? props.buttonLabel ?? "Subscribe";
   const resolvedDescription = () =>
-    props.description ?? "Stay updated on new posts and updates. Unsubscribe at any time."
+    props.description ?? "Stay updated on new posts and updates. Unsubscribe at any time.";
 
   return (
     <RLForm>
@@ -45,7 +45,7 @@ export const NewsletterSignup: Component<NewsletterSignupProps> = (props) => {
         </RLFieldGroup>
       </RLFormField>
     </RLForm>
-  )
-}
+  );
+};
 
-export default NewsletterSignup
+export default NewsletterSignup;

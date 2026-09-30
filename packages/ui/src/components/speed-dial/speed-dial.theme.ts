@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const speedDialTheme = defineTheme("speed-dial", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const speedDialTheme = defineTheme("speed-dial", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

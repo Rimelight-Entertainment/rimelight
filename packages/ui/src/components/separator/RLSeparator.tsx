@@ -1,20 +1,20 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { SeparatorProps } from "./separator"
-import { separatorTheme } from "./separator.theme"
-import { RLAvatar } from "../avatar/RLAvatar"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { SeparatorProps } from "./separator";
+import { separatorTheme } from "./separator.theme";
+import { RLAvatar } from "../avatar/RLAvatar";
 
 export interface RLSeparatorProps extends SeparatorProps {
-  children?: JSX.Element
-  avatarSlot?: JSX.Element
-  iconSlot?: JSX.Element
-  label?: any
-  icon?: string
-  avatar?: string | Record<string, any>
+  children?: JSX.Element;
+  avatarSlot?: JSX.Element;
+  iconSlot?: JSX.Element;
+  label?: any;
+  icon?: string;
+  avatar?: string | Record<string, any>;
 }
 
 const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "color",
@@ -31,7 +31,7 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
     "children",
     "avatarSlot",
     "iconSlot"
-  )
+  );
 
   const classes = createMemo(() =>
     separatorTheme({
@@ -43,9 +43,9 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const decorative = props.decorative ?? true
+  const decorative = props.decorative ?? true;
 
   return (
     <div
@@ -89,7 +89,7 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { RLSeparator }
+export { RLSeparator };

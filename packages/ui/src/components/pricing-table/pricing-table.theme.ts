@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const pricingTableTheme = defineTheme("pricing-table", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const pricingTableTheme = defineTheme("pricing-table", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

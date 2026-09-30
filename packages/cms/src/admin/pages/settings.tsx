@@ -1,57 +1,57 @@
-import { createSignal, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { useCmsApi } from "./_shared.tsx"
+import { createSignal, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { useCmsApi } from "./_shared.tsx";
 
 export interface SettingsPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  initialSettings?: any
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  initialSettings?: any;
 }
 
 export const SettingsPage: Component<SettingsPageProps> = (props) => {
-  const apiBase = () => props.apiBase ?? "/api/cms"
+  const apiBase = () => props.apiBase ?? "/api/cms";
   const remote = useCmsApi<{ settings: any }>(() =>
     props.initialSettings ? null : `${apiBase()}/settings`
-  )
-  const settings = () => props.initialSettings ?? remote.data()?.settings ?? {}
+  );
+  const settings = () => props.initialSettings ?? remote.data()?.settings ?? {};
 
-  const [name, setName] = createSignal("")
-  const [description, setDescription] = createSignal("")
-  const [url, setUrl] = createSignal("")
-  const [hydrated, setHydrated] = createSignal(false)
-  const [saving, setSaving] = createSignal(false)
-  const [status, setStatus] = createSignal<string | null>(null)
+  const [name, setName] = createSignal("");
+  const [description, setDescription] = createSignal("");
+  const [url, setUrl] = createSignal("");
+  const [hydrated, setHydrated] = createSignal(false);
+  const [saving, setSaving] = createSignal(false);
+  const [status, setStatus] = createSignal<string | null>(null);
 
   const hydrate = () => {
     if (!hydrated() && (remote.data() || props.initialSettings)) {
-      const s = settings()
-      setName(s.name ?? "")
-      setDescription(s.description ?? "")
-      setUrl(s.url ?? "")
-      setHydrated(true)
+      const s = settings();
+      setName(s.name ?? "");
+      setDescription(s.description ?? "");
+      setUrl(s.url ?? "");
+      setHydrated(true);
     }
-  }
-  hydrate()
+  };
+  hydrate();
 
   const save = async (e: Event) => {
-    e.preventDefault()
-    setSaving(true)
-    setStatus(null)
+    e.preventDefault();
+    setSaving(true);
+    setStatus(null);
     try {
       const res = await fetch(`${apiBase()}/settings`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name(), description: description(), url: url() })
-      })
-      if (!res.ok) throw new Error(`Save failed (${res.status})`)
-      setStatus("Settings saved")
+      });
+      if (!res.ok) throw new Error(`Save failed (${res.status})`);
+      setStatus("Settings saved");
     } catch (e: any) {
-      setStatus(e?.message ?? "Save failed")
+      setStatus(e?.message ?? "Save failed");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <CMSDashboardLayout
@@ -100,7 +100,7 @@ export const SettingsPage: Component<SettingsPageProps> = (props) => {
         </form>
       </Show>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default SettingsPage
+export default SettingsPage;

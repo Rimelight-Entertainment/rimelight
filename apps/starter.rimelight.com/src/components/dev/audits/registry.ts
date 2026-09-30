@@ -1,21 +1,21 @@
-import { accordionAudit } from "./accordion.audit"
-import { aspectRatioAudit } from "./aspect-ratio.audit"
-import { audioAudit } from "./audio.audit"
-import { avatarAudit } from "./avatar.audit"
-import { badgeAudit } from "./badge.audit"
-import { bannerAudit } from "./banner.audit"
-import type { ComponentAuditDefinition } from "./types"
+import { accordionAudit } from "./accordion.audit";
+import { aspectRatioAudit } from "./aspect-ratio.audit";
+import { audioAudit } from "./audio.audit";
+import { avatarAudit } from "./avatar.audit";
+import { badgeAudit } from "./badge.audit";
+import { bannerAudit } from "./banner.audit";
+import type { ComponentAuditDefinition } from "./types";
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
-  "accordion": accordionAudit,
+  accordion: accordionAudit,
   "aspect-ratio": aspectRatioAudit,
-  "audio": audioAudit,
-  "avatar": avatarAudit,
-  "badge": badgeAudit,
-  "banner": bannerAudit
-}
+  audio: audioAudit,
+  avatar: avatarAudit,
+  badge: badgeAudit,
+  banner: bannerAudit
+};
 
-export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS)
+export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);
 
 export const getAuditById = (id: string): ComponentAuditDefinition | undefined =>
-  COMPONENT_AUDITS[id.toLowerCase()]
+  COMPONENT_AUDITS[id.toLowerCase()];

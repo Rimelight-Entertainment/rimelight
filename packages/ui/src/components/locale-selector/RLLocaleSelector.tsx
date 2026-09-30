@@ -1,33 +1,33 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { LocaleSelectorProps, LocaleItem } from "./locale-selector"
-import { localeSelectorTheme } from "./locale-selector.theme"
-import { RLSelect } from "../select/RLSelect"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { LocaleSelectorProps, LocaleItem } from "./locale-selector";
+import { localeSelectorTheme } from "./locale-selector.theme";
+import { RLSelect } from "../select/RLSelect";
 
 export interface RLLocaleSelectorProps extends LocaleSelectorProps {
-  mode?: "select" | "icon"
-  children?: JSX.Element
-  labelSlot?: JSX.Element
-  leading?: JSX.Element
-  leadingIcon?: string
-  onSelect?: (item: LocaleItem) => void
-  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
+  mode?: "select" | "icon";
+  children?: JSX.Element;
+  labelSlot?: JSX.Element;
+  leading?: JSX.Element;
+  leadingIcon?: string;
+  onSelect?: (item: LocaleItem) => void;
+  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;
 }
 
 const getLocaleDisplayName = (localeCode: string): string => {
   try {
-    const formatter = new Intl.DisplayNames([localeCode], { type: "language" })
-    const nativeName = formatter.of(localeCode)
+    const formatter = new Intl.DisplayNames([localeCode], { type: "language" });
+    const nativeName = formatter.of(localeCode);
     return nativeName
       ? nativeName.charAt(0).toUpperCase() + nativeName.slice(1)
-      : localeCode.toUpperCase()
+      : localeCode.toUpperCase();
   } catch {
-    return localeCode.toUpperCase()
+    return localeCode.toUpperCase();
   }
-}
+};
 
 const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "locales",
@@ -44,9 +44,9 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
     "leadingIcon",
     "onSelect",
     "onChange"
-  )
+  );
 
-  const currentCode = (): string => props.currentLocale ?? "en"
+  const currentCode = (): string => props.currentLocale ?? "en";
 
   const processedLocales = createMemo<LocaleItem[]>(() =>
     (props.locales ?? []).map((item) =>
@@ -54,53 +54,53 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
         ? { code: item, label: getLocaleDisplayName(item) }
         : { ...item, label: item.label || getLocaleDisplayName(item.code) }
     )
-  )
+  );
 
   const items = createMemo(() =>
     processedLocales().map((item) => {
-      let targetUrl: string
-      const search = typeof window !== "undefined" ? window.location.search : ""
-      const pathname = typeof window !== "undefined" ? window.location.pathname : "/"
+      let targetUrl: string;
+      const search = typeof window !== "undefined" ? window.location.search : "";
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
       if (item.href !== undefined && item.href !== null) {
-        targetUrl = item.href + (item.href.includes("?") ? "" : search)
+        targetUrl = item.href + (item.href.includes("?") ? "" : search);
       } else {
-        const knownCodes = new Set(processedLocales().map((l) => l.code))
-        const segments = pathname.split("/").filter(Boolean)
-        const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!)
+        const knownCodes = new Set(processedLocales().map((l) => l.code));
+        const segments = pathname.split("/").filter(Boolean);
+        const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!);
 
         if (firstIsLocale) {
-          segments[0] = item.code
-          targetUrl = `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`
+          segments[0] = item.code;
+          targetUrl = `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
         } else if (segments.length > 0) {
-          targetUrl = `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`
+          targetUrl = `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
         } else {
-          targetUrl = `/${item.code}/${search}`
+          targetUrl = `/${item.code}/${search}`;
         }
       }
-      return { label: item.label, value: item.code, href: targetUrl }
+      return { label: item.label, value: item.code, href: targetUrl };
     })
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     localeSelectorTheme({
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const isIconMode = () => props.mode === "icon" || props.variant === "icon"
+  const isIconMode = () => props.mode === "icon" || props.variant === "icon";
 
   const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
-    const selectedCode = e.currentTarget.value
-    const found = items().find((i) => i.value === selectedCode)
+    const selectedCode = e.currentTarget.value;
+    const found = items().find((i) => i.value === selectedCode);
     if (found) {
-      props.onSelect?.({ label: found.label, code: found.value, href: found.href })
+      props.onSelect?.({ label: found.label, code: found.value, href: found.href });
       if (found.href && typeof window !== "undefined") {
-        window.location.href = found.href
+        window.location.href = found.href;
       }
     }
-    props.onChange?.(e)
-  }
+    props.onChange?.(e);
+  };
 
   return (
     <div
@@ -125,7 +125,7 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
       </div>
       {props.children}
     </div>
-  )
-}
+  );
+};
 
-export { RLLocaleSelector }
+export { RLLocaleSelector };

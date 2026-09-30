@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const listboxTheme = defineTheme("listbox", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const listboxTheme = defineTheme("listbox", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

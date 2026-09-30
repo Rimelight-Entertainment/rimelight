@@ -1,19 +1,19 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ProgressProps } from "./progress"
-import { progressTheme } from "./progress.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ProgressProps } from "./progress";
+import { progressTheme } from "./progress.theme";
 
 export interface RLProgressProps extends ProgressProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLProgress: Component<RLProgressProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "value", "max", "theme", "color", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "value", "max", "theme", "color", "ui", "class", "children");
 
-  const value = () => props.value ?? 0
-  const max = () => props.max ?? 100
-  const percentage = createMemo(() => Math.min(100, Math.max(0, (value() / max()) * 100)))
+  const value = () => props.value ?? 0;
+  const max = () => props.max ?? 100;
+  const percentage = createMemo(() => Math.min(100, Math.max(0, (value() / max()) * 100)));
 
   const resolvedClasses = createMemo(() =>
     progressTheme({
@@ -21,10 +21,10 @@ const RLProgress: Component<RLProgressProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const widthClass = () => {
-    const pct = Math.round(percentage())
+    const pct = Math.round(percentage());
     return pct === 100
       ? "w-full"
       : pct === 75
@@ -35,8 +35,8 @@ const RLProgress: Component<RLProgressProps> = (allProps) => {
             ? "w-1/4"
             : pct === 0
               ? "w-0"
-              : `w-[${pct}%]`
-  }
+              : `w-[${pct}%]`;
+  };
 
   return (
     <div
@@ -52,7 +52,7 @@ const RLProgress: Component<RLProgressProps> = (allProps) => {
       <div class={`${resolvedClasses().indicator} ${widthClass()}`} data-slot="indicator" />
       {props.children}
     </div>
-  )
-}
+  );
+};
 
-export { RLProgress }
+export { RLProgress };

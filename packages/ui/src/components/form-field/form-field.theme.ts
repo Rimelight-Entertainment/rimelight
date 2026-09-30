@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const formFieldTheme = defineTheme("form-field", {
   slots: ["root", "label", "description", "error"],
@@ -18,4 +18,4 @@ export const formFieldTheme = defineTheme("form-field", {
   defaultVariants: {
     size: "md"
   }
-})
+});

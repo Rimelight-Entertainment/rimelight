@@ -1,18 +1,18 @@
-import { createMemo, omit, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { BadgeProps } from "./badge"
-import { badgeTheme } from "./badge.theme"
-import { RLIcon } from "../icon/RLIcon"
-import { RLAvatar } from "../avatar/RLAvatar"
+import { createMemo, omit, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { BadgeProps } from "./badge";
+import { badgeTheme } from "./badge.theme";
+import { RLIcon } from "../icon/RLIcon";
+import { RLAvatar } from "../avatar/RLAvatar";
 
 export interface RLBadgeProps extends BadgeProps {
-  children?: JSX.Element
-  leadingSlot?: JSX.Element
-  trailingSlot?: JSX.Element
+  children?: JSX.Element;
+  leadingSlot?: JSX.Element;
+  trailingSlot?: JSX.Element;
 }
 
 const RLBadge: Component<RLBadgeProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -37,13 +37,13 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
     "children",
     "leadingSlot",
     "trailingSlot"
-  )
+  );
 
-  const leadingIconProp = () => props.leadingIcon ?? (props as any)["leading-icon"]
-  const trailingIconProp = () => props.trailingIcon ?? (props as any)["trailing-icon"]
-  const leadingProp = () => props.leading ?? (props as any)["leading"]
-  const trailingProp = () => props.trailing ?? (props as any)["trailing"]
-  const iconProp = () => props.icon ?? (props as any)["icon"]
+  const leadingIconProp = () => props.leadingIcon ?? (props as any)["leading-icon"];
+  const trailingIconProp = () => props.trailingIcon ?? (props as any)["trailing-icon"];
+  const leadingProp = () => props.leading ?? (props as any)["leading"];
+  const trailingProp = () => props.trailing ?? (props as any)["trailing"];
+  const iconProp = () => props.icon ?? (props as any)["icon"];
 
   const isLeading = () =>
     Boolean(
@@ -52,20 +52,20 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
       leadingIconProp() ||
       props.avatar ||
       props.leadingSlot
-    )
+    );
 
   const leadingIconName = () =>
-    leadingIconProp() || (iconProp() && !trailingProp() ? iconProp() : undefined)
+    leadingIconProp() || (iconProp() && !trailingProp() ? iconProp() : undefined);
 
   const isTrailing = () =>
     Boolean(
       trailingProp() || (iconProp() && trailingProp()) || trailingIconProp() || props.trailingSlot
-    )
+    );
 
   const trailingIconName = () =>
-    trailingIconProp() || (iconProp() && trailingProp() ? iconProp() : undefined)
+    trailingIconProp() || (iconProp() && trailingProp() ? iconProp() : undefined);
 
-  const isSquare = () => Boolean(props.square ?? (props as any)["square"])
+  const isSquare = () => Boolean(props.square ?? (props as any)["square"]);
 
   const resolvedClasses = createMemo(() =>
     badgeTheme({
@@ -84,16 +84,16 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
         : undefined,
       class: props.class
     })
-  )
+  );
 
-  const Root = dynamic(() => props.as ?? "span")
+  const Root = dynamic(() => props.as ?? "span");
 
   const renderLeading = () => {
     if (props.leadingSlot !== undefined && props.leadingSlot !== null) {
-      return props.leadingSlot
+      return props.leadingSlot;
     }
 
-    const iconName = leadingIconName()
+    const iconName = leadingIconName();
     if (iconName) {
       if (typeof iconName === "string") {
         return (
@@ -103,13 +103,13 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
             data-slot="leading-icon"
             aria-hidden="true"
           />
-        )
+        );
       }
       return (
         <span class={resolvedClasses().leadingIcon} data-slot="leading-icon" aria-hidden="true">
           {iconName}
         </span>
-      )
+      );
     }
 
     if (props.avatar) {
@@ -121,7 +121,7 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
             class={resolvedClasses().leadingAvatar}
             data-slot="leading-avatar"
           />
-        )
+        );
       }
       return (
         <RLAvatar
@@ -130,18 +130,18 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
           class={resolvedClasses().leadingAvatar}
           data-slot="leading-avatar"
         />
-      )
+      );
     }
 
-    return null
-  }
+    return null;
+  };
 
   const renderTrailing = () => {
     if (props.trailingSlot !== undefined && props.trailingSlot !== null) {
-      return props.trailingSlot
+      return props.trailingSlot;
     }
 
-    const iconName = trailingIconName()
+    const iconName = trailingIconName();
     if (iconName) {
       if (typeof iconName === "string") {
         return (
@@ -151,31 +151,31 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
             data-slot="trailing-icon"
             aria-hidden="true"
           />
-        )
+        );
       }
       return (
         <span class={resolvedClasses().trailingIcon} data-slot="trailing-icon" aria-hidden="true">
           {iconName}
         </span>
-      )
+      );
     }
 
-    return null
-  }
+    return null;
+  };
 
   const renderContent = () => {
     if (props.children !== undefined && props.children !== null) {
-      return props.children
+      return props.children;
     }
     if (props.label !== undefined && props.label !== null) {
       return (
         <span class={resolvedClasses().label} data-slot="label">
           {props.label}
         </span>
-      )
+      );
     }
-    return null
-  }
+    return null;
+  };
 
   return (
     <Root class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
@@ -183,7 +183,7 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
       {renderContent()}
       {isTrailing() ? renderTrailing() : null}
     </Root>
-  )
-}
+  );
+};
 
-export { RLBadge }
+export { RLBadge };

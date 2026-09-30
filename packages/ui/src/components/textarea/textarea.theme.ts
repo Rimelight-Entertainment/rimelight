@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const textareaTheme = defineTheme("textarea", {
   slots: ["root", "textarea"],
@@ -21,4 +21,4 @@ export const textareaTheme = defineTheme("textarea", {
     size: "md",
     error: false
   }
-})
+});

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const treeTheme = defineTheme("tree", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const treeTheme = defineTheme("tree", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

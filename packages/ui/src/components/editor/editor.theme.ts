@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const editorTheme = defineTheme("editor", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const editorTheme = defineTheme("editor", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

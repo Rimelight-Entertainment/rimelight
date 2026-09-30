@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const toastTheme = defineTheme("toast", {
   slots: ["root", "title", "description", "action", "close"],
@@ -31,4 +31,4 @@ export const toastTheme = defineTheme("toast", {
   defaultVariants: {
     variant: "default"
   }
-})
+});

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const floatingActionTheme = defineTheme("floating-action", {
   slots: ["root"],
@@ -7,4 +7,4 @@ export const floatingActionTheme = defineTheme("floating-action", {
   },
   variants: {},
   defaultVariants: {}
-})
+});

@@ -2,22 +2,22 @@ export interface FieldGroupProps {
   /**
    * Text/icon to prepend.
    */
-  prepend?: string
+  prepend?: string;
   /**
    * Text/icon to append.
    */
-  append?: string
+  append?: string;
   /**
    * Size scale.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

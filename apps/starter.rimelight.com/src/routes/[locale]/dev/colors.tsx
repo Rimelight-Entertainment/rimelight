@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import ColorTestingMatrix from "../../../components/ColorTestingMatrix.tsx"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import ColorTestingMatrix from "../../../components/ColorTestingMatrix.tsx";
 
 export const DevColorsPage: Component = () => {
   return (
@@ -9,7 +9,7 @@ export const DevColorsPage: Component = () => {
         <ColorTestingMatrix />
       </main>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DevColorsPage
+export default DevColorsPage;

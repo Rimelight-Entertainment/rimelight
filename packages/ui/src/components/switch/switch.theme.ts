@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const switchTheme = defineTheme("switch", {
   slots: ["root", "input", "track", "thumb", "label"],
@@ -48,4 +48,4 @@ export const switchTheme = defineTheme("switch", {
     size: "md",
     checked: false
   }
-})
+});

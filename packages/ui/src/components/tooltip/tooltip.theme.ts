@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const tooltipTheme = defineTheme("tooltip", {
   slots: ["root", "trigger", "content"],
@@ -22,4 +22,4 @@ export const tooltipTheme = defineTheme("tooltip", {
   defaultVariants: {
     placement: "top"
   }
-})
+});

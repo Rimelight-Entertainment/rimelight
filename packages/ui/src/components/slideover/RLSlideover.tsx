@@ -7,27 +7,27 @@ import {
   Show,
   omit,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Portal } from "@solidjs/web"
-import type { SlideoverProps } from "./slideover"
-import { slideoverTheme } from "./slideover.theme"
-import { RLIcon } from "../icon/RLIcon"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
+import type { SlideoverProps } from "./slideover";
+import { slideoverTheme } from "./slideover.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLSlideoverProps extends SlideoverProps {
-  children?: JSX.Element
-  trigger?: JSX.Element
-  triggerSlot?: JSX.Element
-  titleSlot?: JSX.Element
-  descriptionSlot?: JSX.Element
-  footer?: JSX.Element
-  footerSlot?: JSX.Element
-  defaultOpen?: boolean
-  onOpenChange?: (open: boolean) => void
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "side",
@@ -47,46 +47,46 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     "footer",
     "footerSlot",
     "onOpenChange"
-  )
+  );
 
-  const side = () => props.side ?? "left"
-  const unmountOnHide = () => props.unmountOnHide ?? true
+  const side = () => props.side ?? "left";
+  const unmountOnHide = () => props.unmountOnHide ?? true;
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false)
+  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
 
   createEffect(
     () => props.open,
     (open) => {
       if (open !== undefined) {
-        setIsOpen(open)
+        setIsOpen(open);
       }
     }
-  )
+  );
 
   const setOpenState = (open: boolean) => {
     if (props.open === undefined) {
-      setIsOpen(open)
+      setIsOpen(open);
     }
     if (typeof document !== "undefined") {
-      document.body.style.overflow = open ? "hidden" : ""
+      document.body.style.overflow = open ? "hidden" : "";
     }
-    props.onOpenChange?.(open)
-  }
+    props.onOpenChange?.(open);
+  };
 
   onSettled(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen()) {
-        setOpenState(false)
+        setOpenState(false);
       }
-    }
-    window.addEventListener("keydown", onKeyDown)
+    };
+    window.addEventListener("keydown", onKeyDown);
     return () => {
-      window.removeEventListener("keydown", onKeyDown)
+      window.removeEventListener("keydown", onKeyDown);
       if (typeof document !== "undefined") {
-        document.body.style.overflow = ""
+        document.body.style.overflow = "";
       }
-    }
-  })
+    };
+  });
 
   const resolvedClasses = createMemo(() =>
     slideoverTheme({
@@ -94,15 +94,15 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const resolvedChildren = resolveChildren(() => props.children)
+  const resolvedChildren = resolveChildren(() => props.children);
 
   const getSlotChild = (name: string) => {
-    const all = resolvedChildren()
-    const arr = Array.isArray(all) ? all : all ? [all] : []
+    const all = resolvedChildren();
+    const arr = Array.isArray(all) ? all : all ? [all] : [];
     return arr.find((child: any) => {
-      if (!child) return false
+      if (!child) return false;
       if (typeof child === "object") {
         const s =
           child.slot ??
@@ -111,18 +111,18 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
           child?.props?.["data-slot"] ??
           (typeof child.getAttribute === "function"
             ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined)
-        return s === name
+            : undefined);
+        return s === name;
       }
-      return false
-    })
-  }
+      return false;
+    });
+  };
 
   const getBodyChildren = () => {
-    const all = resolvedChildren()
-    const arr = Array.isArray(all) ? all : all ? [all] : []
+    const all = resolvedChildren();
+    const arr = Array.isArray(all) ? all : all ? [all] : [];
     return arr.filter((child: any) => {
-      if (!child) return false
+      if (!child) return false;
       if (typeof child === "object") {
         const s =
           child.slot ??
@@ -131,18 +131,18 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
           child?.props?.["data-slot"] ??
           (typeof child.getAttribute === "function"
             ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined)
-        if (s === "trigger" || s === "footer" || s === "title" || s === "description") return false
+            : undefined);
+        if (s === "trigger" || s === "footer" || s === "title" || s === "description") return false;
       }
-      return true
-    })
-  }
+      return true;
+    });
+  };
 
-  const triggerContent = () => props.trigger ?? props.triggerSlot ?? getSlotChild("trigger")
-  const footerContent = () => props.footer ?? props.footerSlot ?? getSlotChild("footer")
-  const titleContent = () => props.titleSlot ?? getSlotChild("title") ?? props.title
+  const triggerContent = () => props.trigger ?? props.triggerSlot ?? getSlotChild("trigger");
+  const footerContent = () => props.footer ?? props.footerSlot ?? getSlotChild("footer");
+  const titleContent = () => props.titleSlot ?? getSlotChild("title") ?? props.title;
   const descriptionContent = () =>
-    props.descriptionSlot ?? getSlotChild("description") ?? props.description
+    props.descriptionSlot ?? getSlotChild("description") ?? props.description;
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
@@ -212,7 +212,7 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
         </Portal>
       </Show>
     </div>
-  )
-}
+  );
+};
 
-export { RLSlideover }
+export { RLSlideover };

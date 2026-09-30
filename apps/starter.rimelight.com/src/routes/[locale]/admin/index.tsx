@@ -1,28 +1,28 @@
-import { type Component } from "solid-js"
-import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout"
-import { createAsyncData } from "#utils/async"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+import { type Component } from "solid-js";
+import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout";
+import { createAsyncData } from "#utils/async";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 export const AdminIndexPage: Component = () => {
   const metrics = createAsyncData(
     () => true,
     async () => {
-      let totalPages = 0
-      let totalBylines = 0
-      let totalCategories = 0
-      let totalTags = 0
+      let totalPages = 0;
+      let totalBylines = 0;
+      let totalCategories = 0;
+      let totalTags = 0;
 
       try {
-        const res = await fetch("/api/cms/stats")
+        const res = await fetch("/api/cms/stats");
         if (res.ok) {
-          const data = (await res.json()) as any
-          totalPages = data.totalPages ?? 0
-          totalBylines = data.totalBylines ?? 0
-          totalCategories = data.totalCategories ?? 0
-          totalTags = data.totalTags ?? 0
+          const data = (await res.json()) as any;
+          totalPages = data.totalPages ?? 0;
+          totalBylines = data.totalBylines ?? 0;
+          totalCategories = data.totalCategories ?? 0;
+          totalTags = data.totalTags ?? 0;
         }
       } catch {}
 
@@ -31,10 +31,10 @@ export const AdminIndexPage: Component = () => {
         totalBylines,
         totalCategories,
         totalTags
-      }
+      };
     },
     { totalPages: 0, totalBylines: 0, totalCategories: 0, totalTags: 0 }
-  )
+  );
 
   return (
     <AuthAdminDashboardLayout
@@ -254,7 +254,7 @@ export const AdminIndexPage: Component = () => {
         </div>
       </div>
     </AuthAdminDashboardLayout>
-  )
-}
+  );
+};
 
-export default AdminIndexPage
+export default AdminIndexPage;

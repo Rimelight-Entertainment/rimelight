@@ -1,49 +1,49 @@
-import type { LocaleConfig, SeoEntry, SitemapUrl } from "./types.js"
+import type { LocaleConfig, SeoEntry, SitemapUrl } from "./types.js";
 
 /**
  * Build fully-resolved sitemap URLs from entries and locale config
  */
 export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): SitemapUrl[] {
-  const urls: SitemapUrl[] = []
-  const { site, locales, defaultLocale, prefixDefaultLocale, trailingSlash } = config
+  const urls: SitemapUrl[] = [];
+  const { site, locales, defaultLocale, prefixDefaultLocale, trailingSlash } = config;
 
   for (const entry of entries) {
     const entryLocales =
-      entry.locales && entry.locales.length > 0 ? entry.locales : Object.keys(locales)
+      entry.locales && entry.locales.length > 0 ? entry.locales : Object.keys(locales);
 
-    const entryUrls: SitemapUrl[] = []
+    const entryUrls: SitemapUrl[] = [];
 
     for (const locale of entryLocales) {
-      const isDefault = locale === defaultLocale
-      const localePrefix = !isDefault || prefixDefaultLocale ? `/${locale}` : ""
+      const isDefault = locale === defaultLocale;
+      const localePrefix = !isDefault || prefixDefaultLocale ? `/${locale}` : "";
 
-      let path = entry.path
+      let path = entry.path;
       if (trailingSlash === "always" && !path.endsWith("/")) {
-        path += "/"
+        path += "/";
       } else if (trailingSlash === "never" && path.endsWith("/")) {
-        path = path.replace(/\/$/, "")
+        path = path.replace(/\/$/, "");
       }
 
-      const loc = `${site}${localePrefix}${path}`
+      const loc = `${site}${localePrefix}${path}`;
 
-      const item: SitemapUrl = { loc }
+      const item: SitemapUrl = { loc };
       if (entry.lastmod) {
-        item.lastmod = entry.lastmod.toISOString()
+        item.lastmod = entry.lastmod.toISOString();
       }
       if (entry.changefreq) {
-        item.changefreq = entry.changefreq
+        item.changefreq = entry.changefreq;
       }
       if (entry.priority !== undefined) {
-        item.priority = entry.priority
+        item.priority = entry.priority;
       }
-      entryUrls.push(item)
+      entryUrls.push(item);
     }
 
     // Add alternates if multiple locales
     if (entryUrls.length > 1) {
       const defaultUrl = entryUrls.find(
         (u) => u.loc === `${site}${prefixDefaultLocale ? `/${defaultLocale}` : ""}${entry.path}`
-      )
+      );
 
       for (const url of entryUrls) {
         url.alternates = entryUrls
@@ -51,7 +51,7 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
           .map((u) => ({
             hreflang: extractHreflang(u.loc, locales, defaultLocale),
             href: u.loc
-          }))
+          }));
 
         // Add x-default pointing to default locale
         // x-default should be on the default URL itself, pointing to itself
@@ -59,15 +59,15 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
           url.alternates.push({
             hreflang: "x-default",
             href: defaultUrl.loc
-          })
+          });
         }
       }
     }
 
-    urls.push(...entryUrls)
+    urls.push(...entryUrls);
   }
 
-  return urls
+  return urls;
 }
 
 /**
@@ -76,35 +76,35 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
 export function buildSitemapXml(urls: SitemapUrl[]): string {
   const urlElements = urls
     .map((url) => {
-      let xml = `  <url>\n    <loc>${escapeXml(url.loc)}</loc>`
+      let xml = `  <url>\n    <loc>${escapeXml(url.loc)}</loc>`;
 
       if (url.lastmod) {
-        xml += `\n    <lastmod>${url.lastmod}</lastmod>`
+        xml += `\n    <lastmod>${url.lastmod}</lastmod>`;
       }
 
       if (url.changefreq) {
-        xml += `\n    <changefreq>${url.changefreq}</changefreq>`
+        xml += `\n    <changefreq>${url.changefreq}</changefreq>`;
       }
 
       if (url.priority !== undefined) {
-        xml += `\n    <priority>${url.priority.toFixed(1)}</priority>`
+        xml += `\n    <priority>${url.priority.toFixed(1)}</priority>`;
       }
 
       if (url.alternates && url.alternates.length > 0) {
         for (const alt of url.alternates) {
-          xml += `\n    <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${escapeXml(alt.href)}" />`
+          xml += `\n    <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${escapeXml(alt.href)}" />`;
         }
       }
 
-      xml += "\n  </url>"
-      return xml
+      xml += "\n  </url>";
+      return xml;
     })
-    .join("\n")
+    .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urlElements}
-</urlset>`
+</urlset>`;
 }
 
 /**
@@ -117,23 +117,23 @@ export function buildSitemapIndexXml(sitemapUrls: string[]): string {
     <loc>${escapeXml(url)}</loc>
   </sitemap>`
     )
-    .join("\n")
+    .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapElements}
-</sitemapindex>`
+</sitemapindex>`;
 }
 
 /**
  * Chunk sitemap URLs into multiple sitemaps (max 50k URLs per sitemap)
  */
 export function chunkSitemapUrls(urls: SitemapUrl[], limit: number = 45000): SitemapUrl[][] {
-  const chunks: SitemapUrl[][] = []
+  const chunks: SitemapUrl[][] = [];
   for (let i = 0; i < urls.length; i += limit) {
-    chunks.push(urls.slice(i, i + limit))
+    chunks.push(urls.slice(i, i + limit));
   }
-  return chunks
+  return chunks;
 }
 
 /**
@@ -146,11 +146,11 @@ function extractHreflang(
 ): string {
   for (const [segment, hreflang] of Object.entries(locales)) {
     if (url.includes(`/${segment}/`) || url.endsWith(`/${segment}`)) {
-      return hreflang
+      return hreflang;
     }
   }
   // Default to the first locale's hreflang if no match
-  return locales[defaultLocale] || "en"
+  return locales[defaultLocale] || "en";
 }
 
 /**
@@ -162,5 +162,5 @@ function escapeXml(str: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;")
+    .replace(/'/g, "&apos;");
 }

@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import TableShowcase from "../../../components/TableShowcase.tsx"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import TableShowcase from "../../../components/TableShowcase.tsx";
 
 export const DevTablePage: Component = () => {
   return (
@@ -37,7 +37,7 @@ export const DevTablePage: Component = () => {
         </section>
       </main>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default DevTablePage
+export default DevTablePage;

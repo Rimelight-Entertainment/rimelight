@@ -1,20 +1,20 @@
 export interface ArticleSchemaOptions {
-  type?: "TechArticle" | "Article" | "BlogPosting"
-  title: string
-  description?: string
-  url: string
-  datePublished?: string | Date
-  dateModified?: string | Date
-  authorName?: string
-  authorUrl?: string
-  image?: string
-  publisherName?: string
-  publisherLogo?: string
+  type?: "TechArticle" | "Article" | "BlogPosting";
+  title: string;
+  description?: string;
+  url: string;
+  datePublished?: string | Date;
+  dateModified?: string | Date;
+  authorName?: string;
+  authorUrl?: string;
+  image?: string;
+  publisherName?: string;
+  publisherLogo?: string;
 }
 
 export interface BreadcrumbItem {
-  name: string
-  url: string
+  name: string;
+  url: string;
 }
 
 /**
@@ -33,50 +33,50 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
     image,
     publisherName = "Rimelight Entertainment",
     publisherLogo
-  } = options
+  } = options;
 
   const schema: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": type,
-    "headline": title,
-    "mainEntityOfPage": {
+    headline: title,
+    mainEntityOfPage: {
       "@type": "WebPage",
       "@id": url
     }
-  }
+  };
 
-  if (description) schema["description"] = description
-  if (image) schema["image"] = image
+  if (description) schema["description"] = description;
+  if (image) schema["image"] = image;
 
   if (datePublished) {
     schema["datePublished"] =
-      datePublished instanceof Date ? datePublished.toISOString() : datePublished
+      datePublished instanceof Date ? datePublished.toISOString() : datePublished;
   }
 
   if (dateModified) {
     schema["dateModified"] =
-      dateModified instanceof Date ? dateModified.toISOString() : dateModified
+      dateModified instanceof Date ? dateModified.toISOString() : dateModified;
   } else if (datePublished) {
-    schema["dateModified"] = schema["datePublished"]
+    schema["dateModified"] = schema["datePublished"];
   }
 
   if (authorName) {
     schema["author"] = {
       "@type": "Person",
-      "name": authorName,
+      name: authorName,
       ...(authorUrl ? { url: authorUrl } : {})
-    }
+    };
   }
 
   if (publisherName) {
     schema["publisher"] = {
       "@type": "Organization",
-      "name": publisherName,
-      ...(publisherLogo ? { logo: { "@type": "ImageObject", "url": publisherLogo } } : {})
-    }
+      name: publisherName,
+      ...(publisherLogo ? { logo: { "@type": "ImageObject", url: publisherLogo } } : {})
+    };
   }
 
-  return schema
+  return schema;
 }
 
 /**
@@ -86,11 +86,11 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]): Record<string, a
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": items.map((item, index) => ({
+    itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
-      "position": index + 1,
-      "name": item.name,
-      "item": item.url
+      position: index + 1,
+      name: item.name,
+      item: item.url
     }))
-  }
+  };
 }

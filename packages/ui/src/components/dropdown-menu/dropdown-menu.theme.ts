@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dropdownMenuTheme = defineTheme("dropdown-menu", {
   slots: [
@@ -50,4 +50,4 @@ export const dropdownMenuTheme = defineTheme("dropdown-menu", {
   defaultVariants: {
     size: "md"
   }
-})
+});

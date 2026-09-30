@@ -7,40 +7,40 @@ import {
   Show,
   omit,
   type Component
-} from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { CarouselProps, CarouselSlide } from "./carousel"
-import { carouselTheme } from "./carousel.theme"
-import { RLIcon } from "../icon/RLIcon"
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { CarouselProps, CarouselSlide } from "./carousel";
+import { carouselTheme } from "./carousel.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLCarouselProps extends CarouselProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
-const SLIDE_TRANSITION = "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)"
+const SLIDE_TRANSITION = "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)";
 
 const RLCarousel: Component<RLCarouselProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "slides", "autoplay", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "slides", "autoplay", "ui", "class", "children");
 
-  const [index, setIndex] = createSignal(0)
-  const [dragOffset, setDragOffset] = createSignal(0)
-  const [isDragging, setIsDragging] = createSignal(false)
+  const [index, setIndex] = createSignal(0);
+  const [dragOffset, setDragOffset] = createSignal(0);
+  const [isDragging, setIsDragging] = createSignal(false);
 
-  const childrenContent = children(() => props.children)
+  const childrenContent = children(() => props.children);
 
   const slideCount = createMemo(() => {
-    if (props.slides && props.slides.length > 0) return props.slides.length
-    return childrenContent.toArray().length
-  })
+    if (props.slides && props.slides.length > 0) return props.slides.length;
+    return childrenContent.toArray().length;
+  });
 
-  let viewportRef: HTMLDivElement | undefined
-  let containerRef: HTMLDivElement | undefined
-  let startX = 0
-  let startY = 0
-  let hasDragged = false
-  let intervalId: ReturnType<typeof setInterval> | undefined
-  let lastBtnClickTime = 0
+  let viewportRef: HTMLDivElement | undefined;
+  let containerRef: HTMLDivElement | undefined;
+  let startX = 0;
+  let startY = 0;
+  let hasDragged = false;
+  let intervalId: ReturnType<typeof setInterval> | undefined;
+  let lastBtnClickTime = 0;
 
   const resolvedClasses = createMemo(() =>
     carouselTheme({
@@ -48,7 +48,7 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const dotActiveClasses = createMemo(() =>
     carouselTheme({
@@ -56,105 +56,105 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const carouselId = `rl-carousel-${Math.random().toString(36).substring(2, 9)}`
-  const dots = createMemo(() => Array.from({ length: slideCount() }, (_, i) => i))
+  const carouselId = `rl-carousel-${Math.random().toString(36).substring(2, 9)}`;
+  const dots = createMemo(() => Array.from({ length: slideCount() }, (_, i) => i));
 
   const goTo = (n: number) => {
-    const count = slideCount()
-    if (count === 0) return
-    setIndex(((n % count) + count) % count)
-  }
+    const count = slideCount();
+    if (count === 0) return;
+    setIndex(((n % count) + count) % count);
+  };
 
-  const next = () => goTo(index() + 1)
-  const prev = () => goTo(index() - 1)
+  const next = () => goTo(index() + 1);
+  const prev = () => goTo(index() - 1);
 
   const startAutoplay = () => {
     if (props.autoplay && !intervalId) {
-      intervalId = setInterval(() => goTo(index() + 1), 5000)
+      intervalId = setInterval(() => goTo(index() + 1), 5000);
     }
-  }
+  };
 
   const stopAutoplay = () => {
     if (intervalId) {
-      clearInterval(intervalId)
-      intervalId = undefined
+      clearInterval(intervalId);
+      intervalId = undefined;
     }
-  }
+  };
 
   onSettled(() => {
-    startAutoplay()
-    return stopAutoplay
-  })
+    startAutoplay();
+    return stopAutoplay;
+  });
 
   const handleBtnClick = (action: () => void) => {
-    const now = Date.now()
-    if (now - lastBtnClickTime < 500) return
-    lastBtnClickTime = now
-    stopAutoplay()
-    action()
-    startAutoplay()
-  }
+    const now = Date.now();
+    if (now - lastBtnClickTime < 500) return;
+    lastBtnClickTime = now;
+    stopAutoplay();
+    action();
+    startAutoplay();
+  };
 
   const handlePointerDown = (e: PointerEvent) => {
-    if (!viewportRef) return
-    stopAutoplay()
-    startX = e.clientX
-    startY = e.clientY
-    hasDragged = false
-    setIsDragging(true)
+    if (!viewportRef) return;
+    stopAutoplay();
+    startX = e.clientX;
+    startY = e.clientY;
+    hasDragged = false;
+    setIsDragging(true);
     try {
-      viewportRef.setPointerCapture(e.pointerId)
+      viewportRef.setPointerCapture(e.pointerId);
     } catch {}
-  }
+  };
 
   const handlePointerMove = (e: PointerEvent) => {
-    if (!isDragging() || !viewportRef || !containerRef) return
-    const deltaX = e.clientX - startX
-    const deltaY = e.clientY - startY
+    if (!isDragging() || !viewportRef || !containerRef) return;
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
 
     if (!hasDragged) {
       if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 5) {
-        setIsDragging(false)
+        setIsDragging(false);
         try {
-          viewportRef.releasePointerCapture(e.pointerId)
+          viewportRef.releasePointerCapture(e.pointerId);
         } catch {}
-        return
+        return;
       }
       if (Math.abs(deltaX) > 5) {
-        hasDragged = true
+        hasDragged = true;
       }
     }
 
     if (hasDragged) {
-      e.preventDefault()
-      const width = viewportRef.clientWidth
-      setDragOffset((deltaX / width) * 100)
+      e.preventDefault();
+      const width = viewportRef.clientWidth;
+      setDragOffset((deltaX / width) * 100);
     }
-  }
+  };
 
   const handlePointerUp = (e: PointerEvent) => {
-    if (!isDragging() || !viewportRef) return
-    setIsDragging(false)
-    setDragOffset(0)
+    if (!isDragging() || !viewportRef) return;
+    setIsDragging(false);
+    setDragOffset(0);
     try {
-      viewportRef.releasePointerCapture(e.pointerId)
+      viewportRef.releasePointerCapture(e.pointerId);
     } catch {}
 
     if (hasDragged) {
-      const deltaX = e.clientX - startX
-      const width = viewportRef.clientWidth
-      const threshold = width * 0.15
+      const deltaX = e.clientX - startX;
+      const width = viewportRef.clientWidth;
+      const threshold = width * 0.15;
       if (deltaX < -threshold) {
-        next()
+        next();
       } else if (deltaX > threshold) {
-        prev()
+        prev();
       }
     }
-    hasDragged = false
-    startAutoplay()
-  }
+    hasDragged = false;
+    startAutoplay();
+  };
 
   const renderSlide = (slide: CarouselSlide) => (
     <div class={`${resolvedClasses().slide} rl-carousel-slide`} data-slot="slide">
@@ -175,7 +175,7 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
         ) : null}
       </div>
     </div>
-  )
+  );
 
   return (
     <div data-autoplay={props.autoplay ? "true" : "false"} class="contents" {...rest}>
@@ -246,7 +246,7 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
         </Show>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLCarousel }
+export { RLCarousel };

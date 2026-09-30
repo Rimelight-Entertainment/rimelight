@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import GrandTaleLayout from "#layouts/GrandTaleLayout"
-import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx"
+import { type Component } from "solid-js";
+import GrandTaleLayout from "#layouts/GrandTaleLayout";
+import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
 
 const faqItems = [
   {
@@ -22,7 +22,7 @@ const faqItems = [
     content:
       "Grand Tale is free to download and play, with cosmetic and community-driven customizations."
   }
-]
+];
 
 export const GrandTaleAboutPage: Component = () => {
   return (
@@ -42,7 +42,7 @@ export const GrandTaleAboutPage: Component = () => {
         <RLAccordion items={faqItems} />
       </div>
     </GrandTaleLayout>
-  )
-}
+  );
+};
 
-export default GrandTaleAboutPage
+export default GrandTaleAboutPage;

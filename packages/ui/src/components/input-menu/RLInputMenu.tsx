@@ -7,20 +7,20 @@ import {
   onSettled,
   createEffect,
   type Component
-} from "solid-js"
-import type { InputMenuProps } from "./input-menu"
-import { inputMenuTheme } from "./input-menu.theme"
-import { RLIcon } from "../icon/RLIcon"
+} from "solid-js";
+import type { InputMenuProps } from "./input-menu";
+import { inputMenuTheme } from "./input-menu.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLInputMenuProps extends InputMenuProps {
-  defaultValue?: string
-  onValueChange?: (value: string) => void
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
 }
 
-type InputMenuItem = { label: string; value: string; [key: string]: any }
+type InputMenuItem = { label: string; value: string; [key: string]: any };
 
 const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "items",
@@ -35,7 +35,7 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     "ui",
     "class",
     "onValueChange"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     inputMenuTheme({
@@ -44,13 +44,13 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const normalizedItems = createMemo<InputMenuItem[]>(() =>
     (props.items ?? []).map((item) =>
       typeof item === "string" ? { label: item, value: item } : item
     )
-  )
+  );
 
   const [selectedValue, setSelectedValue] = createSignal<string>(
     props.value !== undefined
@@ -58,65 +58,65 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
       : props.defaultValue !== undefined
         ? String(props.defaultValue)
         : ""
-  )
-  const currentValue = () => (props.value !== undefined ? String(props.value) : selectedValue())
+  );
+  const currentValue = () => (props.value !== undefined ? String(props.value) : selectedValue());
 
   const selectedItem = createMemo(() =>
     normalizedItems().find((item) => String(item.value) === String(currentValue()))
-  )
+  );
 
   const visibleLabel = createMemo(() => {
     if (props.placeholder && (currentValue() === "" || currentValue() === "undefined")) {
-      return props.placeholder
+      return props.placeholder;
     }
-    return selectedItem()?.label ?? props.placeholder ?? "Select item..."
-  })
+    return selectedItem()?.label ?? props.placeholder ?? "Select item...";
+  });
 
-  const [open, setOpen] = createSignal(false)
-  const [query, setQuery] = createSignal("")
+  const [open, setOpen] = createSignal(false);
+  const [query, setQuery] = createSignal("");
 
-  let searchRef: HTMLInputElement | undefined
-  let hiddenRef: HTMLInputElement | undefined
+  let searchRef: HTMLInputElement | undefined;
+  let hiddenRef: HTMLInputElement | undefined;
 
   const filteredItems = createMemo(() => {
-    const q = query().toLowerCase().trim()
-    if (!q) return normalizedItems()
-    return normalizedItems().filter((item) => item.label.toLowerCase().includes(q))
-  })
+    const q = query().toLowerCase().trim();
+    if (!q) return normalizedItems();
+    return normalizedItems().filter((item) => item.label.toLowerCase().includes(q));
+  });
 
   const selectItem = (value: string, _label: string) => {
-    if (props.value === undefined) setSelectedValue(value)
-    if (hiddenRef) hiddenRef.value = value
-    props.onValueChange?.(value)
-    setQuery("")
-    setOpen(false)
-  }
+    if (props.value === undefined) setSelectedValue(value);
+    if (hiddenRef) hiddenRef.value = value;
+    props.onValueChange?.(value);
+    setQuery("");
+    setOpen(false);
+  };
 
   const handleTriggerClick = (e: MouseEvent) => {
-    e.stopPropagation()
-    if (props.disabled) return
-    setOpen(!open())
-  }
+    e.stopPropagation();
+    if (props.disabled) return;
+    setOpen(!open());
+  };
 
   const handleItemClick = (e: MouseEvent, item: InputMenuItem) => {
-    e.stopPropagation()
-    selectItem(item.value, item.label)
-  }
+    e.stopPropagation();
+    selectItem(item.value, item.label);
+  };
 
   createEffect(
     () => open(),
     (isOpen) => {
-      if (isOpen) searchRef?.focus()
+      if (isOpen) searchRef?.focus();
     }
-  )
+  );
 
   onSettled(() => {
     const handleDocumentClick = () => {
-      setOpen(false)
-    }
-    document.addEventListener("click", handleDocumentClick)
-    return () => document.removeEventListener("click", handleDocumentClick)
-  })
+      setOpen(false);
+    };
+    document.addEventListener("click", handleDocumentClick);
+    return () => document.removeEventListener("click", handleDocumentClick);
+  });
 
   return (
     <div
@@ -197,7 +197,7 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
         ref={(el) => (hiddenRef = el)}
       />
     </div>
-  )
-}
+  );
+};
 
-export { RLInputMenu }
+export { RLInputMenu };

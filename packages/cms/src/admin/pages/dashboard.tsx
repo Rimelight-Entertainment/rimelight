@@ -1,17 +1,17 @@
-import { type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
+import { type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 export interface DashboardPageProps {
-  basePath?: string | undefined
+  basePath?: string | undefined;
 }
 
 /**
  * CMS admin overview (Solid).
  */
 export const DashboardPage: Component<DashboardPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
+  const base = () => props.basePath ?? "/cms";
 
   return (
     <CMSDashboardLayout
@@ -63,7 +63,7 @@ export const DashboardPage: Component<DashboardPageProps> = (props) => {
         </div>
       </RLCard>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;

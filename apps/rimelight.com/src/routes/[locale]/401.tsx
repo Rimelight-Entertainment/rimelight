@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import AppError from "#components/app/AppError"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import AppError from "#components/app/AppError";
 
 export const Error401Page: Component = () => {
   return (
@@ -24,7 +24,7 @@ export const Error401Page: Component = () => {
         ]}
       />
     </AppLayout>
-  )
-}
+  );
+};
 
-export default Error401Page
+export default Error401Page;

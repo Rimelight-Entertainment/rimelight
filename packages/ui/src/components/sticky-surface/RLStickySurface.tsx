@@ -1,21 +1,23 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { StickySurfaceProps } from "./sticky-surface"
-import { stickySurfaceTheme } from "./sticky-surface.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { StickySurfaceProps } from "./sticky-surface";
+import { stickySurfaceTheme } from "./sticky-surface.theme";
 
 export interface RLStickySurfaceProps extends StickySurfaceProps {
-  children?: JSX.Element
+  children?: JSX.Element;
 }
 
 const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children")
+  const props = allProps;
+  const rest = omit(allProps, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children");
 
-  const stuckShadow = () => props.stuckShadow ?? true
+  const stuckShadow = () => props.stuckShadow ?? true;
 
-  const id = `sticky-${Math.random().toString(36).substring(2, 9)}`
+  const id = `sticky-${Math.random().toString(36).substring(2, 9)}`;
 
-  const resolvedClasses = createMemo(() => stickySurfaceTheme({ ui: props.ui, class: props.class }))
+  const resolvedClasses = createMemo(() =>
+    stickySurfaceTheme({ ui: props.ui, class: props.class })
+  );
 
   return (
     <div
@@ -52,7 +54,7 @@ const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
         `}</style>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export { RLStickySurface }
+export { RLStickySurface };

@@ -1,5 +1,5 @@
-import type { Component } from "solid-js"
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+import type { Component } from "solid-js";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const WikiSidebar: Component = () => {
   const sections = [
@@ -37,7 +37,7 @@ export const WikiSidebar: Component = () => {
         { label: t("wiki_sidebar.settings"), to: "/franchises/grand-tale/wiki/game/settings" }
       ]
     }
-  ]
+  ];
 
   return (
     <div class="flex flex-col gap-6 px-4 py-6 bg-indigo-950/20 rounded-2xl border border-indigo-900/30">
@@ -59,7 +59,7 @@ export const WikiSidebar: Component = () => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default WikiSidebar
+export default WikiSidebar;

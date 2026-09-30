@@ -7,9 +7,9 @@ import {
   timestamp,
   uniqueIndex,
   uuid
-} from "drizzle-orm/pg-core"
-import { pages } from "./pages.ts"
-import type { Localized } from "../core/types/pages"
+} from "drizzle-orm/pg-core";
+import { pages } from "./pages.ts";
+import type { Localized } from "../core/types/pages";
 
 export const taxonomyTerms = pgTable(
   "taxonomy_terms",
@@ -32,7 +32,7 @@ export const taxonomyTerms = pgTable(
       name: "taxonomy_terms_parent_id_fk"
     }).onDelete("cascade")
   ]
-)
+);
 
 export const pageTaxonomyTerms = pgTable(
   "page_taxonomy_terms",
@@ -46,4 +46,4 @@ export const pageTaxonomyTerms = pgTable(
     assignedAt: timestamp("assigned_at", { withTimezone: true }).defaultNow().notNull()
   },
   (table) => [uniqueIndex("page_taxonomy_terms_page_term_idx").on(table.pageId, table.termId)]
-)
+);

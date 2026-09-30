@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const linkTheme = defineTheme("link", {
   slots: ["root", "label", "leadingIcon", "trailingIcon"],
@@ -33,4 +33,4 @@ export const linkTheme = defineTheme("link", {
   defaultVariants: {
     active: false
   }
-})
+});

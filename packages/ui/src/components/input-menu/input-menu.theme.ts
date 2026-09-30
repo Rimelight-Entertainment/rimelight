@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const inputMenuTheme = defineTheme("input-menu", {
   slots: ["root", "label", "trigger", "input", "content", "item", "itemText", "itemIcon"],
@@ -29,4 +29,4 @@ export const inputMenuTheme = defineTheme("input-menu", {
   defaultVariants: {
     size: "md"
   }
-})
+});

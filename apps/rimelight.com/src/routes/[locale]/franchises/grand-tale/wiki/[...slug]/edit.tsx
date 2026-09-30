@@ -1,52 +1,52 @@
-import { type Component, createSignal } from "solid-js"
-import { useParams } from "@solidjs/router"
-import { createAsyncData } from "#utils/async"
-import DashboardLayout from "#layouts/DashboardLayout"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
+import { type Component, createSignal } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { createAsyncData } from "#utils/async";
+import DashboardLayout from "#layouts/DashboardLayout";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 
 export const WikiEditPage: Component = () => {
-  const params = useParams<{ locale: string; slug?: string }>()
-  const currentLocale = () => getLocale()
-  const [titleVal, setTitleVal] = createSignal("")
-  const [descVal, setDescVal] = createSignal("")
-  const [saving, setSaving] = createSignal(false)
+  const params = useParams<{ locale: string; slug?: string }>();
+  const currentLocale = () => getLocale();
+  const [titleVal, setTitleVal] = createSignal("");
+  const [descVal, setDescVal] = createSignal("");
+  const [saving, setSaving] = createSignal(false);
 
   const pageData = createAsyncData(
     () => params.slug,
     async (slug) => {
-      if (!slug) return null
+      if (!slug) return null;
       try {
-        const lookupSlug = `franchises/grand-tale/wiki/${slug}`
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(lookupSlug)}`)
-        if (!res.ok) return null
-        const page = (await res.json()) as any
+        const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
+        const res = await fetch(`/api/content/pages/${encodeURIComponent(lookupSlug)}`);
+        if (!res.ok) return null;
+        const page = (await res.json()) as any;
         const title =
           typeof page.title === "object"
             ? page.title?.[currentLocale()] || page.title?.en || ""
             : typeof page.title === "string"
               ? page.title
-              : ""
+              : "";
         const desc =
           typeof page.description === "object"
             ? page.description?.[currentLocale()] || page.description?.en || ""
             : typeof page.description === "string"
               ? page.description
-              : ""
-        setTitleVal(title)
-        setDescVal(desc)
-        return page
+              : "";
+        setTitleVal(title);
+        setDescVal(desc);
+        return page;
       } catch {
-        return null
+        return null;
       }
     },
     null
-  )
+  );
 
   const handleSave = async () => {
-    const page = pageData()
-    if (!page) return
-    setSaving(true)
+    const page = pageData();
+    if (!page) return;
+    setSaving(true);
     try {
       const res = await fetch(`/api/cms/pages/${page.id}`, {
         method: "PUT",
@@ -55,15 +55,15 @@ export const WikiEditPage: Component = () => {
           title: { [currentLocale()]: titleVal() },
           description: { [currentLocale()]: descVal() }
         })
-      })
-      if (res.ok) alert("Saved!")
-      else alert("Failed to save")
+      });
+      if (res.ok) alert("Saved!");
+      else alert("Failed to save");
     } catch {
-      alert("Network error")
+      alert("Network error");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <DashboardLayout title={`Edit Wiki Page: ${titleVal() || "Untitled"}`}>
@@ -118,7 +118,7 @@ export const WikiEditPage: Component = () => {
         </div>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default WikiEditPage
+export default WikiEditPage;

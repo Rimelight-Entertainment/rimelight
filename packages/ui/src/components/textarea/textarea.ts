@@ -1,53 +1,53 @@
-import type { ThemeColor } from "../../types"
+import type { ThemeColor } from "../../types";
 export interface TextareaProps {
-  autoGrow?: boolean
+  autoGrow?: boolean;
   /**
    * The text value.
    */
-  value?: string
+  value?: string;
   /**
    * Placeholder text.
    */
-  placeholder?: string
+  placeholder?: string;
   /**
    * Disabled state.
    */
-  disabled?: boolean
+  disabled?: boolean;
   /**
    * Readonly state.
    */
-  readonly?: boolean
+  readonly?: boolean;
   /**
    * Name for forms.
    */
-  name?: string
+  name?: string;
   /**
    * Required field state.
    */
-  required?: boolean
+  required?: boolean;
   /**
    * Row count.
    */
-  rows?: number
+  rows?: number;
   /**
    * Error state.
    */
-  error?: boolean | string
+  error?: boolean | string;
   /**
    * Size scale.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Color theme.
    */
-  color?: ThemeColor
+  color?: ThemeColor;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

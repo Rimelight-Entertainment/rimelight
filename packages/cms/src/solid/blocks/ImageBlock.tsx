@@ -1,11 +1,11 @@
-import { Show, type Component } from "solid-js"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 export const ImageBlock: Component<BlockViewProps> = (props) => {
   const src = () =>
-    (props.block.props?.["src"] as string) ?? (props.block.props?.["url"] as string) ?? ""
-  const alt = () => (props.block.props?.["alt"] as string) ?? "Image"
-  const caption = () => (props.block.props?.["caption"] as string) ?? ""
+    (props.block.props?.["src"] as string) ?? (props.block.props?.["url"] as string) ?? "";
+  const alt = () => (props.block.props?.["alt"] as string) ?? "Image";
+  const caption = () => (props.block.props?.["caption"] as string) ?? "";
 
   return (
     <figure
@@ -23,7 +23,7 @@ export const ImageBlock: Component<BlockViewProps> = (props) => {
         </figcaption>
       </Show>
     </figure>
-  )
-}
+  );
+};
 
-export default ImageBlock
+export default ImageBlock;

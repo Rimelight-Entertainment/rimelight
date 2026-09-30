@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const tableOfContentsTheme = defineTheme("table-of-contents", {
   slots: [
@@ -61,4 +61,4 @@ export const tableOfContentsTheme = defineTheme("table-of-contents", {
     interactive: false,
     overlay: false
   }
-})
+});

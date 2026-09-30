@@ -1,18 +1,18 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { TooltipProps } from "./tooltip"
-import { tooltipTheme } from "./tooltip.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { TooltipProps } from "./tooltip";
+import { tooltipTheme } from "./tooltip.theme";
 
 export interface RLTooltipProps extends TooltipProps {
-  children?: JSX.Element
-  contentSlot?: JSX.Element
+  children?: JSX.Element;
+  contentSlot?: JSX.Element;
 }
 
 const RLTooltip: Component<RLTooltipProps> = (allProps) => {
-  const props = allProps
-  const rest = omit(allProps, "content", "placement", "ui", "class", "children", "contentSlot")
+  const props = allProps;
+  const rest = omit(allProps, "content", "placement", "ui", "class", "children", "contentSlot");
 
-  const placement = () => props.placement ?? "top"
+  const placement = () => props.placement ?? "top";
 
   const resolvedClasses = createMemo(() =>
     tooltipTheme({
@@ -20,7 +20,7 @@ const RLTooltip: Component<RLTooltipProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   return (
     <div
@@ -37,7 +37,7 @@ const RLTooltip: Component<RLTooltipProps> = (allProps) => {
         {props.contentSlot !== undefined ? props.contentSlot : props.content}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { RLTooltip }
+export { RLTooltip };

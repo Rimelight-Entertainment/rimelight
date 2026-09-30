@@ -1,117 +1,117 @@
-import { createSignal, onSettled, For, Show, type Component } from "solid-js"
+import { createSignal, onSettled, For, Show, type Component } from "solid-js";
 import {
   getPageDefinition,
   type PageDefinition,
   type FieldDefinition
-} from "../../core/page-definitions.ts"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
+} from "../../core/page-definitions.ts";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 function getTextValue(value: any): string {
-  if (typeof value === "string") return value
-  if (typeof value === "object" && value !== null && "en" in value) return value.en
-  if (typeof value === "number") return String(value)
-  return ""
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && value !== null && "en" in value) return value.en;
+  if (typeof value === "number") return String(value);
+  return "";
 }
 
 export interface BylineItem {
-  name: string
-  avatar?: string
-  role?: string
-  url?: string
+  name: string;
+  avatar?: string;
+  role?: string;
+  url?: string;
 }
 
 export interface RimelightPropertiesPanelProps {
-  pageType?: string
-  initialProperties?: Record<string, any>
-  title?: string
-  slug?: string
-  icon?: string
-  tags?: string[]
-  bylines?: BylineItem[]
-  onPropertiesChange?: (props: Record<string, any>) => void
-  class?: string
+  pageType?: string;
+  initialProperties?: Record<string, any>;
+  title?: string;
+  slug?: string;
+  icon?: string;
+  tags?: string[];
+  bylines?: BylineItem[];
+  onPropertiesChange?: (props: Record<string, any>) => void;
+  class?: string;
 }
 
 export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> = (
   componentProps
 ) => {
-  const pageType = () => componentProps.pageType || "blog"
-  const definition = (): PageDefinition | null => getPageDefinition(pageType())
+  const pageType = () => componentProps.pageType || "blog";
+  const definition = (): PageDefinition | null => getPageDefinition(pageType());
 
   const [properties, setProperties] = createSignal<Record<string, any>>(
     componentProps.initialProperties || {}
-  )
-  const [expandedGroups, setExpandedGroups] = createSignal<Record<string, boolean>>({})
-  const [arrayInputs, setArrayInputs] = createSignal<Record<string, string>>({})
+  );
+  const [expandedGroups, setExpandedGroups] = createSignal<Record<string, boolean>>({});
+  const [arrayInputs, setArrayInputs] = createSignal<Record<string, string>>({});
   const [links, setLinks] = createSignal<Array<{ label: string; to: string; icon?: string }>>(
     componentProps.initialProperties?.["links"] || []
-  )
+  );
 
   // Bylines state
-  const [availableBylines, setAvailableBylines] = createSignal<BylineItem[]>([])
+  const [availableBylines, setAvailableBylines] = createSignal<BylineItem[]>([]);
   const [bylines, setBylines] = createSignal<BylineItem[]>(
     componentProps.bylines || componentProps.initialProperties?.["bylines"] || []
-  )
-  const [isBylineModalOpen, setIsBylineModalOpen] = createSignal(false)
-  const [editingBylineIndex, setEditingBylineIndex] = createSignal<number | null>(null)
+  );
+  const [isBylineModalOpen, setIsBylineModalOpen] = createSignal(false);
+  const [editingBylineIndex, setEditingBylineIndex] = createSignal<number | null>(null);
   const [bylineDraft, setBylineDraft] = createSignal<BylineItem>({
     name: "",
     avatar: "",
     role: "",
     url: ""
-  })
+  });
 
   // Taxonomies state
   const [categoriesList, setCategoriesList] = createSignal<
     Array<{ id: string; name: string; slug: string }>
-  >([])
+  >([]);
   const [selectedCategory, setSelectedCategory] = createSignal<string>(
     componentProps.initialProperties?.["category"] || ""
-  )
+  );
   const [tagsList, setTagsList] = createSignal<string[]>(
     componentProps.tags || componentProps.initialProperties?.["tags"] || []
-  )
-  const [newTagInput, setNewTagInput] = createSignal("")
+  );
+  const [newTagInput, setNewTagInput] = createSignal("");
 
-  const [isLinkModalOpen, setIsLinkModalOpen] = createSignal(false)
-  const [editingLinkIndex, setEditingLinkIndex] = createSignal<number | null>(null)
-  const [linkDraft, setLinkDraft] = createSignal({ label: "", to: "", icon: "" })
+  const [isLinkModalOpen, setIsLinkModalOpen] = createSignal(false);
+  const [editingLinkIndex, setEditingLinkIndex] = createSignal<number | null>(null);
+  const [linkDraft, setLinkDraft] = createSignal({ label: "", to: "", icon: "" });
 
   onSettled(() => {
-    const def = definition()
+    const def = definition();
     if (def?.properties) {
-      const initialExpanded: Record<string, boolean> = {}
+      const initialExpanded: Record<string, boolean> = {};
       Object.entries(def.properties).forEach(([groupId, group]) => {
-        initialExpanded[groupId] = group.defaultOpen ?? true
-      })
-      setExpandedGroups(initialExpanded)
+        initialExpanded[groupId] = group.defaultOpen ?? true;
+      });
+      setExpandedGroups(initialExpanded);
     }
 
     const handlePropsChange = (e: Event) => {
       if (e instanceof CustomEvent && e.detail?.properties) {
-        setProperties(e.detail.properties)
-        if (e.detail.properties.bylines) setBylines(e.detail.properties.bylines)
-        if (e.detail.properties.tags) setTagsList(e.detail.properties.tags)
-        if (e.detail.properties.category) setSelectedCategory(e.detail.properties.category)
+        setProperties(e.detail.properties);
+        if (e.detail.properties.bylines) setBylines(e.detail.properties.bylines);
+        if (e.detail.properties.tags) setTagsList(e.detail.properties.tags);
+        if (e.detail.properties.category) setSelectedCategory(e.detail.properties.category);
       }
-    }
+    };
     if (typeof document !== "undefined") {
-      document.addEventListener("properties-change", handlePropsChange)
+      document.addEventListener("properties-change", handlePropsChange);
     }
 
     void (async () => {
       // Load available taxonomy categories
       try {
-        const res = await fetch("/api/cms/taxonomies/category/terms")
+        const res = await fetch("/api/cms/taxonomies/category/terms");
         if (res.ok) {
-          const data = await res.json()
+          const data = await res.json();
           if (Array.isArray(data)) {
-            setCategoriesList(data.map((t: any) => ({ id: t.id, name: t.name, slug: t.slug })))
+            setCategoriesList(data.map((t: any) => ({ id: t.id, name: t.name, slug: t.slug })));
           }
         }
       } catch {
@@ -120,9 +120,9 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
       // Load available global bylines
       try {
-        const res = await fetch("/api/cms/bylines")
+        const res = await fetch("/api/cms/bylines");
         if (res.ok) {
-          const data = await res.json()
+          const data = await res.json();
           if (Array.isArray(data)) {
             setAvailableBylines(
               data.map((b: any) => ({
@@ -131,126 +131,131 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                 role: b.bio || "",
                 url: b.websiteUrl || ""
               }))
-            )
+            );
           }
         }
       } catch {
         // ignore
       }
-    })()
-  })
+    })();
+  });
 
   const handlePropertyChange = (key: string, value: any) => {
-    const updated = { ...properties(), [key]: value }
-    setProperties(updated)
-    componentProps.onPropertiesChange?.(updated)
+    const updated = { ...properties(), [key]: value };
+    setProperties(updated);
+    componentProps.onPropertiesChange?.(updated);
     if (typeof document !== "undefined") {
       document.dispatchEvent(
         new CustomEvent("properties-change", { detail: { properties: updated }, bubbles: true })
-      )
+      );
     }
     if (typeof window !== "undefined") {
-      ;(window as any).cmsPageProperties = updated
+      (window as any).cmsPageProperties = updated;
     }
-  }
+  };
 
   const toggleGroup = (groupId: string) => {
-    setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))
-  }
+    setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
+  };
 
   // Bylines Handlers
   const openBylineModal = (index: number | null = null) => {
-    setEditingBylineIndex(index)
+    setEditingBylineIndex(index);
     if (index !== null && bylines()[index]) {
-      const b = bylines()[index]!
-      setBylineDraft({ name: b.name, avatar: b.avatar || "", role: b.role || "", url: b.url || "" })
+      const b = bylines()[index]!;
+      setBylineDraft({
+        name: b.name,
+        avatar: b.avatar || "",
+        role: b.role || "",
+        url: b.url || ""
+      });
     } else {
-      setBylineDraft({ name: "", avatar: "", role: "", url: "" })
+      setBylineDraft({ name: "", avatar: "", role: "", url: "" });
     }
-    setIsBylineModalOpen(true)
-  }
+    setIsBylineModalOpen(true);
+  };
 
   const saveByline = () => {
-    const draft = bylineDraft()
-    if (!draft.name) return
-    const current = [...bylines()]
-    const idx = editingBylineIndex()
+    const draft = bylineDraft();
+    if (!draft.name) return;
+    const current = [...bylines()];
+    const idx = editingBylineIndex();
     if (idx !== null) {
-      current[idx] = draft
+      current[idx] = draft;
     } else {
-      current.push(draft)
+      current.push(draft);
     }
-    setBylines(current)
-    handlePropertyChange("bylines", current)
-    setIsBylineModalOpen(false)
-  }
+    setBylines(current);
+    handlePropertyChange("bylines", current);
+    setIsBylineModalOpen(false);
+  };
 
   const removeByline = (index: number) => {
-    const current = [...bylines()]
-    current.splice(index, 1)
-    setBylines(current)
-    handlePropertyChange("bylines", current)
-  }
+    const current = [...bylines()];
+    current.splice(index, 1);
+    setBylines(current);
+    handlePropertyChange("bylines", current);
+  };
 
   // Taxonomies Handlers
   const handleCategoryChange = (slug: string) => {
-    setSelectedCategory(slug)
-    handlePropertyChange("category", slug)
-  }
+    setSelectedCategory(slug);
+    handlePropertyChange("category", slug);
+  };
 
   const addTag = () => {
-    const tag = newTagInput().trim().toLowerCase()
+    const tag = newTagInput().trim().toLowerCase();
     if (tag && !tagsList().includes(tag)) {
-      const updated = [...tagsList(), tag]
-      setTagsList(updated)
-      handlePropertyChange("tags", updated)
-      setNewTagInput("")
+      const updated = [...tagsList(), tag];
+      setTagsList(updated);
+      handlePropertyChange("tags", updated);
+      setNewTagInput("");
     }
-  }
+  };
 
   const removeTag = (tagToRemove: string) => {
-    const updated = tagsList().filter((t) => t !== tagToRemove)
-    setTagsList(updated)
-    handlePropertyChange("tags", updated)
-  }
+    const updated = tagsList().filter((t) => t !== tagToRemove);
+    setTagsList(updated);
+    handlePropertyChange("tags", updated);
+  };
 
   // Links Handlers
   const openLinkModal = (index: number | null = null) => {
-    setEditingLinkIndex(index)
+    setEditingLinkIndex(index);
     if (index !== null && links()[index]) {
-      const l = links()[index]!
-      setLinkDraft({ label: l.label, to: l.to, icon: l.icon || "" })
+      const l = links()[index]!;
+      setLinkDraft({ label: l.label, to: l.to, icon: l.icon || "" });
     } else {
-      setLinkDraft({ label: "", to: "", icon: "" })
+      setLinkDraft({ label: "", to: "", icon: "" });
     }
-    setIsLinkModalOpen(true)
-  }
+    setIsLinkModalOpen(true);
+  };
 
   const saveLink = () => {
-    const draft = linkDraft()
-    if (!draft.label || !draft.to) return
-    const current = [...links()]
-    const idx = editingLinkIndex()
+    const draft = linkDraft();
+    if (!draft.label || !draft.to) return;
+    const current = [...links()];
+    const idx = editingLinkIndex();
     if (idx !== null) {
-      current[idx] = draft
+      current[idx] = draft;
     } else {
-      current.push(draft)
+      current.push(draft);
     }
-    setLinks(current)
-    handlePropertyChange("links", current)
-    setIsLinkModalOpen(false)
-  }
+    setLinks(current);
+    handlePropertyChange("links", current);
+    setIsLinkModalOpen(false);
+  };
 
   const removeLink = (index: number) => {
-    const current = [...links()]
-    current.splice(index, 1)
-    setLinks(current)
-    handlePropertyChange("links", current)
-  }
+    const current = [...links()];
+    current.splice(index, 1);
+    setLinks(current);
+    handlePropertyChange("links", current);
+  };
 
   const renderField = (fieldId: string, field: FieldDefinition) => {
-    const label = getTextValue(field.label)
-    const value = properties()[fieldId] !== undefined ? properties()[fieldId] : field.defaultValue
+    const label = getTextValue(field.label);
+    const value = properties()[fieldId] !== undefined ? properties()[fieldId] : field.defaultValue;
 
     if (field.type === "text") {
       return (
@@ -265,7 +270,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             size="sm"
           />
         </div>
-      )
+      );
     }
 
     if (field.type === "number") {
@@ -282,11 +287,11 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             size="sm"
           />
         </div>
-      )
+      );
     }
 
     if (field.type === "enum") {
-      const selectItems = (field.options || []).map((opt) => getTextValue(opt))
+      const selectItems = (field.options || []).map((opt) => getTextValue(opt));
       return (
         <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
@@ -299,25 +304,25 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             size="sm"
           />
         </div>
-      )
+      );
     }
 
     if (field.type === "text-array" || field.type === "page-array") {
-      const arr: string[] = Array.isArray(value) ? value : []
+      const arr: string[] = Array.isArray(value) ? value : [];
 
       const addArrayItem = () => {
-        const inputVal = arrayInputs()[fieldId]?.trim()
+        const inputVal = arrayInputs()[fieldId]?.trim();
         if (inputVal) {
-          handlePropertyChange(fieldId, [...arr, inputVal])
-          setArrayInputs((prev) => ({ ...prev, [fieldId]: "" }))
+          handlePropertyChange(fieldId, [...arr, inputVal]);
+          setArrayInputs((prev) => ({ ...prev, [fieldId]: "" }));
         }
-      }
+      };
 
       const removeArrayItem = (idx: number) => {
-        const updatedArr = [...arr]
-        updatedArr.splice(idx, 1)
-        handlePropertyChange(fieldId, updatedArr)
-      }
+        const updatedArr = [...arr];
+        updatedArr.splice(idx, 1);
+        handlePropertyChange(fieldId, updatedArr);
+      };
 
       return (
         <div class="flex flex-col gap-1 w-full">
@@ -347,8 +352,8 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                 }
                 onKeyDown={(e: KeyboardEvent) => {
                   if (e.key === "Enter") {
-                    e.preventDefault()
-                    addArrayItem()
+                    e.preventDefault();
+                    addArrayItem();
                   }
                 }}
                 size="sm"
@@ -364,11 +369,11 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             />
           </div>
         </div>
-      )
+      );
     }
 
-    return null
-  }
+    return null;
+  };
 
   return (
     <aside id="cms-properties-panel" class="flex flex-col gap-4 p-4 w-full bg-transparent">
@@ -437,8 +442,8 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   }
                   onKeyDown={(e: KeyboardEvent) => {
                     if (e.key === "Enter") {
-                      e.preventDefault()
-                      addTag()
+                      e.preventDefault();
+                      addTag();
                     }
                   }}
                   size="sm"
@@ -467,15 +472,15 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
           <Show when={availableBylines().length > 0}>
             <select
               onChange={(e) => {
-                const authorName = e.currentTarget.value
-                if (!authorName) return
-                const found = availableBylines().find((b) => b.name === authorName)
+                const authorName = e.currentTarget.value;
+                if (!authorName) return;
+                const found = availableBylines().find((b) => b.name === authorName);
                 if (found && !bylines().some((b) => b.name === found.name)) {
-                  const updated = [...bylines(), found]
-                  setBylines(updated)
-                  handlePropertyChange("bylines", updated)
+                  const updated = [...bylines(), found];
+                  setBylines(updated);
+                  handlePropertyChange("bylines", updated);
                 }
-                e.currentTarget.value = ""
+                e.currentTarget.value = "";
               }}
               class="w-full text-xs py-1.5 px-2 rounded-md border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary mb-1"
             >
@@ -542,7 +547,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         <div class="mt-4 space-y-2 w-full">
           <For each={Object.entries(definition()?.properties || {})}>
             {([groupId, group]) => {
-              const isExpanded = () => expandedGroups()[groupId] ?? true
+              const isExpanded = () => expandedGroups()[groupId] ?? true;
               return (
                 <div class="w-full" data-group-id={groupId}>
                   <button
@@ -568,7 +573,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                     </div>
                   )}
                 </div>
-              )
+              );
             }}
           </For>
         </div>
@@ -750,5 +755,5 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         </div>
       </RLModal>
     </aside>
-  )
-}
+  );
+};

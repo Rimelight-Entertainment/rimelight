@@ -1,7 +1,7 @@
-import { Show, type Component } from "solid-js"
-import { Dynamic } from "@solidjs/web"
-import { calculateHeadingLevel, type HeadingLevel } from "../../core/types/blocks.ts"
-import type { BlockViewProps } from "./ParagraphBlock.tsx"
+import { Show, type Component } from "solid-js";
+import { Dynamic } from "@solidjs/web";
+import { calculateHeadingLevel, type HeadingLevel } from "../../core/types/blocks.ts";
+import type { BlockViewProps } from "./ParagraphBlock.tsx";
 
 function slugify(text: string): string {
   return text
@@ -13,7 +13,7 @@ function slugify(text: string): string {
     .replace(/[^\w-]+/g, "")
     .replace(/-{2,}/g, "-")
     .replace(/^-+/, "")
-    .replace(/-+$/, "")
+    .replace(/-+$/, "");
 }
 
 const headingClasses: Record<HeadingLevel, string> = {
@@ -22,18 +22,18 @@ const headingClasses: Record<HeadingLevel, string> = {
   4: "text-xl font-medium text-neutral-900 mt-4 mb-2",
   5: "text-lg font-medium text-neutral-800 mt-3 mb-1.5",
   6: "text-base font-normal text-neutral-700 mt-2 mb-1"
-}
+};
 
 export const SectionBlock: Component<BlockViewProps> = (props) => {
-  const title = () => props.block.props?.["title"] ?? ""
-  const description = () => props.block.props?.["description"] ?? ""
+  const title = () => props.block.props?.["title"] ?? "";
+  const description = () => props.block.props?.["description"] ?? "";
   const level = () => {
-    const explicit = props.block.props?.["level"] as HeadingLevel | undefined
-    if (explicit != null) return explicit
-    return calculateHeadingLevel(props.sectionDepth ?? 0)
-  }
-  const headingId = () => (title() ? slugify(title()) : undefined)
-  const tag = () => `h${level()}`
+    const explicit = props.block.props?.["level"] as HeadingLevel | undefined;
+    if (explicit != null) return explicit;
+    return calculateHeadingLevel(props.sectionDepth ?? 0);
+  };
+  const headingId = () => (title() ? slugify(title()) : undefined);
+  const tag = () => `h${level()}`;
 
   return (
     <section id={headingId()} class="cms-section my-6 scroll-mt-20" data-block-id={props.block.id}>
@@ -47,7 +47,7 @@ export const SectionBlock: Component<BlockViewProps> = (props) => {
       </Show>
       <div class="mt-4">{props.children}</div>
     </section>
-  )
-}
+  );
+};
 
-export default SectionBlock
+export default SectionBlock;

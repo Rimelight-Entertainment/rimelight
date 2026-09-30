@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const avatarGroupTheme = defineTheme("avatar-group", {
   slots: ["root", "base", "more"],
@@ -17,23 +17,23 @@ export const avatarGroupTheme = defineTheme("avatar-group", {
         base: "-me-1.5",
         more: "-me-1.5 size-5 text-[8px]"
       },
-      "xs": {
+      xs: {
         base: "-me-1.5",
         more: "-me-1.5 size-6 text-[9px]"
       },
-      "sm": {
+      sm: {
         base: "-me-2",
         more: "-me-2 size-7 text-[10px]"
       },
-      "md": {
+      md: {
         base: "-me-2.5",
         more: "-me-2.5 size-8 text-[11px]"
       },
-      "lg": {
+      lg: {
         base: "-me-3",
         more: "-me-3 size-9 text-xs"
       },
-      "xl": {
+      xl: {
         base: "-me-3.5",
         more: "-me-3.5 size-10 text-xs"
       },
@@ -52,4 +52,4 @@ export const avatarGroupTheme = defineTheme("avatar-group", {
     size: "md",
     color: "neutral"
   }
-})
+});

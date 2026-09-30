@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from "solid-js"
+import { createSignal, For, Show } from "solid-js";
 
 export const PALETTES = [
   "neutral",
@@ -11,7 +11,7 @@ export const PALETTES = [
   "commentary",
   "ideation",
   "source"
-] as const
+] as const;
 
 export const SHADES = [
   "50",
@@ -25,7 +25,7 @@ export const SHADES = [
   "800",
   "900",
   "950"
-] as const
+] as const;
 
 export const INTENTS = [
   "default",
@@ -36,37 +36,37 @@ export const INTENTS = [
   "toned",
   "highlighted",
   "inverted"
-] as const
+] as const;
 
 export default function ColorTestingMatrix() {
   const [activeTab, setActiveTab] = createSignal<
     "intents" | "palettes" | "matrix" | "variants" | "sandbox"
-  >("sandbox")
-  const [selectedMatrixPalette, setSelectedMatrixPalette] = createSignal<string>("neutral")
-  const [copiedToken, setCopiedToken] = createSignal<string | null>(null)
+  >("sandbox");
+  const [selectedMatrixPalette, setSelectedMatrixPalette] = createSignal<string>("neutral");
+  const [copiedToken, setCopiedToken] = createSignal<string | null>(null);
 
   // Sandbox State
-  const [sandboxBgIntent, setSandboxBgIntent] = createSignal<string>("bg-default")
-  const [sandboxTextIntent, setSandboxTextIntent] = createSignal<string>("text-default")
-  const [sandboxBorderIntent, setSandboxBorderIntent] = createSignal<string>("border-default")
-  const [sandboxAccentColor, setSandboxAccentColor] = createSignal<string>("primary")
-  const [sandboxVariantBg, setSandboxVariantBg] = createSignal<string>("bg-default")
-  const [sandboxActiveTab, setSandboxActiveTab] = createSignal<number>(0)
+  const [sandboxBgIntent, setSandboxBgIntent] = createSignal<string>("bg-default");
+  const [sandboxTextIntent, setSandboxTextIntent] = createSignal<string>("text-default");
+  const [sandboxBorderIntent, setSandboxBorderIntent] = createSignal<string>("border-default");
+  const [sandboxAccentColor, setSandboxAccentColor] = createSignal<string>("primary");
+  const [sandboxVariantBg, setSandboxVariantBg] = createSignal<string>("bg-default");
+  const [sandboxActiveTab, setSandboxActiveTab] = createSignal<number>(0);
 
   const copyToClipboard = (text: string) => {
-    void navigator.clipboard.writeText(text)
-    setCopiedToken(text)
-    setTimeout(() => setCopiedToken(null), 1500)
-  }
+    void navigator.clipboard.writeText(text);
+    setCopiedToken(text);
+    setTimeout(() => setCopiedToken(null), 1500);
+  };
 
   const isInvalidInvertedPair = (row: string, col: string) => {
-    if (row === "inverted" && col !== "inverted") return true
-    if (row !== "inverted" && col === "inverted") return true
-    return false
-  }
+    if (row === "inverted" && col !== "inverted") return true;
+    if (row !== "inverted" && col === "inverted") return true;
+    return false;
+  };
 
   const renderSandboxShowcase = () => {
-    const accentClass = () => `rl-color-${sandboxAccentColor()}`
+    const accentClass = () => `rl-color-${sandboxAccentColor()}`;
 
     return (
       <div
@@ -326,8 +326,8 @@ export default function ColorTestingMatrix() {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div class="flex flex-col gap-6 w-full">
@@ -556,7 +556,7 @@ export default function ColorTestingMatrix() {
                       </td>
                       <For each={INTENTS}>
                         {(col) => {
-                          const isInvalid = isInvalidInvertedPair(row, col)
+                          const isInvalid = isInvalidInvertedPair(row, col);
                           return (
                             <td class="p-1 border-r border-default last:border-r-0">
                               <div
@@ -581,7 +581,7 @@ export default function ColorTestingMatrix() {
                                 </span>
                               </div>
                             </td>
-                          )
+                          );
                         }}
                       </For>
                     </tr>
@@ -657,7 +657,7 @@ export default function ColorTestingMatrix() {
                 <div class="grid grid-cols-11 flex-1 rounded-lg overflow-hidden border border-default">
                   <For each={SHADES}>
                     {(s) => {
-                      const varName = `--rl-${pal}-${s}`
+                      const varName = `--rl-${pal}-${s}`;
                       return (
                         <button
                           type="button"
@@ -670,7 +670,7 @@ export default function ColorTestingMatrix() {
                             {s}
                           </span>
                         </button>
-                      )
+                      );
                     }}
                   </For>
                 </div>
@@ -769,7 +769,7 @@ export default function ColorTestingMatrix() {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <For each={PALETTES}>
               {(pal) => {
-                const colorClass = `rl-color-${pal}`
+                const colorClass = `rl-color-${pal}`;
                 return (
                   <div
                     class={`p-4 rounded-xl border border-default flex flex-col gap-3 ${sandboxVariantBg()} ${
@@ -836,12 +836,12 @@ export default function ColorTestingMatrix() {
                       </span>
                     </div>
                   </div>
-                )
+                );
               }}
             </For>
           </div>
         </div>
       </Show>
     </div>
-  )
+  );
 }

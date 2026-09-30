@@ -1,32 +1,32 @@
 export interface FormFieldProps {
-  id?: string
+  id?: string;
   /**
    * Label for the field.
    */
-  label?: string
+  label?: string;
   /**
    * Description text.
    */
-  description?: string
+  description?: string;
   /**
    * Error message.
    */
-  error?: string
+  error?: string;
   /**
    * Required field state.
    */
-  required?: boolean
+  required?: boolean;
   /**
    * Size scale.
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,4 +1,4 @@
-﻿import type { UserSessionContext } from "@rimelight/auth"
+﻿import type { UserSessionContext } from "@rimelight/auth";
 
 /**
  * Synchronizes an authenticated Auth0 user or employee profile into Postgres. Called from the
@@ -6,21 +6,21 @@
  */
 export async function syncAuth0UserToDb(session: UserSessionContext) {
   try {
-    if (!session.email) return null
+    if (!session.email) return null;
 
-    const { db } = await import("#db")
-    const { employees } = await import("#db/schema/employees")
-    const { users } = await import("#db/schema/users")
-    const { eq, or } = await import("drizzle-orm")
+    const { db } = await import("#db");
+    const { employees } = await import("#db/schema/employees");
+    const { users } = await import("#db/schema/users");
+    const { eq, or } = await import("drizzle-orm");
 
     if (session.userType === "employee") {
       const existing = await db
         .select()
         .from(employees)
         .where(or(eq(employees.auth0Id, session.userId), eq(employees.email, session.email)))
-        .limit(1)
+        .limit(1);
 
-      const role = session.roles[0] || "employee"
+      const role = session.roles[0] || "employee";
 
       if (existing.length > 0) {
         const [updated] = await db
@@ -35,8 +35,8 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             updatedAt: new Date()
           })
           .where(eq(employees.id, existing[0]!.id))
-          .returning()
-        return { type: "employee", record: updated }
+          .returning();
+        return { type: "employee", record: updated };
       } else {
         const [inserted] = await db
           .insert(employees)
@@ -49,15 +49,15 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             permissions: session.permissions,
             metadata: session.metadata || {}
           })
-          .returning()
-        return { type: "employee", record: inserted }
+          .returning();
+        return { type: "employee", record: inserted };
       }
     } else {
       const existing = await db
         .select()
         .from(users)
         .where(or(eq(users.auth0Id, session.userId), eq(users.email, session.email)))
-        .limit(1)
+        .limit(1);
 
       if (existing.length > 0) {
         const [updated] = await db
@@ -70,8 +70,8 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             updatedAt: new Date()
           })
           .where(eq(users.id, existing[0]!.id))
-          .returning()
-        return { type: "user", record: updated }
+          .returning();
+        return { type: "user", record: updated };
       } else {
         const [inserted] = await db
           .insert(users)
@@ -83,12 +83,12 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
             avatar: session.avatar || null,
             emailVerified: true
           })
-          .returning()
-        return { type: "user", record: inserted }
+          .returning();
+        return { type: "user", record: inserted };
       }
     }
   } catch (error) {
-    console.error("[Auth] Error syncing Auth0 user to database:", error)
-    return null
+    console.error("[Auth] Error syncing Auth0 user to database:", error);
+    return null;
   }
 }

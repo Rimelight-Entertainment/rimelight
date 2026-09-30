@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const paginationTheme = defineTheme("pagination", {
   slots: ["root", "list", "item", "link", "ellipsis"],
@@ -21,4 +21,4 @@ export const paginationTheme = defineTheme("pagination", {
   defaultVariants: {
     active: false
   }
-})
+});

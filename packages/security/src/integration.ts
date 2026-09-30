@@ -1,5 +1,5 @@
-import type { SecurityOptions, ConstructionOptions } from "./types"
-import { security } from "./vite"
+import type { SecurityOptions, ConstructionOptions } from "./types";
+import { security } from "./vite";
 
 export interface RimelightSecurityOptions extends SecurityOptions {
   /**
@@ -9,12 +9,12 @@ export interface RimelightSecurityOptions extends SecurityOptions {
     /**
      * Optional custom route pattern. Defaults to "/[locale]/construction".
      */
-    routePattern?: string
+    routePattern?: string;
     /**
      * Optional custom page entrypoint to inject.
      */
-    entrypoint?: string
-  }
+    entrypoint?: string;
+  };
 }
 
 /**
@@ -27,11 +27,11 @@ export function rimelightSecurity(options: RimelightSecurityOptions = {}): any {
       "astro:config:setup": ({ injectRoute, updateConfig }: any) => {
         // 1. Inject custom construction route if an entrypoint is provided
         if (options.construction?.entrypoint) {
-          const pattern = options.construction?.routePattern || "/[locale]/construction"
+          const pattern = options.construction?.routePattern || "/[locale]/construction";
           injectRoute({
             pattern,
             entrypoint: options.construction.entrypoint
-          })
+          });
         }
 
         // 2. Add Vite security plugin
@@ -39,10 +39,10 @@ export function rimelightSecurity(options: RimelightSecurityOptions = {}): any {
           vite: {
             plugins: [security(options)]
           }
-        })
+        });
       }
     }
-  }
+  };
 }
 
-export default rimelightSecurity
+export default rimelightSecurity;

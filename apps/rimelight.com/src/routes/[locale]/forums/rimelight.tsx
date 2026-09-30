@@ -1,5 +1,5 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
 
 export const RimelightForumsPage: Component = () => {
   return (
@@ -14,7 +14,7 @@ export const RimelightForumsPage: Component = () => {
         </p>
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default RimelightForumsPage
+export default RimelightForumsPage;

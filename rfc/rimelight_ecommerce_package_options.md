@@ -144,12 +144,12 @@ packages/commerce/
 
 ```typescript
 // astro.config.ts — a store becomes a composition, not a fork
-import { rimelightCommerce } from "@rimelight/commerce/core"
+import { rimelightCommerce } from "@rimelight/commerce/core";
 export default defineConfig({
   vite: {
     plugins: [rimelightCommerce({ stripe: true, lightning: process.env.LND_URL })]
   }
-})
+});
 ```
 
 The first implementation milestone can be a **vendored minshop clone** (its own repo or a `starter.store.rimelight.com`-style app) that proves the flow with real traffic before the decomposition into Drizzle-backed packages pays off — the same "run the working self-contained thing first, decompose later" logic the analytics RFC used to keep Edgemetry's server out of the monorepo.

@@ -1,5 +1,5 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { pageVersions } from "./page_versions.ts"
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pageVersions } from "./page_versions.ts";
 
 export const pageVersionComments = pgTable("page_version_comments", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -11,4 +11,4 @@ export const pageVersionComments = pgTable("page_version_comments", {
   content: text("content").notNull(),
   blockId: text("block_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
-})
+});

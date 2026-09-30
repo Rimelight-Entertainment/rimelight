@@ -1,19 +1,19 @@
-import { createMemo, omit, type Component } from "solid-js"
-import { dynamic, type JSX } from "@solidjs/web"
-import type { HeaderProps } from "./header"
-import { headerTheme } from "./header.theme"
-import { useHeaderStack } from "./useHeaderStack"
+import { createMemo, omit, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
+import type { HeaderProps } from "./header";
+import { headerTheme } from "./header.theme";
+import { useHeaderStack } from "./useHeaderStack";
 
 export interface RLHeaderProps extends HeaderProps {
-  layerType?: "header" | "banner"
-  left?: JSX.Element
-  center?: JSX.Element
-  right?: JSX.Element
-  children?: JSX.Element
+  layerType?: "header" | "banner";
+  left?: JSX.Element;
+  center?: JSX.Element;
+  right?: JSX.Element;
+  children?: JSX.Element;
 }
 
 const RLHeader: Component<RLHeaderProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "as",
@@ -31,20 +31,20 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     "center",
     "right",
     "children"
-  )
+  );
 
-  const contain = () => props.contain ?? true
-  const sticky = () => props.sticky ?? true
-  const fixed = () => props.fixed ?? false
-  const stackIndex = () => props.stackIndex ?? 1
-  const hideOnScroll = () => props.hideOnScroll ?? false
-  const layerType = () => props.layerType ?? "header"
-  const isBanner = () => layerType() === "banner"
+  const contain = () => props.contain ?? true;
+  const sticky = () => props.sticky ?? true;
+  const fixed = () => props.fixed ?? false;
+  const stackIndex = () => props.stackIndex ?? 1;
+  const hideOnScroll = () => props.hideOnScroll ?? false;
+  const layerType = () => props.layerType ?? "header";
+  const isBanner = () => layerType() === "banner";
 
   // Deterministic id: explicit `id` wins, else derived from layer identity
   // (random ids diverge between SSR and hydration and never persist).
   const layerId =
-    typeof props["id"] === "string" ? props["id"] : `rl-header-${layerType()}-${stackIndex()}`
+    typeof props["id"] === "string" ? props["id"] : `rl-header-${layerType()}-${stackIndex()}`;
 
   const resolvedClasses = createMemo(() =>
     headerTheme({
@@ -54,9 +54,9 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
-  const { registerHeader } = useHeaderStack()
+  const { registerHeader } = useHeaderStack();
   const { ref, topOffset, isCollapsed } = registerHeader({
     id: layerId,
     order: stackIndex(),
@@ -65,28 +65,28 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     fixed: fixed(),
     hideOnScroll: hideOnScroll(),
     visible: true
-  })
+  });
 
   const dynamicStyles = () => {
     if (!fixed() && !sticky())
-      return typeof props["style"] === "object" ? props["style"] : undefined
+      return typeof props["style"] === "object" ? props["style"] : undefined;
 
     const base: Record<string, any> = {
       top: `${topOffset()}px`,
       transform: isCollapsed() ? "translateY(-100%)" : "translateY(0)",
       transition:
         "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-    }
+    };
 
     if (typeof props["style"] === "object" && props["style"] !== null) {
-      return { ...props["style"], ...base }
+      return { ...props["style"], ...base };
     }
-    return base
-  }
+    return base;
+  };
 
   // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh
   // factory at every call site).
-  const Tag = dynamic(() => props.as ?? "header")
+  const Tag = dynamic(() => props.as ?? "header");
 
   return (
     <Tag
@@ -118,7 +118,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
         </div>
       </div>
     </Tag>
-  )
-}
+  );
+};
 
-export { RLHeader }
+export { RLHeader };

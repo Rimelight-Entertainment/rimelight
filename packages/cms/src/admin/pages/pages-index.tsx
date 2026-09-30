@@ -1,51 +1,51 @@
-import { createSignal, For, Show, type Component } from "solid-js"
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { getLocalized, useCmsApi } from "./_shared.tsx"
+import { createSignal, For, Show, type Component } from "solid-js";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { getLocalized, useCmsApi } from "./_shared.tsx";
 
 export interface CmsPageListItem {
-  id: string
-  slug: string
-  type: string
-  title: unknown
-  description?: unknown
-  publishedVersionId?: string | null
-  postedAt?: string | null
-  updatedAt?: string | null
-  createdAt?: string | null
+  id: string;
+  slug: string;
+  type: string;
+  title: unknown;
+  description?: unknown;
+  publishedVersionId?: string | null;
+  postedAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 
 export interface PagesIndexPageProps {
-  basePath?: string | undefined
-  apiBase?: string | undefined
-  locale?: string | undefined
-  initialPages?: CmsPageListItem[] | undefined
+  basePath?: string | undefined;
+  apiBase?: string | undefined;
+  locale?: string | undefined;
+  initialPages?: CmsPageListItem[] | undefined;
 }
 
 export const PagesIndexPage: Component<PagesIndexPageProps> = (props) => {
-  const base = () => props.basePath ?? "/cms"
-  const apiBase = () => props.apiBase ?? "/api/cms"
-  const locale = () => props.locale ?? "en"
-  const [confirmDelete, setConfirmDelete] = createSignal<string | null>(null)
+  const base = () => props.basePath ?? "/cms";
+  const apiBase = () => props.apiBase ?? "/api/cms";
+  const locale = () => props.locale ?? "en";
+  const [confirmDelete, setConfirmDelete] = createSignal<string | null>(null);
 
   const remote = useCmsApi<{ pages: CmsPageListItem[] }>(() =>
     props.initialPages ? null : `${apiBase()}/pages`
-  )
-  const pages = () => props.initialPages ?? remote.data()?.pages ?? []
+  );
+  const pages = () => props.initialPages ?? remote.data()?.pages ?? [];
 
-  const statusOf = (p: CmsPageListItem) => (p.publishedVersionId ? "published" : "draft")
+  const statusOf = (p: CmsPageListItem) => (p.publishedVersionId ? "published" : "draft");
 
   const unpublish = async (id: string) => {
-    await fetch(`${apiBase()}/pages/${id}/unpublish`, { method: "POST" })
-    await remote.refetch()
-  }
+    await fetch(`${apiBase()}/pages/${id}/unpublish`, { method: "POST" });
+    await remote.refetch();
+  };
 
   const remove = async (id: string) => {
-    await fetch(`${apiBase()}/pages/${id}`, { method: "DELETE" })
-    setConfirmDelete(null)
-    await remote.refetch()
-  }
+    await fetch(`${apiBase()}/pages/${id}`, { method: "DELETE" });
+    setConfirmDelete(null);
+    await remote.refetch();
+  };
 
   return (
     <CMSDashboardLayout
@@ -147,7 +147,7 @@ export const PagesIndexPage: Component<PagesIndexPageProps> = (props) => {
         </Show>
       </div>
     </CMSDashboardLayout>
-  )
-}
+  );
+};
 
-export default PagesIndexPage
+export default PagesIndexPage;

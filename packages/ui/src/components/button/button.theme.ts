@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const buttonTheme = defineTheme("button", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
@@ -171,4 +171,4 @@ export const buttonTheme = defineTheme("button", {
     justify: "center",
     rounded: false
   }
-})
+});

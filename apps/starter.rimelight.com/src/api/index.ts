@@ -1,10 +1,10 @@
-import { Hono } from "hono"
-import authRoutes from "./routes/auth"
-import searchRoutes from "./routes/search"
-import contactRoutes from "./routes/contact"
-import contentRoutes from "./routes/content"
-import uploadRoutes from "./routes/upload"
-import cmsRoutes from "./routes/cms"
+import { Hono } from "hono";
+import authRoutes from "./routes/auth";
+import searchRoutes from "./routes/search";
+import contactRoutes from "./routes/contact";
+import contentRoutes from "./routes/content";
+import uploadRoutes from "./routes/upload";
+import cmsRoutes from "./routes/cms";
 
 const api = new Hono()
   .route("/auth", authRoutes)
@@ -12,7 +12,7 @@ const api = new Hono()
   .route("/contact", contactRoutes)
   .route("/content", contentRoutes)
   .route("/upload", uploadRoutes)
-  .route("/cms", cmsRoutes)
+  .route("/cms", cmsRoutes);
 
-export type ApiType = typeof api
-export default api
+export type ApiType = typeof api;
+export default api;

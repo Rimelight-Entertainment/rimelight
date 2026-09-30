@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const fileUploadTheme = defineTheme("file-upload", {
   slots: ["root", "input", "content", "icon", "title", "description"],
@@ -18,4 +18,4 @@ export const fileUploadTheme = defineTheme("file-upload", {
   defaultVariants: {
     disabled: false
   }
-})
+});

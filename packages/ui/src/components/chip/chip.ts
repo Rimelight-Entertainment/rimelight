@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types"
+import type { Theme, ThemeColor } from "../../types";
 
 export interface ChipProps {
   color?:
@@ -11,7 +11,7 @@ export interface ChipProps {
     | "neutral"
     | ThemeColor
     | (string & {})
-    | undefined
+    | undefined;
   size?:
     | "3xs"
     | "2xs"
@@ -23,25 +23,25 @@ export interface ChipProps {
     | "2xl"
     | "3xl"
     | (string & {})
-    | undefined
-  position?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined
-  inset?: boolean | undefined
-  text?: any
-  standalone?: boolean | undefined
-  show?: boolean | undefined
-  activeColor?: string
-  activeVariant?: string
+    | undefined;
+  position?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined;
+  inset?: boolean | undefined;
+  text?: any;
+  standalone?: boolean | undefined;
+  show?: boolean | undefined;
+  activeColor?: string;
+  activeVariant?: string;
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: Theme
+  theme?: Theme;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -59,15 +59,15 @@ At the same time, this design preserves Astro's strict island tree-shaking guara
 #### Consuming Application `astro.config.ts`
 
 ```typescript
-import { defineConfig } from "astro/config"
-import { rimelightAstroConfig } from "@rimelight/config/astro"
+import { defineConfig } from "astro/config";
+import { rimelightAstroConfig } from "@rimelight/config/astro";
 
 export default defineConfig(
   rimelightAstroConfig({
     domain: "example.com",
     ui: true // Automatically mounts UnoCSS + Solid island renderer
   })
-)
+);
 ```
 
 #### Using Components in `.astro` Layouts & Pages
@@ -117,14 +117,14 @@ flowchart TD
 In `packages/ui/src/integration.ts`:
 
 ```typescript
-import type { AstroIntegration } from "astro"
-import solid from "@astrojs/solid-js"
-import UnoCSS from "@unocss/vite"
-import { rimelightUiPreset } from "./preset.js"
-import type { UIConfig } from "./types.js"
+import type { AstroIntegration } from "astro";
+import solid from "@astrojs/solid-js";
+import UnoCSS from "@unocss/vite";
+import { rimelightUiPreset } from "./preset.js";
+import type { UIConfig } from "./types.js";
 
 export function rimelightUi(config: UIConfig = {}): AstroIntegration {
-  const { unocss = {}, solid: solidOptions, ...cfg } = config
+  const { unocss = {}, solid: solidOptions, ...cfg } = config;
 
   return {
     name: "@rimelight/ui",
@@ -134,7 +134,7 @@ export function rimelightUi(config: UIConfig = {}): AstroIntegration {
           typeof solidOptions === "object"
             ? solidOptions
             : { include: ["**/solid/**", "**/*.tsx", "**/*.jsx"] }
-        )
+        );
 
         updateConfig({
           vite: {
@@ -155,7 +155,7 @@ export function rimelightUi(config: UIConfig = {}): AstroIntegration {
               })
             ]
           }
-        })
+        });
 
         // Delegate renderer registration to @astrojs/solid-js
         if (solidIntegration.hooks["astro:config:setup"]) {
@@ -163,14 +163,14 @@ export function rimelightUi(config: UIConfig = {}): AstroIntegration {
             addRenderer,
             updateConfig
             // Pass standard Astro setup context
-          } as any)
+          } as any);
         }
       }
     }
-  }
+  };
 }
 
-export default rimelightUi
+export default rimelightUi;
 ```
 
 ---
@@ -231,12 +231,12 @@ flowchart TD
 - **Design**: Root `@rimelight/ui` remains a 100% generic Vite plugin with zero Astro dependencies. A dedicated subpath export `@rimelight/ui/astro` provides the Astro integration for Astro consumers:
   ```typescript
   // astro.config.ts
-  import { defineConfig } from "astro/config"
-  import { rimelightUi } from "@rimelight/ui/astro"
+  import { defineConfig } from "astro/config";
+  import { rimelightUi } from "@rimelight/ui/astro";
 
   export default defineConfig({
     integrations: [rimelightUi()]
-  })
+  });
   ```
 - **Pros**: Non-Astro consumers import `@rimelight/ui` with 0 Astro baggage; Astro consumers import `@rimelight/ui/astro` and get zero-config Solid/UnoCSS registration.
 - **Cons**: Astro apps still import from the UI package rather than a dedicated meta-framework integration.

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const dashboardSidebarToggleTheme = defineTheme("dashboard-sidebar-toggle", {
   slots: ["root"],
@@ -14,4 +14,4 @@ export const dashboardSidebarToggleTheme = defineTheme("dashboard-sidebar-toggle
   defaultVariants: {
     side: "left"
   }
-})
+});

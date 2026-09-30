@@ -1,8 +1,8 @@
-import { type Component, Show } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { Title, Meta } from "@solidjs/meta"
-import AppHeader from "#components/app/AppHeader"
-import AppFooter from "#components/app/AppFooter"
+import { type Component, Show } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { Title, Meta } from "@solidjs/meta";
+import AppHeader from "#components/app/AppHeader";
+import AppFooter from "#components/app/AppFooter";
 import {
   RLBanner,
   RLMain,
@@ -10,13 +10,13 @@ import {
   RLShortcuts,
   RLLayoutGrid,
   RLToaster
-} from "@rimelight/ui"
+} from "@rimelight/ui";
 
 export interface DashboardLayoutProps {
-  title?: string
-  description?: string
-  children?: JSX.Element
-  session?: any
+  title?: string;
+  description?: string;
+  children?: JSX.Element;
+  session?: any;
 }
 
 export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
@@ -58,7 +58,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
         <RLToaster />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

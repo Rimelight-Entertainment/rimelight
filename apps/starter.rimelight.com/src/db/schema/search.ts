@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core"
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const searchIndex = sqliteTable(
   "search_index",
@@ -17,7 +17,7 @@ export const searchIndex = sqliteTable(
       .notNull()
   },
   (t) => [uniqueIndex("search_index_source_type_source_id_key").on(t.sourceType, t.sourceId)]
-)
+);
 
-export type SearchIndex = typeof searchIndex.$inferSelect
-export type NewSearchIndex = typeof searchIndex.$inferInsert
+export type SearchIndex = typeof searchIndex.$inferSelect;
+export type NewSearchIndex = typeof searchIndex.$inferInsert;

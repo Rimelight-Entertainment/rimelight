@@ -1,17 +1,17 @@
-import { createMemo, createSignal, For, Show, type Component } from "solid-js"
-import { RLButton } from "../button/RLButton"
+import { createMemo, createSignal, For, Show, type Component } from "solid-js";
+import { RLButton } from "../button/RLButton";
 
-type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp"
-type CommandType = "add" | "create" | "dlx" | "exec" | "install" | "remove" | "run"
+type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp";
+type CommandType = "add" | "create" | "dlx" | "exec" | "install" | "remove" | "run";
 
 export interface RLPackageManagersProps {
-  pkg?: string
-  type?: CommandType
-  dev?: boolean
-  args?: string
-  comment?: string
-  prefix?: string
-  managers?: Manager[]
+  pkg?: string;
+  type?: CommandType;
+  dev?: boolean;
+  args?: string;
+  comment?: string;
+  prefix?: string;
+  managers?: Manager[];
 }
 
 const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: string }> = {
@@ -73,55 +73,55 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
     remove: "vp remove",
     dev: "-D"
   }
-}
+};
 
 const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
 
   const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
-    let cmd = commands[mgr][cmdType]
-    if (cmd === undefined) return undefined
+    let cmd = commands[mgr][cmdType];
+    if (cmd === undefined) return undefined;
 
-    if (props.prefix) cmd = `${props.prefix} ${cmd}`
-    if (props.comment) cmd = `# ${props.comment.replaceAll("{PKG}", mgr)}\n${cmd}`
-    if (props.dev && cmdType === "add") cmd += ` ${commands[mgr].dev}`
+    if (props.prefix) cmd = `${props.prefix} ${cmd}`;
+    if (props.comment) cmd = `# ${props.comment.replaceAll("{PKG}", mgr)}\n${cmd}`;
+    if (props.dev && cmdType === "add") cmd += ` ${commands[mgr].dev}`;
 
     if (props.pkg) {
       const processedPkg =
         cmdType === "create" && mgr === "yarn"
           ? props.pkg.replace(/@(?![^@]*\/)\S*$/, "")
-          : props.pkg
-      cmd += ` ${processedPkg}`
+          : props.pkg;
+      cmd += ` ${processedPkg}`;
     }
 
     if (props.args) {
-      const needsDoubleDash = mgr === "npm" && !["dlx", "exec", "run"].includes(cmdType)
-      cmd += `${needsDoubleDash ? " --" : ""} ${props.args}`
+      const needsDoubleDash = mgr === "npm" && !["dlx", "exec", "run"].includes(cmdType);
+      cmd += `${needsDoubleDash ? " --" : ""} ${props.args}`;
     }
 
-    return cmd
-  }
+    return cmd;
+  };
 
   const tabs = createMemo(() =>
     ((props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"]) as Manager[])
       .map((mgr) => ({ mgr, cmd: getCommand(mgr, props.type ?? "add") }))
       .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined)
-  )
+  );
 
-  const [activeIdx, setActiveIdx] = createSignal(0)
-  const [copied, setCopied] = createSignal<string | null>(null)
+  const [activeIdx, setActiveIdx] = createSignal(0);
+  const [copied, setCopied] = createSignal<string | null>(null);
 
   const copyCommand = async (mgr: string, cmd: string) => {
     try {
-      await navigator.clipboard.writeText(cmd)
-      setCopied(mgr)
+      await navigator.clipboard.writeText(cmd);
+      setCopied(mgr);
       setTimeout(() => {
-        setCopied((current) => (current === mgr ? null : current))
-      }, 2000)
+        setCopied((current) => (current === mgr ? null : current));
+      }, 2000);
     } catch {
-      setCopied(null)
+      setCopied(null);
     }
-  }
+  };
 
   return (
     <div
@@ -135,7 +135,7 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
       >
         <For each={tabs()}>
           {(tab, idx) => {
-            const active = idx() === activeIdx()
+            const active = idx() === activeIdx();
             return (
               <button
                 type="button"
@@ -153,7 +153,7 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
               >
                 {tab.mgr}
               </button>
-            )
+            );
           }}
         </For>
       </div>
@@ -190,7 +190,7 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
         )}
       </For>
     </div>
-  )
-}
+  );
+};
 
-export { RLPackageManagers }
+export { RLPackageManagers };

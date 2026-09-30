@@ -1,136 +1,136 @@
-import { createSignal, onSettled, For, Show, createMemo, type Component } from "solid-js"
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx"
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx"
-import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx"
-import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx"
-import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx"
+import { createSignal, onSettled, For, Show, createMemo, type Component } from "solid-js";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 
 export interface TaxonomyRecord {
-  id: string
-  taxonomy: string
-  name: string
-  slug: string
-  description?: string
-  parentId?: string | null
-  postCount?: number
+  id: string;
+  taxonomy: string;
+  name: string;
+  slug: string;
+  description?: string;
+  parentId?: string | null;
+  postCount?: number;
 }
 
 export interface RimelightTaxonomyMasterDetailProps {
-  taxonomy: string
-  title?: string
-  description?: string
+  taxonomy: string;
+  title?: string;
+  description?: string;
 }
 
 export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDetailProps> = (
   props
 ) => {
-  const taxType = () => props.taxonomy || "category"
-  const isCategory = () => taxType() === "category"
-  const defaultTitle = () => (isCategory() ? "Categories" : "Tags")
+  const taxType = () => props.taxonomy || "category";
+  const isCategory = () => taxType() === "category";
+  const defaultTitle = () => (isCategory() ? "Categories" : "Tags");
   const defaultDesc = () =>
     isCategory()
       ? "Organize your content into hierarchical topics and sections."
-      : "Label articles and posts with keywords for easy filtering."
+      : "Label articles and posts with keywords for easy filtering.";
 
-  const [terms, setTerms] = createSignal<TaxonomyRecord[]>([])
-  const [selectedId, setSelectedId] = createSignal<string | null>(null)
-  const [searchQuery, setSearchQuery] = createSignal("")
-  const [isLoading, setIsLoading] = createSignal(false)
-  const [isSaving, setIsSaving] = createSignal(false)
-  const [error, setError] = createSignal<string | null>(null)
+  const [terms, setTerms] = createSignal<TaxonomyRecord[]>([]);
+  const [selectedId, setSelectedId] = createSignal<string | null>(null);
+  const [searchQuery, setSearchQuery] = createSignal("");
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [isSaving, setIsSaving] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
 
   // Form State
   const [form, setForm] = createSignal<{
-    name: string
-    slug: string
-    parentId: string
-    description: string
+    name: string;
+    slug: string;
+    parentId: string;
+    description: string;
   }>({
     name: "",
     slug: "",
     parentId: "",
     description: ""
-  })
+  });
 
   const loadTerms = async () => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
     try {
-      const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms?includeCounts=true`)
-      if (!res.ok) throw new Error(`Failed to load ${taxType()} terms`)
-      const data = await res.json()
-      const list: TaxonomyRecord[] = Array.isArray(data) ? data : []
-      setTerms(list)
+      const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms?includeCounts=true`);
+      if (!res.ok) throw new Error(`Failed to load ${taxType()} terms`);
+      const data = await res.json();
+      const list: TaxonomyRecord[] = Array.isArray(data) ? data : [];
+      setTerms(list);
 
       if (list.length > 0 && !selectedId()) {
-        selectTerm(list[0]!)
+        selectTerm(list[0]!);
       } else if (list.length === 0) {
-        startNewTerm()
+        startNewTerm();
       }
     } catch (err: any) {
-      setError(err.message || "Failed to load terms")
+      setError(err.message || "Failed to load terms");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   onSettled(() => {
-    void loadTerms()
-  })
+    void loadTerms();
+  });
 
   const filteredTerms = createMemo(() => {
-    const q = searchQuery().toLowerCase().trim()
-    if (!q) return terms()
+    const q = searchQuery().toLowerCase().trim();
+    if (!q) return terms();
     return terms().filter(
       (t) =>
         t.name.toLowerCase().includes(q) ||
         t.slug.toLowerCase().includes(q) ||
         (t.description && t.description.toLowerCase().includes(q))
-    )
-  })
+    );
+  });
 
   const selectTerm = (term: TaxonomyRecord) => {
-    setSelectedId(term.id)
+    setSelectedId(term.id);
     setForm({
       name: term.name || "",
       slug: term.slug || "",
       parentId: term.parentId || "",
       description: term.description || ""
-    })
-  }
+    });
+  };
 
   const startNewTerm = () => {
-    setSelectedId(null)
+    setSelectedId(null);
     setForm({
       name: "",
       slug: "",
       parentId: "",
       description: ""
-    })
-  }
+    });
+  };
 
   const handleNameChange = (name: string) => {
-    const isNew = !selectedId()
+    const isNew = !selectedId();
     const autoSlug = isNew
       ? name
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/(^-|-$)/g, "")
-      : form().slug
+      : form().slug;
 
     setForm((prev) => ({
       ...prev,
       name,
       slug: isNew ? autoSlug : prev.slug
-    }))
-  }
+    }));
+  };
 
   const handleSave = async (e?: Event) => {
-    e?.preventDefault()
-    const f = form()
+    e?.preventDefault();
+    const f = form();
     if (!f.name.trim()) {
-      alert("Name is required")
-      return
+      alert("Name is required");
+      return;
     }
 
     const slug =
@@ -138,64 +138,64 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
       f.name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
+        .replace(/(^-|-$)/g, "");
 
     const payload = {
       name: f.name.trim(),
       slug,
       parentId: isCategory() && f.parentId ? f.parentId : null,
       description: f.description.trim()
-    }
+    };
 
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       if (selectedId()) {
         const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms/${selectedId()}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        })
-        if (!res.ok) throw new Error(`Failed to update ${taxType()}`)
-        const updated = await res.json()
-        setTerms((prev) => prev.map((t) => (t.id === updated.id ? { ...t, ...updated } : t)))
+        });
+        if (!res.ok) throw new Error(`Failed to update ${taxType()}`);
+        const updated = await res.json();
+        setTerms((prev) => prev.map((t) => (t.id === updated.id ? { ...t, ...updated } : t)));
       } else {
         const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        })
-        if (!res.ok) throw new Error(`Failed to create ${taxType()}`)
-        const created = await res.json()
-        setTerms((prev) => [created, ...prev])
-        setSelectedId(created.id)
+        });
+        if (!res.ok) throw new Error(`Failed to create ${taxType()}`);
+        const created = await res.json();
+        setTerms((prev) => [created, ...prev]);
+        setSelectedId(created.id);
       }
     } catch (err: any) {
-      alert(err.message || `Failed to save ${taxType()}`)
+      alert(err.message || `Failed to save ${taxType()}`);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    const id = selectedId()
-    if (!id) return
-    const current = terms().find((t) => t.id === id)
-    if (!confirm(`Are you sure you want to delete "${current?.name || id}"?`)) return
+    const id = selectedId();
+    if (!id) return;
+    const current = terms().find((t) => t.id === id);
+    if (!confirm(`Are you sure you want to delete "${current?.name || id}"?`)) return;
 
     try {
-      const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms/${id}`, { method: "DELETE" })
-      if (!res.ok) throw new Error(`Failed to delete ${taxType()}`)
-      setTerms((prev) => prev.filter((t) => t.id !== id))
-      const remaining = terms().filter((t) => t.id !== id)
+      const res = await fetch(`/api/cms/taxonomies/${taxType()}/terms/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(`Failed to delete ${taxType()}`);
+      setTerms((prev) => prev.filter((t) => t.id !== id));
+      const remaining = terms().filter((t) => t.id !== id);
       if (remaining.length > 0) {
-        selectTerm(remaining[0]!)
+        selectTerm(remaining[0]!);
       } else {
-        startNewTerm()
+        startNewTerm();
       }
     } catch (err: any) {
-      alert(err.message || `Failed to delete ${taxType()}`)
+      alert(err.message || `Failed to delete ${taxType()}`);
     }
-  }
+  };
 
   return (
     <div class="flex flex-col gap-6 w-full max-w-7xl mx-auto py-2">
@@ -253,7 +253,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
           <div class="flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
             <For each={filteredTerms()}>
               {(item) => {
-                const isSelected = () => selectedId() === item.id
+                const isSelected = () => selectedId() === item.id;
                 return (
                   <button
                     type="button"
@@ -287,7 +287,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
                       </Show>
                     </div>
                   </button>
-                )
+                );
               }}
             </For>
           </div>
@@ -413,5 +413,5 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

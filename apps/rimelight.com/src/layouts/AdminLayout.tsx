@@ -1,18 +1,18 @@
-import type { Component, ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
-import DashboardLayout from "./DashboardLayout"
-import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n"
+import type { Component, ParentProps } from "solid-js";
+import { useParams } from "@solidjs/router";
+import DashboardLayout from "./DashboardLayout";
+import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
 
 export interface AdminLayoutProps extends ParentProps {
-  title?: string | undefined
-  activeTab: "overview" | "categories" | "tags" | "bylines" | "taxonomies"
-  favicon?: string | undefined
+  title?: string | undefined;
+  activeTab: "overview" | "categories" | "tags" | "bylines" | "taxonomies";
+  favicon?: string | undefined;
 }
 
 export const AdminLayout: Component<AdminLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>()
+  const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale)
+    currentLocale.set(params.locale);
   }
 
   const links = [
@@ -46,7 +46,7 @@ export const AdminLayout: Component<AdminLayoutProps> = (props) => {
       href: getRelativeLocaleUrl("/cms"),
       active: false
     }
-  ]
+  ];
 
   return (
     <DashboardLayout title={props.title || "Admin Panel"} favicon={props.favicon}>
@@ -82,7 +82,7 @@ export const AdminLayout: Component<AdminLayoutProps> = (props) => {
         <div class="flex-1">{props.children}</div>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default AdminLayout
+export default AdminLayout;

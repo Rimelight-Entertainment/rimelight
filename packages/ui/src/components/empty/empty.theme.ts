@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const emptyTheme = defineTheme("empty", {
   slots: ["root", "header", "avatar", "title", "description", "body", "actions", "footer"],
@@ -78,4 +78,4 @@ export const emptyTheme = defineTheme("empty", {
     variant: "outline",
     size: "md"
   }
-})
+});

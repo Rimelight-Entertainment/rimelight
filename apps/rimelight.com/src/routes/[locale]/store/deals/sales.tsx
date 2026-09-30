@@ -1,6 +1,6 @@
-import { type Component } from "solid-js"
-import StoreLayout from "#layouts/StoreLayout"
-import { t } from "@rimelight/i18n"
+import { type Component } from "solid-js";
+import StoreLayout from "#layouts/StoreLayout";
+import { t } from "@rimelight/i18n";
 
 export const StoreCategoryPage: Component = () => {
   return (
@@ -8,7 +8,7 @@ export const StoreCategoryPage: Component = () => {
       <h1>{t("page_store.meta_title")}</h1>
       <p>{t("page_store.meta_description")}</p>
     </StoreLayout>
-  )
-}
+  );
+};
 
-export default StoreCategoryPage
+export default StoreCategoryPage;

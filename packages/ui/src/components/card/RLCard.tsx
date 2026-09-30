@@ -1,17 +1,17 @@
-import { createMemo, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { CardProps } from "./card"
-import { cardTheme } from "./card.theme"
+import { createMemo, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { CardProps } from "./card";
+import { cardTheme } from "./card.theme";
 
 export interface RLCardProps extends CardProps {
-  children?: JSX.Element
-  header?: JSX.Element
-  footer?: JSX.Element
-  media?: JSX.Element
+  children?: JSX.Element;
+  header?: JSX.Element;
+  footer?: JSX.Element;
+  media?: JSX.Element;
 }
 
 const RLCard: Component<RLCardProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "title",
@@ -27,7 +27,7 @@ const RLCard: Component<RLCardProps> = (allProps) => {
     "header",
     "footer",
     "media"
-  )
+  );
 
   const resolvedClasses = createMemo(() =>
     cardTheme({
@@ -38,7 +38,7 @@ const RLCard: Component<RLCardProps> = (allProps) => {
       ui: props.ui,
       class: props.class
     })
-  )
+  );
 
   const content = () => (
     <>
@@ -97,7 +97,7 @@ const RLCard: Component<RLCardProps> = (allProps) => {
         </>
       )}
     </>
-  )
+  );
 
   if (props.href) {
     return (
@@ -109,14 +109,14 @@ const RLCard: Component<RLCardProps> = (allProps) => {
       >
         {content()}
       </a>
-    )
+    );
   }
 
   return (
     <div class={resolvedClasses().root} data-slot="card-root" {...rest}>
       {content()}
     </div>
-  )
-}
+  );
+};
 
-export { RLCard }
+export { RLCard };

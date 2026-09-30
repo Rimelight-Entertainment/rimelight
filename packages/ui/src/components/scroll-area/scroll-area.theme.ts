@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const scrollAreaTheme = defineTheme("scroll-area", {
   slots: ["root", "viewport", "scrollbar", "thumb"],
@@ -21,4 +21,4 @@ export const scrollAreaTheme = defineTheme("scroll-area", {
   defaultVariants: {
     orientation: "vertical"
   }
-})
+});

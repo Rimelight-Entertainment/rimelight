@@ -1,14 +1,14 @@
 export interface ConstructionFallbackOptions {
-  siteName?: string | undefined
-  title?: string | undefined
-  description?: string | undefined
-  passphraseLabel?: string | undefined
-  passphrasePlaceholder?: string | undefined
-  rememberMeLabel?: string | undefined
-  signInButtonLabel?: string | undefined
-  error?: string | undefined
-  redirect?: string | undefined
-  endpoint?: string | undefined
+  siteName?: string | undefined;
+  title?: string | undefined;
+  description?: string | undefined;
+  passphraseLabel?: string | undefined;
+  passphrasePlaceholder?: string | undefined;
+  rememberMeLabel?: string | undefined;
+  signInButtonLabel?: string | undefined;
+  error?: string | undefined;
+  redirect?: string | undefined;
+  endpoint?: string | undefined;
 }
 
 export function getConstructionFallbackHtml(options: ConstructionFallbackOptions = {}): string {
@@ -23,11 +23,11 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackOptions
     error,
     redirect = "/",
     endpoint = "/api/construction-guest"
-  } = options
+  } = options;
 
-  const isError = Boolean(error)
-  const escapedRedirect = redirect.replace(/"/g, "&quot;")
-  const escapedEndpoint = endpoint.replace(/"/g, "&quot;")
+  const isError = Boolean(error);
+  const escapedRedirect = redirect.replace(/"/g, "&quot;");
+  const escapedEndpoint = endpoint.replace(/"/g, "&quot;");
 
   return `<!doctype html>
 <html lang="en">
@@ -142,5 +142,5 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackOptions
     </div>
   </div>
 </body>
-</html>`
+</html>`;
 }

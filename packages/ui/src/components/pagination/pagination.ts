@@ -2,22 +2,22 @@ export interface PaginationProps {
   /**
    * The currently active page (1-indexed).
    */
-  currentPage?: number
+  currentPage?: number;
   /**
    * Total number of pages.
    */
-  totalPages?: number
+  totalPages?: number;
   /**
    * The base URL used for links (e.g. `/blog?page=`).
    */
-  baseUrl?: string
+  baseUrl?: string;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any
+  ui?: any;
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any
-  [key: string]: unknown
+  class?: any;
+  [key: string]: unknown;
 }

@@ -1,6 +1,6 @@
-import { createMemo, createSignal, For, onSettled, Show } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import { isServer } from "@solidjs/web"
+import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { isServer } from "@solidjs/web";
 import type {
   TableProps,
   TableColumn,
@@ -17,178 +17,179 @@ import type {
   TableColumnOrderState,
   TableEditingCellState,
   TableExportOptions
-} from "./table"
-import { tableTheme } from "./table.theme"
-export * from "./table"
-import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme"
-import { RLInput } from "../input/RLInput"
-import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu"
-import { RLIcon } from "../icon/RLIcon"
+} from "./table";
+import { tableTheme } from "./table.theme";
+export * from "./table";
+import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
+import { RLInput } from "../input/RLInput";
+import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
+import { RLIcon } from "../icon/RLIcon";
 
-type AnyData = Record<string, any>
+type AnyData = Record<string, any>;
 
 export interface RLTableProps<T = any> extends TableProps<T> {
-  ref?: (api: TableApi<T>) => void | TableApi<T>
-  toolbar?: () => JSX.Element
-  captionContent?: () => JSX.Element
-  groupHeader?: (group: TableGroup<T>, colSpan: number) => JSX.Element
-  expandedContent?: (row: TableRow<T>) => JSX.Element
-  loadingContent?: () => JSX.Element
-  emptyContent?: () => JSX.Element
-  bodyTop?: () => JSX.Element
-  bodyBottom?: () => JSX.Element
+  ref?: (api: TableApi<T>) => void | TableApi<T>;
+  toolbar?: () => JSX.Element;
+  captionContent?: () => JSX.Element;
+  groupHeader?: (group: TableGroup<T>, colSpan: number) => JSX.Element;
+  expandedContent?: (row: TableRow<T>) => JSX.Element;
+  loadingContent?: () => JSX.Element;
+  emptyContent?: () => JSX.Element;
+  bodyTop?: () => JSX.Element;
+  bodyBottom?: () => JSX.Element;
 }
 
 function getNestedValue(obj: AnyData, key: string): any {
-  if (!obj || typeof obj !== "object") return undefined
+  if (!obj || typeof obj !== "object") return undefined;
   if (key.includes(".")) {
-    return key.split(".").reduce((acc: any, k) => acc?.[k], obj)
+    return key.split(".").reduce((acc: any, k) => acc?.[k], obj);
   }
-  return obj[key]
+  return obj[key];
 }
 
 export function RLTable<T = any>(props: RLTableProps<T>) {
-  let tableElementRef: HTMLTableElement | null = null
-  let containerRef: HTMLDivElement | null = null
+  let tableElementRef: HTMLTableElement | null = null;
+  let containerRef: HTMLDivElement | null = null;
 
   // ─── Controlled / Uncontrolled State Store ──────────────────────────────────
-  const [internalSorting, setInternalSorting] = createSignal<SortingState>(props.sorting ?? [])
+  const [internalSorting, setInternalSorting] = createSignal<SortingState>(props.sorting ?? []);
   const [internalGlobalFilter, setInternalGlobalFilter] = createSignal<string>(
     props.globalFilter ?? ""
-  )
+  );
   const [internalColumnFilters, setInternalColumnFilters] = createSignal<ColumnFiltersState>(
     props.columnFilters ?? []
-  )
+  );
   const [internalColumnVisibility, setInternalColumnVisibility] = createSignal<
     Record<string, boolean>
-  >(props.columnVisibility ?? {})
+  >(props.columnVisibility ?? {});
   const [internalColumnPinning, setInternalColumnPinning] = createSignal<TableColumnPinningState>(
     props.columnPinning ?? {}
-  )
+  );
   const [internalRowSelection, setInternalRowSelection] = createSignal<Record<string, boolean>>(
     props.rowSelection ?? {}
-  )
+  );
   const [internalExpanded, setInternalExpanded] = createSignal<Record<string, boolean>>(
     props.expanded ?? {}
-  )
+  );
   const [internalRowPinning, setInternalRowPinning] = createSignal<TableRowPinningState>(
     props.rowPinning ?? {}
-  )
+  );
   const [internalPagination, setInternalPagination] = createSignal<
     TablePaginationState | undefined
-  >(props.pagination)
+  >(props.pagination);
   const [internalColumnSizing, setInternalColumnSizing] = createSignal<TableColumnSizingState>(
     props.columnSizing ?? {}
-  )
+  );
   const [internalColumnOrder, setInternalColumnOrder] = createSignal<TableColumnOrderState>(
     props.columnOrder ?? []
-  )
+  );
   const [internalEditingCell, setInternalEditingCell] = createSignal<TableEditingCellState>(
     props.editingCell ?? null
-  )
+  );
 
   // Drag & drop indicator states
-  const [draggedColId, setDraggedColId] = createSignal<string | null>(null)
+  const [draggedColId, setDraggedColId] = createSignal<string | null>(null);
   const [dropTargetCol, setDropTargetCol] = createSignal<{
-    id: string
-    position: "left" | "right"
-  } | null>(null)
+    id: string;
+    position: "left" | "right";
+  } | null>(null);
 
-  const [draggedRowIndex, setDraggedRowIndex] = createSignal<number | null>(null)
+  const [draggedRowIndex, setDraggedRowIndex] = createSignal<number | null>(null);
   const [dropTargetRow, setDropTargetRow] = createSignal<{
-    id: string
-    index: number
-    position: "top" | "bottom"
-  } | null>(null)
+    id: string;
+    index: number;
+    position: "top" | "bottom";
+  } | null>(null);
 
   // Reactive state readers
-  const currentSorting = () => (props.sorting !== undefined ? props.sorting : internalSorting())
+  const currentSorting = () => (props.sorting !== undefined ? props.sorting : internalSorting());
   const currentGlobalFilter = () =>
-    props.globalFilter !== undefined ? props.globalFilter : internalGlobalFilter()
+    props.globalFilter !== undefined ? props.globalFilter : internalGlobalFilter();
   const currentColumnFilters = () =>
-    props.columnFilters !== undefined ? props.columnFilters : internalColumnFilters()
+    props.columnFilters !== undefined ? props.columnFilters : internalColumnFilters();
   const currentColumnVisibility = () =>
-    props.columnVisibility !== undefined ? props.columnVisibility : internalColumnVisibility()
+    props.columnVisibility !== undefined ? props.columnVisibility : internalColumnVisibility();
   const currentColumnPinning = () =>
-    props.columnPinning !== undefined ? props.columnPinning : internalColumnPinning()
+    props.columnPinning !== undefined ? props.columnPinning : internalColumnPinning();
   const currentRowSelection = () =>
-    props.rowSelection !== undefined ? props.rowSelection : internalRowSelection()
-  const currentExpanded = () => (props.expanded !== undefined ? props.expanded : internalExpanded())
+    props.rowSelection !== undefined ? props.rowSelection : internalRowSelection();
+  const currentExpanded = () =>
+    props.expanded !== undefined ? props.expanded : internalExpanded();
   const currentRowPinning = () =>
-    props.rowPinning !== undefined ? props.rowPinning : internalRowPinning()
+    props.rowPinning !== undefined ? props.rowPinning : internalRowPinning();
   const currentPagination = () =>
-    props.pagination !== undefined ? props.pagination : internalPagination()
+    props.pagination !== undefined ? props.pagination : internalPagination();
   const currentColumnSizing = () =>
-    props.columnSizing !== undefined ? props.columnSizing : internalColumnSizing()
+    props.columnSizing !== undefined ? props.columnSizing : internalColumnSizing();
   const currentColumnOrder = () =>
-    props.columnOrder !== undefined ? props.columnOrder : internalColumnOrder()
+    props.columnOrder !== undefined ? props.columnOrder : internalColumnOrder();
   const currentEditingCell = () =>
-    props.editingCell !== undefined ? props.editingCell : internalEditingCell()
+    props.editingCell !== undefined ? props.editingCell : internalEditingCell();
 
   const updateSorting = (next: SortingState) => {
-    setInternalSorting(next)
-    props.onSortingChange?.(next)
-  }
+    setInternalSorting(next);
+    props.onSortingChange?.(next);
+  };
   const updateGlobalFilter = (val: string) => {
-    setInternalGlobalFilter(val)
-    props.onGlobalFilterChange?.(val)
-  }
+    setInternalGlobalFilter(val);
+    props.onGlobalFilterChange?.(val);
+  };
   const updateColumnFilters = (next: ColumnFiltersState) => {
-    setInternalColumnFilters(next)
-    props.onColumnFiltersChange?.(next)
-  }
+    setInternalColumnFilters(next);
+    props.onColumnFiltersChange?.(next);
+  };
   const updateColumnVisibility = (next: Record<string, boolean>) => {
-    setInternalColumnVisibility(next)
-    props.onColumnVisibilityChange?.(next)
-  }
+    setInternalColumnVisibility(next);
+    props.onColumnVisibilityChange?.(next);
+  };
   const updateRowSelection = (next: Record<string, boolean>) => {
-    setInternalRowSelection(next)
-    props.onRowSelectionChange?.(next)
-  }
+    setInternalRowSelection(next);
+    props.onRowSelectionChange?.(next);
+  };
   const updateExpanded = (next: Record<string, boolean>) => {
-    setInternalExpanded(next)
-    props.onExpandedChange?.(next)
-  }
+    setInternalExpanded(next);
+    props.onExpandedChange?.(next);
+  };
   const updateColumnPinning = (next: TableColumnPinningState) => {
-    setInternalColumnPinning(next)
-    props.onColumnPinningChange?.(next)
-  }
+    setInternalColumnPinning(next);
+    props.onColumnPinningChange?.(next);
+  };
   const updateRowPinning = (next: TableRowPinningState) => {
-    setInternalRowPinning(next)
-    props.onRowPinningChange?.(next)
-  }
+    setInternalRowPinning(next);
+    props.onRowPinningChange?.(next);
+  };
   const updatePagination = (next: TablePaginationState) => {
-    setInternalPagination(next)
-    props.onPaginationChange?.(next)
-  }
+    setInternalPagination(next);
+    props.onPaginationChange?.(next);
+  };
   const updateColumnSizing = (next: TableColumnSizingState) => {
-    setInternalColumnSizing(next)
-    props.onColumnSizingChange?.(next)
-  }
+    setInternalColumnSizing(next);
+    props.onColumnSizingChange?.(next);
+  };
   const updateColumnOrder = (next: TableColumnOrderState) => {
-    setInternalColumnOrder(next)
-    props.onColumnOrderChange?.(next)
-  }
+    setInternalColumnOrder(next);
+    props.onColumnOrderChange?.(next);
+  };
   const updateEditingCell = (next: TableEditingCellState) => {
-    setInternalEditingCell(next)
-    props.onEditingCellChange?.(next)
-  }
+    setInternalEditingCell(next);
+    props.onEditingCellChange?.(next);
+  };
 
   // ─── Column resolution & ordering ───────────────────────────────────────────
   const rawResolvedColumns = createMemo<TableColumn<T>[]>(() => {
-    let cols: TableColumn<T>[] = []
+    let cols: TableColumn<T>[] = [];
     if (props.columns && props.columns.length > 0) {
-      cols = [...props.columns]
+      cols = [...props.columns];
     } else {
-      const d = props.data
+      const d = props.data;
       if (d && d.length > 0 && typeof d[0] === "object" && d[0] !== null) {
-        const firstRow = d[0] as AnyData
+        const firstRow = d[0] as AnyData;
         cols = Object.keys(firstRow).map((key) => ({
           id: key,
           accessorKey: key as any,
           header: key.charAt(0).toUpperCase() + key.slice(1),
           enableSorting: true
-        }))
+        }));
       }
     }
 
@@ -212,27 +213,27 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               data-slot="drag-handle"
               draggable="true"
               onDragStart={(e) => {
-                setDraggedRowIndex(row.index)
-                e.dataTransfer?.setData("text/plain", String(row.index))
+                setDraggedRowIndex(row.index);
+                e.dataTransfer?.setData("text/plain", String(row.index));
                 if (e.dataTransfer) {
-                  e.dataTransfer.effectAllowed = "move"
+                  e.dataTransfer.effectAllowed = "move";
                 }
               }}
               onDragEnd={() => {
-                setDraggedRowIndex(null)
-                setDropTargetRow(null)
+                setDraggedRowIndex(null);
+                setDropTargetRow(null);
               }}
             >
               <span class="i-lucide-grip-vertical size-4" />
             </span>
           </div>
         )
-      }
-      return [reorderCol, ...cols]
+      };
+      return [reorderCol, ...cols];
     }
 
     // Auto-inject rowActions / actions column if defined on table props and not in columns
-    const actionsDef = props.actions || props.rowActions
+    const actionsDef = props.actions || props.rowActions;
     if (actionsDef && !cols.some((c) => c.id === "actions")) {
       cols.push({
         id: "actions",
@@ -248,16 +249,16 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           }
         },
         actions: actionsDef
-      })
+      });
     }
 
     // Normalize actions column defaults
     for (const c of cols) {
       if (c.id === "actions" || c.actions || c.items) {
-        if (c.enableSorting === undefined) c.enableSorting = false
-        if (c.header === undefined && c.id === "actions") c.header = ""
-        if (c.size === undefined && c.id === "actions") c.size = 60
-        if (c.minSize === undefined && c.id === "actions") c.minSize = 60
+        if (c.enableSorting === undefined) c.enableSorting = false;
+        if (c.header === undefined && c.id === "actions") c.header = "";
+        if (c.size === undefined && c.id === "actions") c.size = 60;
+        if (c.minSize === undefined && c.id === "actions") c.minSize = 60;
         if (!c.meta?.class?.td && c.id === "actions") {
           c.meta = {
             ...c.meta,
@@ -266,23 +267,23 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               th: c.meta?.class?.th || "text-right",
               td: c.meta?.class?.td || "text-right"
             }
-          }
+          };
         }
       }
     }
 
-    return cols
-  })
+    return cols;
+  });
 
   function getCellActions(row: TableRow<T>, col: TableColumn<T>) {
     const actionsFn =
       col.actions ??
       col.items ??
-      (col.id === "actions" ? props.actions || props.rowActions : undefined)
+      (col.id === "actions" ? props.actions || props.rowActions : undefined);
     if (actionsFn) {
-      return typeof actionsFn === "function" ? (actionsFn as any)(row) : actionsFn
+      return typeof actionsFn === "function" ? (actionsFn as any)(row) : actionsFn;
     }
-    return undefined
+    return undefined;
   }
 
   function renderCellContent(
@@ -292,9 +293,9 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     isEditing: () => boolean,
     setEditing: (e: boolean) => void
   ) {
-    const actions = getCellActions(row, col)
+    const actions = getCellActions(row, col);
     if (Array.isArray(actions) && actions.length > 0) {
-      const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" })
+      const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" });
       return (
         <div class="flex items-center justify-end">
           <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
@@ -308,7 +309,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
             </button>
           </div>
         </div>
-      )
+      );
     }
     if (typeof col.cell === "function") {
       const rendered = col.cell({
@@ -319,9 +320,9 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         setEditing,
         column: col,
         table: tableApi
-      })
+      });
       if (Array.isArray(rendered) && rendered.length > 0) {
-        const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" })
+        const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" });
         return (
           <div class="flex items-center justify-end">
             <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
@@ -335,50 +336,50 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               </button>
             </div>
           </div>
-        )
+        );
       }
-      return rendered
+      return rendered;
     }
-    return cellValue() !== undefined && cellValue() !== null ? String(cellValue()) : "—"
+    return cellValue() !== undefined && cellValue() !== null ? String(cellValue()) : "—";
   }
 
   const resolvedColumns = (): TableColumn<T>[] => {
-    const raw = rawResolvedColumns()
-    const order = currentColumnOrder()
-    if (!order || order.length === 0) return raw
+    const raw = rawResolvedColumns();
+    const order = currentColumnOrder();
+    if (!order || order.length === 0) return raw;
 
-    const ordered: TableColumn<T>[] = []
-    const rawMap = new Map<string, TableColumn<T>>()
+    const ordered: TableColumn<T>[] = [];
+    const rawMap = new Map<string, TableColumn<T>>();
     for (const col of raw) {
-      const id = String(col.id || col.accessorKey || "")
-      rawMap.set(id, col)
+      const id = String(col.id || col.accessorKey || "");
+      rawMap.set(id, col);
     }
 
     for (const id of order) {
       if (rawMap.has(id)) {
-        ordered.push(rawMap.get(id)!)
-        rawMap.delete(id)
+        ordered.push(rawMap.get(id)!);
+        rawMap.delete(id);
       }
     }
     // Append any columns not explicitly in order
     for (const remaining of rawMap.values()) {
-      ordered.push(remaining)
+      ordered.push(remaining);
     }
-    return ordered
-  }
+    return ordered;
+  };
 
   const visibleColumns = createMemo(() => {
-    const visibility = currentColumnVisibility()
+    const visibility = currentColumnVisibility();
     return resolvedColumns().filter((col) => {
-      const id = (col.id || col.accessorKey || "") as string
-      if (!id) return true
-      if (col.enableHiding === false) return true
-      return visibility[id] !== false
-    })
-  })
+      const id = (col.id || col.accessorKey || "") as string;
+      if (!id) return true;
+      if (col.enableHiding === false) return true;
+      return visibility[id] !== false;
+    });
+  });
 
   // ─── Column Resizing Handler ────────────────────────────────────────────────
-  const [resizingColId, setResizingColId] = createSignal<string | null>(null)
+  const [resizingColId, setResizingColId] = createSignal<string | null>(null);
 
   const startResize = (
     e: PointerEvent,
@@ -386,65 +387,65 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     minSize?: number | string,
     maxSize?: number | string
   ) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const startX = e.clientX
-    const thElement = (e.target as HTMLElement).closest("th")
-    const initialWidth = currentColumnSizing()[colId] ?? thElement?.offsetWidth ?? 150
-    const minW = typeof minSize === "number" ? minSize : 40
-    const maxW = typeof maxSize === "number" ? maxSize : 2000
-    setResizingColId(colId)
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const thElement = (e.target as HTMLElement).closest("th");
+    const initialWidth = currentColumnSizing()[colId] ?? thElement?.offsetWidth ?? 150;
+    const minW = typeof minSize === "number" ? minSize : 40;
+    const maxW = typeof maxSize === "number" ? maxSize : 2000;
+    setResizingColId(colId);
 
-    let liveWidth = initialWidth
+    let liveWidth = initialWidth;
 
     const onPointerMove = (moveEv: PointerEvent) => {
-      const deltaX = moveEv.clientX - startX
-      liveWidth = Math.max(minW, Math.min(maxW, initialWidth + deltaX))
+      const deltaX = moveEv.clientX - startX;
+      liveWidth = Math.max(minW, Math.min(maxW, initialWidth + deltaX));
       if (props.columnResizeMode !== "onEnd") {
         updateColumnSizing({
           ...currentColumnSizing(),
           [colId]: liveWidth
-        })
+        });
       }
-    }
+    };
 
     const onPointerUp = () => {
       if (props.columnResizeMode === "onEnd") {
         updateColumnSizing({
           ...currentColumnSizing(),
           [colId]: liveWidth
-        })
+        });
       }
-      setResizingColId(null)
-      window.removeEventListener("pointermove", onPointerMove)
-      window.removeEventListener("pointerup", onPointerUp)
-    }
+      setResizingColId(null);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
 
-    window.addEventListener("pointermove", onPointerMove)
-    window.addEventListener("pointerup", onPointerUp)
-  }
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+  };
 
   // ─── Row Hierarchy Building ──────────────────────────────────────────────────
   const getAllRowDescendants = (row: TableRow<T>): TableRow<T>[] => {
-    if (!row.subRows || row.subRows.length === 0) return []
-    const res: TableRow<T>[] = []
+    if (!row.subRows || row.subRows.length === 0) return [];
+    const res: TableRow<T>[] = [];
     for (const child of row.subRows) {
-      res.push(child)
-      res.push(...getAllRowDescendants(child))
+      res.push(child);
+      res.push(...getAllRowDescendants(child));
     }
-    return res
-  }
+    return res;
+  };
 
   const getAllFlatRows = (rows: TableRow<T>[]): TableRow<T>[] => {
-    const flat: TableRow<T>[] = []
+    const flat: TableRow<T>[] = [];
     for (const r of rows) {
-      flat.push(r)
+      flat.push(r);
       if (r.subRows && r.subRows.length > 0) {
-        flat.push(...getAllFlatRows(r.subRows))
+        flat.push(...getAllFlatRows(r.subRows));
       }
     }
-    return flat
-  }
+    return flat;
+  };
 
   const buildRowTree = (rawItems: T[], parentDepth = 0): TableRow<T>[] => {
     return rawItems.map((item, idx) => {
@@ -452,16 +453,16 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         ? props.getRowId(item, idx)
         : (item as any)?.id !== undefined
           ? String((item as any).id)
-          : String(idx)
+          : String(idx);
 
-      let subRowsList: TableRow<T>[] | undefined = undefined
+      let subRowsList: TableRow<T>[] | undefined = undefined;
       if (props.getSubRows) {
-        const children = props.getSubRows(item, idx)
+        const children = props.getSubRows(item, idx);
         if (children && children.length > 0) {
-          subRowsList = buildRowTree(children, parentDepth + 1)
+          subRowsList = buildRowTree(children, parentDepth + 1);
         }
       } else if (Array.isArray((item as any)?.children) && (item as any).children.length > 0) {
-        subRowsList = buildRowTree((item as any).children, parentDepth + 1)
+        subRowsList = buildRowTree((item as any).children, parentDepth + 1);
       }
 
       const rowObj: TableRow<T> = {
@@ -470,90 +471,90 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         index: idx,
         depth: parentDepth,
         getValue: (key: string) => {
-          const colDef = resolvedColumns().find((c) => (c.id || c.accessorKey) === key)
+          const colDef = resolvedColumns().find((c) => (c.id || c.accessorKey) === key);
           if (colDef && typeof colDef.accessorFn === "function") {
-            return colDef.accessorFn(item)
+            return colDef.accessorFn(item);
           }
-          return getNestedValue(item as AnyData, key)
+          return getNestedValue(item as AnyData, key);
         },
         getIsSelected: () => {
-          const sel = currentRowSelection()
+          const sel = currentRowSelection();
           if (subRowsList && subRowsList.length > 0) {
-            const descendants = getAllRowDescendants(rowObj)
+            const descendants = getAllRowDescendants(rowObj);
             if (descendants.length > 0) {
-              return descendants.every((d) => !!sel[d.id])
+              return descendants.every((d) => !!sel[d.id]);
             }
           }
-          return !!sel[rId]
+          return !!sel[rId];
         },
         getIsSomeSelected: () => {
-          if (!subRowsList || subRowsList.length === 0) return false
-          const sel = currentRowSelection()
-          const descendants = getAllRowDescendants(rowObj)
-          if (descendants.length === 0) return false
-          const count = descendants.filter((d) => !!sel[d.id]).length
-          return count > 0 && count < descendants.length
+          if (!subRowsList || subRowsList.length === 0) return false;
+          const sel = currentRowSelection();
+          const descendants = getAllRowDescendants(rowObj);
+          if (descendants.length === 0) return false;
+          const count = descendants.filter((d) => !!sel[d.id]).length;
+          return count > 0 && count < descendants.length;
         },
         toggleSelected: (val?: boolean) => {
-          const isCurrentlySelected = rowObj.getIsSelected()
-          const nextVal = val !== undefined ? val : !isCurrentlySelected
-          const nextMap = { ...currentRowSelection(), [rId]: nextVal }
+          const isCurrentlySelected = rowObj.getIsSelected();
+          const nextVal = val !== undefined ? val : !isCurrentlySelected;
+          const nextMap = { ...currentRowSelection(), [rId]: nextVal };
           if (subRowsList) {
-            const descendants = getAllRowDescendants(rowObj)
+            const descendants = getAllRowDescendants(rowObj);
             for (const d of descendants) {
-              nextMap[d.id] = nextVal
+              nextMap[d.id] = nextVal;
             }
           }
-          updateRowSelection(nextMap)
+          updateRowSelection(nextMap);
         },
         getIsExpanded: () => !!currentExpanded()[rId],
         toggleExpanded: (val?: boolean) => {
-          const nextVal = val !== undefined ? val : !currentExpanded()[rId]
-          updateExpanded({ ...currentExpanded(), [rId]: nextVal })
+          const nextVal = val !== undefined ? val : !currentExpanded()[rId];
+          updateExpanded({ ...currentExpanded(), [rId]: nextVal });
         },
         getToggleExpandedHandler: () => (e?: Event) => {
-          e?.stopPropagation?.()
-          rowObj.toggleExpanded()
+          e?.stopPropagation?.();
+          rowObj.toggleExpanded();
         },
         getToggleSelectedHandler: () => (e?: Event) => {
-          e?.stopPropagation?.()
-          rowObj.toggleSelected()
+          e?.stopPropagation?.();
+          rowObj.toggleSelected();
         },
         getIsPinned: () => {
-          const pin = currentRowPinning()
-          if (pin.top?.includes(rId)) return "top"
-          if (pin.bottom?.includes(rId)) return "bottom"
-          return false
+          const pin = currentRowPinning();
+          if (pin.top?.includes(rId)) return "top";
+          if (pin.bottom?.includes(rId)) return "bottom";
+          return false;
         },
         pin: (position: boolean | "top" | "bottom") => {
-          const current = currentRowPinning()
-          const nextTop = (current.top || []).filter((id) => id !== rId)
-          const nextBottom = (current.bottom || []).filter((id) => id !== rId)
-          if (position === "top") nextTop.push(rId)
-          else if (position === "bottom") nextBottom.push(rId)
-          updateRowPinning({ top: nextTop, bottom: nextBottom })
+          const current = currentRowPinning();
+          const nextTop = (current.top || []).filter((id) => id !== rId);
+          const nextBottom = (current.bottom || []).filter((id) => id !== rId);
+          if (position === "top") nextTop.push(rId);
+          else if (position === "bottom") nextBottom.push(rId);
+          updateRowPinning({ top: nextTop, bottom: nextBottom });
         },
         getIsGrouped: () => false,
         getCanExpand: () => {
           if (typeof props.getRowCanExpand === "function") {
-            return props.getRowCanExpand(rowObj)
+            return props.getRowCanExpand(rowObj);
           }
-          return !!(subRowsList && subRowsList.length > 0)
+          return !!(subRowsList && subRowsList.length > 0);
         },
         ...(subRowsList ? { subRows: subRowsList } : {})
-      }
-      return rowObj
-    })
-  }
+      };
+      return rowObj;
+    });
+  };
 
   // ─── Filter pipeline ─────────────────────────────────────────────────────────
   const filteredRows = createMemo(() => {
-    let rows = buildRowTree(props.data ?? [])
-    const q = currentGlobalFilter().toLowerCase().trim()
+    let rows = buildRowTree(props.data ?? []);
+    const q = currentGlobalFilter().toLowerCase().trim();
     if (q) {
       rows = rows.filter((r) => {
         if (typeof r.original !== "object" || !r.original) {
-          return String(r.original).toLowerCase().includes(q)
+          return String(r.original).toLowerCase().includes(q);
         }
         return (
           Object.values(r.original as AnyData).some((val) =>
@@ -564,16 +565,16 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           resolvedColumns().some((col) => {
             const v = col.accessorFn
               ? col.accessorFn(r.original)
-              : r.getValue((col.id || col.accessorKey || "") as string)
+              : r.getValue((col.id || col.accessorKey || "") as string);
             return String(v ?? "")
               .toLowerCase()
-              .includes(q)
+              .includes(q);
           })
-        )
-      })
+        );
+      });
     }
 
-    const colFilters = currentColumnFilters()
+    const colFilters = currentColumnFilters();
     if (colFilters && colFilters.length > 0) {
       for (const filter of colFilters) {
         if (
@@ -582,54 +583,54 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           filter.value === null ||
           filter.value === ""
         )
-          continue
-        const fVal = String(filter.value).toLowerCase()
+          continue;
+        const fVal = String(filter.value).toLowerCase();
         rows = rows.filter((r) =>
           String(r.getValue(filter.id) ?? "")
             .toLowerCase()
             .includes(fVal)
-        )
+        );
       }
     }
-    return rows
-  })
+    return rows;
+  });
 
   // ─── Sort pipeline ───────────────────────────────────────────────────────────
   const sortedRows = createMemo(() => {
-    const sorts = currentSorting()
-    if (!sorts || sorts.length === 0) return filteredRows()
+    const sorts = currentSorting();
+    if (!sorts || sorts.length === 0) return filteredRows();
 
     return [...filteredRows()].sort((a, b) => {
       for (const { id, desc } of sorts) {
-        const valA = a.getValue(id)
-        const valB = b.getValue(id)
-        if (valA === valB) continue
-        if (valA === undefined || valA === null) return 1
-        if (valB === undefined || valB === null) return -1
-        let cmp: number
+        const valA = a.getValue(id);
+        const valB = b.getValue(id);
+        if (valA === valB) continue;
+        if (valA === undefined || valA === null) return 1;
+        if (valB === undefined || valB === null) return -1;
+        let cmp: number;
         if (typeof valA === "number" && typeof valB === "number") {
-          cmp = valA - valB
+          cmp = valA - valB;
         } else if (valA instanceof Date && valB instanceof Date) {
-          cmp = valA.getTime() - valB.getTime()
+          cmp = valA.getTime() - valB.getTime();
         } else {
-          const numA = Number(valA)
-          const numB = Number(valB)
+          const numA = Number(valA);
+          const numB = Number(valB);
           if (!isNaN(numA) && !isNaN(numB)) {
-            cmp = numA - numB
+            cmp = numA - numB;
           } else {
-            cmp = String(valA).localeCompare(String(valB))
+            cmp = String(valA).localeCompare(String(valB));
           }
         }
-        return desc ? -cmp : cmp
+        return desc ? -cmp : cmp;
       }
-      return 0
-    })
-  })
+      return 0;
+    });
+  });
 
   // ─── Multi-level Grouping pipeline ──────────────────────────────────────────
   type GroupedItem =
     | { type: "group"; group: TableGroup<T>; depth: number }
-    | { type: "row"; row: TableRow<T> }
+    | { type: "row"; row: TableRow<T> };
 
   function groupRowsRecursively(
     rows: TableRow<T>[],
@@ -638,234 +639,234 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     parentPath = ""
   ): GroupedItem[] {
     if (depth >= groupCols.length || rows.length === 0) {
-      return rows.map((r) => ({ type: "row", row: r }))
+      return rows.map((r) => ({ type: "row", row: r }));
     }
 
-    const colId = groupCols[depth]!
-    const groupMap = new Map<string, TableRow<T>[]>()
-    const groupOrder: string[] = []
+    const colId = groupCols[depth]!;
+    const groupMap = new Map<string, TableRow<T>[]>();
+    const groupOrder: string[] = [];
 
     for (const row of rows) {
-      const val = String(row.getValue(colId) ?? "")
+      const val = String(row.getValue(colId) ?? "");
       if (!groupMap.has(val)) {
-        groupMap.set(val, [])
-        groupOrder.push(val)
+        groupMap.set(val, []);
+        groupOrder.push(val);
       }
-      row.groupingColumnId = colId
-      row.groupingValue = val
-      groupMap.get(val)!.push(row)
+      row.groupingColumnId = colId;
+      row.groupingValue = val;
+      groupMap.get(val)!.push(row);
     }
 
-    const result: GroupedItem[] = []
+    const result: GroupedItem[] = [];
     for (const val of groupOrder) {
-      const subRows = groupMap.get(val)!
-      const groupId = `group-${parentPath}${colId}-${val}`
+      const subRows = groupMap.get(val)!;
+      const groupId = `group-${parentPath}${colId}-${val}`;
       const group: TableGroup<T> = {
         id: groupId,
         columnId: colId,
         value: val,
         depth,
         rows: subRows
-      }
-      result.push({ type: "group", group, depth })
-      result.push(...groupRowsRecursively(subRows, groupCols, depth + 1, `${groupId}/`))
+      };
+      result.push({ type: "group", group, depth });
+      result.push(...groupRowsRecursively(subRows, groupCols, depth + 1, `${groupId}/`));
     }
-    return result
+    return result;
   }
 
   const groupedItems = createMemo<GroupedItem[]>(() => {
-    const sRows = sortedRows()
-    const grp = props.grouping
+    const sRows = sortedRows();
+    const grp = props.grouping;
     if (!grp || grp.length === 0) {
-      return sRows.map((r) => ({ type: "row", row: r }))
+      return sRows.map((r) => ({ type: "row", row: r }));
     }
-    return groupRowsRecursively(sRows, grp, 0, "")
-  })
+    return groupRowsRecursively(sRows, grp, 0, "");
+  });
 
   // ─── Row Pinning ─────────────────────────────────────────────────────────────
   const pinnedItems = createMemo<GroupedItem[]>(() => {
-    const items = groupedItems()
-    const pin = currentRowPinning()
+    const items = groupedItems();
+    const pin = currentRowPinning();
     if ((!pin.top || pin.top.length === 0) && (!pin.bottom || pin.bottom.length === 0)) {
-      return items
+      return items;
     }
 
-    const topItems: GroupedItem[] = []
-    const midItems: GroupedItem[] = []
-    const botItems: GroupedItem[] = []
+    const topItems: GroupedItem[] = [];
+    const midItems: GroupedItem[] = [];
+    const botItems: GroupedItem[] = [];
 
     for (const item of items) {
       if (item.type === "row") {
-        if (pin.top?.includes(item.row.id)) topItems.push(item)
-        else if (pin.bottom?.includes(item.row.id)) botItems.push(item)
-        else midItems.push(item)
+        if (pin.top?.includes(item.row.id)) topItems.push(item);
+        else if (pin.bottom?.includes(item.row.id)) botItems.push(item);
+        else midItems.push(item);
       } else {
-        midItems.push(item)
+        midItems.push(item);
       }
     }
-    return [...topItems, ...midItems, ...botItems]
-  })
+    return [...topItems, ...midItems, ...botItems];
+  });
 
   // ─── Pagination ──────────────────────────────────────────────────────────────
   const paginatedItems = createMemo<GroupedItem[]>(() => {
-    const items = pinnedItems()
-    const pag = currentPagination()
-    if (!pag) return items
+    const items = pinnedItems();
+    const pag = currentPagination();
+    if (!pag) return items;
 
-    const { pageIndex, pageSize } = pag
-    const rowItems = items.filter((i) => i.type === "row") as { type: "row"; row: TableRow<T> }[]
-    const pageRows = rowItems.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
-    const pageRowIds = new Set(pageRows.map((i) => i.row.id))
+    const { pageIndex, pageSize } = pag;
+    const rowItems = items.filter((i) => i.type === "row") as { type: "row"; row: TableRow<T> }[];
+    const pageRows = rowItems.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+    const pageRowIds = new Set(pageRows.map((i) => i.row.id));
 
     if (props.grouping && props.grouping.length > 0) {
-      const result: GroupedItem[] = []
+      const result: GroupedItem[] = [];
       for (const item of items) {
         if (item.type === "group") {
-          if (item.group.rows.some((r) => pageRowIds.has(r.id))) result.push(item)
+          if (item.group.rows.some((r) => pageRowIds.has(r.id))) result.push(item);
         } else if (pageRowIds.has(item.row.id)) {
-          result.push(item)
+          result.push(item);
         }
       }
-      return result
+      return result;
     }
-    return pageRows
-  })
+    return pageRows;
+  });
 
   // ─── Virtualization Windowing ────────────────────────────────────────────────
-  const [scrollTop, setScrollTop] = createSignal(0)
-  const isVirtual = () => !!props.virtualize
+  const [scrollTop, setScrollTop] = createSignal(0);
+  const isVirtual = () => !!props.virtualize;
   const virtualOpts = (): TableVirtualizeOptions =>
-    typeof props.virtualize === "object" ? props.virtualize : {}
+    typeof props.virtualize === "object" ? props.virtualize : {};
 
   const estimateRowHeight = () => {
-    const opt = virtualOpts().estimateSize
-    if (typeof opt === "number") return opt
-    return 48
-  }
+    const opt = virtualOpts().estimateSize;
+    if (typeof opt === "number") return opt;
+    return 48;
+  };
 
-  const overscan = () => virtualOpts().overscan ?? 8
+  const overscan = () => virtualOpts().overscan ?? 8;
 
   const virtualizedView = createMemo(() => {
-    const items = paginatedItems()
+    const items = paginatedItems();
     if (!isVirtual()) {
       return {
         items,
         padTop: 0,
         padBottom: 0,
         startIndex: 0
-      }
+      };
     }
 
-    const rowH = estimateRowHeight()
-    const scrollPos = scrollTop()
-    const containerHeight = containerRef?.clientHeight || 400
-    const totalCount = items.length
+    const rowH = estimateRowHeight();
+    const scrollPos = scrollTop();
+    const containerHeight = containerRef?.clientHeight || 400;
+    const totalCount = items.length;
 
-    const rawStart = Math.floor(scrollPos / rowH)
-    const startIndex = Math.max(0, rawStart - overscan())
-    const visibleCount = Math.ceil(containerHeight / rowH) + overscan() * 2
-    const endIndex = Math.min(totalCount, startIndex + visibleCount)
+    const rawStart = Math.floor(scrollPos / rowH);
+    const startIndex = Math.max(0, rawStart - overscan());
+    const visibleCount = Math.ceil(containerHeight / rowH) + overscan() * 2;
+    const endIndex = Math.min(totalCount, startIndex + visibleCount);
 
-    const padTop = startIndex * rowH
-    const padBottom = Math.max(0, (totalCount - endIndex) * rowH)
-    const sliced = items.slice(startIndex, endIndex)
+    const padTop = startIndex * rowH;
+    const padBottom = Math.max(0, (totalCount - endIndex) * rowH);
+    const sliced = items.slice(startIndex, endIndex);
 
     return {
       items: sliced,
       padTop,
       padBottom,
       startIndex
-    }
-  })
+    };
+  });
 
   if (!isServer) {
     onSettled(() => {
       if (isVirtual()) {
-        const scrollEl = virtualOpts().getScrollElement?.() || containerRef
+        const scrollEl = virtualOpts().getScrollElement?.() || containerRef;
         if (scrollEl) {
-          const handleScroll = () => setScrollTop(scrollEl.scrollTop)
-          scrollEl.addEventListener("scroll", handleScroll, { passive: true })
-          return () => scrollEl.removeEventListener("scroll", handleScroll)
+          const handleScroll = () => setScrollTop(scrollEl.scrollTop);
+          scrollEl.addEventListener("scroll", handleScroll, { passive: true });
+          return () => scrollEl.removeEventListener("scroll", handleScroll);
         }
       }
-      return undefined
-    })
+      return undefined;
+    });
   }
 
   // ─── Column offsets ──────────────────────────────────────────────────────────
   const getColSizeNumber = (col: TableColumn<T>): number => {
-    const colId = String(col.id || col.accessorKey || "")
-    const sized = currentColumnSizing()[colId]
-    if (typeof sized === "number") return sized
-    if (typeof col.size === "number") return col.size
-    return 150
-  }
+    const colId = String(col.id || col.accessorKey || "");
+    const sized = currentColumnSizing()[colId];
+    if (typeof sized === "number") return sized;
+    if (typeof col.size === "number") return col.size;
+    return 150;
+  };
 
   const columnOffsets = createMemo(() => {
-    const cols = resolvedColumns()
-    const pin = currentColumnPinning()
-    const left: Record<string, number> = {}
-    const right: Record<string, number> = {}
+    const cols = resolvedColumns();
+    const pin = currentColumnPinning();
+    const left: Record<string, number> = {};
+    const right: Record<string, number> = {};
 
     if (pin.left && pin.left.length > 0) {
-      let offset = 0
+      let offset = 0;
       for (const colId of pin.left) {
-        left[colId] = offset
-        const col = cols.find((c) => (c.id || c.accessorKey) === colId)
-        offset += col ? getColSizeNumber(col) : 150
+        left[colId] = offset;
+        const col = cols.find((c) => (c.id || c.accessorKey) === colId);
+        offset += col ? getColSizeNumber(col) : 150;
       }
     }
 
     if (pin.right && pin.right.length > 0) {
-      let offset = 0
+      let offset = 0;
       for (const colId of [...pin.right].reverse()) {
-        right[colId] = offset
-        const col = cols.find((c) => (c.id || c.accessorKey) === colId)
-        offset += col ? getColSizeNumber(col) : 150
+        right[colId] = offset;
+        const col = cols.find((c) => (c.id || c.accessorKey) === colId);
+        offset += col ? getColSizeNumber(col) : 150;
       }
     }
 
-    return { left, right }
-  })
+    return { left, right };
+  });
 
   const toggleSort = (colId: string, isMulti = false) => {
-    const current = currentSorting()
-    const existing = current.find((s) => s.id === colId)
+    const current = currentSorting();
+    const existing = current.find((s) => s.id === colId);
 
-    let next: SortingState
+    let next: SortingState;
     if (!existing) {
-      const newItem = { id: colId, desc: false }
-      next = isMulti ? [...current, newItem] : [newItem]
+      const newItem = { id: colId, desc: false };
+      next = isMulti ? [...current, newItem] : [newItem];
     } else if (!existing.desc) {
-      const updated = { id: colId, desc: true }
-      next = isMulti ? current.map((s) => (s.id === colId ? updated : s)) : [updated]
+      const updated = { id: colId, desc: true };
+      next = isMulti ? current.map((s) => (s.id === colId ? updated : s)) : [updated];
     } else {
-      next = isMulti ? current.filter((s) => s.id !== colId) : []
+      next = isMulti ? current.filter((s) => s.id !== colId) : [];
     }
-    updateSorting(next)
-  }
+    updateSorting(next);
+  };
 
   // ─── Expose TableApi ─────────────────────────────────────────────────────────
   const getPageRows = () => {
     return paginatedItems()
       .filter((i) => i.type === "row")
-      .map((i) => (i as { type: "row"; row: TableRow<T> }).row)
-  }
+      .map((i) => (i as { type: "row"; row: TableRow<T> }).row);
+  };
 
   const tableApi: TableApi<T> = {
     get tableRef() {
-      return tableElementRef
+      return tableElementRef;
     },
     getFilteredRows: () => filteredRows(),
     getFlatRows: () => getAllFlatRows(filteredRows()),
     getSortedRows: () => sortedRows(),
     getSelectedRows: () => getAllFlatRows(filteredRows()).filter((r) => r.getIsSelected()),
     getFilteredSelectedRowModel: () => {
-      const flatSelected = getAllFlatRows(filteredRows()).filter((r) => r.getIsSelected())
+      const flatSelected = getAllFlatRows(filteredRows()).filter((r) => r.getIsSelected());
       return {
         rows: filteredRows().filter((r) => r.getIsSelected()),
         flatRows: flatSelected
-      }
+      };
     },
     getFilteredRowModel: () => ({
       rows: filteredRows(),
@@ -874,204 +875,208 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
     getAllColumns: () => resolvedColumns(),
     getColumn: (id: string) => resolvedColumns().find((c) => (c.id || c.accessorKey) === id),
     getIsAllRowsSelected: () => {
-      const flat = getAllFlatRows(filteredRows())
-      if (flat.length === 0) return false
-      return flat.every((r) => r.getIsSelected())
+      const flat = getAllFlatRows(filteredRows());
+      if (flat.length === 0) return false;
+      return flat.every((r) => r.getIsSelected());
     },
     getIsSomeRowsSelected: () => {
-      const flat = getAllFlatRows(filteredRows())
-      if (flat.length === 0) return false
-      const selCount = flat.filter((r) => r.getIsSelected()).length
-      return selCount > 0 && selCount < flat.length
+      const flat = getAllFlatRows(filteredRows());
+      if (flat.length === 0) return false;
+      const selCount = flat.filter((r) => r.getIsSelected()).length;
+      return selCount > 0 && selCount < flat.length;
     },
     toggleAllRowsSelected: (selected?: boolean) => {
-      const flat = getAllFlatRows(filteredRows())
-      const isAll = flat.length > 0 && flat.every((r) => r.getIsSelected())
-      const targetState = selected !== undefined ? selected : !isAll
-      const nextMap = { ...currentRowSelection() }
+      const flat = getAllFlatRows(filteredRows());
+      const isAll = flat.length > 0 && flat.every((r) => r.getIsSelected());
+      const targetState = selected !== undefined ? selected : !isAll;
+      const nextMap = { ...currentRowSelection() };
       for (const r of flat) {
-        nextMap[r.id] = targetState
+        nextMap[r.id] = targetState;
       }
-      updateRowSelection(nextMap)
+      updateRowSelection(nextMap);
     },
     getIsAllPageRowsSelected: () => {
-      const rows = getPageRows()
-      const flat = getAllFlatRows(rows)
-      if (flat.length === 0) return false
-      return flat.every((r) => r.getIsSelected())
+      const rows = getPageRows();
+      const flat = getAllFlatRows(rows);
+      if (flat.length === 0) return false;
+      return flat.every((r) => r.getIsSelected());
     },
     getIsSomePageRowsSelected: () => {
-      const rows = getPageRows()
-      const flat = getAllFlatRows(rows)
-      if (flat.length === 0) return false
-      const selCount = flat.filter((r) => r.getIsSelected()).length
-      return selCount > 0 && selCount < flat.length
+      const rows = getPageRows();
+      const flat = getAllFlatRows(rows);
+      if (flat.length === 0) return false;
+      const selCount = flat.filter((r) => r.getIsSelected()).length;
+      return selCount > 0 && selCount < flat.length;
     },
     toggleAllPageRowsSelected: (selected?: boolean) => {
-      const rows = getPageRows()
-      const flat = getAllFlatRows(rows)
-      const isAll = flat.length > 0 && flat.every((r) => r.getIsSelected())
-      const targetState = selected !== undefined ? selected : !isAll
-      const nextMap = { ...currentRowSelection() }
+      const rows = getPageRows();
+      const flat = getAllFlatRows(rows);
+      const isAll = flat.length > 0 && flat.every((r) => r.getIsSelected());
+      const targetState = selected !== undefined ? selected : !isAll;
+      const nextMap = { ...currentRowSelection() };
       for (const r of flat) {
-        nextMap[r.id] = targetState
+        nextMap[r.id] = targetState;
       }
-      updateRowSelection(nextMap)
+      updateRowSelection(nextMap);
     },
     setGlobalFilter: (val: string) => updateGlobalFilter(val),
     setColumnFilter: (id: string, val: any) => {
-      const current = currentColumnFilters().filter((f) => f.id !== id)
+      const current = currentColumnFilters().filter((f) => f.id !== id);
       if (val !== undefined && val !== null && val !== "") {
-        current.push({ id, value: val })
+        current.push({ id, value: val });
       }
-      updateColumnFilters(current)
+      updateColumnFilters(current);
     },
     setColumnVisibility: (id: string, visible: boolean) => {
-      updateColumnVisibility({ ...currentColumnVisibility(), [id]: visible })
+      updateColumnVisibility({ ...currentColumnVisibility(), [id]: visible });
     },
     setColumnPinning: (pinning: TableColumnPinningState) => updateColumnPinning(pinning),
     setRowPinning: (pinning: TableRowPinningState) => updateRowPinning(pinning),
     setSorting: (st: SortingState) => updateSorting(st),
     setPagination: (pag: TablePaginationState) => updatePagination(pag),
     setPageIndex: (pageIndex: number) => {
-      const cur = currentPagination() || { pageIndex: 0, pageSize: 10 }
-      updatePagination({ ...cur, pageIndex })
+      const cur = currentPagination() || { pageIndex: 0, pageSize: 10 };
+      updatePagination({ ...cur, pageIndex });
     },
     setPageSize: (pageSize: number) => {
-      const cur = currentPagination() || { pageIndex: 0, pageSize: 10 }
-      updatePagination({ ...cur, pageSize })
+      const cur = currentPagination() || { pageIndex: 0, pageSize: 10 };
+      updatePagination({ ...cur, pageSize });
     },
     // Resizing & Ordering
     setColumnSizing: (id: string, size: number) => {
-      updateColumnSizing({ ...currentColumnSizing(), [id]: size })
+      updateColumnSizing({ ...currentColumnSizing(), [id]: size });
     },
     resetColumnSizing: () => updateColumnSizing({}),
     setColumnOrder: (order: TableColumnOrderState) => updateColumnOrder(order),
     resetColumnOrder: () => updateColumnOrder([]),
     // Exporting
     exportToCsv: (options?: TableExportOptions) => {
-      const targetRows = options?.selectedOnly ? tableApi.getSelectedRows() : tableApi.getFlatRows()
+      const targetRows = options?.selectedOnly
+        ? tableApi.getSelectedRows()
+        : tableApi.getFlatRows();
       const colsToExport = resolvedColumns().filter((col) => {
-        const id = String(col.id || col.accessorKey || "")
+        const id = String(col.id || col.accessorKey || "");
         if (id === "select" || id === "actions" || id === "reorder" || id === "dragHandle")
-          return false
+          return false;
         if (options?.columns && options.columns.length > 0) {
-          return options.columns.includes(id)
+          return options.columns.includes(id);
         }
-        return currentColumnVisibility()[id] !== false
-      })
+        return currentColumnVisibility()[id] !== false;
+      });
 
       const escapeCsv = (val: any): string => {
-        if (val === undefined || val === null) return ""
-        const str = String(val)
+        if (val === undefined || val === null) return "";
+        const str = String(val);
         if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
-          return `"${str.replace(/"/g, '""')}"`
+          return `"${str.replace(/"/g, '""')}"`;
         }
-        return str
-      }
+        return str;
+      };
 
       const headers = colsToExport.map((c) => {
-        const label = typeof c.header === "string" ? c.header : String(c.id || c.accessorKey || "")
-        return escapeCsv(label)
-      })
+        const label = typeof c.header === "string" ? c.header : String(c.id || c.accessorKey || "");
+        return escapeCsv(label);
+      });
 
-      const lines: string[] = [headers.join(",")]
+      const lines: string[] = [headers.join(",")];
 
       for (const row of targetRows) {
         const rowVals = colsToExport.map((col) => {
-          let val: any
+          let val: any;
           if (typeof col.accessorFn === "function") {
-            val = col.accessorFn(row.original)
+            val = col.accessorFn(row.original);
           } else {
-            const key = String(col.accessorKey || col.id || "")
-            val = row.getValue(key)
+            const key = String(col.accessorKey || col.id || "");
+            val = row.getValue(key);
           }
-          return escapeCsv(val)
-        })
-        lines.push(rowVals.join(","))
+          return escapeCsv(val);
+        });
+        lines.push(rowVals.join(","));
       }
 
-      const csvContent = lines.join("\r\n")
+      const csvContent = lines.join("\r\n");
 
       if (!isServer && options?.filename) {
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
         link.download = options.filename.endsWith(".csv")
           ? options.filename
-          : `${options.filename}.csv`
-        link.click()
-        URL.revokeObjectURL(url)
+          : `${options.filename}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
       }
 
-      return csvContent
+      return csvContent;
     },
     exportToJson: (options?: TableExportOptions) => {
-      const targetRows = options?.selectedOnly ? tableApi.getSelectedRows() : tableApi.getFlatRows()
+      const targetRows = options?.selectedOnly
+        ? tableApi.getSelectedRows()
+        : tableApi.getFlatRows();
       const colsToExport = resolvedColumns().filter((col) => {
-        const id = String(col.id || col.accessorKey || "")
+        const id = String(col.id || col.accessorKey || "");
         if (id === "select" || id === "actions" || id === "reorder" || id === "dragHandle")
-          return false
+          return false;
         if (options?.columns && options.columns.length > 0) {
-          return options.columns.includes(id)
+          return options.columns.includes(id);
         }
-        return currentColumnVisibility()[id] !== false
-      })
+        return currentColumnVisibility()[id] !== false;
+      });
 
       const jsonArray = targetRows.map((row) => {
-        const obj: Record<string, any> = {}
+        const obj: Record<string, any> = {};
         for (const col of colsToExport) {
-          const key = String(col.id || col.accessorKey || "")
-          let val: any
+          const key = String(col.id || col.accessorKey || "");
+          let val: any;
           if (typeof col.accessorFn === "function") {
-            val = col.accessorFn(row.original)
+            val = col.accessorFn(row.original);
           } else {
-            val = row.getValue(key)
+            val = row.getValue(key);
           }
-          obj[key] = val
+          obj[key] = val;
         }
-        return obj
-      })
+        return obj;
+      });
 
-      const jsonContent = JSON.stringify(jsonArray, null, 2)
+      const jsonContent = JSON.stringify(jsonArray, null, 2);
 
       if (!isServer && options?.filename) {
-        const blob = new Blob([jsonContent], { type: "application/json;charset=utf-8;" })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
+        const blob = new Blob([jsonContent], { type: "application/json;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
         link.download = options.filename.endsWith(".json")
           ? options.filename
-          : `${options.filename}.json`
-        link.click()
-        URL.revokeObjectURL(url)
+          : `${options.filename}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
       }
 
-      return jsonContent
+      return jsonContent;
     },
     // Faceted statistics
     getFacetedUniqueValues: (columnId: string) => {
-      const map = new Map<any, number>()
-      const rows = getAllFlatRows(filteredRows())
+      const map = new Map<any, number>();
+      const rows = getAllFlatRows(filteredRows());
       for (const r of rows) {
-        const val = r.getValue(columnId)
-        map.set(val, (map.get(val) || 0) + 1)
+        const val = r.getValue(columnId);
+        map.set(val, (map.get(val) || 0) + 1);
       }
-      return map
+      return map;
     },
     getFacetedMinMaxValues: (columnId: string) => {
-      const rows = getAllFlatRows(filteredRows())
-      let min: number | undefined
-      let max: number | undefined
+      const rows = getAllFlatRows(filteredRows());
+      let min: number | undefined;
+      let max: number | undefined;
       for (const r of rows) {
-        const val = r.getValue(columnId)
+        const val = r.getValue(columnId);
         if (typeof val === "number" && !isNaN(val)) {
-          if (min === undefined || val < min) min = val
-          if (max === undefined || val > max) max = val
+          if (min === undefined || val < min) min = val;
+          if (max === undefined || val > max) max = val;
         }
       }
-      return min !== undefined && max !== undefined ? [min, max] : undefined
+      return min !== undefined && max !== undefined ? [min, max] : undefined;
     },
     // Inline editing support
     setEditingCell: (cell: TableEditingCellState) => updateEditingCell(cell),
@@ -1090,10 +1095,10 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       pagination: currentPagination() || { pageIndex: 0, pageSize: 10 },
       editingCell: currentEditingCell()
     })
-  }
+  };
 
   if (typeof props.ref === "function") {
-    props.ref(tableApi)
+    props.ref(tableApi);
   }
 
   // ─── Theme Resolution ────────────────────────────────────────────────────────
@@ -1110,7 +1115,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       class: props.class,
       externalScroll: false
     })
-  )
+  );
 
   const showToolbar = createMemo(
     () =>
@@ -1119,25 +1124,25 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       props.exportable ||
       !!props.toolbar ||
       !!props.slots?.["toolbar"]
-  )
+  );
 
   const columnDropdownItems = createMemo(() =>
     resolvedColumns()
       .filter((col) => col.enableHiding !== false && col.id !== "reorder")
       .map((col) => {
-        const colId = (col.id || col.accessorKey || "") as string
-        const rawLabel = typeof col.header === "string" ? col.header : colId
+        const colId = (col.id || col.accessorKey || "") as string;
+        const rawLabel = typeof col.header === "string" ? col.header : colId;
         return {
           id: colId,
           label: rawLabel.charAt(0).toUpperCase() + rawLabel.slice(1),
           type: "checkbox" as const,
           checked: currentColumnVisibility()[colId] !== false,
           onUpdateChecked: (checked: boolean) => {
-            tableApi.setColumnVisibility(colId, checked)
+            tableApi.setColumnVisibility(colId, checked);
           }
-        }
+        };
       })
-  )
+  );
 
   const exportDropdownItems = createMemo(() => [
     {
@@ -1145,7 +1150,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       label: "Export as CSV",
       icon: "i-lucide-file-spreadsheet",
       onSelect: () => {
-        tableApi.exportToCsv({ filename: props.exportFilename ?? "export" })
+        tableApi.exportToCsv({ filename: props.exportFilename ?? "export" });
       }
     },
     {
@@ -1153,10 +1158,10 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       label: "Export as JSON",
       icon: "i-lucide-file-json",
       onSelect: () => {
-        tableApi.exportToJson({ filename: props.exportFilename ?? "export" })
+        tableApi.exportToJson({ filename: props.exportFilename ?? "export" });
       }
     }
-  ])
+  ]);
 
   const hasFooters = createMemo(() =>
     visibleColumns().some(
@@ -1165,7 +1170,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         col.footer ||
         props.slots?.[`${String(col.id || col.accessorKey || "")}-footer`]
     )
-  )
+  );
 
   return (
     <div class={classes().root} data-slot="root">
@@ -1221,22 +1226,22 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           <colgroup>
             <For each={visibleColumns()}>
               {(col) => {
-                const colId = () => String(col.id || col.accessorKey || "")
-                const sizeVal = () => currentColumnSizing()[colId()] ?? col.size
-                const styles: string[] = []
-                if (typeof sizeVal() === "number") styles.push(`width: ${sizeVal()}px;`)
-                else if (sizeVal()) styles.push(`width: ${sizeVal()};`)
+                const colId = () => String(col.id || col.accessorKey || "");
+                const sizeVal = () => currentColumnSizing()[colId()] ?? col.size;
+                const styles: string[] = [];
+                if (typeof sizeVal() === "number") styles.push(`width: ${sizeVal()}px;`);
+                else if (sizeVal()) styles.push(`width: ${sizeVal()};`);
                 if (col.minSize) {
                   styles.push(
                     `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
-                  )
+                  );
                 }
                 if (col.maxSize) {
                   styles.push(
                     `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
-                  )
+                  );
                 }
-                return <col data-col-id={colId()} style={styles.join(" ") || undefined} />
+                return <col data-col-id={colId()} style={styles.join(" ") || undefined} />;
               }}
             </For>
           </colgroup>
@@ -1257,68 +1262,68 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               <tr class={classes().tr} data-slot="tr">
                 <For each={visibleColumns()}>
                   {(col) => {
-                    const colId = () => String(col.id || col.accessorKey || "")
+                    const colId = () => String(col.id || col.accessorKey || "");
                     const pinned = () =>
-                      colId() in columnOffsets().left || colId() in columnOffsets().right
+                      colId() in columnOffsets().left || colId() in columnOffsets().right;
                     const pinStyle = () => {
                       if (colId() in columnOffsets().left) {
-                        return `left: ${columnOffsets().left[colId()]}px;`
+                        return `left: ${columnOffsets().left[colId()]}px;`;
                       }
                       if (colId() in columnOffsets().right) {
-                        return `right: ${columnOffsets().right[colId()]}px;`
+                        return `right: ${columnOffsets().right[colId()]}px;`;
                       }
-                      return ""
-                    }
+                      return "";
+                    };
                     const sizeStyle = () => {
-                      const sizeVal = currentColumnSizing()[colId()] ?? col.size
-                      const styles: string[] = []
-                      if (typeof sizeVal === "number") styles.push(`width: ${sizeVal}px;`)
-                      else if (sizeVal) styles.push(`width: ${sizeVal};`)
+                      const sizeVal = currentColumnSizing()[colId()] ?? col.size;
+                      const styles: string[] = [];
+                      if (typeof sizeVal === "number") styles.push(`width: ${sizeVal}px;`);
+                      else if (sizeVal) styles.push(`width: ${sizeVal};`);
                       if (col.minSize) {
                         styles.push(
                           `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
-                        )
+                        );
                       }
                       if (col.maxSize) {
                         styles.push(
                           `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
-                        )
+                        );
                       }
-                      return styles.join(" ")
-                    }
+                      return styles.join(" ");
+                    };
                     const metaThClass = () =>
                       typeof col.meta?.class?.th === "function"
                         ? col.meta.class.th(col)
-                        : col.meta?.class?.th || ""
+                        : col.meta?.class?.th || "";
                     const metaThStyle = () =>
                       typeof col.meta?.style?.th === "function"
                         ? col.meta.style.th(col)
-                        : col.meta?.style?.th || ""
+                        : col.meta?.style?.th || "";
                     const canSort = () =>
                       col.enableSorting !== false &&
                       !!(col.accessorKey || col.id || col.accessorFn) &&
                       colId() !== "actions" &&
                       colId() !== "select" &&
                       colId() !== "reorder" &&
-                      colId() !== "dragHandle"
+                      colId() !== "dragHandle";
 
-                    const activeSort = () => currentSorting().find((s) => s.id === colId())
+                    const activeSort = () => currentSorting().find((s) => s.id === colId());
                     const sortDir = () =>
-                      activeSort() ? (activeSort()!.desc ? "desc" : "asc") : "none"
+                      activeSort() ? (activeSort()!.desc ? "desc" : "asc") : "none";
 
-                    const slotHeader = props.slots?.[`${colId()}-header`]
+                    const slotHeader = props.slots?.[`${colId()}-header`];
 
                     const isDropTarget = () =>
-                      dropTargetCol()?.id === colId() && draggedColId() !== colId()
+                      dropTargetCol()?.id === colId() && draggedColId() !== colId();
                     const dropPosition = () =>
-                      isDropTarget() ? dropTargetCol()?.position : undefined
+                      isDropTarget() ? dropTargetCol()?.position : undefined;
 
                     const headerLabel = () => {
                       if (typeof col.header === "function") {
-                        return col.header({ column: col, table: tableApi })
+                        return col.header({ column: col, table: tableApi });
                       }
                       if (col.header !== undefined && col.header !== null) {
-                        return col.header
+                        return col.header;
                       }
                       if (
                         colId() === "reorder" ||
@@ -1326,10 +1331,10 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                         colId() === "actions" ||
                         colId() === "dragHandle"
                       ) {
-                        return ""
+                        return "";
                       }
-                      return colId().charAt(0).toUpperCase() + colId().slice(1)
-                    }
+                      return colId().charAt(0).toUpperCase() + colId().slice(1);
+                    };
 
                     return (
                       <th
@@ -1340,44 +1345,44 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                         data-slot="th"
                         data-drop-position={dropPosition()}
                         onDragOver={(e) => {
-                          if (!props.enableColumnReordering || !draggedColId()) return
-                          e.preventDefault()
-                          const th = e.currentTarget as HTMLElement
-                          const rect = th.getBoundingClientRect()
-                          const pos = e.clientX < rect.left + rect.width / 2 ? "left" : "right"
-                          const cur = dropTargetCol()
+                          if (!props.enableColumnReordering || !draggedColId()) return;
+                          e.preventDefault();
+                          const th = e.currentTarget as HTMLElement;
+                          const rect = th.getBoundingClientRect();
+                          const pos = e.clientX < rect.left + rect.width / 2 ? "left" : "right";
+                          const cur = dropTargetCol();
                           if (!cur || cur.id !== colId() || cur.position !== pos) {
-                            setDropTargetCol({ id: colId(), position: pos })
+                            setDropTargetCol({ id: colId(), position: pos });
                           }
                         }}
                         onDragLeave={() => {
                           if (dropTargetCol()?.id === colId()) {
-                            setDropTargetCol(null)
+                            setDropTargetCol(null);
                           }
                         }}
                         onDrop={(e) => {
-                          if (!props.enableColumnReordering || !draggedColId()) return
-                          e.preventDefault()
-                          const sourceId = draggedColId()!
-                          const target = dropTargetCol()
-                          setDraggedColId(null)
-                          setDropTargetCol(null)
-                          if (!target || sourceId === target.id) return
+                          if (!props.enableColumnReordering || !draggedColId()) return;
+                          e.preventDefault();
+                          const sourceId = draggedColId()!;
+                          const target = dropTargetCol();
+                          setDraggedColId(null);
+                          setDropTargetCol(null);
+                          if (!target || sourceId === target.id) return;
 
                           const cols = resolvedColumns().map((c) =>
                             String(c.id || c.accessorKey || "")
-                          )
-                          const fromIdx = cols.indexOf(sourceId)
-                          if (fromIdx === -1) return
-                          const newOrder = [...cols]
-                          newOrder.splice(fromIdx, 1)
-                          let toIdx = newOrder.indexOf(target.id)
-                          if (toIdx === -1) return
+                          );
+                          const fromIdx = cols.indexOf(sourceId);
+                          if (fromIdx === -1) return;
+                          const newOrder = [...cols];
+                          newOrder.splice(fromIdx, 1);
+                          let toIdx = newOrder.indexOf(target.id);
+                          if (toIdx === -1) return;
                           if (target.position === "right") {
-                            toIdx += 1
+                            toIdx += 1;
                           }
-                          newOrder.splice(toIdx, 0, sourceId)
-                          updateColumnOrder(newOrder)
+                          newOrder.splice(toIdx, 0, sourceId);
+                          updateColumnOrder(newOrder);
                         }}
                       >
                         <div class="flex items-center gap-1.5">
@@ -1396,15 +1401,15 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                               data-slot="drag-handle"
                               draggable="true"
                               onDragStart={(e) => {
-                                setDraggedColId(colId())
-                                e.dataTransfer?.setData("text/plain", colId())
+                                setDraggedColId(colId());
+                                e.dataTransfer?.setData("text/plain", colId());
                                 if (e.dataTransfer) {
-                                  e.dataTransfer.effectAllowed = "move"
+                                  e.dataTransfer.effectAllowed = "move";
                                 }
                               }}
                               onDragEnd={() => {
-                                setDraggedColId(null)
-                                setDropTargetCol(null)
+                                setDraggedColId(null);
+                                setDropTargetCol(null);
                               }}
                             >
                               <span class="i-lucide-grip-vertical size-3.5 opacity-40 hover:opacity-100" />
@@ -1449,7 +1454,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                           />
                         </Show>
                       </th>
-                    )
+                    );
                   }}
                 </For>
               </tr>
@@ -1530,8 +1535,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                 <For each={virtualizedView().items}>
                   {(item) => {
                     if (item.type === "group") {
-                      const { group, depth } = item
-                      const groupHeaderSlot = props.slots?.["group-header"]
+                      const { group, depth } = item;
+                      const groupHeaderSlot = props.slots?.["group-header"];
 
                       return (
                         <tr class={classes().trGroup} data-slot="tr-group" data-depth={depth}>
@@ -1566,25 +1571,25 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                             </Show>
                           </td>
                         </tr>
-                      )
+                      );
                     }
 
-                    const { row } = item
+                    const { row } = item;
                     const trMetaClass = () =>
                       typeof props.meta?.class?.tr === "function"
                         ? props.meta.class.tr(row)
-                        : props.meta?.class?.tr || ""
+                        : props.meta?.class?.tr || "";
                     const trMetaStyle = () =>
                       typeof props.meta?.style?.tr === "function"
                         ? props.meta.style.tr(row)
-                        : props.meta?.style?.tr || ""
+                        : props.meta?.style?.tr || "";
 
                     const isRowDropTarget = () =>
                       dropTargetRow()?.id === row.id &&
                       draggedRowIndex() !== null &&
-                      draggedRowIndex() !== row.index
+                      draggedRowIndex() !== row.index;
                     const rowDropPos = () =>
-                      isRowDropTarget() ? dropTargetRow()?.position : undefined
+                      isRowDropTarget() ? dropTargetRow()?.position : undefined;
 
                     return (
                       <>
@@ -1598,19 +1603,19 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                           data-pinned={row.getIsPinned() || undefined}
                           data-drop-position={rowDropPos()}
                           onDragOver={(e) => {
-                            if (!props.enableRowReordering || draggedRowIndex() === null) return
-                            e.preventDefault()
-                            const tr = e.currentTarget as HTMLElement
-                            const rect = tr.getBoundingClientRect()
-                            const pos = e.clientY < rect.top + rect.height / 2 ? "top" : "bottom"
-                            const cur = dropTargetRow()
+                            if (!props.enableRowReordering || draggedRowIndex() === null) return;
+                            e.preventDefault();
+                            const tr = e.currentTarget as HTMLElement;
+                            const rect = tr.getBoundingClientRect();
+                            const pos = e.clientY < rect.top + rect.height / 2 ? "top" : "bottom";
+                            const cur = dropTargetRow();
                             if (!cur || cur.id !== row.id || cur.position !== pos) {
-                              setDropTargetRow({ id: row.id, index: row.index, position: pos })
+                              setDropTargetRow({ id: row.id, index: row.index, position: pos });
                             }
                           }}
                           onDragLeave={() => {
                             if (dropTargetRow()?.id === row.id) {
-                              setDropTargetRow(null)
+                              setDropTargetRow(null);
                             }
                           }}
                           onDrop={(e) => {
@@ -1619,33 +1624,33 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                               draggedRowIndex() === null ||
                               !props.data
                             )
-                              return
-                            e.preventDefault()
-                            const fromIdx = draggedRowIndex()!
-                            const target = dropTargetRow()
-                            setDraggedRowIndex(null)
-                            setDropTargetRow(null)
-                            if (!target || fromIdx === target.index) return
+                              return;
+                            e.preventDefault();
+                            const fromIdx = draggedRowIndex()!;
+                            const target = dropTargetRow();
+                            setDraggedRowIndex(null);
+                            setDropTargetRow(null);
+                            if (!target || fromIdx === target.index) return;
 
-                            const newData = [...props.data]
-                            const [movedItem] = newData.splice(fromIdx, 1)
+                            const newData = [...props.data];
+                            const [movedItem] = newData.splice(fromIdx, 1);
                             if (movedItem !== undefined) {
-                              let toIdx = target.index
+                              let toIdx = target.index;
                               if (fromIdx < target.index && target.position === "top") {
-                                toIdx = target.index - 1
+                                toIdx = target.index - 1;
                               } else if (fromIdx > target.index && target.position === "bottom") {
-                                toIdx = target.index + 1
+                                toIdx = target.index + 1;
                               }
-                              toIdx = Math.max(0, Math.min(newData.length, toIdx))
-                              newData.splice(toIdx, 0, movedItem)
-                              props.onRowReorder?.(newData, fromIdx, toIdx)
+                              toIdx = Math.max(0, Math.min(newData.length, toIdx));
+                              newData.splice(toIdx, 0, movedItem);
+                              props.onRowReorder?.(newData, fromIdx, toIdx);
                             }
                           }}
                           onClick={(e) => {
-                            const target = e.target as HTMLElement
+                            const target = e.target as HTMLElement;
                             if (target.closest("a, button, input, select, textarea, [role=button]"))
-                              return
-                            props.onSelect?.(e, row)
+                              return;
+                            props.onSelect?.(e, row);
                           }}
                           onMouseEnter={(e) => props.onHover?.(e, row)}
                           onMouseLeave={(e) => props.onHover?.(e, null)}
@@ -1653,72 +1658,73 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                         >
                           <For each={visibleColumns()}>
                             {(col) => {
-                              const colId = () => String(col.id || col.accessorKey || "")
+                              const colId = () => String(col.id || col.accessorKey || "");
                               const cellValue = () => {
                                 if (typeof col.accessorFn === "function") {
-                                  return col.accessorFn(row.original)
+                                  return col.accessorFn(row.original);
                                 }
-                                const key = (col.accessorKey || col.id || "") as string
-                                return key ? row.getValue(key) : undefined
-                              }
+                                const key = (col.accessorKey || col.id || "") as string;
+                                return key ? row.getValue(key) : undefined;
+                              };
                               const pinned = () =>
-                                colId() in columnOffsets().left || colId() in columnOffsets().right
+                                colId() in columnOffsets().left || colId() in columnOffsets().right;
 
                               const metaTdClass = () =>
                                 typeof col.meta?.class?.td === "function"
                                   ? col.meta.class.td(row)
-                                  : col.meta?.class?.td || ""
+                                  : col.meta?.class?.td || "";
                               const metaTdStyle = () =>
                                 typeof col.meta?.style?.td === "function"
                                   ? col.meta.style.td(row)
-                                  : col.meta?.style?.td || ""
+                                  : col.meta?.style?.td || "";
                               const colSpanVal = () =>
                                 typeof col.meta?.colspan?.td === "function"
                                   ? col.meta.colspan.td(row)
-                                  : col.meta?.colspan?.td
+                                  : col.meta?.colspan?.td;
                               const rowSpanVal = () =>
                                 typeof col.meta?.rowspan?.td === "function"
                                   ? col.meta.rowspan.td(row)
-                                  : col.meta?.rowspan?.td
+                                  : col.meta?.rowspan?.td;
 
                               const sizeStyle = () => {
-                                const sizeVal = currentColumnSizing()[colId()] ?? col.size
-                                const styles: string[] = []
-                                if (typeof sizeVal === "number") styles.push(`width: ${sizeVal}px;`)
-                                else if (sizeVal) styles.push(`width: ${sizeVal};`)
+                                const sizeVal = currentColumnSizing()[colId()] ?? col.size;
+                                const styles: string[] = [];
+                                if (typeof sizeVal === "number")
+                                  styles.push(`width: ${sizeVal}px;`);
+                                else if (sizeVal) styles.push(`width: ${sizeVal};`);
                                 if (col.minSize) {
                                   styles.push(
                                     `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
-                                  )
+                                  );
                                 }
                                 if (col.maxSize) {
                                   styles.push(
                                     `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
-                                  )
+                                  );
                                 }
-                                return styles.join(" ")
-                              }
+                                return styles.join(" ");
+                              };
 
                               const pinStyle = () => {
                                 if (colId() in columnOffsets().left) {
-                                  return `left: ${columnOffsets().left[colId()]}px;`
+                                  return `left: ${columnOffsets().left[colId()]}px;`;
                                 }
                                 if (colId() in columnOffsets().right) {
-                                  return `right: ${columnOffsets().right[colId()]}px;`
+                                  return `right: ${columnOffsets().right[colId()]}px;`;
                                 }
-                                return ""
-                              }
+                                return "";
+                              };
 
                               const isEditing = () =>
                                 currentEditingCell()?.rowId === row.id &&
-                                currentEditingCell()?.columnId === colId()
+                                currentEditingCell()?.columnId === colId();
                               const setEditing = (editing: boolean) => {
                                 tableApi.setEditingCell(
                                   editing ? { rowId: row.id, columnId: colId() } : null
-                                )
-                              }
+                                );
+                              };
 
-                              const cellSlot = props.slots?.[`${colId()}-cell`]
+                              const cellSlot = props.slots?.[`${colId()}-cell`];
 
                               return (
                                 <td
@@ -1745,7 +1751,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                     {renderCellContent(row, col, cellValue, isEditing, setEditing)}
                                   </Show>
                                 </td>
-                              )
+                              );
                             }}
                           </For>
                         </tr>
@@ -1778,11 +1784,11 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                               const subMetaClass = () =>
                                 typeof props.meta?.class?.tr === "function"
                                   ? props.meta.class.tr(subRow)
-                                  : props.meta?.class?.tr || ""
+                                  : props.meta?.class?.tr || "";
                               const subMetaStyle = () =>
                                 typeof props.meta?.style?.tr === "function"
                                   ? props.meta.style.tr(subRow)
-                                  : props.meta?.style?.tr || ""
+                                  : props.meta?.style?.tr || "";
 
                               return (
                                 <tr
@@ -1793,14 +1799,14 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                   data-depth={subRow.depth}
                                   data-selected={subRow.getIsSelected() ? "true" : undefined}
                                   onClick={(e) => {
-                                    const target = e.target as HTMLElement
+                                    const target = e.target as HTMLElement;
                                     if (
                                       target.closest(
                                         "a, button, input, select, textarea, [role=button]"
                                       )
                                     )
-                                      return
-                                    props.onSelect?.(e, subRow)
+                                      return;
+                                    props.onSelect?.(e, subRow);
                                   }}
                                   onMouseEnter={(e) => props.onHover?.(e, subRow)}
                                   onMouseLeave={(e) => props.onHover?.(e, null)}
@@ -1808,74 +1814,74 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                 >
                                   <For each={visibleColumns()}>
                                     {(col) => {
-                                      const colId = () => String(col.id || col.accessorKey || "")
+                                      const colId = () => String(col.id || col.accessorKey || "");
                                       const cellValue = () => {
                                         if (typeof col.accessorFn === "function") {
-                                          return col.accessorFn(subRow.original)
+                                          return col.accessorFn(subRow.original);
                                         }
-                                        const key = (col.accessorKey || col.id || "") as string
-                                        return key ? subRow.getValue(key) : undefined
-                                      }
+                                        const key = (col.accessorKey || col.id || "") as string;
+                                        return key ? subRow.getValue(key) : undefined;
+                                      };
                                       const pinned = () =>
                                         colId() in columnOffsets().left ||
-                                        colId() in columnOffsets().right
+                                        colId() in columnOffsets().right;
 
                                       const metaTdClass = () =>
                                         typeof col.meta?.class?.td === "function"
                                           ? col.meta.class.td(subRow)
-                                          : col.meta?.class?.td || ""
+                                          : col.meta?.class?.td || "";
                                       const metaTdStyle = () =>
                                         typeof col.meta?.style?.td === "function"
                                           ? col.meta.style.td(subRow)
-                                          : col.meta?.style?.td || ""
+                                          : col.meta?.style?.td || "";
                                       const colSpanVal = () =>
                                         typeof col.meta?.colspan?.td === "function"
                                           ? col.meta.colspan.td(subRow)
-                                          : col.meta?.colspan?.td
+                                          : col.meta?.colspan?.td;
                                       const rowSpanVal = () =>
                                         typeof col.meta?.rowspan?.td === "function"
                                           ? col.meta.rowspan.td(subRow)
-                                          : col.meta?.rowspan?.td
+                                          : col.meta?.rowspan?.td;
 
                                       const sizeStyle = () => {
-                                        const sizeVal = currentColumnSizing()[colId()] ?? col.size
-                                        const styles: string[] = []
+                                        const sizeVal = currentColumnSizing()[colId()] ?? col.size;
+                                        const styles: string[] = [];
                                         if (typeof sizeVal === "number")
-                                          styles.push(`width: ${sizeVal}px;`)
-                                        else if (sizeVal) styles.push(`width: ${sizeVal};`)
+                                          styles.push(`width: ${sizeVal}px;`);
+                                        else if (sizeVal) styles.push(`width: ${sizeVal};`);
                                         if (col.minSize) {
                                           styles.push(
                                             `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
-                                          )
+                                          );
                                         }
                                         if (col.maxSize) {
                                           styles.push(
                                             `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
-                                          )
+                                          );
                                         }
-                                        return styles.join(" ")
-                                      }
+                                        return styles.join(" ");
+                                      };
 
                                       const pinStyle = () => {
                                         if (colId() in columnOffsets().left) {
-                                          return `left: ${columnOffsets().left[colId()]}px;`
+                                          return `left: ${columnOffsets().left[colId()]}px;`;
                                         }
                                         if (colId() in columnOffsets().right) {
-                                          return `right: ${columnOffsets().right[colId()]}px;`
+                                          return `right: ${columnOffsets().right[colId()]}px;`;
                                         }
-                                        return ""
-                                      }
+                                        return "";
+                                      };
 
                                       const isEditing = () =>
                                         currentEditingCell()?.rowId === subRow.id &&
-                                        currentEditingCell()?.columnId === colId()
+                                        currentEditingCell()?.columnId === colId();
                                       const setEditing = (editing: boolean) => {
                                         tableApi.setEditingCell(
                                           editing ? { rowId: subRow.id, columnId: colId() } : null
-                                        )
-                                      }
+                                        );
+                                      };
 
-                                      const cellSlot = props.slots?.[`${colId()}-cell`]
+                                      const cellSlot = props.slots?.[`${colId()}-cell`];
 
                                       return (
                                         <td
@@ -1908,16 +1914,16 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                                             )}
                                           </Show>
                                         </td>
-                                      )
+                                      );
                                     }}
                                   </For>
                                 </tr>
-                              )
+                              );
                             }}
                           </For>
                         </Show>
                       </>
-                    )
+                    );
                   }}
                 </For>
 
@@ -1944,8 +1950,8 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
               <tr class={classes().tr} data-slot="tr">
                 <For each={visibleColumns()}>
                   {(col) => {
-                    const colId = () => String(col.id || col.accessorKey || "")
-                    const footerSlot = props.slots?.[`${colId()}-footer`]
+                    const colId = () => String(col.id || col.accessorKey || "");
+                    const footerSlot = props.slots?.[`${colId()}-footer`];
 
                     return (
                       <td class={classes().td} data-slot="td">
@@ -1958,7 +1964,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
                             : col.footer || ""}
                         </Show>
                       </td>
-                    )
+                    );
                   }}
                 </For>
               </tr>
@@ -1967,5 +1973,5 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         </table>
       </div>
     </div>
-  )
+  );
 }

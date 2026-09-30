@@ -1,4 +1,4 @@
-import { defineTheme } from "../../resolver"
+import { defineTheme } from "../../resolver";
 
 export const iconTheme = defineTheme("icon", {
   slots: ["root"],
@@ -17,4 +17,4 @@ export const iconTheme = defineTheme("icon", {
   defaultVariants: {
     size: "md"
   }
-})
+});

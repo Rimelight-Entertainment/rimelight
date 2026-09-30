@@ -1,10 +1,10 @@
-import { type Component } from "solid-js"
-import AppLayout from "#layouts/AppLayout"
-import AppError from "#components/app/AppError"
-import { t } from "@rimelight/i18n"
+import { type Component } from "solid-js";
+import AppLayout from "#layouts/AppLayout";
+import AppError from "#components/app/AppError";
+import { t } from "@rimelight/i18n";
 
 interface Props {
-  error?: unknown
+  error?: unknown;
 }
 
 export const Error500Page: Component<Props> = (props) => {
@@ -36,7 +36,7 @@ export const Error500Page: Component<Props> = (props) => {
         ]}
       />
     </AppLayout>
-  )
-}
+  );
+};
 
-export default Error500Page
+export default Error500Page;

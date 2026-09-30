@@ -1,17 +1,17 @@
-import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js"
-import type { JSX } from "@solidjs/web"
-import type { ImageMetadata, ImageProps } from "./image"
-import { imageTheme } from "./image.theme"
-import { RLIcon } from "../icon/RLIcon"
+import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { ImageMetadata, ImageProps } from "./image";
+import { imageTheme } from "./image.theme";
+import { RLIcon } from "../icon/RLIcon";
 
 export interface RLImageProps extends ImageProps {
-  trigger?: JSX.Element
-  captionSlot?: JSX.Element
-  children?: JSX.Element
+  trigger?: JSX.Element;
+  captionSlot?: JSX.Element;
+  children?: JSX.Element;
 }
 
 const RLImage: Component<RLImageProps> = (allProps) => {
-  const props = allProps
+  const props = allProps;
   const rest = omit(
     allProps,
     "src",
@@ -48,166 +48,166 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     "trigger",
     "captionSlot",
     "children"
-  )
+  );
 
-  const isInteractive = props.lightbox ?? props.interactive ?? true
-  const isFigure = props.figure ?? !!props.caption
+  const isInteractive = props.lightbox ?? props.interactive ?? true;
+  const isFigure = props.figure ?? !!props.caption;
 
-  const isResponsive = !!(props.mobileSrc && props.desktopSrc)
+  const isResponsive = !!(props.mobileSrc && props.desktopSrc);
   const effectiveLight =
-    props.lightSrc || (!props.darkSrc ? props.src : props.src || props.lightSrc)
-  const effectiveDark = props.darkSrc
+    props.lightSrc || (!props.darkSrc ? props.src : props.src || props.lightSrc);
+  const effectiveDark = props.darkSrc;
   const hasColorMode =
-    !isResponsive && !!(effectiveLight && effectiveDark && effectiveLight !== effectiveDark)
-  const breakpointVal = props.breakpoint ?? 768
-  const activeSrc = isResponsive ? props.desktopSrc : effectiveLight || props.src
+    !isResponsive && !!(effectiveLight && effectiveDark && effectiveLight !== effectiveDark);
+  const breakpointVal = props.breakpoint ?? 768;
+  const activeSrc = isResponsive ? props.desktopSrc : effectiveLight || props.src;
 
   const urlOf = (v?: string | ImageMetadata): string | undefined =>
-    typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src
+    typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src;
 
   const widthOf = (v?: string | ImageMetadata): string | number | undefined =>
-    v && typeof v !== "string" ? (v as ImageMetadata).width : undefined
+    v && typeof v !== "string" ? (v as ImageMetadata).width : undefined;
 
   const heightOf = (v?: string | ImageMetadata): string | number | undefined =>
-    v && typeof v !== "string" ? (v as ImageMetadata).height : undefined
+    v && typeof v !== "string" ? (v as ImageMetadata).height : undefined;
 
   const formatOf = (v?: string | ImageMetadata): string | undefined =>
-    v && typeof v !== "string" ? (v as ImageMetadata).format : undefined
+    v && typeof v !== "string" ? (v as ImageMetadata).format : undefined;
 
-  const activeUrl = urlOf(activeSrc)
-  const lightUrl = effectiveLight ? (urlOf(effectiveLight) ?? "") : ""
-  const darkUrl = effectiveDark ? (urlOf(effectiveDark) ?? "") : ""
+  const activeUrl = urlOf(activeSrc);
+  const lightUrl = effectiveLight ? (urlOf(effectiveLight) ?? "") : "";
+  const darkUrl = effectiveDark ? (urlOf(effectiveDark) ?? "") : "";
 
-  const imgWidth = props.width ?? widthOf(activeSrc)
-  const imgHeight = props.height ?? heightOf(activeSrc)
-  const imgFormat = formatOf(activeSrc) ?? props.metadata?.format
-  const rawName = activeUrl ? activeUrl.split("/").pop() || "image" : "image"
-  const fileName = rawName.split("?")[0] ?? ""
+  const imgWidth = props.width ?? widthOf(activeSrc);
+  const imgHeight = props.height ?? heightOf(activeSrc);
+  const imgFormat = formatOf(activeSrc) ?? props.metadata?.format;
+  const rawName = activeUrl ? activeUrl.split("/").pop() || "image" : "image";
+  const fileName = rawName.split("?")[0] ?? "";
   const fileExtension =
     imgFormat?.toUpperCase() ||
-    (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG")
+    (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG");
 
   const resolvedClasses = createMemo(() =>
     imageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class })
-  )
+  );
 
-  const alt = props.alt ?? ""
-  const loading = props.loading ?? "lazy"
-  const decoding = props.decoding ?? "async"
+  const alt = props.alt ?? "";
+  const loading = props.loading ?? "lazy";
+  const decoding = props.decoding ?? "async";
 
-  const [show, setShow] = createSignal(loading !== "lazy")
-  const [status, setStatus] = createSignal<"loading" | "ok" | "error">("loading")
-  const [open, setOpen] = createSignal(Boolean(props.open))
-  const [zoom, setZoom] = createSignal(false)
+  const [show, setShow] = createSignal(loading !== "lazy");
+  const [status, setStatus] = createSignal<"loading" | "ok" | "error">("loading");
+  const [open, setOpen] = createSignal(Boolean(props.open));
+  const [zoom, setZoom] = createSignal(false);
   const [metaSizeTxt, setMetaSizeTxt] = createSignal<string>(
     props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : "fetching..."
-  )
-  const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(fileExtension)
+  );
+  const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(fileExtension);
 
-  let rootRef: HTMLDivElement | undefined
-  let dialogRef: HTMLDialogElement | undefined
-  let fetched = false
+  let rootRef: HTMLDivElement | undefined;
+  let dialogRef: HTMLDialogElement | undefined;
+  let fetched = false;
 
-  const handleError = () => setStatus("error")
-  const handleLoad = () => setStatus("ok")
+  const handleError = () => setStatus("error");
+  const handleLoad = () => setStatus("ok");
 
   const activeModalSrc = () => {
-    if (typeof document === "undefined") return activeUrl ?? ""
-    const rootTheme = document.documentElement.getAttribute("data-theme")
+    if (typeof document === "undefined") return activeUrl ?? "";
+    const rootTheme = document.documentElement.getAttribute("data-theme");
     const isDark =
       rootTheme === "dark" ||
       (typeof window !== "undefined" &&
         (window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false) &&
-        rootTheme !== "light")
-    if (isDark && darkUrl) return darkUrl
-    return lightUrl || activeUrl || ""
-  }
+        rootTheme !== "light");
+    if (isDark && darkUrl) return darkUrl;
+    return lightUrl || activeUrl || "";
+  };
 
-  const openDialog = () => setOpen(true)
+  const openDialog = () => setOpen(true);
 
   const handleDownload = async () => {
-    const url = activeModalSrc()
-    if (!url) return
+    const url = activeModalSrc();
+    if (!url) return;
     try {
-      const response = await fetch(url)
-      const blob = await response.blob()
-      const objectUrl = URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.href = objectUrl
-      link.download = (url.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(objectUrl)
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = (url.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
     } catch (err) {
-      console.error("Download failed", err)
+      console.error("Download failed", err);
     }
-  }
+  };
 
   createEffect(
     () => show(),
     (isShown) => {
-      const el = rootRef
-      if (!el || loading !== "lazy" || isShown) return
+      const el = rootRef;
+      if (!el || loading !== "lazy" || isShown) return;
       const io = new IntersectionObserver(
         (entries) => {
           if (entries.some((e) => e.isIntersecting)) {
-            setShow(true)
-            io.disconnect()
+            setShow(true);
+            io.disconnect();
           }
         },
         { rootMargin: "200px" }
-      )
-      io.observe(el)
-      return () => io.disconnect()
+      );
+      io.observe(el);
+      return () => io.disconnect();
     }
-  )
+  );
 
   createEffect(
     () => ({ isOpen: open(), src: activeModalSrc() }),
     ({ isOpen, src }) => {
-      const dialog = dialogRef
-      if (!dialog) return
+      const dialog = dialogRef;
+      if (!dialog) return;
       if (isOpen) {
-        if (!dialog.open) dialog.showModal()
+        if (!dialog.open) dialog.showModal();
         if (!fetched) {
-          fetched = true
+          fetched = true;
           if (src) {
             fetch(src)
               .then((r) => r.blob())
               .then((blob) => {
-                setMetaSizeTxt(`${(blob.size / 1024).toFixed(2)} KB`)
-                const mime = blob.type.split("/").pop()?.toUpperCase()
-                if (mime && mime !== "OCTET-STREAM") setMetaFormatTxt(mime)
+                setMetaSizeTxt(`${(blob.size / 1024).toFixed(2)} KB`);
+                const mime = blob.type.split("/").pop()?.toUpperCase();
+                if (mime && mime !== "OCTET-STREAM") setMetaFormatTxt(mime);
               })
-              .catch(() => setMetaSizeTxt("unavailable"))
+              .catch(() => setMetaSizeTxt("unavailable"));
           }
         }
       } else if (dialog.open) {
-        dialog.close()
+        dialog.close();
       }
     }
-  )
+  );
 
   onSettled(() => {
-    const dialog = dialogRef
+    const dialog = dialogRef;
     if (dialog) {
-      const onClose = () => setOpen(false)
-      dialog.addEventListener("close", onClose)
-      return () => dialog.removeEventListener("close", onClose)
+      const onClose = () => setOpen(false);
+      dialog.addEventListener("close", onClose);
+      return () => dialog.removeEventListener("close", onClose);
     }
-    return undefined
-  })
+    return undefined;
+  });
 
   const fallbackBox = () => (
     <div class="flex w-full h-full min-h-40 items-center justify-center gap-2 rounded-lg bg-elevated text-muted">
       <RLIcon name="image" class="size-8" aria-hidden="true" />
       <span class="text-sm">Image unavailable</span>
     </div>
-  )
+  );
 
   const triggerImage = () => {
-    if (status() === "error") return fallbackBox()
+    if (status() === "error") return fallbackBox();
 
     if (isResponsive) {
       return (
@@ -230,7 +230,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
             onLoad={handleLoad}
           />
         </picture>
-      )
+      );
     }
 
     if (hasColorMode) {
@@ -253,7 +253,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
             class={`${resolvedClasses().triggerImage} rl-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
           />
         </div>
-      )
+      );
     }
 
     return (
@@ -269,8 +269,8 @@ const RLImage: Component<RLImageProps> = (allProps) => {
         onError={handleError}
         onLoad={handleLoad}
       />
-    )
-  }
+    );
+  };
 
   const renderTrigger = () =>
     props.trigger ? (
@@ -286,7 +286,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
       </button>
     ) : (
       <div class="overflow-hidden rounded-[inherit] block">{triggerImage()}</div>
-    )
+    );
 
   return (
     <div
@@ -324,7 +324,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
           class={resolvedClasses().dialog}
           data-image-dialog
           onClick={(e) => {
-            if (e.target === e.currentTarget) setOpen(false)
+            if (e.target === e.currentTarget) setOpen(false);
           }}
         >
           <div class="flex flex-col bg-default text-highlighted max-h-[90vh]">
@@ -531,7 +531,7 @@ const RLImage: Component<RLImageProps> = (allProps) => {
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-export { RLImage }
+export { RLImage };

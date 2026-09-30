@@ -1,64 +1,103 @@
-import { describe, it, expect, beforeEach, afterEach } from "vite-plus/test"
-import fs from "node:fs/promises"
-import path from "node:path"
-import os from "node:os"
-import { updateDomainConfigs } from "../src/index"
+import { describe, it, expect, beforeEach, afterEach } from "vite-plus/test";
+import fs from "node:fs/promises";
+import path from "node:path";
+import os from "node:os";
+import { updateDomainConfigs } from "../src/index";
+
+const CLOUDFLARE_CONFIG = `import { bindings, defineConfig, exports, triggers, type InferEnv } from "cf/config";
+
+const config = defineConfig({
+  worker: {
+    name: "starter-dot-rimelight-dot-com",
+    entrypoint: "./src/fetch.ts",
+    domains: ["starter.rimelight.com", "www.starter.rimelight.com"],
+    env: {
+      DB: bindings.d1({ id: "a6610294-e214-4d35-b841-174469da54d2" }),
+      "starter-dot-rimelight-dot-com_translations": bindings.kv({ id: "8c09f90741704096bd1dcdf2abadc974" }),
+      BLOB: bindings.r2({ name: "starter-dot-rimelight-dot-com" }),
+      ChatRoom: bindings.durableObject({
+        worker: "starter-dot-rimelight-dot-com",
+        exportName: "ChatRoom"
+      })
+    }
+  }
+});
+
+export default config;
+`;
+
+const VITE_CONFIG = `import { defineConfig } from "vite-plus";
+import { seo } from "@rimelight/seo/plugin";
+import { security } from "@rimelight/security/plugin";
+
+export default defineConfig({
+  plugins: [
+    seo({ id: "starter.rimelight.com", url: "https://starter.rimelight.com" }),
+    security({ domain: "starter.rimelight.com" })
+  ]
+});
+`;
 
 describe("@rimelight/cli domain configuration updates", () => {
-  let tmpDir: string
+  let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "rimelight-cli-test-"))
-  })
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "rimelight-cli-test-"));
+    await fs.writeFile(path.join(tmpDir, "cloudflare.config.ts"), CLOUDFLARE_CONFIG, "utf-8");
+    await fs.writeFile(path.join(tmpDir, "vite.config.ts"), VITE_CONFIG, "utf-8");
+  });
 
   afterEach(async () => {
-    await fs.rm(tmpDir, { recursive: true, force: true })
-  })
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
 
-  it("should update astro.config.ts and wrangler.jsonc with custom domain", async () => {
-    const astroPath = path.join(tmpDir, "astro.config.ts")
-    const wranglerPath = path.join(tmpDir, "wrangler.jsonc")
+  it("should rename the worker and every name derived from the domain", async () => {
+    await updateDomainConfigs(tmpDir, "my-app.com", "my-app");
 
-    await fs.writeFile(
-      astroPath,
-      'import { rimelightAstroConfig } from "@rimelight/config/astro"\nexport default rimelightAstroConfig({ site: "https://starter.rimelight.com" })',
-      "utf-8"
-    )
+    const content = await fs.readFile(path.join(tmpDir, "cloudflare.config.ts"), "utf-8");
 
-    await fs.writeFile(
-      wranglerPath,
-      JSON.stringify({ name: "starter-template", routes: [] }, null, 2),
-      "utf-8"
-    )
+    expect(content).toContain('name: "my-app-dot-com"');
+    expect(content).toContain('domains: ["my-app.com", "www.my-app.com"]');
+    // Names derived from the worker must stay in sync with `worker.name`.
+    expect(content).toContain('"my-app-dot-com_translations"');
+    expect(content).toContain('BLOB: bindings.r2({ name: "my-app-dot-com" })');
+    expect(content).toContain('worker: "my-app-dot-com"');
+    // Nothing should be left pointing at the starter.
+    expect(content).not.toContain("starter");
+  });
 
-    await updateDomainConfigs(tmpDir, "my-app.com", "my-app")
+  it("should update the domain used by the seo and security plugins", async () => {
+    await updateDomainConfigs(tmpDir, "my-app.com", "my-app");
 
-    const astroContent = await fs.readFile(astroPath, "utf-8")
-    const wranglerContent = await fs.readFile(wranglerPath, "utf-8")
-    const parsedWrangler = JSON.parse(wranglerContent)
+    const content = await fs.readFile(path.join(tmpDir, "vite.config.ts"), "utf-8");
 
-    expect(astroContent).toContain('site: "https://my-app.com"')
-    expect(parsedWrangler.name).toBe("my-app-dot-com")
-    expect(parsedWrangler.routes).toEqual([
-      { pattern: "my-app.com", custom_domain: true },
-      { pattern: "www.my-app.com", custom_domain: true }
-    ])
-  })
+    expect(content).toContain('id: "my-app.com"');
+    expect(content).toContain('url: "https://my-app.com"');
+    expect(content).toContain('domain: "my-app.com"');
+    expect(content).not.toContain("starter");
+  });
 
-  it("should format project name into wrangler.jsonc when no domain is provided", async () => {
-    const wranglerPath = path.join(tmpDir, "wrangler.jsonc")
+  it("should fall back to the project name for the worker when no domain is provided", async () => {
+    await updateDomainConfigs(tmpDir, "", "My Super App");
 
-    await fs.writeFile(
-      wranglerPath,
-      JSON.stringify({ name: "starter-template", routes: [{ pattern: "old.com" }] }, null, 2),
-      "utf-8"
-    )
+    const cloudflare = await fs.readFile(path.join(tmpDir, "cloudflare.config.ts"), "utf-8");
+    const vite = await fs.readFile(path.join(tmpDir, "vite.config.ts"), "utf-8");
 
-    await updateDomainConfigs(tmpDir, "", "My Super App")
+    // There is no domain to derive a worker name from, so it falls back to the
+    // project name, while the starter domain itself is left alone.
+    expect(cloudflare).toContain('name: "my-super-app"');
+    expect(cloudflare).toContain('"my-super-app_translations"');
+    expect(cloudflare).toContain('domains: ["starter.rimelight.com", "www.starter.rimelight.com"]');
+    // No domain means the site plugins are left untouched.
+    expect(vite).toContain('id: "starter.rimelight.com"');
+  });
 
-    const parsedWrangler = JSON.parse(await fs.readFile(wranglerPath, "utf-8"))
-    expect(parsedWrangler.name).toBe("my-super-app")
-    // Should preserve existing routes if domain is empty
-    expect(parsedWrangler.routes).toEqual([{ pattern: "old.com" }])
-  })
-})
+  it("should not fail when the config files are absent", async () => {
+    const emptyDir = await fs.mkdtemp(path.join(os.tmpdir(), "rimelight-cli-empty-"));
+    try {
+      await expect(updateDomainConfigs(emptyDir, "my-app.com", "my-app")).resolves.toBeUndefined();
+    } finally {
+      await fs.rm(emptyDir, { recursive: true, force: true });
+    }
+  });
+});
