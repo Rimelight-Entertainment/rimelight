@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vite-plus/test"
 import path from "node:path"
 import fs from "node:fs"
-import { rimelightConfig, rimelightPackConfig, findSourceEntries } from "../vite-plus/base"
+import { rimelightConfig } from "../vite-plus/base"
 
 describe("@rimelight/config vite-plus helpers", () => {
   describe("rimelightConfig", () => {
@@ -14,29 +14,7 @@ describe("@rimelight/config vite-plus helpers", () => {
     })
   })
 
-  describe("rimelightPackConfig", () => {
-    it("should merge pack options with base config", () => {
-      const pack = rimelightPackConfig({
-        entry: ["src/index.ts", "src/extra.ts"]
-      })
-      expect(pack.pack.entry).toEqual(["src/index.ts", "src/extra.ts"])
-      expect(pack.pack.dts).toBe(true)
-      expect(pack.fmt.semi).toBe(false)
-    })
-  })
-
   describe("package integrity utils", () => {
-    it("should find source entries in given base directory", () => {
-      const baseDir = path.resolve(import.meta.dirname, "../vite-plus")
-      const entries = findSourceEntries(baseDir)
-      expect(entries.some((e) => e.endsWith("base.ts"))).toBe(true)
-    })
-
-    it("should return empty array if baseDir does not exist", () => {
-      const entries = findSourceEntries("non-existent-directory")
-      expect(entries).toEqual([])
-    })
-
     it("should not ship exports or files entries that do not exist on disk", () => {
       const pkgDir = path.resolve(import.meta.dirname, "..")
       const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, "package.json"), "utf-8"))

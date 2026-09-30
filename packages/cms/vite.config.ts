@@ -1,8 +1,9 @@
 import { defineConfig } from "vite-plus"
-import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
+import { rimelightConfig } from "@rimelight/config/vite-plus/base"
 
-export default defineConfig(
-  rimelightPackConfig({
+export default defineConfig({
+  ...rimelightConfig(),
+  pack: {
     entry: [
       "src/index.ts",
       "src/schema/index.ts",
@@ -11,6 +12,8 @@ export default defineConfig(
       "src/plugin.ts",
       "src/storage/index.ts",
       "src/server/index.ts"
-    ]
-  })
-)
+    ],
+    dts: true,
+    checks: { pluginTimings: false }
+  }
+})

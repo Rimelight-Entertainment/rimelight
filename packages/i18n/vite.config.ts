@@ -1,8 +1,10 @@
 import { defineConfig } from "vite-plus"
-import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
 
-export default defineConfig(
-  rimelightPackConfig({
-    autoEntry: true
-  })
-)
+export default defineConfig({
+  pack: {
+    entry: ["src/**/*.ts"],
+    exclude: ["**/*.d.ts"],
+    dts: true,
+    checks: { pluginTimings: false }
+  }
+})

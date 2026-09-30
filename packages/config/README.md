@@ -44,21 +44,25 @@ export default defineConfig({
 })
 ```
 
-### Package Config (with Auto-Entry Discovery)
+### Package Config
 
-For library / workspace packages:
+For library / workspace packages, spread `rimelightConfig()` and declare the pack entry points yourself. `vp pack` accepts globs:
 
 ```typescript
 import { defineConfig } from "vite-plus"
-import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
+import { rimelightConfig } from "@rimelight/config/vite-plus/base"
 
-export default defineConfig(
-  rimelightPackConfig({
-    // Automatically discovers all entry modules in src/ (ignoring tests and .d.ts)
-    autoEntry: true
-  })
-)
+export default defineConfig({
+  ...rimelightConfig(),
+  pack: {
+    // Discovers every module in src/ as a build entry
+    entry: ["src/**/*.ts"],
+    dts: true
+  }
+})
 ```
+
+Packages that only publish a subset of `src/` can list those paths explicitly instead of using a glob.
 
 ## Drizzle Configs
 
