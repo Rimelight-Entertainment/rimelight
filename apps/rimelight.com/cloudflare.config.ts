@@ -1,4 +1,4 @@
-import { bindings, defineConfig, type InferEnv } from "cf/config";
+import { bindings, defineConfig, triggers, type InferEnv } from "cf/config";
 
 const config = defineConfig({
   worker: {
@@ -19,7 +19,10 @@ const config = defineConfig({
         enabled: true,
       },
     },
-    domains: ["rimelight.com", "www.rimelight.com"],
+    triggers: [
+      triggers.fetch({ pattern: "rimelight.com/*", zone: "rimelight.com" }),
+      triggers.fetch({ pattern: "www.rimelight.com/*", zone: "rimelight.com" }),
+    ],
     env: {
       CONSTRUCTION_MODE: bindings.text("true"),
       EMAIL_DOMAIN: bindings.text("rimelight.com"),

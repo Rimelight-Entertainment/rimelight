@@ -19,8 +19,9 @@ const config = defineConfig({
         enabled: true,
       },
     },
-    domains: ["starter.rimelight.com", "www.starter.rimelight.com"],
     triggers: [
+      triggers.fetch({ pattern: "starter.rimelight.com/*", zone: "rimelight.com" }),
+      triggers.fetch({ pattern: "www.starter.rimelight.com/*", zone: "rimelight.com" }),
       triggers.scheduled({
         schedule: "* * * * *",
       }),
