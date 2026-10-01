@@ -117,7 +117,7 @@ export const contentTypes = pgTable("content_types", {
   // Metadata & System Flags
   isSystem: boolean("is_system").default(false).notNull(), // System types (blog, legal) cannot be deleted
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
 });
 ```
 

@@ -29,9 +29,9 @@ This document serves as a standardized checklist for onboarding and configuring 
       "flagship": [
         {
           "binding": "FLAGS",
-          "app_id": "<APP_ID>"
-        }
-      ]
+          "app_id": "<APP_ID>",
+        },
+      ],
     }
     ```
   - [ ] Standardize evaluation via native bindings (`env.FLAGS`) or OpenFeature provider (`@cloudflare/flagship/server` and `@openfeature/server-sdk`):

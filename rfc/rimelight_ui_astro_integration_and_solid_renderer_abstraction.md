@@ -65,8 +65,8 @@ import { rimelightAstroConfig } from "@rimelight/config/astro";
 export default defineConfig(
   rimelightAstroConfig({
     domain: "example.com",
-    ui: true // Automatically mounts UnoCSS + Solid island renderer
-  })
+    ui: true, // Automatically mounts UnoCSS + Solid island renderer
+  }),
 );
 ```
 
@@ -133,7 +133,7 @@ export function rimelightUi(config: UIConfig = {}): AstroIntegration {
         const solidIntegration = solid(
           typeof solidOptions === "object"
             ? solidOptions
-            : { include: ["**/solid/**", "**/*.tsx", "**/*.jsx"] }
+            : { include: ["**/solid/**", "**/*.tsx", "**/*.jsx"] },
         );
 
         updateConfig({
@@ -148,25 +148,25 @@ export function rimelightUi(config: UIConfig = {}): AstroIntegration {
                     ...unocss.content?.pipeline,
                     include: [
                       /\.(astro|html|js|jsx|json|md|mdx|ts|tsx)$/,
-                      ...[unocss.content?.pipeline?.include]
-                    ]
-                  }
-                }
-              })
-            ]
-          }
+                      ...[unocss.content?.pipeline?.include],
+                    ],
+                  },
+                },
+              }),
+            ],
+          },
         });
 
         // Delegate renderer registration to @astrojs/solid-js
         if (solidIntegration.hooks["astro:config:setup"]) {
           solidIntegration.hooks["astro:config:setup"]({
             addRenderer,
-            updateConfig
+            updateConfig,
             // Pass standard Astro setup context
           } as any);
         }
-      }
-    }
+      },
+    },
   };
 }
 
@@ -235,7 +235,7 @@ flowchart TD
   import { rimelightUi } from "@rimelight/ui/astro";
 
   export default defineConfig({
-    integrations: [rimelightUi()]
+    integrations: [rimelightUi()],
   });
   ```
 - **Pros**: Non-Astro consumers import `@rimelight/ui` with 0 Astro baggage; Astro consumers import `@rimelight/ui/astro` and get zero-config Solid/UnoCSS registration.

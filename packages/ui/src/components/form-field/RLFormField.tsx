@@ -1,4 +1,4 @@
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { FormFieldProps } from "./form-field";
 import { formFieldTheme } from "./form-field.theme";
@@ -40,33 +40,43 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
     }),
   );
 
+  const resolvedHint = children(() => props.hint);
+  const resolvedLabelSlot = children(() => props.labelSlot);
+  const resolvedDescriptionSlot = children(() => props.descriptionSlot);
+  const resolvedErrorSlot = children(() => props.errorSlot);
+  const resolvedHelpSlot = children(() => props.helpSlot);
+
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
-      {props.label || props.labelSlot || props.hint ? (
+      <Show when={props.label || resolvedLabelSlot() || resolvedHint()}>
         <div class="flex items-center justify-between gap-2">
           <label for={props.id} class={resolvedClasses().label} data-slot="label">
-            {props.labelSlot ? props.labelSlot : props.label}
-            {props.required && <span class="text-error-500 ml-0.5">*</span>}
+            {resolvedLabelSlot() ? resolvedLabelSlot() : props.label}
+            <Show when={props.required}>
+              <span class="text-error-500 ml-0.5">*</span>
+            </Show>
           </label>
-          {props.hint}
+          <Show when={resolvedHint()}>{resolvedHint()}</Show>
         </div>
-      ) : null}
+      </Show>
 
-      {props.description || props.descriptionSlot ? (
+      <Show when={props.description || resolvedDescriptionSlot()}>
         <p class={resolvedClasses().description} data-slot="description">
-          {props.descriptionSlot ? props.descriptionSlot : props.description}
+          {resolvedDescriptionSlot() ? resolvedDescriptionSlot() : props.description}
         </p>
-      ) : null}
+      </Show>
 
       <div class="relative w-full">{props.children}</div>
 
-      {props.error || props.errorSlot ? (
+      <Show when={props.error || resolvedErrorSlot()}>
         <p class={resolvedClasses().error} data-slot="error">
-          {props.errorSlot ? props.errorSlot : props.error}
+          {resolvedErrorSlot() ? resolvedErrorSlot() : props.error}
         </p>
-      ) : null}
+      </Show>
 
-      {props.helpSlot ? <div class="mt-1">{props.helpSlot}</div> : null}
+      <Show when={resolvedHelpSlot()}>
+        <div class="mt-1">{resolvedHelpSlot()}</div>
+      </Show>
     </div>
   );
 };

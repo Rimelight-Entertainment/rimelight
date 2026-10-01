@@ -1,4 +1,4 @@
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { InputProps } from "./input";
 import { inputTheme } from "./input.theme";
@@ -45,8 +45,11 @@ const RLInput: Component<RLInputProps> = (allProps) => {
     "trailing",
   );
 
-  const hasLeading = () => !!(props.leadingIcon || props.leading);
-  const hasTrailing = () => !!(props.trailingIcon || props.trailing);
+  const resolvedLeading = children(() => props.leading);
+  const resolvedTrailing = children(() => props.trailing);
+
+  const hasLeading = () => !!(props.leadingIcon || resolvedLeading());
+  const hasTrailing = () => !!(props.trailingIcon || resolvedTrailing());
 
   const resolvedClasses = createMemo(() =>
     inputTheme({
@@ -63,13 +66,12 @@ const RLInput: Component<RLInputProps> = (allProps) => {
 
   return (
     <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme}>
-      {props.leading ? (
-        props.leading
-      ) : props.leadingIcon ? (
+      <Show when={resolvedLeading()}>{resolvedLeading()}</Show>
+      <Show when={!resolvedLeading() && props.leadingIcon}>
         <span class={resolvedClasses().leading} data-slot="leading">
-          <RLIcon name={props.leadingIcon} size="sm" aria-hidden="true" />
+          <RLIcon name={props.leadingIcon!} size="sm" aria-hidden="true" />
         </span>
-      ) : null}
+      </Show>
 
       <input
         ref={props.ref}
@@ -90,13 +92,12 @@ const RLInput: Component<RLInputProps> = (allProps) => {
         {...rest}
       />
 
-      {props.trailing ? (
-        props.trailing
-      ) : props.trailingIcon ? (
+      <Show when={resolvedTrailing()}>{resolvedTrailing()}</Show>
+      <Show when={!resolvedTrailing() && props.trailingIcon}>
         <span class={resolvedClasses().trailing} data-slot="trailing">
-          <RLIcon name={props.trailingIcon} size="sm" aria-hidden="true" />
+          <RLIcon name={props.trailingIcon!} size="sm" aria-hidden="true" />
         </span>
-      ) : null}
+      </Show>
     </div>
   );
 };

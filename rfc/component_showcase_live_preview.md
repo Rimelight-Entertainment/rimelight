@@ -155,7 +155,7 @@ Rendered between the "controls area" and the preview area. Only shown when 2+ pr
 ```js
 const templates = {
   astro: previewWrapper?.querySelector('[data-preview="astro"]')?.cloneNode(true),
-  solid: previewWrapper?.querySelector('[data-preview="solid"]')?.cloneNode(true)
+  solid: previewWrapper?.querySelector('[data-preview="solid"]')?.cloneNode(true),
 };
 
 function updateComponent() {

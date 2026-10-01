@@ -1,4 +1,4 @@
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { CheckboxProps } from "./checkbox";
 import { checkboxTheme } from "./checkbox.theme";
@@ -28,6 +28,8 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     "children",
   );
 
+  const resolvedChildren = children(() => props.children);
+
   const resolvedClasses = createMemo(() =>
     checkboxTheme({
       color: props.color ?? "primary",
@@ -56,11 +58,13 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
           <RLIcon name="check" size="xs" aria-hidden="true" />
         </span>
       </div>
-      {props.label || props.children ? (
+      <Show when={props.label || resolvedChildren()}>
         <span class={resolvedClasses().label} data-slot="label">
-          {props.children !== undefined && props.children !== null ? props.children : props.label}
+          {resolvedChildren() !== undefined && resolvedChildren() !== null
+            ? resolvedChildren()
+            : props.label}
         </span>
-      ) : null}
+      </Show>
     </label>
   );
 };

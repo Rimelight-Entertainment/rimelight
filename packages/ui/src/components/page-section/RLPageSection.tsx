@@ -1,4 +1,4 @@
-import { createMemo, omit, For, type Component } from "solid-js";
+import { createMemo, omit, For, children, type Component, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { Dynamic } from "@solidjs/web";
 import type { PageSectionProps } from "./page-section";
@@ -55,6 +55,20 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     "children",
   );
 
+  const resolvedBackground = children(() => props.background);
+  const resolvedTop = children(() => props.top);
+  const resolvedHeader = children(() => props.header);
+  const resolvedLeading = children(() => props.leading);
+  const resolvedHeadlineSlot = children(() => props.headlineSlot);
+  const resolvedTitleSlot = children(() => props.titleSlot);
+  const resolvedDescriptionSlot = children(() => props.descriptionSlot);
+  const resolvedBody = children(() => props.body);
+  const resolvedFooter = children(() => props.footer);
+  const resolvedLinksSlot = children(() => props.linksSlot);
+  const resolvedContent = children(() => props.content);
+  const resolvedBottom = children(() => props.bottom);
+  const resolvedChildren = children(() => props.children);
+
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "hero" || props.variant === "cta"
       ? props.variant
@@ -66,10 +80,10 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       ...(resolvedVariant() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
       orientation: props.orientation ?? "vertical",
       reverse: !!props.reverse,
-      headline: !!(props.headlineSlot || props.headline),
-      title: !!(props.titleSlot || props.title),
-      description: !!(props.descriptionSlot || props.description),
-      body: !!props.body,
+      headline: !!(resolvedHeadlineSlot() || props.headline),
+      title: !!(resolvedTitleSlot() || props.title),
+      description: !!(resolvedDescriptionSlot() || props.description),
+      body: !!resolvedBody(),
       ui: props.ui,
       class: props.class,
     }),
@@ -80,22 +94,22 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
 
   const showHeader = () =>
     !!(
-      props.header ||
+      resolvedHeader() ||
       props.icon ||
       props.headline ||
-      props.headlineSlot ||
+      resolvedHeadlineSlot() ||
       props.title ||
-      props.titleSlot ||
+      resolvedTitleSlot() ||
       props.description ||
-      props.descriptionSlot
+      resolvedDescriptionSlot()
     );
 
   const showWrapper = () =>
     !!(
       showHeader() ||
-      props.body ||
-      props.footer ||
-      props.linksSlot ||
+      resolvedBody() ||
+      resolvedFooter() ||
+      resolvedLinksSlot() ||
       (props.links?.length ?? 0) > 0
     );
 
@@ -115,86 +129,106 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       }
       {...rest}
     >
-      {props.background ? (
+      <Show when={resolvedBackground()}>
         <div class={resolvedClasses().background} data-slot="background">
-          {props.background}
+          {resolvedBackground()}
         </div>
-      ) : null}
+      </Show>
 
-      {props.top}
+      {resolvedTop()}
 
       <div class={resolvedClasses().container}>
-        {showWrapper() ? (
+        <Show when={showWrapper()}>
           <div class={resolvedClasses().wrapper}>
-            {showHeader() ? (
-              <div class={resolvedClasses().header}>
-                {props.header ? (
-                  props.header
-                ) : (
-                  <>
-                    {props.icon || props.leading ? (
+            <Show
+              when={resolvedHeader()}
+              fallback={
+                <Show when={showHeader()}>
+                  <div class={resolvedClasses().header}>
+                    <Show when={props.icon || resolvedLeading()}>
                       <div class={resolvedClasses().leading}>
-                        {props.leading ? (
-                          props.leading
-                        ) : props.icon ? (
-                          <RLIcon
-                            name={props.icon}
-                            size="md"
-                            ui={{ root: resolvedClasses().leadingIcon }}
-                          />
-                        ) : null}
+                        <Show
+                          when={resolvedLeading()}
+                          fallback={
+                            <Show when={props.icon}>
+                              <RLIcon
+                                name={props.icon!}
+                                size="md"
+                                ui={{ root: resolvedClasses().leadingIcon }}
+                              />
+                            </Show>
+                          }
+                        >
+                          {resolvedLeading()}
+                        </Show>
                       </div>
-                    ) : null}
+                    </Show>
 
-                    {props.headline || props.headlineSlot ? (
+                    <Show when={props.headline || resolvedHeadlineSlot()}>
                       <div class={resolvedClasses().headline}>
-                        {props.headlineSlot ?? props.headline}
+                        {resolvedHeadlineSlot() ?? props.headline}
                       </div>
-                    ) : null}
+                    </Show>
 
-                    {props.title || props.titleSlot ? (
+                    <Show when={props.title || resolvedTitleSlot()}>
                       <Dynamic component={titleTag()} class={resolvedClasses().title}>
-                        {props.titleSlot ?? props.title}
+                        {resolvedTitleSlot() ?? props.title}
                       </Dynamic>
-                    ) : null}
+                    </Show>
 
-                    {props.description || props.descriptionSlot ? (
+                    <Show when={props.description || resolvedDescriptionSlot()}>
                       <div class={resolvedClasses().description}>
-                        {props.descriptionSlot ?? props.description}
+                        {resolvedDescriptionSlot() ?? props.description}
                       </div>
-                    ) : null}
-                  </>
-                )}
-              </div>
-            ) : null}
-
-            {props.body ? <div class={resolvedClasses().body}>{props.body}</div> : null}
-
-            {props.footer || props.linksSlot || (props.links?.length ?? 0) > 0 ? (
-              <div class={resolvedClasses().footer}>
-                {props.footer ? (
-                  props.footer
-                ) : (
-                  <div class={resolvedClasses().links}>
-                    <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
-                    {props.linksSlot}
+                    </Show>
                   </div>
-                )}
+                </Show>
+              }
+            >
+              <div class={resolvedClasses().header}>{resolvedHeader()}</div>
+            </Show>
+
+            <Show when={resolvedBody()}>
+              <div class={resolvedClasses().body}>{resolvedBody()}</div>
+            </Show>
+
+            <Show when={resolvedFooter() || resolvedLinksSlot() || (props.links?.length ?? 0) > 0}>
+              <div class={resolvedClasses().footer}>
+                <Show
+                  when={resolvedFooter()}
+                  fallback={
+                    <div class={resolvedClasses().links}>
+                      <For each={props.links ?? []}>
+                        {(link) => <RLButton size="lg" {...link} />}
+                      </For>
+                      {resolvedLinksSlot()}
+                    </div>
+                  }
+                >
+                  {resolvedFooter()}
+                </Show>
               </div>
-            ) : null}
+            </Show>
           </div>
-        ) : null}
+        </Show>
 
-        {props.children !== undefined && props.children !== null ? (
-          props.children
-        ) : (props.orientation ?? "vertical") === "horizontal" ? (
-          <div class="hidden lg:block" />
-        ) : null}
+        <Show
+          when={resolvedChildren() !== undefined && resolvedChildren() !== null}
+          fallback={
+            <Show when={(props.orientation ?? "vertical") === "horizontal"}>
+              <div class="hidden lg:block" />
+            </Show>
+          }
+        >
+          {resolvedChildren()}
+        </Show>
 
-        {props.content ? <div class="col-span-full w-full">{props.content}</div> : null}
+        <Show when={resolvedContent()}>
+          <div class="col-span-full w-full">{resolvedContent()}</div>
+        </Show>
       </div>
 
-      {props.bottom}
+      {resolvedBottom()}
     </Dynamic>
   );
 };

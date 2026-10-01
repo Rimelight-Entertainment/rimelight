@@ -95,9 +95,9 @@ export default defineConfig({
     rimelightAnalytics({
       scriptUrl: "https://stats.example.com/em.js",
       domain: "example.com",
-      events: true
-    })
-  ]
+      events: true,
+    }),
+  ],
 });
 ```
 
@@ -123,9 +123,9 @@ export default defineConfig({
     rimelightAnalytics({
       scriptUrl: "https://stats.example.com/em.js",
       domain: "example.com",
-      events: true
-    })
-  ]
+      events: true,
+    }),
+  ],
 });
 ```
 
@@ -136,7 +136,7 @@ import { defineAnalyticsConfig, generateAnalyticsHead } from "@rimelight/analyti
 
 const config = defineAnalyticsConfig({
   scriptUrl: "https://stats.example.com/em.js",
-  domain: "example.com"
+  domain: "example.com",
 });
 
 const head = generateAnalyticsHead(config); // => { html, tags }
@@ -205,7 +205,7 @@ import { cspAdditions } from "@rimelight/analytics/csp";
 
 const securityOptions = {
   domain: "example.com",
-  ...cspAdditions({ scriptUrl: "https://stats.example.com/em.js" })
+  ...cspAdditions({ scriptUrl: "https://stats.example.com/em.js" }),
 };
 ```
 

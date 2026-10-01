@@ -1,5 +1,5 @@
-import { createMemo, omit, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import type { ButtonProps } from "./button";
 import { buttonTheme } from "./button.theme";
 import { RLIcon } from "../icon/RLIcon";
@@ -56,11 +56,16 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
     "ariaCurrentValue",
   );
 
+  const resolvedLeading = children(() => props.leading);
+  const resolvedTrailing = children(() => props.trailing);
+  const resolvedChildren = children(() => props.children);
+
   const href = () => props.href || (props["to"] as string | undefined);
   const isLink = () => Boolean(href());
-  const isLeading = () => !!(props.leadingIcon || props.avatar || props.leading) || !!props.loading;
+  const isLeading = () =>
+    !!(props.leadingIcon || props.avatar || resolvedLeading()) || !!props.loading;
   const isTrailing = () =>
-    !!(props.trailingIcon || props.trailing) || (!!props.loading && !isLeading());
+    !!(props.trailingIcon || resolvedTrailing()) || (!!props.loading && !isLeading());
 
   const showLeadingIcon = () => {
     if (props.loading) return "loaderCircle";
@@ -83,7 +88,7 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
       size: props.size ?? "md",
       justify: props.justify,
       block: props.block,
-      square: props.square !== undefined ? props.square : !props.label && !props.children,
+      square: props.square !== undefined ? props.square : !props.label && !resolvedChildren(),
       rounded: (props["rounded"] as boolean | string | undefined) ?? false,
       leading: isLeading(),
       trailing: isTrailing(),
@@ -95,68 +100,87 @@ const RLButton: Component<RLButtonProps> = (allProps) => {
     }),
   );
 
-  const renderLeading = () => {
-    if (props.leading) return props.leading;
-    if (!isLeading()) return null;
+  const buttonContent = () => (
+    <>
+      <Show when={resolvedLeading()}>{resolvedLeading()}</Show>
+      <Show when={!resolvedLeading() && isLeading()}>
+        <span class={`${classes()["leadingIcon"]} ${leadingIconClass()}`} data-slot="leading-icon">
+          <Show when={props.loading || props.leadingIcon}>
+            <RLIcon name={showLeadingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
+          </Show>
+          <Show when={!props.loading && !props.leadingIcon && props.avatar}>
+            <RLAvatar
+              {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
+              size={classes()["leadingAvatarSize"] as any}
+              class={classes()["leadingAvatar"]}
+              data-slot="leading-avatar"
+            />
+          </Show>
+        </span>
+      </Show>
 
-    return (
-      <span class={`${classes()["leadingIcon"]} ${leadingIconClass()}`} data-slot="leading-icon">
-        {props.loading || props.leadingIcon ? (
-          <RLIcon name={showLeadingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
-        ) : props.avatar ? (
-          <RLAvatar
-            {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-            size={classes()["leadingAvatarSize"] as any}
-            class={classes()["leadingAvatar"]}
-            data-slot="leading-avatar"
-          />
-        ) : null}
-      </span>
-    );
-  };
+      <Show
+        when={resolvedChildren() !== undefined && resolvedChildren() !== null}
+        fallback={
+          <Show when={props.label !== undefined && props.label !== null}>
+            <span class={classes()["label"]} data-slot="label">
+              {props.label}
+            </span>
+          </Show>
+        }
+      >
+        {resolvedChildren()}
+      </Show>
 
-  const renderTrailing = () => {
-    if (props.trailing) return props.trailing;
-    if (!isTrailing() || !showTrailingIcon()) return null;
-
-    return (
-      <span class={`${classes()["trailingIcon"]} ${trailingIconClass()}`} data-slot="trailing-icon">
-        <RLIcon name={showTrailingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
-      </span>
-    );
-  };
-
-  const Root = dynamic(() => (isLink() ? "a" : "button"));
+      <Show when={resolvedTrailing()}>{resolvedTrailing()}</Show>
+      <Show when={!resolvedTrailing() && isTrailing() && showTrailingIcon()}>
+        <span
+          class={`${classes()["trailingIcon"]} ${trailingIconClass()}`}
+          data-slot="trailing-icon"
+        >
+          <RLIcon name={showTrailingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
+        </span>
+      </Show>
+    </>
+  );
 
   return (
-    <Root
-      type={!isLink() ? props.type || "button" : undefined}
-      href={isLink() ? href() : undefined}
-      target={isLink() ? props.target : undefined}
-      rel={isLink() ? props.rel || undefined : undefined}
-      disabled={!isLink() ? props.disabled : undefined}
-      aria-disabled={isLink() && props.disabled ? "true" : undefined}
-      class={classes()["root"]}
-      data-slot="root"
-      data-theme={props.theme}
-      data-loading={props.loading ? "true" : undefined}
-      data-loading-auto={props.loadingAuto ? "true" : undefined}
-      aria-label={props.ariaLabel}
-      onClick={props.onClick}
-      {...rest}
+    <Show
+      when={isLink()}
+      fallback={
+        <button
+          type={props.type || "button"}
+          disabled={props.disabled}
+          class={classes()["root"]}
+          data-slot="root"
+          data-theme={props.theme}
+          data-loading={props.loading ? "true" : undefined}
+          data-loading-auto={props.loadingAuto ? "true" : undefined}
+          aria-label={props.ariaLabel}
+          onClick={props.onClick}
+          {...rest}
+        >
+          {buttonContent()}
+        </button>
+      }
     >
-      {isLeading() ? renderLeading() : null}
-
-      {props.children !== undefined && props.children !== null ? (
-        props.children
-      ) : props.label !== undefined && props.label !== null ? (
-        <span class={classes()["label"]} data-slot="label">
-          {props.label}
-        </span>
-      ) : null}
-
-      {isTrailing() ? renderTrailing() : null}
-    </Root>
+      <a
+        href={href()}
+        target={props.target}
+        rel={props.rel || undefined}
+        aria-disabled={props.disabled ? "true" : undefined}
+        class={classes()["root"]}
+        data-slot="root"
+        data-theme={props.theme}
+        data-loading={props.loading ? "true" : undefined}
+        data-loading-auto={props.loadingAuto ? "true" : undefined}
+        aria-label={props.ariaLabel}
+        onClick={props.onClick}
+        {...rest}
+      >
+        {buttonContent()}
+      </a>
+    </Show>
   );
 };
 

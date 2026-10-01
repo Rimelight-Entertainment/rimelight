@@ -147,8 +147,8 @@ packages/commerce/
 import { rimelightCommerce } from "@rimelight/commerce/core";
 export default defineConfig({
   vite: {
-    plugins: [rimelightCommerce({ stripe: true, lightning: process.env.LND_URL })]
-  }
+    plugins: [rimelightCommerce({ stripe: true, lightning: process.env.LND_URL })],
+  },
 });
 ```
 

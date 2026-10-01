@@ -80,7 +80,7 @@ export interface SyncOptions {
 }
 
 export const DEFAULT_HOOKS: Record<string, string> = {
-  "pre-commit": "pnpm audit && vp staged\n"
+  "pre-commit": "pnpm audit && vp staged\n",
 };
 
 export const DEFAULT_EDITORCONFIG = `root = true
@@ -120,7 +120,7 @@ export function syncProject(options?: SyncOptions): void {
   syncHooks(options);
   if (options?.editorconfig !== false) {
     syncEditorConfig(
-      typeof options?.editorconfig === "string" ? options.editorconfig : DEFAULT_EDITORCONFIG
+      typeof options?.editorconfig === "string" ? options.editorconfig : DEFAULT_EDITORCONFIG,
     );
   }
 }
