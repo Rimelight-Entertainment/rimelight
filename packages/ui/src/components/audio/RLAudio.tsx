@@ -1,4 +1,5 @@
 import {
+  children,
   createMemo,
   createSignal,
   createUniqueId,
@@ -127,6 +128,13 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
     "onRepeatModeChange",
   );
 
+  const resolvedChildren = children(() => props.children);
+  const resolvedHeaderSlot = children(() => props.headerSlot);
+  const resolvedTimelineSlot = children(() => props.timelineSlot);
+  const resolvedControlsSlot = children(() => props.controlsSlot);
+  const resolvedArtworkSlot = children(() => props.artworkSlot);
+  const resolvedTranscript = children(() => props.transcript);
+
   const titleId = createUniqueId();
   const descId = createUniqueId();
 
@@ -246,7 +254,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
   const trackTitle = () => currentTrack()?.title ?? props.title;
   const trackDescription = () => currentTrack()?.description ?? props.description;
   const trackArtwork = () => currentTrack()?.artwork ?? props.artwork;
-  const trackTranscript = () => currentTrack()?.transcript ?? props.transcript;
+  const trackTranscript = () => currentTrack()?.transcript ?? resolvedTranscript();
   const trackFormat = () => currentTrack()?.format ?? props.format;
   const trackFileSize = () => currentTrack()?.fileSize ?? props.fileSize;
   const trackBitrate = () => currentTrack()?.bitrate ?? props.bitrate;
@@ -513,11 +521,11 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
 
   const renderArtwork = () => {
     const art = trackArtwork();
-    if (!art && !props.artworkSlot) return null;
+    if (!art && !resolvedArtworkSlot()) return null;
 
     const imageElement = () =>
-      props.artworkSlot !== undefined ? (
-        props.artworkSlot
+      resolvedArtworkSlot() ? (
+        resolvedArtworkSlot()
       ) : artworkZoomable() && art ? (
         <RLImage
           src={art}
@@ -592,7 +600,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
       <div class={resolvedClasses().container} data-slot="container">
         {/* 1. Header with Artwork, Track Details & Top Actions */}
         <Show
-          when={props.headerSlot !== undefined}
+          when={resolvedHeaderSlot()}
           fallback={
             <div class={resolvedClasses().header} data-slot="header">
               {renderArtwork()}
@@ -679,12 +687,12 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
             </div>
           }
         >
-          {props.headerSlot}
+          {resolvedHeaderSlot()}
         </Show>
 
         {/* 2. Timeline Section (Progress Scrub Bar or Waveform + Time) */}
         <Show
-          when={props.timelineSlot !== undefined}
+          when={resolvedTimelineSlot()}
           fallback={
             <div class={resolvedClasses().timeline} data-slot="timeline">
               <div
@@ -792,12 +800,12 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
             </div>
           }
         >
-          {props.timelineSlot}
+          {resolvedTimelineSlot()}
         </Show>
 
         {/* 3. Controls Section: Left (Volume), Center (Playback), Right (Repeat & Speed) */}
         <Show
-          when={props.controlsSlot !== undefined}
+          when={resolvedControlsSlot()}
           fallback={
             <div class={resolvedClasses().controls} data-slot="controls">
               {/* Bottom-Left: Vertical Volume Popover & Mute */}
@@ -1067,7 +1075,7 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
             </div>
           }
         >
-          {props.controlsSlot}
+          {resolvedControlsSlot()}
         </Show>
 
         {/* 4. Playlist / Queue View */}
@@ -1119,8 +1127,8 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
         </Show>
 
         {/* 5. Children Slot */}
-        <Show when={props.children !== undefined}>
-          <div data-slot="children">{props.children}</div>
+        <Show when={resolvedChildren()}>
+          <div data-slot="children">{resolvedChildren()}</div>
         </Show>
 
         {/* 6. Transcript Collapsible Section */}

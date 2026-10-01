@@ -1,4 +1,4 @@
-import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { children, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { VideoProps } from "./video";
 import { videoTheme } from "./video.theme";
@@ -66,6 +66,10 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
 
 const RLVideo: Component<RLVideoProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
+  const resolvedIconSlot = children(() => props.iconSlot);
+  const resolvedTranscriptSlot = children(() => props.transcriptSlot);
+
   const rest = omit(
     allProps,
     "src",
@@ -124,8 +128,8 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
                 data-slot="image"
               />
 
-              {props.iconSlot !== undefined ? (
-                props.iconSlot
+              {resolvedIconSlot() ? (
+                resolvedIconSlot()
               ) : (
                 <RLIcon
                   name={iconName()}
@@ -150,9 +154,9 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
         </Show>
       </div>
 
-      <Show when={props.transcriptSlot !== undefined || props.children !== undefined}>
+      <Show when={resolvedTranscriptSlot() || resolvedChildren()}>
         <div class={resolvedClasses().transcript} data-slot="transcript">
-          {props.transcriptSlot !== undefined ? props.transcriptSlot : props.children}
+          {resolvedTranscriptSlot() ? resolvedTranscriptSlot() : resolvedChildren()}
         </div>
       </Show>
     </div>

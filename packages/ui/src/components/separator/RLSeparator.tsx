@@ -1,4 +1,4 @@
-import { createMemo, omit, type Component } from "solid-js";
+import { children, createMemo, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { SeparatorProps } from "./separator";
 import { separatorTheme } from "./separator.theme";
@@ -15,6 +15,10 @@ export interface RLSeparatorProps extends SeparatorProps {
 
 const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
+  const resolvedAvatarSlot = children(() => props.avatarSlot);
+  const resolvedIconSlot = children(() => props.iconSlot);
+
   const rest = omit(
     allProps,
     "color",
@@ -57,11 +61,11 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
     >
       <div class={classes()["border"]} />
 
-      {(props.label || props.icon || props.avatar || props.children !== undefined) && (
+      {(props.label || props.icon || props.avatar || resolvedChildren()) && (
         <>
           <div class={classes()["container"]} data-slot="container">
-            {props.avatarSlot !== undefined ? (
-              props.avatarSlot
+            {resolvedAvatarSlot() ? (
+              resolvedAvatarSlot()
             ) : props.avatar ? (
               <RLAvatar
                 {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
@@ -71,8 +75,8 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
               />
             ) : null}
 
-            {props.iconSlot !== undefined ? (
-              props.iconSlot
+            {resolvedIconSlot() ? (
+              resolvedIconSlot()
             ) : props.icon ? (
               <span class={classes()["icon"]} data-slot="icon">
                 <span class={props.icon} aria-hidden="true" />
@@ -81,7 +85,7 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
 
             <span class={classes()["label"]} data-slot="label">
               {props.label}
-              {props.children}
+              {resolvedChildren()}
             </span>
           </div>
 

@@ -1,4 +1,5 @@
 import {
+  children,
   createMemo,
   createSignal,
   createEffect,
@@ -25,6 +26,13 @@ export interface RLModalProps extends ModalProps {
 
 const RLModal: Component<RLModalProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
+  const resolvedTrigger = children(() => props.trigger);
+  const resolvedTriggerSlot = children(() => props.triggerSlot);
+  const resolvedTitleSlot = children(() => props.titleSlot);
+  const resolvedDescriptionSlot = children(() => props.descriptionSlot);
+  const resolvedFooter = children(() => props.footer);
+  const resolvedFooterSlot = children(() => props.footerSlot);
   const rest = omit(
     allProps,
     "open",
@@ -129,8 +137,8 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     },
   );
 
-  const triggerContent = () => props.trigger ?? props.triggerSlot;
-  const footerContent = () => props.footer ?? props.footerSlot;
+  const triggerContent = () => resolvedTrigger() || resolvedTriggerSlot();
+  const footerContent = () => resolvedFooter() || resolvedFooterSlot();
 
   return (
     <div class={resolvedClasses().root} data-slot="root">
@@ -169,18 +177,18 @@ const RLModal: Component<RLModalProps> = (allProps) => {
             onClick={handleClose}
           />
 
-          {props.title || props.description || props.titleSlot || props.descriptionSlot ? (
+          {props.title || props.description || resolvedTitleSlot() || resolvedDescriptionSlot() ? (
             <div class={resolvedClasses().header} data-slot="header">
-              {props.titleSlot ? (
-                props.titleSlot
+              {resolvedTitleSlot() ? (
+                resolvedTitleSlot()
               ) : props.title ? (
                 <h3 class={resolvedClasses().title} data-slot="title">
                   {props.title}
                 </h3>
               ) : null}
 
-              {props.descriptionSlot ? (
-                props.descriptionSlot
+              {resolvedDescriptionSlot() ? (
+                resolvedDescriptionSlot()
               ) : props.description ? (
                 <p class={resolvedClasses().description} data-slot="description">
                   {props.description}
@@ -189,7 +197,7 @@ const RLModal: Component<RLModalProps> = (allProps) => {
             </div>
           ) : null}
 
-          {props.children}
+          {resolvedChildren()}
 
           {footerContent() ? (
             <div class={resolvedClasses().footer} data-slot="footer">

@@ -1,4 +1,4 @@
-import { createMemo, omit, For, type Component } from "solid-js";
+import { children, createMemo, omit, For, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { EmptyProps } from "./empty";
 import { emptyTheme } from "./empty.theme";
@@ -19,6 +19,15 @@ export interface RLEmptyProps extends EmptyProps {
 
 const RLEmpty: Component<RLEmptyProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
+  const resolvedHeaderSlot = children(() => props.headerSlot);
+  const resolvedLeadingSlot = children(() => props.leadingSlot);
+  const resolvedTitleSlot = children(() => props.titleSlot);
+  const resolvedDescriptionSlot = children(() => props.descriptionSlot);
+  const resolvedBodySlot = children(() => props.bodySlot);
+  const resolvedActionsSlot = children(() => props.actionsSlot);
+  const resolvedFooterSlot = children(() => props.footerSlot);
+
   const rest = omit(
     allProps,
     "icon",
@@ -58,12 +67,12 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
 
   return (
     <div class={classes()["root"]} data-slot="root" {...rest}>
-      {props.headerSlot !== undefined ? (
-        props.headerSlot
+      {resolvedHeaderSlot() ? (
+        resolvedHeaderSlot()
       ) : (
         <div class={classes()["header"]} data-slot="header">
-          {props.leadingSlot !== undefined ? (
-            props.leadingSlot
+          {resolvedLeadingSlot() ? (
+            resolvedLeadingSlot()
           ) : activeIcon ? (
             <div class={classes()["avatar"]} data-slot="avatar">
               <RLIcon
@@ -78,30 +87,30 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
             </div>
           ) : null}
 
-          {(props.title || props.titleSlot !== undefined) && (
+          {(props.title || resolvedTitleSlot()) && (
             <div class={classes()["title"]} data-slot="title">
-              {props.titleSlot !== undefined ? props.titleSlot : props.title}
+              {resolvedTitleSlot() ? resolvedTitleSlot() : props.title}
             </div>
           )}
 
-          {(props.description || props.descriptionSlot !== undefined) && (
+          {(props.description || resolvedDescriptionSlot()) && (
             <div class={classes()["description"]} data-slot="description">
-              {props.descriptionSlot !== undefined ? props.descriptionSlot : props.description}
+              {resolvedDescriptionSlot() ? resolvedDescriptionSlot() : props.description}
             </div>
           )}
         </div>
       )}
 
-      {(props.bodySlot !== undefined || props.children !== undefined) && (
+      {(resolvedBodySlot() || resolvedChildren()) && (
         <div class={classes()["body"]} data-slot="body">
-          {props.bodySlot !== undefined ? props.bodySlot : props.children}
+          {resolvedBodySlot() ? resolvedBodySlot() : resolvedChildren()}
         </div>
       )}
 
-      {((props.actions?.length ?? 0) > 0 || props.actionsSlot !== undefined) && (
+      {((props.actions?.length ?? 0) > 0 || resolvedActionsSlot()) && (
         <div class={classes()["actions"]} data-slot="actions">
-          {props.actionsSlot !== undefined ? (
-            props.actionsSlot
+          {resolvedActionsSlot() ? (
+            resolvedActionsSlot()
           ) : (
             <For each={actionList}>
               {(action) => {
@@ -123,9 +132,9 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
         </div>
       )}
 
-      {props.footerSlot !== undefined && (
+      {resolvedFooterSlot() && (
         <div class={classes()["footer"]} data-slot="footer">
-          {props.footerSlot}
+          {resolvedFooterSlot()}
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import {
+  children,
   createEffect,
   createMemo,
   createSignal,
@@ -21,6 +22,7 @@ export interface RLTabsProps<T extends TabItem = TabItem> extends TabsProps<T> {
 
 const RLTabs: Component<RLTabsProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
   const rest = omit(
     allProps,
     "items",
@@ -274,8 +276,8 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
 
       <Show when={showContent()}>
         <div class="flex-1">
-          {props.children ? (
-            props.children
+          {resolvedChildren() ? (
+            resolvedChildren()
           ) : (
             <For each={items()}>
               {(item, index) => {

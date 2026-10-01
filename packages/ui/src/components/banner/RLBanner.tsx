@@ -1,4 +1,4 @@
-import { createMemo, createSignal, omit, For, Show, type Component } from "solid-js";
+import { children, createMemo, createSignal, omit, For, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 import type { BannerProps } from "./banner";
 import { bannerTheme } from "./banner.theme";
@@ -21,6 +21,14 @@ export interface RLBannerProps extends BannerProps {
 
 const RLBanner: Component<RLBannerProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
+  const resolvedLeading = children(() => props.leading);
+  const resolvedTitleSlot = children(() => props.titleSlot);
+  const resolvedActionsSlot = children(() => props.actionsSlot);
+  const resolvedCloseSlot = children(() => props.closeSlot);
+  const resolvedLeft = children(() => props.left);
+  const resolvedRight = children(() => props.right);
+
   const rest = omit(
     allProps,
     "as",
@@ -193,15 +201,15 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
           <div class={classes()["container"]} data-slot="container">
             {/* Left Slot */}
             <div class={classes()["left"]} data-slot="left">
-              {props.left}
+              {resolvedLeft()}
             </div>
 
             {/* Center Slot (Leading icon, title, children) */}
             <div class={classes()["center"]} data-slot="center">
               {/* Leading Icon / Slot */}
-              <Show when={props.leading || props.icon}>
-                {props.leading ? (
-                  props.leading
+              <Show when={resolvedLeading() || props.icon}>
+                {resolvedLeading() ? (
+                  resolvedLeading()
                 ) : (
                   <span class={classes()["icon"]} data-slot="icon">
                     <RLIcon name={props.icon!} size="sm" aria-hidden="true" />
@@ -210,18 +218,16 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
               </Show>
 
               {/* Title / Title Slot / Children */}
-              <Show
-                when={props.titleSlot || props.title !== undefined || props.children !== undefined}
-              >
-                {props.titleSlot ? (
-                  props.titleSlot
+              <Show when={resolvedTitleSlot() || props.title !== undefined || resolvedChildren()}>
+                {resolvedTitleSlot() ? (
+                  resolvedTitleSlot()
                 ) : props.title !== undefined ? (
                   <span class={classes()["title"]} data-slot="title">
                     {props.title}
                   </span>
-                ) : props.children !== undefined ? (
+                ) : resolvedChildren() ? (
                   <span class={classes()["title"]} data-slot="title">
-                    {props.children}
+                    {resolvedChildren()}
                   </span>
                 ) : null}
               </Show>
@@ -229,12 +235,12 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
 
             {/* Right Slot (Actions & Close) */}
             <div class={classes()["right"]} data-slot="right">
-              {props.right}
+              {resolvedRight()}
 
               {/* Actions */}
-              <Show when={props.actionsSlot || (props.actions && props.actions.length > 0)}>
+              <Show when={resolvedActionsSlot() || (props.actions && props.actions.length > 0)}>
                 <div class={classes()["actions"]} data-slot="actions">
-                  <Show when={props.actionsSlot}>{props.actionsSlot}</Show>
+                  <Show when={resolvedActionsSlot()}>{resolvedActionsSlot()}</Show>
                   <Show when={props.actions && props.actions.length > 0}>
                     <For each={props.actions}>
                       {(action) => (
@@ -251,9 +257,9 @@ const RLBanner: Component<RLBannerProps> = (allProps) => {
               </Show>
 
               {/* Close Button */}
-              <Show when={props.closeSlot || isClosable()}>
-                {props.closeSlot ? (
-                  props.closeSlot
+              <Show when={resolvedCloseSlot() || isClosable()}>
+                {resolvedCloseSlot() ? (
+                  resolvedCloseSlot()
                 ) : (
                   <RLButton
                     type="button"

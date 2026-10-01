@@ -1,4 +1,4 @@
-import { createMemo, For, Show, omit, type Component } from "solid-js";
+import { children, createMemo, For, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { SidebarItem, SidebarProps } from "./sidebar";
 import { sidebarTheme } from "./sidebar.theme";
@@ -165,6 +165,12 @@ const RLSidebarItems: Component<{
 
 const RLSidebar: Component<RLSidebarProps> = (allProps) => {
   const props = allProps;
+  const resolvedChildren = children(() => props.children);
+  const resolvedHeader = children(() => props.header);
+  const resolvedHeaderSlot = children(() => props.headerSlot);
+  const resolvedFooter = children(() => props.footer);
+  const resolvedFooterSlot = children(() => props.footerSlot);
+
   const rest = omit(
     allProps,
     "items",
@@ -205,10 +211,10 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
   };
 
   const headerContent = () =>
-    props.header !== undefined ? (
-      props.header
-    ) : props.headerSlot !== undefined ? (
-      props.headerSlot
+    resolvedHeader() ? (
+      resolvedHeader()
+    ) : resolvedHeaderSlot() ? (
+      resolvedHeaderSlot()
     ) : props.logo ? (
       <span data-slot="sidebar-logo" class="flex items-center gap-2">
         <RLIcon name="i-rl-layers" class="size-5 text-primary" />
@@ -216,7 +222,7 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
       </span>
     ) : null;
 
-  const footerContent = () => (props.footer !== undefined ? props.footer : props.footerSlot);
+  const footerContent = () => resolvedFooter() || resolvedFooterSlot();
 
   return (
     <Show
@@ -237,14 +243,14 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
         </div>
 
         <div class={resolvedClasses().content} data-slot="content">
-          {props.children !== undefined ? (
-            props.children
+          {resolvedChildren() ? (
+            resolvedChildren()
           ) : (
             <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={resolvedClasses()} />
           )}
         </div>
 
-        {footerContent() !== undefined && (
+        {footerContent() && (
           <div class={resolvedClasses().footer} data-slot="footer">
             {footerContent()}
           </div>
