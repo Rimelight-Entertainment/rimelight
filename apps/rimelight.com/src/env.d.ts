@@ -1,5 +1,4 @@
 /// <reference types="vite-plus/client" />
-/// <reference types="@solidjs/vite-plugin/virtual-solid-manifest" />
 
 declare module "cloudflare:workers" {
   export const env: import("../cloudflare.config").Env;
@@ -26,9 +25,4 @@ declare module "virtual:rimelight/seo" {
 declare module "virtual:rimelight-ui-docs-meta" {
   const meta: Record<string, any>;
   export default meta;
-}
-
-declare module "astro:content" {
-  export const getCollection: (collection: string) => Promise<any[]>;
-  export const getEntry: (collection: string, slug: string) => Promise<any>;
 }

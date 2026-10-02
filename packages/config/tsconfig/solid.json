@@ -2,6 +2,7 @@
   "extends": "./base.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@solidjs/web"
+    "jsxImportSource": "@solidjs/web",
+    "types": ["@solidjs/vite-plugin/virtual-solid-manifest"]
   }
 }
