@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocale, getRelativeLocaleUrl, getLocalizedText } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
@@ -8,14 +8,6 @@ import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
-
-function getLocalizedText(val: unknown, locale: string): string {
-  if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>;
-    return record[locale] || record["en"] || "";
-  }
-  return typeof val === "string" ? val : "";
-}
 
 export const HomePage: Component = () => {
   const activeLocale = () => getLocale();

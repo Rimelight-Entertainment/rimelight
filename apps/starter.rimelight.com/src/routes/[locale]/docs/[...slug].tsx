@@ -9,15 +9,7 @@ import {
   blocksToMarkdown,
 } from "@rimelight/cms";
 import PageRenderer from "#components/cms/PageRenderer";
-import { getLocale } from "@rimelight/i18n";
-
-function getLocalizedText(val: unknown, loc: string): string {
-  if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>;
-    return record[loc] || record["en"] || "";
-  }
-  return typeof val === "string" ? val : "";
-}
+import { getLocale, getLocalizedText } from "@rimelight/i18n";
 
 export const DocsSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();

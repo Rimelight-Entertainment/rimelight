@@ -24,6 +24,7 @@ import {
 // into the browser bundle. Import it from `@rimelight/i18n/plugin` in your
 // `vite.config.ts` instead.
 import type { RimelightI18nOptions, RimelightI18nPlugins } from "./plugin";
+import { getLocalizedText } from "./utils";
 
 let locales: string[] = ["en"];
 let defaultLocale: string = "en";
@@ -62,6 +63,7 @@ export {
   baseTArray as tArray,
   getRawTranslation,
   getPluralCategory,
+  getLocalizedText,
 };
 export type { RimelightI18nOptions, RimelightI18nPlugins };
 export type {

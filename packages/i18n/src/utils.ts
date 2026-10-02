@@ -305,3 +305,37 @@ export function fixTranslations(
 
   return fixed;
 }
+
+/**
+ * Resolves localized text from a polymorphic value (localized dictionary object, plain string, or null/undefined).
+ *
+ * @param val The value to extract localized text from (e.g., `{ en: "Hello", pt: "Olá" }` or `"Hello"`).
+ * @param locale The desired locale code.
+ * @param fallbackLocale Optional fallback locale if the requested locale is not found (default: "en").
+ * @returns The resolved localized string, fallback string, or empty string.
+ */
+export function getLocalizedText(
+  val: unknown,
+  locale: string,
+  fallbackLocale: string = "en",
+): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, unknown>;
+    const localized = record[locale];
+    if (typeof localized === "string" && localized.length > 0) {
+      return localized;
+    }
+    const fallback = record[fallbackLocale];
+    if (typeof fallback === "string") {
+      return fallback;
+    }
+    return "";
+  }
+  if (typeof val === "string") {
+    return val;
+  }
+  if (typeof val === "number" || typeof val === "boolean") {
+    return String(val);
+  }
+  return "";
+}

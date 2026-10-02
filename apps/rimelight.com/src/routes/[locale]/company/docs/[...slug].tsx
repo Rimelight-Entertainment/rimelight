@@ -6,7 +6,7 @@ import meta from "virtual:rimelight-ui-docs-meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
 import { BlockRenderer } from "#components/cms/PageRenderer";
-import { getLocale } from "@rimelight/i18n";
+import { getLocale, getLocalizedText } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
 
 // Build component registry from all UI components
@@ -104,14 +104,6 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
   const componentMatch = trimmed.match(/<(RL\w+)([\s\S]*?)(\/?)/);
   if (componentMatch) return parseTag(componentMatch[0]!);
   return parseTag(trimmed);
-}
-
-function getLocalizedText(val: unknown, loc: string): string {
-  if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, string>;
-    return record[loc] || record["en"] || "";
-  }
-  return typeof val === "string" ? val : "";
 }
 
 export const DocPage: Component = () => {
