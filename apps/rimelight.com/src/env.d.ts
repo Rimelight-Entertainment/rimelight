@@ -4,24 +4,8 @@
 /// <reference types="filesystem-routing/types" />
 /// <reference types="../file-routes.d.ts" />
 
-type D1Database = import("@cloudflare/workers-types").D1Database;
-type R2Bucket = import("@cloudflare/workers-types").R2Bucket;
-type KVNamespace = import("@cloudflare/workers-types").KVNamespace;
-
-type CloudflareEnv = {
-  DB?: D1Database;
-  BLOB: R2Bucket;
-  "rimelight-dot-com_translations"?: KVNamespace;
-  CONSTRUCTION_MODE?: string;
-  EMAIL_DOMAIN?: string;
-  AUTH0_CLIENT_SECRET?: string;
-  AUTH0_SECRET?: string;
-  DATABASE_URL?: string;
-  CONSTRUCTION_PASSPHRASE?: string;
-};
-
 declare module "cloudflare:workers" {
-  export const env: CloudflareEnv;
+  export const env: import("../cloudflare.config").Env;
 }
 
 declare module "virtual:rimelight/seo" {
