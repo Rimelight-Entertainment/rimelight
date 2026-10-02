@@ -175,9 +175,8 @@ describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
           "utf-8",
         );
         expect(cloudflareContent).toContain('name: "test-dot-example-dot-com"');
-        expect(cloudflareContent).toContain(
-          'domains: ["test.example.com", "www.test.example.com"]',
-        );
+        expect(cloudflareContent).toContain('pattern: "test.example.com/*"');
+        expect(cloudflareContent).toContain('pattern: "www.test.example.com/*"');
         expect(cloudflareContent).not.toContain("starter.rimelight.com");
 
         // The starter must not ship legacy astro/wrangler config any more

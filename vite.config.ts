@@ -44,6 +44,9 @@ export default defineConfig({
         ],
         command: 'node -e "process.exit(0)"',
       },
+      test: {
+        command: "vp test",
+      },
     },
   },
 });

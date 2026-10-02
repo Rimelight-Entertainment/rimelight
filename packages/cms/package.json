@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "private": false,
   "description": "Rimelight Entertainment's Content Management System Package",
   "homepage": "https://rimelight.com/docs",
@@ -97,6 +97,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
+    "@solidjs/vite-plugin": "3.0.0-next.47",
     "@types/sortablejs": "1.15.9",
     "unocss": "66.10.5"
   },
