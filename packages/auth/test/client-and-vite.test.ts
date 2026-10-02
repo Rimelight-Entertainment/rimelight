@@ -84,4 +84,17 @@ describe("Auth Vite Plugin", () => {
     expect(code).toContain("createAuth0FromEnv");
     expect(code).toContain("export const auth");
   });
+
+  it("resolves and loads virtual:rimelight-auth-config", async () => {
+    const plugin: Plugin = authPlugin({
+      roleGuards: {
+        "/admin": ["admin", "owner"],
+      },
+    });
+    expect(await callHook(plugin.resolveId, "virtual:rimelight-auth-config")).toBe(
+      "\0virtual:rimelight-auth-config",
+    );
+    const code = await callHook<string | null>(plugin.load, "\0virtual:rimelight-auth-config");
+    expect(code).toContain('export const config = {"roleGuards":{"/admin":["admin","owner"]}};');
+  });
 });

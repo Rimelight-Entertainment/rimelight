@@ -4,5 +4,9 @@ export default defineConfig({
   pack: {
     entry: ["src/**/*.ts"],
     dts: true,
+    deps: {
+      neverBundle: [/^(?:virtual|cloudflare):/],
+      onlyBundle: false,
+    },
   },
 });

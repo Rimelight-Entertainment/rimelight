@@ -1,7 +1,19 @@
-import type { AuthMiddlewareOptions, RoleGuard, UserSessionContext } from "../types";
+import type {
+  AuthMiddlewareOptions,
+  AuthPluginConfig,
+  RoleGuard,
+  UserSessionContext,
+} from "../types";
 import type { AuthAdapter } from "../types";
 import { createCfAccessFromEnv } from "../adapters/cf-access";
 import { createAuth0FromEnv } from "../adapters/auth0";
+import { config as pluginConfig } from "virtual:rimelight-auth-config";
+
+function isConfigRecord(obj: unknown): obj is AuthPluginConfig {
+  return typeof obj === "object" && obj !== null && !Array.isArray(obj);
+}
+
+const defaultPluginConfig: AuthPluginConfig = isConfigRecord(pluginConfig) ? pluginConfig : {};
 
 let _defaultAuth: AuthAdapter | null = null;
 
@@ -38,28 +50,27 @@ function matchesPattern(
  * @example
  *   import { auth } from "@rimelight/auth/middleware"
  *
- *   app.use(
- *     auth({
- *       roleGuards: {
- *         "/admin": ["admin", "owner"]
- *       }
- *     })
- *   )
+ *   app.use(auth())
  */
 export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
-  const {
-    auth = getDefaultAuth(),
-    skipStaticAssets = true,
-    ignoredRoutes = DEFAULT_IGNORED_ROUTES,
-    protectedRoutes = DEFAULT_PROTECTED_ROUTES,
-    roleGuards = {},
-    guestOnlyRoutes = DEFAULT_GUEST_ONLY_ROUTES,
-    authRedirectUrl = "/auth/sign-in",
-    signInUrl = "/auth/sign-in",
-    homeUrl = "/",
-    onUnauthorized,
-    onForbidden,
-  } = options;
+  const auth = options.auth ?? defaultPluginConfig.auth ?? getDefaultAuth();
+  const skipStaticAssets = options.skipStaticAssets ?? defaultPluginConfig.skipStaticAssets ?? true;
+  const ignoredRoutes =
+    options.ignoredRoutes ?? defaultPluginConfig.ignoredRoutes ?? DEFAULT_IGNORED_ROUTES;
+  const protectedRoutes =
+    options.protectedRoutes ?? defaultPluginConfig.protectedRoutes ?? DEFAULT_PROTECTED_ROUTES;
+  const roleGuards = {
+    ...defaultPluginConfig.roleGuards,
+    ...options.roleGuards,
+  };
+  const guestOnlyRoutes =
+    options.guestOnlyRoutes ?? defaultPluginConfig.guestOnlyRoutes ?? DEFAULT_GUEST_ONLY_ROUTES;
+  const authRedirectUrl =
+    options.authRedirectUrl ?? defaultPluginConfig.authRedirectUrl ?? "/auth/sign-in";
+  const signInUrl = options.signInUrl ?? defaultPluginConfig.signInUrl ?? "/auth/sign-in";
+  const homeUrl = options.homeUrl ?? defaultPluginConfig.homeUrl ?? "/";
+  const onUnauthorized = options.onUnauthorized ?? defaultPluginConfig.onUnauthorized;
+  const onForbidden = options.onForbidden ?? defaultPluginConfig.onForbidden;
 
   return async (c: any, next: () => Promise<any>): Promise<any> => {
     const rawUrl = c?.req?.url || "http://localhost/";

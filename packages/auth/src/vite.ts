@@ -1,24 +1,7 @@
 import type { Plugin } from "vite-plus";
+import type { AuthPluginConfig } from "./types";
 
-export interface RimelightAuthPluginOptions {
-  /**
-   * Auth adapter to initialize: "cf-access" (default), "auth0", "mock", or "custom".
-   *
-   * @default "cf-access"
-   */
-  adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {});
-
-  /**
-   * Path to custom auth module if adapter is set to "custom".
-   */
-  customModule?: string;
-
-  /**
-   * Additional adapter-specific configuration overrides.
-   */
-  [key: string]: any;
-}
-
+export type RimelightAuthPluginOptions = AuthPluginConfig;
 export type RimelightAuthPlugin = Plugin;
 
 /**

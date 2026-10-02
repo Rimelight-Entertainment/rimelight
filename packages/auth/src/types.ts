@@ -150,3 +150,22 @@ export interface AuthMiddlewareOptions {
     meta: { isApi: boolean; path: string; requiredRoles?: string[] | undefined },
   ) => Response | Promise<Response>;
 }
+
+export interface AuthPluginConfig extends AuthMiddlewareOptions {
+  /**
+   * Auth adapter to initialize: "cf-access" (default), "auth0", "mock", or "custom".
+   *
+   * @default "cf-access"
+   */
+  adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {});
+
+  /**
+   * Path to custom auth module if adapter is set to "custom".
+   */
+  customModule?: string;
+
+  /**
+   * Additional adapter-specific configuration overrides.
+   */
+  [key: string]: any;
+}
