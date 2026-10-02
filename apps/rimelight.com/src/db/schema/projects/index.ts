@@ -1,8 +1,5 @@
-import { relations } from "drizzle-orm";
 import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { users } from "../users.ts";
 
-// --- Boards ---
 export const board = pgTable("kanban_board", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   userId: text("user_id").notNull(),
@@ -18,16 +15,6 @@ export const board = pgTable("kanban_board", {
 
 export type Board = typeof board.$inferSelect;
 
-export const boardRelations = relations(board, ({ one, many }) => ({
-  user: one(users, {
-    fields: [board.userId],
-    references: [users.auth0Id],
-  }),
-  lists: many(list),
-  customFields: many(customFieldDefinition),
-}));
-
-// --- Custom Fields ---
 export const customFieldDefinition = pgTable("kanban_custom_field", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   boardId: uuid("board_id")
@@ -45,14 +32,6 @@ export const customFieldDefinition = pgTable("kanban_custom_field", {
 
 export type CustomFieldDefinition = typeof customFieldDefinition.$inferSelect;
 
-export const customFieldDefinitionRelations = relations(customFieldDefinition, ({ one }) => ({
-  board: one(board, {
-    fields: [customFieldDefinition.boardId],
-    references: [board.id],
-  }),
-}));
-
-// --- Lists ---
 export const list = pgTable("kanban_list", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   boardId: uuid("board_id")
@@ -69,15 +48,6 @@ export const list = pgTable("kanban_list", {
 
 export type List = typeof list.$inferSelect;
 
-export const listRelations = relations(list, ({ one, many }) => ({
-  board: one(board, {
-    fields: [list.boardId],
-    references: [board.id],
-  }),
-  cards: many(card),
-}));
-
-// --- Cards ---
 export const card = pgTable("kanban_card", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   listId: uuid("list_id")
@@ -96,10 +66,3 @@ export const card = pgTable("kanban_card", {
 });
 
 export type Card = typeof card.$inferSelect;
-
-export const cardRelations = relations(card, ({ one }) => ({
-  list: one(list, {
-    fields: [card.listId],
-    references: [list.id],
-  }),
-}));

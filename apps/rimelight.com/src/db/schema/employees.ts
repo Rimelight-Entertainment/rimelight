@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
@@ -27,5 +26,3 @@ export const employees = pgTable("employees", {
 
 export type Employee = typeof employees.$inferSelect;
 export type NewEmployee = typeof employees.$inferInsert;
-
-export const employeesRelations = relations(employees, () => ({}));

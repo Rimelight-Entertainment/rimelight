@@ -1,11 +1,4 @@
-import { relations } from "drizzle-orm";
 import { boolean, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
-
-import { users } from "../users.ts";
-
-// ============================================================================
-// Note & Todo Tables (rimelight.com app feature)
-// ============================================================================
 
 export const todo = pgTable("todo", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -59,48 +52,6 @@ export const note_noteLabel = pgTable(
   },
   (t) => [primaryKey({ columns: [t.noteId, t.labelId] })],
 );
-
-// ============================================================================
-// Relations for Note & Todo
-// ============================================================================
-
-export const noteRelations = relations(note, ({ one, many }) => ({
-  user: one(users, {
-    fields: [note.userId],
-    references: [users.auth0Id],
-  }),
-  noteLabels: many(note_noteLabel),
-}));
-
-export const noteLabelRelations = relations(noteLabel, ({ one, many }) => ({
-  user: one(users, {
-    fields: [noteLabel.userId],
-    references: [users.auth0Id],
-  }),
-  noteLabels: many(note_noteLabel),
-}));
-
-export const note_noteLabelRelations = relations(note_noteLabel, ({ one }) => ({
-  note: one(note, {
-    fields: [note_noteLabel.noteId],
-    references: [note.id],
-  }),
-  label: one(noteLabel, {
-    fields: [note_noteLabel.labelId],
-    references: [noteLabel.id],
-  }),
-}));
-
-export const todoRelations = relations(todo, ({ one }) => ({
-  user: one(users, {
-    fields: [todo.userId],
-    references: [users.auth0Id],
-  }),
-}));
-
-// ============================================================================
-// Type Exports for Note & Todo
-// ============================================================================
 
 export type Note = typeof note.$inferSelect & {
   labels: Array<

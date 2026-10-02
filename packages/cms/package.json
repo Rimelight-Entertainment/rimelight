@@ -91,7 +91,7 @@
     "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
     "@solidjs/web": "2.0.0-rc.11",
-    "drizzle-orm": "0.45.3",
+    "drizzle-orm": "1.0.0-rc.4",
     "solid-js": "2.0.0-rc.11",
     "sortablejs": "1.15.7"
   },

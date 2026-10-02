@@ -1,6 +1,6 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import * as schema from "./schema/index.ts";
+import { relations } from "./schema/relations.ts";
 
 const databaseUrl =
   (typeof import.meta.env !== "undefined"
@@ -10,10 +10,4 @@ const databaseUrl =
     ? process.env["HYPERDRIVE_URL"] || process.env["DATABASE_URL"]
     : undefined);
 
-export function getDb(url: string = databaseUrl) {
-  return drizzle(neon(url), { schema });
-}
-
-export const db = getDb();
-
-export * from "./schema/index.ts";
+export const db = drizzle({ client: neon(databaseUrl || ""), relations });

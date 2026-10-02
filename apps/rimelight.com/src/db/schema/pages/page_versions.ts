@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import {
   type Block,
@@ -39,10 +38,3 @@ export const pageVersions = pgTable("page_versions", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
-
-export const pageVersionsRelations = relations(pageVersions, ({ one }) => ({
-  page: one(pages, {
-    fields: [pageVersions.pageId],
-    references: [pages.id],
-  }),
-}));
