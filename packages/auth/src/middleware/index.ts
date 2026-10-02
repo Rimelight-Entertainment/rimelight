@@ -116,7 +116,7 @@ export function auth(options: AuthMiddlewareOptions = {}) {
             sessionCtx = await authAdapterInstance.getSession(req);
           }
         } catch (err) {
-          console.error("[authMiddleware] Failed to resolve session:", err);
+          console.error("[auth] Failed to resolve session:", err);
         }
       }
 
@@ -244,8 +244,3 @@ export function auth(options: AuthMiddlewareOptions = {}) {
     return await next();
   };
 }
-
-/**
- * Backward compatibility alias for `auth`
- */
-export const authMiddleware = auth;

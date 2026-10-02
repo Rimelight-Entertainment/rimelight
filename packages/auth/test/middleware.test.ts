@@ -4,11 +4,11 @@ vi.mock("virtual:rimelight-auth-config", () => ({
   config: {},
 }));
 
-import { authMiddleware } from "../src/middleware/index";
+import { auth } from "../src/middleware/index";
 
 describe("Auth Middleware", () => {
   it("skips static assets by default", async () => {
-    const middleware = authMiddleware();
+    const middleware = auth();
     let nextCalled = false;
     const next = async () => {
       nextCalled = true;
@@ -25,7 +25,7 @@ describe("Auth Middleware", () => {
   });
 
   it("sets null session for ignored routes", async () => {
-    const middleware = authMiddleware({
+    const middleware = auth({
       ignoredRoutes: ["/docs/"],
     });
 
@@ -61,7 +61,7 @@ describe("Auth Middleware", () => {
       }),
     };
 
-    const middleware = authMiddleware({
+    const middleware = auth({
       auth: mockAdapter,
     });
 
@@ -88,7 +88,7 @@ describe("Auth Middleware", () => {
   });
 
   it("redirects unauthenticated user accessing protected route", async () => {
-    const middleware = authMiddleware({
+    const middleware = auth({
       protectedRoutes: ["/dashboard"],
       signInUrl: "/auth/sign-in",
     });
@@ -109,7 +109,7 @@ describe("Auth Middleware", () => {
   });
 
   it("returns 401 for API protected routes when unauthenticated", async () => {
-    const middleware = authMiddleware({
+    const middleware = auth({
       protectedRoutes: ["/api/private"],
     });
 
@@ -142,7 +142,7 @@ describe("Auth Middleware", () => {
       }),
     };
 
-    const middleware = authMiddleware({
+    const middleware = auth({
       auth: mockAdapter,
       roleGuards: {
         "/admin": ["admin", "owner"],
@@ -177,7 +177,7 @@ describe("Auth Middleware", () => {
       }),
     };
 
-    const middleware = authMiddleware({
+    const middleware = auth({
       auth: mockAdapter,
       guestOnlyRoutes: ["/auth/sign-in"],
     });
