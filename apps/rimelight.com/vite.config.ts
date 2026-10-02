@@ -104,7 +104,19 @@ export default defineConfig({
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"],
     }),
 
-    auth(),
+    auth({
+      roleGuards: {
+        "/internal": {
+          roles: ["employee", "staff", "admin", "owner"],
+          userTypes: ["employee"],
+        },
+        "/api/internal": {
+          roles: ["employee", "staff", "admin", "owner"],
+          userTypes: ["employee"],
+        },
+        "/admin": ["admin", "owner"],
+      },
+    }),
 
     i18n({
       locales: ["en", "pt", "es"],

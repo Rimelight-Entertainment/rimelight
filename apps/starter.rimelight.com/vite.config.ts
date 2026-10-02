@@ -82,7 +82,11 @@ export default defineConfig({
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"],
     }),
 
-    auth(),
+    auth({
+      roleGuards: {
+        "/admin": ["admin", "owner"],
+      },
+    }),
 
     i18n({
       locales: ["en", "pt", "es"],
