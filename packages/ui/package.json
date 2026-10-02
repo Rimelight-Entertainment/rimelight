@@ -90,7 +90,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/vite-plugin": "3.0.0-next.46",
+    "@solidjs/vite-plugin": "3.0.0-next.47",
     "@solidjs/web": "2.0.0-rc.11",
     "solid-js": "2.0.0-rc.11"
   },
@@ -99,7 +99,7 @@
     "vite-plus": "^1.0.0"
   },
   "engines": {
-    "node": ">=26.6.0"
+    "node": ">=26.10.0"
   },
   "packageManager": "pnpm@12.8.1"
 }
