@@ -1,4 +1,4 @@
-import { type Component, Show } from "solid-js";
+import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DocsLayout from "#layouts/DocsLayout";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
@@ -9,7 +9,6 @@ import {
   blocksToMarkdown,
 } from "@rimelight/cms";
 import PageRenderer from "#components/cms/PageRenderer";
-import { createAsyncData } from "#utils/async";
 import { getLocale } from "@rimelight/i18n";
 
 function getLocalizedText(val: unknown, loc: string): string {
@@ -24,9 +23,10 @@ export const DocsSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();
   const activeLocale = () => getLocale();
 
-  const docData = createAsyncData(
-    () => ({ slug: params["slug"], loc: activeLocale() }),
-    async ({ slug, loc }) => {
+  const docData = createMemo<any>(
+    async () => {
+      const slug = params["slug"];
+      const loc = activeLocale();
       let allDocPages: any[] = [];
       try {
         const res = await fetch("/api/content/doc-versions");
@@ -82,6 +82,7 @@ export const DocsSlugPage: Component = () => {
         includeVersionInUrl,
       };
     },
+    { loadingValue: null },
   );
 
   const dbPage = () => docData()?.dbPage;

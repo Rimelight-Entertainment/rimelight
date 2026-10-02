@@ -1,8 +1,7 @@
-import { type Component, Show } from "solid-js";
+import { type Component, Show, createMemo } from "solid-js";
 import DocsLayout from "#layouts/DocsLayout";
 import { extractHeadingsFromBlocks, blocksToMarkdown } from "@rimelight/cms";
 import PageRenderer from "#components/cms/PageRenderer";
-import { createAsyncData } from "#utils/async";
 import { getLocale } from "@rimelight/i18n";
 
 function getLocalizedText(val: unknown, loc: string): string {
@@ -16,8 +15,7 @@ function getLocalizedText(val: unknown, loc: string): string {
 export const DocsIndexPage: Component = () => {
   const activeLocale = () => getLocale();
 
-  const docData = createAsyncData(
-    () => true,
+  const docData = createMemo<any>(
     async () => {
       try {
         const res = await fetch("/api/content/docs?slugs=index");
@@ -29,6 +27,7 @@ export const DocsIndexPage: Component = () => {
         return null;
       }
     },
+    { loadingValue: null },
   );
 
   const title = () =>

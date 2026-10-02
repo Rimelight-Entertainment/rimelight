@@ -1,5 +1,4 @@
-import { type Component, For, createSignal } from "solid-js";
-import { createAsyncData } from "#utils/async";
+import { type Component, For, createSignal, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
@@ -19,8 +18,7 @@ export const BlogIndexPage: Component = () => {
   const activeLocale = () => getLocale();
   const [activeTab, setActiveTab] = createSignal("all");
 
-  const blogPages = createAsyncData(
-    () => true,
+  const blogPages = createMemo<any[]>(
     async () => {
       try {
         const res = await fetch("/api/content/pages?type=blog");
@@ -31,7 +29,7 @@ export const BlogIndexPage: Component = () => {
         return [];
       }
     },
-    [],
+    { loadingValue: [] },
   );
 
   const categoryMessages = () => ({

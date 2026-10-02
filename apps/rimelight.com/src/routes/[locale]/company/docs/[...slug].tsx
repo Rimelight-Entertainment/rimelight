@@ -1,6 +1,5 @@
-import { type Component, Show, For } from "solid-js";
+import { type Component, Show, For, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { createAsyncData } from "#utils/async";
 import DocsLayout from "#layouts/DocsLayout";
 import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms";
 import meta from "virtual:rimelight-ui-docs-meta";
@@ -119,9 +118,9 @@ export const DocPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
   const activeLocale = () => getLocale();
 
-  const docsData = createAsyncData(
-    () => params.slug,
-    async (slug) => {
+  const docsData = createMemo<any>(
+    async () => {
+      const slug = params.slug;
       try {
         const res = await fetch("/api/content/pages?type=doc");
         if (!res.ok) return null;
@@ -161,7 +160,7 @@ export const DocPage: Component = () => {
         return null;
       }
     },
-    null,
+    { loadingValue: null },
   );
 
   const docPage = () => docsData()?.dbPage;

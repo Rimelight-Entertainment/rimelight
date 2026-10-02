@@ -1,14 +1,12 @@
-import { type Component } from "solid-js";
+import { type Component, createMemo } from "solid-js";
 import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout";
-import { createAsyncData } from "#utils/async";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 
 export const AdminIndexPage: Component = () => {
-  const metrics = createAsyncData(
-    () => true,
+  const metrics = createMemo(
     async () => {
       let totalPages = 0;
       let totalBylines = 0;
@@ -33,7 +31,7 @@ export const AdminIndexPage: Component = () => {
         totalTags,
       };
     },
-    { totalPages: 0, totalBylines: 0, totalCategories: 0, totalTags: 0 },
+    { loadingValue: { totalPages: 0, totalBylines: 0, totalCategories: 0, totalTags: 0 } },
   );
 
   return (

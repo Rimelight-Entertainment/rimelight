@@ -1,6 +1,5 @@
-import { type Component, Show } from "solid-js";
+import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { createAsyncData } from "#utils/async";
 import WikiLayout from "#layouts/WikiLayout";
 import PageRenderer from "#components/cms/PageRenderer";
 import { getLocale } from "@rimelight/i18n";
@@ -17,9 +16,9 @@ export const WikiSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
   const activeLocale = () => getLocale();
 
-  const pageData = createAsyncData(
-    () => params.slug,
-    async (slug) => {
+  const pageData = createMemo<any>(
+    async () => {
+      const slug = params.slug;
       if (!slug) return null;
       try {
         const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
@@ -30,7 +29,7 @@ export const WikiSlugPage: Component = () => {
         return null;
       }
     },
-    null,
+    { loadingValue: null },
   );
 
   const title = () =>

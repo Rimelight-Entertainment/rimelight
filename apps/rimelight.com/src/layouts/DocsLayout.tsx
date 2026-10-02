@@ -1,4 +1,4 @@
-import { type Component, For, Show } from "solid-js";
+import { type Component, For, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import type { JSX } from "@solidjs/web";
 import AppLayout from "./AppLayout";
@@ -7,7 +7,6 @@ import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
 import { t, getLocale, currentLocale } from "@rimelight/i18n";
-import { createAsyncData } from "#utils/async";
 
 export interface DocsLayoutProps {
   title: string;
@@ -35,14 +34,12 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   const currentPath = () =>
     typeof window !== "undefined" ? window.location.pathname : `/${locale()}/docs`;
 
-  const sidebarData = createAsyncData(
-    () => ({
-      loc: locale(),
-      path: currentPath(),
-      v: props.activeVersion,
-      inc: props.includeVersionInUrl,
-    }),
-    async ({ loc, path, v, inc }) => {
+  const sidebarData = createMemo<any>(
+    async () => {
+      const loc = locale();
+      const path = currentPath();
+      const v = props.activeVersion;
+      const inc = props.includeVersionInUrl;
       const { items, scopes, activeScope } = await getDocsSidebar(docsConfig, loc, path, v, inc);
       const { prev: sidebarPrev, next: sidebarNext } = getSurroundItems(items, path);
       return {
@@ -53,6 +50,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
         next: props.nextOverride ?? sidebarNext ?? null,
       };
     },
+    { loadingValue: null },
   );
 
   const rawGlobalToc = (docsConfig as DocsConfig).tableOfContents;

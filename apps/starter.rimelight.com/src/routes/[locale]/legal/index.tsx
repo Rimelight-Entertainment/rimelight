@@ -1,7 +1,6 @@
-import { type Component, For } from "solid-js";
+import { type Component, For, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
 import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
-import { createAsyncData } from "#utils/async";
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {
@@ -14,8 +13,7 @@ function getLocalizedText(val: unknown, locale: string): string {
 export const LegalIndexPage: Component = () => {
   const activeLocale = () => getLocale();
 
-  const legalPages = createAsyncData(
-    () => true,
+  const legalPages = createMemo<any[]>(
     async () => {
       try {
         const res = await fetch("/api/content/pages?type=legal");
@@ -26,7 +24,7 @@ export const LegalIndexPage: Component = () => {
         return [];
       }
     },
-    [],
+    { loadingValue: [] },
   );
 
   return (

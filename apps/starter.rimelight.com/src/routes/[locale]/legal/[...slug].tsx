@@ -1,8 +1,7 @@
-import { type Component, Show } from "solid-js";
+import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "#layouts/AppLayout";
 import PageRenderer from "#components/cms/PageRenderer";
-import { createAsyncData } from "#utils/async";
 import { t, getLocale } from "@rimelight/i18n";
 
 function getLocalizedText(val: unknown, locale: string): string {
@@ -17,9 +16,9 @@ export const LegalSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();
   const activeLocale = () => getLocale();
 
-  const pageData = createAsyncData(
-    () => params["slug"],
-    async (slug) => {
+  const pageData = createMemo<any>(
+    async () => {
+      const slug = params["slug"];
       if (!slug) return null;
       try {
         const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=legal`);
@@ -30,6 +29,7 @@ export const LegalSlugPage: Component = () => {
         return null;
       }
     },
+    { loadingValue: null },
   );
 
   const title = () => (pageData() ? getLocalizedText(pageData()!.title, activeLocale()) : "Legal");

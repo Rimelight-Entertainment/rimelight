@@ -1,6 +1,5 @@
-import { type Component, createSignal } from "solid-js";
+import { type Component, createSignal, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { createAsyncData } from "#utils/async";
 import DashboardLayout from "#layouts/DashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
@@ -12,9 +11,9 @@ export const WikiEditPage: Component = () => {
   const [descVal, setDescVal] = createSignal("");
   const [saving, setSaving] = createSignal(false);
 
-  const pageData = createAsyncData(
-    () => params.slug,
-    async (slug) => {
+  const pageData = createMemo<any>(
+    async () => {
+      const slug = params.slug;
       if (!slug) return null;
       try {
         const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
@@ -40,7 +39,7 @@ export const WikiEditPage: Component = () => {
         return null;
       }
     },
-    null,
+    { loadingValue: null },
   );
 
   const handleSave = async () => {

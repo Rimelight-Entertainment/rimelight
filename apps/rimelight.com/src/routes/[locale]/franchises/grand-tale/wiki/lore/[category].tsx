@@ -1,6 +1,5 @@
-import { type Component, For, Show } from "solid-js";
+import { type Component, For, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { createAsyncData } from "#utils/async";
 import WikiLayout from "#layouts/WikiLayout";
 import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 
@@ -21,9 +20,9 @@ export const LoreCategoryPage: Component = () => {
   const categoryLabel = () => category().charAt(0).toUpperCase() + category().slice(1);
   const pageType = () => categoryToType[category()] || "Character";
 
-  const pagesData = createAsyncData(
-    () => [category(), activeLocale()] as const,
-    async ([cat]) => {
+  const pagesData = createMemo<any[]>(
+    async () => {
+      const cat = category();
       const type = categoryToType[cat] || "Character";
       try {
         const res = await fetch(
@@ -35,7 +34,7 @@ export const LoreCategoryPage: Component = () => {
         return [];
       }
     },
-    [],
+    { loadingValue: [] },
   );
 
   return (

@@ -1,5 +1,4 @@
-import { type Component, Show, For, createSignal } from "solid-js";
-import { createAsyncData } from "#utils/async";
+import { type Component, Show, For, createSignal, createMemo } from "solid-js";
 import type { BaseBlock } from "@rimelight/cms";
 
 function filterProps(props: any[], options: { hide?: string[]; show?: string[] }): any[] {
@@ -30,9 +29,10 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
   const [isThemeExpanded, setIsThemeExpanded] = createSignal(false);
   const [changelogError, setChangelogError] = createSignal(false);
 
-  const changelogData = createAsyncData(
-    () => [sections().changelog, componentName()] as const,
-    async ([hasChangelog, name]) => {
+  const changelogData = createMemo<any[]>(
+    async () => {
+      const hasChangelog = sections().changelog;
+      const name = componentName();
       if (!hasChangelog || !name) return [];
       try {
         const res = await fetch(`/api/github/changelog?component=${name}`);
@@ -44,7 +44,7 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
         return [];
       }
     },
-    [],
+    { loadingValue: [] },
   );
 
   const changelogLoading = () => changelogData() === undefined;
