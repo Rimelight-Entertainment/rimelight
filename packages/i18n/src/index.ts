@@ -102,7 +102,33 @@ export const t: TFunction = Object.assign(
 );
 
 export function getLocale(): string {
-  return currentLocale.get() || defaultLocale || "en";
+  const explicit = currentLocale.get();
+  if (explicit) return explicit;
+
+  // Browser auto-detection
+  if (typeof window !== "undefined" && window.location?.pathname) {
+    const segment = window.location.pathname.split("/").find(Boolean)?.toLowerCase();
+    if (segment && locales.includes(segment)) {
+      return segment;
+    }
+  }
+
+  // Universal / SSR context auto-detection (AsyncLocalStorage or framework request global)
+  try {
+    const g = globalThis as any;
+    const reqUrl = g.__RIMELIGHT_REQUEST_URL__ || g.__request_url__;
+    if (reqUrl) {
+      const pathname = new URL(reqUrl).pathname;
+      const segment = pathname.split("/").find(Boolean)?.toLowerCase();
+      if (segment && locales.includes(segment)) {
+        return segment;
+      }
+    }
+  } catch {
+    // Ignore URL parse errors
+  }
+
+  return defaultLocale || "en";
 }
 
 /**

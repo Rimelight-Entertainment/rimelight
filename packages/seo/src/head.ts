@@ -17,7 +17,7 @@ import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize.js";
  * autocomplete and safety on .tags without needing to fall back to raw .html.
  */
 export type HeadTag =
-  | { tag: "title"; props: { children: string }; children?: string }
+  | { tag: "title"; props: { children: string }; children?: string; key?: string }
   | {
       tag: "meta";
       props:
@@ -27,21 +27,25 @@ export type HeadTag =
         | { "http-equiv": string; content: string; [k: string]: string | undefined }
         | Record<string, string | undefined>;
       children?: never;
+      key?: string;
     }
   | {
       tag: "link";
       props: { rel: string; href: string; [k: string]: string | undefined };
       children?: never;
+      key?: string;
     }
   | {
       tag: "script";
-      props?: { type?: string; nonce?: string; children?: string; [k: string]: string | undefined };
+      props: { type?: string; nonce?: string; children?: string; [k: string]: string | undefined };
       children?: string;
+      key?: string;
     }
   | {
       tag: "style";
-      props?: { nonce?: string; children?: string; [k: string]: string | undefined };
+      props: { nonce?: string; children?: string; [k: string]: string | undefined };
       children?: string;
+      key?: string;
     };
 
 export interface HeadResult {

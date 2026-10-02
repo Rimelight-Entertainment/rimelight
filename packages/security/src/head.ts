@@ -1,5 +1,5 @@
 export type HeadTag =
-  | { tag: "title"; props: { children: string }; children?: string }
+  | { tag: "title"; props: { children: string }; children?: string; key?: string }
   | {
       tag: "meta";
       props:
@@ -8,23 +8,30 @@ export type HeadTag =
         | { charset: string }
         | { "http-equiv": string; content: string };
       children?: never;
+      key?: string;
     }
   | {
       tag: "link";
       props: { rel: string; href: string; [k: string]: string | undefined };
       children?: never;
+      key?: string;
     }
   | {
       tag: "script";
-      props?:
-        | { type?: string | undefined; nonce?: string | undefined; children?: string; [k: string]: string | undefined }
-        | undefined;
+      props: {
+        type?: string | undefined;
+        nonce?: string | undefined;
+        children?: string;
+        [k: string]: string | undefined;
+      };
       children?: string;
+      key?: string;
     }
   | {
       tag: "style";
-      props?: { nonce?: string | undefined; children?: string; [k: string]: string | undefined } | undefined;
+      props: { nonce?: string | undefined; children?: string; [k: string]: string | undefined };
       children?: string;
+      key?: string;
     };
 
 export interface HeadResult {
