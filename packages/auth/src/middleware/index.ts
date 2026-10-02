@@ -52,11 +52,12 @@ function matchesPattern(
  *
  *   app.use(auth())
  */
-export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
-  const auth = options.auth ?? defaultPluginConfig.auth ?? getDefaultAuth();
+export function auth(options: AuthMiddlewareOptions = {}) {
+  const authAdapterInstance = options.auth ?? defaultPluginConfig.auth ?? getDefaultAuth();
   const skipStaticAssets = options.skipStaticAssets ?? defaultPluginConfig.skipStaticAssets ?? true;
   const ignoredRoutes =
     options.ignoredRoutes ?? defaultPluginConfig.ignoredRoutes ?? DEFAULT_IGNORED_ROUTES;
+
   const protectedRoutes =
     options.protectedRoutes ?? defaultPluginConfig.protectedRoutes ?? DEFAULT_PROTECTED_ROUTES;
   const roleGuards = {
@@ -105,14 +106,14 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     } else {
       // 3. Resolve session from adapter or custom resolver
       let sessionCtx: UserSessionContext | null = null;
-      if (auth) {
+      if (authAdapterInstance) {
         try {
-          if (typeof auth === "function") {
-            sessionCtx = await auth(c);
-          } else if (typeof auth.getSession === "function") {
+          if (typeof authAdapterInstance === "function") {
+            sessionCtx = await authAdapterInstance(c);
+          } else if (typeof authAdapterInstance.getSession === "function") {
             const req =
               c.req?.raw instanceof Request ? c.req.raw : new Request(c.req?.url || rawUrl);
-            sessionCtx = await auth.getSession(req);
+            sessionCtx = await authAdapterInstance.getSession(req);
           }
         } catch (err) {
           console.error("[authMiddleware] Failed to resolve session:", err);
@@ -242,9 +243,9 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
 
     return await next();
   };
-};
+}
 
 /**
- * Canonical alias — preferred over `authMiddleware`
+ * Backward compatibility alias for `auth`
  */
-export const auth = authMiddleware;
+export const authMiddleware = auth;
