@@ -1,6 +1,5 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { siteConfig } from "virtual:rimelight/seo";
 import { getRelativeLocaleUrl, t, getLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
@@ -85,7 +84,7 @@ export const HomePage: Component = () => {
   ];
 
   return (
-    <AppLayout title={siteConfig.name} description={siteConfig.description}>
+    <AppLayout title={t("page_home.meta_title")} description={t("page_home.meta_description")}>
       <RLPageSection
         variant="hero"
         reverse={true}
