@@ -1,6 +1,6 @@
-import { type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import { Title, Meta } from "@solidjs/meta";
+import { type Component } from "solid-js";
+import { type JSX, useHead } from "@solidjs/web";
+import { createSeoHead } from "@rimelight/seo/head";
 import { RLMain } from "@rimelight/ui/components/main/RLMain.tsx";
 
 export interface BlankLayoutProps {
@@ -11,17 +11,16 @@ export interface BlankLayoutProps {
 }
 
 export const BlankLayout: Component<BlankLayoutProps> = (props) => {
+  useHead(
+    () =>
+      createSeoHead({
+        title: props.title,
+        description: props.description,
+        noindex: props.noindex,
+      }).tags,
+  );
   return (
     <>
-      <Show when={props.title}>
-        <Title>{props.title}</Title>
-      </Show>
-      <Show when={props.description}>
-        <Meta name="description" content={props.description} />
-      </Show>
-      <Show when={props.noindex}>
-        <Meta name="robots" content="noindex, nofollow" />
-      </Show>
       <RLMain>{props.children}</RLMain>
     </>
   );

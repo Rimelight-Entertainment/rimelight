@@ -1,6 +1,6 @@
-import { type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import { Title, Meta } from "@solidjs/meta";
+import { type Component } from "solid-js";
+import { type JSX, useHead } from "@solidjs/web";
+import { createSeoHead } from "@rimelight/seo/head";
 
 export interface OgLayoutProps {
   title?: string;
@@ -9,15 +9,11 @@ export interface OgLayoutProps {
 }
 
 export const OgLayout: Component<OgLayoutProps> = (props) => {
+  useHead(
+    () => createSeoHead({ title: props.title, description: props.description, noindex: true }).tags,
+  );
   return (
     <>
-      <Show when={props.title}>
-        <Title>{props.title}</Title>
-      </Show>
-      <Show when={props.description}>
-        <Meta name="description" content={props.description} />
-      </Show>
-      <Meta name="robots" content="noindex" />
       <div class="w-full h-full flex items-center justify-center bg-black text-white">
         {props.children}
       </div>
