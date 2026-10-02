@@ -205,13 +205,16 @@ Key decisions:
 1. **`createEffect` + `setTimeout(100)`** (as proposed in the originating conversation)
    - Rejected: `onSettled` is the idiomatic Solid 2.0 approach and does not rely on an arbitrary timeout that may fail on slow devices or race with title updates.
 
-2. **`MutationObserver` on `<title>`**
+2. **JSX inline `style={{}}` prop for the visually-hidden pattern**
+   - Rejected: `@rimelight/security` sets `style-src 'self'` with no `'unsafe-inline'`. Inline styles are a CSP violation and will be silently blocked by the browser. All styling must go through UnoCSS's external stylesheet pipeline.
+
+3. **`MutationObserver` on `<title>`**
    - Would work, but adds imperative DOM code when the reactive `onSettled` approach is cleaner and framework-idiomatic.
 
-3. **A separate `@rimelight/shell` package**
+4. **A separate `@rimelight/shell` package**
    - Rejected: the components are ~30 lines each and fit naturally into `@rimelight/ui`'s existing structure. A new package adds dependency management overhead with no real benefit at the current scale of 2 apps.
 
-4. **Wrapping `filesystem-routing` in a custom package**
+5. **Wrapping `filesystem-routing` in a custom package**
    - Discussed separately and deferred. Not related to these components.
 
 ---
