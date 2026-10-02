@@ -1,6 +1,6 @@
-import { bindings, defineConfig, exports, triggers, type InferEnv } from "cf/config";
+import { bindings, defineConfig, exports, triggers } from "cf/config";
 
-const config = defineConfig({
+export default defineConfig({
   worker: {
     name: "starter-dot-rimelight-dot-com",
     compatibilityDate: "2026-08-27",
@@ -73,6 +73,3 @@ const config = defineConfig({
     },
   },
 });
-
-export type Env = InferEnv<typeof config>;
-export default config;
