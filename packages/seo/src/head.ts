@@ -17,7 +17,7 @@ import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize.js";
  * autocomplete and safety on .tags without needing to fall back to raw .html.
  */
 export type HeadTag =
-  | { tag: "title"; children: string; props?: never }
+  | { tag: "title"; props: { children: string }; children?: string }
   | {
       tag: "meta";
       props:
@@ -35,13 +35,13 @@ export type HeadTag =
     }
   | {
       tag: "script";
-      props?: { type?: string; nonce?: string; [k: string]: string | undefined };
-      children: string;
+      props?: { type?: string; nonce?: string; children?: string; [k: string]: string | undefined };
+      children?: string;
     }
   | {
       tag: "style";
-      props?: { nonce?: string; [k: string]: string | undefined };
-      children: string;
+      props?: { nonce?: string; children?: string; [k: string]: string | undefined };
+      children?: string;
     };
 
 export interface HeadResult {
@@ -72,7 +72,8 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
 
   for (const t of tags) {
     if (t.tag === "title") {
-      lines.push(`<title>${escapeHtml(t.children)}</title>`);
+      const text = t.props?.children ?? t.children ?? "";
+      lines.push(`<title>${escapeHtml(text)}</title>`);
     } else if (t.tag === "meta") {
       const attrs = Object.entries(t.props || {})
         .filter(([, v]) => v !== undefined && v !== null)
@@ -91,19 +92,23 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
         .join(" ");
       lines.push(`<link ${attrs} />`);
     } else if (t.tag === "script") {
-      const attrs = Object.entries(t.props || {})
+      const { children: bodyText, ...otherProps } = (t.props || {}) as Record<string, unknown>;
+      const scriptBody = (bodyText ?? t.children ?? "") as string;
+      const attrs = Object.entries(otherProps)
         .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
         .join(" ");
       const attrStr = attrs ? ` ${attrs}` : "";
-      lines.push(`<script${attrStr}>${t.children}</script>`);
+      lines.push(`<script${attrStr}>${scriptBody}</script>`);
     } else if (t.tag === "style") {
-      const attrs = Object.entries(t.props || {})
+      const { children: bodyText, ...otherProps } = (t.props || {}) as Record<string, unknown>;
+      const styleBody = (bodyText ?? t.children ?? "") as string;
+      const attrs = Object.entries(otherProps)
         .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
         .join(" ");
       const attrStr = attrs ? ` ${attrs}` : "";
-      lines.push(`<style${attrStr}>${t.children}</style>`);
+      lines.push(`<style${attrStr}>${styleBody}</style>`);
     }
   }
 
@@ -408,7 +413,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   }
 
   // Title & SEO
-  tags.push({ tag: "title", children: displayTitle });
+  tags.push({ tag: "title", props: { children: displayTitle }, children: displayTitle });
   if (safeDescription) {
     tags.push({ tag: "meta", props: { name: "description", content: safeDescription } });
   }
@@ -618,28 +623,31 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
 
   if (config) {
     const websiteSchema = buildWebSiteSchema(config, siteUrl);
+    const content = serializeJsonLd(websiteSchema);
     tags.push({
       tag: "script",
-      props: scriptProps,
-      children: serializeJsonLd(websiteSchema),
+      props: { ...scriptProps, children: content },
+      children: content,
     });
   }
 
   if (articleSchema) {
     const article = buildArticleSchema(articleSchema);
+    const content = serializeJsonLd(article);
     tags.push({
       tag: "script",
-      props: scriptProps,
-      children: serializeJsonLd(article),
+      props: { ...scriptProps, children: content },
+      children: content,
     });
   }
 
   if (breadcrumbs && breadcrumbs.length > 0) {
     const breadcrumb = buildBreadcrumbSchema(breadcrumbs);
+    const content = serializeJsonLd(breadcrumb);
     tags.push({
       tag: "script",
-      props: scriptProps,
-      children: serializeJsonLd(breadcrumb),
+      props: { ...scriptProps, children: content },
+      children: content,
     });
   }
 

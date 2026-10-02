@@ -98,7 +98,8 @@ describe("createSeoHead", () => {
 
     expect(result.html).toContain('<script type="application/ld+json" nonce="secret-nonce-12345">');
     const jsonLdTag = result.tags.find(
-      (t) => t.tag === "script" && t.props?.type === "application/ld+json",
+      (t): t is Extract<typeof t, { tag: "script" }> =>
+        t.tag === "script" && t.props?.type === "application/ld+json",
     );
     expect(jsonLdTag?.props?.nonce).toBe("secret-nonce-12345");
   });

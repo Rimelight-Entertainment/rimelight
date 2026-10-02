@@ -1,5 +1,5 @@
 export type HeadTag =
-  | { tag: "title"; children: string; props?: never }
+  | { tag: "title"; props: { children: string }; children?: string }
   | {
       tag: "meta";
       props:
@@ -17,14 +17,14 @@ export type HeadTag =
   | {
       tag: "script";
       props?:
-        | { type?: string | undefined; nonce?: string | undefined; [k: string]: string | undefined }
+        | { type?: string | undefined; nonce?: string | undefined; children?: string; [k: string]: string | undefined }
         | undefined;
-      children: string;
+      children?: string;
     }
   | {
       tag: "style";
-      props?: { nonce?: string | undefined; [k: string]: string | undefined } | undefined;
-      children: string;
+      props?: { nonce?: string | undefined; children?: string; [k: string]: string | undefined } | undefined;
+      children?: string;
     };
 
 export interface HeadResult {
@@ -84,7 +84,7 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
   if (trustedTypes) {
     tags.push({
       tag: "script",
-      ...(scriptProps ? { props: scriptProps } : {}),
+      props: { ...scriptProps, children: TRUSTED_TYPES_SCRIPT },
       children: TRUSTED_TYPES_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${TRUSTED_TYPES_SCRIPT}</script>`);
@@ -93,7 +93,7 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
   if (nonceSync) {
     tags.push({
       tag: "script",
-      ...(scriptProps ? { props: scriptProps } : {}),
+      props: { ...scriptProps, children: NONCE_SYNC_SCRIPT },
       children: NONCE_SYNC_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${NONCE_SYNC_SCRIPT}</script>`);
@@ -102,7 +102,7 @@ export function createSecurityHead(options: SecurityHeadOptions = {}): HeadResul
   if (devReporter) {
     tags.push({
       tag: "script",
-      ...(scriptProps ? { props: scriptProps } : {}),
+      props: { ...scriptProps, children: DEV_REPORTER_SCRIPT },
       children: DEV_REPORTER_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${DEV_REPORTER_SCRIPT}</script>`);

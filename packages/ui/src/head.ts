@@ -1,5 +1,5 @@
 export type HeadTag =
-  | { tag: "title"; children: string; props?: never }
+  | { tag: "title"; props: { children: string }; children?: string }
   | {
       tag: "meta";
       props:
@@ -18,14 +18,14 @@ export type HeadTag =
   | {
       tag: "script";
       props?:
-        | { type?: string | undefined; nonce?: string | undefined; [k: string]: string | undefined }
+        | { type?: string | undefined; nonce?: string | undefined; children?: string; [k: string]: string | undefined }
         | undefined;
-      children: string;
+      children?: string;
     }
   | {
       tag: "style";
-      props?: { nonce?: string | undefined; [k: string]: string | undefined } | undefined;
-      children: string;
+      props?: { nonce?: string | undefined; children?: string; [k: string]: string | undefined } | undefined;
+      children?: string;
     };
 
 export interface HeadResult {
@@ -75,7 +75,7 @@ export function createUiHead(options: UiHeadOptions = {}): HeadResult {
   if (themeSync) {
     tags.push({
       tag: "script",
-      ...(scriptProps ? { props: scriptProps } : {}),
+      props: { ...scriptProps, children: THEME_FLASH_SCRIPT },
       children: THEME_FLASH_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${THEME_FLASH_SCRIPT}</script>`);
@@ -84,7 +84,7 @@ export function createUiHead(options: UiHeadOptions = {}): HeadResult {
   if (headerStack) {
     tags.push({
       tag: "script",
-      ...(scriptProps ? { props: scriptProps } : {}),
+      props: { ...scriptProps, children: HEADER_STACK_SCRIPT },
       children: HEADER_STACK_SCRIPT,
     });
     htmlParts.push(`<script${nonceAttr}>${HEADER_STACK_SCRIPT}</script>`);
