@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "private": false,
   "description": "Rimelight Entertainment's Content Management System Package",
   "homepage": "https://rimelight.com/docs",
@@ -59,23 +59,30 @@
       "import": "./dist/plugin.mjs",
       "default": "./dist/plugin.mjs"
     },
-    "./server/*": "./src/server/*",
-    "./cron/scheduled": {
-      "types": "./src/cron/scheduled.ts",
-      "import": "./src/cron/scheduled.ts"
+    "./middleware": {
+      "types": "./dist/middleware/index.d.mts",
+      "import": "./dist/middleware/index.mjs"
     },
-    "./cron/*": "./src/cron/*",
+    "./client": {
+      "types": "./dist/client/index.d.mts",
+      "import": "./dist/client/index.mjs"
+    },
     "./client/styles/*": "./src/client/styles/*",
     "./client/components": "./src/client/components/index.ts",
     "./client/components/*.tsx": "./src/client/components/*.tsx",
     "./client/components/*.ts": "./src/client/components/*.ts",
     "./client/components/*": "./src/client/components/*.tsx",
     "./client/loader": "./src/client/loader.ts",
-    "./client/*": "./src/client/*.ts",
-    "./auth/*": "./src/auth/*",
-    "./cache/*": "./src/cache/*",
-    "./search/*": "./src/search/*",
-    "./admin/*": "./src/admin/*"
+    "./server": {
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
+    },
+    "./server/*": "./src/server/*",
+    "./cron/scheduled": {
+      "types": "./src/cron/scheduled.ts",
+      "import": "./src/cron/scheduled.ts"
+    },
+    "./cron/*": "./src/cron/*"
   },
   "publishConfig": {
     "access": "public"
@@ -92,6 +99,7 @@
     "@rimelight/ui": "workspace:*",
     "@solidjs/web": "2.0.0-rc.11",
     "drizzle-orm": "1.0.0-rc.4",
+    "hono": "4.13.12",
     "solid-js": "2.0.0-rc.11",
     "sortablejs": "1.15.7"
   },
