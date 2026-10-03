@@ -1,31 +1,18 @@
 import { defineConfig } from "vite-plus";
-import { fileRoutes } from "filesystem-routing/vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import solid from "@solidjs/vite-plugin";
-import { ui } from "@rimelight/ui/plugin";
+import { fileRoutes } from "filesystem-routing/vite";
 import { seo } from "@rimelight/seo/plugin";
 import { security } from "@rimelight/security/plugin";
 import { auth } from "@rimelight/auth/plugin";
 import { i18n } from "@rimelight/i18n/plugin";
+import { ui } from "@rimelight/ui/plugin";
 import en from "./src/i18n/en.json";
 import es from "./src/i18n/es.json";
 import pt from "./src/i18n/pt.json";
 
 export default defineConfig({
   plugins: [
-    {
-      name: "virtual:rimelight-ui-docs-meta",
-      resolveId(id: string) {
-        if (id === "virtual:rimelight-ui-docs-meta") return "\0virtual:rimelight-ui-docs-meta";
-        if (id === "cloudflare:workers") return "\0cloudflare:workers";
-        return null;
-      },
-      load(id: string) {
-        if (id === "\0virtual:rimelight-ui-docs-meta") return "export default {};";
-        if (id === "\0cloudflare:workers") return "export const env = {};";
-        return null;
-      },
-    },
     cloudflare({
       viteEnvironment: {
         name: "ssr",
@@ -40,22 +27,7 @@ export default defineConfig({
       ssr: true,
     }),
 
-    fileRoutes({ types: true }),
-
-    ui({
-      logos: {
-        logomark: {
-          color: "https://cdn.rimelight.com/logos/logomark_color.svg",
-          white: "https://cdn.rimelight.com/logos/logomark_white.svg",
-          black: "https://cdn.rimelight.com/logos/logomark_black.svg",
-        },
-        logotype: {
-          color: "https://cdn.rimelight.com/logos/logotype_color.svg",
-          white: "https://cdn.rimelight.com/logos/logotype_white.svg",
-          black: "https://cdn.rimelight.com/logos/logotype_black.svg",
-        },
-      },
-    }),
+    fileRoutes({ types: ".cloudflare/types/file-routes.d.ts" }),
 
     seo({
       id: "rimelight.com",
@@ -111,5 +83,34 @@ export default defineConfig({
       defaultLocale: "en",
       translations: { en, es, pt },
     }),
+
+    ui({
+      logos: {
+        logomark: {
+          color: "https://cdn.rimelight.com/logos/logomark_color.svg",
+          white: "https://cdn.rimelight.com/logos/logomark_white.svg",
+          black: "https://cdn.rimelight.com/logos/logomark_black.svg",
+        },
+        logotype: {
+          color: "https://cdn.rimelight.com/logos/logotype_color.svg",
+          white: "https://cdn.rimelight.com/logos/logotype_white.svg",
+          black: "https://cdn.rimelight.com/logos/logotype_black.svg",
+        },
+      },
+    }),
+
+    {
+      name: "virtual:rimelight-ui-docs-meta",
+      resolveId(id: string) {
+        if (id === "virtual:rimelight-ui-docs-meta") return "\0virtual:rimelight-ui-docs-meta";
+        if (id === "cloudflare:workers") return "\0cloudflare:workers";
+        return null;
+      },
+      load(id: string) {
+        if (id === "\0virtual:rimelight-ui-docs-meta") return "export default {};";
+        if (id === "\0cloudflare:workers") return "export const env = {};";
+        return null;
+      },
+    },
   ],
 });
