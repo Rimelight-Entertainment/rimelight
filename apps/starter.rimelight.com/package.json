@@ -42,7 +42,7 @@
     "check": "cf workers types && vp check --fix"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "1.62.3",
+    "@cloudflare/vite-plugin": "1.62.4",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
     "@rimelight/i18n": "workspace:*",
@@ -61,17 +61,13 @@
     "@iconify-json/logos": "1.2.15",
     "@iconify-json/lucide": "1.2.138",
     "@rimelight/config": "workspace:*",
-    "@types/node": "26.6.3",
-    "cf": "1.0.0-beta.9",
+    "cf": "1.0.0-beta.11",
     "drizzle-kit": "1.0.0-rc.4",
     "filesystem-routing": "0.4.0",
     "typescript": "7.0.2",
     "unocss": "66.10.5",
     "vite-plus": "1.0.0",
-    "wrangler": "4.145.0"
-  },
-  "engines": {
-    "node": ">=26.10.0"
+    "wrangler": "4.146.0"
   },
   "packageManager": "pnpm@12.8.1"
 }
