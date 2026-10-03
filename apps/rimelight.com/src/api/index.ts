@@ -7,7 +7,7 @@ import pagesRoutes from "./routes/pages";
 import versionRoutes from "./routes/versions";
 import emailPreviewRoutes from "./routes/email/preview";
 import docsRoutes from "./routes/docs";
-import cmsRoutes from "./routes/cms";
+import contactRoutes from "./routes/contact";
 
 const api = new Hono()
   .route("/auth", authRoutes)
@@ -18,7 +18,7 @@ const api = new Hono()
   .route("/pages/versions", versionRoutes)
   .route("/dev/email/preview", emailPreviewRoutes)
   .route("/docs", docsRoutes)
-  .route("/cms", cmsRoutes);
+  .route("/contact", contactRoutes);
 
 export type ApiType = typeof api;
 export default api;

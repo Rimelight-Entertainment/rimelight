@@ -1,4 +1,19 @@
 {
+  "page_contact": {
+    "title": "Contáctanos",
+    "description": "Ponte en contacto con Rimelight Entertainment.",
+    "hero_description": "¿Tienes alguna pregunta, propuesta o quieres colaborar? Envíanos un mensaje directamente.",
+    "hero_title": "Ponte en contacto",
+    "contact_form_email_label": "Correo electrónico *",
+    "contact_form_message_label": "Mensaje *",
+    "contact_form_name_label": "Tu nombre *",
+    "contact_form_placeholder_email": "juan@ejemplo.com",
+    "contact_form_placeholder_message": "Escribe tu mensaje aquí...",
+    "contact_form_placeholder_name": "Juan Pérez",
+    "contact_form_placeholder_subject": "¿Cómo podemos ayudarte?",
+    "contact_form_send_button": "Enviar mensaje",
+    "contact_form_subject_label": "Asunto (opcional)"
+  },
   "page_auth_sign-up": {
     "auth_newsletter_label": "Suscríbete a nuestro boletín. Puedes darte de baja en cualquier momento."
   }
