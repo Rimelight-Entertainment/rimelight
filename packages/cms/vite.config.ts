@@ -10,6 +10,8 @@ export default defineConfig({
       "src/plugin.ts",
       "src/storage/index.ts",
       "src/server/index.ts",
+      "src/middleware/index.ts",
+      "src/client/index.ts",
     ],
   },
 });
