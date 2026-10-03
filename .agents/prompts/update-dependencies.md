@@ -18,7 +18,7 @@ This prompt is used to update dependencies in a project.
 - Adhere strictly to the commands provided. If `vp` was instructed, use `vp`. If `pnpm` was instructed, use `pnpm`.
 - Verify the current directory to ensure the correct packages are updated, not assuming the root to be a monorepository. Run the commands inside all sub-packages in any monorepositories requested – do not rely on the root.
 - Verify `pnpm-workspace.yaml` for configurations like catalogs, overrides, peer dependency rules, build allowlist, `saveExact` and `minimumReleaseAge` before changing a version.
-- Verify `.node-version` and `engines.node` in `package.json` match the locally installed Node.js version.
+- Verify `.node-version` matches the locally installed Node.js version.
 - Keep `workspace:*` references for internal packages and do not replace them with registry versions. Be aware some package-related changes might require updating registry versions to resolve fully.
 - Do not remove or weaken `pnpm-workspace.yaml` safeguards such as `strictSsl`, `minimumReleaseAge`, `overrides`, `peerDependencyRules`, or `allowBuilds` to make an update pass.
 - If a version is listed at vulnerable but within the minimumReleaseAge, add it as an allowed override under the `# Vulnerability Fixes` comment.
@@ -44,7 +44,7 @@ Inside a project directory, the resolution is driven by `.node-version` and `pac
 ## Workflow
 
 1. Check the locally installed Node.js version with `node --version` and compare it to the latest release with `npm view node version`. Update the local Node.js to the latest version via `vp env default <latest>` (install it first with `vp env install <latest>` if missing). Verify with `vp env current` and `vp env doctor`.
-2. Update each project's `.node-version` and `package.json` `engines.node` to the latest version. Ensure you update all sub-packages in monorespository cases. Also update node references elsewhere, such as `node-version` and pinned action SHAs in `.github/workflows`.
+2. Update each project's `.node-version` to the latest version. Ensure you update all sub-packages in monorepository cases. Also update node references elsewhere, such as `node-version` and pinned action SHAs in `.github/workflows`.
 3. Run `vp upgrade` to update Vite-Plus.
 4. Run `pnpm self-update` to update pnpm.
 5. Update `packageManager` or `devEngines` in `package.json` to the latest installed version. Ensure you update all sub-packages in monorespository cases.
