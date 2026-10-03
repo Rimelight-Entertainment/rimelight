@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type MiddlewareHandler } from "hono";
 import { z } from "zod";
 import { env } from "cloudflare:workers";
 import { turnstile } from "@rimelight/security/middleware";
@@ -10,7 +10,7 @@ const schema = z.object({
   message: z.string().trim().min(10).max(5192),
 });
 
-export default new Hono().post("/", turnstile(), async (c) => {
+export default new Hono().post("/", turnstile() as MiddlewareHandler, async (c) => {
   const { success, data, error } = schema.safeParse(await c.req.parseBody());
   if (!success) return c.json({ success: false as const, error: error.issues[0]?.message }, 400);
 
