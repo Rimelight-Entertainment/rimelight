@@ -12,15 +12,6 @@ import es from "./src/i18n/es.json";
 import pt from "./src/i18n/pt.json";
 
 export default defineConfig({
-  lint: {
-    options: {
-      typeAware: true,
-      typeCheck: true,
-    },
-  },
-  staged: {
-    "*": "vp check --fix",
-  },
   plugins: [
     {
       name: "virtual:rimelight-ui-docs-meta",
