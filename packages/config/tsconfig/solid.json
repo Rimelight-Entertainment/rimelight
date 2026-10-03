@@ -3,6 +3,6 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "@solidjs/web",
-    "types": ["@solidjs/vite-plugin/virtual-solid-manifest"]
+    "types": ["@solidjs/vite-plugin/virtual-solid-manifest", "vite-plus/client"]
   }
 }
