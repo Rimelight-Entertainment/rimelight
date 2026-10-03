@@ -28,6 +28,9 @@ export default defineConfig({
           ],
         },
       },
+      build: {
+        command: 'vp run -F "./apps/*" build',
+      },
       check: {
         dependsOn: [
           "audit",
@@ -43,9 +46,6 @@ export default defineConfig({
           "starter-dot-rimelight-dot-com#check",
         ],
         command: 'node -e "process.exit(0)"',
-      },
-      test: {
-        command: "vp test",
       },
     },
   },
