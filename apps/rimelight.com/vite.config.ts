@@ -7,9 +7,6 @@ import { security } from "@rimelight/security/plugin";
 import { auth } from "@rimelight/auth/plugin";
 import { i18n } from "@rimelight/i18n/plugin";
 import { ui } from "@rimelight/ui/plugin";
-import en from "./src/i18n/en.json";
-import es from "./src/i18n/es.json";
-import pt from "./src/i18n/pt.json";
 
 export default defineConfig({
   plugins: [
@@ -78,11 +75,7 @@ export default defineConfig({
       },
     }),
 
-    i18n({
-      locales: ["en", "pt", "es"],
-      defaultLocale: "en",
-      translations: { en, es, pt },
-    }),
+    i18n(),
 
     ui({
       logos: {

@@ -90,4 +90,100 @@ describe("@rimelight/i18n Vite plugin", () => {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
+
+  it("automatically infers locales and loads translations from directory", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-dir-"));
+    const i18nDir = path.join(tmpDir, "src", "i18n");
+    fs.mkdirSync(i18nDir, { recursive: true });
+
+    fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ header: { title: "Hello" } }));
+    fs.writeFileSync(path.join(i18nDir, "pt.json"), JSON.stringify({ header: { title: "Olá" } }));
+
+    try {
+      const plugins: Plugin[] = i18n({
+        translationsDir: path.join(tmpDir, "src", "i18n"),
+      });
+
+      const configPlugin = plugins[0]!;
+      await callHook(configPlugin.configResolved, { root: tmpDir });
+
+      const loaded = (await callHook(
+        configPlugin.load,
+        "\0virtual:rimelight-i18n-config",
+      )) as string;
+      expect(loaded).toContain(`["en","pt"]`);
+      expect(loaded).toContain(`export const defaultLocale = "en";`);
+      expect(loaded).toContain(`"Olá"`);
+      expect(loaded).toContain(`"Hello"`);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("infers translations for explicitly passed locales", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-locales-"));
+    const i18nDir = path.join(tmpDir, "src", "i18n");
+    fs.mkdirSync(i18nDir, { recursive: true });
+
+    fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ test: { val: "English" } }));
+    fs.writeFileSync(path.join(i18nDir, "ro.json"), JSON.stringify({ test: { val: "Romanian" } }));
+    fs.writeFileSync(
+      path.join(i18nDir, "unused.json"),
+      JSON.stringify({ test: { val: "Unused" } }),
+    );
+
+    try {
+      const plugins: Plugin[] = i18n({
+        locales: ["ro", "en"],
+        defaultLocale: "ro",
+        translationsDir: path.join(tmpDir, "src", "i18n"),
+      });
+
+      const configPlugin = plugins[0]!;
+      await callHook(configPlugin.configResolved, { root: tmpDir });
+
+      const loaded = (await callHook(
+        configPlugin.load,
+        "\0virtual:rimelight-i18n-config",
+      )) as string;
+      expect(loaded).toContain(`["ro","en"]`);
+      expect(loaded).toContain(`export const defaultLocale = "ro";`);
+      expect(loaded).toContain(`"Romanian"`);
+      expect(loaded).not.toContain(`"Unused"`);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("defaults to 'en' when 'en' is present, and to the first locale when 'en' is absent", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-default-"));
+    const i18nDir = path.join(tmpDir, "src", "i18n");
+    fs.mkdirSync(i18nDir, { recursive: true });
+
+    // When "pt" and "ro" are present (no "en")
+    fs.writeFileSync(path.join(i18nDir, "pt.json"), JSON.stringify({ a: { b: "1" } }));
+    fs.writeFileSync(path.join(i18nDir, "ro.json"), JSON.stringify({ a: { b: "2" } }));
+
+    try {
+      const pluginsWithoutEn: Plugin[] = i18n({
+        translationsDir: path.join(tmpDir, "src", "i18n"),
+      });
+      const pluginA = pluginsWithoutEn[0]!;
+      await callHook(pluginA.configResolved, { root: tmpDir });
+      const loadedA = (await callHook(pluginA.load, "\0virtual:rimelight-i18n-config")) as string;
+      expect(loadedA).toContain(`export const defaultLocale = "pt";`);
+
+      // Now add "en.json"
+      fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ a: { b: "0" } }));
+      const pluginsWithEn: Plugin[] = i18n({
+        translationsDir: path.join(tmpDir, "src", "i18n"),
+      });
+      const pluginB = pluginsWithEn[0]!;
+      await callHook(pluginB.configResolved, { root: tmpDir });
+      const loadedB = (await callHook(pluginB.load, "\0virtual:rimelight-i18n-config")) as string;
+      expect(loadedB).toContain(`export const defaultLocale = "en";`);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });
