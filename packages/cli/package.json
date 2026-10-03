@@ -41,7 +41,7 @@
   },
   "scripts": {
     "build": "vp pack",
-    "prepack": "pnpm run build",
+    "prepack": "vp pack",
     "create": "node ./dist/cli.mjs create",
     "check": "vp check --fix",
     "test": "vp test"
