@@ -1,8 +1,6 @@
 packages:
   - "apps/*"
   - "packages/*"
-audit:
-  level: low
 saveExact: true
 autoDedupe: true
 minimumReleaseAgeStrict: true
