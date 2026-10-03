@@ -90,7 +90,7 @@ function withProtocol(input: string) {
  * via `rimelightFontsVitePlugin` in dev / emitted as bundle assets in build.
  */
 export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
-  const { cacheDir, fontAssetsDir, fontServeBaseUrl } = resolveFontPaths(options);
+  const { cacheDir, fontAssetsDir } = resolveFontPaths(options);
 
   async function remember(filename: string, buf: Buffer) {
     emittedFonts.set(filename, buf);
@@ -154,7 +154,7 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
             await downloadFont(hasProtocol(url) ? url : withProtocol(url), assetPath);
           else if (!emittedFonts.has(filename))
             emittedFonts.set(filename, await fsp.readFile(assetPath));
-          replacements.set(url, `${fontServeBaseUrl}/${filename}`);
+          replacements.set(url, assetPath.replace(/\\/g, "/"));
         }),
       );
       return css.replace(fontUrlRegex, (match) => replacements.get(match) || match);
@@ -162,91 +162,12 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
   };
 }
 
-const FONT_MIME_TYPES: Record<string, string> = {
-  woff2: "font/woff2",
-  woff: "font/woff",
-  ttf: "font/ttf",
-  otf: "font/otf",
-  eot: "application/vnd.ms-fontobject",
-  svg: "image/svg+xml",
-};
-
 /**
- * Vite plugin companion to `createLocalFontProcessor`. Serves cached fonts from memory/disk in dev
- * and emits them as bundle assets in build, so no font files ever need to live in `public/`.
+ * Vite plugin companion to `createLocalFontProcessor`.
  */
-export function rimelightFontsVitePlugin(options?: LocalFontProcessorOptions) {
-  const { fontAssetsDir, fontServeBaseUrl } = resolveFontPaths(options);
-  const basePrefix = fontServeBaseUrl.endsWith("/") ? fontServeBaseUrl : `${fontServeBaseUrl}/`;
-
-  async function readFont(filename: string): Promise<Buffer | null> {
-    const cached = emittedFonts.get(filename);
-    if (cached) return cached;
-    try {
-      const buf = await fsp.readFile(join(fontAssetsDir, filename));
-      emittedFonts.set(filename, buf);
-      return buf;
-    } catch {
-      return null;
-    }
-  }
-
+export function rimelightFontsVitePlugin(_options?: LocalFontProcessorOptions) {
   return {
     name: "rimelight:fonts",
-    resolveId(id: string) {
-      if (id.startsWith(basePrefix)) {
-        return { id, external: true };
-      }
-      return null;
-    },
-    configureServer(server: any) {
-      server.middlewares.use(async (req: any, res: any, next: any) => {
-        try {
-          const rawUrl = typeof req.url === "string" ? req.url.split("?")[0]! : "";
-          const pathname = decodeURIComponent(rawUrl);
-          if (!pathname.startsWith(basePrefix)) return next();
-          if (req.method && req.method !== "GET" && req.method !== "HEAD") return next();
-          const filename = pathname.slice(basePrefix.length);
-          if (
-            !filename ||
-            filename.includes("/") ||
-            filename.includes("\\") ||
-            filename.includes("..")
-          )
-            return next();
-          const buf = await readFont(filename);
-          if (!buf) return next();
-          const ext = filename.split(".").pop()?.toLowerCase() || "";
-          res.setHeader("Content-Type", FONT_MIME_TYPES[ext] || "application/octet-stream");
-          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-          res.setHeader("Content-Length", buf.length);
-          res.end(req.method === "HEAD" ? undefined : buf);
-        } catch {
-          next();
-        }
-      });
-    },
-    async generateBundle(this: any) {
-      try {
-        const entries = await fsp.readdir(fontAssetsDir).catch(() => []);
-        await Promise.all(
-          entries.map(async (filename) => {
-            if (!emittedFonts.has(filename)) {
-              try {
-                emittedFonts.set(filename, await fsp.readFile(join(fontAssetsDir, filename)));
-              } catch {
-                // ignore unreadable cache entries
-              }
-            }
-          }),
-        );
-      } catch {
-        // no cache yet — nothing to emit
-      }
-      for (const [filename, source] of emittedFonts) {
-        this.emitFile({ type: "asset", fileName: `assets/fonts/${filename}`, source });
-      }
-    },
   };
 }
 
