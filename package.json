@@ -16,7 +16,10 @@
   },
   "type": "module",
   "scripts": {
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "check": "vp check --fix",
+    "test": "vp run -r test",
+    "build": "vp run -r build"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",

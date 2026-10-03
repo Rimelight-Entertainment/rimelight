@@ -10,7 +10,4 @@ export default defineConfig({
   staged: {
     "*": "vp check --fix",
   },
-  test: {
-    projects: ["packages/*/vite.config.ts"],
-  },
 });
