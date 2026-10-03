@@ -254,9 +254,6 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:packages/config
-      '@types/node':
-        specifier: 26.6.3
-        version: 26.6.3
       pkg-pr-new:
         specifier: 0.0.88
         version: 0.0.88
@@ -293,9 +290,6 @@ importers:
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@solidjs/meta':
-        specifier: 1.0.0-next.2
-        version: 1.0.0-next.2(@solidjs/web@2.0.0-rc.11(solid-js@2.0.0-rc.11))(solid-js@2.0.0-rc.11)
       '@solidjs/router':
         specifier: 2.0.0-next.30
         version: 2.0.0-next.30(@solidjs/web@2.0.0-rc.11(solid-js@2.0.0-rc.11))(filesystem-routing@0.4.0(supports-color@10.2.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(solid-js@2.0.0-rc.11)
@@ -378,9 +372,6 @@ importers:
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@solidjs/meta':
-        specifier: 1.0.0-next.2
-        version: 1.0.0-next.2(@solidjs/web@2.0.0-rc.11(solid-js@2.0.0-rc.11))(solid-js@2.0.0-rc.11)
       '@solidjs/router':
         specifier: 2.0.0-next.30
         version: 2.0.0-next.30(@solidjs/web@2.0.0-rc.11(solid-js@2.0.0-rc.11))(filesystem-routing@0.4.0(supports-color@10.2.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(solid-js@2.0.0-rc.11)
@@ -1976,12 +1967,6 @@ packages:
 
   '@solidjs/compiler@2.0.0-rc.13':
     resolution: {integrity: sha512-OveR/xhLKo8MTJO/53jgjHuBW54c6/a9B/jiSjDrBeQ3JSbODUxQ8t58WBSlHaxyowPd27TwhVkLo3zeT1YqMQ==}
-
-  '@solidjs/meta@1.0.0-next.2':
-    resolution: {integrity: sha512-4aqPczFqDdep4JTAUXfh4nyfq7InbTgimd7NuN6ZWWE29UPv0uR5dyr53yFcf2YgVXjFdX+JGhXtsE0njGL+fA==}
-    peerDependencies:
-      '@solidjs/web': ^2.0.0-rc.0
-      solid-js: ^2.0.0-rc.0
 
   '@solidjs/router@2.0.0-next.30':
     resolution: {integrity: sha512-Nl7i8Y00yn8HAQBc34WtJYabvzNK6t35lb2sXqBQKCBL6qrBGbSFXFUeakyRA8Toh0gErWcDsKTMEGeyozTJkQ==}
@@ -4528,11 +4513,6 @@ snapshots:
       '@solidjs/compiler-linux-x64-gnu': 2.0.0-rc.13
       '@solidjs/compiler-wasm32-wasi': 2.0.0-rc.13
       '@solidjs/compiler-win32-x64-msvc': 2.0.0-rc.13
-
-  '@solidjs/meta@1.0.0-next.2(@solidjs/web@2.0.0-rc.11(solid-js@2.0.0-rc.11))(solid-js@2.0.0-rc.11)':
-    dependencies:
-      '@solidjs/web': 2.0.0-rc.11(solid-js@2.0.0-rc.11)
-      solid-js: 2.0.0-rc.11
 
   '@solidjs/router@2.0.0-next.30(@solidjs/web@2.0.0-rc.11(solid-js@2.0.0-rc.11))(filesystem-routing@0.4.0(supports-color@10.2.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(solid-js@2.0.0-rc.11)':
     dependencies:
