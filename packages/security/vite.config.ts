@@ -5,7 +5,6 @@ export default defineConfig({
     entry: ["src/**/*.ts"],
     deps: {
       neverBundle: [/^virtual:/],
-      onlyBundle: false,
     },
   },
 });

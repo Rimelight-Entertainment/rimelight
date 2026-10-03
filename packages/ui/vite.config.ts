@@ -19,7 +19,6 @@ export default defineConfig({
     ],
     deps: {
       neverBundle: [/^virtual:/],
-      onlyBundle: false,
     },
   },
 });
