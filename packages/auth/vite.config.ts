@@ -3,9 +3,8 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   pack: {
     entry: ["src/**/*.ts"],
-    dts: true,
     deps: {
-      neverBundle: [/^(?:virtual|cloudflare):/],
+      neverBundle: [/^virtual:/],
       onlyBundle: false,
     },
   },

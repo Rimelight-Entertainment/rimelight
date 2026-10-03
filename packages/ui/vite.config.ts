@@ -17,9 +17,8 @@ export default defineConfig({
       "src/icons.ts",
       "src/fonts.ts",
     ],
-    dts: true,
     deps: {
-      neverBundle: [/^(?:virtual|cloudflare):/],
+      neverBundle: [/^virtual:/],
       onlyBundle: false,
     },
   },

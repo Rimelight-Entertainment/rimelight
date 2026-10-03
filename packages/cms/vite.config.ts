@@ -11,6 +11,5 @@ export default defineConfig({
       "src/storage/index.ts",
       "src/server/index.ts",
     ],
-    dts: true,
   },
 });
