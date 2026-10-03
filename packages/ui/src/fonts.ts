@@ -193,6 +193,12 @@ export function rimelightFontsVitePlugin(options?: LocalFontProcessorOptions) {
 
   return {
     name: "rimelight:fonts",
+    resolveId(id: string) {
+      if (id.startsWith(basePrefix)) {
+        return { id, external: true };
+      }
+      return null;
+    },
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
         try {
