@@ -1,57 +1,70 @@
-import { type Component, createSignal } from "solid-js";
+import { type Component, Show } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
 import BlankLayout from "#layouts/BlankLayout";
-import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
-import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
-import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
-import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
-import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
+import { RLCard, RLFormField, RLInput, RLButton, RLCheckbox, RLLogo } from "@rimelight/ui";
 import { t } from "@rimelight/i18n";
 
 export const ConstructionPage: Component = () => {
-  const [email, setEmail] = createSignal("");
-  const [agreed, setAgreed] = createSignal(false);
+  const [searchParams] = useSearchParams();
+  const redirect = () => searchParams["redirect"] || "/";
+  const isError = () => searchParams["error"] === "invalid";
 
   return (
     <BlankLayout
-      title={t("page_under_construction.title")}
-      description={t("page_under_construction.description")}
+      title={t("page_construction.meta_title")}
+      description={t("page_construction.meta_description")}
+      noindex={true}
     >
-      <div class="min-h-screen flex items-center justify-center p-4 bg-neutral-950">
-        <RLCard class="w-full max-w-md p-8 bg-neutral-900 border-neutral-800">
-          <div class="flex flex-col items-center text-center gap-6">
-            <RLLogo variant="logomark" class="h-16 w-auto text-primary-500" />
-            <h1 class="text-2xl font-bold text-white">{t("page_under_construction.title")}</h1>
-            <p class="text-neutral-400 text-sm">{t("page_under_construction.description")}</p>
+      <div class="flex min-h-screen flex-col items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md space-y-6 text-center">
+          <div class="flex flex-col items-center gap-4">
+            <RLLogo class="h-12 w-auto" variant="logomark" />
+            <h1 class="m-0 text-3xl font-bold tracking-tight sm:text-4xl">
+              {t("page_construction.title")}
+            </h1>
+            <p class="m-0 text-neutral-400 text-sm">{t("page_construction.description")}</p>
+          </div>
 
-            <form class="w-full flex flex-col gap-4 mt-2" onSubmit={(e) => e.preventDefault()}>
-              <RLFormField label={t("common.email") || "Email"}>
+          <RLCard class="text-left w-full">
+            <Show when={isError()}>
+              <div
+                class="mb-4 rounded-md border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-400"
+                role="alert"
+              >
+                Invalid credentials. Please try again.
+              </div>
+            </Show>
+
+            {/* Native Server-Side Form POST */}
+            <form method="post" action="/api/construction-guest" class="flex flex-col gap-4">
+              <input type="hidden" name="redirect" value={redirect()} />
+
+              <RLFormField label={t("page_construction.form_passphrase_label")} required>
                 <RLInput
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email()}
-                  onInput={(e: any) => setEmail(e.currentTarget?.value || "")}
+                  id="construction-passphrase-input"
+                  type="password"
+                  name="passphrase"
+                  placeholder={t("page_construction.form_passphrase_placeholder")}
+                  class="w-full"
+                  required
+                  autofocus
+                  autocomplete="current-password"
                 />
               </RLFormField>
 
-              <div class="flex items-center gap-2 text-left">
-                <RLCheckbox
-                  checked={agreed()}
-                  onChange={(e) => setAgreed(e.currentTarget.checked)}
-                  label="Notify me when site goes live"
-                />
-              </div>
-
-              <RLButton
-                label="Subscribe"
-                color="primary"
-                variant="solid"
-                type="submit"
-                class="w-full mt-2"
+              <RLCheckbox
+                id="construction-remember-me-checkbox"
+                name="rememberMe"
+                label={t("page_construction.form_remember_me_label")}
+                checked
               />
+
+              <RLButton type="submit" color="primary" variant="solid" block class="w-full mt-2">
+                {t("page_construction.form_sign_in_button")}
+              </RLButton>
             </form>
-          </div>
-        </RLCard>
+          </RLCard>
+        </div>
       </div>
     </BlankLayout>
   );
