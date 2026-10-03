@@ -1,8 +1,8 @@
-import { defineConfig } from "vite-plus";
+import { defineConfig, type PluginOption } from "vite-plus";
 import solid from "@solidjs/vite-plugin";
 
 export default defineConfig({
-  plugins: solid(),
+  plugins: solid() as PluginOption[],
   test: {
     environment: "node",
   },
