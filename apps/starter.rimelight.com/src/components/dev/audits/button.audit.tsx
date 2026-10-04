@@ -1,14 +1,14 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
+const COLORS = AUDIT_COLORS;
 const VARIANTS = ["solid", "outline", "soft", "subtle", "ghost", "link"] as const;
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 
 export const ButtonSandbox = (): JSX.Element => {
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [color, setColor] = createSignal<string>("primary");
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
   const [label, setLabel] = createSignal("Button Action");

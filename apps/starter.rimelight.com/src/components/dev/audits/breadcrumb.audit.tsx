@@ -2,9 +2,9 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBreadcrumb } from "@rimelight/ui/components/breadcrumb/RLBreadcrumb.tsx";
 import type { BreadcrumbItem } from "@rimelight/ui/components/breadcrumb/breadcrumb.ts";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
+const COLORS = AUDIT_COLORS;
 
 const defaultItems: BreadcrumbItem[] = [
   { label: "Docs", icon: "bookOpen", to: "/docs" },
@@ -22,7 +22,7 @@ const manyItems: BreadcrumbItem[] = [
 ];
 
 export const BreadcrumbSandbox = (): JSX.Element => {
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [color, setColor] = createSignal<string>("primary");
   const [separatorIcon, setSeparatorIcon] = createSignal("chevronRight");
   const [maxVisible, setMaxVisible] = createSignal<number | undefined>(undefined);
   const [showIcons, setShowIcons] = createSignal(false);

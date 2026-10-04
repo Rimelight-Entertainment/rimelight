@@ -1,4 +1,12 @@
 import type { JSX } from "@solidjs/web";
+import { PALETTES } from "@rimelight/ui/preset";
+import uiConfig from "virtual:rimelight/ui";
+
+export const AUDIT_COLORS = [
+  ...new Set([...Object.keys(PALETTES), ...Object.keys(uiConfig?.colors ?? {})]),
+] as string[];
+
+export type AuditColor = string;
 
 export type ComponentCategory =
   | "Data Display"

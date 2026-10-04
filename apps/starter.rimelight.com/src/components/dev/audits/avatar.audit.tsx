@@ -3,14 +3,14 @@ import type { JSX } from "@solidjs/web";
 import { RLAvatar } from "@rimelight/ui/components/avatar/RLAvatar.tsx";
 import { RLAvatarGroup } from "@rimelight/ui/components/avatar-group/RLAvatarGroup.tsx";
 import { RLPopover } from "@rimelight/ui/components/popover/RLPopover.tsx";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const SIZES = ["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
-const COLORS = ["neutral", "primary", "secondary", "success", "info", "warning", "error"] as const;
+const COLORS = AUDIT_COLORS;
 
 export const AvatarSandbox = (): JSX.Element => {
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("neutral");
+  const [color, setColor] = createSignal<string>("neutral");
   const [showSrc, setShowSrc] = createSignal(true);
   const [chipColor, setChipColor] = createSignal<string>("success");
   const [showChip, setShowChip] = createSignal(true);

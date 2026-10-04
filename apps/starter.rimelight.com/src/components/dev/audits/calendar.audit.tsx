@@ -1,9 +1,9 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCalendar } from "@rimelight/ui/components/calendar/RLCalendar.tsx";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
+const COLORS = AUDIT_COLORS;
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const VARIANTS = ["solid", "outline", "soft", "subtle"] as const;
 
@@ -11,7 +11,7 @@ const d = (year: number, month: number, day: number) => new Date(year, month, da
 const FEB = d(2022, 1, 15);
 
 export const CalendarSandbox = (): JSX.Element => {
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [color, setColor] = createSignal<string>("primary");
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
   const [type, setType] = createSignal<"date" | "month" | "year">("date");

@@ -1,17 +1,17 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const VARIANTS = ["solid", "outline", "soft", "subtle", "ghost"] as const;
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
+const COLORS = AUDIT_COLORS;
 const SHAPES = ["pill", "rounded", "square"] as const;
 
 export const BadgeSandbox = (): JSX.Element => {
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [color, setColor] = createSignal<string>("primary");
   const [shape, setShape] = createSignal<(typeof SHAPES)[number]>("pill");
   const [square, setSquare] = createSignal(false);
   const [hasLeadingIcon, setHasLeadingIcon] = createSignal(false);

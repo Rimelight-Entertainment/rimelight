@@ -1,12 +1,12 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBanner } from "@rimelight/ui/components/banner/RLBanner.tsx";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
+const COLORS = AUDIT_COLORS;
 
 export const BannerSandbox = (): JSX.Element => {
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [color, setColor] = createSignal<string>("primary");
   const [hasIcon, setHasIcon] = createSignal(true);
   const [hasActions, setHasActions] = createSignal(true);
   const [isClosable, setIsClosable] = createSignal(true);

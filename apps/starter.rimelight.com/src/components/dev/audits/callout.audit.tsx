@@ -1,14 +1,14 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCallout } from "@rimelight/ui/components/callout/RLCallout.tsx";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
-const COLORS = ["primary", "secondary", "success", "info", "warning", "error", "neutral"] as const;
+const COLORS = AUDIT_COLORS;
 
 const VARIANTS = ["solid", "outline", "soft", "subtle"] as const;
 
 export const CalloutSandbox = (): JSX.Element => {
-  const [color, setColor] = createSignal<(typeof COLORS)[number]>("primary");
+  const [color, setColor] = createSignal<string>("primary");
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
   const [orientation, setOrientation] = createSignal<"vertical" | "horizontal">("vertical");
   const [hasIcon, setHasIcon] = createSignal(true);

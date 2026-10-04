@@ -2,7 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLAudio } from "@rimelight/ui/components/audio/RLAudio.tsx";
 import type { AudioTrackItem } from "@rimelight/ui/components/audio/audio.ts";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const SAMPLE_TRACKS: AudioTrackItem[] = [
   {
@@ -65,15 +65,7 @@ export const AudioSandbox = (): JSX.Element => {
   const sizes = ["sm", "md", "lg"] as const;
   const orientations = ["horizontal", "vertical"] as const;
   const progressTypes = ["bar", "waveform"] as const;
-  const colors = [
-    "primary",
-    "secondary",
-    "success",
-    "info",
-    "warning",
-    "error",
-    "neutral",
-  ] as const;
+  const colors = AUDIT_COLORS;
 
   return (
     <>

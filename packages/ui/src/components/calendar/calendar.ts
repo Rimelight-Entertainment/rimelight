@@ -1,4 +1,5 @@
 import type { JSX } from "@solidjs/web";
+import type { ThemeColor } from "../../types";
 import type { ButtonProps } from "../button/button";
 
 export type CalendarType = "date" | "month" | "year";
@@ -59,7 +60,15 @@ export interface CalendarProps {
    */
   viewControl?: boolean | CalendarControl;
   /** @default "primary" */
-  color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral";
+  color?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "error"
+    | "neutral"
+    | ThemeColor;
   /** @default "solid" */
   variant?: "solid" | "outline" | "soft" | "subtle";
   /** @default "md" */

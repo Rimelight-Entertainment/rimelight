@@ -6,19 +6,11 @@ import type {
   BrowserMockupSize,
   BrowserMockupColor,
 } from "@rimelight/ui/components/browser-mockup/browser-mockup.ts";
-import type { ComponentAuditDefinition } from "./types";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const VARIANTS: BrowserMockupVariant[] = ["outline", "solid", "soft", "subtle", "ghost"];
 const SIZES: BrowserMockupSize[] = ["sm", "md", "lg", "xl"];
-const COLORS: BrowserMockupColor[] = [
-  "primary",
-  "secondary",
-  "success",
-  "info",
-  "warning",
-  "error",
-  "neutral",
-];
+const COLORS = AUDIT_COLORS as unknown as BrowserMockupColor[];
 const CONTROLS_VARIANTS = ["color", "monochrome", "none"] as const;
 
 export const BrowserMockupSandbox = (): JSX.Element => {

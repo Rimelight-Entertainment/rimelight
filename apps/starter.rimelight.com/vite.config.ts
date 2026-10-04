@@ -62,6 +62,9 @@ export default defineConfig({
     i18n(),
 
     ui({
+      colors: {
+        brand: [0.22, 330],
+      },
       logos: {
         logomark: {
           color: "https://cdn.rimelight.com/logos/logomark_color.svg",
