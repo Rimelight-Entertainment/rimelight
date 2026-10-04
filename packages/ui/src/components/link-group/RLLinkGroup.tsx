@@ -9,7 +9,7 @@ export interface RLLinkGroupProps extends LinkGroupProps {
   children?: JSX.Element;
 }
 
-const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
+export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -75,5 +75,3 @@ const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLLinkGroup };

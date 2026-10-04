@@ -36,7 +36,7 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
   return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`;
 };
 
-const RLChart: Component<RLChartProps> = (allProps) => {
+export const RLChart: Component<RLChartProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -300,5 +300,3 @@ const RLChart: Component<RLChartProps> = (allProps) => {
     </>
   );
 };
-
-export { RLChart };

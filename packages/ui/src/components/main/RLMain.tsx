@@ -7,7 +7,7 @@ export interface RLMainProps extends MainProps {
   children?: JSX.Element;
 }
 
-const RLMain: Component<RLMainProps> = (allProps) => {
+export const RLMain: Component<RLMainProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children");
 
@@ -33,5 +33,3 @@ const RLMain: Component<RLMainProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLMain };

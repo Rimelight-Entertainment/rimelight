@@ -70,7 +70,7 @@ function generateDefaultPeaks(count = 36): number[] {
 
 const SPEED_OPTIONS = [0.5, 1, 1.25, 1.5, 2, 3, 4];
 
-const RLAudio: Component<RLAudioProps> = (allProps) => {
+export const RLAudio: Component<RLAudioProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -1159,5 +1159,3 @@ const RLAudio: Component<RLAudioProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLAudio };

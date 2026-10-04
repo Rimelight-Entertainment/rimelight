@@ -7,7 +7,7 @@ export interface RLFloatingActionProps extends FloatingActionProps {
   children?: JSX.Element;
 }
 
-const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
+export const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLFloatingAction };

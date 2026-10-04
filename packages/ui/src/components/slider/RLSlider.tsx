@@ -9,7 +9,7 @@ export interface RLSliderProps extends SliderProps {
   onChange?: (val: number) => void;
 }
 
-const RLSlider: Component<RLSliderProps> = (allProps) => {
+export const RLSlider: Component<RLSliderProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -107,5 +107,3 @@ const RLSlider: Component<RLSliderProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSlider };

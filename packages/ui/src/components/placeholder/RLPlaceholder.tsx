@@ -7,7 +7,7 @@ export interface RLPlaceholderProps extends PlaceholderProps {
   children?: JSX.Element;
 }
 
-const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
+export const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -45,5 +45,3 @@ const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPlaceholder };

@@ -12,7 +12,7 @@ export interface RLSurroundProps {
   class?: string;
 }
 
-const RLSurround: Component<RLSurroundProps> = (props) => {
+export const RLSurround: Component<RLSurroundProps> = (props) => {
   return (
     <Show when={props.prev || props.next}>
       <div
@@ -53,5 +53,3 @@ const RLSurround: Component<RLSurroundProps> = (props) => {
     </Show>
   );
 };
-
-export { RLSurround };

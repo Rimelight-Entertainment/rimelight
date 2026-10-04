@@ -32,7 +32,7 @@ const colorToIcon: Record<string, string | undefined> = {
   neutral: undefined,
 };
 
-const RLCallout: Component<RLCalloutProps> = (allProps) => {
+export const RLCallout: Component<RLCalloutProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -150,5 +150,3 @@ const RLCallout: Component<RLCalloutProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLCallout };

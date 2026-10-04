@@ -74,7 +74,7 @@ const normalizeSingle = (value: string | string[] | undefined): string | undefin
 const normalizeMultiple = (value: string | string[] | undefined): string[] =>
   value === undefined ? [] : Array.isArray(value) ? [...value] : [value];
 
-const RLAccordion: Component<RLAccordionProps> = (allProps) => {
+export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -340,5 +340,3 @@ const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLAccordion };

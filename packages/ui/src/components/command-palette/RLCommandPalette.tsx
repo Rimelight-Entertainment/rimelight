@@ -7,7 +7,7 @@ export interface RLCommandPaletteProps extends CommandPaletteProps {
   children?: JSX.Element;
 }
 
-const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
+export const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLCommandPalette };

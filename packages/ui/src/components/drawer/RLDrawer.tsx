@@ -27,7 +27,7 @@ export interface RLDrawerProps extends DrawerProps {
   lockScroll?: boolean;
 }
 
-const RLDrawer: Component<RLDrawerProps> = (allProps) => {
+export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -177,5 +177,3 @@ const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLDrawer };

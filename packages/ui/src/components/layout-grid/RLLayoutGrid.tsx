@@ -37,7 +37,7 @@ const hexToRgba = (hex: string, alpha: number): string => {
 
 export interface RLLayoutGridProps extends LayoutGridProps {}
 
-const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
+export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -420,5 +420,3 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLLayoutGrid };

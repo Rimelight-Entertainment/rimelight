@@ -16,7 +16,7 @@ export interface RLShareProps extends Omit<
   | "activeVariant"
 > {}
 
-const RLShare: Component<RLShareProps> = (allProps) => {
+export const RLShare: Component<RLShareProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "class", "ui");
   const [copied, setCopied] = createSignal(false);
@@ -63,5 +63,3 @@ const RLShare: Component<RLShareProps> = (allProps) => {
     />
   );
 };
-
-export { RLShare };

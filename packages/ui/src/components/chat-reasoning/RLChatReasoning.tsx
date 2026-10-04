@@ -7,7 +7,7 @@ export interface RLChatReasoningProps extends ChatReasoningProps {
   children?: JSX.Element;
 }
 
-const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
+export const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLChatReasoning };

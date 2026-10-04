@@ -7,7 +7,7 @@ export interface RLPageProps extends PageProps {
   children?: JSX.Element;
 }
 
-const RLPage: Component<RLPageProps> = (allProps) => {
+export const RLPage: Component<RLPageProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -19,5 +19,3 @@ const RLPage: Component<RLPageProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPage };

@@ -7,7 +7,7 @@ export interface RLContextMenuProps extends ContextMenuProps {
   children?: JSX.Element;
 }
 
-const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {
+export const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLContextMenu };

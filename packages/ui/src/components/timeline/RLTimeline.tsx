@@ -17,7 +17,7 @@ export interface RLTimelineProps extends TimelineProps {
   description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
 }
 
-const RLTimeline: Component<RLTimelineProps> = (allProps) => {
+export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -195,5 +195,3 @@ const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     </Dynamic>
   );
 };
-
-export { RLTimeline };

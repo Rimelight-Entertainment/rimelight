@@ -75,7 +75,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
   },
 };
 
-const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
+export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
   const props = allProps;
 
   const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
@@ -192,5 +192,3 @@ const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPackageManagers };

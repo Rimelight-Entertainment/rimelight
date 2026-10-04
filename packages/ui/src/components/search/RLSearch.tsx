@@ -24,7 +24,7 @@ export interface RLSearchProps extends SearchProps {
 
 const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`;
 
-const RLSearch: Component<RLSearchProps> = (allProps) => {
+export const RLSearch: Component<RLSearchProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -292,5 +292,3 @@ const RLSearch: Component<RLSearchProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSearch };

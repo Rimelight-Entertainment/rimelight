@@ -7,7 +7,7 @@ export interface RLErrorProps extends ErrorProps {
   children?: JSX.Element;
 }
 
-const RLError: Component<RLErrorProps> = (allProps) => {
+export const RLError: Component<RLErrorProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLError: Component<RLErrorProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLError };

@@ -39,7 +39,7 @@ const MARQUEE_KEYFRAMES = `
 }
 `;
 
-const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
+export const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "speed", "direction", "pauseOnHover", "ui", "class", "children");
 
@@ -71,5 +71,3 @@ const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLMarquee };

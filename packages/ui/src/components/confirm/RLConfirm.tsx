@@ -16,7 +16,7 @@ export interface RLConfirmProps extends ConfirmProps {
   onCancel?: () => void;
 }
 
-const RLConfirm: Component<RLConfirmProps> = (allProps) => {
+export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -171,5 +171,3 @@ const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLConfirm };

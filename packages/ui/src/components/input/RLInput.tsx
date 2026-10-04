@@ -15,7 +15,7 @@ export interface RLInputProps extends InputProps {
   trailing?: JSX.Element;
 }
 
-const RLInput: Component<RLInputProps> = (allProps) => {
+export const RLInput: Component<RLInputProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -101,5 +101,3 @@ const RLInput: Component<RLInputProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInput };

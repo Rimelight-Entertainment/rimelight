@@ -7,7 +7,7 @@ export interface RLProseProps extends ProseProps {
   children?: JSX.Element;
 }
 
-const RLProse: Component<RLProseProps> = (allProps) => {
+export const RLProse: Component<RLProseProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLProse: Component<RLProseProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLProse };

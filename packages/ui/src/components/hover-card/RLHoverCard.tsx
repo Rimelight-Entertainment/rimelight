@@ -8,7 +8,7 @@ export interface RLHoverCardProps extends HoverCardProps {
   trigger?: JSX.Element;
 }
 
-const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
+export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "triggerLabel", "placement", "ui", "class", "children", "trigger");
 
@@ -63,5 +63,3 @@ const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLHoverCard };

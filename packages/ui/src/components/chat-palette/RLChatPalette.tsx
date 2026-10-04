@@ -7,7 +7,7 @@ export interface RLChatPaletteProps extends ChatPaletteProps {
   children?: JSX.Element;
 }
 
-const RLChatPalette: Component<RLChatPaletteProps> = (allProps) => {
+export const RLChatPalette: Component<RLChatPaletteProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLChatPalette: Component<RLChatPaletteProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLChatPalette };

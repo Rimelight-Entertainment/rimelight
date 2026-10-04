@@ -7,7 +7,7 @@ export interface RLAspectRatioProps extends AspectRatioProps {
   children?: JSX.Element;
 }
 
-const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
+export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ratio", "ui", "class", "children");
 
@@ -42,5 +42,3 @@ const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
     </Root>
   );
 };
-
-export { RLAspectRatio };

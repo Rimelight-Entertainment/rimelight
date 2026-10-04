@@ -17,7 +17,7 @@ export interface RLEmptyProps extends EmptyProps {
   footerSlot?: JSX.Element;
 }
 
-const RLEmpty: Component<RLEmptyProps> = (allProps) => {
+export const RLEmpty: Component<RLEmptyProps> = (allProps) => {
   const props = allProps;
   const resolvedChildren = children(() => props.children);
   const resolvedHeaderSlot = children(() => props.headerSlot);
@@ -140,5 +140,3 @@ const RLEmpty: Component<RLEmptyProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLEmpty };

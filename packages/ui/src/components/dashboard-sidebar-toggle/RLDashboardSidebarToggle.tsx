@@ -8,7 +8,7 @@ export interface RLDashboardSidebarToggleProps extends DashboardSidebarTogglePro
   children?: JSX.Element;
 }
 
-const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allProps) => {
+export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "icon", "ui", "class", "children");
 
@@ -33,5 +33,3 @@ const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allP
     </button>
   );
 };
-
-export { RLDashboardSidebarToggle };

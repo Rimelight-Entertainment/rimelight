@@ -12,7 +12,7 @@ export interface RLDashboardSidebarProps extends DashboardSidebarProps {
   onCollapseChange?: (collapsed: boolean) => void;
 }
 
-const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
+export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -162,5 +162,3 @@ const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
     </>
   );
 };
-
-export { RLDashboardSidebar };

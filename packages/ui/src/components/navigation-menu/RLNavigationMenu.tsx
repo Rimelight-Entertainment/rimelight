@@ -22,7 +22,7 @@ export interface RLNavigationMenuProps extends NavigationMenuProps {
   [key: string]: any;
 }
 
-const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
+export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "items", "color", "orientation", "theme", "ui", "class", "children");
 
@@ -395,5 +395,3 @@ const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
     </nav>
   );
 };
-
-export { RLNavigationMenu };

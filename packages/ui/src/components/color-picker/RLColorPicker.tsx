@@ -7,7 +7,7 @@ export interface RLColorPickerProps extends ColorPickerProps {
   children?: JSX.Element;
 }
 
-const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
+export const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLColorPicker };

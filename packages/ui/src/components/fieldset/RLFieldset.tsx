@@ -7,7 +7,7 @@ export interface RLFieldsetProps extends FieldsetProps {
   children?: JSX.Element;
 }
 
-const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
+export const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLFieldset };

@@ -7,7 +7,7 @@ export interface RLStickySurfaceProps extends StickySurfaceProps {
   children?: JSX.Element;
 }
 
-const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
+export const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children");
 
@@ -56,5 +56,3 @@ const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLStickySurface };

@@ -20,7 +20,7 @@ export interface RLTabsProps<T extends TabItem = TabItem> extends TabsProps<T> {
   onChange?: (value: string) => void;
 }
 
-const RLTabs: Component<RLTabsProps> = (allProps) => {
+export const RLTabs: Component<RLTabsProps> = (allProps) => {
   const props = allProps;
   const resolvedChildren = children(() => props.children);
   const rest = omit(
@@ -305,5 +305,3 @@ const RLTabs: Component<RLTabsProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLTabs };

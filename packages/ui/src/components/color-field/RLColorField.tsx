@@ -20,7 +20,7 @@ export interface RLColorFieldProps extends ColorFieldProps {
   "onUpdate:modelValue"?: (val: string) => void;
 }
 
-const RLColorField: Component<RLColorFieldProps> = (allProps) => {
+export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -231,5 +231,3 @@ const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLColorField };

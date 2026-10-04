@@ -11,7 +11,7 @@ export interface RLChipProps extends ChipProps {
   show?: boolean;
 }
 
-const RLChip: Component<RLChipProps> = (allProps) => {
+export const RLChip: Component<RLChipProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -66,5 +66,3 @@ const RLChip: Component<RLChipProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLChip };

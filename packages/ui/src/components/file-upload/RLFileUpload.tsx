@@ -10,7 +10,7 @@ export interface RLFileUploadProps extends FileUploadProps {
   iconSlot?: JSX.Element;
 }
 
-const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
+export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -162,5 +162,3 @@ const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLFileUpload };

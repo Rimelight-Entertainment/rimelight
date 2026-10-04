@@ -7,7 +7,7 @@ export interface RLSwitchProps extends SwitchProps {
   children?: JSX.Element;
 }
 
-const RLSwitch: Component<RLSwitchProps> = (allProps) => {
+export const RLSwitch: Component<RLSwitchProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -55,5 +55,3 @@ const RLSwitch: Component<RLSwitchProps> = (allProps) => {
     </label>
   );
 };
-
-export { RLSwitch };

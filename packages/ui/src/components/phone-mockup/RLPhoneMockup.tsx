@@ -7,7 +7,7 @@ export interface RLPhoneMockupProps extends PhoneMockupProps {
   children?: JSX.Element;
 }
 
-const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {
+export const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPhoneMockup };

@@ -13,7 +13,7 @@ export interface RLSeparatorProps extends SeparatorProps {
   avatar?: string | Record<string, any>;
 }
 
-const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
+export const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
   const props = allProps;
   const resolvedChildren = children(() => props.children);
   const resolvedAvatarSlot = children(() => props.avatarSlot);
@@ -95,5 +95,3 @@ const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSeparator };

@@ -7,7 +7,7 @@ export interface RLCompareProps extends CompareProps {
   children?: JSX.Element;
 }
 
-const RLCompare: Component<RLCompareProps> = (allProps) => {
+export const RLCompare: Component<RLCompareProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLCompare: Component<RLCompareProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLCompare };

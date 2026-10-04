@@ -15,7 +15,7 @@ export interface RLScrollAreaProps extends ScrollAreaProps {
   children?: JSX.Element;
 }
 
-const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
+export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -214,5 +214,3 @@ const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLScrollArea };

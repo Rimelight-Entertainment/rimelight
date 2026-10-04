@@ -14,7 +14,7 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
   day: "numeric",
 };
 
-const RLDate: Component<RLDateProps> = (allProps) => {
+export const RLDate: Component<RLDateProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "date", "locale", "options");
 
@@ -31,5 +31,3 @@ const RLDate: Component<RLDateProps> = (allProps) => {
     </time>
   );
 };
-
-export { RLDate };

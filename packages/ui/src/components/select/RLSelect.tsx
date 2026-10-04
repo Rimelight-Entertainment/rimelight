@@ -29,7 +29,7 @@ export interface RLSelectProps extends Partial<Omit<SelectProps, "onChange" | "o
   onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void;
 }
 
-const RLSelect: Component<RLSelectProps> = (allProps) => {
+export const RLSelect: Component<RLSelectProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -203,5 +203,3 @@ const RLSelect: Component<RLSelectProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSelect };

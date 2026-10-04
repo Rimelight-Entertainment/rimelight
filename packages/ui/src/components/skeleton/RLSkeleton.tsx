@@ -4,7 +4,7 @@ import { skeletonTheme } from "./skeleton.theme";
 
 export interface RLSkeletonProps extends SkeletonProps {}
 
-const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
+export const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "shape", "ui", "class");
 
@@ -18,5 +18,3 @@ const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
 
   return <div class={classes()["root"]} data-slot="root" {...rest} />;
 };
-
-export { RLSkeleton };

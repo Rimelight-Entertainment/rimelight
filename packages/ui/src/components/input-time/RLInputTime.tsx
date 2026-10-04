@@ -24,7 +24,7 @@ export interface RLInputTimeProps extends InputTimeProps {
   onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
 }
 
-const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
+export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -91,5 +91,3 @@ const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputTime };

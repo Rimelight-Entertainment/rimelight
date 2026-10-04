@@ -24,7 +24,7 @@ export interface RLModalProps extends ModalProps {
   footerSlot?: JSX.Element;
 }
 
-const RLModal: Component<RLModalProps> = (allProps) => {
+export const RLModal: Component<RLModalProps> = (allProps) => {
   const props = allProps;
   const resolvedChildren = children(() => props.children);
   const resolvedTrigger = children(() => props.trigger);
@@ -209,5 +209,3 @@ const RLModal: Component<RLModalProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLModal };

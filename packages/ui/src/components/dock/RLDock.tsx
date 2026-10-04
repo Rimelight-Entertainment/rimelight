@@ -7,7 +7,7 @@ export interface RLDockProps extends DockProps {
   children?: JSX.Element;
 }
 
-const RLDock: Component<RLDockProps> = (allProps) => {
+export const RLDock: Component<RLDockProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLDock: Component<RLDockProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLDock };

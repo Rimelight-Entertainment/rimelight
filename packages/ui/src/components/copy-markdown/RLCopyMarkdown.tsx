@@ -20,7 +20,7 @@ export interface RLCopyMarkdownProps extends Omit<
   ui?: any;
 }
 
-const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
+export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "raw", "class", "ui");
   const [copied, setCopied] = createSignal(false);
@@ -56,5 +56,3 @@ const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
     />
   );
 };
-
-export { RLCopyMarkdown };

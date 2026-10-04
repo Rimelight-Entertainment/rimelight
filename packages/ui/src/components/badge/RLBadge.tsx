@@ -11,7 +11,7 @@ export interface RLBadgeProps extends BadgeProps {
   trailingSlot?: JSX.Element;
 }
 
-const RLBadge: Component<RLBadgeProps> = (allProps) => {
+export const RLBadge: Component<RLBadgeProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -185,5 +185,3 @@ const RLBadge: Component<RLBadgeProps> = (allProps) => {
     </Root>
   );
 };
-
-export { RLBadge };

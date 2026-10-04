@@ -28,7 +28,7 @@ interface VisibleItemEntry {
   hiddenCount?: number | undefined;
 }
 
-const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
+export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -386,5 +386,3 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
     </RootTag>
   );
 };
-
-export { RLBreadcrumb };

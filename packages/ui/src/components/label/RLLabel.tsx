@@ -7,7 +7,7 @@ export interface RLLabelProps extends LabelProps {
   children?: JSX.Element;
 }
 
-const RLLabel: Component<RLLabelProps> = (allProps) => {
+export const RLLabel: Component<RLLabelProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "for", "size", "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLLabel: Component<RLLabelProps> = (allProps) => {
     </label>
   );
 };
-
-export { RLLabel };

@@ -7,7 +7,7 @@ export interface RLEditorProps extends EditorProps {
   children?: JSX.Element;
 }
 
-const RLEditor: Component<RLEditorProps> = (allProps) => {
+export const RLEditor: Component<RLEditorProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLEditor: Component<RLEditorProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLEditor };

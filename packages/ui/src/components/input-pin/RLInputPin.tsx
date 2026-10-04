@@ -20,7 +20,7 @@ export interface RLInputPinProps extends InputPinProps {
   onComplete?: (value: string) => void;
 }
 
-const RLInputPin: Component<RLInputPinProps> = (allProps) => {
+export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -184,5 +184,3 @@ const RLInputPin: Component<RLInputPinProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputPin };

@@ -7,7 +7,7 @@ export interface RLWatermarkProps extends WatermarkProps {
   children?: JSX.Element;
 }
 
-const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
+export const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLWatermark };

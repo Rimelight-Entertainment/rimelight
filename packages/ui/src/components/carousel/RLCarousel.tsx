@@ -19,7 +19,7 @@ export interface RLCarouselProps extends CarouselProps {
 
 const SLIDE_TRANSITION = "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)";
 
-const RLCarousel: Component<RLCarouselProps> = (allProps) => {
+export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "slides", "autoplay", "ui", "class", "children");
 
@@ -248,5 +248,3 @@ const RLCarousel: Component<RLCarouselProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLCarousel };

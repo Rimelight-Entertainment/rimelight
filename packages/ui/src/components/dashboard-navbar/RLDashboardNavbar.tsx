@@ -15,7 +15,7 @@ export interface RLDashboardNavbarProps extends DashboardNavbarProps {
   trailingSlot?: JSX.Element;
 }
 
-const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
+export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -127,5 +127,3 @@ const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
     </header>
   );
 };
-
-export { RLDashboardNavbar };

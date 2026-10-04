@@ -18,7 +18,7 @@ export interface RLDashboardSearchProps extends DashboardSearchProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
+export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children", "open", "onOpenChange");
 
@@ -124,5 +124,3 @@ const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLDashboardSearch };

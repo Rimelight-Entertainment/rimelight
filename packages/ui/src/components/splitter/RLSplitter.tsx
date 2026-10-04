@@ -16,7 +16,7 @@ interface DragState {
   startB: number;
 }
 
-const RLSplitter: Component<RLSplitterProps> = (allProps) => {
+export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "direction", "defaultSizes", "ui", "class", "children", "panels");
 
@@ -157,5 +157,3 @@ const RLSplitter: Component<RLSplitterProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSplitter };

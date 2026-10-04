@@ -14,7 +14,7 @@ export interface RLPostProps extends PostProps {
   footerSlot?: JSX.Element;
 }
 
-const RLPost: Component<RLPostProps> = (allProps) => {
+export const RLPost: Component<RLPostProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -133,5 +133,3 @@ const RLPost: Component<RLPostProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPost };

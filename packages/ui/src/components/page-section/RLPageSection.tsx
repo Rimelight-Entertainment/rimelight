@@ -22,7 +22,7 @@ export interface RLPageSectionProps extends PageSectionProps {
   children?: JSX.Element;
 }
 
-const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
+export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -232,5 +232,3 @@ const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     </Dynamic>
   );
 };
-
-export { RLPageSection };

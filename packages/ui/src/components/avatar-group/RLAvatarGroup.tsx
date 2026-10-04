@@ -8,7 +8,7 @@ export interface RLAvatarGroupProps extends AvatarGroupProps {
   children?: JSX.Element;
 }
 
-const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
+export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -127,5 +127,3 @@ const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
     </Root>
   );
 };
-
-export { RLAvatarGroup };

@@ -23,7 +23,7 @@ function getInitials(alt?: string): string | undefined {
   return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
 }
 
-const RLAvatar: Component<RLAvatarProps> = (allProps) => {
+export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -230,5 +230,3 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLAvatar };

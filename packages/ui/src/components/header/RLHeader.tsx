@@ -19,7 +19,7 @@ export interface RLHeaderProps extends HeaderProps {
   children?: JSX.Element;
 }
 
-const RLHeader: Component<RLHeaderProps> = (allProps) => {
+export const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -134,5 +134,3 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     </div>,
   );
 };
-
-export { RLHeader };

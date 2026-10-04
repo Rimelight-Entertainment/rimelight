@@ -64,7 +64,7 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
   return null;
 }
 
-const RLVideo: Component<RLVideoProps> = (allProps) => {
+export const RLVideo: Component<RLVideoProps> = (allProps) => {
   const props = allProps;
   const resolvedChildren = children(() => props.children);
   const resolvedIconSlot = children(() => props.iconSlot);
@@ -162,5 +162,3 @@ const RLVideo: Component<RLVideoProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLVideo };

@@ -6,7 +6,7 @@ import { iconTheme } from "./icon.theme";
 
 export type RLIconProps = IconProps;
 
-const RLIcon: Component<RLIconProps> = (allProps) => {
+export const RLIcon: Component<RLIconProps> = (allProps) => {
   const rest = omit(allProps, "name", "custom", "size", "class", "unstyled");
   const classes = createMemo(() => iconTheme({ size: allProps.size, class: allProps.class }));
   const resolved = createMemo(() => resolveIcon(allProps.name, allProps["custom"] as any));
@@ -38,5 +38,3 @@ const RLIcon: Component<RLIconProps> = (allProps) => {
     </span>
   );
 };
-
-export { RLIcon };

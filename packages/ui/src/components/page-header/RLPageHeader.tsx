@@ -7,7 +7,7 @@ export interface RLPageHeaderProps extends PageHeaderProps {
   children?: JSX.Element;
 }
 
-const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {
+export const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -19,5 +19,3 @@ const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPageHeader };

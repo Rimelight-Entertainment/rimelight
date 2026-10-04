@@ -7,7 +7,7 @@ export interface RLPageBodyProps extends PageBodyProps {
   children?: JSX.Element;
 }
 
-const RLPageBody: Component<RLPageBodyProps> = (allProps) => {
+export const RLPageBody: Component<RLPageBodyProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -19,5 +19,3 @@ const RLPageBody: Component<RLPageBodyProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPageBody };

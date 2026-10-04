@@ -8,7 +8,7 @@ export interface RLDashboardResizeHandleProps extends DashboardResizeHandleProps
   children?: JSX.Element;
 }
 
-const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allProps) => {
+export const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children");
 
@@ -33,5 +33,3 @@ const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allPro
     </Dynamic>
   );
 };
-
-export { RLDashboardResizeHandle };

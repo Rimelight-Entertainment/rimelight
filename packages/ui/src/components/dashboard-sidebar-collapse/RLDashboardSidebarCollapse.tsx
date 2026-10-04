@@ -8,7 +8,9 @@ export interface RLDashboardSidebarCollapseProps extends DashboardSidebarCollaps
   children?: JSX.Element;
 }
 
-const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (allProps) => {
+export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
+  allProps,
+) => {
   const props = allProps;
   const rest = omit(allProps, "icon", "ui", "class", "children", "side");
 
@@ -40,5 +42,3 @@ const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
     </button>
   );
 };
-
-export { RLDashboardSidebarCollapse };

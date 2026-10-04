@@ -15,7 +15,7 @@ export interface RLDashboardPanelProps extends DashboardPanelProps {
   resizeHandleSlot?: JSX.Element;
 }
 
-const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
+export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -78,5 +78,3 @@ const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
     </>
   );
 };
-
-export { RLDashboardPanel };

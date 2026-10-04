@@ -10,7 +10,7 @@ export interface RLImageProps extends ImageProps {
   children?: JSX.Element;
 }
 
-const RLImage: Component<RLImageProps> = (allProps) => {
+export const RLImage: Component<RLImageProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -533,5 +533,3 @@ const RLImage: Component<RLImageProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLImage };

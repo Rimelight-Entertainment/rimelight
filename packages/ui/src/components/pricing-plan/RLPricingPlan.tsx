@@ -7,7 +7,7 @@ export interface RLPricingPlanProps extends PricingPlanProps {
   children?: JSX.Element;
 }
 
-const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
+export const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPricingPlan };

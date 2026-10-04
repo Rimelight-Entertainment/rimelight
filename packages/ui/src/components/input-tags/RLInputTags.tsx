@@ -9,7 +9,7 @@ export interface RLInputTagsProps extends InputTagsProps {
   onRemoveTag?: (tag: TagItem) => void;
 }
 
-const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
+export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -93,5 +93,3 @@ const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputTags };

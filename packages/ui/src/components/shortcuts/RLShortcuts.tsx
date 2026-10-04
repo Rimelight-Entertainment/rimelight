@@ -20,7 +20,7 @@ interface CategorySection {
 
 const modalId = `rl-shortcuts-${Math.random().toString(36).substring(2, 9)}`;
 
-const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
+export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "categories", "ui", "class");
 
@@ -234,5 +234,3 @@ const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLShortcuts };

@@ -10,7 +10,7 @@ export interface RLFooterProps extends FooterProps {
   children?: JSX.Element;
 }
 
-const RLFooter: Component<RLFooterProps> = (allProps) => {
+export const RLFooter: Component<RLFooterProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -55,5 +55,3 @@ const RLFooter: Component<RLFooterProps> = (allProps) => {
     </footer>
   );
 };
-
-export { RLFooter };

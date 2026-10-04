@@ -7,7 +7,7 @@ export interface RLInputRatingProps extends InputRatingProps {
   onValueChange?: (value: number) => void;
 }
 
-const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
+export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -203,5 +203,3 @@ const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputRating };

@@ -10,7 +10,7 @@ export interface RLQuoteProps extends QuoteProps {
   caption?: JSX.Element;
 }
 
-const RLQuote: Component<RLQuoteProps> = (allProps) => {
+export const RLQuote: Component<RLQuoteProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "quote", "caption", "children", "ui", "class");
 
@@ -35,5 +35,3 @@ const RLQuote: Component<RLQuoteProps> = (allProps) => {
     </figure>
   );
 };
-
-export { RLQuote };

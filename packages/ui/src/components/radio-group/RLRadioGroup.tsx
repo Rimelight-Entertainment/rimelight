@@ -7,7 +7,7 @@ export interface RLRadioGroupProps extends RadioGroupProps {
   children?: JSX.Element;
 }
 
-const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
+export const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -36,5 +36,3 @@ const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLRadioGroup };

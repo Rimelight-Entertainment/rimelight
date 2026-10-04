@@ -21,7 +21,7 @@ export interface RLColorSliderProps extends ColorSliderProps {
   "onUpdate:modelValue"?: (val: string) => void;
 }
 
-const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
+export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -366,5 +366,3 @@ const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLColorSlider };

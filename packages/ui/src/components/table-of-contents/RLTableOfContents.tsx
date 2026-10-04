@@ -5,7 +5,7 @@ import { RLIcon } from "../icon/RLIcon";
 
 export interface RLTableOfContentsProps extends TableOfContentsProps {}
 
-const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
+export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -186,5 +186,3 @@ const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
     </>
   );
 };
-
-export { RLTableOfContents };

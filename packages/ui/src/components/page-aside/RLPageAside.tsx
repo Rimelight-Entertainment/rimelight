@@ -7,7 +7,7 @@ export interface RLPageAsideProps extends PageAsideProps {
   children?: JSX.Element;
 }
 
-const RLPageAside: Component<RLPageAsideProps> = (allProps) => {
+export const RLPageAside: Component<RLPageAsideProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -19,5 +19,3 @@ const RLPageAside: Component<RLPageAsideProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPageAside };

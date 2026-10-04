@@ -7,7 +7,7 @@ export interface RLProgressProps extends ProgressProps {
   children?: JSX.Element;
 }
 
-const RLProgress: Component<RLProgressProps> = (allProps) => {
+export const RLProgress: Component<RLProgressProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "value", "max", "theme", "color", "ui", "class", "children");
 
@@ -54,5 +54,3 @@ const RLProgress: Component<RLProgressProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLProgress };

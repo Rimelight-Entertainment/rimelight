@@ -9,7 +9,7 @@ export interface RLFieldGroupProps extends Omit<FieldGroupProps, "prepend" | "ap
   children?: JSX.Element;
 }
 
-const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
+export const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "prepend", "append", "size", "ui", "class", "children");
 
@@ -37,5 +37,3 @@ const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLFieldGroup };

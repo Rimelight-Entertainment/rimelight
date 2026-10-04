@@ -7,7 +7,7 @@ export interface RLRatingProps extends RatingProps {
   children?: JSX.Element;
 }
 
-const RLRating: Component<RLRatingProps> = (allProps) => {
+export const RLRating: Component<RLRatingProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLRating: Component<RLRatingProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLRating };

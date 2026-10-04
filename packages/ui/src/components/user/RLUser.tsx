@@ -7,7 +7,7 @@ export interface RLUserProps extends UserProps {
   children?: JSX.Element;
 }
 
-const RLUser: Component<RLUserProps> = (allProps) => {
+export const RLUser: Component<RLUserProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLUser: Component<RLUserProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLUser };

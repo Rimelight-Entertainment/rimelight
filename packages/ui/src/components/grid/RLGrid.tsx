@@ -7,7 +7,7 @@ export interface RLGridProps extends GridProps {
   children?: JSX.Element;
 }
 
-const RLGrid: Component<RLGridProps> = (allProps) => {
+export const RLGrid: Component<RLGridProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "cols", "stagger", "gap", "ui", "class", "children");
 
@@ -27,5 +27,3 @@ const RLGrid: Component<RLGridProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLGrid };

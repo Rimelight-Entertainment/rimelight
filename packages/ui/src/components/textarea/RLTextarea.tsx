@@ -11,7 +11,7 @@ export interface RLTextareaProps extends TextareaProps {
   ref?: HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void);
 }
 
-const RLTextarea: Component<RLTextareaProps> = (allProps) => {
+export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -69,5 +69,3 @@ const RLTextarea: Component<RLTextareaProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLTextarea };

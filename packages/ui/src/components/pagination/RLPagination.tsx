@@ -8,7 +8,7 @@ export interface RLPaginationProps extends PaginationProps {
   onPageChange?: (page: number) => void;
 }
 
-const RLPagination: Component<RLPaginationProps> = (allProps) => {
+export const RLPagination: Component<RLPaginationProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -118,5 +118,3 @@ const RLPagination: Component<RLPaginationProps> = (allProps) => {
     </nav>
   );
 };
-
-export { RLPagination };

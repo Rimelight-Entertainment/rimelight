@@ -7,7 +7,7 @@ export interface RLKnobProps extends KnobProps {
   children?: JSX.Element;
 }
 
-const RLKnob: Component<RLKnobProps> = (allProps) => {
+export const RLKnob: Component<RLKnobProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLKnob: Component<RLKnobProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLKnob };

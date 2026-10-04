@@ -194,7 +194,7 @@ const numpadPositions: [number, number][] = [
   [2, 4],
 ];
 
-const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
+export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
   const props = allProps;
 
   const keyGap = (): number => props.keyGap ?? 8;
@@ -462,5 +462,3 @@ const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLKeyboard };

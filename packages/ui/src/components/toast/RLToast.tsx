@@ -20,7 +20,7 @@ const variantIcons: Record<string, string> = {
   info: "i-rl-info",
 };
 
-const RLToast: Component<RLToastProps> = (allProps) => {
+export const RLToast: Component<RLToastProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -170,5 +170,3 @@ const RLToast: Component<RLToastProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLToast };

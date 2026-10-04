@@ -7,7 +7,7 @@ export interface RLListboxProps extends ListboxProps {
   children?: JSX.Element;
 }
 
-const RLListbox: Component<RLListboxProps> = (allProps) => {
+export const RLListbox: Component<RLListboxProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLListbox: Component<RLListboxProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLListbox };

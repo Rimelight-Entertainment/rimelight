@@ -7,7 +7,7 @@ export interface RLTreeProps extends TreeProps {
   children?: JSX.Element;
 }
 
-const RLTree: Component<RLTreeProps> = (allProps) => {
+export const RLTree: Component<RLTreeProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLTree: Component<RLTreeProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLTree };

@@ -7,7 +7,7 @@ export interface RLChatShimmerProps extends ChatShimmerProps {
   children?: JSX.Element;
 }
 
-const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {
+export const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLChatShimmer };

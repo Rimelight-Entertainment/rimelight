@@ -7,7 +7,7 @@ export interface RLKbdProps extends KbdProps {
   children?: JSX.Element;
 }
 
-const RLKbd: Component<RLKbdProps> = (allProps) => {
+export const RLKbd: Component<RLKbdProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "color", "variant", "size", "theme", "ui", "class", "children");
 
@@ -27,5 +27,3 @@ const RLKbd: Component<RLKbdProps> = (allProps) => {
     </kbd>
   );
 };
-
-export { RLKbd };

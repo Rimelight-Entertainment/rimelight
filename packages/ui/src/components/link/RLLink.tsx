@@ -11,7 +11,7 @@ export interface RLLinkProps extends LinkProps {
   trailing?: JSX.Element;
 }
 
-const RLLink: Component<RLLinkProps> = (allProps) => {
+export const RLLink: Component<RLLinkProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -102,5 +102,3 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
     </a>
   );
 };
-
-export { RLLink };

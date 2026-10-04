@@ -7,7 +7,7 @@ export interface RLSpeedDialProps extends SpeedDialProps {
   children?: JSX.Element;
 }
 
-const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
+export const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSpeedDial };

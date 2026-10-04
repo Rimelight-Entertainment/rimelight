@@ -7,7 +7,7 @@ export interface RLSpoilerProps extends SpoilerProps {
   children?: JSX.Element;
 }
 
-const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
+export const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSpoiler };

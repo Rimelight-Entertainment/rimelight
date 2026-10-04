@@ -54,7 +54,7 @@ export interface RLCalendarProps extends CalendarProps {
 
 type View = "day" | "month" | "year";
 
-const RLCalendar: Component<RLCalendarProps> = (allProps) => {
+export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const props = allProps;
 
   const locale = () => props.locale ?? "en";
@@ -802,5 +802,3 @@ function secondRangeDate(v: CalendarModelValue): Date | undefined {
   if (!v || v instanceof Date || Array.isArray(v)) return undefined;
   return v.end ?? undefined;
 }
-
-export { RLCalendar };

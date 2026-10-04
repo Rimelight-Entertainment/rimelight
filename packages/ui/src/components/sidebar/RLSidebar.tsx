@@ -163,7 +163,7 @@ const RLSidebarItems: Component<{
   );
 };
 
-const RLSidebar: Component<RLSidebarProps> = (allProps) => {
+export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
   const props = allProps;
   const resolvedChildren = children(() => props.children);
   const resolvedHeader = children(() => props.header);
@@ -271,5 +271,3 @@ const RLSidebar: Component<RLSidebarProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLSidebar };

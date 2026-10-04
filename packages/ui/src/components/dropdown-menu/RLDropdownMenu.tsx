@@ -10,7 +10,7 @@ export interface RLDropdownMenuProps extends DropdownMenuProps {
   trigger?: JSX.Element;
 }
 
-const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
+export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -307,5 +307,3 @@ const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLDropdownMenu };

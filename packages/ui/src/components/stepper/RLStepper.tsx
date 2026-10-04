@@ -17,7 +17,7 @@ export interface RLStepperProps extends StepperProps {
   onPrev?: (ctx: { index: number; value: string | number }) => void;
 }
 
-const RLStepper: Component<RLStepperProps> = (allProps) => {
+export const RLStepper: Component<RLStepperProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -198,5 +198,3 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLStepper };

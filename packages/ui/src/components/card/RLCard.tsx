@@ -10,7 +10,7 @@ export interface RLCardProps extends CardProps {
   media?: JSX.Element;
 }
 
-const RLCard: Component<RLCardProps> = (allProps) => {
+export const RLCard: Component<RLCardProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -125,5 +125,3 @@ const RLCard: Component<RLCardProps> = (allProps) => {
     </Show>
   );
 };
-
-export { RLCard };

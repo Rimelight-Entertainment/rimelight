@@ -4,7 +4,7 @@ import { spinnerTheme } from "./spinner.theme";
 
 export interface RLSpinnerProps extends SpinnerProps {}
 
-const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
+export const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "size", "color", "theme", "ui", "class");
 
@@ -19,5 +19,3 @@ const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
 
   return <div class={classes()["root"]} data-slot="root" data-theme={props.theme} {...rest} />;
 };
-
-export { RLSpinner };

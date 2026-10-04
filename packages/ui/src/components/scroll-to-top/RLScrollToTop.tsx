@@ -6,7 +6,7 @@ import { RLIcon } from "../icon/RLIcon";
 
 export interface RLScrollToTopProps extends ScrollToTopProps {}
 
-const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
+export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -88,5 +88,3 @@ const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLScrollToTop };

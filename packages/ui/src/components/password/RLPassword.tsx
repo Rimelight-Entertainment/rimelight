@@ -7,7 +7,7 @@ export interface RLPasswordProps extends PasswordProps {
   children?: JSX.Element;
 }
 
-const RLPassword: Component<RLPasswordProps> = (allProps) => {
+export const RLPassword: Component<RLPasswordProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLPassword: Component<RLPasswordProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPassword };

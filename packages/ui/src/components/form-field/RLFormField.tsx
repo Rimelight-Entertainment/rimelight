@@ -12,7 +12,7 @@ export interface RLFormFieldProps extends FormFieldProps {
   helpSlot?: JSX.Element;
 }
 
-const RLFormField: Component<RLFormFieldProps> = (allProps) => {
+export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -80,5 +80,3 @@ const RLFormField: Component<RLFormFieldProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLFormField };

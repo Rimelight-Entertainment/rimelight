@@ -7,7 +7,7 @@ export interface RLGalleryProps extends GalleryProps {
   children?: JSX.Element;
 }
 
-const RLGallery: Component<RLGalleryProps> = (allProps) => {
+export const RLGallery: Component<RLGalleryProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -19,5 +19,3 @@ const RLGallery: Component<RLGalleryProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLGallery };

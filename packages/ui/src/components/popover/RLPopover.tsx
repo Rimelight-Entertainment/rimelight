@@ -10,7 +10,7 @@ export interface RLPopoverProps extends PopoverProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const RLPopover: Component<RLPopoverProps> = (allProps) => {
+export const RLPopover: Component<RLPopoverProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -105,5 +105,3 @@ const RLPopover: Component<RLPopoverProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLPopover };

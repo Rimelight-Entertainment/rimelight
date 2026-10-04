@@ -7,7 +7,7 @@ export interface RLToasterProps {
   [key: string]: unknown;
 }
 
-const RLToaster: Component<RLToasterProps> = (allProps) => {
+export const RLToaster: Component<RLToasterProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "class");
 
@@ -74,5 +74,3 @@ const RLToaster: Component<RLToasterProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLToaster };

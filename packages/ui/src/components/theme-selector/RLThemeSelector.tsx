@@ -16,7 +16,7 @@ const themeItems = [
   { label: "Dark", value: "dark", icon: "i-rl-moon" },
 ];
 
-const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
+export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "mode", "size", "theme", "ui", "class", "children", "onChange");
 
@@ -108,5 +108,3 @@ const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLThemeSelector };

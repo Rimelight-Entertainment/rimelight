@@ -7,7 +7,7 @@ export interface RLChatToolProps extends ChatToolProps {
   children?: JSX.Element;
 }
 
-const RLChatTool: Component<RLChatToolProps> = (allProps) => {
+export const RLChatTool: Component<RLChatToolProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLChatTool: Component<RLChatToolProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLChatTool };

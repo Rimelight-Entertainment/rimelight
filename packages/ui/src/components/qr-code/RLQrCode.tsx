@@ -7,7 +7,7 @@ export interface RLQrCodeProps extends QrCodeProps {
   children?: JSX.Element;
 }
 
-const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
+export const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLQrCode };

@@ -10,7 +10,7 @@ export interface RLCheckboxProps extends CheckboxProps {
   children?: JSX.Element;
 }
 
-const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
+export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -68,5 +68,3 @@ const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     </label>
   );
 };
-
-export { RLCheckbox };

@@ -7,7 +7,7 @@ export interface RLMeterProps extends MeterProps {
   children?: JSX.Element;
 }
 
-const RLMeter: Component<RLMeterProps> = (allProps) => {
+export const RLMeter: Component<RLMeterProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLMeter: Component<RLMeterProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLMeter };

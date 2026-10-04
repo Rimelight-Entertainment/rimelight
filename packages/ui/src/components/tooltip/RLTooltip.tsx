@@ -8,7 +8,7 @@ export interface RLTooltipProps extends TooltipProps {
   contentSlot?: JSX.Element;
 }
 
-const RLTooltip: Component<RLTooltipProps> = (allProps) => {
+export const RLTooltip: Component<RLTooltipProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "content", "placement", "ui", "class", "children", "contentSlot");
 
@@ -39,5 +39,3 @@ const RLTooltip: Component<RLTooltipProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLTooltip };

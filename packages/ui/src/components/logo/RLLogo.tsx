@@ -9,7 +9,7 @@ export interface RLLogoProps extends LogoProps {
   src?: string;
 }
 
-const RLLogo: Component<RLLogoProps> = (allProps) => {
+export const RLLogo: Component<RLLogoProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -117,5 +117,3 @@ const RLLogo: Component<RLLogoProps> = (allProps) => {
     </a>
   );
 };
-
-export { RLLogo };

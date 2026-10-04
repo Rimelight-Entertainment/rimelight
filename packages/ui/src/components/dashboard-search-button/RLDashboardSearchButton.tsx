@@ -9,7 +9,7 @@ export interface RLDashboardSearchButtonProps extends DashboardSearchButtonProps
   trailingSlot?: JSX.Element;
 }
 
-const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
+export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -81,5 +81,3 @@ const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allPro
     </button>
   );
 };
-
-export { RLDashboardSearchButton };

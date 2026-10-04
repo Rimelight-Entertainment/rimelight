@@ -8,7 +8,7 @@ export interface RLFormProps extends FormProps {
   onSubmit?: (e: Event & { currentTarget: HTMLFormElement }) => void;
 }
 
-const RLForm: Component<RLFormProps> = (allProps) => {
+export const RLForm: Component<RLFormProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "schema", "state", "ui", "class", "children", "onSubmit");
 
@@ -25,5 +25,3 @@ const RLForm: Component<RLFormProps> = (allProps) => {
     </form>
   );
 };
-
-export { RLForm };

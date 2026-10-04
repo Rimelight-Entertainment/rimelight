@@ -7,7 +7,7 @@ export interface RLTourProps extends TourProps {
   children?: JSX.Element;
 }
 
-const RLTour: Component<RLTourProps> = (allProps) => {
+export const RLTour: Component<RLTourProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -24,5 +24,3 @@ const RLTour: Component<RLTourProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLTour };

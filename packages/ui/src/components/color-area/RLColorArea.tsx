@@ -192,7 +192,7 @@ const getChannelRange = (channel: string): { min: number; max: number } => {
   }
 };
 
-const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
+export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -548,5 +548,3 @@ const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLColorArea };

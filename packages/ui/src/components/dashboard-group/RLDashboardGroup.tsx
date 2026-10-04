@@ -7,7 +7,7 @@ export interface RLDashboardGroupProps extends DashboardGroupProps {
   children?: JSX.Element;
 }
 
-const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
+export const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children");
 
@@ -28,5 +28,3 @@ const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
     </GroupTag>
   );
 };
-
-export { RLDashboardGroup };

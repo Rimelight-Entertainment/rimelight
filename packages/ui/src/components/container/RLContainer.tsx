@@ -7,7 +7,7 @@ export interface RLContainerProps extends ContainerProps {
   children?: JSX.Element;
 }
 
-const RLContainer: Component<RLContainerProps> = (allProps) => {
+export const RLContainer: Component<RLContainerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children");
 
@@ -23,5 +23,3 @@ const RLContainer: Component<RLContainerProps> = (allProps) => {
     </Tag>
   );
 };
-
-export { RLContainer };

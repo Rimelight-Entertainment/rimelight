@@ -11,7 +11,7 @@ export interface RLCollapsibleProps extends CollapsibleProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
+export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -84,5 +84,3 @@ const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
     </details>
   );
 };
-
-export { RLCollapsible };

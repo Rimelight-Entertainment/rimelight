@@ -19,7 +19,7 @@ export interface RLInputMenuProps extends InputMenuProps {
 
 type InputMenuItem = { label: string; value: string; [key: string]: any };
 
-const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
+export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -199,5 +199,3 @@ const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputMenu };

@@ -7,7 +7,7 @@ export interface RLStepsProps extends StepsProps {
   children?: JSX.Element;
 }
 
-const RLSteps: Component<RLStepsProps> = (allProps) => {
+export const RLSteps: Component<RLStepsProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "size", "ui", "class", "children");
 
@@ -106,5 +106,3 @@ const RLSteps: Component<RLStepsProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSteps };

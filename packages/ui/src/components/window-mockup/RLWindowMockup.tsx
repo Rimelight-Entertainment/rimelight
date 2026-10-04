@@ -7,7 +7,7 @@ export interface RLWindowMockupProps extends WindowMockupProps {
   children?: JSX.Element;
 }
 
-const RLWindowMockup: Component<RLWindowMockupProps> = (allProps) => {
+export const RLWindowMockup: Component<RLWindowMockupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLWindowMockup: Component<RLWindowMockupProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLWindowMockup };

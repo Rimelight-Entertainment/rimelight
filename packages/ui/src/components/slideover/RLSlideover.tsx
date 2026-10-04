@@ -26,7 +26,7 @@ export interface RLSlideoverProps extends SlideoverProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
+export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -214,5 +214,3 @@ const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLSlideover };

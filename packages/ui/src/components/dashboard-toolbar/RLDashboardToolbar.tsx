@@ -10,7 +10,7 @@ export interface RLDashboardToolbarProps extends DashboardToolbarProps {
   rightSlot?: JSX.Element;
 }
 
-const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
+export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children", "leftSlot", "rightSlot");
 
@@ -40,5 +40,3 @@ const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
     </Dynamic>
   );
 };
-
-export { RLDashboardToolbar };

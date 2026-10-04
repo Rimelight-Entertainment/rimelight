@@ -26,7 +26,7 @@ const getLocaleDisplayName = (localeCode: string): string => {
   }
 };
 
-const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
+export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -127,5 +127,3 @@ const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLLocaleSelector };

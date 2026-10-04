@@ -24,7 +24,7 @@ export interface RLInputDateProps extends InputDateProps {
   onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
 }
 
-const RLInputDate: Component<RLInputDateProps> = (allProps) => {
+export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -91,5 +91,3 @@ const RLInputDate: Component<RLInputDateProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputDate };

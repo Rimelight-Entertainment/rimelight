@@ -7,7 +7,7 @@ export interface RLChatPromptSubmitProps extends ChatPromptSubmitProps {
   children?: JSX.Element;
 }
 
-const RLChatPromptSubmit: Component<RLChatPromptSubmitProps> = (allProps) => {
+export const RLChatPromptSubmit: Component<RLChatPromptSubmitProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
@@ -25,5 +25,3 @@ const RLChatPromptSubmit: Component<RLChatPromptSubmitProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLChatPromptSubmit };

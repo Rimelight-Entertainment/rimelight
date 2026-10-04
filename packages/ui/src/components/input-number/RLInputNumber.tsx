@@ -26,7 +26,7 @@ export interface RLInputNumberProps extends InputNumberProps {
   onValueChange?: (value: number) => void;
 }
 
-const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
+export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
@@ -183,5 +183,3 @@ const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
     </div>
   );
 };
-
-export { RLInputNumber };
