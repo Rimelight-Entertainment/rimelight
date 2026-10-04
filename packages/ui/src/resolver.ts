@@ -70,6 +70,8 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
   const variantKeys = Object.keys(variants).filter((k) => !(k === "color" && autoColor));
 
+  let lastRes: Record<S, string> | undefined;
+
   return (props: any = {}): Record<S, string> => {
     const res = {} as Record<S, string>;
     for (let i = 0; i < slots.length; i++) {
@@ -132,6 +134,19 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       res[slot] = typeof override === "function" ? override(slotClass) : cx(slotClass, override);
     }
 
+    if (lastRes) {
+      let isSame = true;
+      for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i]!;
+        if (lastRes[slot] !== res[slot]) {
+          isSame = false;
+          break;
+        }
+      }
+      if (isSame) return lastRes;
+    }
+
+    lastRes = res;
     return res;
   };
 }
