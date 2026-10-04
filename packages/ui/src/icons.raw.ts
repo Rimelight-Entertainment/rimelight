@@ -383,4 +383,5 @@ export const ICONS: Record<string, IconNode[]> = {
     ["path", { d: "m6 11 6 6 6-6" }],
     ["path", { d: "M5 21h14" }],
   ],
+  slash: [["path", { d: "M16 4 8 20" }]],
 };
