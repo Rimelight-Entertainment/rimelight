@@ -10,6 +10,7 @@ export function cleanHtml(html: string): string {
       // Solid hydration markers
       .replace(/<!--[\s\S]*?-->/g, "")
       .replace(/\sdata-hk="[^"]*"/g, "")
+      .replace(/\s_hk=[^\s>]+/g, "")
       // Unescape HTML entities in classes/attributes
       .replace(/&amp;/g, "&")
       .replace(/&quot;/g, '"')
