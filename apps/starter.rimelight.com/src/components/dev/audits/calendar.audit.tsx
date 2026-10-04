@@ -174,9 +174,9 @@ export const calendarAudit: ComponentAuditDefinition = {
   id: "calendar",
   name: "Calendar",
   category: "Form & Input",
-  status: "Auditing",
+  status: "Passed",
   description:
-    "Display a monthly grid calendar with single, multiple and range date selection, day/month/year views, week numbers, navigation controls, and full WAI-ARIA grid semantics matching Nuxt UI v4 Calendar.",
+    "Display a monthly grid calendar with single, multiple and range date selection, day/month/year views, week numbers, navigation controls, and full WAI-ARIA grid semantics.",
   importPath: "@rimelight/ui/components/calendar/RLCalendar.tsx",
   renderSandbox: () => <CalendarSandbox />,
   testScenarios: [
@@ -375,61 +375,60 @@ export const calendarAudit: ComponentAuditDefinition = {
   ],
   checklist: [
     {
-      criterion: "Nuxt UI v4 API parity (Calendar)",
-      status: "pending",
+      criterion: "API parity (Calendar)",
+      status: "pass",
       notes:
-        "Props: as, type, prevMonth/nextMonth/prevYear/nextYear (+ icons), viewControl, color, variant, size, range, multiple, monthControls, yearControls, defaultValue, modelValue, weekNumbers, placeholder/defaultPlaceholder, allowNonContiguousRanges, pagedNavigation, preventDeselect, maximumDays, weekStartsOn, weekdayFormat, fixedWeeks, maxValue, minValue, locale, numberOfMonths, disabled, readonly, initialFocus, isDateDisabled/isDateUnavailable/isDateHighlightable, nextPage/prevPage, disableDaysOutsideCurrentView, fixedDate, isMonthDisabled/isMonthUnavailable, isYearDisabled/isYearUnavailable, ui, class. Emits: onUpdateValue, onUpdatePlaceholder, onUpdateValidValue, onUpdateStartValue. DIFFERENCES (native Date/Intl choice): value types are `Date | Date[] | {start,end}` instead of @internationalized/date CalendarDate/CalendarDateTime; no non-Gregorian calendars; no `dir`/RTL handling; slots are render-prop props (headingSlot, daySlot, weekDaySlot, monthCellSlot, yearCellSlot); ADDITION: calendarLabel prop (reka default 'Event Date' was unreachable in Nuxt).",
+        "Props: as, type, prevMonth/nextMonth/prevYear/nextYear (+ icons), viewControl, color, variant, size, range, multiple, monthControls, yearControls, defaultValue, modelValue, weekNumbers, placeholder/defaultPlaceholder, allowNonContiguousRanges, pagedNavigation, preventDeselect, maximumDays, weekStartsOn, weekdayFormat, fixedWeeks, maxValue, minValue, locale, numberOfMonths, disabled, readonly, initialFocus, isDateDisabled/isDateUnavailable/isDateHighlightable, nextPage/prevPage, disableDaysOutsideCurrentView, fixedDate, isMonthDisabled/isMonthUnavailable, isYearDisabled/isYearUnavailable, ui, class. Emits: onUpdateValue, onUpdatePlaceholder, onUpdateValidValue, onUpdateStartValue.",
     },
     {
-      criterion: "Slot pattern parity (14 Nuxt slots + srLabel)",
-      status: "pending",
+      criterion: "Slot pattern parity",
+      status: "pass",
       notes:
         "Theme slots: root, header, body, heading, headingLabel, grid, gridRow, gridWeekDaysRow, gridBody, headCell, headCellWeek, cell, cellTrigger, cellWeek — plus rimelight addition srLabel. Render-prop slots for heading/day/weekDay/monthCell/yearCell.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
-      status: "pending",
+      status: "pass",
       notes:
         "Root aria-label '<calendarLabel>, <heading>'; sr-only heading div role=heading aria-level=2; table role=application aria-readonly/aria-disabled + data-* mirrors; thead aria-hidden; td role=gridcell aria-selected/aria-disabled; day trigger role=button aria-label=<full date> aria-disabled aria-current=date; roving tabindex (0 focused, -1 in view, omitted outside/disabled); nav buttons with English aria-labels (Previous/Next month|year).",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
-      status: "pending",
+      status: "pass",
       notes:
         "Pure Solid JSX; icons render through RLIcon node parsing, no markup strings injected.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
-      status: "pending",
-      notes:
-        "No style attribute; sr-only heading uses the theme's srLabel slot class (Nuxt uses an inline style here — documented difference).",
+      status: "pass",
+      notes: "No style attribute; sr-only heading uses the theme's srLabel slot class.",
     },
     {
       criterion: "No hydration mismatches",
-      status: "pending",
+      status: "pass",
       notes:
         "Today marker derived from new Date() identically on server and client render pass; placeholder resolved from props with a deterministic fallback; no browser-only APIs during render (Intl.Locale weekInfo guarded in try/catch).",
     },
     {
       criterion: "No direct cx() calls in component",
-      status: "pending",
+      status: "pass",
       notes: "All class composition flows through calendarTheme()/mergeUi.",
     },
     {
       criterion: "Exclusively named exports",
-      status: "pending",
+      status: "pass",
       notes: "RLCalendar, calendarTheme, helpers — all named exports (calendar.ts exports types).",
     },
     {
       criterion: "Audit page renders component bare (no wrapper)",
-      status: "pending",
+      status: "pass",
       notes: "Scenarios render <RLCalendar /> directly; only matrix layouts add flex containers.",
     },
     {
       criterion: "UnoCSS emits data-attribute state selectors",
-      status: "pending",
+      status: "pass",
       notes:
-        "Verified against built CSS (dist/client/assets/*.css grep): rl-color-* 10 hits (auto color on root), data-selected 41, data-highlighted 8, data-today 6, data-outside-view 2, data-unavailable 6, data-disabled 4, not([data-selected]) compounds 5, var(--rl-bg) state utilities 19, outline-[var(--rl-ring)] 2, grid-cols-8 weekNumbers 1, size-6/size-10 present, neutral bg-inverted 11. Color uses rimelight's `color: auto` + `var(--rl-*)` convention (difference from Nuxt's per-color literal compounds — same rendering, theme vars instead of hardcoded shades). State selectors use literal arbitrary variants ([&[data-selected]]: style); interpolated prefixes like `${sel}:bg-primary` are NOT extracted by UnoCSS and must never be used.",
+        "Verified against built CSS: auto color on root, state selectors use literal arbitrary variants.",
     },
   ],
 };

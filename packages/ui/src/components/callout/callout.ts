@@ -1,37 +1,134 @@
 import type { Theme, ThemeColor } from "../../types";
+import type { AvatarProps } from "../avatar/avatar";
+import type { ButtonProps } from "../button/button";
 
 export interface CalloutProps {
   /**
-   * The visual variant of the callout.
+   * The element or component this component should render as.
+   * @defaultValue 'div'
    */
-  variant?: "default" | "destructive" | "outline" | "solid" | "soft" | "subtle";
+  as?: any;
   /**
-   * The color scheme of the callout.
+   * The visual color scheme of the callout.
+   * @defaultValue 'primary'
    */
-  color?: ThemeColor;
+  color?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | ThemeColor
+    | undefined;
+  /**
+   * The visual variant of the callout.
+   * @defaultValue 'solid'
+   */
+  variant?: "solid" | "outline" | "soft" | "subtle" | undefined;
+  /**
+   * The orientation between the content and the actions.
+   * @defaultValue 'vertical'
+   */
+  orientation?: "vertical" | "horizontal" | undefined;
   /**
    * The main title text of the callout.
    */
-  title?: string;
+  title?: string | undefined;
   /**
    * The secondary description text of the callout.
    */
-  description?: string;
+  description?: string | undefined;
   /**
-   * An optional leading icon.
+   * An optional leading icon name.
    */
-  icon?: string;
+  icon?: string | undefined;
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * An optional avatar configuration or image source URL string.
    */
-  theme?: Theme;
+  avatar?: string | AvatarProps | undefined;
+  /**
+   * Display a list of action buttons:
+   * - under the title and description when orientation is `vertical`
+   * - next to the close button when orientation is `horizontal`
+   * `{ size: 'xs' }`
+   */
+  actions?: ButtonProps[] | undefined;
+  /**
+   * Display a close button to dismiss the callout.
+   * Can be a boolean or custom ButtonProps.
+   * @defaultValue false
+   */
+  close?: boolean | ButtonProps | undefined;
+  /**
+   * The icon displayed in the close button.
+   * @defaultValue 'close'
+   */
+  closeIcon?: string | undefined;
+  /**
+   * Controlled open state for the callout.
+   */
+  open?: boolean | undefined;
+  /**
+   * Initial open state when uncontrolled.
+   * @defaultValue true
+   */
+  defaultOpen?: boolean | undefined;
+  /**
+   * Callback fired when the callout is dismissed.
+   */
+  onClose?: (() => void) | undefined;
+  /**
+   * Callback fired when the open state changes.
+   */
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  /**
+   * Callback fired when the open state changes.
+   */
+  onUpdateOpen?: ((open: boolean) => void) | undefined;
+  /**
+   * Theme mode override — pins colors to flat, light, or dark mode.
+   */
+  theme?: Theme | undefined;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any;
+  ui?:
+    | Partial<
+        Record<
+          | "root"
+          | "wrapper"
+          | "title"
+          | "description"
+          | "icon"
+          | "avatar"
+          | "avatarSize"
+          | "actions"
+          | "close",
+          any
+        >
+      >
+    | undefined;
   /**
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  /**
+   * Explicit element ID for accessibility linkages.
+   */
+  id?: string | undefined;
+  /**
+   * Accessible aria-label override.
+   */
+  ariaLabel?: string | undefined;
+  /**
+   * Accessible aria-labelledby ID override.
+   */
+  ariaLabelledby?: string | undefined;
+  /**
+   * Accessible aria-describedby ID override.
+   */
+  ariaDescribedby?: string | undefined;
   [key: string]: unknown;
 }

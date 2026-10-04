@@ -35,10 +35,14 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 
 - Creation of new subcomponents without asking permission and providing context as to why it would be needed or why it would be a reasonable addition to the library.
 - Making changes to core library root files that touch the entire infrastructure. If you strongly believe there is a bug or possible improvement to one of them, you are to specifically request permission after explaining your reasoning.
+- Changing lint or formatting rules to make components comply or to match Nuxt UI's.
+- Using ignore comments to bypass checks and tests.
+- Commenting the code to specify how it matches Nuxt UI or how it complies to the audit.
 
 ## Requirements
 
-- Match Nuxt UI's API and slot pattern when provided: no missing features, only additional ones. Report any differences.
+- Match Nuxt UI's API and slot pattern when provided: no missing features, only additional ones. Report any differences. Do not list components by their Nuxt UI name anywhere in the audit pages, treat it as the name of our local library.
+- Do not reference Nuxt UI in comments or otherwise.
 - Use `color = "auto"` instead of hardcoding color variants.
 - Use `export const Component` instead of a default export or a separate export statement. Exclusively named exports, no double export.
 - Full WAI-ARIA compliance, with required props for aria labels on their respective elements and `aria-labelledby` handled automatically.

@@ -137,7 +137,7 @@ export const avatarAudit: ComponentAuditDefinition = {
   id: "avatar",
   name: "Avatar & AvatarGroup",
   category: "Media & Visuals",
-  status: "Auditing",
+  status: "Passed",
   description:
     "An img element with fallback initials/icons/text, auto color inheritance via CSS variables (color: auto), dynamic polymorphic element rendering, chip integration, and avatar stacking groups with max +X counter.",
   importPath: "@rimelight/ui/components/avatar/RLAvatar.tsx",

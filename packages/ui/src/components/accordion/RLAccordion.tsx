@@ -11,51 +11,38 @@ export interface RLAccordionProps extends AccordionProps {
   /**
    * Custom trailing icon element applied to every item (overridden per item by the `trailing`
    * render prop, then by `item.trailingIcon`).
-   *
-   * Rimelight extra: not in Nuxt UI.
    */
   trailingIconSlot?: JSX.Element;
   /**
    * Custom leading content per item. Falls back to `item.icon`.
-   *
-   * Maps to Nuxt's `#leading` slot.
    */
   leading?: AccordionSlotRenderer;
   /**
    * Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon`
    * prop / `item.trailingIcon`.
-   *
-   * Maps to Nuxt's `#trailing` slot.
    */
   trailing?: AccordionSlotRenderer;
   /**
    * Custom content area per item. Falls back to the default content/body wrappers around the
    * resolved body.
-   *
-   * Maps to Nuxt's `#content` slot.
    */
   content?: AccordionSlotRenderer;
   /**
    * Custom body content per item. Falls back to per-item named slots, then `item.content`.
-   *
-   * Maps to Nuxt's `#body` slot.
    */
   body?: AccordionSlotRenderer;
   /**
-   * Per-item named renderers, keyed by `item.slot` (and `item.slot + "-body"`), mirroring Nuxt's
-   * `#{{ item.slot }}` templates.
+   * Per-item named renderers, keyed by `item.slot` (and `item.slot + "-body"`).
    */
   slots?: Record<string, AccordionSlotRenderer>;
   /**
    * Called with the next open value whenever it changes. Pair with `value` for controlled state.
-   *
-   * Maps to Nuxt's `update:modelValue` emit.
    */
   onChange?: (value: string | string[] | undefined) => void;
 }
 
 /**
- * Dot-path getter for `valueKey` / `labelKey` (Nuxt supports nested keys).
+ * Dot-path getter for `valueKey` / `labelKey`.
  */
 const getPath = (obj: Record<string, unknown>, path: string): unknown => {
   if (!path.includes(".")) return obj[path];

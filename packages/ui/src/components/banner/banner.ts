@@ -48,7 +48,7 @@ export interface BannerProps extends LinkProps {
   icon?: string | undefined;
 
   /**
-   * The URL the banner links to (Nuxt UI parity alias for href).
+   * The URL the banner links to (alias for href).
    */
   to?: string | undefined;
 

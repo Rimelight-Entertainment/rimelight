@@ -295,7 +295,7 @@ export const audioAudit: ComponentAuditDefinition = {
   id: "audio",
   name: "Audio",
   category: "Media & Visuals",
-  status: "Auditing",
+  status: "Passed",
   description:
     "Accessible, CSP-safe HTML5 audio player with multi-track album playlists, waveform soundwaves, repeat looping modes, volume percentage, speed rate editing, zoomable artwork, and vertical/horizontal layout orientations.",
   importPath: "@rimelight/ui/components/audio/RLAudio.tsx",

@@ -11,8 +11,7 @@ export interface AccordionItem {
   disabled?: boolean;
   /**
    * Named slot key. Rendered via the root `slots` record (`slots[item.slot]`, or `slots[item.slot +
-   * "-body"]` for the body variant), mirroring Nuxt's `#{{ item.slot }}` / `#{{ item.slot }}-body`
-   * templates.
+   * "-body"]` for the body variant).
    */
   slot?: string;
   class?: any;
@@ -40,8 +39,6 @@ export interface AccordionProps {
   items?: AccordionItem[];
   /**
    * The summary text displayed when the accordion is collapsed (for single-item usage).
-   *
-   * Rimelight extra: not in Nuxt UI.
    */
   summary?: string;
   /**
@@ -53,8 +50,6 @@ export interface AccordionProps {
   /**
    * Determines whether multiple items can be open at the same time. Alias of `type="multiple"`.
    * When `type` is set it takes precedence.
-   *
-   * Rimelight extra: not in Nuxt UI (which only has `type`).
    */
   multiple?: boolean;
   /**
@@ -72,8 +67,6 @@ export interface AccordionProps {
   /**
    * The controlled open value of the item(s). Pair with `onChange` to control the state. A string
    * for `type="single"`, an array for `type="multiple"`.
-   *
-   * Maps to Nuxt's `modelValue` / `v-model`.
    */
   value?: string | string[] | undefined;
   /**

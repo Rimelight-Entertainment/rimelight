@@ -138,22 +138,22 @@ export interface CalendarProps {
   ui?: Record<string, any>;
   /** Additional CSS classes to apply to the root element. */
   class?: any;
-  /** Called whenever the model value changes (Nuxt `update:modelValue`). */
+  /** Called whenever the model value changes. */
   onUpdateValue?: (value: CalendarModelValue) => void;
-  /** Called whenever the displayed date changes (Nuxt `update:placeholder`). */
+  /** Called whenever the displayed date changes. */
   onUpdatePlaceholder?: (date: Date) => void;
-  /** Called whenever a valid range is committed (Nuxt `update:validModelValue`). */
+  /** Called whenever a valid range is committed. */
   onUpdateValidValue?: (value: CalendarRangeValue) => void;
-  /** Called whenever the range start changes (Nuxt `update:startValue`). */
+  /** Called whenever the range start changes. */
   onUpdateStartValue?: (date: Date | undefined) => void;
-  /** Replaces the heading content (Nuxt `heading` slot). */
+  /** Replaces the heading content. */
   headingSlot?: (ctx: CalendarHeadingContext) => JSX.Element;
-  /** Replaces the day cell content (Nuxt `day` slot). */
+  /** Replaces the day cell content. */
   daySlot?: (ctx: { day: Date }) => JSX.Element;
-  /** Replaces the weekday header content (Nuxt `week-day` slot). */
+  /** Replaces the weekday header content. */
   weekDaySlot?: (ctx: { day: string }) => JSX.Element;
-  /** Replaces the month cell content (Nuxt `month-cell` slot). */
+  /** Replaces the month cell content. */
   monthCellSlot?: (ctx: { month: Date; selected: boolean; disabled: boolean }) => JSX.Element;
-  /** Replaces the year cell content (Nuxt `year-cell` slot). */
+  /** Replaces the year cell content. */
   yearCellSlot?: (ctx: { year: Date; selected: boolean; disabled: boolean }) => JSX.Element;
 }

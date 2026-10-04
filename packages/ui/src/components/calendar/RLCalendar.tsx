@@ -5,6 +5,7 @@ import {
   For,
   onSettled,
   Show,
+  untrack,
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
@@ -83,10 +84,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     controlledValue() ? props.modelValue : innerValue();
 
   const [innerPlaceholder, setInnerPlaceholder] = createSignal<Date>(
-    resolveInitialPlaceholder(
-      props.placeholder,
-      props.defaultPlaceholder,
-      props.modelValue ?? props.defaultValue,
+    // untrack: reads props on first render only — intentionally not tracked.
+    untrack(() =>
+      resolveInitialPlaceholder(
+        props.placeholder,
+        props.defaultPlaceholder,
+        props.modelValue ?? props.defaultValue,
+      ),
     ),
   );
   const placeholder = (): Date => props.placeholder ?? innerPlaceholder();
@@ -97,8 +101,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   };
 
   // Range session state (start/end commits happen progressively like reka-ui).
-  const [innerStart, setInnerStart] = createSignal<Date | undefined>(firstRangeDate(modelValue()));
-  const [innerEnd, setInnerEnd] = createSignal<Date | undefined>(secondRangeDate(modelValue()));
+  // untrack: initial values are deliberately read once and not tracked.
+  const [innerStart, setInnerStart] = createSignal<Date | undefined>(
+    untrack(() => firstRangeDate(modelValue())),
+  );
+  const [innerEnd, setInnerEnd] = createSignal<Date | undefined>(
+    untrack(() => secondRangeDate(modelValue())),
+  );
   const controlledRange = () => props.range && controlledValue();
   const rangeStart = () => (controlledRange() ? firstRangeDate(modelValue()) : innerStart());
   const rangeEnd = () => (controlledRange() ? secondRangeDate(modelValue()) : innerEnd());
@@ -425,9 +434,9 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   });
 
   createEffect(
-    () => props.type,
-    () => {
-      setViewRaw(initialViewFor(type()) as View);
+    () => type(),
+    (t) => {
+      setViewRaw(initialViewFor(t) as View);
     },
   );
 

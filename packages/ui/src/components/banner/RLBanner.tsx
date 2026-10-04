@@ -21,19 +21,19 @@ import type { ButtonProps } from "../button/button";
 
 export interface RLBannerProps extends BannerProps {
   children?: JSX.Element;
-  /** Replaces the leading icon (Nuxt UI `leading` slot). */
+  /** Replaces the leading icon. */
   leading?: JSX.Element;
-  /** Replaces the title text (Nuxt UI `title` slot). */
+  /** Replaces the title text. */
   titleSlot?: JSX.Element;
-  /** Replaces the action buttons (Nuxt UI `actions` slot). */
+  /** Replaces the action buttons. */
   actionsSlot?: JSX.Element;
-  /** Replaces the close button (Nuxt UI `close` slot). */
+  /** Replaces the close button. */
   closeSlot?: JSX.Element;
-  /** Rimelight extra: content rendered in the left area. */
+  /** Content rendered in the left area. */
   left?: JSX.Element;
-  /** Rimelight extra: replaces the center area content (leading & title). */
+  /** Replaces the center area content (leading & title). */
   center?: JSX.Element;
-  /** Rimelight extra: content rendered in the right area, before actions & close button. */
+  /** Content rendered in the right area, before actions & close button. */
   right?: JSX.Element;
 }
 

@@ -127,7 +127,7 @@ export const bannerAudit: ComponentAuditDefinition = {
   id: "banner",
   name: "Banner",
   category: "Feedback",
-  status: "Auditing",
+  status: "Passed",
   description:
     "Display a banner at the top of your website or within layout flows to inform users about important notices, product updates, or global announcements with action buttons, dismissal memory, and header stack integration.",
   importPath: "@rimelight/ui/components/banner/RLBanner.tsx",

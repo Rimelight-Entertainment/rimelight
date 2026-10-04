@@ -1,152 +1,301 @@
-import { createMemo, omit, type Component } from "solid-js";
+import {
+  createComponent,
+  createMemo,
+  createSignal,
+  createUniqueId,
+  omit,
+  For,
+  Show,
+  type Component,
+} from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { CalloutProps } from "./callout";
 import { calloutTheme } from "./callout.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
+import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
+import type { ButtonProps } from "../button/button";
 
 export interface RLCalloutProps extends CalloutProps {
-  children?: JSX.Element;
-  iconSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  headerSlot?: JSX.Element;
-  avatarSlot?: JSX.Element;
-  closeSlot?: JSX.Element;
-  actionsSlot?: JSX.Element;
-  avatar?: string | Record<string, any>;
-  close?: boolean;
-  actions?: boolean;
-  onClose?: () => void;
+  /**
+   * Children content rendered inside the callout description/content area.
+   */
+  children?: JSX.Element | undefined;
+  /**
+   * Replaces the leading icon and avatar.
+   */
+  leading?: JSX.Element | undefined;
+  /**
+   * Alias for the leading icon slot.
+   */
+  iconSlot?: JSX.Element | undefined;
+  /**
+   * Replaces title text.
+   */
+  titleSlot?: JSX.Element | undefined;
+  /**
+   * Replaces description text.
+   */
+  descriptionSlot?: JSX.Element | undefined;
+  /**
+   * Replaces action buttons.
+   */
+  actionsSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the close button.
+   */
+  closeSlot?: JSX.Element | undefined;
+  /**
+   * Custom avatar slot override.
+   */
+  avatarSlot?: JSX.Element | undefined;
+  /**
+   * Extra header area slot.
+   */
+  headerSlot?: JSX.Element | undefined;
 }
-
-const colorToIcon: Record<string, string | undefined> = {
-  error: "i-rl-circleCheck",
-  warning: "i-rl-alertTriangle",
-  info: "i-rl-info",
-  success: "i-rl-circleCheck",
-  primary: undefined,
-  secondary: undefined,
-  commentary: undefined,
-  ideation: undefined,
-  source: undefined,
-  neutral: undefined,
-};
 
 export const RLCallout: Component<RLCalloutProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
+    "as",
     "variant",
     "color",
+    "orientation",
     "title",
     "description",
     "icon",
     "avatar",
     "actions",
     "close",
+    "closeIcon",
+    "open",
+    "defaultOpen",
+    "onClose",
+    "onOpenChange",
+    "onUpdateOpen",
     "theme",
     "ui",
     "class",
+    "id",
+    "ariaLabel",
+    "ariaLabelledby",
+    "ariaDescribedby",
     "children",
+    "leading",
     "iconSlot",
     "titleSlot",
+    "descriptionSlot",
     "headerSlot",
     "avatarSlot",
     "closeSlot",
     "actionsSlot",
-    "onClose",
   );
 
-  const resolvedColor = props.variant === "destructive" ? "error" : (props.color ?? "primary");
-  const resolvedVariant =
-    props.variant === "solid" ||
-    props.variant === "outline" ||
-    props.variant === "soft" ||
-    props.variant === "subtle"
-      ? props.variant
-      : "solid";
-  const resolvedIcon = props.icon ?? colorToIcon[resolvedColor];
-  const hasTitleRow = !!(
-    props.title ||
-    props.titleSlot ||
-    props.headerSlot ||
-    props.avatar ||
-    props.avatarSlot ||
-    props.close ||
-    props.closeSlot
-  );
+  const [internalOpen, setInternalOpen] = createSignal(props.defaultOpen ?? true);
+  const isOpen = () => (props.open !== undefined ? props.open : internalOpen());
+
+  const calloutId = props.id || `rl-callout-${createUniqueId()}`;
+  const titleId = `${calloutId}-title`;
+  const descriptionId = `${calloutId}-description`;
+
+  const hasTitle = () => Boolean(props.title !== undefined || props.titleSlot !== undefined);
+  const hasDescription = () =>
+    Boolean(
+      props.description !== undefined ||
+      props.descriptionSlot !== undefined ||
+      props.children !== undefined,
+    );
+  const hasActions = () =>
+    Boolean(props.actionsSlot !== undefined || (props.actions && props.actions.length > 0));
+  const hasLeading = () =>
+    Boolean(
+      props.leading !== undefined ||
+      props.iconSlot !== undefined ||
+      props.avatarSlot !== undefined ||
+      props.avatar !== undefined ||
+      props.icon !== undefined,
+    );
+  const hasClose = () => Boolean(props.closeSlot !== undefined || props.close);
 
   const classes = createMemo(() =>
     calloutTheme({
-      variant: resolvedVariant,
-      color: resolvedColor as any,
+      variant: props.variant ?? "solid",
+      color: props.color ?? "primary",
+      orientation: props.orientation ?? "vertical",
+      title: hasTitle(),
       theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
   );
 
+  const handleClose = (e?: MouseEvent) => {
+    e?.stopPropagation();
+    if (props.open === undefined) {
+      setInternalOpen(false);
+    }
+    props.onClose?.();
+    props.onUpdateOpen?.(false);
+    props.onOpenChange?.(false);
+  };
+
+  const closeButtonProps = createMemo((): ButtonProps => {
+    const base: ButtonProps = {
+      size: "md",
+      color: "neutral",
+      variant: "link",
+      leadingIcon: props.closeIcon || "close",
+      ariaLabel: "Close",
+    };
+    return typeof props.close === "object" && props.close !== null
+      ? { ...base, ...props.close }
+      : base;
+  });
+
+  const renderRoot = (content: JSX.Element) => {
+    const rootProps = {
+      id: calloutId,
+      "data-slot": "root",
+      "data-orientation": props.orientation ?? "vertical",
+      role: "alert" as const,
+      "aria-labelledby": hasTitle() ? titleId : props.ariaLabelledby,
+      "aria-describedby": hasDescription() ? descriptionId : props.ariaDescribedby,
+      "aria-label": !hasTitle() ? props.ariaLabel : undefined,
+      class: classes().root,
+      "data-theme": props.theme,
+      ...rest,
+    };
+
+    if (props.as === "section") {
+      return <section {...rootProps}>{content}</section>;
+    }
+    if (props.as === "aside") {
+      return <aside {...rootProps}>{content}</aside>;
+    }
+    if (typeof props.as === "function") {
+      return createComponent(props.as as any, { ...rootProps, children: content });
+    }
+    return <div {...rootProps}>{content}</div>;
+  };
+
   return (
-    <div class={classes()["root"]} data-slot="root" role="alert" data-theme={props.theme} {...rest}>
-      {props.iconSlot !== undefined ? (
-        props.iconSlot
-      ) : resolvedIcon ? (
-        <span class={classes()["icon"]} data-slot="icon">
-          <RLIcon name={resolvedIcon} />
-        </span>
-      ) : null}
+    <Show when={isOpen()}>
+      {renderRoot(
+        <>
+          {/* Leading Icon / Avatar / Slot */}
+          <Show when={hasLeading()}>
+            <Show
+              when={props.leading ?? props.iconSlot}
+              fallback={
+                <Show
+                  when={props.avatarSlot !== undefined ? props.avatarSlot : props.avatar}
+                  fallback={
+                    <Show when={props.icon}>
+                      {(icon) => (
+                        <span class={classes().icon} data-slot="icon" aria-hidden="true">
+                          <RLIcon name={icon()} aria-hidden="true" />
+                        </span>
+                      )}
+                    </Show>
+                  }
+                >
+                  <Show
+                    when={props.avatarSlot}
+                    fallback={
+                      <RLAvatar
+                        {...(typeof props.avatar === "string"
+                          ? { src: props.avatar }
+                          : props.avatar)}
+                        size={classes().avatarSize as any}
+                        class={classes().avatar}
+                        data-slot="avatar"
+                      />
+                    }
+                  >
+                    {props.avatarSlot}
+                  </Show>
+                </Show>
+              }
+            >
+              {props.leading ?? props.iconSlot}
+            </Show>
+          </Show>
 
-      <div class={classes()["body"]} data-slot="body">
-        {hasTitleRow && (
-          <div class="flex items-center gap-2.5">
-            {props.avatarSlot !== undefined ? (
-              props.avatarSlot
-            ) : props.avatar ? (
-              <RLAvatar
-                {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-                size={classes()["avatarSize"] as any}
-                class={classes()["avatar"]}
-                data-slot="avatar"
-              />
-            ) : null}
-
-            {(props.title !== undefined || props.titleSlot !== undefined) && (
-              <h5 class={classes()["title"]} data-slot="title">
-                {props.title}
-                {props.titleSlot}
-              </h5>
-            )}
+          {/* Body / Content Wrapper */}
+          <div class={classes().wrapper} data-slot="wrapper">
+            <Show when={hasTitle()}>
+              <div id={titleId} class={classes().title} data-slot="title">
+                {props.titleSlot ?? props.title}
+              </div>
+            </Show>
 
             {props.headerSlot}
 
-            {props.closeSlot !== undefined ? (
-              props.closeSlot
-            ) : props.close ? (
-              <button
-                type="button"
-                class={classes()["close"]}
-                data-slot="close"
-                onClick={props.onClose}
-              >
-                <RLIcon name="i-rl-close" class="size-4" />
-              </button>
-            ) : null}
-          </div>
-        )}
+            <Show when={hasDescription()}>
+              <div id={descriptionId} class={classes().description} data-slot="description">
+                {props.descriptionSlot ?? props.description ?? props.children}
+              </div>
+            </Show>
 
-        {(props.description !== undefined || props.children !== undefined) && (
-          <div class={classes()["content"]} data-slot="content">
-            {props.description}
-            {props.children}
+            {/* Vertical Actions */}
+            <Show when={(props.orientation ?? "vertical") === "vertical" && hasActions()}>
+              <div class={classes().actions} data-slot="actions">
+                <Show
+                  when={props.actionsSlot}
+                  fallback={
+                    <For each={props.actions}>
+                      {(action) => (
+                        <RLButton size="xs" color={props.color ?? "primary"} {...action} />
+                      )}
+                    </For>
+                  }
+                >
+                  {props.actionsSlot}
+                </Show>
+              </div>
+            </Show>
           </div>
-        )}
 
-        {(props.actions === true || props.actionsSlot !== undefined) && (
-          <div class={classes()["actions"]} data-slot="actions">
-            {props.actionsSlot}
-          </div>
-        )}
-      </div>
-    </div>
+          {/* Trailing Horizontal Actions & Close Button */}
+          <Show when={(props.orientation === "horizontal" && hasActions()) || hasClose()}>
+            <div class={classes().actions} data-slot="actions">
+              <Show when={props.orientation === "horizontal" && hasActions()}>
+                <Show
+                  when={props.actionsSlot}
+                  fallback={
+                    <For each={props.actions}>
+                      {(action) => (
+                        <RLButton size="xs" color={props.color ?? "primary"} {...action} />
+                      )}
+                    </For>
+                  }
+                >
+                  {props.actionsSlot}
+                </Show>
+              </Show>
+
+              <Show when={hasClose()}>
+                <Show
+                  when={props.closeSlot}
+                  fallback={
+                    <RLButton
+                      type="button"
+                      class={classes().close}
+                      data-slot="close"
+                      onClick={handleClose}
+                      {...closeButtonProps()}
+                    />
+                  }
+                >
+                  {props.closeSlot}
+                </Show>
+              </Show>
+            </div>
+          </Show>
+        </>,
+      )}
+    </Show>
   );
 };

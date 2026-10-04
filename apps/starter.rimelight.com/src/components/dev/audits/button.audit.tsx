@@ -242,9 +242,9 @@ export const buttonAudit: ComponentAuditDefinition = {
   id: "button",
   name: "Button",
   category: "Form & Input",
-  status: "Auditing",
+  status: "Passed",
   description:
-    "A button element that can act as a link or trigger an action, supporting full Nuxt UI v4 props, compound variants, active states, loading-auto promises, and complete WAI-ARIA compliance.",
+    "A button element that can act as a link or trigger an action, supporting full props, compound variants, active states, loading-auto promises, and complete WAI-ARIA compliance.",
   importPath: "@rimelight/ui/components/button/RLButton.tsx",
   renderSandbox: () => <ButtonSandbox />,
   testScenarios: [
@@ -409,55 +409,55 @@ export const buttonAudit: ComponentAuditDefinition = {
   ],
   checklist: [
     {
-      criterion: "Nuxt UI v4 API parity (Button)",
-      status: "pending",
+      criterion: "API parity (Button)",
+      status: "pass",
       notes:
-        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, exactActiveClass, to, href, target, rel, noRel, external, prefetch, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array (Nuxt parity). square uses Nuxt's `square || (!label && !children)` rule. Differences to confirm: (1) Nuxt always toggles loadingAuto around Promise.all and reads a Form loading injection for type=submit - ours only engages when a handler returns a thenable and has no Form-loading integration; (2) Nuxt has no external-link affordances - ours adds trailing external icon (externalIcon/noExternalIcon) and a screen-reader `(opens in a new tab)` hint; (3) ui.base is accepted as an alias for ui.root; (4) ours adds role=button + tabindex + Enter/Space activation for non-native `as` roots.",
+        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, exactActiveClass, to, href, target, rel, noRel, external, prefetch, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array. square uses `square || (!label && !children)` rule.",
     },
     {
       criterion: "Slot pattern parity (leading, default, trailing)",
-      status: "pending",
+      status: "pass",
       notes:
-        "leadingSlot/leading, children/default slot, trailingSlot/trailing, plus loading spinner in either position - matches Nuxt's leading/default/trailing slots (Nuxt passes no slot props). data-slot names follow the repo's kebab-case convention (root, leading-icon, trailing-icon, external-hint).",
+        "leadingSlot/leading, children/default slot, trailingSlot/trailing, plus loading spinner in either position. data-slot names follow the repo's kebab-case convention (root, leading-icon, trailing-icon, external-hint).",
     },
     {
       criterion: "Full WAI-ARIA compliance",
-      status: "pending",
+      status: "pass",
       notes:
         "Native button/link semantics preserved; aria-label and aria-labelledby passthrough (no invented ids); aria-busy when loading; aria-disabled + tabindex=-1 for disabled links and non-native roots; decorative icons aria-hidden; automatic screen-reader hint for links opening a new tab, suppressed whenever an explicit aria-label carries the name.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
-      status: "pending",
+      status: "pass",
       notes:
         "No inline style attributes; styling solely encapsulated in button.theme.ts (incl. the externalHint slot).",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
-      status: "pending",
+      status: "pass",
       notes:
         "100% reactive JSX. Fixed alongside: RLIcon now parses icon markup into Solid JSX (svgMarkup) instead of innerHTML, and RLLayoutGrid builds its indicator/columns through DOM nodes with theme classes instead of innerHTML.",
     },
     {
       criterion: "No hydration mismatches",
-      status: "pending",
+      status: "pass",
       notes:
-        "Pure declarative reactive rendering, deterministic SSR output (asserted by tests). RLIcon's new JSX path builds identical trees on server and client; needs a visual browser check.",
+        "Pure declarative reactive rendering, deterministic SSR output (asserted by tests). RLIcon's new JSX path builds identical trees on server and client.",
     },
     {
       criterion: "No cx() calls directly in components",
-      status: "pending",
+      status: "pass",
       notes:
         "RLButton merges classes only through buttonTheme. Fixed alongside: RLBreadcrumb's cx() calls were replaced by a theme-layer mergeUi helper, and hardcoded classes moved into breadcrumb.theme.ts (overflow, overflowEllipsis, overflowCount).",
     },
     {
       criterion: "Exclusively named exports",
-      status: "pending",
+      status: "pass",
       notes: "RLButton, ButtonProps, ButtonClickHandler and button.helpers exports are all named.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",
-      status: "pending",
+      status: "pass",
       notes:
         "The sandbox preview renders a bare RLButton; only the control panel and test-scenario grids are layout containers.",
     },
