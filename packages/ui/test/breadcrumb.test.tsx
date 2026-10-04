@@ -103,6 +103,15 @@ describe("RLBreadcrumb Solid Component Suite", () => {
       expect(html).toContain('data-slot="separator"');
     });
 
+    it("renders slash separator icon when configured", () => {
+      const html = renderSolid(RLBreadcrumb, {
+        items: standardItems,
+        separatorIcon: "slash",
+      });
+      expect(html).toContain('data-slot="separator"');
+      expect(html).toContain('d="M16 4 8 20"');
+    });
+
     it("renders item leading icons", () => {
       const itemsWithIcons: BreadcrumbItem[] = [
         { label: "Docs", icon: "book-open", to: "/docs" },
@@ -247,6 +256,76 @@ describe("RLBreadcrumb Solid Component Suite", () => {
       expect(html).toContain("custom-list-class");
       expect(html).toContain("custom-item-class");
       expect(html).toContain("custom-link-class");
+    });
+
+    it("applies ui slot overrides exactly once (no duplicated classes)", () => {
+      const html = renderSolid(RLBreadcrumb, {
+        items: standardItems,
+        class: "custom-root-once",
+        ui: {
+          root: "custom-root-slot-once",
+          list: "custom-list-once",
+          item: "custom-item-once",
+          separator: "custom-separator-once",
+        },
+      });
+
+      expect(html.match(/custom-root-once/g)?.length).toBe(1);
+      expect(html.match(/custom-root-slot-once/g)?.length).toBe(1);
+      expect(html.match(/custom-list-once/g)?.length).toBe(1);
+      expect(html.match(/custom-item-once/g)?.length).toBe(standardItems.length);
+      expect(html.match(/custom-separator-once/g)?.length).toBe(standardItems.length - 1);
+    });
+
+    it("layers per-item ui and class onto the item link", () => {
+      const html = renderSolid(RLBreadcrumb, {
+        items: [{ label: "Home", to: "/", ui: { link: "item-link-cls" }, class: "item-class-cls" }],
+      });
+
+      expect(html).toContain("item-link-cls");
+      expect(html).toContain("item-class-cls");
+      expect(html).toContain("item-link-cls item-class-cls");
+    });
+  });
+
+  describe("Overflow indicator theming", () => {
+    const longItems: BreadcrumbItem[] = [
+      { label: "Home", to: "/" },
+      { label: "Level 1", to: "/1" },
+      { label: "Level 2", to: "/2" },
+      { label: "Level 3", to: "/3" },
+      { label: "Level 4", to: "/4" },
+      { label: "Current Page" },
+    ];
+
+    it("renders ellipsis and count from theme slots", () => {
+      const html = renderSolid(RLBreadcrumb, { items: longItems, maxVisible: 3 });
+
+      expect(html).toContain('data-slot="overflow-ellipsis"');
+      expect(html).toContain('data-slot="overflow-count"');
+      expect(html).toContain("tracking-wider");
+      expect(html).toContain("font-semibold");
+      expect(html).toContain("list-none");
+    });
+
+    it("supports ui.overflow overrides", () => {
+      const html = renderSolid(RLBreadcrumb, {
+        items: longItems,
+        maxVisible: 3,
+        ui: { overflow: "custom-overflow-slot" },
+      });
+
+      expect(html).toContain("custom-overflow-slot");
+    });
+
+    it("keeps ui.item styling on items and on the overflow indicator", () => {
+      const html = renderSolid(RLBreadcrumb, {
+        items: longItems,
+        maxVisible: 3,
+        ui: { item: "custom-item-shared" },
+      });
+
+      expect((html.match(/custom-item-shared/g) ?? []).length).toBeGreaterThanOrEqual(3);
     });
   });
 });

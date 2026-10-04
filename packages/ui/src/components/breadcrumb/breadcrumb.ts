@@ -90,6 +90,9 @@ export interface BreadcrumbProps<T = BreadcrumbItem> {
         linkLabel?: any;
         separator?: any;
         separatorIcon?: any;
+        overflow?: any;
+        overflowEllipsis?: any;
+        overflowCount?: any;
         [key: string]: any;
       }
     | undefined;

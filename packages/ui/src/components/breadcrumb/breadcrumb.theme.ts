@@ -12,6 +12,9 @@ export const breadcrumbTheme = defineTheme("breadcrumb", {
     "linkLabel",
     "separator",
     "separatorIcon",
+    "overflow",
+    "overflowEllipsis",
+    "overflowCount",
   ],
   base: {
     root: "relative min-w-0",
@@ -24,6 +27,9 @@ export const breadcrumbTheme = defineTheme("breadcrumb", {
     linkLabel: "truncate",
     separator: "inline-flex items-center justify-center shrink-0 select-none",
     separatorIcon: "shrink-0 size-3.5 text-muted flex items-center justify-center",
+    overflow: "inline-flex items-center gap-1.5 list-none shrink-0",
+    overflowEllipsis: "text-muted tracking-wider font-medium select-none",
+    overflowCount: "text-muted text-xs font-semibold select-none",
   },
   variants: {
     active: {

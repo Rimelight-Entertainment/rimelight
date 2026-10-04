@@ -5,7 +5,6 @@ import { breadcrumbTheme } from "./breadcrumb.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { resolveLinkAttrs } from "../link/helpers";
-import { cx } from "../../resolver";
 
 export interface RLBreadcrumbProps<T = BreadcrumbItem> extends BreadcrumbProps<T> {
   children?: JSX.Element;
@@ -92,51 +91,46 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
     }
 
     const max = props.maxVisible!;
-    const startItemsCount = 1;
-    const endItemsCount = 1;
-    const availableMiddle = Math.max(0, max - (startItemsCount + endItemsCount));
-
-    const first = items[0]!;
-    const last = items[total - 1]!;
-    const middleItems = items.slice(1, total - 1);
-    const visibleMiddle = middleItems.slice(middleItems.length - availableMiddle);
-    const hiddenCount = middleItems.length - visibleMiddle.length;
-
+    const insideCount = max - 2;
     const result: VisibleItemEntry[] = [];
 
+    // First item
     result.push({
-      item: first,
+      item: items[0],
       originalIndex: 0,
       isLast: total === 1,
       isFirst: true,
       isOverflow: false,
     });
 
-    if (hiddenCount > 0) {
-      result.push({
-        item: null,
-        originalIndex: 1,
-        isLast: false,
-        isFirst: false,
-        isOverflow: true,
-        hiddenCount,
-      });
-    }
+    const hiddenCount = total - 1 - insideCount - 1;
 
-    for (let i = 0; i < visibleMiddle.length; i++) {
-      const idx = total - 1 - visibleMiddle.length + i;
+    // Overflow item
+    result.push({
+      item: { label: "…" },
+      originalIndex: 1,
+      isLast: false,
+      isFirst: false,
+      isOverflow: true,
+      hiddenCount,
+    });
+
+    // Inside items (trailing before last)
+    const trailingStartIndex = total - 1 - insideCount;
+    for (let i = trailingStartIndex; i < total - 1; i++) {
       result.push({
-        item: visibleMiddle[i],
-        originalIndex: idx,
+        item: items[i],
+        originalIndex: i,
         isLast: false,
         isFirst: false,
         isOverflow: false,
       });
     }
 
+    // Last item
     if (total > 1) {
       result.push({
-        item: last,
+        item: items[total - 1],
         originalIndex: total - 1,
         isLast: true,
         isFirst: false,
@@ -157,7 +151,14 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
       active,
       disabled,
       to: hasTo,
-      ui: props.ui,
+      ui:
+        item?.ui || item?.class
+          ? {
+              ...props.ui,
+              ...item?.ui,
+              ...(item?.class ? { link: [props.ui?.link, item?.ui?.link, item.class] } : {}),
+            }
+          : props.ui,
       class: props.class,
     });
 
@@ -170,19 +171,16 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
   };
 
   const renderSeparator = (item?: any, idx?: number) => {
-    const themeClasses = breadcrumbTheme({
-      color: resolvedColor(),
-      ui: props.ui,
-      class: props.class,
-    });
+    const themeClasses = () =>
+      breadcrumbTheme({
+        color: resolvedColor(),
+        ui: item?.ui ? { ...props.ui, ...item.ui } : props.ui,
+        class: props.class,
+      });
 
     if (props.separatorSlot) {
       return (
-        <span
-          class={cx(themeClasses.separator, props.ui?.separator, item?.ui?.separator)}
-          data-slot="separator"
-          aria-hidden="true"
-        >
+        <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
           {props.separatorSlot({ item, index: idx })}
         </span>
       );
@@ -190,47 +188,43 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
 
     if (props.separator !== undefined && props.separator !== null) {
       return (
-        <span
-          class={cx(themeClasses.separator, props.ui?.separator, item?.ui?.separator)}
-          data-slot="separator"
-          aria-hidden="true"
-        >
+        <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
           {props.separator}
         </span>
       );
     }
 
-    const iconName = props.separatorIcon ?? "chevronRight";
+    const iconName = () => props.separatorIcon ?? "chevronRight";
 
     return (
-      <span
-        class={cx(themeClasses.separator, props.ui?.separator, item?.ui?.separator)}
-        data-slot="separator"
-        aria-hidden="true"
-      >
-        <span
-          class={cx(themeClasses.separatorIcon, props.ui?.separatorIcon, item?.ui?.separatorIcon)}
-          data-slot="separator-icon"
-        >
-          <RLIcon name={iconName} aria-hidden="true" />
+      <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
+        <span class={themeClasses().separatorIcon} data-slot="separator-icon">
+          <RLIcon name={iconName()} aria-hidden="true" />
         </span>
       </span>
     );
   };
 
-  const renderItemContent = (item: any, index: number, isLast: boolean) => {
-    const { active, disabled, hasTo, classes } = getThemeClasses(item, isLast);
+  const renderItemContent = (
+    item: any,
+    index: number,
+    theme: () => ReturnType<typeof getThemeClasses>,
+  ) => {
+    const active = () => theme().active;
+    const disabled = () => theme().disabled;
+    const hasTo = () => theme().hasTo;
+    const classes = () => theme().classes;
 
     const customSlotName = item?.slot;
     if (customSlotName && props.slots && props.slots[customSlotName]) {
-      return props.slots[customSlotName]!({ item, index, active });
+      return props.slots[customSlotName]!({ item, index, active: active() });
     }
 
     if (props.itemSlot) {
-      return props.itemSlot({ item, index, active });
+      return props.itemSlot({ item, index, active: active() });
     }
 
-    const labelText = getItemLabel(item);
+    const labelText = () => getItemLabel(item);
 
     const leadingSlot =
       (customSlotName && props.slots && props.slots[`${customSlotName}-leading`]) ||
@@ -244,20 +238,13 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
 
     const renderLeading = () => {
       if (leadingSlot) {
-        return leadingSlot({ item, index, active });
+        return leadingSlot({ item, index, active: active() });
       }
 
       if (item?.avatar) {
         const avatarProps = typeof item.avatar === "object" ? item.avatar : { src: item.avatar };
         return (
-          <span
-            class={cx(
-              classes.linkLeadingAvatar,
-              props.ui?.linkLeadingAvatar,
-              item?.ui?.linkLeadingAvatar,
-            )}
-            data-slot="link-leading-avatar"
-          >
+          <span class={classes().linkLeadingAvatar} data-slot="link-leading-avatar">
             <RLAvatar
               size={item?.ui?.linkLeadingAvatarSize ?? props.ui?.linkLeadingAvatarSize ?? "3xs"}
               {...avatarProps}
@@ -268,14 +255,7 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
 
       if (item?.icon) {
         return (
-          <span
-            class={cx(
-              classes.linkLeadingIcon,
-              props.ui?.linkLeadingIcon,
-              item?.ui?.linkLeadingIcon,
-            )}
-            data-slot="link-leading-icon"
-          >
+          <span class={classes().linkLeadingIcon} data-slot="link-leading-icon">
             <RLIcon name={item.icon} aria-hidden="true" />
           </span>
         );
@@ -286,22 +266,19 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
 
     const renderLabel = () => {
       if (labelSlot) {
-        return labelSlot({ item, index, active });
+        return labelSlot({ item, index, active: active() });
       }
 
       return (
-        <span
-          class={cx(classes.linkLabel, props.ui?.linkLabel, item?.ui?.linkLabel)}
-          data-slot="link-label"
-        >
-          {labelText}
+        <span class={classes().linkLabel} data-slot="link-label">
+          {labelText()}
         </span>
       );
     };
 
     const renderTrailing = () => {
       if (trailingSlot) {
-        return trailingSlot({ item, index, active });
+        return trailingSlot({ item, index, active: active() });
       }
       return null;
     };
@@ -314,32 +291,33 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
       </>
     );
 
-    const itemLinkClass = cx(classes.link, props.ui?.link, item?.ui?.link, item?.class);
+    const itemLinkClass = () => classes().link;
 
-    if (hasTo) {
-      const linkAttrs = resolveLinkAttrs({
-        to: item.to,
-        href: item.href ?? item.to,
-        target: item.target,
-        rel: item.rel,
-        external: item.external,
-        disabled,
-        active,
-        ariaLabel: item.ariaLabel || item["aria-label"],
-        ariaCurrentValue: active ? "page" : undefined,
-      });
+    if (hasTo()) {
+      const linkAttrs = () =>
+        resolveLinkAttrs({
+          to: item.to,
+          href: item.href ?? item.to,
+          target: item.target,
+          rel: item.rel,
+          external: item.external,
+          disabled: disabled(),
+          active: active(),
+          ariaLabel: item.ariaLabel || item["aria-label"],
+          ariaCurrentValue: active() ? "page" : undefined,
+        });
 
       return (
         <a
-          class={itemLinkClass}
+          class={itemLinkClass()}
           data-slot="link"
-          href={linkAttrs.href}
-          target={linkAttrs.target}
-          rel={linkAttrs.rel}
+          href={linkAttrs().href}
+          target={linkAttrs().target}
+          rel={linkAttrs().rel}
           aria-label={item.ariaLabel || item["aria-label"]}
-          aria-current={active ? "page" : undefined}
-          aria-disabled={disabled ? "true" : undefined}
-          tabindex={disabled ? -1 : undefined}
+          aria-current={active() ? "page" : undefined}
+          aria-disabled={disabled() ? "true" : undefined}
+          tabindex={disabled() ? -1 : undefined}
         >
           {content}
         </a>
@@ -347,7 +325,7 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
     }
 
     return (
-      <span class={itemLinkClass} data-slot="link" aria-current={active ? "page" : undefined}>
+      <span class={itemLinkClass()} data-slot="link" aria-current={active() ? "page" : undefined}>
         {content}
       </span>
     );
@@ -361,48 +339,50 @@ const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
     }),
   );
 
+  const overflowThemeClasses = () =>
+    breadcrumbTheme({
+      color: resolvedColor(),
+      ui:
+        props.ui?.overflow === undefined && props.ui?.item !== undefined
+          ? { ...props.ui, overflow: props.ui.item }
+          : props.ui,
+      class: props.class,
+    });
+
   return (
-    <RootTag
-      aria-label="Breadcrumb"
-      class={cx(rootClasses().root, props.ui?.root, props.class)}
-      data-slot="root"
-      {...rest}
-    >
-      {props.items ? (
-        <ol class={cx(rootClasses().list, props.ui?.list)} data-slot="list">
+    <RootTag aria-label="Breadcrumb" class={rootClasses().root} data-slot="root" {...rest}>
+      <ol class={rootClasses().list} data-slot="list">
+        {props.items ? (
           <For each={visibleItemsWithMeta()}>
             {({ item, originalIndex, isLast, isOverflow, hiddenCount }) => {
               if (isOverflow) {
+                const overflowClasses = () => overflowThemeClasses();
                 return (
-                  <li
-                    class={cx(
-                      "inline-flex items-center gap-1.5 list-none shrink-0",
-                      props.ui?.item,
-                    )}
-                    aria-hidden="true"
-                    data-slot="overflow"
-                  >
-                    <span class="text-muted tracking-wider font-medium select-none">…</span>
-                    <span class="text-muted text-xs font-semibold select-none">+{hiddenCount}</span>
+                  <li class={overflowClasses().overflow} aria-hidden="true" data-slot="overflow">
+                    <span class={overflowClasses().overflowEllipsis} data-slot="overflow-ellipsis">
+                      …
+                    </span>
+                    <span class={overflowClasses().overflowCount} data-slot="overflow-count">
+                      +{hiddenCount}
+                    </span>
                     {renderSeparator()}
                   </li>
                 );
               }
 
+              const theme = () => getThemeClasses(item, isLast);
               return (
-                <li class={cx(rootClasses().item, props.ui?.item, item?.ui?.item)} data-slot="item">
-                  {renderItemContent(item, originalIndex, isLast)}
+                <li class={theme().classes.item} data-slot="item">
+                  {renderItemContent(item, originalIndex, theme)}
                   {!isLast && renderSeparator(item, originalIndex)}
                 </li>
               );
             }}
           </For>
-        </ol>
-      ) : (
-        <ol class={cx(rootClasses().list, props.ui?.list)} data-slot="list">
-          {props.children}
-        </ol>
-      )}
+        ) : (
+          props.children
+        )}
+      </ol>
     </RootTag>
   );
 };
