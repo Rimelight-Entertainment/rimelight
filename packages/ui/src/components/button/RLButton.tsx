@@ -1,4 +1,4 @@
-import { createMemo, createSignal, type Component } from "solid-js";
+import { createMemo, createSignal, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 import { omit } from "solid-js";
 import type { ButtonProps } from "./button";
@@ -188,7 +188,8 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
           ? "noopener noreferrer"
           : undefined;
 
-  const Root = dynamic(() => (isLink() ? "a" : (props.as ?? "button")));
+  const CustomRoot = dynamic(() => (props.as ?? "div") as string);
+  const isCustomRoot = () => !isLink() && Boolean(props.as) && props.as !== "button";
 
   const renderLeading = () => {
     if (props.leadingSlot !== undefined && props.leadingSlot !== null) {
@@ -267,41 +268,87 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     return null;
   };
 
+  const leadingNode = createMemo(() => renderLeading());
+  const contentNode = createMemo(() => renderContent());
+  const trailingNode = createMemo(() => renderTrailing());
+
+  const buttonContent = () => (
+    <>
+      <Show when={leadingNode()}>{leadingNode()}</Show>
+      <Show when={contentNode()}>{contentNode()}</Show>
+      <Show when={trailingNode()}>{trailingNode()}</Show>
+    </>
+  );
+
+  const rootClass = () => classes()["root"];
+
   return (
-    <Root
-      type={!isLink() && (!props.as || props.as === "button") ? props.type || "button" : undefined}
-      href={isLink() ? (props.disabled || isLoading() ? undefined : href()) : undefined}
-      target={isLink() ? targetValue() : undefined}
-      rel={isLink() ? relValue() : undefined}
-      disabled={!isLink() ? props.disabled || isLoading() : undefined}
-      aria-disabled={props.disabled || isLoading() ? "true" : undefined}
-      aria-current={isLink() && props.active ? (props.ariaCurrentValue ?? "page") : undefined}
-      tabindex={
-        isLink()
-          ? props.disabled || isLoading()
-            ? -1
-            : undefined
-          : props.as && props.as !== "button"
-            ? props.disabled
-              ? -1
-              : 0
-            : undefined
+    <Show
+      when={isLink()}
+      fallback={
+        <Show
+          when={isCustomRoot()}
+          fallback={
+            <button
+              type={props.type || "button"}
+              disabled={props.disabled || isLoading()}
+              aria-disabled={props.disabled || isLoading() ? "true" : undefined}
+              class={rootClass()}
+              data-slot="root"
+              data-theme={props.theme}
+              data-loading={isLoading() ? "true" : undefined}
+              data-loading-auto={props.loadingAuto ? "true" : undefined}
+              aria-label={ariaLabel()}
+              aria-labelledby={ariaLabelledby()}
+              aria-busy={isLoading() ? "true" : undefined}
+              onClick={handleClick}
+              {...rest}
+            >
+              {buttonContent()}
+            </button>
+          }
+        >
+          <CustomRoot
+            disabled={props.disabled || isLoading()}
+            aria-disabled={props.disabled || isLoading() ? "true" : undefined}
+            tabindex={props.disabled ? -1 : 0}
+            role="button"
+            class={rootClass()}
+            data-slot="root"
+            data-theme={props.theme}
+            data-loading={isLoading() ? "true" : undefined}
+            data-loading-auto={props.loadingAuto ? "true" : undefined}
+            aria-label={ariaLabel()}
+            aria-labelledby={ariaLabelledby()}
+            aria-busy={isLoading() ? "true" : undefined}
+            onClick={handleClick}
+            {...rest}
+          >
+            {buttonContent()}
+          </CustomRoot>
+        </Show>
       }
-      role={!isLink() && props.as && props.as !== "button" ? "button" : undefined}
-      class={classes()["root"]}
-      data-slot="root"
-      data-theme={props.theme}
-      data-loading={isLoading() ? "true" : undefined}
-      data-loading-auto={props.loadingAuto ? "true" : undefined}
-      aria-label={ariaLabel()}
-      aria-labelledby={ariaLabelledby()}
-      aria-busy={isLoading() ? "true" : undefined}
-      onClick={handleClick}
-      {...rest}
     >
-      {renderLeading()}
-      {renderContent()}
-      {renderTrailing()}
-    </Root>
+      <a
+        href={props.disabled || isLoading() ? undefined : href()}
+        target={targetValue()}
+        rel={relValue()}
+        aria-disabled={props.disabled || isLoading() ? "true" : undefined}
+        aria-current={props.active ? (props.ariaCurrentValue ?? "page") : undefined}
+        tabindex={props.disabled || isLoading() ? -1 : undefined}
+        class={rootClass()}
+        data-slot="root"
+        data-theme={props.theme}
+        data-loading={isLoading() ? "true" : undefined}
+        data-loading-auto={props.loadingAuto ? "true" : undefined}
+        aria-label={ariaLabel()}
+        aria-labelledby={ariaLabelledby()}
+        aria-busy={isLoading() ? "true" : undefined}
+        onClick={handleClick}
+        {...rest}
+      >
+        {buttonContent()}
+      </a>
+    </Show>
   );
 };
