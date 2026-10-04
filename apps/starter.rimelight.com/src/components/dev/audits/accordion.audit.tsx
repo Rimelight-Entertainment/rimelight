@@ -118,9 +118,9 @@ export const accordionAudit: ComponentAuditDefinition = {
   id: "accordion",
   name: "Accordion",
   category: "Data Display",
-  status: "Auditing",
+  status: "Passed",
   description:
-    "A collapsible content panel component built on native HTML5 <details> & <summary> elements with Nuxt-parity props (type, value/defaultValue + onChange, collapsible, unmountOnHide, valueKey/labelKey, slots) plus Rimelight extras (summary/children single mode, multiple alias, name, trailingIconSlot).",
+    "A collapsible content panel component built on native HTML5 <details> & <summary> elements with props (type, value/defaultValue + onChange, collapsible, unmountOnHide, valueKey/labelKey, slots) plus extras (summary/children single mode, multiple alias, name, trailingIconSlot).",
   importPath: "@rimelight/ui/components/accordion/RLAccordion.tsx",
   renderSandbox: () => <AccordionSandbox />,
   testScenarios: [

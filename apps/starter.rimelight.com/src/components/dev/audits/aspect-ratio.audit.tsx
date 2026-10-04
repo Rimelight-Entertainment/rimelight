@@ -55,7 +55,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
   id: "aspect-ratio",
   name: "AspectRatio",
   category: "Layout",
-  status: "Auditing",
+  status: "Passed",
   description:
     "Constrains content to a fixed width/height ratio via an SVG spacer (CSP-safe, no inline styles) with an absolutely positioned content slot.",
   importPath: "@rimelight/ui/components/aspect-ratio/RLAspectRatio.tsx",
