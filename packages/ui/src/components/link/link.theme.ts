@@ -1,12 +1,13 @@
 import { defineTheme } from "../../resolver";
 
 export const linkTheme = defineTheme("link", {
-  slots: ["root", "label", "leadingIcon", "trailingIcon"],
+  slots: ["root", "label", "leadingIcon", "trailingIcon", "externalHint"],
   base: {
     root: "outline-primary/25 focus-visible:outline-3 rounded-md inline-flex items-center gap-1 leading-none transition-colors",
     label: "",
     leadingIcon: "-translate-y-[1.5px]",
     trailingIcon: "-translate-y-[1.5px]",
+    externalHint: "sr-only",
   },
   variants: {
     active: {

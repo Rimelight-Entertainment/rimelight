@@ -40,9 +40,11 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
 
   const attrs = createMemo(() => resolveLinkAttrs(props));
 
+  const ariaLabelValue = () => props.ariaLabel ?? (props["aria-label"] as string | undefined);
+
   const classes = createMemo<Record<string, string>>(() => {
     if (props.raw) {
-      return { root: props.class || "" };
+      return { root: props.class || "", externalHint: "sr-only" };
     }
 
     return linkTheme({
@@ -62,7 +64,7 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
       href={attrs().href}
       target={attrs().target}
       rel={attrs().rel}
-      aria-label={props.ariaLabel}
+      aria-label={ariaLabelValue()}
       aria-current={attrs().ariaCurrent}
       aria-disabled={attrs().ariaDisabled}
       data-astro-prefetch={attrs().prefetchAttr}
@@ -92,8 +94,8 @@ const RLLink: Component<RLLinkProps> = (allProps) => {
         </span>
       ) : null}
 
-      {attrs().isExternal && !props.ariaLabel && (
-        <span class="sr-only" data-slot="external-hint">
+      {attrs().isExternal && attrs().target === "_blank" && !ariaLabelValue() && (
+        <span class={classes()["externalHint"]} data-slot="external-hint">
           (opens in a new tab)
         </span>
       )}
