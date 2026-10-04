@@ -101,26 +101,24 @@ export const BannerSandbox = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Preview Area */}
-      <div class="p-4 rounded-xl border border-default bg-elevated/10 flex flex-col gap-4">
-        <RLBanner
-          color={color()}
-          icon={hasIcon() ? "sparkles" : undefined}
-          title={title()}
-          contain={contain()}
-          close={isClosable()}
-          to={isLink() ? "https://rimelight.com" : undefined}
-          target={isLink() ? "_blank" : undefined}
-          actions={
-            hasActions()
-              ? [
-                  { label: "Documentation", variant: "outline", href: "#docs" },
-                  { label: "Get Started", trailingIcon: "arrow-right" },
-                ]
-              : undefined
-          }
-        />
-      </div>
+      {/* Preview (bare) */}
+      <RLBanner
+        color={color()}
+        icon={hasIcon() ? "star" : undefined}
+        title={title()}
+        contain={contain()}
+        close={isClosable()}
+        to={isLink() ? "https://rimelight.com" : undefined}
+        target={isLink() ? "_blank" : undefined}
+        actions={
+          hasActions()
+            ? [
+                { label: "Documentation", variant: "outline", href: "#docs" },
+                { label: "Get Started", trailingIcon: "arrow-right" },
+              ]
+            : undefined
+        }
+      />
     </div>
   );
 };
@@ -187,37 +185,55 @@ export const bannerAudit: ComponentAuditDefinition = {
       ),
     },
     {
+      id: "custom-slots",
+      title: "Slot Overrides (leading, title, actions, close)",
+      description:
+        "Nuxt UI slots replace their default content: `leading` replaces the icon, `titleSlot` the title, `actionsSlot` the actions and `closeSlot` the close button.",
+      render: () => (
+        <RLBanner
+          color="success"
+          leading={<span aria-hidden="true">🎉</span>}
+          titleSlot={
+            <span>
+              Custom <strong>title</strong> slot
+            </span>
+          }
+          actionsSlot={<a href="#custom-action">Custom action</a>}
+          closeSlot={<span>(custom close slot)</span>}
+        />
+      ),
+    },
+    {
       id: "link-mode",
       title: "Interactive Link Mode",
       description:
-        "Banners rendered as clickable links via `to` or `href` prop with automatic external link attribute handling.",
+        "`to` / `href` renders a full-surface overlay link labelled by the title, so actions and the close button stay valid, independently focusable controls.",
       render: () => (
-        <div class="flex flex-col gap-3">
-          <RLBanner
-            to="https://rimelight.com"
-            target="_blank"
-            color="primary"
-            icon="sparkles"
-            title="Rimelight Entertainment releases Next-Gen UI toolkit — Click to explore!"
-          />
-        </div>
+        <RLBanner
+          to="https://rimelight.com"
+          target="_blank"
+          color="primary"
+          icon="star"
+          title="Rimelight Entertainment releases Next-Gen UI toolkit — Click to explore!"
+          actions={[{ label: "Secondary action", variant: "outline" }]}
+          close
+        />
       ),
     },
     {
       id: "closable-and-persistence",
       title: "Dismissible with Persistence ID",
       description:
-        "Dismissible banner with custom close button icon and optional local storage persistence via `id` prop.",
+        "Custom close icon; with an explicit `id`, dismissal is saved to localStorage (`banner-<id>`). Clear it from devtools to see it again.",
       render: () => (
-        <div class="flex flex-col gap-3">
-          <RLBanner
-            id="audit-closable-banner-demo"
-            title="You can dismiss this banner. On explicit `id`, state is saved to localStorage."
-            color="warning"
-            icon="alert-circle"
-            close
-          />
-        </div>
+        <RLBanner
+          id="audit-closable-banner-demo"
+          title="You can dismiss this banner. On explicit `id`, state is saved to localStorage."
+          color="warning"
+          icon="alert-circle"
+          closeIcon="x"
+          close
+        />
       ),
     },
     {
@@ -226,15 +242,13 @@ export const bannerAudit: ComponentAuditDefinition = {
       description:
         "Coordinates with Rimelight Header Stack system: supports `sticky`, `fixed`, `stackIndex`, `hideOnScroll` and dynamic height registration.",
       render: () => (
-        <div class="flex flex-col gap-3">
-          <RLBanner
-            title="Header-Stack Synchronized Banner (stackIndex=0)"
-            color="neutral"
-            icon="layers"
-            stackIndex={0}
-            actions={[{ label: "Configure Stack", variant: "outline" }]}
-          />
-        </div>
+        <RLBanner
+          title="Header-Stack Synchronized Banner (stackIndex=0)"
+          color="neutral"
+          icon="layers"
+          stackIndex={0}
+          actions={[{ label: "Configure Stack", variant: "outline" }]}
+        />
       ),
     },
   ],
@@ -243,30 +257,31 @@ export const bannerAudit: ComponentAuditDefinition = {
       criterion: "Nuxt UI v4 API parity (Banner)",
       status: "pass",
       notes:
-        "Full support for as, id, icon, title, actions, color, close, closeIcon, to, target, rel, ui, class, and onClose.",
+        "as, id, icon, title, actions (neutral/xs defaults), color, close (md/neutral/ghost defaults), closeIcon, to/href, target, rel, ui, class, onClose. Differences: `to` accepts strings only; slots are props (`leading`, `titleSlot`, `actionsSlot`, `closeSlot`).",
     },
     {
-      criterion: "Slot pattern parity (leading, title, actions, close, left, center, right)",
+      criterion:
+        "Slot pattern parity (leading, title, actions, close) + extras (left, center, right, default)",
       status: "pass",
-      notes: "Full Solid JSX slot pattern support for all banner areas.",
+      notes: "Slots replace their default content like Nuxt UI. Extra `content`/`link` ui keys.",
     },
     {
       criterion: "Header Stack & Scroll Integration (Rimelight Exclusive)",
       status: "pass",
       notes:
-        "Seamless integration with useHeaderStack composable (stackIndex, hideOnScroll, sticky, fixed, dynamic top offset calculation).",
+        "useHeaderStack registration (stackIndex, hideOnScroll, sticky, fixed). Collapse via data-collapsed theme classes; top offset via CSSOM.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "role='region' or role='link', aria-label automatically derived or forwarded, decorative icons have aria-hidden='true'.",
+        "role='region' auto aria-labelledby the title (or ariaLabel fallback); overlay link labelled by title; no interactive content nested in <a>; decorative icons aria-hidden.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
       status: "pass",
       notes:
-        "All CSS classes encapsulated within banner.theme.ts without static inline styles (only dynamic top offset in header stack).",
+        "No style attribute rendered; dynamic top uses element.style (CSSOM), which CSP allows.",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
@@ -276,12 +291,13 @@ export const bannerAudit: ComponentAuditDefinition = {
     {
       criterion: "No hydration mismatches",
       status: "pass",
-      notes: "Deterministic dynamic element rendering and SSR safe localStorage reads.",
+      notes:
+        "Dismissed state always starts false; localStorage read after settle (head script hides pre-hydration). Fallback ids via createUniqueId.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",
       status: "pass",
-      notes: "All scenario renders return bare components directly.",
+      notes: "Single-banner scenarios render bare; the color matrix only uses a flex list.",
     },
   ],
 };

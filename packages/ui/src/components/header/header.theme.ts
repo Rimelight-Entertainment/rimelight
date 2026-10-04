@@ -22,7 +22,7 @@ export const headerTheme = defineTheme("header", {
     },
     sticky: {
       true: {
-        root: "sticky top-0 inset-x-0 z-50",
+        root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
       },
       false: {
         root: "",
@@ -30,7 +30,7 @@ export const headerTheme = defineTheme("header", {
     },
     fixed: {
       true: {
-        root: "fixed left-0 right-0 z-50 transition-[top,opacity] duration-200 ease-in-out",
+        root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
       },
       false: {},
     },

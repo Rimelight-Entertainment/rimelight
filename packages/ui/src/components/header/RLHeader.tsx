@@ -1,5 +1,12 @@
-import { createMemo, omit, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
+import {
+  createComponent,
+  createEffect,
+  createMemo,
+  createUniqueId,
+  omit,
+  type Component,
+} from "solid-js";
+import type { JSX } from "@solidjs/web";
 import type { HeaderProps } from "./header";
 import { headerTheme } from "./header.theme";
 import { useHeaderStack } from "./useHeaderStack";
@@ -26,7 +33,6 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     "id",
     "ui",
     "class",
-    "style",
     "left",
     "center",
     "right",
@@ -41,10 +47,8 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const layerType = () => props.layerType ?? "header";
   const isBanner = () => layerType() === "banner";
 
-  // Deterministic id: explicit `id` wins, else derived from layer identity
-  // (random ids diverge between SSR and hydration and never persist).
-  const layerId =
-    typeof props["id"] === "string" ? props["id"] : `rl-header-${layerType()}-${stackIndex()}`;
+  // Unique id fallback using createUniqueId so multiple headers never collide
+  const layerId = typeof props["id"] === "string" ? props["id"] : `rl-header-${createUniqueId()}`;
 
   const resolvedClasses = createMemo(() =>
     headerTheme({
@@ -57,7 +61,7 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
   );
 
   const { registerHeader } = useHeaderStack();
-  const { ref, topOffset, isCollapsed } = registerHeader({
+  const layer = registerHeader({
     id: layerId,
     order: stackIndex(),
     type: layerType(),
@@ -67,57 +71,67 @@ const RLHeader: Component<RLHeaderProps> = (allProps) => {
     visible: true,
   });
 
-  const dynamicStyles = () => {
-    if (!fixed() && !sticky())
-      return typeof props["style"] === "object" ? props["style"] : undefined;
+  // Positioning goes through the CSSOM (not a style attribute): CSP-safe and
+  // never part of the SSR markup, so no hydration mismatch.
+  let rootEl: HTMLElement | undefined;
+  createEffect(
+    () => (fixed() || sticky() ? layer.topOffset() : undefined),
+    (top) => {
+      if (!rootEl) return;
+      if (top === undefined) rootEl.style.removeProperty("top");
+      else rootEl.style.setProperty("top", `${top}px`);
+    },
+  );
 
-    const base: Record<string, any> = {
-      top: `${topOffset()}px`,
-      transform: isCollapsed() ? "translateY(-100%)" : "translateY(0)",
-      transition:
-        "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  const renderRoot = (content: JSX.Element) => {
+    const rootProps = {
+      ref: (el: HTMLElement) => {
+        rootEl = el;
+        layer.ref(el);
+      },
+      id: layerId,
+      "data-slot": "root",
+      class: resolvedClasses().root,
+      "data-contain": contain() ? "true" : "false",
+      "data-collapsed": layer.isCollapsed() ? "true" : "false",
+      "data-rl-header": isBanner() ? undefined : "true",
+      "data-rl-banner": isBanner() ? "true" : undefined,
+      "data-stack-index": stackIndex(),
+      "data-hide-on-scroll": String(hideOnScroll()),
+      "data-header-layer-id": layerId,
+      "data-layer-type": layerType(),
+      ...rest,
     };
 
-    if (typeof props["style"] === "object" && props["style"] !== null) {
-      return { ...props["style"], ...base };
+    if (props.as === "div") {
+      return <div {...rootProps}>{content}</div>;
     }
-    return base;
+    if (props.as === "section") {
+      return <section {...rootProps}>{content}</section>;
+    }
+    if (props.as === "nav") {
+      return <nav {...rootProps}>{content}</nav>;
+    }
+    if (typeof props.as === "function") {
+      return createComponent(props.as as any, { ...rootProps, children: content });
+    }
+    return <header {...rootProps}>{content}</header>;
   };
 
-  // Hoisted per instance (<Dynamic> is deprecated: it rebuilds a fresh
-  // factory at every call site).
-  const Tag = dynamic(() => props.as ?? "header");
-
-  return (
-    <Tag
-      ref={ref}
-      id={layerId}
-      data-slot="root"
-      class={resolvedClasses().root}
-      data-contain={contain() ? "true" : "false"}
-      data-rl-header={isBanner() ? undefined : "true"}
-      data-rl-banner={isBanner() ? "true" : undefined}
-      data-stack-index={stackIndex()}
-      data-hide-on-scroll={String(hideOnScroll())}
-      data-header-layer-id={layerId}
-      data-layer-type={layerType()}
-      style={dynamicStyles() as JSX.CSSProperties}
-      {...rest}
-    >
-      <div class={resolvedClasses().content} data-header-content>
-        <div class={resolvedClasses().container} data-slot="container">
-          <div class={resolvedClasses().left} data-slot="left">
-            {props.left}
-          </div>
-          <div class={resolvedClasses().center} data-slot="center">
-            {props.center ?? props.children}
-          </div>
-          <div class={resolvedClasses().right} data-slot="right">
-            {props.right}
-          </div>
+  return renderRoot(
+    <div class={resolvedClasses().content} data-header-content>
+      <div class={resolvedClasses().container} data-slot="container">
+        <div class={resolvedClasses().left} data-slot="left">
+          {props.left}
+        </div>
+        <div class={resolvedClasses().center} data-slot="center">
+          {props.center ?? props.children}
+        </div>
+        <div class={resolvedClasses().right} data-slot="right">
+          {props.right}
         </div>
       </div>
-    </Tag>
+    </div>,
   );
 };
 

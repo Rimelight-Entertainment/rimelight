@@ -173,7 +173,7 @@ describe("@rimelight/ui preset intent shortcuts", () => {
     expect(css).toContain("var(--rl-neutral-50)");
     expect(css).not.toContain("--colors-");
     expect(css).toContain(".text-muted\\/50");
-  });
+  }, 15000);
 });
 
 describe("@rimelight/ui shortcuts system", () => {

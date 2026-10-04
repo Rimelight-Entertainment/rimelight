@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vite-plus/test";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vite-plus/test";
 
 vi.mock("virtual:rimelight/ui", () => ({
   default: {
@@ -9,9 +9,27 @@ vi.mock("virtual:rimelight/ui", () => ({
 }));
 
 import { RLBanner } from "../src/components/banner/RLBanner";
-import { renderSolid } from "./utils/normalize";
+import { RLHeader } from "../src/components/header/RLHeader";
+import { bannerTheme } from "../src/components/banner/banner.theme";
+import * as components from "../src/components/index";
+import { renderToString } from "@solidjs/web";
+import { cleanHtml } from "./utils/normalize";
 
-describe("RLBanner Solid Component Suite", () => {
+function render(fn: () => any): string {
+  return cleanHtml(renderToString(fn));
+}
+
+/** Returns the opening tag of the first element carrying `data-slot="<slot>"`. */
+function slotTag(html: string, slot: string): string {
+  const match = html.match(new RegExp(`<[a-z]+[^>]*data-slot="${slot}"[^>]*>`));
+  return match?.[0] ?? "";
+}
+
+function attr(tag: string, name: string): string | undefined {
+  return tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+}
+
+describe("RLBanner", () => {
   const colors = [
     "primary",
     "secondary",
@@ -22,185 +40,422 @@ describe("RLBanner Solid Component Suite", () => {
     "neutral",
   ] as const;
 
-  beforeEach(() => {
-    try {
-      if (typeof window !== "undefined") {
-        window.localStorage.clear();
-      }
-    } catch {}
-  });
-
-  describe("Basic & Title / Content Rendering", () => {
-    it("renders title prop correctly", () => {
-      const html = renderSolid(RLBanner, { title: "Important Update Available" });
+  describe("Title & content", () => {
+    it("renders the title prop", () => {
+      const html = render(() => <RLBanner title="Important Update Available" />);
       expect(html).toContain("Important Update Available");
-      expect(html).toContain('data-slot="root"');
-      expect(html).toContain('data-slot="title"');
-      expect(html).toContain('role="region"');
+      expect(slotTag(html, "title")).not.toBe("");
     });
 
-    it("renders default children when title prop is not provided", () => {
-      const html = renderSolid(RLBanner, {}, "Default children banner message");
+    it("falls back to children when no title is given", () => {
+      const html = render(() => <RLBanner>Default children banner message</RLBanner>);
       expect(html).toContain("Default children banner message");
-      expect(html).toContain('data-slot="title"');
+      expect(slotTag(html, "title")).not.toBe("");
     });
 
-    it("renders custom as polymorphic element", () => {
-      const html = renderSolid(RLBanner, { as: "section", title: "Section Banner" });
-      expect(html).toContain("<section");
-      expect(html).toContain('data-slot="root"');
-      expect(html).toContain("Section Banner");
+    it("prefers title over children", () => {
+      const html = render(() => <RLBanner title="From prop">From children</RLBanner>);
+      expect(html).toContain("From prop");
+      expect(html).not.toContain("From children");
+    });
+
+    it("omits the title element when there is nothing to show", () => {
+      const html = render(() => <RLBanner />);
+      expect(slotTag(html, "title")).toBe("");
+    });
+
+    it("renders as a div by default and honours `as`", () => {
+      expect(render(() => <RLBanner title="x" />)).toMatch(/^<div/);
+      expect(render(() => <RLBanner as="section" title="x" />)).toMatch(/^<section/);
+    });
+
+    it("renders as a div even with `to` (link is an overlay, not the root)", () => {
+      expect(render(() => <RLBanner to="/a" title="x" />)).toMatch(/^<div/);
     });
   });
 
-  describe("Color Variants", () => {
+  describe("Colors", () => {
     for (const color of colors) {
-      it(`renders color="${color}" correctly`, () => {
-        const html = renderSolid(RLBanner, { color, title: `Banner with ${color} color` });
-        expect(html).toContain(`Banner with ${color} color`);
-        expect(html).toContain('data-slot="root"');
+      it(`applies color="${color}"`, () => {
+        const html = render(() => <RLBanner color={color} title="t" />);
+        expect(attr(slotTag(html, "root"), "data-color")).toBe(color);
       });
     }
+
+    it("defaults to primary", () => {
+      const html = render(() => <RLBanner title="t" />);
+      expect(attr(slotTag(html, "root"), "data-color")).toBe("primary");
+    });
   });
 
-  describe("Icons & Leading Slot", () => {
-    it("renders icon prop in leading slot", () => {
-      const html = renderSolid(RLBanner, { icon: "rocket", title: "Launch Notification" });
-      expect(html).toContain('data-slot="icon"');
+  describe("Icon & leading slot", () => {
+    it("renders the icon, hidden from assistive tech", () => {
+      const html = render(() => <RLBanner icon="rocket" title="Launch" />);
+      const icon = slotTag(html, "icon");
+      expect(icon).not.toBe("");
+      expect(attr(icon, "aria-hidden")).toBe("true");
       expect(html).toContain("<svg");
-      expect(html).toContain("Launch Notification");
     });
 
-    it("renders custom leading slot", () => {
-      const html = renderSolid(RLBanner, {
-        leading: '<span class="custom-leading">🚀 Custom</span>' as any,
-        title: "Custom Leading Slot",
-      });
+    it("leading slot replaces the icon", () => {
+      const html = render(() => (
+        <RLBanner icon="rocket" leading={<span class="custom-leading">L</span>} title="t" />
+      ));
       expect(html).toContain("custom-leading");
-      expect(html).toContain("Custom Leading Slot");
+      expect(slotTag(html, "icon")).toBe("");
     });
   });
 
-  describe("Actions Prop & Actions Slot", () => {
-    it("renders action buttons via actions prop", () => {
-      const html = renderSolid(RLBanner, {
-        title: "New feature released!",
-        actions: [
-          { label: "Learn More", href: "/docs" },
-          { label: "Dismiss", variant: "outline" },
-        ],
-      });
-      expect(html).toContain('data-slot="actions"');
+  describe("Title slot", () => {
+    it("titleSlot replaces the title text but keeps the labelled wrapper", () => {
+      const html = render(() => (
+        <RLBanner title="Prop title" titleSlot={<strong class="custom-title">Slot title</strong>} />
+      ));
+      expect(html).toContain("custom-title");
+      expect(html).not.toContain("Prop title");
+      expect(attr(slotTag(html, "title"), "id")).toBeTruthy();
+    });
+  });
+
+  describe("Actions", () => {
+    it("renders action buttons inside the right area next to close", () => {
+      const html = render(() => (
+        <RLBanner
+          title="t"
+          actions={[
+            { label: "Learn More", href: "/docs" },
+            { label: "Other", variant: "outline" },
+          ]}
+        />
+      ));
+      expect(slotTag(html, "actions")).not.toBe("");
       expect(html).toContain("Learn More");
-      expect(html).toContain("Dismiss");
+      expect(html).toContain("Other");
+      const right = html.indexOf('data-slot="right"');
+      const actions = html.indexOf('data-slot="actions"');
+      expect(actions).toBeGreaterThan(right);
     });
 
-    it("renders custom actions slot", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Actions Slot Test",
-        actionsSlot: '<button type="button" class="btn-custom">Click Me</button>' as any,
-      });
-      expect(html).toContain('data-slot="actions"');
+    it("omits the actions wrapper for an empty array", () => {
+      const html = render(() => <RLBanner title="t" actions={[]} />);
+      expect(slotTag(html, "actions")).toBe("");
+    });
+
+    it("actionsSlot replaces the actions prop (Nuxt slot semantics)", () => {
+      const html = render(() => (
+        <RLBanner
+          title="t"
+          actions={[{ label: "From prop" }]}
+          actionsSlot={
+            <button type="button" class="btn-custom">
+              Slot
+            </button>
+          }
+        />
+      ));
       expect(html).toContain("btn-custom");
+      expect(html).not.toContain("From prop");
     });
   });
 
-  describe("Closable & Dismiss Persistence", () => {
-    it("renders close button when close=true", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Dismissible Banner",
-        close: true,
-      });
-      expect(html).toContain('data-slot="close"');
-      expect(html).toContain("data-banner-close");
-      expect(html).toContain('aria-label="Close banner"');
+  describe("Close button", () => {
+    it("is hidden by default", () => {
+      expect(render(() => <RLBanner title="t" />)).not.toContain("data-banner-close");
     });
 
-    it("supports backward compatible dismissable=true prop", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Legacy dismissable prop",
-        dismissable: true,
-      });
-      expect(html).toContain('data-slot="close"');
-      expect(html).toContain("data-banner-close");
+    it("renders an accessible type=button when close=true", () => {
+      const html = render(() => <RLBanner title="t" close={true} />);
+      const btn = slotTag(html, "close");
+      expect(btn).not.toBe("");
+      expect(btn).toContain("data-banner-close");
+      expect(attr(btn, "type")).toBe("button");
+      expect(attr(btn, "aria-label")).toBe("Close banner");
     });
 
-    it("customizes close button with closeIcon prop", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Custom Close Icon",
-        close: true,
-        closeIcon: "trash",
-      });
-      expect(html).toContain('data-slot="close"');
+    it("supports legacy dismissable", () => {
+      expect(render(() => <RLBanner title="t" dismissable={true} />)).toContain(
+        "data-banner-close",
+      );
     });
 
-    it("customizes close button with object props", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Object Close Props",
-        close: {
-          variant: "outline",
-          color: "error",
-          ariaLabel: "Custom dismiss label",
+    it("close=false wins over dismissable", () => {
+      expect(render(() => <RLBanner title="t" close={false} dismissable={true} />)).not.toContain(
+        "data-banner-close",
+      );
+    });
+
+    it("merges object close props", () => {
+      const html = render(() => (
+        <RLBanner title="t" close={{ color: "error", ariaLabel: "Dismiss announcement" }} />
+      ));
+      expect(attr(slotTag(html, "close"), "aria-label")).toBe("Dismiss announcement");
+    });
+
+    it("accepts a closeIcon", () => {
+      const html = render(() => <RLBanner title="t" close={true} closeIcon="x" />);
+      expect(slotTag(html, "close")).not.toBe("");
+    });
+
+    it("closeSlot replaces the close button", () => {
+      const html = render(() => (
+        <RLBanner title="t" close={true} closeSlot={<span class="custom-close">C</span>} />
+      ));
+      expect(html).toContain("custom-close");
+      expect(html).not.toContain("data-banner-close");
+    });
+  });
+
+  describe("Rimelight extra slots", () => {
+    it("renders left and right content", () => {
+      const html = render(() => (
+        <RLBanner
+          title="t"
+          left={<span class="l-extra">L</span>}
+          right={<span class="r-extra">R</span>}
+        />
+      ));
+      expect(html).toContain("l-extra");
+      expect(html).toContain("r-extra");
+    });
+
+    it("center replaces leading and title", () => {
+      const html = render(() => (
+        <RLBanner title="Hidden title" icon="rocket" center={<span class="c-extra">C</span>} />
+      ));
+      expect(html).toContain("c-extra");
+      expect(html).not.toContain("Hidden title");
+      expect(slotTag(html, "icon")).toBe("");
+    });
+  });
+
+  describe("Link mode", () => {
+    it("renders an overlay link with resolved external attributes", () => {
+      const html = render(() => <RLBanner to="https://rimelight.com" title="Visit" />);
+      const link = slotTag(html, "link");
+      expect(link).toMatch(/^<a/);
+      expect(attr(link, "href")).toBe("https://rimelight.com");
+      expect(attr(link, "target")).toBe("_blank");
+      expect(attr(link, "rel")).toBe("noopener noreferrer");
+    });
+
+    it("accepts href as an alias of to", () => {
+      const html = render(() => <RLBanner href="/announcement" title="Read" />);
+      expect(attr(slotTag(html, "link"), "href")).toBe("/announcement");
+    });
+
+    it("never nests interactive content inside the anchor", () => {
+      const html = render(() => (
+        <RLBanner to="/x" title="t" actions={[{ label: "Act" }]} close={true} />
+      ));
+      expect(html).toMatch(/<a[^>]*data-slot="link"[^>]*><\/a>/);
+    });
+
+    it("labels the link by the title", () => {
+      const html = render(() => <RLBanner to="/x" title="Link title" />);
+      const titleId = attr(slotTag(html, "title"), "id");
+      expect(attr(slotTag(html, "link"), "aria-labelledby")).toBe(titleId);
+    });
+
+    it("uses ariaLabel on the link when provided", () => {
+      const html = render(() => <RLBanner to="/x" title="t" ariaLabel="Open news" />);
+      const link = slotTag(html, "link");
+      expect(attr(link, "aria-label")).toBe("Open news");
+      expect(attr(link, "aria-labelledby")).toBeUndefined();
+    });
+
+    it("does not leak resolver internals as DOM attributes", () => {
+      const html = render(() => <RLBanner to="https://a.com" title="t" />);
+      expect(html).not.toMatch(/isExternal|showTrailingIcon|prefetchAttr|ariaDisabled/);
+    });
+
+    it("does not render a link without to/href", () => {
+      expect(
+        slotTag(
+          render(() => <RLBanner title="t" />),
+          "link",
+        ),
+      ).toBe("");
+    });
+
+    it("does not use role=link on the root", () => {
+      const html = render(() => <RLBanner to="/x" title="t" />);
+      expect(attr(slotTag(html, "root"), "role")).toBe("region");
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("region is labelled by the title element", () => {
+      const html = render(() => <RLBanner title="Labelled" />);
+      const root = slotTag(html, "root");
+      const titleId = attr(slotTag(html, "title"), "id");
+      expect(attr(root, "role")).toBe("region");
+      expect(titleId).toBeTruthy();
+      expect(attr(root, "aria-labelledby")).toBe(titleId);
+    });
+
+    it("JSX titles are labelled too", () => {
+      const html = render(() => <RLBanner titleSlot={<em>JSX</em>} />);
+      expect(attr(slotTag(html, "root"), "aria-labelledby")).toBeTruthy();
+    });
+
+    it("falls back to ariaLabel when untitled", () => {
+      const html = render(() => <RLBanner ariaLabel="Announcement" />);
+      const root = slotTag(html, "root");
+      expect(attr(root, "role")).toBe("region");
+      expect(attr(root, "aria-label")).toBe("Announcement");
+    });
+
+    it("drops the region role when no accessible name exists", () => {
+      const html = render(() => <RLBanner />);
+      expect(attr(slotTag(html, "root"), "role")).toBeUndefined();
+    });
+
+    it("generates unique ids for multiple untitled-id banners", () => {
+      const html = render(() => (
+        <>
+          <RLBanner title="a" />
+          <RLBanner title="b" />
+        </>
+      ));
+      const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+      expect(ids.length).toBeGreaterThanOrEqual(4);
+      expect(new Set(ids).size).toBe(ids.length);
+    });
+
+    it("uses the explicit id for the root", () => {
+      const html = render(() => <RLBanner id="promo" title="t" />);
+      expect(attr(slotTag(html, "root"), "id")).toBe("promo");
+      expect(attr(slotTag(html, "title"), "id")).toBe("promo-title");
+    });
+  });
+
+  describe("Persistence & hydration safety", () => {
+    const originalWindow = (globalThis as { window?: unknown }).window;
+
+    beforeEach(() => {
+      const store = new Map<string, string>([["banner-dismissed-one", "true"]]);
+      (globalThis as { window?: unknown }).window = {
+        localStorage: {
+          getItem: (k: string) => store.get(k) ?? null,
+          setItem: (k: string, v: string) => store.set(k, v),
+          removeItem: (k: string) => store.delete(k),
+          clear: () => store.clear(),
         },
-      });
-      expect(html).toContain('data-slot="close"');
-      expect(html).toContain('aria-label="Custom dismiss label"');
+      };
+    });
+
+    afterEach(() => {
+      (globalThis as { window?: unknown }).window = originalWindow;
+    });
+
+    it("still SSR-renders a previously dismissed banner (no initial-render divergence)", () => {
+      const html = render(() => <RLBanner id="dismissed-one" title="Still here" close={true} />);
+      expect(html).toContain("Still here");
+    });
+
+    it("exposes the dismiss key matching the head script", () => {
+      const html = render(() => <RLBanner id="promo" title="t" close={true} />);
+      expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBe("banner-promo");
+    });
+
+    it("supports legacy dismissId", () => {
+      const html = render(() => <RLBanner dismissId="legacy" title="t" />);
+      expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBe("banner-legacy");
+    });
+
+    it("has no dismiss key without an id", () => {
+      const html = render(() => <RLBanner title="t" close={true} />);
+      expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBeUndefined();
     });
   });
 
-  describe("Link & Navigation Mode", () => {
-    it("renders anchor tag when `to` prop is provided", () => {
-      const html = renderSolid(RLBanner, {
-        to: "https://rimelight.com",
-        target: "_blank",
-        title: "Visit Rimelight",
+  describe("CSP / styling rules", () => {
+    for (const mode of [
+      {},
+      { sticky: true },
+      { fixed: true },
+      { fixed: true, hideOnScroll: true },
+    ]) {
+      it(`renders no inline style attribute (${JSON.stringify(mode)})`, () => {
+        const html = render(() => <RLBanner title="t" {...mode} />);
+        expect(html).not.toMatch(/\sstyle="/);
       });
-      expect(html).toContain("<a");
-      expect(html).toContain('href="https://rimelight.com"');
-      expect(html).toContain('target="_blank"');
-      expect(html).toContain('role="link"');
-    });
+    }
 
-    it("renders anchor tag when `href` prop is provided", () => {
-      const html = renderSolid(RLBanner, {
-        href: "/announcement",
-        title: "Read announcement",
-      });
-      expect(html).toContain("<a");
-      expect(html).toContain('href="/announcement"');
-    });
-  });
-
-  describe("UI & Custom Slots Overrides", () => {
-    it("applies class and ui slot overrides", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Custom UI Classes",
-        class: "my-custom-banner",
-        ui: {
-          root: "custom-root",
-          title: "custom-title",
-          container: "custom-container",
-        },
-      });
+    it("applies class and ui overrides", () => {
+      const html = render(() => (
+        <RLBanner
+          title="t"
+          class="my-custom-banner"
+          ui={{ root: "custom-root", title: "custom-title", container: "custom-container" }}
+        />
+      ));
       expect(html).toContain("my-custom-banner");
       expect(html).toContain("custom-root");
       expect(html).toContain("custom-title");
       expect(html).toContain("custom-container");
     });
+
+    it("theme exposes all Nuxt UI slots plus extras", () => {
+      const slots = bannerTheme({});
+      for (const key of [
+        "root",
+        "container",
+        "left",
+        "center",
+        "right",
+        "icon",
+        "title",
+        "actions",
+        "close",
+        "link",
+        "content",
+      ]) {
+        expect(slots).toHaveProperty(key);
+      }
+    });
   });
 
-  describe("Header Stack & Contain Integration", () => {
-    it("includes header stack and contain attributes", () => {
-      const html = renderSolid(RLBanner, {
-        title: "Header Stack Banner",
-        contain: true,
-        stackIndex: 2,
-        fixed: true,
-      });
-      expect(html).toContain('data-rl-banner="true"');
-      expect(html).toContain('data-contain="true"');
-      expect(html).toContain('data-stack-index="2"');
-      expect(html).toContain('data-layer-type="banner"');
+  describe("Header stack integration", () => {
+    it("emits header stack data attributes", () => {
+      const html = render(() => (
+        <RLBanner title="t" stackIndex={2} fixed={true} hideOnScroll={true} />
+      ));
+      const root = slotTag(html, "root");
+      expect(attr(root, "data-rl-banner")).toBe("true");
+      expect(attr(root, "data-contain")).toBe("true");
+      expect(attr(root, "data-stack-index")).toBe("2");
+      expect(attr(root, "data-layer-type")).toBe("banner");
+      expect(attr(root, "data-hide-on-scroll")).toBe("true");
+      expect(attr(root, "data-collapsed")).toBe("false");
+      expect(html).toContain("data-header-content");
     });
+
+    it("contain=false is reflected", () => {
+      const html = render(() => <RLBanner title="t" contain={false} />);
+      expect(attr(slotTag(html, "root"), "data-contain")).toBe("false");
+    });
+  });
+});
+
+describe("RLHeader (shared header-stack fixes)", () => {
+  it("renders no inline style attribute when sticky/fixed", () => {
+    for (const mode of [{ sticky: true }, { fixed: true }, { fixed: true, hideOnScroll: true }]) {
+      expect(render(() => <RLHeader {...mode}>x</RLHeader>)).not.toMatch(/\sstyle="/);
+    }
+  });
+
+  it("exposes data-collapsed for theme-driven collapse", () => {
+    expect(render(() => <RLHeader hideOnScroll={true}>x</RLHeader>)).toContain(
+      'data-collapsed="false"',
+    );
+  });
+});
+
+describe("Exports", () => {
+  it("exports RLBanner once, without aliases", () => {
+    expect(components).toHaveProperty("RLBanner");
+    expect(components).toHaveProperty("useHeaderStack");
+    expect(components).not.toHaveProperty("getHeaderStack");
   });
 });

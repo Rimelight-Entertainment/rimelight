@@ -92,7 +92,6 @@ export { RLGrid, type RLGridProps } from "./grid/RLGrid";
 export { RLHeader, type RLHeaderProps } from "./header/RLHeader";
 export {
   useHeaderStack,
-  getHeaderStack,
   type HeaderLayer,
   type RegisterHeaderOptions,
 } from "./header/useHeaderStack";

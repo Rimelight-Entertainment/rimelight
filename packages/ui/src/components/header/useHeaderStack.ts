@@ -225,5 +225,3 @@ export function useHeaderStack() {
     totalOffset,
   };
 }
-
-export const getHeaderStack = useHeaderStack;
