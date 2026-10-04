@@ -6,7 +6,7 @@ export interface IconProps {
   /**
    * The size scale of the icon.
    */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "none" | undefined;
   /**
    * Slot-specific CSS class overrides.
    */

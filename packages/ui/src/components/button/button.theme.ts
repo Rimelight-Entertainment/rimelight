@@ -4,20 +4,28 @@ export const buttonTheme = defineTheme("button", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
   base: {
     root: [
-      "group inline-flex items-center font-medium ws-nowrap no-underline disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
-      "transition-colors outline-none",
+      "rounded-md font-medium inline-flex items-center justify-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+      "transition-colors outline-none select-none no-underline leading-none",
       "aria-invalid:border-error-500 aria-invalid:ring-error-500/20",
     ],
-    label: "truncate",
-    leadingIcon: "shrink-0 flex items-center justify-center",
+    label: "truncate leading-none",
+    leadingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
     leadingAvatar: "shrink-0",
     leadingAvatarSize: "",
-    trailingIcon: "shrink-0 flex items-center justify-center",
+    trailingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
   },
   variants: {
+    fieldGroup: {
+      horizontal: {
+        root: "first:rounded-e-none last:rounded-s-none [&:not(:first-child):not(:last-child)]:rounded-none [&:not(:first-child)]:-ms-px focus-visible:z-[1]",
+      },
+      vertical: {
+        root: "first:rounded-b-none last:rounded-t-none [&:not(:first-child):not(:last-child)]:rounded-none [&:not(:first-child)]:-mt-px focus-visible:z-[1]",
+      },
+    },
     variant: {
       solid: {
-        root: "bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] disabled:bg-[var(--rl-bg)] aria-disabled:bg-[var(--rl-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]",
+        root: "bg-[var(--rl-bg)] text-inverted hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] disabled:bg-[var(--rl-bg)] aria-disabled:bg-[var(--rl-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]",
       },
       outline: {
         root: "ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]",
@@ -38,34 +46,34 @@ export const buttonTheme = defineTheme("button", {
     color: "auto",
     size: {
       xs: {
-        root: "text-xs gap-1 [&_svg]:size-4",
+        root: "text-xs gap-1 leading-none",
         leadingIcon: "size-4",
         leadingAvatarSize: "3xs",
         trailingIcon: "size-4",
       },
       sm: {
-        root: "text-sm gap-1.5 [&_svg]:size-4",
+        root: "text-xs gap-1.5 leading-none",
         leadingIcon: "size-4",
-        leadingAvatarSize: "2xs",
+        leadingAvatarSize: "3xs",
         trailingIcon: "size-4",
       },
       md: {
-        root: "text-base gap-2 [&_svg]:size-5",
+        root: "text-sm gap-1.5 leading-none",
         leadingIcon: "size-5",
-        leadingAvatarSize: "xs",
+        leadingAvatarSize: "2xs",
         trailingIcon: "size-5",
       },
       lg: {
-        root: "text-lg gap-2.5 [&_svg]:size-5",
+        root: "text-sm gap-2 leading-none",
         leadingIcon: "size-5",
-        leadingAvatarSize: "sm",
+        leadingAvatarSize: "2xs",
         trailingIcon: "size-5",
       },
       xl: {
-        root: "text-2xl gap-3 [&_svg]:size-7",
-        leadingIcon: "size-7",
-        leadingAvatarSize: "lg",
-        trailingIcon: "size-7",
+        root: "text-base gap-2 leading-none",
+        leadingIcon: "size-6",
+        leadingAvatarSize: "xs",
+        trailingIcon: "size-6",
       },
     },
     justify: {
@@ -77,10 +85,10 @@ export const buttonTheme = defineTheme("button", {
       evenly: { root: "justify-evenly" },
     },
     block: {
-      true: { root: "w-full", trailingIcon: "ms-auto" },
+      true: { root: "w-full justify-center", trailingIcon: "ms-auto" },
     },
     square: {
-      true: {},
+      true: { root: "aspect-square justify-center" },
       false: {},
     },
     rounded: {
@@ -107,7 +115,7 @@ export const buttonTheme = defineTheme("button", {
       color: "neutral",
       variant: "outline",
       classNames: {
-        root: "ring ring-inset ring-current text-default bg-transparent hover:bg-elevated active:bg-elevated disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
+        root: "ring ring-inset ring-accented text-default bg-default hover:bg-elevated active:bg-elevated disabled:bg-default aria-disabled:bg-default focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
       },
     },
     {
@@ -128,7 +136,7 @@ export const buttonTheme = defineTheme("button", {
       color: "neutral",
       variant: "ghost",
       classNames: {
-        root: "text-default hover:bg-hover active:bg-hover/80 focus:outline-none focus-visible:bg-hover hover:disabled:bg-transparent hover:aria-disabled:bg-transparent",
+        root: "text-default hover:bg-elevated active:bg-elevated focus:outline-none focus-visible:bg-elevated hover:disabled:bg-transparent hover:aria-disabled:bg-transparent",
       },
     },
     {
@@ -142,12 +150,12 @@ export const buttonTheme = defineTheme("button", {
     { square: true, size: "xs", classNames: { root: "p-1" } },
     { square: false, size: "sm", classNames: { root: "px-2.5 py-1.5" } },
     { square: true, size: "sm", classNames: { root: "p-1.5" } },
-    { square: false, size: "md", classNames: { root: "px-3 py-2" } },
-    { square: true, size: "md", classNames: { root: "p-2" } },
-    { square: false, size: "lg", classNames: { root: "px-3.5 py-2.5" } },
-    { square: true, size: "lg", classNames: { root: "p-2.5" } },
-    { square: false, size: "xl", classNames: { root: "px-5 py-3.5" } },
-    { square: true, size: "xl", classNames: { root: "p-3.5" } },
+    { square: false, size: "md", classNames: { root: "px-2.5 py-1.5" } },
+    { square: true, size: "md", classNames: { root: "p-1.5" } },
+    { square: false, size: "lg", classNames: { root: "px-3 py-2" } },
+    { square: true, size: "lg", classNames: { root: "p-2" } },
+    { square: false, size: "xl", classNames: { root: "px-3 py-2" } },
+    { square: true, size: "xl", classNames: { root: "p-2" } },
     {
       loading: true,
       leading: true,
@@ -158,6 +166,13 @@ export const buttonTheme = defineTheme("button", {
     {
       loading: true,
       leading: false,
+      trailing: true,
+      classNames: {
+        trailingIcon: "animate-spin",
+      },
+    },
+    {
+      loading: true,
       trailing: true,
       classNames: {
         trailingIcon: "animate-spin",
