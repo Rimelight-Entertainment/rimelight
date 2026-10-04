@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { KnobProps } from "./knob";
+import type { RLKnobProps } from "./knob";
 import { knobTheme } from "./knob.theme";
-
-export interface RLKnobProps extends KnobProps {
-  children?: JSX.Element;
-}
 
 export const RLKnob: Component<RLKnobProps> = (allProps) => {
   const props = allProps;

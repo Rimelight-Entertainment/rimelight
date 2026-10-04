@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { SpeedDialProps } from "./speed-dial";
+import type { RLSpeedDialProps } from "./speed-dial";
 import { speedDialTheme } from "./speed-dial.theme";
-
-export interface RLSpeedDialProps extends SpeedDialProps {
-  children?: JSX.Element;
-}
 
 export const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {
   const props = allProps;

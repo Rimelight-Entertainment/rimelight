@@ -1,4 +1,6 @@
-export interface ModalProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLModalProps {
   size?: "sm" | "md" | "lg" | "xl";
   /**
    * Controlled open state.
@@ -40,5 +42,13 @@ export interface ModalProps {
    * Keep content mounted in the DOM when hidden.
    */
   unmountOnHide?: boolean;
+  onClose?: () => void;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
   [key: string]: unknown;
 }

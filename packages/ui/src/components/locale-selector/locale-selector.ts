@@ -1,3 +1,5 @@
+import type { JSX } from "@solidjs/web";
+
 export interface LocaleItem {
   code: string;
   label: string;
@@ -10,7 +12,7 @@ export interface LocaleItem {
   href?: string;
 }
 
-export interface LocaleSelectorProps {
+export interface RLLocaleSelectorProps {
   /**
    * Array of available locales to display in the selector.
    *
@@ -60,5 +62,11 @@ export interface LocaleSelectorProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  labelSlot?: JSX.Element;
+  leading?: JSX.Element;
+  leadingIcon?: string;
+  onSelect?: (item: LocaleItem) => void;
+  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;
   [key: string]: unknown;
 }

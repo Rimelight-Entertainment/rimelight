@@ -1,16 +1,6 @@
 import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { DashboardSidebarProps } from "./dashboard-sidebar";
+import type { RLDashboardSidebarProps } from "./dashboard-sidebar";
 import { dashboardSidebarTheme } from "./dashboard-sidebar.theme";
-
-export interface RLDashboardSidebarProps extends DashboardSidebarProps {
-  children?: JSX.Element;
-  headerSlot?: JSX.Element;
-  footerSlot?: JSX.Element;
-  openMobile?: boolean;
-  onOpenMobileChange?: (open: boolean) => void;
-  onCollapseChange?: (collapsed: boolean) => void;
-}
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
   const props = allProps;

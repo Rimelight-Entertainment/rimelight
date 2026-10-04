@@ -8,14 +8,9 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { CarouselProps, CarouselSlide } from "./carousel";
+import type { RLCarouselProps, CarouselSlide } from "./carousel";
 import { carouselTheme } from "./carousel.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLCarouselProps extends CarouselProps {
-  children?: JSX.Element;
-}
 
 const SLIDE_TRANSITION = "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)";
 

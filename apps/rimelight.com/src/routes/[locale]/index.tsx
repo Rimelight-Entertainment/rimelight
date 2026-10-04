@@ -8,7 +8,7 @@ import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getLocale();
@@ -36,7 +36,7 @@ export const HomePage: Component = () => {
     { loadingValue: [] },
   );
 
-  const heroLinks = (): ButtonProps[] => [
+  const heroLinks = (): RLButtonProps[] => [
     {
       label: t("page_home.section_hero_actions_join-us"),
       href: getRelativeLocaleUrl("/auth/sign-up"),
@@ -56,7 +56,7 @@ export const HomePage: Component = () => {
     },
   ];
 
-  const ctaLinks = (): ButtonProps[] => [
+  const ctaLinks = (): RLButtonProps[] => [
     {
       label: t("page_home.section_cta_actions_create-account"),
       href: getRelativeLocaleUrl("/auth/sign-up"),

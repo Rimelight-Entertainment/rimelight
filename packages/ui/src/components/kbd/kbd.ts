@@ -1,4 +1,6 @@
-export interface KbdProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLKbdProps {
   color?: string;
   variant?: string;
   theme?: string;
@@ -14,5 +16,6 @@ export interface KbdProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

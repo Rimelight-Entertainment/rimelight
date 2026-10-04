@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { MainProps } from "./main";
+import type { RLMainProps } from "./main";
 import { mainTheme } from "./main.theme";
-
-export interface RLMainProps extends MainProps {
-  children?: JSX.Element;
-}
 
 export const RLMain: Component<RLMainProps> = (allProps) => {
   const props = allProps;

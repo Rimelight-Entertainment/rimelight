@@ -8,14 +8,9 @@ import {
   createEffect,
   type Component,
 } from "solid-js";
-import type { InputMenuProps } from "./input-menu";
+import type { RLInputMenuProps } from "./input-menu";
 import { inputMenuTheme } from "./input-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLInputMenuProps extends InputMenuProps {
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-}
 
 type InputMenuItem = { label: string; value: string; [key: string]: any };
 

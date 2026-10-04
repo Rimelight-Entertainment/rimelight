@@ -1,3 +1,4 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
 
 export interface DropdownMenuItem {
@@ -42,7 +43,7 @@ export interface DropdownMenuContentProps {
   [key: string]: any;
 }
 
-export interface DropdownMenuProps {
+export interface RLDropdownMenuProps {
   /**
    * The menu items array (single level or grouped array).
    */
@@ -87,5 +88,7 @@ export interface DropdownMenuProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
   [key: string]: unknown;
 }

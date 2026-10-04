@@ -1,6 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
-export interface InputProps {
+export interface RLInputProps {
   /**
    * Type of input element.
    */
@@ -54,7 +55,7 @@ export interface InputProps {
    */
   color?: ThemeColor;
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * Theme mode override — pins colors to flat, light, or dark mode.
    */
   theme?: Theme;
   /**
@@ -65,5 +66,13 @@ export interface InputProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+  ref?: HTMLInputElement | ((el: HTMLInputElement) => void);
+  leading?: JSX.Element;
+  trailing?: JSX.Element;
   [key: string]: unknown;
 }

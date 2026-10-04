@@ -1,14 +1,6 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ColorAreaProps } from "./color-area";
+import type { RLColorAreaProps } from "./color-area";
 import { colorAreaTheme } from "./color-area.theme";
-
-export interface RLColorAreaProps extends ColorAreaProps {
-  onChange?: (value: string) => void;
-  onValueChange?: (value: string) => void;
-  onChangeEnd?: (value: string) => void;
-  children?: JSX.Element;
-}
 
 type Channel =
   | "hue"

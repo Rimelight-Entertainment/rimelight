@@ -1,24 +1,6 @@
 import { createSignal, onCleanup, omit, type Component } from "solid-js";
-import type { ButtonProps } from "../button/button";
+import type { RLCopyMarkdownProps } from "./copy-markdown";
 import { RLButton } from "../button/RLButton";
-
-export interface RLCopyMarkdownProps extends Omit<
-  ButtonProps,
-  | "href"
-  | "label"
-  | "leadingIcon"
-  | "trailingIcon"
-  | "loading"
-  | "loadingAuto"
-  | "square"
-  | "active"
-  | "activeColor"
-  | "activeVariant"
-> {
-  raw: string;
-  class?: any;
-  ui?: any;
-}
 
 export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {
   const props = allProps;

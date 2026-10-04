@@ -1,4 +1,4 @@
-export interface IconProps {
+export interface RLIconProps {
   /**
    * The name of the icon to display.
    */

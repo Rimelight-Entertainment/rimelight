@@ -1,16 +1,6 @@
 import { Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLSurroundItem {
-  label: string;
-  href: string;
-}
-
-export interface RLSurroundProps {
-  prev?: RLSurroundItem | null;
-  next?: RLSurroundItem | null;
-  class?: string;
-}
+import type { RLSurroundProps } from "./surround";
 
 export const RLSurround: Component<RLSurroundProps> = (props) => {
   return (

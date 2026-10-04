@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ProgressProps } from "./progress";
+import type { RLProgressProps } from "./progress";
 import { progressTheme } from "./progress.theme";
-
-export interface RLProgressProps extends ProgressProps {
-  children?: JSX.Element;
-}
 
 export const RLProgress: Component<RLProgressProps> = (allProps) => {
   const props = allProps;

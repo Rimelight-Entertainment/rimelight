@@ -1,28 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { InputDateProps } from "./input-date";
+import type { RLInputDateProps } from "./input-date";
 import { inputDateTheme } from "./input-date.theme";
 import { inputTheme } from "../input/input.theme";
-
-export interface RLInputDateProps extends InputDateProps {
-  children?: JSX.Element;
-  value?: string;
-  defaultValue?: string;
-  name?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  readonly?: boolean;
-  required?: boolean;
-  min?: string;
-  max?: string;
-  step?: number;
-  size?: "sm" | "md" | "lg";
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
-}
 
 export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
   const props = allProps;

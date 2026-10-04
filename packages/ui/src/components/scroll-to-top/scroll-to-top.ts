@@ -1,6 +1,6 @@
 import type { Theme, ThemeColor } from "../../types";
 
-export interface ScrollToTopProps {
+export interface RLScrollToTopProps {
   /**
    * The color scheme applied to the scroll-to-top button.
    */
@@ -22,7 +22,7 @@ export interface ScrollToTopProps {
    */
   showProgress?: boolean;
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * Theme mode override — pins colors to flat, light, or dark mode.
    */
   theme?: Theme;
   /**

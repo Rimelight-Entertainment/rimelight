@@ -1,26 +1,12 @@
 import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { Portal } from "@solidjs/web";
-import type { SearchProps } from "./search";
+import type { RLSearchProps, SearchResultItem } from "./search";
 import { searchTheme } from "./search.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLInput } from "../input/RLInput";
 import { RLKbd } from "../kbd/RLKbd";
 import { RLButton } from "../button/RLButton";
 import { defineShortcuts } from "../../shortcuts";
-
-export interface SearchResultItem {
-  title?: string;
-  url?: string;
-  sourceType?: string;
-  snippet?: string;
-  [key: string]: any;
-}
-
-export interface RLSearchProps extends SearchProps {
-  children?: JSX.Element;
-  triggerSlot?: JSX.Element;
-}
 
 const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`;
 

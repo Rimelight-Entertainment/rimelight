@@ -1,6 +1,5 @@
 import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ColorSliderProps } from "./color-slider";
+import type { RLColorSliderProps } from "./color-slider";
 import { colorSliderTheme } from "./color-slider.theme";
 import {
   clamp,
@@ -12,14 +11,6 @@ import {
   rgbToHsb,
   rgbToHsl,
 } from "../color-picker/color";
-
-export interface RLColorSliderProps extends ColorSliderProps {
-  children?: JSX.Element;
-  value?: string;
-  onChange?: (val: string) => void;
-  onChangeEnd?: (val: string) => void;
-  "onUpdate:modelValue"?: (val: string) => void;
-}
 
 export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
   const props = allProps;

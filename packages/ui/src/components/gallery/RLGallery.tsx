@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { GalleryProps } from "./gallery";
+import type { RLGalleryProps } from "./gallery";
 import { galleryTheme } from "./gallery.theme";
-
-export interface RLGalleryProps extends GalleryProps {
-  children?: JSX.Element;
-}
 
 export const RLGallery: Component<RLGalleryProps> = (allProps) => {
   const props = allProps;

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ListboxProps } from "./listbox";
+import type { RLListboxProps } from "./listbox";
 import { listboxTheme } from "./listbox.theme";
-
-export interface RLListboxProps extends ListboxProps {
-  children?: JSX.Element;
-}
 
 export const RLListbox: Component<RLListboxProps> = (allProps) => {
   const props = allProps;

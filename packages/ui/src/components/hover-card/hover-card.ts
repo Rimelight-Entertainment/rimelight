@@ -1,19 +1,11 @@
-export interface HoverCardProps {
-  /**
-   * Label of the trigger.
-   */
+import type { JSX } from "@solidjs/web";
+
+export interface RLHoverCardProps {
   triggerLabel?: string;
-  /**
-   * Placement relative to trigger.
-   */
   placement?: "top" | "bottom" | "left" | "right";
-  /**
-   * Slot-specific CSS class overrides.
-   */
   ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
   [key: string]: unknown;
 }

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { KbdProps } from "./kbd";
+import type { RLKbdProps } from "./kbd";
 import { kbdTheme } from "./kbd.theme";
-
-export interface RLKbdProps extends KbdProps {
-  children?: JSX.Element;
-}
 
 export const RLKbd: Component<RLKbdProps> = (allProps) => {
   const props = allProps;

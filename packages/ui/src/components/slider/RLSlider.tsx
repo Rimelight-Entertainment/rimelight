@@ -1,13 +1,7 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { SliderProps } from "./slider";
+import type { RLSliderProps } from "./slider";
 import { sliderTheme } from "./slider.theme";
-
-export interface RLSliderProps extends SliderProps {
-  children?: JSX.Element;
-  defaultValue?: number;
-  onChange?: (val: number) => void;
-}
 
 export const RLSlider: Component<RLSliderProps> = (allProps) => {
   const props = allProps;

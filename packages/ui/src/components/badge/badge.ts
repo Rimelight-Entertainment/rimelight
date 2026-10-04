@@ -1,7 +1,8 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
-import type { AvatarProps } from "../avatar/avatar";
+import type { RLAvatarProps } from "../avatar/avatar";
 
-export interface BadgeProps {
+export interface RLBadgeProps {
   /**
    * The element or component this component should render as.
    *
@@ -58,7 +59,7 @@ export interface BadgeProps {
   /**
    * Display an avatar on the left side.
    */
-  avatar?: AvatarProps | string | undefined;
+  avatar?: RLAvatarProps | string | undefined;
   /**
    * When `true`, the icon will be displayed on the left side.
    */
@@ -98,5 +99,17 @@ export interface BadgeProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  /**
+   * Default slot children.
+   */
+  children?: JSX.Element;
+  /**
+   * Replaces the leading icon.
+   */
+  leadingSlot?: JSX.Element;
+  /**
+   * Replaces the trailing icon.
+   */
+  trailingSlot?: JSX.Element;
   [key: string]: unknown;
 }

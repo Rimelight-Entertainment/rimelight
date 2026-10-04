@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PlaceholderProps } from "./placeholder";
+import type { RLPlaceholderProps } from "./placeholder";
 import { placeholderTheme } from "./placeholder.theme";
-
-export interface RLPlaceholderProps extends PlaceholderProps {
-  children?: JSX.Element;
-}
 
 export const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
   const props = allProps;

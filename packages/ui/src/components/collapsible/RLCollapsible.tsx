@@ -1,15 +1,7 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { CollapsibleProps } from "./collapsible";
+import type { RLCollapsibleProps } from "./collapsible";
 import { collapsibleTheme } from "./collapsible.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLCollapsibleProps extends CollapsibleProps {
-  children?: JSX.Element;
-  triggerSlot?: JSX.Element;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
 
 export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
   const props = allProps;

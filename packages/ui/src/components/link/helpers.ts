@@ -1,8 +1,8 @@
-import type { LinkProps } from "./link";
+import type { RLLinkProps } from "./link";
 
 const EXTERNAL_URL_RE = /^(?:https?:)?\/\//;
 
-export function resolveLinkAttrs(props: Partial<LinkProps>) {
+export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
   const isExternal = !!(props.external || (props.href && EXTERNAL_URL_RE.test(props.href)));
 
   const showTrailingIcon =

@@ -1,6 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme } from "../../types";
 
-export interface LinkProps {
+export interface RLLinkProps {
   /**
    * The text label displayed inside the link. Alternative to passing children via the default slot.
    */
@@ -108,5 +109,8 @@ export interface LinkProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  leading?: JSX.Element;
+  trailing?: JSX.Element;
   [key: string]: unknown;
 }

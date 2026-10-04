@@ -1,4 +1,6 @@
-export interface FormFieldProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLFormFieldProps {
   id?: string;
   /**
    * Label for the field.
@@ -28,5 +30,11 @@ export interface FormFieldProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  hint?: JSX.Element;
+  labelSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  errorSlot?: JSX.Element;
+  helpSlot?: JSX.Element;
   [key: string]: unknown;
 }

@@ -1,30 +1,8 @@
 import { createMemo, createSignal, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { InputNumberProps } from "./input-number";
+import type { RLInputNumberProps } from "./input-number";
 import { inputNumberTheme } from "./input-number.theme";
 import { inputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLInputNumberProps extends InputNumberProps {
-  children?: JSX.Element;
-  value?: number;
-  defaultValue?: number;
-  min?: number;
-  max?: number;
-  step?: number;
-  name?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  readonly?: boolean;
-  required?: boolean;
-  size?: "sm" | "md" | "lg";
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
-  onValueChange?: (value: number) => void;
-}
 
 export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
   const props = allProps;

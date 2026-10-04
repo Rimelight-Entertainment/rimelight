@@ -5,12 +5,7 @@ import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "
 import { shortcutsTheme } from "./shortcuts.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
-
-export interface RLShortcutsProps {
-  categories?: Record<string, string>;
-  ui?: any;
-  class?: string;
-}
+import type { RLShortcutsProps } from "./shortcuts";
 
 interface CategorySection {
   key: string;

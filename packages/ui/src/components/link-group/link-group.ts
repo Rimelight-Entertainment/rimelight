@@ -1,7 +1,8 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme } from "../../types";
-import type { LinkProps } from "../link/link";
+import type { RLLinkProps } from "../link/link";
 
-export interface LinkGroupProps {
+export interface RLLinkGroupProps {
   /**
    * The direct text label of the group heading.
    */
@@ -21,7 +22,7 @@ export interface LinkGroupProps {
   /**
    * The links in the group. Supports full button/link properties.
    */
-  links?: LinkProps | LinkProps[] | undefined;
+  links?: RLLinkProps | RLLinkProps[] | undefined;
   /**
    * Slot-specific CSS class overrides.
    */
@@ -34,5 +35,6 @@ export interface LinkGroupProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

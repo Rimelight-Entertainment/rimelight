@@ -1,33 +1,9 @@
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { SelectItem, SelectProps } from "./select";
+import type { RLSelectProps, SelectItem } from "./select";
 import { selectTheme } from "./select.theme";
-import { RLButton, type RLButtonProps } from "../button/RLButton";
+import { RLButton } from "../button/RLButton";
+import type { RLButtonProps } from "../button/button";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLSelectProps extends Partial<Omit<SelectProps, "onChange" | "onBlur">> {
-  id?: string | undefined;
-  name?: string | undefined;
-  value?: string | number | (string | number)[] | undefined;
-  defaultValue?: string | number | (string | number)[] | undefined;
-  placeholder?: string | undefined;
-  disabled?: boolean | undefined;
-  required?: boolean | undefined;
-  multiple?: boolean | undefined;
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
-  variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none" | undefined;
-  buttonVariant?: RLButtonProps["variant"] | undefined;
-  buttonColor?: RLButtonProps["color"] | undefined;
-  class?: string | undefined;
-  items?: SelectItem[] | undefined;
-  leadingIcon?: string | undefined;
-  leading?: JSX.Element | undefined;
-  children?: JSX.Element | undefined;
-  theme?: string | undefined;
-  ui?: any;
-  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void;
-}
 
 export const RLSelect: Component<RLSelectProps> = (allProps) => {
   const props = allProps;
@@ -73,7 +49,7 @@ export const RLSelect: Component<RLSelectProps> = (allProps) => {
 
   const normalizedItems = createMemo(() => {
     if (!props.items) return [];
-    return props.items.map((item: SelectItem) => {
+    return props.items.map((item: SelectItem | string) => {
       if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
         return { label: String(item), value: String(item), disabled: false };
       }

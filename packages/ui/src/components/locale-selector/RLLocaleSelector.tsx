@@ -1,18 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { LocaleSelectorProps, LocaleItem } from "./locale-selector";
+import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector";
 import { localeSelectorTheme } from "./locale-selector.theme";
 import { RLSelect } from "../select/RLSelect";
-
-export interface RLLocaleSelectorProps extends LocaleSelectorProps {
-  mode?: "select" | "icon";
-  children?: JSX.Element;
-  labelSlot?: JSX.Element;
-  leading?: JSX.Element;
-  leadingIcon?: string;
-  onSelect?: (item: LocaleItem) => void;
-  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;
-}
 
 const getLocaleDisplayName = (localeCode: string): string => {
   try {

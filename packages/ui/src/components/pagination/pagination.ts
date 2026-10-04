@@ -1,4 +1,4 @@
-export interface PaginationProps {
+export interface RLPaginationProps {
   /**
    * The currently active page (1-indexed).
    */
@@ -19,5 +19,7 @@ export interface PaginationProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  page?: number;
+  onPageChange?: (page: number) => void;
   [key: string]: unknown;
 }

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { TourProps } from "./tour";
+import type { RLTourProps } from "./tour";
 import { tourTheme } from "./tour.theme";
-
-export interface RLTourProps extends TourProps {
-  children?: JSX.Element;
-}
 
 export const RLTour: Component<RLTourProps> = (allProps) => {
   const props = allProps;

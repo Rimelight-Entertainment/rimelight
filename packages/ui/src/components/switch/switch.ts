@@ -1,6 +1,7 @@
 import type { Theme, ThemeColor } from "../../types";
+import type { JSX } from "@solidjs/web";
 
-export interface SwitchProps {
+export interface RLSwitchProps {
   /**
    * Controlled checked state.
    */
@@ -37,5 +38,6 @@ export interface SwitchProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

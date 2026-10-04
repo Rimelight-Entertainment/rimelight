@@ -1,22 +1,5 @@
 import { createMemo, For, Show, type Component } from "solid-js";
-
-interface HighlightGroup {
-  keys: string[];
-  color?: string;
-  label?: string;
-}
-
-export interface RLKeyboardProps {
-  highlightedKeys?: string[];
-  groups?: HighlightGroup[];
-  keyGap?: number;
-  sectionGap?: number;
-  keySize?: number;
-  variant?: "full" | "60";
-  os?: "windows" | "mac";
-  highlightColor?: string;
-  backgroundColor?: string;
-}
+import type { RLKeyboardProps, HighlightGroup } from "./keyboard";
 
 interface Key {
   label?: string;

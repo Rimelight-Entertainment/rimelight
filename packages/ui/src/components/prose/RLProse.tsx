@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ProseProps } from "./prose";
+import type { RLProseProps } from "./prose";
 import { proseTheme } from "./prose.theme";
-
-export interface RLProseProps extends ProseProps {
-  children?: JSX.Element;
-}
 
 export const RLProse: Component<RLProseProps> = (allProps) => {
   const props = allProps;

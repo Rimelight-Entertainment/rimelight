@@ -1,20 +1,7 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ConfirmProps } from "./confirm";
+import type { RLConfirmProps } from "./confirm";
 import { confirmTheme } from "./confirm.theme";
 import { RLButton } from "../button/RLButton";
-
-export interface RLConfirmProps extends ConfirmProps {
-  children?: JSX.Element;
-  trigger?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
-  onOpenChange?: (open: boolean) => void;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-}
 
 export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
   const props = allProps;

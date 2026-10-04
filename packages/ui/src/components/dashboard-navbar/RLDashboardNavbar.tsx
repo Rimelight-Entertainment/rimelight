@@ -1,19 +1,8 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { Dynamic } from "@solidjs/web";
-import type { DashboardNavbarProps } from "./dashboard-navbar";
+import type { RLDashboardNavbarProps } from "./dashboard-navbar";
 import { dashboardNavbarTheme } from "./dashboard-navbar.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLDashboardNavbarProps extends DashboardNavbarProps {
-  children?: JSX.Element;
-  leftSlot?: JSX.Element;
-  rightSlot?: JSX.Element;
-  centerSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  leadingSlot?: JSX.Element;
-  trailingSlot?: JSX.Element;
-}
 
 export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
   const props = allProps;

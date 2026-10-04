@@ -1,17 +1,5 @@
 import { For, Show, type Component } from "solid-js";
-
-interface HighlightGroup {
-  label: string;
-  buttons: string[];
-  color: string;
-}
-
-export interface RLGamepadProps {
-  highlightedButtons?: string[];
-  groups?: HighlightGroup[];
-  highlightColor?: string;
-  backgroundColor?: string;
-}
+import type { RLGamepadProps, HighlightGroup } from "./gamepad";
 
 interface GamepadButton {
   id: string;

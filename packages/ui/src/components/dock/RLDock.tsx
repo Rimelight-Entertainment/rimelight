@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { DockProps } from "./dock";
+import type { RLDockProps } from "./dock";
 import { dockTheme } from "./dock.theme";
-
-export interface RLDockProps extends DockProps {
-  children?: JSX.Element;
-}
 
 export const RLDock: Component<RLDockProps> = (allProps) => {
   const props = allProps;

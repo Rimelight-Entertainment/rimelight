@@ -1,32 +1,86 @@
-export interface LogoProps {
-  /**
-   * The visual variant of the logo.
-   */
-  variant?: "logomark" | "logotype" | "full";
-  /**
-   * The color mode of the logo.
-   */
-  mode?: "color" | "white" | "black";
-  /**
-   * Theme override — pins the logo rendering to `"light"` or `"dark"` color-scheme context, causing
-   * `light-dark()` variables to resolve to the correct scheme regardless of the global page mode.
-   */
-  theme?: "light" | "dark";
-  /**
-   * The destination URL when the logo is clicked.
-   */
+import type { JSX } from "@solidjs/web";
+
+export interface RLLogoProps {
+  variant?: string;
+  mode?: string;
+  theme?: string;
   href?: string;
-  /**
-   * Accessible description of the logo.
-   */
-  alt?: string;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
+  src?: string | undefined;
+  alt?: string | undefined;
+  icon?: any;
+  text?: string | undefined;
+  fallback?: string | undefined;
+  initials?: string | undefined;
+  size?:
+    | "3xs"
+    | "2xs"
+    | "xs"
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "6xl"
+    | "7xl"
+    | "8xl"
+    | "9xl"
+    | "10xl"
+    | "11xl"
+    | "12xl"
+    | (string & {})
+    | undefined;
+  color?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | (string & {})
+    | undefined;
+  chip?: boolean | (string & {}) | undefined;
+  badge?: boolean | string | number | undefined;
+  badgeColor?: string | undefined;
+  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined;
+  loading?: "lazy" | "eager" | undefined;
+  referrerpolicy?:
+    | ""
+    | "no-referrer"
+    | "no-referrer-when-downgrade"
+    | "origin"
+    | "origin-when-cross-origin"
+    | "same-origin"
+    | "strict-origin"
+    | "strict-origin-when-cross-origin"
+    | "unsafe-url"
+    | undefined;
+  crossorigin?: "" | "anonymous" | "use-credentials" | undefined;
+  decoding?: "async" | "auto" | "sync" | undefined;
+  height?: string | number | undefined;
+  width?: string | number | undefined;
+  sizes?: string | undefined;
+  srcset?: string | undefined;
+  usemap?: string | undefined;
+  title?: string | undefined;
+  subtitle?: string | undefined;
+  label?: string;
+  ui?:
+    | {
+        root?: any;
+        image?: any;
+        fallback?: any;
+        icon?: any;
+        badge?: any;
+        wrapper?: any;
+        title?: any;
+        subtitle?: any;
+      }
+    | undefined;
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

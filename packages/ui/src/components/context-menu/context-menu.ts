@@ -1,4 +1,6 @@
-export interface ContextMenuProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLContextMenuProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface ContextMenuProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

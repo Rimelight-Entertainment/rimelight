@@ -7,16 +7,9 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { DashboardSearchProps } from "./dashboard-search";
+import type { RLDashboardSearchProps } from "./dashboard-search";
 import { dashboardSearchTheme } from "./dashboard-search.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLDashboardSearchProps extends DashboardSearchProps {
-  children?: JSX.Element;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
 
 export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
   const props = allProps;

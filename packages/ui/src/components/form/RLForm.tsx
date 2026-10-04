@@ -1,12 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { FormProps } from "./form";
+import type { RLFormProps } from "./form";
 import { formTheme } from "./form.theme";
-
-export interface RLFormProps extends FormProps {
-  children?: JSX.Element;
-  onSubmit?: (e: Event & { currentTarget: HTMLFormElement }) => void;
-}
 
 export const RLForm: Component<RLFormProps> = (allProps) => {
   const props = allProps;

@@ -1,4 +1,14 @@
-export interface SearchProps {
+import type { JSX } from "@solidjs/web";
+
+export interface SearchResultItem {
+  title?: string;
+  url?: string;
+  sourceType?: string;
+  snippet?: string;
+  [key: string]: any;
+}
+
+export interface RLSearchProps {
   /**
    * API endpoint to query results from.
    */
@@ -25,5 +35,7 @@ export interface SearchProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  triggerSlot?: JSX.Element;
   [key: string]: unknown;
 }

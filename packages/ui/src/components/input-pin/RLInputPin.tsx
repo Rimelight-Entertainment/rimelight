@@ -1,24 +1,7 @@
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { InputPinProps } from "./input-pin";
+import type { RLInputPinProps } from "./input-pin";
 import { inputPinTheme } from "./input-pin.theme";
 import { inputTheme } from "../input/input.theme";
-
-export interface RLInputPinProps extends InputPinProps {
-  children?: JSX.Element;
-  length?: number;
-  value?: string;
-  defaultValue?: string;
-  name?: string;
-  disabled?: boolean;
-  required?: boolean;
-  type?: "text" | "numeric" | "alphanumeric";
-  size?: "sm" | "md" | "lg";
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
-  onComplete?: (value: string) => void;
-}
 
 export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
   const props = allProps;

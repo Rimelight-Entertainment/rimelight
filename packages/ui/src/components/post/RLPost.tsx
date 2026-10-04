@@ -1,18 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PostProps } from "./post";
+import type { RLPostProps } from "./post";
 import { postTheme } from "./post.theme";
 import { RLBadge } from "../badge/RLBadge";
-
-export interface RLPostProps extends PostProps {
-  children?: JSX.Element;
-  imageSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  badgeSlot?: JSX.Element;
-  dateSlot?: JSX.Element;
-  footerSlot?: JSX.Element;
-}
 
 export const RLPost: Component<RLPostProps> = (allProps) => {
   const props = allProps;

@@ -1,5 +1,6 @@
 import type { ThemeColor } from "../../types";
-export interface TextareaProps {
+
+export interface RLTextareaProps {
   autoGrow?: boolean;
   /**
    * The text value.
@@ -49,5 +50,11 @@ export interface TextareaProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  onInput?: (e: InputEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLTextAreaElement }) => void;
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  onFocus?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  ref?: HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void);
   [key: string]: unknown;
 }

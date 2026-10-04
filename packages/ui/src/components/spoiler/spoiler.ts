@@ -1,4 +1,6 @@
-export interface SpoilerProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLSpoilerProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface SpoilerProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

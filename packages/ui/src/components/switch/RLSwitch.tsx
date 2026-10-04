@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { SwitchProps } from "./switch";
+import type { RLSwitchProps } from "./switch";
 import { switchTheme } from "./switch.theme";
-
-export interface RLSwitchProps extends SwitchProps {
-  children?: JSX.Element;
-}
 
 export const RLSwitch: Component<RLSwitchProps> = (allProps) => {
   const props = allProps;

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChatMessageProps } from "./chat-message";
+import type { RLChatMessageProps } from "./chat-message";
 import { chatMessageTheme } from "./chat-message.theme";
-
-export interface RLChatMessageProps extends ChatMessageProps {
-  children?: JSX.Element;
-}
 
 export const RLChatMessage: Component<RLChatMessageProps> = (allProps) => {
   const props = allProps;

@@ -1,4 +1,5 @@
 import type { ThemeColor } from "../../types";
+import type { JSX } from "@solidjs/web";
 
 export interface TabItem {
   label?: string;
@@ -13,7 +14,7 @@ export interface TabItem {
   [key: string]: any;
 }
 
-export interface TabsProps<T extends TabItem = TabItem> {
+export interface RLTabsProps<T extends TabItem = TabItem> {
   /**
    * The tab items.
    */
@@ -98,5 +99,7 @@ export interface TabsProps<T extends TabItem = TabItem> {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  onChange?: (value: string) => void;
   [key: string]: unknown;
 }

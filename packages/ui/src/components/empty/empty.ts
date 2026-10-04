@@ -1,4 +1,6 @@
-export interface EmptyProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLEmptyProps {
   /**
    * Element or tag to render as (default: "div")
    */
@@ -64,5 +66,13 @@ export interface EmptyProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  headerSlot?: JSX.Element;
+  leadingSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  bodySlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
+  footerSlot?: JSX.Element;
   [key: string]: unknown;
 }

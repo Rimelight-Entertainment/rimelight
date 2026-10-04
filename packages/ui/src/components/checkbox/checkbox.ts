@@ -1,6 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
-export interface CheckboxProps {
+export interface RLCheckboxProps {
   /**
    * Controlled checked state.
    */
@@ -37,5 +38,8 @@ export interface CheckboxProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  id?: string;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

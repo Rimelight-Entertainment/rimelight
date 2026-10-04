@@ -1,3 +1,4 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
 
 export interface AvatarItemData {
@@ -43,7 +44,7 @@ export interface AvatarItemData {
   [key: string]: unknown;
 }
 
-export interface AvatarGroupProps {
+export interface RLAvatarGroupProps {
   /**
    * The element or component this component should render as.
    *
@@ -108,5 +109,6 @@ export interface AvatarGroupProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

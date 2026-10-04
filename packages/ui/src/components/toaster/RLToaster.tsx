@@ -1,11 +1,7 @@
 import { For, onSettled, omit, type Component } from "solid-js";
 import { toasts, removeToast, addToast, type ToastItem } from "../toast/store";
 import { RLToast } from "../toast/RLToast";
-
-export interface RLToasterProps {
-  class?: any;
-  [key: string]: unknown;
-}
+import type { RLToasterProps } from "./toaster";
 
 export const RLToaster: Component<RLToasterProps> = (allProps) => {
   const props = allProps;

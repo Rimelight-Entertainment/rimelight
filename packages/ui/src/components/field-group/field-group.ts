@@ -1,12 +1,14 @@
-export interface FieldGroupProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLFieldGroupProps {
   /**
    * Text/icon to prepend.
    */
-  prepend?: string;
+  prepend?: string | JSX.Element;
   /**
    * Text/icon to append.
    */
-  append?: string;
+  append?: string | JSX.Element;
   /**
    * Size scale.
    */
@@ -19,5 +21,6 @@ export interface FieldGroupProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

@@ -1,7 +1,7 @@
 import { createMemo, createSignal, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 import { omit } from "solid-js";
-import type { ButtonProps } from "./button";
+import type { RLButtonProps } from "./button";
 import { buttonTheme } from "./button.theme";
 import {
   isThenable,
@@ -12,8 +12,6 @@ import {
 import { resolveLinkAttrs } from "../link/helpers";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
-
-export interface RLButtonProps extends ButtonProps {}
 
 const NATIVE_BUTTON_TAGS = new Set(["button", "input", "select", "textarea", "summary"]);
 const DISABLED_TAGS = new Set([

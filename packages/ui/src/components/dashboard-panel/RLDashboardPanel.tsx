@@ -1,19 +1,6 @@
 import { createMemo, Show, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { DashboardPanelProps } from "./dashboard-panel";
+import type { RLDashboardPanelProps } from "./dashboard-panel";
 import { dashboardPanelTheme } from "./dashboard-panel.theme";
-
-export interface RLDashboardPanelProps extends DashboardPanelProps {
-  children?: JSX.Element;
-  header?: JSX.Element;
-  headerSlot?: JSX.Element;
-  body?: JSX.Element;
-  bodySlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
-  resizeHandle?: JSX.Element;
-  resizeHandleSlot?: JSX.Element;
-}
 
 export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
   const props = allProps;

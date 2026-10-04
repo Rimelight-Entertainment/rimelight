@@ -9,16 +9,10 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { TabItem, TabsProps } from "./tabs";
+import type { RLTabsProps } from "./tabs";
 import { tabsTheme } from "./tabs.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLTabsProps<T extends TabItem = TabItem> extends TabsProps<T> {
-  children?: JSX.Element;
-  onChange?: (value: string) => void;
-}
 
 export const RLTabs: Component<RLTabsProps> = (allProps) => {
   const props = allProps;

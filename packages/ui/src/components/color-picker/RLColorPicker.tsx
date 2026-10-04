@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ColorPickerProps } from "./color-picker";
+import type { RLColorPickerProps } from "./color-picker";
 import { colorPickerTheme } from "./color-picker.theme";
-
-export interface RLColorPickerProps extends ColorPickerProps {
-  children?: JSX.Element;
-}
 
 export const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
   const props = allProps;

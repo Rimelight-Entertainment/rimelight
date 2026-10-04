@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PageAsideProps } from "./page-aside";
+import type { RLPageAsideProps } from "./page-aside";
 import { pageAsideTheme } from "./page-aside.theme";
-
-export interface RLPageAsideProps extends PageAsideProps {
-  children?: JSX.Element;
-}
 
 export const RLPageAside: Component<RLPageAsideProps> = (allProps) => {
   const props = allProps;

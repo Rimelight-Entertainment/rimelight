@@ -1,3 +1,7 @@
+import type { JSX } from "@solidjs/web";
+
+export type AccordionSlotRenderer = (item: AccordionItem, index: number) => JSX.Element;
+
 export interface AccordionItem {
   label?: string;
   /**
@@ -27,7 +31,7 @@ export interface AccordionItem {
   [key: string]: unknown;
 }
 
-export interface AccordionProps {
+export interface RLAccordionProps {
   /**
    * The element or component the items root should render as (items mode). The single-summary root
    * always renders `<details>` (or `as` when provided).
@@ -123,5 +127,37 @@ export interface AccordionProps {
    * Rimelight extra: not in Nuxt UI.
    */
   name?: string;
+  children?: JSX.Element;
+  /**
+   * Custom trailing icon element applied to every item (overridden per item by the `trailing`
+   * render prop, then by `item.trailingIcon`).
+   */
+  trailingIconSlot?: JSX.Element;
+  /**
+   * Custom leading content per item. Falls back to `item.icon`.
+   */
+  leading?: AccordionSlotRenderer;
+  /**
+   * Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon`
+   * prop / `item.trailingIcon`.
+   */
+  trailing?: AccordionSlotRenderer;
+  /**
+   * Custom content area per item. Falls back to the default content/body wrappers around the
+   * resolved body.
+   */
+  content?: AccordionSlotRenderer;
+  /**
+   * Custom body content per item. Falls back to per-item named slots, then `item.content`.
+   */
+  body?: AccordionSlotRenderer;
+  /**
+   * Per-item named renderers, keyed by `item.slot` (and `item.slot + "-body"`).
+   */
+  slots?: Record<string, AccordionSlotRenderer>;
+  /**
+   * Called with the next open value whenever it changes. Pair with `value` for controlled state.
+   */
+  onChange?: (value: string | string[] | undefined) => void;
   [key: string]: unknown;
 }

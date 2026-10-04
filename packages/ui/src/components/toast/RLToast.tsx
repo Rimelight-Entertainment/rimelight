@@ -1,16 +1,7 @@
 import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ToastProps } from "./toast";
+import type { RLToastProps } from "./toast";
 import { toastTheme } from "./toast.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLToastProps extends ToastProps {
-  onDismiss?: () => void;
-  children?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  actionsSlot?: JSX.Element;
-}
 
 const variantIcons: Record<string, string> = {
   default: "i-rl-bell",

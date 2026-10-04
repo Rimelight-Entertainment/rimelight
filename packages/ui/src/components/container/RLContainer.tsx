@@ -1,11 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { ContainerProps } from "./container";
+import { dynamic } from "@solidjs/web";
+import type { RLContainerProps } from "./container";
 import { containerTheme } from "./container.theme";
-
-export interface RLContainerProps extends ContainerProps {
-  children?: JSX.Element;
-}
 
 export const RLContainer: Component<RLContainerProps> = (allProps) => {
   const props = allProps;

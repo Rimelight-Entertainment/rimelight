@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { GridProps } from "./grid";
+import type { RLGridProps } from "./grid";
 import { gridTheme } from "./grid.theme";
-
-export interface RLGridProps extends GridProps {
-  children?: JSX.Element;
-}
 
 export const RLGrid: Component<RLGridProps> = (allProps) => {
   const props = allProps;

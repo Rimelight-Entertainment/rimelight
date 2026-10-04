@@ -1,15 +1,8 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { LinkProps } from "./link";
+import type { RLLinkProps } from "./link";
 import { linkTheme } from "./link.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";
-
-export interface RLLinkProps extends LinkProps {
-  children?: JSX.Element;
-  leading?: JSX.Element;
-  trailing?: JSX.Element;
-}
 
 export const RLLink: Component<RLLinkProps> = (allProps) => {
   const props = allProps;

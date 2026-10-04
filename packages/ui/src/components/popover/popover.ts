@@ -1,4 +1,6 @@
-export interface PopoverProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLPopoverProps {
   /**
    * Controlled open state.
    */
@@ -27,5 +29,9 @@ export interface PopoverProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   [key: string]: unknown;
 }

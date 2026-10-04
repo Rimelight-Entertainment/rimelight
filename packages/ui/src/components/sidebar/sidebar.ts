@@ -1,10 +1,11 @@
-import type { BadgeProps } from "../badge/badge";
+import type { JSX } from "@solidjs/web";
+import type { RLBadgeProps } from "../badge/badge";
 
 export interface SidebarItem {
   label: string;
   href?: string | undefined;
   icon?: string | undefined;
-  badge?: string | BadgeProps | undefined;
+  badge?: string | RLBadgeProps | undefined;
   active?: boolean | undefined;
   children?: SidebarItem[] | undefined;
   items?: SidebarItem[] | undefined;
@@ -20,7 +21,7 @@ export interface SidebarScope {
   collapsed?: boolean | undefined;
 }
 
-export interface SidebarProps {
+export interface RLSidebarProps {
   t?: (key: string) => string;
   _depth?: number;
   /**
@@ -51,5 +52,10 @@ export interface SidebarProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  header?: JSX.Element;
+  headerSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
   [key: string]: unknown;
 }

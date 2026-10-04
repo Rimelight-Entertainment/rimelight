@@ -1,10 +1,8 @@
 import { createMemo, omit, For, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import { resolveIcon } from "../../icons";
-import type { IconProps } from "./icon";
+import type { RLIconProps } from "./icon";
 import { iconTheme } from "./icon.theme";
-
-export type RLIconProps = IconProps;
 
 export const RLIcon: Component<RLIconProps> = (allProps) => {
   const rest = omit(allProps, "name", "custom", "size", "class", "unstyled");

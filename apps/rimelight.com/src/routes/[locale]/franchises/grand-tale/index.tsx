@@ -3,10 +3,10 @@ import GrandTaleLayout from "#layouts/GrandTaleLayout";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 export const GrandTaleIndexPage: Component = () => {
-  const heroLinks = (): ButtonProps[] => [
+  const heroLinks = (): RLButtonProps[] => [
     {
       label: t("page_grand-tale_home.hero_btn") || "Play Grand Tale",
       href: getRelativeLocaleUrl("/franchises/grand-tale/download"),
@@ -17,7 +17,7 @@ export const GrandTaleIndexPage: Component = () => {
     },
   ];
 
-  const overviewLinks = (): ButtonProps[] => [
+  const overviewLinks = (): RLButtonProps[] => [
     {
       label: t("page_grand-tale_home.overview_btn") || "Learn More",
       href: getRelativeLocaleUrl("/franchises/grand-tale/about"),

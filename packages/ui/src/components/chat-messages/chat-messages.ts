@@ -1,4 +1,6 @@
-export interface ChatMessagesProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLChatMessagesProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface ChatMessagesProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

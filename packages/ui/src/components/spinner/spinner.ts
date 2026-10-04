@@ -1,6 +1,6 @@
 import type { Theme, ThemeColor } from "../../types";
 
-export interface SpinnerProps {
+export interface RLSpinnerProps {
   /**
    * The size scale of the spinner.
    */
@@ -10,7 +10,7 @@ export interface SpinnerProps {
    */
   color?: ThemeColor | "current";
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * Theme mode override — pins colors to flat, light, or dark mode.
    */
   theme?: Theme;
   /**

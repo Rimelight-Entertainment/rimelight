@@ -1,16 +1,9 @@
 import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { AvatarProps } from "./avatar";
+import { dynamic } from "@solidjs/web";
+import type { RLAvatarProps } from "./avatar";
 import { avatarTheme } from "./avatar.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";
-
-export interface RLAvatarProps extends AvatarProps {
-  children?: JSX.Element;
-  fallbackSlot?: JSX.Element;
-  badgeSlot?: JSX.Element;
-  imgProps?: JSX.ImgHTMLAttributes<HTMLImageElement>;
-}
 
 /**
  * Extract 1-2 initials from alt text, e.g. "Benjamin Canac" -> "BC", "John" -> "J"

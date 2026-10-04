@@ -1,17 +1,7 @@
 import { children, createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { SeparatorProps } from "./separator";
+import type { RLSeparatorProps } from "./separator";
 import { separatorTheme } from "./separator.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
-
-export interface RLSeparatorProps extends SeparatorProps {
-  children?: JSX.Element;
-  avatarSlot?: JSX.Element;
-  iconSlot?: JSX.Element;
-  label?: any;
-  icon?: string;
-  avatar?: string | Record<string, any>;
-}
 
 export const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
   const props = allProps;

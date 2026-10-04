@@ -1,23 +1,11 @@
-export interface GridProps {
-  /**
-   * Number of columns on desktop viewports.
-   */
+import type { JSX } from "@solidjs/web";
+
+export interface RLGridProps {
   cols?: 1 | 2 | 3 | 4 | 5 | 6;
-  /**
-   * Staggered height layout for grid items.
-   */
   stagger?: boolean;
-  /**
-   * Grid gap size.
-   */
   gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl";
-  /**
-   * Slot-specific CSS class overrides.
-   */
   ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

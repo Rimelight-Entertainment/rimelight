@@ -1,6 +1,7 @@
-import type { ButtonProps } from "../button/button";
+import type { JSX } from "@solidjs/web";
+import type { RLButtonProps } from "../button/button";
 
-export interface PageSectionProps {
+export interface RLPageSectionProps {
   /**
    * The element or component this component should render as.
    *
@@ -38,7 +39,7 @@ export interface PageSectionProps {
   /**
    * Display a list of buttons under the description.
    */
-  links?: ButtonProps[];
+  links?: RLButtonProps[];
   /**
    * The orientation of the section.
    *
@@ -67,5 +68,18 @@ export interface PageSectionProps {
    * Dynamic intrinsic size fallback for content-visibility layout stability.
    */
   containIntrinsicSize?: string;
+  background?: JSX.Element;
+  top?: JSX.Element;
+  header?: JSX.Element;
+  leading?: JSX.Element;
+  headlineSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  body?: JSX.Element;
+  footer?: JSX.Element;
+  linksSlot?: JSX.Element;
+  content?: JSX.Element;
+  bottom?: JSX.Element;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

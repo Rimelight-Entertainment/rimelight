@@ -1,14 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { QuoteProps } from "./quote";
+import type { RLQuoteProps } from "./quote";
 import { quoteTheme } from "./quote.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLQuoteProps extends QuoteProps {
-  children?: JSX.Element;
-  quote?: JSX.Element;
-  caption?: JSX.Element;
-}
 
 export const RLQuote: Component<RLQuoteProps> = (allProps) => {
   const props = allProps;

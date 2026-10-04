@@ -1,14 +1,7 @@
 import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ImageMetadata, ImageProps } from "./image";
+import type { RLImageProps, ImageMetadata } from "./image";
 import { imageTheme } from "./image.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLImageProps extends ImageProps {
-  trigger?: JSX.Element;
-  captionSlot?: JSX.Element;
-  children?: JSX.Element;
-}
 
 export const RLImage: Component<RLImageProps> = (allProps) => {
   const props = allProps;

@@ -1,4 +1,6 @@
-export interface StepsProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLStepsProps {
   /**
    * Controls the size of the step indicators and spacing.
    *
@@ -13,5 +15,6 @@ export interface StepsProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

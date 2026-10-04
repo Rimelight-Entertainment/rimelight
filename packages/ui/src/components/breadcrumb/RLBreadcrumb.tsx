@@ -1,23 +1,10 @@
 import { createMemo, omit, For, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { BreadcrumbItem, BreadcrumbProps } from "./breadcrumb";
+import { dynamic } from "@solidjs/web";
+import type { RLBreadcrumbProps } from "./breadcrumb";
 import { breadcrumbTheme } from "./breadcrumb.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { resolveLinkAttrs } from "../link/helpers";
-
-export interface RLBreadcrumbProps<T = BreadcrumbItem> extends BreadcrumbProps<T> {
-  children?: JSX.Element;
-  separator?: JSX.Element;
-  itemSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  itemLeadingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  itemLabelSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  itemTrailingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  separatorSlot?: (props: { item?: T | undefined; index?: number | undefined }) => JSX.Element;
-  slots?:
-    | Record<string, (props: { item: T; index: number; active: boolean }) => JSX.Element>
-    | undefined;
-}
 
 interface VisibleItemEntry {
   item: any;

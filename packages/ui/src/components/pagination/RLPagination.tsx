@@ -1,12 +1,7 @@
 import { createMemo, omit, For, type Component } from "solid-js";
-import type { PaginationProps } from "./pagination";
+import type { RLPaginationProps } from "./pagination";
 import { paginationTheme } from "./pagination.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLPaginationProps extends PaginationProps {
-  page?: number;
-  onPageChange?: (page: number) => void;
-}
 
 export const RLPagination: Component<RLPaginationProps> = (allProps) => {
   const props = allProps;

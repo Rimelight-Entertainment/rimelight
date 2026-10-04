@@ -1,16 +1,6 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { FormFieldProps } from "./form-field";
+import type { RLFormFieldProps } from "./form-field";
 import { formFieldTheme } from "./form-field.theme";
-
-export interface RLFormFieldProps extends FormFieldProps {
-  children?: JSX.Element;
-  hint?: JSX.Element;
-  labelSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  errorSlot?: JSX.Element;
-  helpSlot?: JSX.Element;
-}
 
 export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
   const props = allProps;

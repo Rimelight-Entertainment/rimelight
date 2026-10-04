@@ -1,4 +1,6 @@
-export interface PostProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLPostProps {
   /**
    * The title of the post.
    */
@@ -43,5 +45,12 @@ export interface PostProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  imageSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  badgeSlot?: JSX.Element;
+  dateSlot?: JSX.Element;
+  footerSlot?: JSX.Element;
   [key: string]: unknown;
 }

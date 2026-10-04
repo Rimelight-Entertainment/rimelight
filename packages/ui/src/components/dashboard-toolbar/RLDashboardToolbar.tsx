@@ -1,14 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { Dynamic } from "@solidjs/web";
-import type { DashboardToolbarProps } from "./dashboard-toolbar";
+import type { RLDashboardToolbarProps } from "./dashboard-toolbar";
 import { dashboardToolbarTheme } from "./dashboard-toolbar.theme";
-
-export interface RLDashboardToolbarProps extends DashboardToolbarProps {
-  children?: JSX.Element;
-  leftSlot?: JSX.Element;
-  rightSlot?: JSX.Element;
-}
 
 export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
   const props = allProps;

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { FieldsetProps } from "./fieldset";
+import type { RLFieldsetProps } from "./fieldset";
 import { fieldsetTheme } from "./fieldset.theme";
-
-export interface RLFieldsetProps extends FieldsetProps {
-  children?: JSX.Element;
-}
 
 export const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
   const props = allProps;

@@ -1,3 +1,5 @@
+import type { JSX } from "@solidjs/web";
+
 export interface TimelineItem {
   date?: string;
   title?: string;
@@ -31,7 +33,7 @@ export interface TimelineItemProps extends TimelineItem {
   class?: any;
 }
 
-export interface TimelineProps<T extends TimelineItem = TimelineItem> {
+export interface RLTimelineProps<T extends TimelineItem = TimelineItem> {
   /**
    * The element or component this component should render as.
    */
@@ -67,5 +69,13 @@ export interface TimelineProps<T extends TimelineItem = TimelineItem> {
     [key: string]: any;
   };
   class?: any;
+  children?:
+    | JSX.Element
+    | ((ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element);
+  indicator?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  wrapper?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  date?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  title?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
+  description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
   [key: string]: unknown;
 }

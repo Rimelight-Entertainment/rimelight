@@ -218,7 +218,9 @@ export interface TableApi<T = any> {
   };
 }
 
-export interface TableProps<T = any> {
+import type { JSX } from "@solidjs/web";
+
+export interface RLTableProps<T = any> {
   /**
    * Data rows. Auto-infers columns from the first row's keys when `columns` is omitted.
    */
@@ -438,5 +440,14 @@ export interface TableProps<T = any> {
    * Solid slot overrides dictionary (e.g. { "name-cell": ({ row }) => ... })
    */
   slots?: Record<string, (props: any) => any> | undefined;
+  ref?: (api: TableApi<T>) => void | TableApi<T>;
+  toolbar?: () => JSX.Element;
+  captionContent?: () => JSX.Element;
+  groupHeader?: (group: TableGroup<T>, colSpan: number) => JSX.Element;
+  expandedContent?: (row: TableRow<T>) => JSX.Element;
+  loadingContent?: () => JSX.Element;
+  emptyContent?: () => JSX.Element;
+  bodyTop?: () => JSX.Element;
+  bodyBottom?: () => JSX.Element;
   [key: string]: unknown;
 }

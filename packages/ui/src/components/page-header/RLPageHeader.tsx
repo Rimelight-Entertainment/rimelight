@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PageHeaderProps } from "./page-header";
+import type { RLPageHeaderProps } from "./page-header";
 import { pageHeaderTheme } from "./page-header.theme";
-
-export interface RLPageHeaderProps extends PageHeaderProps {
-  children?: JSX.Element;
-}
 
 export const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {
   const props = allProps;

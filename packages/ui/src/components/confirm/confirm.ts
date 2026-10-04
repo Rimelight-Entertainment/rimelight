@@ -1,4 +1,6 @@
-export interface ConfirmProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLConfirmProps {
   variant?: "default" | "destructive";
   /**
    * Title of the alert confirmation dialog.
@@ -32,5 +34,14 @@ export interface ConfirmProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  onOpenChange?: (open: boolean) => void;
+  onConfirm?: () => void;
+  onCancel?: () => void;
   [key: string]: unknown;
 }

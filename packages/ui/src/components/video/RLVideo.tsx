@@ -1,15 +1,7 @@
 import { children, createMemo, createSignal, Show, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { VideoProps } from "./video";
+import type { RLVideoProps } from "./video";
 import { videoTheme } from "./video.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLVideoProps extends VideoProps {
-  children?: JSX.Element;
-  thumbnail?: string;
-  iconSlot?: JSX.Element;
-  transcriptSlot?: JSX.Element;
-}
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
 const YOUTUBE_EMBED_BASE = "https://www.youtube.com/embed/";

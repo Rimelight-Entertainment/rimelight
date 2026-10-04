@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { EditorProps } from "./editor";
+import type { RLEditorProps } from "./editor";
 import { editorTheme } from "./editor.theme";
-
-export interface RLEditorProps extends EditorProps {
-  children?: JSX.Element;
-}
 
 export const RLEditor: Component<RLEditorProps> = (allProps) => {
   const props = allProps;

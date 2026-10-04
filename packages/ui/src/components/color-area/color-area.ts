@@ -1,6 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
-export interface ColorAreaProps {
+export interface RLColorAreaProps {
   colorSpace?: "hsl" | "rgb" | "hsb";
   defaultValue?: string;
   disabled?: boolean;
@@ -15,5 +16,9 @@ export interface ColorAreaProps {
   theme?: Theme;
   ui?: any;
   class?: any;
+  onChange?: (value: string) => void;
+  onValueChange?: (value: string) => void;
+  onChangeEnd?: (value: string) => void;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

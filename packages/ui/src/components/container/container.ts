@@ -1,4 +1,6 @@
-export interface ContainerProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLContainerProps {
   /**
    * The component the root element should render as.
    *
@@ -13,5 +15,6 @@ export interface ContainerProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

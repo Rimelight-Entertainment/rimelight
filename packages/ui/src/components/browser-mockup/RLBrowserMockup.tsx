@@ -1,26 +1,8 @@
 import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { BrowserMockupProps } from "./browser-mockup";
+import { dynamic } from "@solidjs/web";
+import type { RLBrowserMockupProps } from "./browser-mockup";
 import { browserMockupTheme } from "./browser-mockup.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLBrowserMockupProps extends BrowserMockupProps {
-  children?: JSX.Element;
-  /** Custom slot for the entire header bar */
-  headerSlot?: JSX.Element;
-  /** Custom slot replacing the control dots */
-  controlsSlot?: JSX.Element;
-  /** Custom slot replacing navigation buttons */
-  navigationSlot?: JSX.Element;
-  /** Custom slot replacing the URL bar area */
-  urlSlot?: JSX.Element;
-  /** Custom slot before URL text */
-  urlPrefixSlot?: JSX.Element;
-  /** Custom slot after URL text */
-  urlSuffixSlot?: JSX.Element;
-  /** Custom actions slot at the right side of header */
-  actionsSlot?: JSX.Element;
-}
 
 export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
   const rest = omit(

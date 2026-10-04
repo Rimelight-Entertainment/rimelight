@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChatShimmerProps } from "./chat-shimmer";
+import type { RLChatShimmerProps } from "./chat-shimmer";
 import { chatShimmerTheme } from "./chat-shimmer.theme";
-
-export interface RLChatShimmerProps extends ChatShimmerProps {
-  children?: JSX.Element;
-}
 
 export const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {
   const props = allProps;

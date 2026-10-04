@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { WindowMockupProps } from "./window-mockup";
+import type { RLWindowMockupProps } from "./window-mockup";
 import { windowMockupTheme } from "./window-mockup.theme";
-
-export interface RLWindowMockupProps extends WindowMockupProps {
-  children?: JSX.Element;
-}
 
 export const RLWindowMockup: Component<RLWindowMockupProps> = (allProps) => {
   const props = allProps;

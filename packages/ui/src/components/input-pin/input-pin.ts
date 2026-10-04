@@ -1,11 +1,19 @@
-export interface InputPinProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
+import type { JSX } from "@solidjs/web";
+
+export interface RLInputPinProps {
+  length?: number;
+  value?: string;
+  defaultValue?: string;
+  name?: string;
+  disabled?: boolean;
+  required?: boolean;
+  type?: "text" | "numeric" | "alphanumeric";
+  size?: "sm" | "md" | "lg";
   ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any;
-  [key: string]: unknown;
+  children?: JSX.Element;
+  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+  onComplete?: (value: string) => void;
 }

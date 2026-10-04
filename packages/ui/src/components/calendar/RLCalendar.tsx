@@ -9,7 +9,7 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { CalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar";
+import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar";
 import { calendarTheme } from "./calendar.theme";
 import {
   addMonths,
@@ -49,10 +49,6 @@ import {
 } from "./calendar.helpers";
 import { RLButton } from "../button/RLButton";
 
-export interface RLCalendarProps extends CalendarProps {
-  children?: JSX.Element;
-}
-
 type View = "day" | "month" | "year";
 
 export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
@@ -79,8 +75,10 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const cycle = () => setViewRaw(cycleView(view(), minView()) as View);
 
   const controlledValue = () => props.modelValue !== undefined;
-  const [innerValue, setInnerValue] = createSignal<CalendarModelValue>(props.defaultValue);
-  const modelValue = (): CalendarModelValue =>
+  const [innerValue, setInnerValue] = createSignal<CalendarModelValue | undefined>(
+    props.defaultValue,
+  );
+  const modelValue = (): CalendarModelValue | undefined =>
     controlledValue() ? props.modelValue : innerValue();
 
   const [innerPlaceholder, setInnerPlaceholder] = createSignal<Date>(
@@ -117,7 +115,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const isInvalid = createMemo(() => {
     const v = modelValue();
     if (!v) return false;
-    const dates = Array.isArray(v) ? v : v instanceof Date ? [v] : [v.start, v.end];
+    const dates = Array.isArray(v)
+      ? v
+      : v instanceof Date
+        ? [v]
+        : typeof v === "object" && "start" in v && "end" in v
+          ? [v.start, v.end]
+          : [];
     return dates.some(
       (d) =>
         d instanceof Date &&
@@ -182,9 +186,9 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     }),
   );
 
-  const commitModel = (next: CalendarModelValue) => {
+  const commitModel = (next: CalendarModelValue | null | undefined) => {
     if (!controlledValue()) setInnerValue(next);
-    props.onUpdateValue?.(next);
+    props.onUpdateValue?.(next ?? undefined);
   };
 
   const isRangeDay = (d: Date): boolean => {
@@ -239,7 +243,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (props.multiple) {
       commitModel(
         toggleMultiValue(
-          Array.isArray(modelValue()) ? (modelValue() as Date[]) : undefined,
+          Array.isArray(modelValue()) ? (modelValue() as unknown as Date[]) : undefined,
           day,
           props.preventDeselect,
         ) ?? null,
@@ -248,7 +252,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     }
 
     const next = toggleSingleValue(
-      modelValue() instanceof Date ? (modelValue() as Date) : undefined,
+      modelValue() instanceof Date ? (modelValue() as unknown as Date) : undefined,
       day,
       props.preventDeselect,
     );
@@ -257,11 +261,11 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   };
 
   const isRangeValid = (start: Date, end: Date): boolean => {
-    if (props.maximumDays) {
+    if (props.maximumDays !== undefined && typeof props.maximumDays === "number") {
       const days = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
       if (days > props.maximumDays) return false;
     }
-    if (props.isDateUnavailable && !props.allowNonContiguousRanges) {
+    if (props.isDateUnavailable && props.allowNonContiguousRanges === false) {
       const cursor = startOfDay(start);
       while (cursor.getTime() <= end.getTime()) {
         if (props.isDateUnavailable(cursor)) return false;
@@ -300,7 +304,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (props.multiple) {
       commitModel(
         toggleMultiValue(
-          Array.isArray(modelValue()) ? (modelValue() as Date[]) : undefined,
+          Array.isArray(modelValue()) ? (modelValue() as unknown as Date[]) : undefined,
           day,
           props.preventDeselect,
         ) ?? null,
@@ -310,7 +314,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     const current = modelValue();
     commitModel(
       toggleSingleValue(
-        current instanceof Date ? current : undefined,
+        current instanceof Date ? (current as unknown as Date) : undefined,
         day,
         props.preventDeselect,
       ) ?? null,
@@ -441,17 +445,26 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   );
 
   // ---- render helpers ----
-  const controlBase = (override: Record<string, any> | undefined, icon: any, label: string) => ({
-    color: "neutral" as const,
-    variant: "ghost" as const,
-    size: props.size,
-    square: true,
-    icon,
-    ariaLabel: label,
-    type: "button" as const,
-    disabled: props.disabled,
-    ...override,
-  });
+  const controlBase = (
+    override: Record<string, unknown> | (() => void) | undefined,
+    icon: unknown,
+    label: string,
+  ) => {
+    const base: Record<string, unknown> = {
+      color: "neutral" as const,
+      variant: "ghost" as const,
+      size: props.size,
+      square: true,
+      icon,
+      ariaLabel: label,
+      type: "button" as const,
+      disabled: props.disabled,
+    };
+    if (override && typeof override === "object") {
+      Object.assign(base, override);
+    }
+    return base;
+  };
 
   const renderDayGrid = (grid: CalendarMonthGrid) => (
     <table
@@ -549,7 +562,10 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (!v) return false;
     if (Array.isArray(v)) return v.some((d) => isSameMonth(d, m));
     if (v instanceof Date) return isSameMonth(v, m);
-    return isSameMonth(v.start, m) || isSameMonth(v.end, m);
+    if (typeof v === "object" && "start" in v && "end" in v) {
+      return isSameMonth(v.start, m) || isSameMonth(v.end, m);
+    }
+    return false;
   };
 
   const yearSelected = (y: Date) => {
@@ -558,7 +574,10 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     const has = (d?: Date | null) => d instanceof Date && d.getFullYear() === y.getFullYear();
     if (Array.isArray(v)) return v.some(has);
     if (v instanceof Date) return has(v);
-    return has(v.start) || has(v.end);
+    if (typeof v === "object" && "start" in v && "end" in v) {
+      return has(v.start) || has(v.end);
+    }
+    return false;
   };
 
   const renderPickerGrid = (mode: "month" | "year") => {
@@ -657,14 +676,6 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     );
   };
 
-  const headingCtx = () => ({
-    value: headingValue(),
-    view: view(),
-    date: placeholder(),
-    setView,
-    setPlaceholder,
-  });
-
   const showPrevYear = () => view() === "day" && yearControls();
   const showSideControls = () => view() !== "day" || monthControls();
 
@@ -759,7 +770,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                 </Show>
               }
             >
-              {(slot) => slot()(headingCtx())}
+              {props.headingSlot ? props.headingSlot() : null}
             </Show>
           </div>
 
@@ -802,12 +813,14 @@ function chunkFour<T>(arr: T[]): T[][] {
   return out;
 }
 
-function firstRangeDate(v: CalendarModelValue): Date | undefined {
-  if (!v || v instanceof Date || Array.isArray(v)) return undefined;
-  return v.start ?? undefined;
+function firstRangeDate(v: CalendarModelValue | undefined): Date | undefined {
+  if (!v || v instanceof Date || Array.isArray(v) || typeof v !== "object") return undefined;
+  if ("start" in v && "end" in v) return v.start;
+  return undefined;
 }
 
-function secondRangeDate(v: CalendarModelValue): Date | undefined {
-  if (!v || v instanceof Date || Array.isArray(v)) return undefined;
-  return v.end ?? undefined;
+function secondRangeDate(v: CalendarModelValue | undefined): Date | undefined {
+  if (!v || v instanceof Date || Array.isArray(v) || typeof v !== "object") return undefined;
+  if ("start" in v && "end" in v) return v.end;
+  return undefined;
 }

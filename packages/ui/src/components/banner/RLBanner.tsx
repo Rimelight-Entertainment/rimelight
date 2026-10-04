@@ -11,31 +11,13 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { BannerProps } from "./banner";
+import type { RLBannerProps } from "./banner";
 import { bannerTheme } from "./banner.theme";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import { useHeaderStack } from "../header/useHeaderStack";
 import { resolveLinkAttrs } from "../link/helpers";
-import type { ButtonProps } from "../button/button";
-
-export interface RLBannerProps extends BannerProps {
-  children?: JSX.Element;
-  /** Replaces the leading icon. */
-  leading?: JSX.Element;
-  /** Replaces the title text. */
-  titleSlot?: JSX.Element;
-  /** Replaces the action buttons. */
-  actionsSlot?: JSX.Element;
-  /** Replaces the close button. */
-  closeSlot?: JSX.Element;
-  /** Content rendered in the left area. */
-  left?: JSX.Element;
-  /** Replaces the center area content (leading & title). */
-  center?: JSX.Element;
-  /** Content rendered in the right area, before actions & close button. */
-  right?: JSX.Element;
-}
+import type { RLButtonProps } from "../button/button";
 
 /** Value written to localStorage; must match the pre-hydration head script check. */
 const DISMISSED_VALUE = "true";
@@ -167,11 +149,30 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   );
 
   const linkAttrs = createMemo(() =>
-    isLink() ? resolveLinkAttrs({ ...props, href: href() as string | undefined }) : undefined,
+    isLink()
+      ? resolveLinkAttrs({
+          href: href() as string | undefined,
+          to: props.to,
+          label: props.label,
+          leadingIcon: props.leadingIcon,
+          trailingIcon: props.trailingIcon,
+          external: props.external,
+          externalIcon: props.externalIcon,
+          noExternalIcon: props.noExternalIcon,
+          target: props.target,
+          rel: props.rel,
+          prefetch: props.prefetch,
+          active: props.active,
+          disabled: props.disabled,
+          raw: props.raw,
+          ariaLabel: props.ariaLabel,
+          ariaCurrentValue: props.ariaCurrentValue,
+        })
+      : undefined,
   );
 
-  const closeButtonProps = createMemo((): ButtonProps => {
-    const base: ButtonProps = {
+  const closeButtonProps = createMemo((): RLButtonProps => {
+    const base: RLButtonProps = {
       size: "md",
       color: "neutral",
       variant: "ghost",

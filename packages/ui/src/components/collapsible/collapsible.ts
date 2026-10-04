@@ -1,5 +1,6 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-export interface CollapsibleProps {
+export interface RLCollapsibleProps {
   /**
    * Controlled open state.
    */
@@ -28,5 +29,9 @@ export interface CollapsibleProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   [key: string]: unknown;
 }

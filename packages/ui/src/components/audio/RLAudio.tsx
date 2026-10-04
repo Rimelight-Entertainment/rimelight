@@ -9,29 +9,12 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { AudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio";
+import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio";
 import { audioTheme } from "./audio.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLImage } from "../image/RLImage";
 import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio";
 import { RLPopover } from "../popover/RLPopover";
-
-export interface RLAudioProps extends AudioProps {
-  children?: JSX.Element | undefined;
-  transcript?: JSX.Element | undefined;
-  headerSlot?: JSX.Element | undefined;
-  timelineSlot?: JSX.Element | undefined;
-  controlsSlot?: JSX.Element | undefined;
-  artworkSlot?: JSX.Element | undefined;
-  onPlay?: (() => void) | undefined;
-  onPause?: (() => void) | undefined;
-  onEnded?: (() => void) | undefined;
-  onTrackChange?: ((index: number, track: AudioTrackItem) => void) | undefined;
-  onTimeUpdate?: ((currentTime: number, duration: number) => void) | undefined;
-  onVolumeChange?: ((volume: number, muted: boolean) => void) | undefined;
-  onRepeatModeChange?: ((mode: AudioRepeatMode) => void) | undefined;
-}
 
 function formatTime(seconds: number): string {
   if (isNaN(seconds) || !isFinite(seconds) || seconds < 0) return "0:00";

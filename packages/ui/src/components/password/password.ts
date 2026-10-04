@@ -1,4 +1,6 @@
-export interface PasswordProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLPasswordProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface PasswordProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

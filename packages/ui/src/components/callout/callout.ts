@@ -1,8 +1,6 @@
-import type { Theme, ThemeColor } from "../../types";
-import type { AvatarProps } from "../avatar/avatar";
-import type { ButtonProps } from "../button/button";
+import type { JSX } from "@solidjs/web";
 
-export interface CalloutProps {
+export interface RLCalloutProps {
   /**
    * The element or component this component should render as.
    * @defaultValue 'div'
@@ -20,7 +18,7 @@ export interface CalloutProps {
     | "info"
     | "warning"
     | "neutral"
-    | ThemeColor
+    | (string & {})
     | undefined;
   /**
    * The visual variant of the callout.
@@ -47,20 +45,19 @@ export interface CalloutProps {
   /**
    * An optional avatar configuration or image source URL string.
    */
-  avatar?: string | AvatarProps | undefined;
+  avatar?: { src: string; alt: string } | string | undefined;
   /**
    * Display a list of action buttons:
    * - under the title and description when orientation is `vertical`
    * - next to the close button when orientation is `horizontal`
-   * `{ size: 'xs' }`
    */
-  actions?: ButtonProps[] | undefined;
+  actions?: any[] | undefined;
   /**
    * Display a close button to dismiss the callout.
-   * Can be a boolean or custom ButtonProps.
+   * Can be a boolean or custom object.
    * @defaultValue false
    */
-  close?: boolean | ButtonProps | undefined;
+  close?: boolean | Record<string, unknown> | undefined;
   /**
    * The icon displayed in the close button.
    * @defaultValue 'close'
@@ -90,7 +87,7 @@ export interface CalloutProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: Theme | undefined;
+  theme?: "light" | "dark" | undefined;
   /**
    * Slot-specific CSS class overrides.
    */
@@ -106,7 +103,7 @@ export interface CalloutProps {
           | "avatarSize"
           | "actions"
           | "close",
-          any
+          unknown
         >
       >
     | undefined;
@@ -130,5 +127,14 @@ export interface CalloutProps {
    * Accessible aria-describedby ID override.
    */
   ariaDescribedby?: string | undefined;
+  leading?: JSX.Element;
+  iconSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  headerSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
+  closeSlot?: JSX.Element;
+  avatarSlot?: JSX.Element;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

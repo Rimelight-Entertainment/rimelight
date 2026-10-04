@@ -1,15 +1,9 @@
 import { createMemo, omit, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { BadgeProps } from "./badge";
+import { dynamic } from "@solidjs/web";
+import type { RLBadgeProps } from "./badge";
 import { badgeTheme } from "./badge.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
-
-export interface RLBadgeProps extends BadgeProps {
-  children?: JSX.Element;
-  leadingSlot?: JSX.Element;
-  trailingSlot?: JSX.Element;
-}
 
 export const RLBadge: Component<RLBadgeProps> = (allProps) => {
   const props = allProps;

@@ -1,4 +1,7 @@
-export interface FooterProps {
+import type { JSX } from "@solidjs/web";
+import type {} from "../../types";
+
+export interface RLFooterProps {
   /**
    * Whether to contain the footer content within a max-width container.
    */
@@ -15,5 +18,9 @@ export interface FooterProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  left?: JSX.Element;
+  center?: JSX.Element;
+  right?: JSX.Element;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChatReasoningProps } from "./chat-reasoning";
+import type { RLChatReasoningProps } from "./chat-reasoning";
 import { chatReasoningTheme } from "./chat-reasoning.theme";
-
-export interface RLChatReasoningProps extends ChatReasoningProps {
-  children?: JSX.Element;
-}
 
 export const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
   const props = allProps;

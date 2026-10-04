@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ErrorProps } from "./error";
+import type { RLErrorProps } from "./error";
 import { errorTheme } from "./error.theme";
-
-export interface RLErrorProps extends ErrorProps {
-  children?: JSX.Element;
-}
 
 export const RLError: Component<RLErrorProps> = (allProps) => {
   const props = allProps;

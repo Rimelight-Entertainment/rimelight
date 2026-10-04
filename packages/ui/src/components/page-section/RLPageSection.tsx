@@ -1,26 +1,9 @@
 import { createMemo, omit, For, children, type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { Dynamic } from "@solidjs/web";
-import type { PageSectionProps } from "./page-section";
+import type { RLPageSectionProps } from "./page-section";
 import { pageSectionTheme } from "./page-section.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
-
-export interface RLPageSectionProps extends PageSectionProps {
-  background?: JSX.Element;
-  top?: JSX.Element;
-  header?: JSX.Element;
-  leading?: JSX.Element;
-  headlineSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  body?: JSX.Element;
-  footer?: JSX.Element;
-  linksSlot?: JSX.Element;
-  content?: JSX.Element;
-  bottom?: JSX.Element;
-  children?: JSX.Element;
-}
 
 export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
   const props = allProps;

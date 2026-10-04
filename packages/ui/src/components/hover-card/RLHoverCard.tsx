@@ -1,12 +1,6 @@
 import { createMemo, createSignal, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { HoverCardProps } from "./hover-card";
+import type { RLHoverCardProps } from "./hover-card";
 import { hoverCardTheme } from "./hover-card.theme";
-
-export interface RLHoverCardProps extends HoverCardProps {
-  children?: JSX.Element;
-  trigger?: JSX.Element;
-}
 
 export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
   const props = allProps;

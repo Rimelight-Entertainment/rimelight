@@ -1,11 +1,11 @@
-import type { AvatarProps } from "../avatar/avatar";
-import type { LinkProps } from "../link/link";
-import type { ThemeColor } from "../../types";
+import type { JSX } from "@solidjs/web";
+import type { RLAvatarProps } from "../avatar/avatar";
+import type { Theme, ThemeColor } from "../../types";
 
-export interface BreadcrumbItem extends Partial<LinkProps> {
+export interface BreadcrumbItem {
   label?: string | undefined;
   icon?: string | undefined;
-  avatar?: AvatarProps | string | undefined;
+  avatar?: RLAvatarProps | string | undefined;
   slot?: string | undefined;
   class?: any;
   ui?:
@@ -20,11 +20,36 @@ export interface BreadcrumbItem extends Partial<LinkProps> {
         separatorIcon?: any;
       }
     | undefined;
+  leadingIcon?: string | undefined;
+  trailingIcon?: string | undefined;
+  href?: string | undefined;
+  to?: string | undefined;
+  external?: boolean | undefined;
+  externalIcon?: string | undefined;
+  noExternalIcon?: boolean | undefined;
+  target?: string | undefined;
+  rel?: string | null | undefined;
+  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
+  active?: boolean | undefined;
+  disabled?: boolean | undefined;
+  raw?: boolean | undefined;
+  ariaLabel?: string | undefined;
+  ariaCurrentValue?:
+    | "page"
+    | "step"
+    | "location"
+    | "date"
+    | "time"
+    | "true"
+    | "false"
+    | boolean
+    | undefined;
+  theme?: Theme | undefined;
   children?: BreadcrumbItem[] | undefined;
   [key: string]: unknown;
 }
 
-export interface BreadcrumbProps<T = BreadcrumbItem> {
+export interface RLBreadcrumbProps<T = BreadcrumbItem> {
   /**
    * The element or component this component should render as.
    * @default 'nav'
@@ -101,6 +126,17 @@ export interface BreadcrumbProps<T = BreadcrumbItem> {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+
+  children?: JSX.Element;
+  separator?: JSX.Element;
+  itemSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
+  itemLeadingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
+  itemLabelSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
+  itemTrailingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
+  separatorSlot?: (props: { item?: T | undefined; index?: number | undefined }) => JSX.Element;
+  slots?:
+    | Record<string, (props: { item: T; index: number; active: boolean }) => JSX.Element>
+    | undefined;
 
   [key: string]: unknown;
 }

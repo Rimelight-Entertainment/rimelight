@@ -7,7 +7,7 @@ import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getLocale();
@@ -35,7 +35,7 @@ export const HomePage: Component = () => {
     { loadingValue: [] },
   );
 
-  const heroLinks = (): ButtonProps[] => [
+  const heroLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
       leadingIcon: "i-lucide-github",
@@ -50,7 +50,7 @@ export const HomePage: Component = () => {
     },
   ];
 
-  const featureLinks = (): ButtonProps[] => [
+  const featureLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
       label: t("page_home.section_features_link_browse-components_label"),
@@ -63,7 +63,7 @@ export const HomePage: Component = () => {
     },
   ];
 
-  const ctaLinks = (): ButtonProps[] => [
+  const ctaLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
       leadingIcon: "i-lucide-github",

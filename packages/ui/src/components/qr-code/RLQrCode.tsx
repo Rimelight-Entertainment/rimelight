@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { QrCodeProps } from "./qr-code";
+import type { RLQrCodeProps } from "./qr-code";
 import { qrCodeTheme } from "./qr-code.theme";
-
-export interface RLQrCodeProps extends QrCodeProps {
-  children?: JSX.Element;
-}
 
 export const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
   const props = allProps;

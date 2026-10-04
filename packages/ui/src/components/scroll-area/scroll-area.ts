@@ -1,4 +1,6 @@
-export interface ScrollAreaProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLScrollAreaProps {
   /**
    * Orientation of the scrollbar.
    */
@@ -19,5 +21,6 @@ export interface ScrollAreaProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

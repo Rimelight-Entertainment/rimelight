@@ -1,14 +1,6 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { CardProps } from "./card";
+import type { RLCardProps } from "./card";
 import { cardTheme } from "./card.theme";
-
-export interface RLCardProps extends CardProps {
-  children?: JSX.Element;
-  header?: JSX.Element;
-  footer?: JSX.Element;
-  media?: JSX.Element;
-}
 
 export const RLCard: Component<RLCardProps> = (allProps) => {
   const props = allProps;

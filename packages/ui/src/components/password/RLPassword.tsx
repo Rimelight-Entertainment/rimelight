@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PasswordProps } from "./password";
+import type { RLPasswordProps } from "./password";
 import { passwordTheme } from "./password.theme";
-
-export interface RLPasswordProps extends PasswordProps {
-  children?: JSX.Element;
-}
 
 export const RLPassword: Component<RLPasswordProps> = (allProps) => {
   const props = allProps;

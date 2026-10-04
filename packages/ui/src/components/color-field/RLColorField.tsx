@@ -1,6 +1,6 @@
 import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { ColorFieldProps } from "./color-field";
+import type { RLColorFieldProps } from "./color-field";
 import { colorFieldTheme } from "./color-field.theme";
 import {
   clamp,
@@ -12,13 +12,6 @@ import {
   rgbToHsb,
   rgbToHsl,
 } from "../color-picker/color";
-
-export interface RLColorFieldProps extends ColorFieldProps {
-  children?: JSX.Element;
-  value?: string;
-  onChange?: (val: string) => void;
-  "onUpdate:modelValue"?: (val: string) => void;
-}
 
 export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
   const props = allProps;

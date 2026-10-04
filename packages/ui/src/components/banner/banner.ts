@@ -1,34 +1,8 @@
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-import type { ButtonProps } from "../button/button";
-import type { LinkProps } from "../link/link";
+import type { RLButtonProps } from "../button/button";
 
-export type BannerColor =
-  | "primary"
-  | "secondary"
-  | "success"
-  | "info"
-  | "warning"
-  | "error"
-  | "neutral"
-  | ThemeColor;
-
-export interface BannerAction extends ButtonProps {
-  [key: string]: unknown;
-}
-
-export interface BannerSlots {
-  leading?: JSX.Element | (() => JSX.Element);
-  title?: JSX.Element | (() => JSX.Element);
-  actions?: JSX.Element | (() => JSX.Element);
-  close?: JSX.Element | (() => JSX.Element);
-  left?: JSX.Element | (() => JSX.Element);
-  center?: JSX.Element | (() => JSX.Element);
-  right?: JSX.Element | (() => JSX.Element);
-  default?: JSX.Element | (() => JSX.Element);
-}
-
-export interface BannerProps extends LinkProps {
+export interface RLBannerProps {
   /**
    * The element or component this component should render as.
    *
@@ -60,21 +34,21 @@ export interface BannerProps extends LinkProps {
   /**
    * Display a list of actions next to the title.
    */
-  actions?: BannerAction[] | undefined;
+  actions?: RLButtonProps[] | undefined;
 
   /**
    * Color variant of the banner.
    *
    * @default "primary"
    */
-  color?: BannerColor | undefined;
+  color?: ThemeColor | undefined;
 
   /**
    * Display a close button to dismiss the banner. Can be boolean or button props override.
    *
    * @default false
    */
-  close?: boolean | ButtonProps | undefined;
+  close?: boolean | RLButtonProps | undefined;
 
   /**
    * The icon displayed in the close button.
@@ -161,5 +135,119 @@ export interface BannerProps extends LinkProps {
    */
   class?: any;
 
+  /**
+   * The text label displayed inside the link. Alternative to passing children via the default slot.
+   */
+  label?: string | undefined;
+  /**
+   * Icon name displayed before the link label.
+   */
+  leadingIcon?: string | undefined;
+  /**
+   * Icon name displayed after the link label. Replaces the external icon when set.
+   */
+  trailingIcon?: string | undefined;
+  /**
+   * The URL the link points to.
+   */
+  href?: string | undefined;
+  /**
+   * Forces the link to be treated as an external link.
+   *
+   * @default false
+   */
+  external?: boolean | undefined;
+  /**
+   * Custom external link icon name.
+   *
+   * @default "externalLink"
+   */
+  externalIcon?: string | undefined;
+  /**
+   * Suppress the automatic external link icon.
+   *
+   * @default false
+   */
+  noExternalIcon?: boolean | undefined;
+  /**
+   * Where to open the linked URL. External links default to `"_blank"`.
+   *
+   * @default undefined
+   */
+  target?: string | undefined;
+  /**
+   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
+   * string to suppress the attribute entirely.
+   *
+   * @default undefined
+   */
+  rel?: string | null | undefined;
+  /**
+   * Enables Astro's built-in prefetch strategy.
+   *
+   * @default undefined;
+   */
+  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
+  /**
+   * Applies active styling to the link.
+   *
+   * @default undefined
+   */
+  active?: boolean | undefined;
+  /**
+   * Disables the link, preventing navigation and applying disabled styling.
+   *
+   * @default false
+   */
+  disabled?: boolean | undefined;
+  /**
+   * When true, only `class` is applied — all default theme styles are skipped.
+   *
+   * @default false
+   */
+  raw?: boolean | undefined;
+  /**
+   * Screen reader accessibility label. When omitted on external links, "(opens in a new tab)" is
+   * appended automatically.
+   */
+  ariaLabel?: string | undefined;
+  /**
+   * The value of `aria-current` when the link is the active/current page.
+   *
+   * @default "page"
+   */
+  ariaCurrentValue?:
+    | "page"
+    | "step"
+    | "location"
+    | "date"
+    | "time"
+    | "true"
+    | "false"
+    | boolean
+    | undefined;
+  /**
+   * Force a color-scheme context on the component.
+   */
+  theme?: unknown;
+
+  /**
+   * Default slot children.
+   */
+  children?: JSX.Element;
+  /** Replaces the leading icon. */
+  leading?: JSX.Element;
+  /** Replaces the title text. */
+  titleSlot?: JSX.Element;
+  /** Replaces the action buttons. */
+  actionsSlot?: JSX.Element;
+  /** Replaces the close button. */
+  closeSlot?: JSX.Element;
+  /** Content rendered in the left area. */
+  left?: JSX.Element;
+  /** Replaces the center area content (leading & title). */
+  center?: JSX.Element;
+  /** Content rendered in the right area, before actions & close button. */
+  right?: JSX.Element;
   [key: string]: unknown;
 }

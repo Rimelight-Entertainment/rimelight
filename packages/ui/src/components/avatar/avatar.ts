@@ -1,7 +1,8 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-import type { ChipProps } from "../chip/chip";
+import type { RLChipProps } from "../chip/chip";
 
-export interface AvatarProps {
+export interface RLAvatarProps {
   /**
    * The element or component this component should render as.
    *
@@ -61,7 +62,7 @@ export interface AvatarProps {
     | "neutral"
     | ThemeColor
     | undefined;
-  chip?: boolean | ChipProps | undefined;
+  chip?: boolean | RLChipProps | undefined;
   badge?: boolean | string | number | undefined;
   badgeColor?: string | undefined;
   badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined;
@@ -113,5 +114,9 @@ export interface AvatarProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  fallbackSlot?: JSX.Element;
+  badgeSlot?: JSX.Element;
+  imgProps?: JSX.ImgHTMLAttributes<HTMLImageElement>;
   [key: string]: unknown;
 }

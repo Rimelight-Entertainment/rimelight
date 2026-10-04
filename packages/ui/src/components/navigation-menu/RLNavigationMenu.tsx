@@ -8,19 +8,13 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import type {
   NavigationMenuItem,
   NavigationMenuChildItem,
-  NavigationMenuProps,
+  RLNavigationMenuProps,
 } from "./navigation-menu";
 import { navigationMenuTheme } from "./navigation-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLNavigationMenuProps extends NavigationMenuProps {
-  children?: JSX.Element;
-  [key: string]: any;
-}
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
   const props = allProps;

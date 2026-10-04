@@ -1,14 +1,8 @@
 import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ThemeSelectorProps } from "./theme-selector";
+import type { RLThemeSelectorProps } from "./theme-selector";
 import { themeSelectorTheme } from "./theme-selector.theme";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
-
-export interface RLThemeSelectorProps extends ThemeSelectorProps {
-  children?: JSX.Element;
-  onChange?: (theme: string) => void;
-}
 
 const themeItems = [
   { label: "System", value: "system", icon: "i-lucide-laptop" },

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChatToolProps } from "./chat-tool";
+import type { RLChatToolProps } from "./chat-tool";
 import { chatToolTheme } from "./chat-tool.theme";
-
-export interface RLChatToolProps extends ChatToolProps {
-  children?: JSX.Element;
-}
 
 export const RLChatTool: Component<RLChatToolProps> = (allProps) => {
   const props = allProps;

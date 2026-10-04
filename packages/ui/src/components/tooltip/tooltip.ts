@@ -1,4 +1,6 @@
-export interface TooltipProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLTooltipProps {
   /**
    * The text content to display inside the tooltip.
    */
@@ -19,5 +21,7 @@ export interface TooltipProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  contentSlot?: JSX.Element;
   [key: string]: unknown;
 }

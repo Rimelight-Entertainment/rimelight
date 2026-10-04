@@ -1,15 +1,6 @@
 import { createMemo, omit, Show, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChipProps } from "./chip";
+import type { RLChipProps } from "./chip";
 import { chipTheme } from "./chip.theme";
-
-export interface RLChipProps extends ChipProps {
-  children?: JSX.Element;
-  content?: JSX.Element;
-  text?: any;
-  standalone?: boolean;
-  show?: boolean;
-}
 
 export const RLChip: Component<RLChipProps> = (allProps) => {
   const props = allProps;

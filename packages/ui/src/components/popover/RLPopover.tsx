@@ -1,14 +1,6 @@
 import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PopoverProps } from "./popover";
+import type { RLPopoverProps } from "./popover";
 import { popoverTheme } from "./popover.theme";
-
-export interface RLPopoverProps extends PopoverProps {
-  children?: JSX.Element;
-  trigger?: JSX.Element;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
 
 export const RLPopover: Component<RLPopoverProps> = (allProps) => {
   const props = allProps;

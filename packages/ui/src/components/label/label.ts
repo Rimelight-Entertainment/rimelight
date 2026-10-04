@@ -1,4 +1,6 @@
-export interface LabelProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLLabelProps {
   /**
    * The associated form input element ID.
    */
@@ -15,5 +17,6 @@ export interface LabelProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

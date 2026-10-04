@@ -1,13 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { LogoProps } from "./logo";
+import type { RLLogoProps } from "./logo";
 import { logoTheme } from "./logo.theme";
 import uiConfig from "virtual:rimelight/ui";
-
-export interface RLLogoProps extends LogoProps {
-  children?: JSX.Element;
-  src?: string;
-}
 
 export const RLLogo: Component<RLLogoProps> = (allProps) => {
   const props = allProps;
@@ -22,6 +16,28 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "icon",
+    "text",
+    "fallback",
+    "initials",
+    "size",
+    "color",
+    "chip",
+    "badge",
+    "badgeColor",
+    "badgePosition",
+    "loading",
+    "referrerpolicy",
+    "crossorigin",
+    "decoding",
+    "height",
+    "width",
+    "sizes",
+    "srcset",
+    "usemap",
+    "title",
+    "subtitle",
+    "label",
   );
 
   const variant = () => props.variant || "logomark";

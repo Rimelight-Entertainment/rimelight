@@ -8,21 +8,9 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ModalProps } from "./modal";
+import type { RLModalProps } from "./modal";
 import { modalTheme } from "./modal.theme";
 import { RLButton } from "../button/RLButton";
-
-export interface RLModalProps extends ModalProps {
-  onClose?: () => void;
-  children?: JSX.Element;
-  trigger?: JSX.Element;
-  triggerSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
-}
 
 export const RLModal: Component<RLModalProps> = (allProps) => {
   const props = allProps;

@@ -7,13 +7,8 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ScrollAreaProps } from "./scroll-area";
+import type { RLScrollAreaProps } from "./scroll-area";
 import { scrollAreaTheme } from "./scroll-area.theme";
-
-export interface RLScrollAreaProps extends ScrollAreaProps {
-  children?: JSX.Element;
-}
 
 export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
   const props = allProps;

@@ -7,25 +7,9 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { DrawerProps } from "./drawer";
+import type { RLDrawerProps } from "./drawer";
 import { drawerTheme } from "./drawer.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLDrawerProps extends DrawerProps {
-  children?: JSX.Element;
-  trigger?: JSX.Element;
-  triggerSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  closeOnClickOutside?: boolean;
-  closeOnEscape?: boolean;
-  lockScroll?: boolean;
-}
 
 export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
   const props = allProps;

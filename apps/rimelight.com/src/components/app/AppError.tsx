@@ -2,14 +2,14 @@ import { type Component, Show, For } from "solid-js";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
-import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
-import type { BadgeProps } from "@rimelight/ui/components/badge/badge.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.ts";
 import type { ThemeColor } from "@rimelight/ui/types.ts";
 
 export interface Action {
   label: string;
   href: string;
-  variant?: ButtonProps["variant"];
+  variant?: RLButtonProps["variant"];
   color?: ThemeColor;
   icon?: string;
 }
@@ -27,7 +27,7 @@ interface StatusThemeConfig {
   icon: string;
   iconBoxClass: string;
   dotClass: string;
-  badgeColor: BadgeProps["color"];
+  badgeColor: RLBadgeProps["color"];
 }
 
 const statusConfig: Record<number, StatusThemeConfig> = {

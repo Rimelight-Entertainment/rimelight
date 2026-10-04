@@ -1,19 +1,7 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { InputProps } from "./input";
+import type { RLInputProps } from "./input";
 import { inputTheme } from "./input.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLInputProps extends InputProps {
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
-  ref?: HTMLInputElement | ((el: HTMLInputElement) => void);
-  leading?: JSX.Element;
-  trailing?: JSX.Element;
-}
 
 export const RLInput: Component<RLInputProps> = (allProps) => {
   const props = allProps;

@@ -1,13 +1,8 @@
 import { createMemo, omit, For, Show, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { LinkGroupProps } from "./link-group";
+import type { RLLinkGroupProps } from "./link-group";
 import { linkGroupTheme } from "./link-group.theme";
 import { RLLink } from "../link/RLLink";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLLinkGroupProps extends LinkGroupProps {
-  children?: JSX.Element;
-}
 
 export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
   const props = allProps;

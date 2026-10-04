@@ -1,8 +1,7 @@
 import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { isServer } from "@solidjs/web";
 import type {
-  TableProps,
+  RLTableProps,
   TableColumn,
   TableRow,
   TableGroup,
@@ -26,18 +25,6 @@ import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
 import { RLIcon } from "../icon/RLIcon";
 
 type AnyData = Record<string, any>;
-
-export interface RLTableProps<T = any> extends TableProps<T> {
-  ref?: (api: TableApi<T>) => void | TableApi<T>;
-  toolbar?: () => JSX.Element;
-  captionContent?: () => JSX.Element;
-  groupHeader?: (group: TableGroup<T>, colSpan: number) => JSX.Element;
-  expandedContent?: (row: TableRow<T>) => JSX.Element;
-  loadingContent?: () => JSX.Element;
-  emptyContent?: () => JSX.Element;
-  bodyTop?: () => JSX.Element;
-  bodyBottom?: () => JSX.Element;
-}
 
 function getNestedValue(obj: AnyData, key: string): any {
   if (!obj || typeof obj !== "object") return undefined;

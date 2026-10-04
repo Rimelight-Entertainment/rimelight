@@ -1,4 +1,6 @@
-export interface PageBodyProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLPageBodyProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface PageBodyProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

@@ -7,17 +7,9 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { HeaderProps } from "./header";
+import type { RLHeaderProps } from "./header";
 import { headerTheme } from "./header.theme";
 import { useHeaderStack } from "./useHeaderStack";
-
-export interface RLHeaderProps extends HeaderProps {
-  layerType?: "header" | "banner";
-  left?: JSX.Element;
-  center?: JSX.Element;
-  right?: JSX.Element;
-  children?: JSX.Element;
-}
 
 export const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const props = allProps;

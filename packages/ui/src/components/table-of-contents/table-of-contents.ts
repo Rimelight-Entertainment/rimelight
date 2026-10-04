@@ -9,7 +9,7 @@ export interface TableOfContentsConfig {
   maxHeadingLevel?: number;
 }
 
-export interface TableOfContentsProps {
+export interface RLTableOfContentsProps {
   headings: TableOfContentsHeading[];
   /**
    * False = hide entirely, object = heading level bounds

@@ -1,5 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-export interface FileUploadProps {
+
+export interface RLFileUploadProps {
   /**
    * Accepted file types (e.g. 'image/*', 'application/pdf').
    */
@@ -36,5 +38,17 @@ export interface FileUploadProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  /**
+   * Click event handler.
+   */
+  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+  /**
+   * Slot for the icon.
+   */
+  iconSlot?: JSX.Element;
+  /**
+   * Default slot children.
+   */
+  children?: JSX.Element;
   [key: string]: unknown;
 }

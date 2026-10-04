@@ -1,4 +1,6 @@
-export interface ColorPickerProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLColorPickerProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface ColorPickerProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

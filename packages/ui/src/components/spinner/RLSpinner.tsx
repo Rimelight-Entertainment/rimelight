@@ -1,8 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { SpinnerProps } from "./spinner";
+import type { RLSpinnerProps } from "./spinner";
 import { spinnerTheme } from "./spinner.theme";
-
-export interface RLSpinnerProps extends SpinnerProps {}
 
 export const RLSpinner: Component<RLSpinnerProps> = (allProps) => {
   const props = allProps;

@@ -8,23 +8,10 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { Portal } from "@solidjs/web";
-import type { SlideoverProps } from "./slideover";
+import type { RLSlideoverProps } from "./slideover";
 import { slideoverTheme } from "./slideover.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLSlideoverProps extends SlideoverProps {
-  children?: JSX.Element;
-  trigger?: JSX.Element;
-  triggerSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
 
 export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   const props = allProps;

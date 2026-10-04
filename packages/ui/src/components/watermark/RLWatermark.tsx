@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { WatermarkProps } from "./watermark";
+import type { RLWatermarkProps } from "./watermark";
 import { watermarkTheme } from "./watermark.theme";
-
-export interface RLWatermarkProps extends WatermarkProps {
-  children?: JSX.Element;
-}
 
 export const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
   const props = allProps;

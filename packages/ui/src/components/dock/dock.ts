@@ -1,4 +1,6 @@
-export interface DockProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLDockProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface DockProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

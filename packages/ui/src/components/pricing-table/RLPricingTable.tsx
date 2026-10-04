@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PricingTableProps } from "./pricing-table";
+import type { RLPricingTableProps } from "./pricing-table";
 import { pricingTableTheme } from "./pricing-table.theme";
-
-export interface RLPricingTableProps extends PricingTableProps {
-  children?: JSX.Element;
-}
 
 export const RLPricingTable: Component<RLPricingTableProps> = (allProps) => {
   const props = allProps;

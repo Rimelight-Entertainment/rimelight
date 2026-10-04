@@ -1,12 +1,8 @@
 import { children, createMemo, omit, For, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { AvatarGroupProps } from "./avatar-group";
+import { dynamic } from "@solidjs/web";
+import type { RLAvatarGroupProps } from "./avatar-group";
 import { avatarGroupTheme } from "./avatar-group.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
-
-export interface RLAvatarGroupProps extends AvatarGroupProps {
-  children?: JSX.Element;
-}
 
 export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
   const props = allProps;

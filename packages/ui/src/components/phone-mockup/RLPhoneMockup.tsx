@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PhoneMockupProps } from "./phone-mockup";
+import type { RLPhoneMockupProps } from "./phone-mockup";
 import { phoneMockupTheme } from "./phone-mockup.theme";
-
-export interface RLPhoneMockupProps extends PhoneMockupProps {
-  children?: JSX.Element;
-}
 
 export const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {
   const props = allProps;

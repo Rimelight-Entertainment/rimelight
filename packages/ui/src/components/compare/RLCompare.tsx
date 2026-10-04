@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { CompareProps } from "./compare";
+import type { RLCompareProps } from "./compare";
 import { compareTheme } from "./compare.theme";
-
-export interface RLCompareProps extends CompareProps {
-  children?: JSX.Element;
-}
 
 export const RLCompare: Component<RLCompareProps> = (allProps) => {
   const props = allProps;

@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { TreeProps } from "./tree";
+import type { RLTreeProps } from "./tree";
 import { treeTheme } from "./tree.theme";
-
-export interface RLTreeProps extends TreeProps {
-  children?: JSX.Element;
-}
 
 export const RLTree: Component<RLTreeProps> = (allProps) => {
   const props = allProps;

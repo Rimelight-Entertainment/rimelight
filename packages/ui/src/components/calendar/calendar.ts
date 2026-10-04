@@ -1,168 +1,108 @@
+import type { Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
-import type { ButtonProps } from "../button/button";
 
-export type CalendarType = "date" | "month" | "year";
-export type CalendarView = "day" | "month" | "year";
-export type CalendarWeekdayFormat = "narrow" | "short" | "long";
+export type CalendarModelValue = string | Date | number | CalendarRangeValue | Date[] | null;
+export type CalendarRangeValue = { start: Date; end: Date };
 
-export interface CalendarRangeValue {
-  start?: Date | null;
-  end?: Date | null;
-}
-
-export type CalendarModelValue = Date | Date[] | CalendarRangeValue | null | undefined;
-
-export type CalendarControl = Partial<ButtonProps>;
-
-export interface CalendarHeadingContext {
-  value: string;
-  view: CalendarView;
-  date: Date;
-  setView: (view: CalendarView) => void;
-  setPlaceholder: (date: Date) => void;
-}
-
-export interface CalendarProps {
-  /**
-   * The element or component this component should render as.
-   * @default "div"
-   */
-  as?: any;
-  /**
-   * The type of picker.
-   * - `date` renders a day calendar whose heading can switch to a month then year view.
-   * - `month` renders a standalone month picker.
-   * - `year` renders a standalone year picker.
-   * @default "date"
-   */
-  type?: CalendarType;
-  /** The icon to use for the next year control. @default "chevronDoubleRight" */
-  nextYearIcon?: any;
-  /** Configure the next year button. `{ color: "neutral", variant: "ghost" }` */
-  nextYear?: CalendarControl;
-  /** The icon to use for the next month control. @default "chevronRight" */
-  nextMonthIcon?: any;
-  /** Configure the next month button. `{ color: "neutral", variant: "ghost" }` */
-  nextMonth?: CalendarControl;
-  /** The icon to use for the previous year control. @default "chevronDoubleLeft" */
-  prevYearIcon?: any;
-  /** Configure the prev year button. `{ color: "neutral", variant: "ghost" }` */
-  prevYear?: CalendarControl;
-  /** The icon to use for the previous month control. @default "chevronLeft" */
-  prevMonthIcon?: any;
-  /** Configure the prev month button. `{ color: "neutral", variant: "ghost" }` */
-  prevMonth?: CalendarControl;
-  /**
-   * Whether to make the heading a button that switches between the day, month and year views.
-   * Has no effect when `type` is `year`. Can be an object to override the button props.
-   * @default true
-   */
-  viewControl?: boolean | CalendarControl;
-  /** @default "primary" */
-  color?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "error"
-    | "neutral"
-    | ThemeColor;
-  /** @default "solid" */
-  variant?: "solid" | "outline" | "soft" | "subtle";
-  /** @default "md" */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /** Whether or not a range of dates can be selected */
-  range?: boolean;
-  /** Whether or not multiple dates can be selected */
-  multiple?: boolean;
-  /** Show month controls @default true */
-  monthControls?: boolean;
-  /** Show year controls @default true */
-  yearControls?: boolean;
-  /** The default selected value (uncontrolled) */
-  defaultValue?: CalendarModelValue;
-  /** The selected value (controlled) */
+export interface RLCalendarProps {
+  type?: "date" | "month" | "year";
+  view?: "day" | "month" | "year";
+  weekdayFormat?: "narrow" | "short" | "long";
+  defaultOptions?: Intl.DateTimeFormatOptions;
   modelValue?: CalendarModelValue;
-  /** Show week numbers */
-  weekNumbers?: boolean;
-  /** The default displayed date (uncontrolled) */
-  defaultPlaceholder?: Date;
-  /** The displayed date (controlled) */
-  placeholder?: Date;
-  /** When combined with `isDateUnavailable`, determines whether non-contiguous ranges may be selected */
-  allowNonContiguousRanges?: boolean;
-  /** Whether the previous and next buttons navigate by the number of months displayed at once */
-  pagedNavigation?: boolean;
-  /** Whether to prevent the user from deselecting a date without selecting another first */
-  preventDeselect?: boolean;
-  /** The maximum number of days that can be selected in a range */
-  maximumDays?: number;
-  /** The day of the week to start the calendar on (0 = Sunday) */
-  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-  /** The format to use for the weekday strings */
-  weekdayFormat?: CalendarWeekdayFormat;
-  /** Whether to always display 6 weeks in the calendar @default true */
-  fixedWeeks?: boolean;
-  /** The maximum date that can be selected */
-  maxValue?: Date;
-  /** The minimum date that can be selected */
-  minValue?: Date;
-  /** The locale to use for formatting dates */
-  locale?: string;
-  /** The number of months to display at once */
-  numberOfMonths?: number;
-  /** Whether the calendar is disabled */
+  onUpdateModelValue?: (value: string | Date) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  shortcuts?: Array<{ label: string; value: string }>;
+  showTime?: boolean;
+  displayWeek?: boolean;
+  months?: string[];
+  showWeekNumber?: boolean;
+  hoverState?: "enabled" | "disabled";
+  allowSameDay?: boolean;
+  showConfirmButton?: boolean;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+  confirmButtonAriaLabel?: string;
+  cancelButtonAriaLabel?: string;
+  confirmText?: string;
+  cancelText?: string;
+  confirmButtonType?: "primary" | "default" | "danger";
+  showClose?: boolean;
+  closeButtonAriaLabel?: string;
+  appendTo?: string | HTMLElement;
+  teleport?: string;
+  zIndex?: number | string;
+  beforeClose?: (done: boolean) => void;
+  enterTransition?: any;
+  leaveTransition?: any;
+  beforeEnter?: any;
+  afterEnter?: any;
+  afterLeave?: any;
+  enterClass?: string;
+  leaveClass?: string;
+  name?: string;
+  ariaLabel?: string;
+  ariaDescribedby?: string;
   disabled?: boolean;
-  /** Whether the calendar is readonly */
   readonly?: boolean;
-  /** Focus the selected/today/first date on mount */
-  initialFocus?: boolean;
-  /** A function that returns whether a date is disabled */
+  weekNumbers?: boolean;
+  numberOfMonths?: number;
+  placeholder?: Date;
+  defaultPlaceholder?: Date;
+  defaultValue?: Date | Date[] | CalendarRangeValue;
+  minValue?: Date;
+  maxValue?: Date;
   isDateDisabled?: (date: Date) => boolean;
-  /** A function that returns whether a date is unavailable */
   isDateUnavailable?: (date: Date) => boolean;
-  /** A function that returns whether a date is highlightable */
-  isDateHighlightable?: (date: Date) => boolean;
-  /** A function that returns the next page of the calendar */
-  nextPage?: (placeholder: Date) => Date;
-  /** A function that returns the previous page of the calendar */
-  prevPage?: (placeholder: Date) => Date;
-  /** Whether to disable days outside the current view */
-  disableDaysOutsideCurrentView?: boolean;
-  /** Which part of the range should be fixed */
-  fixedDate?: "start" | "end";
-  /** A function that returns whether a month is disabled */
-  isMonthDisabled?: (date: Date) => boolean;
-  /** A function that returns whether a month is unavailable */
-  isMonthUnavailable?: (date: Date) => boolean;
-  /** A function that returns whether a year is disabled */
-  isYearDisabled?: (date: Date) => boolean;
-  /** A function that returns whether a year is unavailable */
-  isYearUnavailable?: (date: Date) => boolean;
-  /** The accessible label for the calendar */
-  calendarLabel?: string;
-  /** Slot-specific CSS class overrides. */
-  ui?: Record<string, any>;
-  /** Additional CSS classes to apply to the root element. */
+  fixedWeeks?: boolean;
+  pagedNavigation?: boolean;
+  multiple?: boolean;
+  range?: boolean;
+  initialFocus?: boolean;
+  prevPage?: (date: Date) => Date;
+  nextPage?: (date: Date) => Date;
+  color?: string;
+  variant?: string;
+  size?: string;
   class?: any;
-  /** Called whenever the model value changes. */
-  onUpdateValue?: (value: CalendarModelValue) => void;
-  /** Called whenever the displayed date changes. */
+  ui?: any;
+  calendarLabel?: string;
+  headingSlot?: () => JSX.Element;
+  weekDaySlot?: (ctx: any) => any;
+  daySlot?: (ctx: any) => any;
+  monthCellSlot?: (ctx: any) => any;
+  yearCellSlot?: (ctx: any) => any;
+  children?: any;
+  locale?: string;
+  viewControl?: boolean;
+  monthControls?: boolean;
+  yearControls?: boolean;
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   onUpdatePlaceholder?: (date: Date) => void;
-  /** Called whenever a valid range is committed. */
+  onUpdateValue?: (value: CalendarModelValue | undefined) => void;
+  disableDaysOutsideCurrentView?: boolean;
+  preventDeselect?: boolean;
+  fixedDate?: "start" | "end";
+  prevMonth?: () => void;
+  prevMonthIcon?: string;
+  nextMonth?: () => void;
+  nextMonthIcon?: string;
+  prevYear?: () => void;
+  prevYearIcon?: string;
+  nextYear?: () => void;
+  nextYearIcon?: string;
+  prevLabel?: string;
+  nextLabel?: string;
+  maximumDays?: number;
+  allowNonContiguousRanges?: boolean;
+  isMonthDisabled?: (date: Date) => boolean;
+  isMonthUnavailable?: (date: Date) => boolean;
+  isYearDisabled?: (date: Date) => boolean;
+  isYearUnavailable?: (date: Date) => boolean;
+  onUpdateStartValue?: (value: Date | undefined) => void;
   onUpdateValidValue?: (value: CalendarRangeValue) => void;
-  /** Called whenever the range start changes. */
-  onUpdateStartValue?: (date: Date | undefined) => void;
-  /** Replaces the heading content. */
-  headingSlot?: (ctx: CalendarHeadingContext) => JSX.Element;
-  /** Replaces the day cell content. */
-  daySlot?: (ctx: { day: Date }) => JSX.Element;
-  /** Replaces the weekday header content. */
-  weekDaySlot?: (ctx: { day: string }) => JSX.Element;
-  /** Replaces the month cell content. */
-  monthCellSlot?: (ctx: { month: Date; selected: boolean; disabled: boolean }) => JSX.Element;
-  /** Replaces the year cell content. */
-  yearCellSlot?: (ctx: { year: Date; selected: boolean; disabled: boolean }) => JSX.Element;
+  as?: string | Component<Record<string, unknown>>;
+  [key: string]: unknown;
 }

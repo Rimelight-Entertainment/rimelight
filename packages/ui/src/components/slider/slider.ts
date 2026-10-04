@@ -1,6 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
-export interface SliderProps {
+export interface RLSliderProps {
   /**
    * The value of the range input.
    */
@@ -26,7 +27,7 @@ export interface SliderProps {
    */
   color?: ThemeColor;
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * Theme mode override — pins colors to flat, light, or dark mode.
    */
   theme?: Theme;
   /**
@@ -37,5 +38,8 @@ export interface SliderProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  defaultValue?: number;
+  onChange?: (val: number) => void;
   [key: string]: unknown;
 }

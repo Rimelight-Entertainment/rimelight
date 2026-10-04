@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { StepsProps } from "./steps";
+import type { RLStepsProps } from "./steps";
 import { stepsTheme } from "./steps.theme";
-
-export interface RLStepsProps extends StepsProps {
-  children?: JSX.Element;
-}
 
 export const RLSteps: Component<RLStepsProps> = (allProps) => {
   const props = allProps;

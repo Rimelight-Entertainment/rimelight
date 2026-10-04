@@ -1,25 +1,12 @@
-export interface ThemeSelectorProps {
-  /**
-   * The display mode of the theme selector.
-   *
-   * @default "select"
-   */
+import type { JSX } from "@solidjs/web";
+
+export interface RLThemeSelectorProps {
   mode?: "select" | "icon";
-  /**
-   * The size of the select/button.
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /**
-   * Theme variant/mode.
-   */
-  theme?: "light" | "dark";
-  /**
-   * Slot-specific CSS class overrides.
-   */
+  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+  theme?: string;
   ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any;
+  children?: JSX.Element;
+  onChange?: (theme: string) => void;
   [key: string]: unknown;
 }

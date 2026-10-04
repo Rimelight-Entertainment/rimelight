@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChatPromptSubmitProps } from "./chat-prompt-submit";
+import type { RLChatPromptSubmitProps } from "./chat-prompt-submit";
 import { chatPromptSubmitTheme } from "./chat-prompt-submit.theme";
-
-export interface RLChatPromptSubmitProps extends ChatPromptSubmitProps {
-  children?: JSX.Element;
-}
 
 export const RLChatPromptSubmit: Component<RLChatPromptSubmitProps> = (allProps) => {
   const props = allProps;

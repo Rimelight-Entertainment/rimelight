@@ -1,21 +1,10 @@
 import { createMemo, For, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { Dynamic } from "@solidjs/web";
-import type { TimelineProps, TimelineItem } from "./timeline";
+import type { JSX } from "@solidjs/web";
+import type { RLTimelineProps, TimelineItem } from "./timeline";
 import { timelineTheme } from "./timeline.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLTimelineProps extends TimelineProps {
-  children?:
-    | JSX.Element
-    | ((ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element);
-  indicator?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  wrapper?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  date?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  title?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-}
 
 export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
   const props = allProps;

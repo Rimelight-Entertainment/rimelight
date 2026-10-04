@@ -1,12 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { TooltipProps } from "./tooltip";
+import type { RLTooltipProps } from "./tooltip";
 import { tooltipTheme } from "./tooltip.theme";
-
-export interface RLTooltipProps extends TooltipProps {
-  children?: JSX.Element;
-  contentSlot?: JSX.Element;
-}
 
 export const RLTooltip: Component<RLTooltipProps> = (allProps) => {
   const props = allProps;

@@ -1,41 +1,29 @@
-import type { Theme } from "../../types";
+import type { JSX } from "@solidjs/web";
 
-export interface CardProps {
-  /**
-   * The visual style variant of the card.
-   */
-  variant?: "solid" | "outline" | "soft" | "subtle";
-  /**
-   * Theme mode override.
-   */
-  theme?: Theme;
-  /**
-   * Card heading title.
-   */
-  title?: string;
-  /**
-   * Subtitle description text.
-   */
-  description?: string;
-  /**
-   * Media source (e.g. image url) displayed at top.
-   */
-  mediaSrc?: string;
-  /**
-   * Link reference makes the entire card interactive.
-   */
-  href?: string;
-  /**
-   * Glassmorphism or overlay style.
-   */
-  overlay?: boolean;
-  /**
-   * Slot-specific CSS class overrides.
-   */
+export interface RLCardProps {
+  resizable?: boolean;
+  defaultSize?: number;
+  minSize?: number;
+  maxSize?: number;
   ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any;
+  children?: JSX.Element;
+  header?: JSX.Element;
+  headerSlot?: JSX.Element;
+  body?: JSX.Element;
+  bodySlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  resizeHandle?: JSX.Element;
+  resizeHandleSlot?: JSX.Element;
+  description?: string;
+  href?: string;
+  title?: any;
+  titleStr?: string;
+  mediaSrc?: string;
+  overlay?: JSX.Element;
+  media?: JSX.Element;
+  variant?: string;
+  theme?: string;
   [key: string]: unknown;
 }

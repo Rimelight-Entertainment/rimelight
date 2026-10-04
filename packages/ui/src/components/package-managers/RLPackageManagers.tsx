@@ -1,18 +1,6 @@
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
-
-type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp";
-type CommandType = "add" | "create" | "dlx" | "exec" | "install" | "remove" | "run";
-
-export interface RLPackageManagersProps {
-  pkg?: string;
-  type?: CommandType;
-  dev?: boolean;
-  args?: string;
-  comment?: string;
-  prefix?: string;
-  managers?: Manager[];
-}
+import type { RLPackageManagersProps, Manager, CommandType } from "./package-managers";
 
 const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: string }> = {
   npm: {

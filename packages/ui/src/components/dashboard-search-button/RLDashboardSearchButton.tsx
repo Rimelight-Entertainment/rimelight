@@ -1,13 +1,8 @@
 import { createMemo, For, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { DashboardSearchButtonProps } from "./dashboard-search-button";
+import type { RLDashboardSearchButtonProps } from "./dashboard-search-button";
 import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLDashboardSearchButtonProps extends DashboardSearchButtonProps {
-  children?: JSX.Element;
-  trailingSlot?: JSX.Element;
-}
 
 export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
   const props = allProps;

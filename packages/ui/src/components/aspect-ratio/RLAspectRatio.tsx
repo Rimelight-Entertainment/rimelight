@@ -1,11 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { AspectRatioProps } from "./aspect-ratio";
+import { dynamic } from "@solidjs/web";
+import type { RLAspectRatioProps } from "./aspect-ratio";
 import { aspectRatioTheme } from "./aspect-ratio.theme";
-
-export interface RLAspectRatioProps extends AspectRatioProps {
-  children?: JSX.Element;
-}
 
 export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
   const props = allProps;

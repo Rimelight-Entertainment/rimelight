@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { PageBodyProps } from "./page-body";
+import type { RLPageBodyProps } from "./page-body";
 import { pageBodyTheme } from "./page-body.theme";
-
-export interface RLPageBodyProps extends PageBodyProps {
-  children?: JSX.Element;
-}
 
 export const RLPageBody: Component<RLPageBodyProps> = (allProps) => {
   const props = allProps;

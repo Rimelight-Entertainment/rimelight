@@ -1,11 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import type { DashboardGroupProps } from "./dashboard-group";
+import { dynamic } from "@solidjs/web";
+import type { RLDashboardGroupProps } from "./dashboard-group";
 import { dashboardGroupTheme } from "./dashboard-group.theme";
-
-export interface RLDashboardGroupProps extends DashboardGroupProps {
-  children?: JSX.Element;
-}
 
 export const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
   const props = allProps;

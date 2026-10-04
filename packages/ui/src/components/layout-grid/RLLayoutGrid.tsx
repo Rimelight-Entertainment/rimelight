@@ -8,7 +8,7 @@ import {
   type Component,
 } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { LayoutGridProps } from "./layout-grid";
+import type { RLLayoutGridProps } from "./layout-grid";
 import { layoutGridTheme } from "./layout-grid.theme";
 import { defineShortcuts } from "../../shortcuts";
 
@@ -34,8 +34,6 @@ const hexToRgba = (hex: string, alpha: number): string => {
   const b = num & 255;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
-
-export interface RLLayoutGridProps extends LayoutGridProps {}
 
 export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
   const props = allProps;

@@ -1,21 +1,7 @@
 import { createMemo, createSignal, For, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { StepperProps, StepperItem } from "./stepper";
+import type { RLStepperProps, StepperItem } from "./stepper";
 import { stepperTheme } from "./stepper.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLStepperProps extends StepperProps {
-  children?: JSX.Element;
-  indicator?: (ctx: {
-    item: StepperItem;
-    index: number;
-    state: "completed" | "active" | "inactive";
-  }) => JSX.Element;
-  wrapper?: (ctx: { item: StepperItem; index: number }) => JSX.Element;
-  onChange?: (ctx: { index: number; value: string | number }) => void;
-  onNext?: (ctx: { index: number; value: string | number }) => void;
-  onPrev?: (ctx: { index: number; value: string | number }) => void;
-}
 
 export const RLStepper: Component<RLStepperProps> = (allProps) => {
   const props = allProps;

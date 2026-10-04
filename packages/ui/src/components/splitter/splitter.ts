@@ -1,4 +1,6 @@
-export interface SplitterProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLSplitterProps {
   /**
    * Resizing orientation.
    */
@@ -15,5 +17,7 @@ export interface SplitterProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  panels?: JSX.Element[];
   [key: string]: unknown;
 }

@@ -1,5 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-export interface ToastProps {
+
+export interface RLToastProps {
   /**
    * Main toast title.
    */
@@ -36,5 +38,10 @@ export interface ToastProps {
    * Whether the toast can be dismissed by user or timeout.
    */
   dismissable?: boolean;
+  onDismiss?: () => void;
+  children?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  actionsSlot?: JSX.Element;
   [key: string]: unknown;
 }

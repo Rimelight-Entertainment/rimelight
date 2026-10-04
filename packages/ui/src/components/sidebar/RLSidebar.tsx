@@ -1,18 +1,8 @@
 import { children, createMemo, For, Show, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { SidebarItem, SidebarProps } from "./sidebar";
+import type { RLSidebarProps, SidebarItem } from "./sidebar";
 import { sidebarTheme } from "./sidebar.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLSidebarProps extends SidebarProps {
-  children?: JSX.Element;
-  header?: JSX.Element;
-  headerSlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
-  _depth?: number;
-}
 
 function hasActiveChild(item: SidebarItem): boolean {
   if (item.active) return true;

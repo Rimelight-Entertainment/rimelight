@@ -1,4 +1,6 @@
-export interface DrawerProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLDrawerProps {
   /**
    * Controlled open state.
    */
@@ -27,5 +29,17 @@ export interface DrawerProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+  lockScroll?: boolean;
   [key: string]: unknown;
 }

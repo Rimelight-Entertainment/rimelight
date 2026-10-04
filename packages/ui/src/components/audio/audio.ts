@@ -1,3 +1,5 @@
+import type { JSX } from "@solidjs/web";
+
 export interface AudioSource {
   src: string;
   type?: string | undefined;
@@ -49,7 +51,7 @@ export interface AudioIconOverrides {
   externalLink?: string | undefined;
 }
 
-export interface AudioProps {
+export interface RLAudioProps {
   /**
    * Audio source URL or array of source objects with mime types.
    */
@@ -255,5 +257,18 @@ export interface AudioProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element | undefined;
+  transcript?: JSX.Element | undefined;
+  headerSlot?: JSX.Element | undefined;
+  timelineSlot?: JSX.Element | undefined;
+  controlsSlot?: JSX.Element | undefined;
+  artworkSlot?: JSX.Element | undefined;
+  onPlay?: (() => void) | undefined;
+  onPause?: (() => void) | undefined;
+  onEnded?: (() => void) | undefined;
+  onTrackChange?: ((index: number, track: AudioTrackItem) => void) | undefined;
+  onTimeUpdate?: ((currentTime: number, duration: number) => void) | undefined;
+  onVolumeChange?: ((volume: number, muted: boolean) => void) | undefined;
+  onRepeatModeChange?: ((mode: AudioRepeatMode) => void) | undefined;
   [key: string]: unknown;
 }

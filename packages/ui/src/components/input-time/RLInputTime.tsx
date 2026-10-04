@@ -1,28 +1,7 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { InputTimeProps } from "./input-time";
+import type { RLInputTimeProps } from "./input-time";
 import { inputTimeTheme } from "./input-time.theme";
 import { inputTheme } from "../input/input.theme";
-
-export interface RLInputTimeProps extends InputTimeProps {
-  children?: JSX.Element;
-  value?: string;
-  defaultValue?: string;
-  name?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  readonly?: boolean;
-  required?: boolean;
-  min?: string;
-  max?: string;
-  step?: number;
-  size?: "sm" | "md" | "lg";
-  onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
-}
 
 export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
   const props = allProps;

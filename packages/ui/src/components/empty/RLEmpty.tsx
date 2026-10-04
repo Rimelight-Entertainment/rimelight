@@ -1,21 +1,9 @@
 import { children, createMemo, omit, For, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { EmptyProps } from "./empty";
+import type { RLEmptyProps } from "./empty";
 import { emptyTheme } from "./empty.theme";
 import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLEmptyProps extends EmptyProps {
-  children?: JSX.Element;
-  headerSlot?: JSX.Element;
-  leadingSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  bodySlot?: JSX.Element;
-  actionsSlot?: JSX.Element;
-  footerSlot?: JSX.Element;
-}
 
 export const RLEmpty: Component<RLEmptyProps> = (allProps) => {
   const props = allProps;

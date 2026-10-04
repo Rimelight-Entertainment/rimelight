@@ -1,25 +1,20 @@
-export interface CarouselSlide {
+import type { JSX } from "@solidjs/web";
+
+export type CarouselSlide = {
+  src?: string;
   imageSrc?: string;
+  alt?: string;
+  caption?: string;
   title?: string;
   description?: string;
-}
+  [key: string]: unknown;
+};
 
-export interface CarouselProps {
-  /**
-   * The list of slide items to render.
-   */
+export interface RLCarouselProps {
   slides?: CarouselSlide[];
-  /**
-   * Controlled autoplay.
-   */
   autoplay?: boolean;
-  /**
-   * Slot-specific CSS class overrides.
-   */
   ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

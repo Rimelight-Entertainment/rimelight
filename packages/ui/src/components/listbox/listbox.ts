@@ -1,4 +1,6 @@
-export interface ListboxProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLListboxProps {
   /**
    * Slot-specific CSS class overrides.
    */
@@ -7,5 +9,6 @@ export interface ListboxProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }

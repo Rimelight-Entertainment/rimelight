@@ -1,14 +1,7 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { CheckboxProps } from "./checkbox";
+import type { RLCheckboxProps } from "./checkbox";
 import { checkboxTheme } from "./checkbox.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLCheckboxProps extends CheckboxProps {
-  id?: string;
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  children?: JSX.Element;
-}
 
 export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
   const props = allProps;

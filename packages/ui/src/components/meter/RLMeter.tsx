@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { MeterProps } from "./meter";
+import type { RLMeterProps } from "./meter";
 import { meterTheme } from "./meter.theme";
-
-export interface RLMeterProps extends MeterProps {
-  children?: JSX.Element;
-}
 
 export const RLMeter: Component<RLMeterProps> = (allProps) => {
   const props = allProps;

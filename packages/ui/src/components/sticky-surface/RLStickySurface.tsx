@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { StickySurfaceProps } from "./sticky-surface";
+import type { RLStickySurfaceProps } from "./sticky-surface";
 import { stickySurfaceTheme } from "./sticky-surface.theme";
-
-export interface RLStickySurfaceProps extends StickySurfaceProps {
-  children?: JSX.Element;
-}
 
 export const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
   const props = allProps;

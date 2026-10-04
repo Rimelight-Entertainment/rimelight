@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { SpoilerProps } from "./spoiler";
+import type { RLSpoilerProps } from "./spoiler";
 import { spoilerTheme } from "./spoiler.theme";
-
-export interface RLSpoilerProps extends SpoilerProps {
-  children?: JSX.Element;
-}
 
 export const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
   const props = allProps;

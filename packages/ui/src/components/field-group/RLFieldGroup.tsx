@@ -1,13 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { FieldGroupProps } from "./field-group";
+import type { RLFieldGroupProps } from "./field-group";
 import { fieldGroupTheme } from "./field-group.theme";
-
-export interface RLFieldGroupProps extends Omit<FieldGroupProps, "prepend" | "append"> {
-  prepend?: JSX.Element;
-  append?: JSX.Element;
-  children?: JSX.Element;
-}
 
 export const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
   const props = allProps;

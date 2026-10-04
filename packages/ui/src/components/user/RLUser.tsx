@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { UserProps } from "./user";
+import type { RLUserProps } from "./user";
 import { userTheme } from "./user.theme";
-
-export interface RLUserProps extends UserProps {
-  children?: JSX.Element;
-}
 
 export const RLUser: Component<RLUserProps> = (allProps) => {
   const props = allProps;

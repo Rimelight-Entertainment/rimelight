@@ -1,11 +1,6 @@
 import { createMemo, For, Show, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { ChartProps, ChartDataPoint } from "./chart";
+import type { RLChartProps, ChartDataPoint } from "./chart";
 import { chartTheme } from "./chart.theme";
-
-export interface RLChartProps extends ChartProps {
-  children?: JSX.Element;
-}
 
 const palette = [
   "hsl(221 83% 53%)",

@@ -1,13 +1,8 @@
 import { children, createMemo, createSignal, For, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { SplitterProps } from "./splitter";
+import type { RLSplitterProps } from "./splitter";
 import { splitterTheme } from "./splitter.theme";
 import { RLIcon } from "../icon/RLIcon";
-
-export interface RLSplitterProps extends SplitterProps {
-  children?: JSX.Element;
-  panels?: JSX.Element[];
-}
 
 interface DragState {
   i: number;

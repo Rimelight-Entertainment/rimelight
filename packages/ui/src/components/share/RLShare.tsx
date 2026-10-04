@@ -1,20 +1,6 @@
 import { createSignal, onCleanup, omit, type Component } from "solid-js";
-import type { ButtonProps } from "../button/button";
+import type { RLShareProps } from "./share";
 import { RLButton } from "../button/RLButton";
-
-export interface RLShareProps extends Omit<
-  ButtonProps,
-  | "href"
-  | "label"
-  | "leadingIcon"
-  | "trailingIcon"
-  | "loading"
-  | "loadingAuto"
-  | "square"
-  | "active"
-  | "activeColor"
-  | "activeVariant"
-> {}
 
 export const RLShare: Component<RLShareProps> = (allProps) => {
   const props = allProps;

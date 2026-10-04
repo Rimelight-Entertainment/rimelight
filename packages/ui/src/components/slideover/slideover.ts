@@ -1,4 +1,6 @@
-export interface SlideoverProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLSlideoverProps {
   /**
    * The edge the sheet slides in from.
    */
@@ -31,5 +33,14 @@ export interface SlideoverProps {
    * Keep content mounted in the DOM when hidden.
    */
   unmountOnHide?: boolean;
+  children?: JSX.Element;
+  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
+  titleSlot?: JSX.Element;
+  descriptionSlot?: JSX.Element;
+  footer?: JSX.Element;
+  footerSlot?: JSX.Element;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   [key: string]: unknown;
 }

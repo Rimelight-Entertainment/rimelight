@@ -1,4 +1,4 @@
-export interface SkeletonProps {
+export interface RLSkeletonProps {
   /**
    * The visual rounding variant.
    */

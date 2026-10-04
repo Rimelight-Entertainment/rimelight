@@ -9,51 +9,12 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { CalloutProps } from "./callout";
+import type { RLCalloutProps } from "./callout";
 import { calloutTheme } from "./callout.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
-import type { ButtonProps } from "../button/button";
-
-export interface RLCalloutProps extends CalloutProps {
-  /**
-   * Children content rendered inside the callout description/content area.
-   */
-  children?: JSX.Element | undefined;
-  /**
-   * Replaces the leading icon and avatar.
-   */
-  leading?: JSX.Element | undefined;
-  /**
-   * Alias for the leading icon slot.
-   */
-  iconSlot?: JSX.Element | undefined;
-  /**
-   * Replaces title text.
-   */
-  titleSlot?: JSX.Element | undefined;
-  /**
-   * Replaces description text.
-   */
-  descriptionSlot?: JSX.Element | undefined;
-  /**
-   * Replaces action buttons.
-   */
-  actionsSlot?: JSX.Element | undefined;
-  /**
-   * Replaces the close button.
-   */
-  closeSlot?: JSX.Element | undefined;
-  /**
-   * Custom avatar slot override.
-   */
-  avatarSlot?: JSX.Element | undefined;
-  /**
-   * Extra header area slot.
-   */
-  headerSlot?: JSX.Element | undefined;
-}
+import type { RLButtonProps } from "../button/button";
 
 export const RLCallout: Component<RLCalloutProps> = (allProps) => {
   const props = allProps;
@@ -141,8 +102,8 @@ export const RLCallout: Component<RLCalloutProps> = (allProps) => {
     props.onOpenChange?.(false);
   };
 
-  const closeButtonProps = createMemo((): ButtonProps => {
-    const base: ButtonProps = {
+  const closeButtonProps = createMemo((): RLButtonProps => {
+    const base: RLButtonProps = {
       size: "md",
       color: "neutral",
       variant: "link",

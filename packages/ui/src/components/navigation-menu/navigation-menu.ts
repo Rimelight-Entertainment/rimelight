@@ -1,7 +1,8 @@
+import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-import type { LinkProps } from "../link/link";
+import type { RLLinkProps } from "../link/link";
 
-export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "custom"> {
+export interface NavigationMenuItem extends Omit<RLLinkProps, "type" | "raw" | "custom"> {
   label?: string | undefined;
   icon?: string | undefined;
   badge?: string | number | undefined;
@@ -34,7 +35,7 @@ export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, "type"
   [key: string]: any;
 }
 
-export interface NavigationMenuProps {
+export interface RLNavigationMenuProps {
   theme?: string;
   /**
    * Main menu navigation links.
@@ -56,5 +57,6 @@ export interface NavigationMenuProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: any;
 }

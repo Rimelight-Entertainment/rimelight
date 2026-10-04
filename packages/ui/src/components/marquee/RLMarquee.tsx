@@ -1,11 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { MarqueeProps } from "./marquee";
+import type { RLMarqueeProps } from "./marquee";
 import { marqueeTheme } from "./marquee.theme";
-
-export interface RLMarqueeProps extends MarqueeProps {
-  children?: JSX.Element;
-}
 
 const MARQUEE_KEYFRAMES = `
 @keyframes marquee-left {

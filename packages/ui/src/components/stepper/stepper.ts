@@ -1,3 +1,5 @@
+import type { JSX } from "@solidjs/web";
+
 export interface StepperItem {
   title?: string;
   description?: string;
@@ -11,7 +13,7 @@ export interface StepperItem {
   [key: string]: any;
 }
 
-export interface StepperProps {
+export interface RLStepperProps {
   items?: StepperItem[];
   value?: string | number;
   defaultValue?: string | number;
@@ -24,5 +26,15 @@ export interface StepperProps {
   color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral";
   ui?: any;
   class?: any;
+  children?: JSX.Element;
+  indicator?: (ctx: {
+    item: StepperItem;
+    index: number;
+    state: "completed" | "active" | "inactive";
+  }) => JSX.Element;
+  wrapper?: (ctx: { item: StepperItem; index: number }) => JSX.Element;
+  onChange?: (ctx: { index: number; value: string | number }) => void;
+  onNext?: (ctx: { index: number; value: string | number }) => void;
+  onPrev?: (ctx: { index: number; value: string | number }) => void;
   [key: string]: unknown;
 }

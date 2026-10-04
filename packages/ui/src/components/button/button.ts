@@ -1,11 +1,10 @@
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
-import type { AvatarProps } from "../avatar/avatar";
-import type { LinkProps } from "../link/link";
+import type { RLAvatarProps } from "../avatar/avatar";
 
 export type ButtonClickHandler = (event: MouseEvent) => unknown;
 
-export interface ButtonProps extends LinkProps {
+export interface RLButtonProps {
   /**
    * The text label displayed inside the button.
    */
@@ -70,7 +69,7 @@ export interface ButtonProps extends LinkProps {
   /**
    * Display an avatar on the left side.
    */
-  avatar?: AvatarProps | string | undefined;
+  avatar?: RLAvatarProps | string | undefined;
   /**
    * When `true`, the icon will be displayed on the left side. Also accepts slot JSX.
    */
@@ -96,7 +95,7 @@ export interface ButtonProps extends LinkProps {
    */
   trailingSlot?: JSX.Element;
   /**
-   * When `true`, the loading icon will be displayed and the button is disabled.
+   * When `true`, the loading icon is displayed and the button is disabled.
    */
   loading?: boolean | undefined;
   /**
@@ -180,5 +179,62 @@ export interface ButtonProps extends LinkProps {
    * Click event handler. Accepts a single handler or an array of handlers.
    */
   onClick?: ButtonClickHandler | ButtonClickHandler[] | undefined;
+  /**
+   * Disables the link, preventing navigation and applying disabled styling.
+   *
+   * @default false
+   */
+  disabled?: boolean | undefined;
+  /**
+   * The URL the link points to.
+   */
+  href?: string | undefined;
+  /**
+   * Alias for `href`.
+   */
+  to?: string | undefined;
+  /**
+   * Forces the link to be treated as an external link.
+   *
+   * @default false
+   */
+  external?: boolean | undefined;
+  /**
+   * Custom external link icon name.
+   *
+   * @default "externalLink"
+   */
+  externalIcon?: string | undefined;
+  /**
+   * Suppress the automatic external link icon.
+   *
+   * @default false
+   */
+  noExternalIcon?: boolean | undefined;
+  /**
+   * Where to open the linked URL. External links default to `"_blank"`.
+   *
+   * @default undefined
+   */
+  target?: string | undefined;
+  /**
+   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
+   * string to suppress the attribute entirely.
+   *
+   * @default undefined
+   */
+  rel?: string | null | undefined;
+  /**
+   * Enables Astro's built-in prefetch strategy.
+   *
+   * @default undefined;
+   */
+  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
+  /**
+   * When true, only `class` is applied — all default theme styles are skipped.
+   *
+   * @default false
+   */
+  raw?: boolean | undefined;
   [key: string]: unknown;
 }

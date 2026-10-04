@@ -1,6 +1,7 @@
+import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
-export interface ColorSliderProps {
+export interface RLColorSliderProps {
   channel: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness";
   colorSpace?: "hsl" | "rgb" | "hsb";
   defaultValue?: string;
@@ -16,5 +17,10 @@ export interface ColorSliderProps {
   theme?: Theme;
   ui?: any;
   class?: any;
+  children?: JSX.Element;
+  value?: string;
+  onChange?: (val: string) => void;
+  onChangeEnd?: (val: string) => void;
+  "onUpdate:modelValue"?: (val: string) => void;
   [key: string]: unknown;
 }

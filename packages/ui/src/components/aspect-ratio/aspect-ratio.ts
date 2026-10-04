@@ -1,4 +1,6 @@
-export interface AspectRatioProps {
+import type { JSX } from "@solidjs/web";
+
+export interface RLAspectRatioProps {
   /**
    * The element or component the root should render as.
    */
@@ -18,5 +20,6 @@ export interface AspectRatioProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  children?: JSX.Element;
   [key: string]: unknown;
 }
