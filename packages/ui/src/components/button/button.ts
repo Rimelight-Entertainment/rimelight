@@ -3,6 +3,8 @@ import type { Theme, ThemeColor } from "../../types";
 import type { AvatarProps } from "../avatar/avatar";
 import type { LinkProps } from "../link/link";
 
+export type ButtonClickHandler = (event: MouseEvent) => unknown;
+
 export interface ButtonProps extends LinkProps {
   /**
    * The text label displayed inside the button.
@@ -175,8 +177,8 @@ export interface ButtonProps extends LinkProps {
    */
   children?: JSX.Element;
   /**
-   * Click event handler.
+   * Click event handler. Accepts a single handler or an array of handlers.
    */
-  onClick?: ((event: MouseEvent) => unknown) | undefined;
+  onClick?: ButtonClickHandler | ButtonClickHandler[] | undefined;
   [key: string]: unknown;
 }

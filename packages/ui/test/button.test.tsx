@@ -342,4 +342,146 @@ describe("RLButton", () => {
       expect(html).not.toContain('style="');
     });
   });
+
+  describe("External link affordances", () => {
+    it("appends the screen-reader hint for links opening in a new tab", () => {
+      const html = render(() => <RLButton href="https://example.com" label="Open" />);
+      expect(html).toContain('data-slot="external-hint"');
+      expect(html).toContain("(opens in a new tab)");
+      expect(html).toContain("sr-only");
+    });
+
+    it("hides the hint when an explicit aria-label carries the name", () => {
+      const html = render(() => (
+        <RLButton href="https://example.com" label="Open" aria-label="Open example in a new tab" />
+      ));
+      expect(html).not.toContain('data-slot="external-hint"');
+    });
+
+    it("omits the hint for internal links", () => {
+      const html = render(() => <RLButton to="/docs" label="Docs" />);
+      expect(html).not.toContain('data-slot="external-hint"');
+    });
+
+    it("omits the hint when target is not _blank", () => {
+      const html = render(() => (
+        <RLButton href="https://example.com" target="_self" label="Same tab" />
+      ));
+      expect(html).not.toContain('data-slot="external-hint"');
+    });
+
+    it("omits the hint on non-link buttons", () => {
+      const html = render(() => <RLButton label="Plain" />);
+      expect(html).not.toContain('data-slot="external-hint"');
+    });
+
+    it("appends a trailing external icon for new-tab links", () => {
+      const html = render(() => <RLButton href="https://example.com" label="Open" />);
+      expect(html).toContain('data-slot="trailing-icon"');
+      expect(html).toContain("<svg");
+    });
+
+    it("removes the external icon via noExternalIcon", () => {
+      const html = render(() => (
+        <RLButton href="https://example.com" label="Open" noExternalIcon />
+      ));
+      expect(html).not.toContain('data-slot="trailing-icon"');
+    });
+
+    it("renders a custom externalIcon instead of the default one", () => {
+      const defaultHtml = render(() => <RLButton href="https://example.com" label="Open" />);
+      const customHtml = render(() => (
+        <RLButton
+          href="https://example.com"
+          label="Open"
+          externalIcon="arrowUpFromLine"
+          trailingIcon="arrowUpFromLine"
+        />
+      ));
+      expect(customHtml).toContain('data-slot="trailing-icon"');
+      expect(customHtml).not.toBe(defaultHtml);
+    });
+
+    it("keeps the hint present but overrides its class via ui.externalHint", () => {
+      const html = render(() => (
+        <RLButton
+          href="https://example.com"
+          label="Open"
+          ui={{ externalHint: "sr-only custom-hint" }}
+        />
+      ));
+      expect(html).toContain('data-slot="external-hint"');
+      expect(html).toContain("custom-hint");
+    });
+  });
+
+  describe("Prefetch attribute", () => {
+    it("emits data-astro-prefetch on links", () => {
+      expect(render(() => <RLButton to="/docs" label="Docs" prefetch />)).toContain(
+        'data-astro-prefetch="viewport"',
+      );
+      expect(render(() => <RLButton to="/docs" label="Docs" prefetch={false} />)).toContain(
+        'data-astro-prefetch="false"',
+      );
+      expect(render(() => <RLButton to="/docs" label="Docs" prefetch="hover" />)).toContain(
+        'data-astro-prefetch="hover"',
+      );
+    });
+
+    it("omits the attribute when prefetch is not set or the button is not a link", () => {
+      expect(render(() => <RLButton to="/docs" label="Docs" />)).not.toContain(
+        "data-astro-prefetch",
+      );
+      expect(render(() => <RLButton label="Plain" />)).not.toContain("data-astro-prefetch");
+    });
+  });
+
+  describe("Polymorphic semantics", () => {
+    it("keeps native button semantics without an explicit role", () => {
+      const html = render(() => <RLButton label="Native" />);
+      expect(html.startsWith("<button")).toBe(true);
+      expect(html).toContain('type="button"');
+      expect(html).not.toContain('role="button"');
+    });
+
+    it("adds role and tabindex to a non-native custom root", () => {
+      const html = render(() => <RLButton as="div" label="Custom" />);
+      expect(html.startsWith("<div")).toBe(true);
+      expect(html).toContain('role="button"');
+      expect(html).toContain('tabindex="0"');
+      expect(html).not.toContain('type="');
+    });
+
+    it("keeps tabindex=-1 on disabled non-native roots", () => {
+      const html = render(() => <RLButton as="div" disabled label="Custom" />);
+      expect(html).toContain('tabindex="-1"');
+      expect(html).toContain('aria-disabled="true"');
+    });
+
+    it("does not force type on tags outside button/input", () => {
+      const html = render(() => <RLButton as="span" label="Span" />);
+      expect(html.startsWith("<span")).toBe(true);
+      expect(html).not.toContain('type="button"');
+    });
+  });
+
+  describe("Square parity with Nuxt UI", () => {
+    it("stays square for icon-only buttons even when square={false}", () => {
+      const html = render(() => <RLButton icon="search" square={false} />);
+      expect(html).toContain("aspect-square");
+      expect(html).not.toContain("px-2.5");
+    });
+
+    it("keeps standard padding for labeled buttons with square={false}", () => {
+      const html = render(() => <RLButton icon="search" label="Search" square={false} />);
+      expect(html).toContain("px-2.5");
+      expect(html).not.toContain("aspect-square");
+    });
+
+    it("keeps standard padding when children are provided without a label", () => {
+      const html = render(() => <RLButton icon="search">Search</RLButton>);
+      expect(html).toContain("px-2.5");
+      expect(html).not.toContain("aspect-square");
+    });
+  });
 });

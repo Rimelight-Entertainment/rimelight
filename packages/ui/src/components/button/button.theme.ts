@@ -1,7 +1,15 @@
 import { defineTheme } from "../../resolver";
 
 export const buttonTheme = defineTheme("button", {
-  slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
+  slots: [
+    "root",
+    "label",
+    "leadingIcon",
+    "leadingAvatar",
+    "leadingAvatarSize",
+    "trailingIcon",
+    "externalHint",
+  ],
   base: {
     root: [
       "rounded-md font-medium inline-flex items-center justify-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
@@ -13,6 +21,7 @@ export const buttonTheme = defineTheme("button", {
     leadingAvatar: "shrink-0",
     leadingAvatarSize: "",
     trailingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
+    externalHint: "sr-only",
   },
   variants: {
     fieldGroup: {

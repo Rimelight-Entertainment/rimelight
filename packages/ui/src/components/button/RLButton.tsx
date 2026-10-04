@@ -3,10 +3,30 @@ import { dynamic, type JSX } from "@solidjs/web";
 import { omit } from "solid-js";
 import type { ButtonProps } from "./button";
 import { buttonTheme } from "./button.theme";
+import {
+  isThenable,
+  resolveKeyboardAction,
+  runClickHandlers,
+  toClickHandlers,
+} from "./button.helpers";
+import { resolveLinkAttrs } from "../link/helpers";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 
 export interface RLButtonProps extends ButtonProps {}
+
+const NATIVE_BUTTON_TAGS = new Set(["button", "input", "select", "textarea", "summary"]);
+const DISABLED_TAGS = new Set([
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "fieldset",
+  "optgroup",
+  "option",
+  "datalist",
+]);
+const TYPE_TAGS = new Set(["button", "input"]);
 
 export const RLButton: Component<RLButtonProps> = (allProps) => {
   const props = allProps;
@@ -52,6 +72,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     "leadingSlot",
     "trailingSlot",
     "onClick",
+    "onKeyDown",
     "type",
     "external",
     "externalIcon",
@@ -60,6 +81,16 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     "rel",
     "noRel",
     "prefetch",
+    "prefetchOn" as any,
+    "noPrefetch" as any,
+    "prefetchedClass" as any,
+    "trailingSlash" as any,
+    "replace" as any,
+    "exact" as any,
+    "exactQuery" as any,
+    "exactHash" as any,
+    "locale" as any,
+    "viewTransition" as any,
     "raw",
     "ariaLabel",
     "aria-label" as any,
@@ -75,9 +106,30 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
   const iconProp = () => props.icon ?? (props as any)["icon"];
 
   const isLoading = () => Boolean(props.loading || autoLoading());
+  const isDisabled = () => Boolean(props.disabled || isLoading());
 
   const href = () => props.href || (props["to"] as string | undefined);
   const isLink = () => Boolean(href());
+
+  const linkAttrs = createMemo(() =>
+    resolveLinkAttrs({
+      href: href(),
+      external: props.external,
+      target: props.target,
+      rel: props.noRel ? "" : (props.rel ?? undefined),
+      prefetch: props.prefetch,
+      active: props.active,
+      ariaCurrentValue: props.ariaCurrentValue,
+      disabled: isDisabled(),
+    }),
+  );
+
+  const externalIconName = () => {
+    if (!linkAttrs().isExternal || props.noExternalIcon) return undefined;
+    return props.externalIcon || "externalLink";
+  };
+
+  const showExternalHint = () => isLink() && linkAttrs().target === "_blank" && !ariaLabel();
 
   const isTrailingPosition = () =>
     Boolean(
@@ -85,6 +137,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
       (props.trailing !== undefined && typeof props.trailing !== "boolean") ||
       trailingIconProp() ||
       (iconProp() && trailingFlag() === true) ||
+      externalIconName() ||
       (isLoading() && trailingFlag() === true && leadingFlag() !== true),
     );
 
@@ -110,13 +163,14 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     if (isLoading() && isTrailingPosition()) {
       return props.loadingIcon || "loaderCircle";
     }
-    return trailingIconProp() || (iconProp() && trailingFlag() === true ? iconProp() : undefined);
+    return (
+      trailingIconProp() ||
+      (iconProp() && trailingFlag() === true ? iconProp() : undefined) ||
+      externalIconName()
+    );
   };
 
-  const isSquare = () =>
-    props.square !== undefined
-      ? Boolean(props.square)
-      : !props.label && !props.children && Boolean(isLeadingPosition() || isTrailingPosition());
+  const isSquare = () => Boolean(props.square) || (!props.label && !props.children);
 
   const rootClassOverride = () => {
     const activeCls = props.active ? props.activeClass : props.inactiveClass;
@@ -152,41 +206,61 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
   );
 
   const handleClick = (e: MouseEvent) => {
-    if (props.disabled || isLoading()) {
+    if (isDisabled()) {
       e.preventDefault();
       return;
     }
-    if (props.onClick) {
-      const result = props.onClick(e);
-      if (props.loadingAuto && result && typeof (result as any).then === "function") {
-        setAutoLoading(true);
-        void (result as Promise<unknown>).finally(() => {
-          setAutoLoading(false);
-        });
-      }
+    const handlers = toClickHandlers(props.onClick);
+    if (!handlers.length) return;
+
+    const results = runClickHandlers(handlers, e);
+
+    if (props.loadingAuto && results.some(isThenable)) {
+      setAutoLoading(true);
+      void Promise.all(results).finally(() => {
+        setAutoLoading(false);
+      });
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const userHandler = props["onKeyDown"] as ((event: KeyboardEvent) => unknown) | undefined;
+    if (userHandler) userHandler(e);
+
+    const action = resolveKeyboardAction({
+      key: e.key,
+      repeat: e.repeat,
+      disabled: isDisabled(),
+      defaultPrevented: e.defaultPrevented,
+    });
+
+    if (action === "prevent") {
+      e.preventDefault();
+      return;
+    }
+    if (action === "click") {
+      e.preventDefault();
+      (e.currentTarget as HTMLElement | null)?.click();
     }
   };
 
   const ariaLabel = () => props.ariaLabel ?? (props as any)["aria-label"];
   const ariaLabelledby = () => props.ariaLabelledby ?? (props as any)["aria-labelledby"];
 
-  const isExternal = () =>
-    Boolean(
-      props.external ||
-      (href() && /^(?:https?:)?\/\//.test(href()!)) ||
-      (props.target && props.target !== "_self"),
-    );
+  const asTag = () => (typeof props.as === "string" ? props.as.toLowerCase() : undefined);
 
-  const targetValue = () => props.target || (isExternal() ? "_blank" : undefined);
+  const isNativeButtonish = () => {
+    const tag = asTag();
+    return tag !== undefined && NATIVE_BUTTON_TAGS.has(tag);
+  };
 
-  const relValue = () =>
-    props.rel !== undefined
-      ? props.rel || undefined
-      : props.noRel
-        ? undefined
-        : isExternal()
-          ? "noopener noreferrer"
-          : undefined;
+  const acceptsDisabled = () => {
+    const tag = asTag();
+    return tag === undefined || DISABLED_TAGS.has(tag);
+  };
+
+  const targetValue = () => linkAttrs().target;
+  const relValue = () => linkAttrs().rel;
 
   const CustomRoot = dynamic(() => (props.as ?? "div") as string);
   const isCustomRoot = () => !isLink() && Boolean(props.as) && props.as !== "button";
@@ -280,6 +354,14 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     </>
   );
 
+  const externalHint = () => (
+    <Show when={showExternalHint()}>
+      <span class={classes()["externalHint"]} data-slot="external-hint">
+        (opens in a new tab)
+      </span>
+    </Show>
+  );
+
   const rootClass = () => classes()["root"];
 
   return (
@@ -291,8 +373,8 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
           fallback={
             <button
               type={props.type || "button"}
-              disabled={props.disabled || isLoading()}
-              aria-disabled={props.disabled || isLoading() ? "true" : undefined}
+              disabled={isDisabled()}
+              aria-disabled={isDisabled() ? "true" : undefined}
               class={rootClass()}
               data-slot="root"
               data-theme={props.theme}
@@ -309,10 +391,11 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
           }
         >
           <CustomRoot
-            disabled={props.disabled || isLoading()}
-            aria-disabled={props.disabled || isLoading() ? "true" : undefined}
-            tabindex={props.disabled ? -1 : 0}
-            role="button"
+            disabled={acceptsDisabled() ? isDisabled() : undefined}
+            aria-disabled={isDisabled() ? "true" : undefined}
+            role={isNativeButtonish() ? undefined : "button"}
+            tabindex={isDisabled() ? -1 : 0}
+            type={TYPE_TAGS.has(asTag() ?? "") ? props.type || "button" : undefined}
             class={rootClass()}
             data-slot="root"
             data-theme={props.theme}
@@ -322,6 +405,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
             aria-labelledby={ariaLabelledby()}
             aria-busy={isLoading() ? "true" : undefined}
             onClick={handleClick}
+            onKeyDown={isNativeButtonish() ? undefined : handleKeyDown}
             {...rest}
           >
             {buttonContent()}
@@ -330,12 +414,13 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
       }
     >
       <a
-        href={props.disabled || isLoading() ? undefined : href()}
+        href={linkAttrs().href}
         target={targetValue()}
         rel={relValue()}
-        aria-disabled={props.disabled || isLoading() ? "true" : undefined}
-        aria-current={props.active ? (props.ariaCurrentValue ?? "page") : undefined}
-        tabindex={props.disabled || isLoading() ? -1 : undefined}
+        aria-disabled={isDisabled() ? "true" : undefined}
+        aria-current={linkAttrs().ariaCurrent}
+        tabindex={isDisabled() ? -1 : undefined}
+        data-astro-prefetch={linkAttrs().prefetchAttr}
         class={rootClass()}
         data-slot="root"
         data-theme={props.theme}
@@ -348,6 +433,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
         {...rest}
       >
         {buttonContent()}
+        {externalHint()}
       </a>
     </Show>
   );
