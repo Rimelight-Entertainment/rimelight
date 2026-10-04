@@ -4,6 +4,7 @@ import { audioAudit } from "./audio.audit";
 import { avatarAudit } from "./avatar.audit";
 import { badgeAudit } from "./badge.audit";
 import { bannerAudit } from "./banner.audit";
+import { breadcrumbAudit } from "./breadcrumb.audit";
 import type { ComponentAuditDefinition } from "./types";
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
@@ -13,6 +14,7 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   avatar: avatarAudit,
   badge: badgeAudit,
   banner: bannerAudit,
+  breadcrumb: breadcrumbAudit,
 };
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);

@@ -1,43 +1,103 @@
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
+import type { AvatarProps } from "../avatar/avatar";
+import type { LinkProps } from "../link/link";
+import type { ThemeColor } from "../../types";
+
+export interface BreadcrumbItem extends Partial<LinkProps> {
+  label?: string | undefined;
+  icon?: string | undefined;
+  avatar?: AvatarProps | string | undefined;
+  slot?: string | undefined;
+  class?: any;
+  ui?:
+    | {
+        item?: any;
+        link?: any;
+        linkLeadingIcon?: any;
+        linkLeadingAvatar?: any;
+        linkLeadingAvatarSize?: any;
+        linkLabel?: any;
+        separator?: any;
+        separatorIcon?: any;
+      }
+    | undefined;
+  children?: BreadcrumbItem[] | undefined;
+  [key: string]: unknown;
 }
 
-export interface BreadcrumbProps {
+export interface BreadcrumbProps<T = BreadcrumbItem> {
   /**
-   * Quick-prop array to render breadcrumb items automatically.
+   * The element or component this component should render as.
+   * @default 'nav'
    */
-  items?: BreadcrumbItem[];
+  as?: any;
+
   /**
-   * Maximum number of items to show at full container width (including first and last which are
-   * always visible). Middle items beyond this cap are pre-hidden server-side and counted in the
-   * "…+N" overflow indicator.
-   *
-   * Example: 7 items, maxVisible=4 → shows [Home, …+3, Current]. At a narrow container the count
-   * increases further via CSS queries.
-   *
-   * When undefined, all items are shown at full width and only container queries produce the
-   * responsive collapse.
+   * Array of breadcrumb items to render.
    */
-  maxVisible?: number;
+  items?: T[] | undefined;
+
   /**
-   * Approximate width in pixels of each breadcrumb item (text + separator). Used to compute
-   * container-query breakpoints for the responsive collapse. Increase for longer labels.
-   *
+   * The icon to use as a separator.
+   * @default 'chevronRight'
+   */
+  separatorIcon?: any;
+
+  /**
+   * Color of the active breadcrumb item.
+   * @default 'primary'
+   */
+  color?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "error"
+    | "neutral"
+    | ThemeColor
+    | (string & {})
+    | undefined;
+
+  /**
+   * The key used to get the label from the item.
+   * @default 'label'
+   */
+  labelKey?: string | undefined;
+
+  /**
+   * Maximum number of items to show. Middle items beyond this cap are collapsed into an overflow indicator.
+   */
+  maxVisible?: number | undefined;
+
+  /**
+   * Approximate width in pixels of each breadcrumb item (text + separator).
    * @default 120
    */
-  estimatedItemWidth?: number;
-  /**
-   * The icon separating the breadcrumbs.
-   */
-  separatorIcon?: string;
+  estimatedItemWidth?: number | undefined;
+
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: any;
+  ui?:
+    | {
+        root?: any;
+        list?: any;
+        item?: any;
+        link?: any;
+        linkLeadingIcon?: any;
+        linkLeadingAvatar?: any;
+        linkLeadingAvatarSize?: any;
+        linkLabel?: any;
+        separator?: any;
+        separatorIcon?: any;
+        [key: string]: any;
+      }
+    | undefined;
+
   /**
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+
   [key: string]: unknown;
 }
