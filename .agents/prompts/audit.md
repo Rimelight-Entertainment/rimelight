@@ -48,7 +48,8 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Full WAI-ARIA compliance, with required props for aria labels on their respective elements and `aria-labelledby` handled automatically.
 - No `innerHTML`/`dangerouslySetInnerHTML`.
 - No inline styles (CSP-breaking); use UnoCSS exclusively, save for very specific CSS cases upon asking permission.
-- No CSS/Uno inside the component itself; all of it lives solely in the theme file.
+- No CSS/Uno inside the component itself; all of it lives solely in the `component.theme.ts` file.
+- No type declarations inside the component itself, all of its types live solely in the `component.types.ts` file.
 - No `cx` calls directly in the component.
 - No hydration mismatches.
 - Do not surround the component in any wrapper on the audit page.
