@@ -214,7 +214,7 @@ const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     <Show when={hasProfile()} fallback={withChip()}>
       <div class={resolvedClasses().wrapper} data-slot="profile-wrapper">
         {withChip()}
-        <div class="flex flex-col leading-tight">
+        <div class={resolvedClasses().text} data-slot="text">
           <Show when={props.title}>
             <span class={resolvedClasses().title} data-slot="title">
               {props.title}

@@ -1,7 +1,7 @@
 import { defineTheme } from "../../resolver";
 
 export const avatarTheme = defineTheme("avatar", {
-  slots: ["root", "image", "fallback", "icon", "badge", "wrapper", "title", "subtitle"],
+  slots: ["root", "image", "fallback", "icon", "badge", "wrapper", "text", "title", "subtitle"],
   base: {
     root: "inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative text-[var(--rl-text)] bg-elevated",
     image: "h-full w-full rounded-[inherit] object-cover",
@@ -9,6 +9,7 @@ export const avatarTheme = defineTheme("avatar", {
     icon: "shrink-0 text-inherit",
     badge: "absolute rounded-full ring-2 ring-bg",
     wrapper: "inline-flex items-center gap-3",
+    text: "flex flex-col leading-tight",
     title: "font-medium text-sm text-default leading-tight",
     subtitle: "text-xs text-muted leading-tight",
   },

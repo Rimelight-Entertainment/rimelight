@@ -185,6 +185,26 @@ describe("RLAvatar Solid Component Suite", () => {
       expect(html).toContain('data-slot="subtitle"');
       expect(html).toContain("Lead Developer");
     });
+
+    it("renders the text column from the theme text slot", () => {
+      const html = renderSolid(RLAvatar, {
+        alt: "Daniel Marchi",
+        title: "Daniel Marchi",
+        subtitle: "Lead Developer",
+      });
+
+      expect(html).toContain('data-slot="text"');
+      expect(html).toContain("flex flex-col leading-tight");
+    });
+
+    it("supports ui.text overrides", () => {
+      const html = renderSolid(RLAvatar, {
+        title: "Daniel Marchi",
+        ui: { text: "custom-text-slot" },
+      });
+
+      expect(html).toContain("custom-text-slot");
+    });
   });
 
   describe("Polymorphic as Prop & Accessibility", () => {
