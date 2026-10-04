@@ -6,3 +6,8 @@ declare module "virtual:rimelight/ui" {
   const config: UIConfig;
   export default config;
 }
+
+declare module "virtual:audits/colors" {
+  const colors: string[];
+  export default colors;
+}
