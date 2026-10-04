@@ -1,5 +1,10 @@
 # Prompt Template
 
+## Parameters:
+
+- Parameter name:
+  -
+
 ## Objective
 
 <!-- State the outcome this task must achieve. -->

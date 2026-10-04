@@ -1,0 +1,94 @@
+# Rimelight Component Audit
+
+## Parameters:
+
+- Current component to audit:
+  - RL
+- Reference docs (if available):
+  -
+
+## Objective
+
+Audit a component file to ensure strict adherence to our design patterns and functionality targets. The component must pass all checks and tests and have full API parity with the reference when provided, barring deliberate functionality additions and improvements over the reference.
+
+## Context
+
+- Components are built with SolidJS 2.0.
+- Nuxt UI is the main reference and is used for API and slot patterns when provided.
+- Nuxt UI is cloned locally under `WebStormProjects/ui` for reference; component docs will be provided if available.
+- Some components are still non-functional/barebones/placeholder and will need to be built directly.
+- Assume this starting state without re-verifying it at the start of your work. This is a strict order to preserve token usage:
+  - Git status for related components is clean.
+  - Checks all pass.
+  - Tests all pass.
+- There is often work being done in parallel — ignore unrelated changes or errors. Stay focused solely on the scope of your component and its subcomponents.
+- Assume a clean dev server restart happens after every change and manual verification.
+- I might make changes alongside you. Anything that differs from what you produced was changed by me and should be kept that way.
+
+## Scope
+
+### In scope
+
+- The component file, its theme entries, its tests, and its audit page entry.
+
+### Out of scope
+
+- Creation of new subcomponents without asking permission and providing context as to why it would be needed or why it would be a reasonable addition to the library.
+- Making changes to core library root files that touch the entire infrastructure. If you strongly believe there is a bug or possible improvement to one of them, you are to specifically request permission after explaining your reasoning.
+
+## Requirements
+
+- Match Nuxt UI's API and slot pattern when provided: no missing features, only additional ones. Report any differences.
+- Use `color = "auto"` instead of hardcoding color variants.
+- Use `export const Component` instead of a default export or a separate export statement. Exclusively named exports, no double export.
+- Full WAI-ARIA compliance, with required props for aria labels on their respective elements and `aria-labelledby` handled automatically.
+- No `innerHTML`/`dangerouslySetInnerHTML`.
+- No inline styles (CSP-breaking); use UnoCSS exclusively, save for very specific CSS cases upon asking permission.
+- No CSS/Uno inside the component itself; all of it lives solely in the theme file.
+- No `cx` calls directly in the component.
+- No hydration mismatches.
+- Do not surround the component in any wrapper on the audit page.
+- Create a robust test suite for the component in question to avoid regressions.
+- If you notice another component with the same issue, always fix it alongside.
+- If you have suggestions or remarks, say them.
+
+## Implementation notes
+
+- Component package layout, `packages/ui/src/components/<name>/`:
+  - `RL<Name>.tsx` — implementation, exported as `export const RL<Name>: Component<RL<Name>Props>`.
+  - `<name>.ts` — props interface extending the base component props, JSDoc on every prop.
+  - `<name>.theme.ts` — the only place classes/Uno utilities live; the component reads them from the theme.
+  - `<name>.helpers.ts` — non-rendering logic, only when it is worth splitting out.
+- Audit page: `apps/starter.rimelight.com/src/components/dev/audits/<name>.audit.tsx`, importing the component from `@rimelight/ui/components/<name>/RL<Name>.tsx` and following an existing audit as the pattern reference.
+- Tests: `packages/ui/test/<name>.test.tsx` (plus `<name>.helpers.test.ts` / `<name>.browser.test.tsx` when applicable). Mirror an existing component's test file for setup and conventions.
+- Read one healthy existing component end to end (component, theme, tests, audit page) before writing anything; conform to it rather than inventing structure.
+
+## Validation
+
+- Run `vpr check` and `vpr test` after every change to ensure nothing broke.
+- `vpr check` must pass with zero errors and zero warnings.
+- `vpr test` must pass with zero errors and zero warnings.
+- Manual verification by me must be requested for any hydration errors or other console warnings. You never run `dev` directly to verify.
+- Do not mark audits as passed unless specifically told to, after my manual verification.
+
+## Deliverables
+
+- Updated component (`RL<Name>.tsx`), props, theme, helpers.
+- Test suite covering the component's props, states, slots, and interaction behavior.
+- Audit page entry exercising every prop, variant, and state.
+- Completion report in the structure below.
+
+## Completion report
+
+Report in this exact structure, omitting nothing:
+
+1. **Status** — `awaiting manual verification` unless I have explicitly said otherwise. Never self-declare a pass.
+2. **Component** — the audited component and whether it was already functional or built from placeholder.
+3. **Files changed** — every file touched, grouped as component / theme / tests / audit page / drive-by fixes.
+4. **Validation** — the exact `vpr check` and `vpr test` results (zero errors, zero warnings) and when they were last run.
+5. **API parity** — differences from the reference: missing features, added features, and renamed or restructured props. Empty only if truly identical.
+6. **Tests** — test file path, number of tests, and what is covered (props, states, slots, keyboard/interaction, edge cases).
+7. **Drive-by fixes** — other components fixed alongside, with the shared issue that was corrected.
+8. **Manual verification needed** — exactly what to check in the browser: hydration warnings, console warnings, and the audit page behaviors to click through.
+9. **Suggestions and remarks** — anything you would do differently or that needs a decision from me.
+10. **Follow-up work** — anything intentionally left undone and why.

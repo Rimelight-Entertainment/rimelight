@@ -92,6 +92,7 @@
     "@rimelight/config": "workspace:*",
     "@solidjs/vite-plugin": "3.0.0-next.47",
     "@solidjs/web": "2.0.0-rc.11",
+    "@vitest/browser-playwright": "5.0.1",
     "solid-js": "2.0.0-rc.11"
   },
   "peerDependencies": {

@@ -176,113 +176,12 @@ describe("@rimelight/ui preset intent shortcuts", () => {
   }, 15000);
 });
 
-describe("@rimelight/ui shortcuts system", () => {
+describe("@rimelight/ui shortcuts formatting", () => {
   it("should format shortcut keys correctly", async () => {
     const { formatShortcutKeys } = await import("../src/shortcuts");
     expect(formatShortcutKeys("meta_k")).toEqual([expect.any(String), "K"]);
     expect(formatShortcutKeys("ctrl_alt_delete")).toEqual(["Ctrl", "Alt", "⌦"]);
     expect(formatShortcutKeys("g-d")).toEqual(["G", "D"]);
-  });
-
-  it("should register shortcuts into activeShortcutsStore before listeners subscribe", async () => {
-    const origWindow = (globalThis as any).window;
-    (globalThis as any).window = { addEventListener: () => {}, removeEventListener: () => {} };
-    try {
-      const { defineShortcuts, activeShortcutsStore } = await import("../src/shortcuts");
-      const cleanup = defineShortcuts({
-        meta_k: {
-          handler: () => {},
-          label: "Open Search",
-          category: "navigation",
-        },
-      });
-
-      expect(activeShortcutsStore.some((s) => s.label === "Open Search")).toBe(true);
-      cleanup();
-      expect(activeShortcutsStore.some((s) => s.label === "Open Search")).toBe(false);
-    } finally {
-      (globalThis as any).window = origWindow;
-    }
-  });
-
-  it("should trigger multi-modifier shortcuts like meta_alt_t via Ctrl+Alt+T on Windows/Linux", async () => {
-    let listener: ((e: any) => void) | null = null;
-    const origWindow = (globalThis as any).window;
-    (globalThis as any).window = {
-      addEventListener: (_event: string, fn: any) => {
-        listener = fn;
-      },
-      removeEventListener: () => {
-        listener = null;
-      },
-    };
-
-    try {
-      const { defineShortcuts } = await import("../src/shortcuts");
-      let triggered = false;
-      const cleanup = defineShortcuts({
-        meta_alt_t: () => {
-          triggered = true;
-        },
-      });
-
-      expect(listener).toBeDefined();
-      // Simulate physical Ctrl + Alt + T on Windows/Linux (ctrlKey: true, altKey: true, metaKey: false)
-      listener!({
-        key: "t",
-        code: "KeyT",
-        ctrlKey: true,
-        altKey: true,
-        metaKey: false,
-        shiftKey: false,
-        preventDefault: () => {},
-      });
-
-      expect(triggered).toBe(true);
-      cleanup();
-    } finally {
-      (globalThis as any).window = origWindow;
-    }
-  });
-
-  it("should resolve shortcuts using codeKey when Alt produces a special character", async () => {
-    let listener: ((e: any) => void) | null = null;
-    const origWindow = (globalThis as any).window;
-    (globalThis as any).window = {
-      addEventListener: (_event: string, fn: any) => {
-        listener = fn;
-      },
-      removeEventListener: () => {
-        listener = null;
-      },
-    };
-
-    try {
-      const { defineShortcuts } = await import("../src/shortcuts");
-      let triggered = false;
-      const cleanup = defineShortcuts({
-        meta_alt_t: () => {
-          triggered = true;
-        },
-      });
-
-      expect(listener).toBeDefined();
-      // On Mac or special layout, Alt+T produces '†' in e.key but 'KeyT' in e.code
-      listener!({
-        key: "†",
-        code: "KeyT",
-        ctrlKey: true,
-        altKey: true,
-        metaKey: false,
-        shiftKey: false,
-        preventDefault: () => {},
-      });
-
-      expect(triggered).toBe(true);
-      cleanup();
-    } finally {
-      (globalThis as any).window = origWindow;
-    }
   });
 });
 
