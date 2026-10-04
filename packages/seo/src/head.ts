@@ -393,7 +393,10 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   const tags: HeadTag[] = [];
 
   // Basic Metadata
-  if (charset) {
+  // charset is shell-only: browsers ignore it once parsing starts and useHead warns
+  // ("shell-only and ignored on the client") when it is re-registered during hydration.
+  // Emit it only while rendering the HTML shell (server); the client copy omits it.
+  if (charset && typeof document === "undefined") {
     tags.push({ tag: "meta", props: { charset } });
   }
   if (viewport) {
