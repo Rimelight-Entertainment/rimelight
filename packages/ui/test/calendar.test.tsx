@@ -423,10 +423,13 @@ describe("RLCalendar", () => {
     });
 
     it("calendarTheme applies compound color/variant state classes", () => {
-      const trigger = calendarTheme({ color: "primary", variant: "solid" }).cellTrigger;
-      expect(trigger).toContain("bg-primary");
-      expect(trigger).toContain("text-inverted");
-      expect(trigger).toContain("data-selected");
+      const ui = calendarTheme({ color: "primary", variant: "solid" });
+      expect(ui.root).toContain("rl-color-primary");
+      expect(ui.cellTrigger).toContain("[&[data-selected]]:bg-[var(--rl-bg)]");
+      expect(ui.cellTrigger).toContain("text-inverted");
+      expect(ui.cellTrigger).toContain("data-selected");
+      const neutral = calendarTheme({ color: "neutral", variant: "solid" }).cellTrigger;
+      expect(neutral).toContain("bg-inverted");
     });
 
     it("calendarTheme applies weekNumbers compound", () => {

@@ -429,7 +429,7 @@ export const calendarAudit: ComponentAuditDefinition = {
       criterion: "UnoCSS emits data-attribute state selectors",
       status: "pending",
       notes:
-        "Verified against built CSS (dist/client/assets/*.css grep): data-selected 131 hits, data-highlighted 28, data-today 16, data-outside-view 2, data-unavailable 6, data-disabled 4, hover:not([data-selected]) compound 20, grid-cols-8 weekNumbers 1, size-6..size-10 1 each, line-through 2. All state selectors use literal arbitrary variants ([&[data-selected]]: style); interpolated prefixes like `${sel}:bg-primary` are NOT extracted by UnoCSS and must never be used.",
+        "Verified against built CSS (dist/client/assets/*.css grep): rl-color-* 10 hits (auto color on root), data-selected 41, data-highlighted 8, data-today 6, data-outside-view 2, data-unavailable 6, data-disabled 4, not([data-selected]) compounds 5, var(--rl-bg) state utilities 19, outline-[var(--rl-ring)] 2, grid-cols-8 weekNumbers 1, size-6/size-10 present, neutral bg-inverted 11. Color uses rimelight's `color: auto` + `var(--rl-*)` convention (difference from Nuxt's per-color literal compounds — same rendering, theme vars instead of hardcoded shades). State selectors use literal arbitrary variants ([&[data-selected]]: style); interpolated prefixes like `${sel}:bg-primary` are NOT extracted by UnoCSS and must never be used.",
     },
   ],
 };
