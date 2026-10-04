@@ -7,6 +7,7 @@ import { bannerAudit } from "./banner.audit";
 import { breadcrumbAudit } from "./breadcrumb.audit";
 import { browserMockupAudit } from "./browser-mockup.audit";
 import { buttonAudit } from "./button.audit";
+import { calendarAudit } from "./calendar.audit";
 import type { ComponentAuditDefinition } from "./types";
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
@@ -19,6 +20,7 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   breadcrumb: breadcrumbAudit,
   "browser-mockup": browserMockupAudit,
   button: buttonAudit,
+  calendar: calendarAudit,
 };
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);
