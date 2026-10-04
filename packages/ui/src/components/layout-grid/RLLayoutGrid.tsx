@@ -225,7 +225,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     const containerLeft = (width - maxWidthPx) / 2;
     const containerRight = (width + maxWidthPx) / 2;
 
-    columnsContainer.innerHTML = "";
+    columnsContainer.replaceChildren();
 
     hostRef?.style.setProperty("--rl-grid-cols", colCount.toString());
     hostRef?.style.setProperty("--rl-grid-gap", `${gutterPx}px`);
@@ -258,13 +258,40 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
 
     if (indicatorElement) {
-      indicatorElement.innerHTML = `<span style="color: #3b82f6;">${bp.toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`;
+      const { indicatorBreakpoint, indicatorDivider, indicatorWidth, indicatorColumns } =
+        resolvedClasses();
+
+      const breakpointSpan = document.createElement("span");
+      breakpointSpan.className = indicatorBreakpoint;
+      breakpointSpan.textContent = `${bp.toUpperCase()} (${breakpointThreshold}px)`;
+
+      const firstDivider = document.createElement("span");
+      firstDivider.className = indicatorDivider;
+      firstDivider.textContent = "|";
+
+      const widthSpan = document.createElement("span");
+      widthSpan.className = indicatorWidth;
+      widthSpan.textContent = `${width}px`;
+
+      const secondDivider = document.createElement("span");
+      secondDivider.className = indicatorDivider;
+      secondDivider.textContent = "|";
+
+      const columnsSpan = document.createElement("span");
+      columnsSpan.className = indicatorColumns;
+      columnsSpan.textContent = `${totalCols} Cols`;
+
+      indicatorElement.replaceChildren(
+        breakpointSpan,
+        firstDivider,
+        widthSpan,
+        secondDivider,
+        columnsSpan,
+      );
     }
 
     const gridWrapper = document.createElement("div");
-    gridWrapper.className =
-      "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl gap-xs sm:gap-md md:gap-xl lg:gap-xl h-full box-border grid";
-    gridWrapper.style.gridTemplateColumns = "repeat(var(--rl-grid-cols), 1fr)";
+    gridWrapper.className = resolvedClasses().columns;
 
     const innerLeft = (width - innerMaxWidthPx) / 2;
     const innerRight = (width + innerMaxWidthPx) / 2;
@@ -275,16 +302,12 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       const isInner = colX >= innerLeft - 1 && colRight <= innerRight + 1;
 
       const col = document.createElement("div");
-      col.className = "grid-column";
+      col.className = resolvedClasses().column;
       const color = isInner ? innerGridColor : gridColor;
       const opacity = isInner ? innerGridOpacity : gridOpacity;
       const bg = isInner ? showInnerBackground : showBackground;
-      Object.assign(col.style, {
-        height: "100%",
-        borderInline: `1px solid ${color}`,
-        boxSizing: "border-box",
-        backgroundColor: bg ? hexToRgba(color, opacity) : "transparent",
-      });
+      col.style.borderInline = `1px solid ${color}`;
+      col.style.backgroundColor = bg ? hexToRgba(color, opacity) : "transparent";
       gridWrapper.appendChild(col);
     }
 
@@ -293,19 +316,13 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     if (width > maxWidthPx && showFullWidth) {
       const drawOuterColumn = (x: number) => {
         const col = document.createElement("div");
-        col.className = "rl-outer-column";
-        Object.assign(col.style, {
-          position: "absolute",
-          top: "0",
-          left: `${x}px`,
-          width: `${colWidth}px`,
-          height: "100%",
-          borderInline: `1px solid ${fullWidthColor}`,
-          boxSizing: "border-box",
-          backgroundColor: showFullWidthBackground
-            ? hexToRgba(fullWidthColor, fullWidthOpacity)
-            : "transparent",
-        });
+        col.className = resolvedClasses().outerColumn;
+        col.style.left = `${x}px`;
+        col.style.width = `${colWidth}px`;
+        col.style.borderInline = `1px solid ${fullWidthColor}`;
+        col.style.backgroundColor = showFullWidthBackground
+          ? hexToRgba(fullWidthColor, fullWidthOpacity)
+          : "transparent";
         columnsContainer.appendChild(col);
       };
 
@@ -337,7 +354,6 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     ({ isVisible, bp, gutters, margins }) => {
       if (overlayRef) {
         overlayRef.classList.toggle("hidden", !isVisible);
-        overlayRef.classList.toggle("block", isVisible);
       }
       updateGrid(bp, gutters, margins, isVisible);
     },
@@ -356,7 +372,7 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       <Dynamic
         component={"rl-layout-grid"}
         ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
-        class={`${resolvedClasses().root} contents`}
+        class={resolvedClasses().root}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}
         data-md-cols={props.mdCols ?? 8}
@@ -385,19 +401,19 @@ const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       >
         <aside
           ref={(el) => (overlayRef = el as HTMLElement | undefined)}
-          class={`${resolvedClasses().overlay} hidden`}
+          class={resolvedClasses().overlay}
           data-slot="overlay"
           id="rl-layout-grid-overlay"
         >
           <div
             ref={(el) => (columnsRef = el as HTMLElement | undefined)}
-            class="relative w-full h-full"
+            class={resolvedClasses().container}
             data-slot="columns-container"
           />
           <div
             ref={(el) => (indicatorRef = el as HTMLElement | undefined)}
             data-slot="indicator"
-            class="fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2"
+            class={resolvedClasses().indicator}
           />
         </aside>
       </Dynamic>
