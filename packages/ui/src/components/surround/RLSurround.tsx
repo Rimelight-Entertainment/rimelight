@@ -1,43 +1,52 @@
 import type { RLSurroundProps } from "./surround.types";
-import { Show, type Component } from "solid-js";
+import { RLSurroundTheme } from "./surround.theme";
+import { createMemo, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLSurround: Component<RLSurroundProps> = (props) => {
+  const theme = createMemo(() =>
+    RLSurroundTheme({
+      class: props.class,
+    }),
+  );
+
   return (
     <Show when={props.prev || props.next}>
-      <div
-        class={`mt-12 pt-6 border-t border-default flex justify-between gap-4 ${props.class ?? ""}`}
-      >
+      <div class={theme().root}>
         <Show when={props.prev} fallback={<div />}>
-          {(prev) => (
-            <a
-              href={prev().href}
-              class="flex flex-col gap-1 text-left group no-underline max-w-[45%]"
-            >
-              <span class="text-xs text-muted font-medium flex items-center gap-1 group-hover:text-primary transition-colors">
-                <RLIcon name="arrowLeft" class="size-3" /> Previous
-              </span>
-              <span class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors truncate">
-                {prev().label}
-              </span>
-            </a>
-          )}
+          {(prev) => {
+            const prevTheme = createMemo(() =>
+              RLSurroundTheme({
+                side: "prev",
+              }),
+            );
+            return (
+              <a href={prev().href} class={prevTheme().link}>
+                <span class={`${theme().label} ${prevTheme().labelPrev}`}>
+                  <RLIcon name="arrowLeft" class="size-3" /> Previous
+                </span>
+                <span class={theme().title}>{prev().label}</span>
+              </a>
+            );
+          }}
         </Show>
 
         <Show when={props.next} fallback={<div />}>
-          {(next) => (
-            <a
-              href={next().href}
-              class="flex flex-col gap-1 text-right group no-underline max-w-[45%]"
-            >
-              <span class="text-xs text-muted font-medium flex items-center justify-end gap-1 group-hover:text-primary transition-colors">
-                Next <RLIcon name="arrowRight" class="size-3" />
-              </span>
-              <span class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors truncate">
-                {next().label}
-              </span>
-            </a>
-          )}
+          {(next) => {
+            const nextTheme = createMemo(() =>
+              RLSurroundTheme({
+                side: "next",
+              }),
+            );
+            return (
+              <a href={next().href} class={nextTheme().link}>
+                <span class={`${theme().label} ${nextTheme().labelNext}`}>
+                  Next <RLIcon name="arrowRight" class="size-3" />
+                </span>
+                <span class={theme().title}>{next().label}</span>
+              </a>
+            );
+          }}
         </Show>
       </div>
     </Show>

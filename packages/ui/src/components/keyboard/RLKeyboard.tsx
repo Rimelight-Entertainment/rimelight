@@ -1,4 +1,5 @@
 import type { RLKeyboardProps, HighlightGroup } from "./keyboard.types";
+import { RLKeyboardTheme } from "./keyboard.theme";
 import { createMemo, For, Show, type Component } from "solid-js";
 
 interface Key {
@@ -333,12 +334,18 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
     ...numpadRenderKeys(),
   ]);
 
+  const theme = createMemo(() =>
+    RLKeyboardTheme({
+      class: props.class,
+    }),
+  );
+
   return (
-    <div class="keyboard-wrapper">
-      <div class="keyboard-container">
+    <div class={theme().root}>
+      <div class={theme().container}>
         <svg
           viewBox={`-16 -16 ${totalWidth() + 32} ${finalHeight() + 64}`}
-          class="keyboard-svg"
+          class={theme().svg}
           preserveAspectRatio="xMidYMid meet"
         >
           <Show when={backgroundColor() !== "transparent"}>
@@ -359,7 +366,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
               const label = getKeyLabel(key);
 
               return (
-                <g class={`kb-key-group ${highlight.active ? "highlighted" : ""}`}>
+                <g class={`${theme().keyGroup} ${highlight.active ? "highlighted" : ""}`}>
                   <rect
                     x={key.x}
                     y={key.y + 1}
@@ -384,7 +391,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
                       y={key.y + key.h / 2}
                       text-anchor="middle"
                       dominant-baseline="central"
-                      class="kb-key-label"
+                      class={theme().keyLabel}
                       fill={highlight.active ? "#fff" : "#e0e0e0"}
                     >
                       {label}
@@ -398,7 +405,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
       </div>
 
       <Show when={groups().some((group) => group.label)}>
-        <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-6 w-full">
+        <div class={theme().legend}>
           <For each={groups().filter((group) => group.label)}>
             {(group) => (
               <div class="flex items-center gap-2 m-0 p-0 text-[10px] text-[#a0a0b0] uppercase tracking-[0.05em] font-medium whitespace-nowrap leading-none">
@@ -411,37 +418,6 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
           </For>
         </div>
       </Show>
-
-      <style>{`
-        .keyboard-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 1rem;
-          border-radius: 0.75rem;
-          width: 100%;
-          max-width: 100%;
-          margin: 1rem 0;
-          box-sizing: border-box;
-        }
-        .keyboard-container {
-          width: 100%;
-          display: flex;
-          justify-content: center;
-        }
-        .keyboard-svg {
-          width: 100%;
-          height: auto;
-          max-width: 56.25rem;
-        }
-        .kb-key-label {
-          font-family: var(--font-mono, monospace);
-          font-size: 0.625rem;
-          font-weight: 600;
-          pointer-events: none;
-          user-select: none;
-        }
-      `}</style>
     </div>
   );
 };

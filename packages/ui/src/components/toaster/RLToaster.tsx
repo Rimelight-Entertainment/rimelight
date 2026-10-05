@@ -1,11 +1,18 @@
 import type { RLToasterProps } from "./toaster.types";
-import { For, onSettled, omit, type Component } from "solid-js";
+import { RLToasterTheme } from "./toaster.theme";
+import { createMemo, For, onSettled, omit, type Component } from "solid-js";
 import { toasts, removeToast, addToast, type ToastItem } from "../toast/store";
 import { RLToast } from "../toast/RLToast";
 
 export const RLToaster: Component<RLToasterProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "class");
+
+  const theme = createMemo(() =>
+    RLToasterTheme({
+      class: props.class,
+    }),
+  );
 
   onSettled(() => {
     const stored = sessionStorage.getItem("pending_toast");
@@ -50,7 +57,7 @@ export const RLToaster: Component<RLToasterProps> = (allProps) => {
   return (
     <div
       id="rl-toaster-container"
-      class={`fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none ${props.class || ""}`}
+      class={theme().root}
       aria-live="polite"
       aria-atomic="false"
       role="status"

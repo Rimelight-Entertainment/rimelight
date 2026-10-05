@@ -67,7 +67,10 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     props.weekStartsOn !== undefined ? props.weekStartsOn : getWeekStartsOn(locale());
   const weekdayFormat = (): WeekdayFormat => props.weekdayFormat ?? "narrow";
 
-  const [view, setViewRaw] = createSignal<View>(initialViewFor(type()) as View);
+  const [view, setViewRaw] = createSignal<View>(
+    // untrack: seed once from props.type; the effect below re-syncs on change.
+    untrack(() => initialViewFor(type()) as View),
+  );
   const setView = (v: string) => setViewRaw(clampView(v, minView()) as View);
 
   const isMinView = () => view() === minView();

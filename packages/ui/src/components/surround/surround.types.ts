@@ -1,3 +1,5 @@
+import type { Theme } from "../../types";
+
 export interface RLSurroundItem {
   label: string;
   href: string;
@@ -6,5 +8,16 @@ export interface RLSurroundItem {
 export interface RLSurroundProps {
   prev?: RLSurroundItem | null;
   next?: RLSurroundItem | null;
-  class?: string;
+  /**
+   * Theme mode override — pins colors to flat, light, or dark mode.
+   */
+  theme?: Theme | undefined;
+  /**
+   * Slot-specific CSS class overrides.
+   */
+  ui?: any;
+  /**
+   * Additional CSS classes to apply to the root element.
+   */
+  class?: any;
 }
