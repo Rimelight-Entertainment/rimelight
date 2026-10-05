@@ -1,4 +1,4 @@
-import type { TranslationLoader, WritableAtom } from "./types";
+import type { TFunction, WritableAtom } from "./types";
 
 /**
  * Creates a lightweight reactive atom store compatible with Nanostores / Svelte store contracts.
@@ -55,10 +55,6 @@ export interface InitializeI18nOptions {
    * Pre-loaded translations keyed by locale then component.
    */
   translations: Record<string, Record<string, any>>;
-  /**
-   * Optional dynamic loader called when a locale or component is not in cache.
-   */
-  get?: TranslationLoader | undefined;
 }
 
 /**
@@ -69,6 +65,7 @@ export function initializeI18n(options: InitializeI18nOptions): void {
   const { defaultLocale, translations } = options;
   baseLocaleDefault = defaultLocale;
   rawTranslationsDict = translations ? { ...translations } : {};
+  chainCache.clear();
 
   if (!currentLocale.get()) {
     currentLocale.set(defaultLocale);
@@ -113,7 +110,18 @@ function resolvePath(obj: unknown, path: string): unknown {
   return current;
 }
 
+const chainCache = new Map<string, string[]>();
+
+/**
+ * Builds the ordered locale fallback chain (exact → lowercase → base language) for the active
+ * locale, the configured default locale, and 'en'. Cached because the chain only depends on the
+ * two locale codes, which change solely through `initializeI18n`.
+ */
 function getLocaleCandidateChain(activeLocale: string, defaultLocale: string): string[] {
+  const cacheKey = `${activeLocale}|${defaultLocale}`;
+  const cached = chainCache.get(cacheKey);
+  if (cached) return cached;
+
   const chain: string[] = [];
 
   function addCandidates(code: string) {
@@ -131,6 +139,7 @@ function getLocaleCandidateChain(activeLocale: string, defaultLocale: string): s
   addCandidates(defaultLocale);
   addCandidates("en");
 
+  chainCache.set(cacheKey, chain);
   return chain;
 }
 
@@ -209,53 +218,54 @@ export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
 
 /**
  * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")` or
- * nested/array paths like `t("page_resume.experiences.0.role")`).
+ * nested/array paths like `t("page_resume.experiences.0.role")`). Also provides `t.raw()` and
+ * `t.array()` methods to retrieve structured data or string arrays.
  */
-export function t(key: string, params?: Record<string, any>): string {
-  const dotIndex = key.indexOf(".");
-  if (dotIndex === -1) {
-    return key;
-  }
-  const componentName = key.slice(0, dotIndex);
-  const keyName = key.slice(dotIndex + 1);
+export const t: TFunction = Object.assign(
+  function t(key: string, params?: Record<string, any>): string {
+    const dotIndex = key.indexOf(".");
+    if (dotIndex === -1) {
+      return key;
+    }
+    const componentName = key.slice(0, dotIndex);
+    const keyName = key.slice(dotIndex + 1);
 
-  const activeLocale = currentLocale.get() || baseLocaleDefault;
-  let value = resolveKeyInLocales(activeLocale, componentName, keyName) ?? key;
+    const activeLocale = currentLocale.get() || baseLocaleDefault;
+    let value = resolveKeyInLocales(activeLocale, componentName, keyName) ?? key;
 
-  // Pluralization support if count parameter is provided and translation value is a plural object
-  if (
-    params &&
-    typeof params["count"] === "number" &&
-    typeof value === "object" &&
-    value !== null &&
-    !Array.isArray(value)
-  ) {
-    const pluralCategory = getPluralCategory(params["count"], activeLocale);
-    value =
-      (value as Record<string, any>)[pluralCategory] ??
-      (value as Record<string, any>)["other"] ??
-      key;
-  }
+    // Pluralization support if count parameter is provided and translation value is a plural object
+    if (
+      params &&
+      typeof params["count"] === "number" &&
+      typeof value === "object" &&
+      value !== null &&
+      !Array.isArray(value)
+    ) {
+      const pluralCategory = getPluralCategory(params["count"], activeLocale);
+      value =
+        (value as Record<string, any>)[pluralCategory] ??
+        (value as Record<string, any>)["other"] ??
+        key;
+    }
 
-  if (typeof value === "function") {
-    return (value as Function)(params);
-  }
+    if (typeof value === "function") {
+      return (value as Function)(params);
+    }
 
-  if (params && typeof value === "string") {
-    return value.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
-  }
+    if (params && typeof value === "string") {
+      return value.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+    }
 
-  if (typeof value === "string") {
-    return value;
-  }
-  if (value !== undefined && value !== null && typeof value === "object") {
-    return JSON.stringify(value);
-  }
-  return value != null ? `${value as string | number | boolean}` : "";
-}
-
-t.raw = tRaw;
-t.array = tArray;
+    if (typeof value === "string") {
+      return value;
+    }
+    if (value !== undefined && value !== null && typeof value === "object") {
+      return JSON.stringify(value);
+    }
+    return value != null ? `${value as string | number | boolean}` : "";
+  },
+  { raw: tRaw, array: tArray },
+);
 
 /**
  * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale

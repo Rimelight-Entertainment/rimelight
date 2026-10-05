@@ -2,8 +2,8 @@ import {
   locales as configLocales,
   defaultLocale as configDefaultLocale,
   prefixDefaultLocale as configPrefixDefaultLocale,
-  setKVBinding,
-} from "./index";
+} from "./config";
+import { setKVBinding } from "./kv";
 import { currentLocale } from "./runtime";
 
 export interface HonoI18nOptions {
@@ -87,16 +87,20 @@ export function i18n(options?: HonoI18nOptions) {
     // 2. Execute routing & locale detection
     const url = new URL(c.req.url);
     const pathname = url.pathname;
+    const firstSegment = pathname.split("/").find(Boolean);
+    const segmentLocale =
+      firstSegment !== undefined && supportedLocales.has(firstSegment) ? firstSegment : null;
+
+    // Locale for the current request: explicit route param > URL prefix > default
+    const resolveLocale = (): string => {
+      const paramLocale = c.req.param("locale");
+      if (paramLocale && supportedLocales.has(paramLocale)) return paramLocale;
+      return segmentLocale ?? defaultLocale;
+    };
 
     // Only handle GET/HEAD requests
     if (c.req.method !== "GET" && c.req.method !== "HEAD") {
-      const paramLocale = c.req.param("locale");
-      const firstSegment = pathname.split("/").find(Boolean);
-      const activeLocale =
-        (paramLocale && supportedLocales.has(paramLocale) ? paramLocale : null) ||
-        (firstSegment && supportedLocales.has(firstSegment) ? firstSegment : null) ||
-        defaultLocale;
-      currentLocale.set(activeLocale);
+      currentLocale.set(resolveLocale());
       return next();
     }
 
@@ -105,21 +109,13 @@ export function i18n(options?: HonoI18nOptions) {
       return next();
     }
 
-    const firstSegment = pathname.split("/").find(Boolean);
-    const firstIsLocale = firstSegment !== undefined && supportedLocales.has(firstSegment);
-
     if (prefixDefaultLocale) {
       // All locales are prefixed (e.g. /en/about, /pt/about)
-      const paramLocale = c.req.param("locale");
-      const activeLocale =
-        (paramLocale && supportedLocales.has(paramLocale) ? paramLocale : null) ||
-        (firstIsLocale ? firstSegment! : null) ||
-        defaultLocale;
-
+      const activeLocale = resolveLocale();
       currentLocale.set(activeLocale);
 
       // If pathname already has a valid locale prefix, proceed
-      if (firstIsLocale) {
+      if (segmentLocale) {
         return next();
       }
 
@@ -129,23 +125,23 @@ export function i18n(options?: HonoI18nOptions) {
       currentLocale.set(locale);
       const targetPath = `/${locale}${pathname}${url.search}`;
       return c.redirect(targetPath, 302);
-    } else {
-      // Only non-default locales are prefixed (e.g. /about, /pt/about)
-      if (firstIsLocale) {
-        if (firstSegment === defaultLocale) {
-          // Strip the redundant default-locale prefix: /en/about → /about
-          const rest = pathname.slice(defaultLocale.length + 1) || "/";
-          currentLocale.set(defaultLocale);
-          return c.redirect(`${rest}${url.search}`, 302);
-        }
-        // Non-default locale — serve as-is
-        currentLocale.set(firstSegment!);
-        return next();
-      }
+    }
 
-      // No locale prefix → default locale, serve as-is
-      currentLocale.set(defaultLocale);
+    // Only non-default locales are prefixed (e.g. /about, /pt/about)
+    if (segmentLocale) {
+      if (firstSegment === defaultLocale) {
+        // Strip the redundant default-locale prefix: /en/about → /about
+        const rest = pathname.slice(defaultLocale.length + 1) || "/";
+        currentLocale.set(defaultLocale);
+        return c.redirect(`${rest}${url.search}`, 302);
+      }
+      // Non-default locale — serve as-is
+      currentLocale.set(segmentLocale);
       return next();
     }
+
+    // No locale prefix → default locale, serve as-is
+    currentLocale.set(defaultLocale);
+    return next();
   };
 }

@@ -1,6 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
+import { readLocaleFiles, resolveTranslationsDir } from "./fs";
+
+const VIRTUAL_CONFIG_ID = "virtual:rimelight-i18n-config";
+const RESOLVED_VIRTUAL_CONFIG_ID = `\0${VIRTUAL_CONFIG_ID}`;
 
 export interface RimelightI18nOptions<
   TLocale extends string = string,
@@ -32,17 +36,16 @@ export interface RimelightI18nOptions<
    * - `false`: the default locale has no prefix — `/about`, `/pt/about`
    */
   prefixDefaultLocale?: boolean;
-  validateExtraction?: boolean;
+  /**
+   * The Cloudflare KV namespace binding name used when seeding translations (default: "TRANSLATIONS_KV").
+   */
+  kvBinding?: string;
   /**
    * Optional manual translations map. If omitted, translations are loaded automatically
    * from `${translationsDir}/${locale}.json`.
    */
   translations?: Record<string, Record<string, any>>;
-  kvBinding?: string;
-  translationLoader?: string;
 }
-
-export type RimelightI18nVitePlugin = Plugin;
 
 export type RimelightI18nPlugins = Plugin[];
 
@@ -51,42 +54,15 @@ function discoverTranslations(
   specifiedDir?: string,
   specifiedLocales?: readonly string[],
 ): { locales: string[]; translations: Record<string, any>; dirPath: string | null } {
-  const dirPath = path.resolve(root, specifiedDir ?? "src/i18n");
-  const translations: Record<string, any> = {};
-  const discoveredLocales = new Set<string>();
+  const dirPath = resolveTranslationsDir(root, specifiedDir);
+  const { translations } = readLocaleFiles(dirPath, specifiedLocales);
 
-  if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
-    try {
-      const files = fs.readdirSync(dirPath);
-      for (const file of files) {
-        if (file.endsWith(".json")) {
-          const locale = path.basename(file, ".json");
-          // If explicit locales are given, only read those
-          if (!specifiedLocales || specifiedLocales.includes(locale)) {
-            try {
-              const fullPath = path.join(dirPath, file);
-              const content = fs.readFileSync(fullPath, "utf-8");
-              translations[locale] = JSON.parse(content);
-              discoveredLocales.add(locale);
-            } catch {
-              // Ignore invalid JSON / unreadable files
-            }
-          }
-        }
-      }
-    } catch {
-      // Ignore if readdir fails
-    }
-  }
-
-  // Determine final locales list
   let finalLocales: string[];
   if (specifiedLocales && specifiedLocales.length > 0) {
     finalLocales = [...specifiedLocales];
-  } else if (discoveredLocales.size > 0) {
-    finalLocales = Array.from(discoveredLocales).sort();
   } else {
-    finalLocales = ["en"];
+    const discovered = Object.keys(translations).sort();
+    finalLocales = discovered.length > 0 ? discovered : ["en"];
   }
 
   return {
@@ -97,8 +73,9 @@ function discoverTranslations(
 }
 
 /**
- * Pure Vite plugin for Rimelight i18n. Provides virtual modules `virtual:rimelight/i18n` and
- * `virtual:rimelight-i18n-config`.
+ * Pure Vite plugin for Rimelight i18n. Provides the virtual module
+ * `virtual:rimelight-i18n-config` with locales, defaultLocale, prefixDefaultLocale, and
+ * translations, plus KV seed generation on `closeBundle`.
  */
 export function i18n<
   const TLocale extends string = string,
@@ -140,12 +117,11 @@ export function i18n<
         root = resolvedConfig.root ?? process.cwd();
       },
       resolveId(id: string) {
-        if (id === "virtual:rimelight-i18n-config" || id === "virtual:rimelight/i18n")
-          return "\0" + id;
+        if (id === VIRTUAL_CONFIG_ID) return RESOLVED_VIRTUAL_CONFIG_ID;
         return null;
       },
       load(id: string) {
-        if (id === "\0virtual:rimelight-i18n-config" || id === "\0virtual:rimelight/i18n") {
+        if (id === RESOLVED_VIRTUAL_CONFIG_ID) {
           const cfg = getResolvedConfig();
 
           // Watch all discovered translation files in the translations directory
@@ -164,7 +140,6 @@ export function i18n<
 
           return `
             export const locales = ${JSON.stringify(cfg.locales)};
-            export const languages = ${JSON.stringify(cfg.locales)};
             export const defaultLocale = ${JSON.stringify(cfg.defaultLocale)};
             export const prefixDefaultLocale = ${JSON.stringify(cfg.prefixDefaultLocale)};
             export const translations = ${JSON.stringify(cfg.translations)};
@@ -176,10 +151,8 @@ export function i18n<
       async handleHotUpdate(ctx) {
         const { dirPath } = getResolvedConfig();
         if (dirPath && ctx.file.startsWith(dirPath) && ctx.file.endsWith(".json")) {
-          const mod = ctx.server.moduleGraph.getModuleById("\0virtual:rimelight-i18n-config");
-          const modAlias = ctx.server.moduleGraph.getModuleById("\0virtual:rimelight/i18n");
+          const mod = ctx.server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_CONFIG_ID);
           if (mod) ctx.server.moduleGraph.invalidateModule(mod);
-          if (modAlias) ctx.server.moduleGraph.invalidateModule(modAlias);
           ctx.server.ws.send({
             type: "full-reload",
           });
@@ -222,5 +195,3 @@ export function i18n<
     },
   ];
 }
-
-export default i18n;

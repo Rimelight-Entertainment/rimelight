@@ -440,9 +440,6 @@ importers:
       '@rimelight/auth':
         specifier: workspace:*
         version: link:../auth
-      '@rimelight/i18n':
-        specifier: workspace:*
-        version: link:../i18n
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../ui

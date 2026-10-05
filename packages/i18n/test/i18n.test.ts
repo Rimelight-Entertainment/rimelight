@@ -31,6 +31,17 @@ describe("translation dictionary utils", () => {
     });
   });
 
+  it("flattens arrays through numeric indices and round-trips", () => {
+    const source = { tags: ["a", "b"], list: [{ name: "x", role: "dev" }] };
+    expect(flatten(source)).toEqual({
+      "tags.0": "a",
+      "tags.1": "b",
+      "list.0.name": "x",
+      "list.0.role": "dev",
+    });
+    expect(unflatten(flatten(source))).toEqual(source);
+  });
+
   it("unflattens dotted keys back into components", () => {
     expect(unflatten({ "hero.title": "Hello", "nav.home": "Home" })).toEqual({
       hero: { title: "Hello" },

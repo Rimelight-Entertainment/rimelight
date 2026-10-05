@@ -34,9 +34,6 @@ describe("@rimelight/i18n Vite plugin", () => {
     expect(await callHook(configPlugin.resolveId, "virtual:rimelight-i18n-config")).toBe(
       "\0virtual:rimelight-i18n-config",
     );
-    expect(await callHook(configPlugin.resolveId, "virtual:rimelight/i18n")).toBe(
-      "\0virtual:rimelight/i18n",
-    );
     expect(await callHook(configPlugin.resolveId, "other-module")).toBeNull();
 
     // Load virtual content

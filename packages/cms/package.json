@@ -95,7 +95,6 @@
   },
   "dependencies": {
     "@rimelight/auth": "workspace:*",
-    "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
     "@solidjs/web": "2.0.0-rc.11",
     "drizzle-orm": "1.0.0-rc.4",

@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import { findTranslationsDir, readLocaleFiles } from "./fs";
 import { verifyTranslations, formatAuditReport, fixTranslations } from "./utils";
 
 const HELP_TEXT = `
@@ -19,25 +20,6 @@ Options:
   --allow-empty        Do not treat empty strings as missing/invalid translations
   -h, --help           Show this help message
 `;
-
-function findLocalesDir(customDir?: string): string | null {
-  const cwd = process.cwd();
-  if (customDir) {
-    const resolved = path.resolve(cwd, customDir);
-    return fs.existsSync(resolved) ? resolved : null;
-  }
-
-  const searchCandidates = ["src/i18n", "i18n", "src/locales", "locales", "src/assets/i18n"];
-
-  for (const rel of searchCandidates) {
-    const resolved = path.join(cwd, rel);
-    if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
-      return resolved;
-    }
-  }
-
-  return null;
-}
 
 export async function runCli(argv: string[] = process.argv.slice(2)): Promise<number> {
   const { values, positionals } = parseArgs({
@@ -63,7 +45,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const localesDir = findLocalesDir(values.dir);
+  const localesDir = findTranslationsDir(process.cwd(), values.dir);
   if (!localesDir) {
     console.error(
       `✖ [i18n] Could not find translation directory. Pass --dir <path> (e.g. --dir src/i18n)`,
@@ -71,23 +53,15 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const files = fs.readdirSync(localesDir).filter((f) => f.endsWith(".json"));
+  const { files, translations, errors } = readLocaleFiles(localesDir);
   if (files.length === 0) {
     console.error(`✖ [i18n] No .json translation files found in ${localesDir}`);
     return 1;
   }
-
-  const translations: Record<string, Record<string, any>> = {};
-  for (const file of files) {
-    const locale = path.basename(file, ".json");
-    const filePath = path.join(localesDir, file);
-    try {
-      const content = fs.readFileSync(filePath, "utf-8");
-      translations[locale] = JSON.parse(content);
-    } catch (err: any) {
-      console.error(`✖ [i18n] Failed to parse ${file}: ${err?.message || err}`);
-      return 1;
-    }
+  if (errors.length > 0) {
+    const { file, error } = errors[0]!;
+    console.error(`✖ [i18n] Failed to parse ${file}: ${(error as any)?.message || error}`);
+    return 1;
   }
 
   const baseLocale = values.base || "en";

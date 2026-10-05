@@ -1,5 +1,4 @@
 export type ComponentsJSON = Record<string, Record<string, any>>;
-export type Translations = Record<string, any>;
 export type TranslationLoader = (
   locale: string,
   components: string[],
@@ -44,12 +43,6 @@ export interface VerifyTranslationsOptions {
   allowEmpty?: boolean;
 }
 
-export interface LocaleFile {
-  [component: string]: {
-    [key: string]: string;
-  };
-}
-
 export interface KVNamespaceBinding {
   get(key: string, type: "json"): Promise<Record<string, string> | null>;
   put(key: string, value: string): Promise<void>;
@@ -88,3 +81,12 @@ export interface CustomTranslations {}
 export type TranslationKey = [keyof CustomTranslations] extends [never]
   ? string
   : NestedTranslationKeys<CustomTranslations>;
+
+export interface TFunction {
+  <K extends string = TranslationKey>(
+    key: K | TranslationKey,
+    params?: Record<string, any>,
+  ): string;
+  raw: <T = unknown>(key: string, fallback?: T) => T;
+  array: <T = string>(key: string, fallback?: T[]) => T[];
+}

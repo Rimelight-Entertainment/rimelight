@@ -7,7 +7,8 @@ import type {
 } from "./types";
 
 /**
- * Flattens deeply nested translation objects or arrays into dot-notated paths.
+ * Flattens deeply nested translation objects or arrays into dot-notated paths. Arrays are
+ * traversed through their numeric indices (`tags.0`), so objects and arrays share one branch.
  */
 export function flatten(
   obj: Record<string, any>,
@@ -23,18 +24,8 @@ export function flatten(
       continue;
     }
     const fullPath = prefix ? `${prefix}.${key}` : key;
-    if (value != null && typeof value === "object" && !Array.isArray(value)) {
+    if (value != null && typeof value === "object") {
       flatten(value, fullPath, result);
-    } else if (Array.isArray(value)) {
-      for (let i = 0; i < value.length; i++) {
-        const item = value[i];
-        const arrayPath = `${fullPath}.${i}`;
-        if (item != null && typeof item === "object") {
-          flatten(item, arrayPath, result);
-        } else {
-          result[arrayPath] = String(item ?? "");
-        }
-      }
     } else {
       result[fullPath] = value != null ? String(value) : "";
     }
@@ -93,22 +84,33 @@ export function extractPlaceholders(str: string): string[] {
   return Array.from(new Set(matches.map((m) => m.slice(1, -1))));
 }
 
-/**
- * Compares a target translation dictionary against a base translation dictionary, returning any
- * missing deep dotted keys.
- */
-export function findMissingKeys(base: Record<string, any>, target: Record<string, any>): string[] {
-  const baseFlat = flatten(base);
-  const targetFlat = flatten(target);
+function diffKeys(
+  baseFlat: FlattenedTranslations,
+  targetFlat: FlattenedTranslations,
+): { missing: string[]; stale: string[] } {
   const missing: string[] = [];
+  const stale: string[] = [];
 
   for (const key of Object.keys(baseFlat)) {
     if (!(key in targetFlat)) {
       missing.push(key);
     }
   }
+  for (const key of Object.keys(targetFlat)) {
+    if (!(key in baseFlat)) {
+      stale.push(key);
+    }
+  }
 
-  return missing;
+  return { missing, stale };
+}
+
+/**
+ * Compares a target translation dictionary against a base translation dictionary, returning any
+ * missing deep dotted keys.
+ */
+export function findMissingKeys(base: Record<string, any>, target: Record<string, any>): string[] {
+  return diffKeys(flatten(base), flatten(target)).missing;
 }
 
 /**
@@ -116,22 +118,13 @@ export function findMissingKeys(base: Record<string, any>, target: Record<string
  * stale/orphaned keys present in target but absent in base.
  */
 export function findStaleKeys(base: Record<string, any>, target: Record<string, any>): string[] {
-  const baseFlat = flatten(base);
-  const targetFlat = flatten(target);
-  const stale: string[] = [];
-
-  for (const key of Object.keys(targetFlat)) {
-    if (!(key in baseFlat)) {
-      stale.push(key);
-    }
-  }
-
-  return stale;
+  return diffKeys(flatten(base), flatten(target)).stale;
 }
 
 /**
  * Runs a comprehensive audit across all translation dictionaries comparing against
- * base/defaultLocale.
+ * base/defaultLocale. Each locale is flattened exactly once and all checks (missing, stale,
+ * empty, placeholder mismatches, completion) run in a single pass over the flat maps.
  */
 export function verifyTranslations(
   translations: Record<string, Record<string, any>>,
@@ -141,8 +134,11 @@ export function verifyTranslations(
   const allowEmpty = options.allowEmpty ?? false;
   const locales = Object.keys(translations);
 
-  const baseDict = translations[defaultLocale] || {};
-  const baseFlat = flatten(baseDict);
+  const flattened = new Map<string, FlattenedTranslations>(
+    locales.map((locale) => [locale, flatten(translations[locale] || {})]),
+  );
+
+  const baseFlat = flattened.get(defaultLocale) ?? {};
   const totalKeys = Object.keys(baseFlat).length;
 
   const missingKeys: Record<string, string[]> = {};
@@ -154,11 +150,9 @@ export function verifyTranslations(
   let isValid = true;
 
   for (const locale of locales) {
-    const targetDict = translations[locale] || {};
-    const targetFlat = flatten(targetDict);
+    const targetFlat = flattened.get(locale)!;
 
-    const missing = findMissingKeys(baseDict, targetDict);
-    const stale = findStaleKeys(baseDict, targetDict);
+    const { missing, stale } = diffKeys(baseFlat, targetFlat);
     const empty: string[] = [];
     const mismatches: PlaceholderMismatch[] = [];
 
