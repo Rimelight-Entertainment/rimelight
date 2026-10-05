@@ -84,7 +84,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
     RLImageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
   );
 
-  const alt = props.alt ?? "";
+  const alt = () => props.alt ?? "";
   const loading = props.loading ?? "lazy";
   const decoding = props.decoding ?? "async";
 
@@ -215,7 +215,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
           />
           <img
             src={show() ? urlOf(props.desktopSrc) : undefined}
-            alt={alt}
+            alt={alt()}
             loading={loading}
             decoding={decoding}
             class={resolvedClasses().triggerImage}
@@ -231,7 +231,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
         <div class="rl-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center">
           <img
             src={show() ? lightUrl : undefined}
-            alt={alt}
+            alt={alt()}
             loading={loading}
             decoding={decoding}
             class={`${resolvedClasses().triggerImage} rl-img-light w-full h-full object-cover rounded-[inherit]`}
@@ -240,7 +240,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
           />
           <img
             src={show() ? darkUrl : undefined}
-            alt={alt}
+            alt={alt()}
             loading={loading}
             decoding={decoding}
             class={`${resolvedClasses().triggerImage} rl-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
@@ -252,7 +252,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
     return (
       <img
         src={show() ? activeUrl : undefined}
-        alt={alt}
+        alt={alt()}
         loading={loading}
         decoding={decoding}
         width={imgWidth !== undefined ? String(imgWidth) : undefined}
@@ -339,7 +339,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                   />
                   <img
                     src={show() ? urlOf(props.desktopSrc) : undefined}
-                    alt={alt}
+                    alt={alt()}
                     class={`${resolvedClasses().image}${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img
                   />
@@ -348,7 +348,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 <div class="rl-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden">
                   <img
                     src={show() ? lightUrl : undefined}
-                    alt={alt}
+                    alt={alt()}
                     class={`${resolvedClasses().image} rl-img-light${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img
                     data-light-src={lightUrl}
@@ -356,7 +356,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                   />
                   <img
                     src={show() ? darkUrl : undefined}
-                    alt={alt}
+                    alt={alt()}
                     class={`${resolvedClasses().image} rl-img-dark hidden${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img-dark
                   />
@@ -364,7 +364,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
               ) : (
                 <img
                   src={show() ? activeUrl : undefined}
-                  alt={alt}
+                  alt={alt()}
                   class={`${resolvedClasses().image}${zoom() ? " max-w-none max-h-none" : ""}`}
                   data-modal-img
                 />
@@ -430,9 +430,9 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                     />
                     <span class="text-muted">Alt:</span>
                     <span
-                      class={`text-dimmed truncate max-w-[30vw]${alt ? "" : " italic opacity-50"}`}
+                      class={`text-dimmed truncate max-w-[30vw]${alt() ? "" : " italic opacity-50"}`}
                     >
-                      {alt || "none"}
+                      {alt() || "none"}
                     </span>
                   </div>
                 )}
