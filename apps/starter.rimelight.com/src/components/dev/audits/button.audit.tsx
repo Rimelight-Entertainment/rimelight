@@ -259,9 +259,11 @@ export const buttonAudit: ComponentAuditDefinition = {
             {(v) => (
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="w-16 text-xs text-muted font-mono uppercase">{v}:</span>
-                <For each={COLORS}>
-                  {(c) => <RLButton color={c} variant={v} label={`${c}`} size="sm" />}
-                </For>
+                {COLORS.map((c) => (
+                  <span class="inline-flex">
+                    <RLButton color={c} variant={v} label={`${c}`} size="sm" />
+                  </span>
+                ))}
               </div>
             )}
           </For>

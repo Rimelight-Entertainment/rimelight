@@ -199,7 +199,13 @@ export const badgeAudit: ComponentAuditDefinition = {
             {(v) => (
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="w-16 text-[11px] font-mono text-muted uppercase">{v}</span>
-                <For each={COLORS}>{(c) => <RLBadge variant={v} color={c} label={c} />}</For>
+                <For each={COLORS}>
+                  {(c) => (
+                    <span class="inline-flex">
+                      <RLBadge variant={v} color={c} label={c} />
+                    </span>
+                  )}
+                </For>
               </div>
             )}
           </For>

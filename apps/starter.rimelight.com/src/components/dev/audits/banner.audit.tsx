@@ -142,12 +142,14 @@ export const bannerAudit: ComponentAuditDefinition = {
         <div class="flex flex-col gap-3">
           <For each={COLORS}>
             {(c) => (
-              <RLBanner
-                color={c}
-                icon="info"
-                title={`This is an important ${c} announcement banner.`}
-                close
-              />
+              <span class="block">
+                <RLBanner
+                  color={c}
+                  icon="info"
+                  title={`This is an important ${c} announcement banner.`}
+                  close
+                />
+              </span>
             )}
           </For>
         </div>

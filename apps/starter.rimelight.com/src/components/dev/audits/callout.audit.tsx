@@ -195,13 +195,15 @@ export const calloutAudit: ComponentAuditDefinition = {
         <div class="flex flex-col gap-3">
           <For each={COLORS}>
             {(c) => (
-              <RLCallout
-                color={c}
-                icon="info"
-                title={`This is a ${c} callout notification.`}
-                description={`Demonstrating ${c} theme color styling with high contrast readability.`}
-                close
-              />
+              <span class="block">
+                <RLCallout
+                  color={c}
+                  icon="info"
+                  title={`This is a ${c} callout notification.`}
+                  description={`Demonstrating ${c} theme color styling with high contrast readability.`}
+                  close
+                />
+              </span>
             )}
           </For>
         </div>
