@@ -1,4 +1,11 @@
-import { createSignal, createMemo, createEffect, onSettled, type Accessor } from "solid-js";
+import {
+  createSignal,
+  createMemo,
+  createEffect,
+  onSettled,
+  untrack,
+  type Accessor,
+} from "solid-js";
 
 export interface HeaderLayer {
   id: string;
@@ -83,37 +90,39 @@ export function useHeaderStack() {
         const height = Math.round(el.getBoundingClientRect().height);
         const visible: boolean = isVisibleAccessor();
 
-        setHeaders((prev) => {
-          const index = prev.findIndex((h) => h.id === options.id);
-          const newEntry: HeaderLayer = {
-            id: options.id,
-            order: options.order ?? (options.type === "banner" ? 0 : 1),
-            type: options.type ?? "header",
-            height,
-            sticky: options.sticky ?? true,
-            fixed: options.fixed ?? false,
-            hideOnScroll: options.hideOnScroll ?? false,
-            visible,
-            element: el,
-          };
+        untrack(() => {
+          setHeaders((prev) => {
+            const index = prev.findIndex((h) => h.id === options.id);
+            const newEntry: HeaderLayer = {
+              id: options.id,
+              order: options.order ?? (options.type === "banner" ? 0 : 1),
+              type: options.type ?? "header",
+              height,
+              sticky: options.sticky ?? true,
+              fixed: options.fixed ?? false,
+              hideOnScroll: options.hideOnScroll ?? false,
+              visible,
+              element: el,
+            };
 
-          if (index !== -1) {
-            const existing = prev[index];
-            if (
-              existing &&
-              existing.height === height &&
-              existing.visible === visible &&
-              existing.hideOnScroll === newEntry.hideOnScroll &&
-              existing.order === newEntry.order &&
-              existing.type === newEntry.type
-            ) {
-              return prev;
+            if (index !== -1) {
+              const existing = prev[index];
+              if (
+                existing &&
+                existing.height === height &&
+                existing.visible === visible &&
+                existing.hideOnScroll === newEntry.hideOnScroll &&
+                existing.order === newEntry.order &&
+                existing.type === newEntry.type
+              ) {
+                return prev;
+              }
+              const copy = [...prev];
+              copy[index] = newEntry;
+              return copy;
             }
-            const copy = [...prev];
-            copy[index] = newEntry;
-            return copy;
-          }
-          return [...prev, newEntry];
+            return [...prev, newEntry];
+          });
         });
       };
 
@@ -130,7 +139,9 @@ export function useHeaderStack() {
         if (observer) {
           observer.disconnect();
         }
-        setHeaders((prev) => prev.filter((h) => h.id !== options.id));
+        queueMicrotask(() => {
+          setHeaders((prev) => prev.filter((h) => h.id !== options.id));
+        });
       };
     });
 
@@ -141,15 +152,17 @@ export function useHeaderStack() {
         (visible) => {
           if (!el) return;
           const height = Math.round(el.getBoundingClientRect().height);
-          setHeaders((prev) => {
-            const index = prev.findIndex((h) => h.id === options.id);
-            if (index === -1) return prev;
-            const copy = [...prev];
-            const existing = copy[index];
-            if (existing) {
-              copy[index] = { ...existing, height, visible: Boolean(visible) };
-            }
-            return copy;
+          untrack(() => {
+            setHeaders((prev) => {
+              const index = prev.findIndex((h) => h.id === options.id);
+              if (index === -1) return prev;
+              const copy = [...prev];
+              const existing = copy[index];
+              if (existing) {
+                copy[index] = { ...existing, height, visible: Boolean(visible) };
+              }
+              return copy;
+            });
           });
         },
       );

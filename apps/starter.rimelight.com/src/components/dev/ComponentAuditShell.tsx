@@ -1,6 +1,7 @@
 import { createSignal, createMemo, For, Show, type Component } from "solid-js";
 import { COMPONENT_AUDITS, getAllAudits, getAuditById } from "./audits/registry";
 import type { ComponentCategory, AuditStatus } from "./audits/types";
+import { RLThemeSelector } from "@rimelight/ui/components";
 
 interface ComponentAuditShellProps {
   initialComponentId?: string;
@@ -100,15 +101,20 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
             <>
               {/* Header Bar */}
               <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-col gap-3">
-                <div class="flex items-center gap-3">
-                  <h1 class="text-xl font-black tracking-tight text-highlighted">{audit().name}</h1>
-                  <span
-                    class={`text-[11px] font-mono px-2 py-0.5 rounded-full border font-semibold ${getStatusBadge(
-                      audit().status,
-                    )}`}
-                  >
-                    {audit().status}
-                  </span>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <h1 class="text-xl font-black tracking-tight text-highlighted">
+                      {audit().name}
+                    </h1>
+                    <span
+                      class={`text-[11px] font-mono px-2 py-0.5 rounded-full border font-semibold ${getStatusBadge(
+                        audit().status,
+                      )}`}
+                    >
+                      {audit().status}
+                    </span>
+                  </div>
+                  <RLThemeSelector size="sm" />
                 </div>
 
                 {/* Tabs */}
