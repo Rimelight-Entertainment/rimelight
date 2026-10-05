@@ -17,6 +17,8 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Nuxt UI is the main reference and is used for API and slot patterns when provided.
 - Nuxt UI is cloned locally under `WebStormProjects/ui` for reference; component docs will be provided if available.
 - Some components are still non-functional/barebones/placeholder and will need to be built directly.
+- Components are never meant to add new dependencies to the package, even if the original reference uses one. All functionality is meant to be rebuilt directly.
+- Components should use other RL components internally when possible, instead of manual re-implementations for common functionality. i.e. If an RLModal has an action, it uses an RLButton not a <button>.
 - Assume this starting state without re-verifying it at the start of your work. This is a strict order to preserve token usage:
   - Git status for related components is clean.
   - Checks all pass.
