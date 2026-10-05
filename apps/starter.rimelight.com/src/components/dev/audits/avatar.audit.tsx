@@ -164,7 +164,9 @@ export const avatarAudit: ComponentAuditDefinition = {
       description: "From 3xs (16px) up to 3xl (48px) with proportional typography and badges.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
-          <For each={SIZES}>{(s) => <RLAvatar alt="Size Test" size={s} />}</For>
+          {SIZES.map((s) => (
+            <RLAvatar alt="Size Test" size={s} />
+          ))}
         </div>
       ),
     },
@@ -175,7 +177,11 @@ export const avatarAudit: ComponentAuditDefinition = {
         "Supports built-in colors and custom user color ramps via color: 'auto' CSS variable tokens.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
-          <For each={COLORS}>{(c) => <RLAvatar alt={c} color={c} />}</For>
+          {COLORS.map((c) => (
+            <span class="inline-flex">
+              <RLAvatar alt={c} color={c} />
+            </span>
+          ))}
         </div>
       ),
     },
