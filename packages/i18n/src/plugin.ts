@@ -97,7 +97,7 @@ function discoverTranslations(
 }
 
 /**
- * Pure Vite plugin for Rimelight i18n. Provides virtual modules `@rimelight/i18n:runtime` and
+ * Pure Vite plugin for Rimelight i18n. Provides virtual modules `virtual:rimelight/i18n` and
  * `virtual:rimelight-i18n-config`.
  */
 export function i18n<
