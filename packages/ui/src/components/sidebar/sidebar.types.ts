@@ -1,5 +1,5 @@
 import type { JSX } from "@solidjs/web";
-import type { RLBadgeProps } from "../badge/badge";
+import type { RLBadgeProps } from "../badge/badge.types";
 
 export interface SidebarItem {
   label: string;

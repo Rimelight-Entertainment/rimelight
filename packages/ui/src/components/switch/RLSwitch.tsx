@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLSwitchProps } from "./switch";
+import type { RLSwitchProps } from "./switch.types";
 import { switchTheme } from "./switch.theme";
 
 export const RLSwitch: Component<RLSwitchProps> = (allProps) => {

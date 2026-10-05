@@ -3,7 +3,7 @@ import GrandTaleLayout from "#layouts/GrandTaleLayout";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
-import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 
 export const GrandTaleIndexPage: Component = () => {
   const heroLinks = (): RLButtonProps[] => [

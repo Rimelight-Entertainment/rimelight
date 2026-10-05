@@ -8,7 +8,7 @@ import {
   createEffect,
   type Component,
 } from "solid-js";
-import type { RLInputMenuProps } from "./input-menu";
+import type { RLInputMenuProps } from "./input-menu.types";
 import { inputMenuTheme } from "./input-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
 

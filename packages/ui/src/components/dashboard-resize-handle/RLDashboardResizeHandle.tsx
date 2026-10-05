@@ -1,6 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLDashboardResizeHandleProps } from "./dashboard-resize-handle";
+import type { RLDashboardResizeHandleProps } from "./dashboard-resize-handle.types";
 import { dashboardResizeHandleTheme } from "./dashboard-resize-handle.theme";
 
 export const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (allProps) => {

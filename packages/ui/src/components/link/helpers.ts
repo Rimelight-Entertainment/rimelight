@@ -1,4 +1,4 @@
-import type { RLLinkProps } from "./link";
+import type { RLLinkProps } from "./link.types";
 
 const EXTERNAL_URL_RE = /^(?:https?:)?\/\//;
 

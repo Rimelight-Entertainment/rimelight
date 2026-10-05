@@ -1,5 +1,5 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { RLInputProps } from "./input";
+import type { RLInputProps } from "./input.types";
 import { inputTheme } from "./input.theme";
 import { RLIcon } from "../icon/RLIcon";
 

@@ -5,7 +5,7 @@ import type {
   BrowserMockupVariant,
   BrowserMockupSize,
   BrowserMockupColor,
-} from "@rimelight/ui/components/browser-mockup/browser-mockup.ts";
+} from "@rimelight/ui/components/browser-mockup/browser-mockup.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const VARIANTS: BrowserMockupVariant[] = ["outline", "solid", "soft", "subtle", "ghost"];

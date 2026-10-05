@@ -1,6 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLDashboardNavbarProps } from "./dashboard-navbar";
+import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
 import { dashboardNavbarTheme } from "./dashboard-navbar.theme";
 import { RLIcon } from "../icon/RLIcon";
 

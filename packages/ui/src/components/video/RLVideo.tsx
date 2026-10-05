@@ -1,5 +1,5 @@
 import { children, createMemo, createSignal, Show, omit, type Component } from "solid-js";
-import type { RLVideoProps } from "./video";
+import type { RLVideoProps } from "./video.types";
 import { videoTheme } from "./video.theme";
 import { RLIcon } from "../icon/RLIcon";
 

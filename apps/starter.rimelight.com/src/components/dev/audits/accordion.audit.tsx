@@ -1,7 +1,7 @@
 import { createMemo, createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
-import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts";
+import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.types.ts";
 import type { ComponentAuditDefinition } from "./types";
 
 const BASE_ITEMS: AccordionItem[] = [

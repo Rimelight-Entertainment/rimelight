@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPageAsideProps } from "./page-aside";
+import type { RLPageAsideProps } from "./page-aside.types";
 import { pageAsideTheme } from "./page-aside.theme";
 
 export const RLPageAside: Component<RLPageAsideProps> = (allProps) => {

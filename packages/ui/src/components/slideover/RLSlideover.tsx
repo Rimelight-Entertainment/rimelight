@@ -9,7 +9,7 @@ import {
   type Component,
 } from "solid-js";
 import { Portal } from "@solidjs/web";
-import type { RLSlideoverProps } from "./slideover";
+import type { RLSlideoverProps } from "./slideover.types";
 import { slideoverTheme } from "./slideover.theme";
 import { RLIcon } from "../icon/RLIcon";
 

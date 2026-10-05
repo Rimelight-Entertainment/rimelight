@@ -1,5 +1,5 @@
 import { createMemo, omit, For, type Component } from "solid-js";
-import type { RLPaginationProps } from "./pagination";
+import type { RLPaginationProps } from "./pagination.types";
 import { paginationTheme } from "./pagination.theme";
 import { RLIcon } from "../icon/RLIcon";
 

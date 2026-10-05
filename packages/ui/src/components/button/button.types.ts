@@ -1,9 +1,14 @@
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
-import type { RLAvatarProps } from "../avatar/avatar";
-import type { ButtonClickHandler } from "../button/button";
+import type { RLAvatarProps } from "../avatar/avatar.types";
 
-export interface RLCopyMarkdownProps {
+export type ButtonClickHandler = (event: MouseEvent) => unknown;
+
+export interface RLButtonProps {
+  /**
+   * The text label displayed inside the button.
+   */
+  label?: string | undefined;
   /**
    * The color scheme applied to the button.
    * @default 'primary'
@@ -19,19 +24,44 @@ export interface RLCopyMarkdownProps {
     | ThemeColor
     | undefined;
   /**
+   * Color used when button is in active state.
+   */
+  activeColor?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "neutral"
+    | ThemeColor
+    | undefined;
+  /**
    * The visual style variant of the button.
    * @default 'solid'
    */
   variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link" | undefined;
+  /**
+   * Variant used when button is in active state.
+   */
+  activeVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link" | undefined;
   /**
    * The size scale of the button.
    * @default 'md'
    */
   size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
   /**
+   * Render the button with equal padding on all sides.
+   */
+  square?: boolean | undefined;
+  /**
    * Render the button full width.
    */
   block?: boolean | undefined;
+  /**
+   * Set loading state automatically based on the `@click` / `onClick` promise state.
+   */
+  loadingAuto?: boolean | undefined;
   /**
    * Display an icon based on the `leading` and `trailing` props.
    */
@@ -45,6 +75,10 @@ export interface RLCopyMarkdownProps {
    */
   leading?: JSX.Element;
   /**
+   * Display an icon on the left side.
+   */
+  leadingIcon?: any;
+  /**
    * Slot content rendered in leading position.
    */
   leadingSlot?: JSX.Element;
@@ -53,14 +87,26 @@ export interface RLCopyMarkdownProps {
    */
   trailing?: JSX.Element;
   /**
+   * Display an icon on the right side.
+   */
+  trailingIcon?: any;
+  /**
    * Slot content rendered in trailing position.
    */
   trailingSlot?: JSX.Element;
+  /**
+   * When `true`, the loading icon is displayed and the button is disabled.
+   */
+  loading?: boolean | undefined;
   /**
    * The icon when the `loading` prop is `true`.
    * @default 'loaderCircle'
    */
   loadingIcon?: any;
+  /**
+   * Force the link / button to be active independent of the current route.
+   */
+  active?: boolean | undefined;
   /**
    * Class to apply when the button / link is active.
    */
@@ -124,6 +170,7 @@ export interface RLCopyMarkdownProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
+  className?: any;
   /**
    * Default slot children.
    */
@@ -138,6 +185,10 @@ export interface RLCopyMarkdownProps {
    * @default false
    */
   disabled?: boolean | undefined;
+  /**
+   * The URL the link points to.
+   */
+  href?: string | undefined;
   /**
    * Alias for `href`.
    */
@@ -180,8 +231,10 @@ export interface RLCopyMarkdownProps {
    */
   prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
   /**
-   * Raw markdown content to copy to the clipboard.
+   * When true, only `class` is applied — all default theme styles are skipped.
+   *
+   * @default false
    */
-  raw: string;
+  raw?: boolean | undefined;
   [key: string]: unknown;
 }

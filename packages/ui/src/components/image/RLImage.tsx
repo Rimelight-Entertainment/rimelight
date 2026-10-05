@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { RLImageProps, ImageMetadata } from "./image";
+import type { RLImageProps, ImageMetadata } from "./image.types";
 import { imageTheme } from "./image.theme";
 import { RLIcon } from "../icon/RLIcon";
 

@@ -28,7 +28,7 @@ export type TableAggregationFn<T = any> =
   | "uniqueCount"
   | ((values: any[], rows: TableRow<T>[]) => any);
 
-import type { DropdownMenuItem } from "../dropdown-menu/dropdown-menu";
+import type { DropdownMenuItem } from "../dropdown-menu/dropdown-menu.types";
 
 export interface TableColumn<T = any> {
   id?: string;

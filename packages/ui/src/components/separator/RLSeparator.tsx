@@ -1,5 +1,5 @@
 import { children, createMemo, omit, type Component } from "solid-js";
-import type { RLSeparatorProps } from "./separator";
+import type { RLSeparatorProps } from "./separator.types";
 import { separatorTheme } from "./separator.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 

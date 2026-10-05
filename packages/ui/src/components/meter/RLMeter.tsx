@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLMeterProps } from "./meter";
+import type { RLMeterProps } from "./meter.types";
 import { meterTheme } from "./meter.theme";
 
 export const RLMeter: Component<RLMeterProps> = (allProps) => {

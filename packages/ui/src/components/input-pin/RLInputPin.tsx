@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
-import type { RLInputPinProps } from "./input-pin";
+import type { RLInputPinProps } from "./input-pin.types";
 import { inputPinTheme } from "./input-pin.theme";
 import { inputTheme } from "../input/input.theme";
 

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPlaceholderProps } from "./placeholder";
+import type { RLPlaceholderProps } from "./placeholder.types";
 import { placeholderTheme } from "./placeholder.theme";
 
 export const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {

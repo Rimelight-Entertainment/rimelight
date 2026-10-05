@@ -8,7 +8,7 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLCarouselProps, CarouselSlide } from "./carousel";
+import type { RLCarouselProps, CarouselSlide } from "./carousel.types";
 import { carouselTheme } from "./carousel.theme";
 import { RLIcon } from "../icon/RLIcon";
 

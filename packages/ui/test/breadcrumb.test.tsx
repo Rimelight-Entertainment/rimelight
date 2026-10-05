@@ -10,7 +10,7 @@ vi.mock("virtual:rimelight/ui", () => ({
 }));
 
 import { RLBreadcrumb } from "../src/components/breadcrumb/RLBreadcrumb";
-import type { BreadcrumbItem } from "../src/components/breadcrumb/breadcrumb";
+import type { BreadcrumbItem } from "../src/components/breadcrumb/breadcrumb.types";
 import { renderSolid } from "./utils/normalize";
 
 describe("RLBreadcrumb Solid Component Suite", () => {

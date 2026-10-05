@@ -1,7 +1,7 @@
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DocsLayout from "#layouts/DocsLayout";
-import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
+import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 import {
   getDocsVersions,
   parseDocsSlug,

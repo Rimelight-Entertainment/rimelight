@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLQrCodeProps } from "./qr-code";
+import type { RLQrCodeProps } from "./qr-code.types";
 import { qrCodeTheme } from "./qr-code.theme";
 
 export const RLQrCode: Component<RLQrCodeProps> = (allProps) => {

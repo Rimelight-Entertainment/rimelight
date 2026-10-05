@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
-import type { RLSearchProps, SearchResultItem } from "./search";
+import type { RLSearchProps, SearchResultItem } from "./search.types";
 import { searchTheme } from "./search.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLInput } from "../input/RLInput";

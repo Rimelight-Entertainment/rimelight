@@ -1,5 +1,5 @@
 import { createSignal, onCleanup, omit, type Component } from "solid-js";
-import type { RLShareProps } from "./share";
+import type { RLShareProps } from "./share.types";
 import { RLButton } from "../button/RLButton";
 
 export const RLShare: Component<RLShareProps> = (allProps) => {

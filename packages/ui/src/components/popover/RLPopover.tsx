@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js";
-import type { RLPopoverProps } from "./popover";
+import type { RLPopoverProps } from "./popover.types";
 import { popoverTheme } from "./popover.theme";
 
 export const RLPopover: Component<RLPopoverProps> = (allProps) => {

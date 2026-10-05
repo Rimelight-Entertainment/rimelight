@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
-import type { RLColorSliderProps } from "./color-slider";
+import type { RLColorSliderProps } from "./color-slider.types";
 import { colorSliderTheme } from "./color-slider.theme";
 import {
   clamp,

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPageHeaderProps } from "./page-header";
+import type { RLPageHeaderProps } from "./page-header.types";
 import { pageHeaderTheme } from "./page-header.theme";
 
 export const RLPageHeader: Component<RLPageHeaderProps> = (allProps) => {

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLDashboardSidebarToggleProps } from "./dashboard-sidebar-toggle";
+import type { RLDashboardSidebarToggleProps } from "./dashboard-sidebar-toggle.types";
 import { dashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme";
 import { RLIcon } from "../icon/RLIcon";
 

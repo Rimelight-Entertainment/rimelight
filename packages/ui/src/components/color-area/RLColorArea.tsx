@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import type { RLColorAreaProps } from "./color-area";
+import type { RLColorAreaProps } from "./color-area.types";
 import { colorAreaTheme } from "./color-area.theme";
 
 type Channel =

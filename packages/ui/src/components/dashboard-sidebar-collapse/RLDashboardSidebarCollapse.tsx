@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLDashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse";
+import type { RLDashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse.types";
 import { dashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme";
 import { RLIcon } from "../icon/RLIcon";
 

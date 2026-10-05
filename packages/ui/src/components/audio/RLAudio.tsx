@@ -9,7 +9,7 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio";
+import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio.types";
 import { audioTheme } from "./audio.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLImage } from "../image/RLImage";

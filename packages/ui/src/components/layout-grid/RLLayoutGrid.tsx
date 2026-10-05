@@ -8,7 +8,7 @@ import {
   type Component,
 } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLLayoutGridProps } from "./layout-grid";
+import type { RLLayoutGridProps } from "./layout-grid.types";
 import { layoutGridTheme } from "./layout-grid.theme";
 import { defineShortcuts } from "../../shortcuts";
 

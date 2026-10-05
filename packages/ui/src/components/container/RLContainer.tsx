@@ -1,6 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLContainerProps } from "./container";
+import type { RLContainerProps } from "./container.types";
 import { containerTheme } from "./container.theme";
 
 export const RLContainer: Component<RLContainerProps> = (allProps) => {

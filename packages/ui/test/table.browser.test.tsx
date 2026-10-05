@@ -2,7 +2,7 @@ import { describe, it, expect } from "vite-plus/test";
 import { flush } from "solid-js";
 import { mountComponent } from "./utils/browser-render";
 import { RLTable } from "../src/components/table/RLTable";
-import type { TableApi, TableColumn } from "../src/components/table/table";
+import type { TableApi, TableColumn } from "../src/components/table/table.types";
 
 describe("RLTable — browser & TableApi interactions", () => {
   const sampleData = [

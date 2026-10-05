@@ -1,6 +1,6 @@
 import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLBrowserMockupProps } from "./browser-mockup";
+import type { RLBrowserMockupProps } from "./browser-mockup.types";
 import { browserMockupTheme } from "./browser-mockup.theme";
 import { RLIcon } from "../icon/RLIcon";
 

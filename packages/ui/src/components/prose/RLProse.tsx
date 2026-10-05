@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLProseProps } from "./prose";
+import type { RLProseProps } from "./prose.types";
 import { proseTheme } from "./prose.theme";
 
 export const RLProse: Component<RLProseProps> = (allProps) => {

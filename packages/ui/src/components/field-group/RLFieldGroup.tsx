@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLFieldGroupProps } from "./field-group";
+import type { RLFieldGroupProps } from "./field-group.types";
 import { fieldGroupTheme } from "./field-group.theme";
 
 export const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {

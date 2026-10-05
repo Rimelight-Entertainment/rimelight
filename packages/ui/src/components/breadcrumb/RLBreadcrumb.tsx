@@ -1,6 +1,6 @@
 import { createMemo, omit, For, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLBreadcrumbProps } from "./breadcrumb";
+import type { RLBreadcrumbProps } from "./breadcrumb.types";
 import { breadcrumbTheme } from "./breadcrumb.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";

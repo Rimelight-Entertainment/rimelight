@@ -1,5 +1,5 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { RLCardProps } from "./card";
+import type { RLCardProps } from "./card.types";
 import { cardTheme } from "./card.theme";
 
 export const RLCard: Component<RLCardProps> = (allProps) => {

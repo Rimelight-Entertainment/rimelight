@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLUserProps } from "./user";
+import type { RLUserProps } from "./user.types";
 import { userTheme } from "./user.theme";
 
 export const RLUser: Component<RLUserProps> = (allProps) => {

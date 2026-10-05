@@ -1,5 +1,5 @@
 import { createMemo, omit, Show, type Component } from "solid-js";
-import type { RLChipProps } from "./chip";
+import type { RLChipProps } from "./chip.types";
 import { chipTheme } from "./chip.theme";
 
 export const RLChip: Component<RLChipProps> = (allProps) => {

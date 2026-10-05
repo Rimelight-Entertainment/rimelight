@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLMarqueeProps } from "./marquee";
+import type { RLMarqueeProps } from "./marquee.types";
 import { marqueeTheme } from "./marquee.theme";
 
 const MARQUEE_KEYFRAMES = `

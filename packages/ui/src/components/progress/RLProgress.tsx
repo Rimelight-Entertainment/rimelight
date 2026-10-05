@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLProgressProps } from "./progress";
+import type { RLProgressProps } from "./progress.types";
 import { progressTheme } from "./progress.theme";
 
 export const RLProgress: Component<RLProgressProps> = (allProps) => {

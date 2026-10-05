@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPhoneMockupProps } from "./phone-mockup";
+import type { RLPhoneMockupProps } from "./phone-mockup.types";
 import { phoneMockupTheme } from "./phone-mockup.theme";
 
 export const RLPhoneMockup: Component<RLPhoneMockupProps> = (allProps) => {

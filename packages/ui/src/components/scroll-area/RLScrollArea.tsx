@@ -7,7 +7,7 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLScrollAreaProps } from "./scroll-area";
+import type { RLScrollAreaProps } from "./scroll-area.types";
 import { scrollAreaTheme } from "./scroll-area.theme";
 
 export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {

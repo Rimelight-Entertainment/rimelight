@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPostProps } from "./post";
+import type { RLPostProps } from "./post.types";
 import { postTheme } from "./post.theme";
 import { RLBadge } from "../badge/RLBadge";
 

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLGalleryProps } from "./gallery";
+import type { RLGalleryProps } from "./gallery.types";
 import { galleryTheme } from "./gallery.theme";
 
 export const RLGallery: Component<RLGalleryProps> = (allProps) => {

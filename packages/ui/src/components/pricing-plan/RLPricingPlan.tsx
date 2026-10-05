@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPricingPlanProps } from "./pricing-plan";
+import type { RLPricingPlanProps } from "./pricing-plan.types";
 import { pricingPlanTheme } from "./pricing-plan.theme";
 
 export const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {

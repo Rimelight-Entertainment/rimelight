@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLRadioGroupProps } from "./radio-group";
+import type { RLRadioGroupProps } from "./radio-group.types";
 import { radioGroupTheme } from "./radio-group.theme";
 
 export const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {

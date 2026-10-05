@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLTextareaProps } from "./textarea";
+import type { RLTextareaProps } from "./textarea.types";
 import { textareaTheme } from "./textarea.theme";
 
 export const RLTextarea: Component<RLTextareaProps> = (allProps) => {

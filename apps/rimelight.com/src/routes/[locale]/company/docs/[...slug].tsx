@@ -7,7 +7,7 @@ import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
 import { BlockRenderer } from "#components/cms/PageRenderer";
 import { getLocale, getLocalizedText } from "@rimelight/i18n";
-import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
+import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob(

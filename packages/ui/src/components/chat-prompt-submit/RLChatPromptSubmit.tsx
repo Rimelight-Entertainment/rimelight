@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLChatPromptSubmitProps } from "./chat-prompt-submit";
+import type { RLChatPromptSubmitProps } from "./chat-prompt-submit.types";
 import { chatPromptSubmitTheme } from "./chat-prompt-submit.theme";
 
 export const RLChatPromptSubmit: Component<RLChatPromptSubmitProps> = (allProps) => {

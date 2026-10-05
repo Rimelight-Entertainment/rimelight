@@ -10,7 +10,7 @@ vi.mock("virtual:rimelight/ui", () => ({
 }));
 
 import { RLAccordion } from "../src/components/accordion/RLAccordion";
-import type { AccordionItem } from "../src/components/accordion/accordion";
+import type { AccordionItem } from "../src/components/accordion/accordion.types";
 import { renderSolid, cleanHtml } from "./utils/normalize";
 
 const SAMPLE_ITEMS: AccordionItem[] = [

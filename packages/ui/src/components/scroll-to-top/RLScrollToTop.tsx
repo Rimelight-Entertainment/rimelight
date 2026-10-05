@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js";
-import type { RLScrollToTopProps } from "./scroll-to-top";
+import type { RLScrollToTopProps } from "./scroll-to-top.types";
 import { scrollToTopTheme } from "./scroll-to-top.theme";
 import { trackScroll, scrollToTop } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";

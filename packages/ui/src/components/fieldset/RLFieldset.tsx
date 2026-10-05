@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLFieldsetProps } from "./fieldset";
+import type { RLFieldsetProps } from "./fieldset.types";
 import { fieldsetTheme } from "./fieldset.theme";
 
 export const RLFieldset: Component<RLFieldsetProps> = (allProps) => {

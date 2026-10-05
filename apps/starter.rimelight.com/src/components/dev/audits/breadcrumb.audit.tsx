@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBreadcrumb } from "@rimelight/ui/components/breadcrumb/RLBreadcrumb.tsx";
-import type { BreadcrumbItem } from "@rimelight/ui/components/breadcrumb/breadcrumb.ts";
+import type { BreadcrumbItem } from "@rimelight/ui/components/breadcrumb/breadcrumb.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const COLORS = AUDIT_COLORS;

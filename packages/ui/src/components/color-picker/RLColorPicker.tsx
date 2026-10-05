@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLColorPickerProps } from "./color-picker";
+import type { RLColorPickerProps } from "./color-picker.types";
 import { colorPickerTheme } from "./color-picker.theme";
 
 export const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {

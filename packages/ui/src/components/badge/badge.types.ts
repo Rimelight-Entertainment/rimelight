@@ -1,6 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
-import type { RLAvatarProps } from "../avatar/avatar";
+import type { RLAvatarProps } from "../avatar/avatar.types";
 
 export interface RLBadgeProps {
   /**

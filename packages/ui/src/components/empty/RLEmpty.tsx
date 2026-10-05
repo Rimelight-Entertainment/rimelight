@@ -1,5 +1,5 @@
 import { children, createMemo, omit, For, type Component } from "solid-js";
-import type { RLEmptyProps } from "./empty";
+import type { RLEmptyProps } from "./empty.types";
 import { emptyTheme } from "./empty.theme";
 import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";

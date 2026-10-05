@@ -8,7 +8,7 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { RLModalProps } from "./modal";
+import type { RLModalProps } from "./modal.types";
 import { modalTheme } from "./modal.theme";
 import { RLButton } from "../button/RLButton";
 

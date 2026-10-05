@@ -1,4 +1,4 @@
-import type { ButtonClickHandler } from "./button";
+import type { ButtonClickHandler } from "./button.types";
 
 export function toClickHandlers(
   onClick: ButtonClickHandler | ButtonClickHandler[] | null | undefined,

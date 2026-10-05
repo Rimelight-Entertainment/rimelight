@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLEditorProps } from "./editor";
+import type { RLEditorProps } from "./editor.types";
 import { editorTheme } from "./editor.theme";
 
 export const RLEditor: Component<RLEditorProps> = (allProps) => {

@@ -1,5 +1,5 @@
 import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { RLToastProps } from "./toast";
+import type { RLToastProps } from "./toast.types";
 import { toastTheme } from "./toast.theme";
 import { RLIcon } from "../icon/RLIcon";
 

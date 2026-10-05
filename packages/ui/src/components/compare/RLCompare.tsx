@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLCompareProps } from "./compare";
+import type { RLCompareProps } from "./compare.types";
 import { compareTheme } from "./compare.theme";
 
 export const RLCompare: Component<RLCompareProps> = (allProps) => {

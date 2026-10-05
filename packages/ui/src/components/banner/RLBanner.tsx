@@ -11,13 +11,13 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLBannerProps } from "./banner";
+import type { RLBannerProps } from "./banner.types";
 import { bannerTheme } from "./banner.theme";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import { useHeaderStack } from "../header/useHeaderStack";
 import { resolveLinkAttrs } from "../link/helpers";
-import type { RLButtonProps } from "../button/button";
+import type { RLButtonProps } from "../button/button.types";
 
 /** Value written to localStorage; must match the pre-hydration head script check. */
 const DISMISSED_VALUE = "true";

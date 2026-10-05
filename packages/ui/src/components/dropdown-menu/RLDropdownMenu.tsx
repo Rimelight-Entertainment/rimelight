@@ -1,6 +1,6 @@
 import { createSignal, createMemo, omit, onSettled, For, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
-import type { RLDropdownMenuProps, DropdownMenuItem } from "./dropdown-menu";
+import type { RLDropdownMenuProps, DropdownMenuItem } from "./dropdown-menu.types";
 import { dropdownMenuTheme } from "./dropdown-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
 

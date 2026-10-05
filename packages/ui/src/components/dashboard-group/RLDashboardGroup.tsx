@@ -1,6 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLDashboardGroupProps } from "./dashboard-group";
+import type { RLDashboardGroupProps } from "./dashboard-group.types";
 import { dashboardGroupTheme } from "./dashboard-group.theme";
 
 export const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {

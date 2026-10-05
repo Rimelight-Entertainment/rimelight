@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLGridProps } from "./grid";
+import type { RLGridProps } from "./grid.types";
 import { gridTheme } from "./grid.theme";
 
 export const RLGrid: Component<RLGridProps> = (allProps) => {

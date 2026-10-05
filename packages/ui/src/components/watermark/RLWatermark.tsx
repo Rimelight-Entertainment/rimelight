@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLWatermarkProps } from "./watermark";
+import type { RLWatermarkProps } from "./watermark.types";
 import { watermarkTheme } from "./watermark.theme";
 
 export const RLWatermark: Component<RLWatermarkProps> = (allProps) => {

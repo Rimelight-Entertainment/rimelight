@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import type { RLConfirmProps } from "./confirm";
+import type { RLConfirmProps } from "./confirm.types";
 import { confirmTheme } from "./confirm.theme";
 import { RLButton } from "../button/RLButton";
 

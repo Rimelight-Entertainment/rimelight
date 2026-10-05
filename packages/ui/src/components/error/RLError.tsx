@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLErrorProps } from "./error";
+import type { RLErrorProps } from "./error.types";
 import { errorTheme } from "./error.theme";
 
 export const RLError: Component<RLErrorProps> = (allProps) => {

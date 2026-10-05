@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLSkeletonProps } from "./skeleton";
+import type { RLSkeletonProps } from "./skeleton.types";
 import { skeletonTheme } from "./skeleton.theme";
 
 export const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {

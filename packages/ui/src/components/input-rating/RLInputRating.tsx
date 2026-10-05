@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
-import type { RLInputRatingProps } from "./input-rating";
+import type { RLInputRatingProps } from "./input-rating.types";
 import { inputRatingTheme } from "./input-rating.theme";
 import { RLIcon } from "../icon/RLIcon";
 

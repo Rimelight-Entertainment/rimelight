@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, type Component } from "solid-js";
-import type { RLInputNumberProps } from "./input-number";
+import type { RLInputNumberProps } from "./input-number.types";
 import { inputNumberTheme } from "./input-number.theme";
 import { inputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";

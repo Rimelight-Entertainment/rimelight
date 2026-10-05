@@ -1,6 +1,6 @@
 import { createMemo, omit, For, children, type Component, Show } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLPageSectionProps } from "./page-section";
+import type { RLPageSectionProps } from "./page-section.types";
 import { pageSectionTheme } from "./page-section.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";

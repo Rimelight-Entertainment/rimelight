@@ -12,7 +12,7 @@ import type {
   NavigationMenuItem,
   NavigationMenuChildItem,
   RLNavigationMenuProps,
-} from "./navigation-menu";
+} from "./navigation-menu.types";
 import { navigationMenuTheme } from "./navigation-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
 

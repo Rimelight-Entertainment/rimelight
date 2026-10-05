@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLKbdProps } from "./kbd";
+import type { RLKbdProps } from "./kbd.types";
 import { kbdTheme } from "./kbd.theme";
 
 export const RLKbd: Component<RLKbdProps> = (allProps) => {

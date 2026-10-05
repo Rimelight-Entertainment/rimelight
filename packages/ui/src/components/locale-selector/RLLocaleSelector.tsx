@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector";
+import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types";
 import { localeSelectorTheme } from "./locale-selector.theme";
 import { RLSelect } from "../select/RLSelect";
 

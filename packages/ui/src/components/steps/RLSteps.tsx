@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLStepsProps } from "./steps";
+import type { RLStepsProps } from "./steps.types";
 import { stepsTheme } from "./steps.theme";
 
 export const RLSteps: Component<RLStepsProps> = (allProps) => {

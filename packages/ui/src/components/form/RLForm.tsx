@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLFormProps } from "./form";
+import type { RLFormProps } from "./form.types";
 import { formTheme } from "./form.theme";
 
 export const RLForm: Component<RLFormProps> = (allProps) => {

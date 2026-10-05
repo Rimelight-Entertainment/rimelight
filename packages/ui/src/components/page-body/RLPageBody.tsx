@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPageBodyProps } from "./page-body";
+import type { RLPageBodyProps } from "./page-body.types";
 import { pageBodyTheme } from "./page-body.theme";
 
 export const RLPageBody: Component<RLPageBodyProps> = (allProps) => {

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLInputDateProps } from "./input-date";
+import type { RLInputDateProps } from "./input-date.types";
 import { inputDateTheme } from "./input-date.theme";
 import { inputTheme } from "../input/input.theme";
 

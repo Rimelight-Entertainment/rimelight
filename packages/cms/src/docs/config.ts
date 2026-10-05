@@ -1,5 +1,5 @@
-import type { SidebarItem, SidebarScope } from "@rimelight/ui/components/sidebar/sidebar.ts";
-import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.ts";
+import type { SidebarItem, SidebarScope } from "@rimelight/ui/components/sidebar/sidebar.types.ts";
+import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.types.ts";
 
 export interface EditLinkConfig {
   baseUrl: string;

@@ -1,5 +1,5 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { RLFormFieldProps } from "./form-field";
+import type { RLFormFieldProps } from "./form-field.types";
 import { formFieldTheme } from "./form-field.theme";
 
 export const RLFormField: Component<RLFormFieldProps> = (allProps) => {

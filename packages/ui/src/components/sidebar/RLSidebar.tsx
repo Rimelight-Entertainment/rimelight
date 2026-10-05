@@ -1,5 +1,5 @@
 import { children, createMemo, For, Show, omit, type Component } from "solid-js";
-import type { RLSidebarProps, SidebarItem } from "./sidebar";
+import type { RLSidebarProps, SidebarItem } from "./sidebar.types";
 import { sidebarTheme } from "./sidebar.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";

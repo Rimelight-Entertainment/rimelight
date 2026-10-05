@@ -1,5 +1,5 @@
 import { createMemo, For, Show, omit, type Component } from "solid-js";
-import type { RLChartProps, ChartDataPoint } from "./chart";
+import type { RLChartProps, ChartDataPoint } from "./chart.types";
 import { chartTheme } from "./chart.theme";
 
 const palette = [

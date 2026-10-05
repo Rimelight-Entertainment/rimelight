@@ -1,5 +1,5 @@
 import type { JSX } from "@solidjs/web";
-import type { RLButtonProps } from "../button/button";
+import type { RLButtonProps } from "../button/button.types";
 
 export interface RLPageSectionProps {
   /**

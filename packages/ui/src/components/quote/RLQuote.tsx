@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLQuoteProps } from "./quote";
+import type { RLQuoteProps } from "./quote.types";
 import { quoteTheme } from "./quote.theme";
 import { RLIcon } from "../icon/RLIcon";
 

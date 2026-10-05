@@ -1,6 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { Theme } from "../../types";
-import type { RLLinkProps } from "../link/link";
+import type { RLLinkProps } from "../link/link.types";
 
 export interface RLLinkGroupProps {
   /**

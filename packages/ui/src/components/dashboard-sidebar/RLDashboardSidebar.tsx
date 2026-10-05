@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { RLDashboardSidebarProps } from "./dashboard-sidebar";
+import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
 import { dashboardSidebarTheme } from "./dashboard-sidebar.theme";
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {

@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, type Component } from "solid-js";
-import type { RLHoverCardProps } from "./hover-card";
+import type { RLHoverCardProps } from "./hover-card.types";
 import { hoverCardTheme } from "./hover-card.theme";
 
 export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {

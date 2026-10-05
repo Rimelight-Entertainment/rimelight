@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLWindowMockupProps } from "./window-mockup";
+import type { RLWindowMockupProps } from "./window-mockup.types";
 import { windowMockupTheme } from "./window-mockup.theme";
 
 export const RLWindowMockup: Component<RLWindowMockupProps> = (allProps) => {

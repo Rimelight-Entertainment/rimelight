@@ -1,5 +1,5 @@
 import { createMemo, omit, For, Show, type Component } from "solid-js";
-import type { RLLinkGroupProps } from "./link-group";
+import type { RLLinkGroupProps } from "./link-group.types";
 import { linkGroupTheme } from "./link-group.theme";
 import { RLLink } from "../link/RLLink";
 import { RLIcon } from "../icon/RLIcon";

@@ -9,12 +9,12 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLCalloutProps } from "./callout";
+import type { RLCalloutProps } from "./callout.types";
 import { calloutTheme } from "./callout.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
-import type { RLButtonProps } from "../button/button";
+import type { RLButtonProps } from "../button/button.types";
 
 export const RLCallout: Component<RLCalloutProps> = (allProps) => {
   const props = allProps;

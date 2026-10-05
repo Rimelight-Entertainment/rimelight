@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLLogoProps } from "./logo";
+import type { RLLogoProps } from "./logo.types";
 import { logoTheme } from "./logo.theme";
 import uiConfig from "virtual:rimelight/ui";
 

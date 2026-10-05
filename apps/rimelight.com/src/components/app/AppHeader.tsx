@@ -13,8 +13,8 @@ import {
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
-import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts";
-import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.ts";
+import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
+import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.types.ts";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export interface AppHeaderProps {

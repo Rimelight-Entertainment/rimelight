@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLDockProps } from "./dock";
+import type { RLDockProps } from "./dock.types";
 import { dockTheme } from "./dock.theme";
 
 export const RLDock: Component<RLDockProps> = (allProps) => {

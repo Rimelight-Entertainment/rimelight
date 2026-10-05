@@ -9,7 +9,7 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar";
+import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
 import { calendarTheme } from "./calendar.theme";
 import {
   addMonths,

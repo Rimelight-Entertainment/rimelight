@@ -1,5 +1,5 @@
 import type { JSX } from "@solidjs/web";
-import type { RLAvatarProps } from "../avatar/avatar";
+import type { RLAvatarProps } from "../avatar/avatar.types";
 import type { Theme, ThemeColor } from "../../types";
 
 export interface BreadcrumbItem {

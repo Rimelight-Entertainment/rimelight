@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLChatMessageProps } from "./chat-message";
+import type { RLChatMessageProps } from "./chat-message.types";
 import { chatMessageTheme } from "./chat-message.theme";
 
 export const RLChatMessage: Component<RLChatMessageProps> = (allProps) => {

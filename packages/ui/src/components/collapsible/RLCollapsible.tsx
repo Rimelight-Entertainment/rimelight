@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import type { RLCollapsibleProps } from "./collapsible";
+import type { RLCollapsibleProps } from "./collapsible.types";
 import { collapsibleTheme } from "./collapsible.theme";
 import { RLIcon } from "../icon/RLIcon";
 

@@ -1,7 +1,7 @@
 import { createMemo, createSignal, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 import { omit } from "solid-js";
-import type { RLButtonProps } from "./button";
+import type { RLButtonProps } from "./button.types";
 import { buttonTheme } from "./button.theme";
 import {
   isThenable,

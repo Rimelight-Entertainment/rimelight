@@ -1,4 +1,4 @@
-import type { RLButtonProps } from "../button/button";
+import type { RLButtonProps } from "../button/button.types";
 
 export interface RLShareProps extends Omit<
   RLButtonProps,

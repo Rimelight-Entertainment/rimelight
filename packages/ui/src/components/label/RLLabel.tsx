@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLLabelProps } from "./label";
+import type { RLLabelProps } from "./label.types";
 import { labelTheme } from "./label.theme";
 
 export const RLLabel: Component<RLLabelProps> = (allProps) => {

@@ -1,6 +1,6 @@
 import { createMemo, createSignal, omit, untrack, For, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
-import type { AccordionItem, RLAccordionProps } from "./accordion";
+import type { AccordionItem, RLAccordionProps } from "./accordion.types";
 import { accordionTheme } from "./accordion.theme";
 import { RLIcon } from "../icon/RLIcon";
 

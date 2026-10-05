@@ -1,5 +1,5 @@
 import { createMemo, omit, children, type Component, Show } from "solid-js";
-import type { RLCheckboxProps } from "./checkbox";
+import type { RLCheckboxProps } from "./checkbox.types";
 import { checkboxTheme } from "./checkbox.theme";
 import { RLIcon } from "../icon/RLIcon";
 

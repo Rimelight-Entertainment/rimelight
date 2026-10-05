@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLKnobProps } from "./knob";
+import type { RLKnobProps } from "./knob.types";
 import { knobTheme } from "./knob.theme";
 
 export const RLKnob: Component<RLKnobProps> = (allProps) => {

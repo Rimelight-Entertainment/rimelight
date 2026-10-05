@@ -7,7 +7,7 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLDashboardSearchProps } from "./dashboard-search";
+import type { RLDashboardSearchProps } from "./dashboard-search.types";
 import { dashboardSearchTheme } from "./dashboard-search.theme";
 import { RLIcon } from "../icon/RLIcon";
 

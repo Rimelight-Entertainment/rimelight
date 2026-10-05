@@ -1,7 +1,7 @@
 import { type Component } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
 import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
-import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.ts";
+import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.types.ts";
 import { AccordionSandbox } from "../../../components/dev/audits/accordion.audit.tsx";
 
 const standardItems: AccordionItem[] = [

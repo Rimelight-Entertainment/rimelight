@@ -9,7 +9,7 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLTabsProps } from "./tabs";
+import type { RLTabsProps } from "./tabs.types";
 import { tabsTheme } from "./tabs.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";

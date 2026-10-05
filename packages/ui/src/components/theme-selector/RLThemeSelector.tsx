@@ -1,5 +1,5 @@
 import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
-import type { RLThemeSelectorProps } from "./theme-selector";
+import type { RLThemeSelectorProps } from "./theme-selector.types";
 import { themeSelectorTheme } from "./theme-selector.theme";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";

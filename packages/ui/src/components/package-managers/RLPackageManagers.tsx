@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
-import type { RLPackageManagersProps, Manager, CommandType } from "./package-managers";
+import type { RLPackageManagersProps, Manager, CommandType } from "./package-managers.types";
 
 const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: string }> = {
   npm: {

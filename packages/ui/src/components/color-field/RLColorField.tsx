@@ -1,6 +1,6 @@
 import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLColorFieldProps } from "./color-field";
+import type { RLColorFieldProps } from "./color-field.types";
 import { colorFieldTheme } from "./color-field.theme";
 import {
   clamp,

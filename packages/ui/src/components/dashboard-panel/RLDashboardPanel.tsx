@@ -1,5 +1,5 @@
 import { createMemo, Show, omit, type Component } from "solid-js";
-import type { RLDashboardPanelProps } from "./dashboard-panel";
+import type { RLDashboardPanelProps } from "./dashboard-panel.types";
 import { dashboardPanelTheme } from "./dashboard-panel.theme";
 
 export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {

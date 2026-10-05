@@ -1,6 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-import type { RLLinkProps } from "../link/link";
+import type { RLLinkProps } from "../link/link.types";
 
 export interface NavigationMenuItem extends Omit<RLLinkProps, "type" | "raw" | "custom"> {
   label?: string | undefined;

@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLListboxProps } from "./listbox";
+import type { RLListboxProps } from "./listbox.types";
 import { listboxTheme } from "./listbox.theme";
 
 export const RLListbox: Component<RLListboxProps> = (allProps) => {

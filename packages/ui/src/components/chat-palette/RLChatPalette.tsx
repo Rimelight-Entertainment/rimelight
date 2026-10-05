@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLChatPaletteProps } from "./chat-palette";
+import type { RLChatPaletteProps } from "./chat-palette.types";
 import { chatPaletteTheme } from "./chat-palette.theme";
 
 export const RLChatPalette: Component<RLChatPaletteProps> = (allProps) => {

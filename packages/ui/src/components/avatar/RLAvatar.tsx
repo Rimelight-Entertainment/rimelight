@@ -1,6 +1,6 @@
 import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLAvatarProps } from "./avatar";
+import type { RLAvatarProps } from "./avatar.types";
 import { avatarTheme } from "./avatar.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";

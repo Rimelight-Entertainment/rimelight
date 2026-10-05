@@ -7,7 +7,7 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLHeaderProps } from "./header";
+import type { RLHeaderProps } from "./header.types";
 import { headerTheme } from "./header.theme";
 import { useHeaderStack } from "./useHeaderStack";
 

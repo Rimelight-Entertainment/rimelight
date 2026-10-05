@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLFloatingActionProps } from "./floating-action";
+import type { RLFloatingActionProps } from "./floating-action.types";
 import { floatingActionTheme } from "./floating-action.theme";
 
 export const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {

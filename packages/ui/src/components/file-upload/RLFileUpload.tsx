@@ -1,5 +1,5 @@
 import { createMemo, createSignal, omit, type Component } from "solid-js";
-import type { RLFileUploadProps } from "./file-upload";
+import type { RLFileUploadProps } from "./file-upload.types";
 import { fileUploadTheme } from "./file-upload.theme";
 import { RLIcon } from "../icon/RLIcon";
 

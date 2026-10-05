@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLTooltipProps } from "./tooltip";
+import type { RLTooltipProps } from "./tooltip.types";
 import { tooltipTheme } from "./tooltip.theme";
 
 export const RLTooltip: Component<RLTooltipProps> = (allProps) => {

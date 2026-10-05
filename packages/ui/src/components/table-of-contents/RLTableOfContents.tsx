@@ -1,5 +1,5 @@
 import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js";
-import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-contents";
+import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-contents.types";
 import { tableOfContentsTheme } from "./table-of-contents.theme";
 import { RLIcon } from "../icon/RLIcon";
 

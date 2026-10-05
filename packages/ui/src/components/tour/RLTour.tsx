@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLTourProps } from "./tour";
+import type { RLTourProps } from "./tour.types";
 import { tourTheme } from "./tour.theme";
 
 export const RLTour: Component<RLTourProps> = (allProps) => {

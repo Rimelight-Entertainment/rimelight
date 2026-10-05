@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLRatingProps } from "./rating";
+import type { RLRatingProps } from "./rating.types";
 import { ratingTheme } from "./rating.theme";
 
 export const RLRating: Component<RLRatingProps> = (allProps) => {

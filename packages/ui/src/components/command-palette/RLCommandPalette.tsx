@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLCommandPaletteProps } from "./command-palette";
+import type { RLCommandPaletteProps } from "./command-palette.types";
 import { commandPaletteTheme } from "./command-palette.theme";
 
 export const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {

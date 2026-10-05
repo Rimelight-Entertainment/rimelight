@@ -1,8 +1,8 @@
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
-import type { RLSelectProps, SelectItem } from "./select";
+import type { RLSelectProps, SelectItem } from "./select.types";
 import { selectTheme } from "./select.theme";
 import { RLButton } from "../button/RLButton";
-import type { RLButtonProps } from "../button/button";
+import type { RLButtonProps } from "../button/button.types";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLSelect: Component<RLSelectProps> = (allProps) => {

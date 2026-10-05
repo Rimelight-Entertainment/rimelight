@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLPasswordProps } from "./password";
+import type { RLPasswordProps } from "./password.types";
 import { passwordTheme } from "./password.theme";
 
 export const RLPassword: Component<RLPasswordProps> = (allProps) => {

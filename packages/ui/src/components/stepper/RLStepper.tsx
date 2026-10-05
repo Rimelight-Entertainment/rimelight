@@ -1,5 +1,5 @@
 import { createMemo, createSignal, For, omit, type Component } from "solid-js";
-import type { RLStepperProps, StepperItem } from "./stepper";
+import type { RLStepperProps, StepperItem } from "./stepper.types";
 import { stepperTheme } from "./stepper.theme";
 import { RLIcon } from "../icon/RLIcon";
 

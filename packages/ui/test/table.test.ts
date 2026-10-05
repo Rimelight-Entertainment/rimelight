@@ -11,7 +11,7 @@ vi.mock("virtual:rimelight/ui", () => ({
 import { tableTheme } from "../src/components/table/table.theme";
 import { RLTable } from "../src/components/table/RLTable";
 import { renderSolid } from "./utils/normalize";
-import type { TableApi, TableColumn } from "../src/components/table/table";
+import type { TableApi, TableColumn } from "../src/components/table/table.types";
 
 describe("RLTable Theme & Logic Suite", () => {
   it("generates correct slot classes with default variants", () => {

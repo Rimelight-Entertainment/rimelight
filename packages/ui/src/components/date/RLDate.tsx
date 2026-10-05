@@ -1,5 +1,5 @@
 import { omit, type Component } from "solid-js";
-import type { RLDateProps } from "./date";
+import type { RLDateProps } from "./date.types";
 
 const defaultOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",

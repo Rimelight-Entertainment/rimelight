@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLChatShimmerProps } from "./chat-shimmer";
+import type { RLChatShimmerProps } from "./chat-shimmer.types";
 import { chatShimmerTheme } from "./chat-shimmer.theme";
 
 export const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {

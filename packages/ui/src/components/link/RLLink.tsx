@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLLinkProps } from "./link";
+import type { RLLinkProps } from "./link.types";
 import { linkTheme } from "./link.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";

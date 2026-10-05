@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLTreeProps } from "./tree";
+import type { RLTreeProps } from "./tree.types";
 import { treeTheme } from "./tree.theme";
 
 export const RLTree: Component<RLTreeProps> = (allProps) => {

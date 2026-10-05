@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLAudio } from "@rimelight/ui/components/audio/RLAudio.tsx";
-import type { AudioTrackItem } from "@rimelight/ui/components/audio/audio.ts";
+import type { AudioTrackItem } from "@rimelight/ui/components/audio/audio.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const SAMPLE_TRACKS: AudioTrackItem[] = [

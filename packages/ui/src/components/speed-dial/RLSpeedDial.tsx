@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLSpeedDialProps } from "./speed-dial";
+import type { RLSpeedDialProps } from "./speed-dial.types";
 import { speedDialTheme } from "./speed-dial.theme";
 
 export const RLSpeedDial: Component<RLSpeedDialProps> = (allProps) => {

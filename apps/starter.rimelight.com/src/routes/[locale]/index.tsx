@@ -7,7 +7,7 @@ import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
-import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getLocale();

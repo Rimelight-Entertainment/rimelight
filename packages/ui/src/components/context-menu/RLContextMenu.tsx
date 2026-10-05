@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component } from "solid-js";
-import type { RLContextMenuProps } from "./context-menu";
+import type { RLContextMenuProps } from "./context-menu.types";
 import { contextMenuTheme } from "./context-menu.theme";
 
 export const RLContextMenu: Component<RLContextMenuProps> = (allProps) => {

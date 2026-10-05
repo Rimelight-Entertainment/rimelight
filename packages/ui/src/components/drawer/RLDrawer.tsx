@@ -7,7 +7,7 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { RLDrawerProps } from "./drawer";
+import type { RLDrawerProps } from "./drawer.types";
 import { drawerTheme } from "./drawer.theme";
 import { RLIcon } from "../icon/RLIcon";
 

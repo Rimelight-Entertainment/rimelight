@@ -1,6 +1,10 @@
 import { createSignal, createMemo, Show, For } from "solid-js";
 import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx";
-import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts";
+import type {
+  TableColumn,
+  TableApi,
+  TableRow,
+} from "@rimelight/ui/components/table/table.types.ts";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";

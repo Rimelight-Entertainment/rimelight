@@ -2,8 +2,8 @@ import { type Component, Show, For } from "solid-js";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
-import type { RLButtonProps } from "@rimelight/ui/components/button/button.ts";
-import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.ts";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
+import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.types.ts";
 import type { ThemeColor } from "@rimelight/ui/types.ts";
 
 export interface Action {

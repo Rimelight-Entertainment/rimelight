@@ -1,6 +1,6 @@
 import { children, createMemo, omit, For, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLAvatarGroupProps } from "./avatar-group";
+import type { RLAvatarGroupProps } from "./avatar-group.types";
 import { avatarGroupTheme } from "./avatar-group.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 

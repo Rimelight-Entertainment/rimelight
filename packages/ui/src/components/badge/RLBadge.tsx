@@ -1,6 +1,6 @@
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLBadgeProps } from "./badge";
+import type { RLBadgeProps } from "./badge.types";
 import { badgeTheme } from "./badge.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";

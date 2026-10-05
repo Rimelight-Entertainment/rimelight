@@ -1,5 +1,5 @@
 import { createMemo, omit, type Component, Show } from "solid-js";
-import type { RLMainProps } from "./main";
+import type { RLMainProps } from "./main.types";
 import { mainTheme } from "./main.theme";
 
 export const RLMain: Component<RLMainProps> = (allProps) => {

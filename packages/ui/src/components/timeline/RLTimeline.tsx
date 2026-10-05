@@ -1,7 +1,7 @@
 import { createMemo, For, omit, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { RLTimelineProps, TimelineItem } from "./timeline";
+import type { RLTimelineProps, TimelineItem } from "./timeline.types";
 import { timelineTheme } from "./timeline.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";

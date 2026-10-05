@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLInputTagsProps, TagItem } from "./input-tags";
+import type { RLInputTagsProps, TagItem } from "./input-tags.types";
 import { inputTagsTheme } from "./input-tags.theme";
 
 export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {

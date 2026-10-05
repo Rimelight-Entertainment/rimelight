@@ -1,6 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-import type { RLChipProps } from "../chip/chip";
+import type { RLChipProps } from "../chip/chip.types";
 
 export interface RLAvatarProps {
   /**
