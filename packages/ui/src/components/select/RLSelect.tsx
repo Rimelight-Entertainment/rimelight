@@ -83,6 +83,23 @@ export const RLSelect: Component<RLSelectProps> = (allProps) => {
     return item?.label ?? "";
   });
 
+  const currentValueStr = createMemo(() => {
+    const val = currentValue();
+    return val !== undefined ? String(val) : undefined;
+  });
+
+  const optionsWithSelection = createMemo(() => {
+    const val = currentValue();
+    return normalizedItems().map((item) => {
+      const isSelected = Array.isArray(val)
+        ? val.map(String).includes(String(item.value))
+        : val !== undefined
+          ? String(val) === String(item.value)
+          : undefined;
+      return { item, isSelected };
+    });
+  });
+
   const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
     setInternalValue(e.currentTarget.value);
     props.onChange?.(e);
@@ -131,7 +148,7 @@ export const RLSelect: Component<RLSelectProps> = (allProps) => {
         disabled={props.disabled}
         required={props.required}
         multiple={props.multiple}
-        value={currentValue() !== undefined ? String(currentValue()) : undefined}
+        value={currentValueStr()}
         onChange={handleChange}
         onBlur={props.onBlur}
         class={classes().select}
@@ -147,25 +164,17 @@ export const RLSelect: Component<RLSelectProps> = (allProps) => {
         {props.children ? (
           props.children
         ) : (
-          <For each={normalizedItems()}>
-            {(item) => {
-              const val = currentValue();
-              const isSelected = Array.isArray(val)
-                ? val.map(String).includes(String(item.value))
-                : val !== undefined
-                  ? String(val) === String(item.value)
-                  : undefined;
-              return (
-                <option
-                  value={item.value}
-                  disabled={item.disabled}
-                  selected={isSelected}
-                  class="bg-default text-highlighted"
-                >
-                  {item.label}
-                </option>
-              );
-            }}
+          <For each={optionsWithSelection()}>
+            {({ item, isSelected }) => (
+              <option
+                value={item.value}
+                disabled={item.disabled}
+                selected={isSelected}
+                class="bg-default text-highlighted"
+              >
+                {item.label}
+              </option>
+            )}
           </For>
         )}
       </select>

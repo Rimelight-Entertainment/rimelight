@@ -1,15 +1,6 @@
 import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
 import { RLCalendarTheme } from "./calendar.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  For,
-  onSettled,
-  Show,
-  untrack,
-  type Component,
-} from "solid-js";
+import { createMemo, createSignal, For, onSettled, Show, untrack, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import {
   addMonths,
@@ -68,7 +59,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const weekdayFormat = (): WeekdayFormat => props.weekdayFormat ?? "narrow";
 
   const [view, setViewRaw] = createSignal<View>(
-    // untrack: seed once from props.type; the effect below re-syncs on change.
+    // untrack: seed once from props.type; view can be changed manually via cycle
     untrack(() => initialViewFor(type()) as View),
   );
   const setView = (v: string) => setViewRaw(clampView(v, minView()) as View);
@@ -81,8 +72,9 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const [innerValue, setInnerValue] = createSignal<CalendarModelValue | undefined>(
     props.defaultValue,
   );
-  const modelValue = (): CalendarModelValue | undefined =>
-    controlledValue() ? props.modelValue : innerValue();
+  const modelValue = createMemo<CalendarModelValue | undefined>(() =>
+    controlledValue() ? props.modelValue : innerValue(),
+  );
 
   const [innerPlaceholder, setInnerPlaceholder] = createSignal<Date>(
     // untrack: reads props on first render only — intentionally not tracked.
@@ -94,7 +86,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
       ),
     ),
   );
-  const placeholder = (): Date => props.placeholder ?? innerPlaceholder();
+  const placeholder = (): Date => props.placeholder ?? untrack(() => innerPlaceholder());
 
   const setPlaceholder = (d: Date) => {
     setInnerPlaceholder(startOfDay(d));
@@ -104,19 +96,23 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   // Range session state (start/end commits happen progressively like reka-ui).
   // untrack: initial values are deliberately read once and not tracked.
   const [innerStart, setInnerStart] = createSignal<Date | undefined>(
-    untrack(() => firstRangeDate(modelValue())),
+    untrack(() => firstRangeDate(untrack(() => modelValue()))),
   );
   const [innerEnd, setInnerEnd] = createSignal<Date | undefined>(
-    untrack(() => secondRangeDate(modelValue())),
+    untrack(() => secondRangeDate(untrack(() => modelValue()))),
   );
   const controlledRange = () => props.range && controlledValue();
-  const rangeStart = () => (controlledRange() ? firstRangeDate(modelValue()) : innerStart());
-  const rangeEnd = () => (controlledRange() ? secondRangeDate(modelValue()) : innerEnd());
+  const rangeStart = () =>
+    controlledRange() ? firstRangeDate(untrack(() => modelValue())) : innerStart();
+  const rangeEnd = () =>
+    controlledRange() ? secondRangeDate(untrack(() => modelValue())) : innerEnd();
 
   const today = createMemo(() => startOfDay(new Date()));
+  const currentPlaceholder = createMemo(() => placeholder());
+  const currentToday = createMemo(() => today());
 
   const isInvalid = createMemo(() => {
-    const v = modelValue();
+    const v = untrack(() => modelValue());
     if (!v) return false;
     const dates = Array.isArray(v)
       ? v
@@ -133,14 +129,16 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   });
 
   const dayCtx = (): DayMatchContext => {
+    const rs = untrack(() => rangeStart());
+    const re = untrack(() => rangeEnd());
     const base: DayMatchContext = {
       modelValue: props.range
-        ? rangeStart() && rangeEnd()
-          ? { start: rangeStart(), end: rangeEnd() }
-          : rangeStart()
+        ? rs && re
+          ? { start: rs, end: re }
+          : rs
             ? null
-            : modelValue()
-        : modelValue(),
+            : untrack(() => modelValue())
+        : untrack(() => modelValue()),
       month: placeholder(),
       today: today(),
       weekStartsOn: weekStartsOn(),
@@ -246,7 +244,9 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (props.multiple) {
       commitModel(
         toggleMultiValue(
-          Array.isArray(modelValue()) ? (modelValue() as unknown as Date[]) : undefined,
+          Array.isArray(untrack(() => modelValue()))
+            ? (untrack(() => modelValue()) as unknown as Date[])
+            : undefined,
           day,
           props.preventDeselect,
         ) ?? null,
@@ -255,7 +255,9 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     }
 
     const next = toggleSingleValue(
-      modelValue() instanceof Date ? (modelValue() as unknown as Date) : undefined,
+      untrack(() => modelValue()) instanceof Date
+        ? (untrack(() => modelValue()) as unknown as Date)
+        : undefined,
       day,
       props.preventDeselect,
     );
@@ -307,14 +309,16 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (props.multiple) {
       commitModel(
         toggleMultiValue(
-          Array.isArray(modelValue()) ? (modelValue() as unknown as Date[]) : undefined,
+          Array.isArray(untrack(() => modelValue()))
+            ? (untrack(() => modelValue()) as unknown as Date[])
+            : undefined,
           day,
           props.preventDeselect,
         ) ?? null,
       );
       return;
     }
-    const current = modelValue();
+    const current = untrack(() => modelValue());
     commitModel(
       toggleSingleValue(
         current instanceof Date ? (current as unknown as Date) : undefined,
@@ -432,20 +436,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 
   onSettled(() => {
     if (!props.initialFocus) return;
-    const sel = firstDateOf(modelValue());
+    const sel = firstDateOf(untrack(() => modelValue()));
     const target = sel && isSameMonth(sel, placeholder()) ? sel : today();
     queueMicrotask(() => {
       const el = rootEl?.querySelector<HTMLElement>(`[data-value="${dateKey(target)}"]`);
       if (el && !el.hasAttribute("data-disabled")) el.focus();
     });
   });
-
-  createEffect(
-    () => type(),
-    (t) => {
-      setViewRaw(initialViewFor(t) as View);
-    },
-  );
 
   // ---- render helpers ----
   const controlBase = (
@@ -504,15 +501,21 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
               </Show>
               <For each={row}>
                 {(day) => {
-                  const st = () => dayCtx() && dayCellState(day, grid.value, dayCtx());
-                  const isRangeSelected = () => props.range && isRangeDay(day);
+                  const st = createMemo(() => dayCellState(day, grid.value, dayCtx()));
+                  const isRangeSelected = createMemo(
+                    () => untrack(() => props.range) && isRangeDay(day),
+                  );
+                  const th = untrack(() => theme());
+                  const loc = untrack(() => locale());
+                  const pRange = untrack(() => props.range);
+                  const pDaySlot = untrack(() => props.daySlot);
                   return (
                     <td
                       role="gridcell"
-                      class={theme().cell}
+                      class={th.cell}
                       data-slot="cell"
                       aria-selected={
-                        props.range
+                        pRange
                           ? isRangeSelected() || st().selected
                             ? "true"
                             : undefined
@@ -525,11 +528,11 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                     >
                       <div
                         role="button"
-                        class={theme().cellTrigger}
+                        class={th.cellTrigger}
                         data-slot="cellTrigger"
                         data-value={dateKey(day)}
                         data-selected={
-                          props.range
+                          pRange
                             ? isRangeSelected() || st().selected || undefined
                             : st().selected || undefined
                         }
@@ -538,7 +541,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                         data-today={st().today ? "" : undefined}
                         data-outside-view={st().outsideView ? "" : undefined}
                         data-focused={st().focused ? "" : undefined}
-                        aria-label={formatFullDate(day, locale())}
+                        aria-label={formatFullDate(day, loc)}
                         aria-disabled={st().disabled || st().unavailable ? "true" : undefined}
                         aria-current={st().today ? "date" : undefined}
                         tabindex={
@@ -547,7 +550,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                         onClick={() => onDayClick(day)}
                         onKeyDown={(e) => onDayKey(e, day)}
                       >
-                        {props.daySlot ? props.daySlot({ day }) : formatDayLabel(day, locale())}
+                        {pDaySlot ? pDaySlot({ day }) : formatDayLabel(day, loc)}
                       </div>
                     </td>
                   );
@@ -561,7 +564,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   );
 
   const monthSelected = (m: Date) => {
-    const v = modelValue();
+    const v = untrack(() => modelValue());
     if (!v) return false;
     if (Array.isArray(v)) return v.some((d) => isSameMonth(d, m));
     if (v instanceof Date) return isSameMonth(v, m);
@@ -572,7 +575,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   };
 
   const yearSelected = (y: Date) => {
-    const v = modelValue();
+    const v = untrack(() => modelValue());
     if (!v) return false;
     const has = (d?: Date | null) => d instanceof Date && d.getFullYear() === y.getFullYear();
     if (Array.isArray(v)) return v.some(has);
@@ -602,22 +605,18 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
               <tr class={theme().gridRow} data-slot="gridRow">
                 <For each={row}>
                   {(cell) => {
+                    const pDisabled = untrack(() => props.disabled);
                     const disabled =
-                      props.disabled ||
+                      pDisabled ||
                       (mode === "month"
                         ? props.isMonthDisabled?.(cell) || props.isMonthUnavailable?.(cell)
                         : props.isYearDisabled?.(cell) || props.isYearUnavailable?.(cell));
-                    const selected = mode === "month" ? monthSelected(cell) : yearSelected(cell);
-                    const focused =
-                      isSameMonth(cell, placeholder()) && mode === "month"
-                        ? cell.getFullYear() === placeholder().getFullYear()
-                        : mode === "year"
-                          ? cell.getFullYear() === placeholder().getFullYear()
-                          : false;
-                    const isTodayCell =
+                    const selected =
                       mode === "month"
-                        ? isSameMonth(cell, today())
-                        : cell.getFullYear() === today().getFullYear();
+                        ? untrack(() => monthSelected(cell))
+                        : untrack(() => yearSelected(cell));
+                    const cp = untrack(() => currentPlaceholder());
+                    const ct = untrack(() => currentToday());
                     return (
                       <td
                         role="gridcell"
@@ -634,8 +633,24 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                           data-value={dateKey(cell)}
                           data-selected={selected || undefined}
                           data-disabled={disabled ? "" : undefined}
-                          data-today={isTodayCell ? "" : undefined}
-                          data-focused={focused && !props.disabled ? "" : undefined}
+                          data-today={
+                            mode === "month"
+                              ? isSameMonth(cell, ct)
+                                ? ""
+                                : undefined
+                              : cell.getFullYear() === ct.getFullYear()
+                                ? ""
+                                : undefined
+                          }
+                          data-focused={
+                            (mode === "month"
+                              ? isSameMonth(cell, cp) && cell.getFullYear() === cp.getFullYear()
+                              : mode === "year"
+                                ? cell.getFullYear() === cp.getFullYear()
+                                : false) && !pDisabled
+                              ? ""
+                              : undefined
+                          }
                           aria-label={
                             mode === "month"
                               ? new Intl.DateTimeFormat(locale(), {
@@ -645,7 +660,17 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                               : formatYearHeading(cell, locale())
                           }
                           aria-disabled={disabled ? "true" : undefined}
-                          tabindex={focused && !props.disabled ? 0 : disabled ? undefined : -1}
+                          tabindex={
+                            (mode === "month"
+                              ? isSameMonth(cell, cp) && cell.getFullYear() === cp.getFullYear()
+                              : mode === "year"
+                                ? cell.getFullYear() === cp.getFullYear()
+                                : false) && !pDisabled
+                              ? 0
+                              : disabled
+                                ? undefined
+                                : -1
+                          }
                           onClick={() =>
                             mode === "month" ? onMonthCellClick(cell) : onYearCellClick(cell)
                           }
