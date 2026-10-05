@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLRatingProps } from "./rating.types";
-import { ratingTheme } from "./rating.theme";
+import { RLRatingTheme } from "./rating.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLRating: Component<RLRatingProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    ratingTheme({
+    RLRatingTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

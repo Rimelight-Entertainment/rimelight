@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const fileUploadTheme = defineTheme("file-upload", {
+export const RLFileUploadTheme = defineTheme("file-upload", {
   slots: ["root", "input", "content", "icon", "title", "description"],
   base: {
     root: "flex flex-col items-center justify-center w-full min-h-[150px] border-2 border-dashed border-default rounded-lg bg-default/50 hover:bg-muted/30 transition-colors cursor-pointer select-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const checkboxTheme = defineTheme("checkbox", {
+export const RLCheckboxTheme = defineTheme("checkbox", {
   slots: ["root", "input", "box", "indicator", "label"],
   base: {
     root: "relative inline-flex items-center gap-2 cursor-pointer select-none",

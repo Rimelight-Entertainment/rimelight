@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const chatReasoningTheme = defineTheme("chat-reasoning", {
+export const RLChatReasoningTheme = defineTheme("chat-reasoning", {
   slots: ["root"],
   base: {
     root: "",

@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLTextareaProps } from "./textarea.types";
-import { textareaTheme } from "./textarea.theme";
+import { RLTextareaTheme } from "./textarea.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
   const props = allProps;
@@ -28,7 +28,7 @@ export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    textareaTheme({
+    RLTextareaTheme({
       size: props.size ?? "md",
       error: !!props.error,
       ui: props.ui,

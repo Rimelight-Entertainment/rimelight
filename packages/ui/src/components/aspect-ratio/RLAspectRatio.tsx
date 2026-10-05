@@ -1,7 +1,7 @@
+import type { RLAspectRatioProps } from "./aspect-ratio.types";
+import { RLAspectRatioTheme } from "./aspect-ratio.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLAspectRatioProps } from "./aspect-ratio.types";
-import { aspectRatioTheme } from "./aspect-ratio.theme";
 
 export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
   const props = allProps;
@@ -12,7 +12,9 @@ export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
     return Number.isFinite(value) && value > 0 ? value : 1;
   };
 
-  const resolvedClasses = createMemo(() => aspectRatioTheme({ ui: props.ui, class: props.class }));
+  const resolvedClasses = createMemo(() =>
+    RLAspectRatioTheme({ ui: props.ui, class: props.class }),
+  );
 
   const spacerHeight = () => (1 / safeRatio()) * 100;
 

@@ -1,6 +1,6 @@
-import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { RLCardProps } from "./card.types";
-import { cardTheme } from "./card.theme";
+import { RLCardTheme } from "./card.theme";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 
 export const RLCard: Component<RLCardProps> = (allProps) => {
   const props = allProps;
@@ -22,7 +22,7 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    cardTheme({
+    RLCardTheme({
       variant: props.variant,
       interactive: !!props.href,
       overlay: !!props.overlay,

@@ -1,7 +1,7 @@
+import type { RLAvatarGroupProps } from "./avatar-group.types";
+import { RLAvatarGroupTheme } from "./avatar-group.theme";
 import { children, createMemo, omit, For, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLAvatarGroupProps } from "./avatar-group.types";
-import { avatarGroupTheme } from "./avatar-group.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 
 export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
@@ -34,7 +34,7 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
   const color = () => props.color ?? "neutral";
 
   const resolvedClasses = createMemo(() =>
-    avatarGroupTheme({
+    RLAvatarGroupTheme({
       size: size(),
       color: color(),
       ui: props.ui,

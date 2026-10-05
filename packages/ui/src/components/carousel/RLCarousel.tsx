@@ -1,3 +1,5 @@
+import type { RLCarouselProps, CarouselSlide } from "./carousel.types";
+import { RLCarouselTheme } from "./carousel.theme";
 import {
   children,
   createMemo,
@@ -8,8 +10,6 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLCarouselProps, CarouselSlide } from "./carousel.types";
-import { carouselTheme } from "./carousel.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 const SLIDE_TRANSITION = "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)";
@@ -38,7 +38,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
   let lastBtnClickTime = 0;
 
   const resolvedClasses = createMemo(() =>
-    carouselTheme({
+    RLCarouselTheme({
       active: false,
       ui: props.ui,
       class: props.class,
@@ -46,7 +46,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
   );
 
   const dotActiveClasses = createMemo(() =>
-    carouselTheme({
+    RLCarouselTheme({
       active: true,
       ui: props.ui,
       class: props.class,

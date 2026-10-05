@@ -1,6 +1,6 @@
-import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import type { RLInputRatingProps } from "./input-rating.types";
-import { inputRatingTheme } from "./input-rating.theme";
+import { RLInputRatingTheme } from "./input-rating.theme";
+import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
@@ -30,7 +30,7 @@ export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    inputRatingTheme({
+    RLInputRatingTheme({
       color: props.color ?? "primary",
       size: props.size ?? "md",
       orientation: props.orientation ?? "horizontal",

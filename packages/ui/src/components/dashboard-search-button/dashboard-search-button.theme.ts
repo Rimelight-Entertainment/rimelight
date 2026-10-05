@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const dashboardSearchButtonTheme = defineTheme("dashboard-search-button", {
+export const RLDashboardSearchButtonTheme = defineTheme("dashboard-search-button", {
   slots: ["base", "label", "trailing"],
   base: {
     base: "group flex items-center gap-2 w-full rounded-md border border-default px-3 py-2 text-sm text-muted hover:text-default hover:bg-muted transition-colors cursor-pointer",

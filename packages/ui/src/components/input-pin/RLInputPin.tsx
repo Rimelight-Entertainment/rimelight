@@ -1,7 +1,7 @@
-import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import type { RLInputPinProps } from "./input-pin.types";
-import { inputPinTheme } from "./input-pin.theme";
-import { inputTheme } from "../input/input.theme";
+import { RLInputPinTheme } from "./input-pin.theme";
+import { createMemo, createSignal, omit, For, type Component } from "solid-js";
+import { RLInputTheme } from "../input/input.theme";
 
 export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
   const props = allProps;
@@ -25,14 +25,14 @@ export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    inputPinTheme({
+    RLInputPinTheme({
       ui: props.ui,
       class: props.class,
     }),
   );
 
   const cellsClasses = createMemo(() =>
-    inputTheme({
+    RLInputTheme({
       variant: "default",
       size: props.size ?? "md",
       error: false,

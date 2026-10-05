@@ -1,5 +1,5 @@
-import { createMemo, For, Show, type Component } from "solid-js";
 import type { RLKeyboardProps, HighlightGroup } from "./keyboard.types";
+import { createMemo, For, Show, type Component } from "solid-js";
 
 interface Key {
   label?: string;

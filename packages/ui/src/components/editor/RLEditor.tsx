@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLEditorProps } from "./editor.types";
-import { editorTheme } from "./editor.theme";
+import { RLEditorTheme } from "./editor.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLEditor: Component<RLEditorProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    editorTheme({
+    RLEditorTheme({
       ui: props.ui,
       class: props.class,
     }),

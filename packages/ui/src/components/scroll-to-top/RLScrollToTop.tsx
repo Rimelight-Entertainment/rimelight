@@ -1,6 +1,6 @@
-import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js";
 import type { RLScrollToTopProps } from "./scroll-to-top.types";
-import { scrollToTopTheme } from "./scroll-to-top.theme";
+import { RLScrollToTopTheme } from "./scroll-to-top.theme";
+import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js";
 import { trackScroll, scrollToTop } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -30,7 +30,7 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    scrollToTopTheme({
+    RLScrollToTopTheme({
       color: props.color ?? "primary",
       ui: props.ui,
       class: props.class,

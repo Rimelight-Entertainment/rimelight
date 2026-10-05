@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLFieldGroupProps } from "./field-group.types";
-import { fieldGroupTheme } from "./field-group.theme";
+import { RLFieldGroupTheme } from "./field-group.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "prepend", "append", "size", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    fieldGroupTheme({
+    RLFieldGroupTheme({
       size: props["size"] ?? "md",
       ui: props["ui"],
       class: props["class"],

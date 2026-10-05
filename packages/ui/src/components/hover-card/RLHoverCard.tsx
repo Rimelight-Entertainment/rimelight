@@ -1,6 +1,6 @@
-import { createMemo, createSignal, omit, type Component } from "solid-js";
 import type { RLHoverCardProps } from "./hover-card.types";
-import { hoverCardTheme } from "./hover-card.theme";
+import { RLHoverCardTheme } from "./hover-card.theme";
+import { createMemo, createSignal, omit, type Component } from "solid-js";
 
 export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
   const props = allProps;
@@ -9,7 +9,7 @@ export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
   const [isOpen, setIsOpen] = createSignal(false);
 
   const resolvedClasses = createMemo(() =>
-    hoverCardTheme({
+    RLHoverCardTheme({
       placement: props.placement ?? "bottom",
       ui: props.ui,
       class: props.class,

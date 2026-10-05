@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const quoteTheme = defineTheme("quote", {
+export const RLQuoteTheme = defineTheme("quote", {
   slots: ["root", "icon", "quote", "caption"],
   base: {
     root: "relative my-8 border-y-2 border-default py-4",

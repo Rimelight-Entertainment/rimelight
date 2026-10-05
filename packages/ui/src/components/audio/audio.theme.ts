@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const audioTheme = defineTheme("audio", {
+export const RLAudioTheme = defineTheme("audio", {
   slots: [
     "root",
     "container",

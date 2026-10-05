@@ -1,3 +1,5 @@
+import type { RLModalProps } from "./modal.types";
+import { RLModalTheme } from "./modal.theme";
 import {
   children,
   createMemo,
@@ -8,8 +10,6 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { RLModalProps } from "./modal.types";
-import { modalTheme } from "./modal.theme";
 import { RLButton } from "../button/RLButton";
 
 export const RLModal: Component<RLModalProps> = (allProps) => {
@@ -96,7 +96,7 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    modalTheme({
+    RLModalTheme({
       size: props.size ?? "md",
       ui: props.ui,
       class: props.class,

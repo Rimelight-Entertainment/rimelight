@@ -1,5 +1,5 @@
-import { createSignal, onCleanup, omit, type Component } from "solid-js";
 import type { RLCopyMarkdownProps } from "./copy-markdown.types";
+import { createSignal, onCleanup, omit, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 
 export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (allProps) => {

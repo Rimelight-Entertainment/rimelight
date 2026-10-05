@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const phoneMockupTheme = defineTheme("phone-mockup", {
+export const RLPhoneMockupTheme = defineTheme("phone-mockup", {
   slots: ["root"],
   base: {
     root: "",

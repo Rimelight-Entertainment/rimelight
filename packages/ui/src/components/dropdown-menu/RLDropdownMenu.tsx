@@ -1,7 +1,7 @@
+import type { RLDropdownMenuProps, DropdownMenuItem } from "./dropdown-menu.types";
+import { RLDropdownMenuTheme } from "./dropdown-menu.theme";
 import { createSignal, createMemo, omit, onSettled, For, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
-import type { RLDropdownMenuProps, DropdownMenuItem } from "./dropdown-menu.types";
-import { dropdownMenuTheme } from "./dropdown-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
@@ -77,7 +77,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    dropdownMenuTheme({
+    RLDropdownMenuTheme({
       size: props.size ?? "md",
       ui: props.ui,
       class: props.class,

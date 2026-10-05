@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLTooltipProps } from "./tooltip.types";
-import { tooltipTheme } from "./tooltip.theme";
+import { RLTooltipTheme } from "./tooltip.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLTooltip: Component<RLTooltipProps> = (allProps) => {
   const props = allProps;
@@ -9,7 +9,7 @@ export const RLTooltip: Component<RLTooltipProps> = (allProps) => {
   const placement = () => props.placement ?? "top";
 
   const resolvedClasses = createMemo(() =>
-    tooltipTheme({
+    RLTooltipTheme({
       placement: placement(),
       ui: props.ui,
       class: props.class,

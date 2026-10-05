@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const tableOfContentsTheme = defineTheme("table-of-contents", {
+export const RLTableOfContentsTheme = defineTheme("table-of-contents", {
   slots: [
     "root",
     "container",

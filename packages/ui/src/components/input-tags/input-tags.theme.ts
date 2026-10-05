@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const inputTagsTheme = defineTheme("input-tags", {
+export const RLInputTagsTheme = defineTheme("input-tags", {
   slots: ["root", "tag", "tagLabel", "more", "input"],
   base: {
     root: "flex flex-wrap items-center gap-1.5",

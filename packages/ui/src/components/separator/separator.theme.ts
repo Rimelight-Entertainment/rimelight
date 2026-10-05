@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const separatorTheme = defineTheme("separator", {
+export const RLSeparatorTheme = defineTheme("separator", {
   slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
   base: {
     root: "flex items-center align-center text-center",

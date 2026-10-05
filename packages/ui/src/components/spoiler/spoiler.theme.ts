@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const spoilerTheme = defineTheme("spoiler", {
+export const RLSpoilerTheme = defineTheme("spoiler", {
   slots: ["root"],
   base: {
     root: "",

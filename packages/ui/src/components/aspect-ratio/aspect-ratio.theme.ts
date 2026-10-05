@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const aspectRatioTheme = defineTheme("aspect-ratio", {
+export const RLAspectRatioTheme = defineTheme("aspect-ratio", {
   slots: ["root", "spacer", "content"],
   base: {
     root: "relative w-full overflow-hidden",

@@ -1,7 +1,7 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLInputTimeProps } from "./input-time.types";
-import { inputTimeTheme } from "./input-time.theme";
-import { inputTheme } from "../input/input.theme";
+import { RLInputTimeTheme } from "./input-time.theme";
+import { createMemo, omit, type Component } from "solid-js";
+import { RLInputTheme } from "../input/input.theme";
 
 export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
   const props = allProps;
@@ -29,14 +29,14 @@ export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    inputTimeTheme({
+    RLInputTimeTheme({
       ui: props.ui,
       class: props.class,
     }),
   );
 
   const inputClasses = createMemo(() =>
-    inputTheme({
+    RLInputTheme({
       variant: "default",
       size: props.size ?? "md",
       error: false,

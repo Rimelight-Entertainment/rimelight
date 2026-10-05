@@ -1,6 +1,6 @@
-import { createMemo, For, Show, omit, type Component } from "solid-js";
 import type { RLChartProps, ChartDataPoint } from "./chart.types";
-import { chartTheme } from "./chart.theme";
+import { RLChartTheme } from "./chart.theme";
+import { createMemo, For, Show, omit, type Component } from "solid-js";
 
 const palette = [
   "hsl(221 83% 53%)",
@@ -49,7 +49,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
   const chartType = () => props.type ?? "bar";
 
   const resolvedClasses = createMemo(() =>
-    chartTheme({
+    RLChartTheme({
       color: props.color ?? "primary",
       ui: props.ui,
       class: props.class,

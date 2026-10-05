@@ -1,6 +1,6 @@
-import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
-import { dashboardSidebarTheme } from "./dashboard-sidebar.theme";
+import { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
+import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
   const props = allProps;
@@ -94,7 +94,7 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
   });
 
   const resolvedClasses = createMemo(() =>
-    dashboardSidebarTheme({
+    RLDashboardSidebarTheme({
       side: side(),
       collapsed: isCollapsible() && isCollapsed(),
       ui: props.ui,

@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLRadioGroupProps } from "./radio-group.types";
-import { radioGroupTheme } from "./radio-group.theme";
+import { RLRadioGroupTheme } from "./radio-group.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
   const props = allProps;
@@ -18,7 +18,7 @@ export const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    radioGroupTheme({
+    RLRadioGroupTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

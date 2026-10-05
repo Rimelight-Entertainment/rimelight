@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLDashboardSidebarToggleProps } from "./dashboard-sidebar-toggle.types";
-import { dashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme";
+import { RLDashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allProps) => {
@@ -8,7 +8,7 @@ export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> 
   const rest = omit(allProps, "icon", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    dashboardSidebarToggleTheme({
+    RLDashboardSidebarToggleTheme({
       ui: props.ui,
       class: props.class,
     }),

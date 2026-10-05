@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const scrollToTopTheme = defineTheme("scroll-to-top", {
+export const RLScrollToTopTheme = defineTheme("scroll-to-top", {
   slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],
   base: {
     root: "fixed bottom-6 right-6 z-50",

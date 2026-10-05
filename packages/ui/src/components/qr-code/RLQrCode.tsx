@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLQrCodeProps } from "./qr-code.types";
-import { qrCodeTheme } from "./qr-code.theme";
+import { RLQrCodeTheme } from "./qr-code.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    qrCodeTheme({
+    RLQrCodeTheme({
       ui: props.ui,
       class: props.class,
     }),

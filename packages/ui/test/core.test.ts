@@ -214,18 +214,18 @@ describe("@rimelight/ui unstyled mode", () => {
 });
 
 describe("@rimelight/ui logo & image themes", () => {
-  it("should export and resolve logoTheme properly", async () => {
+  it("should export and resolve RLLogoTheme properly", async () => {
     vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = false;
-    const { logoTheme } = await import("../src/components/logo/logo.theme");
-    const slots = logoTheme({ class: "custom-logo" });
+    const { RLLogoTheme } = await import("../src/components/logo/logo.theme");
+    const slots = RLLogoTheme({ class: "custom-logo" });
     expect(slots["root"]).toContain("flex items-center");
     expect(slots["root"]).toContain("custom-logo");
   });
 
-  it("should export and resolve imageTheme properly", async () => {
+  it("should export and resolve RLImageTheme properly", async () => {
     vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = false;
-    const { imageTheme } = await import("../src/components/image/image.theme");
-    const slots = imageTheme({ class: "custom-image", fit: "contain" });
+    const { RLImageTheme } = await import("../src/components/image/image.theme");
+    const slots = RLImageTheme({ class: "custom-image", fit: "contain" });
     expect(slots["root"]).toContain("relative inline-block");
     expect(slots["root"]).toContain("custom-image");
     expect(slots["trigger"]).toContain("cursor-pointer");

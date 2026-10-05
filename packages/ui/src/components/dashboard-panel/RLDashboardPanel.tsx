@@ -1,6 +1,6 @@
-import { createMemo, Show, omit, type Component } from "solid-js";
 import type { RLDashboardPanelProps } from "./dashboard-panel.types";
-import { dashboardPanelTheme } from "./dashboard-panel.theme";
+import { RLDashboardPanelTheme } from "./dashboard-panel.theme";
+import { createMemo, Show, omit, type Component } from "solid-js";
 
 export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
   const props = allProps;
@@ -23,7 +23,7 @@ export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => 
   const resizable = () => props.resizable ?? false;
 
   const resolvedClasses = createMemo(() =>
-    dashboardPanelTheme({
+    RLDashboardPanelTheme({
       size: false,
       ui: props.ui,
       class: props.class,

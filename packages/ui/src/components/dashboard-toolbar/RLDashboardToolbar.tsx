@@ -1,7 +1,7 @@
+import type { RLDashboardToolbarProps } from "./dashboard-toolbar.types";
+import { RLDashboardToolbarTheme } from "./dashboard-toolbar.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLDashboardToolbarProps } from "./dashboard-toolbar.types";
-import { dashboardToolbarTheme } from "./dashboard-toolbar.theme";
 
 export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
   const props = allProps;
@@ -10,7 +10,7 @@ export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps)
   const Tag = () => props.as || "div";
 
   const resolvedClasses = createMemo(() =>
-    dashboardToolbarTheme({
+    RLDashboardToolbarTheme({
       ui: props.ui,
       class: props.class,
     }),

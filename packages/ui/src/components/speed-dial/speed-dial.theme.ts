@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const speedDialTheme = defineTheme("speed-dial", {
+export const RLSpeedDialTheme = defineTheme("speed-dial", {
   slots: ["root"],
   base: {
     root: "",

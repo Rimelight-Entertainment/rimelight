@@ -1,7 +1,7 @@
+import type { RLAvatarProps } from "./avatar.types";
+import { RLAvatarTheme } from "./avatar.theme";
 import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLAvatarProps } from "./avatar.types";
-import { avatarTheme } from "./avatar.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";
 
@@ -56,7 +56,7 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
   const [imageError, setImageError] = createSignal(false);
 
   const resolvedClasses = createMemo(() =>
-    avatarTheme({
+    RLAvatarTheme({
       size: props.size ?? "md",
       color: props.color ?? "neutral",
       badgePosition: props.badgePosition ?? "bottom-right",

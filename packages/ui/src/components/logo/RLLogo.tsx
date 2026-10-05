@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLLogoProps } from "./logo.types";
-import { logoTheme } from "./logo.theme";
+import { RLLogoTheme } from "./logo.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import uiConfig from "virtual:rimelight/ui";
 
 export const RLLogo: Component<RLLogoProps> = (allProps) => {
@@ -86,7 +86,7 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    logoTheme({
+    RLLogoTheme({
       variant: variant(),
       ui: props.ui,
       class: props.class,

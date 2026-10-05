@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLMeterProps } from "./meter.types";
-import { meterTheme } from "./meter.theme";
+import { RLMeterTheme } from "./meter.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLMeter: Component<RLMeterProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    meterTheme({
+    RLMeterTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

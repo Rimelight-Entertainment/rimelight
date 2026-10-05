@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const scrollAreaTheme = defineTheme("scroll-area", {
+export const RLScrollAreaTheme = defineTheme("scroll-area", {
   slots: ["root", "viewport", "scrollbar", "thumb"],
   base: {
     root: "relative overflow-hidden w-full",

@@ -1,6 +1,6 @@
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import type { RLConfirmProps } from "./confirm.types";
-import { confirmTheme } from "./confirm.theme";
+import { RLConfirmTheme } from "./confirm.theme";
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 
 export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
@@ -31,7 +31,7 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
   let dialogRef: HTMLDialogElement | undefined;
 
   const resolvedClasses = createMemo(() =>
-    confirmTheme({
+    RLConfirmTheme({
       variant: props.variant ?? "default",
       ui: props.ui,
       class: props.class,

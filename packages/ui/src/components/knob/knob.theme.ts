@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const knobTheme = defineTheme("knob", {
+export const RLKnobTheme = defineTheme("knob", {
   slots: ["root"],
   base: {
     root: "",

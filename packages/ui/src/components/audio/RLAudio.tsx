@@ -1,3 +1,5 @@
+import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio.types";
+import { RLAudioTheme } from "./audio.theme";
 import {
   children,
   createMemo,
@@ -9,8 +11,6 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio.types";
-import { audioTheme } from "./audio.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLImage } from "../image/RLImage";
 import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio";
@@ -178,7 +178,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
   const skipSecs = () => props.skipSeconds ?? 15;
 
   const resolvedClasses = createMemo(() =>
-    audioTheme({
+    RLAudioTheme({
       variant: props.variant ?? "outline",
       orientation: orientation(),
       color: props.color ?? "primary",

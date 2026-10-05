@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types";
-import { localeSelectorTheme } from "./locale-selector.theme";
+import { RLLocaleSelectorTheme } from "./locale-selector.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 
 const getLocaleDisplayName = (localeCode: string): string => {
@@ -71,7 +71,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => 
   );
 
   const resolvedClasses = createMemo(() =>
-    localeSelectorTheme({
+    RLLocaleSelectorTheme({
       ui: props.ui,
       class: props.class,
     }),

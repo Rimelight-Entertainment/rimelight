@@ -1,3 +1,5 @@
+import type { RLTabsProps } from "./tabs.types";
+import { RLTabsTheme } from "./tabs.theme";
 import {
   children,
   createEffect,
@@ -9,8 +11,6 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLTabsProps } from "./tabs.types";
-import { tabsTheme } from "./tabs.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -83,7 +83,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    tabsTheme({
+    RLTabsTheme({
       variant: normalizedVariant(),
       orientation: orientation(),
       size: size(),

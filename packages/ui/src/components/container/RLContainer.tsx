@@ -1,7 +1,7 @@
+import type { RLContainerProps } from "./container.types";
+import { RLContainerTheme } from "./container.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLContainerProps } from "./container.types";
-import { containerTheme } from "./container.theme";
 
 export const RLContainer: Component<RLContainerProps> = (allProps) => {
   const props = allProps;
@@ -11,7 +11,7 @@ export const RLContainer: Component<RLContainerProps> = (allProps) => {
   // factory at every call site).
   const Tag = dynamic(() => props.as ?? "div");
 
-  const resolvedClasses = createMemo(() => containerTheme({ ui: props.ui, class: props.class }));
+  const resolvedClasses = createMemo(() => RLContainerTheme({ ui: props.ui, class: props.class }));
 
   return (
     <Tag class={resolvedClasses().root} data-slot="root" {...rest}>

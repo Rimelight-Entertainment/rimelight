@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLSwitchProps } from "./switch.types";
-import { switchTheme } from "./switch.theme";
+import { RLSwitchTheme } from "./switch.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLSwitch: Component<RLSwitchProps> = (allProps) => {
   const props = allProps;
@@ -19,7 +19,7 @@ export const RLSwitch: Component<RLSwitchProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    switchTheme({
+    RLSwitchTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

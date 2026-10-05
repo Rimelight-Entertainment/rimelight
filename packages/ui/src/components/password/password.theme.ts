@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const passwordTheme = defineTheme("password", {
+export const RLPasswordTheme = defineTheme("password", {
   slots: ["root"],
   base: {
     root: "",

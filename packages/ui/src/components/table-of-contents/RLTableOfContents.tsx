@@ -1,6 +1,6 @@
-import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js";
 import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-contents.types";
-import { tableOfContentsTheme } from "./table-of-contents.theme";
+import { RLTableOfContentsTheme } from "./table-of-contents.theme";
+import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
@@ -45,7 +45,7 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) =
   );
 
   const resolvedClasses = createMemo(() =>
-    tableOfContentsTheme({
+    RLTableOfContentsTheme({
       ui: props.ui,
       class: props.class,
     }),

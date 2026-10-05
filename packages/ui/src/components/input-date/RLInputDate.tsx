@@ -1,7 +1,7 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLInputDateProps } from "./input-date.types";
-import { inputDateTheme } from "./input-date.theme";
-import { inputTheme } from "../input/input.theme";
+import { RLInputDateTheme } from "./input-date.theme";
+import { createMemo, omit, type Component } from "solid-js";
+import { RLInputTheme } from "../input/input.theme";
 
 export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
   const props = allProps;
@@ -29,14 +29,14 @@ export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    inputDateTheme({
+    RLInputDateTheme({
       ui: props.ui,
       class: props.class,
     }),
   );
 
   const inputClasses = createMemo(() =>
-    inputTheme({
+    RLInputTheme({
       variant: "default",
       size: props.size ?? "md",
       error: false,

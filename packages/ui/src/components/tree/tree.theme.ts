@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const treeTheme = defineTheme("tree", {
+export const RLTreeTheme = defineTheme("tree", {
   slots: ["root"],
   base: {
     root: "",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const avatarGroupTheme = defineTheme("avatar-group", {
+export const RLAvatarGroupTheme = defineTheme("avatar-group", {
   slots: ["root", "base", "more"],
   base: {
     root: "inline-flex flex-row-reverse justify-end items-center",

@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLLinkProps } from "./link.types";
-import { linkTheme } from "./link.theme";
+import { RLLinkTheme } from "./link.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";
 
@@ -40,7 +40,7 @@ export const RLLink: Component<RLLinkProps> = (allProps) => {
       return { root: props.class || "", externalHint: "sr-only" };
     }
 
-    return linkTheme({
+    return RLLinkTheme({
       theme: props.theme,
       ...(props.active !== undefined ? { active: props.active } : {}),
       disabled: !!props.disabled,

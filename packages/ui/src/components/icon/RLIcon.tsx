@@ -1,12 +1,12 @@
+import type { RLIconProps } from "./icon.types";
+import { RLIconTheme } from "./icon.theme";
 import { createMemo, omit, For, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import { resolveIcon } from "../../icons";
-import type { RLIconProps } from "./icon.types";
-import { iconTheme } from "./icon.theme";
 
 export const RLIcon: Component<RLIconProps> = (allProps) => {
   const rest = omit(allProps, "name", "custom", "size", "class", "unstyled");
-  const classes = createMemo(() => iconTheme({ size: allProps.size, class: allProps.class }));
+  const classes = createMemo(() => RLIconTheme({ size: allProps.size, class: allProps.class }));
   const resolved = createMemo(() => resolveIcon(allProps.name, allProps["custom"] as any));
 
   return (

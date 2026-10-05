@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLFormProps } from "./form.types";
-import { formTheme } from "./form.theme";
+import { RLFormTheme } from "./form.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLForm: Component<RLFormProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "schema", "state", "ui", "class", "children", "onSubmit");
 
   const resolvedClasses = createMemo(() =>
-    formTheme({
+    RLFormTheme({
       ui: props.ui,
       class: props.class,
     }),

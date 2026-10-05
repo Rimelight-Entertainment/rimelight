@@ -448,7 +448,7 @@ export const buttonAudit: ComponentAuditDefinition = {
       criterion: "No cx() calls directly in components",
       status: "pass",
       notes:
-        "RLButton merges classes only through buttonTheme. Fixed alongside: RLBreadcrumb's cx() calls were replaced by a theme-layer mergeUi helper, and hardcoded classes moved into breadcrumb.theme.ts (overflow, overflowEllipsis, overflowCount).",
+        "RLButton merges classes only through RLButtonTheme. Fixed alongside: RLBreadcrumb's cx() calls were replaced by a theme-layer mergeUi helper, and hardcoded classes moved into breadcrumb.theme.ts (overflow, overflowEllipsis, overflowCount).",
     },
     {
       criterion: "Exclusively named exports",

@@ -1,6 +1,6 @@
-import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import type { RLImageProps, ImageMetadata } from "./image.types";
-import { imageTheme } from "./image.theme";
+import { RLImageTheme } from "./image.theme";
+import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLImage: Component<RLImageProps> = (allProps) => {
@@ -81,7 +81,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
     (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG");
 
   const resolvedClasses = createMemo(() =>
-    imageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
+    RLImageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
   );
 
   const alt = props.alt ?? "";

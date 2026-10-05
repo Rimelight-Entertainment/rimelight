@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const inputMenuTheme = defineTheme("input-menu", {
+export const RLInputMenuTheme = defineTheme("input-menu", {
   slots: ["root", "label", "trigger", "input", "content", "item", "itemText", "itemIcon"],
   base: {
     root: "relative w-full flex flex-col gap-1.5",

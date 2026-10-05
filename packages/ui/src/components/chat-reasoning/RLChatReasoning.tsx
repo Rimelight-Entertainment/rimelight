@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLChatReasoningProps } from "./chat-reasoning.types";
-import { chatReasoningTheme } from "./chat-reasoning.theme";
+import { RLChatReasoningTheme } from "./chat-reasoning.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    chatReasoningTheme({
+    RLChatReasoningTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

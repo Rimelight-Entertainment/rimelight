@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const stepsTheme = defineTheme("steps", {
+export const RLStepsTheme = defineTheme("steps", {
   slots: ["root"],
   base: {
     root: "w-full",

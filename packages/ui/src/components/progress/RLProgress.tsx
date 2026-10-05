@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLProgressProps } from "./progress.types";
-import { progressTheme } from "./progress.theme";
+import { RLProgressTheme } from "./progress.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLProgress: Component<RLProgressProps> = (allProps) => {
   const props = allProps;
@@ -11,7 +11,7 @@ export const RLProgress: Component<RLProgressProps> = (allProps) => {
   const percentage = createMemo(() => Math.min(100, Math.max(0, (value() / max()) * 100)));
 
   const resolvedClasses = createMemo(() =>
-    progressTheme({
+    RLProgressTheme({
       color: props.color,
       ui: props.ui,
       class: props.class,

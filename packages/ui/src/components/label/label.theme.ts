@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const labelTheme = defineTheme("label", {
+export const RLLabelTheme = defineTheme("label", {
   slots: ["root"],
   base: {
     root: "font-medium leading-none text-highlighted peer-disabled:cursor-not-allowed peer-disabled:opacity-70",

@@ -1,6 +1,6 @@
-import { createMemo, omit, For, type Component } from "solid-js";
 import type { RLPaginationProps } from "./pagination.types";
-import { paginationTheme } from "./pagination.theme";
+import { RLPaginationTheme } from "./pagination.theme";
+import { createMemo, omit, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLPagination: Component<RLPaginationProps> = (allProps) => {
@@ -20,7 +20,7 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
   const totalPages = () => props.totalPages ?? 1;
 
   const resolvedClasses = createMemo(() =>
-    paginationTheme({
+    RLPaginationTheme({
       ui: props.ui,
       class: props.class,
     }),
@@ -47,7 +47,7 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
     return pages;
   });
 
-  const itemLinkClasses = (isActive: boolean) => paginationTheme({ active: isActive }).link;
+  const itemLinkClasses = (isActive: boolean) => RLPaginationTheme({ active: isActive }).link;
 
   return (
     <nav

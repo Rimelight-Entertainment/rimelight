@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const watermarkTheme = defineTheme("watermark", {
+export const RLWatermarkTheme = defineTheme("watermark", {
   slots: ["root"],
   base: {
     root: "",

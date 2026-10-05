@@ -10,7 +10,7 @@ vi.mock("virtual:rimelight/ui", () => ({
 
 import { RLBanner } from "../src/components/banner/RLBanner";
 import { RLHeader } from "../src/components/header/RLHeader";
-import { bannerTheme } from "../src/components/banner/banner.theme";
+import { RLBannerTheme } from "../src/components/banner/banner.theme";
 import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
@@ -397,7 +397,7 @@ describe("RLBanner", () => {
     });
 
     it("theme exposes all Nuxt UI slots plus extras", () => {
-      const slots = bannerTheme({});
+      const slots = RLBannerTheme({});
       for (const key of [
         "root",
         "container",

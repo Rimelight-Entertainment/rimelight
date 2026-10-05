@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const footerTheme = defineTheme("footer", {
+export const RLFooterTheme = defineTheme("footer", {
   slots: ["root", "container", "left", "center", "right"],
   base: {
     root: "py-8 lg:py-12 overflow-hidden text-default",

@@ -1,5 +1,5 @@
-import { For, Show, type Component } from "solid-js";
 import type { RLGamepadProps, HighlightGroup } from "./gamepad.types";
+import { For, Show, type Component } from "solid-js";
 
 interface GamepadButton {
   id: string;

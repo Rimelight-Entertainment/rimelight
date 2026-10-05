@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const ratingTheme = defineTheme("rating", {
+export const RLRatingTheme = defineTheme("rating", {
   slots: ["root"],
   base: {
     root: "",

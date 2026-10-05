@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const browserMockupTheme = defineTheme("browser-mockup", {
+export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
   slots: [
     "root",
     "header",

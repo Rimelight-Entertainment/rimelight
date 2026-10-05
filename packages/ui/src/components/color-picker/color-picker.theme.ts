@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const colorPickerTheme = defineTheme("color-picker", {
+export const RLColorPickerTheme = defineTheme("color-picker", {
   slots: ["root"],
   base: {
     root: "",

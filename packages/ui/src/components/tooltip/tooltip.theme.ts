@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const tooltipTheme = defineTheme("tooltip", {
+export const RLTooltipTheme = defineTheme("tooltip", {
   slots: ["root", "trigger", "content"],
   base: {
     root: "relative inline-block group/tooltip",

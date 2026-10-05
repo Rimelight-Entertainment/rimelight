@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const avatarTheme = defineTheme("avatar", {
+export const RLAvatarTheme = defineTheme("avatar", {
   slots: ["root", "image", "fallback", "icon", "badge", "wrapper", "text", "title", "subtitle"],
   base: {
     root: "inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative text-[var(--rl-text)] bg-elevated",

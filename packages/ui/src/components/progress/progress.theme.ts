@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const progressTheme = defineTheme("progress", {
+export const RLProgressTheme = defineTheme("progress", {
   slots: ["root", "indicator"],
   base: {
     root: "relative w-full overflow-hidden rounded-full bg-muted shadow-inner",

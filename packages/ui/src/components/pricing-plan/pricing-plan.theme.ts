@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const pricingPlanTheme = defineTheme("pricing-plan", {
+export const RLPricingPlanTheme = defineTheme("pricing-plan", {
   slots: ["root"],
   base: {
     root: "",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const chartTheme = defineTheme("chart", {
+export const RLChartTheme = defineTheme("chart", {
   slots: ["root", "title", "container", "svg", "axis", "bar", "line", "tooltip", "legend"],
   base: {
     root: "flex flex-col gap-3 p-4 rounded-xl border border-default bg-elevated text-highlighted shadow-sm",

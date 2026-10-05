@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLPasswordProps } from "./password.types";
-import { passwordTheme } from "./password.theme";
+import { RLPasswordTheme } from "./password.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLPassword: Component<RLPasswordProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    passwordTheme({
+    RLPasswordTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

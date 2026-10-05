@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const kbdTheme = defineTheme("kbd", {
+export const RLKbdTheme = defineTheme("kbd", {
   slots: ["root"],
   base: {
     root: "inline-flex items-center justify-center px-1 rounded-sm font-medium font-sans uppercase",

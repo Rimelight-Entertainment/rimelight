@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLListboxProps } from "./listbox.types";
-import { listboxTheme } from "./listbox.theme";
+import { RLListboxTheme } from "./listbox.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLListbox: Component<RLListboxProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    listboxTheme({
+    RLListboxTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

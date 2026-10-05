@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const badgeTheme = defineTheme("badge", {
+export const RLBadgeTheme = defineTheme("badge", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
   base: {
     root: "font-medium inline-flex items-center transition-all duration-150 select-none",

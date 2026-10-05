@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLDashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse.types";
-import { dashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme";
+import { RLDashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
@@ -10,7 +10,7 @@ export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapsePro
   const rest = omit(allProps, "icon", "ui", "class", "children", "side");
 
   const resolvedClasses = createMemo(() =>
-    dashboardSidebarCollapseTheme({
+    RLDashboardSidebarCollapseTheme({
       side: props.side ?? "left",
       ui: props.ui,
       class: props.class,

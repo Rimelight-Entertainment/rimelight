@@ -1,3 +1,5 @@
+import type { RLCalloutProps } from "./callout.types";
+import { RLCalloutTheme } from "./callout.theme";
 import {
   createComponent,
   createMemo,
@@ -9,8 +11,6 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLCalloutProps } from "./callout.types";
-import { calloutTheme } from "./callout.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
@@ -81,7 +81,7 @@ export const RLCallout: Component<RLCalloutProps> = (allProps) => {
   const hasClose = () => Boolean(props.closeSlot !== undefined || props.close);
 
   const classes = createMemo(() =>
-    calloutTheme({
+    RLCalloutTheme({
       variant: props.variant ?? "solid",
       color: props.color ?? "primary",
       orientation: props.orientation ?? "vertical",

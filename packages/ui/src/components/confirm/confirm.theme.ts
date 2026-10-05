@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const confirmTheme = defineTheme("confirm", {
+export const RLConfirmTheme = defineTheme("confirm", {
   slots: [
     "root",
     "trigger",

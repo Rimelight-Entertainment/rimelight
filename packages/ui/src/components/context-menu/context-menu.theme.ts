@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const contextMenuTheme = defineTheme("context-menu", {
+export const RLContextMenuTheme = defineTheme("context-menu", {
   slots: ["root"],
   base: {
     root: "",

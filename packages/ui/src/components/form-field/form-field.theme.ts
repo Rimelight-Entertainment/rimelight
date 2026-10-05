@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const formFieldTheme = defineTheme("form-field", {
+export const RLFormFieldTheme = defineTheme("form-field", {
   slots: ["root", "label", "description", "error"],
   base: {
     root: "flex flex-col gap-1.5 w-full",

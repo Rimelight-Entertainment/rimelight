@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const inputRatingTheme = defineTheme("input-rating", {
+export const RLInputRatingTheme = defineTheme("input-rating", {
   slots: ["root", "item", "indicator", "icon", "emptyIcon"],
   base: {
     root: "inline-flex select-none",

@@ -1,5 +1,3 @@
-import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
-import { isServer } from "@solidjs/web";
 import type {
   RLTableProps,
   TableColumn,
@@ -17,12 +15,14 @@ import type {
   TableEditingCellState,
   TableExportOptions,
 } from "./table.types";
-import { tableTheme } from "./table.theme";
-export * from "./table.types";
-import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
+import { RLTableTheme } from "./table.theme";
+import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
+import { isServer } from "@solidjs/web";
+import { RLDropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
 import { RLInput } from "../input/RLInput";
 import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
 import { RLIcon } from "../icon/RLIcon";
+export * from "./table.types";
 
 type AnyData = Record<string, any>;
 
@@ -282,7 +282,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
   ) {
     const actions = getCellActions(row, col);
     if (Array.isArray(actions) && actions.length > 0) {
-      const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" });
+      const dmClasses = RLDropdownMenuTheme({ size: "xs", color: "neutral" });
       return (
         <div class="flex items-center justify-end">
           <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
@@ -309,7 +309,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
         table: tableApi,
       });
       if (Array.isArray(rendered) && rendered.length > 0) {
-        const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" });
+        const dmClasses = RLDropdownMenuTheme({ size: "xs", color: "neutral" });
         return (
           <div class="flex items-center justify-end">
             <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
@@ -1090,7 +1090,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
 
   // ─── Theme Resolution ────────────────────────────────────────────────────────
   const classes = createMemo(() =>
-    tableTheme({
+    RLTableTheme({
       sticky: props.sticky,
       loading: props.loading,
       loadingColor: props.loadingColor ?? "primary",

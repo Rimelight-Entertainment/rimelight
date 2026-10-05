@@ -1,11 +1,11 @@
+import type { RLShortcutsProps } from "./shortcuts.types";
+import { RLShortcutsTheme } from "./shortcuts.theme";
 import uiConfig from "virtual:rimelight/ui";
 import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts";
-import { shortcutsTheme } from "./shortcuts.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
-import type { RLShortcutsProps } from "./shortcuts.types";
 
 interface CategorySection {
   key: string;
@@ -92,7 +92,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    shortcutsTheme({
+    RLShortcutsTheme({
       ui: props.ui,
       class: props.class,
     }),

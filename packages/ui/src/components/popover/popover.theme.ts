@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const popoverTheme = defineTheme("popover", {
+export const RLPopoverTheme = defineTheme("popover", {
   slots: ["root", "trigger", "content"],
   base: {
     root: "relative inline-flex items-center justify-center",

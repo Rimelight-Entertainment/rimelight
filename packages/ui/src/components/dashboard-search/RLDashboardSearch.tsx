@@ -1,3 +1,5 @@
+import type { RLDashboardSearchProps } from "./dashboard-search.types";
+import { RLDashboardSearchTheme } from "./dashboard-search.theme";
 import {
   createEffect,
   createMemo,
@@ -7,8 +9,6 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLDashboardSearchProps } from "./dashboard-search.types";
-import { dashboardSearchTheme } from "./dashboard-search.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
@@ -65,7 +65,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) =
   });
 
   const resolvedClasses = createMemo(() =>
-    dashboardSearchTheme({
+    RLDashboardSearchTheme({
       ui: props.ui,
       class: props.class,
       fullscreen: false,

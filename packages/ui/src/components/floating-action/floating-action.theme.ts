@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const floatingActionTheme = defineTheme("floating-action", {
+export const RLFloatingActionTheme = defineTheme("floating-action", {
   slots: ["root"],
   base: {
     root: "",

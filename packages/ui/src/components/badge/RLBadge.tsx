@@ -1,7 +1,7 @@
+import type { RLBadgeProps } from "./badge.types";
+import { RLBadgeTheme } from "./badge.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLBadgeProps } from "./badge.types";
-import { badgeTheme } from "./badge.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 
@@ -62,7 +62,7 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
   const isSquare = () => Boolean(props.square ?? (props as any)["square"]);
 
   const resolvedClasses = createMemo(() =>
-    badgeTheme({
+    RLBadgeTheme({
       variant: props.variant ?? "solid",
       color: props.color ?? "primary",
       size: props.size ?? "md",

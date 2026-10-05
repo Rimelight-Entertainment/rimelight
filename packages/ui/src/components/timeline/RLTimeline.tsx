@@ -1,8 +1,8 @@
+import type { RLTimelineProps, TimelineItem } from "./timeline.types";
+import { RLTimelineTheme } from "./timeline.theme";
 import { createMemo, For, omit, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { RLTimelineProps, TimelineItem } from "./timeline.types";
-import { timelineTheme } from "./timeline.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -57,7 +57,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    timelineTheme({
+    RLTimelineTheme({
       size: props.size ?? "md",
       color: props.color ?? "primary",
       orientation: props.orientation ?? "vertical",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const pageAsideTheme = defineTheme("page-aside", {
+export const RLPageAsideTheme = defineTheme("page-aside", {
   slots: ["root"],
   base: {
     root: "",

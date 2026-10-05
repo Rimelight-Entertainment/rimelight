@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const compareTheme = defineTheme("compare", {
+export const RLCompareTheme = defineTheme("compare", {
   slots: ["root"],
   base: {
     root: "",

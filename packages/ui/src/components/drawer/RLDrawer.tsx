@@ -1,3 +1,5 @@
+import type { RLDrawerProps } from "./drawer.types";
+import { RLDrawerTheme } from "./drawer.theme";
 import {
   createEffect,
   createMemo,
@@ -7,8 +9,6 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type { RLDrawerProps } from "./drawer.types";
-import { drawerTheme } from "./drawer.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
@@ -85,7 +85,7 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    drawerTheme({
+    RLDrawerTheme({
       direction: props.direction ?? "bottom",
       ui: props.ui,
       class: props.class,

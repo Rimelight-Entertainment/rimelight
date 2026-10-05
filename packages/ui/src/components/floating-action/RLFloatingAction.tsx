@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLFloatingActionProps } from "./floating-action.types";
-import { floatingActionTheme } from "./floating-action.theme";
+import { RLFloatingActionTheme } from "./floating-action.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    floatingActionTheme({
+    RLFloatingActionTheme({
       ui: props.ui,
       class: props.class,
     }),

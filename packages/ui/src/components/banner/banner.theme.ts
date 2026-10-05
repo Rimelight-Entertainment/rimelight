@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const bannerTheme = defineTheme("banner", {
+export const RLBannerTheme = defineTheme("banner", {
   slots: [
     "root",
     "link",

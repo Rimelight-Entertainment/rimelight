@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const editorTheme = defineTheme("editor", {
+export const RLEditorTheme = defineTheme("editor", {
   slots: ["root"],
   base: {
     root: "",

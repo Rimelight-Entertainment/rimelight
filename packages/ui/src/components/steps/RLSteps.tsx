@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLStepsProps } from "./steps.types";
-import { stepsTheme } from "./steps.theme";
+import { RLStepsTheme } from "./steps.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLSteps: Component<RLStepsProps> = (allProps) => {
   const props = allProps;
@@ -9,7 +9,7 @@ export const RLSteps: Component<RLStepsProps> = (allProps) => {
   const size = () => props.size || "md";
 
   const resolvedClasses = createMemo(() =>
-    stepsTheme({
+    RLStepsTheme({
       ui: props.ui,
       class: props.class,
     }),

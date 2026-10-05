@@ -1,6 +1,6 @@
-import { children, createMemo, For, Show, omit, type Component } from "solid-js";
 import type { RLSidebarProps, SidebarItem } from "./sidebar.types";
-import { sidebarTheme } from "./sidebar.theme";
+import { RLSidebarTheme } from "./sidebar.theme";
+import { children, createMemo, For, Show, omit, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -184,7 +184,7 @@ export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
   const isRoot = () => depth() === 0;
 
   const resolvedClasses = createMemo(() =>
-    sidebarTheme({
+    RLSidebarTheme({
       collapsible: props.collapsible,
       variant: props.variant,
       ui: props.ui,

@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLDockProps } from "./dock.types";
-import { dockTheme } from "./dock.theme";
+import { RLDockTheme } from "./dock.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLDock: Component<RLDockProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    dockTheme({
+    RLDockTheme({
       ui: props.ui,
       class: props.class,
     }),

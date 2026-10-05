@@ -1,6 +1,6 @@
-import { createMemo, createSignal, omit, type Component } from "solid-js";
 import type { RLFileUploadProps } from "./file-upload.types";
-import { fileUploadTheme } from "./file-upload.theme";
+import { RLFileUploadTheme } from "./file-upload.theme";
+import { createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
@@ -22,7 +22,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    fileUploadTheme({
+    RLFileUploadTheme({
       color: props.color,
       disabled: !!props.disabled,
       ui: props.ui,

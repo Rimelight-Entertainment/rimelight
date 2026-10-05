@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLChatShimmerProps } from "./chat-shimmer.types";
-import { chatShimmerTheme } from "./chat-shimmer.theme";
+import { RLChatShimmerTheme } from "./chat-shimmer.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLChatShimmer: Component<RLChatShimmerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    chatShimmerTheme({
+    RLChatShimmerTheme({
       ui: props.ui,
       class: props.class,
       ...allProps,

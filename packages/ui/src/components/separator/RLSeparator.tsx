@@ -1,6 +1,6 @@
-import { children, createMemo, omit, type Component } from "solid-js";
 import type { RLSeparatorProps } from "./separator.types";
-import { separatorTheme } from "./separator.theme";
+import { RLSeparatorTheme } from "./separator.theme";
+import { children, createMemo, omit, type Component } from "solid-js";
 import { RLAvatar } from "../avatar/RLAvatar";
 
 export const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
@@ -28,7 +28,7 @@ export const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
   );
 
   const classes = createMemo(() =>
-    separatorTheme({
+    RLSeparatorTheme({
       color: props.color ?? "neutral",
       size: props.size ?? "xs",
       type: props.type ?? "solid",

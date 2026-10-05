@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const colorFieldTheme = defineTheme("color-field", {
+export const RLColorFieldTheme = defineTheme("color-field", {
   slots: ["root", "input"],
   base: {
     root: "relative flex items-center border border-default rounded-lg bg-default shadow-sm px-3 py-1.5 focus-within:ring-2 focus-within:ring-[var(--rl-ring)]/50 focus-within:ring-offset-2",

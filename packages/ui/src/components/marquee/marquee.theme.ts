@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const marqueeTheme = defineTheme("marquee", {
+export const RLMarqueeTheme = defineTheme("marquee", {
   slots: ["root", "track"],
   base: {
     root: "relative w-full overflow-hidden flex gap-4 mask-gradient-to-r",

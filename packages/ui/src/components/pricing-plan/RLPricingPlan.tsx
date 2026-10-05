@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLPricingPlanProps } from "./pricing-plan.types";
-import { pricingPlanTheme } from "./pricing-plan.theme";
+import { RLPricingPlanTheme } from "./pricing-plan.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLPricingPlan: Component<RLPricingPlanProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    pricingPlanTheme({
+    RLPricingPlanTheme({
       ui: props.ui,
       class: props.class,
     }),

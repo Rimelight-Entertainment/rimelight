@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLStickySurfaceProps } from "./sticky-surface.types";
-import { stickySurfaceTheme } from "./sticky-surface.theme";
+import { RLStickySurfaceTheme } from "./sticky-surface.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
   const props = allProps;
@@ -11,7 +11,7 @@ export const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
   const id = `sticky-${Math.random().toString(36).substring(2, 9)}`;
 
   const resolvedClasses = createMemo(() =>
-    stickySurfaceTheme({ ui: props.ui, class: props.class }),
+    RLStickySurfaceTheme({ ui: props.ui, class: props.class }),
   );
 
   return (

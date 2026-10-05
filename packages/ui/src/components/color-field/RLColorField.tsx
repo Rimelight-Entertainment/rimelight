@@ -1,7 +1,7 @@
+import type { RLColorFieldProps } from "./color-field.types";
+import { RLColorFieldTheme } from "./color-field.theme";
 import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLColorFieldProps } from "./color-field.types";
-import { colorFieldTheme } from "./color-field.theme";
 import {
   clamp,
   getChannelRange,
@@ -181,7 +181,7 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    colorFieldTheme({
+    RLColorFieldTheme({
       color: props.color,
       ui: props.ui,
       class: props.class,

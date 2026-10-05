@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const chatShimmerTheme = defineTheme("chat-shimmer", {
+export const RLChatShimmerTheme = defineTheme("chat-shimmer", {
   slots: ["root"],
   base: {
     root: "",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const fieldsetTheme = defineTheme("fieldset", {
+export const RLFieldsetTheme = defineTheme("fieldset", {
   slots: ["root"],
   base: {
     root: "",

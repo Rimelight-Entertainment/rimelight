@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const tableTheme = defineTheme("table", {
+export const RLTableTheme = defineTheme("table", {
   slots: [
     "root",
     "base",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const tourTheme = defineTheme("tour", {
+export const RLTourTheme = defineTheme("tour", {
   slots: ["root"],
   base: {
     root: "",

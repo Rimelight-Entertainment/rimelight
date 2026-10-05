@@ -296,7 +296,8 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
     {
       criterion: "No cx calls directly in component",
       status: "pass",
-      notes: "Theme resolution handled via breadcrumbTheme; cx only imported for combining slots.",
+      notes:
+        "Theme resolution handled via RLBreadcrumbTheme; cx only imported for combining slots.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",

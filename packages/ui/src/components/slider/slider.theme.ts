@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const sliderTheme = defineTheme("slider", {
+export const RLSliderTheme = defineTheme("slider", {
   slots: ["root", "track", "range", "thumb"],
   base: {
     root: "relative flex w-full touch-none select-none items-center",

@@ -1,3 +1,5 @@
+import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
+import { RLCalendarTheme } from "./calendar.theme";
 import {
   createEffect,
   createMemo,
@@ -9,8 +11,6 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
-import { calendarTheme } from "./calendar.theme";
 import {
   addMonths,
   addYears,
@@ -175,7 +175,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const fullLabel = createMemo(() => `${props.calendarLabel ?? "Event Date"}, ${headingValue()}`);
 
   const theme = createMemo(() =>
-    calendarTheme({
+    RLCalendarTheme({
       color: props.color,
       variant: props.variant,
       size: props.size,

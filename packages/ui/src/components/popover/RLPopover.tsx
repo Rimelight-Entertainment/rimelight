@@ -1,6 +1,6 @@
-import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js";
 import type { RLPopoverProps } from "./popover.types";
-import { popoverTheme } from "./popover.theme";
+import { RLPopoverTheme } from "./popover.theme";
+import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js";
 
 export const RLPopover: Component<RLPopoverProps> = (allProps) => {
   const props = allProps;
@@ -50,7 +50,7 @@ export const RLPopover: Component<RLPopoverProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    popoverTheme({
+    RLPopoverTheme({
       size: props.size ?? "md",
       placement: props.placement ?? "bottom",
       ui: props.ui,

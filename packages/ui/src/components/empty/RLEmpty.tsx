@@ -1,6 +1,6 @@
-import { children, createMemo, omit, For, type Component } from "solid-js";
 import type { RLEmptyProps } from "./empty.types";
-import { emptyTheme } from "./empty.theme";
+import { RLEmptyTheme } from "./empty.theme";
+import { children, createMemo, omit, For, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
@@ -44,7 +44,7 @@ export const RLEmpty: Component<RLEmptyProps> = (allProps) => {
   const actionList = props.actions ?? [];
 
   const classes = createMemo(() =>
-    emptyTheme({
+    RLEmptyTheme({
       variant: props.variant ?? "outline",
       size: props.size ?? "md",
       loading: props.loading ?? false,

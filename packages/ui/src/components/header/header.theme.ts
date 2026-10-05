@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const headerTheme = defineTheme("header", {
+export const RLHeaderTheme = defineTheme("header", {
   slots: ["root", "content", "container", "left", "center", "right"],
   base: {
     root: "w-full",

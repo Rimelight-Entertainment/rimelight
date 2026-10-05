@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLFieldsetProps } from "./fieldset.types";
-import { fieldsetTheme } from "./fieldset.theme";
+import { RLFieldsetTheme } from "./fieldset.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLFieldset: Component<RLFieldsetProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    fieldsetTheme({
+    RLFieldsetTheme({
       ui: props.ui,
       class: props.class,
     }),

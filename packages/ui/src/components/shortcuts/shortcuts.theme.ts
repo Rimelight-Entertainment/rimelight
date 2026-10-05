@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const shortcutsTheme = defineTheme("shortcuts", {
+export const RLShortcutsTheme = defineTheme("shortcuts", {
   slots: [
     "root",
     "modal",

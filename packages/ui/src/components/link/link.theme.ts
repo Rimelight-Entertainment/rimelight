@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const linkTheme = defineTheme("link", {
+export const RLLinkTheme = defineTheme("link", {
   slots: ["root", "label", "leadingIcon", "trailingIcon", "externalHint"],
   base: {
     root: "outline-primary/25 focus-visible:outline-3 rounded-md inline-flex items-center gap-1 leading-none transition-colors",

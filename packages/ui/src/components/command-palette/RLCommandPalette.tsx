@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLCommandPaletteProps } from "./command-palette.types";
-import { commandPaletteTheme } from "./command-palette.theme";
+import { RLCommandPaletteTheme } from "./command-palette.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLCommandPalette: Component<RLCommandPaletteProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    commandPaletteTheme({
+    RLCommandPaletteTheme({
       ui: props.ui,
       class: props.class,
     }),

@@ -1,6 +1,6 @@
-import { createMemo, omit, For, Show, type Component } from "solid-js";
 import type { RLLinkGroupProps } from "./link-group.types";
-import { linkGroupTheme } from "./link-group.theme";
+import { RLLinkGroupTheme } from "./link-group.theme";
+import { createMemo, omit, For, Show, type Component } from "solid-js";
 import { RLLink } from "../link/RLLink";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -20,7 +20,7 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    linkGroupTheme({
+    RLLinkGroupTheme({
       ui: props.ui,
       class: props.class,
     }),

@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLMarqueeProps } from "./marquee.types";
-import { marqueeTheme } from "./marquee.theme";
+import { RLMarqueeTheme } from "./marquee.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 const MARQUEE_KEYFRAMES = `
 @keyframes marquee-left {
@@ -39,7 +39,7 @@ export const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
   const rest = omit(allProps, "speed", "direction", "pauseOnHover", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    marqueeTheme({
+    RLMarqueeTheme({
       direction: props.direction ?? "left",
       pauseOnHover: props.pauseOnHover ?? true,
       ui: props.ui,

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const inputTimeTheme = defineTheme("input-time", {
+export const RLInputTimeTheme = defineTheme("input-time", {
   slots: ["root"],
   base: {
     root: "",

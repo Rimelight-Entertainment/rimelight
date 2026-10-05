@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const meterTheme = defineTheme("meter", {
+export const RLMeterTheme = defineTheme("meter", {
   slots: ["root"],
   base: {
     root: "",

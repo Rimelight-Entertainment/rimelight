@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const accordionTheme = defineTheme("accordion", {
+export const RLAccordionTheme = defineTheme("accordion", {
   slots: ["root", "item", "trigger", "content", "body", "leadingIcon", "trailingIcon", "label"],
   base: {
     root: "w-full",

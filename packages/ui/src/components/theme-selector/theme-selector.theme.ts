@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const themeSelectorTheme = defineTheme("theme-selector", {
+export const RLThemeSelectorTheme = defineTheme("theme-selector", {
   slots: ["root", "wrapper", "select"],
   base: {
     root: "inline-flex flex-col gap-1.5",

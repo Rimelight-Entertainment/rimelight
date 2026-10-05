@@ -1,3 +1,5 @@
+import type { RLScrollAreaProps } from "./scroll-area.types";
+import { RLScrollAreaTheme } from "./scroll-area.theme";
 import {
   createEffect,
   createMemo,
@@ -7,8 +9,6 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import type { RLScrollAreaProps } from "./scroll-area.types";
-import { scrollAreaTheme } from "./scroll-area.theme";
 
 export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
   const props = allProps;
@@ -138,7 +138,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    scrollAreaTheme({
+    RLScrollAreaTheme({
       orientation: orientation(),
       ui: props.ui,
       class: props.class,

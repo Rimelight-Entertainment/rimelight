@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const buttonTheme = defineTheme("button", {
+export const RLButtonTheme = defineTheme("button", {
   slots: [
     "root",
     "label",

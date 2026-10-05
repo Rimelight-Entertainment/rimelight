@@ -1,6 +1,6 @@
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import type { RLCollapsibleProps } from "./collapsible.types";
-import { collapsibleTheme } from "./collapsible.theme";
+import { RLCollapsibleTheme } from "./collapsible.theme";
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
@@ -30,7 +30,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    collapsibleTheme({
+    RLCollapsibleTheme({
       open: isOpen(),
       size: props.size,
       color: props.color,

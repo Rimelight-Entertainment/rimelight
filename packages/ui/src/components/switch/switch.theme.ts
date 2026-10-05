@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const switchTheme = defineTheme("switch", {
+export const RLSwitchTheme = defineTheme("switch", {
   slots: ["root", "input", "track", "thumb", "label"],
   base: {
     root: "inline-flex items-center gap-2 cursor-pointer select-none",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const dockTheme = defineTheme("dock", {
+export const RLDockTheme = defineTheme("dock", {
   slots: ["root"],
   base: {
     root: "",

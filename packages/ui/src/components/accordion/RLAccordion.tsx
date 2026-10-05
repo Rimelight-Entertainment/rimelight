@@ -1,7 +1,7 @@
+import type { RLAccordionProps, AccordionItem } from "./accordion.types";
+import { RLAccordionTheme } from "./accordion.theme";
 import { createMemo, createSignal, omit, untrack, For, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
-import type { AccordionItem, RLAccordionProps } from "./accordion.types";
-import { accordionTheme } from "./accordion.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 /**
@@ -110,7 +110,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     (getPath(item as Record<string, unknown>, labelKey()) ?? item.label) as JSX.Element;
 
   const resolvedClasses = createMemo(() =>
-    accordionTheme({
+    RLAccordionTheme({
       disabled: props.disabled ? true : false,
       ui: props.ui,
       class: props.class,
@@ -194,7 +194,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
         const val = () => itemVal(item, index());
         const disabled = () => !!(props.disabled || item.disabled);
         const itemTheme = () =>
-          accordionTheme({
+          RLAccordionTheme({
             disabled: disabled(),
             ui:
               item.ui || item.class

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const breadcrumbTheme = defineTheme("breadcrumb", {
+export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
   slots: [
     "root",
     "list",

@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLUserProps } from "./user.types";
-import { userTheme } from "./user.theme";
+import { RLUserTheme } from "./user.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLUser: Component<RLUserProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const classes = createMemo(() =>
-    userTheme({
+    RLUserTheme({
       ui: props.ui,
       class: props.class,
     }),

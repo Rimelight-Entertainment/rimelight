@@ -1,6 +1,6 @@
+import type { RLSurroundProps } from "./surround.types";
 import { Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
-import type { RLSurroundProps } from "./surround.types";
 
 export const RLSurround: Component<RLSurroundProps> = (props) => {
   return (

@@ -342,7 +342,7 @@ export const avatarAudit: ComponentAuditDefinition = {
       criterion: "Custom user defined colors support",
       status: "pass",
       notes:
-        "Uses color: 'auto' in avatarTheme with CSS variables (--rl-bg, --rl-text) and rl-color-* classes for full custom palette support.",
+        "Uses color: 'auto' in RLAvatarTheme with CSS variables (--rl-bg, --rl-text) and rl-color-* classes for full custom palette support.",
     },
     {
       criterion: "Full WAI-ARIA compliance",

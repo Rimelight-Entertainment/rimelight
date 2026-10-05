@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLPostProps } from "./post.types";
-import { postTheme } from "./post.theme";
+import { RLPostTheme } from "./post.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 
 export const RLPost: Component<RLPostProps> = (allProps) => {
@@ -28,7 +28,7 @@ export const RLPost: Component<RLPostProps> = (allProps) => {
   );
 
   const classes = createMemo(() =>
-    postTheme({
+    RLPostTheme({
       variant: props.variant ?? "soft",
       orientation: props.orientation ?? "vertical",
       ui: props.ui,

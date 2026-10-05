@@ -1,3 +1,5 @@
+import type { RLBannerProps } from "./banner.types";
+import { RLBannerTheme } from "./banner.theme";
 import {
   createComponent,
   createEffect,
@@ -11,8 +13,6 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLBannerProps } from "./banner.types";
-import { bannerTheme } from "./banner.theme";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import { useHeaderStack } from "../header/useHeaderStack";
@@ -115,7 +115,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     Boolean(props.actionsSlot !== undefined || (props.actions && props.actions.length > 0));
 
   const classes = createMemo(() =>
-    bannerTheme({
+    RLBannerTheme({
       color: props.color ?? "primary",
       contain: props.contain ?? true,
       sticky: sticky(),

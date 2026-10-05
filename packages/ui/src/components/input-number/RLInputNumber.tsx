@@ -1,7 +1,7 @@
-import { createMemo, createSignal, omit, type Component } from "solid-js";
 import type { RLInputNumberProps } from "./input-number.types";
-import { inputNumberTheme } from "./input-number.theme";
-import { inputTheme } from "../input/input.theme";
+import { RLInputNumberTheme } from "./input-number.theme";
+import { createMemo, createSignal, omit, type Component } from "solid-js";
+import { RLInputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
@@ -31,14 +31,14 @@ export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    inputNumberTheme({
+    RLInputNumberTheme({
       ui: props.ui,
       class: props.class,
     }),
   );
 
   const inputClasses = createMemo(() =>
-    inputTheme({
+    RLInputTheme({
       variant: "default",
       size: props.size ?? "md",
       error: false,

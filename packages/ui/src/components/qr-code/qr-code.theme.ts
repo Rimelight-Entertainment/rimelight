@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const qrCodeTheme = defineTheme("qr-code", {
+export const RLQrCodeTheme = defineTheme("qr-code", {
   slots: ["root"],
   base: {
     root: "",

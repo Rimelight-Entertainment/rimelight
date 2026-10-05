@@ -1,14 +1,14 @@
+import type { RLDashboardGroupProps } from "./dashboard-group.types";
+import { RLDashboardGroupTheme } from "./dashboard-group.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLDashboardGroupProps } from "./dashboard-group.types";
-import { dashboardGroupTheme } from "./dashboard-group.theme";
 
 export const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    dashboardGroupTheme({
+    RLDashboardGroupTheme({
       ui: props.ui,
       class: props.class,
     }),

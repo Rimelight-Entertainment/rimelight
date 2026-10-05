@@ -1,6 +1,6 @@
-import { createMemo, createSignal, For, omit, type Component } from "solid-js";
 import type { RLStepperProps, StepperItem } from "./stepper.types";
-import { stepperTheme } from "./stepper.theme";
+import { RLStepperTheme } from "./stepper.theme";
+import { createMemo, createSignal, For, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLStepper: Component<RLStepperProps> = (allProps) => {
@@ -66,7 +66,7 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    stepperTheme({
+    RLStepperTheme({
       size: props.size ?? "sm",
       color: props.color ?? "primary",
       orientation: props.orientation ?? "horizontal",

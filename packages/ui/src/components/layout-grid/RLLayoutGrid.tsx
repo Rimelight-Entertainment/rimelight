@@ -1,3 +1,5 @@
+import type { RLLayoutGridProps } from "./layout-grid.types";
+import { RLLayoutGridTheme } from "./layout-grid.theme";
 import {
   createMemo,
   createSignal,
@@ -8,8 +10,6 @@ import {
   type Component,
 } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLLayoutGridProps } from "./layout-grid.types";
-import { layoutGridTheme } from "./layout-grid.theme";
 import { defineShortcuts } from "../../shortcuts";
 
 const isDev = (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV === true;
@@ -69,7 +69,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     "class",
   );
 
-  const resolvedClasses = createMemo(() => layoutGridTheme({ ui: props.ui, class: props.class }));
+  const resolvedClasses = createMemo(() => RLLayoutGridTheme({ ui: props.ui, class: props.class }));
 
   const gutterArray = createMemo(() => normalizeArray(props.gutter ?? [0.75, 1, 1.5, 2, 2], 1));
   const marginArray = createMemo(() => normalizeArray(props.margin ?? [0.75, 1, 1.5, 2, 2], 1));

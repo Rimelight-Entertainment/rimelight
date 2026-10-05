@@ -1,12 +1,12 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLPageBodyProps } from "./page-body.types";
-import { pageBodyTheme } from "./page-body.theme";
+import { RLPageBodyTheme } from "./page-body.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLPageBody: Component<RLPageBodyProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() => pageBodyTheme({ ui: props.ui, class: props.class }));
+  const resolvedClasses = createMemo(() => RLPageBodyTheme({ ui: props.ui, class: props.class }));
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>

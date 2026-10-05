@@ -1,6 +1,6 @@
-import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import type { RLThemeSelectorProps } from "./theme-selector.types";
-import { themeSelectorTheme } from "./theme-selector.theme";
+import { RLThemeSelectorTheme } from "./theme-selector.theme";
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
 
@@ -64,7 +64,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
   const size = () => props.size || "md";
 
   const resolvedClasses = createMemo(() =>
-    themeSelectorTheme({
+    RLThemeSelectorTheme({
       ui: props.ui,
       class: props.class,
     }),

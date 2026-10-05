@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const slideoverTheme = defineTheme("slideover", {
+export const RLSlideoverTheme = defineTheme("slideover", {
   slots: [
     "root",
     "trigger",

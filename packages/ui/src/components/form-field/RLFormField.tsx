@@ -1,6 +1,6 @@
-import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { RLFormFieldProps } from "./form-field.types";
-import { formFieldTheme } from "./form-field.theme";
+import { RLFormFieldTheme } from "./form-field.theme";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 
 export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
   const props = allProps;
@@ -23,7 +23,7 @@ export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    formFieldTheme({
+    RLFormFieldTheme({
       size: props.size ?? "md",
       ui: props.ui,
       class: props.class,

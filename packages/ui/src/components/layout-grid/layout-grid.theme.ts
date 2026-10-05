@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const layoutGridTheme = defineTheme("layout-grid", {
+export const RLLayoutGridTheme = defineTheme("layout-grid", {
   slots: [
     "root",
     "overlay",

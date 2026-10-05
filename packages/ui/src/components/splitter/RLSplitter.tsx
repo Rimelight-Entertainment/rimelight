@@ -1,7 +1,7 @@
+import type { RLSplitterProps } from "./splitter.types";
+import { RLSplitterTheme } from "./splitter.theme";
 import { children, createMemo, createSignal, For, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLSplitterProps } from "./splitter.types";
-import { splitterTheme } from "./splitter.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 interface DragState {
@@ -36,7 +36,7 @@ export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    splitterTheme({
+    RLSplitterTheme({
       direction: props.direction ?? "horizontal",
       ui: props.ui,
       class: props.class,

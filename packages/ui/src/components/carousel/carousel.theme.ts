@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const carouselTheme = defineTheme("carousel", {
+export const RLCarouselTheme = defineTheme("carousel", {
   slots: ["root", "viewport", "container", "slide", "buttonPrev", "buttonNext", "dots", "dot"],
   base: {
     root: "relative w-full overflow-hidden select-none group/carousel",

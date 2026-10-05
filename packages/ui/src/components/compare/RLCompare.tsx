@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLCompareProps } from "./compare.types";
-import { compareTheme } from "./compare.theme";
+import { RLCompareTheme } from "./compare.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLCompare: Component<RLCompareProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const classes = createMemo(() =>
-    compareTheme({
+    RLCompareTheme({
       ui: props.ui,
       class: props.class,
     }),

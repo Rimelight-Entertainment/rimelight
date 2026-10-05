@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLFooterProps } from "./footer.types";
-import { footerTheme } from "./footer.theme";
+import { RLFooterTheme } from "./footer.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLFooter: Component<RLFooterProps> = (allProps) => {
   const props = allProps;
@@ -17,7 +17,7 @@ export const RLFooter: Component<RLFooterProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    footerTheme({
+    RLFooterTheme({
       contain: props.contain,
       theme: props.theme,
       ui: props.ui,

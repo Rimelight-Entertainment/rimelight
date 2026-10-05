@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLSkeletonProps } from "./skeleton.types";
-import { skeletonTheme } from "./skeleton.theme";
+import { RLSkeletonTheme } from "./skeleton.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "shape", "ui", "class");
 
   const classes = createMemo(() =>
-    skeletonTheme({
+    RLSkeletonTheme({
       shape: props.shape ?? "rounded",
       ui: props.ui,
       class: props.class,

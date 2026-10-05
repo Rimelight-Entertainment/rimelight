@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const timelineTheme = defineTheme("timeline", {
+export const RLTimelineTheme = defineTheme("timeline", {
   slots: [
     "root",
     "item",

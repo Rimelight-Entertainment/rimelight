@@ -9,7 +9,7 @@ vi.mock("virtual:rimelight/ui", () => ({
 }));
 
 import { RLCalendar } from "../src/components/calendar/RLCalendar";
-import { calendarTheme } from "../src/components/calendar/calendar.theme";
+import { RLCalendarTheme } from "../src/components/calendar/calendar.theme";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -392,8 +392,8 @@ describe("RLCalendar", () => {
       expect(slotTag(html, "root")).toContain("extra-class");
     });
 
-    it("calendarTheme exposes all 15 slots", () => {
-      const ui = calendarTheme({});
+    it("RLCalendarTheme exposes all 15 slots", () => {
+      const ui = RLCalendarTheme({});
       const slots: Array<keyof typeof ui> = [
         "root",
         "header",
@@ -416,32 +416,32 @@ describe("RLCalendar", () => {
       }
     });
 
-    it("calendarTheme applies view variants", () => {
-      expect(calendarTheme({ view: "day" }).gridRow).toContain("grid-cols-7");
-      expect(calendarTheme({ view: "month" }).gridRow).toContain("grid-cols-4");
-      expect(calendarTheme({ view: "year" }).gridRow).toContain("grid-cols-4");
+    it("RLCalendarTheme applies view variants", () => {
+      expect(RLCalendarTheme({ view: "day" }).gridRow).toContain("grid-cols-7");
+      expect(RLCalendarTheme({ view: "month" }).gridRow).toContain("grid-cols-4");
+      expect(RLCalendarTheme({ view: "year" }).gridRow).toContain("grid-cols-4");
     });
 
-    it("calendarTheme applies compound color/variant state classes", () => {
-      const ui = calendarTheme({ color: "primary", variant: "solid" });
+    it("RLCalendarTheme applies compound color/variant state classes", () => {
+      const ui = RLCalendarTheme({ color: "primary", variant: "solid" });
       expect(ui.root).toContain("rl-color-primary");
       expect(ui.cellTrigger).toContain("[&[data-selected]]:bg-[var(--rl-bg)]");
       expect(ui.cellTrigger).toContain("text-inverted");
       expect(ui.cellTrigger).toContain("data-selected");
-      const neutral = calendarTheme({ color: "neutral", variant: "solid" }).cellTrigger;
+      const neutral = RLCalendarTheme({ color: "neutral", variant: "solid" }).cellTrigger;
       expect(neutral).toContain("bg-inverted");
     });
 
-    it("calendarTheme applies weekNumbers compound", () => {
-      const ui = calendarTheme({ view: "day", weekNumbers: true });
+    it("RLCalendarTheme applies weekNumbers compound", () => {
+      const ui = RLCalendarTheme({ view: "day", weekNumbers: true });
       expect(ui.gridRow).toContain("grid-cols-8");
       expect(ui.gridWeekDaysRow).toContain("grid-cols-8");
     });
 
-    it("calendarTheme applies size variants", () => {
-      expect(calendarTheme({ size: "xs", view: "day" }).cellTrigger).toContain("size-6");
-      expect(calendarTheme({ size: "xl", view: "day" }).cellTrigger).toContain("size-10");
-      expect(calendarTheme({ size: "md", view: "month" }).cellTrigger).toContain("h-8");
+    it("RLCalendarTheme applies size variants", () => {
+      expect(RLCalendarTheme({ size: "xs", view: "day" }).cellTrigger).toContain("size-6");
+      expect(RLCalendarTheme({ size: "xl", view: "day" }).cellTrigger).toContain("size-10");
+      expect(RLCalendarTheme({ size: "md", view: "month" }).cellTrigger).toContain("h-8");
     });
   });
 

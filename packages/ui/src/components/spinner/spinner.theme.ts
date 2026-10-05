@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const spinnerTheme = defineTheme("spinner", {
+export const RLSpinnerTheme = defineTheme("spinner", {
   slots: ["root"],
   base: {
     root: "animate-spin shrink-0 rounded-full border-2 border-t-transparent text-[var(--rl-text)] border-current",

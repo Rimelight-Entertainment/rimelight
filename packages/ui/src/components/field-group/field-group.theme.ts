@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const fieldGroupTheme = defineTheme("field-group", {
+export const RLFieldGroupTheme = defineTheme("field-group", {
   slots: ["root", "prepend", "append"],
   base: {
     root: "relative flex items-stretch w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 overflow-hidden",

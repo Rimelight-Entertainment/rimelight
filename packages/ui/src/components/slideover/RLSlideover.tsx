@@ -1,3 +1,5 @@
+import type { RLSlideoverProps } from "./slideover.types";
+import { RLSlideoverTheme } from "./slideover.theme";
 import {
   children as resolveChildren,
   createEffect,
@@ -9,8 +11,6 @@ import {
   type Component,
 } from "solid-js";
 import { Portal } from "@solidjs/web";
-import type { RLSlideoverProps } from "./slideover.types";
-import { slideoverTheme } from "./slideover.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
@@ -76,7 +76,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   });
 
   const resolvedClasses = createMemo(() =>
-    slideoverTheme({
+    RLSlideoverTheme({
       side: side(),
       ui: props.ui,
       class: props.class,

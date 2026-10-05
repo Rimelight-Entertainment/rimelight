@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const errorTheme = defineTheme("error", {
+export const RLErrorTheme = defineTheme("error", {
   slots: ["root"],
   base: {
     root: "",

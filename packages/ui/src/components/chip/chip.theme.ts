@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const chipTheme = defineTheme("chip", {
+export const RLChipTheme = defineTheme("chip", {
   slots: ["root", "base"],
   base: {
     root: "relative inline-flex items-center justify-center shrink-0",

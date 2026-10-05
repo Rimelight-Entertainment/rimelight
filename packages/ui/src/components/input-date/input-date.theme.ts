@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const inputDateTheme = defineTheme("input-date", {
+export const RLInputDateTheme = defineTheme("input-date", {
   slots: ["root"],
   base: {
     root: "",

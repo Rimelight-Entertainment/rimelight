@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLSpoilerProps } from "./spoiler.types";
-import { spoilerTheme } from "./spoiler.theme";
+import { RLSpoilerTheme } from "./spoiler.theme";
+import { createMemo, omit, type Component } from "solid-js";
 
 export const RLSpoiler: Component<RLSpoilerProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "ui", "class", "children");
 
   const classes = createMemo(() =>
-    spoilerTheme({
+    RLSpoilerTheme({
       ui: props.ui,
       class: props.class,
     }),

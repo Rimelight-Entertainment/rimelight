@@ -1,6 +1,6 @@
-import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { RLInputProps } from "./input.types";
-import { inputTheme } from "./input.theme";
+import { RLInputTheme } from "./input.theme";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLInput: Component<RLInputProps> = (allProps) => {
@@ -40,7 +40,7 @@ export const RLInput: Component<RLInputProps> = (allProps) => {
   const hasTrailing = () => !!(props.trailingIcon || resolvedTrailing());
 
   const resolvedClasses = createMemo(() =>
-    inputTheme({
+    RLInputTheme({
       variant: props.variant ?? "default",
       size: props.size ?? "md",
       hasLeading: hasLeading(),

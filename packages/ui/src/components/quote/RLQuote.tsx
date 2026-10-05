@@ -1,6 +1,6 @@
-import { createMemo, omit, type Component } from "solid-js";
 import type { RLQuoteProps } from "./quote.types";
-import { quoteTheme } from "./quote.theme";
+import { RLQuoteTheme } from "./quote.theme";
+import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLQuote: Component<RLQuoteProps> = (allProps) => {
@@ -8,7 +8,7 @@ export const RLQuote: Component<RLQuoteProps> = (allProps) => {
   const rest = omit(allProps, "quote", "caption", "children", "ui", "class");
 
   const resolvedClasses = createMemo(() =>
-    quoteTheme({
+    RLQuoteTheme({
       ui: props.ui,
       class: props.class,
     }),

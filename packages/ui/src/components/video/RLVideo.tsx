@@ -1,6 +1,6 @@
-import { children, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { RLVideoProps } from "./video.types";
-import { videoTheme } from "./video.theme";
+import { RLVideoTheme } from "./video.theme";
+import { children, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
@@ -90,7 +90,7 @@ export const RLVideo: Component<RLVideoProps> = (allProps) => {
   const isPlayable = () => Boolean(embedUrl());
 
   const resolvedClasses = createMemo(() =>
-    videoTheme({
+    RLVideoTheme({
       title: !!props.title,
       icon: !!props.icon,
       ui: props.ui,

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const skeletonTheme = defineTheme("skeleton", {
+export const RLSkeletonTheme = defineTheme("skeleton", {
   slots: ["root"],
   base: {
     root: "animate-pulse bg-elevated shrink-0",

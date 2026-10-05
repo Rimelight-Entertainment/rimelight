@@ -1,6 +1,6 @@
-import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import type { RLSelectProps, SelectItem } from "./select.types";
-import { selectTheme } from "./select.theme";
+import { RLSelectTheme } from "./select.theme";
+import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 import type { RLButtonProps } from "../button/button.types";
 import { RLIcon } from "../icon/RLIcon";
@@ -39,7 +39,7 @@ export const RLSelect: Component<RLSelectProps> = (allProps) => {
   const buttonColor = () => props.buttonColor ?? "neutral";
 
   const classes = createMemo(() =>
-    selectTheme({
+    RLSelectTheme({
       size: props.size,
       variant: resolvedVariant(),
       ui: props.ui,

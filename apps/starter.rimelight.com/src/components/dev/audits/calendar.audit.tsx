@@ -412,12 +412,13 @@ export const calendarAudit: ComponentAuditDefinition = {
     {
       criterion: "No direct cx() calls in component",
       status: "pass",
-      notes: "All class composition flows through calendarTheme()/mergeUi.",
+      notes: "All class composition flows through RLCalendarTheme()/mergeUi.",
     },
     {
       criterion: "Exclusively named exports",
       status: "pass",
-      notes: "RLCalendar, calendarTheme, helpers — all named exports (calendar.ts exports types).",
+      notes:
+        "RLCalendar, RLCalendarTheme, helpers — all named exports (calendar.ts exports types).",
     },
     {
       criterion: "Audit page renders component bare (no wrapper)",

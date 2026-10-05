@@ -1,3 +1,9 @@
+import type {
+  RLNavigationMenuProps,
+  NavigationMenuItem,
+  NavigationMenuChildItem,
+} from "./navigation-menu.types";
+import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import {
   children as resolveChildren,
   createMemo,
@@ -8,12 +14,6 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import type {
-  NavigationMenuItem,
-  NavigationMenuChildItem,
-  RLNavigationMenuProps,
-} from "./navigation-menu.types";
-import { navigationMenuTheme } from "./navigation-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
@@ -29,7 +29,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
   const orientation = () => props.orientation ?? "horizontal";
 
   const resolvedClasses = createMemo(() =>
-    navigationMenuTheme({
+    RLNavigationMenuTheme({
       color: props.color ?? "primary",
       orientation: orientation(),
       ui: props.ui,

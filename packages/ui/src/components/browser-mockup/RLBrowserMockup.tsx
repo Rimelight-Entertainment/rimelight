@@ -1,7 +1,7 @@
+import type { RLBrowserMockupProps } from "./browser-mockup.types";
+import { RLBrowserMockupTheme } from "./browser-mockup.theme";
 import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLBrowserMockupProps } from "./browser-mockup.types";
-import { browserMockupTheme } from "./browser-mockup.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
@@ -36,7 +36,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
   const titleId = createUniqueId();
 
   const resolvedClasses = createMemo(() =>
-    browserMockupTheme({
+    RLBrowserMockupTheme({
       variant: allProps.variant,
       size: allProps.size,
       color: allProps.color,

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const videoTheme = defineTheme("video", {
+export const RLVideoTheme = defineTheme("video", {
   slots: ["root", "trigger", "image", "icon", "iframe", "transcript"],
   base: {
     root: "relative aspect-video h-full w-full cursor-pointer overflow-hidden",

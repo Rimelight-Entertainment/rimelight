@@ -1,6 +1,6 @@
 ﻿import { defineTheme } from "../../resolver";
 
-export const calendarTheme = defineTheme("calendar", {
+export const RLCalendarTheme = defineTheme("calendar", {
   slots: [
     "root",
     "header",

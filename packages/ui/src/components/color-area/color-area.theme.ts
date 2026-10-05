@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const colorAreaTheme = defineTheme("color-area", {
+export const RLColorAreaTheme = defineTheme("color-area", {
   slots: ["root", "area", "thumb"],
   base: {
     root: "relative block touch-none select-none rounded-lg w-full aspect-square outline-none",

@@ -1,3 +1,5 @@
+import type { RLInputMenuProps } from "./input-menu.types";
+import { RLInputMenuTheme } from "./input-menu.theme";
 import {
   createMemo,
   createSignal,
@@ -8,8 +10,6 @@ import {
   createEffect,
   type Component,
 } from "solid-js";
-import type { RLInputMenuProps } from "./input-menu.types";
-import { inputMenuTheme } from "./input-menu.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 type InputMenuItem = { label: string; value: string; [key: string]: any };
@@ -33,7 +33,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    inputMenuTheme({
+    RLInputMenuTheme({
       size: props.size ?? "md",
       color: props.color,
       ui: props.ui,

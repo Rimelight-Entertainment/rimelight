@@ -1,7 +1,7 @@
+import type { RLSearchProps, SearchResultItem } from "./search.types";
+import { RLSearchTheme } from "./search.theme";
 import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
-import type { RLSearchProps, SearchResultItem } from "./search.types";
-import { searchTheme } from "./search.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLInput } from "../input/RLInput";
 import { RLKbd } from "../kbd/RLKbd";
@@ -148,7 +148,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    searchTheme({
+    RLSearchTheme({
       ui: props.ui,
       class: props.class,
     }),

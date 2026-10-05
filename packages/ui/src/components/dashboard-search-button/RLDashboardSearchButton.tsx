@@ -1,7 +1,7 @@
+import type { RLDashboardSearchButtonProps } from "./dashboard-search-button.types";
+import { RLDashboardSearchButtonTheme } from "./dashboard-search-button.theme";
 import { createMemo, For, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLDashboardSearchButtonProps } from "./dashboard-search-button.types";
-import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
@@ -23,7 +23,7 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
   const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }];
 
   const resolvedClasses = createMemo(() =>
-    dashboardSearchButtonTheme({
+    RLDashboardSearchButtonTheme({
       collapsed: props.collapsed ?? false,
       ui: props.ui,
       class: props.class,

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const textareaTheme = defineTheme("textarea", {
+export const RLTextareaTheme = defineTheme("textarea", {
   slots: ["root", "textarea"],
   base: {
     root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",

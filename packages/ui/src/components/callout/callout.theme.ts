@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const calloutTheme = defineTheme("callout", {
+export const RLCalloutTheme = defineTheme("callout", {
   slots: [
     "root",
     "wrapper",

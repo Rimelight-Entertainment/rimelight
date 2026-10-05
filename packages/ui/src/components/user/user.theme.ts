@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const userTheme = defineTheme("user", {
+export const RLUserTheme = defineTheme("user", {
   slots: ["root"],
   base: {
     root: "",

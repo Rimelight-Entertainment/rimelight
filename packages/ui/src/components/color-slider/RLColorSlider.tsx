@@ -1,6 +1,6 @@
-import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { RLColorSliderProps } from "./color-slider.types";
-import { colorSliderTheme } from "./color-slider.theme";
+import { RLColorSliderTheme } from "./color-slider.theme";
+import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import {
   clamp,
   getChannelRange,
@@ -298,7 +298,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
   };
 
   const resolvedClasses = createMemo(() =>
-    colorSliderTheme({
+    RLColorSliderTheme({
       color: props.color,
       ui: props.ui,
       class: props.class,

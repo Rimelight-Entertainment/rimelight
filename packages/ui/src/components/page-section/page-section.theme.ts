@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const pageSectionTheme = defineTheme("page-section", {
+export const RLPageSectionTheme = defineTheme("page-section", {
   slots: [
     "root",
     "background",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const drawerTheme = defineTheme("drawer", {
+export const RLDrawerTheme = defineTheme("drawer", {
   slots: [
     "root",
     "trigger",

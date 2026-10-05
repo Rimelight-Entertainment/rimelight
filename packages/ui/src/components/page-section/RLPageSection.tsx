@@ -1,7 +1,7 @@
+import type { RLPageSectionProps } from "./page-section.types";
+import { RLPageSectionTheme } from "./page-section.theme";
 import { createMemo, omit, For, children, type Component, Show } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLPageSectionProps } from "./page-section.types";
-import { pageSectionTheme } from "./page-section.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
 
@@ -58,7 +58,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       : "default";
 
   const resolvedClasses = createMemo(() =>
-    pageSectionTheme({
+    RLPageSectionTheme({
       variant: resolvedVariant(),
       ...(resolvedVariant() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
       orientation: props.orientation ?? "vertical",

@@ -1,6 +1,6 @@
-import { createMemo, omit, children, type Component, Show } from "solid-js";
 import type { RLCheckboxProps } from "./checkbox.types";
-import { checkboxTheme } from "./checkbox.theme";
+import { RLCheckboxTheme } from "./checkbox.theme";
+import { createMemo, omit, children, type Component, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
@@ -24,7 +24,7 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
   const resolvedChildren = children(() => props.children);
 
   const resolvedClasses = createMemo(() =>
-    checkboxTheme({
+    RLCheckboxTheme({
       color: props.color ?? "primary",
       size: props.size ?? "md",
       theme: props.theme,

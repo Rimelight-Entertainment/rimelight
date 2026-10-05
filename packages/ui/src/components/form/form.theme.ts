@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export const formTheme = defineTheme("form", {
+export const RLFormTheme = defineTheme("form", {
   slots: ["root"],
   base: {
     root: "space-y-6",

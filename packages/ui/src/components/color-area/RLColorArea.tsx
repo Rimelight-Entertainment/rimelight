@@ -1,6 +1,6 @@
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import type { RLColorAreaProps } from "./color-area.types";
-import { colorAreaTheme } from "./color-area.theme";
+import { RLColorAreaTheme } from "./color-area.theme";
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 
 type Channel =
   | "hue"
@@ -252,7 +252,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
   );
 
   const resolvedClasses = createMemo(() =>
-    colorAreaTheme({
+    RLColorAreaTheme({
       color: props.color ?? "primary",
       theme: props.theme,
       ui: props.ui,

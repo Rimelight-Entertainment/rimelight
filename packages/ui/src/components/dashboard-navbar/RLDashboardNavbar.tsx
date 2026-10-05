@@ -1,7 +1,7 @@
+import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
+import { RLDashboardNavbarTheme } from "./dashboard-navbar.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
-import { dashboardNavbarTheme } from "./dashboard-navbar.theme";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
@@ -28,7 +28,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
   const toggleSide = () => props.toggleSide ?? "left";
 
   const resolvedClasses = createMemo(() =>
-    dashboardNavbarTheme({
+    RLDashboardNavbarTheme({
       toggleSide: toggleSide(),
       ui: props.ui,
       class: props.class,

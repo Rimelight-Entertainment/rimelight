@@ -1,13 +1,13 @@
-import { createMemo, omit, type Component, Show } from "solid-js";
 import type { RLMainProps } from "./main.types";
-import { mainTheme } from "./main.theme";
+import { RLMainTheme } from "./main.theme";
+import { createMemo, omit, type Component, Show } from "solid-js";
 
 export const RLMain: Component<RLMainProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children");
 
   const resolvedClasses = createMemo(() =>
-    mainTheme({
+    RLMainTheme({
       ui: props.ui,
       class: props.class,
     }),

@@ -1,6 +1,6 @@
-import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import type { RLToastProps } from "./toast.types";
-import { toastTheme } from "./toast.theme";
+import { RLToastTheme } from "./toast.theme";
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const variantIcons: Record<string, string> = {
@@ -40,7 +40,7 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
   const isError = () => props.variant === "error";
 
   const resolvedClasses = createMemo(() =>
-    toastTheme({
+    RLToastTheme({
       variant: ["success", "error", "warning", "info"].includes(props.variant ?? "")
         ? (props.variant as "success" | "error" | "warning" | "info")
         : "default",

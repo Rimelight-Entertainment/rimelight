@@ -1,7 +1,7 @@
+import type { RLBreadcrumbProps } from "./breadcrumb.types";
+import { RLBreadcrumbTheme } from "./breadcrumb.theme";
 import { createMemo, omit, For, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
-import type { RLBreadcrumbProps } from "./breadcrumb.types";
-import { breadcrumbTheme } from "./breadcrumb.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { resolveLinkAttrs } from "../link/helpers";
@@ -133,7 +133,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
     const active = item?.active !== undefined ? Boolean(item.active) : isLast;
     const disabled = Boolean(item?.disabled);
 
-    const baseClasses = breadcrumbTheme({
+    const baseClasses = RLBreadcrumbTheme({
       color: resolvedColor(),
       active,
       disabled,
@@ -159,7 +159,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
 
   const renderSeparator = (item?: any, idx?: number) => {
     const themeClasses = () =>
-      breadcrumbTheme({
+      RLBreadcrumbTheme({
         color: resolvedColor(),
         ui: item?.ui ? { ...props.ui, ...item.ui } : props.ui,
         class: props.class,
@@ -319,7 +319,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
   };
 
   const rootClasses = createMemo(() =>
-    breadcrumbTheme({
+    RLBreadcrumbTheme({
       color: resolvedColor(),
       ui: props.ui,
       class: props.class,
@@ -327,7 +327,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
   );
 
   const overflowThemeClasses = () =>
-    breadcrumbTheme({
+    RLBreadcrumbTheme({
       color: resolvedColor(),
       ui:
         props.ui?.overflow === undefined && props.ui?.item !== undefined

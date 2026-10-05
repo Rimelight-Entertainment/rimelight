@@ -1,3 +1,5 @@
+import type { RLHeaderProps } from "./header.types";
+import { RLHeaderTheme } from "./header.theme";
 import {
   createComponent,
   createEffect,
@@ -7,8 +9,6 @@ import {
   type Component,
 } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { RLHeaderProps } from "./header.types";
-import { headerTheme } from "./header.theme";
 import { useHeaderStack } from "./useHeaderStack";
 
 export const RLHeader: Component<RLHeaderProps> = (allProps) => {
@@ -43,7 +43,7 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const layerId = typeof props["id"] === "string" ? props["id"] : `rl-header-${createUniqueId()}`;
 
   const resolvedClasses = createMemo(() =>
-    headerTheme({
+    RLHeaderTheme({
       contain: contain(),
       sticky: fixed() ? false : sticky(),
       fixed: fixed(),
