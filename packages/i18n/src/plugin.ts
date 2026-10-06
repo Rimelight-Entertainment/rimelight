@@ -73,28 +73,14 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
   const skipPaths = options?.skipPaths ?? ["/api", "/_"];
   let root = process.cwd();
 
-  type Config = {
-    locales: string[];
-    defaultLocale: string;
-    prefixDefaultLocale: boolean;
-    translations: Record<string, Record<string, any>>;
-    kvBinding: string;
-    skipPaths: string[];
-    dirPath: string | null;
-  };
-
-  let cachedConfig: Config | null = null;
-
-  function loadConfig(): Config {
-    if (cachedConfig) return cachedConfig;
-
+  function loadConfig() {
     const dirPath = resolveTranslationsDir(root, options?.translationsDir);
     const { translations } = readLocaleFiles(dirPath);
     const locales = Object.keys(translations).sort();
     const defaultLocale =
       options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
-    cachedConfig = {
+    return {
       locales,
       defaultLocale,
       prefixDefaultLocale,
@@ -103,8 +89,6 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
       skipPaths,
       dirPath: fs.existsSync(dirPath) ? dirPath : null,
     };
-
-    return cachedConfig;
   }
 
   return [
@@ -112,7 +96,6 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
       name: "vite-plugin-rimelight-i18n-config",
       configResolved(resolvedConfig) {
         root = resolvedConfig.root ?? process.cwd();
-        cachedConfig = null;
       },
       resolveId(id: string) {
         if (id === VIRTUAL_CONFIG_ID) return RESOLVED_VIRTUAL_CONFIG_ID;
@@ -142,24 +125,9 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
             kvBinding,
             skipPaths,
           } = cfg;
-          return `export const locales = ${JSON.stringify(locales)};
-export const defaultLocale = ${JSON.stringify(defaultLocale)};
-export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};
-export const translations = ${JSON.stringify(translations)};
-export const kvBinding = ${JSON.stringify(kvBinding)};
-export const skipPaths = ${JSON.stringify(skipPaths)};
-export default { locales, defaultLocale, prefixDefaultLocale, translations, kvBinding, skipPaths };`;
+          return `export default ${JSON.stringify({ locales, defaultLocale, prefixDefaultLocale, translations, kvBinding, skipPaths })};`;
         }
         return null;
-      },
-      async handleHotUpdate(ctx) {
-        const cfg = loadConfig();
-        if (cfg.dirPath && ctx.file.startsWith(cfg.dirPath) && ctx.file.endsWith(".json")) {
-          cachedConfig = null;
-          const mod = ctx.server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_CONFIG_ID);
-          if (mod) ctx.server.moduleGraph.invalidateModule(mod);
-          ctx.server.ws.send({ type: "full-reload" });
-        }
       },
       async closeBundle() {
         const cfg = loadConfig();
@@ -172,16 +140,8 @@ export default { locales, defaultLocale, prefixDefaultLocale, translations, kvBi
         try {
           fs.mkdirSync(path.dirname(seedFile), { recursive: true });
           fs.writeFileSync(seedFile, JSON.stringify(seedData, null, 2));
-
-          if (process.env["WRANGLER_SEED_KV"] === "true" || process.env["CI"] === "true") {
-            const { execSync } = await import("node:child_process");
-            execSync(`npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"`, {
-              stdio: "pipe",
-              timeout: 30_000,
-            });
-          }
         } catch {
-          // Ignore write/seed errors
+          // Ignore write errors
         }
       },
     },

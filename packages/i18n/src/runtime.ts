@@ -13,37 +13,20 @@ export interface TFunction {
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
 }
 
-/**
- * Supported locale codes (e.g. `["en", "pt"]`). Inferred from the translation directory by the Vite plugin.
- */
-export let locales: string[] = virtualConfig?.locales ? [...virtualConfig.locales] : ["en"];
+const config = virtualConfig ?? {
+  locales: ["en"],
+  defaultLocale: "en",
+  prefixDefaultLocale: true,
+  translations: {},
+  kvBinding: "TRANSLATIONS_KV",
+  skipPaths: ["/api", "/_"],
+};
 
-/**
- * The default/fallback locale code (e.g. 'en').
- */
-export let defaultLocale: string = virtualConfig?.defaultLocale ?? "en";
-
-/**
- * Whether the default locale is prefixed in URLs.
- *
- * - `true` (default): all locales are prefixed — `/en/about`, `/pt/about`
- * - `false`: the default locale has no prefix — `/about`, `/pt/about`
- */
-export let prefixDefaultLocale: boolean = virtualConfig?.prefixDefaultLocale ?? true;
-
-/**
- * KV namespace binding holding runtime translation overrides. Requests fall back to bundled
- * translations when the binding is absent or the locale is unseeded.
- */
-export let kvBinding: string = virtualConfig?.kvBinding ?? "TRANSLATIONS_KV";
-
-/**
- * Path prefixes that never render a localized page: no locale redirect and no KV read. Matched
- * exactly or as a segment prefix (`/api` skips `/api` and `/api/users`, not `/apiflow`).
- */
-export let skipPaths: string[] = virtualConfig?.skipPaths
-  ? [...virtualConfig.skipPaths]
-  : ["/api", "/_"];
+export let locales: string[] = [...config.locales];
+export let defaultLocale: string = config.defaultLocale;
+export let prefixDefaultLocale: boolean = config.prefixDefaultLocale;
+export let kvBinding: string = config.kvBinding;
+export let skipPaths: string[] = [...config.skipPaths];
 
 let activeLocale = defaultLocale;
 
