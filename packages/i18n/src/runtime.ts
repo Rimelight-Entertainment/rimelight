@@ -63,6 +63,21 @@ export function setLocale(value: string): void {
   activeLocale = value;
 }
 
+/**
+ * Returns the supported locale codes (e.g. `["en", "pt"]`), inferred from the translations
+ * directory by the Vite plugin.
+ */
+export function getLocales(): string[] {
+  return [...locales];
+}
+
+/**
+ * Returns the default/fallback locale code (e.g. `"en"`).
+ */
+export function getDefaultLocale(): string {
+  return defaultLocale;
+}
+
 let translations: Record<string, Record<string, any>> = virtualConfig?.translations
   ? { ...virtualConfig.translations }
   : {};

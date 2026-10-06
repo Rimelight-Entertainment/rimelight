@@ -1,13 +1,11 @@
 export {
-  defaultLocale,
+  getDefaultLocale,
   getHtmlLang,
   getLocale,
   getLocalizedText,
+  getLocales,
   getPluralCategory,
   getRelativeLocaleUrl,
-  htmlLangs,
-  locales,
-  prefixDefaultLocale,
   setLocale,
   t,
 } from "./runtime";
