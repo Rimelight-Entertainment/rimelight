@@ -1,5 +1,11 @@
-import { currentLocale } from "./runtime";
-import { locales, defaultLocale, prefixDefaultLocale } from "./config";
+import {
+  currentLocale,
+  defaultLocale,
+  prefixDefaultLocale,
+  localeFromPathname,
+  locales,
+  stripLocalePrefix,
+} from "./runtime";
 
 export {
   atom,
@@ -10,17 +16,11 @@ export {
   tArray,
   getRawTranslation,
   getPluralCategory,
+  getLocalizedText,
 } from "./runtime";
 export { setKVBinding, createTranslationLoader } from "./kv";
-export { locales, defaultLocale, prefixDefaultLocale } from "./config";
-export { getLocalizedText } from "./utils";
+export { locales, defaultLocale, prefixDefaultLocale } from "./runtime";
 
-// Only the *types* from `./plugin` are re-exported here. The `i18n` Vite plugin
-// factory is Node-only (it uses `node:fs` / `node:path` / `node:child_process`),
-// so re-exporting it from this runtime entry would drag those Node built-ins
-// into the browser bundle. Import it from `@rimelight/i18n/plugin` in your
-// `vite.config.ts` instead.
-export type { RimelightI18nOptions, RimelightI18nPlugins } from "./plugin";
 export type {
   TranslationKey,
   CustomTranslations,
@@ -31,14 +31,9 @@ export type {
 } from "./types";
 
 /**
- * Returns the first path segment of a pathname if it is one of the configured locales
- * (compared case-insensitively), otherwise null.
+ * Returns the active locale: the explicitly set one, otherwise auto-detected from the pathname
+ * (browser URL or universal/SSR request global), otherwise the configured default.
  */
-function localeFromPathname(pathname: string): string | null {
-  const segment = pathname.split("/").find(Boolean)?.toLowerCase();
-  return segment && locales.includes(segment) ? segment : null;
-}
-
 export function getLocale(): string {
   const explicit = currentLocale.get();
   if (explicit) return explicit;
@@ -65,17 +60,22 @@ export function getLocale(): string {
 }
 
 /**
+ * Canonical HTML (`lang`) and OpenGraph (`og:locale`) tags for the known locales. Unknown locales
+ * fall back to their raw code (HTML) or `<code>_<CODE>` (OG).
+ */
+const LOCALE_TAGS: Record<string, { html: string; og: string }> = {
+  en: { html: "en-US", og: "en_US" },
+  pt: { html: "pt-BR", og: "pt_BR" },
+  es: { html: "es-ES", og: "es_ES" },
+};
+
+/**
  * Returns a standard BCP 47 / RFC 5646 language tag suitable for HTML `<html lang="...">`. Maps
  * 2-letter codes like 'en' to 'en-US', 'pt' to 'pt-BR', 'es' to 'es-ES', etc.
  */
 export function getHtmlLang(): string {
   const loc = getLocale();
-  const langMap: Record<string, string> = {
-    en: "en-US",
-    pt: "pt-BR",
-    es: "es-ES",
-  };
-  return langMap[loc] || loc;
+  return LOCALE_TAGS[loc]?.html ?? loc;
 }
 
 /**
@@ -83,12 +83,7 @@ export function getHtmlLang(): string {
  */
 export function getOgLocale(): string {
   const loc = getLocale();
-  const ogMap: Record<string, string> = {
-    en: "en_US",
-    pt: "pt_BR",
-    es: "es-ES",
-  };
-  return ogMap[loc] || `${loc}_${loc.toUpperCase()}`;
+  return LOCALE_TAGS[loc]?.og ?? `${loc}_${loc.toUpperCase()}`;
 }
 
 export function getRelativeLocaleUrl(path: string): string;
@@ -119,15 +114,8 @@ export function getRelativeLocaleUrl(arg1: string, arg2?: string): string {
     return [match?.[1] ?? "", match?.[2] ?? ""];
   })();
 
-  const rawCleanPath = pathWithoutQueryAndHash.replace(/^\/+/, "");
-  const segments = rawCleanPath ? rawCleanPath.split("/") : [];
-
-  // If the path already begins with a known locale (e.g. /en/about), strip it
-  if (segments.length > 0 && locales.includes(segments[0]!)) {
-    segments.shift();
-  }
-
-  const cleanPath = segments.join("/");
+  // Strip a leading locale segment (e.g. /en/about → about) so locales are never doubled up
+  const cleanPath = stripLocalePrefix(pathWithoutQueryAndHash);
   const shouldPrefix = prefixDefaultLocale || targetLocale !== defaultLocale;
   const prefix = shouldPrefix ? `/${targetLocale}` : "";
 
@@ -139,10 +127,6 @@ export function getRelativeLocaleUrl(arg1: string, arg2?: string): string {
   const hasTrailingSlash = pathWithoutQueryAndHash.endsWith("/");
   const formattedPath = `${prefix}/${cleanPath}${hasTrailingSlash ? "/" : ""}`;
   return `${formattedPath}${queryAndHash}`;
-}
-
-export function getRelativeLocaleUrlList(path: string = "/"): string[] {
-  return locales.map((locale) => getRelativeLocaleUrl(locale, path));
 }
 
 export interface LanguageAlternate {

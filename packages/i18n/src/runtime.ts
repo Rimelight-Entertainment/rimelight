@@ -1,11 +1,36 @@
 import type { TFunction, WritableAtom } from "./types";
 
 /**
+ * Supported locale codes (e.g. `["en", "pt"]`). Populated from the Vite plugin's
+ * `virtual:rimelight-i18n-config` module when bundled inside a Rimelight app, otherwise it
+ * defaults to `["en"]` (tests, plain Node, or apps without the plugin).
+ */
+export let locales: string[] = ["en"];
+/**
+ * The default/fallback locale code (e.g. 'en').
+ */
+export let defaultLocale: string = "en";
+/**
+ * Whether the default locale is prefixed in URLs.
+ *
+ * - `true` (default): all locales are prefixed — `/en/about`, `/pt/about`
+ * - `false`: the default locale has no prefix — `/about`, `/pt/about`
+ */
+export let prefixDefaultLocale: boolean = true;
+
+/**
  * Creates a lightweight reactive atom store compatible with Nanostores / Svelte store contracts.
  */
 export function atom<T>(initialValue: T): WritableAtom<T> {
   let value = initialValue;
   const listeners = new Set<(val: T) => void>();
+
+  const listen = (listener: (val: T) => void): (() => void) => {
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  };
 
   return {
     get: (): T => value,
@@ -17,19 +42,13 @@ export function atom<T>(initialValue: T): WritableAtom<T> {
         }
       }
     },
+    // `subscribe` notifies immediately with the current value, `listen` only on later changes.
     subscribe: (listener: (val: T) => void): (() => void) => {
-      listeners.add(listener);
+      const unsubscribe = listen(listener);
       listener(value);
-      return () => {
-        listeners.delete(listener);
-      };
+      return unsubscribe;
     },
-    listen: (listener: (val: T) => void): (() => void) => {
-      listeners.add(listener);
-      return () => {
-        listeners.delete(listener);
-      };
-    },
+    listen,
   };
 }
 
@@ -143,10 +162,11 @@ function getLocaleCandidateChain(activeLocale: string, defaultLocale: string): s
   return chain;
 }
 
-function getCachedComponent(
-  locale: string,
-  componentName: string,
-): Record<string, any> | undefined {
+/**
+ * Finds a component's translation object for a locale, walking the fallback chain
+ * (active locale → default locale → 'en').
+ */
+function findComponent(locale: string, componentName: string): Record<string, any> | undefined {
   const candidates = getLocaleCandidateChain(locale, baseLocaleDefault);
 
   for (const code of candidates) {
@@ -184,13 +204,10 @@ export function getRawTranslation(key: string): unknown {
   const activeLocale = currentLocale.get() || baseLocaleDefault;
 
   if (dotIndex === -1) {
-    return getCachedComponent(activeLocale, key) ?? getCachedComponent(baseLocaleDefault, key);
+    return findComponent(activeLocale, key);
   }
 
-  const componentName = key.slice(0, dotIndex);
-  const keyName = key.slice(dotIndex + 1);
-
-  return resolveKeyInLocales(activeLocale, componentName, keyName);
+  return resolveKeyInLocales(activeLocale, key.slice(0, dotIndex), key.slice(dotIndex + 1));
 }
 
 /**
@@ -273,4 +290,86 @@ export const t: TFunction = Object.assign(
  */
 export function getPluralCategory(count: number, locale: string = "en"): Intl.LDMLPluralRule {
   return new Intl.PluralRules(locale).select(count);
+}
+
+/**
+ * Resolves localized text from a polymorphic value (localized dictionary object, plain string, or null/undefined).
+ *
+ * @param val The value to extract localized text from (e.g., `{ en: "Hello", pt: "Olá" }` or `"Hello"`).
+ * @param locale The desired locale code.
+ * @param fallbackLocale Optional fallback locale if the requested locale is not found (default: "en").
+ * @returns The resolved localized string, fallback string, or empty string.
+ */
+export function getLocalizedText(
+  val: unknown,
+  locale: string,
+  fallbackLocale: string = "en",
+): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, unknown>;
+    const localized = record[locale];
+    if (typeof localized === "string" && localized.length > 0) {
+      return localized;
+    }
+    const fallback = record[fallbackLocale];
+    if (typeof fallback === "string") {
+      return fallback;
+    }
+    return "";
+  }
+  if (typeof val === "string") {
+    return val;
+  }
+  if (typeof val === "number" || typeof val === "boolean") {
+    return String(val);
+  }
+  return "";
+}
+
+/**
+ * Returns the configured locale matching the first path segment of a pathname (compared
+ * case-insensitively, returning the configured spelling, e.g. `pt-BR`), otherwise null. Shared by
+ * `getLocale()` and the Hono middleware so both agree on what counts as a locale prefix.
+ */
+export function localeFromPathname(
+  pathname: string,
+  supported: readonly string[] = locales,
+): string | null {
+  const segment = pathname.split("/").find(Boolean);
+  if (!segment) return null;
+  return supported.find((code) => code.toLowerCase() === segment.toLowerCase()) ?? null;
+}
+
+/**
+ * Removes a leading locale segment from a path (`/en/about` → `about`, `/pt` → ``), returning the
+ * remainder without a leading slash. Segments are matched case-insensitively against `supported`.
+ */
+export function stripLocalePrefix(path: string, supported: readonly string[] = locales): string {
+  const segments = path.replace(/^\/+/, "").split("/");
+  const first = segments[0];
+  if (first && supported.some((code) => code.toLowerCase() === first.toLowerCase())) {
+    segments.shift();
+  }
+  return segments.join("/");
+}
+
+// ── Bootstrap from the Vite virtual module ────────────────────────────────────────────────────
+// Runs after every declaration above (the fallback-chain cache must exist before
+// `initializeI18n`). Silently falls back to the defaults outside a Rimelight app, where
+// `virtual:rimelight-i18n-config` is only resolvable inside a Vite graph.
+try {
+  const cfg = await import("virtual:rimelight-i18n-config");
+  if (cfg) {
+    if (cfg.locales) locales = cfg.locales;
+    if (cfg.defaultLocale) defaultLocale = cfg.defaultLocale;
+    if (cfg.prefixDefaultLocale !== undefined) prefixDefaultLocale = cfg.prefixDefaultLocale;
+    if (cfg.translations && Object.keys(cfg.translations).length > 0) {
+      initializeI18n({
+        defaultLocale: cfg.defaultLocale || "en",
+        translations: cfg.translations,
+      });
+    }
+  }
+} catch {
+  // Virtual module is resolved inside Vite during app bundle, not in Node config evaluation
 }

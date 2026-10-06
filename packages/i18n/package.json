@@ -35,18 +35,6 @@
       "types": "./dist/hono.d.mts",
       "import": "./dist/hono.mjs"
     },
-    "./runtime": {
-      "types": "./dist/runtime.d.mts",
-      "import": "./dist/runtime.mjs"
-    },
-    "./types": {
-      "types": "./dist/types.d.mts",
-      "import": "./dist/types.mjs"
-    },
-    "./utils": {
-      "types": "./dist/utils.d.mts",
-      "import": "./dist/utils.mjs"
-    },
     "./cli": {
       "types": "./dist/cli.d.mts",
       "import": "./dist/cli.mjs"

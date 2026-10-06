@@ -82,4 +82,68 @@ describe("@rimelight/i18n Hono edge middleware", () => {
 
     expect(currentLocale.get()).toBe("en");
   });
+
+  it("redirects unprefixed paths to the preferred locale when prefixDefaultLocale is true", async () => {
+    const middleware = i18n();
+    const next = async () => {};
+
+    const { c, getRedirect } = createMockContext({ url: "https://example.com/about?page=2" });
+    await middleware(c, next);
+
+    expect(getRedirect()).toEqual({ redirectedTo: "/en/about?page=2", status: 302 });
+    expect(currentLocale.get()).toBe("en");
+  });
+
+  it("serves locale-prefixed paths as-is, matching the prefix case-insensitively", async () => {
+    const middleware = i18n();
+    let nextCalled = false;
+    const next = async () => {
+      nextCalled = true;
+    };
+
+    for (const url of ["https://example.com/en/about", "https://example.com/EN/about"]) {
+      nextCalled = false;
+      const { c, getRedirect } = createMockContext({ url });
+      await middleware(c, next);
+
+      expect(getRedirect().redirectedTo).toBeNull();
+      expect(nextCalled).toBe(true);
+      expect(currentLocale.get()).toBe("en");
+    }
+  });
+
+  it("strips the default locale prefix when prefixDefaultLocale is false", async () => {
+    const middleware = i18n({ prefixDefaultLocale: false, locales: ["en", "pt"] });
+    let nextCalled = false;
+    const next = async () => {
+      nextCalled = true;
+    };
+
+    // Redundant default-locale prefix is stripped
+    const { c: cDefault, getRedirect: redirectDefault } = createMockContext({
+      url: "https://example.com/en/about",
+    });
+    await middleware(cDefault, next);
+    expect(redirectDefault()).toEqual({ redirectedTo: "/about", status: 302 });
+
+    // Non-default locale is served as-is
+    nextCalled = false;
+    const { c: cPt, getRedirect: redirectPt } = createMockContext({
+      url: "https://example.com/pt/about",
+    });
+    await middleware(cPt, next);
+    expect(redirectPt().redirectedTo).toBeNull();
+    expect(nextCalled).toBe(true);
+    expect(currentLocale.get()).toBe("pt");
+
+    // Unprefixed path resolves to the default locale
+    nextCalled = false;
+    const { c: cBare, getRedirect: redirectBare } = createMockContext({
+      url: "https://example.com/about",
+    });
+    await middleware(cBare, next);
+    expect(redirectBare().redirectedTo).toBeNull();
+    expect(nextCalled).toBe(true);
+    expect(currentLocale.get()).toBe("en");
+  });
 });

@@ -20,8 +20,7 @@ export interface RLLocaleSelectorProps {
    * `href` on each `LocaleItem` to make the component fully routing-agnostic — when every item has
    * an `href` the component no longer depends on Astro's i18n APIs at all.
    *
-   * When omitted the component auto-detects available locales from `getRelativeLocaleUrlList()`
-   * (requires Astro i18n).
+   * When omitted the selector renders an empty list, so pass it explicitly.
    */
   locales?: string[] | LocaleItem[];
   /**

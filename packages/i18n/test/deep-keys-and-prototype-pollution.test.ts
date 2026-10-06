@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { flatten, unflatten, findMissingKeys } from "../src/utils";
+import { flatten, unflatten, findMissingKeys } from "../src/cli";
 import { initializeI18n, currentLocale, t } from "../src/runtime";
 
 describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety", () => {

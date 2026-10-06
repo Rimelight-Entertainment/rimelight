@@ -1,7 +1,92 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import { readLocaleFiles, resolveTranslationsDir } from "./fs";
+import { buildKvSeed } from "./kv";
+
+/** Default directory containing `<locale>.json` files, relative to the project root. */
+export const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
+
+/** Candidate directories the CLI searches when no `--dir` is passed. */
+export const TRANSLATIONS_DIR_CANDIDATES = [
+  "src/i18n",
+  "i18n",
+  "src/locales",
+  "locales",
+  "src/assets/i18n",
+];
+
+/**
+ * Resolves the translations directory for the Vite plugin (fixed default or explicitly configured,
+ * relative to `root` or absolute).
+ */
+export function resolveTranslationsDir(root: string, specifiedDir?: string): string {
+  return path.resolve(root, specifiedDir ?? DEFAULT_TRANSLATIONS_DIR);
+}
+
+/**
+ * Finds the translations directory for the CLI: an explicit `--dir` must exist, otherwise the
+ * well-known candidate directories are probed in order.
+ */
+export function findTranslationsDir(cwd: string, customDir?: string): string | null {
+  if (customDir) {
+    const resolved = path.resolve(cwd, customDir);
+    return fs.existsSync(resolved) ? resolved : null;
+  }
+
+  for (const rel of TRANSLATIONS_DIR_CANDIDATES) {
+    const resolved = path.join(cwd, rel);
+    if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
+      return resolved;
+    }
+  }
+
+  return null;
+}
+
+export interface ReadLocaleFilesResult {
+  /** All `<locale>.json` file names found in the directory. */
+  files: string[];
+  /** Parsed translations keyed by locale. */
+  translations: Record<string, Record<string, any>>;
+  /** Files that could not be parsed, in directory order. */
+  errors: { file: string; error: unknown }[];
+}
+
+/**
+ * Reads every `<locale>.json` file in `dirPath`, optionally restricted to `locales`. Unreadable or
+ * invalid JSON files are reported through `errors` instead of throwing.
+ */
+export function readLocaleFiles(
+  dirPath: string,
+  locales?: readonly string[],
+): ReadLocaleFilesResult {
+  const files: string[] = [];
+  const translations: Record<string, Record<string, any>> = {};
+  const errors: { file: string; error: unknown }[] = [];
+
+  let entries: string[];
+  try {
+    entries = fs.readdirSync(dirPath);
+  } catch {
+    return { files, translations, errors };
+  }
+
+  for (const file of entries) {
+    if (!file.endsWith(".json")) continue;
+    const locale = path.basename(file, ".json");
+    if (locales && !locales.includes(locale)) continue;
+
+    files.push(file);
+    try {
+      const content = fs.readFileSync(path.join(dirPath, file), "utf-8");
+      translations[locale] = JSON.parse(content);
+    } catch (error) {
+      errors.push({ file, error });
+    }
+  }
+
+  return { files, translations, errors };
+}
 
 const VIRTUAL_CONFIG_ID = "virtual:rimelight-i18n-config";
 const RESOLVED_VIRTUAL_CONFIG_ID = `\0${VIRTUAL_CONFIG_ID}`;
@@ -91,21 +176,11 @@ export function i18n<
     const defaultLocale =
       options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
-    // Normalise translations passed in options or fallback to discovered translations
-    const normalisedTranslations: Record<string, any> = {};
-    if (options?.translations) {
-      for (const [locale, val] of Object.entries(options.translations)) {
-        normalisedTranslations[locale] = val;
-      }
-    } else {
-      Object.assign(normalisedTranslations, discovered.translations);
-    }
-
     return {
       locales,
       defaultLocale,
       prefixDefaultLocale,
-      translations: normalisedTranslations,
+      translations: options?.translations ?? discovered.translations,
       dirPath: discovered.dirPath,
     };
   };
@@ -162,17 +237,7 @@ export function i18n<
         const cfg = getResolvedConfig();
         if (!cfg.translations || Object.keys(cfg.translations).length === 0) return;
 
-        const seedData: { keys: { key: string; value: string }[] } = { keys: [] };
-        for (const [locale, localeData] of Object.entries(cfg.translations)) {
-          for (const [component, componentData] of Object.entries(
-            localeData as Record<string, any>,
-          )) {
-            seedData.keys.push({
-              key: `locale:${locale}:${component}`,
-              value: JSON.stringify(componentData),
-            });
-          }
-        }
+        const seedData = buildKvSeed(cfg.translations);
         const outDir = process.env["WRANGLER_OUT_DIR"] ?? "dist";
         const seedFile = path.join(outDir, "_translations-seed.json");
         try {

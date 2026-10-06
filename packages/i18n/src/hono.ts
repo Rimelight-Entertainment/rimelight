@@ -1,10 +1,12 @@
 import {
-  locales as configLocales,
+  currentLocale,
   defaultLocale as configDefaultLocale,
+  localeFromPathname,
+  locales as configLocales,
   prefixDefaultLocale as configPrefixDefaultLocale,
-} from "./config";
+  stripLocalePrefix,
+} from "./runtime";
 import { setKVBinding } from "./kv";
-import { currentLocale } from "./runtime";
 
 export interface HonoI18nOptions {
   /**
@@ -68,7 +70,8 @@ function getPreferredLocale(
  * updates, and Cloudflare KV binding setup.
  */
 export function i18n(options?: HonoI18nOptions) {
-  const supportedLocales = new Set(options?.locales ?? configLocales);
+  const supported = options?.locales ?? configLocales;
+  const supportedLocales = new Set(supported);
   const defaultLocale = options?.defaultLocale ?? configDefaultLocale;
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? configPrefixDefaultLocale;
   const kvKey = options?.kvBinding ?? "TRANSLATIONS_KV";
@@ -87,9 +90,7 @@ export function i18n(options?: HonoI18nOptions) {
     // 2. Execute routing & locale detection
     const url = new URL(c.req.url);
     const pathname = url.pathname;
-    const firstSegment = pathname.split("/").find(Boolean);
-    const segmentLocale =
-      firstSegment !== undefined && supportedLocales.has(firstSegment) ? firstSegment : null;
+    const segmentLocale = localeFromPathname(pathname, supported);
 
     // Locale for the current request: explicit route param > URL prefix > default
     const resolveLocale = (): string => {
@@ -111,8 +112,7 @@ export function i18n(options?: HonoI18nOptions) {
 
     if (prefixDefaultLocale) {
       // All locales are prefixed (e.g. /en/about, /pt/about)
-      const activeLocale = resolveLocale();
-      currentLocale.set(activeLocale);
+      currentLocale.set(resolveLocale());
 
       // If pathname already has a valid locale prefix, proceed
       if (segmentLocale) {
@@ -123,25 +123,19 @@ export function i18n(options?: HonoI18nOptions) {
       const acceptLanguage = c.req.header("accept-language") || null;
       const locale = getPreferredLocale(acceptLanguage, supportedLocales, defaultLocale);
       currentLocale.set(locale);
-      const targetPath = `/${locale}${pathname}${url.search}`;
-      return c.redirect(targetPath, 302);
+      return c.redirect(`/${locale}${pathname}${url.search}`, 302);
     }
 
     // Only non-default locales are prefixed (e.g. /about, /pt/about)
-    if (segmentLocale) {
-      if (firstSegment === defaultLocale) {
-        // Strip the redundant default-locale prefix: /en/about → /about
-        const rest = pathname.slice(defaultLocale.length + 1) || "/";
-        currentLocale.set(defaultLocale);
-        return c.redirect(`${rest}${url.search}`, 302);
-      }
-      // Non-default locale — serve as-is
-      currentLocale.set(segmentLocale);
-      return next();
+    if (segmentLocale === defaultLocale) {
+      // Strip the redundant default-locale prefix: /en/about → /about
+      const rest = `/${stripLocalePrefix(pathname, supported)}`;
+      currentLocale.set(defaultLocale);
+      return c.redirect(`${rest}${url.search}`, 302);
     }
 
-    // No locale prefix → default locale, serve as-is
-    currentLocale.set(defaultLocale);
+    // Non-default locale or no locale prefix → serve as-is
+    currentLocale.set(segmentLocale ?? defaultLocale);
     return next();
   };
 }

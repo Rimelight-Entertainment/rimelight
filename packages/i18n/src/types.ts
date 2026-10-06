@@ -14,35 +14,6 @@ export interface WritableAtom<T> extends ReadableAtom<T> {
   set(value: T): void;
 }
 
-export interface FlattenedTranslations {
-  [key: string]: string;
-}
-
-export interface PlaceholderMismatch {
-  key: string;
-  basePlaceholders: string[];
-  targetPlaceholders: string[];
-}
-
-export interface TranslationAuditReport {
-  isValid: boolean;
-  totalKeys: number;
-  locales: string[];
-  defaultLocale: string;
-  missingKeys: Record<string, string[]>;
-  staleKeys: Record<string, string[]>;
-  emptyKeys: Record<string, string[]>;
-  placeholderMismatches: Record<string, PlaceholderMismatch[]>;
-  stats: {
-    completion: Record<string, string>;
-  };
-}
-
-export interface VerifyTranslationsOptions {
-  defaultLocale?: string;
-  allowEmpty?: boolean;
-}
-
 export interface KVNamespaceBinding {
   get(key: string, type: "json"): Promise<Record<string, string> | null>;
   put(key: string, value: string): Promise<void>;

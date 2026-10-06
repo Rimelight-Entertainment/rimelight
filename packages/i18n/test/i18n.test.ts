@@ -8,7 +8,7 @@ import {
   verifyTranslations,
   formatAuditReport,
   fixTranslations,
-} from "../src/utils";
+} from "../src/cli";
 import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
 import {
   getHtmlLang,
