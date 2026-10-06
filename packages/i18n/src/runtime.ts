@@ -239,6 +239,10 @@ function tArray<T = string>(key: string, fallback: T[] = []): T[] {
  * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")` or
  * nested/array paths like `t("page_resume.experiences.0.role")`). Also provides `t.raw()` and
  * `t.array()` methods to retrieve structured data or string arrays.
+ *
+ * When `params.count` is a number:
+ * - a plural object value (`{ one, few, many, other, ... }`) resolves to the locale-correct branch
+ * - `{count}` interpolates locale-formatted (1234 → `"1,234"` in en, `"1.234"` in pt)
  */
 export const t: TFunction = Object.assign(
   function t(key: string, params?: Record<string, any>): string {
@@ -265,9 +269,13 @@ export const t: TFunction = Object.assign(
 
     if (typeof value === "string") {
       return params
-        ? value.replace(/\{(\w+)\}/g, (_, name) =>
-            params[name] !== undefined ? String(params[name]) : `{${name}}`,
-          )
+        ? value.replace(/\{(\w+)\}/g, (_, name) => {
+            const param = params[name];
+            if (param === undefined) return `{${name}}`;
+            return name === "count" && typeof param === "number"
+              ? formatNumber(targetLocale, param)
+              : String(param);
+          })
         : value;
     }
     if (isObjectRecord(value)) return JSON.stringify(value);
@@ -278,10 +286,28 @@ export const t: TFunction = Object.assign(
 
 /**
  * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
- * using the native browser Intl.PluralRules API.
+ * using the native browser Intl.PluralRules API. Internal — `t()` selects plural branches with it
+ * automatically when a numeric `count` param is passed.
  */
 export function getPluralCategory(count: number, targetLocale: string = "en"): Intl.LDMLPluralRule {
-  return new Intl.PluralRules(targetLocale).select(count);
+  return new Intl.PluralRules(targetLocale.replace(/_/g, "-")).select(count);
+}
+
+/** Cached `Intl.NumberFormat` instances per locale — `t()` formats counts on every interpolation. */
+const numberFormats = new Map<string, Intl.NumberFormat>();
+
+/**
+ * Locale-formats a number (e.g. 1234 → `"1,234"` in en, `"1.234"` in pt). Used for the `count`
+ * interpolation param so quantities read as localized text rather than raw digits.
+ */
+function formatNumber(locale: string, value: number): string {
+  const key = locale.replace(/_/g, "-");
+  let formatter = numberFormats.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(key);
+    numberFormats.set(key, formatter);
+  }
+  return formatter.format(value);
 }
 
 /**

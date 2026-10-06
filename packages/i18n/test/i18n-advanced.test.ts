@@ -11,6 +11,10 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     // Portuguese
     expect(getPluralCategory(1, "pt")).toBe("one");
     expect(getPluralCategory(2, "pt")).toBe("other");
+
+    // File-derived locale codes with underscores are normalized (Intl throws otherwise)
+    expect(getPluralCategory(1, "pt_BR")).toBe("one");
+    expect(getPluralCategory(2, "pt_BR")).toBe("other");
   });
 
   it("should format complex translations with placeholders", () => {
@@ -51,6 +55,42 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     setLocale("en");
     expect(t("messages.unread", { count: 1 })).toBe("1 new message");
     expect(t("messages.unread", { count: 5 })).toBe("5 new messages");
+  });
+
+  it("should locale-format the numeric count param during interpolation", () => {
+    setTranslations(
+      {
+        en: {
+          messages: {
+            unread: {
+              one: "{count} new message",
+              other: "{count} new messages",
+            },
+          },
+          misc: {
+            rating: "rating: {score}",
+          },
+        },
+        pt: {
+          messages: {
+            unread: {
+              other: "{count} novas mensagens",
+            },
+          },
+        },
+      },
+      { defaultLocale: "en", locales: ["en", "pt"] },
+    );
+
+    // Grouped per locale
+    setLocale("en");
+    expect(t("messages.unread", { count: 1234 })).toBe("1,234 new messages");
+    setLocale("pt");
+    expect(t("messages.unread", { count: 1234 })).toBe("1.234 novas mensagens");
+
+    // Non-count params are not formatted
+    setLocale("en");
+    expect(t("misc.rating", { score: 1234 })).toBe("rating: 1234");
   });
 
   it("should handle regional sub-locales and fallback chain", () => {

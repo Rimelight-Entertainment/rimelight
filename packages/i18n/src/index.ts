@@ -4,7 +4,6 @@ export {
   getLocale,
   getLocalizedText,
   getLocales,
-  getPluralCategory,
   getRelativeLocaleUrl,
   setLocale,
   t,
