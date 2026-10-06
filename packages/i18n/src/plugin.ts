@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
 
-const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
 const VIRTUAL_CONFIG_ID = "virtual:rimelight-i18n-config";
 const RESOLVED_VIRTUAL_CONFIG_ID = `\0${VIRTUAL_CONFIG_ID}`;
+const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
 
 export interface RimelightI18nOptions {
   defaultLocale?: string;
@@ -12,12 +12,6 @@ export interface RimelightI18nOptions {
   prefixDefaultLocale?: boolean;
   kvBinding?: string;
   skipPaths?: string[];
-}
-
-export { DEFAULT_TRANSLATIONS_DIR };
-
-export function resolveTranslationsDir(root: string, specifiedDir?: string): string {
-  return path.resolve(root, specifiedDir ?? DEFAULT_TRANSLATIONS_DIR);
 }
 
 export interface ReadLocaleFilesResult {
@@ -49,15 +43,8 @@ export function readLocaleFiles(dirPath: string): ReadLocaleFilesResult {
   return { files, translations, errors };
 }
 
-function buildKvSeed(translations: Record<string, Record<string, any>>) {
-  const keys: { key: string; value: string }[] = [];
-  for (const [locale, localeData] of Object.entries(translations)) {
-    keys.push({ key: `locale:${locale}`, value: JSON.stringify(localeData) });
-    for (const [component, componentData] of Object.entries(localeData)) {
-      keys.push({ key: `locale:${locale}:${component}`, value: JSON.stringify(componentData) });
-    }
-  }
-  return { keys };
+export function resolveTranslationsDir(root: string, specifiedDir?: string): string {
+  return path.resolve(root, specifiedDir ?? DEFAULT_TRANSLATIONS_DIR);
 }
 
 export function i18n(options?: RimelightI18nOptions): Plugin {
@@ -65,45 +52,22 @@ export function i18n(options?: RimelightI18nOptions): Plugin {
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   const skipPaths = options?.skipPaths ?? ["/api", "/_"];
   let root = process.cwd();
+  let cached: { translations: Record<string, Record<string, any>>; dirPath: string } | null = null;
 
-  type Config = {
-    locales: string[];
-    defaultLocale: string;
-    prefixDefaultLocale: boolean;
-    translations: Record<string, Record<string, any>>;
-    kvBinding: string;
-    skipPaths: string[];
-    dirPath: string | null;
-  };
-
-  let cachedConfig: Config | null = null;
-
-  function loadConfig(): Config {
-    if (cachedConfig) return cachedConfig;
+  function getData() {
+    if (cached) return cached;
 
     const dirPath = resolveTranslationsDir(root, options?.translationsDir);
     const { translations } = readLocaleFiles(dirPath);
-    const locales = Object.keys(translations).sort();
-    const defaultLocale =
-      options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
-
-    cachedConfig = {
-      locales,
-      defaultLocale,
-      prefixDefaultLocale,
-      translations,
-      kvBinding,
-      skipPaths,
-      dirPath: fs.existsSync(dirPath) ? dirPath : null,
-    };
-    return cachedConfig;
+    cached = { translations, dirPath };
+    return cached;
   }
 
   return {
     name: "vite-plugin-rimelight-i18n-config",
     configResolved(resolvedConfig) {
       root = resolvedConfig.root ?? process.cwd();
-      cachedConfig = null;
+      cached = null;
     },
     resolveId(id: string) {
       if (id === VIRTUAL_CONFIG_ID) return RESOLVED_VIRTUAL_CONFIG_ID;
@@ -111,35 +75,52 @@ export function i18n(options?: RimelightI18nOptions): Plugin {
     },
     load(id: string) {
       if (id === RESOLVED_VIRTUAL_CONFIG_ID) {
-        const cfg = loadConfig();
+        const { translations, dirPath } = getData();
+        const locales = Object.keys(translations).sort();
+        const defaultLocale =
+          options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
-        if (cfg.dirPath) {
+        if (dirPath && fs.existsSync(dirPath)) {
           try {
-            for (const file of fs.readdirSync(cfg.dirPath)) {
-              if (file.endsWith(".json")) {
-                this.addWatchFile(path.join(cfg.dirPath, file));
-              }
+            for (const file of fs.readdirSync(dirPath)) {
+              if (file.endsWith(".json")) this.addWatchFile(path.join(dirPath, file));
             }
           } catch {
             // Ignore watch errors
           }
         }
 
-        return `export default ${JSON.stringify(cfg)};`;
+        return `export default ${JSON.stringify({
+          locales,
+          defaultLocale,
+          prefixDefaultLocale,
+          translations,
+          kvBinding,
+          skipPaths,
+        })};`;
       }
       return null;
     },
     async closeBundle() {
-      const cfg = loadConfig();
-      if (!cfg.translations || Object.keys(cfg.translations).length === 0) return;
+      const { translations } = getData();
+      if (!translations || Object.keys(translations).length === 0) return;
 
-      const seedData = buildKvSeed(cfg.translations);
+      const keys: { key: string; value: string }[] = [];
+      for (const [locale, localeData] of Object.entries(translations)) {
+        keys.push({ key: `locale:${locale}`, value: JSON.stringify(localeData) });
+        for (const [component, componentData] of Object.entries(
+          localeData as Record<string, any>,
+        )) {
+          keys.push({ key: `locale:${locale}:${component}`, value: JSON.stringify(componentData) });
+        }
+      }
+
       const outDir = process.env["WRANGLER_OUT_DIR"] ?? "dist";
       const seedFile = path.join(outDir, "_translations-seed.json");
 
       try {
         fs.mkdirSync(path.dirname(seedFile), { recursive: true });
-        fs.writeFileSync(seedFile, JSON.stringify(seedData, null, 2));
+        fs.writeFileSync(seedFile, JSON.stringify({ keys }, null, 2));
       } catch {
         // Ignore write errors
       }

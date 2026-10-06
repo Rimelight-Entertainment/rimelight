@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { resolveTranslationsDir, readLocaleFiles } from "./plugin";
+import { readLocaleFiles, resolveTranslationsDir } from "./plugin";
 
 type FlattenedTranslations = { [key: string]: string };
 
