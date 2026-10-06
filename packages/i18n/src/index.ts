@@ -6,7 +6,7 @@ export {
   getLocalizedText,
   getPluralCategory,
   getRelativeLocaleUrl,
-  initializeI18n,
+  htmlLangs,
   locales,
   prefixDefaultLocale,
   t,

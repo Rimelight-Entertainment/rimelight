@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { initializeI18n, currentLocale, t } from "../src/index";
+import { currentLocale, t } from "../src/index";
+import { setTranslations } from "../src/runtime";
 
 describe("@rimelight/i18n array, object, and deep path support", () => {
   const translations = {
@@ -49,9 +50,8 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     },
   };
 
-  initializeI18n({
+  setTranslations(translations, {
     defaultLocale: "en",
-    translations,
   });
 
   it("retrieves flat translations as strings via t()", () => {

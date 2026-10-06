@@ -9,7 +9,7 @@ import {
   formatAuditReport,
   fixTranslations,
 } from "../src/cli";
-import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
+import { getPluralCategory, setTranslations, currentLocale, t } from "../src/runtime";
 import { getHtmlLang, getRelativeLocaleUrl } from "../src/index";
 
 describe("translation dictionary utils", () => {
@@ -144,14 +144,14 @@ describe("translation runtime", () => {
   });
 
   it("translates keys after initialization", () => {
-    initializeI18n({
-      defaultLocale: "en",
-      translations: {
+    setTranslations(
+      {
         en: {
           hero: { title: "Hello", greeting: "Hi {name}" },
         },
       },
-    });
+      { defaultLocale: "en" },
+    );
     currentLocale.set("en");
     expect(t("hero.title")).toBe("Hello");
     expect(t("hero.greeting", { name: "Ada" })).toBe("Hi Ada");

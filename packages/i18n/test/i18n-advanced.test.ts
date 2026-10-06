@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
+import { getPluralCategory, setTranslations, currentLocale, t } from "../src/runtime";
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
   it("should handle plural categories for multiple languages", () => {
@@ -14,9 +14,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should format complex translations with placeholders", () => {
-    initializeI18n({
-      defaultLocale: "en",
-      translations: {
+    setTranslations(
+      {
         en: {
           items: {
             count: "You have {count} items in your {container}.",
@@ -24,7 +23,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-    });
+      { defaultLocale: "en" },
+    );
 
     currentLocale.set("en");
     expect(t("items.count", { count: 3, container: "cart" })).toBe(
@@ -34,9 +34,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle plural object structures via t() helper", () => {
-    initializeI18n({
-      defaultLocale: "en",
-      translations: {
+    setTranslations(
+      {
         en: {
           messages: {
             unread: {
@@ -46,7 +45,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-    });
+      { defaultLocale: "en" },
+    );
 
     currentLocale.set("en");
     expect(t("messages.unread", { count: 1 })).toBe("1 new message");
@@ -54,9 +54,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle regional sub-locales and fallback chain", () => {
-    initializeI18n({
-      defaultLocale: "en",
-      translations: {
+    setTranslations(
+      {
         en: {
           common: { button: "Submit", cancel: "Cancel" },
         },
@@ -64,7 +63,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           common: { button: "Enviar" },
         },
       },
-    });
+      { defaultLocale: "en" },
+    );
 
     currentLocale.set("pt-BR");
     expect(t("common.button")).toBe("Enviar");
@@ -73,9 +73,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle multi-tier fallback across regional variants and custom default locales", () => {
-    initializeI18n({
-      defaultLocale: "es-MX",
-      translations: {
+    setTranslations(
+      {
         "pt-BR": {
           shop: { checkout: "Finalizar Compra" },
         },
@@ -92,7 +91,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           shop: { help: "Help", fallbackOnly: "Fallback Only" },
         },
       },
-    });
+      { defaultLocale: "es-MX" },
+    );
 
     currentLocale.set("pt-BR");
     // 1. Direct regional match (pt-BR)
@@ -109,16 +109,16 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should support function values in translations", () => {
-    initializeI18n({
-      defaultLocale: "en",
-      translations: {
+    setTranslations(
+      {
         en: {
           computed: {
             dynamic: (p: { val: number }) => `Result is ${p.val * 2}`,
           },
         },
       },
-    });
+      { defaultLocale: "en" },
+    );
 
     currentLocale.set("en");
     expect(t("computed.dynamic", { val: 21 })).toBe("Result is 42");
@@ -136,9 +136,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle interpolation with booleans, numbers, and missing placeholders", () => {
-    initializeI18n({
-      defaultLocale: "en",
-      translations: {
+    setTranslations(
+      {
         en: {
           misc: {
             details: "User {user} is active: {isActive}, rating: {score}, missing: {missingVar}",
@@ -149,7 +148,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-    });
+      { defaultLocale: "en" },
+    );
 
     currentLocale.set("en");
     expect(t("misc.details", { user: "Ada", isActive: true, score: 9.8 })).toBe(

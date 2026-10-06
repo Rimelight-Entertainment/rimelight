@@ -5,7 +5,7 @@ import type { Plugin } from "vite-plus";
 /** Default directory containing `<locale>.json` files, relative to the project root. */
 export const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
 
-/** Candidate directories the CLI searches when no `--dir` is passed. */
+/** Candidate directories probed in order when no explicit directory is configured. */
 export const TRANSLATIONS_DIR_CANDIDATES = [
   "src/i18n",
   "i18n",
@@ -23,8 +23,8 @@ export function resolveTranslationsDir(root: string, specifiedDir?: string): str
 }
 
 /**
- * Finds the translations directory for the CLI: an explicit `--dir` must exist, otherwise the
- * well-known candidate directories are probed in order.
+ * Finds the translations directory: an explicit custom directory must exist, otherwise the
+ * candidate directories are probed in order.
  */
 export function findTranslationsDir(cwd: string, customDir?: string): string | null {
   if (customDir) {
@@ -52,13 +52,10 @@ export interface ReadLocaleFilesResult {
 }
 
 /**
- * Reads every `<locale>.json` file in `dirPath`, optionally restricted to `locales`. Unreadable or
- * invalid JSON files are reported through `errors` instead of throwing.
+ * Reads every `<locale>.json` file in `dirPath`. Unreadable or invalid JSON files are reported
+ * through `errors` instead of throwing.
  */
-export function readLocaleFiles(
-  dirPath: string,
-  locales?: readonly string[],
-): ReadLocaleFilesResult {
+export function readLocaleFiles(dirPath: string): ReadLocaleFilesResult {
   const files: string[] = [];
   const translations: Record<string, Record<string, any>> = {};
   const errors: { file: string; error: unknown }[] = [];
@@ -73,7 +70,6 @@ export function readLocaleFiles(
   for (const file of entries) {
     if (!file.endsWith(".json")) continue;
     const locale = path.basename(file, ".json");
-    if (locales && !locales.includes(locale)) continue;
 
     files.push(file);
     try {
@@ -112,27 +108,15 @@ function buildKvSeed(translations: Record<string, Record<string, any>>): {
 const VIRTUAL_CONFIG_ID = "virtual:rimelight-i18n-config";
 const RESOLVED_VIRTUAL_CONFIG_ID = `\0${VIRTUAL_CONFIG_ID}`;
 
-export interface RimelightI18nOptions<
-  TLocale extends string = string,
-  TLocales extends readonly TLocale[] = readonly TLocale[],
-> {
-  /**
-   * List of supported locale codes (e.g. `["en", "pt"]`).
-   * If omitted, locales will be automatically inferred from JSON files in `translationsDir` (or `./src/i18n`).
-   */
-  locales?: TLocales;
+export interface RimelightI18nOptions {
   /**
    * The default locale code (e.g. `"en"`).
-   * Strictly typed according to the `locales` list.
+   * If omitted, defaults to `"en"` if present, otherwise the first discovered locale.
    */
-  defaultLocale?: TLocales extends readonly [any, ...any[]]
-    ? TLocales[number]
-    : [TLocale] extends [never]
-      ? string
-      : TLocale;
+  defaultLocale?: string;
   /**
    * Directory containing translation JSON files (`${locale}.json`), relative to Vite project root or absolute.
-   * Defaults to `"src/i18n"` (or `"./src/i18n"`).
+   * If omitted, candidate directories (`src/i18n`, `i18n`, `src/locales`, `locales`, `src/assets/i18n`) are probed in order.
    */
   translationsDir?: string;
   /**
@@ -146,33 +130,73 @@ export interface RimelightI18nOptions<
    * The Cloudflare KV namespace binding name used when seeding translations (default: "TRANSLATIONS_KV").
    */
   kvBinding?: string;
-  /**
-   * Optional manual translations map. If omitted, translations are loaded automatically
-   * from `${translationsDir}/${locale}.json`.
-   */
-  translations?: Record<string, Record<string, any>>;
 }
 
 export type RimelightI18nPlugins = Plugin[];
 
+const DEFAULT_HTML_LANGS: Record<string, string> = {
+  en: "en-US",
+  pt: "pt-BR",
+  es: "es-ES",
+  fr: "fr-FR",
+  de: "de-DE",
+  it: "it-IT",
+  ja: "ja-JP",
+  ko: "ko-KR",
+  zh: "zh-CN",
+};
+
+/**
+ * Infers BCP-47 HTML lang tags from locale file names, file metadata, or language defaults.
+ */
+function inferHtmlLangs(
+  locales: readonly string[],
+  translations: Record<string, Record<string, any>>,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+
+  for (const loc of locales) {
+    const dict = translations[loc];
+    const explicitMetaLang =
+      dict &&
+      (typeof dict["_lang"] === "string"
+        ? dict["_lang"]
+        : typeof dict["_htmlLang"] === "string"
+          ? dict["_htmlLang"]
+          : typeof dict["htmlLang"] === "string"
+            ? dict["htmlLang"]
+            : typeof dict["meta"]?.["lang"] === "string"
+              ? dict["meta"]["lang"]
+              : null);
+
+    if (explicitMetaLang) {
+      result[loc] = explicitMetaLang;
+    } else if (loc.includes("-") || loc.includes("_")) {
+      result[loc] = loc.replace(/_/g, "-");
+    } else if (DEFAULT_HTML_LANGS[loc]) {
+      result[loc] = DEFAULT_HTML_LANGS[loc];
+    } else {
+      result[loc] = loc;
+    }
+  }
+
+  return result;
+}
+
 function discoverTranslations(
   root: string,
   specifiedDir?: string,
-  specifiedLocales?: readonly string[],
 ): { locales: string[]; translations: Record<string, any>; dirPath: string | null } {
-  const dirPath = resolveTranslationsDir(root, specifiedDir);
-  const { translations } = readLocaleFiles(dirPath, specifiedLocales);
+  const dirPath = specifiedDir
+    ? resolveTranslationsDir(root, specifiedDir)
+    : (findTranslationsDir(root) ?? resolveTranslationsDir(root, DEFAULT_TRANSLATIONS_DIR));
 
-  let finalLocales: string[];
-  if (specifiedLocales && specifiedLocales.length > 0) {
-    finalLocales = [...specifiedLocales];
-  } else {
-    const discovered = Object.keys(translations).sort();
-    finalLocales = discovered.length > 0 ? discovered : ["en"];
-  }
+  const { translations } = readLocaleFiles(dirPath);
+  const discovered = Object.keys(translations).sort();
+  const locales = discovered.length > 0 ? discovered : ["en"];
 
   return {
-    locales: finalLocales,
+    locales,
     translations,
     dirPath: fs.existsSync(dirPath) ? dirPath : null,
   };
@@ -180,28 +204,28 @@ function discoverTranslations(
 
 /**
  * Pure Vite plugin for Rimelight i18n. Provides the virtual module
- * `virtual:rimelight-i18n-config` with locales, defaultLocale, prefixDefaultLocale, and
- * translations, plus KV seed generation on `closeBundle`.
+ * `virtual:rimelight-i18n-config` with locales, defaultLocale, prefixDefaultLocale, htmlLangs,
+ * and translations, plus KV seed generation on `closeBundle`.
  */
-export function i18n<
-  const TLocale extends string = string,
-  const TLocales extends readonly TLocale[] = readonly TLocale[],
->(options?: RimelightI18nOptions<TLocale, TLocales>): RimelightI18nPlugins {
+export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   let root = process.cwd();
 
   const getResolvedConfig = () => {
-    const discovered = discoverTranslations(root, options?.translationsDir, options?.locales);
-    const locales = options?.locales ? [...options.locales] : discovered.locales;
+    const discovered = discoverTranslations(root, options?.translationsDir);
+    const locales = discovered.locales;
     const defaultLocale =
       options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
+    const translations = discovered.translations;
+    const htmlLangs = inferHtmlLangs(locales, translations);
 
     return {
       locales,
       defaultLocale,
       prefixDefaultLocale,
-      translations: options?.translations ?? discovered.translations,
+      htmlLangs,
+      translations,
       dirPath: discovered.dirPath,
     };
   };
@@ -233,13 +257,14 @@ export function i18n<
             }
           }
 
-          const { locales, defaultLocale, prefixDefaultLocale, translations } = cfg;
+          const { locales, defaultLocale, prefixDefaultLocale, htmlLangs, translations } = cfg;
           return [
             `export const locales = ${JSON.stringify(locales)};`,
             `export const defaultLocale = ${JSON.stringify(defaultLocale)};`,
             `export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};`,
+            `export const htmlLangs = ${JSON.stringify(htmlLangs)};`,
             `export const translations = ${JSON.stringify(translations)};`,
-            `export default { locales, defaultLocale };`,
+            `export default { locales, defaultLocale, prefixDefaultLocale, htmlLangs, translations };`,
           ].join("\n");
         }
         return null;

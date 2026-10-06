@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { i18n, resolveLocale } from "../src/middleware";
-import { currentLocale, initializeI18n, t } from "../src/runtime";
+import { currentLocale, setTranslations, t } from "../src/runtime";
 
 function req(path: string, init?: RequestInit): Request {
   return new Request(`https://example.com${path}`, init);
@@ -116,7 +116,7 @@ describe("@rimelight/i18n KV-first translations", () => {
   }
 
   it("serves KV overrides over bundled translations when the binding is present", async () => {
-    initializeI18n({ defaultLocale: "en", translations: bundled });
+    setTranslations(bundled, { defaultLocale: "en" });
     currentLocale.set("en");
     const kv = {
       get: async (key: string) => (key === "locale:en" ? { nav: { home: "Home (KV)" } } : null),
@@ -129,7 +129,7 @@ describe("@rimelight/i18n KV-first translations", () => {
   });
 
   it("falls back to bundled translations when the binding is absent", async () => {
-    initializeI18n({ defaultLocale: "en", translations: bundled });
+    setTranslations(bundled, { defaultLocale: "en" });
     currentLocale.set("en");
 
     await i18n()(kvContext("/en/about"), async () => {});
@@ -138,7 +138,7 @@ describe("@rimelight/i18n KV-first translations", () => {
   });
 
   it("falls back to bundled translations when the locale is unseeded", async () => {
-    initializeI18n({ defaultLocale: "en", translations: bundled });
+    setTranslations(bundled, { defaultLocale: "en" });
     currentLocale.set("en");
     const kv = { get: async () => null };
 
@@ -148,7 +148,7 @@ describe("@rimelight/i18n KV-first translations", () => {
   });
 
   it("does not read KV for pass-through paths", async () => {
-    initializeI18n({ defaultLocale: "en", translations: bundled });
+    setTranslations(bundled, { defaultLocale: "en" });
     currentLocale.set("en");
     let reads = 0;
     const kv = {
