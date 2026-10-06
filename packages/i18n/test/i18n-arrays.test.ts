@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { initializeI18n, currentLocale, t, tRaw, tArray, getRawTranslation } from "../src/index";
+import { initializeI18n, currentLocale, t } from "../src/index";
 
 describe("@rimelight/i18n array, object, and deep path support", () => {
   const translations = {
@@ -73,23 +73,21 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     expect(t("resume.experiences.0.bullets.0")).toBe("Treinamento na Unreal Engine");
   });
 
-  it("retrieves string arrays via t.array() and tArray()", () => {
+  it("retrieves string arrays via t.array()", () => {
     currentLocale.set("en");
     expect(t.array("resume.tags")).toEqual(["TypeScript", "Astro", "Unreal Engine"]);
-    expect(tArray("resume.tags")).toEqual(["TypeScript", "Astro", "Unreal Engine"]);
     expect(t.array("resume.experiences.0.bullets")).toEqual([
       "Training in Unreal Engine",
       "Implemented gameplay mechanics",
     ]);
   });
 
-  it("retrieves structured objects and arrays via t.raw() and tRaw()", () => {
+  it("retrieves structured objects and arrays via t.raw()", () => {
     currentLocale.set("en");
     const exp = t.raw<any[]>("resume.experiences");
     expect(Array.isArray(exp)).toBe(true);
     expect(exp.length).toBe(2);
     expect(exp[0].role).toBe("Game Programmer");
-    expect(tRaw<any[]>("resume.experiences")).toEqual(exp);
 
     currentLocale.set("pt");
     const expPt = t.raw<any[]>("resume.experiences");
@@ -105,9 +103,9 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     expect(t.raw("non_existent_component.key")).toBeUndefined();
   });
 
-  it("retrieves component-level object via getRawTranslation", () => {
+  it("retrieves component-level objects via t.raw()", () => {
     currentLocale.set("en");
-    const resumeComp = getRawTranslation("resume") as any;
+    const resumeComp = t.raw<any>("resume");
     expect(resumeComp).toBeDefined();
     expect(resumeComp.title).toBe("Resume");
     expect(resumeComp.tags).toEqual(["TypeScript", "Astro", "Unreal Engine"]);

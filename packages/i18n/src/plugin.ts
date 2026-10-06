@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import { buildKvSeed } from "./kv";
 
 /** Default directory containing `<locale>.json` files, relative to the project root. */
 export const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
@@ -86,6 +85,28 @@ export function readLocaleFiles(
   }
 
   return { files, translations, errors };
+}
+
+/**
+ * Flattens translations into the `{ key, value }` entries written to
+ * `<outDir>/_translations-seed.json` for `wrangler kv:bulk put`. Each locale is written twice: as
+ * an aggregate `locale:<locale>` key (one read per request by the middleware) and as per-component
+ * `locale:<locale>:<component>` keys for granular access.
+ */
+function buildKvSeed(translations: Record<string, Record<string, any>>): {
+  keys: { key: string; value: string }[];
+} {
+  const keys: { key: string; value: string }[] = [];
+  for (const [locale, localeData] of Object.entries(translations)) {
+    keys.push({ key: `locale:${locale}`, value: JSON.stringify(localeData) });
+    for (const [component, componentData] of Object.entries(localeData)) {
+      keys.push({
+        key: `locale:${locale}:${component}`,
+        value: JSON.stringify(componentData),
+      });
+    }
+  }
+  return { keys };
 }
 
 const VIRTUAL_CONFIG_ID = "virtual:rimelight-i18n-config";

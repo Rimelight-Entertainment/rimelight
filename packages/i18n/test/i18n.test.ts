@@ -10,12 +10,7 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
-import {
-  getHtmlLang,
-  getOgLocale,
-  getRelativeLocaleUrl,
-  getLanguageAlternates,
-} from "../src/index";
+import { getHtmlLang, getRelativeLocaleUrl } from "../src/index";
 
 describe("translation dictionary utils", () => {
   const source = {
@@ -118,15 +113,6 @@ describe("locale helpers", () => {
     currentLocale.set("fr");
     expect(getHtmlLang()).toBe("fr");
   });
-
-  it("formats og locale attributes", () => {
-    currentLocale.set("en");
-    expect(getOgLocale()).toBe("en_US");
-    currentLocale.set("pt");
-    expect(getOgLocale()).toBe("pt_BR");
-    currentLocale.set("de");
-    expect(getOgLocale()).toBe("de_DE");
-  });
 });
 
 describe("relative locale urls", () => {
@@ -151,16 +137,6 @@ describe("relative locale urls", () => {
   });
 });
 
-describe("language alternates", () => {
-  it("builds hreflang alternates including x-default", () => {
-    const alternates = getLanguageAlternates("/about", "https://example.com");
-    expect(alternates).toEqual([
-      { hreflang: "en", href: "https://example.com/en/about" },
-      { hreflang: "x-default", href: "https://example.com/en/about" },
-    ]);
-  });
-});
-
 describe("translation runtime", () => {
   it("returns the plural category for a locale", () => {
     expect(getPluralCategory(1, "en")).toBe("one");
@@ -180,43 +156,6 @@ describe("translation runtime", () => {
     expect(t("hero.title")).toBe("Hello");
     expect(t("hero.greeting", { name: "Ada" })).toBe("Hi Ada");
     expect(t("missing.key")).toBe("missing.key");
-  });
-});
-
-describe("translation loader & KV binding", () => {
-  it("loads translations statically when KV is not set", async () => {
-    const { createTranslationLoader } = await import("../src/index");
-    const loader = createTranslationLoader({
-      en: { nav: { home: "Home" } },
-    });
-    const loaded = await loader("en", ["nav"]);
-    expect(loaded).toEqual({ nav: { home: "Home" } });
-  });
-
-  it("loads translations from KV when present, falling back to static", async () => {
-    const { createTranslationLoader, setKVBinding } = await import("../src/index");
-    const mockKV = {
-      get: async (key: string) => {
-        if (key === "locale:en:nav") {
-          return { home: "Homepage (KV)" };
-        }
-        return null;
-      },
-    };
-    setKVBinding(mockKV as any);
-
-    const loader = createTranslationLoader({
-      en: {
-        nav: { home: "Home" },
-        footer: { copyright: "© 2026" },
-      },
-    });
-
-    const loaded = await loader("en", ["nav", "footer"]);
-    expect(loaded).toEqual({
-      nav: { home: "Homepage (KV)" },
-      footer: { copyright: "© 2026" },
-    });
   });
 });
 

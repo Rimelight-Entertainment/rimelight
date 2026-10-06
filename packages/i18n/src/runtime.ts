@@ -68,6 +68,31 @@ export function initializeI18n(options: InitializeI18nOptions): void {
 /** Keys that must never be traversed while resolving dot paths (prototype pollution guard). */
 const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 
+function isMergeable(value: unknown): value is Record<string, any> {
+  return isObjectRecord(value) && !Array.isArray(value);
+}
+
+/** Deep-merges `source` over `target` (KV wins per key), skipping unsafe keys and replacing arrays. */
+function mergeDeep(target: Record<string, any>, source: Record<string, any>): Record<string, any> {
+  const merged: Record<string, any> = { ...target };
+  for (const [key, value] of Object.entries(source)) {
+    if (UNSAFE_KEYS.has(key)) continue;
+    merged[key] =
+      isMergeable(value) && isMergeable(merged[key]) ? mergeDeep(merged[key], value) : value;
+  }
+  return merged;
+}
+
+/**
+ * Layers KV-sourced translation overrides for `locale` over the bundled translations so `t()`
+ * stays synchronous and KV-first. Called by the middleware before rendering; ignores anything
+ * that is not an object, leaving the bundled translations untouched.
+ */
+export function applyLocaleOverrides(locale: string, overrides: unknown): void {
+  if (!locale || !isMergeable(overrides)) return;
+  translations[locale] = mergeDeep(translations[locale] ?? {}, overrides);
+}
+
 /**
  * Resolves a dot-notation path (including array indices) inside a translation object. When a
  * segment is missing, the remaining segments are joined and tried as a single literal key, so
@@ -139,7 +164,7 @@ function resolveFromLocale(locale: string, component: string, key?: string): unk
  * Safely retrieves the raw translation entry (string, array, or object) for a given dot-notation
  * key.
  */
-export function getRawTranslation(key: string): unknown {
+function getRawTranslation(key: string): unknown {
   const dotIndex = key.indexOf(".");
   const locale = currentLocale.get() || defaultLocale;
 
@@ -151,7 +176,7 @@ export function getRawTranslation(key: string): unknown {
 /**
  * Returns raw translation data (such as arrays or nested objects) typed as T.
  */
-export function tRaw<T = unknown>(key: string, fallback?: T): T {
+function tRaw<T = unknown>(key: string, fallback?: T): T {
   const value = getRawTranslation(key);
   return value !== undefined ? (value as T) : (fallback as T);
 }
@@ -160,7 +185,7 @@ export function tRaw<T = unknown>(key: string, fallback?: T): T {
  * Returns an array of translations (e.g. lists of strings or structured objects). Falls back to an
  * empty array or the provided fallback if not found or not an array.
  */
-export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
+function tArray<T = string>(key: string, fallback: T[] = []): T[] {
   const value = getRawTranslation(key);
   return Array.isArray(value) ? (value as T[]) : fallback;
 }
@@ -280,14 +305,11 @@ export function getLocale(): string {
   return defaultLocale;
 }
 
-/**
- * Canonical HTML (`lang`) and OpenGraph (`og:locale`) tags for the known locales. Unknown locales
- * fall back to their raw code (HTML) or `<code>_<CODE>` (OG).
- */
-const LOCALE_TAGS: Record<string, { html: string; og: string }> = {
-  en: { html: "en-US", og: "en_US" },
-  pt: { html: "pt-BR", og: "pt_BR" },
-  es: { html: "es-ES", og: "es_ES" },
+/** Canonical HTML `lang` tags for the known locales; unknown locales fall back to their raw code. */
+const HTML_LANG_TAGS: Record<string, string> = {
+  en: "en-US",
+  pt: "pt-BR",
+  es: "es-ES",
 };
 
 /**
@@ -295,16 +317,7 @@ const LOCALE_TAGS: Record<string, { html: string; og: string }> = {
  * 2-letter codes like 'en' to 'en-US', 'pt' to 'pt-BR', 'es' to 'es-ES', etc.
  */
 export function getHtmlLang(): string {
-  const loc = getLocale();
-  return LOCALE_TAGS[loc]?.html ?? loc;
-}
-
-/**
- * Returns an OpenGraph-compliant locale tag (e.g. 'en_US', 'pt_BR', 'es_ES').
- */
-export function getOgLocale(): string {
-  const loc = getLocale();
-  return LOCALE_TAGS[loc]?.og ?? `${loc}_${loc.toUpperCase()}`;
+  return HTML_LANG_TAGS[getLocale()] ?? getLocale();
 }
 
 export function getRelativeLocaleUrl(
@@ -327,29 +340,6 @@ export function getRelativeLocaleUrl(
 
   const trailingSlash = pathname.endsWith("/") ? "/" : "";
   return `${prefix}/${cleanPath}${trailingSlash}${suffix}`;
-}
-
-interface LanguageAlternate {
-  hreflang: string;
-  href: string;
-}
-
-/**
- * Generates an array of hreflang alternates for SEO tags (<link rel="alternate" hreflang="...">).
- * Automatically includes all supported locales and 'x-default'.
- */
-export function getLanguageAlternates(pathname: string, siteUrl = ""): LanguageAlternate[] {
-  const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
-  return [
-    ...locales.map((loc) => ({
-      hreflang: loc,
-      href: `${normalizedSiteUrl}${getRelativeLocaleUrl(pathname, { locale: loc })}`,
-    })),
-    {
-      hreflang: "x-default",
-      href: `${normalizedSiteUrl}${getRelativeLocaleUrl(pathname, { locale: defaultLocale })}`,
-    },
-  ];
 }
 
 // ── Bootstrap from the Vite virtual module ────────────────────────────────────────────────────

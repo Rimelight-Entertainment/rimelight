@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { i18n, resolveLocale } from "../src/middleware";
-import { createTranslationLoader } from "../src/kv";
-import { currentLocale } from "../src/runtime";
+import { currentLocale, initializeI18n, t } from "../src/runtime";
 
 function req(path: string, init?: RequestInit): Request {
   return new Request(`https://example.com${path}`, init);
@@ -39,6 +38,16 @@ describe("@rimelight/i18n resolveLocale (Fetch standard)", () => {
     }
   });
 
+  it("only skips real API prefixes and asset files, not api-like or dotted page paths", () => {
+    expect(resolveLocale(req("/apiflow"))).toBe("/en/apiflow");
+    expect(resolveLocale(req("/docs/v2.0/setup"))).toBe("/en/docs/v2.0/setup");
+  });
+
+  it("honours a custom skipPaths list", () => {
+    expect(resolveLocale(req("/internal/page"))).toBe("/en/internal/page");
+    expect(resolveLocale(req("/internal/page"), { skipPaths: ["/internal"] })).toBeNull();
+  });
+
   it("strips the default locale prefix when prefixDefaultLocale is false", () => {
     const options = { prefixDefaultLocale: false, locales: ["en", "pt"] };
 
@@ -66,20 +75,16 @@ describe("@rimelight/i18n Hono adapter", () => {
     };
   }
 
-  it("binds the KV namespace from the worker env", async () => {
+  it("calls next and sets the current locale when no redirect is needed", async () => {
     const middleware = i18n();
-    const kv = { get: async () => ({ hello: "from-kv" }), put: async () => {} };
 
     let nextCalled = false;
-    await middleware(mockContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {
+    await middleware(mockContext("/en/about"), async () => {
       nextCalled = true;
     });
 
     expect(nextCalled).toBe(true);
     expect(currentLocale.get()).toBe("en");
-
-    const loader = createTranslationLoader({ en: {} });
-    expect(await loader("en", ["nav"])).toEqual({ nav: { hello: "from-kv" } });
   });
 
   it("short-circuits with a 302 when resolution requests a redirect", async () => {
@@ -95,5 +100,66 @@ describe("@rimelight/i18n Hono adapter", () => {
     expect(response!.status).toBe(302);
     expect(response!.headers.get("location")).toBe("/en/about?page=2");
     expect(currentLocale.get()).toBe("en");
+  });
+});
+
+describe("@rimelight/i18n KV-first translations", () => {
+  const bundled = { en: { nav: { home: "Home", about: "About" } } };
+
+  function kvContext(path: string, env?: Record<string, any>) {
+    return {
+      req: { raw: req(path) },
+      env: env ?? {},
+      redirect: (target: string, status = 302) =>
+        new Response(null, { status, headers: { Location: target } }),
+    };
+  }
+
+  it("serves KV overrides over bundled translations when the binding is present", async () => {
+    initializeI18n({ defaultLocale: "en", translations: bundled });
+    currentLocale.set("en");
+    const kv = {
+      get: async (key: string) => (key === "locale:en" ? { nav: { home: "Home (KV)" } } : null),
+    };
+
+    await i18n()(kvContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {});
+
+    expect(t("nav.home")).toBe("Home (KV)");
+    expect(t("nav.about")).toBe("About");
+  });
+
+  it("falls back to bundled translations when the binding is absent", async () => {
+    initializeI18n({ defaultLocale: "en", translations: bundled });
+    currentLocale.set("en");
+
+    await i18n()(kvContext("/en/about"), async () => {});
+
+    expect(t("nav.home")).toBe("Home");
+  });
+
+  it("falls back to bundled translations when the locale is unseeded", async () => {
+    initializeI18n({ defaultLocale: "en", translations: bundled });
+    currentLocale.set("en");
+    const kv = { get: async () => null };
+
+    await i18n()(kvContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {});
+
+    expect(t("nav.home")).toBe("Home");
+  });
+
+  it("does not read KV for pass-through paths", async () => {
+    initializeI18n({ defaultLocale: "en", translations: bundled });
+    currentLocale.set("en");
+    let reads = 0;
+    const kv = {
+      get: async () => {
+        reads++;
+        return null;
+      },
+    };
+
+    await i18n()(kvContext("/api/users", { TRANSLATIONS_KV: kv }), async () => {});
+
+    expect(reads).toBe(0);
   });
 });

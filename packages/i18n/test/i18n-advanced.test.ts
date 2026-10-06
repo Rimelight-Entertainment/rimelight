@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
 import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
-import { getLanguageAlternates } from "../src/index";
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
   it("should handle plural categories for multiple languages", () => {
@@ -52,14 +51,6 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     currentLocale.set("en");
     expect(t("messages.unread", { count: 1 })).toBe("1 new message");
     expect(t("messages.unread", { count: 5 })).toBe("5 new messages");
-  });
-
-  it("should generate language alternates with custom base urls", () => {
-    const alternates = getLanguageAlternates("/pricing", "https://rimelight.com");
-    expect(alternates).toContainEqual({
-      hreflang: "x-default",
-      href: "https://rimelight.com/en/pricing",
-    });
   });
 
   it("should handle regional sub-locales and fallback chain", () => {

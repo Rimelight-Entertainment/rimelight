@@ -75,6 +75,10 @@ describe("@rimelight/i18n Vite plugin", () => {
 
       const seedContent = JSON.parse(fs.readFileSync(seedPath, "utf-8"));
       expect(seedContent.keys).toContainEqual({
+        key: "locale:en",
+        value: JSON.stringify({ nav: { home: "Home" } }),
+      });
+      expect(seedContent.keys).toContainEqual({
         key: "locale:en:nav",
         value: JSON.stringify({ home: "Home" }),
       });
