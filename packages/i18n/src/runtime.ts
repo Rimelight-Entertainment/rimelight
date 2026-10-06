@@ -33,6 +33,20 @@ export let htmlLangs: Record<string, string> = virtualConfig?.htmlLangs
   ? { ...virtualConfig.htmlLangs }
   : {};
 
+/**
+ * KV namespace binding holding runtime translation overrides. Requests fall back to bundled
+ * translations when the binding is absent or the locale is unseeded.
+ */
+export let kvBinding: string = virtualConfig?.kvBinding ?? "TRANSLATIONS_KV";
+
+/**
+ * Path prefixes that never render a localized page: no locale redirect and no KV read. Matched
+ * exactly or as a segment prefix (`/api` skips `/api` and `/api/users`, not `/apiflow`).
+ */
+export let skipPaths: string[] = virtualConfig?.skipPaths
+  ? [...virtualConfig.skipPaths]
+  : ["/api", "/_"];
+
 let activeLocale = defaultLocale;
 
 /**
@@ -48,14 +62,6 @@ export function getLocale(): string {
 export function setLocale(value: string): void {
   activeLocale = value;
 }
-
-/**
- * Mutable accessor for the current request/render locale code.
- */
-export const currentLocale = {
-  get: getLocale,
-  set: setLocale,
-};
 
 let translations: Record<string, Record<string, any>> = virtualConfig?.translations
   ? { ...virtualConfig.translations }
@@ -78,6 +84,8 @@ export function setTranslations(
     locales?: string[];
     prefixDefaultLocale?: boolean;
     htmlLangs?: Record<string, string>;
+    kvBinding?: string;
+    skipPaths?: string[];
   },
 ): void {
   translations = { ...data };
@@ -85,10 +93,12 @@ export function setTranslations(
   if (options?.locales) locales = [...options.locales];
   if (options?.prefixDefaultLocale !== undefined) prefixDefaultLocale = options.prefixDefaultLocale;
   if (options?.htmlLangs) htmlLangs = { ...htmlLangs, ...options.htmlLangs };
+  if (options?.kvBinding) kvBinding = options.kvBinding;
+  if (options?.skipPaths) skipPaths = [...options.skipPaths];
   chainCache.clear();
 
-  if (!currentLocale.get()) {
-    currentLocale.set(defaultLocale);
+  if (!activeLocale) {
+    setLocale(defaultLocale);
   }
 }
 
@@ -186,7 +196,7 @@ function resolveFromLocale(targetLocale: string, component: string, key?: string
  */
 function getRawTranslation(key: string): unknown {
   const dotIndex = key.indexOf(".");
-  const targetLocale = currentLocale.get() || defaultLocale;
+  const targetLocale = getLocale() || defaultLocale;
 
   return dotIndex === -1
     ? resolveFromLocale(targetLocale, key)
@@ -220,7 +230,7 @@ export const t: TFunction = Object.assign(
     const dotIndex = key.indexOf(".");
     if (dotIndex === -1) return key;
 
-    const targetLocale = currentLocale.get() || defaultLocale;
+    const targetLocale = getLocale() || defaultLocale;
     let value =
       resolveFromLocale(targetLocale, key.slice(0, dotIndex), key.slice(dotIndex + 1)) ?? key;
 

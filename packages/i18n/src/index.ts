@@ -1,5 +1,4 @@
 export {
-  currentLocale,
   defaultLocale,
   getHtmlLang,
   getLocale,

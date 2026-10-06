@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { currentLocale, t } from "../src/index";
+import { setLocale, t } from "../src/index";
 import { setTranslations } from "../src/runtime";
 
 describe("@rimelight/i18n array, object, and deep path support", () => {
@@ -55,26 +55,26 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
   });
 
   it("retrieves flat translations as strings via t()", () => {
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("resume.title")).toBe("Resume");
-    currentLocale.set("pt");
+    setLocale("pt");
     expect(t("resume.title")).toBe("Currículo");
   });
 
   it("retrieves deep-path values via t()", () => {
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("resume.experiences.0.role")).toBe("Game Programmer");
     expect(t("resume.experiences.0.bullets.0")).toBe("Training in Unreal Engine");
     expect(t("resume.experiences.0.details.location")).toBe("Curitiba");
     expect(t("resume.settings.nested.deep")).toBe("Found value");
 
-    currentLocale.set("pt");
+    setLocale("pt");
     expect(t("resume.experiences.0.role")).toBe("Programador de Jogos");
     expect(t("resume.experiences.0.bullets.0")).toBe("Treinamento na Unreal Engine");
   });
 
   it("retrieves string arrays via t.array()", () => {
-    currentLocale.set("en");
+    setLocale("en");
     expect(t.array("resume.tags")).toEqual(["TypeScript", "Astro", "Unreal Engine"]);
     expect(t.array("resume.experiences.0.bullets")).toEqual([
       "Training in Unreal Engine",
@@ -83,20 +83,20 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
   });
 
   it("retrieves structured objects and arrays via t.raw()", () => {
-    currentLocale.set("en");
+    setLocale("en");
     const exp = t.raw<any[]>("resume.experiences");
     expect(Array.isArray(exp)).toBe(true);
     expect(exp.length).toBe(2);
     expect(exp[0].role).toBe("Game Programmer");
 
-    currentLocale.set("pt");
+    setLocale("pt");
     const expPt = t.raw<any[]>("resume.experiences");
     expect(expPt.length).toBe(1);
     expect(expPt[0].role).toBe("Programador de Jogos");
   });
 
   it("returns fallbacks for non-existent paths in t.array() and t.raw()", () => {
-    currentLocale.set("en");
+    setLocale("en");
     expect(t.array("resume.missing_array")).toEqual([]);
     expect(t.array("resume.missing_array", ["fallback"])).toEqual(["fallback"]);
     expect(t.raw("resume.missing_obj", { default: true })).toEqual({ default: true });
@@ -104,7 +104,7 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
   });
 
   it("retrieves component-level objects via t.raw()", () => {
-    currentLocale.set("en");
+    setLocale("en");
     const resumeComp = t.raw<any>("resume");
     expect(resumeComp).toBeDefined();
     expect(resumeComp.title).toBe("Resume");

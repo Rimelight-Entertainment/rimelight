@@ -3,7 +3,7 @@ import { useParams } from "@solidjs/router";
 import AppLayout from "./AppLayout";
 import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
 import WikiSidebar from "#components/franchises/grand-tale/WikiSidebar";
-import { currentLocale } from "@rimelight/i18n";
+import { setLocale } from "@rimelight/i18n";
 
 export interface WikiLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -14,7 +14,7 @@ export interface WikiLayoutProps extends ParentProps {
 export const WikiLayout: Component<WikiLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale);
+    setLocale(params.locale);
   }
 
   return (

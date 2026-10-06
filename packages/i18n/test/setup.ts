@@ -1,16 +1,16 @@
 import { vi } from "vite-plus/test";
 
-vi.mock("virtual:rimelight-i18n-config", () => ({
+const config = {
   locales: ["en"],
   defaultLocale: "en",
   prefixDefaultLocale: true,
   htmlLangs: {},
   translations: {},
-  default: {
-    locales: ["en"],
-    defaultLocale: "en",
-    prefixDefaultLocale: true,
-    htmlLangs: {},
-    translations: {},
-  },
+  kvBinding: "TRANSLATIONS_KV",
+  skipPaths: ["/api", "/_"],
+};
+
+vi.mock("virtual:rimelight-i18n-config", () => ({
+  ...config,
+  default: config,
 }));

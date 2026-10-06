@@ -1,44 +1,24 @@
 import {
   applyLocaleOverrides,
-  currentLocale,
-  defaultLocale as configDefaultLocale,
+  defaultLocale,
+  getLocale,
+  kvBinding,
   localeFromPathname,
-  locales as configLocales,
-  prefixDefaultLocale as configPrefixDefaultLocale,
+  locales,
+  prefixDefaultLocale,
+  setLocale,
+  skipPaths,
   stripLocalePrefix,
 } from "./runtime";
-
-export interface I18nMiddlewareOptions {
-  /** Supported locale codes. Defaults to the configured Vite plugin locales. */
-  locales?: string[];
-  /** Default fallback locale code. Defaults to the configured Vite plugin default locale. */
-  defaultLocale?: string;
-  /** Whether the default locale is prefixed in URLs. Defaults to the configured Vite plugin setting. */
-  prefixDefaultLocale?: boolean;
-  /**
-   * KV namespace binding holding runtime translation overrides (default: "TRANSLATIONS_KV").
-   * Requests fall back to bundled translations when the binding is absent or the locale is
-   * unseeded.
-   */
-  kvBinding?: string;
-  /**
-   * Path prefixes that never render a localized page: no locale redirect and no KV read. Matched
-   * exactly or as a segment prefix (`/api` skips `/api` and `/api/users`, not `/apiflow`).
-   * Defaults to API routes and framework internals: `["/api", "/_"]`.
-   */
-  skipPaths?: string[];
-}
 
 /** Static-asset suffix: a dot plus up to 8 alphanumerics at the end of the last path segment. */
 const FILE_SUFFIX = /\.[A-Za-z0-9]{1,8}$/;
 
-const DEFAULT_SKIP_PATHS = ["/api", "/_"];
-
 /**
- * Whether a path renders a localized page. Paths under `skipPaths` and static assets are
- * excluded — they are never redirected and never read from KV.
+ * Whether a path renders a localized page. Paths under the configured `skipPaths` and static
+ * assets are excluded — they are never redirected and never read from KV.
  */
-function isPagePath(pathname: string, skipPaths: readonly string[]): boolean {
+function isPagePath(pathname: string): boolean {
   if (skipPaths.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
     return false;
   }
@@ -83,22 +63,19 @@ interface ResolvedRequest {
 }
 
 /**
- * Parses a request once: applies the resolved locale to `currentLocale` and computes any
- * redirect. Non-GET/HEAD requests and non-page paths only resolve locale state, never redirect.
+ * Parses a request once: applies the resolved locale and computes any redirect. Non-GET/HEAD
+ * requests and non-page paths only resolve locale state, never redirect. All configuration
+ * (locales, defaultLocale, prefixDefaultLocale, skipPaths) comes from the Vite plugin.
  */
-function resolveRequest(request: Request, options?: I18nMiddlewareOptions): ResolvedRequest {
-  const supported = options?.locales ?? configLocales;
-  const defaultLocale = options?.defaultLocale ?? configDefaultLocale;
-  const prefixDefaultLocale = options?.prefixDefaultLocale ?? configPrefixDefaultLocale;
-
+function resolveRequest(request: Request): ResolvedRequest {
   const url = new URL(request.url);
   const pathname = url.pathname;
-  const isPage = isPagePath(pathname, options?.skipPaths ?? DEFAULT_SKIP_PATHS);
-  const segmentLocale = localeFromPathname(pathname, supported);
+  const isPage = isPagePath(pathname);
+  const segmentLocale = localeFromPathname(pathname, locales);
 
   // Non-GET/HEAD requests only resolve locale state, never redirect.
   if (request.method !== "GET" && request.method !== "HEAD") {
-    currentLocale.set(segmentLocale ?? defaultLocale);
+    setLocale(segmentLocale ?? defaultLocale);
     return { isPage, redirectTo: null };
   }
   if (!isPage) return { isPage, redirectTo: null };
@@ -106,37 +83,37 @@ function resolveRequest(request: Request, options?: I18nMiddlewareOptions): Reso
   // All locales are prefixed (e.g. /en/about, /pt/about)
   if (prefixDefaultLocale) {
     if (segmentLocale) {
-      currentLocale.set(segmentLocale);
+      setLocale(segmentLocale);
       return { isPage, redirectTo: null };
     }
     // Unprefixed path → redirect to the preferred locale
     const locale = getPreferredLocale(
       request.headers.get("accept-language"),
-      supported,
+      locales,
       defaultLocale,
     );
-    currentLocale.set(locale);
+    setLocale(locale);
     return { isPage, redirectTo: `/${locale}${pathname}${url.search}` };
   }
 
   // Only non-default locales are prefixed (e.g. /about, /pt/about)
   if (segmentLocale === defaultLocale) {
     // Strip the redundant default-locale prefix: /en/about → /about
-    currentLocale.set(defaultLocale);
-    return { isPage, redirectTo: `/${stripLocalePrefix(pathname, supported)}${url.search}` };
+    setLocale(defaultLocale);
+    return { isPage, redirectTo: `/${stripLocalePrefix(pathname, locales)}${url.search}` };
   }
 
   // Non-default locale or no locale prefix → serve as-is
-  currentLocale.set(segmentLocale ?? defaultLocale);
+  setLocale(segmentLocale ?? defaultLocale);
   return { isPage, redirectTo: null };
 }
 
 /**
- * Fetch-standard locale resolution: inspects a request, updates `currentLocale`, and returns the
- * URL the client should be redirected to (302), or null to serve the request as-is.
+ * Fetch-standard locale resolution: inspects a request, updates the active locale, and returns
+ * the URL the client should be redirected to (302), or null to serve the request as-is.
  */
-export function resolveLocale(request: Request, options?: I18nMiddlewareOptions): string | null {
-  return resolveRequest(request, options).redirectTo;
+export function resolveLocale(request: Request): string | null {
+  return resolveRequest(request).redirectTo;
 }
 
 /**
@@ -160,12 +137,12 @@ interface TranslationKV {
  * ever becoming async. Silently no-ops — bundled translations win — when the binding is missing,
  * unreadable, or the locale is unseeded.
  */
-async function applyKvTranslations(c: MiddlewareContext, binding: string): Promise<void> {
-  const locale = currentLocale.get();
+async function applyKvTranslations(c: MiddlewareContext): Promise<void> {
+  const locale = getLocale();
   if (!locale) return;
 
   try {
-    const kv = (c.env?.[binding] ?? null) as TranslationKV | null;
+    const kv = (c.env?.[kvBinding] ?? null) as TranslationKV | null;
     if (!kv) return;
     const overrides = await kv.get(`locale:${locale}`, { type: "json", cacheTtl: 60 });
     applyLocaleOverrides(locale, overrides);
@@ -176,16 +153,16 @@ async function applyKvTranslations(c: MiddlewareContext, binding: string): Promi
 
 /**
  * Hono middleware for Rimelight i18n. Resolves the request locale (redirecting when needed),
- * layers KV translation overrides over the bundled ones, then delegates to the handler.
+ * layers KV translation overrides over the bundled ones, then delegates to the handler. Takes no
+ * options — locales, defaultLocale, prefixDefaultLocale, skipPaths, and kvBinding are all
+ * configured once in the Vite plugin and read from `virtual:rimelight-i18n-config`.
  */
-export function i18n(options?: I18nMiddlewareOptions) {
-  const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
-
+export function i18n() {
   return async (c: MiddlewareContext, next: () => Promise<void>): Promise<Response | void> => {
-    const { isPage, redirectTo } = resolveRequest(c.req.raw, options);
+    const { isPage, redirectTo } = resolveRequest(c.req.raw);
     if (redirectTo) return c.redirect(redirectTo, 302);
 
-    if (isPage) await applyKvTranslations(c, kvBinding);
+    if (isPage) await applyKvTranslations(c);
     return next();
   };
 }

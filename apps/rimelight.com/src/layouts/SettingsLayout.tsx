@@ -1,7 +1,7 @@
 import type { Component, ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DashboardLayout from "./DashboardLayout";
-import { getRelativeLocaleUrl, currentLocale } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, setLocale } from "@rimelight/i18n";
 
 export interface SettingsLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -11,7 +11,7 @@ export interface SettingsLayoutProps extends ParentProps {
 export const SettingsLayout: Component<SettingsLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    currentLocale.set(params.locale);
+    setLocale(params.locale);
   }
 
   const links = [

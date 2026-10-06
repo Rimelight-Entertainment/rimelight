@@ -98,9 +98,16 @@ export interface RimelightI18nOptions {
    */
   prefixDefaultLocale?: boolean;
   /**
-   * The Cloudflare KV namespace binding name used when seeding translations (default: "TRANSLATIONS_KV").
+   * The Cloudflare KV namespace binding name used when seeding translations and read by the
+   * middleware for runtime translation overrides (default: "TRANSLATIONS_KV").
    */
   kvBinding?: string;
+  /**
+   * Path prefixes that never render a localized page: no locale redirect and no KV read. Matched
+   * exactly or as a segment prefix (`/api` skips `/api` and `/api/users`, not `/apiflow`).
+   * Defaults to `["/api", "/_"]`.
+   */
+  skipPaths?: string[];
 }
 
 export type RimelightI18nPlugins = Plugin[];
@@ -124,11 +131,13 @@ function discoverTranslations(
 /**
  * Pure Vite plugin for Rimelight i18n. Provides the virtual module
  * `virtual:rimelight-i18n-config` with locales, defaultLocale, prefixDefaultLocale, htmlLangs,
- * and translations, plus KV seed generation on `closeBundle`.
+ * translations, kvBinding, and skipPaths — the single source of truth consumed by the runtime
+ * and middleware — plus KV seed generation on `closeBundle`.
  */
 export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
+  const skipPaths = options?.skipPaths ?? ["/api", "/_"];
   let root = process.cwd();
 
   const getResolvedConfig = () => {
@@ -145,6 +154,8 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
       prefixDefaultLocale,
       htmlLangs,
       translations,
+      kvBinding,
+      skipPaths,
       dirPath: discovered.dirPath,
     };
   };
@@ -176,14 +187,24 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
             }
           }
 
-          const { locales, defaultLocale, prefixDefaultLocale, htmlLangs, translations } = cfg;
+          const {
+            locales,
+            defaultLocale,
+            prefixDefaultLocale,
+            htmlLangs,
+            translations,
+            kvBinding,
+            skipPaths,
+          } = cfg;
           return [
             `export const locales = ${JSON.stringify(locales)};`,
             `export const defaultLocale = ${JSON.stringify(defaultLocale)};`,
             `export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};`,
             `export const htmlLangs = ${JSON.stringify(htmlLangs)};`,
             `export const translations = ${JSON.stringify(translations)};`,
-            `export default { locales, defaultLocale, prefixDefaultLocale, htmlLangs, translations };`,
+            `export const kvBinding = ${JSON.stringify(kvBinding)};`,
+            `export const skipPaths = ${JSON.stringify(skipPaths)};`,
+            `export default { locales, defaultLocale, prefixDefaultLocale, htmlLangs, translations, kvBinding, skipPaths };`,
           ].join("\n");
         }
         return null;

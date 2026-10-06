@@ -1,10 +1,27 @@
-import { describe, expect, it } from "vite-plus/test";
+import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n, resolveLocale } from "../src/middleware";
-import { currentLocale, setTranslations, t } from "../src/runtime";
+import { getLocale, setLocale, setTranslations, t } from "../src/runtime";
 
 function req(path: string, init?: RequestInit): Request {
   return new Request(`https://example.com${path}`, init);
 }
+
+/** Restores the default Vite plugin configuration (locales discovered as `["en"]`, etc.). */
+function config(overrides?: Parameters<typeof setTranslations>[1]): void {
+  setTranslations(
+    {},
+    {
+      locales: ["en"],
+      defaultLocale: "en",
+      prefixDefaultLocale: true,
+      skipPaths: ["/api", "/_"],
+      kvBinding: "TRANSLATIONS_KV",
+      ...overrides,
+    },
+  );
+}
+
+beforeEach(() => config());
 
 describe("@rimelight/i18n resolveLocale (Fetch standard)", () => {
   it("passes through API routes, internal routes, and static assets", () => {
@@ -15,26 +32,27 @@ describe("@rimelight/i18n resolveLocale (Fetch standard)", () => {
 
   it("resolves locale without redirecting on non-GET requests", () => {
     expect(resolveLocale(req("/en/login", { method: "POST" }))).toBeNull();
-    expect(currentLocale.get()).toBe("en");
+    expect(getLocale()).toBe("en");
   });
 
   it("redirects unprefixed paths to the preferred locale when prefixDefaultLocale is true", () => {
     expect(resolveLocale(req("/about?page=2"))).toBe("/en/about?page=2");
-    expect(currentLocale.get()).toBe("en");
+    expect(getLocale()).toBe("en");
   });
 
   it("negotiates the redirect target from the Accept-Language header", () => {
+    config({ locales: ["en", "pt"] });
     const request = req("/about", {
       headers: { "accept-language": "pt-BR,pt;q=0.9,en;q=0.8" },
     });
-    expect(resolveLocale(request, { locales: ["en", "pt"] })).toBe("/pt/about");
-    expect(currentLocale.get()).toBe("pt");
+    expect(resolveLocale(request)).toBe("/pt/about");
+    expect(getLocale()).toBe("pt");
   });
 
   it("serves locale-prefixed paths as-is, matching the prefix case-insensitively", () => {
     for (const path of ["/en/about", "/EN/about"]) {
       expect(resolveLocale(req(path))).toBeNull();
-      expect(currentLocale.get()).toBe("en");
+      expect(getLocale()).toBe("en");
     }
   });
 
@@ -45,23 +63,24 @@ describe("@rimelight/i18n resolveLocale (Fetch standard)", () => {
 
   it("honours a custom skipPaths list", () => {
     expect(resolveLocale(req("/internal/page"))).toBe("/en/internal/page");
-    expect(resolveLocale(req("/internal/page"), { skipPaths: ["/internal"] })).toBeNull();
+    config({ skipPaths: ["/internal"] });
+    expect(resolveLocale(req("/internal/page"))).toBeNull();
   });
 
   it("strips the default locale prefix when prefixDefaultLocale is false", () => {
-    const options = { prefixDefaultLocale: false, locales: ["en", "pt"] };
+    config({ prefixDefaultLocale: false, locales: ["en", "pt"] });
 
     // Redundant default-locale prefix is stripped
-    expect(resolveLocale(req("/en/about"), options)).toBe("/about");
-    expect(currentLocale.get()).toBe("en");
+    expect(resolveLocale(req("/en/about"))).toBe("/about");
+    expect(getLocale()).toBe("en");
 
     // Non-default locale is served as-is
-    expect(resolveLocale(req("/pt/about"), options)).toBeNull();
-    expect(currentLocale.get()).toBe("pt");
+    expect(resolveLocale(req("/pt/about"))).toBeNull();
+    expect(getLocale()).toBe("pt");
 
     // Unprefixed path resolves to the default locale
-    expect(resolveLocale(req("/about"), options)).toBeNull();
-    expect(currentLocale.get()).toBe("en");
+    expect(resolveLocale(req("/about"))).toBeNull();
+    expect(getLocale()).toBe("en");
   });
 });
 
@@ -84,7 +103,7 @@ describe("@rimelight/i18n Hono adapter", () => {
     });
 
     expect(nextCalled).toBe(true);
-    expect(currentLocale.get()).toBe("en");
+    expect(getLocale()).toBe("en");
   });
 
   it("short-circuits with a 302 when resolution requests a redirect", async () => {
@@ -99,7 +118,7 @@ describe("@rimelight/i18n Hono adapter", () => {
     expect(response).toBeInstanceOf(Response);
     expect(response!.status).toBe(302);
     expect(response!.headers.get("location")).toBe("/en/about?page=2");
-    expect(currentLocale.get()).toBe("en");
+    expect(getLocale()).toBe("en");
   });
 });
 
@@ -117,7 +136,7 @@ describe("@rimelight/i18n KV-first translations", () => {
 
   it("serves KV overrides over bundled translations when the binding is present", async () => {
     setTranslations(bundled, { defaultLocale: "en" });
-    currentLocale.set("en");
+    setLocale("en");
     const kv = {
       get: async (key: string) => (key === "locale:en" ? { nav: { home: "Home (KV)" } } : null),
     };
@@ -130,7 +149,7 @@ describe("@rimelight/i18n KV-first translations", () => {
 
   it("falls back to bundled translations when the binding is absent", async () => {
     setTranslations(bundled, { defaultLocale: "en" });
-    currentLocale.set("en");
+    setLocale("en");
 
     await i18n()(kvContext("/en/about"), async () => {});
 
@@ -139,7 +158,7 @@ describe("@rimelight/i18n KV-first translations", () => {
 
   it("falls back to bundled translations when the locale is unseeded", async () => {
     setTranslations(bundled, { defaultLocale: "en" });
-    currentLocale.set("en");
+    setLocale("en");
     const kv = { get: async () => null };
 
     await i18n()(kvContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {});
@@ -149,7 +168,7 @@ describe("@rimelight/i18n KV-first translations", () => {
 
   it("does not read KV for pass-through paths", async () => {
     setTranslations(bundled, { defaultLocale: "en" });
-    currentLocale.set("en");
+    setLocale("en");
     let reads = 0;
     const kv = {
       get: async () => {

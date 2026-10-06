@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { getPluralCategory, setTranslations, currentLocale, t } from "../src/runtime";
+import { getPluralCategory, setTranslations, getLocale, setLocale, t } from "../src/runtime";
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
   it("should handle plural categories for multiple languages", () => {
@@ -26,7 +26,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       { defaultLocale: "en" },
     );
 
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("items.count", { count: 3, container: "cart" })).toBe(
       "You have 3 items in your cart.",
     );
@@ -48,7 +48,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       { defaultLocale: "en" },
     );
 
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("messages.unread", { count: 1 })).toBe("1 new message");
     expect(t("messages.unread", { count: 5 })).toBe("5 new messages");
   });
@@ -66,7 +66,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       { defaultLocale: "en" },
     );
 
-    currentLocale.set("pt-BR");
+    setLocale("pt-BR");
     expect(t("common.button")).toBe("Enviar");
     // Falls back to base/default language for missing key in sub-locale
     expect(t("common.cancel")).toBe("Cancel");
@@ -94,7 +94,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       { defaultLocale: "es-MX" },
     );
 
-    currentLocale.set("pt-BR");
+    setLocale("pt-BR");
     // 1. Direct regional match (pt-BR)
     expect(t("shop.checkout")).toBe("Finalizar Compra");
     // 2. Active base language fallback (pt)
@@ -120,19 +120,19 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       { defaultLocale: "en" },
     );
 
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("computed.dynamic", { val: 21 })).toBe("Result is 42");
   });
 
-  it("should expose the current locale through currentLocale get/set", () => {
-    currentLocale.set("en");
-    expect(currentLocale.get()).toBe("en");
+  it("should expose the current locale through getLocale/setLocale", () => {
+    setLocale("en");
+    expect(getLocale()).toBe("en");
 
-    currentLocale.set("pt-BR");
-    expect(currentLocale.get()).toBe("pt-BR");
+    setLocale("pt-BR");
+    expect(getLocale()).toBe("pt-BR");
 
-    currentLocale.set("de");
-    expect(currentLocale.get()).toBe("de");
+    setLocale("de");
+    expect(getLocale()).toBe("de");
   });
 
   it("should handle interpolation with booleans, numbers, and missing placeholders", () => {
@@ -151,7 +151,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
       { defaultLocale: "en" },
     );
 
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("misc.details", { user: "Ada", isActive: true, score: 9.8 })).toBe(
       "User Ada is active: true, rating: 9.8, missing: {missingVar}",
     );

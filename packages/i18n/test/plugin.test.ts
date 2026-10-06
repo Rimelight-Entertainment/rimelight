@@ -65,6 +65,17 @@ describe("@rimelight/i18n Vite plugin", () => {
 
     expect(loaded).toContain(`export const defaultLocale = "en";`);
     expect(loaded).toContain(`export const prefixDefaultLocale = true;`);
+    expect(loaded).toContain(`export const kvBinding = "TRANSLATIONS_KV";`);
+    expect(loaded).toContain(`export const skipPaths = ["/api","/_"];`);
+  });
+
+  it("emits configured kvBinding and skipPaths to the virtual config", async () => {
+    const plugins: Plugin[] = i18n({ kvBinding: "I18N_KV", skipPaths: ["/internal"] });
+    const configPlugin = plugins[0]!;
+    const loaded = (await callHook(configPlugin.load, "\0virtual:rimelight-i18n-config")) as string;
+
+    expect(loaded).toContain(`export const kvBinding = "I18N_KV";`);
+    expect(loaded).toContain(`export const skipPaths = ["/internal"];`);
   });
 
   it("generates translations seed file on closeBundle", async () => {

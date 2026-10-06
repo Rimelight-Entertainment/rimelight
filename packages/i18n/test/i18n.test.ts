@@ -9,7 +9,7 @@ import {
   formatAuditReport,
   fixTranslations,
 } from "../src/cli";
-import { getPluralCategory, setTranslations, currentLocale, t } from "../src/runtime";
+import { getPluralCategory, setTranslations, setLocale, t } from "../src/runtime";
 import { getHtmlLang, getRelativeLocaleUrl } from "../src/index";
 
 describe("translation dictionary utils", () => {
@@ -106,20 +106,20 @@ describe("translation dictionary utils", () => {
 
 describe("locale helpers", () => {
   it("formats html lang attributes", () => {
-    currentLocale.set("en");
+    setLocale("en");
     expect(getHtmlLang()).toBe("en");
-    currentLocale.set("pt-BR");
+    setLocale("pt-BR");
     expect(getHtmlLang()).toBe("pt-BR");
-    currentLocale.set("pt_BR");
+    setLocale("pt_BR");
     expect(getHtmlLang()).toBe("pt-BR");
-    currentLocale.set("fr");
+    setLocale("fr");
     expect(getHtmlLang()).toBe("fr");
   });
 });
 
 describe("relative locale urls", () => {
   it("prefixes the current locale when prefixDefaultLocale is true", () => {
-    currentLocale.set("en");
+    setLocale("en");
     expect(getRelativeLocaleUrl("/about")).toBe("/en/about");
     expect(getRelativeLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
   });
@@ -154,7 +154,7 @@ describe("translation runtime", () => {
       },
       { defaultLocale: "en" },
     );
-    currentLocale.set("en");
+    setLocale("en");
     expect(t("hero.title")).toBe("Hello");
     expect(t("hero.greeting", { name: "Ada" })).toBe("Hi Ada");
     expect(t("missing.key")).toBe("missing.key");
