@@ -13,34 +13,6 @@ import {
 
 const FILE_SUFFIX = /\.[A-Za-z0-9]{1,8}$/;
 
-interface MiddlewareContext {
-  req: { raw: Request };
-  env?: any;
-  redirect(path: string, status?: number): Response;
-}
-
-interface TranslationKV {
-  get(key: string, opts?: { type: "json"; cacheTtl?: number }): Promise<unknown>;
-}
-
-function parseAcceptLanguage(
-  header: string | null,
-  supported: readonly string[],
-  fallback: string,
-): string {
-  if (!header) return fallback;
-
-  for (const entry of header.split(",")) {
-    const code = entry.split(";")[0]?.trim().toLowerCase();
-    if (!code) continue;
-    if (supported.includes(code)) return code;
-    const base = code.split("-")[0];
-    if (base && supported.includes(base)) return base;
-  }
-
-  return fallback;
-}
-
 function isLocalizedPage(pathname: string): boolean {
   if (skipPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return false;
   return !FILE_SUFFIX.test(pathname.slice(pathname.lastIndexOf("/") + 1));
@@ -58,11 +30,25 @@ export function resolveLocale(request: Request): string | null {
 
   if (prefixDefaultLocale) {
     if (!segmentLocale) {
-      const locale = parseAcceptLanguage(
-        request.headers.get("accept-language"),
-        locales,
-        defaultLocale,
-      );
+      const header = request.headers.get("accept-language");
+      let locale = defaultLocale;
+
+      if (header) {
+        for (const entry of header.split(",")) {
+          const code = entry.split(";")[0]?.trim().toLowerCase();
+          if (!code) continue;
+          if (locales.includes(code)) {
+            locale = code;
+            break;
+          }
+          const base = code.split("-")[0];
+          if (base && locales.includes(base)) {
+            locale = base;
+            break;
+          }
+        }
+      }
+
       setLocale(locale);
       return `/${locale}${pathname}${url.search}`;
     }
@@ -77,14 +63,23 @@ export function resolveLocale(request: Request): string | null {
 }
 
 export function i18n() {
-  return async (c: MiddlewareContext, next: () => Promise<void>): Promise<Response | void> => {
-    const redirectTo = resolveLocale(c.req.raw);
+  return async (
+    c: {
+      request: Request;
+      env?: any;
+      redirect(path: string, status?: number): Response;
+    },
+    next: () => Promise<void>,
+  ): Promise<Response | void> => {
+    const redirectTo = resolveLocale(c.request);
     if (redirectTo) return c.redirect(redirectTo, 302);
 
     const locale = getLocale();
-    const kv = c.env?.[kvBinding] as TranslationKV | null;
+    const kv = c.env?.[kvBinding] as {
+      get(key: string, opts?: { type: "json"; cacheTtl?: number }): Promise<unknown>;
+    } | null;
 
-    if (locale && kv && isLocalizedPage(new URL(c.req.raw.url).pathname)) {
+    if (locale && kv && isLocalizedPage(new URL(c.request.url).pathname)) {
       try {
         const overrides = await kv.get(`locale:${locale}`, { type: "json", cacheTtl: 60 });
         applyLocaleOverrides(locale, overrides);
