@@ -10,7 +10,7 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { getPluralCategory, setTranslations, setLocale, t } from "../src/runtime";
-import { getHtmlLang, getRelativeLocaleUrl } from "../src/index";
+import { getRelativeLocaleUrl } from "../src/index";
 
 describe("translation dictionary utils", () => {
   const source = {
@@ -101,19 +101,6 @@ describe("translation dictionary utils", () => {
     expect((fixed["pt"]?.["nav"] as any)?.["home"]).toBe("Início");
     expect((fixed["pt"]?.["nav"] as any)?.["contact"]).toBe("Contact");
     expect((fixed["pt"]?.["nav"] as any)?.["stale_button"]).toBeUndefined();
-  });
-});
-
-describe("locale helpers", () => {
-  it("formats html lang attributes", () => {
-    setLocale("en");
-    expect(getHtmlLang()).toBe("en");
-    setLocale("pt-BR");
-    expect(getHtmlLang()).toBe("pt-BR");
-    setLocale("pt_BR");
-    expect(getHtmlLang()).toBe("pt-BR");
-    setLocale("fr");
-    expect(getHtmlLang()).toBe("fr");
   });
 });
 

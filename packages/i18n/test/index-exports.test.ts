@@ -2,7 +2,6 @@ import { describe, expect, it } from "vite-plus/test";
 import * as i18n from "../src/index";
 import {
   getDefaultLocale,
-  getHtmlLang,
   getLocale,
   getLocalizedText,
   getLocales,
@@ -16,7 +15,6 @@ describe("index exports", () => {
     expect(Object.keys(i18n).sort()).toEqual(
       [
         "getDefaultLocale",
-        "getHtmlLang",
         "getLocale",
         "getLocalizedText",
         "getLocales",
@@ -33,7 +31,6 @@ describe("index exports", () => {
     expect(typeof i18n.setLocale).toBe("function");
     expect(typeof i18n.getLocales).toBe("function");
     expect(typeof i18n.getDefaultLocale).toBe("function");
-    expect(typeof i18n.getHtmlLang).toBe("function");
     expect(typeof i18n.getRelativeLocaleUrl).toBe("function");
     expect(typeof i18n.getLocalizedText).toBe("function");
     expect(typeof i18n.t.raw).toBe("function");
@@ -51,7 +48,6 @@ describe("index exports", () => {
     expect(t).toBe(i18n.t);
     expect(getLocales()).toEqual(i18n.getLocales());
     expect(getDefaultLocale()).toBe(i18n.getDefaultLocale());
-    expect(getHtmlLang()).toBe(i18n.getHtmlLang());
     expect(typeof getRelativeLocaleUrl("/")).toBe("string");
     expect(getLocalizedText({ en: "Hello" }, "en")).toBe("Hello");
   });

@@ -32,14 +32,6 @@ export let defaultLocale: string = virtualConfig?.defaultLocale ?? "en";
 export let prefixDefaultLocale: boolean = virtualConfig?.prefixDefaultLocale ?? true;
 
 /**
- * HTML `lang` / BCP-47 tag mappings per locale code (e.g. `{ en: "en", "pt-BR": "pt-BR" }`),
- * automatically inferred from the translations directory by the Vite plugin.
- */
-export let htmlLangs: Record<string, string> = virtualConfig?.htmlLangs
-  ? { ...virtualConfig.htmlLangs }
-  : {};
-
-/**
  * KV namespace binding holding runtime translation overrides. Requests fall back to bundled
  * translations when the binding is absent or the locale is unseeded.
  */
@@ -104,7 +96,6 @@ export function setTranslations(
     defaultLocale?: string;
     locales?: string[];
     prefixDefaultLocale?: boolean;
-    htmlLangs?: Record<string, string>;
     kvBinding?: string;
     skipPaths?: string[];
   },
@@ -113,7 +104,6 @@ export function setTranslations(
   if (options?.defaultLocale) defaultLocale = options.defaultLocale;
   if (options?.locales) locales = [...options.locales];
   if (options?.prefixDefaultLocale !== undefined) prefixDefaultLocale = options.prefixDefaultLocale;
-  if (options?.htmlLangs) htmlLangs = { ...htmlLangs, ...options.htmlLangs };
   if (options?.kvBinding) kvBinding = options.kvBinding;
   if (options?.skipPaths) skipPaths = [...options.skipPaths];
   chainCache.clear();
@@ -300,7 +290,7 @@ export const t: TFunction = Object.assign(
  * automatically when a numeric `count` param is passed.
  */
 export function getPluralCategory(count: number, targetLocale: string = "en"): Intl.LDMLPluralRule {
-  return new Intl.PluralRules(targetLocale.replace(/_/g, "-")).select(count);
+  return new Intl.PluralRules(targetLocale).select(count);
 }
 
 /** Cached `Intl.NumberFormat` instances per locale — `t()` formats counts on every interpolation. */
@@ -311,11 +301,10 @@ const numberFormats = new Map<string, Intl.NumberFormat>();
  * interpolation param so quantities read as localized text rather than raw digits.
  */
 function formatNumber(locale: string, value: number): string {
-  const key = locale.replace(/_/g, "-");
-  let formatter = numberFormats.get(key);
+  let formatter = numberFormats.get(locale);
   if (!formatter) {
-    formatter = new Intl.NumberFormat(key);
-    numberFormats.set(key, formatter);
+    formatter = new Intl.NumberFormat(locale);
+    numberFormats.set(locale, formatter);
   }
   return formatter.format(value);
 }
@@ -371,17 +360,6 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
     segments.shift();
   }
   return segments.join("/");
-}
-
-/**
- * Returns a standard BCP 47 / RFC 5646 language tag suitable for HTML `<html lang="...">`.
- * Inferred from locale files or normalized from language codes.
- */
-export function getHtmlLang(targetLocale: string = getLocale()): string {
-  return (
-    htmlLangs[targetLocale] ??
-    (targetLocale.includes("_") ? targetLocale.replace(/_/g, "-") : targetLocale)
-  );
 }
 
 export function getRelativeLocaleUrl(

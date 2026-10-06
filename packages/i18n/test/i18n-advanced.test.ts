@@ -12,9 +12,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     expect(getPluralCategory(1, "pt")).toBe("one");
     expect(getPluralCategory(2, "pt")).toBe("other");
 
-    // File-derived locale codes with underscores are normalized (Intl throws otherwise)
-    expect(getPluralCategory(1, "pt_BR")).toBe("one");
-    expect(getPluralCategory(2, "pt_BR")).toBe("other");
+    expect(getPluralCategory(1, "pt-BR")).toBe("one");
+    expect(getPluralCategory(2, "pt-BR")).toBe("other");
   });
 
   it("should expose plural categories through t.plural", () => {
@@ -29,8 +28,8 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     expect(t.plural(1)).toBe("one");
     expect(t.plural(2)).toBe("other");
 
-    // Explicit locale wins over the active one; underscore codes are normalized
-    expect(t.plural(2, "pt_BR")).toBe("other");
+    // Explicit locale wins over the active one
+    expect(t.plural(2, "pt-BR")).toBe("other");
     expect(t.plural(1, "en")).toBe("one");
   });
 

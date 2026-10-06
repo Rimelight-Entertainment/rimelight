@@ -16,7 +16,7 @@ async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
 }
 
 describe("@rimelight/i18n Vite plugin", () => {
-  it("creates virtual modules for config and runtime with inferred locales and htmlLangs", async () => {
+  it("creates virtual modules for config and runtime with inferred locales", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-virtual-"));
     const i18nDir = path.join(tmpDir, "src", "i18n");
     fs.mkdirSync(i18nDir, { recursive: true });
@@ -50,8 +50,6 @@ describe("@rimelight/i18n Vite plugin", () => {
       expect(loaded).toContain(`["en","es","pt-BR"]`);
       expect(loaded).toContain(`export const defaultLocale = "en";`);
       expect(loaded).toContain(`export const prefixDefaultLocale = false;`);
-      expect(loaded).toContain(`"pt-BR":"pt-BR"`);
-      expect(loaded).toContain(`"en":"en"`);
       expect(loaded).toContain(`"Início"`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });

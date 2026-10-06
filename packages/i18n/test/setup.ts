@@ -4,7 +4,6 @@ const config = {
   locales: ["en"],
   defaultLocale: "en",
   prefixDefaultLocale: true,
-  htmlLangs: {},
   translations: {},
   kvBinding: "TRANSLATIONS_KV",
   skipPaths: ["/api", "/_"],

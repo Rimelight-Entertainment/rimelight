@@ -130,7 +130,7 @@ function discoverTranslations(
 
 /**
  * Pure Vite plugin for Rimelight i18n. Provides the virtual module
- * `virtual:rimelight-i18n-config` with locales, defaultLocale, prefixDefaultLocale, htmlLangs,
+ * `virtual:rimelight-i18n-config` with locales, defaultLocale, prefixDefaultLocale,
  * translations, kvBinding, and skipPaths — the single source of truth consumed by the runtime
  * and middleware — plus KV seed generation on `closeBundle`.
  */
@@ -146,13 +146,11 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
     const defaultLocale =
       options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
     const translations = discovered.translations;
-    const htmlLangs = Object.fromEntries(locales.map((loc) => [loc, loc.replace(/_/g, "-")]));
 
     return {
       locales,
       defaultLocale,
       prefixDefaultLocale,
-      htmlLangs,
       translations,
       kvBinding,
       skipPaths,
@@ -191,7 +189,6 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
             locales,
             defaultLocale,
             prefixDefaultLocale,
-            htmlLangs,
             translations,
             kvBinding,
             skipPaths,
@@ -200,11 +197,10 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
             `export const locales = ${JSON.stringify(locales)};`,
             `export const defaultLocale = ${JSON.stringify(defaultLocale)};`,
             `export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};`,
-            `export const htmlLangs = ${JSON.stringify(htmlLangs)};`,
             `export const translations = ${JSON.stringify(translations)};`,
             `export const kvBinding = ${JSON.stringify(kvBinding)};`,
             `export const skipPaths = ${JSON.stringify(skipPaths)};`,
-            `export default { locales, defaultLocale, prefixDefaultLocale, htmlLangs, translations, kvBinding, skipPaths };`,
+            `export default { locales, defaultLocale, prefixDefaultLocale, translations, kvBinding, skipPaths };`,
           ].join("\n");
         }
         return null;
