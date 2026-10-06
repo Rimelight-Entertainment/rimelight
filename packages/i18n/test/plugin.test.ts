@@ -26,14 +26,11 @@ describe("@rimelight/i18n Vite plugin", () => {
     fs.writeFileSync(path.join(i18nDir, "es.json"), JSON.stringify({ nav: { home: "Inicio" } }));
 
     try {
-      const plugins: Plugin[] = i18n({
+      const configPlugin: Plugin = i18n({
         defaultLocale: "en",
         prefixDefaultLocale: false,
         translationsDir: i18nDir,
       });
-
-      expect(plugins.length).toBeGreaterThan(0);
-      const configPlugin = plugins[0]!;
 
       // Resolve IDs
       expect(await callHook(configPlugin.resolveId, "virtual:rimelight-i18n-config")).toBe(
@@ -48,8 +45,8 @@ describe("@rimelight/i18n Vite plugin", () => {
         "\0virtual:rimelight-i18n-config",
       )) as string;
       expect(loaded).toContain(`["en","es","pt-BR"]`);
-      expect(loaded).toContain(`export const defaultLocale = "en";`);
-      expect(loaded).toContain(`export const prefixDefaultLocale = false;`);
+      expect(loaded).toContain(`"defaultLocale":"en"`);
+      expect(loaded).toContain(`"prefixDefaultLocale":false`);
       expect(loaded).toContain(`"Início"`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -57,23 +54,21 @@ describe("@rimelight/i18n Vite plugin", () => {
   });
 
   it("handles default options when none are passed", async () => {
-    const plugins: Plugin[] = i18n();
-    const configPlugin = plugins[0]!;
+    const configPlugin: Plugin = i18n();
     const loaded = (await callHook(configPlugin.load, "\0virtual:rimelight-i18n-config")) as string;
 
-    expect(loaded).toContain(`export const defaultLocale = "en";`);
-    expect(loaded).toContain(`export const prefixDefaultLocale = true;`);
-    expect(loaded).toContain(`export const kvBinding = "TRANSLATIONS_KV";`);
-    expect(loaded).toContain(`export const skipPaths = ["/api","/_"];`);
+    expect(loaded).toContain(`"defaultLocale":"en"`);
+    expect(loaded).toContain(`"prefixDefaultLocale":true`);
+    expect(loaded).toContain(`"kvBinding":"TRANSLATIONS_KV"`);
+    expect(loaded).toContain(`"skipPaths":["/api","/_"]`);
   });
 
   it("emits configured kvBinding and skipPaths to the virtual config", async () => {
-    const plugins: Plugin[] = i18n({ kvBinding: "I18N_KV", skipPaths: ["/internal"] });
-    const configPlugin = plugins[0]!;
+    const configPlugin: Plugin = i18n({ kvBinding: "I18N_KV", skipPaths: ["/internal"] });
     const loaded = (await callHook(configPlugin.load, "\0virtual:rimelight-i18n-config")) as string;
 
-    expect(loaded).toContain(`export const kvBinding = "I18N_KV";`);
-    expect(loaded).toContain(`export const skipPaths = ["/internal"];`);
+    expect(loaded).toContain(`"kvBinding":"I18N_KV"`);
+    expect(loaded).toContain(`"skipPaths":["/internal"]`);
   });
 
   it("generates translations seed file on closeBundle", async () => {
@@ -86,11 +81,9 @@ describe("@rimelight/i18n Vite plugin", () => {
     process.env["WRANGLER_OUT_DIR"] = tmpDir;
 
     try {
-      const plugins: Plugin[] = i18n({
+      const configPlugin: Plugin = i18n({
         translationsDir: i18nDir,
       });
-
-      const configPlugin = plugins[0]!;
       await callHook(configPlugin.configResolved, { root: tmpDir });
       await callHook(configPlugin.closeBundle);
 
@@ -125,11 +118,9 @@ describe("@rimelight/i18n Vite plugin", () => {
     fs.writeFileSync(path.join(i18nDir, "pt.json"), JSON.stringify({ header: { title: "Olá" } }));
 
     try {
-      const plugins: Plugin[] = i18n({
+      const configPlugin: Plugin = i18n({
         translationsDir: path.join(tmpDir, "src", "i18n"),
       });
-
-      const configPlugin = plugins[0]!;
       await callHook(configPlugin.configResolved, { root: tmpDir });
 
       const loaded = (await callHook(
@@ -137,7 +128,7 @@ describe("@rimelight/i18n Vite plugin", () => {
         "\0virtual:rimelight-i18n-config",
       )) as string;
       expect(loaded).toContain(`["en","pt"]`);
-      expect(loaded).toContain(`export const defaultLocale = "en";`);
+      expect(loaded).toContain(`"defaultLocale":"en"`);
       expect(loaded).toContain(`"Olá"`);
       expect(loaded).toContain(`"Hello"`);
     } finally {
@@ -155,23 +146,21 @@ describe("@rimelight/i18n Vite plugin", () => {
     fs.writeFileSync(path.join(i18nDir, "ro.json"), JSON.stringify({ a: { b: "2" } }));
 
     try {
-      const pluginsWithoutEn: Plugin[] = i18n({
+      const pluginA: Plugin = i18n({
         translationsDir: path.join(tmpDir, "src", "i18n"),
       });
-      const pluginA = pluginsWithoutEn[0]!;
       await callHook(pluginA.configResolved, { root: tmpDir });
       const loadedA = (await callHook(pluginA.load, "\0virtual:rimelight-i18n-config")) as string;
-      expect(loadedA).toContain(`export const defaultLocale = "pt";`);
+      expect(loadedA).toContain(`"defaultLocale":"pt"`);
 
       // Now add "en.json"
       fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ a: { b: "0" } }));
-      const pluginsWithEn: Plugin[] = i18n({
+      const pluginB: Plugin = i18n({
         translationsDir: path.join(tmpDir, "src", "i18n"),
       });
-      const pluginB = pluginsWithEn[0]!;
       await callHook(pluginB.configResolved, { root: tmpDir });
       const loadedB = (await callHook(pluginB.load, "\0virtual:rimelight-i18n-config")) as string;
-      expect(loadedB).toContain(`export const defaultLocale = "en";`);
+      expect(loadedB).toContain(`"defaultLocale":"en"`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }

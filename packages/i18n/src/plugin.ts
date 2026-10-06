@@ -14,8 +14,6 @@ export interface RimelightI18nOptions {
   skipPaths?: string[];
 }
 
-export type RimelightI18nPlugins = Plugin[];
-
 export { DEFAULT_TRANSLATIONS_DIR };
 
 export function resolveTranslationsDir(root: string, specifiedDir?: string): string {
@@ -51,36 +49,45 @@ export function readLocaleFiles(dirPath: string): ReadLocaleFilesResult {
   return { files, translations, errors };
 }
 
-function buildKvSeed(translations: Record<string, Record<string, any>>): {
-  keys: { key: string; value: string }[];
-} {
+function buildKvSeed(translations: Record<string, Record<string, any>>) {
   const keys: { key: string; value: string }[] = [];
   for (const [locale, localeData] of Object.entries(translations)) {
     keys.push({ key: `locale:${locale}`, value: JSON.stringify(localeData) });
     for (const [component, componentData] of Object.entries(localeData)) {
-      keys.push({
-        key: `locale:${locale}:${component}`,
-        value: JSON.stringify(componentData),
-      });
+      keys.push({ key: `locale:${locale}:${component}`, value: JSON.stringify(componentData) });
     }
   }
   return { keys };
 }
 
-export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
+export function i18n(options?: RimelightI18nOptions): Plugin {
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   const skipPaths = options?.skipPaths ?? ["/api", "/_"];
   let root = process.cwd();
 
-  function loadConfig() {
+  type Config = {
+    locales: string[];
+    defaultLocale: string;
+    prefixDefaultLocale: boolean;
+    translations: Record<string, Record<string, any>>;
+    kvBinding: string;
+    skipPaths: string[];
+    dirPath: string | null;
+  };
+
+  let cachedConfig: Config | null = null;
+
+  function loadConfig(): Config {
+    if (cachedConfig) return cachedConfig;
+
     const dirPath = resolveTranslationsDir(root, options?.translationsDir);
     const { translations } = readLocaleFiles(dirPath);
     const locales = Object.keys(translations).sort();
     const defaultLocale =
       options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
-    return {
+    cachedConfig = {
       locales,
       defaultLocale,
       prefixDefaultLocale,
@@ -89,61 +96,53 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
       skipPaths,
       dirPath: fs.existsSync(dirPath) ? dirPath : null,
     };
+    return cachedConfig;
   }
 
-  return [
-    {
-      name: "vite-plugin-rimelight-i18n-config",
-      configResolved(resolvedConfig) {
-        root = resolvedConfig.root ?? process.cwd();
-      },
-      resolveId(id: string) {
-        if (id === VIRTUAL_CONFIG_ID) return RESOLVED_VIRTUAL_CONFIG_ID;
-        return null;
-      },
-      load(id: string) {
-        if (id === RESOLVED_VIRTUAL_CONFIG_ID) {
-          const cfg = loadConfig();
-
-          if (cfg.dirPath) {
-            try {
-              for (const file of fs.readdirSync(cfg.dirPath)) {
-                if (file.endsWith(".json")) {
-                  this.addWatchFile(path.join(cfg.dirPath, file));
-                }
-              }
-            } catch {
-              // Ignore watch errors
-            }
-          }
-
-          const {
-            locales,
-            defaultLocale,
-            prefixDefaultLocale,
-            translations,
-            kvBinding,
-            skipPaths,
-          } = cfg;
-          return `export default ${JSON.stringify({ locales, defaultLocale, prefixDefaultLocale, translations, kvBinding, skipPaths })};`;
-        }
-        return null;
-      },
-      async closeBundle() {
-        const cfg = loadConfig();
-        if (!cfg.translations || Object.keys(cfg.translations).length === 0) return;
-
-        const seedData = buildKvSeed(cfg.translations);
-        const outDir = process.env["WRANGLER_OUT_DIR"] ?? "dist";
-        const seedFile = path.join(outDir, "_translations-seed.json");
-
-        try {
-          fs.mkdirSync(path.dirname(seedFile), { recursive: true });
-          fs.writeFileSync(seedFile, JSON.stringify(seedData, null, 2));
-        } catch {
-          // Ignore write errors
-        }
-      },
+  return {
+    name: "vite-plugin-rimelight-i18n-config",
+    configResolved(resolvedConfig) {
+      root = resolvedConfig.root ?? process.cwd();
+      cachedConfig = null;
     },
-  ];
+    resolveId(id: string) {
+      if (id === VIRTUAL_CONFIG_ID) return RESOLVED_VIRTUAL_CONFIG_ID;
+      return null;
+    },
+    load(id: string) {
+      if (id === RESOLVED_VIRTUAL_CONFIG_ID) {
+        const cfg = loadConfig();
+
+        if (cfg.dirPath) {
+          try {
+            for (const file of fs.readdirSync(cfg.dirPath)) {
+              if (file.endsWith(".json")) {
+                this.addWatchFile(path.join(cfg.dirPath, file));
+              }
+            }
+          } catch {
+            // Ignore watch errors
+          }
+        }
+
+        return `export default ${JSON.stringify(cfg)};`;
+      }
+      return null;
+    },
+    async closeBundle() {
+      const cfg = loadConfig();
+      if (!cfg.translations || Object.keys(cfg.translations).length === 0) return;
+
+      const seedData = buildKvSeed(cfg.translations);
+      const outDir = process.env["WRANGLER_OUT_DIR"] ?? "dist";
+      const seedFile = path.join(outDir, "_translations-seed.json");
+
+      try {
+        fs.mkdirSync(path.dirname(seedFile), { recursive: true });
+        fs.writeFileSync(seedFile, JSON.stringify(seedData, null, 2));
+      } catch {
+        // Ignore write errors
+      }
+    },
+  };
 }
