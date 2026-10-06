@@ -1,4 +1,9 @@
-import type { TFunction } from "./types";
+/** Public shape of the `t` translator: a callable plus its `.raw` and `.array` helpers. */
+export interface TFunction {
+  (key: string, params?: Record<string, any>): string;
+  raw: <T = unknown>(key: string, fallback?: T) => T;
+  array: <T = string>(key: string, fallback?: T[]) => T[];
+}
 
 /**
  * Supported locale codes (e.g. `["en", "pt"]`). Populated from the Vite plugin's
@@ -324,7 +329,7 @@ export function getRelativeLocaleUrl(
   return `${prefix}/${cleanPath}${trailingSlash}${suffix}`;
 }
 
-export interface LanguageAlternate {
+interface LanguageAlternate {
   hreflang: string;
   href: string;
 }

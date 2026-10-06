@@ -16,6 +16,4 @@ export {
   tArray,
   tRaw,
 } from "./runtime";
-export type { LanguageAlternate } from "./runtime";
 export { createTranslationLoader, setKVBinding } from "./kv";
-export type { TFunction } from "./types";

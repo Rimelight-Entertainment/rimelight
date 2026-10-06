@@ -1,4 +1,11 @@
-import type { ComponentsJSON, KVNamespaceBinding, TranslationLoader } from "./types";
+export type ComponentsJSON = Record<string, Record<string, any>>;
+
+export type TranslationLoader = (locale: string, components: string[]) => Promise<ComponentsJSON>;
+
+export interface KVNamespaceBinding {
+  get(key: string, type: "json"): Promise<Record<string, string> | null>;
+  put(key: string, value: string): Promise<void>;
+}
 
 let kvBinding: KVNamespaceBinding | null = null;
 
