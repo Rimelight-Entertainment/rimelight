@@ -17,6 +17,23 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     expect(getPluralCategory(2, "pt_BR")).toBe("other");
   });
 
+  it("should expose plural categories through t.plural", () => {
+    setTranslations({ en: {} }, { defaultLocale: "en", locales: ["en", "pt"] });
+
+    // Defaults to the active locale
+    setLocale("en");
+    expect(t.plural(1)).toBe("one");
+    expect(t.plural(5)).toBe("other");
+
+    setLocale("pt");
+    expect(t.plural(1)).toBe("one");
+    expect(t.plural(2)).toBe("other");
+
+    // Explicit locale wins over the active one; underscore codes are normalized
+    expect(t.plural(2, "pt_BR")).toBe("other");
+    expect(t.plural(1, "en")).toBe("one");
+  });
+
   it("should format complex translations with placeholders", () => {
     setTranslations(
       {
@@ -55,6 +72,27 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     setLocale("en");
     expect(t("messages.unread", { count: 1 })).toBe("1 new message");
     expect(t("messages.unread", { count: 5 })).toBe("5 new messages");
+  });
+
+  it("selects the plural branch even without a {count} placeholder (self-rendered numbers)", () => {
+    setTranslations(
+      {
+        en: {
+          comments: {
+            summary: {
+              one: "new comment",
+              other: "new comments",
+            },
+          },
+        },
+      },
+      { defaultLocale: "en" },
+    );
+
+    setLocale("en");
+    // count drives branch selection; the caller renders the number itself
+    expect(t("comments.summary", { count: 1 })).toBe("new comment");
+    expect(t("comments.summary", { count: 1234 })).toBe("new comments");
   });
 
   it("should locale-format the numeric count param during interpolation", () => {

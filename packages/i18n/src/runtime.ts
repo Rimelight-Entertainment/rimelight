@@ -1,10 +1,16 @@
 import virtualConfig from "virtual:rimelight-i18n-config";
 
-/** Public shape of the `t` translator: a callable plus its `.raw` and `.array` helpers. */
+/** Public shape of the `t` translator: a callable plus its `.raw`, `.array`, and `.plural` helpers. */
 export interface TFunction {
   (key: string, params?: Record<string, any>): string;
   raw: <T = unknown>(key: string, fallback?: T) => T;
   array: <T = string>(key: string, fallback?: T[]) => T[];
+  /**
+   * Returns the CLDR plural category for a count (e.g. `"one"`, `"other"`, `"few"`, `"many"`).
+   * Defaults to the active locale. Use when the plural decision drives code — layout branching,
+   * grouping — rather than a translated string (for text, pass `{ count }` to `t()` instead).
+   */
+  plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
 }
 
 /**
@@ -281,7 +287,11 @@ export const t: TFunction = Object.assign(
     if (isObjectRecord(value)) return JSON.stringify(value);
     return value != null ? String(value as string | number | boolean) : "";
   },
-  { raw: tRaw, array: tArray },
+  {
+    raw: tRaw,
+    array: tArray,
+    plural: (count: number, locale?: string) => getPluralCategory(count, locale ?? getLocale()),
+  },
 );
 
 /**
