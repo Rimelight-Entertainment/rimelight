@@ -32,8 +32,8 @@
       "import": "./dist/plugin.mjs"
     },
     "./middleware": {
-      "types": "./dist/hono.d.mts",
-      "import": "./dist/hono.mjs"
+      "types": "./dist/middleware.d.mts",
+      "import": "./dist/middleware.mjs"
     },
     "./cli": {
       "types": "./dist/cli.d.mts",

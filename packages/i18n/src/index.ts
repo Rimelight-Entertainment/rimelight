@@ -21,14 +21,7 @@ export {
 export { setKVBinding, createTranslationLoader } from "./kv";
 export { locales, defaultLocale, prefixDefaultLocale } from "./runtime";
 
-export type {
-  TranslationKey,
-  CustomTranslations,
-  NestedTranslationKeys,
-  ReadableAtom,
-  WritableAtom,
-  TFunction,
-} from "./types";
+export type { ReadableAtom, WritableAtom, TFunction } from "./types";
 
 /**
  * Returns the active locale: the explicitly set one, otherwise auto-detected from the pathname

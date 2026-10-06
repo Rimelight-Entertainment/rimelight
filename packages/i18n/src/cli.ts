@@ -1,11 +1,8 @@
-#!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { findTranslationsDir, readLocaleFiles } from "./plugin";
-
-// ── Translation audit engine ──────────────────────────────────────────────────────────────────
 
 type FlattenedTranslations = { [key: string]: string };
 
