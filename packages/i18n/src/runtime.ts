@@ -26,7 +26,7 @@ export let defaultLocale: string = virtualConfig?.defaultLocale ?? "en";
 export let prefixDefaultLocale: boolean = virtualConfig?.prefixDefaultLocale ?? true;
 
 /**
- * HTML `lang` / BCP-47 tag mappings per locale code (e.g. `{ en: "en-US", pt: "pt-BR" }`),
+ * HTML `lang` / BCP-47 tag mappings per locale code (e.g. `{ en: "en", "pt-BR": "pt-BR" }`),
  * automatically inferred from the translations directory by the Vite plugin.
  */
 export let htmlLangs: Record<string, string> = virtualConfig?.htmlLangs
@@ -80,39 +80,26 @@ export function setTranslations(
   }
 }
 
-/** Keys that must never be traversed while resolving dot paths (prototype pollution guard). */
-const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
-
-function isMergeable(value: unknown): value is Record<string, any> {
-  return isObjectRecord(value) && !Array.isArray(value);
-}
-
-/** Deep-merges `source` over `target` (KV wins per key), skipping unsafe keys and replacing arrays. */
-function mergeDeep(target: Record<string, any>, source: Record<string, any>): Record<string, any> {
-  const merged: Record<string, any> = { ...target };
-  for (const [key, value] of Object.entries(source)) {
-    if (UNSAFE_KEYS.has(key)) continue;
-    merged[key] =
-      isMergeable(value) && isMergeable(merged[key]) ? mergeDeep(merged[key], value) : value;
-  }
-  return merged;
-}
-
 /**
  * Layers KV-sourced translation overrides for `locale` over the bundled translations so `t()`
- * stays synchronous and KV-first. Called by the middleware before rendering; ignores anything
- * that is not an object, leaving the bundled translations untouched.
+ * stays synchronous and KV-first. Called by the middleware before rendering.
  */
 export function applyLocaleOverrides(locale: string, overrides: unknown): void {
-  if (!locale || !isMergeable(overrides)) return;
-  translations[locale] = mergeDeep(translations[locale] ?? {}, overrides);
+  if (!locale || !isObjectRecord(overrides)) return;
+  const currentLocaleDict = translations[locale] ?? {};
+  const updatedLocaleDict: Record<string, any> = { ...currentLocaleDict };
+  for (const [comp, data] of Object.entries(overrides)) {
+    updatedLocaleDict[comp] =
+      isObjectRecord(data) && isObjectRecord(updatedLocaleDict[comp])
+        ? { ...updatedLocaleDict[comp], ...data }
+        : data;
+  }
+  translations[locale] = updatedLocaleDict;
   chainCache.clear();
 }
 
 /**
- * Resolves a dot-notation path (including array indices) inside a translation object. When a
- * segment is missing, the remaining segments are joined and tried as a single literal key, so
- * translations whose own keys contain dots still resolve. Unsafe segments resolve to undefined.
+ * Resolves a dot-notation path (including array indices) inside a translation object.
  */
 function resolvePath(obj: unknown, path: string): unknown {
   if (obj == null || typeof obj !== "object") return undefined;
@@ -125,7 +112,6 @@ function resolvePath(obj: unknown, path: string): unknown {
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i]!;
-    if (UNSAFE_KEYS.has(segment)) return undefined;
     if (current == null || typeof current !== "object") return undefined;
 
     if (Object.hasOwn(current, segment) || (Array.isArray(current) && segment in current)) {
@@ -323,14 +309,12 @@ export function getLocale(): string {
 
 /**
  * Returns a standard BCP 47 / RFC 5646 language tag suitable for HTML `<html lang="...">`.
- * Inferred from locale files, configured mappings, or language codes.
+ * Inferred from locale files or normalized from language codes.
  */
 export function getHtmlLang(targetLocale: string = getLocale()): string {
   return (
     htmlLangs[targetLocale] ??
-    (targetLocale.includes("-") || targetLocale.includes("_")
-      ? targetLocale.replace(/_/g, "-")
-      : targetLocale)
+    (targetLocale.includes("_") ? targetLocale.replace(/_/g, "-") : targetLocale)
   );
 }
 

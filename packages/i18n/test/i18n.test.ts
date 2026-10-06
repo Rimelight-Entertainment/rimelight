@@ -107,8 +107,10 @@ describe("translation dictionary utils", () => {
 describe("locale helpers", () => {
   it("formats html lang attributes", () => {
     currentLocale.set("en");
-    expect(getHtmlLang()).toBe("en-US");
-    currentLocale.set("pt");
+    expect(getHtmlLang()).toBe("en");
+    currentLocale.set("pt-BR");
+    expect(getHtmlLang()).toBe("pt-BR");
+    currentLocale.set("pt_BR");
     expect(getHtmlLang()).toBe("pt-BR");
     currentLocale.set("fr");
     expect(getHtmlLang()).toBe("fr");

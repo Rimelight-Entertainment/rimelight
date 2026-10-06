@@ -51,7 +51,7 @@ describe("@rimelight/i18n Vite plugin", () => {
       expect(loaded).toContain(`export const defaultLocale = "en";`);
       expect(loaded).toContain(`export const prefixDefaultLocale = false;`);
       expect(loaded).toContain(`"pt-BR":"pt-BR"`);
-      expect(loaded).toContain(`"en":"en-US"`);
+      expect(loaded).toContain(`"en":"en"`);
       expect(loaded).toContain(`"Início"`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });

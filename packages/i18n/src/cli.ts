@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { findTranslationsDir, readLocaleFiles } from "./plugin";
+import { resolveTranslationsDir, readLocaleFiles } from "./plugin";
 
 type FlattenedTranslations = { [key: string]: string };
 
@@ -342,8 +342,8 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const localesDir = findTranslationsDir(process.cwd(), values.dir);
-  if (!localesDir) {
+  const localesDir = resolveTranslationsDir(process.cwd(), values.dir);
+  if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) {
     console.error(
       `✖ [i18n] Could not find translation directory. Pass --dir <path> (e.g. --dir src/i18n)`,
     );

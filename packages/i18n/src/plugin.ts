@@ -5,41 +5,12 @@ import type { Plugin } from "vite-plus";
 /** Default directory containing `<locale>.json` files, relative to the project root. */
 export const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
 
-/** Candidate directories probed in order when no explicit directory is configured. */
-export const TRANSLATIONS_DIR_CANDIDATES = [
-  "src/i18n",
-  "i18n",
-  "src/locales",
-  "locales",
-  "src/assets/i18n",
-];
-
 /**
- * Resolves the translations directory for the Vite plugin (fixed default or explicitly configured,
+ * Resolves the translations directory for the Vite plugin (fixed default "src/i18n" or explicitly configured,
  * relative to `root` or absolute).
  */
 export function resolveTranslationsDir(root: string, specifiedDir?: string): string {
   return path.resolve(root, specifiedDir ?? DEFAULT_TRANSLATIONS_DIR);
-}
-
-/**
- * Finds the translations directory: an explicit custom directory must exist, otherwise the
- * candidate directories are probed in order.
- */
-export function findTranslationsDir(cwd: string, customDir?: string): string | null {
-  if (customDir) {
-    const resolved = path.resolve(cwd, customDir);
-    return fs.existsSync(resolved) ? resolved : null;
-  }
-
-  for (const rel of TRANSLATIONS_DIR_CANDIDATES) {
-    const resolved = path.join(cwd, rel);
-    if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
-      return resolved;
-    }
-  }
-
-  return null;
 }
 
 export interface ReadLocaleFilesResult {
@@ -116,7 +87,7 @@ export interface RimelightI18nOptions {
   defaultLocale?: string;
   /**
    * Directory containing translation JSON files (`${locale}.json`), relative to Vite project root or absolute.
-   * If omitted, candidate directories (`src/i18n`, `i18n`, `src/locales`, `locales`, `src/assets/i18n`) are probed in order.
+   * Defaults to `"src/i18n"`.
    */
   translationsDir?: string;
   /**
@@ -134,20 +105,8 @@ export interface RimelightI18nOptions {
 
 export type RimelightI18nPlugins = Plugin[];
 
-const DEFAULT_HTML_LANGS: Record<string, string> = {
-  en: "en-US",
-  pt: "pt-BR",
-  es: "es-ES",
-  fr: "fr-FR",
-  de: "de-DE",
-  it: "it-IT",
-  ja: "ja-JP",
-  ko: "ko-KR",
-  zh: "zh-CN",
-};
-
 /**
- * Infers BCP-47 HTML lang tags from locale file names, file metadata, or language defaults.
+ * Infers BCP-47 HTML lang tags from locale file names or explicit file metadata.
  */
 function inferHtmlLangs(
   locales: readonly string[],
@@ -169,15 +128,7 @@ function inferHtmlLangs(
               ? dict["meta"]["lang"]
               : null);
 
-    if (explicitMetaLang) {
-      result[loc] = explicitMetaLang;
-    } else if (loc.includes("-") || loc.includes("_")) {
-      result[loc] = loc.replace(/_/g, "-");
-    } else if (DEFAULT_HTML_LANGS[loc]) {
-      result[loc] = DEFAULT_HTML_LANGS[loc];
-    } else {
-      result[loc] = loc;
-    }
+    result[loc] = explicitMetaLang ?? (loc.includes("_") ? loc.replace(/_/g, "-") : loc);
   }
 
   return result;
@@ -187,10 +138,7 @@ function discoverTranslations(
   root: string,
   specifiedDir?: string,
 ): { locales: string[]; translations: Record<string, any>; dirPath: string | null } {
-  const dirPath = specifiedDir
-    ? resolveTranslationsDir(root, specifiedDir)
-    : (findTranslationsDir(root) ?? resolveTranslationsDir(root, DEFAULT_TRANSLATIONS_DIR));
-
+  const dirPath = resolveTranslationsDir(root, specifiedDir);
   const { translations } = readLocaleFiles(dirPath);
   const discovered = Object.keys(translations).sort();
   const locales = discovered.length > 0 ? discovered : ["en"];
