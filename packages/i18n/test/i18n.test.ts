@@ -133,7 +133,7 @@ describe("relative locale urls", () => {
   it("prefixes the current locale when prefixDefaultLocale is true", () => {
     currentLocale.set("en");
     expect(getRelativeLocaleUrl("/about")).toBe("/en/about");
-    expect(getRelativeLocaleUrl("pt", "/about")).toBe("/pt/about");
+    expect(getRelativeLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
   });
 
   it("preserves query strings and hashes", () => {

@@ -1,4 +1,4 @@
-import type { TFunction, WritableAtom } from "./types";
+import type { TFunction } from "./types";
 
 /**
  * Supported locale codes (e.g. `["en", "pt"]`). Populated from the Vite plugin's
@@ -19,47 +19,18 @@ export let defaultLocale: string = "en";
 export let prefixDefaultLocale: boolean = true;
 
 /**
- * Creates a lightweight reactive atom store compatible with Nanostores / Svelte store contracts.
+ * The current locale code, mutable from outside (middleware sets it per request, layouts set it
+ * from route params) and read by `t`, `getLocale`, and friends.
  */
-export function atom<T>(initialValue: T): WritableAtom<T> {
-  let value = initialValue;
-  const listeners = new Set<(val: T) => void>();
+let locale = "";
+export const currentLocale = {
+  get: (): string => locale,
+  set: (value: string): void => {
+    locale = value;
+  },
+};
 
-  const listen = (listener: (val: T) => void): (() => void) => {
-    listeners.add(listener);
-    return () => {
-      listeners.delete(listener);
-    };
-  };
-
-  return {
-    get: (): T => value,
-    set: (nextValue: T): void => {
-      if (value !== nextValue) {
-        value = nextValue;
-        for (const listener of listeners) {
-          listener(value);
-        }
-      }
-    },
-    // `subscribe` notifies immediately with the current value, `listen` only on later changes.
-    subscribe: (listener: (val: T) => void): (() => void) => {
-      const unsubscribe = listen(listener);
-      listener(value);
-      return unsubscribe;
-    },
-    listen,
-  };
-}
-
-/**
- * A reactive store containing the current locale code. Set by middleware on each request, or
- * manually via `currentLocale.set(locale)`.
- */
-export const currentLocale: WritableAtom<string> = atom<string>("");
-
-let baseLocaleDefault: string = "en";
-let rawTranslationsDict: Record<string, Record<string, any>> = {};
+let translations: Record<string, Record<string, any>> = {};
 
 function isObjectRecord(obj: unknown): obj is Record<string, any> {
   return typeof obj === "object" && obj !== null;
@@ -78,118 +49,82 @@ export interface InitializeI18nOptions {
 
 /**
  * Initializes the i18n system. Must be called once before any other i18n functions are used (the
- * integration virtual module does this automatically).
+ * integration virtual module does this automatically). Also updates the active fallback locale.
  */
 export function initializeI18n(options: InitializeI18nOptions): void {
-  const { defaultLocale, translations } = options;
-  baseLocaleDefault = defaultLocale;
-  rawTranslationsDict = translations ? { ...translations } : {};
-  chainCache.clear();
+  defaultLocale = options.defaultLocale;
+  translations = { ...options.translations };
 
   if (!currentLocale.get()) {
     currentLocale.set(defaultLocale);
   }
 }
 
+/** Keys that must never be traversed while resolving dot paths (prototype pollution guard). */
+const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 /**
- * Helper to safely resolve nested dot-notation and array indices while guarding against prototype
- * pollution.
+ * Resolves a dot-notation path (including array indices) inside a translation object. When a
+ * segment is missing, the remaining segments are joined and tried as a single literal key, so
+ * translations whose own keys contain dots still resolve. Unsafe segments resolve to undefined.
  */
 function resolvePath(obj: unknown, path: string): unknown {
   if (obj == null || typeof obj !== "object") return undefined;
-  if (Object.prototype.hasOwnProperty.call(obj, path)) {
-    return (obj as any)[path];
+  if (Object.hasOwn(obj, path)) {
+    return (obj as Record<string, unknown>)[path];
   }
 
   const segments = path.split(".");
   let current: any = obj;
 
   for (let i = 0; i < segments.length; i++) {
-    if (current == null || typeof current !== "object") {
-      return undefined;
-    }
-    const seg = segments[i]!;
-    if (seg === "__proto__" || seg === "constructor" || seg === "prototype") {
-      return undefined;
-    }
-    if (
-      Object.prototype.hasOwnProperty.call(current, seg) ||
-      (Array.isArray(current) && seg in current)
-    ) {
-      current = current[seg];
+    const segment = segments[i]!;
+    if (UNSAFE_KEYS.has(segment)) return undefined;
+    if (current == null || typeof current !== "object") return undefined;
+
+    if (Object.hasOwn(current, segment) || (Array.isArray(current) && segment in current)) {
+      current = current[segment];
     } else {
-      const remainingKey = segments.slice(i).join(".");
-      if (Object.prototype.hasOwnProperty.call(current, remainingKey)) {
-        return current[remainingKey];
-      }
-      return undefined;
+      const literalKey = segments.slice(i).join(".");
+      return Object.hasOwn(current, literalKey) ? current[literalKey] : undefined;
     }
   }
 
   return current;
 }
 
-const chainCache = new Map<string, string[]>();
-
 /**
  * Builds the ordered locale fallback chain (exact → lowercase → base language) for the active
- * locale, the configured default locale, and 'en'. Cached because the chain only depends on the
- * two locale codes, which change solely through `initializeI18n`.
+ * locale, the configured default locale, and 'en'.
  */
-function getLocaleCandidateChain(activeLocale: string, defaultLocale: string): string[] {
-  const cacheKey = `${activeLocale}|${defaultLocale}`;
-  const cached = chainCache.get(cacheKey);
-  if (cached) return cached;
-
+function localeChain(locale: string): string[] {
   const chain: string[] = [];
 
-  function addCandidates(code: string) {
+  const add = (code: string): void => {
     if (!code) return;
-    const exact = code;
     const normalized = code.toLowerCase();
-    const baseLang = normalized.split("-")[0] ?? normalized;
+    for (const candidate of [code, normalized, normalized.split("-")[0]!]) {
+      if (candidate && !chain.includes(candidate)) chain.push(candidate);
+    }
+  };
 
-    if (!chain.includes(exact)) chain.push(exact);
-    if (!chain.includes(normalized)) chain.push(normalized);
-    if (!chain.includes(baseLang)) chain.push(baseLang);
-  }
-
-  addCandidates(activeLocale);
-  addCandidates(defaultLocale);
-  addCandidates("en");
-
-  chainCache.set(cacheKey, chain);
+  add(locale);
+  add(defaultLocale);
+  add("en");
   return chain;
 }
 
 /**
- * Finds a component's translation object for a locale, walking the fallback chain
- * (active locale → default locale → 'en').
+ * Resolves a value for a component across the locale fallback chain (active locale → default
+ * locale → 'en'). Without `key` the component's translation object itself is returned.
  */
-function findComponent(locale: string, componentName: string): Record<string, any> | undefined {
-  const candidates = getLocaleCandidateChain(locale, baseLocaleDefault);
+function resolveFromLocale(locale: string, component: string, key?: string): unknown {
+  for (const code of localeChain(locale)) {
+    const rawComp: unknown = translations[code]?.[component];
+    if (!isObjectRecord(rawComp)) continue;
 
-  for (const code of candidates) {
-    const rawComp: unknown = rawTranslationsDict[code]?.[componentName];
-    if (isObjectRecord(rawComp)) {
-      return rawComp;
-    }
-  }
-
-  return undefined;
-}
-
-function resolveKeyInLocales(locale: string, componentName: string, keyName: string): unknown {
-  const candidates = getLocaleCandidateChain(locale, baseLocaleDefault);
-
-  for (const code of candidates) {
-    const rawComp: unknown = rawTranslationsDict[code]?.[componentName];
-    if (isObjectRecord(rawComp)) {
-      const val = resolvePath(rawComp, keyName);
-      if (val !== undefined) {
-        return val;
-      }
-    }
+    const value = key === undefined ? rawComp : resolvePath(rawComp, key);
+    if (value !== undefined) return value;
   }
 
   return undefined;
@@ -201,24 +136,19 @@ function resolveKeyInLocales(locale: string, componentName: string, keyName: str
  */
 export function getRawTranslation(key: string): unknown {
   const dotIndex = key.indexOf(".");
-  const activeLocale = currentLocale.get() || baseLocaleDefault;
+  const locale = currentLocale.get() || defaultLocale;
 
-  if (dotIndex === -1) {
-    return findComponent(activeLocale, key);
-  }
-
-  return resolveKeyInLocales(activeLocale, key.slice(0, dotIndex), key.slice(dotIndex + 1));
+  return dotIndex === -1
+    ? resolveFromLocale(locale, key)
+    : resolveFromLocale(locale, key.slice(0, dotIndex), key.slice(dotIndex + 1));
 }
 
 /**
  * Returns raw translation data (such as arrays or nested objects) typed as T.
  */
 export function tRaw<T = unknown>(key: string, fallback?: T): T {
-  const val = getRawTranslation(key);
-  if (val !== undefined) {
-    return val as T;
-  }
-  return fallback as T;
+  const value = getRawTranslation(key);
+  return value !== undefined ? (value as T) : (fallback as T);
 }
 
 /**
@@ -226,11 +156,8 @@ export function tRaw<T = unknown>(key: string, fallback?: T): T {
  * empty array or the provided fallback if not found or not an array.
  */
 export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
-  const val = getRawTranslation(key);
-  if (Array.isArray(val)) {
-    return val as T[];
-  }
-  return fallback;
+  const value = getRawTranslation(key);
+  return Array.isArray(value) ? (value as T[]) : fallback;
 }
 
 /**
@@ -241,45 +168,32 @@ export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
 export const t: TFunction = Object.assign(
   function t(key: string, params?: Record<string, any>): string {
     const dotIndex = key.indexOf(".");
-    if (dotIndex === -1) {
-      return key;
-    }
-    const componentName = key.slice(0, dotIndex);
-    const keyName = key.slice(dotIndex + 1);
+    if (dotIndex === -1) return key;
 
-    const activeLocale = currentLocale.get() || baseLocaleDefault;
-    let value = resolveKeyInLocales(activeLocale, componentName, keyName) ?? key;
+    const locale = currentLocale.get() || defaultLocale;
+    let value = resolveFromLocale(locale, key.slice(0, dotIndex), key.slice(dotIndex + 1)) ?? key;
 
-    // Pluralization support if count parameter is provided and translation value is a plural object
+    // Pluralization when `count` is provided and the value is a plural object ({ one, other, ... })
     if (
       params &&
       typeof params["count"] === "number" &&
-      typeof value === "object" &&
-      value !== null &&
+      isObjectRecord(value) &&
       !Array.isArray(value)
     ) {
-      const pluralCategory = getPluralCategory(params["count"], activeLocale);
-      value =
-        (value as Record<string, any>)[pluralCategory] ??
-        (value as Record<string, any>)["other"] ??
-        key;
+      value = value[getPluralCategory(params["count"], locale)] ?? value["other"] ?? key;
     }
 
     if (typeof value === "function") {
-      return (value as Function)(params);
-    }
-
-    if (params && typeof value === "string") {
-      return value.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+      return (value as (p?: Record<string, any>) => string)(params);
     }
 
     if (typeof value === "string") {
-      return value;
+      return params
+        ? value.replace(/\{(\w+)\}/g, (_, name) => String(params[name] ?? `{${name}}`))
+        : value;
     }
-    if (value !== undefined && value !== null && typeof value === "object") {
-      return JSON.stringify(value);
-    }
-    return value != null ? `${value as string | number | boolean}` : "";
+    if (isObjectRecord(value)) return JSON.stringify(value);
+    return value != null ? String(value as string | number | boolean) : "";
   },
   { raw: tRaw, array: tArray },
 );
@@ -305,24 +219,16 @@ export function getLocalizedText(
   locale: string,
   fallbackLocale: string = "en",
 ): string {
-  if (typeof val === "object" && val !== null) {
-    const record = val as Record<string, unknown>;
-    const localized = record[locale];
-    if (typeof localized === "string" && localized.length > 0) {
-      return localized;
-    }
-    const fallback = record[fallbackLocale];
-    if (typeof fallback === "string") {
-      return fallback;
-    }
+  if (isObjectRecord(val)) {
+    const localized = val[locale];
+    if (typeof localized === "string" && localized.length > 0) return localized;
+
+    const fallback = val[fallbackLocale];
+    if (typeof fallback === "string") return fallback;
     return "";
   }
-  if (typeof val === "string") {
-    return val;
-  }
-  if (typeof val === "number" || typeof val === "boolean") {
-    return String(val);
-  }
+  if (typeof val === "string") return val;
+  if (typeof val === "number" || typeof val === "boolean") return String(val);
   return "";
 }
 
@@ -353,22 +259,104 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
   return segments.join("/");
 }
 
+/**
+ * Returns the active locale: the explicitly set one, otherwise auto-detected from the browser
+ * URL pathname, otherwise the configured default.
+ */
+export function getLocale(): string {
+  const explicit = currentLocale.get();
+  if (explicit) return explicit;
+
+  if (typeof window !== "undefined") {
+    const segment = localeFromPathname(window.location.pathname);
+    if (segment) return segment;
+  }
+
+  return defaultLocale;
+}
+
+/**
+ * Canonical HTML (`lang`) and OpenGraph (`og:locale`) tags for the known locales. Unknown locales
+ * fall back to their raw code (HTML) or `<code>_<CODE>` (OG).
+ */
+const LOCALE_TAGS: Record<string, { html: string; og: string }> = {
+  en: { html: "en-US", og: "en_US" },
+  pt: { html: "pt-BR", og: "pt_BR" },
+  es: { html: "es-ES", og: "es_ES" },
+};
+
+/**
+ * Returns a standard BCP 47 / RFC 5646 language tag suitable for HTML `<html lang="...">`. Maps
+ * 2-letter codes like 'en' to 'en-US', 'pt' to 'pt-BR', 'es' to 'es-ES', etc.
+ */
+export function getHtmlLang(): string {
+  const loc = getLocale();
+  return LOCALE_TAGS[loc]?.html ?? loc;
+}
+
+/**
+ * Returns an OpenGraph-compliant locale tag (e.g. 'en_US', 'pt_BR', 'es_ES').
+ */
+export function getOgLocale(): string {
+  const loc = getLocale();
+  return LOCALE_TAGS[loc]?.og ?? `${loc}_${loc.toUpperCase()}`;
+}
+
+export function getRelativeLocaleUrl(
+  path: string,
+  { locale = getLocale() }: { locale?: string } = {},
+): string {
+  // External / absolute URLs, hash anchors, and scheme links (mailto:, tel:, ...) pass through
+  if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
+
+  const splitAt = path.search(/[?#]/);
+  const pathname = splitAt === -1 ? path : path.slice(0, splitAt);
+  const suffix = splitAt === -1 ? "" : path.slice(splitAt);
+
+  // Strip a leading locale segment (e.g. /en/about → about) so locales are never doubled up
+  const cleanPath = stripLocalePrefix(pathname);
+  const prefix = prefixDefaultLocale || locale !== defaultLocale ? `/${locale}` : "";
+
+  // Root path keeps a trailing slash when prefixed: e.g. /en/
+  if (!cleanPath) return `${prefix}/${suffix}`;
+
+  const trailingSlash = pathname.endsWith("/") ? "/" : "";
+  return `${prefix}/${cleanPath}${trailingSlash}${suffix}`;
+}
+
+export interface LanguageAlternate {
+  hreflang: string;
+  href: string;
+}
+
+/**
+ * Generates an array of hreflang alternates for SEO tags (<link rel="alternate" hreflang="...">).
+ * Automatically includes all supported locales and 'x-default'.
+ */
+export function getLanguageAlternates(pathname: string, siteUrl = ""): LanguageAlternate[] {
+  const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
+  return [
+    ...locales.map((loc) => ({
+      hreflang: loc,
+      href: `${normalizedSiteUrl}${getRelativeLocaleUrl(pathname, { locale: loc })}`,
+    })),
+    {
+      hreflang: "x-default",
+      href: `${normalizedSiteUrl}${getRelativeLocaleUrl(pathname, { locale: defaultLocale })}`,
+    },
+  ];
+}
+
 // ── Bootstrap from the Vite virtual module ────────────────────────────────────────────────────
-// Runs after every declaration above (the fallback-chain cache must exist before
-// `initializeI18n`). Silently falls back to the defaults outside a Rimelight app, where
-// `virtual:rimelight-i18n-config` is only resolvable inside a Vite graph.
+// Runs after every declaration above. Silently falls back to the defaults outside a Rimelight app,
+// where `virtual:rimelight-i18n-config` is only resolvable inside a Vite graph.
 try {
   const cfg = await import("virtual:rimelight-i18n-config");
-  if (cfg) {
-    if (cfg.locales) locales = cfg.locales;
-    if (cfg.defaultLocale) defaultLocale = cfg.defaultLocale;
-    if (cfg.prefixDefaultLocale !== undefined) prefixDefaultLocale = cfg.prefixDefaultLocale;
-    if (cfg.translations && Object.keys(cfg.translations).length > 0) {
-      initializeI18n({
-        defaultLocale: cfg.defaultLocale || "en",
-        translations: cfg.translations,
-      });
-    }
+  if (cfg?.locales) locales = cfg.locales;
+  if (cfg?.defaultLocale) defaultLocale = cfg.defaultLocale;
+  if (cfg?.prefixDefaultLocale !== undefined) prefixDefaultLocale = cfg.prefixDefaultLocale;
+  if (cfg?.translations && Object.keys(cfg.translations).length > 0) {
+    initializeI18n({ defaultLocale, translations: cfg.translations });
   }
 } catch {
   // Virtual module is resolved inside Vite during app bundle, not in Node config evaluation

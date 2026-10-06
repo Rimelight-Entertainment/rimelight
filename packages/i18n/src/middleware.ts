@@ -36,29 +36,21 @@ function getPreferredLocale(
 
   const parsed = acceptLanguage
     .split(",")
-    .map((lang) => {
-      const parts = lang.split(";");
-      const code = (parts[0] ?? "").trim().toLowerCase();
-      const base = code.split("-")[0] ?? "";
-      let q = 1.0;
-      const qualityPart = parts[1];
-      if (qualityPart) {
-        const qMatch = qualityPart.match(/q=([0-9.]+)/);
-        if (qMatch) {
-          q = parseFloat(qMatch[1] ?? "1");
-        }
-      }
-      return { code, base, q };
+    .map((entry) => {
+      const [code = "", ...params] = entry.split(";");
+      const normalized = code.trim().toLowerCase();
+      const quality = /q=([\d.]+)/.exec(params.join(";"))?.[1];
+      return {
+        code: normalized,
+        base: normalized.split("-")[0] ?? "",
+        q: quality === undefined ? 1 : Number.parseFloat(quality),
+      };
     })
     .toSorted((a, b) => b.q - a.q);
 
-  for (const item of parsed) {
-    if (supportedLocales.has(item.code)) {
-      return item.code;
-    }
-    if (supportedLocales.has(item.base)) {
-      return item.base;
-    }
+  for (const { code, base } of parsed) {
+    if (supportedLocales.has(code)) return code;
+    if (supportedLocales.has(base)) return base;
   }
 
   return defaultLocale;

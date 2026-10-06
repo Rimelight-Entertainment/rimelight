@@ -1,18 +1,6 @@
 export type ComponentsJSON = Record<string, Record<string, any>>;
-export type TranslationLoader = (
-  locale: string,
-  components: string[],
-) => Promise<ComponentsJSON | Record<string, any>>;
 
-export interface ReadableAtom<T> {
-  get(): T;
-  subscribe(listener: (value: T) => void): () => void;
-  listen(listener: (value: T) => void): () => void;
-}
-
-export interface WritableAtom<T> extends ReadableAtom<T> {
-  set(value: T): void;
-}
+export type TranslationLoader = (locale: string, components: string[]) => Promise<ComponentsJSON>;
 
 export interface KVNamespaceBinding {
   get(key: string, type: "json"): Promise<Record<string, string> | null>;

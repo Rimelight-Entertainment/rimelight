@@ -27,11 +27,11 @@ export function createTranslationLoader(
   translations: Record<string, ComponentsJSON>,
 ): TranslationLoader {
   return async (locale, components) => {
-    const localeTranslations = translations[locale] || {};
+    const bundled = translations[locale] ?? {};
 
-    // If components is not provided, is not an array, or is empty, return the entire locale's translations.
-    if (!components || !Array.isArray(components) || components.length === 0) {
-      return localeTranslations;
+    // No component list → return the entire locale's translations
+    if (!Array.isArray(components) || components.length === 0) {
+      return bundled;
     }
 
     const activeKv = kvBinding;
@@ -46,7 +46,7 @@ export function createTranslationLoader(
             // KV read failed — fall through to static
           }
         }
-        return { [name]: localeTranslations[name] ?? {} };
+        return { [name]: bundled[name] ?? {} };
       }),
     );
     return Object.assign({}, ...results);

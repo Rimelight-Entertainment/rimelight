@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { atom, getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
+import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime";
 import { getLanguageAlternates } from "../src/index";
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
@@ -133,73 +133,15 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     expect(t("computed.dynamic", { val: 21 })).toBe("Result is 42");
   });
 
-  it("should support reactive atom stores with subscribe, listen, and get/set", () => {
-    const localeAtom = currentLocale;
-    localeAtom.set("en");
-    expect(localeAtom.get()).toBe("en");
+  it("should expose the current locale through currentLocale get/set", () => {
+    currentLocale.set("en");
+    expect(currentLocale.get()).toBe("en");
 
-    const subscribedValues: string[] = [];
-    const listenedValues: string[] = [];
+    currentLocale.set("pt-BR");
+    expect(currentLocale.get()).toBe("pt-BR");
 
-    // subscribe calls listener immediately with current value
-    const unsubSubscribe = localeAtom.subscribe((val) => {
-      subscribedValues.push(val);
-    });
-
-    // listen only calls listener on subsequent changes
-    const unsubListen = localeAtom.listen((val) => {
-      listenedValues.push(val);
-    });
-
-    expect(subscribedValues).toEqual(["en"]);
-    expect(listenedValues).toEqual([]);
-
-    localeAtom.set("pt-BR");
-    expect(subscribedValues).toEqual(["en", "pt-BR"]);
-    expect(listenedValues).toEqual(["pt-BR"]);
-
-    // Setting identical value should not trigger listeners
-    localeAtom.set("pt-BR");
-    expect(subscribedValues).toEqual(["en", "pt-BR"]);
-    expect(listenedValues).toEqual(["pt-BR"]);
-
-    // Unsubscribe
-    unsubSubscribe();
-    unsubListen();
-
-    localeAtom.set("de");
-    expect(subscribedValues).toEqual(["en", "pt-BR"]);
-    expect(listenedValues).toEqual(["pt-BR"]);
-    expect(localeAtom.get()).toBe("de");
-  });
-
-  it("should handle atom stores with complex types and multiple independent subscribers", () => {
-    const store = atom({ count: 0, text: "initial" });
-
-    let callCountA = 0;
-    let callCountB = 0;
-
-    const unsubA = store.subscribe(() => {
-      callCountA++;
-    });
-    const unsubB = store.subscribe(() => {
-      callCountB++;
-    });
-
-    expect(callCountA).toBe(1);
-    expect(callCountB).toBe(1);
-
-    store.set({ count: 1, text: "updated" });
-    expect(callCountA).toBe(2);
-    expect(callCountB).toBe(2);
-    expect(store.get()).toEqual({ count: 1, text: "updated" });
-
-    unsubA();
-    store.set({ count: 2, text: "again" });
-    expect(callCountA).toBe(2);
-    expect(callCountB).toBe(3);
-
-    unsubB();
+    currentLocale.set("de");
+    expect(currentLocale.get()).toBe("de");
   });
 
   it("should handle interpolation with booleans, numbers, and missing placeholders", () => {

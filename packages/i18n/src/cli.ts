@@ -31,6 +31,9 @@ interface VerifyTranslationsOptions {
   allowEmpty?: boolean;
 }
 
+/** Keys skipped while flattening/unflattening (prototype pollution guard). */
+const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 /**
  * Flattens deeply nested translation objects or arrays into dot-notated paths. Arrays are
  * traversed through their numeric indices (`tags.0`), so objects and arrays share one branch.
@@ -45,9 +48,8 @@ export function flatten(
   }
 
   for (const [key, value] of Object.entries(obj)) {
-    if (key === "__proto__" || key === "constructor" || key === "prototype") {
-      continue;
-    }
+    if (UNSAFE_KEYS.has(key)) continue;
+
     const fullPath = prefix ? `${prefix}.${key}` : key;
     if (value != null && typeof value === "object") {
       flatten(value, fullPath, result);
@@ -71,19 +73,13 @@ export function unflatten(flat: FlattenedTranslations): Record<string, any> {
 
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i]!;
-      if (part === "__proto__" || part === "constructor" || part === "prototype") {
-        break;
-      }
+      if (UNSAFE_KEYS.has(part)) break;
 
-      const isLast = i === parts.length - 1;
-      const nextPart = parts[i + 1];
-      const nextIsNum = nextPart !== undefined && /^\d+$/.test(nextPart);
-
-      if (isLast) {
+      if (i === parts.length - 1) {
         current[part] = value;
       } else {
         if (current[part] == null || typeof current[part] !== "object") {
-          current[part] = nextIsNum ? [] : {};
+          current[part] = /^\d+$/.test(parts[i + 1] ?? "") ? [] : {};
         }
         current = current[part];
       }
@@ -159,11 +155,7 @@ export function verifyTranslations(
   const allowEmpty = options.allowEmpty ?? false;
   const locales = Object.keys(translations);
 
-  const flattened = new Map<string, FlattenedTranslations>(
-    locales.map((locale) => [locale, flatten(translations[locale] || {})]),
-  );
-
-  const baseFlat = flattened.get(defaultLocale) ?? {};
+  const baseFlat = flatten(translations[defaultLocale] ?? {});
   const totalKeys = Object.keys(baseFlat).length;
 
   const missingKeys: Record<string, string[]> = {};
@@ -175,12 +167,37 @@ export function verifyTranslations(
   let isValid = true;
 
   for (const locale of locales) {
-    const targetFlat = flattened.get(locale)!;
-
+    const targetFlat = flatten(translations[locale] ?? {});
     const { missing, stale } = diffKeys(baseFlat, targetFlat);
     const empty: string[] = [];
     const mismatches: PlaceholderMismatch[] = [];
 
+    for (const [key, val] of Object.entries(targetFlat)) {
+      if (!allowEmpty && val.trim() === "") {
+        empty.push(key);
+      }
+
+      if (key in baseFlat) {
+        const baseHolders = extractPlaceholders(baseFlat[key] ?? "").sort();
+        const targetHolders = extractPlaceholders(val).sort();
+        if (JSON.stringify(baseHolders) !== JSON.stringify(targetHolders)) {
+          mismatches.push({
+            key,
+            basePlaceholders: baseHolders,
+            targetPlaceholders: targetHolders,
+          });
+        }
+      }
+    }
+
+    if (empty.length > 0) {
+      emptyKeys[locale] = empty;
+      isValid = false;
+    }
+    if (mismatches.length > 0) {
+      placeholderMismatches[locale] = mismatches;
+      isValid = false;
+    }
     if (locale !== defaultLocale) {
       if (missing.length > 0) {
         missingKeys[locale] = missing;
@@ -192,37 +209,8 @@ export function verifyTranslations(
       }
     }
 
-    for (const [key, val] of Object.entries(targetFlat)) {
-      if (!allowEmpty && typeof val === "string" && val.trim() === "") {
-        empty.push(key);
-        isValid = false;
-      }
-
-      if (key in baseFlat) {
-        const baseVal = baseFlat[key] ?? "";
-        const baseHolders = extractPlaceholders(baseVal).sort();
-        const targetHolders = extractPlaceholders(val).sort();
-
-        if (JSON.stringify(baseHolders) !== JSON.stringify(targetHolders)) {
-          mismatches.push({
-            key,
-            basePlaceholders: baseHolders,
-            targetPlaceholders: targetHolders,
-          });
-          isValid = false;
-        }
-      }
-    }
-
-    if (empty.length > 0) {
-      emptyKeys[locale] = empty;
-    }
-    if (mismatches.length > 0) {
-      placeholderMismatches[locale] = mismatches;
-    }
-
-    const matchedCount = totalKeys - missing.length;
-    const percentage = totalKeys > 0 ? Math.round((matchedCount / totalKeys) * 100) : 100;
+    const percentage =
+      totalKeys > 0 ? Math.round(((totalKeys - missing.length) / totalKeys) * 100) : 100;
     completion[locale] = `${percentage}%`;
   }
 
@@ -297,32 +285,20 @@ export function fixTranslations(
   translations: Record<string, Record<string, any>>,
   defaultLocale: string = "en",
 ): Record<string, Record<string, any>> {
-  const baseDict = translations[defaultLocale] || {};
-  const baseFlat = flatten(baseDict);
-  const fixed: Record<string, Record<string, any>> = {};
+  const baseFlat = flatten(translations[defaultLocale] ?? {});
 
-  for (const [locale, dict] of Object.entries(translations)) {
-    if (locale === defaultLocale) {
-      fixed[locale] = dict;
-      continue;
-    }
+  return Object.fromEntries(
+    Object.entries(translations).map(([locale, dict]): [string, Record<string, any>] => {
+      if (locale === defaultLocale) return [locale, dict];
 
-    const targetFlat = flatten(dict);
-    const newFlat: FlattenedTranslations = {};
-
-    // Copy only keys that exist in base (pruning stale keys) and fill missing with empty or base string
-    for (const [baseKey, baseVal] of Object.entries(baseFlat)) {
-      if (baseKey in targetFlat) {
-        newFlat[baseKey] = targetFlat[baseKey]!;
-      } else {
-        newFlat[baseKey] = baseVal;
+      const targetFlat = flatten(dict);
+      const fixedFlat: FlattenedTranslations = {};
+      for (const [key, value] of Object.entries(baseFlat)) {
+        fixedFlat[key] = targetFlat[key] ?? value;
       }
-    }
-
-    fixed[locale] = unflatten(newFlat);
-  }
-
-  return fixed;
+      return [locale, unflatten(fixedFlat)];
+    }),
+  );
 }
 
 // ── CLI ───────────────────────────────────────────────────────────────────────────────────────

@@ -202,8 +202,7 @@ export function i18n<
           // Watch all discovered translation files in the translations directory
           if (cfg.dirPath && fs.existsSync(cfg.dirPath)) {
             try {
-              const files = fs.readdirSync(cfg.dirPath);
-              for (const file of files) {
+              for (const file of fs.readdirSync(cfg.dirPath)) {
                 if (file.endsWith(".json")) {
                   this.addWatchFile(path.join(cfg.dirPath, file));
                 }
@@ -213,13 +212,14 @@ export function i18n<
             }
           }
 
-          return `
-            export const locales = ${JSON.stringify(cfg.locales)};
-            export const defaultLocale = ${JSON.stringify(cfg.defaultLocale)};
-            export const prefixDefaultLocale = ${JSON.stringify(cfg.prefixDefaultLocale)};
-            export const translations = ${JSON.stringify(cfg.translations)};
-            export default { locales: ${JSON.stringify(cfg.locales)}, defaultLocale: ${JSON.stringify(cfg.defaultLocale)} };
-          `;
+          const { locales, defaultLocale, prefixDefaultLocale, translations } = cfg;
+          return [
+            `export const locales = ${JSON.stringify(locales)};`,
+            `export const defaultLocale = ${JSON.stringify(defaultLocale)};`,
+            `export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};`,
+            `export const translations = ${JSON.stringify(translations)};`,
+            `export default { locales, defaultLocale };`,
+          ].join("\n");
         }
         return null;
       },
