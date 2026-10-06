@@ -9,5 +9,6 @@ export {
   htmlLangs,
   locales,
   prefixDefaultLocale,
+  setLocale,
   t,
 } from "./runtime";

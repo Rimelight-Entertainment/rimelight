@@ -105,35 +105,6 @@ export interface RimelightI18nOptions {
 
 export type RimelightI18nPlugins = Plugin[];
 
-/**
- * Infers BCP-47 HTML lang tags from locale file names or explicit file metadata.
- */
-function inferHtmlLangs(
-  locales: readonly string[],
-  translations: Record<string, Record<string, any>>,
-): Record<string, string> {
-  const result: Record<string, string> = {};
-
-  for (const loc of locales) {
-    const dict = translations[loc];
-    const explicitMetaLang =
-      dict &&
-      (typeof dict["_lang"] === "string"
-        ? dict["_lang"]
-        : typeof dict["_htmlLang"] === "string"
-          ? dict["_htmlLang"]
-          : typeof dict["htmlLang"] === "string"
-            ? dict["htmlLang"]
-            : typeof dict["meta"]?.["lang"] === "string"
-              ? dict["meta"]["lang"]
-              : null);
-
-    result[loc] = explicitMetaLang ?? (loc.includes("_") ? loc.replace(/_/g, "-") : loc);
-  }
-
-  return result;
-}
-
 function discoverTranslations(
   root: string,
   specifiedDir?: string,
@@ -166,7 +137,7 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
     const defaultLocale =
       options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
     const translations = discovered.translations;
-    const htmlLangs = inferHtmlLangs(locales, translations);
+    const htmlLangs = Object.fromEntries(locales.map((loc) => [loc, loc.replace(/_/g, "-")]));
 
     return {
       locales,

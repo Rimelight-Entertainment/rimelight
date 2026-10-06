@@ -33,16 +33,28 @@ export let htmlLangs: Record<string, string> = virtualConfig?.htmlLangs
   ? { ...virtualConfig.htmlLangs }
   : {};
 
+let activeLocale = defaultLocale;
+
 /**
- * The current locale code, mutable from outside (middleware sets it per request, layouts set it
- * from route params) and read by `t`, `getLocale`, and friends.
+ * Returns the active locale code.
  */
-let locale = defaultLocale;
+export function getLocale(): string {
+  return activeLocale || defaultLocale;
+}
+
+/**
+ * Sets the active locale code.
+ */
+export function setLocale(value: string): void {
+  activeLocale = value;
+}
+
+/**
+ * Mutable accessor for the current request/render locale code.
+ */
 export const currentLocale = {
-  get: (): string => locale,
-  set: (value: string): void => {
-    locale = value;
-  },
+  get: getLocale,
+  set: setLocale,
 };
 
 let translations: Record<string, Record<string, any>> = virtualConfig?.translations
@@ -298,13 +310,6 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
     segments.shift();
   }
   return segments.join("/");
-}
-
-/**
- * Returns the active locale: the current stored locale, otherwise the configured default.
- */
-export function getLocale(): string {
-  return currentLocale.get() || defaultLocale;
 }
 
 /**
