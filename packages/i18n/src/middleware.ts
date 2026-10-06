@@ -64,14 +64,10 @@ export function resolveLocale(request: Request): string | null {
 
 export function i18n() {
   return async (
-    c: {
-      request: Request;
-      env?: any;
-      redirect(path: string, status?: number): Response;
-    },
+    c: { req: { raw: Request }; env?: any; redirect(path: string, status?: number): Response },
     next: () => Promise<void>,
   ): Promise<Response | void> => {
-    const redirectTo = resolveLocale(c.request);
+    const redirectTo = resolveLocale(c.req.raw);
     if (redirectTo) return c.redirect(redirectTo, 302);
 
     const locale = getLocale();
@@ -79,7 +75,7 @@ export function i18n() {
       get(key: string, opts?: { type: "json"; cacheTtl?: number }): Promise<unknown>;
     } | null;
 
-    if (locale && kv && isLocalizedPage(new URL(c.request.url).pathname)) {
+    if (locale && kv && isLocalizedPage(new URL(c.req.raw.url).pathname)) {
       try {
         const overrides = await kv.get(`locale:${locale}`, { type: "json", cacheTtl: 60 });
         applyLocaleOverrides(locale, overrides);
