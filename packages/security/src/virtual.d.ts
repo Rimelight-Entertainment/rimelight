@@ -10,7 +10,7 @@ interface ImportMeta {
 }
 
 declare module "virtual:rimelight-security-config" {
-  export const config: import("./types").SecurityOptions;
+  export const config: import("./types").SecurityPluginOptions;
 }
 
 declare module "virtual:sri-manifest" {

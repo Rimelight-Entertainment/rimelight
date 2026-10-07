@@ -1,17 +1,13 @@
-import { describe, expect, it, vi } from "vite-plus/test";
-
-vi.mock("virtual:sri-manifest", () => ({
-  manifest: {},
-}));
-
-vi.mock("virtual:rimelight-security-config", () => ({
-  config: {},
-}));
-
+import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { security } from "../src/middleware/security";
 import { ratelimit } from "../src/middleware/ratelimit";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
+  beforeEach(() => {
+    setSecurityConfig();
+  });
+
   it("generates strict security headers with comprehensive defaults", async () => {
     const middleware = security();
     const req = new Request("https://rimelight.com/secure");
@@ -31,13 +27,17 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
       return { success: key !== "203.0.113.195-blocked" };
     });
 
-    const limiter = ratelimit({
-      routes: ["/api/test"],
-      bindingName: "TEST_LIMITER",
-      keyGenerator: (c: any) => {
-        return c.req.header("CF-Connecting-IP") || "anonymous";
+    setSecurityConfig({
+      ratelimit: {
+        routes: ["/api/test"],
+        bindingName: "TEST_LIMITER",
+        keyGenerator: (c: any) => {
+          return c.req.header("CF-Connecting-IP") || "anonymous";
+        },
       },
     });
+
+    const limiter = ratelimit();
 
     const createCtx = (ip: string) => ({
       req: {

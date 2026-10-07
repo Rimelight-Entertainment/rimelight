@@ -1,7 +1,12 @@
-import { describe, it, expect, vi } from "vite-plus/test";
+import { describe, it, expect, vi, beforeEach } from "vite-plus/test";
 import { construction, CONSTRUCTION_GUEST_COOKIE } from "../src/middleware/construction";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("@rimelight/security construction middleware", () => {
+  beforeEach(() => {
+    setSecurityConfig();
+  });
+
   const passphrase = "secret-passphrase-999";
 
   const createMockContext = (
@@ -305,7 +310,8 @@ describe("@rimelight/security construction middleware", () => {
   });
 
   it("should serve standalone fallback HTML when renderFallback is enabled", async () => {
-    const middleware = construction({ renderFallback: true });
+    setSecurityConfig({ construction: { renderFallback: true } });
+    const middleware = construction();
     const ctx = createMockContext({ path: "/protected-page", mode: "true" });
     const next = vi.fn();
 

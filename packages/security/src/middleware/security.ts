@@ -1,19 +1,17 @@
 import type { SecurityOptions } from "../types";
 import { buildCspHeader } from "../csp";
+import { getSecurityConfig } from "../runtime";
+import { devOnly } from "./dev-only";
+import { ratelimit } from "./ratelimit";
+import { construction } from "./construction";
 
 import { manifest as sriManifest } from "virtual:sri-manifest";
-import { config as pluginConfig } from "virtual:rimelight-security-config";
 
 function isManifestRecord(obj: unknown): obj is Record<string, string> {
   return typeof obj === "object" && obj !== null && !Array.isArray(obj);
 }
 
-function isConfigRecord(obj: unknown): obj is SecurityOptions {
-  return typeof obj === "object" && obj !== null && !Array.isArray(obj);
-}
-
 const manifest: Record<string, string> = isManifestRecord(sriManifest) ? sriManifest : {};
-const defaultPluginConfig: SecurityOptions = isConfigRecord(pluginConfig) ? pluginConfig : {};
 
 declare const HTMLRewriter: any;
 
@@ -115,40 +113,31 @@ function applySecurityHeaders(
 }
 
 /**
- * Universal Security Middleware for Hono and Web Standards (Fetch API). Injects security headers,
- * CSP with per-request nonce, and SRI attributes.
+ * Universal Security Middleware for Hono and Web Standards (Fetch API).
+ *
+ * Automatically orchestrates security sub-middlewares in optimal order:
+ * 1. TLS 1.2+ and HTTPS enforcement
+ * 2. Dev-only route protection (`/dev/` blocked in non-dev environments)
+ * 3. Rate limiting on sensitive endpoints
+ * 4. Construction / maintenance mode gating
+ * 5. Security response headers, per-request CSP nonce, and SRI injection
  */
-export function security(options: SecurityOptions = {}) {
+export function security() {
+  const pluginConfig = getSecurityConfig();
   const mergedOptions: SecurityOptions = {
-    ...defaultPluginConfig,
-    ...options,
-    allowedDomains: [
-      ...(defaultPluginConfig.allowedDomains || []),
-      ...(options.allowedDomains || []),
-    ],
-    imgSrc: [...(defaultPluginConfig.imgSrc || []), ...(options.imgSrc || [])],
-    connectSrc: [...(defaultPluginConfig.connectSrc || []), ...(options.connectSrc || [])],
-    frameSrc: [...(defaultPluginConfig.frameSrc || []), ...(options.frameSrc || [])],
-    scriptResources: [
-      ...(defaultPluginConfig.scriptResources || []),
-      ...(options.scriptResources || []),
-    ],
-    styleResources: [
-      ...(defaultPluginConfig.styleResources || []),
-      ...(options.styleResources || []),
-    ],
-    directives: {
-      ...defaultPluginConfig.directives,
-      ...options.directives,
-    },
-    strictDynamic: options.strictDynamic ?? defaultPluginConfig.strictDynamic ?? true,
-    enforceTls: options.enforceTls ?? defaultPluginConfig.enforceTls ?? true,
-    stripHeaders: options.stripHeaders ?? defaultPluginConfig.stripHeaders,
-    headers: {
-      ...defaultPluginConfig.headers,
-      ...options.headers,
-    },
+    ...pluginConfig,
+    strictDynamic: pluginConfig.strictDynamic ?? true,
+    enforceTls: pluginConfig.enforceTls ?? true,
   };
+
+  const devOnlyMiddleware = pluginConfig.devOnly !== false ? devOnly() : null;
+  const ratelimitMiddleware = pluginConfig.ratelimit !== false ? ratelimit() : null;
+  const constructionMiddleware = pluginConfig.construction !== false ? construction() : null;
+
+  const subMiddlewares: Array<(c: any, next: () => Promise<any>) => Promise<any>> = [];
+  if (devOnlyMiddleware) subMiddlewares.push(devOnlyMiddleware);
+  if (ratelimitMiddleware) subMiddlewares.push(ratelimitMiddleware);
+  if (constructionMiddleware) subMiddlewares.push(constructionMiddleware);
 
   return async (c: any, next: any): Promise<Response | void> => {
     const isDev =
@@ -181,10 +170,22 @@ export function security(options: SecurityOptions = {}) {
       return Response.redirect(httpsUrl, 301);
     }
 
-    await next();
+    const runPipeline = async (index: number): Promise<any> => {
+      if (index < subMiddlewares.length) {
+        return subMiddlewares[index]!(c, () => runPipeline(index + 1));
+      }
+      return next();
+    };
 
-    const response: Response = c.res;
-    if (!response) return;
+    const pipelineResult = await runPipeline(0);
+
+    let response: Response | undefined = c.res;
+    if (!response && pipelineResult instanceof Response) {
+      response = pipelineResult;
+      c.res = response;
+    }
+
+    if (!response) return pipelineResult;
 
     const contentType = response.headers.get("content-type") || "";
     const origin = req?.url ? new URL(req.url).origin : undefined;

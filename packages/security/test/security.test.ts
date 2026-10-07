@@ -1,16 +1,12 @@
-import { describe, expect, it, vi } from "vite-plus/test";
-
-vi.mock("virtual:sri-manifest", () => ({
-  manifest: {},
-}));
-
-vi.mock("virtual:rimelight-security-config", () => ({
-  config: {},
-}));
-
+import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { security } from "../src/middleware/security";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("Security Middleware Headers", () => {
+  beforeEach(() => {
+    setSecurityConfig();
+  });
+
   it("sets standard COEP (credentialless), COOP, and CORP headers by default", async () => {
     const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
@@ -37,9 +33,10 @@ describe("Security Middleware Headers", () => {
   });
 
   it("supports custom Cross-Origin-Embedder-Policy configuration", async () => {
-    const middleware = security({
+    setSecurityConfig({
       crossOriginEmbedderPolicy: "require-corp",
     });
+    const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
@@ -51,9 +48,10 @@ describe("Security Middleware Headers", () => {
   });
 
   it("supports custom Cross-Origin-Opener-Policy configuration", async () => {
-    const middleware = security({
+    setSecurityConfig({
       crossOriginOpenerPolicy: "same-origin-allow-popups",
     });
+    const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
@@ -65,11 +63,12 @@ describe("Security Middleware Headers", () => {
   });
 
   it("supports disabling COEP / COOP / CORP headers with false", async () => {
-    const middleware = security({
+    setSecurityConfig({
       crossOriginEmbedderPolicy: false,
       crossOriginOpenerPolicy: false,
       crossOriginResourcePolicy: false,
     });
+    const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
@@ -83,12 +82,13 @@ describe("Security Middleware Headers", () => {
   });
 
   it("allows overriding headers via custom headers object", async () => {
-    const middleware = security({
+    setSecurityConfig({
       headers: {
         "Cross-Origin-Embedder-Policy": "unsafe-none",
         "Cross-Origin-Opener-Policy": "noopener-allow-popups",
       },
     });
+    const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
@@ -135,7 +135,8 @@ describe("Security Middleware Headers", () => {
   });
 
   it("enforces TLS 1.2+ when enforceTls is enabled and cf.tlsVersion is present", async () => {
-    const middleware = security({ enforceTls: true });
+    setSecurityConfig({ enforceTls: true });
+    const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     (req as any).cf = { tlsVersion: "TLSv1.1" };
     const res = new Response('{"ok":true}', {
@@ -178,7 +179,8 @@ describe("Security Middleware Headers", () => {
       "/app.js": "sha384-abc123custom",
       "/styles.css": "sha384-xyz789custom",
     };
-    const middleware = security({ manifest: customManifest });
+    setSecurityConfig({ manifest: customManifest });
+    const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
@@ -208,7 +210,8 @@ describe("Security Middleware Headers", () => {
 
     (globalThis as any).HTMLRewriter = MockHTMLRewriter;
 
-    const middleware = security({ manifest: customManifest });
+    setSecurityConfig({ manifest: customManifest });
+    const middleware = security();
     const req = new Request("https://rimelight.com/");
     const res = new Response(
       '<html><head></head><body><script src="/main.js"></script></body></html>',
@@ -245,7 +248,8 @@ describe("Security Middleware Headers", () => {
     const originalEnv = process.env["NODE_ENV"];
     process.env["NODE_ENV"] = "development";
     try {
-      const middleware = security({ domain: "example.com" });
+      setSecurityConfig({ domain: "example.com" });
+      const middleware = security();
       const req = new Request("http://localhost:5173/");
       const res = new Response("<html><head></head><body>Hello</body></html>", {
         headers: { "content-type": "text/html" },
@@ -266,5 +270,174 @@ describe("Security Middleware Headers", () => {
     } finally {
       process.env["NODE_ENV"] = originalEnv;
     }
+  });
+
+  describe("Unified Pipeline Orchestration", () => {
+    it("blocks /dev/ routes in production when devOnly is enabled by default", async () => {
+      const originalEnv = process.env["NODE_ENV"];
+      process.env["NODE_ENV"] = "production";
+      try {
+        setSecurityConfig();
+        const middleware = security();
+        let nextCalled = false;
+        const ctx = {
+          req: { path: "/dev/preview", raw: new Request("https://rimelight.com/dev/preview") },
+          notFound: () => new Response("Not Found", { status: 404 }),
+        };
+
+        const result = await middleware(ctx, async () => {
+          nextCalled = true;
+        });
+        expect(nextCalled).toBe(false);
+        const res = (result || (ctx as any).res) as Response;
+        expect(res.status).toBe(404);
+      } finally {
+        process.env["NODE_ENV"] = originalEnv;
+      }
+    });
+
+    it("allows /dev/ routes when devOnly is set to false", async () => {
+      const originalEnv = process.env["NODE_ENV"];
+      process.env["NODE_ENV"] = "production";
+      try {
+        setSecurityConfig({ devOnly: false });
+        const middleware = security();
+        let nextCalled = false;
+        const ctx = {
+          req: { path: "/dev/preview", raw: new Request("https://rimelight.com/dev/preview") },
+          res: new Response("OK", { headers: { "content-type": "text/plain" } }),
+        };
+
+        await middleware(ctx, async () => {
+          nextCalled = true;
+        });
+        expect(nextCalled).toBe(true);
+      } finally {
+        process.env["NODE_ENV"] = originalEnv;
+      }
+    });
+
+    it("applies rate limiting when configured in plugin config", async () => {
+      const limitMock = vi.fn().mockResolvedValue({ success: false });
+      setSecurityConfig({
+        ratelimit: {
+          routes: ["/auth/sign-in"],
+          bindingName: "MY_RATE_LIMITER",
+        },
+      });
+
+      const middleware = security();
+      let nextCalled = false;
+      const ctx = {
+        req: {
+          path: "/auth/sign-in",
+          header: () => "1.2.3.4",
+          raw: new Request("https://rimelight.com/auth/sign-in"),
+        },
+        env: {
+          MY_RATE_LIMITER: { limit: limitMock },
+        },
+        json: (data: any, status: number) => new Response(JSON.stringify(data), { status }),
+      };
+
+      const result = await middleware(ctx, async () => {
+        nextCalled = true;
+      });
+
+      expect(nextCalled).toBe(false);
+      const res = (result || (ctx as any).res) as Response;
+      expect(res.status).toBe(429);
+    });
+
+    it("skips rate limiting when ratelimit is false", async () => {
+      const limitMock = vi.fn().mockResolvedValue({ success: false });
+      setSecurityConfig({
+        ratelimit: false,
+      });
+
+      const middleware = security();
+      let nextCalled = false;
+      const ctx = {
+        req: {
+          path: "/auth/sign-in",
+          header: () => "1.2.3.4",
+          raw: new Request("https://rimelight.com/auth/sign-in"),
+        },
+        env: {
+          MY_RATE_LIMITER: { limit: limitMock },
+        },
+        res: new Response("OK", { headers: { "content-type": "text/plain" } }),
+      };
+
+      await middleware(ctx, async () => {
+        nextCalled = true;
+      });
+
+      expect(nextCalled).toBe(true);
+      expect(limitMock).not.toHaveBeenCalled();
+    });
+
+    it("gates traffic through construction mode when enabled", async () => {
+      setSecurityConfig({
+        construction: {
+          constructionPath: "/construction",
+        },
+      });
+
+      const middleware = security();
+      let nextCalled = false;
+      let redirectedTo: string | null = null;
+      const ctx = {
+        req: {
+          path: "/dashboard",
+          raw: new Request("https://rimelight.com/dashboard", {
+            headers: { "sec-fetch-dest": "document", accept: "text/html" },
+          }),
+        },
+        env: {
+          CONSTRUCTION_MODE: "true",
+          CONSTRUCTION_PASSPHRASE: "pass123",
+        },
+        redirect: (target: string) => {
+          redirectedTo = target;
+          return new Response(null, { status: 302, headers: { Location: target } });
+        },
+      };
+
+      await middleware(ctx, async () => {
+        nextCalled = true;
+      });
+
+      expect(nextCalled).toBe(false);
+      expect(redirectedTo).toContain("/en/construction?redirect=");
+    });
+
+    it("skips construction mode when construction is false", async () => {
+      setSecurityConfig({
+        construction: false,
+      });
+
+      const middleware = security();
+      let nextCalled = false;
+      const ctx = {
+        req: {
+          path: "/dashboard",
+          raw: new Request("https://rimelight.com/dashboard", {
+            headers: { "sec-fetch-dest": "document", accept: "text/html" },
+          }),
+        },
+        env: {
+          CONSTRUCTION_MODE: "true",
+          CONSTRUCTION_PASSPHRASE: "pass123",
+        },
+        res: new Response("OK", { headers: { "content-type": "text/plain" } }),
+      };
+
+      await middleware(ctx, async () => {
+        nextCalled = true;
+      });
+
+      expect(nextCalled).toBe(true);
+    });
   });
 });

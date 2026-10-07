@@ -1,7 +1,12 @@
-import { describe, expect, it, vi } from "vite-plus/test";
+import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { ratelimit } from "../src/middleware/ratelimit";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("Rate Limit Middleware", () => {
+  beforeEach(() => {
+    setSecurityConfig();
+  });
+
   it("skips non-sensitive routes by default", async () => {
     const middleware = ratelimit();
     const limitMock = vi.fn().mockResolvedValue({ success: false });
@@ -96,12 +101,15 @@ describe("Rate Limit Middleware", () => {
   });
 
   it("supports custom routes, bindingName, retryAfter, and custom keyGenerator", async () => {
-    const middleware = ratelimit({
-      routes: ["/api/custom-endpoint"],
-      bindingName: "CUSTOM_LIMITER",
-      retryAfter: 120,
-      keyGenerator: (c) => c.req.header("Authorization") || "anonymous",
+    setSecurityConfig({
+      ratelimit: {
+        routes: ["/api/custom-endpoint"],
+        bindingName: "CUSTOM_LIMITER",
+        retryAfter: 120,
+        keyGenerator: (c) => c.req.header("Authorization") || "anonymous",
+      },
     });
+    const middleware = ratelimit();
 
     const limitMock = vi.fn().mockResolvedValue({ success: false });
     const jsonMock = vi.fn((data: any, status: number, headers: any) => ({
@@ -149,9 +157,12 @@ describe("Rate Limit Middleware", () => {
   });
 
   it("fails closed when fallback is set to block and binding is missing", async () => {
-    const middleware = ratelimit({
-      fallback: "block",
+    setSecurityConfig({
+      ratelimit: {
+        fallback: "block",
+      },
     });
+    const middleware = ratelimit();
 
     const jsonMock = vi.fn((data: any, status: number) => ({ data, status }));
     const ctx = {

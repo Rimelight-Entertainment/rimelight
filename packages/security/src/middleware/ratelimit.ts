@@ -1,4 +1,5 @@
 import type { RateLimitOptions, RateLimiterBinding } from "../types";
+import { getSecurityConfig } from "../runtime";
 
 const DEFAULT_SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"];
 
@@ -6,21 +7,23 @@ const DEFAULT_SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload
  * Middleware to enforce rate limits on sensitive endpoints using Cloudflare Rate Limiting bindings.
  *
  * @example
+ *   // vite.config.ts
+ *   security({
+ *     ratelimit: {
+ *       routes: ["/api/checkout", "/auth/login"],
+ *       retryAfter: 30,
+ *       bindingName: "MY_RATE_LIMITER",
+ *     },
+ *   })
+ *
  *   // fetch.ts
  *   import { ratelimit } from "@rimelight/security/middleware"
  *   app.use(ratelimit())
- *
- * @example
- *   // Custom configuration
- *   app.use(
- *     ratelimit({
- *       routes: ["/api/checkout", "/auth/login"],
- *       retryAfter: 30,
- *       bindingName: "MY_RATE_LIMITER"
- *     })
- *   )
  */
-export const ratelimit = (options: RateLimitOptions = {}) => {
+export const ratelimit = () => {
+  const rawRatelimit = getSecurityConfig().ratelimit;
+  const options: RateLimitOptions =
+    typeof rawRatelimit === "object" && rawRatelimit !== null ? rawRatelimit : {};
   const {
     bindingName = "MY_RATE_LIMITER",
     routes = DEFAULT_SENSITIVE_ROUTES,
@@ -65,7 +68,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
     const matchesRoute =
       typeof routes === "function"
         ? routes(c)
-        : routes.some((route) =>
+        : routes.some((route: string | RegExp) =>
             typeof route === "string" ? path.includes(route) : route.test(path),
           );
 

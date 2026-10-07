@@ -1,5 +1,6 @@
 import type { ConstructionOptions } from "../types";
 import { getConstructionFallbackHtml } from "../construction/fallback";
+import { getSecurityConfig } from "../runtime";
 
 export const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest";
 
@@ -198,10 +199,14 @@ export const isConstructionGuest = async (
   c: any,
   options?: ConstructionOptions,
 ): Promise<boolean> => {
-  const cookieName = options?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
+  const rawConstruction = getSecurityConfig().construction;
+  const opts: ConstructionOptions | undefined =
+    options ??
+    (typeof rawConstruction === "object" && rawConstruction !== null ? rawConstruction : undefined);
+  const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
   const helpers = getContextHelpers(c);
   const token = helpers.getCookieValue(cookieName);
-  const passphrase = getPassphrase(c, options);
+  const passphrase = getPassphrase(c, opts);
   if (!token || !passphrase) return false;
 
   try {
@@ -232,7 +237,11 @@ export const signInConstructionGuest = async (
   rememberMe = true,
   options?: ConstructionOptions,
 ): Promise<boolean> => {
-  const expectedPassphrase = getPassphrase(c, options);
+  const rawConstruction = getSecurityConfig().construction;
+  const opts: ConstructionOptions | undefined =
+    options ??
+    (typeof rawConstruction === "object" && rawConstruction !== null ? rawConstruction : undefined);
+  const expectedPassphrase = getPassphrase(c, opts);
   if (!expectedPassphrase || !passphrase) {
     return false;
   }
@@ -242,8 +251,8 @@ export const signInConstructionGuest = async (
     return false;
   }
 
-  const cookieName = options?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
-  const maxAge = options?.cookieMaxAge ?? 60 * 60 * 24 * 7; // 7 days
+  const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
+  const maxAge = opts?.cookieMaxAge ?? 60 * 60 * 24 * 7; // 7 days
 
   const payload = JSON.stringify({
     expiresAt: Date.now() + maxAge * 1000,
@@ -283,7 +292,10 @@ const resolveLocale = (path: string, options?: ConstructionOptions): string => {
  * guest auth endpoint automatically, and passes authenticated requests or whitelisted assets
  * cleanly.
  */
-export function construction(options: ConstructionOptions = {}) {
+export function construction() {
+  const rawConstruction = getSecurityConfig().construction;
+  const options: ConstructionOptions =
+    typeof rawConstruction === "object" && rawConstruction !== null ? rawConstruction : {};
   const apiPath = options.apiPath !== undefined ? options.apiPath : "/api/construction-guest";
   const constructionPath = options.constructionPath ?? "/construction";
 

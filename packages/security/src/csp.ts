@@ -52,7 +52,9 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     ]),
   );
 
-  const allowTurnstile = options.turnstile === true;
+  const allowTurnstile =
+    options.turnstile === true ||
+    (typeof options.turnstile === "object" && options.turnstile !== null);
 
   const connectSources = Array.from(
     new Set([

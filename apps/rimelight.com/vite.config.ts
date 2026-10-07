@@ -60,6 +60,9 @@ export default defineConfig({
     security({
       domain: "rimelight.com",
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"],
+      ratelimit: {
+        routes: ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat", "/api/contact"],
+      },
     }),
 
     auth({

@@ -6,6 +6,7 @@
 export type { RimelightSecurityPlugin, SecurityPluginOptions } from "./vite";
 export type { RimelightSecurityOptions } from "./integration";
 export * from "./types";
+export * from "./runtime";
 export * from "./csp";
 export * from "./middleware/construction";
 export * from "./turnstile";

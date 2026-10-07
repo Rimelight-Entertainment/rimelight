@@ -1,7 +1,7 @@
-import type { SecurityOptions, ConstructionOptions } from "./types";
+import type { SecurityPluginOptions, ConstructionOptions } from "./types";
 import { security } from "./vite";
 
-export interface RimelightSecurityOptions extends SecurityOptions {
+export interface RimelightSecurityOptions extends SecurityPluginOptions {
   /**
    * Construction mode options & route injection settings
    */

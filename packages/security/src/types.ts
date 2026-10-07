@@ -1,3 +1,15 @@
+import type { TurnstileVerifyOptions } from "./turnstile";
+
+export interface TurnstileMiddlewareOptions extends Pick<
+  TurnstileVerifyOptions,
+  "secretKey" | "failOpen" | "endpoint"
+> {
+  /**
+   * Form field containing the Turnstile token. Defaults to `cf-turnstile-response`.
+   */
+  field?: string;
+}
+
 export interface SecurityOptions {
   /**
    * The base domain name for this project (e.g. "idantity.me"), used to derive the
@@ -44,9 +56,10 @@ export interface SecurityOptions {
 
   /**
    * Enables Cloudflare Turnstile CSP allowances (challenges.cloudflare.com in script-src,
-   * frame-src, connect-src).
+   * frame-src, connect-src). Passing a TurnstileMiddlewareOptions object also configures
+   * the turnstile() middleware.
    */
-  turnstile?: boolean | undefined;
+  turnstile?: boolean | TurnstileMiddlewareOptions | undefined;
 
   /**
    * Enables the 'require-trusted-types-for' directive
@@ -253,6 +266,29 @@ export interface RateLimitOptions {
    * Custom handler when the rate limit is exceeded.
    */
   onRateLimited?: (c: any, retryAfter: number) => Response | Promise<Response>;
+}
+
+export interface SecurityPluginOptions extends SecurityOptions {
+  /**
+   * Additional external script/style URLs to fetch and hash for SRI at build time.
+   */
+  resources?: string[];
+
+  /**
+   * Rate limiting middleware configuration, or `false` to disable rate limiting in `security()`.
+   */
+  ratelimit?: RateLimitOptions | false;
+
+  /**
+   * Construction mode middleware configuration, or `false` to disable construction mode in `security()`.
+   */
+  construction?: ConstructionOptions | false;
+
+  /**
+   * Blocks access to `/dev/` routes in non-development environments. Defaults to `true`.
+   * Set to `false` to disable in `security()`.
+   */
+  devOnly?: boolean;
 }
 
 export type { ConstructionFallbackOptions } from "./construction/fallback";

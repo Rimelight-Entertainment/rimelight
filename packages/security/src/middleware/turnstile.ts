@@ -1,14 +1,8 @@
-import { verifyTurnstile, type TurnstileVerifyOptions } from "../turnstile";
+import { verifyTurnstile } from "../turnstile";
+import type { TurnstileMiddlewareOptions } from "../types";
+import { getSecurityConfig } from "../runtime";
 
-export interface TurnstileMiddlewareOptions extends Pick<
-  TurnstileVerifyOptions,
-  "secretKey" | "failOpen" | "endpoint"
-> {
-  /**
-   * Form field containing the Turnstile token. Defaults to `cf-turnstile-response`.
-   */
-  field?: string;
-}
+export type { TurnstileMiddlewareOptions } from "../types";
 
 /**
  * Middleware that verifies a Cloudflare Turnstile token from the request's form body before
@@ -18,7 +12,10 @@ export interface TurnstileMiddlewareOptions extends Pick<
  *   import { turnstile } from "@rimelight/security/middleware"
  *   app.post("/contact", turnstile(), (c) => { ... })
  */
-export const turnstile = (options: TurnstileMiddlewareOptions = {}) => {
+export const turnstile = () => {
+  const rawTurnstile = getSecurityConfig().turnstile;
+  const options: TurnstileMiddlewareOptions =
+    typeof rawTurnstile === "object" && rawTurnstile !== null ? rawTurnstile : {};
   const { field = "cf-turnstile-response", ...verifyOptions } = options;
 
   return async (c: any, next: () => Promise<any>): Promise<any> => {
