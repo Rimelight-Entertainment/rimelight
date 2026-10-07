@@ -1,6 +1,6 @@
 export {
-  getDefaultLocale,
   getLocales,
+  getDefaultLocale,
   getCurrentLocale,
   setCurrentLocale,
   getLocalizedText,
