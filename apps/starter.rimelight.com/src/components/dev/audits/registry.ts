@@ -14,6 +14,7 @@ import { carouselAudit } from "./carousel.audit";
 import { checkboxAudit } from "./checkbox.audit";
 import { chipAudit } from "./chip.audit";
 import { collapsibleAudit } from "./collapsible.audit";
+import { compareAudit } from "./compare.audit";
 import type { ComponentAuditDefinition } from "./types";
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
@@ -33,6 +34,7 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   checkbox: checkboxAudit,
   chip: chipAudit,
   collapsible: collapsibleAudit,
+  compare: compareAudit,
 };
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);
