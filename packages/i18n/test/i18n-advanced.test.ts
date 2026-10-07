@@ -151,27 +151,21 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
 
     setCurrentLocale("pt-BR");
     expect(t("common.button")).toBe("Enviar");
-    // Falls back to base/default language for missing key in sub-locale
+    // Falls back to default locale (en) for missing key in sub-locale
     expect(t("common.cancel")).toBe("Cancel");
   });
 
-  it("should handle multi-tier fallback across regional variants and custom default locales", () => {
+  it("should handle fallback across regional variants and custom default locales", () => {
     setTranslations(
       {
         "pt-BR": {
           shop: { checkout: "Finalizar Compra" },
         },
-        pt: {
-          shop: { cart: "Carrinho" },
-        },
         "es-MX": {
-          shop: { currency: "MXN$" },
-        },
-        es: {
-          shop: { search: "Buscar", help: "Ayuda" },
+          shop: { currency: "MXN$", search: "Buscar" },
         },
         en: {
-          shop: { help: "Help", fallbackOnly: "Fallback Only" },
+          shop: { help: "Help" },
         },
       },
       { defaultLocale: "es-MX" },
@@ -180,15 +174,11 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
     setCurrentLocale("pt-BR");
     // 1. Direct regional match (pt-BR)
     expect(t("shop.checkout")).toBe("Finalizar Compra");
-    // 2. Active base language fallback (pt)
-    expect(t("shop.cart")).toBe("Carrinho");
-    // 3. Configured default regional locale (es-MX)
+    // 2. Fallback to default locale (es-MX)
     expect(t("shop.currency")).toBe("MXN$");
-    // 4. Configured default base language (es)
     expect(t("shop.search")).toBe("Buscar");
-    expect(t("shop.help")).toBe("Ayuda");
-    // 5. Ultimate fallback if key only exists in en
-    expect(t("shop.fallbackOnly")).toBe("Fallback Only");
+    // 3. Key not in active or default locale returns the key itself
+    expect(t("shop.help")).toBe("shop.help");
   });
 
   it("should support function values in translations", () => {

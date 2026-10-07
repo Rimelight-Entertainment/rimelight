@@ -134,7 +134,7 @@ describe("@rimelight/i18n KV-first translations", () => {
     };
   }
 
-  it("serves KV overrides over bundled translations when the binding is present", async () => {
+  it("replaces bundled translations with KV data when the binding is present", async () => {
     setTranslations(bundled, { defaultLocale: "en" });
     setCurrentLocale("en");
     const kv = {
@@ -144,7 +144,7 @@ describe("@rimelight/i18n KV-first translations", () => {
     await i18n()(kvContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {});
 
     expect(t("nav.home")).toBe("Home (KV)");
-    expect(t("nav.about")).toBe("About");
+    expect(t("nav.about")).toBe("nav.about");
   });
 
   it("falls back to bundled translations when the binding is absent", async () => {

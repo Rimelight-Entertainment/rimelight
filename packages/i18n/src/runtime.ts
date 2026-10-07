@@ -97,20 +97,13 @@ export function setTranslations(
 }
 
 /**
- * Layers KV-sourced translation overrides for `locale` over the bundled translations so `t()`
- * stays synchronous and KV-first. Called by the middleware before rendering.
+ * Replaces bundled translations for `locale` with KV-sourced translations. If KV data exists,
+ * it completely replaces the bundled data (no merging). If KV data is unavailable or invalid,
+ * bundled translations are used. Called by the middleware before rendering.
  */
 export function applyLocaleOverrides(locale: string, overrides: unknown): void {
   if (!locale || !isObjectRecord(overrides)) return;
-  const currentLocaleDict = translations[locale] ?? {};
-  const updatedLocaleDict: Record<string, any> = { ...currentLocaleDict };
-  for (const [comp, data] of Object.entries(overrides)) {
-    updatedLocaleDict[comp] =
-      isObjectRecord(data) && isObjectRecord(updatedLocaleDict[comp])
-        ? { ...updatedLocaleDict[comp], ...data }
-        : data;
-  }
-  translations[locale] = updatedLocaleDict;
+  translations[locale] = overrides;
   chainCache.clear();
 }
 
@@ -142,8 +135,7 @@ function resolvePath(obj: unknown, path: string): unknown {
 }
 
 /**
- * Builds the ordered locale fallback chain (exact → lowercase → base language) for the active
- * locale, the configured default locale, and 'en'.
+ * Builds the ordered locale fallback chain (exact → default locale).
  */
 function localeChain(targetLocale: string): string[] {
   const cacheKey = `${targetLocale}:${defaultLocale}`;
@@ -151,26 +143,16 @@ function localeChain(targetLocale: string): string[] {
   if (cached) return cached;
 
   const chain: string[] = [];
+  if (targetLocale && !chain.includes(targetLocale)) chain.push(targetLocale);
+  if (defaultLocale && !chain.includes(defaultLocale)) chain.push(defaultLocale);
 
-  const add = (code: string): void => {
-    if (!code) return;
-    const normalized = code.toLowerCase();
-    const base = normalized.split("-")[0]!;
-    if (!chain.includes(code)) chain.push(code);
-    if (normalized !== code && !chain.includes(normalized)) chain.push(normalized);
-    if (base && !chain.includes(base)) chain.push(base);
-  };
-
-  add(targetLocale);
-  add(defaultLocale);
-  add("en");
   chainCache.set(cacheKey, chain);
   return chain;
 }
 
 /**
  * Resolves a value for a component across the locale fallback chain (active locale → default
- * locale → 'en'). Without `key` the component's translation object itself is returned.
+ * locale). Without `key` the component's translation object itself is returned.
  */
 function resolveFromLocale(targetLocale: string, component: string, key?: string): unknown {
   for (const code of localeChain(targetLocale)) {
