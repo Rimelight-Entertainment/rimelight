@@ -9,6 +9,7 @@ import { browserMockupAudit } from "./browser-mockup.audit";
 import { buttonAudit } from "./button.audit";
 import { calendarAudit } from "./calendar.audit";
 import { calloutAudit } from "./callout.audit";
+import { cardAudit } from "./card.audit";
 import type { ComponentAuditDefinition } from "./types";
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
@@ -23,6 +24,7 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   button: buttonAudit,
   calendar: calendarAudit,
   callout: calloutAudit,
+  card: cardAudit,
 };
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);

@@ -1,119 +1,207 @@
 import type { RLCardProps } from "./card.types";
 import { RLCardTheme } from "./card.theme";
-import { createMemo, omit, children, type Component, Show } from "solid-js";
+import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
+import { dynamic } from "@solidjs/web";
 
 export const RLCard: Component<RLCardProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
+    "as",
     "title",
     "description",
-    "mediaSrc",
-    "href",
-    "overlay",
     "variant",
+    "mediaSrc",
+    "overlay",
+    "overlaySlot",
+    "href",
+    "to",
+    "target",
+    "rel",
+    "id",
+    "role",
+    "ariaLabel",
+    "ariaLabelledby",
+    "ariaDescribedby",
     "theme",
     "ui",
     "class",
     "children",
     "header",
+    "headerSlot",
+    "titleSlot",
+    "descriptionSlot",
+    "body",
+    "bodySlot",
     "footer",
+    "footerSlot",
     "media",
+    "mediaSlot",
   );
+
+  const cardId = props.id || `rl-card-${createUniqueId()}`;
+  const titleId = `${cardId}-title`;
+  const descriptionId = `${cardId}-description`;
+
+  const isInteractive = () => Boolean(props.href || props.to);
+  const isOverlay = () => Boolean(props.overlaySlot !== undefined || props.overlay);
+
+  const Tag = dynamic(() => props.as ?? (isInteractive() ? "a" : "div"));
+
+  const hasHeaderSlot = () => Boolean(props.headerSlot !== undefined || props.header !== undefined);
+  const hasTitle = () => Boolean(props.titleSlot !== undefined || props.title !== undefined);
+  const hasDescription = () =>
+    Boolean(props.descriptionSlot !== undefined || props.description !== undefined);
+  const hasHeader = () => Boolean(hasHeaderSlot() || hasTitle() || hasDescription());
+
+  const hasBody = () =>
+    Boolean(
+      props.bodySlot !== undefined || props.body !== undefined || props.children !== undefined,
+    );
+  const hasFooter = () => Boolean(props.footerSlot !== undefined || props.footer !== undefined);
+  const hasMedia = () =>
+    Boolean(
+      props.mediaSlot !== undefined || props.media !== undefined || props.mediaSrc !== undefined,
+    );
 
   const resolvedClasses = createMemo(() =>
     RLCardTheme({
-      variant: props.variant,
-      interactive: !!props.href,
-      overlay: !!props.overlay,
+      variant: props.variant ?? "outline",
+      overlay: isOverlay(),
       theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
   );
 
-  const resolvedChildren = children(() => props.children);
-  const resolvedHeader = children(() => props.header);
-  const resolvedFooter = children(() => props.footer);
-  const resolvedMedia = children(() => props.media);
+  const linkHref = () => props.href ?? props.to;
+  const linkRel = () =>
+    props.rel ?? (props.target === "_blank" ? "noopener noreferrer" : undefined);
 
-  const cardInner = () => (
-    <>
-      <Show when={resolvedMedia()}>{resolvedMedia()}</Show>
-      <Show when={!resolvedMedia() && props.mediaSrc}>
-        <div class={resolvedClasses().media} data-slot="media">
-          <img src={props.mediaSrc} alt={props.title || ""} class="h-full w-full object-cover" />
-        </div>
+  return (
+    <Tag
+      id={props.id}
+      class={resolvedClasses().root}
+      data-slot="root"
+      role={props.role}
+      aria-labelledby={props.ariaLabelledby ?? (hasTitle() ? titleId : undefined)}
+      aria-describedby={props.ariaDescribedby ?? (hasDescription() ? descriptionId : undefined)}
+      aria-label={props.ariaLabel}
+      href={linkHref()}
+      target={props.target}
+      rel={linkRel()}
+      data-theme={props.theme}
+      {...rest}
+    >
+      {/* Media */}
+      <Show when={hasMedia()}>
+        <Show
+          when={props.mediaSlot ?? props.media}
+          fallback={
+            <Show when={props.mediaSrc}>
+              {(src) => (
+                <div class={resolvedClasses().media} data-slot="media">
+                  <img
+                    src={src()}
+                    alt={typeof props.title === "string" ? props.title : ""}
+                    class="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+            </Show>
+          }
+        >
+          {props.mediaSlot ?? props.media}
+        </Show>
       </Show>
 
       <Show
-        when={props.overlay}
+        when={isOverlay()}
         fallback={
           <>
-            <Show when={resolvedHeader()}>{resolvedHeader()}</Show>
-            <Show when={!resolvedHeader() && (props.title || props.description)}>
+            {/* Header */}
+            <Show when={hasHeader()}>
               <div class={resolvedClasses().header} data-slot="header">
-                <Show when={props.title}>
-                  <div class={resolvedClasses().title} data-slot="title">
-                    {props.title}
-                  </div>
-                </Show>
-                <Show when={props.description}>
-                  <div class={resolvedClasses().description} data-slot="description">
-                    {props.description}
-                  </div>
+                <Show
+                  when={props.headerSlot ?? props.header}
+                  fallback={
+                    <>
+                      <Show when={hasTitle()}>
+                        <div id={titleId} class={resolvedClasses().title} data-slot="title">
+                          {props.titleSlot ?? props.title}
+                        </div>
+                      </Show>
+                      <Show when={hasDescription()}>
+                        <div
+                          id={descriptionId}
+                          class={resolvedClasses().description}
+                          data-slot="description"
+                        >
+                          {props.descriptionSlot ?? props.description}
+                        </div>
+                      </Show>
+                    </>
+                  }
+                >
+                  {props.headerSlot ?? props.header}
                 </Show>
               </div>
             </Show>
 
-            <Show when={resolvedChildren()}>
+            {/* Body */}
+            <Show when={hasBody()}>
               <div class={resolvedClasses().body} data-slot="body">
-                {resolvedChildren()}
+                {props.bodySlot ?? props.body ?? props.children}
               </div>
             </Show>
 
-            <Show when={resolvedFooter()}>
+            {/* Footer */}
+            <Show when={hasFooter()}>
               <div class={resolvedClasses().footer} data-slot="footer">
-                {resolvedFooter()}
+                {props.footerSlot ?? props.footer}
               </div>
             </Show>
           </>
         }
       >
         <div class={resolvedClasses().overlay} data-slot="overlay">
-          <Show when={props.title}>
-            <div class={resolvedClasses().title} data-slot="title">
-              {props.title}
-            </div>
+          <Show
+            when={
+              props.overlaySlot ?? (typeof props.overlay !== "boolean" ? props.overlay : undefined)
+            }
+            fallback={
+              <>
+                <Show when={hasTitle()}>
+                  <div id={titleId} class={resolvedClasses().title} data-slot="title">
+                    {props.titleSlot ?? props.title}
+                  </div>
+                </Show>
+                <Show when={hasDescription()}>
+                  <div
+                    id={descriptionId}
+                    class={resolvedClasses().description}
+                    data-slot="description"
+                  >
+                    {props.descriptionSlot ?? props.description}
+                  </div>
+                </Show>
+                <Show when={hasBody()}>
+                  <div class={resolvedClasses().body} data-slot="body">
+                    {props.bodySlot ?? props.body ?? props.children}
+                  </div>
+                </Show>
+                <Show when={hasFooter()}>
+                  <div class={resolvedClasses().footer} data-slot="footer">
+                    {props.footerSlot ?? props.footer}
+                  </div>
+                </Show>
+              </>
+            }
+          >
+            {props.overlaySlot ?? (typeof props.overlay !== "boolean" ? props.overlay : undefined)}
           </Show>
-          <Show when={props.description}>
-            <div class={resolvedClasses().description} data-slot="description">
-              {props.description}
-            </div>
-          </Show>
-          {resolvedChildren()}
         </div>
       </Show>
-    </>
-  );
-
-  return (
-    <Show
-      when={props.href}
-      fallback={
-        <div class={resolvedClasses().root} data-slot="card-root" {...rest}>
-          {cardInner()}
-        </div>
-      }
-    >
-      <a
-        href={props.href}
-        class={`${resolvedClasses().root} no-underline`}
-        data-slot="card-root"
-        {...rest}
-      >
-        {cardInner()}
-      </a>
-    </Show>
+    </Tag>
   );
 };
