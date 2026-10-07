@@ -96,10 +96,10 @@
   "dependencies": {
     "@rimelight/auth": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "@solidjs/web": "2.0.0-rc.11",
+    "@solidjs/web": "2.0.0-rc.13",
     "drizzle-orm": "1.0.0-rc.4",
-    "hono": "4.13.12",
-    "solid-js": "2.0.0-rc.11",
+    "hono": "4.13.13",
+    "solid-js": "2.0.0-rc.13",
     "sortablejs": "1.15.7"
   },
   "devDependencies": {
@@ -115,5 +115,5 @@
   "engines": {
     "node": ">=26.10.0"
   },
-  "packageManager": "pnpm@12.8.1"
+  "packageManager": "pnpm@12.10.1"
 }
