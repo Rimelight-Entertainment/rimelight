@@ -48,6 +48,8 @@ export { RLChatTool } from "./chat-tool/RLChatTool";
 export type { RLChatToolProps } from "./chat-tool/chat-tool.types";
 export { RLCheckbox } from "./checkbox/RLCheckbox";
 export type { RLCheckboxProps } from "./checkbox/checkbox.types";
+export { RLCheckboxGroup } from "./checkbox-group/RLCheckboxGroup";
+export type { RLCheckboxGroupProps } from "./checkbox-group/checkbox-group.types";
 export { RLChip } from "./chip/RLChip";
 export type { RLChipProps } from "./chip/chip.types";
 export { RLCollapsible } from "./collapsible/RLCollapsible";
