@@ -9,7 +9,7 @@ import {
   formatAuditReport,
   fixTranslations,
 } from "../src/cli";
-import { getPluralCategory, setTranslations, setLocale, t } from "../src/runtime";
+import { getPluralCategory, setTranslations, setCurrentLocale, t } from "../src/runtime";
 import { getRelativeLocaleUrl } from "../src/index";
 
 describe("translation dictionary utils", () => {
@@ -106,7 +106,7 @@ describe("translation dictionary utils", () => {
 
 describe("relative locale urls", () => {
   it("prefixes the current locale when prefixDefaultLocale is true", () => {
-    setLocale("en");
+    setCurrentLocale("en");
     expect(getRelativeLocaleUrl("/about")).toBe("/en/about");
     expect(getRelativeLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
   });
@@ -141,7 +141,7 @@ describe("translation runtime", () => {
       },
       { defaultLocale: "en" },
     );
-    setLocale("en");
+    setCurrentLocale("en");
     expect(t("hero.title")).toBe("Hello");
     expect(t("hero.greeting", { name: "Ada" })).toBe("Hi Ada");
     expect(t("missing.key")).toBe("missing.key");

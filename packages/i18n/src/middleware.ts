@@ -1,12 +1,12 @@
 import {
   applyLocaleOverrides,
   defaultLocale,
-  getLocale,
+  getCurrentLocale,
+  setCurrentLocale,
   kvBinding,
   localeFromPathname,
   locales,
   prefixDefaultLocale,
-  setLocale,
   skipPaths,
   stripLocalePrefix,
 } from "./runtime";
@@ -23,7 +23,7 @@ export function resolveLocale(request: Request): string | null {
   const pathname = url.pathname;
   const segmentLocale = localeFromPathname(pathname, locales);
 
-  setLocale(segmentLocale ?? defaultLocale);
+  setCurrentLocale(segmentLocale ?? defaultLocale);
 
   if (request.method !== "GET" && request.method !== "HEAD") return null;
   if (!isLocalizedPage(pathname)) return null;
@@ -49,7 +49,7 @@ export function resolveLocale(request: Request): string | null {
         }
       }
 
-      setLocale(locale);
+      setCurrentLocale(locale);
       return `/${locale}${pathname}${url.search}`;
     }
     return null;
@@ -70,7 +70,7 @@ export function i18n() {
     const redirectTo = resolveLocale(c.req.raw);
     if (redirectTo) return c.redirect(redirectTo, 302);
 
-    const locale = getLocale();
+    const locale = getCurrentLocale();
     const kv = c.env?.[kvBinding] as {
       get(key: string, opts?: { type: "json"; cacheTtl?: number }): Promise<unknown>;
     } | null;

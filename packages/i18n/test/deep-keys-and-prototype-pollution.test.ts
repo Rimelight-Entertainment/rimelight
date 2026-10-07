@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { flatten, unflatten, findMissingKeys } from "../src/cli";
-import { setTranslations, setLocale, t } from "../src/runtime";
+import { setTranslations, setCurrentLocale, t } from "../src/runtime";
 
 describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety", () => {
   const translations = {
@@ -50,7 +50,7 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
     setTranslations(translations, {
       defaultLocale: "en",
     });
-    setLocale("en");
+    setCurrentLocale("en");
     expect(t("nav.home")).toBe("Home");
     expect(t("messages.welcome", { user: "Marcelo" })).toBe("Welcome, Marcelo!");
     expect(t("unknown.missing.key")).toBe("unknown.missing.key");

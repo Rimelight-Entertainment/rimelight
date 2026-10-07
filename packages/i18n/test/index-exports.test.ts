@@ -2,11 +2,11 @@ import { describe, expect, it } from "vite-plus/test";
 import * as i18n from "../src/index";
 import {
   getDefaultLocale,
-  getLocale,
+  getCurrentLocale,
   getLocalizedText,
   getLocales,
   getRelativeLocaleUrl,
-  setLocale,
+  setCurrentLocale,
   t,
 } from "../src/index";
 
@@ -15,11 +15,11 @@ describe("index exports", () => {
     expect(Object.keys(i18n).sort()).toEqual(
       [
         "getDefaultLocale",
-        "getLocale",
+        "getCurrentLocale",
         "getLocalizedText",
         "getLocales",
         "getRelativeLocaleUrl",
-        "setLocale",
+        "setCurrentLocale",
         "t",
       ].sort(),
     );
@@ -27,8 +27,8 @@ describe("index exports", () => {
 
   it("exposes the full API through the module namespace", () => {
     expect(typeof i18n.t).toBe("function");
-    expect(typeof i18n.getLocale).toBe("function");
-    expect(typeof i18n.setLocale).toBe("function");
+    expect(typeof i18n.getCurrentLocale).toBe("function");
+    expect(typeof i18n.setCurrentLocale).toBe("function");
     expect(typeof i18n.getLocales).toBe("function");
     expect(typeof i18n.getDefaultLocale).toBe("function");
     expect(typeof i18n.getRelativeLocaleUrl).toBe("function");
@@ -39,12 +39,12 @@ describe("index exports", () => {
   });
 
   it("shares live state between namespace and named access", () => {
-    i18n.setLocale("pt");
-    expect(i18n.getLocale()).toBe("pt");
-    expect(getLocale()).toBe("pt");
-    i18n.setLocale("en");
-    expect(getLocale()).toBe("en");
-    expect(setLocale).toBe(i18n.setLocale);
+    i18n.setCurrentLocale("pt");
+    expect(i18n.getCurrentLocale()).toBe("pt");
+    expect(getCurrentLocale()).toBe("pt");
+    i18n.setCurrentLocale("en");
+    expect(getCurrentLocale()).toBe("en");
+    expect(setCurrentLocale).toBe(i18n.setCurrentLocale);
     expect(t).toBe(i18n.t);
     expect(getLocales()).toEqual(i18n.getLocales());
     expect(getDefaultLocale()).toBe(i18n.getDefaultLocale());

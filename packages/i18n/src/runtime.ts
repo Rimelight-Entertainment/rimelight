@@ -33,14 +33,14 @@ let activeLocale = defaultLocale;
 /**
  * Returns the active locale code.
  */
-export function getLocale(): string {
+export function getCurrentLocale(): string {
   return activeLocale || defaultLocale;
 }
 
 /**
  * Sets the active locale code.
  */
-export function setLocale(value: string): void {
+export function setCurrentLocale(value: string): void {
   activeLocale = value;
 }
 
@@ -92,7 +92,7 @@ export function setTranslations(
   chainCache.clear();
 
   if (!activeLocale) {
-    setLocale(defaultLocale);
+    setCurrentLocale(defaultLocale);
   }
 }
 
@@ -190,7 +190,7 @@ function resolveFromLocale(targetLocale: string, component: string, key?: string
  */
 function getRawTranslation(key: string): unknown {
   const dotIndex = key.indexOf(".");
-  const targetLocale = getLocale() || defaultLocale;
+  const targetLocale = getCurrentLocale() || defaultLocale;
 
   return dotIndex === -1
     ? resolveFromLocale(targetLocale, key)
@@ -228,7 +228,7 @@ export const t: TFunction = Object.assign(
     const dotIndex = key.indexOf(".");
     if (dotIndex === -1) return key;
 
-    const targetLocale = getLocale() || defaultLocale;
+    const targetLocale = getCurrentLocale() || defaultLocale;
     let value =
       resolveFromLocale(targetLocale, key.slice(0, dotIndex), key.slice(dotIndex + 1)) ?? key;
 
@@ -263,7 +263,8 @@ export const t: TFunction = Object.assign(
   {
     raw: tRaw,
     array: tArray,
-    plural: (count: number, locale?: string) => getPluralCategory(count, locale ?? getLocale()),
+    plural: (count: number, locale?: string) =>
+      getPluralCategory(count, locale ?? getCurrentLocale()),
   },
 );
 
@@ -347,7 +348,7 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
 
 export function getRelativeLocaleUrl(
   path: string,
-  { locale: targetLocale = getLocale() }: { locale?: string } = {},
+  { locale: targetLocale = getCurrentLocale() }: { locale?: string } = {},
 ): string {
   // External / absolute URLs, hash anchors, and scheme links (mailto:, tel:, ...) pass through
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
