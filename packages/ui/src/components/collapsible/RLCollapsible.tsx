@@ -1,78 +1,176 @@
 import type { RLCollapsibleProps } from "./collapsible.types";
 import { RLCollapsibleTheme } from "./collapsible.theme";
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
-import { RLIcon } from "../icon/RLIcon";
+import { createMemo, createSignal, createUniqueId, omit, Show, type Component } from "solid-js";
+import { dynamic, type JSX } from "@solidjs/web";
 
 export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
-    "open",
-    "defaultOpen",
-    "label",
-    "icon",
-    "size",
-    "color",
+    "as",
     "ui",
     "class",
+    "disabled",
+    "defaultOpen",
+    "open",
+    "unmountOnHide",
     "children",
+    "content",
+    "contentSlot",
+    "trigger",
     "triggerSlot",
     "onOpenChange",
+    "onUpdateOpen",
+    "onUpdate:open",
+    "id",
+    "theme",
+    "ariaLabel",
+    "ariaLabelledby",
+    "ariaDescribedby",
   );
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
+  const [internalOpen, setInternalOpen] = createSignal(props.defaultOpen ?? false);
 
-  createEffect(
-    () => props.open,
-    (open) => {
-      if (open !== undefined) setIsOpen(open);
-    },
-  );
+  const isOpen = () => (props.open !== undefined ? Boolean(props.open) : internalOpen());
+  const unmountOnHide = () => props.unmountOnHide !== false;
+  const isDisabled = () => props.disabled === true;
+
+  const instanceId = () => props.id || `rl-collapsible-${createUniqueId()}`;
+  const triggerId = () => `${instanceId()}-trigger`;
+  const contentId = () => `${instanceId()}-content`;
+
+  const handleToggle = () => {
+    if (isDisabled()) return;
+    const next = !isOpen();
+    if (props.open === undefined) {
+      setInternalOpen(next);
+    }
+    props.onOpenChange?.(next);
+    props.onUpdateOpen?.(next);
+    props["onUpdate:open"]?.(next);
+  };
 
   const resolvedClasses = createMemo(() =>
     RLCollapsibleTheme({
       open: isOpen(),
-      size: props.size,
-      color: props.color,
+      disabled: isDisabled(),
+      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
   );
 
-  const handleToggle = (e: Event) => {
-    const target = e.currentTarget as HTMLDetailsElement;
-    setIsOpen(target.open);
-    props.onOpenChange?.(target.open);
+  const hasContentProp = () => props.content !== undefined || props.contentSlot !== undefined;
+  const hasTriggerProp = () => props.trigger !== undefined || props.triggerSlot !== undefined;
+
+  const renderTrigger = () => {
+    const t = props.triggerSlot ?? props.trigger;
+    if (t !== undefined) {
+      return typeof t === "function"
+        ? (t as (p: { open: boolean }) => JSX.Element)({ open: isOpen() })
+        : t;
+    }
+    if (hasContentProp() || !hasTriggerProp()) {
+      const c = props.children;
+      if (typeof c === "function") {
+        return (c as (p: { open: boolean }) => JSX.Element)({ open: isOpen() });
+      }
+      return c;
+    }
+    return null;
   };
 
+  const renderContent = () => {
+    const c = props.contentSlot ?? props.content;
+    if (c !== undefined) {
+      return typeof c === "function" ? (c as (p?: Record<string, unknown>) => JSX.Element)({}) : c;
+    }
+    if (hasTriggerProp() && !hasContentProp()) {
+      const ch = props.children;
+      if (typeof ch === "function") {
+        return (ch as (p: { open: boolean }) => JSX.Element)({ open: isOpen() });
+      }
+      return ch;
+    }
+    return null;
+  };
+
+  const Tag = dynamic(() => props.as ?? "div");
+
+  const hasTrigger = () => hasTriggerProp() || props.children !== undefined;
+  const hasContent = () => hasContentProp() || (hasTriggerProp() && props.children !== undefined);
+
   return (
-    <details
+    <Tag
+      id={props.id}
       class={resolvedClasses().root}
-      open={isOpen()}
-      onToggle={handleToggle}
       data-slot="root"
+      data-state={isOpen() ? "open" : "closed"}
+      data-disabled={isDisabled() ? "" : undefined}
+      data-theme={props.theme}
+      aria-label={props.ariaLabel}
+      aria-labelledby={props.ariaLabelledby}
+      aria-describedby={props.ariaDescribedby}
       {...rest}
     >
-      <summary class={resolvedClasses().trigger} data-slot="trigger">
-        {props.triggerSlot ? (
-          props.triggerSlot
-        ) : (
-          <>
-            <span class="flex items-center gap-2">
-              {props.icon ? <span class={props.icon} aria-hidden="true" /> : null}
-              {props.label ?? "Toggle"}
-            </span>
-            <RLIcon
-              name="chevronDown"
-              size="sm"
-              class={`transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
-            />
-          </>
-        )}
-      </summary>
-      <div class={resolvedClasses().content} data-slot="content">
-        {props.children}
-      </div>
-    </details>
+      <Show when={hasTrigger()}>
+        <div
+          id={triggerId()}
+          class={resolvedClasses().trigger}
+          data-slot="trigger"
+          aria-controls={contentId()}
+          aria-expanded={isOpen() ? "true" : "false"}
+          data-state={isOpen() ? "open" : "closed"}
+          data-disabled={isDisabled() ? "" : undefined}
+          onClick={handleToggle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              const target = e.target as HTMLElement | null;
+              if (
+                target &&
+                target.tagName !== "BUTTON" &&
+                target.tagName !== "A" &&
+                target.tagName !== "INPUT"
+              ) {
+                e.preventDefault();
+                handleToggle();
+              }
+            }
+          }}
+        >
+          {renderTrigger()}
+        </div>
+      </Show>
+
+      <Show when={hasContent()}>
+        <Show
+          when={unmountOnHide()}
+          fallback={
+            <div
+              id={contentId()}
+              class={resolvedClasses().content}
+              data-slot="content"
+              data-state={isOpen() ? "open" : "closed"}
+              data-disabled={isDisabled() ? "" : undefined}
+              hidden={!isOpen() ? true : undefined}
+            >
+              {renderContent()}
+            </div>
+          }
+        >
+          <Show when={isOpen()}>
+            <div
+              id={contentId()}
+              class={resolvedClasses().content}
+              data-slot="content"
+              data-state="open"
+              data-disabled={isDisabled() ? "" : undefined}
+            >
+              {renderContent()}
+            </div>
+          </Show>
+        </Show>
+      </Show>
+    </Tag>
   );
 };
