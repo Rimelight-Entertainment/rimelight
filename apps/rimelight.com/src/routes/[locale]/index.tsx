@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { getRelativeLocaleUrl, t, getLocale, getLocalizedText } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, t, getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
@@ -11,7 +11,7 @@ import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 
 export const HomePage: Component = () => {
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const latestPosts = createMemo<any[]>(
     async () => {

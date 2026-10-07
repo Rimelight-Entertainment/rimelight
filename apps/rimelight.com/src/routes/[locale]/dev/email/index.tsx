@@ -1,6 +1,6 @@
 import { type Component, For, createSignal } from "solid-js";
 import BlankLayout from "#layouts/BlankLayout";
-import { getLocale } from "@rimelight/i18n";
+import { getCurrentLocale } from "@rimelight/i18n";
 
 const links = [
   ["verification", "Verify Email"],
@@ -9,7 +9,7 @@ const links = [
 ];
 
 export const DevEmailIndexPage: Component = () => {
-  const locale = getLocale();
+  const locale = getCurrentLocale();
   const [statusMap, setStatusMap] = createSignal<Record<string, { text: string; error?: boolean }>>(
     {},
   );

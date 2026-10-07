@@ -2,11 +2,11 @@ import { type Component, Show, createMemo } from "solid-js";
 import DocsLayout from "#layouts/DocsLayout";
 import PageRenderer from "#components/cms/PageRenderer";
 import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms";
-import { getLocale, getLocalizedText } from "@rimelight/i18n";
+import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 
 export const DocsIndexPage: Component = () => {
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const docsData = createMemo<any>(
     async () => {

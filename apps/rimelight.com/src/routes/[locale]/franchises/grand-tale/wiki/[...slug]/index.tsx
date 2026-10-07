@@ -2,11 +2,11 @@ import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import WikiLayout from "#layouts/WikiLayout";
 import PageRenderer from "#components/cms/PageRenderer";
-import { getLocale, getLocalizedText } from "@rimelight/i18n";
+import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 
 export const WikiSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const pageData = createMemo<any>(
     async () => {

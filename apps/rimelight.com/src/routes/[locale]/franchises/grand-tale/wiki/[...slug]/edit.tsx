@@ -2,11 +2,11 @@ import { type Component, createSignal, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DashboardLayout from "#layouts/DashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 
 export const WikiEditPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
-  const currentLocale = () => getLocale();
+  const currentLocale = () => getCurrentLocale();
   const [titleVal, setTitleVal] = createSignal("");
   const [descVal, setDescVal] = createSignal("");
   const [saving, setSaving] = createSignal(false);

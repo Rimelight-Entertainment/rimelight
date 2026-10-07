@@ -2,7 +2,7 @@ import type { Component, ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "./AppLayout";
 import StoreSidebar from "#components/store/StoreSidebar";
-import { setLocale } from "@rimelight/i18n";
+import { setCurrentLocale } from "@rimelight/i18n";
 
 export interface StoreLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -12,7 +12,7 @@ export interface StoreLayoutProps extends ParentProps {
 export const StoreLayout: Component<StoreLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    setLocale(params.locale);
+    setCurrentLocale(params.locale);
   }
 
   return (

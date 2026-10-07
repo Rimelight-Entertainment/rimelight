@@ -10,7 +10,7 @@ import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import type { TableOfContentsConfig } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
-import { getLocale } from "@rimelight/i18n";
+import { getCurrentLocale } from "@rimelight/i18n";
 
 export interface DocsLayoutProps {
   title: string;
@@ -47,7 +47,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
     (snapshot) => {
       const { activeVersion, includeVersionInUrl } = snapshot;
       void (async () => {
-        const locale = getLocale();
+        const locale = getCurrentLocale();
         const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
         try {
           const data = await getDocsSidebar(

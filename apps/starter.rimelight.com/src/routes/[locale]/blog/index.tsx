@@ -1,6 +1,6 @@
 import { type Component, For, createSignal, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
@@ -15,7 +15,7 @@ function getPageTitle(title: unknown, locale: string): string {
 }
 
 export const BlogIndexPage: Component = () => {
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
   const [activeTab, setActiveTab] = createSignal("all");
 
   const blogPages = createMemo<any[]>(

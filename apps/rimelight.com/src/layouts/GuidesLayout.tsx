@@ -3,7 +3,7 @@ import { useParams } from "@solidjs/router";
 import AppLayout from "./AppLayout";
 import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
 import GuidesSidebar from "#components/franchises/grand-tale/GuidesSidebar";
-import { setLocale } from "@rimelight/i18n";
+import { setCurrentLocale } from "@rimelight/i18n";
 
 export interface GuidesLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -14,7 +14,7 @@ export interface GuidesLayoutProps extends ParentProps {
 export const GuidesLayout: Component<GuidesLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
   if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
-    setLocale(params.locale);
+    setCurrentLocale(params.locale);
   }
 
   return (

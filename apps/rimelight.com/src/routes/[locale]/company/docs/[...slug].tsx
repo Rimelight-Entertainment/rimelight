@@ -6,7 +6,7 @@ import meta from "virtual:rimelight-ui-docs-meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
 import { BlockRenderer } from "#components/cms/PageRenderer";
-import { getLocale, getLocalizedText } from "@rimelight/i18n";
+import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 
 // Build component registry from all UI components
@@ -108,7 +108,7 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
 
 export const DocPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const docsData = createMemo<any>(
     async () => {

@@ -1,7 +1,7 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import WikiLayout from "#layouts/WikiLayout";
-import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 
 const categoryToType: Record<string, string> = {
   timeline: "Timeline",
@@ -14,7 +14,7 @@ const categoryToType: Record<string, string> = {
 
 export const LoreCategoryPage: Component = () => {
   const params = useParams<{ locale: string; category?: string }>();
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const category = () => params.category || "characters";
   const categoryLabel = () => category().charAt(0).toUpperCase() + category().slice(1);

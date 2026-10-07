@@ -9,7 +9,7 @@ import {
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
-import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import NewsletterSignup from "./NewsletterSignup";
 
 export const AppFooter: Component = () => {
@@ -109,7 +109,7 @@ export const AppFooter: Component = () => {
             <RLThemeSelector class="min-w-44" />
             <RLLocaleSelector
               locales={targetLanguages()}
-              currentLocale={getLocale()}
+              currentLocale={getCurrentLocale()}
               class="min-w-44"
             />
           </div>

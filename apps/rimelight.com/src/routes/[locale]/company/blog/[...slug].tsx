@@ -3,11 +3,11 @@ import { useParams } from "@solidjs/router";
 import AppLayout from "#layouts/AppLayout";
 import PageRenderer from "#components/cms/PageRenderer";
 import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
-import { getLocale, getLocalizedText } from "@rimelight/i18n";
+import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 
 export const BlogPostPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const pageData = createMemo<any>(
     async () => {

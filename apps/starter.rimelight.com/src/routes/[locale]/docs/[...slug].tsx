@@ -9,11 +9,11 @@ import {
   blocksToMarkdown,
 } from "@rimelight/cms";
 import PageRenderer from "#components/cms/PageRenderer";
-import { getLocale, getLocalizedText } from "@rimelight/i18n";
+import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 
 export const DocsSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const docData = createMemo<any>(
     async () => {

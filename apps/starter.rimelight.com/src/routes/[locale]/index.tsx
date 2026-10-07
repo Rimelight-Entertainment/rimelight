@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getLocale, getRelativeLocaleUrl, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale, getRelativeLocaleUrl, getLocalizedText } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
@@ -10,7 +10,7 @@ import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 
 export const HomePage: Component = () => {
-  const activeLocale = () => getLocale();
+  const activeLocale = () => getCurrentLocale();
 
   const latestPosts = createMemo<any[]>(
     async () => {
@@ -54,7 +54,7 @@ export const HomePage: Component = () => {
     {
       variant: "outline",
       label: t("page_home.section_features_link_browse-components_label"),
-      href: `https://rimelight.com/${getLocale()}/company/docs/packages/rimelight-ui/components/`,
+      href: `https://rimelight.com/${getCurrentLocale()}/company/docs/packages/rimelight-ui/components/`,
     },
     {
       label: t("page_home.section_features_link_read-the-docs_label"),
@@ -73,7 +73,7 @@ export const HomePage: Component = () => {
     {
       label: t("page_home.section_cta_learn-how"),
       trailingIcon: "i-lucide-square-arrow-out-up-right",
-      href: `https://rimelight.com/${getLocale()}/company/docs/overview/contributing/introduction`,
+      href: `https://rimelight.com/${getCurrentLocale()}/company/docs/overview/contributing/introduction`,
     },
   ];
 

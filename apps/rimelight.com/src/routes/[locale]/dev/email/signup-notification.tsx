@@ -1,10 +1,10 @@
 import { type Component, createMemo } from "solid-js";
 import BlankLayout from "#layouts/BlankLayout";
-import { getLocale } from "@rimelight/i18n";
+import { getCurrentLocale } from "@rimelight/i18n";
 import { renderSignupNotificationEmail } from "#auth/email/render";
 
 export const SignupNotificationEmailPreview: Component = () => {
-  const locale = getLocale();
+  const locale = getCurrentLocale();
   const url = "http://localhost:4321/api/auth/login";
 
   const html = createMemo(
