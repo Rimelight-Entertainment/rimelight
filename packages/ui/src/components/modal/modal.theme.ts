@@ -4,43 +4,96 @@ export const RLModalTheme = defineTheme("modal", {
   slots: [
     "root",
     "trigger",
+    "overlay",
     "backdrop",
     "content",
     "header",
+    "wrapper",
+    "body",
+    "footer",
     "title",
     "description",
-    "footer",
+    "close",
     "closeButton",
+    "actions",
   ],
   base: {
     root: "relative inline-block",
     trigger: "",
-    backdrop: "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300",
-    content: [
-      "fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] sm:w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border border-default",
-      "bg-default p-5 sm:p-6 shadow-xl transition-all duration-300 outline-none",
-      "max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] overflow-y-auto",
-      "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-1/2",
-      "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-1/2",
-    ],
-    header: "flex flex-col gap-1.5 text-center sm:text-left mb-4",
-    title: "text-lg font-semibold leading-none tracking-tight text-highlighted",
-    description: "text-sm text-muted leading-relaxed",
-    footer: "flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-6",
-    closeButton: [
-      "absolute right-4 top-4 opacity-70 transition-opacity hover:opacity-100",
-      "focus:outline-none",
-    ],
+    overlay: "fixed inset-0 z-50",
+    backdrop: "",
+    content:
+      "bg-default divide-y divide-default flex flex-col focus:outline-none z-50 pointer-events-auto",
+    header: "flex items-center gap-1.5 p-4 sm:px-6 min-h-14 relative",
+    wrapper: "",
+    body: "flex-1 p-4 sm:p-6",
+    footer: "flex items-center gap-1.5 p-4 sm:px-6",
+    title: "text-highlighted font-semibold text-base",
+    description: "mt-1 text-muted text-sm leading-relaxed",
+    close: "absolute top-4 right-4 end-4",
+    closeButton: "",
+    actions: "flex items-center gap-1.5 ml-auto",
   },
   variants: {
+    transition: {
+      true: {
+        overlay:
+          "transition-opacity duration-200 data-[state=open]:opacity-100 data-[state=closed]:opacity-0",
+        content:
+          "transition-all duration-200 data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:scale-95 data-[state=closed]:opacity-0",
+      },
+      false: {},
+    },
+    fullscreen: {
+      true: {
+        content: "fixed inset-0 rounded-none w-screen h-screen max-w-none max-h-none border-none",
+      },
+      false: {
+        content: "w-[calc(100vw-2rem)] max-w-lg rounded-lg shadow-lg ring ring-default",
+      },
+    },
+    overlay: {
+      true: {
+        overlay: "bg-elevated/75 backdrop-blur-sm",
+      },
+      false: {
+        overlay: "bg-transparent",
+      },
+    },
+    modal: {
+      true: {},
+      false: {
+        overlay: "pointer-events-none bg-transparent",
+      },
+    },
+    scrollable: {
+      true: {
+        overlay: "overflow-y-auto grid place-items-center p-4 sm:py-8",
+        content: "relative",
+      },
+      false: {
+        overlay: "flex items-center justify-center p-4 sm:p-6",
+        content: "max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-4rem)] overflow-hidden",
+        body: "overflow-y-auto",
+      },
+    },
     size: {
+      xs: { content: "max-w-xs" },
       sm: { content: "max-w-sm" },
       md: { content: "max-w-lg" },
       lg: { content: "max-w-2xl" },
       xl: { content: "max-w-4xl" },
+      fullscreen: {
+        content: "fixed inset-0 rounded-none w-screen h-screen max-w-none max-h-none border-none",
+      },
     },
   },
   defaultVariants: {
+    transition: true,
+    fullscreen: false,
+    overlay: true,
+    scrollable: false,
+    modal: true,
     size: "md",
   },
 });

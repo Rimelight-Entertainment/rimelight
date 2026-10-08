@@ -1,6 +1,7 @@
 import type { RLConfirmProps } from "./confirm.types";
 import { RLConfirmTheme } from "./confirm.theme";
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
+import { createMemo, createSignal, omit, type Component } from "solid-js";
+import { RLModal } from "../modal/RLModal";
 import { RLButton } from "../button/RLButton";
 
 export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
@@ -14,147 +15,138 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     "cancelLabel",
     "triggerLabel",
     "open",
+    "defaultOpen",
+    "size",
+    "dismissible",
+    "portal",
+    "transition",
+    "lockScroll",
+    "unmountOnHide",
     "ui",
     "class",
+    "className",
     "children",
     "trigger",
+    "triggerSlot",
     "titleSlot",
     "descriptionSlot",
     "footer",
     "footerSlot",
     "onOpenChange",
+    "onUpdateOpen",
     "onConfirm",
     "onCancel",
+    "onClose",
   );
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? false);
-  let dialogRef: HTMLDialogElement | undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
+  const isOpen = () => (props.open !== undefined ? Boolean(props.open) : uncontrolledOpen());
 
-  const resolvedClasses = createMemo(() =>
+  const resolvedTheme = createMemo(() =>
     RLConfirmTheme({
       variant: props.variant ?? "default",
       ui: props.ui,
-      class: props.class,
+      class: props.class ?? props.className,
     }),
   );
 
-  createEffect(
-    () => isOpen(),
-    (open) => {
-      if (!dialogRef) return;
-      if (open) {
-        if (!dialogRef.open) dialogRef.showModal();
-      } else {
-        if (dialogRef.open) dialogRef.close();
-      }
-    },
-  );
-
-  createEffect(
-    () => props.open,
-    (open) => {
-      if (open !== undefined) {
-        setIsOpen(open);
-      }
-    },
-  );
-
-  const openDialog = () => {
-    setIsOpen(true);
-    props.onOpenChange?.(true);
+  const setOpenState = (next: boolean) => {
+    if (props.open === undefined) {
+      setUncontrolledOpen(next);
+    }
+    props.onOpenChange?.(next);
+    props.onUpdateOpen?.(next);
+    if (!next) {
+      props.onClose?.();
+    }
   };
 
   const handleCancel = () => {
-    setIsOpen(false);
-    props.onOpenChange?.(false);
+    setOpenState(false);
     props.onCancel?.();
   };
 
-  const handleAction = () => {
-    setIsOpen(false);
-    props.onOpenChange?.(false);
+  const handleConfirm = () => {
+    setOpenState(false);
     props.onConfirm?.();
   };
 
   const isDestructive = () => props.variant === "destructive";
+  const footerContent = () => props.footerSlot ?? props.footer;
 
   return (
-    <div class={resolvedClasses().root} data-slot="alert-dialog-container">
-      {props.triggerLabel ? (
-        <RLButton
-          class={resolvedClasses().trigger}
-          data-slot="trigger"
-          type="button"
-          onClick={openDialog}
-        >
-          {props.triggerLabel}
-        </RLButton>
-      ) : props.trigger ? (
-        <span onClick={openDialog}>{props.trigger}</span>
-      ) : null}
-
-      <dialog
-        ref={(el) => (dialogRef = el)}
-        class={resolvedClasses().content}
-        data-slot="content"
-        aria-modal="true"
-        data-lock-scroll="true"
-        data-state={isOpen() ? "open" : "closed"}
-        onCancel={(e) => {
-          e.preventDefault();
+    <RLModal
+      role="alertdialog"
+      open={isOpen()}
+      defaultOpen={props.defaultOpen}
+      title={props.title}
+      description={props.description}
+      size={props.size ?? "sm"}
+      dismissible={props.dismissible ?? true}
+      portal={props.portal}
+      transition={props.transition}
+      lockScroll={props.lockScroll}
+      unmountOnHide={props.unmountOnHide}
+      close={false}
+      trigger={props.trigger}
+      triggerSlot={props.triggerSlot}
+      triggerLabel={props.triggerLabel}
+      titleSlot={props.titleSlot}
+      descriptionSlot={props.descriptionSlot}
+      ui={{
+        root: resolvedTheme().root,
+        trigger: resolvedTheme().trigger,
+        content: resolvedTheme().content,
+        header: resolvedTheme().header,
+        title: resolvedTheme().title,
+        description: resolvedTheme().description,
+        footer: resolvedTheme().footer,
+        ...props.ui,
+      }}
+      class={props.class ?? props.className}
+      onOpenChange={(next) => {
+        if (!next) {
           handleCancel();
-        }}
-        onClick={(e) => {
-          if (e.target === dialogRef) handleCancel();
-        }}
-        {...rest}
-      >
-        <div class={resolvedClasses().header} data-slot="header">
-          {props.title ? (
-            <h3 class={resolvedClasses().title} data-slot="title">
-              {props.title}
-            </h3>
-          ) : null}
-          {props.titleSlot}
-          {props.description ? (
-            <p class={resolvedClasses().description} data-slot="description">
-              {props.description}
-            </p>
-          ) : null}
-          {props.descriptionSlot}
-        </div>
-
-        {props.children}
-
-        <div class={resolvedClasses().footer} data-slot="footer">
-          {props.footer !== undefined || props.footerSlot !== undefined ? (
-            (props.footer ?? props.footerSlot)
+        } else {
+          setOpenState(true);
+        }
+      }}
+      onClose={handleCancel}
+      footerSlot={() =>
+        footerContent() !== undefined ? (
+          typeof footerContent() === "function" ? (
+            (footerContent() as any)()
           ) : (
-            <>
-              <RLButton
-                class={resolvedClasses().cancelButton}
-                data-slot="cancel"
-                variant="outline"
-                color={isDestructive() ? "error" : "neutral"}
-                type="button"
-                onClick={handleCancel}
-              >
-                {props.cancelLabel ?? "Cancel"}
-              </RLButton>
-              <RLButton
-                class={resolvedClasses().actionButton}
-                data-slot="action"
-                color={isDestructive() ? "error" : "primary"}
-                variant={isDestructive() ? "subtle" : "solid"}
-                type="button"
-                onClick={handleAction}
-              >
-                {props.actionLabel ?? "Confirm"}
-              </RLButton>
-            </>
-          )}
-        </div>
-      </dialog>
-    </div>
+            footerContent()
+          )
+        ) : (
+          <div class="flex items-center justify-between w-full" data-slot="confirm-actions">
+            <RLButton
+              class={resolvedTheme().cancelButton}
+              data-slot="cancel"
+              variant="outline"
+              color={isDestructive() ? "error" : "neutral"}
+              type="button"
+              onClick={handleCancel}
+            >
+              {props.cancelLabel ?? "Cancel"}
+            </RLButton>
+            <RLButton
+              class={resolvedTheme().actionButton}
+              data-slot="action"
+              color={isDestructive() ? "error" : "primary"}
+              variant="solid"
+              type="button"
+              onClick={handleConfirm}
+            >
+              {props.actionLabel ?? "Confirm"}
+            </RLButton>
+          </div>
+        )
+      }
+      {...rest}
+    >
+      {props.children}
+    </RLModal>
   );
 };
