@@ -387,6 +387,7 @@ describe("Security Middleware Headers", () => {
       const middleware = security();
       let nextCalled = false;
       let redirectedTo: string | null = null;
+      let backingRes: Response | undefined;
       const ctx = {
         req: {
           path: "/dashboard",
@@ -402,14 +403,26 @@ describe("Security Middleware Headers", () => {
           redirectedTo = target;
           return new Response(null, { status: 302, headers: { Location: target } });
         },
+        // Hono's `Context#res` getter auto-instantiates an empty 200 on first
+        // read instead of returning undefined — mirror that here, or the
+        // sub-middleware's early return can be silently swallowed.
+        get res(): Response {
+          return (backingRes ??= new Response(null, { status: 200 }));
+        },
+        set res(value: Response) {
+          backingRes = value;
+        },
       };
 
-      await middleware(ctx, async () => {
+      const result = (await middleware(ctx, async () => {
         nextCalled = true;
-      });
+      })) as Response;
 
       expect(nextCalled).toBe(false);
       expect(redirectedTo).toContain("/en/construction?redirect=");
+      expect(result.status).toBe(302);
+      expect(result.headers.get("Location")).toContain("/en/construction?redirect=");
+      expect(ctx.res.status).toBe(302);
     });
 
     it("skips construction mode when construction is false", async () => {

@@ -179,10 +179,16 @@ export function security() {
 
     const pipelineResult = await runPipeline(0);
 
-    let response: Response | undefined = c.res;
-    if (!response && pipelineResult instanceof Response) {
-      response = pipelineResult;
-      c.res = response;
+    // `c.res` auto-instantiates an empty 200 placeholder on its first read, so
+    // reading it before consulting the pipeline shadows any Response a
+    // sub-middleware returned early (the construction gate's redirect, a rate
+    // limit 429, a dev-only 404) with a blank body. Prefer an explicit Response
+    // from the pipeline; otherwise fall back to `c.res`, which the inner
+    // dispatch commits once the chain reaches the terminal handler.
+    const pipelineResponse = pipelineResult instanceof Response ? pipelineResult : undefined;
+    const response: Response | undefined = pipelineResponse ?? c.res;
+    if (pipelineResponse) {
+      c.res = pipelineResponse;
     }
 
     if (!response) return pipelineResult;
