@@ -23,6 +23,10 @@
   ],
   "type": "module",
   "imports": {
+    "#rimelight/i18n/*": {
+      "types": "./node_modules/.rimelight/i18n/*.d.ts",
+      "default": "./node_modules/.rimelight/i18n/*.js"
+    },
     "#rimelight/*/client": {
       "types": "./node_modules/.rimelight/*/client.d.ts",
       "default": "./node_modules/.rimelight/*/client.js"

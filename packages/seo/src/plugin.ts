@@ -242,9 +242,9 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
 
       return {
         "config.js": configCode,
-        "config.d.ts": `import type { SiteConfig } from "@rimelight/seo/types";\nexport declare const siteConfig: SiteConfig, SEO_LOCALES: any, PRIVATE_PATH_PREFIXES: string[], seoConfig: any, createHead: any, createSeoHead: any, defineSeoConfig: any;\nexport default siteConfig;`,
+        "config.d.ts": `import type { SiteConfig } from "@rimelight/seo/types";\nexport declare const siteConfig: SiteConfig;\nexport declare const SEO_LOCALES: any;\nexport declare const PRIVATE_PATH_PREFIXES: string[];\nexport declare const seoConfig: any;\nexport declare const createHead: any;\nexport declare const createSeoHead: any;\nexport declare const defineSeoConfig: any;\nexport default siteConfig;`,
         "server.js": serverCode,
-        "server.d.ts": `export declare const masterIconBuffer: Buffer | Uint8Array | null, isSvg: boolean, backgroundColor: string, db: any, corpusPages: any[];`,
+        "server.d.ts": `export declare const masterIconBuffer: any;\nexport declare const isSvg: boolean;\nexport declare const backgroundColor: string;\nexport declare const db: any;\nexport declare const corpusPages: any[];`,
       };
     },
   });

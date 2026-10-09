@@ -19,22 +19,24 @@ export interface CodeGenExport {
  * 3. Falls back to creating a local node_modules directory if none exists.
  */
 export function findNodeModulesRoot(startDir: string): string {
-  const localCandidate = path.resolve(startDir, "node_modules");
-  if (fs.existsSync(localCandidate) && fs.statSync(localCandidate).isDirectory()) {
-    return localCandidate;
-  }
-
   let current = path.resolve(startDir);
+  let topCandidate: string | null = null;
+
   while (true) {
     const candidate = path.join(current, "node_modules");
     if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
-      return candidate;
+      topCandidate = candidate;
     }
     const parent = path.dirname(current);
     if (parent === current) break;
     current = parent;
   }
 
+  if (topCandidate) {
+    return topCandidate;
+  }
+
+  const localCandidate = path.resolve(startDir, "node_modules");
   fs.mkdirSync(localCandidate, { recursive: true });
   return localCandidate;
 }

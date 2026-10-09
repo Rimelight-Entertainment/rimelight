@@ -21,6 +21,10 @@
   ],
   "type": "module",
   "imports": {
+    "#rimelight/ui/*": {
+      "types": "./node_modules/.rimelight/ui/*.d.ts",
+      "default": "./node_modules/.rimelight/ui/*.js"
+    },
     "#rimelight/*/client": {
       "types": "./node_modules/.rimelight/*/client.d.ts",
       "default": "./node_modules/.rimelight/*/client.js"

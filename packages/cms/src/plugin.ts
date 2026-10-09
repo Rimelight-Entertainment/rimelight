@@ -71,7 +71,7 @@ export function cms(options: RimelightCmsPluginOptions = {}): RimelightCmsPlugin
     emit({ root }) {
       return {
         "config.js": `export const routePrefix = ${JSON.stringify(routePrefix)};\nexport const storageConfig = ${serializeData(storageConfig)};\nexport const cmsOptions = ${serializeData({ routePrefix, storage: storageConfig })};\nexport default cmsOptions;`,
-        "config.d.ts": `export declare const routePrefix: string, storageConfig: any, cmsOptions: any;\nexport default cmsOptions;`,
+        "config.d.ts": `export declare const routePrefix: string;\nexport declare const storageConfig: any;\nexport declare const cmsOptions: any;\nexport default cmsOptions;`,
         "storage.js": `export const storageConfig = ${serializeData(storageConfig)};\nexport default storageConfig;`,
         "storage.d.ts": `export declare const storageConfig: any;\nexport default storageConfig;`,
         "auth.js": resolveAuthCode(root),

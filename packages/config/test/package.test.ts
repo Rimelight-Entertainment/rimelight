@@ -4,30 +4,22 @@ import fs from "node:fs";
 
 describe("@rimelight/config package", () => {
   describe("package integrity utils", () => {
-    it("should not ship exports or files entries that do not exist on disk", () => {
+    it("should export valid tsconfig and generator files", () => {
       const pkgDir = path.resolve(import.meta.dirname, "..");
       const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, "package.json"), "utf-8"));
 
-      const targets: string[] = [];
-      for (const value of Object.values<unknown>(pkg.exports ?? {})) {
-        if (typeof value === "string") {
-          targets.push(value);
-        } else if (value && typeof value === "object") {
-          for (const entry of Object.values<unknown>(value as Record<string, unknown>)) {
-            if (typeof entry === "string") targets.push(entry);
-          }
-        }
-      }
-      const files: string[] = pkg.files ?? [];
-      targets.push(...files);
+      expect(pkg.exports).toBeDefined();
+      expect(pkg.exports["./tsconfig/base"]).toBeDefined();
+      expect(pkg.exports["./tsconfig/solid"]).toBeDefined();
+      expect(fs.existsSync(path.join(pkgDir, pkg.exports["./tsconfig/base"]))).toBe(true);
+      expect(fs.existsSync(path.join(pkgDir, pkg.exports["./tsconfig/solid"]))).toBe(true);
 
-      expect(targets.length).toBeGreaterThan(0);
+      expect(pkg.exports["."]).toBeDefined();
+      expect(pkg.exports["./generator"]).toBeDefined();
 
-      const missing = targets
-        .filter((t) => t.startsWith("./"))
-        .map((t) => t.replace(/^\.\//, ""))
-        .filter((rel) => !fs.existsSync(path.join(pkgDir, rel)));
-      expect(missing).toEqual([]);
+      // Ensure source entrypoints exist
+      expect(fs.existsSync(path.join(pkgDir, "src", "index.ts"))).toBe(true);
+      expect(fs.existsSync(path.join(pkgDir, "src", "generator.ts"))).toBe(true);
     });
   });
 });

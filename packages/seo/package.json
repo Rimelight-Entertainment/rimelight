@@ -21,6 +21,10 @@
   ],
   "type": "module",
   "imports": {
+    "#rimelight/seo/*": {
+      "types": "./node_modules/.rimelight/seo/*.d.ts",
+      "default": "./node_modules/.rimelight/seo/*.js"
+    },
     "#rimelight/*/client": {
       "types": "./node_modules/.rimelight/*/client.d.ts",
       "default": "./node_modules/.rimelight/*/client.js"
@@ -86,8 +90,7 @@
     "./assets": {
       "types": "./dist/assets.d.mts",
       "import": "./dist/assets.mjs"
-    },
-    "./*": "./src/*"
+    }
   },
   "publishConfig": {
     "access": "public"

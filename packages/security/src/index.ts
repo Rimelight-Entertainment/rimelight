@@ -3,8 +3,7 @@
 // drag `node:crypto` and friends into the browser bundle. Import them from
 // `@rimelight/security/plugin` in your `vite.config.ts` instead. The types stay
 // re-exported here because types are erased at compile time.
-export type { RimelightSecurityPlugin, SecurityPluginOptions } from "./vite";
-export type { RimelightSecurityOptions } from "./integration";
+export type { RimelightSecurityPlugin, SecurityPluginOptions } from "./plugin";
 export * from "./types";
 export * from "./runtime";
 export * from "./csp";

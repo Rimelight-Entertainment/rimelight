@@ -20,6 +20,10 @@
   ],
   "type": "module",
   "imports": {
+    "#rimelight/auth/*": {
+      "types": "./node_modules/.rimelight/auth/*.d.ts",
+      "default": "./node_modules/.rimelight/auth/*.js"
+    },
     "#rimelight/*/client": {
       "types": "./node_modules/.rimelight/*/client.d.ts",
       "default": "./node_modules/.rimelight/*/client.js"
@@ -75,10 +79,6 @@
       "import": "./dist/jwt.mjs"
     },
     "./plugin": {
-      "types": "./dist/plugin.d.mts",
-      "import": "./dist/plugin.mjs"
-    },
-    "./integration": {
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
     }

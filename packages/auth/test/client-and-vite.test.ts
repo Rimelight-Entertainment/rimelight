@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import type { Plugin } from "vite-plus";
 import { createAuthClient } from "../src/client/index";
-import { auth as authPlugin } from "../src/vite";
+import { auth as authPlugin } from "../src/plugin";
 
 /**
  * Invoke a Vite object-hook the way the container does (function or { handler }).

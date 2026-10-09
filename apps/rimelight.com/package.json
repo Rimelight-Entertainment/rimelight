@@ -32,7 +32,7 @@
   "scripts": {
     "generate-types": "cf workers types",
     "dev": "vp dev",
-    "prebuild": "pnpm -r --parallel --filter \"@rimelight/*\" run --if-present build",
+    "prebuild": "pnpm -r --filter \"@rimelight/*\" run --if-present build",
     "build": "vp build",
     "preview": "vp preview",
     "deploy": "vp build && wrangler deploy",

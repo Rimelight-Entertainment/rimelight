@@ -21,6 +21,10 @@
   ],
   "type": "module",
   "imports": {
+    "#rimelight/security/*": {
+      "types": "./node_modules/.rimelight/security/*.d.ts",
+      "default": "./node_modules/.rimelight/security/*.js"
+    },
     "#rimelight/*/client": {
       "types": "./node_modules/.rimelight/*/client.d.ts",
       "default": "./node_modules/.rimelight/*/client.js"
@@ -55,10 +59,6 @@
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
     },
-    "./integration": {
-      "types": "./dist/plugin.d.mts",
-      "import": "./dist/plugin.mjs"
-    },
     "./turnstile": {
       "types": "./dist/turnstile.d.mts",
       "import": "./dist/turnstile.mjs"
@@ -66,8 +66,7 @@
     "./head": {
       "types": "./dist/head.d.mts",
       "import": "./dist/head.mjs"
-    },
-    "./*": "./src/*"
+    }
   },
   "publishConfig": {
     "access": "public"

@@ -21,6 +21,14 @@
   ],
   "type": "module",
   "imports": {
+    "#rimelight/cms/*": {
+      "types": "./node_modules/.rimelight/cms/*.d.ts",
+      "default": "./node_modules/.rimelight/cms/*.js"
+    },
+    "#rimelight/auth/*": {
+      "types": "./node_modules/.rimelight/auth/*.d.ts",
+      "default": "./node_modules/.rimelight/auth/*.js"
+    },
     "#rimelight/*/client": {
       "types": "./node_modules/.rimelight/*/client.d.ts",
       "default": "./node_modules/.rimelight/*/client.js"
@@ -51,11 +59,6 @@
       "default": "./dist/schema/sqlite.mjs"
     },
     "./schema/*": "./src/schema/*",
-    "./integration": {
-      "types": "./dist/integration.d.mts",
-      "import": "./dist/integration.mjs",
-      "default": "./dist/integration.mjs"
-    },
     "./storage": {
       "types": "./dist/storage/index.d.mts",
       "import": "./dist/storage/index.mjs",

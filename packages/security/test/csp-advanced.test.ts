@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { buildCspHeader, resolveSecurityDomain } from "../src/csp";
-import { security as securityPlugin } from "../src/vite";
+import { security as securityPlugin } from "../src/plugin";
 
 describe("@rimelight/security CSP header generator", () => {
   it("should generate strict baseline Content-Security-Policy", () => {

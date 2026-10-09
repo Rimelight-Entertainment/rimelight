@@ -54,7 +54,10 @@ export * from "./schema/index.ts";
 // bundle. Import them from `@rimelight/cms/plugin` or `@rimelight/cms/integration`
 // in your `vite.config.ts` instead. The option types stay re-exported here
 // because types are erased at compile time and cost nothing at runtime.
-export type { RimelightCmsPluginOptions, RimelightCmsOptions } from "./integration.ts";
+export type {
+  RimelightCmsPluginOptions,
+  RimelightCmsPluginOptions as RimelightCmsOptions,
+} from "./plugin.ts";
 
 // Toast API
 export * from "./client/toast.ts";
