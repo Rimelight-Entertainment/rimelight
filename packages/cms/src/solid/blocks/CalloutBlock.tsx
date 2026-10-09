@@ -1,6 +1,6 @@
 import { type Component } from "solid-js";
-import type { CalloutVariant } from "../../core/types/blocks.ts";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { CalloutVariant } from "../../core/types/blocks";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 const variantConfigs: Record<string, { icon: string; classes: string }> = {
   info: { icon: "i-lucide-info", classes: "bg-info-50/50 border-info-200 text-info-800" },
@@ -50,5 +50,3 @@ export const CalloutBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default CalloutBlock;

@@ -38,20 +38,20 @@ export type {
   AssetRouteOptions,
   RimelightSeoOptions,
   OgRouteOptions,
-} from "./types.js";
+} from "./types";
 
-export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize.js";
+export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize";
 
 export {
   buildSitemapUrls,
   buildSitemapXml,
   buildSitemapIndexXml,
   chunkSitemapUrls,
-} from "./sitemap.js";
+} from "./sitemap";
 
-export { buildRobotsTxt } from "./robots.js";
+export { buildRobotsTxt } from "./robots";
 
-export { buildRssXml, escapeXml } from "./rss.js";
+export { buildRssXml, escapeXml } from "./rss";
 
 export {
   buildCanonicalUrl,
@@ -61,14 +61,14 @@ export {
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
   deepMerge,
-} from "./meta.js";
+} from "./meta";
 
-export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js";
-export { buildSecurityTxt } from "./security.js";
-export { buildWebManifest } from "./manifest.js";
-export { buildApiCatalog } from "./catalog.js";
-export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js";
-export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js";
+export { buildLlmsTxt, buildLlmsFullTxt } from "./llms";
+export { buildSecurityTxt } from "./security";
+export { buildWebManifest } from "./manifest";
+export { buildApiCatalog } from "./catalog";
+export { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
+export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets";
 
 export {
   NOTO_SANS,
@@ -76,13 +76,18 @@ export {
   loadOgFonts,
   renderOgResponse,
   renderDefaultOg,
+  handleOgRequest,
+  createHonoOgHandler,
   type OgFontConfig,
   type OgLayoutOptions,
   type OgRenderConfig,
-} from "./og.js";
+  type OgHandlerOptions,
+  type HonoContext,
+} from "./og/index";
 
-export { handleOgRequest, createHonoOgHandler } from "./og/index.js";
-
-import { seo } from "./plugin.js";
-export { seo };
-export default seo;
+// The `seo` Vite plugin factory is Node-only, so it is deliberately NOT
+// re-exported from this runtime entry point to prevent pulling Node APIs
+// into the browser bundle. Import it from `@rimelight/seo/plugin` in your
+// `vite.config.ts` instead. The types stay re-exported here because types
+// are erased at compile time.
+export type { RimelightSeoPlugin, RimelightSeoPluginOptions } from "./plugin";

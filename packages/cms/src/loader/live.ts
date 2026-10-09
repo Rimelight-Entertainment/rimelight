@@ -1,10 +1,10 @@
 import { and, desc, eq, isNotNull, isNull, lte, sql, type SQL } from "drizzle-orm";
-import { pages } from "../schema/pages.ts";
-import { createPageExcerpt } from "../core/excerpt.ts";
-import type { BaseBlock } from "../core/types/blocks.ts";
-import type { Localized, PageType } from "../core/types/pages.ts";
+import { pages } from "../schema/pages";
+import { createPageExcerpt } from "../core/excerpt";
+import type { BaseBlock } from "../core/types/blocks";
+import type { Localized, PageType } from "../core/types/pages";
 
-import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies.ts";
+import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies";
 
 export interface CmsLoaderOptions {
   type?: PageType | undefined;

@@ -1,5 +1,5 @@
-import { getR2Bucket, listR2Files, uploadR2File, deleteR2File } from "../storage/index.ts";
-import type { StorageConfig } from "../storage/index.ts";
+import { getR2Bucket, listR2Files, uploadR2File, deleteR2File } from "../storage/index";
+import type { StorageConfig } from "../storage/index";
 
 export interface MediaRouteContext {
   storage?: StorageConfig | undefined;

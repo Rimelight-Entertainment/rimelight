@@ -34,5 +34,3 @@ export function auth(options: RimelightAuthPluginOptions = {}): RimelightAuthPlu
     }),
   });
 }
-
-export default auth;

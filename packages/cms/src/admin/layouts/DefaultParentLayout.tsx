@@ -23,5 +23,3 @@ export const DefaultParentLayout: Component<DefaultParentLayoutProps> = (props) 
     </RLMain>
   );
 };
-
-export default DefaultParentLayout;

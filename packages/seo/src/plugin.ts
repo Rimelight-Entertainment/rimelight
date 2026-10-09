@@ -6,19 +6,20 @@ import {
   resolveImportSpecifier,
   serializeData,
 } from "@rimelight/config";
-import type { RimelightSeoOptions, SiteConfig } from "./types.js";
-import { buildRobotsTxt } from "./robots.js";
-import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap.js";
-import { buildRssXml } from "./rss.js";
-import { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js";
-import { buildSecurityTxt } from "./security.js";
-import { buildApiCatalog } from "./catalog.js";
-import { buildWebManifest } from "./manifest.js";
-import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets.js";
+import type { RimelightSeoOptions, SiteConfig } from "./types";
+import { buildRobotsTxt } from "./robots";
+import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap";
+import { buildRssXml } from "./rss";
+import { buildLlmsTxt, buildLlmsFullTxt } from "./llms";
+import { buildSecurityTxt } from "./security";
+import { buildApiCatalog } from "./catalog";
+import { buildWebManifest } from "./manifest";
+import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets";
 
 export type RimelightSeoPlugin = Plugin;
+export type RimelightSeoPluginOptions = RimelightSeoOptions;
 
-export { type RimelightSeoOptions } from "./types.js";
+export { type RimelightSeoOptions } from "./types";
 
 /**
  * Validates that a requested file path resolves strictly within the given root directory.
@@ -699,4 +700,3 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
 }
 
 export { seo };
-export default seo;

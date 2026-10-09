@@ -1,4 +1,4 @@
-import type { SiteConfig } from "./types.js";
+import type { SiteConfig } from "./types";
 
 /**
  * Build a canonical URL from a page URL and site base. - Strips trailing slash unless the path has

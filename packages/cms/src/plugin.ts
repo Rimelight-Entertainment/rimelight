@@ -2,7 +2,7 @@ import path from "node:path";
 import fs from "node:fs";
 import type { Plugin } from "vite-plus";
 import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config";
-import type { StorageConfig } from "./storage/index.ts";
+import type { StorageConfig } from "./storage/index";
 import type { AuthAdapter } from "@rimelight/auth";
 
 export interface RimelightCmsPluginOptions {
@@ -84,4 +84,3 @@ export function cms(options: RimelightCmsPluginOptions = {}): RimelightCmsPlugin
 }
 
 export { cms as rimelightCmsPlugin };
-export default cms;

@@ -1,7 +1,7 @@
 import { For, Show, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import type { BaseBlock } from "../core/types/blocks.ts";
-import { defaultBlockComponents } from "./blocks/index.ts";
+import type { BaseBlock } from "../core/types/blocks";
+import { defaultBlockComponents } from "./blocks/index";
 
 export interface BlockRendererProps {
   block: BaseBlock;
@@ -65,5 +65,3 @@ export const BlockRenderer: Component<BlockRendererProps> = (props) => {
     </Show>
   );
 };
-
-export default BlockRenderer;

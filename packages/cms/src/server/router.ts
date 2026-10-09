@@ -7,7 +7,7 @@ import {
   pageTemplates as defaultPageTemplates,
   pageVersions as defaultPageVersions,
   pageVersionApprovals as defaultPageVersionApprovals,
-} from "../schema/sqlite.ts";
+} from "../schema/sqlite";
 import { eq, and, desc, isNull } from "drizzle-orm";
 import {
   validateServerBlockPayload,
@@ -29,7 +29,7 @@ import {
   createByline,
   updateByline,
   deleteByline,
-} from "../index.ts";
+} from "../index";
 
 export interface CmsRouterOptions {
   db?: any;
@@ -962,4 +962,3 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
 
 export const cmsRouter: Hono = createCmsRouter();
 export type CmsRouterType = ReturnType<typeof createCmsRouter>;
-export default createCmsRouter;

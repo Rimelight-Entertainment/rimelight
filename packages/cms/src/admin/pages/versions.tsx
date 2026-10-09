@@ -1,7 +1,7 @@
 import { For, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import { formatDate, useCmsApi } from "./_shared.tsx";
+import { formatDate, useCmsApi } from "./_shared";
 
 export interface VersionsPageProps {
   basePath?: string | undefined;
@@ -48,5 +48,3 @@ export const VersionsPage: Component<VersionsPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default VersionsPage;

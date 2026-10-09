@@ -162,7 +162,7 @@ describe("@rimelight/ui core icon resolution", () => {
 describe("@rimelight/ui preset intent shortcuts", () => {
   it("should expand intent shortcuts properly via UnoCSS", async () => {
     const { createGenerator } = await import("unocss");
-    const rimelightUiPreset = (await import("../src/preset")).default;
+    const { rimelightUiPreset } = await import("../src/preset");
     const uno = await createGenerator({
       presets: [rimelightUiPreset()],
     });

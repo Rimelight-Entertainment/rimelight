@@ -8,7 +8,7 @@ import {
   extractHeadingsFromBlocks,
   blocksToMarkdown,
 } from "@rimelight/cms";
-import PageRenderer from "#components/cms/PageRenderer";
+import { PageRenderer } from "#components/cms/PageRenderer";
 import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 
 export const DocsSlugPage: Component = () => {

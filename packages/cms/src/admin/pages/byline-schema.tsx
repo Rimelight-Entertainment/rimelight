@@ -1,5 +1,5 @@
 import { For, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
@@ -105,5 +105,3 @@ export const BylineSchemaPage: Component<{ basePath?: string | undefined }> = (p
     </CMSDashboardLayout>
   );
 };
-
-export default BylineSchemaPage;

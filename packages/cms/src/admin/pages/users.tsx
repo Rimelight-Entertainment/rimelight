@@ -1,5 +1,5 @@
 import { For, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 
@@ -79,5 +79,3 @@ export const UsersPage: Component<{ basePath?: string | undefined }> = (props) =
     </CMSDashboardLayout>
   );
 };
-
-export default UsersPage;

@@ -1,13 +1,13 @@
 // Core Types
-export * from "./core/types/blocks.ts";
-export * from "./core/types/inline.ts";
-export * from "./core/types/pages.ts";
-export * from "./core/types/templates.ts";
-export * from "./core/types/versioning.ts";
-export * from "./core/page-definitions.ts";
+export * from "./core/types/blocks";
+export * from "./core/types/inline";
+export * from "./core/types/pages";
+export * from "./core/types/templates";
+export * from "./core/types/versioning";
+export * from "./core/page-definitions";
 
 // Markdown Serialization & Parsing
-export * from "./markdown/index.ts";
+export * from "./markdown/index";
 
 // Re-export specific types for convenience
 export type {
@@ -17,17 +17,17 @@ export type {
   ScriptBlockProps,
   SceneBlockProps,
   DialogueBlockProps,
-} from "./core/types/blocks.ts";
+} from "./core/types/blocks";
 
 // Core Services & Registries
-export * from "./core/registry.ts";
-export * from "./core/validator.ts";
+export * from "./core/registry";
+export * from "./core/validator";
 
 // Universal Auth & Pluggable Adapters (RFC-0004 & RFC-0006)
-export * from "./auth/permissions.ts";
-export * from "./auth/filter-blocks.ts";
-export * from "./auth/editor-guards.ts";
-export * from "./auth/filter-templates.ts";
+export * from "./auth/permissions";
+export * from "./auth/filter-blocks";
+export * from "./auth/editor-guards";
+export * from "./auth/filter-templates";
 export { cfAccessAuth } from "@rimelight/auth/cf-access";
 export { auth0Auth } from "@rimelight/auth/auth0";
 export { mockAuth } from "@rimelight/auth/mock";
@@ -40,11 +40,11 @@ export type {
 } from "@rimelight/auth";
 
 // Edge Cache & Search
-export * from "./cache/purge.ts";
-export * from "./search/query.ts";
+export * from "./cache/purge";
+export * from "./search/query";
 
 // Database Schemas & Migration
-export * from "./schema/index.ts";
+export * from "./schema/index";
 
 // Vite Plugin & CMS Integration types (Solid).
 //
@@ -54,47 +54,44 @@ export * from "./schema/index.ts";
 // bundle. Import them from `@rimelight/cms/plugin` or `@rimelight/cms/integration`
 // in your `vite.config.ts` instead. The option types stay re-exported here
 // because types are erased at compile time and cost nothing at runtime.
-export type {
-  RimelightCmsPluginOptions,
-  RimelightCmsPluginOptions as RimelightCmsOptions,
-} from "./plugin.ts";
+export type { RimelightCmsPlugin, RimelightCmsPluginOptions } from "./plugin";
 
 // Toast API
-export * from "./client/toast.ts";
+export * from "./client/toast";
 
 // Excerpts & Summaries
-export * from "./core/excerpt.ts";
+export * from "./core/excerpt";
 
 // Dynamic Site Settings
-export * from "./services/site-settings.ts";
+export * from "./services/site-settings";
 
 // CMS Collection Loader (framework-agnostic)
-export * from "./loader/live.ts";
+export * from "./loader/live";
 
 // Cloudflare Worker Cron Dispatcher
-export * from "./cron/scheduled.ts";
+export * from "./cron/scheduled";
 
 // Model Context Protocol (MCP) Tools
-export * from "./mcp/index.ts";
+export * from "./mcp/index";
 
 // Media & Bylines
-export * from "./core/types/media.ts";
-export * from "./core/types/bylines.ts";
-export * from "./services/bylines.ts";
+export * from "./core/types/media";
+export * from "./core/types/bylines";
+export * from "./services/bylines";
 
 // Preview Tokens & Block Diffs
-export * from "./core/preview.ts";
-export * from "./core/diff.ts";
+export * from "./core/preview";
+export * from "./core/diff";
 
 // Search Indexer
-export * from "./services/search-indexer.ts";
+export * from "./services/search-indexer";
 
 // Taxonomies Engine
-export * from "./core/types/taxonomies.ts";
-export * from "./services/taxonomies.ts";
+export * from "./core/types/taxonomies";
+export * from "./services/taxonomies";
 
 // Documentation Engine & Navigation
-export * from "./docs/index.ts";
+export * from "./docs/index";
 
 // Storage Adapters (R2, etc.)
-export * from "./storage/index.ts";
+export * from "./storage/index";

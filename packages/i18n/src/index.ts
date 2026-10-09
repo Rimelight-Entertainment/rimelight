@@ -7,3 +7,5 @@ export {
   getRelativeLocaleUrl,
   t,
 } from "./runtime";
+
+export type { RimelightI18nPlugin, RimelightI18nPluginOptions } from "./plugin";

@@ -1,4 +1,4 @@
-import type { RssFeedOptions } from "./types.js";
+import type { RssFeedOptions } from "./types";
 
 export function escapeXml(str: string): string {
   return str

@@ -1,4 +1,4 @@
-import type { LocaleConfig, SeoEntry, SitemapUrl } from "./types.js";
+import type { LocaleConfig, SeoEntry, SitemapUrl } from "./types";
 
 /**
  * Build fully-resolved sitemap URLs from entries and locale config

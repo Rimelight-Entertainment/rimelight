@@ -1,5 +1,3 @@
-import { cmsRouter } from "./router.ts";
-
 export {
   handleMediaList,
   handleMediaUpload,
@@ -7,8 +5,6 @@ export {
   handleMediaFile,
   registerCmsMediaRoutes,
   type MediaRouteContext,
-} from "./media.ts";
+} from "./media";
 
-export { createCmsRouter, cmsRouter, type CmsRouterOptions } from "./router.ts";
-
-export default cmsRouter;
+export { createCmsRouter, cmsRouter, type CmsRouterOptions } from "./router";

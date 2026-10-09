@@ -1,7 +1,7 @@
 import { For, type Component } from "solid-js";
-import type { BaseBlock } from "../../core/types/blocks.ts";
-import { InlineNodes } from "./inlines.tsx";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BaseBlock } from "../../core/types/blocks";
+import { InlineNodes } from "./inlines";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const UnorderedListBlock: Component<BlockViewProps> = (props) => {
   const items = () => (props.block.props?.["items"] as BaseBlock[]) ?? props.block.children ?? [];
@@ -21,5 +21,3 @@ export const UnorderedListBlock: Component<BlockViewProps> = (props) => {
     </ul>
   );
 };
-
-export default UnorderedListBlock;

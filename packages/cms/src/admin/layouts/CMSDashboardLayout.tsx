@@ -240,5 +240,3 @@ export const CMSDashboardLayout: Component<CMSDashboardLayoutProps> = (props) =>
     </RLDashboardGroup>
   );
 };
-
-export default CMSDashboardLayout;

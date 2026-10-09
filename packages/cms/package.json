@@ -45,36 +45,30 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.mjs"
+      "import": "./dist/index.mjs"
     },
     "./schema": {
       "types": "./dist/schema/index.d.mts",
-      "import": "./dist/schema/index.mjs",
-      "default": "./dist/schema/index.mjs"
+      "import": "./dist/schema/index.mjs"
     },
     "./schema/sqlite": {
       "types": "./dist/schema/sqlite.d.mts",
-      "import": "./dist/schema/sqlite.mjs",
-      "default": "./dist/schema/sqlite.mjs"
+      "import": "./dist/schema/sqlite.mjs"
     },
     "./schema/*": "./src/schema/*",
     "./storage": {
       "types": "./dist/storage/index.d.mts",
-      "import": "./dist/storage/index.mjs",
-      "default": "./dist/storage/index.mjs"
+      "import": "./dist/storage/index.mjs"
     },
     "./mcp": {
       "types": "./src/mcp/index.ts",
-      "import": "./src/mcp/index.ts",
-      "default": "./src/mcp/index.ts"
+      "import": "./src/mcp/index.ts"
     },
     "./core/*": "./src/core/*",
     "./solid/*": "./src/solid/*",
     "./plugin": {
       "types": "./dist/plugin.d.mts",
-      "import": "./dist/plugin.mjs",
-      "default": "./dist/plugin.mjs"
+      "import": "./dist/plugin.mjs"
     },
     "./middleware": {
       "types": "./dist/middleware/index.d.mts",

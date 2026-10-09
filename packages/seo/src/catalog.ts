@@ -1,4 +1,4 @@
-import type { ApiCatalog, ApiCatalogOptions } from "./types.js";
+import type { ApiCatalog, ApiCatalogOptions } from "./types";
 
 /**
  * Build RFC 9652 Application Linkset API Catalog. https://www.rfc-editor.org/rfc/rfc9652

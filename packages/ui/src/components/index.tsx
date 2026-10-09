@@ -132,7 +132,7 @@ export {
   useHeaderStack,
   type HeaderLayer,
   type RegisterHeaderOptions,
-} from "./header/useHeaderStack.ts";
+} from "./header/useHeaderStack";
 export { RLHoverCard } from "./hover-card/RLHoverCard";
 export type { RLHoverCardProps } from "./hover-card/hover-card.types";
 export { RLIcon } from "./icon/RLIcon";

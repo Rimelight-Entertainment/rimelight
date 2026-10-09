@@ -8,7 +8,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { pages } from "./pages.ts";
+import { pages } from "./pages";
 import type { Localized } from "../core/types/pages";
 
 export const taxonomyTerms = pgTable(

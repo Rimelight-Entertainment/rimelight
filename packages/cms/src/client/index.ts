@@ -11,4 +11,3 @@ export function createCmsClient(baseUrl = "/api/cms", options?: Parameters<typeo
 }
 
 export const cmsClient = createCmsClient();
-export default cmsClient;

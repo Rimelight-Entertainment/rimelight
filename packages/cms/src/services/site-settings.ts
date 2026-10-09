@@ -1,9 +1,5 @@
 import { eq } from "drizzle-orm";
-import {
-  siteSettings,
-  type InsertSiteSettings,
-  type SiteSettings,
-} from "../schema/site_settings.ts";
+import { siteSettings, type InsertSiteSettings, type SiteSettings } from "../schema/site_settings";
 
 export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   id: "default",

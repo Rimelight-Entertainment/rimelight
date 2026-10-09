@@ -3,8 +3,8 @@ import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "dri
 import type { BaseBlock } from "../core/types/blocks";
 import type { Localized, PageType } from "../core/types/pages";
 import type { BylineCredit } from "../core/types/bylines";
-import { pageVersions } from "./page_versions.ts";
-import { pageTemplates } from "./page_templates.ts";
+import { pageVersions } from "./page_versions";
+import { pageTemplates } from "./page_templates";
 
 export const pages = pgTable(
   "pages",

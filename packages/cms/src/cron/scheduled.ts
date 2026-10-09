@@ -1,6 +1,6 @@
 import { and, isNotNull, isNull, lt, lte } from "drizzle-orm";
-import { pageDraftLocks } from "../schema/page_draft_locks.ts";
-import { pages } from "../schema/pages.ts";
+import { pageDraftLocks } from "../schema/page_draft_locks";
+import { pages } from "../schema/pages";
 
 export interface CmsCronResult {
   expiredLocksCleaned: number;

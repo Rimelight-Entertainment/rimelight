@@ -29,4 +29,3 @@ export function cms(options: CmsMiddlewareOptions = {}) {
 }
 
 export { cmsRouter, type CmsRouterType };
-export default cms;

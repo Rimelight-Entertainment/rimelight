@@ -1,4 +1,4 @@
-import type { RobotsOptions, UserAgentRule } from "./types.js";
+import type { RobotsOptions, UserAgentRule } from "./types";
 
 /**
  * Build robots.txt content from options

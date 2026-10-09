@@ -1,4 +1,4 @@
-import type { SecurityTxtOptions } from "./types.js";
+import type { SecurityTxtOptions } from "./types";
 
 /**
  * Build RFC 9116 compliant security.txt content. https://www.rfc-editor.org/rfc/rfc9116

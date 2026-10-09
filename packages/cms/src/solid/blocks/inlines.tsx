@@ -1,5 +1,5 @@
 import { For, Show, type Component } from "solid-js";
-import type { InlineNode } from "../../core/types/inline.ts";
+import type { InlineNode } from "../../core/types/inline";
 
 export function resolveLocalizedText(value: unknown, locale = "en"): string {
   if (value == null) return "";

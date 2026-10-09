@@ -4,8 +4,8 @@ import {
   loadOgFonts,
   type OgFontConfig,
   type OgLayoutOptions,
-} from "../og.js";
-import type { OgRouteOptions } from "../types.js";
+} from "./index";
+import type { OgRouteOptions } from "../types";
 
 export interface OgHandlerOptions extends OgRouteOptions {
   font?: OgFontConfig;
@@ -52,7 +52,7 @@ export async function handleOgRequest(
     const vnode = defaultOgLayout(layoutOptions, font);
 
     // Lazy load Takumi renderer
-    const { renderTakumi } = await import("../takumi.js");
+    const { renderTakumi } = await import("../takumi");
     const { regular, bold } = await loadOgFonts(font);
 
     const pngBuffer = await renderTakumi(vnode, {

@@ -1,4 +1,4 @@
-import { pageTemplates } from "../schema/page_templates.ts";
+import { pageTemplates } from "../schema/page_templates";
 import {
   BLOG_POST_DEFINITION,
   DOCUMENT_DEFINITION,
@@ -10,7 +10,7 @@ import {
   ITEM_DEFINITION,
   SPECIES_DEFINITION,
   SKILL_DEFINITION,
-} from "../core/page-definitions.ts";
+} from "../core/page-definitions";
 
 export interface BuiltinTemplate {
   slug: string;

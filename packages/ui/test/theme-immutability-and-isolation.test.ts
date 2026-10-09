@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { createGenerator } from "unocss";
 import { createStore } from "solid-js";
-import rimelightUiPreset from "../src/preset";
+import { rimelightUiPreset } from "../src/preset";
 import { normalizeModifier, formatShortcutKeys } from "../src/shortcuts";
 
 describe("@rimelight/ui - Preset Architecture and Reactive State Isolation", () => {

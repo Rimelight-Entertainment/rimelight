@@ -1,5 +1,5 @@
 import { For, Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const ScriptBlock: Component<BlockViewProps> = (props) => {
   const title = () => (props.block.props?.["title"] as string) ?? "Untitled Script";
@@ -77,5 +77,3 @@ export const ScriptBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default ScriptBlock;

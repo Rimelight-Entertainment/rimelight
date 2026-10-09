@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { buildArticleSchema, buildBreadcrumbSchema } from "../src/schema.js";
+import { buildArticleSchema, buildBreadcrumbSchema } from "../src/schema";
 
 describe("seo-schema", () => {
   it("builds TechArticle JSON-LD schema", () => {

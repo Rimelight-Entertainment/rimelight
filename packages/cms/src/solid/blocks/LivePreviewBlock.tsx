@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const LivePreviewBlock: Component<BlockViewProps> = (props) => {
   const componentCode = () => (props.block.props?.["componentCode"] as string) ?? "";
@@ -38,5 +38,3 @@ export const LivePreviewBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default LivePreviewBlock;

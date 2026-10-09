@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { seo, isContained } from "../src/plugin.js";
+import { seo, isContained } from "../src/plugin";
 import path from "node:path";
 
 async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {

@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const DialogueBlock: Component<BlockViewProps> = (props) => {
   const character = () => (props.block.props?.["character"] as string) ?? "CHARACTER";
@@ -23,5 +23,3 @@ export const DialogueBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default DialogueBlock;

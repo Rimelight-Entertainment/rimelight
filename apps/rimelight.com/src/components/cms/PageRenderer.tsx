@@ -145,5 +145,3 @@ export const PageRenderer: Component<PageRendererProps> = (props) => {
     </article>
   );
 };
-
-export default PageRenderer;

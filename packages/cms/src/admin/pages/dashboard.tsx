@@ -1,5 +1,5 @@
 import { type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
@@ -65,5 +65,3 @@ export const DashboardPage: Component<DashboardPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default DashboardPage;

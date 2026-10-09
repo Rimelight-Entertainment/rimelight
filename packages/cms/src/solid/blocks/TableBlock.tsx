@@ -1,7 +1,7 @@
 import { type Component } from "solid-js";
 import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx";
 import type { TableColumn } from "@rimelight/ui/components/table/RLTable.tsx";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const TableBlock: Component<BlockViewProps> = (props) => {
   const columns = () => (props.block.props?.["columns"] as any[]) ?? [];
@@ -38,5 +38,3 @@ export const TableBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default TableBlock;

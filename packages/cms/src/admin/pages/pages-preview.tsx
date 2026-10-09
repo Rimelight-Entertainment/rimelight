@@ -1,8 +1,8 @@
 import { createSignal, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { PageRenderer } from "../../solid/PageRenderer.tsx";
-import { getLocalized, parseContent, useCmsApi } from "./_shared.tsx";
+import { PageRenderer } from "../../solid/PageRenderer";
+import { getLocalized, parseContent, useCmsApi } from "./_shared";
 
 export interface PagesPreviewPageProps {
   pageId: string;
@@ -87,5 +87,3 @@ export const PagesPreviewPage: Component<PagesPreviewPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default PagesPreviewPage;

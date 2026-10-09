@@ -1,8 +1,8 @@
 import { createSignal, For, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import { getLocalized, useCmsApi } from "./_shared.tsx";
+import { getLocalized, useCmsApi } from "./_shared";
 
 export interface CmsPageListItem {
   id: string;
@@ -149,5 +149,3 @@ export const PagesIndexPage: Component<PagesIndexPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default PagesIndexPage;

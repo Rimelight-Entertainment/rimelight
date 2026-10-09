@@ -1,9 +1,9 @@
 import { createSignal, For, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import { useCmsApi } from "./_shared.tsx";
-import type { StorageFile } from "../../storage/index.ts";
+import { useCmsApi } from "./_shared";
+import type { StorageFile } from "../../storage";
 
 export interface AssetsPageProps {
   basePath?: string | undefined;
@@ -154,5 +154,3 @@ export const AssetsPage: Component<AssetsPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default AssetsPage;

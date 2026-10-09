@@ -1,18 +1,18 @@
 import { and, desc, eq, isNotNull, isNull, like, or, sql } from "drizzle-orm";
-import { pages } from "../schema/pages.ts";
-import { pageDrafts } from "../schema/page_drafts.ts";
-import { pageVersions } from "../schema/page_versions.ts";
-import { pageTemplates } from "../schema/page_templates.ts";
-import { contentTypes } from "../schema/content_types.ts";
-import { bylines } from "../schema/bylines.ts";
-import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies.ts";
-import { pageVersionApprovals } from "../schema/page_version_approvals.ts";
-import { pageVersionComments } from "../schema/page_version_comments.ts";
-import { getSiteSettings, updateSiteSettings } from "../services/site-settings.ts";
-import { getTaxonomyTerms } from "../services/taxonomies.ts";
-import { indexPageForSearch } from "../services/search-indexer.ts";
-import type { PageType } from "../core/types/pages.ts";
-import type { BaseBlock } from "../core/types/blocks.ts";
+import { pages } from "../schema/pages";
+import { pageDrafts } from "../schema/page_drafts";
+import { pageVersions } from "../schema/page_versions";
+import { pageTemplates } from "../schema/page_templates";
+import { contentTypes } from "../schema/content_types";
+import { bylines } from "../schema/bylines";
+import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies";
+import { pageVersionApprovals } from "../schema/page_version_approvals";
+import { pageVersionComments } from "../schema/page_version_comments";
+import { getSiteSettings, updateSiteSettings } from "../services/site-settings";
+import { getTaxonomyTerms } from "../services/taxonomies";
+import { indexPageForSearch } from "../services/search-indexer";
+import type { PageType } from "../core/types/pages";
+import type { BaseBlock } from "../core/types/blocks";
 
 export const CMS_MCP_TOOLS = [
   // ─── 1. Pages & Drafts ──────────────────────────────────────────────────────

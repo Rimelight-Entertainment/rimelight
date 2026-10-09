@@ -1,7 +1,7 @@
 import { createSignal, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { useCmsApi } from "./_shared.tsx";
+import { useCmsApi } from "./_shared";
 
 export interface SettingsPageProps {
   basePath?: string | undefined;
@@ -102,5 +102,3 @@ export const SettingsPage: Component<SettingsPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default SettingsPage;

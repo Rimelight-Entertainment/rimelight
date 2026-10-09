@@ -11,4 +11,4 @@ export {
   handleMediaDelete as DELETE,
   registerCmsMediaRoutes,
   type MediaRouteContext,
-} from "../../server/media.ts";
+} from "../../server/media";

@@ -7,7 +7,7 @@ import {
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
   deepMerge,
-} from "../src/meta.js";
+} from "../src/meta";
 
 const BASE = "https://example.com";
 

@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const ImageBlock: Component<BlockViewProps> = (props) => {
   const src = () =>
@@ -25,5 +25,3 @@ export const ImageBlock: Component<BlockViewProps> = (props) => {
     </figure>
   );
 };
-
-export default ImageBlock;

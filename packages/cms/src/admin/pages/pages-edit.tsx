@@ -1,8 +1,8 @@
 import { Show, createSignal, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { RimelightEditorLayout } from "../../client/components/RimelightEditorLayout.tsx";
-import { parseContent, useCmsApi } from "./_shared.tsx";
+import { RimelightEditorLayout } from "../../client/components/RimelightEditorLayout";
+import { parseContent, useCmsApi } from "./_shared";
 
 export interface PagesEditPageProps {
   pageId: string;
@@ -110,5 +110,3 @@ export const PagesEditPage: Component<PagesEditPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default PagesEditPage;

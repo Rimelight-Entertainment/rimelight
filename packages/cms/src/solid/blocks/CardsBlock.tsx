@@ -1,5 +1,5 @@
 import { type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const CardsBlock: Component<BlockViewProps> = (props) => {
   const columns = () => (props.block.props?.["columns"] as number) ?? 2;
@@ -18,5 +18,3 @@ export const CardsBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default CardsBlock;

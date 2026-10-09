@@ -1,7 +1,7 @@
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import WikiLayout from "#layouts/WikiLayout";
-import PageRenderer from "#components/cms/PageRenderer";
+import { PageRenderer } from "#components/cms/PageRenderer";
 import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
 
 export const WikiSlugPage: Component = () => {

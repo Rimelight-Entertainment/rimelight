@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { buildRssXml } from "../src/rss.js";
+import { buildRssXml } from "../src/rss";
 
 describe("buildRssXml", () => {
   it("should generate valid RSS XML with channel and items", () => {

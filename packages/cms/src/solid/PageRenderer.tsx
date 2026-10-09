@@ -1,8 +1,8 @@
 import { createMemo, For, type Component } from "solid-js";
-import type { BaseBlock } from "../core/types/blocks.ts";
-import type { UserSessionContext } from "../auth/permissions.ts";
-import { filterBlocksForReader } from "../auth/filter-blocks.ts";
-import { BlockRenderer } from "./BlockRenderer.tsx";
+import type { BaseBlock } from "../core/types/blocks";
+import type { UserSessionContext } from "../auth/permissions";
+import { filterBlocksForReader } from "../auth/filter-blocks";
+import { BlockRenderer } from "./BlockRenderer";
 
 export interface PageRendererProps {
   blocks: BaseBlock[];
@@ -29,5 +29,3 @@ export const PageRenderer: Component<PageRendererProps> = (props) => {
     </article>
   );
 };
-
-export default PageRenderer;

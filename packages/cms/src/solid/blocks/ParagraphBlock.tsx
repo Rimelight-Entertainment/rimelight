@@ -1,7 +1,7 @@
 import { Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import type { BaseBlock } from "../../core/types/blocks.ts";
-import { InlineNodes } from "./inlines.tsx";
+import type { BaseBlock } from "../../core/types/blocks";
+import { InlineNodes } from "./inlines";
 
 export interface BlockViewProps {
   block: BaseBlock;
@@ -36,5 +36,3 @@ export const ParagraphBlock: Component<BlockViewProps> = (props) => {
     </p>
   );
 };
-
-export default ParagraphBlock;

@@ -1,2 +1,2 @@
-export * from "./layouts/index.ts";
-export * from "./pages/index.ts";
+export * from "./layouts/index";
+export * from "./pages/index";

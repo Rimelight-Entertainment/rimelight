@@ -1,5 +1,5 @@
-import type { HeadProps, OpenGraphMeta, SiteConfig, TwitterMeta } from "./types.js";
-export type { HeadProps } from "./types.js";
+import type { HeadProps, OpenGraphMeta, SiteConfig, TwitterMeta } from "./types";
+export type { HeadProps } from "./types";
 import {
   buildCanonicalUrl,
   buildDefaultOgImageUrl,
@@ -8,9 +8,9 @@ import {
   buildSafeDescription,
   buildWebSiteSchema,
   deepMerge,
-} from "./meta.js";
-import { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js";
-import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize.js";
+} from "./meta";
+import { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
+import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize";
 
 /**
  * Discriminated union of all supported head tag shapes. Typed per-tag so JSX consumers get

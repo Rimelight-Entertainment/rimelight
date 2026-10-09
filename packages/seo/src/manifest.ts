@@ -1,4 +1,4 @@
-import type { WebManifest, WebManifestOptions } from "./types.js";
+import type { WebManifest, WebManifestOptions } from "./types";
 
 /**
  * Build web app manifest (site.webmanifest) compliant with W3C Web App Manifest.

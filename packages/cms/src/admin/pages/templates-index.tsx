@@ -1,8 +1,8 @@
 import { For, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import { useCmsApi } from "./_shared.tsx";
+import { useCmsApi } from "./_shared";
 
 export interface TemplatesIndexPageProps {
   basePath?: string | undefined;
@@ -76,5 +76,3 @@ export const TemplatesIndexPage: Component<TemplatesIndexPageProps> = (props) =>
     </CMSDashboardLayout>
   );
 };
-
-export default TemplatesIndexPage;

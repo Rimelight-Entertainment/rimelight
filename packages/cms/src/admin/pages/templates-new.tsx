@@ -1,7 +1,7 @@
 import { createSignal, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { RimelightTemplateEditor } from "../../client/components/RimelightTemplateEditor.tsx";
+import { RimelightTemplateEditor } from "../../client/components/RimelightTemplateEditor";
 
 export interface TemplatesNewPageProps {
   basePath?: string | undefined;
@@ -104,5 +104,3 @@ export const TemplatesNewPage: Component<TemplatesNewPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default TemplatesNewPage;

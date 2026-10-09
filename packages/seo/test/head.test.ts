@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
-import { createSeoHead, createHead, defineSeoConfig } from "../src/head.js";
-import { escapeHtml, serializeJsonLd, sanitizeUrl } from "../src/sanitize.js";
+import { createSeoHead, createHead, defineSeoConfig } from "../src/head";
+import { escapeHtml, serializeJsonLd, sanitizeUrl } from "../src/sanitize";
 
 describe("sanitize helpers", () => {
   describe("escapeHtml", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { buildLlmsTxt, buildLlmsFullTxt } from "../src/llms.js";
+import { buildLlmsTxt, buildLlmsFullTxt } from "../src/llms";
 
 describe("seo-llms", () => {
   it("builds standard /llms.txt with sections and pages", () => {

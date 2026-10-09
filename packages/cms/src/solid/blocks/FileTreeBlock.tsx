@@ -1,6 +1,6 @@
 import { For, Show, type Component } from "solid-js";
-import type { FileTreeNode } from "../../core/types/blocks.ts";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { FileTreeNode } from "../../core/types/blocks";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 const TreeNode: Component<{ node: FileTreeNode }> = (props) => {
   const node = () => props.node;
@@ -43,5 +43,3 @@ export const FileTreeBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default FileTreeBlock;

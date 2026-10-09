@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const TabItemBlock: Component<BlockViewProps & { active?: boolean | undefined }> = (
   props,
@@ -12,5 +12,3 @@ export const TabItemBlock: Component<BlockViewProps & { active?: boolean | undef
     </Show>
   );
 };
-
-export default TabItemBlock;

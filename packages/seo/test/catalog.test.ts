@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { buildApiCatalog } from "../src/catalog.js";
+import { buildApiCatalog } from "../src/catalog";
 
 describe("buildApiCatalog", () => {
   it("builds linkset api-catalog object", () => {

@@ -3,7 +3,7 @@ import {
   getPageDefinition,
   type PageDefinition,
   type FieldDefinition,
-} from "../../core/page-definitions.ts";
+} from "../../core/page-definitions";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";

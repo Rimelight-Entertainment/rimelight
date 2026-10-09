@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { createGenerator } from "unocss";
-import rimelightUiPreset from "../src/preset";
+import { rimelightUiPreset } from "../src/preset";
 
 const uno = await createGenerator({ presets: [rimelightUiPreset()] });
 

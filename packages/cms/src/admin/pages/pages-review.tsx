@@ -1,9 +1,9 @@
 import { createSignal, For, Show, type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import { BlockRenderer } from "../../solid/BlockRenderer.tsx";
-import { getLocalized, useCmsApi } from "./_shared.tsx";
+import { BlockRenderer } from "../../solid/BlockRenderer";
+import { getLocalized, useCmsApi } from "./_shared";
 
 export interface PagesReviewPageProps {
   pageId: string;
@@ -105,5 +105,3 @@ export const PagesReviewPage: Component<PagesReviewPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default PagesReviewPage;

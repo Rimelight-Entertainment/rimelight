@@ -1,6 +1,6 @@
 import { type Component } from "solid-js";
-import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout.tsx";
-import { RimelightBylinesManager } from "../../client/components/index.ts";
+import { CMSDashboardLayout } from "../layouts/CMSDashboardLayout";
+import { RimelightBylinesManager } from "../../client/components/index";
 
 export interface BylinesPageProps {
   basePath?: string | undefined;
@@ -20,5 +20,3 @@ export const BylinesPage: Component<BylinesPageProps> = (props) => {
     </CMSDashboardLayout>
   );
 };
-
-export default BylinesPage;

@@ -1,6 +1,6 @@
 import { createSignal, For, Show, type Component } from "solid-js";
-import type { BaseBlock } from "../../core/types/blocks.ts";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BaseBlock } from "../../core/types/blocks";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const TabsBlock: Component<BlockViewProps> = (props) => {
   const children = () =>
@@ -50,5 +50,3 @@ export const TabsBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default TabsBlock;

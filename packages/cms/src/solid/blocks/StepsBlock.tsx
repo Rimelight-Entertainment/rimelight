@@ -1,5 +1,5 @@
 import { type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const StepsBlock: Component<BlockViewProps> = (props) => {
   return (
@@ -11,5 +11,3 @@ export const StepsBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default StepsBlock;

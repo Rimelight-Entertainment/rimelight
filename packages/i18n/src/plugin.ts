@@ -5,13 +5,15 @@ import { defineRimelightArtifactPlugin } from "@rimelight/config";
 
 const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
 
-export interface RimelightI18nOptions {
+export interface RimelightI18nPluginOptions {
   defaultLocale?: string;
   translationsDir?: string;
   prefixDefaultLocale?: boolean;
   kvBinding?: string;
   skipPaths?: string[];
 }
+
+export type RimelightI18nPlugin = Plugin;
 
 export interface ReadLocaleFilesResult {
   files: string[];
@@ -46,7 +48,7 @@ export function resolveTranslationsDir(root: string, specifiedDir?: string): str
   return path.resolve(root, specifiedDir ?? DEFAULT_TRANSLATIONS_DIR);
 }
 
-export function i18n(options?: RimelightI18nOptions): Plugin {
+export function i18n(options?: RimelightI18nPluginOptions): Plugin {
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   const skipPaths = options?.skipPaths ?? ["/api", "/_"];

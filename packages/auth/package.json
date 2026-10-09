@@ -40,8 +40,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.mjs"
+      "import": "./dist/index.mjs"
     },
     "./types": {
       "types": "./dist/types.d.mts",

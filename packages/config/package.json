@@ -2,7 +2,7 @@
   "name": "@rimelight/config",
   "version": "0.0.35",
   "private": false,
-  "description": "Rimelight Entertainment's shared configuration package",
+  "description": "Rimelight Entertainment's Shared Configuration Package",
   "homepage": "https://rimelight.com/docs",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
@@ -40,8 +40,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.mjs"
+      "import": "./dist/index.mjs"
     },
     "./generator": {
       "types": "./dist/generator.d.mts",

@@ -1,24 +1,24 @@
-import { ParagraphBlock } from "./ParagraphBlock.tsx";
-import { SectionBlock } from "./SectionBlock.tsx";
-import { CalloutBlock } from "./CalloutBlock.tsx";
-import { ImageBlock } from "./ImageBlock.tsx";
-import { CodeBlock } from "./CodeBlock.tsx";
-import { TableBlock } from "./TableBlock.tsx";
-import { TabsBlock } from "./TabsBlock.tsx";
-import { TabItemBlock } from "./TabItemBlock.tsx";
-import { StepsBlock } from "./StepsBlock.tsx";
-import { StepItemBlock } from "./StepItemBlock.tsx";
-import { CardsBlock } from "./CardsBlock.tsx";
-import { CardBlock } from "./CardBlock.tsx";
-import { FileTreeBlock } from "./FileTreeBlock.tsx";
-import { UnorderedListBlock } from "./UnorderedListBlock.tsx";
-import { OrderedListBlock } from "./OrderedListBlock.tsx";
-import { ScriptBlock } from "./ScriptBlock.tsx";
-import { SceneBlock } from "./SceneBlock.tsx";
-import { DialogueBlock } from "./DialogueBlock.tsx";
-import { LivePreviewBlock } from "./LivePreviewBlock.tsx";
+import { ParagraphBlock } from "./ParagraphBlock";
+import { SectionBlock } from "./SectionBlock";
+import { CalloutBlock } from "./CalloutBlock";
+import { ImageBlock } from "./ImageBlock";
+import { CodeBlock } from "./CodeBlock";
+import { TableBlock } from "./TableBlock";
+import { TabsBlock } from "./TabsBlock";
+import { TabItemBlock } from "./TabItemBlock";
+import { StepsBlock } from "./StepsBlock";
+import { StepItemBlock } from "./StepItemBlock";
+import { CardsBlock } from "./CardsBlock";
+import { CardBlock } from "./CardBlock";
+import { FileTreeBlock } from "./FileTreeBlock";
+import { UnorderedListBlock } from "./UnorderedListBlock";
+import { OrderedListBlock } from "./OrderedListBlock";
+import { ScriptBlock } from "./ScriptBlock";
+import { SceneBlock } from "./SceneBlock";
+import { DialogueBlock } from "./DialogueBlock";
+import { LivePreviewBlock } from "./LivePreviewBlock";
 import type { Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export {
   ParagraphBlock,
@@ -42,7 +42,7 @@ export {
   LivePreviewBlock,
 };
 export type { BlockViewProps };
-export { InlineNodes, InlineNodeView, resolveInlineText } from "./inlines.tsx";
+export { InlineNodes, InlineNodeView, resolveInlineText } from "./inlines";
 
 export const defaultBlockComponents: Record<string, Component<BlockViewProps>> = {
   ParagraphBlock,
@@ -65,5 +65,3 @@ export const defaultBlockComponents: Record<string, Component<BlockViewProps>> =
   DialogueBlock,
   LivePreviewBlock,
 };
-
-export default defaultBlockComponents;

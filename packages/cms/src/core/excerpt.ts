@@ -1,5 +1,5 @@
-import type { BaseBlock } from "./types/blocks.ts";
-import type { InlineNode } from "./types/inline.ts";
+import type { BaseBlock } from "./types/blocks";
+import type { InlineNode } from "./types/inline";
 
 function extractTextFromInlineNodes(nodes: InlineNode[] | undefined | null): string {
   if (!nodes || !Array.isArray(nodes)) return "";

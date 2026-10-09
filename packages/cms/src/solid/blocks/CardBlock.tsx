@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const CardBlock: Component<BlockViewProps> = (props) => {
   const title = () => (props.block.props?.["title"] as string) ?? "";
@@ -64,5 +64,3 @@ function CardBody(props: {
     </>
   );
 }
-
-export default CardBlock;

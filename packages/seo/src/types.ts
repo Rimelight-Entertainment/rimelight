@@ -1,4 +1,4 @@
-import type { LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js";
+import type { LlmsTxtOptions, LlmsFullTxtOptions } from "./llms";
 
 /**
  * Change frequency for sitemap entries
@@ -654,5 +654,5 @@ export interface OgRouteOptions {
   docsBackground?: "dark" | "gradient" | (string & {});
 }
 
-export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js";
-export type { ArticleSchemaOptions, BreadcrumbItem } from "./schema.js";
+export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms";
+export type { ArticleSchemaOptions, BreadcrumbItem } from "./schema";

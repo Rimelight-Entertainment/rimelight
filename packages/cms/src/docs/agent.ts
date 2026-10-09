@@ -1,5 +1,5 @@
-import { blocksToMarkdown } from "../markdown/index.ts";
-import { pages } from "../schema/pages.ts";
+import { blocksToMarkdown } from "../markdown";
+import { pages } from "../schema";
 import { eq, and, isNull, isNotNull } from "drizzle-orm";
 
 export interface AgentMarkdownOptions {

@@ -42,19 +42,16 @@
     ".": {
       "types": "./src/index.ts",
       "solid": "./src/index.tsx",
-      "import": "./src/index.tsx",
-      "default": "./src/index.tsx"
+      "import": "./src/index.tsx"
     },
     "./plugin": {
       "types": "./dist/plugin.d.mts",
-      "import": "./dist/plugin.mjs",
-      "default": "./dist/plugin.mjs"
+      "import": "./dist/plugin.mjs"
     },
     "./components": {
       "types": "./src/components/index.ts",
       "solid": "./src/components/index.tsx",
-      "import": "./src/components/index.tsx",
-      "default": "./src/components/index.tsx"
+      "import": "./src/components/index.tsx"
     },
     "./preset": {
       "types": "./dist/preset.d.mts",

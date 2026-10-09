@@ -4,8 +4,8 @@ import {
   buildSitemapXml,
   buildSitemapIndexXml,
   chunkSitemapUrls,
-} from "../src/sitemap.js";
-import type { LocaleConfig, SeoEntry } from "../src/types.js";
+} from "../src/sitemap";
+import type { LocaleConfig, SeoEntry } from "../src/types";
 
 describe("buildSitemapUrls", () => {
   const config: LocaleConfig = {

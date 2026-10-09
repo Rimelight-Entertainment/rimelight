@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
-import { createUiHead } from "../src/head.js";
-import type { HeadTag } from "../src/head.js";
+import { createUiHead } from "../src/head";
+import type { HeadTag } from "../src/head";
 
 describe("createUiHead", () => {
   it("generates theme flash script and header stack script by default", () => {

@@ -1,7 +1,7 @@
 import { Show, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
-import { calculateHeadingLevel, type HeadingLevel } from "../../core/types/blocks.ts";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import { calculateHeadingLevel, type HeadingLevel } from "../../core/types/blocks";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 function slugify(text: string): string {
   return text
@@ -49,5 +49,3 @@ export const SectionBlock: Component<BlockViewProps> = (props) => {
     </section>
   );
 };
-
-export default SectionBlock;

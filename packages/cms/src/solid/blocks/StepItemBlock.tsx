@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const StepItemBlock: Component<BlockViewProps> = (props) => {
   const title = () => (props.block.props?.["title"] as string) ?? "";
@@ -23,5 +23,3 @@ export const StepItemBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default StepItemBlock;

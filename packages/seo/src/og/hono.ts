@@ -1,4 +1,4 @@
-import { handleOgRequest, type OgHandlerOptions } from "./handler.js";
+import { handleOgRequest, type OgHandlerOptions } from "./handler";
 
 export interface HonoContext {
   req: {

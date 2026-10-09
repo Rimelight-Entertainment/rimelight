@@ -1,5 +1,5 @@
 import { Show, type Component } from "solid-js";
-import type { BlockViewProps } from "./ParagraphBlock.tsx";
+import type { BlockViewProps } from "./ParagraphBlock";
 
 export const SceneBlock: Component<BlockViewProps> = (props) => {
   const location = () => (props.block.props?.["location"] as string) ?? "LOCATION";
@@ -30,5 +30,3 @@ export const SceneBlock: Component<BlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default SceneBlock;

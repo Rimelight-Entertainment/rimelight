@@ -101,12 +101,7 @@ function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
   return { themeColors, tokenVarLines };
 }
 
-export default function rimelightUiPreset({
-  colors,
-  icons,
-  fonts,
-  presets = {},
-}: UIConfig = {}): Preset {
+export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConfig = {}): Preset {
   const { themeColors, tokenVarLines } = resolveTokens(colors);
   const webFontsPreset =
     presets.fonts !== false && fonts !== false ? resolveWebFontsPreset(fonts) : null;

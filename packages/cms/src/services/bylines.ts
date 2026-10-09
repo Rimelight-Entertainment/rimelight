@@ -1,5 +1,5 @@
 import { eq, and, isNull, or } from "drizzle-orm";
-import { bylines, type Byline, type NewByline } from "../schema/bylines.ts";
+import { bylines, type Byline, type NewByline } from "../schema/bylines";
 
 /**
  * Returns all active (non-deleted) bylines.
