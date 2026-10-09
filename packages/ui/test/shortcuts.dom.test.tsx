@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vite-plus/test";
 import { defineShortcuts, activeShortcutsStore } from "../src/shortcuts";
 
-describe("@rimelight/ui shortcuts runtime — browser", () => {
+describe("@rimelight/ui shortcuts runtime — DOM", () => {
   it("should register shortcuts into activeShortcutsStore before listeners subscribe", () => {
     const cleanup = defineShortcuts({
       meta_k: {

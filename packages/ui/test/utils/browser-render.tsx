@@ -1,18 +1,13 @@
-import { render } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
-import { page } from "vite-plus/test/browser";
+import { renderToString } from "@solidjs/web";
 
 /**
- * Mounts a Solid component into a real DOM container and returns a Vitest
- * locator scoped to it. Marks the container for automatic cleanup by
- * the afterEach in setup-browser.ts.
+ * Renders a Solid component into a DOM container in happy-dom.
+ * Automatically cleaned up between tests by afterEach in setup.ts.
  */
-export function mountComponent(
-  component: () => JSX.Element,
-): ReturnType<typeof page.elementLocator> {
+export function mountComponent(component: () => any): HTMLElement {
   const container = document.createElement("div");
   container.setAttribute("data-test-root", "");
   document.body.appendChild(container);
-  render(component, container);
-  return page.elementLocator(container);
+  container.innerHTML = renderToString(component);
+  return container;
 }

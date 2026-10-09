@@ -4,7 +4,7 @@ import { mountComponent } from "./utils/browser-render";
 import { RLTable } from "../src/components/table/RLTable";
 import type { TableApi, TableColumn } from "../src/components/table/table.types";
 
-describe("RLTable — browser & TableApi interactions", () => {
+describe("RLTable — DOM & TableApi interactions", () => {
   const sampleData = [
     { id: "1", name: "Alice", role: "Admin", score: 95, details: { team: "Core" } },
     { id: "2", name: "Bob", role: "Developer", score: 82, details: { team: "UI" } },
