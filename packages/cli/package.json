@@ -22,10 +22,29 @@
     "dist"
   ],
   "type": "module",
+  "imports": {
+    "#rimelight/cli/*": {
+      "types": "./node_modules/.rimelight/cli/*.d.ts",
+      "default": "./node_modules/.rimelight/cli/*.js"
+    },
+    "#rimelight/*/client": {
+      "types": "./node_modules/.rimelight/*/client.d.ts",
+      "default": "./node_modules/.rimelight/*/client.js"
+    },
+    "#rimelight/*/server": {
+      "types": "./node_modules/.rimelight/*/server.d.ts",
+      "default": "./node_modules/.rimelight/*/server.js"
+    },
+    "#rimelight/*": {
+      "types": "./node_modules/.rimelight/*/config.d.ts",
+      "default": "./node_modules/.rimelight/*/config.js"
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     },
     "./prompts": {
       "types": "./dist/prompts.d.mts",
@@ -40,14 +59,17 @@
     "access": "public"
   },
   "scripts": {
+    "check": "vp check --fix",
+    "test": "vp test",
     "build": "vp pack",
     "prepack": "vp pack",
-    "create": "node ./dist/cli.mjs create",
-    "check": "vp check --fix",
-    "test": "vp test"
+    "create": "node ./dist/cli.mjs create"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite-plus": "^1.0.0"
   },
   "engines": {
     "node": ">=26.10.0"

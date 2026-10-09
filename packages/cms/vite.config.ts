@@ -1,6 +1,8 @@
 import { defineConfig } from "vite-plus";
+import solid from "@solidjs/vite-plugin";
 
 export default defineConfig({
+  plugins: [solid({ ssr: true }) as any],
   pack: {
     entry: [
       "src/index.ts",
@@ -12,5 +14,8 @@ export default defineConfig({
       "src/middleware/index.ts",
       "src/client/index.ts",
     ],
+  },
+  test: {
+    environment: "node",
   },
 });

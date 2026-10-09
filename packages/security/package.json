@@ -16,8 +16,7 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "type": "module",
   "imports": {
@@ -41,7 +40,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     },
     "./middleware": {
       "types": "./dist/middleware/index.d.mts",
@@ -72,10 +72,10 @@
     "access": "public"
   },
   "scripts": {
-    "build": "vp pack",
-    "prepack": "vp pack",
     "check": "vp check --fix",
-    "test": "vp test"
+    "test": "vp test",
+    "build": "vp pack",
+    "prepack": "vp pack"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"

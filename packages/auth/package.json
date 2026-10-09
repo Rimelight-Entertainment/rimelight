@@ -40,7 +40,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     },
     "./types": {
       "types": "./dist/types.d.mts",
@@ -87,10 +88,10 @@
     "access": "public"
   },
   "scripts": {
-    "build": "vp pack",
-    "prepack": "vp pack",
     "check": "vp check --fix",
-    "test": "vp test"
+    "test": "vp test",
+    "build": "vp pack",
+    "prepack": "vp pack"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"

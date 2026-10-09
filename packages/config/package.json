@@ -19,11 +19,29 @@
     "dist",
     "tsconfig"
   ],
-  "type": "module",
+  "imports": {
+    "#rimelight/config/*": {
+      "types": "./node_modules/.rimelight/config/*.d.ts",
+      "default": "./node_modules/.rimelight/config/*.js"
+    },
+    "#rimelight/*/client": {
+      "types": "./node_modules/.rimelight/*/client.d.ts",
+      "default": "./node_modules/.rimelight/*/client.js"
+    },
+    "#rimelight/*/server": {
+      "types": "./node_modules/.rimelight/*/server.d.ts",
+      "default": "./node_modules/.rimelight/*/server.js"
+    },
+    "#rimelight/*": {
+      "types": "./node_modules/.rimelight/*/config.d.ts",
+      "default": "./node_modules/.rimelight/*/config.js"
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     },
     "./generator": {
       "types": "./dist/generator.d.mts",
@@ -36,18 +54,13 @@
     "access": "public"
   },
   "scripts": {
-    "build": "vp pack",
-    "prepack": "vp pack",
     "check": "vp check --fix",
-    "test": "vp test"
+    "test": "vp test",
+    "build": "vp pack",
+    "prepack": "vp pack"
   },
   "peerDependencies": {
     "vite-plus": "^1.0.0"
-  },
-  "peerDependenciesMeta": {
-    "vite-plus": {
-      "optional": true
-    }
   },
   "engines": {
     "node": ">=26.10.0"
