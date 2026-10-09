@@ -135,6 +135,13 @@ export function resolveImportSpecifier(from: string, rootDir: string, targetDir:
     }
     return relativePath;
   }
+  if (path.isAbsolute(from)) {
+    let relativePath = path.relative(targetDir, from).replace(/\\/g, "/");
+    if (!relativePath.startsWith(".")) {
+      relativePath = `./${relativePath}`;
+    }
+    return relativePath;
+  }
   return from.replace(/\\/g, "/");
 }
 

@@ -107,6 +107,19 @@ describe("@rimelight/config generator utils", () => {
         path.join(tempDir, "node_modules", ".rimelight", "pkg"),
       );
       expect(rel).toContain("custom.ts");
+      expect(rel.startsWith("./") || rel.startsWith("../")).toBe(true);
+    });
+
+    it("resolves absolute import specifiers with POSIX slashes", () => {
+      const absPath = path.resolve(tempDir, "src", "db.ts");
+      const rel = resolveImportSpecifier(
+        absPath,
+        tempDir,
+        path.join(tempDir, "node_modules", ".rimelight", "seo"),
+      );
+      expect(rel).toContain("src/db.ts");
+      expect(rel.includes("\\")).toBe(false);
+      expect(rel.startsWith("./") || rel.startsWith("../")).toBe(true);
     });
 
     it("generates module with static values and re-based imports", () => {

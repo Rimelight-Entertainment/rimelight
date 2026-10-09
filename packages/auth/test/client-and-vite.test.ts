@@ -57,7 +57,7 @@ describe("Auth Client", () => {
 });
 
 describe("Auth Vite Plugin", () => {
-  it("injects resolve.alias for #rimelight/auth and legacy #auth aliases", async () => {
+  it("injects resolve.alias for #rimelight/auth subpaths", async () => {
     const plugin: Plugin = authPlugin({ adapter: "cf-access" });
     const configResult = await callHook<any>(plugin.config, { root: process.cwd() });
     expect(configResult?.resolve?.alias).toBeDefined();
@@ -67,9 +67,9 @@ describe("Auth Vite Plugin", () => {
       aliases.find((a: any) => (a.find instanceof RegExp ? a.find.test(name) : a.find === name));
 
     expect(findAlias("#rimelight/auth")).toBeDefined();
-    expect(findAlias("#auth")).toBeDefined();
-    expect(findAlias("#auth/auth")).toBeDefined();
-    expect(findAlias("#auth/auth-client")).toBeDefined();
+    expect(findAlias("#rimelight/auth/server")).toBeDefined();
+    expect(findAlias("#rimelight/auth/client")).toBeDefined();
+    expect(findAlias("#auth")).toBeUndefined();
   });
 
   it("emits disk artifacts when configResolved runs", async () => {

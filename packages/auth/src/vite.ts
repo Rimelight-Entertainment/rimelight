@@ -23,9 +23,6 @@ export function auth(options: RimelightAuthPluginOptions = {}): RimelightAuthPlu
     aliases: {
       "#rimelight/auth/server": "auth.js",
       "#rimelight/auth/client": "client.js",
-      "#auth": "auth.js",
-      "#auth/auth": "auth.js",
-      "#auth/auth-client": "client.js",
     },
     emit: () => ({
       "config.js": `export const config = ${serializeData(options)};\nexport default config;`,

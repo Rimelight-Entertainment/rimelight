@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config";
+import {
+  defineRimelightArtifactPlugin,
+  resolveImportSpecifier,
+  serializeData,
+} from "@rimelight/config";
 import type { RimelightSeoOptions, SiteConfig } from "./types.js";
 import { buildRobotsTxt } from "./robots.js";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap.js";
@@ -199,7 +203,7 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
       "#rimelight/seo/server": "server.js",
       "#rimelight/seo/client": "config.js",
     },
-    emit({ root }) {
+    emit({ root, targetDir }) {
       rootDir = root;
       resolveIcons();
 
@@ -209,6 +213,10 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
         "src/config/llms.corpus.js",
         "src/config/llms.corpus.mjs",
       ]);
+      const dbSpecifier = dbPath ? resolveImportSpecifier(dbPath, root, targetDir) : null;
+      const corpusSpecifier = corpusPath
+        ? resolveImportSpecifier(corpusPath, root, targetDir)
+        : null;
       const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
 
       const configCode = `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";
@@ -229,8 +237,8 @@ export default siteConfig;`;
 export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;
 export const isSvg = ${JSON.stringify(isSvg)};
 export const backgroundColor = ${JSON.stringify(bgColor)};
-export const db = ${dbPath ? `await import(${JSON.stringify(dbPath)})` : "null"};
-export const corpusPages = ${corpusPath ? `(await import(${JSON.stringify(corpusPath)})).corpusPages || []` : "[]"};`;
+export const db = ${dbSpecifier ? `await import(${JSON.stringify(dbSpecifier)})` : "null"};
+export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(corpusSpecifier)})).corpusPages || []` : "[]"};`;
 
       return {
         "config.js": configCode,
