@@ -29,8 +29,8 @@ export function auth(options: RimelightAuthPluginOptions = {}): RimelightAuthPlu
       "config.d.ts": `export declare const config: any;\nexport declare const auth: any;\nexport declare const authAdapter: any;\ndeclare const _default: { config: any; auth: any; authAdapter: any };\nexport default _default;`,
       "auth.js": adapterImport,
       "auth.d.ts": `export declare const auth: any;\nexport declare const authAdapter: any;\ndeclare const _default: any;\nexport default _default;`,
-      "client.js": `export * from "@rimelight/auth/client";\nexport { default } from "@rimelight/auth/client";`,
-      "client.d.ts": `export * from "@rimelight/auth/client";\nexport { default } from "@rimelight/auth/client";`,
+      "client.js": `export * from "@rimelight/auth/client";`,
+      "client.d.ts": `export * from "@rimelight/auth/client";`,
     }),
   });
 }

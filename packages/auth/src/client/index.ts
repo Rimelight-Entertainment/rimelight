@@ -95,4 +95,3 @@ export function createAuthClient<TUser = UserSessionContext>(
 }
 
 export const authClient = createAuthClient();
-export default authClient;

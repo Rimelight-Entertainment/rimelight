@@ -19,6 +19,7 @@
     "dist",
     "tsconfig"
   ],
+  "type": "module",
   "imports": {
     "#rimelight/config/*": {
       "types": "./node_modules/.rimelight/config/*.d.ts",
