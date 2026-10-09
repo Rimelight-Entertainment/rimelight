@@ -1,5 +1,5 @@
 import type { RateLimitOptions, RateLimiterBinding } from "../types";
-import { getSecurityConfig } from "../runtime";
+import { getSecurityConfig } from "../state";
 
 const DEFAULT_SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"];
 

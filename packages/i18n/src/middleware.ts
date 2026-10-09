@@ -1,5 +1,4 @@
 import {
-  applyLocaleOverrides,
   defaultLocale,
   getCurrentLocale,
   setCurrentLocale,
@@ -9,7 +8,8 @@ import {
   prefixDefaultLocale,
   skipPaths,
   stripLocalePrefix,
-} from "./runtime";
+} from "./locale";
+import { applyLocaleOverrides } from "./translate";
 
 const FILE_SUFFIX = /\.[A-Za-z0-9]{1,8}$/;
 

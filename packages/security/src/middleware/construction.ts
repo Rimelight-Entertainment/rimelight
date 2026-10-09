@@ -1,6 +1,6 @@
 import type { ConstructionOptions } from "../types";
 import { getConstructionFallbackHtml } from "../construction/fallback";
-import { getSecurityConfig } from "../runtime";
+import { getSecurityConfig } from "../state";
 
 export const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest";
 

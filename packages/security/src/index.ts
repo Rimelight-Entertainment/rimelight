@@ -5,7 +5,7 @@
 // re-exported here because types are erased at compile time.
 export type { RimelightSecurityPlugin, RimelightSecurityPluginOptions } from "./plugin";
 export * from "./types";
-export * from "./runtime";
+export * from "./state";
 export * from "./csp";
 export * from "./middleware/construction";
 export * from "./turnstile";

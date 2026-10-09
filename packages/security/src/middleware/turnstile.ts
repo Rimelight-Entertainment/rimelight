@@ -1,6 +1,6 @@
 import { verifyTurnstile } from "../turnstile";
 import type { TurnstileMiddlewareOptions } from "../types";
-import { getSecurityConfig } from "../runtime";
+import { getSecurityConfig } from "../state";
 
 export type { TurnstileMiddlewareOptions } from "../types";
 

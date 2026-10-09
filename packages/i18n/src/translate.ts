@@ -1,4 +1,5 @@
 import generatedConfig from "#rimelight/i18n";
+import { defaultLocale, getCurrentLocale, setLocaleConfig } from "./locale";
 
 /** Public shape of the `t` translator: a callable plus its `.raw`, `.array`, and `.plural` helpers. */
 export interface TFunction {
@@ -13,60 +14,11 @@ export interface TFunction {
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
 }
 
-const rawConfig: Record<string, any> =
-  generatedConfig && typeof generatedConfig === "object"
-    ? (generatedConfig as Record<string, any>)
-    : {};
-
-export let locales: string[] = Array.isArray(rawConfig["locales"])
-  ? [...rawConfig["locales"]]
-  : ["en"];
-export let defaultLocale: string =
-  typeof rawConfig["defaultLocale"] === "string" ? rawConfig["defaultLocale"] : "en";
-export let prefixDefaultLocale: boolean =
-  typeof rawConfig["prefixDefaultLocale"] === "boolean" ? rawConfig["prefixDefaultLocale"] : true;
-export let kvBinding: string =
-  typeof rawConfig["kvBinding"] === "string" ? rawConfig["kvBinding"] : "TRANSLATIONS_KV";
-export let skipPaths: string[] = Array.isArray(rawConfig["skipPaths"])
-  ? [...rawConfig["skipPaths"]]
-  : ["/api", "/_"];
-
-let activeLocale = defaultLocale;
-
-/**
- * Returns the active locale code.
- */
-export function getCurrentLocale(): string {
-  return activeLocale || defaultLocale;
-}
-
-/**
- * Sets the active locale code.
- */
-export function setCurrentLocale(value: string): void {
-  activeLocale = value;
-}
-
-/**
- * Returns the supported locale codes (e.g. `["en", "pt"]`), inferred from the translations
- * directory by the Vite plugin.
- */
-export function getLocales(): string[] {
-  return [...locales];
-}
-
-/**
- * Returns the default/fallback locale code (e.g. `"en"`).
- */
-export function getDefaultLocale(): string {
-  return defaultLocale;
-}
-
-let translations: Record<string, Record<string, any>> = generatedConfig?.translations
+export let translations: Record<string, Record<string, any>> = generatedConfig?.translations
   ? { ...generatedConfig.translations }
   : {};
 
-function isObjectRecord(obj: unknown): obj is Record<string, any> {
+export function isObjectRecord(obj: unknown): obj is Record<string, any> {
   return typeof obj === "object" && obj !== null;
 }
 
@@ -87,16 +39,10 @@ export function setTranslations(
   },
 ): void {
   translations = { ...data };
-  if (options?.defaultLocale) defaultLocale = options.defaultLocale;
-  if (options?.locales) locales = [...options.locales];
-  if (options?.prefixDefaultLocale !== undefined) prefixDefaultLocale = options.prefixDefaultLocale;
-  if (options?.kvBinding) kvBinding = options.kvBinding;
-  if (options?.skipPaths) skipPaths = [...options.skipPaths];
-  chainCache.clear();
-
-  if (!activeLocale) {
-    setCurrentLocale(defaultLocale);
+  if (options) {
+    setLocaleConfig(options);
   }
+  chainCache.clear();
 }
 
 /**
@@ -113,7 +59,7 @@ export function applyLocaleOverrides(locale: string, overrides: unknown): void {
 /**
  * Resolves a dot-notation path (including array indices) inside a translation object.
  */
-function resolvePath(obj: unknown, path: string): unknown {
+export function resolvePath(obj: unknown, path: string): unknown {
   if (obj == null || typeof obj !== "object") return undefined;
   if (Object.hasOwn(obj, path)) {
     return (obj as Record<string, unknown>)[path];
@@ -140,7 +86,7 @@ function resolvePath(obj: unknown, path: string): unknown {
 /**
  * Builds the ordered locale fallback chain (exact → default locale).
  */
-function localeChain(targetLocale: string): string[] {
+export function localeChain(targetLocale: string): string[] {
   const cacheKey = `${targetLocale}:${defaultLocale}`;
   const cached = chainCache.get(cacheKey);
   if (cached) return cached;
@@ -157,7 +103,7 @@ function localeChain(targetLocale: string): string[] {
  * Resolves a value for a component across the locale fallback chain (active locale → default
  * locale). Without `key` the component's translation object itself is returned.
  */
-function resolveFromLocale(targetLocale: string, component: string, key?: string): unknown {
+export function resolveFromLocale(targetLocale: string, component: string, key?: string): unknown {
   for (const code of localeChain(targetLocale)) {
     const rawComp: unknown = translations[code]?.[component];
     if (!isObjectRecord(rawComp)) continue;
@@ -173,7 +119,7 @@ function resolveFromLocale(targetLocale: string, component: string, key?: string
  * Safely retrieves the raw translation entry (string, array, or object) for a given dot-notation
  * key.
  */
-function getRawTranslation(key: string): unknown {
+export function getRawTranslation(key: string): unknown {
   const dotIndex = key.indexOf(".");
   const targetLocale = getCurrentLocale() || defaultLocale;
 
@@ -185,7 +131,7 @@ function getRawTranslation(key: string): unknown {
 /**
  * Returns raw translation data (such as arrays or nested objects) typed as T.
  */
-function tRaw<T = unknown>(key: string, fallback?: T): T {
+export function tRaw<T = unknown>(key: string, fallback?: T): T {
   const value = getRawTranslation(key);
   return value !== undefined ? (value as T) : (fallback as T);
 }
@@ -194,9 +140,34 @@ function tRaw<T = unknown>(key: string, fallback?: T): T {
  * Returns an array of translations (e.g. lists of strings or structured objects). Falls back to an
  * empty array or the provided fallback if not found or not an array.
  */
-function tArray<T = string>(key: string, fallback: T[] = []): T[] {
+export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
   const value = getRawTranslation(key);
   return Array.isArray(value) ? (value as T[]) : fallback;
+}
+
+/**
+ * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
+ * using the native browser Intl.PluralRules API. Internal — `t()` selects plural branches with it
+ * automatically when a numeric `count` param is passed.
+ */
+export function getPluralCategory(count: number, targetLocale: string = "en"): Intl.LDMLPluralRule {
+  return new Intl.PluralRules(targetLocale).select(count);
+}
+
+/** Cached `Intl.NumberFormat` instances per locale — `t()` formats counts on every interpolation. */
+const numberFormats = new Map<string, Intl.NumberFormat>();
+
+/**
+ * Locale-formats a number (e.g. 1234 → `"1,234"` in en, `"1.234"` in pt). Used for the `count`
+ * interpolation param so quantities read as localized text rather than raw digits.
+ */
+function formatNumber(locale: string, value: number): string {
+  let formatter = numberFormats.get(locale);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale);
+    numberFormats.set(locale, formatter);
+  }
+  return formatter.format(value);
 }
 
 /**
@@ -254,31 +225,6 @@ export const t: TFunction = Object.assign(
 );
 
 /**
- * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
- * using the native browser Intl.PluralRules API. Internal — `t()` selects plural branches with it
- * automatically when a numeric `count` param is passed.
- */
-export function getPluralCategory(count: number, targetLocale: string = "en"): Intl.LDMLPluralRule {
-  return new Intl.PluralRules(targetLocale).select(count);
-}
-
-/** Cached `Intl.NumberFormat` instances per locale — `t()` formats counts on every interpolation. */
-const numberFormats = new Map<string, Intl.NumberFormat>();
-
-/**
- * Locale-formats a number (e.g. 1234 → `"1,234"` in en, `"1.234"` in pt). Used for the `count`
- * interpolation param so quantities read as localized text rather than raw digits.
- */
-function formatNumber(locale: string, value: number): string {
-  let formatter = numberFormats.get(locale);
-  if (!formatter) {
-    formatter = new Intl.NumberFormat(locale);
-    numberFormats.set(locale, formatter);
-  }
-  return formatter.format(value);
-}
-
-/**
  * Resolves localized text from a polymorphic value (localized dictionary object, plain string, or null/undefined).
  *
  * @param val The value to extract localized text from (e.g., `{ en: "Hello", pt: "Olá" }` or `"Hello"`).
@@ -302,53 +248,4 @@ export function getLocalizedText(
   if (typeof val === "string") return val;
   if (typeof val === "number" || typeof val === "boolean") return String(val);
   return "";
-}
-
-/**
- * Returns the configured locale matching the first path segment of a pathname (compared
- * case-insensitively, returning the configured spelling, e.g. `pt-BR`), otherwise null. Shared by
- * the Hono middleware and URL utilities so both agree on what counts as a locale prefix.
- */
-export function localeFromPathname(
-  pathname: string,
-  supported: readonly string[] = locales,
-): string | null {
-  const segment = pathname.split("/").find(Boolean);
-  if (!segment) return null;
-  return supported.find((code) => code.toLowerCase() === segment.toLowerCase()) ?? null;
-}
-
-/**
- * Removes a leading locale segment from a path (`/en/about` → `about`, `/pt` → ``), returning the
- * remainder without a leading slash. Segments are matched case-insensitively against `supported`.
- */
-export function stripLocalePrefix(path: string, supported: readonly string[] = locales): string {
-  const segments = path.replace(/^\/+/, "").split("/");
-  const first = segments[0];
-  if (first && supported.some((code) => code.toLowerCase() === first.toLowerCase())) {
-    segments.shift();
-  }
-  return segments.join("/");
-}
-
-export function getRelativeLocaleUrl(
-  path: string,
-  { locale: targetLocale = getCurrentLocale() }: { locale?: string } = {},
-): string {
-  // External / absolute URLs, hash anchors, and scheme links (mailto:, tel:, ...) pass through
-  if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
-
-  const splitAt = path.search(/[?#]/);
-  const pathname = splitAt === -1 ? path : path.slice(0, splitAt);
-  const suffix = splitAt === -1 ? "" : path.slice(splitAt);
-
-  // Strip a leading locale segment (e.g. /en/about → about) so locales are never doubled up
-  const cleanPath = stripLocalePrefix(pathname);
-  const prefix = prefixDefaultLocale || targetLocale !== defaultLocale ? `/${targetLocale}` : "";
-
-  // Root path keeps a trailing slash when prefixed: e.g. /en/
-  if (!cleanPath) return `${prefix}/${suffix}`;
-
-  const trailingSlash = pathname.endsWith("/") ? "/" : "";
-  return `${prefix}/${cleanPath}${trailingSlash}${suffix}`;
 }

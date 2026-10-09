@@ -3,9 +3,9 @@ export {
   getDefaultLocale,
   getCurrentLocale,
   setCurrentLocale,
-  getLocalizedText,
   getRelativeLocaleUrl,
-  t,
-} from "./runtime";
+} from "./locale";
+
+export { t, getLocalizedText, type TFunction } from "./translate";
 
 export type { RimelightI18nPlugin, RimelightI18nPluginOptions } from "./plugin";

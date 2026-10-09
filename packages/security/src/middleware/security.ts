@@ -1,6 +1,6 @@
 import type { SecurityOptions } from "../types";
 import { buildCspHeader } from "../csp";
-import { getSecurityConfig } from "../runtime";
+import { getSecurityConfig } from "../state";
 import { devOnly } from "./dev-only";
 import { ratelimit } from "./ratelimit";
 import { construction } from "./construction";

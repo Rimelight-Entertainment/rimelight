@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { security } from "../src/middleware/security";
-import { setSecurityConfig } from "../src/runtime";
+import { setSecurityConfig } from "../src/index";
 
 describe("Security Middleware Headers", () => {
   beforeEach(() => {

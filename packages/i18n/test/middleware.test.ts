@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n, resolveLocale } from "../src/middleware";
-import { getCurrentLocale, setCurrentLocale, setTranslations, t } from "../src/runtime";
+import { getCurrentLocale, setCurrentLocale, t } from "../src/index";
+import { setTranslations } from "../src/translate";
 
 function req(path: string, init?: RequestInit): Request {
   return new Request(`https://example.com${path}`, init);

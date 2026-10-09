@@ -9,8 +9,8 @@ import {
   formatAuditReport,
   fixTranslations,
 } from "../src/cli";
-import { getPluralCategory, setTranslations, setCurrentLocale, t } from "../src/runtime";
-import { getRelativeLocaleUrl } from "../src/index";
+import { getRelativeLocaleUrl, setCurrentLocale, t } from "../src/index";
+import { getPluralCategory, setTranslations } from "../src/translate";
 
 describe("translation dictionary utils", () => {
   const source = {
