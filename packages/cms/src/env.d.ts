@@ -1,35 +1,3 @@
-declare module "virtual:rimelight/cms" {
-  export const routePrefix: string;
-  export const storageConfig: any;
-  export const cmsOptions: any;
-  const cmsOptionsDefault: any;
-  export default cmsOptionsDefault;
-}
-
-declare module "virtual:rimelight/cms/config" {
-  export const routePrefix: string;
-  export const storageConfig: any;
-  export const cmsOptions: any;
-  const cmsOptionsDefault: any;
-  export default cmsOptionsDefault;
-}
-
-declare module "virtual:rimelight/cms/db" {
-  export const db: any;
-}
-
-declare module "virtual:rimelight/cms/storage" {
-  export const storageConfig: any;
-  const storageConfigDefault: any;
-  export default storageConfigDefault;
-}
-
-declare module "virtual:rimelight/cms/auth" {
-  import type { AuthAdapter } from "@rimelight/auth";
-  export const authAdapter: AuthAdapter;
-  export default authAdapter;
-}
-
 declare module "cloudflare:workers" {
   /**
    * Ambient Cloudflare Workers env — populated at runtime by the CF runtime.

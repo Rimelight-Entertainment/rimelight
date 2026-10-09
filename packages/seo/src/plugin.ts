@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
+import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config";
 import type { RimelightSeoOptions, SiteConfig } from "./types.js";
 import { buildRobotsTxt } from "./robots.js";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap.js";
@@ -14,12 +15,6 @@ import { generateIco, generatePng, generateMaskablePng, generateOgCard } from ".
 export type RimelightSeoPlugin = Plugin;
 
 export { type RimelightSeoOptions } from "./types.js";
-
-const VIRTUAL_SEO = "virtual:rimelight/seo";
-const RESOLVED_VIRTUAL_SEO = `\0${VIRTUAL_SEO}`;
-
-const VIRTUAL_SEO_SERVER = "virtual:rimelight/seo/server";
-const RESOLVED_VIRTUAL_SEO_SERVER = `\0${VIRTUAL_SEO_SERVER}`;
 
 /**
  * Validates that a requested file path resolves strictly within the given root directory.
@@ -48,8 +43,8 @@ function createDefaultIconSvg(
 }
 
 /**
- * Single Consolidated Vite Plugin orchestrating SEO virtual modules, dev-server asset middleware,
- * and production static asset generation.
+ * Consolidated Vite Plugin orchestrating SEO artifacts in node_modules/.rimelight/seo/,
+ * dev-server asset middleware, and production static asset generation.
  */
 function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
   let rootDir = process.cwd();
@@ -128,171 +123,130 @@ function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
   const bgColor =
     assetOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor || "#ffffff";
 
-  return {
-    name: "rimelight:seo",
-    configResolved(config) {
-      rootDir = config.root || process.cwd();
+  function resolveIcons() {
+    const candidateIcon =
+      assetOpts.icon ||
+      (typeof options.branding?.favicon === "object"
+        ? options.branding.favicon.svg || options.branding.favicon.png
+        : options.branding?.favicon) ||
+      options.branding?.appleTouchIcon ||
+      options.branding?.icon ||
+      options.branding?.logo?.src ||
+      (typeof siteOpt.branding?.favicon === "object"
+        ? siteOpt.branding.favicon.svg || siteOpt.branding.favicon.png
+        : siteOpt.branding?.favicon) ||
+      siteOpt.branding?.appleTouchIcon ||
+      siteOpt.branding?.icon ||
+      siteOpt.branding?.logo?.src;
 
-      // Discover master icon from options or filesystem
-      const candidateIcon =
-        assetOpts.icon ||
-        (typeof options.branding?.favicon === "object"
-          ? options.branding.favicon.svg || options.branding.favicon.png
-          : options.branding?.favicon) ||
-        options.branding?.appleTouchIcon ||
-        options.branding?.icon ||
-        options.branding?.logo?.src ||
-        (typeof siteOpt.branding?.favicon === "object"
-          ? siteOpt.branding.favicon.svg || siteOpt.branding.favicon.png
-          : siteOpt.branding?.favicon) ||
-        siteOpt.branding?.appleTouchIcon ||
-        siteOpt.branding?.icon ||
-        siteOpt.branding?.logo?.src;
-
-      if (candidateIcon) {
-        if (
-          typeof candidateIcon === "string" &&
-          (candidateIcon.startsWith("http://") ||
-            candidateIcon.startsWith("https://") ||
-            candidateIcon.startsWith("data:") ||
-            candidateIcon.startsWith("<svg"))
-        ) {
-          masterIconSource = candidateIcon;
-          isSvg =
-            candidateIcon.includes("<svg") ||
-            candidateIcon.includes(".svg") ||
-            candidateIcon.startsWith("data:image/svg");
-        } else if (typeof candidateIcon === "string") {
-          const resolvedPath = path.resolve(rootDir, candidateIcon);
-          if (fs.existsSync(resolvedPath) && isContained(rootDir, resolvedPath)) {
-            masterIconBuffer = fs.readFileSync(resolvedPath);
-            masterIconSource = masterIconBuffer;
-            isSvg = resolvedPath.endsWith(".svg");
-          }
-        }
-      }
-
-      if (!masterIconSource) {
-        const masterIconPath = findFile([
-          "src/assets/logos/logomark_color.svg",
-          "src/assets/logos/logo_color.svg",
-          "src/assets/logos/logomark.svg",
-          "src/assets/logos/logo.svg",
-          "src/assets/icon.svg",
-          "src/assets/logo.svg",
-          "src/assets/icon.png",
-          "public/favicon.svg",
-        ]);
-
-        if (masterIconPath && fs.existsSync(masterIconPath)) {
-          masterIconBuffer = fs.readFileSync(masterIconPath);
-          masterIconSource = masterIconBuffer;
-          isSvg = masterIconPath.endsWith(".svg");
-        }
-      }
-
-      // Default fallback SVG if no icon configured or found
-      if (!masterIconSource && options.assets !== false) {
-        masterIconSource = createDefaultIconSvg(
-          normalizedSiteConfig.name,
-          bgColor,
-          normalizedSiteConfig.branding.colors.themeColor || "#ffffff",
-        );
-        isSvg = true;
-      }
-    },
-
-    resolveId(id) {
-      if (id === VIRTUAL_SEO) return RESOLVED_VIRTUAL_SEO;
-      if (id === VIRTUAL_SEO_SERVER) return RESOLVED_VIRTUAL_SEO_SERVER;
-
-      // Backwards-compatible legacy virtual IDs
+    if (candidateIcon) {
       if (
-        id === "virtual:rimelight-seo-config" ||
-        id === "virtual:rimelight-seo/options" ||
-        id === "virtual:rimelight-seo/config" ||
-        id === "virtual:rimelight-seo/site-config" ||
-        id === "virtual:rimelight-seo/db" ||
-        id === "virtual:rimelight-seo/corpus" ||
-        id === "virtual:rimelight-seo/assets"
+        typeof candidateIcon === "string" &&
+        (candidateIcon.startsWith("http://") ||
+          candidateIcon.startsWith("https://") ||
+          candidateIcon.startsWith("data:") ||
+          candidateIcon.startsWith("<svg"))
       ) {
-        return `\0${id}`;
+        masterIconSource = candidateIcon;
+        isSvg =
+          candidateIcon.includes("<svg") ||
+          candidateIcon.includes(".svg") ||
+          candidateIcon.startsWith("data:image/svg");
+      } else if (typeof candidateIcon === "string") {
+        const resolvedPath = path.resolve(rootDir, candidateIcon);
+        if (fs.existsSync(resolvedPath) && isContained(rootDir, resolvedPath)) {
+          masterIconBuffer = fs.readFileSync(resolvedPath);
+          masterIconSource = masterIconBuffer;
+          isSvg = resolvedPath.endsWith(".svg");
+        }
       }
-      return null;
+    }
+
+    if (!masterIconSource) {
+      const masterIconPath = findFile([
+        "src/assets/logos/logomark_color.svg",
+        "src/assets/logos/logo_color.svg",
+        "src/assets/logos/logomark.svg",
+        "src/assets/logos/logo.svg",
+        "src/assets/icon.svg",
+        "src/assets/logo.svg",
+        "src/assets/icon.png",
+        "public/favicon.svg",
+      ]);
+
+      if (masterIconPath && fs.existsSync(masterIconPath)) {
+        masterIconBuffer = fs.readFileSync(masterIconPath);
+        masterIconSource = masterIconBuffer;
+        isSvg = masterIconPath.endsWith(".svg");
+      }
+    }
+
+    // Default fallback SVG if no icon configured or found
+    if (!masterIconSource && options.assets !== false) {
+      masterIconSource = createDefaultIconSvg(
+        normalizedSiteConfig.name,
+        bgColor,
+        normalizedSiteConfig.branding.colors.themeColor || "#ffffff",
+      );
+      isSvg = true;
+    }
+  }
+
+  const basePlugin = defineRimelightArtifactPlugin({
+    name: "rimelight:seo",
+    pkgName: "seo",
+    aliases: {
+      "#rimelight/seo/server": "server.js",
+      "#rimelight/seo/client": "config.js",
     },
+    emit({ root }) {
+      rootDir = root;
+      resolveIcons();
 
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_SEO || id === "\0virtual:rimelight-seo/site-config") {
-        return `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";
+      const dbPath = findFile(["src/db/index.ts", "src/db/index.js", "src/db/index.mjs"]);
+      const corpusPath = findFile([
+        "src/config/llms.corpus.ts",
+        "src/config/llms.corpus.js",
+        "src/config/llms.corpus.mjs",
+      ]);
+      const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
 
-export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};
-export const SEO_LOCALES = ${JSON.stringify(seoLocales)};
-export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};
+      const configCode = `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";
+
+export const siteConfig = ${serializeData(normalizedSiteConfig)};
+export const SEO_LOCALES = ${serializeData(seoLocales)};
+export const PRIVATE_PATH_PREFIXES = ${serializeData(privatePathPrefixes)};
 export const seoConfig = {
-  SEO_LOCALES: ${JSON.stringify(seoLocales)},
-  PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)}
+  SEO_LOCALES: ${serializeData(seoLocales)},
+  PRIVATE_PATH_PREFIXES: ${serializeData(privatePathPrefixes)}
 };
 
 export const createHead = defineSeoConfig(siteConfig);
 export { createHead as createSeoHead, defineSeoConfig };
 export default siteConfig;`;
-      }
 
-      if (id === RESOLVED_VIRTUAL_SEO_SERVER) {
-        const dbPath = findFile(["src/db/index.ts", "src/db/index.js", "src/db/index.mjs"]);
-        const corpusPath = findFile([
-          "src/config/llms.corpus.ts",
-          "src/config/llms.corpus.js",
-          "src/config/llms.corpus.mjs",
-        ]);
-        const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
-
-        return `const b64 = ${JSON.stringify(b64)};
+      const serverCode = `const b64 = ${JSON.stringify(b64)};
 export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;
 export const isSvg = ${JSON.stringify(isSvg)};
 export const backgroundColor = ${JSON.stringify(bgColor)};
 export const db = ${dbPath ? `await import(${JSON.stringify(dbPath)})` : "null"};
 export const corpusPages = ${corpusPath ? `(await import(${JSON.stringify(corpusPath)})).corpusPages || []` : "[]"};`;
-      }
 
-      // Legacy module support
-      if (id === "\0virtual:rimelight-seo-config" || id === "\0virtual:rimelight-seo/config") {
-        return `export const SEO_LOCALES = ${JSON.stringify(seoLocales)};
-export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};
-export const seoEntries = async () => [];
-export const rssEntries = undefined;
-export default { SEO_LOCALES: ${JSON.stringify(seoLocales)}, PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)} };`;
-      }
+      return {
+        "config.js": configCode,
+        "config.d.ts": `import type { SiteConfig } from "@rimelight/seo/types";\nexport declare const siteConfig: SiteConfig, SEO_LOCALES: any, PRIVATE_PATH_PREFIXES: string[], seoConfig: any, createHead: any, createSeoHead: any, defineSeoConfig: any;\nexport default siteConfig;`,
+        "server.js": serverCode,
+        "server.d.ts": `export declare const masterIconBuffer: Buffer | Uint8Array | null, isSvg: boolean, backgroundColor: string, db: any, corpusPages: any[];`,
+      };
+    },
+  });
 
-      if (id === "\0virtual:rimelight-seo/options") {
-        return `export default ${JSON.stringify(options)};`;
-      }
+  return {
+    ...basePlugin,
 
-      if (id === "\0virtual:rimelight-seo/assets") {
-        const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
-        return `const b64 = ${JSON.stringify(b64)};
-export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;
-export const isSvg = ${JSON.stringify(isSvg)};
-export const backgroundColor = ${JSON.stringify(bgColor)};`;
-      }
-
-      if (id === "\0virtual:rimelight-seo/db") {
-        const dbPath = findFile(["src/db/index.ts", "src/db/index.js", "src/db/index.mjs"]);
-        if (dbPath) return `export * from ${JSON.stringify(dbPath)};`;
-        return `export const db = null;\nexport const pages = null;`;
-      }
-
-      if (id === "\0virtual:rimelight-seo/corpus") {
-        const corpusPath = findFile([
-          "src/config/llms.corpus.ts",
-          "src/config/llms.corpus.js",
-          "src/config/llms.corpus.mjs",
-        ]);
-        if (corpusPath) return `export * from ${JSON.stringify(corpusPath)};`;
-        return `export const corpusPages = [];`;
-      }
-
-      return null;
+    configResolved(config) {
+      rootDir = config.root || process.cwd();
+      resolveIcons();
     },
 
     configureServer(server: any) {

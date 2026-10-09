@@ -1,6 +1,6 @@
 import type { RLShortcutsProps } from "./shortcuts.types";
 import { RLShortcutsTheme } from "./shortcuts.theme";
-import uiConfig from "virtual:rimelight/ui";
+import uiConfig from "#rimelight/ui";
 import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts";

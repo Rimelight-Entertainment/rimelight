@@ -1,9 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
+import { defineRimelightArtifactPlugin } from "@rimelight/config";
 
-const VIRTUAL_CONFIG_ID = "virtual:rimelight-i18n-config";
-const RESOLVED_VIRTUAL_CONFIG_ID = `\0${VIRTUAL_CONFIG_ID}`;
 const DEFAULT_TRANSLATIONS_DIR = "src/i18n";
 
 export interface RimelightI18nOptions {
@@ -51,62 +50,40 @@ export function i18n(options?: RimelightI18nOptions): Plugin {
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   const skipPaths = options?.skipPaths ?? ["/api", "/_"];
-  let root = process.cwd();
   let cached: { translations: Record<string, Record<string, any>>; dirPath: string } | null = null;
 
-  function getData() {
+  function getData(root: string) {
     if (cached) return cached;
-
     const dirPath = resolveTranslationsDir(root, options?.translationsDir);
     const { translations } = readLocaleFiles(dirPath);
     cached = { translations, dirPath };
     return cached;
   }
 
-  return {
-    name: "vite-plugin-rimelight-i18n-config",
-    configResolved(resolvedConfig) {
-      root = resolvedConfig.root ?? process.cwd();
+  return defineRimelightArtifactPlugin({
+    pkgName: "i18n",
+    watch: ({ root }) => [resolveTranslationsDir(root, options?.translationsDir)],
+    config({ root }) {
       cached = null;
-    },
-    resolveId(id: string) {
-      if (id === VIRTUAL_CONFIG_ID) return RESOLVED_VIRTUAL_CONFIG_ID;
-      return null;
-    },
-    load(id: string) {
-      if (id === RESOLVED_VIRTUAL_CONFIG_ID) {
-        const { translations, dirPath } = getData();
-        const locales = Object.keys(translations).sort();
-        const defaultLocale =
-          options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
+      const { translations } = getData(root);
+      const locales = Object.keys(translations).sort();
+      const defaultLocale =
+        options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
-        if (dirPath && fs.existsSync(dirPath)) {
-          try {
-            for (const file of fs.readdirSync(dirPath)) {
-              if (file.endsWith(".json")) this.addWatchFile(path.join(dirPath, file));
-            }
-          } catch {
-            // Ignore watch errors
-          }
-        }
-
-        return `export default ${JSON.stringify({
-          locales,
-          defaultLocale,
-          prefixDefaultLocale,
-          translations,
-          kvBinding,
-          skipPaths,
-        })};`;
-      }
-      return null;
+      return {
+        locales,
+        defaultLocale,
+        prefixDefaultLocale,
+        translations,
+        kvBinding,
+        skipPaths,
+      };
     },
     async closeBundle() {
-      const { translations } = getData();
-      if (!translations || Object.keys(translations).length === 0) return;
+      if (!cached?.translations || Object.keys(cached.translations).length === 0) return;
 
       const keys: { key: string; value: string }[] = [];
-      for (const [locale, localeData] of Object.entries(translations)) {
+      for (const [locale, localeData] of Object.entries(cached.translations)) {
         keys.push({ key: `locale:${locale}`, value: JSON.stringify(localeData) });
         for (const [component, componentData] of Object.entries(
           localeData as Record<string, any>,
@@ -125,5 +102,5 @@ export function i18n(options?: RimelightI18nOptions): Plugin {
         // Ignore write errors
       }
     },
-  };
+  });
 }

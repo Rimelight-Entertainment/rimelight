@@ -5,7 +5,7 @@ import { devOnly } from "./dev-only";
 import { ratelimit } from "./ratelimit";
 import { construction } from "./construction";
 
-import { manifest as sriManifest } from "virtual:sri-manifest";
+import { manifest as sriManifest } from "#rimelight/security";
 
 function isManifestRecord(obj: unknown): obj is Record<string, string> {
   return typeof obj === "object" && obj !== null && !Array.isArray(obj);

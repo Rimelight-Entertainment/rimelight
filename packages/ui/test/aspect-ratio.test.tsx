@@ -1,13 +1,5 @@
-import { describe, it, expect, vi } from "vite-plus/test";
+import { describe, it, expect } from "vite-plus/test";
 import { renderToString } from "@solidjs/web";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
 
 import { RLAspectRatio } from "../src/components/aspect-ratio/RLAspectRatio";
 import { renderSolid, cleanHtml } from "./utils/normalize";

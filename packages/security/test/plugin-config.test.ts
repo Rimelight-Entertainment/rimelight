@@ -1,23 +1,23 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { describe, it, expect } from "vite-plus/test";
 import { security, serializeConfig } from "../src/vite";
 import { buildCspHeader } from "../src/csp";
 import type { SecurityPluginOptions } from "../src/types";
 
 describe("Security Plugin Config Serialization", () => {
-  it("serializes primitives, arrays, RegExps, and functions", async () => {
+  it("serializes primitives, arrays, and RegExps into disk artifacts", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "security-plugin-"));
     const options: SecurityPluginOptions = {
       domain: "example.com",
       ratelimit: {
         routes: ["/auth/sign-in", /^\/api\/secure\//],
         retryAfter: 45,
-        keyGenerator: (c: any) => c.req.header("X-Custom-IP") || "ip",
       },
       construction: {
         renderFallback: true,
         whitelist: [/^\/public\//, "/login"],
-        isAuthorized(c: any) {
-          return c.req.path === "/admin-special";
-        },
       },
       turnstile: {
         field: "cf-token",
@@ -25,56 +25,56 @@ describe("Security Plugin Config Serialization", () => {
       },
     };
 
-    const plugin = security(options) as any;
-    const code = plugin.load("\0virtual:rimelight-security-config");
-    expect(code).toContain("export const config =");
+    try {
+      const plugin = security(options) as any;
+      const viteConfig = (await plugin.config?.({ root: tmpDir })) as any;
+      const aliases = viteConfig.resolve.alias;
+      const findAlias = (name: string) =>
+        aliases.find((a: any) => (a.find instanceof RegExp ? a.find.test(name) : a.find === name));
+      expect(findAlias("#rimelight/security")?.replacement).toMatch(
+        /[\\/]\.rimelight[\\/]security[\\/]config\.js$/,
+      );
 
-    // Test dynamic import via data: URL
-    const dataUrl = `data:text/javascript;charset=utf-8,${encodeURIComponent(code)}`;
-    const mod = await import(dataUrl);
-    const loadedConfig: SecurityPluginOptions = mod.config;
+      const generatedJs = path.join(tmpDir, "node_modules", ".rimelight", "security", "config.js");
+      expect(fs.existsSync(generatedJs)).toBe(true);
 
-    expect(loadedConfig.domain).toBe("example.com");
-    expect(loadedConfig.turnstile).toEqual({
-      field: "cf-token",
-      failOpen: false,
-    });
-    const ratelimitOpts =
-      typeof loadedConfig.ratelimit === "object" ? loadedConfig.ratelimit : undefined;
-    expect(ratelimitOpts?.retryAfter).toBe(45);
+      const code = fs.readFileSync(generatedJs, "utf-8");
+      expect(code).toContain("export const config =");
 
-    // Assert RegExp survived
-    const routes = ratelimitOpts?.routes;
-    expect(Array.isArray(routes)).toBe(true);
-    if (Array.isArray(routes)) {
-      expect(routes[0]).toBe("/auth/sign-in");
-      expect(routes[1]).toBeInstanceOf(RegExp);
-      expect((routes[1] as RegExp).test("/api/secure/data")).toBe(true);
-      expect((routes[1] as RegExp).test("/api/public/data")).toBe(false);
+      // Test dynamic import via data: URL
+      const dataUrl = `data:text/javascript;charset=utf-8,${encodeURIComponent(code)}`;
+      const mod = await import(dataUrl);
+      const loadedConfig: SecurityPluginOptions = mod.config;
+
+      expect(loadedConfig.domain).toBe("example.com");
+      expect(loadedConfig.turnstile).toEqual({
+        field: "cf-token",
+        failOpen: false,
+      });
+      const ratelimitOpts =
+        typeof loadedConfig.ratelimit === "object" ? loadedConfig.ratelimit : undefined;
+      expect(ratelimitOpts?.retryAfter).toBe(45);
+
+      // Assert RegExp survived
+      const routes = ratelimitOpts?.routes;
+      expect(Array.isArray(routes)).toBe(true);
+      if (Array.isArray(routes)) {
+        expect(routes[0]).toBe("/auth/sign-in");
+        expect(routes[1]).toBeInstanceOf(RegExp);
+        expect((routes[1] as RegExp).test("/api/secure/data")).toBe(true);
+        expect((routes[1] as RegExp).test("/api/public/data")).toBe(false);
+      }
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-
-    // Assert functions survived
-    const keyGen = ratelimitOpts?.keyGenerator;
-    expect(typeof keyGen).toBe("function");
-    const mockCtx = {
-      req: { header: (name: string) => (name === "X-Custom-IP" ? "1.2.3.4" : undefined) },
-    };
-    expect(await keyGen!(mockCtx)).toBe("1.2.3.4");
-
-    const constructionOpts =
-      typeof loadedConfig.construction === "object" ? loadedConfig.construction : undefined;
-    const isAuth = constructionOpts?.isAuthorized;
-    expect(typeof isAuth).toBe("function");
-    expect(await isAuth!({ req: { path: "/admin-special" } })).toBe(true);
-    expect(await isAuth!({ req: { path: "/other" } })).toBe(false);
   });
 
-  it("throws when trying to serialize a native function", () => {
+  it("throws when trying to serialize a function", () => {
     expect(() => {
       serializeConfig({
-        fn: Math.sin,
+        fn: () => {},
       });
-    }).toThrow(/Cannot serialize native function/);
+    }).toThrow(/Functions cannot be serialized directly/);
   });
 
   it("enables challenges domain in CSP when turnstile is configured as an object", () => {

@@ -2,6 +2,13 @@ import { describe, it, expect } from "vite-plus/test";
 import { seo, isContained } from "../src/plugin.js";
 import path from "node:path";
 
+async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
+  const fn =
+    typeof hook === "function" ? hook : (hook as { handler?: unknown } | undefined)?.handler;
+  if (typeof fn !== "function") throw new Error("hook not implemented");
+  return (await (fn as (...a: any[]) => unknown).call(undefined, ...args)) as T;
+}
+
 describe("isContained path containment", () => {
   const root = process.cwd();
 
@@ -17,30 +24,21 @@ describe("isContained path containment", () => {
 });
 
 describe("seo Vite Plugin", () => {
-  it("resolves virtual modules correctly", () => {
+  it("injects resolve.alias for #rimelight/seo and subpaths", async () => {
     const plugin = seo({
       name: "Test Site",
       url: "https://test.rimelight.com",
     });
 
-    const resolvedSeo = (plugin.resolveId as any)("virtual:rimelight/seo");
-    expect(resolvedSeo).toBe("\0virtual:rimelight/seo");
+    const configResult = await callHook<any>(plugin.config, { root: process.cwd() });
+    expect(configResult?.resolve?.alias).toBeDefined();
+    const aliases = configResult.resolve.alias;
+    const findAlias = (name: string) =>
+      aliases.find((a: any) => (a.find instanceof RegExp ? a.find.test(name) : a.find === name));
 
-    const resolvedServer = (plugin.resolveId as any)("virtual:rimelight/seo/server");
-    expect(resolvedServer).toBe("\0virtual:rimelight/seo/server");
-  });
-
-  it("loads virtual:rimelight/seo with normalized config and pre-bound createHead", () => {
-    const plugin = seo({
-      name: "Plugin Test Site",
-      url: "https://plugintest.com",
-    });
-
-    const loaded = (plugin.load as any)("\0virtual:rimelight/seo");
-    expect(loaded).toContain('"name":"Plugin Test Site"');
-    expect(loaded).toContain('"url":"https://plugintest.com"');
-    expect(loaded).toContain("export const createHead = defineSeoConfig(siteConfig)");
-    expect(loaded).toContain("export { createHead as createSeoHead, defineSeoConfig }");
+    expect(findAlias("#rimelight/seo")).toBeDefined();
+    expect(findAlias("#rimelight/seo/server")).toBeDefined();
+    expect(findAlias("#rimelight/seo/client")).toBeDefined();
   });
 
   it("emits static assets during generateBundle", async () => {
@@ -81,7 +79,7 @@ describe("seo Vite Plugin", () => {
       },
     });
 
-    (plugin.configResolved as any)({ root: process.cwd() });
+    await callHook(plugin.configResolved, { root: process.cwd() });
 
     const mockContext = {
       emitFile(file: any) {

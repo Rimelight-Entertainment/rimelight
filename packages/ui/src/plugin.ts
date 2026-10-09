@@ -1,16 +1,11 @@
 import UnoCSS from "@unocss/vite";
 import type { Plugin, PluginOption } from "vite-plus";
+import { defineRimelightArtifactPlugin } from "@rimelight/config";
 import rimelightUiPreset from "./preset";
 import { rimelightFontsVitePlugin } from "./fonts";
 import type { UIConfig } from "./types";
 
-const ID = "virtual:rimelight/ui";
-
-export type RimelightUIPlugin = Plugin;
-
-export type RimelightUIPlugins = PluginOption;
-
-export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins => {
+export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
   const fontsOpts = cfg.fonts && typeof cfg.fonts === "object" ? cfg.fonts : undefined;
   const fontsEnabled = cfg.presets?.fonts !== false && cfg.fonts !== false;
   const fontsPlugin = fontsEnabled ? rimelightFontsVitePlugin(fontsOpts?.processorOptions) : null;
@@ -34,13 +29,9 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins =
       },
     }) as unknown as Plugin[]),
     ...(fontsPlugin ? [fontsPlugin as Plugin] : []),
-    {
-      name: "rimelight/ui",
-      enforce: "pre",
-      resolveId: (id: string) => (id === ID ? `\0${ID}` : null),
-      load: (id: string) => (id === `\0${ID}` ? `export default ${JSON.stringify(cfg)};` : null),
-    },
+    defineRimelightArtifactPlugin({
+      pkgName: "ui",
+      config: cfg,
+    }),
   ];
 };
-
-export default ui;

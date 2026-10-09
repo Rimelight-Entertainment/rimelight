@@ -1,12 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vite-plus/test";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
+import { describe, it, expect, beforeEach, afterEach } from "vite-plus/test";
 
 import { RLBanner } from "../src/components/banner/RLBanner";
 import { RLHeader } from "../src/components/header/RLHeader";

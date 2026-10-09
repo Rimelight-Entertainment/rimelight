@@ -1,12 +1,4 @@
-import { describe, it, expect, vi } from "vite-plus/test";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
+import { describe, it, expect } from "vite-plus/test";
 
 import { RLTableTheme } from "../src/components/table/table.theme";
 import { RLTable } from "../src/components/table/RLTable";

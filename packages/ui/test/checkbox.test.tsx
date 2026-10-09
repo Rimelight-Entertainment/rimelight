@@ -1,12 +1,4 @@
-import { describe, it, expect, vi } from "vite-plus/test";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
+import { describe, it, expect } from "vite-plus/test";
 
 import { RLCheckbox } from "../src/components/checkbox/RLCheckbox";
 import { RLCheckboxGroup } from "../src/components/checkbox-group/RLCheckboxGroup";

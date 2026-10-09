@@ -1,27 +1,33 @@
 import { defineConfig, type PluginOption } from "vite-plus";
 import solid from "@solidjs/vite-plugin";
 import { playwright } from "@vitest/browser-playwright";
+import { ui } from "./src/plugin";
 
-const virtualRimelightUI = {
-  name: "virtual-rimelight-ui-mock",
-  resolveId(id: string) {
-    if (id === "virtual:rimelight/ui") return "\0virtual:rimelight/ui";
-    return null;
+const uiPluginInstance = ui({
+  unstyled: false,
+  components: {
+    themes: {
+      testOverride: {
+        base: { label: "overridden-label" },
+        variants: {
+          size: { sm: { root: "override-sm" } },
+        },
+      },
+    },
   },
-  load(id: string) {
-    if (id === "\0virtual:rimelight/ui") {
-      return `export default { unstyled: false, components: { themes: {} }, icons: {} };`;
-    }
-    return null;
+  icons: {
+    customIcon: "i-custom-icon",
   },
-};
+}) as PluginOption[];
 
 export default defineConfig({
-  plugins: [solid() as PluginOption, virtualRimelightUI as PluginOption],
+  plugins: [solid() as PluginOption, ...uiPluginInstance],
   test: {
     projects: [
       {
         // Existing SSR unit tests — fast, Node-based
+        extends: false,
+        plugins: [solid({ ssr: true }) as PluginOption, ...uiPluginInstance],
         test: {
           name: "unit",
           environment: "node",
@@ -33,7 +39,7 @@ export default defineConfig({
         // Browser component tests — real Chromium via Playwright
         // extends: false so we don't inherit root plugins twice
         extends: false,
-        plugins: [solid() as PluginOption, virtualRimelightUI as PluginOption],
+        plugins: [solid() as PluginOption, ...uiPluginInstance],
         test: {
           name: "browser",
           include: ["test/**/*.browser.test.{ts,tsx}"],
@@ -58,8 +64,5 @@ export default defineConfig({
       "src/icons.ts",
       "src/fonts.ts",
     ],
-    deps: {
-      neverBundle: [/^virtual:/],
-    },
   },
 });

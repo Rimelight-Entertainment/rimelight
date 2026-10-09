@@ -1,9 +1,4 @@
 import { describe, expect, it, vi } from "vite-plus/test";
-
-vi.mock("virtual:rimelight-auth-config", () => ({
-  config: {},
-}));
-
 import { auth } from "../src/middleware/index";
 
 describe("Auth Middleware", () => {

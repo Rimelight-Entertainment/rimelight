@@ -1,4 +1,4 @@
-import virtualConfig from "virtual:rimelight-i18n-config";
+import generatedConfig from "#rimelight/i18n";
 
 /** Public shape of the `t` translator: a callable plus its `.raw`, `.array`, and `.plural` helpers. */
 export interface TFunction {
@@ -13,20 +13,23 @@ export interface TFunction {
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
 }
 
-const config = virtualConfig ?? {
-  locales: ["en"],
-  defaultLocale: "en",
-  prefixDefaultLocale: true,
-  translations: {},
-  kvBinding: "TRANSLATIONS_KV",
-  skipPaths: ["/api", "/_"],
-};
+const rawConfig: Record<string, any> =
+  generatedConfig && typeof generatedConfig === "object"
+    ? (generatedConfig as Record<string, any>)
+    : {};
 
-export let locales: string[] = [...config.locales];
-export let defaultLocale: string = config.defaultLocale;
-export let prefixDefaultLocale: boolean = config.prefixDefaultLocale;
-export let kvBinding: string = config.kvBinding;
-export let skipPaths: string[] = [...config.skipPaths];
+export let locales: string[] = Array.isArray(rawConfig["locales"])
+  ? [...rawConfig["locales"]]
+  : ["en"];
+export let defaultLocale: string =
+  typeof rawConfig["defaultLocale"] === "string" ? rawConfig["defaultLocale"] : "en";
+export let prefixDefaultLocale: boolean =
+  typeof rawConfig["prefixDefaultLocale"] === "boolean" ? rawConfig["prefixDefaultLocale"] : true;
+export let kvBinding: string =
+  typeof rawConfig["kvBinding"] === "string" ? rawConfig["kvBinding"] : "TRANSLATIONS_KV";
+export let skipPaths: string[] = Array.isArray(rawConfig["skipPaths"])
+  ? [...rawConfig["skipPaths"]]
+  : ["/api", "/_"];
 
 let activeLocale = defaultLocale;
 
@@ -59,8 +62,8 @@ export function getDefaultLocale(): string {
   return defaultLocale;
 }
 
-let translations: Record<string, Record<string, any>> = virtualConfig?.translations
-  ? { ...virtualConfig.translations }
+let translations: Record<string, Record<string, any>> = generatedConfig?.translations
+  ? { ...generatedConfig.translations }
   : {};
 
 function isObjectRecord(obj: unknown): obj is Record<string, any> {

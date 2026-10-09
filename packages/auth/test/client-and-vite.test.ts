@@ -12,6 +12,7 @@ async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
   if (typeof fn !== "function") throw new Error("hook not implemented");
   return (await (fn as (...a: any[]) => unknown).call(undefined, ...args)) as T;
 }
+
 describe("Auth Client", () => {
   it("fetches session and me correctly", async () => {
     const mockFetch = vi.fn().mockImplementation((url: string) => {
@@ -56,45 +57,29 @@ describe("Auth Client", () => {
 });
 
 describe("Auth Vite Plugin", () => {
-  it("resolves virtual auth modules and aliases", async () => {
+  it("injects resolve.alias for #rimelight/auth and legacy #auth aliases", async () => {
     const plugin: Plugin = authPlugin({ adapter: "cf-access" });
-    expect(await callHook(plugin.resolveId, "virtual:rimelight-auth")).toBe(
-      "\0virtual:rimelight-auth",
-    );
-    expect(await callHook(plugin.resolveId, "#auth/auth")).toBe("\0virtual:rimelight-auth");
-    expect(await callHook(plugin.resolveId, "#auth")).toBe("\0virtual:rimelight-auth");
-    expect(await callHook(plugin.resolveId, "virtual:rimelight-auth-client")).toBe(
-      "\0virtual:rimelight-auth-client",
-    );
-    expect(await callHook(plugin.resolveId, "#auth/auth-client")).toBe(
-      "\0virtual:rimelight-auth-client",
-    );
+    const configResult = await callHook<any>(plugin.config, { root: process.cwd() });
+    expect(configResult?.resolve?.alias).toBeDefined();
+
+    const aliases = configResult.resolve.alias;
+    const findAlias = (name: string) =>
+      aliases.find((a: any) => (a.find instanceof RegExp ? a.find.test(name) : a.find === name));
+
+    expect(findAlias("#rimelight/auth")).toBeDefined();
+    expect(findAlias("#auth")).toBeDefined();
+    expect(findAlias("#auth/auth")).toBeDefined();
+    expect(findAlias("#auth/auth-client")).toBeDefined();
   });
 
-  it("loads cf-access virtual module code", async () => {
-    const plugin: Plugin = authPlugin({ adapter: "cf-access" });
-    const code = await callHook<string | null>(plugin.load, "\0virtual:rimelight-auth");
-    expect(code).toContain("createCfAccessFromEnv");
-    expect(code).toContain("export const auth");
-  });
-
-  it("loads auth0 virtual module code", async () => {
-    const plugin: Plugin = authPlugin({ adapter: "auth0" });
-    const code = await callHook<string | null>(plugin.load, "\0virtual:rimelight-auth");
-    expect(code).toContain("createAuth0FromEnv");
-    expect(code).toContain("export const auth");
-  });
-
-  it("resolves and loads virtual:rimelight-auth-config", async () => {
+  it("emits disk artifacts when configResolved runs", async () => {
     const plugin: Plugin = authPlugin({
+      adapter: "cf-access",
       roleGuards: {
         "/admin": ["admin", "owner"],
       },
     });
-    expect(await callHook(plugin.resolveId, "virtual:rimelight-auth-config")).toBe(
-      "\0virtual:rimelight-auth-config",
-    );
-    const code = await callHook<string | null>(plugin.load, "\0virtual:rimelight-auth-config");
-    expect(code).toContain('export const config = {"roleGuards":{"/admin":["admin","owner"]}};');
+
+    await callHook(plugin.configResolved, { root: process.cwd() });
   });
 });

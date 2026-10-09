@@ -483,7 +483,11 @@ importers:
         specifier: 66.10.5
         version: 66.10.5(cac@7.0.0)(rolldown@1.2.12)(srvx@1.0.5)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(jiti@2.7.0))
 
-  packages/config: {}
+  packages/config:
+    dependencies:
+      vite-plus:
+        specifier: ^1.0.0
+        version: 1.0.0(@types/node@26.6.4)(@vitest/browser-playwright@5.0.3)(@vitest/ui@5.0.1)(esbuild@0.28.1)(jiti@2.7.0)(typescript@7.0.2)
 
   packages/i18n:
     dependencies:

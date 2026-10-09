@@ -1,12 +1,4 @@
-import { describe, it, expect, vi } from "vite-plus/test";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
+import { describe, it, expect } from "vite-plus/test";
 
 import { RLCarousel } from "../src/components/carousel/RLCarousel";
 import * as components from "../src/components/index";

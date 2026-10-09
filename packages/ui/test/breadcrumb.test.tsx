@@ -1,13 +1,5 @@
-import { describe, it, expect, vi } from "vite-plus/test";
+import { describe, it, expect } from "vite-plus/test";
 import { renderToString } from "@solidjs/web";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
 
 import { RLBreadcrumb } from "../src/components/breadcrumb/RLBreadcrumb";
 import type { BreadcrumbItem } from "../src/components/breadcrumb/breadcrumb.types";

@@ -1,23 +1,4 @@
-import { describe, it, expect, vi } from "vite-plus/test";
-
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: {
-      themes: {
-        testOverride: {
-          base: { label: "overridden-label" },
-          variants: {
-            size: { sm: { root: "override-sm" } },
-          },
-        },
-      },
-    },
-    icons: {
-      customIcon: "i-custom-icon",
-    },
-  },
-}));
+import { describe, it, expect } from "vite-plus/test";
 
 import { defineTheme } from "../src/resolver";
 import { resolveIcon } from "../src/icons";
@@ -197,7 +178,7 @@ describe("@rimelight/ui inlined cx", () => {
 
 describe("@rimelight/ui unstyled mode", () => {
   it("should preserve props.class and props.ui overrides when unstyled", async () => {
-    vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = true;
+    (await import("#rimelight/ui")).default.unstyled = true;
     const { defineTheme } = await import("../src/resolver");
 
     const themeFn = defineTheme("testUnstyled", {
@@ -215,7 +196,7 @@ describe("@rimelight/ui unstyled mode", () => {
 
 describe("@rimelight/ui logo & image themes", () => {
   it("should export and resolve RLLogoTheme properly", async () => {
-    vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = false;
+    (await import("#rimelight/ui")).default.unstyled = false;
     const { RLLogoTheme } = await import("../src/components/logo/logo.theme");
     const slots = RLLogoTheme({ class: "custom-logo" });
     expect(slots["root"]).toContain("flex items-center");
@@ -223,7 +204,7 @@ describe("@rimelight/ui logo & image themes", () => {
   });
 
   it("should export and resolve RLImageTheme properly", async () => {
-    vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = false;
+    (await import("#rimelight/ui")).default.unstyled = false;
     const { RLImageTheme } = await import("../src/components/image/image.theme");
     const slots = RLImageTheme({ class: "custom-image", fit: "contain" });
     expect(slots["root"]).toContain("relative inline-block");

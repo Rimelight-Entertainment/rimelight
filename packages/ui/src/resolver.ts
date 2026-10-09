@@ -1,5 +1,15 @@
-import uiConfig from "virtual:rimelight/ui";
-import type { ClassValue, ThemeConfig } from "./types";
+import uiConfig from "#rimelight/ui";
+import type { ClassValue, ThemeConfig, UIConfig } from "./types";
+
+let testOverrides: Partial<UIConfig> | null = null;
+
+export function getUIConfig(): UIConfig {
+  return testOverrides ? { ...uiConfig, ...testOverrides } : uiConfig;
+}
+
+export function setRimelightUITestConfig(overrides: Partial<UIConfig> | null): void {
+  testOverrides = overrides;
+}
 
 export function cx(...args: ClassValue[]): string {
   let str = "";
@@ -23,32 +33,13 @@ export function cx(...args: ClassValue[]): string {
 }
 
 export function defineTheme<const S extends string>(name: string, themeConfig: ThemeConfig<S>) {
-  const custom = uiConfig?.components?.themes?.[name];
-  const slots = (custom?.slots ?? themeConfig.slots ?? ["root" as S]) as readonly S[];
-  const rootSlot = (slots.includes("root" as S) ? "root" : slots[0] || "root") as S;
+  const defaultSlots = (themeConfig.slots ?? ["root" as S]) as readonly S[];
 
-  if (uiConfig?.unstyled) {
-    return (props: any = {}): Record<S, string> => {
-      const res = {} as Record<S, string>;
-      const hasClass = props.class || props.className;
-      for (let i = 0; i < slots.length; i++) {
-        const slot = slots[i]!;
-        const base = slot === rootSlot && hasClass ? cx(props.class, props.className) : "";
-        const fn = props.ui?.[slot];
-        res[slot] = typeof fn === "function" ? fn(base) : cx(base, fn);
-      }
-      return res;
-    };
-  }
+  const defaultAutoColor = themeConfig.variants?.["color"] === "auto";
+  const defaultVariants = { ...themeConfig.defaultVariants };
+  const staticCompoundVariants = [...(themeConfig.compoundVariants ?? [])];
 
-  const autoColor = (custom?.variants ?? themeConfig.variants)?.color === "auto";
-  const defaultVariants = { ...themeConfig.defaultVariants, ...custom?.defaultVariants };
-  const compoundVariants = [
-    ...(themeConfig.compoundVariants ?? []),
-    ...(custom?.compoundVariants ?? []),
-  ];
-
-  const compiledCV = compoundVariants.map((cv) => {
+  const staticCompiledCV = staticCompoundVariants.map((cv) => {
     const { classNames, class: cls, ...rest } = cv;
     const matchers: Array<{ key: string; exp: any }> = [];
     for (const k in rest) {
@@ -57,34 +48,76 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     return { matchers, cls: classNames || cls };
   });
 
-  const baseMap: Record<string, string> = {};
-  for (let i = 0; i < slots.length; i++) {
-    const s = slots[i]!;
-    baseMap[s] = cx(themeConfig.base?.[s], custom?.base?.[s]);
+  const staticBaseMap: Record<string, string> = {};
+  for (let i = 0; i < defaultSlots.length; i++) {
+    const s = defaultSlots[i]!;
+    staticBaseMap[s] = themeConfig.base?.[s] ? cx(themeConfig.base[s]) : "";
   }
-
-  const variants: Record<string, Record<string, any>> = { ...themeConfig.variants };
-  if (custom?.variants) {
-    for (const k in custom.variants) variants[k] = { ...variants[k], ...custom.variants[k] };
-  }
-
-  const variantKeys = Object.keys(variants).filter((k) => !(k === "color" && autoColor));
-
-  let lastRes: Record<S, string> | undefined;
 
   return (props: any = {}): Record<S, string> => {
+    const currentConfig = getUIConfig();
+    const custom = currentConfig?.components?.themes?.[name];
+    const isUnstyled = currentConfig?.unstyled;
+
+    const slots = (custom?.slots ?? defaultSlots) as readonly S[];
+    const actualRootSlot = (slots.includes("root" as S) ? "root" : slots[0] || "root") as S;
+
+    if (isUnstyled) {
+      const res = {} as Record<S, string>;
+      const hasClass = props.class || props.className;
+      for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i]!;
+        const base = slot === actualRootSlot && hasClass ? cx(props.class, props.className) : "";
+        const fn = props.ui?.[slot];
+        res[slot] = typeof fn === "function" ? fn(base) : cx(base, fn);
+      }
+      return res;
+    }
+
+    const autoColor =
+      (custom?.variants ?? themeConfig.variants)?.["color"] === "auto" || defaultAutoColor;
+    const mergedDefaultVariants = { ...defaultVariants, ...custom?.defaultVariants };
+    const customCV = custom?.compoundVariants ?? [];
+
+    const compiledCV = customCV.length
+      ? [
+          ...staticCompiledCV,
+          ...customCV.map((cv: any) => {
+            const { classNames, class: cls, ...rest } = cv;
+            const matchers: Array<{ key: string; exp: any }> = [];
+            for (const k in rest) {
+              matchers.push({ key: k, exp: rest[k] });
+            }
+            return { matchers, cls: classNames || cls };
+          }),
+        ]
+      : staticCompiledCV;
+
+    const baseMap: Record<string, string> = {};
+    for (let i = 0; i < slots.length; i++) {
+      const s = slots[i]!;
+      baseMap[s] = cx(staticBaseMap[s], custom?.base?.[s]);
+    }
+
+    const variants: Record<string, Record<string, any>> = { ...themeConfig.variants };
+    if (custom?.variants) {
+      for (const k in custom.variants) variants[k] = { ...variants[k], ...custom.variants[k] };
+    }
+
+    const variantKeys = Object.keys(variants).filter((k) => !(k === "color" && autoColor));
+
     const res = {} as Record<S, string>;
     for (let i = 0; i < slots.length; i++) {
       res[slots[i]!] = baseMap[slots[i]!] || "";
     }
 
-    const values: Record<string, any> = { ...defaultVariants };
+    const values: Record<string, any> = { ...mergedDefaultVariants };
     for (const k in props) {
       if (props[k] !== undefined) {
         values[k] = props[k];
       }
     }
-    const color = autoColor ? (props.color ?? defaultVariants.color) : undefined;
+    const color = autoColor ? (props.color ?? mergedDefaultVariants["color"]) : undefined;
 
     for (let k = 0; k < variantKeys.length; k++) {
       const key = variantKeys[k]!;
@@ -125,7 +158,7 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     for (let i = 0; i < slots.length; i++) {
       const slot = slots[i]!;
       let slotClass = res[slot]!;
-      if (slot === rootSlot) {
+      if (slot === actualRootSlot) {
         if (color) slotClass = slotClass ? `${slotClass} rl-color-${color}` : `rl-color-${color}`;
         const extra = cx(props.class, props.className);
         if (extra) slotClass = slotClass ? `${slotClass} ${extra}` : extra;
@@ -134,19 +167,6 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       res[slot] = typeof override === "function" ? override(slotClass) : cx(slotClass, override);
     }
 
-    if (lastRes) {
-      let isSame = true;
-      for (let i = 0; i < slots.length; i++) {
-        const slot = slots[i]!;
-        if (lastRes[slot] !== res[slot]) {
-          isSame = false;
-          break;
-        }
-      }
-      if (isSame) return lastRes;
-    }
-
-    lastRes = res;
     return res;
   };
 }

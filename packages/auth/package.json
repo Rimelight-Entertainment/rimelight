@@ -19,6 +19,20 @@
     "dist"
   ],
   "type": "module",
+  "imports": {
+    "#rimelight/*/client": {
+      "types": "./node_modules/.rimelight/*/client.d.ts",
+      "default": "./node_modules/.rimelight/*/client.js"
+    },
+    "#rimelight/*/server": {
+      "types": "./node_modules/.rimelight/*/server.d.ts",
+      "default": "./node_modules/.rimelight/*/server.js"
+    },
+    "#rimelight/*": {
+      "types": "./node_modules/.rimelight/*/config.d.ts",
+      "default": "./node_modules/.rimelight/*/config.js"
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",

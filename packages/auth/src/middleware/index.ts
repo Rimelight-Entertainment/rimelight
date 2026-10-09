@@ -7,7 +7,7 @@ import type {
 import type { AuthAdapter } from "../types";
 import { createCfAccessFromEnv } from "../adapters/cf-access";
 import { createAuth0FromEnv } from "../adapters/auth0";
-import { config as pluginConfig } from "virtual:rimelight-auth-config";
+import { config as pluginConfig } from "#rimelight/auth";
 
 function isConfigRecord(obj: unknown): obj is AuthPluginConfig {
   return typeof obj === "object" && obj !== null && !Array.isArray(obj);

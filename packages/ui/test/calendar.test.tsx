@@ -1,13 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vite-plus/test";
 
-vi.mock("virtual:rimelight/ui", () => ({
-  default: {
-    unstyled: false,
-    components: { themes: {} },
-    icons: {},
-  },
-}));
-
 import { RLCalendar } from "../src/components/calendar/RLCalendar";
 import { RLCalendarTheme } from "../src/components/calendar/calendar.theme";
 import { renderToString } from "@solidjs/web";
