@@ -1,6 +1,5 @@
 import generatedConfig from "#rimelight/i18n";
 import { defaultLocale, getCurrentLocale, setLocaleConfig } from "./locale";
-import { flatten } from "./cli";
 
 export interface TFunction {
   <K extends string = string>(key: K | (string & {}), params?: Record<string, any>): string;
@@ -11,10 +10,6 @@ export interface TFunction {
 
 export let translations: Record<string, Record<string, any>> = generatedConfig?.translations
   ? { ...generatedConfig.translations }
-  : {};
-
-export let flatTranslations: Record<string, Record<string, any>> = generatedConfig?.flatTranslations
-  ? { ...generatedConfig.flatTranslations }
   : {};
 
 export function isObjectRecord(obj: unknown): obj is Record<string, any> {
@@ -32,19 +27,15 @@ export function setTranslations(
   },
 ): void {
   translations = { ...data };
-  flatTranslations = {};
-  for (const [locale, dict] of Object.entries(data)) {
-    flatTranslations[locale] = flatten(dict);
-  }
   if (options) {
     setLocaleConfig(options);
   }
 }
 
-function resolveFromDict(dict: Record<string, any> | undefined, key: string): unknown {
+function getVal(dict: Record<string, any> | undefined, path: string): unknown {
   if (!dict) return undefined;
-  if (key in dict) return dict[key];
-  const parts = key.split(".");
+  if (path in dict) return dict[path];
+  const parts = path.split(".");
   let cur: any = dict;
   for (const p of parts) {
     if (cur == null || typeof cur !== "object") return undefined;
@@ -55,10 +46,8 @@ function resolveFromDict(dict: Record<string, any> | undefined, key: string): un
 
 function resolveKey(key: string, targetLocale: string): unknown {
   return (
-    flatTranslations[targetLocale]?.[key] ??
-    resolveFromDict(translations[targetLocale], key) ??
-    flatTranslations[defaultLocale]?.[key] ??
-    resolveFromDict(translations[defaultLocale], key)
+    getVal(translations[targetLocale], key) ??
+    (targetLocale !== defaultLocale ? getVal(translations[defaultLocale], key) : undefined)
   );
 }
 
