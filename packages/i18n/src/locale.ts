@@ -1,11 +1,19 @@
 import generatedConfig from "#rimelight/i18n";
 
-export const config = {
-  locales: (generatedConfig?.locales ?? ["en"]) as readonly string[],
-  defaultLocale: (generatedConfig?.defaultLocale ?? "en") as string,
-  prefixDefaultLocale: (generatedConfig?.prefixDefaultLocale ?? true) as boolean,
-  skipPaths: (generatedConfig?.skipPaths ?? ["/api", "/_"]) as readonly string[],
-  translations: (generatedConfig?.translations ?? {}) as Record<string, Record<string, any>>,
+interface I18nConfig {
+  locales: readonly string[];
+  defaultLocale: string;
+  prefixDefaultLocale: boolean;
+  skipPaths: readonly string[];
+  translations: Record<string, Record<string, any>>;
+}
+
+export const config: I18nConfig = {
+  locales: generatedConfig?.locales ?? ["en"],
+  defaultLocale: generatedConfig?.defaultLocale ?? "en",
+  prefixDefaultLocale: generatedConfig?.prefixDefaultLocale ?? true,
+  skipPaths: generatedConfig?.skipPaths ?? ["/api", "/_"],
+  translations: generatedConfig?.translations ?? {},
 };
 
 let currentLocale = config.defaultLocale;
