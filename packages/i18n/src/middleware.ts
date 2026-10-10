@@ -1,5 +1,15 @@
 import { config, setCurrentLocale } from "./runtime";
 
+/**
+ * Universal i18n middleware for locale resolution and route redirection.
+ *
+ * 1. **Locale Resolution**: Resolves the active locale from the URL segment prefix,
+ *    falling back to `Accept-Language` header negotiation and `defaultLocale`.
+ * 2. **State Propagation**: Sets the active request locale via `setCurrentLocale()`.
+ * 3. **Canonical Redirection**: Automatically redirects unprefixed or default-prefixed routes
+ *    according to the `prefixDefaultLocale` configuration, while preserving query parameters
+ *    and ignoring API routes, skip paths, and static asset requests.
+ */
 export const i18n =
   () =>
   async (
