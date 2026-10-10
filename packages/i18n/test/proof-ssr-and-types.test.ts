@@ -8,8 +8,14 @@ function req(path: string, init?: RequestInit): Request {
 }
 
 function mockContext(path: string, init?: RequestInit) {
+  const request = req(path, init);
   return {
-    req: { raw: req(path, init) },
+    req: {
+      raw: request,
+      url: request.url,
+      method: request.method,
+      header: (name: string) => request.headers.get(name) ?? undefined,
+    },
     redirect: (target: string, status = 302) =>
       new Response(null, { status, headers: { Location: target } }),
   };

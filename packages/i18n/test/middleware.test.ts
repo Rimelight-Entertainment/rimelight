@@ -8,8 +8,14 @@ function req(path: string, init?: RequestInit): Request {
 }
 
 function mockContext(path: string, init?: RequestInit) {
+  const request = req(path, init);
   return {
-    req: { raw: req(path, init) },
+    req: {
+      raw: request,
+      url: request.url,
+      method: request.method,
+      header: (name: string) => request.headers.get(name) ?? undefined,
+    },
     redirect: (target: string, status = 302) =>
       new Response(null, { status, headers: { Location: target } }),
   };
@@ -109,12 +115,36 @@ describe("@rimelight/i18n middleware", () => {
     expect(getCurrentLocale()).toBe("en");
   });
 
-  it("short-circuits with a 302 when resolution requests a redirect", async () => {
-    const result = await runMiddleware("/about?page=2");
-    expect(result.nextCalled).toBe(false);
-    expect(result.response).toBeInstanceOf(Response);
-    expect(result.response!.status).toBe(302);
-    expect(result.location).toBe("/en/about?page=2");
-    expect(getCurrentLocale()).toBe("en");
+  it("injects locale and t into Hono Context c.set / c.get", async () => {
+    const middleware = i18n();
+    let injectedLocale = "";
+    let injectedTranslation = "";
+
+    const request = req("/en/about");
+    const honoContext = {
+      req: {
+        raw: request,
+        url: request.url,
+        header: (name: string) => (name.toLowerCase() === "accept-language" ? "en" : undefined),
+      },
+      _store: new Map<string, any>(),
+      set(key: string, value: any) {
+        this._store.set(key, value);
+      },
+      get(key: string) {
+        return this._store.get(key);
+      },
+      redirect: (target: string, status = 302) =>
+        new Response(null, { status, headers: { Location: target } }),
+    };
+
+    await middleware(honoContext as any, async () => {
+      injectedLocale = honoContext.get("locale");
+      const tFunc = honoContext.get("t");
+      injectedTranslation = typeof tFunc === "function" ? "available" : "missing";
+    });
+
+    expect(injectedLocale).toBe("en");
+    expect(injectedTranslation).toBe("available");
   });
 });

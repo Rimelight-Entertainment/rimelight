@@ -1,4 +1,4 @@
-import { config, i18nContext, setCurrentLocale } from "./runtime";
+import { config, i18nContext, setCurrentLocale, t } from "./runtime";
 import serverTranslations from "#rimelight/i18n/server";
 
 /**
@@ -11,46 +11,38 @@ import serverTranslations from "#rimelight/i18n/server";
  *    according to the `prefixDefaultLocale` configuration, while preserving query parameters
  *    and ignoring API routes, skip paths, and static asset requests.
  */
-export const i18n =
-  () =>
-  async (
-    context: { req: { raw: Request }; redirect(path: string, status?: number): Response },
-    next: () => Promise<void>,
-  ) => {
-    const { pathname, search } = new URL(context.req.raw.url);
+export const i18n = () => async (c: any, next: () => Promise<void>) => {
+  const { pathname, search } = new URL(c.req.url);
+  const prefix = config.locales.find(
+    (l) => l.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
+  );
 
-    const prefix = config.locales.find(
-      (l) => l.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
-    );
+  const locale =
+    prefix ??
+    (c.req.header?.("accept-language") ?? c.req.raw?.headers?.get("accept-language") ?? "")
+      .split(",")
+      .flatMap((e: string) => {
+        const tag = e.split(";")[0]?.trim().toLowerCase();
+        return config.locales.find((l) => l === tag || l === tag?.split("-")[0]) ?? [];
+      })[0] ??
+    config.defaultLocale;
 
-    const locale =
-      prefix ??
-      context.req.raw.headers
-        .get("accept-language")
-        ?.split(",")
-        .flatMap((e) => {
-          const [tag] = e.trim().toLowerCase().split(";");
-          return config.locales.find((l) => l === tag || l === tag?.split("-")[0]) ?? [];
-        })[0] ??
-      config.defaultLocale;
+  setCurrentLocale(locale);
+  c.set?.("locale", locale);
+  c.set?.("t", t);
 
-    setCurrentLocale(locale);
+  const target =
+    /^(GET|HEAD)$/i.test(c.req.method) &&
+    !config.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`)) &&
+    !/\.[a-z0-9]{1,8}$/i.test(pathname) &&
+    (config.prefixDefaultLocale
+      ? !prefix && `/${locale}${pathname}`
+      : prefix === config.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
 
-    const target =
-      /^(GET|HEAD)$/i.test(context.req.raw.method) &&
-      !config.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`)) &&
-      !/\.[a-z0-9]{1,8}$/i.test(pathname) &&
-      (config.prefixDefaultLocale
-        ? !prefix && `/${locale}${pathname}`
-        : prefix === config.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
-
-    return target
-      ? context.redirect(`${target}${search}`, 302)
-      : i18nContext.run(
-          {
-            locale,
-            translations: serverTranslations?.[locale] ?? config.translations?.[locale],
-          },
-          next,
-        );
-  };
+  return target
+    ? c.redirect(`${target}${search}`, 302)
+    : i18nContext.run(
+        { locale, translations: serverTranslations?.[locale] ?? config.translations?.[locale] },
+        next,
+      );
+};
