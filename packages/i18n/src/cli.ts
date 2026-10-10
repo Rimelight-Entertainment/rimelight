@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { readLocaleFiles, resolveTranslationsDir } from "./plugin";
 
 type FlattenedTranslations = { [key: string]: string };
 
@@ -311,7 +310,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const localesDir = resolveTranslationsDir(process.cwd(), values.dir);
+  const localesDir = path.resolve(process.cwd(), values.dir || "src/i18n");
   if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) {
     console.error(
       `✖ [i18n] Could not find translation directory. Pass --dir <path> (e.g. --dir src/i18n)`,
@@ -319,7 +318,23 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const { files, translations, errors } = readLocaleFiles(localesDir);
+  const files: string[] = [];
+  const translations: Record<string, Record<string, any>> = {};
+  const errors: { file: string; error: unknown }[] = [];
+
+  try {
+    for (const file of fs.readdirSync(localesDir)) {
+      if (!file.endsWith(".json")) continue;
+      files.push(file);
+      try {
+        translations[path.basename(file, ".json")] = JSON.parse(
+          fs.readFileSync(path.join(localesDir, file), "utf-8"),
+        );
+      } catch (error) {
+        errors.push({ file, error });
+      }
+    }
+  } catch {}
   if (files.length === 0) {
     console.error(`✖ [i18n] No .json translation files found in ${localesDir}`);
     return 1;

@@ -9,87 +9,60 @@ export interface RimelightI18nPluginOptions {
   prefixDefaultLocale?: boolean;
 }
 
-export const resolveTranslationsDir = (root: string, specifiedDir = "src/i18n"): string =>
-  path.resolve(root, specifiedDir);
+export const i18n = (options?: RimelightI18nPluginOptions): Plugin => {
+  let cachedTranslations: Record<string, Record<string, any>> | null = null;
 
-export const readLocaleFiles = (
-  dirPath: string,
-): {
-  files: string[];
-  translations: Record<string, Record<string, any>>;
-  errors: { file: string; error: unknown }[];
-} => {
-  const files: string[] = [];
-  const translations: Record<string, Record<string, any>> = {};
-  const errors: { file: string; error: unknown }[] = [];
-
-  try {
-    for (const file of fs.readdirSync(dirPath)) {
-      if (!file.endsWith(".json")) continue;
-      files.push(file);
-      try {
-        translations[path.basename(file, ".json")] = JSON.parse(
-          fs.readFileSync(path.join(dirPath, file), "utf-8"),
-        );
-      } catch (error) {
-        errors.push({ file, error });
+  const flattenTranslations = (
+    obj: Record<string, any>,
+    prefix = "",
+    target: Record<string, any> = {},
+  ): Record<string, any> => {
+    for (const [key, value] of Object.entries(obj)) {
+      if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+      const fullPath = prefix ? `${prefix}.${key}` : key;
+      target[fullPath] = value;
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        flattenTranslations(value, fullPath, target);
       }
     }
-  } catch {}
-
-  return { files, translations, errors };
-};
-
-/**
- * Pre-indexes nested dictionaries into flat dot-paths for O(1) runtime lookups,
- * while retaining structural containers and array nodes.
- */
-export const indexTranslations = (
-  obj: Record<string, any>,
-  prefix = "",
-  target: Record<string, any> = {},
-): Record<string, any> => {
-  for (const [key, value] of Object.entries(obj)) {
-    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
-    const fullPath = prefix ? `${prefix}.${key}` : key;
-    target[fullPath] = value;
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      indexTranslations(value, fullPath, target);
-    }
-  }
-  return target;
-};
-
-export const i18n = (options?: RimelightI18nPluginOptions): Plugin => {
-  const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
-  let cachedTranslations: Record<string, Record<string, any>> | null = null;
+    return target;
+  };
 
   return defineRimelightArtifactPlugin({
     pkgName: "i18n",
-    watch: ({ root }) => [resolveTranslationsDir(root, options?.translationsDir)],
-    config({ root }) {
-      const { translations } = readLocaleFiles(
-        resolveTranslationsDir(root, options?.translationsDir),
-      );
+    watch: ({ root }) => [path.resolve(root, options?.translationsDir ?? "src/i18n")],
+    config: ({ root }) => {
+      const translationsDir = path.resolve(root, options?.translationsDir ?? "src/i18n");
+      const translations: Record<string, Record<string, any>> = {};
+
+      try {
+        for (const file of fs.readdirSync(translationsDir)) {
+          if (file.endsWith(".json")) {
+            translations[path.basename(file, ".json")] = JSON.parse(
+              fs.readFileSync(path.join(translationsDir, file), "utf-8"),
+            );
+          }
+        }
+      } catch {}
+
       cachedTranslations = translations;
       const locales = Object.keys(translations).sort();
-      const defaultLocale =
-        options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
       const indexedTranslations: Record<string, Record<string, any>> = {};
       for (const [locale, data] of Object.entries(translations)) {
-        indexedTranslations[locale] = indexTranslations(data);
+        indexedTranslations[locale] = flattenTranslations(data);
       }
 
       return {
         locales,
-        defaultLocale,
-        prefixDefaultLocale,
+        defaultLocale:
+          options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en")),
+        prefixDefaultLocale: options?.prefixDefaultLocale ?? true,
         translations: indexedTranslations,
         skipPaths: ["/api", "/_"],
       };
     },
-    async closeBundle() {
+    closeBundle: async () => {
       if (!cachedTranslations || Object.keys(cachedTranslations).length === 0) return;
 
       const outDir = path.join(process.env["WRANGLER_OUT_DIR"] ?? "dist", "locales");
