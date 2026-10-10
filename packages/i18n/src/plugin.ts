@@ -14,12 +14,12 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let translations: Record<string, any> = {};
 
   const flatten = (target: any, prefix = "", result: Record<string, any> = {}) => {
-    for (const [key, value] of Object.entries(target || {})) {
-      if (key in Object.prototype) continue;
+    Object.entries(target || {}).forEach(([key, value]) => {
+      if (key in Object.prototype) return;
       const fullKey = prefix ? `${prefix}.${key}` : key;
       result[fullKey] = value;
       if (value?.constructor === Object) flatten(value, fullKey, result);
-    }
+    });
     return result;
   };
 
@@ -43,22 +43,22 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
 
         const locales = Object.keys(translations).sort();
         return {
+          ...options,
           locales,
           defaultLocale:
             options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en",
-          ...options,
           translations,
         };
       },
     }),
     generateBundle() {
-      for (const [locale, data] of Object.entries(translations)) {
+      Object.entries(translations).forEach(([locale, data]) =>
         this.emitFile({
           type: "asset",
           fileName: `locales/${locale}.json`,
           source: JSON.stringify(data, null, 2),
-        });
-      }
+        }),
+      );
     },
   };
 };
