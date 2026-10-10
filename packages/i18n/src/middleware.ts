@@ -4,7 +4,7 @@ const isLocalizedPage = (p: string) =>
   !config.skipPaths.some((s) => p === s || p.startsWith(`${s}/`)) &&
   !/\.[A-Za-z0-9]{1,8}$/.test(p.slice(p.lastIndexOf("/") + 1));
 
-function matchAcceptLanguage(header: string | null): string | undefined {
+const matchAcceptLanguage = (header: string | null): string | undefined => {
   if (!header) return undefined;
   for (const entry of header.split(",")) {
     const code = entry.split(";")[0]?.trim().toLowerCase();
@@ -13,9 +13,9 @@ function matchAcceptLanguage(header: string | null): string | undefined {
     if (match) return match;
   }
   return undefined;
-}
+};
 
-export function resolveLocale(request: Request): string | null {
+export const resolveLocale = (request: Request): string | null => {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const segmentLocale = localeFromPathname(pathname);
@@ -42,14 +42,14 @@ export function resolveLocale(request: Request): string | null {
   }
 
   return null;
-}
+};
 
-export function i18n() {
-  return async (
+export const i18n =
+  () =>
+  async (
     c: { req: { raw: Request }; redirect(path: string, status?: number): Response },
     next: () => Promise<void>,
   ): Promise<Response | void> => {
     const redirectTo = resolveLocale(c.req.raw);
     return redirectTo ? c.redirect(redirectTo, 302) : next();
   };
-}

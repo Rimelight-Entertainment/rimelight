@@ -9,15 +9,16 @@ export interface RimelightI18nPluginOptions {
   prefixDefaultLocale?: boolean;
 }
 
-export function resolveTranslationsDir(root: string, specifiedDir = "src/i18n"): string {
-  return path.resolve(root, specifiedDir);
-}
+export const resolveTranslationsDir = (root: string, specifiedDir = "src/i18n"): string =>
+  path.resolve(root, specifiedDir);
 
-export function readLocaleFiles(dirPath: string): {
+export const readLocaleFiles = (
+  dirPath: string,
+): {
   files: string[];
   translations: Record<string, Record<string, any>>;
   errors: { file: string; error: unknown }[];
-} {
+} => {
   const files: string[] = [];
   const translations: Record<string, Record<string, any>> = {};
   const errors: { file: string; error: unknown }[] = [];
@@ -37,9 +38,9 @@ export function readLocaleFiles(dirPath: string): {
   } catch {}
 
   return { files, translations, errors };
-}
+};
 
-export function i18n(options?: RimelightI18nPluginOptions): Plugin {
+export const i18n = (options?: RimelightI18nPluginOptions): Plugin => {
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   let cachedTranslations: Record<string, Record<string, any>> | null = null;
 
@@ -75,4 +76,4 @@ export function i18n(options?: RimelightI18nPluginOptions): Plugin {
       } catch {}
     },
   });
-}
+};

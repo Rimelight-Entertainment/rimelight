@@ -92,55 +92,32 @@ export function unflatten(flat: FlattenedTranslations): Record<string, any> {
 /**
  * Extracts all dotted translation keys from a translation dictionary.
  */
-export function extractKeys(source: Record<string, any>): string[] {
-  return Object.keys(flatten(source));
-}
+export const extractKeys = (source: Record<string, any>): string[] => Object.keys(flatten(source));
 
 /**
  * Extracts all interpolation variables like `{name}` or `{count}` from a string.
  */
-export function extractPlaceholders(str: string): string[] {
-  const matches = str.match(/\{(\w+)\}/g);
-  if (!matches) return [];
-  return Array.from(new Set(matches.map((m) => m.slice(1, -1))));
-}
+export const extractPlaceholders = (str: string): string[] =>
+  Array.from(new Set(str.match(/\{(\w+)\}/g)?.map((m) => m.slice(1, -1)) ?? []));
 
-function diffKeys(
-  baseFlat: FlattenedTranslations,
-  targetFlat: FlattenedTranslations,
-): { missing: string[]; stale: string[] } {
-  const missing: string[] = [];
-  const stale: string[] = [];
-
-  for (const key of Object.keys(baseFlat)) {
-    if (!(key in targetFlat)) {
-      missing.push(key);
-    }
-  }
-  for (const key of Object.keys(targetFlat)) {
-    if (!(key in baseFlat)) {
-      stale.push(key);
-    }
-  }
-
-  return { missing, stale };
-}
+const diffKeys = (baseFlat: FlattenedTranslations, targetFlat: FlattenedTranslations) => ({
+  missing: Object.keys(baseFlat).filter((k) => !(k in targetFlat)),
+  stale: Object.keys(targetFlat).filter((k) => !(k in baseFlat)),
+});
 
 /**
  * Compares a target translation dictionary against a base translation dictionary, returning any
  * missing deep dotted keys.
  */
-export function findMissingKeys(base: Record<string, any>, target: Record<string, any>): string[] {
-  return diffKeys(flatten(base), flatten(target)).missing;
-}
+export const findMissingKeys = (base: Record<string, any>, target: Record<string, any>): string[] =>
+  diffKeys(flatten(base), flatten(target)).missing;
 
 /**
  * Compares a target translation dictionary against a base translation dictionary, returning any
  * stale/orphaned keys present in target but absent in base.
  */
-export function findStaleKeys(base: Record<string, any>, target: Record<string, any>): string[] {
-  return diffKeys(flatten(base), flatten(target)).stale;
-}
+export const findStaleKeys = (base: Record<string, any>, target: Record<string, any>): string[] =>
+  diffKeys(flatten(base), flatten(target)).stale;
 
 /**
  * Runs a comprehensive audit across all translation dictionaries comparing against
@@ -173,9 +150,7 @@ export function verifyTranslations(
     const mismatches: PlaceholderMismatch[] = [];
 
     for (const [key, val] of Object.entries(targetFlat)) {
-      if (!allowEmpty && val.trim() === "") {
-        empty.push(key);
-      }
+      if (!allowEmpty && val.trim() === "") empty.push(key);
 
       if (key in baseFlat) {
         const baseHolders = extractPlaceholders(baseFlat[key] ?? "").sort();
@@ -223,9 +198,7 @@ export function verifyTranslations(
     staleKeys,
     emptyKeys,
     placeholderMismatches,
-    stats: {
-      completion,
-    },
+    stats: { completion },
   };
 }
 
@@ -237,8 +210,7 @@ export function formatAuditReport(report: TranslationAuditReport): string {
     return `✔ [i18n] Verified ${report.locales.length} locales (${report.locales.join(", ")}) — ${report.totalKeys} keys synchronized with 0 issues.`;
   }
 
-  const lines: string[] = [];
-  lines.push(`✖ [i18n] Translation verification failed:`);
+  const lines = ["✖ [i18n] Translation verification failed:"];
 
   for (const locale of report.locales) {
     const missing = report.missingKeys[locale];
@@ -249,29 +221,26 @@ export function formatAuditReport(report: TranslationAuditReport): string {
     if (!missing && !stale && !empty && !mismatches) continue;
 
     lines.push(`\n  [${locale}] (${report.stats.completion[locale]} complete):`);
-
-    if (missing && missing.length > 0) {
-      lines.push(`    Missing Keys (${missing.length}):`);
-      for (const k of missing) lines.push(`      - ${k}`);
+    if (missing?.length) {
+      lines.push(`    Missing Keys (${missing.length}):`, ...missing.map((k) => `      - ${k}`));
     }
-
-    if (stale && stale.length > 0) {
-      lines.push(`    Stale Keys (${stale.length}, not in '${report.defaultLocale}'):`);
-      for (const k of stale) lines.push(`      - ${k}`);
+    if (stale?.length) {
+      lines.push(
+        `    Stale Keys (${stale.length}, not in '${report.defaultLocale}'):`,
+        ...stale.map((k) => `      - ${k}`),
+      );
     }
-
-    if (empty && empty.length > 0) {
-      lines.push(`    Empty Keys (${empty.length}):`);
-      for (const k of empty) lines.push(`      - ${k}`);
+    if (empty?.length) {
+      lines.push(`    Empty Keys (${empty.length}):`, ...empty.map((k) => `      - ${k}`));
     }
-
-    if (mismatches && mismatches.length > 0) {
-      lines.push(`    Placeholder Mismatches (${mismatches.length}):`);
-      for (const m of mismatches) {
-        lines.push(
-          `      - ${m.key}: expected {${m.basePlaceholders.join(", ")}}, found {${m.targetPlaceholders.join(", ")}}`,
-        );
-      }
+    if (mismatches?.length) {
+      lines.push(
+        `    Placeholder Mismatches (${mismatches.length}):`,
+        ...mismatches.map(
+          (m) =>
+            `      - ${m.key}: expected {${m.basePlaceholders.join(", ")}}, found {${m.targetPlaceholders.join(", ")}}`,
+        ),
+      );
     }
   }
 

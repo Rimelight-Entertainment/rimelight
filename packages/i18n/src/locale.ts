@@ -11,48 +11,37 @@ export const config = {
 let currentLocale = config.defaultLocale;
 
 /** Returns the active locale code. */
-export function getCurrentLocale(): string {
-  return currentLocale;
-}
+export const getCurrentLocale = (): string => currentLocale;
 
 /** Sets the active locale code. */
-export function setCurrentLocale(locale: string): void {
+export const setCurrentLocale = (locale: string): void => {
   currentLocale = locale;
-}
+};
 
 /** Returns the supported locale codes. */
-export function getLocales(): string[] {
-  return [...config.locales];
-}
+export const getLocales = (): string[] => [...config.locales];
 
 /** Returns the default locale code. */
-export function getDefaultLocale(): string {
-  return config.defaultLocale;
-}
+export const getDefaultLocale = (): string => config.defaultLocale;
 
 /** Returns the configured locale from the first pathname segment, or null. */
-export function localeFromPathname(
+export const localeFromPathname = (
   pathname: string,
   supported: readonly string[] = config.locales,
-): string | null {
-  return (
-    supported.find((c) => c.toLowerCase() === pathname.split(/[/?#]/)[1]?.toLowerCase()) ?? null
-  );
-}
+): string | null =>
+  supported.find((c) => c.toLowerCase() === pathname.split(/[/?#]/)[1]?.toLowerCase()) ?? null;
 
 /** Removes leading locale prefix from pathname. */
-export function stripLocalePrefix(
+export const stripLocalePrefix = (
   path: string,
   supported: readonly string[] = config.locales,
-): string {
-  return path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "");
-}
+): string => path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "");
 
 /** Generates a localized relative URL path. */
-export function getLocaleUrl(path: string, locale = getCurrentLocale()): string {
+export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string => {
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
   const target = stripLocalePrefix(path).replace(/^\/?/, "/");
   return config.prefixDefaultLocale || locale !== config.defaultLocale
     ? `/${locale}${target}`
     : target;
-}
+};
