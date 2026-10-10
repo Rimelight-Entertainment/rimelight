@@ -8,50 +8,41 @@ export interface TFunction {
   localize: (val: unknown, locale?: string) => string;
 }
 
-const isRecord = (v: any): v is Record<string, any> =>
-  v && typeof v === "object" && !Array.isArray(v);
-const numberFormats = new Map<string, Intl.NumberFormat>();
+const isRecord = (v: unknown): v is Record<string, any> =>
+  Boolean(v && typeof v === "object" && !Array.isArray(v));
 
-const getVal = (dict: any, path: string): unknown =>
-  dict && (path in dict ? dict[path] : path.split(".").reduce((acc, p) => acc?.[p], dict));
+const cache = new Map<string, any>();
+const intl = (type: "p" | "n", loc: string) =>
+  cache.get(type + loc) ??
+  cache
+    .set(type + loc, type === "p" ? new Intl.PluralRules(loc) : new Intl.NumberFormat(loc))
+    .get(type + loc);
 
-const resolveKey = (key: string, locale = getCurrentLocale()): unknown =>
-  getVal(config.translations[locale], key) ??
-  (locale !== config.defaultLocale
-    ? getVal(config.translations[config.defaultLocale], key)
-    : undefined);
+const resolve = (key: string, loc = getCurrentLocale()): unknown => {
+  const get = (d: any) => d?.[key] ?? key.split(".").reduce((a, p) => a?.[p], d);
+  return get(config.translations[loc]) ?? get(config.translations[config.defaultLocale]);
+};
 
 export const getPluralCategory = (count: number, locale = "en"): Intl.LDMLPluralRule =>
-  new Intl.PluralRules(locale).select(count);
+  intl("p", locale).select(count);
 
 export const t: TFunction = Object.assign(
-  function t(key: string, params?: Record<string, any>): string {
+  (key: string, params?: Record<string, any>): string => {
     if (!key.includes(".")) return key;
-
-    const locale = getCurrentLocale();
-    let val = resolveKey(key, locale) ?? key;
+    const loc = getCurrentLocale();
+    let val = resolve(key, loc) ?? key;
 
     if (params && typeof params["count"] === "number" && isRecord(val)) {
-      val = val[getPluralCategory(params["count"], locale)] ?? val["other"] ?? key;
+      val = val[getPluralCategory(params["count"], loc)] ?? val["other"] ?? key;
     }
-
     if (typeof val === "function") return val(params);
-
-    if (typeof val === "string") {
-      return params
-        ? val.replace(/\{(\w+)\}/g, (_, k) => {
-            const p = params[k];
-            if (p === undefined) return `{${k}}`;
-            if (k === "count" && typeof p === "number") {
-              if (!numberFormats.has(locale))
-                numberFormats.set(locale, new Intl.NumberFormat(locale));
-              return numberFormats.get(locale)!.format(p);
-            }
-            return String(p);
-          })
-        : val;
+    if (typeof val === "string" && params) {
+      return val.replace(/\{(\w+)\}/g, (_, k) =>
+        k === "count" && typeof params[k] === "number"
+          ? intl("n", loc).format(params[k])
+          : String(params[k] ?? `{${k}}`),
+      );
     }
-
     return isRecord(val)
       ? JSON.stringify(val)
       : val != null
@@ -59,19 +50,15 @@ export const t: TFunction = Object.assign(
         : "";
   },
   {
-    raw: <T = unknown>(key: string, fallback?: T): T => (resolveKey(key) ?? fallback) as T,
-    array: <T = string>(key: string, fallback: T[] = []): T[] => {
-      const v = resolveKey(key);
-      return Array.isArray(v) ? (v as T[]) : fallback;
-    },
-    plural: (count: number, locale?: string) =>
-      getPluralCategory(count, locale ?? getCurrentLocale()),
-    localize: (val: unknown, locale = getCurrentLocale()): string => {
-      if (isRecord(val)) {
-        const loc = val[locale] || val[config.defaultLocale];
-        return typeof loc === "string" ? loc : "";
-      }
-      return val != null && typeof val !== "object" ? String(val as string | number | boolean) : "";
-    },
+    raw: <T = unknown>(k: string, fb?: T): T => (resolve(k) ?? fb) as T,
+    array: <T = string>(k: string, fb: T[] = []): T[] =>
+      (Array.isArray(resolve(k)) ? resolve(k) : fb) as T[],
+    plural: (c: number, loc?: string) => getPluralCategory(c, loc ?? getCurrentLocale()),
+    localize: (v: unknown, loc = getCurrentLocale()): string =>
+      isRecord(v)
+        ? String(v[loc] || v[config.defaultLocale] || "")
+        : v != null && typeof v !== "object"
+          ? String(v as string | number | boolean)
+          : "",
   },
 );
