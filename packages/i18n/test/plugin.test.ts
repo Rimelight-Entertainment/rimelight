@@ -52,6 +52,12 @@ describe("@rimelight/i18n Vite plugin", () => {
       expect(contentJs).toContain(`export const defaultLocale = "en";`);
       expect(contentJs).toContain(`export const prefixDefaultLocale = false;`);
       expect(contentJs).toContain(`"Início"`);
+
+      const generatedTypes = path.join(tmpDir, "node_modules", ".rimelight", "i18n", "types.d.ts");
+      expect(fs.existsSync(generatedTypes)).toBe(true);
+      const contentTypes = fs.readFileSync(generatedTypes, "utf-8");
+      expect(contentTypes).toContain('declare module "@rimelight/i18n"');
+      expect(contentTypes).toContain('"nav.home"');
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
@@ -121,7 +127,6 @@ describe("@rimelight/i18n Vite plugin", () => {
           fileName: "locales/en.json",
           source: JSON.stringify(
             {
-              nav: { home: "Home" },
               "nav.home": "Home",
             },
             null,
@@ -133,7 +138,6 @@ describe("@rimelight/i18n Vite plugin", () => {
           fileName: "locales/pt.json",
           source: JSON.stringify(
             {
-              nav: { home: "Início" },
               "nav.home": "Início",
             },
             null,

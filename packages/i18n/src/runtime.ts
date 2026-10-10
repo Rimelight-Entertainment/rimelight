@@ -1,4 +1,13 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import generatedConfig from "#rimelight/i18n";
+
+export const i18nContext = new AsyncLocalStorage<{ locale: string }>();
+
+export interface RimelightTranslationKeys {
+  keys: string;
+}
+
+export type TranslationKey = RimelightTranslationKeys["keys"];
 
 interface I18nConfig {
   locales: readonly string[];
@@ -25,7 +34,7 @@ export const getLocales = (): string[] => [...config.locales];
 export const getDefaultLocale = (): string => config.defaultLocale;
 
 /** Returns the active locale code. */
-export const getCurrentLocale = (): string => currentLocale;
+export const getCurrentLocale = (): string => i18nContext.getStore()?.locale ?? currentLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -43,9 +52,9 @@ export const getLocaleAsset = <T>(assets: Record<string, T>, locale = getCurrent
   (assets[locale] ?? assets[config.defaultLocale]) as T;
 
 export interface TFunction {
-  (key: string, params?: Record<string, unknown>, locale?: string): string;
-  raw: <T = unknown>(key: string, fallback?: T, locale?: string) => T;
-  array: <T = string>(key: string, fallback?: T[], locale?: string) => T[];
+  (key: TranslationKey, params?: Record<string, unknown>, locale?: string): string;
+  raw: <T = unknown>(key: TranslationKey, fallback?: T, locale?: string) => T;
+  array: <T = string>(key: TranslationKey, fallback?: T[], locale?: string) => T[];
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
   localize: (value: unknown, locale?: string) => string;
 }
@@ -81,16 +90,18 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const get = (targetLocale: string) =>
-        key
+      const get = (targetLocale: string) => {
+        const dict = config.translations[targetLocale];
+        if (!dict) return undefined;
+        if (key in dict) return dict[key];
+        return key
           .split(".")
           .reduce<unknown>(
-            (dict, part) =>
-              dict && typeof dict === "object"
-                ? (dict as Record<string, unknown>)[part]
-                : undefined,
-            config.translations[targetLocale],
+            (d, part) =>
+              d && typeof d === "object" ? (d as Record<string, unknown>)[part] : undefined,
+            dict,
           );
+      };
       return (get(locale) ?? get(config.defaultLocale) ?? fallback) as T;
     },
     array: <T = string>(key: string, fallback: T[] = [], locale = getCurrentLocale()): T[] => {

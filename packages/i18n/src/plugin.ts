@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
 import { defineRimelightArtifactPlugin } from "@rimelight/config";
+import { flatten } from "./cli";
 
 export interface RimelightI18nPluginOptions {
   defaultLocale?: string;
@@ -12,16 +13,6 @@ export interface RimelightI18nPluginOptions {
 
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let translations: Record<string, any> = {};
-
-  const flatten = (target: any, prefix = "", result: Record<string, any> = {}) => {
-    Object.entries(target || {}).forEach(([key, value]) => {
-      if (key in Object.prototype) return;
-      const fullKey = prefix ? `${prefix}.${key}` : key;
-      result[fullKey] = value;
-      if (value?.constructor === Object) flatten(value, fullKey, result);
-    });
-    return result;
-  };
 
   return {
     ...defineRimelightArtifactPlugin({
@@ -42,12 +33,26 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
           : {};
 
         const locales = Object.keys(translations).sort();
+        const defaultLocale =
+          options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en";
+
+        return { ...options, locales, defaultLocale, translations };
+      },
+      emit: () => {
+        const locales = Object.keys(translations).sort();
+        const defaultLoc =
+          options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en";
+        const firstLocale = locales[0];
+        const keys = Object.keys(
+          translations[defaultLoc] ?? (firstLocale ? translations[firstLocale] : undefined) ?? {},
+        );
+        const keyUnion =
+          keys.length > 0 ? keys.map((k) => JSON.stringify(k)).join(" | ") : "string";
+
         return {
-          ...options,
-          locales,
-          defaultLocale:
-            options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en",
-          translations,
+          files: {
+            "types.d.ts": `declare module "@rimelight/i18n" {\n  interface RimelightTranslationKeys {\n    keys: ${keyUnion};\n  }\n}\n`,
+          },
         };
       },
     }),
