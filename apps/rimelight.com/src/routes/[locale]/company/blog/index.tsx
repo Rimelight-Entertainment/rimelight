@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getRelativeLocaleUrl, getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
@@ -48,11 +48,9 @@ export const BlogIndexPage: Component = () => {
               {(post) => {
                 const content =
                   typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-                const title = getLocalizedText(post.title, activeLocale());
+                const title = t.localize(post.title);
                 const description =
-                  getLocalizedText(post.description, activeLocale()) ||
-                  content.properties?.description ||
-                  "";
+                  t.localize(post.description) || content.properties?.description || "";
                 const heroImage = content.properties?.heroImage;
                 const postDate = post.postedAt || post.createdAt;
                 return (

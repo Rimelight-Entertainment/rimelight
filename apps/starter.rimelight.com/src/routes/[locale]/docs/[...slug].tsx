@@ -9,7 +9,7 @@ import {
   blocksToMarkdown,
 } from "@rimelight/cms";
 import { PageRenderer } from "#components/cms/PageRenderer";
-import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const DocsSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();
@@ -86,15 +86,9 @@ export const DocsSlugPage: Component = () => {
   const dbBlocks = () => content().blocks || [];
 
   const docTitle = () =>
-    dbPage()
-      ? getLocalizedText(dbPage()!.title, activeLocale()) || "Documentation"
-      : "Documentation";
+    dbPage() ? t.localize(dbPage()!.title) || "Documentation" : "Documentation";
   const docDescription = () =>
-    dbPage()
-      ? getLocalizedText(dbPage()!.description, activeLocale()) ||
-        content().properties?.description ||
-        ""
-      : "";
+    dbPage() ? t.localize(dbPage()!.description) || content().properties?.description || "" : "";
   const docHeadings = () => extractHeadingsFromBlocks(dbBlocks());
   const docTableOfContents = () =>
     content().properties?.tableOfContents as TableOfContentsConfig | false | undefined;

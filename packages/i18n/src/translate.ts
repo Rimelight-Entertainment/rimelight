@@ -6,6 +6,7 @@ export interface TFunction {
   raw: <T = unknown>(key: string, fallback?: T) => T;
   array: <T = string>(key: string, fallback?: T[]) => T[];
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
+  localize: (val: unknown, locale?: string) => string;
 }
 
 export let translations: Record<string, Record<string, any>> = generatedConfig?.translations
@@ -120,13 +121,14 @@ export const t: TFunction = Object.assign(
     array: tArray,
     plural: (count: number, locale?: string) =>
       getPluralCategory(count, locale ?? getCurrentLocale()),
+    localize: tLocalize,
   },
 );
 
 export function getLocalizedText(
   val: unknown,
   targetLocale: string,
-  fallbackLocale: string = "en",
+  fallbackLocale: string = defaultLocale,
 ): string {
   if (isObjectRecord(val)) {
     const localized = val[targetLocale];
@@ -139,4 +141,8 @@ export function getLocalizedText(
   if (typeof val === "string") return val;
   if (typeof val === "number" || typeof val === "boolean") return String(val);
   return "";
+}
+
+function tLocalize(val: unknown, targetLocale: string = getCurrentLocale()): string {
+  return getLocalizedText(val, targetLocale);
 }

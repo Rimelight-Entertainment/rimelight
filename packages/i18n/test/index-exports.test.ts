@@ -36,6 +36,7 @@ describe("index exports", () => {
     expect(typeof i18n.t.raw).toBe("function");
     expect(typeof i18n.t.array).toBe("function");
     expect(typeof i18n.t.plural).toBe("function");
+    expect(typeof i18n.t.localize).toBe("function");
   });
 
   it("shares live state between namespace and named access", () => {

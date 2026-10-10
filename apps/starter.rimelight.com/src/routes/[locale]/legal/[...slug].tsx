@@ -2,7 +2,7 @@ import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "#layouts/AppLayout";
 import { PageRenderer } from "#components/cms/PageRenderer";
-import { t, getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const LegalSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();
@@ -24,9 +24,8 @@ export const LegalSlugPage: Component = () => {
     { loadingValue: null },
   );
 
-  const title = () => (pageData() ? getLocalizedText(pageData()!.title, activeLocale()) : "Legal");
-  const description = () =>
-    pageData() ? getLocalizedText(pageData()!.description, activeLocale()) : "";
+  const title = () => (pageData() ? t.localize(pageData()!.title) : "Legal");
+  const description = () => (pageData() ? t.localize(pageData()!.description) : "");
   const content = () => {
     const p = pageData();
     if (!p) return {};

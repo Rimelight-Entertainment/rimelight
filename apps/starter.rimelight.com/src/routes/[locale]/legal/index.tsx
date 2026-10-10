@@ -1,10 +1,8 @@
 import { type Component, For, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getRelativeLocaleUrl, getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const LegalIndexPage: Component = () => {
-  const activeLocale = () => getCurrentLocale();
-
   const legalPages = createMemo<any[]>(
     async () => {
       try {
@@ -27,8 +25,8 @@ export const LegalIndexPage: Component = () => {
           <ul class="legal-list flex flex-col gap-6">
             <For each={legalPages() || []}>
               {(doc) => {
-                const title = getLocalizedText(doc.title, activeLocale());
-                const description = getLocalizedText(doc.description, activeLocale());
+                const title = t.localize(doc.title);
+                const description = t.localize(doc.description);
                 const pubDate = doc.postedAt || doc.createdAt;
                 return (
                   <li class="legal-item border-b border-neutral-800 pb-6 last:border-b-0">

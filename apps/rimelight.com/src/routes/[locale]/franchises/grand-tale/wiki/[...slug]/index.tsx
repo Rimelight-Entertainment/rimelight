@@ -2,7 +2,7 @@ import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import WikiLayout from "#layouts/WikiLayout";
 import { PageRenderer } from "#components/cms/PageRenderer";
-import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const WikiSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
@@ -24,10 +24,8 @@ export const WikiSlugPage: Component = () => {
     { loadingValue: null },
   );
 
-  const title = () =>
-    (pageData() ? getLocalizedText(pageData()!.title, activeLocale()) : "") || "Wiki Article";
-  const description = () =>
-    pageData() ? getLocalizedText(pageData()!.description, activeLocale()) : "";
+  const title = () => (pageData() ? t.localize(pageData()!.title) : "") || "Wiki Article";
+  const description = () => (pageData() ? t.localize(pageData()!.description) : "");
   const blocks = () => {
     const p = pageData();
     if (!p) return [];

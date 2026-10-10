@@ -2,7 +2,7 @@ import { type Component, Show, createMemo } from "solid-js";
 import DocsLayout from "#layouts/DocsLayout";
 import { PageRenderer } from "#components/cms/PageRenderer";
 import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms";
-import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 
 export const DocsIndexPage: Component = () => {
@@ -68,10 +68,9 @@ export const DocsIndexPage: Component = () => {
   };
 
   const dbBlocks = () => content().blocks || [];
-  const docTitle = () =>
-    (docPage() ? getLocalizedText(docPage()!.title, activeLocale()) : "") || "Documentation";
+  const docTitle = () => (docPage() ? t.localize(docPage()!.title) : "") || "Documentation";
   const docDescription = () =>
-    (docPage() ? getLocalizedText(docPage()!.description, activeLocale()) : "") ||
+    (docPage() ? t.localize(docPage()!.description) : "") ||
     content().properties?.description ||
     "";
   const docHeadings = () => extractHeadingsFromBlocks(dbBlocks());

@@ -187,3 +187,35 @@ describe("getLocalizedText", () => {
     expect(getLocalizedText(undefined, "en")).toBe("");
   });
 });
+
+describe("t.localize", () => {
+  it("resolves the current locale from a dictionary object", () => {
+    setTranslations({}, { defaultLocale: "en", locales: ["en", "pt", "es"] });
+    setCurrentLocale("pt");
+    expect(t.localize({ en: "Hello", pt: "Olá", es: "Hola" })).toBe("Olá");
+  });
+
+  it("falls back to defaultLocale when the locale is missing or empty", () => {
+    setTranslations({}, { defaultLocale: "en", locales: ["en", "de", "fr"] });
+    setCurrentLocale("de");
+    expect(t.localize({ en: "Hello World", fr: "" })).toBe("Hello World");
+  });
+
+  it("supports an explicit locale override", () => {
+    setCurrentLocale("en");
+    expect(t.localize({ en: "Hello", pt: "Olá" }, "pt")).toBe("Olá");
+  });
+
+  it("returns raw strings and stringifies primitives", () => {
+    setCurrentLocale("en");
+    expect(t.localize("Plain string")).toBe("Plain string");
+    expect(t.localize(123)).toBe("123");
+    expect(t.localize(true)).toBe("true");
+  });
+
+  it("returns empty string for null or undefined", () => {
+    setCurrentLocale("en");
+    expect(t.localize(null)).toBe("");
+    expect(t.localize(undefined)).toBe("");
+  });
+});

@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { getRelativeLocaleUrl, t, getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, t, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
@@ -262,11 +262,9 @@ export const HomePage: Component = () => {
               {(post) => {
                 const content =
                   typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-                const title = getLocalizedText(post.title, activeLocale());
+                const title = t.localize(post.title);
                 const description =
-                  getLocalizedText(post.description, activeLocale()) ||
-                  content.properties?.description ||
-                  "";
+                  t.localize(post.description) || content.properties?.description || "";
                 const heroImage = content.properties?.heroImage;
                 const postDate = post.postedAt || post.createdAt;
                 return (

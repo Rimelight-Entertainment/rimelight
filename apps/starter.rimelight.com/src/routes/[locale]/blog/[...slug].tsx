@@ -2,7 +2,7 @@ import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "#layouts/AppLayout";
 import { PageRenderer } from "#components/cms/PageRenderer";
-import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const BlogPostPage: Component = () => {
   const params = useParams<{ locale: string; slug: string }>();
@@ -24,13 +24,12 @@ export const BlogPostPage: Component = () => {
     { loadingValue: null },
   );
 
-  const title = () =>
-    pageData() ? getLocalizedText(pageData()!.title, activeLocale()) || "Blog Post" : "Blog Post";
+  const title = () => (pageData() ? t.localize(pageData()!.title) || "Blog Post" : "Blog Post");
   const description = () => {
     const p = pageData();
     if (!p) return "";
     const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return getLocalizedText(p.description, activeLocale()) || content.properties?.description || "";
+    return t.localize(p.description) || content.properties?.description || "";
   };
 
   const content = () => {

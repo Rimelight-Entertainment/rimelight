@@ -6,7 +6,7 @@ import meta from "virtual:rimelight-ui-docs-meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
 import { BlockRenderer } from "#components/cms/PageRenderer";
-import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 
 // Build component registry from all UI components
@@ -183,10 +183,9 @@ export const DocPage: Component = () => {
     return blocks;
   };
 
-  const docTitle = () =>
-    (docPage() ? getLocalizedText(docPage()!.title, activeLocale()) : "") || "Documentation";
+  const docTitle = () => (docPage() ? t.localize(docPage()!.title) : "") || "Documentation";
   const docDescription = () =>
-    (docPage() ? getLocalizedText(docPage()!.description, activeLocale()) : "") ||
+    (docPage() ? t.localize(docPage()!.description) : "") ||
     content().properties?.description ||
     "";
   const docHeadings = () => extractHeadingsFromBlocks(dbBlocks());

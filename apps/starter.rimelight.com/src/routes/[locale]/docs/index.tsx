@@ -2,7 +2,7 @@ import { type Component, Show, createMemo } from "solid-js";
 import DocsLayout from "#layouts/DocsLayout";
 import { extractHeadingsFromBlocks, blocksToMarkdown } from "@rimelight/cms";
 import { PageRenderer } from "#components/cms/PageRenderer";
-import { getCurrentLocale, getLocalizedText } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const DocsIndexPage: Component = () => {
   const activeLocale = () => getCurrentLocale();
@@ -23,9 +23,7 @@ export const DocsIndexPage: Component = () => {
   );
 
   const title = () =>
-    docData()
-      ? getLocalizedText(docData()!.title, activeLocale()) || "Documentation"
-      : "Documentation";
+    docData() ? t.localize(docData()!.title) || "Documentation" : "Documentation";
   const content = () => {
     const d = docData();
     if (!d) return {};
@@ -33,11 +31,7 @@ export const DocsIndexPage: Component = () => {
   };
   const dbBlocks = () => content().blocks || [];
   const description = () =>
-    docData()
-      ? getLocalizedText(docData()!.description, activeLocale()) ||
-        content().properties?.description ||
-        ""
-      : "";
+    docData() ? t.localize(docData()!.description) || content().properties?.description || "" : "";
   const headings = () => extractHeadingsFromBlocks(dbBlocks());
   const rawMarkdown = () => blocksToMarkdown(dbBlocks());
 
