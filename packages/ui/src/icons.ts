@@ -1,4 +1,4 @@
-import uiConfig from "#rimelight/ui";
+import { getUIConfig } from "./resolver";
 import { getIconNodes, getIconSvg, ICONS, svg, type IconNode } from "./icons.raw";
 
 export { ICONS, svg, type IconNode };
@@ -27,7 +27,7 @@ export const resolveIcon = (name = "", custom?: string | IconNode[]): ResolvedIc
   if (Array.isArray(custom)) {
     return { isClass: false, content: "", nodes: custom };
   }
-  const iconOverride = uiConfig?.icons?.[name as keyof typeof ICONS];
+  const iconOverride = getUIConfig()?.icons?.[name as keyof typeof ICONS];
   if (Array.isArray(iconOverride)) {
     return { isClass: false, content: "", nodes: iconOverride };
   }
