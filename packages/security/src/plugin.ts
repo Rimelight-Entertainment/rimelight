@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import type { Plugin } from "vite-plus";
-import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config";
-import { resolveSecurityDomain } from "./runtime";
+import { resolveSecurityDomain } from "./domain";
 
 export interface RimelightSecurityPluginOptions {
   domain?: string;
@@ -77,7 +76,8 @@ export interface RimelightSecurityPluginOptions {
   devOnly?: boolean;
 }
 
-export { serializeData as serializeConfig };
+export const VIRTUAL_ID = "virtual:rimelight-security";
+export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")
@@ -93,17 +93,24 @@ export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
   const externalUrls = Array.from(new Set(options.resources || []));
 
   return {
-    ...defineRimelightArtifactPlugin({
-      pkgName: "security",
-      emit: () => ({
-        files: {
-          "config.js": `export const config = ${serializeData(options)};\nexport const manifest = ${JSON.stringify(sriManifest)};\nexport default { config, manifest };\n`,
-          "config.d.ts": `export declare const config: any;\nexport declare const manifest: Record<string, string>;\nexport default { config, manifest };\n`,
-          "sri.json": JSON.stringify(sriManifest, null, 2),
-        },
-      }),
-    }),
+    name: "rimelight:security",
     enforce: "post",
+
+    resolveId(id) {
+      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      return null;
+    },
+
+    load(id) {
+      if (id === RESOLVED_VIRTUAL_ID) {
+        return [
+          `export const config = ${JSON.stringify(options)};`,
+          `export const manifest = ${JSON.stringify(sriManifest)};`,
+          `export default { config, manifest };`,
+        ].join("\n");
+      }
+      return null;
+    },
 
     async buildStart() {
       if (process.env["NODE_ENV"] === "development") return;

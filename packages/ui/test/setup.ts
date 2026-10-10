@@ -1,5 +1,10 @@
-import { afterEach } from "vite-plus/test";
+import { afterEach, vi } from "vite-plus/test";
 import { Window } from "happy-dom";
+
+vi.mock("virtual:rimelight-ui", () => ({
+  config: {},
+  default: {},
+}));
 
 const window = new Window();
 

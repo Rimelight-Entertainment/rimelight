@@ -1,8 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import { defineRimelightArtifactPlugin } from "@rimelight/config";
 import { flatten } from "./cli";
+
+export const VIRTUAL_ID = "virtual:rimelight-i18n";
+export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+export const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
+export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 export interface RimelightI18nPluginOptions {
   defaultLocale?: string;
@@ -12,54 +16,59 @@ export interface RimelightI18nPluginOptions {
 }
 
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
-  let translations: Record<string, any> = {};
+  let root = process.cwd();
+
+  const getTranslations = () => {
+    const dir = path.resolve(root, options.translationsDir ?? "src/i18n");
+    return fs.existsSync(dir)
+      ? Object.fromEntries(
+          fs
+            .readdirSync(dir)
+            .filter((f) => f.endsWith(".json"))
+            .map((f) => [
+              path.basename(f, ".json"),
+              flatten(JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"))),
+            ]),
+        )
+      : {};
+  };
 
   return {
-    ...defineRimelightArtifactPlugin({
-      pkgName: "i18n",
-      watch: ({ root }) => [path.resolve(root, options.translationsDir ?? "src/i18n")],
-      config: ({ root }) => {
-        const dir = path.resolve(root, options.translationsDir ?? "src/i18n");
-        translations = fs.existsSync(dir)
-          ? Object.fromEntries(
-              fs
-                .readdirSync(dir)
-                .filter((file) => file.endsWith(".json"))
-                .map((file) => [
-                  path.basename(file, ".json"),
-                  flatten(JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8"))),
-                ]),
-            )
-          : {};
-
-        const locales = Object.keys(translations).sort();
+    name: "rimelight:i18n",
+    configResolved(c) {
+      root = c.root ? path.resolve(c.root) : root;
+    },
+    resolveId(id) {
+      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      if (id === VIRTUAL_SERVER_ID) return RESOLVED_VIRTUAL_SERVER_ID;
+      return null;
+    },
+    load(id) {
+      if (id === RESOLVED_VIRTUAL_ID) {
+        const trans = getTranslations();
+        const locales = Object.keys(trans).sort();
         const defaultLocale =
           options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en";
+        const prefixDefaultLocale = options.prefixDefaultLocale ?? true;
+        const skipPaths = options.skipPaths ?? ["/api", "/_"];
 
-        return { ...options, locales, defaultLocale };
-      },
-      emit: () => {
-        const locales = Object.keys(translations).sort();
-        const defaultLoc =
-          options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en";
-        const firstLocale = locales[0];
-        const keys = Object.keys(
-          translations[defaultLoc] ?? (firstLocale ? translations[firstLocale] : undefined) ?? {},
-        );
-        const keyUnion =
-          keys.length > 0 ? keys.map((k) => JSON.stringify(k)).join(" | ") : "string";
+        return [
+          `export const locales = ${JSON.stringify(locales)};`,
+          `export const defaultLocale = ${JSON.stringify(defaultLocale)};`,
+          `export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};`,
+          `export const skipPaths = ${JSON.stringify(skipPaths)};`,
+          `export const translations = {};`,
+          `export default { locales, defaultLocale, prefixDefaultLocale, skipPaths, translations };`,
+        ].join("\n");
+      }
 
-        return {
-          files: {
-            "server.js": `export const translations = ${JSON.stringify(translations)};\nexport default translations;\n`,
-            "server.d.ts": `export declare const translations: Record<string, Record<string, string>>;\nexport default translations;\n`,
-            "types.d.ts": `declare module "@rimelight/i18n" {\n  interface RimelightTranslationKeys {\n    keys: ${keyUnion};\n  }\n}\n`,
-          },
-        };
-      },
-    }),
+      if (id === RESOLVED_VIRTUAL_SERVER_ID) {
+        return `export const translations = ${JSON.stringify(getTranslations())};\nexport default translations;`;
+      }
+      return null;
+    },
     generateBundle() {
-      Object.entries(translations).forEach(([locale, data]) =>
+      Object.entries(getTranslations()).forEach(([locale, data]) =>
         this.emitFile({
           type: "asset",
           fileName: `locales/${locale}.json`,

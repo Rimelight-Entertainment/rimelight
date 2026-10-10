@@ -3,6 +3,10 @@ import solid from "@solidjs/vite-plugin";
 
 export default defineConfig({
   plugins: [solid({ ssr: true }) as any],
+  test: {
+    environment: "node",
+    setupFiles: ["test/setup.ts"],
+  },
   pack: {
     entry: [
       "src/plugin.ts",
@@ -15,11 +19,7 @@ export default defineConfig({
       "src/fonts.ts",
     ],
     deps: {
-      neverBundle: [/^#rimelight/],
+      neverBundle: [/^virtual:rimelight-ui/],
     },
-  },
-  test: {
-    environment: "node",
-    setupFiles: ["test/setup.ts"],
   },
 });

@@ -20,32 +20,10 @@
     "tsconfig"
   ],
   "type": "module",
-  "imports": {
-    "#rimelight/config/*": {
-      "types": "./node_modules/.rimelight/config/*.d.ts",
-      "default": "./node_modules/.rimelight/config/*.js"
-    },
-    "#rimelight/*/client": {
-      "types": "./node_modules/.rimelight/*/client.d.ts",
-      "default": "./node_modules/.rimelight/*/client.js"
-    },
-    "#rimelight/*/server": {
-      "types": "./node_modules/.rimelight/*/server.d.ts",
-      "default": "./node_modules/.rimelight/*/server.js"
-    },
-    "#rimelight/*": {
-      "types": "./node_modules/.rimelight/*/config.d.ts",
-      "default": "./node_modules/.rimelight/*/config.js"
-    }
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
-    },
-    "./generator": {
-      "types": "./dist/generator.d.mts",
-      "import": "./dist/generator.mjs"
     },
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/solid": "./tsconfig/solid.json"

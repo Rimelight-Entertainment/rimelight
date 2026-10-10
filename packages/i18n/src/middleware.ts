@@ -1,5 +1,5 @@
 import { config, i18nContext, setCurrentLocale, t } from "./runtime";
-import serverTranslations from "#rimelight/i18n/server";
+import serverTranslations from "virtual:rimelight-i18n/server";
 
 /**
  * Universal i18n middleware for locale resolution, route redirection,

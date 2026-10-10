@@ -1,7 +1,13 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import type { Plugin } from "vite-plus";
 import { createAuthClient } from "../src/client/index";
-import { auth as authPlugin } from "../src/plugin";
+import {
+  auth as authPlugin,
+  VIRTUAL_ID,
+  RESOLVED_VIRTUAL_ID,
+  VIRTUAL_SERVER_ID,
+  RESOLVED_VIRTUAL_SERVER_ID,
+} from "../src/plugin";
 
 /**
  * Invoke a Vite object-hook the way the container does (function or { handler }).
@@ -57,22 +63,7 @@ describe("Auth Client", () => {
 });
 
 describe("Auth Vite Plugin", () => {
-  it("injects resolve.alias for #rimelight/auth subpaths", async () => {
-    const plugin: Plugin = authPlugin({ adapter: "cf-access" });
-    const configResult = await callHook<any>(plugin.config, { root: process.cwd() });
-    expect(configResult?.resolve?.alias).toBeDefined();
-
-    const aliases = configResult.resolve.alias;
-    const findAlias = (name: string) =>
-      aliases.find((a: any) => (a.find instanceof RegExp ? a.find.test(name) : a.find === name));
-
-    expect(findAlias("#rimelight/auth")).toBeDefined();
-    expect(findAlias("#rimelight/auth/server")).toBeDefined();
-    expect(findAlias("#rimelight/auth/client")).toBeDefined();
-    expect(findAlias("#auth")).toBeUndefined();
-  });
-
-  it("emits disk artifacts when configResolved runs", async () => {
+  it("resolves and loads virtual modules", async () => {
     const plugin: Plugin = authPlugin({
       adapter: "cf-access",
       roleGuards: {
@@ -80,6 +71,15 @@ describe("Auth Vite Plugin", () => {
       },
     });
 
-    await callHook(plugin.configResolved, { root: process.cwd() });
+    expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
+    expect(await callHook(plugin.resolveId, VIRTUAL_SERVER_ID)).toBe(RESOLVED_VIRTUAL_SERVER_ID);
+    expect(await callHook(plugin.resolveId, "some-other-id")).toBeNull();
+
+    const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
+    expect(configCode).toContain("export const config =");
+    expect(configCode).toContain('"/admin"');
+
+    const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
+    expect(serverCode).toContain("createCfAccessFromEnv");
   });
 });

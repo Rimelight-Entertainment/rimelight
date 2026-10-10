@@ -1,11 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import {
-  defineRimelightArtifactPlugin,
-  resolveImportSpecifier,
-  serializeData,
-} from "@rimelight/config";
 import type { RimelightSeoOptions, SiteConfig } from "./types";
 import { buildRobotsTxt } from "./robots";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap";
@@ -19,6 +14,11 @@ import { generateIco, generatePng, generateMaskablePng, generateOgCard } from ".
 export type RimelightSeoPluginOptions = RimelightSeoOptions;
 
 export { type RimelightSeoOptions } from "./types";
+
+export const VIRTUAL_ID = "virtual:rimelight-seo";
+export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+export const VIRTUAL_SERVER_ID = "virtual:rimelight-seo/server";
+export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Validates that a requested file path resolves strictly within the given root directory.
@@ -47,16 +47,12 @@ function createDefaultIconSvg(
 }
 
 /**
- * Consolidated Vite Plugin orchestrating SEO artifacts in node_modules/.rimelight/seo/,
+ * Consolidated Vite Plugin orchestrating SEO in-memory virtual modules,
  * dev-server asset middleware, and production static asset generation.
  */
 function seo(options: RimelightSeoOptions = {}): Plugin {
   let rootDir = process.cwd();
 
-  // Resolve configuration according to priority:
-  // 1. Explicit top-level fields in RimelightSeoOptions
-  // 2. Fields in options.site
-  // 3. Package defaults
   const siteOpt = options.site || {};
   const authorHandle = options.authorHandle || siteOpt.seo?.authorHandle;
   const ogImage = options.ogImage || siteOpt.ogImage;
@@ -111,7 +107,6 @@ function seo(options: RimelightSeoOptions = {}): Plugin {
   const seoLocales = options.locales;
   const privatePathPrefixes = options.privatePathPrefixes || [];
 
-  // File discovery helpers
   const findFile = (candidates: string[]): string | null => {
     for (const c of candidates) {
       const resolved = path.resolve(rootDir, c);
@@ -185,7 +180,6 @@ function seo(options: RimelightSeoOptions = {}): Plugin {
       }
     }
 
-    // Default fallback SVG if no icon configured or found
     if (!masterIconSource && options.assets !== false) {
       masterIconSource = createDefaultIconSvg(
         normalizedSiteConfig.name,
@@ -196,61 +190,46 @@ function seo(options: RimelightSeoOptions = {}): Plugin {
     }
   }
 
-  const basePlugin = defineRimelightArtifactPlugin({
-    name: "rimelight:seo",
-    pkgName: "seo",
-    aliases: {
-      "#rimelight/seo/server": "server.js",
-      "#rimelight/seo/client": "config.js",
-    },
-    emit({ root, targetDir }) {
-      rootDir = root;
-      resolveIcons();
-
-      const dbPath = findFile(["src/db/index.ts", "src/db/index.js", "src/db/index.mjs"]);
-      const corpusPath = findFile([
-        "src/config/llms.corpus.ts",
-        "src/config/llms.corpus.js",
-        "src/config/llms.corpus.mjs",
-      ]);
-      const dbSpecifier = dbPath ? resolveImportSpecifier(dbPath, root, targetDir) : null;
-      const corpusSpecifier = corpusPath
-        ? resolveImportSpecifier(corpusPath, root, targetDir)
-        : null;
-      const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
-
-      const configCode = `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";
-
-export const siteConfig = ${serializeData(normalizedSiteConfig)};
-export const SEO_LOCALES = ${serializeData(seoLocales)};
-export const PRIVATE_PATH_PREFIXES = ${serializeData(privatePathPrefixes)};
-export const seoConfig = {
-  SEO_LOCALES: ${serializeData(seoLocales)},
-  PRIVATE_PATH_PREFIXES: ${serializeData(privatePathPrefixes)}
-};
-
-export const createHead = defineSeoConfig(siteConfig);
-export { createHead as createSeoHead, defineSeoConfig };
-export default siteConfig;`;
-
-      const serverCode = `const b64 = ${JSON.stringify(b64)};
-export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;
-export const isSvg = ${JSON.stringify(isSvg)};
-export const backgroundColor = ${JSON.stringify(bgColor)};
-export const db = ${dbSpecifier ? `await import(${JSON.stringify(dbSpecifier)})` : "null"};
-export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(corpusSpecifier)})).corpusPages || []` : "[]"};`;
-
-      return {
-        "config.js": configCode,
-        "config.d.ts": `import type { SiteConfig } from "@rimelight/seo/types";\nexport declare const siteConfig: SiteConfig;\nexport declare const SEO_LOCALES: any;\nexport declare const PRIVATE_PATH_PREFIXES: string[];\nexport declare const seoConfig: any;\nexport declare const createHead: any;\nexport declare const createSeoHead: any;\nexport declare const defineSeoConfig: any;\nexport default siteConfig;`,
-        "server.js": serverCode,
-        "server.d.ts": `export declare const masterIconBuffer: any;\nexport declare const isSvg: boolean;\nexport declare const backgroundColor: string;\nexport declare const db: any;\nexport declare const corpusPages: any[];`,
-      };
-    },
-  });
-
   return {
-    ...basePlugin,
+    name: "rimelight:seo",
+    enforce: "pre",
+
+    resolveId(id) {
+      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      if (id === VIRTUAL_SERVER_ID) return RESOLVED_VIRTUAL_SERVER_ID;
+      return null;
+    },
+
+    load(id) {
+      if (id === RESOLVED_VIRTUAL_ID) {
+        return [
+          `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";`,
+          `export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};`,
+          `export const SEO_LOCALES = ${JSON.stringify(seoLocales)};`,
+          `export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};`,
+          `export const seoConfig = { SEO_LOCALES: ${JSON.stringify(seoLocales)}, PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)} };`,
+          `export const createHead = defineSeoConfig(siteConfig);`,
+          `export { createHead as createSeoHead, defineSeoConfig };`,
+          `export default siteConfig;`,
+        ].join("\n");
+      }
+
+      if (id === RESOLVED_VIRTUAL_SERVER_ID) {
+        resolveIcons();
+        const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
+        return [
+          `const b64 = ${JSON.stringify(b64)};`,
+          `export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;`,
+          `export const isSvg = ${JSON.stringify(isSvg)};`,
+          `export const backgroundColor = ${JSON.stringify(bgColor)};`,
+          `export const db = null;`,
+          `export const corpusPages = [];`,
+          `export default { masterIconBuffer, isSvg, backgroundColor, db, corpusPages };`,
+        ].join("\n");
+      }
+
+      return null;
+    },
 
     configResolved(config) {
       rootDir = config.root || process.cwd();
@@ -261,7 +240,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
       server.middlewares.use(async (req: any, res: any, next: any) => {
         const rawUrl = req.url?.split("?")[0] || "";
 
-        // robots.txt
         if (rawUrl === "/robots.txt" && options.robots !== false) {
           const robotsOpts = typeof options.robots === "object" ? options.robots : {};
           const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
@@ -275,7 +253,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // sitemap.xml
         if (rawUrl === "/sitemap.xml" && options.sitemap !== false) {
           const sitemapOpts = typeof options.sitemap === "object" ? options.sitemap : {};
           const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
@@ -308,7 +285,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // sitemap-index.xml
         if (rawUrl === "/sitemap-index.xml" && options.sitemap !== false) {
           const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
           const sitemapIndexXml = buildSitemapIndexXml([
@@ -320,7 +296,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // rss.xml
         if (rawUrl === "/rss.xml" && options.rss !== false) {
           const rssOpts = typeof options.rss === "object" ? options.rss : {};
           const items =
@@ -338,7 +313,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // llms.txt
         if (rawUrl === "/llms.txt" && options.llms !== false) {
           const llmsOpts = typeof options.llms === "object" ? options.llms : {};
           const llmsTxt = buildLlmsTxt({
@@ -355,7 +329,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // llms-full.txt
         if (rawUrl === "/llms-full.txt" && options.llmsFull !== false) {
           const llmsFullOpts = typeof options.llmsFull === "object" ? options.llmsFull : {};
           const llmsFullTxt = buildLlmsFullTxt({
@@ -371,7 +344,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // security.txt
         if (
           (rawUrl === "/.well-known/security.txt" || rawUrl === "/security.txt") &&
           options.security !== false
@@ -387,7 +359,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // api-catalog
         if (rawUrl === "/.well-known/api-catalog" && options.apiCatalog !== false) {
           const apiOpts = typeof options.apiCatalog === "object" ? options.apiCatalog : {};
           const apiCatalog = buildApiCatalog({
@@ -399,7 +370,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // site.webmanifest
         if (rawUrl === "/site.webmanifest" && options.manifest !== false) {
           const manOpts = typeof options.manifest === "object" ? options.manifest : {};
           const manifest = buildWebManifest({
@@ -428,7 +398,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
           return;
         }
 
-        // Dynamic Icons & Images middleware
         if (masterIconSource && options.assets !== false) {
           try {
             if (rawUrl === "/favicon.ico" && assetOpts.faviconIco !== false) {
@@ -506,7 +475,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
     },
 
     async generateBundle() {
-      // Build-time asset emission
       if (options.robots !== false) {
         const robotsOpts = typeof options.robots === "object" ? options.robots : {};
         const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
@@ -643,7 +611,6 @@ export const corpusPages = ${corpusSpecifier ? `(await import(${JSON.stringify(c
         });
       }
 
-      // Icon & Image Assets
       if (options.assets !== false && masterIconSource) {
         try {
           if (assetOpts.faviconIco !== false) {

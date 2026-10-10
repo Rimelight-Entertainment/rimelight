@@ -1,6 +1,9 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  test: {
+    setupFiles: ["./test/setup.ts"],
+  },
   pack: {
     entry: [
       "src/index.ts",
@@ -18,7 +21,7 @@ export default defineConfig({
       "src/assets.ts",
     ],
     deps: {
-      neverBundle: [/^#rimelight/],
+      neverBundle: [/^virtual:rimelight-seo/],
     },
   },
 });

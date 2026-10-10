@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import generatedConfig from "#rimelight/i18n";
+import virtualConfig from "virtual:rimelight-i18n";
 
 interface I18nContext {
   locale: string;
@@ -23,11 +23,11 @@ export interface I18nConfig {
 }
 
 export const config: I18nConfig = {
-  locales: generatedConfig?.locales ?? ["en"],
-  defaultLocale: generatedConfig?.defaultLocale ?? "en",
-  prefixDefaultLocale: generatedConfig?.prefixDefaultLocale ?? true,
-  skipPaths: generatedConfig?.skipPaths ?? ["/api", "/_"],
-  translations: generatedConfig?.translations ?? {},
+  locales: virtualConfig?.locales ?? ["en"],
+  defaultLocale: virtualConfig?.defaultLocale ?? "en",
+  prefixDefaultLocale: virtualConfig?.prefixDefaultLocale ?? true,
+  skipPaths: virtualConfig?.skipPaths ?? ["/api", "/_"],
+  translations: virtualConfig?.translations ?? {},
 };
 
 let currentLocale = config.defaultLocale;

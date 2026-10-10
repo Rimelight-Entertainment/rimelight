@@ -27,28 +27,6 @@
     "strict": true,
     "target": "ESNext",
     "verbatimModuleSyntax": true,
-    "types": ["vite-plus/client"],
-    "paths": {
-      "#rimelight": [
-        "../../../node_modules/.rimelight/index.d.ts",
-        "../../../node_modules/.rimelight/config.d.ts",
-        "./node_modules/.rimelight/index.d.ts",
-        "./node_modules/.rimelight/config.d.ts"
-      ],
-      "#rimelight/*": [
-        "../../../node_modules/.rimelight/*/config.d.ts",
-        "../../../node_modules/.rimelight/*/index.d.ts",
-        "../../../node_modules/.rimelight/*/client.d.ts",
-        "../../../node_modules/.rimelight/*/server.d.ts",
-        "../../../node_modules/.rimelight/*",
-        "../../../node_modules/.rimelight/*.d.ts",
-        "./node_modules/.rimelight/*/config.d.ts",
-        "./node_modules/.rimelight/*/index.d.ts",
-        "./node_modules/.rimelight/*/client.d.ts",
-        "./node_modules/.rimelight/*/server.d.ts",
-        "./node_modules/.rimelight/*",
-        "./node_modules/.rimelight/*.d.ts"
-      ]
-    }
+    "types": ["vite-plus/client"]
   }
 }

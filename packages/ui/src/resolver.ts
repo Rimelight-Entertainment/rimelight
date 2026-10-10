@@ -1,4 +1,4 @@
-import uiConfig from "#rimelight/ui";
+import uiConfig from "virtual:rimelight-ui";
 import type { ClassValue, ThemeConfig, UIConfig } from "./types";
 
 let testOverrides: Partial<UIConfig> | null = null;

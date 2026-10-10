@@ -1,4 +1,4 @@
-import generated from "#rimelight/security";
+import generated from "virtual:rimelight-security";
 import type { RimelightSecurityPluginOptions } from "./plugin";
 import {
   buildCspHeader,

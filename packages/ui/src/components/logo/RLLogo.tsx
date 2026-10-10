@@ -1,7 +1,7 @@
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
 import { createMemo, omit, type Component } from "solid-js";
-import uiConfig from "#rimelight/ui";
+import uiConfig from "virtual:rimelight-ui";
 
 export const RLLogo: Component<RLLogoProps> = (allProps) => {
   const props = allProps;

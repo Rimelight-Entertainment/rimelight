@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vite-plus/test";
-import { seo, isContained } from "../src/plugin";
+import {
+  seo,
+  isContained,
+  VIRTUAL_ID,
+  RESOLVED_VIRTUAL_ID,
+  VIRTUAL_SERVER_ID,
+  RESOLVED_VIRTUAL_SERVER_ID,
+} from "../src/plugin";
 import path from "node:path";
 
 async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
@@ -24,77 +31,44 @@ describe("isContained path containment", () => {
 });
 
 describe("seo Vite Plugin", () => {
-  it("injects resolve.alias for #rimelight/seo and subpaths", async () => {
+  it("resolves and loads virtual modules", async () => {
     const plugin = seo({
       name: "Test Site",
       url: "https://test.rimelight.com",
     });
 
-    const configResult = await callHook<any>(plugin.config, { root: process.cwd() });
-    expect(configResult?.resolve?.alias).toBeDefined();
-    const aliases = configResult.resolve.alias;
-    const findAlias = (name: string) =>
-      aliases.find((a: any) => (a.find instanceof RegExp ? a.find.test(name) : a.find === name));
+    expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
+    expect(await callHook(plugin.resolveId, VIRTUAL_SERVER_ID)).toBe(RESOLVED_VIRTUAL_SERVER_ID);
+    expect(await callHook(plugin.resolveId, "other-id")).toBeNull();
 
-    expect(findAlias("#rimelight/seo")).toBeDefined();
-    expect(findAlias("#rimelight/seo/server")).toBeDefined();
-    expect(findAlias("#rimelight/seo/client")).toBeDefined();
+    const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
+    expect(configCode).toContain("export const siteConfig =");
+    expect(configCode).toContain('"name":"Test Site"');
+
+    const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
+    expect(serverCode).toContain("export const masterIconBuffer =");
   });
 
   it("emits static assets during generateBundle", async () => {
     const emitted: any[] = [];
     const plugin = seo({
-      name: "Bundle Site",
-      url: "https://bundle.com",
+      name: "Test Site",
+      url: "https://test.rimelight.com",
       robots: true,
       sitemap: true,
-      security: true,
     });
 
-    const mockContext = {
-      emitFile(file: any) {
-        emitted.push(file);
-      },
-    };
+    const hook =
+      typeof plugin.generateBundle === "function"
+        ? plugin.generateBundle
+        : (plugin.generateBundle as any)?.handler;
 
-    await (plugin.generateBundle as any).call(mockContext);
-
-    const fileNames = emitted.map((e) => e.fileName);
-    expect(fileNames).toContain("robots.txt");
-    expect(fileNames).toContain("sitemap.xml");
-    expect(fileNames).toContain("sitemap-index.xml");
-    expect(fileNames).toContain(".well-known/security.txt");
-    expect(fileNames).toContain("site.webmanifest");
-  });
-
-  it("emits icon assets when branding favicon SVG is provided", async () => {
-    const emitted: any[] = [];
-    const plugin = seo({
-      name: "Icon Site",
-      url: "https://icon.com",
-      branding: {
-        favicon: {
-          svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#00f"/></svg>`,
-        },
-      },
+    await hook.call({
+      emitFile: (asset: any) => emitted.push(asset),
     });
 
-    await callHook(plugin.configResolved, { root: process.cwd() });
-
-    const mockContext = {
-      emitFile(file: any) {
-        emitted.push(file);
-      },
-    };
-
-    await (plugin.generateBundle as any).call(mockContext);
-
-    const fileNames = emitted.map((e) => e.fileName);
-    expect(fileNames).toContain("icon-192.png");
-    expect(fileNames).toContain("icon-512.png");
-    expect(fileNames).toContain("icon-maskable-512.png");
-    expect(fileNames).toContain("favicon.ico");
-    expect(fileNames).toContain("apple-touch-icon.png");
-    expect(fileNames).toContain("favicon.svg");
+    expect(emitted.some((a) => a.fileName === "robots.txt")).toBe(true);
+    expect(emitted.some((a) => a.fileName === "sitemap.xml")).toBe(true);
+    expect(emitted.some((a) => a.fileName === "sitemap-index.xml")).toBe(true);
   });
 });

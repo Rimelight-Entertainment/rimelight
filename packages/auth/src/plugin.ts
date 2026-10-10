@@ -1,8 +1,12 @@
 import type { Plugin } from "vite-plus";
-import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config";
 import type { AuthPluginConfig } from "./types";
 
 export type RimelightAuthPluginOptions = AuthPluginConfig;
+
+export const VIRTUAL_ID = "virtual:rimelight-auth";
+export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+export const VIRTUAL_SERVER_ID = "virtual:rimelight-auth/server";
+export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 export function auth(options: RimelightAuthPluginOptions = {}): Plugin {
   const adapter = options.adapter || "cf-access";
@@ -11,25 +15,27 @@ export function auth(options: RimelightAuthPluginOptions = {}): Plugin {
     adapter === "custom" && options.customModule
       ? `export * from ${JSON.stringify(options.customModule)};\nexport { default } from ${JSON.stringify(options.customModule)};`
       : adapter === "auth0"
-        ? `import { createAuth0FromEnv } from "@rimelight/auth/auth0";\nexport const auth = createAuth0FromEnv(${serializeData({ devFallback: true, ...options })});\nexport const authAdapter = auth;\nexport default auth;`
+        ? `import { createAuth0FromEnv } from "@rimelight/auth/auth0";\nexport const auth = createAuth0FromEnv(${JSON.stringify({ devFallback: true, ...options })});\nexport const authAdapter = auth;\nexport default auth;`
         : adapter === "mock"
-          ? `import { mockAuth } from "@rimelight/auth/mock";\nexport const auth = mockAuth(${serializeData(options)});\nexport const authAdapter = auth;\nexport default auth;`
-          : `import { createCfAccessFromEnv } from "@rimelight/auth/cf-access";\nexport const auth = createCfAccessFromEnv(${serializeData(options)});\nexport const authAdapter = auth;\nexport default auth;`;
+          ? `import { mockAuth } from "@rimelight/auth/mock";\nexport const auth = mockAuth(${JSON.stringify(options)});\nexport const authAdapter = auth;\nexport default auth;`
+          : `import { createCfAccessFromEnv } from "@rimelight/auth/cf-access";\nexport const auth = createCfAccessFromEnv(${JSON.stringify(options)});\nexport const authAdapter = auth;\nexport default auth;`;
 
-  return defineRimelightArtifactPlugin({
+  return {
     name: "rimelight:auth",
-    pkgName: "auth",
-    aliases: {
-      "#rimelight/auth/server": "auth.js",
-      "#rimelight/auth/client": "client.js",
+    enforce: "pre",
+    resolveId(id) {
+      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      if (id === VIRTUAL_SERVER_ID) return RESOLVED_VIRTUAL_SERVER_ID;
+      return null;
     },
-    emit: () => ({
-      "config.js": `export const config = ${serializeData(options)};\nexport default config;`,
-      "config.d.ts": `export declare const config: any;\nexport declare const auth: any;\nexport declare const authAdapter: any;\ndeclare const _default: { config: any; auth: any; authAdapter: any };\nexport default _default;`,
-      "auth.js": adapterImport,
-      "auth.d.ts": `export declare const auth: any;\nexport declare const authAdapter: any;\ndeclare const _default: any;\nexport default _default;`,
-      "client.js": `export * from "@rimelight/auth/client";`,
-      "client.d.ts": `export * from "@rimelight/auth/client";`,
-    }),
-  });
+    load(id) {
+      if (id === RESOLVED_VIRTUAL_ID) {
+        return `export const config = ${JSON.stringify(options)};\nexport default config;`;
+      }
+      if (id === RESOLVED_VIRTUAL_SERVER_ID) {
+        return adapterImport;
+      }
+      return null;
+    },
+  };
 }
