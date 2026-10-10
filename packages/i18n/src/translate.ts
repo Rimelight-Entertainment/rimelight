@@ -25,7 +25,7 @@ export const t: TFunction = Object.assign(
     const resolved = value ?? key;
     if (typeof resolved === "function") return String(resolved(params));
     if (typeof resolved === "string" && params) {
-      return resolved.replace(/\{\s*(\w+)\s*\}/g, (match, paramKey) =>
+      return resolved.replace(/\{\s*(\w+)\s*}/g, (match, paramKey) =>
         params[paramKey] == null
           ? match
           : paramKey === "count" && typeof params[paramKey] === "number"
