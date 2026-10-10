@@ -1,4 +1,4 @@
-import { config, setCurrentLocale } from "../src/locale";
+import { config, setCurrentLocale } from "../src/runtime";
 
 export function setLocaleConfig(options: Partial<typeof config>): void {
   Object.assign(config, options);
