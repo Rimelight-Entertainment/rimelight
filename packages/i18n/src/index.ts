@@ -5,8 +5,8 @@ export {
   setCurrentLocale,
   getLocaleUrl,
   getLocaleAsset,
-} from "./locale";
-
-export { t, type TFunction } from "./translate";
+  t,
+  type TFunction,
+} from "./runtime";
 
 export type { RimelightI18nPluginOptions } from "./plugin";
