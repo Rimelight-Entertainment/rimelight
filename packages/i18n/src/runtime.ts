@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import generatedConfig from "#rimelight/i18n";
 
-export interface I18nContext {
+interface I18nContext {
   locale: string;
   translations?: Record<string, unknown> | undefined;
 }
