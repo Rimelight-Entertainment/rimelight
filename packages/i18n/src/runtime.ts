@@ -95,11 +95,11 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const get = (targetLocale: string) => {
-        const store = i18nContext.getStore();
+      const store = i18nContext.getStore();
+      const get = (loc: string) => {
         const dict =
-          (store && (store.locale === targetLocale || !targetLocale) && store.translations) ||
-          config.translations[targetLocale];
+          (store && (store.locale === loc || !loc) && store.translations) ||
+          config.translations[loc];
         if (!dict) return undefined;
         if (key in dict) return dict[key];
         return key
@@ -119,12 +119,12 @@ export const t: TFunction = Object.assign(
     plural: (count: number, locale = getCurrentLocale()): Intl.LDMLPluralRule =>
       new Intl.PluralRules(locale).select(count),
     localize: (value: unknown, locale = getCurrentLocale()): string =>
-      typeof value === "object" && value
-        ? String(
-            ((value as Record<string, unknown>)[locale] ??
-              (value as Record<string, unknown>)[config.defaultLocale] ??
-              "") as string | number | boolean,
-          )
-        : String((value as string | number | boolean) ?? ""),
+      String(
+        (value && typeof value === "object"
+          ? ((value as Record<string, unknown>)[locale] ??
+            (value as Record<string, unknown>)[config.defaultLocale] ??
+            "")
+          : (value ?? "")) as string | number | boolean,
+      ),
   },
 );

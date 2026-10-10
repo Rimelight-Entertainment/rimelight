@@ -1,24 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
 import { i18n } from "../src/middleware";
 import { getCurrentLocale, t } from "../src/index";
-import { setTranslations } from "./helpers";
+import { createMockContext, setTranslations } from "./helpers";
 
 function req(path: string, init?: RequestInit): Request {
   return new Request(`https://example.com${path}`, init);
-}
-
-function mockContext(path: string, init?: RequestInit) {
-  const request = req(path, init);
-  return {
-    req: {
-      raw: request,
-      url: request.url,
-      method: request.method,
-      header: (name: string) => request.headers.get(name) ?? undefined,
-    },
-    redirect: (target: string, status = 302) =>
-      new Response(null, { status, headers: { Location: target } }),
-  };
 }
 
 describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
@@ -88,7 +74,8 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
     const results = await Promise.all(
       testCases.map(async (tc) => {
         let actualResult = { actualLocale: "", actualTitle: "" };
-        await middleware(mockContext(tc.path), async () => {
+        const ctx = createMockContext(req(tc.path));
+        await middleware(ctx as any, async () => {
           await new Promise((r) => setTimeout(r, tc.delayMs));
           actualResult = {
             actualLocale: getCurrentLocale(),

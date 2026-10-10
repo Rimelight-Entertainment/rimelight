@@ -1,33 +1,26 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n } from "../src/middleware";
 import { getCurrentLocale } from "../src/index";
-import { setTranslations } from "./helpers";
+import { createMockContext, setTranslations } from "./helpers";
 
 function req(path: string, init?: RequestInit): Request {
   return new Request(`https://example.com${path}`, init);
 }
 
-function mockContext(path: string, init?: RequestInit) {
-  const request = req(path, init);
-  return {
-    req: {
-      raw: request,
-      url: request.url,
-      method: request.method,
-      header: (name: string) => request.headers.get(name) ?? undefined,
-    },
-    redirect: (target: string, status = 302) =>
-      new Response(null, { status, headers: { Location: target } }),
-  };
-}
-
 const runMiddleware = async (path: string, init?: RequestInit) => {
   const middleware = i18n();
   let nextCalled = false;
-  const response = await middleware(mockContext(path, init), async () => {
+  const ctx = createMockContext(req(path, init));
+
+  const response = await middleware(ctx as any, async () => {
     nextCalled = true;
   });
-  return { response, nextCalled, location: response?.headers.get("location") ?? null };
+
+  return {
+    response,
+    nextCalled,
+    location: response?.headers.get("location") ?? null,
+  };
 };
 
 /** Restores the default Vite plugin configuration (locales discovered as `["en"]`, etc.). */
@@ -120,27 +113,11 @@ describe("@rimelight/i18n middleware", () => {
     let injectedLocale = "";
     let injectedTranslation = "";
 
-    const request = req("/en/about");
-    const honoContext = {
-      req: {
-        raw: request,
-        url: request.url,
-        header: (name: string) => (name.toLowerCase() === "accept-language" ? "en" : undefined),
-      },
-      _store: new Map<string, any>(),
-      set(key: string, value: any) {
-        this._store.set(key, value);
-      },
-      get(key: string) {
-        return this._store.get(key);
-      },
-      redirect: (target: string, status = 302) =>
-        new Response(null, { status, headers: { Location: target } }),
-    };
+    const ctx = createMockContext(req("/en/about", { headers: { "accept-language": "en" } }));
 
-    await middleware(honoContext as any, async () => {
-      injectedLocale = honoContext.get("locale");
-      const tFunc = honoContext.get("t");
+    await middleware(ctx as any, async () => {
+      injectedLocale = ctx.get("locale");
+      const tFunc = ctx.get("t");
       injectedTranslation = typeof tFunc === "function" ? "available" : "missing";
     });
 
