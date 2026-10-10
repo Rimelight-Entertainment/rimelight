@@ -10,7 +10,6 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { setCurrentLocale, getLocaleUrl, getLocaleAsset, t } from "../src/index";
-import { getPluralCategory } from "../src/translate";
 import { setLocaleConfig, setTranslations } from "./helpers";
 
 describe("translation dictionary utils", () => {
@@ -146,8 +145,8 @@ describe("relative locale urls", () => {
 
 describe("translation runtime", () => {
   it("returns the plural category for a locale", () => {
-    expect(getPluralCategory(1, "en")).toBe("one");
-    expect(getPluralCategory(2, "en")).toBe("other");
+    expect(t.plural(1, "en")).toBe("one");
+    expect(t.plural(2, "en")).toBe("other");
   });
 
   it("translates keys after initialization", () => {

@@ -1,21 +1,20 @@
 import { describe, expect, it } from "vite-plus/test";
 import { getCurrentLocale, setCurrentLocale, t } from "../src/index";
-import { getPluralCategory } from "../src/translate";
 import { setTranslations } from "./helpers";
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
   it("should handle plural categories for multiple languages", () => {
     // English
-    expect(getPluralCategory(1, "en")).toBe("one");
-    expect(getPluralCategory(0, "en")).toBe("other");
-    expect(getPluralCategory(5, "en")).toBe("other");
+    expect(t.plural(1, "en")).toBe("one");
+    expect(t.plural(0, "en")).toBe("other");
+    expect(t.plural(5, "en")).toBe("other");
 
     // Portuguese
-    expect(getPluralCategory(1, "pt")).toBe("one");
-    expect(getPluralCategory(2, "pt")).toBe("other");
+    expect(t.plural(1, "pt")).toBe("one");
+    expect(t.plural(2, "pt")).toBe("other");
 
-    expect(getPluralCategory(1, "pt-BR")).toBe("one");
-    expect(getPluralCategory(2, "pt-BR")).toBe("other");
+    expect(t.plural(1, "pt-BR")).toBe("one");
+    expect(t.plural(2, "pt-BR")).toBe("other");
   });
 
   it("should expose plural categories through t.plural", () => {
