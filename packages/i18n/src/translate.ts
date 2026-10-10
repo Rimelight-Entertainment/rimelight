@@ -8,21 +8,24 @@ export interface TFunction {
   localize: (value: unknown, locale?: string) => string;
 }
 
-const isRecord = (v: unknown): v is Record<string, any> => v?.constructor === Object;
-
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, any>): string => {
     const locale = getCurrentLocale();
-    let value = t.raw(key, undefined, locale) ?? key;
+    let value: unknown = t.raw(key, undefined, locale) ?? key;
 
-    if (typeof params?.["count"] === "number" && isRecord(value)) {
-      value = value[t.plural(params["count"], locale)] ?? value["other"] ?? key;
+    if (
+      typeof params?.["count"] === "number" &&
+      value instanceof Object &&
+      value.constructor === Object
+    ) {
+      const plurals = value as Record<string, string>;
+      value = plurals[t.plural(params["count"], locale)] ?? plurals["other"] ?? key;
     }
 
     if (typeof value === "function") return (value as (p?: any) => string)(params);
 
     if (typeof value === "string" && params) {
-      return value.replace(/\{(\w+)}/g, (_, placeholder) => {
+      return value.replace(/\{(\w+)\}/g, (_, placeholder) => {
         const param = params[placeholder];
         return placeholder === "count" && typeof param === "number"
           ? param.toLocaleString(locale)
@@ -30,7 +33,7 @@ export const t: TFunction = Object.assign(
       });
     }
 
-    return isRecord(value)
+    return value instanceof Object && value.constructor === Object
       ? JSON.stringify(value)
       : value != null
         ? String(value as string | number | boolean)
@@ -51,8 +54,12 @@ export const t: TFunction = Object.assign(
     plural: (count: number, locale = getCurrentLocale()): Intl.LDMLPluralRule =>
       new Intl.PluralRules(locale).select(count),
     localize: (value: unknown, locale = getCurrentLocale()): string =>
-      isRecord(value)
-        ? String(value[locale] || value[config.defaultLocale] || "")
+      value instanceof Object && value.constructor === Object
+        ? String(
+            (value as Record<string, string>)[locale] ||
+              (value as Record<string, string>)[config.defaultLocale] ||
+              "",
+          )
         : value != null && typeof value !== "object"
           ? String(value as string | number | boolean)
           : "",
