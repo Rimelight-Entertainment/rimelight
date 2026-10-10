@@ -16,7 +16,6 @@ import { buildApiCatalog } from "./catalog";
 import { buildWebManifest } from "./manifest";
 import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets";
 
-export type RimelightSeoPlugin = Plugin;
 export type RimelightSeoPluginOptions = RimelightSeoOptions;
 
 export { type RimelightSeoOptions } from "./types";
@@ -51,7 +50,7 @@ function createDefaultIconSvg(
  * Consolidated Vite Plugin orchestrating SEO artifacts in node_modules/.rimelight/seo/,
  * dev-server asset middleware, and production static asset generation.
  */
-function seo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
+function seo(options: RimelightSeoOptions = {}): Plugin {
   let rootDir = process.cwd();
 
   // Resolve configuration according to priority:

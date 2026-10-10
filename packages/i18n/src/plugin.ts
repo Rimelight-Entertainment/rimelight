@@ -11,8 +11,6 @@ export interface RimelightI18nPluginOptions {
   prefixDefaultLocale?: boolean;
 }
 
-export type RimelightI18nPlugin = Plugin;
-
 export function readLocaleFiles(dirPath: string): {
   files: string[];
   translations: Record<string, Record<string, any>>;

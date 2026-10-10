@@ -90,4 +90,4 @@ export {
 // into the browser bundle. Import it from `@rimelight/seo/plugin` in your
 // `vite.config.ts` instead. The types stay re-exported here because types
 // are erased at compile time.
-export type { RimelightSeoPlugin, RimelightSeoPluginOptions } from "./plugin";
+export type { RimelightSeoPluginOptions } from "./plugin";

@@ -3,9 +3,8 @@ import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config"
 import type { AuthPluginConfig } from "./types";
 
 export type RimelightAuthPluginOptions = AuthPluginConfig;
-export type RimelightAuthPlugin = Plugin;
 
-export function auth(options: RimelightAuthPluginOptions = {}): RimelightAuthPlugin {
+export function auth(options: RimelightAuthPluginOptions = {}): Plugin {
   const adapter = options.adapter || "cf-access";
 
   const adapterImport =

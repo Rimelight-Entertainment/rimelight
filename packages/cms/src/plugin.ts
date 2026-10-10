@@ -12,9 +12,7 @@ export interface RimelightCmsPluginOptions {
   auth?: AuthAdapter | string | undefined;
 }
 
-export type RimelightCmsPlugin = Plugin;
-
-export function cms(options: RimelightCmsPluginOptions = {}): RimelightCmsPlugin {
+export function cms(options: RimelightCmsPluginOptions = {}): Plugin {
   const storageConfig = {
     provider: options.storage?.provider ?? "r2",
     binding: options.storage?.binding ?? "BLOB",

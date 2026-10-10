@@ -8,4 +8,4 @@ export {
 
 export { t, getLocalizedText, type TFunction } from "./translate";
 
-export type { RimelightI18nPlugin, RimelightI18nPluginOptions } from "./plugin";
+export type { RimelightI18nPluginOptions } from "./plugin";

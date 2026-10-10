@@ -9,7 +9,6 @@ import {
 import type { SecurityPluginOptions } from "./types";
 import { resolveSecurityDomain } from "./csp";
 
-export type RimelightSecurityPlugin = Plugin;
 export type RimelightSecurityPluginOptions = SecurityPluginOptions;
 export { serializeData as serializeConfig };
 
@@ -20,7 +19,7 @@ function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string
   return `sha384-${hash}`;
 }
 
-export function security(options: RimelightSecurityPluginOptions = {}): RimelightSecurityPlugin {
+export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
   resolveSecurityDomain(options.domain);
 
   const sriManifest: Record<string, string> = {};

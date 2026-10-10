@@ -38,4 +38,4 @@ export const auth: AuthAdapter = {
 };
 
 export const authAdapter = auth;
-export type { RimelightAuthPlugin, RimelightAuthPluginOptions } from "./plugin";
+export type { RimelightAuthPluginOptions } from "./plugin";

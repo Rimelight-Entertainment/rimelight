@@ -5,7 +5,6 @@ import { rimelightUiPreset } from "./preset";
 import { rimelightFontsVitePlugin } from "./fonts";
 import type { UIConfig } from "./types";
 
-export type RimelightUiPlugin = PluginOption;
 export type RimelightUiPluginOptions = UIConfig;
 
 export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
