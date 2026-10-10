@@ -51,9 +51,7 @@ export const stripLocalePrefix = (
     : path;
 
 /** Generates a localized relative URL path. */
-export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string => {
-  if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
-  const target = stripLocalePrefix(path);
-  const prefix = config.prefixDefaultLocale || locale !== config.defaultLocale ? `/${locale}` : "";
-  return `${prefix}${target.startsWith("/") ? target : `/${target}`}`;
-};
+export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string =>
+  /^(?:[a-z]+:|\/\/|#)/i.test(path)
+    ? path
+    : `${config.prefixDefaultLocale || locale !== config.defaultLocale ? `/${locale}` : ""}/${stripLocalePrefix(path).replace(/^\/+/, "")}`;
