@@ -12,22 +12,23 @@ export const i18n =
       (locale) => locale.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
     );
 
-    const preferredLocale = !segmentLocale
-      ? (headers
-          .get("accept-language")
-          ?.split(",")
-          .map((entry) => entry.split(";")[0]?.trim().toLowerCase())
-          .map((code) =>
-            config.locales.find((locale) => locale === code || locale === code?.split("-")[0]),
-          )
-          .find(Boolean) ?? config.defaultLocale)
-      : segmentLocale;
+    const preferredLocale =
+      segmentLocale ??
+      headers
+        .get("accept-language")
+        ?.split(",")
+        .map((entry) => entry.split(";")[0]?.trim().toLowerCase())
+        .map((code) =>
+          config.locales.find((locale) => locale === code || locale === code?.split("-")[0]),
+        )
+        .find(Boolean) ??
+      config.defaultLocale;
 
     setCurrentLocale(preferredLocale);
 
     const isLocalized =
       (method === "GET" || method === "HEAD") &&
-      !config.skipPaths.some((skip) => pathname === skip || pathname.startsWith(`${skip}/`)) &&
+      !config.skipPaths.some((skip) => `${pathname}/`.startsWith(`${skip}/`)) &&
       !/\/[^/]+\.[A-Za-z0-9]{1,8}$/.test(pathname);
 
     const redirectPath =
