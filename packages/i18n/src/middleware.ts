@@ -9,19 +9,16 @@ export const i18n =
     const { method, headers, url } = context.req.raw;
     const { pathname, search } = new URL(url);
 
-    const segmentLocale = config.locales.find(
-      (l) => l.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
-    );
+    const segment = pathname.split("/")[1]?.toLowerCase();
+    const segmentLocale = config.locales.find((l) => l.toLowerCase() === segment);
 
+    const accept = headers.get("accept-language")?.split(",") ?? [];
     const preferredLocale =
       segmentLocale ??
-      headers
-        .get("accept-language")
-        ?.split(",")
-        .flatMap((entry) => {
-          const [tag] = entry.trim().toLowerCase().split(";");
-          return config.locales.find((l) => l === tag || l === tag?.split("-")[0]) ?? [];
-        })[0] ??
+      accept.flatMap((e) => {
+        const [tag] = e.trim().toLowerCase().split(";");
+        return config.locales.find((l) => l === tag || l === tag?.split("-")[0]) ?? [];
+      })[0] ??
       config.defaultLocale;
 
     setCurrentLocale(preferredLocale);
