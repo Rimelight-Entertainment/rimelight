@@ -1,27 +1,22 @@
 import generatedConfig from "#rimelight/i18n";
 
-const raw = (
-  generatedConfig && typeof generatedConfig === "object" ? generatedConfig : {}
-) as Record<string, any>;
-
 export const config = {
-  locales: Array.isArray(raw["locales"]) ? raw["locales"] : ["en"],
-  defaultLocale: typeof raw["defaultLocale"] === "string" ? raw["defaultLocale"] : "en",
-  prefixDefaultLocale:
-    typeof raw["prefixDefaultLocale"] === "boolean" ? raw["prefixDefaultLocale"] : true,
-  skipPaths: Array.isArray(raw["skipPaths"]) ? raw["skipPaths"] : ["/api", "/_"],
+  locales: (generatedConfig?.locales ?? ["en"]) as readonly string[],
+  defaultLocale: (generatedConfig?.defaultLocale ?? "en") as string,
+  prefixDefaultLocale: (generatedConfig?.prefixDefaultLocale ?? true) as boolean,
+  skipPaths: (generatedConfig?.skipPaths ?? ["/api", "/_"]) as readonly string[],
 };
 
-let activeLocale = config.defaultLocale;
+let currentLocale = config.defaultLocale;
 
 /** Returns the active locale code. */
 export function getCurrentLocale(): string {
-  return activeLocale || config.defaultLocale;
+  return currentLocale;
 }
 
 /** Sets the active locale code. */
-export function setCurrentLocale(value: string): void {
-  activeLocale = value;
+export function setCurrentLocale(locale: string): void {
+  currentLocale = locale;
 }
 
 /** Returns the supported locale codes. */
