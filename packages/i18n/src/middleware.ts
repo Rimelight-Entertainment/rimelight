@@ -25,14 +25,13 @@ export const i18n =
 
     setCurrentLocale(locale);
 
-    const isLocalized =
+    const target =
       /^(GET|HEAD)$/i.test(context.req.raw.method) &&
       !config.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`)) &&
-      !/\.[a-z0-9]{1,8}$/i.test(pathname);
+      !/\.[a-z0-9]{1,8}$/i.test(pathname) &&
+      (config.prefixDefaultLocale
+        ? !prefix && `/${locale}${pathname}`
+        : prefix === config.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
 
-    const target = config.prefixDefaultLocale
-      ? !prefix && `/${locale}${pathname}`
-      : prefix === config.defaultLocale && (pathname.slice(prefix.length + 1) || "/");
-
-    return isLocalized && target ? context.redirect(`${target}${search}`, 302) : next();
+    return target ? context.redirect(`${target}${search}`, 302) : next();
   };
