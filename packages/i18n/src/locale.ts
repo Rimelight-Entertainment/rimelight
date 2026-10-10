@@ -63,8 +63,9 @@ export function localeFromPathname(
   pathname: string,
   supported: readonly string[] = locales,
 ): string | null {
-  const segment = pathname.split(/[/?#]/)[1]?.toLowerCase();
-  return supported.find((code) => code.toLowerCase() === segment) ?? null;
+  return (
+    supported.find((c) => c.toLowerCase() === pathname.split(/[/?#]/)[1]?.toLowerCase()) ?? null
+  );
 }
 
 /** Removes leading locale prefix from pathname. */
@@ -75,7 +76,6 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
 /** Generates a localized relative URL path. */
 export function getLocaleUrl(path: string, locale = getCurrentLocale()): string {
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
-  const clean = stripLocalePrefix(path);
-  const target = clean.startsWith("/") ? clean : `/${clean}`;
+  const target = stripLocalePrefix(path).replace(/^\/?/, "/");
   return prefixDefaultLocale || locale !== defaultLocale ? `/${locale}${target}` : target;
 }
