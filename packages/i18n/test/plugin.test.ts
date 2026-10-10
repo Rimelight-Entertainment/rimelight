@@ -67,52 +67,81 @@ describe("@rimelight/i18n Vite plugin", () => {
       const contentJs = fs.readFileSync(generatedJs, "utf-8");
 
       expect(contentJs).toContain(`export const defaultLocale = "en";`);
-      expect(contentJs).toContain(`export const prefixDefaultLocale = true;`);
-      expect(contentJs).toContain(`export const skipPaths = ["/api", "/_"];`);
+      expect(contentJs).toContain(`export const locales = [];`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
 
-  it("emits standard skipPaths to the generated config", async () => {
+  it("forwards custom plugin options to the generated config", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-custom-"));
     try {
-      const configPlugin: Plugin = i18n();
+      const configPlugin: Plugin = i18n({
+        prefixDefaultLocale: false,
+        skipPaths: ["/custom", "/api"],
+      });
       await callHook(configPlugin.config, { root: tmpDir });
 
       const generatedJs = path.join(tmpDir, "node_modules", ".rimelight", "i18n", "config.js");
       const contentJs = fs.readFileSync(generatedJs, "utf-8");
 
-      expect(contentJs).toContain(`export const skipPaths = ["/api", "/_"];`);
+      expect(contentJs).toContain(`export const prefixDefaultLocale = false;`);
+      expect(contentJs).toContain(`export const skipPaths = ["/custom", "/api"];`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
 
-  it("generates static JSON assets on closeBundle for external/game clients", async () => {
+  it("generates static JSON assets on generateBundle for external/game clients", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-static-"));
     const i18nDir = path.join(tmpDir, "src", "i18n");
     fs.mkdirSync(i18nDir, { recursive: true });
     fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ nav: { home: "Home" } }));
     fs.writeFileSync(path.join(i18nDir, "pt.json"), JSON.stringify({ nav: { home: "Início" } }));
 
-    process.env["WRANGLER_OUT_DIR"] = tmpDir;
-
     try {
       const configPlugin: Plugin = i18n({
         translationsDir: i18nDir,
       });
       await callHook(configPlugin.config, { root: tmpDir });
-      await callHook(configPlugin.closeBundle);
 
-      const staticEn = path.join(tmpDir, "locales", "en.json");
-      const staticPt = path.join(tmpDir, "locales", "pt.json");
-      expect(fs.existsSync(staticEn)).toBe(true);
-      expect(fs.existsSync(staticPt)).toBe(true);
-      expect(JSON.parse(fs.readFileSync(staticEn, "utf-8"))).toEqual({ nav: { home: "Home" } });
-      expect(JSON.parse(fs.readFileSync(staticPt, "utf-8"))).toEqual({ nav: { home: "Início" } });
+      const emitted: any[] = [];
+      const hook =
+        typeof configPlugin.generateBundle === "function"
+          ? configPlugin.generateBundle
+          : (configPlugin.generateBundle as any)?.handler;
+
+      await hook.call({
+        emitFile: (asset: any) => emitted.push(asset),
+      });
+
+      expect(emitted).toEqual([
+        {
+          type: "asset",
+          fileName: "locales/en.json",
+          source: JSON.stringify(
+            {
+              nav: { home: "Home" },
+              "nav.home": "Home",
+            },
+            null,
+            2,
+          ),
+        },
+        {
+          type: "asset",
+          fileName: "locales/pt.json",
+          source: JSON.stringify(
+            {
+              nav: { home: "Início" },
+              "nav.home": "Início",
+            },
+            null,
+            2,
+          ),
+        },
+      ]);
     } finally {
-      delete process.env["WRANGLER_OUT_DIR"];
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
