@@ -11,5 +11,8 @@ export default defineConfig({
       "src/turnstile.ts",
       "src/head.ts",
     ],
+    deps: {
+      neverBundle: [/^#rimelight/],
+    },
   },
 });

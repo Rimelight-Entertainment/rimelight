@@ -17,5 +17,8 @@ export default defineConfig({
       "src/og/index.ts",
       "src/assets.ts",
     ],
+    deps: {
+      neverBundle: [/^#rimelight/],
+    },
   },
 });

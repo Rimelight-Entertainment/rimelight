@@ -148,46 +148,6 @@ describe("translation runtime", () => {
   });
 });
 
-describe("getLocalizedText", () => {
-  it("resolves the requested locale from a dictionary object", async () => {
-    const { getLocalizedText } = await import("../src/index");
-    const val = { en: "Hello", pt: "Olá", es: "Hola" };
-    expect(getLocalizedText(val, "pt")).toBe("Olá");
-    expect(getLocalizedText(val, "es")).toBe("Hola");
-  });
-
-  it("falls back to default fallback locale ('en') if locale is not found or empty", async () => {
-    const { getLocalizedText } = await import("../src/index");
-    const val = { en: "Hello World", fr: "" };
-    expect(getLocalizedText(val, "de")).toBe("Hello World");
-    expect(getLocalizedText(val, "fr")).toBe("Hello World");
-  });
-
-  it("supports custom fallback locale", async () => {
-    const { getLocalizedText } = await import("../src/index");
-    const val = { es: "Hola Mundo" };
-    expect(getLocalizedText(val, "de", "es")).toBe("Hola Mundo");
-    expect(getLocalizedText(val, "de", "fr")).toBe("");
-  });
-
-  it("returns raw string if val is a plain string", async () => {
-    const { getLocalizedText } = await import("../src/index");
-    expect(getLocalizedText("Plain string", "fr")).toBe("Plain string");
-  });
-
-  it("stringifies number or boolean primitives", async () => {
-    const { getLocalizedText } = await import("../src/index");
-    expect(getLocalizedText(123, "en")).toBe("123");
-    expect(getLocalizedText(true, "en")).toBe("true");
-  });
-
-  it("returns empty string if val is null or undefined", async () => {
-    const { getLocalizedText } = await import("../src/index");
-    expect(getLocalizedText(null, "en")).toBe("");
-    expect(getLocalizedText(undefined, "en")).toBe("");
-  });
-});
-
 describe("t.localize", () => {
   it("resolves the current locale from a dictionary object", () => {
     setTranslations({}, { defaultLocale: "en", locales: ["en", "pt", "es"] });

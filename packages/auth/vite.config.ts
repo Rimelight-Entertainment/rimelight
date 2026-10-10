@@ -15,5 +15,8 @@ export default defineConfig({
       "src/jwt.ts",
       "src/plugin.ts",
     ],
+    deps: {
+      neverBundle: [/^#rimelight/],
+    },
   },
 });

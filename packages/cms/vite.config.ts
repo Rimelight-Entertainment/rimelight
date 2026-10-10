@@ -14,6 +14,9 @@ export default defineConfig({
       "src/middleware/index.ts",
       "src/client/index.ts",
     ],
+    deps: {
+      neverBundle: [/^#rimelight/],
+    },
   },
   test: {
     environment: "node",

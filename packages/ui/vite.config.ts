@@ -14,6 +14,9 @@ export default defineConfig({
       "src/icons.ts",
       "src/fonts.ts",
     ],
+    deps: {
+      neverBundle: [/^#rimelight/],
+    },
   },
   test: {
     environment: "node",

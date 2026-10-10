@@ -125,24 +125,16 @@ export const t: TFunction = Object.assign(
   },
 );
 
-export function getLocalizedText(
-  val: unknown,
-  targetLocale: string,
-  fallbackLocale: string = defaultLocale,
-): string {
+function tLocalize(val: unknown, targetLocale: string = getCurrentLocale()): string {
   if (isObjectRecord(val)) {
     const localized = val[targetLocale];
     if (typeof localized === "string" && localized.length > 0) return localized;
 
-    const fallback = val[fallbackLocale];
+    const fallback = val[defaultLocale];
     if (typeof fallback === "string") return fallback;
     return "";
   }
   if (typeof val === "string") return val;
   if (typeof val === "number" || typeof val === "boolean") return String(val);
   return "";
-}
-
-function tLocalize(val: unknown, targetLocale: string = getCurrentLocale()): string {
-  return getLocalizedText(val, targetLocale);
 }
