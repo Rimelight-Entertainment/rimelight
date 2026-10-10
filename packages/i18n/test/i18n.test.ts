@@ -10,7 +10,7 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { setCurrentLocale, getLocaleUrl, getLocaleAsset, t } from "../src/index";
-import { localeFromPathname, stripLocalePrefix } from "../src/locale";
+import { stripLocalePrefix } from "../src/locale";
 import { getPluralCategory } from "../src/translate";
 import { setLocaleConfig, setTranslations } from "./helpers";
 
@@ -142,13 +142,6 @@ describe("relative locale urls", () => {
     expect(getLocaleUrl("https://example.com/x")).toBe("https://example.com/x");
     expect(getLocaleUrl("#anchor")).toBe("#anchor");
     expect(getLocaleUrl("mailto:hi@example.com")).toBe("mailto:hi@example.com");
-  });
-
-  it("extracts locale from pathname with or without leading slash", () => {
-    expect(localeFromPathname("/pt/about")).toBe("pt");
-    expect(localeFromPathname("pt/about")).toBe("pt");
-    expect(localeFromPathname("/unknown/about")).toBeNull();
-    expect(localeFromPathname("")).toBeNull();
   });
 
   it("handles stripLocalePrefix with empty or custom supported locales", () => {

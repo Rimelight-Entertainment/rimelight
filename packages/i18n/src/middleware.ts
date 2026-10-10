@@ -1,4 +1,4 @@
-import { config, setCurrentLocale, localeFromPathname, stripLocalePrefix } from "./locale";
+import { config, setCurrentLocale, stripLocalePrefix } from "./locale";
 
 const isLocalizedPage = (p: string) =>
   !config.skipPaths.some((s) => p === s || p.startsWith(`${s}/`)) &&
@@ -18,7 +18,8 @@ const matchAcceptLanguage = (header: string | null): string | undefined => {
 export const resolveLocale = (request: Request): string | null => {
   const url = new URL(request.url);
   const pathname = url.pathname;
-  const segmentLocale = localeFromPathname(pathname);
+  const segment = pathname.split("/")[1]?.toLowerCase();
+  const segmentLocale = config.locales.find((l) => l.toLowerCase() === segment);
 
   setCurrentLocale(segmentLocale ?? config.defaultLocale);
 

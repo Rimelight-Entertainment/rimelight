@@ -32,15 +32,6 @@ export const setCurrentLocale = (locale: string): void => {
   currentLocale = locale;
 };
 
-/** Returns the configured locale from the first pathname segment, or null. */
-export const localeFromPathname = (
-  pathname: string,
-  supported: readonly string[] = config.locales,
-): string | null =>
-  supported.find(
-    (c) => c.toLowerCase() === pathname.replace(/^\/+/, "").split(/[/?#]/)[0]?.toLowerCase(),
-  ) ?? null;
-
 /** Removes leading locale prefix from pathname. */
 export const stripLocalePrefix = (
   path: string,
