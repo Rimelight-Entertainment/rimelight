@@ -2,9 +2,8 @@ import { config, setCurrentLocale } from "./runtime";
 
 export const resolveLocale = (request: Request): string | null => {
   const { pathname, search } = new URL(request.url);
-  const segmentLocale = config.locales.find(
-    (locale) => locale.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
-  );
+  const segment = pathname.split("/")[1]?.toLowerCase();
+  const segmentLocale = config.locales.find((locale) => locale.toLowerCase() === segment);
 
   setCurrentLocale(segmentLocale ?? config.defaultLocale);
 
@@ -21,11 +20,12 @@ export const resolveLocale = (request: Request): string | null => {
       request.headers
         .get("accept-language")
         ?.split(",")
-        .map((entry) => {
-          const code = entry.split(";")[0]?.trim().toLowerCase();
-          return config.locales.find((locale) => locale === code || locale === code?.split("-")[0]);
-        })
-        .find(Boolean) ?? config.defaultLocale;
+        .map((entry) => entry.split(";")[0]?.trim().toLowerCase())
+        .flatMap((code) =>
+          code
+            ? config.locales.filter((locale) => locale === code || locale === code.split("-")[0])
+            : [],
+        )[0] ?? config.defaultLocale;
 
     setCurrentLocale(preferredLocale);
     return `/${preferredLocale}${pathname}${search}`;
