@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n, resolveLocale } from "../src/middleware";
-import { getCurrentLocale, setCurrentLocale, t } from "../src/index";
+import { getCurrentLocale } from "../src/index";
 import { setTranslations } from "../src/translate";
 
 function req(path: string, init?: RequestInit): Request {
@@ -16,7 +16,6 @@ function config(overrides?: Parameters<typeof setTranslations>[1]): void {
       defaultLocale: "en",
       prefixDefaultLocale: true,
       skipPaths: ["/api", "/_"],
-      kvBinding: "TRANSLATIONS_KV",
       ...overrides,
     },
   );
@@ -86,10 +85,9 @@ describe("@rimelight/i18n resolveLocale (Fetch standard)", () => {
 });
 
 describe("@rimelight/i18n Hono adapter", () => {
-  function mockContext(path: string, env?: Record<string, any>) {
+  function mockContext(path: string) {
     return {
       req: { raw: req(path) },
-      env: env ?? {},
       redirect: (target: string, status = 302) =>
         new Response(null, { status, headers: { Location: target } }),
     };
@@ -120,66 +118,5 @@ describe("@rimelight/i18n Hono adapter", () => {
     expect(response!.status).toBe(302);
     expect(response!.headers.get("location")).toBe("/en/about?page=2");
     expect(getCurrentLocale()).toBe("en");
-  });
-});
-
-describe("@rimelight/i18n KV-first translations", () => {
-  const bundled = { en: { nav: { home: "Home", about: "About" } } };
-
-  function kvContext(path: string, env?: Record<string, any>) {
-    return {
-      req: { raw: req(path) },
-      env: env ?? {},
-      redirect: (target: string, status = 302) =>
-        new Response(null, { status, headers: { Location: target } }),
-    };
-  }
-
-  it("replaces bundled translations with KV data when the binding is present", async () => {
-    setTranslations(bundled, { defaultLocale: "en" });
-    setCurrentLocale("en");
-    const kv = {
-      get: async (key: string) => (key === "locale:en" ? { nav: { home: "Home (KV)" } } : null),
-    };
-
-    await i18n()(kvContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {});
-
-    expect(t("nav.home")).toBe("Home (KV)");
-    expect(t("nav.about")).toBe("nav.about");
-  });
-
-  it("falls back to bundled translations when the binding is absent", async () => {
-    setTranslations(bundled, { defaultLocale: "en" });
-    setCurrentLocale("en");
-
-    await i18n()(kvContext("/en/about"), async () => {});
-
-    expect(t("nav.home")).toBe("Home");
-  });
-
-  it("falls back to bundled translations when the locale is unseeded", async () => {
-    setTranslations(bundled, { defaultLocale: "en" });
-    setCurrentLocale("en");
-    const kv = { get: async () => null };
-
-    await i18n()(kvContext("/en/about", { TRANSLATIONS_KV: kv }), async () => {});
-
-    expect(t("nav.home")).toBe("Home");
-  });
-
-  it("does not read KV for pass-through paths", async () => {
-    setTranslations(bundled, { defaultLocale: "en" });
-    setCurrentLocale("en");
-    let reads = 0;
-    const kv = {
-      get: async () => {
-        reads++;
-        return null;
-      },
-    };
-
-    await i18n()(kvContext("/api/users", { TRANSLATIONS_KV: kv }), async () => {});
-
-    expect(reads).toBe(0);
   });
 });

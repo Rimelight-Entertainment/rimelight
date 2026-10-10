@@ -9,19 +9,15 @@ export interface RimelightI18nPluginOptions {
   defaultLocale?: string;
   translationsDir?: string;
   prefixDefaultLocale?: boolean;
-  kvBinding?: string;
-  skipPaths?: string[];
 }
 
 export type RimelightI18nPlugin = Plugin;
 
-export interface ReadLocaleFilesResult {
+export function readLocaleFiles(dirPath: string): {
   files: string[];
   translations: Record<string, Record<string, any>>;
   errors: { file: string; error: unknown }[];
-}
-
-export function readLocaleFiles(dirPath: string): ReadLocaleFilesResult {
+} {
   const files: string[] = [];
   const translations: Record<string, Record<string, any>> = {};
   const errors: { file: string; error: unknown }[] = [];
@@ -49,9 +45,7 @@ export function resolveTranslationsDir(root: string, specifiedDir?: string): str
 }
 
 export function i18n(options?: RimelightI18nPluginOptions): Plugin {
-  const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV";
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
-  const skipPaths = options?.skipPaths ?? ["/api", "/_"];
   let cached: { translations: Record<string, Record<string, any>>; dirPath: string } | null = null;
 
   function getData(root: string) {
@@ -77,31 +71,26 @@ export function i18n(options?: RimelightI18nPluginOptions): Plugin {
         defaultLocale,
         prefixDefaultLocale,
         translations,
-        kvBinding,
-        skipPaths,
+        skipPaths: ["/api", "/_"],
       };
     },
     async closeBundle() {
       if (!cached?.translations || Object.keys(cached.translations).length === 0) return;
 
-      const keys: { key: string; value: string }[] = [];
-      for (const [locale, localeData] of Object.entries(cached.translations)) {
-        keys.push({ key: `locale:${locale}`, value: JSON.stringify(localeData) });
-        for (const [component, componentData] of Object.entries(
-          localeData as Record<string, any>,
-        )) {
-          keys.push({ key: `locale:${locale}:${component}`, value: JSON.stringify(componentData) });
-        }
-      }
-
       const outDir = process.env["WRANGLER_OUT_DIR"] ?? "dist";
-      const seedFile = path.join(outDir, "_translations-seed.json");
+      const localesOutDir = path.join(outDir, "locales");
 
+      // Emit static JSON files per locale for external clients (games, mobile apps, CDN)
       try {
-        fs.mkdirSync(path.dirname(seedFile), { recursive: true });
-        fs.writeFileSync(seedFile, JSON.stringify({ keys }, null, 2));
+        fs.mkdirSync(localesOutDir, { recursive: true });
+        for (const [locale, data] of Object.entries(cached.translations)) {
+          fs.writeFileSync(
+            path.join(localesOutDir, `${locale}.json`),
+            JSON.stringify(data, null, 2),
+          );
+        }
       } catch {
-        // Ignore write errors
+        // Ignore static asset write errors
       }
     },
   });

@@ -68,31 +68,29 @@ describe("@rimelight/i18n Vite plugin", () => {
 
       expect(contentJs).toContain(`export const defaultLocale = "en";`);
       expect(contentJs).toContain(`export const prefixDefaultLocale = true;`);
-      expect(contentJs).toContain(`export const kvBinding = "TRANSLATIONS_KV";`);
       expect(contentJs).toContain(`export const skipPaths = ["/api", "/_"];`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
 
-  it("emits configured kvBinding and skipPaths to the generated config", async () => {
+  it("emits standard skipPaths to the generated config", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-custom-"));
     try {
-      const configPlugin: Plugin = i18n({ kvBinding: "I18N_KV", skipPaths: ["/internal"] });
+      const configPlugin: Plugin = i18n();
       await callHook(configPlugin.config, { root: tmpDir });
 
       const generatedJs = path.join(tmpDir, "node_modules", ".rimelight", "i18n", "config.js");
       const contentJs = fs.readFileSync(generatedJs, "utf-8");
 
-      expect(contentJs).toContain(`export const kvBinding = "I18N_KV";`);
-      expect(contentJs).toContain(`export const skipPaths = ["/internal"];`);
+      expect(contentJs).toContain(`export const skipPaths = ["/api", "/_"];`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
 
-  it("generates translations seed file on closeBundle", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-seed-"));
+  it("generates static JSON assets on closeBundle for external/game clients", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-static-"));
     const i18nDir = path.join(tmpDir, "src", "i18n");
     fs.mkdirSync(i18nDir, { recursive: true });
     fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ nav: { home: "Home" } }));
@@ -107,22 +105,12 @@ describe("@rimelight/i18n Vite plugin", () => {
       await callHook(configPlugin.config, { root: tmpDir });
       await callHook(configPlugin.closeBundle);
 
-      const seedPath = path.join(tmpDir, "_translations-seed.json");
-      expect(fs.existsSync(seedPath)).toBe(true);
-
-      const seedContent = JSON.parse(fs.readFileSync(seedPath, "utf-8"));
-      expect(seedContent.keys).toContainEqual({
-        key: "locale:en",
-        value: JSON.stringify({ nav: { home: "Home" } }),
-      });
-      expect(seedContent.keys).toContainEqual({
-        key: "locale:en:nav",
-        value: JSON.stringify({ home: "Home" }),
-      });
-      expect(seedContent.keys).toContainEqual({
-        key: "locale:pt:nav",
-        value: JSON.stringify({ home: "Início" }),
-      });
+      const staticEn = path.join(tmpDir, "locales", "en.json");
+      const staticPt = path.join(tmpDir, "locales", "pt.json");
+      expect(fs.existsSync(staticEn)).toBe(true);
+      expect(fs.existsSync(staticPt)).toBe(true);
+      expect(JSON.parse(fs.readFileSync(staticEn, "utf-8"))).toEqual({ nav: { home: "Home" } });
+      expect(JSON.parse(fs.readFileSync(staticPt, "utf-8"))).toEqual({ nav: { home: "Início" } });
     } finally {
       delete process.env["WRANGLER_OUT_DIR"];
       fs.rmSync(tmpDir, { recursive: true, force: true });

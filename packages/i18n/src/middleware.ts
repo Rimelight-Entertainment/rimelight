@@ -1,15 +1,12 @@
 import {
   defaultLocale,
-  getCurrentLocale,
   setCurrentLocale,
-  kvBinding,
   localeFromPathname,
   locales,
   prefixDefaultLocale,
   skipPaths,
   stripLocalePrefix,
 } from "./locale";
-import { applyLocaleOverrides } from "./translate";
 
 const FILE_SUFFIX = /\.[A-Za-z0-9]{1,8}$/;
 
@@ -64,25 +61,11 @@ export function resolveLocale(request: Request): string | null {
 
 export function i18n() {
   return async (
-    c: { req: { raw: Request }; env?: any; redirect(path: string, status?: number): Response },
+    c: { req: { raw: Request }; redirect(path: string, status?: number): Response },
     next: () => Promise<void>,
   ): Promise<Response | void> => {
     const redirectTo = resolveLocale(c.req.raw);
     if (redirectTo) return c.redirect(redirectTo, 302);
-
-    const locale = getCurrentLocale();
-    const kv = c.env?.[kvBinding] as {
-      get(key: string, opts?: { type: "json"; cacheTtl?: number }): Promise<unknown>;
-    } | null;
-
-    if (locale && kv && isLocalizedPage(new URL(c.req.raw.url).pathname)) {
-      try {
-        const overrides = await kv.get(`locale:${locale}`, { type: "json", cacheTtl: 60 });
-        applyLocaleOverrides(locale, overrides);
-      } catch {
-        // KV unavailable → bundled translations
-      }
-    }
 
     return next();
   };
