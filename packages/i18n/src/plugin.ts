@@ -13,14 +13,14 @@ export interface RimelightI18nPluginOptions {
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let translations: Record<string, any> = {};
 
-  const flatten = (obj: any, prefix = "", target: Record<string, any> = {}) => {
+  const flatten = (obj: any, p = "", out: Record<string, any> = {}) => {
     for (const [k, v] of Object.entries(obj || {})) {
-      if (k === "__proto__" || k === "constructor" || k === "prototype") continue;
-      const key = prefix ? `${prefix}.${k}` : k;
-      target[key] = v;
-      if (v && typeof v === "object" && !Array.isArray(v)) flatten(v, key, target);
+      if (k in Object.prototype) continue;
+      const key = p ? `${p}.${k}` : k;
+      out[key] = v;
+      if (v?.constructor === Object) flatten(v, key, out);
     }
-    return target;
+    return out;
   };
 
   return {
@@ -33,19 +33,18 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
           ? fs.readdirSync(dir).filter((f) => f.endsWith(".json"))
           : [];
 
-        translations = {};
-        for (const file of files) {
-          const locale = path.basename(file, ".json");
-          translations[locale] = flatten(
-            JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8")),
-          );
-        }
+        translations = Object.fromEntries(
+          files.map((f) => [
+            path.basename(f, ".json"),
+            flatten(JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"))),
+          ]),
+        );
 
         const locales = Object.keys(translations).sort();
         return {
           locales,
           defaultLocale:
-            options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en",
+            options.defaultLocale ?? locales.find((l) => l === "en") ?? locales[0] ?? "en",
           ...options,
           translations,
         };
