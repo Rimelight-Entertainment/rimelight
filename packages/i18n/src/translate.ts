@@ -1,67 +1,68 @@
 import { config, getCurrentLocale } from "./locale";
 
 export interface TFunction {
-  <K extends string = string>(key: K | (string & {}), params?: Record<string, any>): string;
+  (key: string, params?: Record<string, any>): string;
   raw: <T = unknown>(key: string, fallback?: T, locale?: string) => T;
   array: <T = string>(key: string, fallback?: T[]) => T[];
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
   localize: (value: unknown, locale?: string) => string;
 }
 
+const plurals = new Map<string, Intl.PluralRules>();
+
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, any>): string => {
-    const locale = getCurrentLocale();
-    let value: unknown = t.raw(key, undefined, locale) ?? key;
+    const loc = getCurrentLocale();
+    let val: unknown = t.raw(key, undefined, loc);
 
-    if (
-      typeof params?.["count"] === "number" &&
-      value instanceof Object &&
-      value.constructor === Object
-    ) {
-      const plurals = value as Record<string, string>;
-      value = plurals[t.plural(params["count"], locale)] ?? plurals["other"] ?? key;
+    if (typeof params?.["count"] === "number") {
+      const cat = t.plural(params["count"], loc);
+      if (val && typeof val === "object")
+        val = (val as Record<string, any>)[cat] ?? (val as Record<string, any>)["other"];
+      else if (val === undefined)
+        val = t.raw(`${key}.${cat}`, undefined, loc) ?? t.raw(`${key}.other`, undefined, loc);
     }
+    val = val ?? key;
 
-    if (typeof value === "function") return (value as (p?: any) => string)(params);
-
-    if (typeof value === "string" && params) {
-      return value.replace(/\{(\w+)\}/g, (_, placeholder) => {
-        const param = params[placeholder];
-        return placeholder === "count" && typeof param === "number"
-          ? param.toLocaleString(locale)
-          : String(param ?? `{${placeholder}}`);
-      });
+    if (typeof val === "function") return (val as (p?: any) => string)(params);
+    if (typeof val === "string") {
+      return params
+        ? val.replace(/\{(\w+)\}/g, (_: string, k: string) =>
+            k === "count" && typeof params[k] === "number"
+              ? (params[k] as number).toLocaleString(loc)
+              : String(params[k] ?? `{${k}}`),
+          )
+        : val;
     }
-
-    return value instanceof Object && value.constructor === Object
-      ? JSON.stringify(value)
-      : value != null
-        ? String(value as string | number | boolean)
+    return val && typeof val === "object"
+      ? JSON.stringify(val)
+      : val != null
+        ? String(val as string | number | boolean)
         : "";
   },
   {
-    raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
+    raw: <T = unknown>(key: string, fallback?: T, loc = getCurrentLocale()): T => {
       const get = (dict?: Record<string, any>) =>
-        dict && (dict[key] ?? key.split(".").reduce((target, segment) => target?.[segment], dict));
-      return (get(config.translations[locale]) ??
+        dict && (key in dict ? dict[key] : key.split(".").reduce((acc, p) => acc?.[p], dict));
+      return (get(config.translations[loc]) ??
         get(config.translations[config.defaultLocale]) ??
         fallback) as T;
     },
     array: <T = string>(key: string, fallback: T[] = []): T[] => {
-      const value = t.raw(key);
-      return (Array.isArray(value) ? value : fallback) as T[];
+      const val = t.raw(key);
+      return Array.isArray(val) ? (val as T[]) : fallback;
     },
-    plural: (count: number, locale = getCurrentLocale()): Intl.LDMLPluralRule =>
-      new Intl.PluralRules(locale).select(count),
-    localize: (value: unknown, locale = getCurrentLocale()): string =>
-      value instanceof Object && value.constructor === Object
+    plural: (count: number, loc = getCurrentLocale()): Intl.LDMLPluralRule =>
+      (plurals.get(loc) ?? plurals.set(loc, new Intl.PluralRules(loc)).get(loc)!).select(count),
+    localize: (val: unknown, loc = getCurrentLocale()): string =>
+      val && typeof val === "object"
         ? String(
-            (value as Record<string, string>)[locale] ||
-              (value as Record<string, string>)[config.defaultLocale] ||
+            (val as Record<string, any>)[loc] ||
+              (val as Record<string, any>)[config.defaultLocale] ||
               "",
           )
-        : value != null && typeof value !== "object"
-          ? String(value as string | number | boolean)
+        : val != null && typeof val !== "object"
+          ? String(val as string | number | boolean)
           : "",
   },
 );

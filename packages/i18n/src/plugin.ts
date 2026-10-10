@@ -40,6 +40,26 @@ export const readLocaleFiles = (
   return { files, translations, errors };
 };
 
+/**
+ * Pre-indexes nested dictionaries into flat dot-paths for O(1) runtime lookups,
+ * while retaining structural containers and array nodes.
+ */
+export const indexTranslations = (
+  obj: Record<string, any>,
+  prefix = "",
+  target: Record<string, any> = {},
+): Record<string, any> => {
+  for (const [key, value] of Object.entries(obj)) {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+    const fullPath = prefix ? `${prefix}.${key}` : key;
+    target[fullPath] = value;
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      indexTranslations(value, fullPath, target);
+    }
+  }
+  return target;
+};
+
 export const i18n = (options?: RimelightI18nPluginOptions): Plugin => {
   const prefixDefaultLocale = options?.prefixDefaultLocale ?? true;
   let cachedTranslations: Record<string, Record<string, any>> | null = null;
@@ -56,11 +76,16 @@ export const i18n = (options?: RimelightI18nPluginOptions): Plugin => {
       const defaultLocale =
         options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
 
+      const indexedTranslations: Record<string, Record<string, any>> = {};
+      for (const [locale, data] of Object.entries(translations)) {
+        indexedTranslations[locale] = indexTranslations(data);
+      }
+
       return {
         locales,
         defaultLocale,
         prefixDefaultLocale,
-        translations,
+        translations: indexedTranslations,
         skipPaths: ["/api", "/_"],
       };
     },
