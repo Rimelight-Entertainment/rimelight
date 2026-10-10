@@ -30,6 +30,9 @@
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
     },
+    "./client": {
+      "types": "./src/client.d.ts"
+    },
     "./components": {
       "types": "./src/components/index.ts",
       "solid": "./src/components/index.tsx",

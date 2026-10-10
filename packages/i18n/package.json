@@ -19,7 +19,8 @@
     "rimelight-i18n": "./dist/cli.mjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "type": "module",
   "exports": {
