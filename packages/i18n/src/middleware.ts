@@ -12,33 +12,30 @@ export const i18n =
       (locale) => locale.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
     );
 
-    setCurrentLocale(segmentLocale ?? config.defaultLocale);
-
-    if (
-      (method !== "GET" && method !== "HEAD") ||
-      config.skipPaths.some((skip) => pathname === skip || pathname.startsWith(`${skip}/`)) ||
-      /\/[^/]+\.[A-Za-z0-9]{1,8}$/.test(pathname)
-    ) {
-      return next();
-    }
-
-    if (config.prefixDefaultLocale && !segmentLocale) {
-      const preferredLocale =
-        headers
+    const preferredLocale = !segmentLocale
+      ? (headers
           .get("accept-language")
           ?.split(",")
           .map((entry) => entry.split(";")[0]?.trim().toLowerCase())
-          .flatMap((code) =>
-            config.locales.filter((locale) => locale === code || locale === code?.split("-")[0]),
-          )[0] ?? config.defaultLocale;
+          .map((code) =>
+            config.locales.find((locale) => locale === code || locale === code?.split("-")[0]),
+          )
+          .find(Boolean) ?? config.defaultLocale)
+      : segmentLocale;
 
-      setCurrentLocale(preferredLocale);
-      return context.redirect(`/${preferredLocale}${pathname}${search}`, 302);
-    }
+    setCurrentLocale(preferredLocale);
 
-    if (!config.prefixDefaultLocale && segmentLocale === config.defaultLocale) {
-      return context.redirect(`${pathname.slice(segmentLocale.length + 1) || "/"}${search}`, 302);
-    }
+    const isLocalized =
+      (method === "GET" || method === "HEAD") &&
+      !config.skipPaths.some((skip) => pathname === skip || pathname.startsWith(`${skip}/`)) &&
+      !/\/[^/]+\.[A-Za-z0-9]{1,8}$/.test(pathname);
 
-    return next();
+    const redirectPath =
+      isLocalized && config.prefixDefaultLocale && !segmentLocale
+        ? `/${preferredLocale}${pathname}${search}`
+        : isLocalized && !config.prefixDefaultLocale && segmentLocale === config.defaultLocale
+          ? `${pathname.slice(segmentLocale.length + 1) || "/"}${search}`
+          : null;
+
+    return redirectPath ? context.redirect(redirectPath, 302) : next();
   };
