@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { setCurrentLocale, t } from "../src/index";
-import { setTranslations } from "../src/translate";
+import { setTranslations } from "./helpers";
 
 describe("@rimelight/i18n array, object, and deep path support", () => {
   const translations = {

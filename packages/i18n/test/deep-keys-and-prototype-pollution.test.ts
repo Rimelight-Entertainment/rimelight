@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { flatten, unflatten, findMissingKeys } from "../src/cli";
 import { setCurrentLocale, t } from "../src/index";
-import { setTranslations } from "../src/translate";
+import { setTranslations } from "./helpers";
 
 describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety", () => {
   const translations = {

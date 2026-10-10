@@ -10,8 +10,8 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { getLocaleUrl, setCurrentLocale, t } from "../src/index";
-import { setLocaleConfig } from "../src/locale";
-import { getPluralCategory, setTranslations } from "../src/translate";
+import { getPluralCategory } from "../src/translate";
+import { setLocaleConfig, setTranslations } from "./helpers";
 
 describe("translation dictionary utils", () => {
   const source = {

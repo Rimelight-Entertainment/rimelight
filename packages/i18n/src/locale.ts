@@ -1,29 +1,22 @@
 import generatedConfig from "#rimelight/i18n";
 
-const rawConfig: Record<string, any> =
-  generatedConfig && typeof generatedConfig === "object"
-    ? (generatedConfig as Record<string, any>)
-    : {};
+const raw = (
+  generatedConfig && typeof generatedConfig === "object" ? generatedConfig : {}
+) as Record<string, any>;
 
-export let locales: string[] = Array.isArray(rawConfig["locales"])
-  ? [...rawConfig["locales"]]
-  : ["en"];
+export const config = {
+  locales: Array.isArray(raw["locales"]) ? raw["locales"] : ["en"],
+  defaultLocale: typeof raw["defaultLocale"] === "string" ? raw["defaultLocale"] : "en",
+  prefixDefaultLocale:
+    typeof raw["prefixDefaultLocale"] === "boolean" ? raw["prefixDefaultLocale"] : true,
+  skipPaths: Array.isArray(raw["skipPaths"]) ? raw["skipPaths"] : ["/api", "/_"],
+};
 
-export let defaultLocale: string =
-  typeof rawConfig["defaultLocale"] === "string" ? rawConfig["defaultLocale"] : "en";
-
-export let prefixDefaultLocale: boolean =
-  typeof rawConfig["prefixDefaultLocale"] === "boolean" ? rawConfig["prefixDefaultLocale"] : true;
-
-export let skipPaths: string[] = Array.isArray(rawConfig["skipPaths"])
-  ? [...rawConfig["skipPaths"]]
-  : ["/api", "/_"];
-
-let activeLocale = defaultLocale;
+let activeLocale = config.defaultLocale;
 
 /** Returns the active locale code. */
 export function getCurrentLocale(): string {
-  return activeLocale || defaultLocale;
+  return activeLocale || config.defaultLocale;
 }
 
 /** Sets the active locale code. */
@@ -33,35 +26,18 @@ export function setCurrentLocale(value: string): void {
 
 /** Returns the supported locale codes. */
 export function getLocales(): string[] {
-  return [...locales];
+  return [...config.locales];
 }
 
 /** Returns the default locale code. */
 export function getDefaultLocale(): string {
-  return defaultLocale;
-}
-
-/** Test/runtime helper to update locale configuration. */
-export function setLocaleConfig(options: {
-  defaultLocale?: string;
-  locales?: string[];
-  prefixDefaultLocale?: boolean;
-  skipPaths?: string[];
-}): void {
-  if (options.defaultLocale) defaultLocale = options.defaultLocale;
-  if (options.locales) locales = [...options.locales];
-  if (options.prefixDefaultLocale !== undefined) prefixDefaultLocale = options.prefixDefaultLocale;
-  if (options.skipPaths) skipPaths = [...options.skipPaths];
-
-  if (!activeLocale) {
-    setCurrentLocale(defaultLocale);
-  }
+  return config.defaultLocale;
 }
 
 /** Returns the configured locale from the first pathname segment, or null. */
 export function localeFromPathname(
   pathname: string,
-  supported: readonly string[] = locales,
+  supported: readonly string[] = config.locales,
 ): string | null {
   return (
     supported.find((c) => c.toLowerCase() === pathname.split(/[/?#]/)[1]?.toLowerCase()) ?? null
@@ -69,7 +45,10 @@ export function localeFromPathname(
 }
 
 /** Removes leading locale prefix from pathname. */
-export function stripLocalePrefix(path: string, supported: readonly string[] = locales): string {
+export function stripLocalePrefix(
+  path: string,
+  supported: readonly string[] = config.locales,
+): string {
   return path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "");
 }
 
@@ -77,5 +56,7 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
 export function getLocaleUrl(path: string, locale = getCurrentLocale()): string {
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
   const target = stripLocalePrefix(path).replace(/^\/?/, "/");
-  return prefixDefaultLocale || locale !== defaultLocale ? `/${locale}${target}` : target;
+  return config.prefixDefaultLocale || locale !== config.defaultLocale
+    ? `/${locale}${target}`
+    : target;
 }

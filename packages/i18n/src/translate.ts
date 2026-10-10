@@ -1,5 +1,5 @@
 import generatedConfig from "#rimelight/i18n";
-import { defaultLocale, getCurrentLocale, setLocaleConfig } from "./locale";
+import { config, getCurrentLocale } from "./locale";
 
 export interface TFunction {
   <K extends string = string>(key: K | (string & {}), params?: Record<string, any>): string;
@@ -9,28 +9,12 @@ export interface TFunction {
   localize: (val: unknown, locale?: string) => string;
 }
 
-export let translations: Record<string, Record<string, any>> = generatedConfig?.translations
+export const translations: Record<string, Record<string, any>> = generatedConfig?.translations
   ? { ...generatedConfig.translations }
   : {};
 
 export function isObjectRecord(obj: unknown): obj is Record<string, any> {
   return typeof obj === "object" && obj !== null;
-}
-
-/** Test/runtime helper to set in-memory translations. */
-export function setTranslations(
-  data: Record<string, Record<string, any>>,
-  options?: {
-    defaultLocale?: string;
-    locales?: string[];
-    prefixDefaultLocale?: boolean;
-    skipPaths?: string[];
-  },
-): void {
-  translations = { ...data };
-  if (options) {
-    setLocaleConfig(options);
-  }
 }
 
 function getVal(dict: Record<string, any> | undefined, path: string): unknown {
@@ -48,19 +32,19 @@ function getVal(dict: Record<string, any> | undefined, path: string): unknown {
 function resolveKey(key: string, targetLocale: string): unknown {
   return (
     getVal(translations[targetLocale], key) ??
-    (targetLocale !== defaultLocale ? getVal(translations[defaultLocale], key) : undefined)
+    (targetLocale !== config.defaultLocale
+      ? getVal(translations[config.defaultLocale], key)
+      : undefined)
   );
 }
 
 function tRaw<T = unknown>(key: string, fallback?: T): T {
-  const targetLocale = getCurrentLocale() || defaultLocale;
-  const val = resolveKey(key, targetLocale);
+  const val = resolveKey(key, getCurrentLocale());
   return val !== undefined ? (val as T) : (fallback as T);
 }
 
 function tArray<T = string>(key: string, fallback: T[] = []): T[] {
-  const targetLocale = getCurrentLocale() || defaultLocale;
-  const val = resolveKey(key, targetLocale);
+  const val = resolveKey(key, getCurrentLocale());
   return Array.isArray(val) ? (val as T[]) : fallback;
 }
 
@@ -84,7 +68,7 @@ export const t: TFunction = Object.assign(
     const dotIndex = key.indexOf(".");
     if (dotIndex === -1) return key;
 
-    const targetLocale = getCurrentLocale() || defaultLocale;
+    const targetLocale = getCurrentLocale();
     let value = resolveKey(key, targetLocale) ?? key;
 
     // Pluralization
@@ -130,7 +114,7 @@ function tLocalize(val: unknown, targetLocale: string = getCurrentLocale()): str
     const localized = val[targetLocale];
     if (typeof localized === "string" && localized.length > 0) return localized;
 
-    const fallback = val[defaultLocale];
+    const fallback = val[config.defaultLocale];
     if (typeof fallback === "string") return fallback;
     return "";
   }
