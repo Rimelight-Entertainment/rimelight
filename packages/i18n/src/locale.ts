@@ -5,7 +5,7 @@ interface I18nConfig {
   defaultLocale: string;
   prefixDefaultLocale: boolean;
   skipPaths: readonly string[];
-  translations: Record<string, Record<string, any>>;
+  translations: Record<string, Record<string, unknown>>;
 }
 
 export const config: I18nConfig = {
@@ -37,19 +37,23 @@ export const localeFromPathname = (
   pathname: string,
   supported: readonly string[] = config.locales,
 ): string | null =>
-  supported.find((c) => c.toLowerCase() === pathname.split(/[/?#]/)[1]?.toLowerCase()) ?? null;
+  supported.find(
+    (c) => c.toLowerCase() === pathname.replace(/^\/+/, "").split(/[/?#]/)[0]?.toLowerCase(),
+  ) ?? null;
 
 /** Removes leading locale prefix from pathname. */
 export const stripLocalePrefix = (
   path: string,
   supported: readonly string[] = config.locales,
-): string => path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "");
+): string =>
+  supported.length
+    ? path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "")
+    : path;
 
 /** Generates a localized relative URL path. */
 export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string => {
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
-  const target = stripLocalePrefix(path).replace(/^\/?/, "/");
-  return config.prefixDefaultLocale || locale !== config.defaultLocale
-    ? `/${locale}${target}`
-    : target;
+  const target = stripLocalePrefix(path);
+  const prefix = config.prefixDefaultLocale || locale !== config.defaultLocale ? `/${locale}` : "";
+  return `${prefix}${target.startsWith("/") ? target : `/${target}`}`;
 };
