@@ -10,68 +10,55 @@ export interface RimelightI18nPluginOptions {
 }
 
 export const i18n = (options?: RimelightI18nPluginOptions): Plugin => {
-  let cachedTranslations: Record<string, Record<string, any>> | null = null;
+  let cached: Record<string, any> = {};
 
-  const flattenTranslations = (
-    obj: Record<string, any>,
-    prefix = "",
-    target: Record<string, any> = {},
-  ): Record<string, any> => {
-    for (const [key, value] of Object.entries(obj)) {
-      if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
-      const fullPath = prefix ? `${prefix}.${key}` : key;
-      target[fullPath] = value;
-      if (value && typeof value === "object" && !Array.isArray(value)) {
-        flattenTranslations(value, fullPath, target);
-      }
+  const flatten = (obj: any, prefix = "", res: Record<string, any> = {}): Record<string, any> => {
+    for (const [k, v] of Object.entries(obj || {})) {
+      if (k === "__proto__" || k === "constructor" || k === "prototype") continue;
+      const key = prefix ? `${prefix}.${k}` : k;
+      res[key] = v;
+      if (v && typeof v === "object" && !Array.isArray(v)) flatten(v, key, res);
     }
-    return target;
+    return res;
   };
+
+  const getDir = (root: string) => path.resolve(root, options?.translationsDir ?? "src/i18n");
 
   return defineRimelightArtifactPlugin({
     pkgName: "i18n",
-    watch: ({ root }) => [path.resolve(root, options?.translationsDir ?? "src/i18n")],
+    watch: ({ root }) => [getDir(root)],
     config: ({ root }) => {
-      const translationsDir = path.resolve(root, options?.translationsDir ?? "src/i18n");
-      const translations: Record<string, Record<string, any>> = {};
+      const dir = getDir(root);
+      const files = fs.existsSync(dir)
+        ? fs.readdirSync(dir).filter((f) => f.endsWith(".json"))
+        : [];
+      const indexed: Record<string, any> = {};
 
-      try {
-        for (const file of fs.readdirSync(translationsDir)) {
-          if (file.endsWith(".json")) {
-            translations[path.basename(file, ".json")] = JSON.parse(
-              fs.readFileSync(path.join(translationsDir, file), "utf-8"),
-            );
-          }
-        }
-      } catch {}
-
-      cachedTranslations = translations;
-      const locales = Object.keys(translations).sort();
-
-      const indexedTranslations: Record<string, Record<string, any>> = {};
-      for (const [locale, data] of Object.entries(translations)) {
-        indexedTranslations[locale] = flattenTranslations(data);
+      cached = {};
+      for (const file of files) {
+        const locale = path.basename(file, ".json");
+        const json = JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8"));
+        cached[locale] = json;
+        indexed[locale] = flatten(json);
       }
 
+      const locales = Object.keys(cached).sort();
       return {
         locales,
         defaultLocale:
           options?.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en")),
         prefixDefaultLocale: options?.prefixDefaultLocale ?? true,
-        translations: indexedTranslations,
+        translations: indexed,
         skipPaths: ["/api", "/_"],
       };
     },
-    closeBundle: async () => {
-      if (!cachedTranslations || Object.keys(cachedTranslations).length === 0) return;
-
+    closeBundle: () => {
+      if (!Object.keys(cached).length) return;
       const outDir = path.join(process.env["WRANGLER_OUT_DIR"] ?? "dist", "locales");
-      try {
-        fs.mkdirSync(outDir, { recursive: true });
-        for (const [locale, data] of Object.entries(cachedTranslations)) {
-          fs.writeFileSync(path.join(outDir, `${locale}.json`), JSON.stringify(data, null, 2));
-        }
-      } catch {}
+      fs.mkdirSync(outDir, { recursive: true });
+      for (const [locale, data] of Object.entries(cached)) {
+        fs.writeFileSync(path.join(outDir, `${locale}.json`), JSON.stringify(data, null, 2));
+      }
     },
   });
 };
