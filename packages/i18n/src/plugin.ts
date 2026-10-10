@@ -23,22 +23,20 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
     return result;
   };
 
-  const resolvePath = (root: string) => path.resolve(root, options.translationsDir ?? "src/i18n");
-
   return {
     ...defineRimelightArtifactPlugin({
       pkgName: "i18n",
-      watch: ({ root }) => [resolvePath(root)],
+      watch: ({ root }) => [path.resolve(root, options.translationsDir ?? "src/i18n")],
       config: ({ root }) => {
-        const directory = resolvePath(root);
-        translations = fs.existsSync(directory)
+        const dir = path.resolve(root, options.translationsDir ?? "src/i18n");
+        translations = fs.existsSync(dir)
           ? Object.fromEntries(
               fs
-                .readdirSync(directory)
+                .readdirSync(dir)
                 .filter((file) => file.endsWith(".json"))
                 .map((file) => [
                   path.basename(file, ".json"),
-                  flatten(JSON.parse(fs.readFileSync(path.join(directory, file), "utf-8"))),
+                  flatten(JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8"))),
                 ]),
             )
           : {};
@@ -54,13 +52,13 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
       },
     }),
     generateBundle() {
-      Object.entries(translations).forEach(([locale, data]) => {
+      for (const [locale, data] of Object.entries(translations)) {
         this.emitFile({
           type: "asset",
           fileName: `locales/${locale}.json`,
           source: JSON.stringify(data, null, 2),
         });
-      });
+      }
     },
   };
 };
