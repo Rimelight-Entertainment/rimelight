@@ -8,8 +8,6 @@ export interface TFunction {
   localize: (value: unknown, locale?: string) => string;
 }
 
-const plurals = new Map<string, Intl.PluralRules>();
-
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, any>): string => {
     const loc = getCurrentLocale();
@@ -53,7 +51,7 @@ export const t: TFunction = Object.assign(
       return Array.isArray(val) ? (val as T[]) : fallback;
     },
     plural: (count: number, loc = getCurrentLocale()): Intl.LDMLPluralRule =>
-      (plurals.get(loc) ?? plurals.set(loc, new Intl.PluralRules(loc)).get(loc)!).select(count),
+      new Intl.PluralRules(loc).select(count),
     localize: (val: unknown, loc = getCurrentLocale()): string =>
       val && typeof val === "object"
         ? String(
