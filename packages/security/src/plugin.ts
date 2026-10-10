@@ -1,15 +1,82 @@
 import { createHash } from "node:crypto";
 import type { Plugin } from "vite-plus";
-import {
-  defineRimelightArtifactPlugin,
-  emitRimelightArtifact,
-  serializeData,
-} from "@rimelight/config";
+import { defineRimelightArtifactPlugin, serializeData } from "@rimelight/config";
+import { resolveSecurityDomain } from "./runtime";
 
-import type { SecurityPluginOptions } from "./types";
-import { resolveSecurityDomain } from "./csp";
+export interface RimelightSecurityPluginOptions {
+  domain?: string;
+  allowedDomains?: string[];
+  imgSrc?: string[];
+  connectSrc?: string[];
+  frameSrc?: string[];
+  scriptResources?: string[];
+  styleResources?: string[];
+  resources?: string[];
+  turnstile?:
+    | boolean
+    | {
+        field?: string;
+        secretKey?: string;
+        failOpen?: boolean;
+        endpoint?: string;
+      };
+  trustedTypes?: boolean;
+  crossOriginEmbedderPolicy?:
+    | "require-corp"
+    | "credentialless"
+    | "unsafe-none"
+    | (string & {})
+    | false;
+  crossOriginOpenerPolicy?:
+    | "same-origin"
+    | "same-origin-allow-popups"
+    | "noopener-allow-popups"
+    | "unsafe-none"
+    | (string & {})
+    | false;
+  crossOriginResourcePolicy?: "same-origin" | "same-site" | "cross-origin" | (string & {}) | false;
+  directives?: Record<string, string[] | string | boolean>;
+  strictDynamic?: boolean;
+  enforceTls?: boolean;
+  stripHeaders?: string[] | false;
+  headers?: Record<string, string>;
+  manifest?: Record<string, string>;
+  ratelimit?:
+    | false
+    | {
+        bindingName?: string;
+        limiter?: (
+          c: any,
+        ) => { limit(options: { key: string }): Promise<{ success: boolean }> } | undefined;
+        routes?: (string | RegExp)[] | ((c: any) => boolean);
+        keyGenerator?: (c: any) => string | Promise<string>;
+        retryAfter?: number;
+        fallback?: "pass" | "block";
+        onRateLimited?: (c: any, retryAfter: number) => Response | Promise<Response>;
+      };
+  construction?:
+    | false
+    | {
+        modeEnvKey?: string;
+        passphraseEnvKey?: string;
+        passphrase?: string;
+        cookieName?: string;
+        cookieMaxAge?: number;
+        locales?: string[];
+        getLocale?: (path: string) => string;
+        constructionPath?: string;
+        apiPath?: string | false;
+        renderFallback?: boolean;
+        whitelist?: (string | RegExp)[] | ((path: string) => boolean);
+        isAuthorized?: (c: any) => boolean | Promise<boolean>;
+        onUnauthorized?: (
+          c: any,
+          meta: { locale: string; path: string; redirectUrl: string },
+        ) => Response | Promise<Response>;
+      };
+  devOnly?: boolean;
+}
 
-export type RimelightSecurityPluginOptions = SecurityPluginOptions;
 export { serializeData as serializeConfig };
 
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
@@ -24,22 +91,18 @@ export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
 
   const sriManifest: Record<string, string> = {};
   const externalUrls = Array.from(new Set(options.resources || []));
-  let pluginRoot = process.cwd();
-
-  const basePlugin = defineRimelightArtifactPlugin({
-    name: "rimelight:security",
-    pkgName: "security",
-    emit({ root }) {
-      pluginRoot = root;
-      return {
-        "config.js": `export const config = ${serializeData(options)};\nexport const manifest = ${JSON.stringify(sriManifest)};\nexport default { config, manifest };`,
-        "config.d.ts": `export declare const config: any;\nexport declare const manifest: Record<string, string>;\ndeclare const _default: { config: any; manifest: Record<string, string> };\nexport default _default;`,
-      };
-    },
-  });
 
   return {
-    ...basePlugin,
+    ...defineRimelightArtifactPlugin({
+      pkgName: "security",
+      emit: () => ({
+        files: {
+          "config.js": `export const config = ${serializeData(options)};\nexport const manifest = ${JSON.stringify(sriManifest)};\nexport default { config, manifest };\n`,
+          "config.d.ts": `export declare const config: any;\nexport declare const manifest: Record<string, string>;\nexport default { config, manifest };\n`,
+          "sri.json": JSON.stringify(sriManifest, null, 2),
+        },
+      }),
+    }),
     enforce: "post",
 
     async buildStart() {
@@ -58,9 +121,7 @@ export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
             if (!response.ok) return;
             const buffer = await response.arrayBuffer();
             sriManifest[url] = hashContent(buffer);
-          } catch {
-            // Silently ignore unreachable external resources during build
-          }
+          } catch {}
         }),
       );
     },
@@ -69,13 +130,7 @@ export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
       for (const [fileName, chunk] of Object.entries(bundle)) {
         if (!fileName.endsWith(".js") && !fileName.endsWith(".css")) continue;
 
-        let content: string | Uint8Array | undefined;
-        if (chunk.type === "chunk") {
-          content = chunk.code;
-        } else if (chunk.type === "asset") {
-          content = chunk.source;
-        }
-
+        const content = chunk.type === "chunk" ? chunk.code : chunk.source;
         if (content) {
           const hash = hashContent(content);
           sriManifest[`/${fileName.replace(/^\/+/, "")}`] = hash;
@@ -83,9 +138,10 @@ export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
         }
       }
 
-      emitRimelightArtifact(pluginRoot, "security", {
-        "config.js": `export const config = ${serializeData(options)};\nexport const manifest = ${JSON.stringify(sriManifest)};\nexport default { config, manifest };`,
-        "sri.json": JSON.stringify(sriManifest, null, 2),
+      this.emitFile?.({
+        type: "asset",
+        fileName: "sri.json",
+        source: JSON.stringify(sriManifest, null, 2),
       });
     },
   };

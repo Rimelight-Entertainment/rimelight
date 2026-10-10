@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { construction, isConstructionGuest } from "../src/middleware/construction";
+import { construction, isConstructionGuest } from "../src/middleware";
 
 describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
   it("safely and quickly evaluates regex and string route rules against hostile inputs", async () => {

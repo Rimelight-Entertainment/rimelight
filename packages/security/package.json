@@ -42,25 +42,13 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./middleware": {
-      "types": "./dist/middleware/index.d.mts",
-      "import": "./dist/middleware/index.mjs"
-    },
-    "./construction": {
-      "types": "./dist/construction/index.d.mts",
-      "import": "./dist/construction/index.mjs"
-    },
-    "./config": {
-      "types": "./dist/config/index.d.mts",
-      "import": "./dist/config/index.mjs"
-    },
     "./plugin": {
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
     },
-    "./turnstile": {
-      "types": "./dist/turnstile.d.mts",
-      "import": "./dist/turnstile.mjs"
+    "./middleware": {
+      "types": "./dist/middleware.d.mts",
+      "import": "./dist/middleware.mjs"
     },
     "./head": {
       "types": "./dist/head.d.mts",

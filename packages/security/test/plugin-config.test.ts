@@ -2,14 +2,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, it, expect } from "vite-plus/test";
-import { security, serializeConfig } from "../src/plugin";
-import { buildCspHeader } from "../src/csp";
-import type { SecurityPluginOptions } from "../src/types";
+import { security, serializeConfig, type RimelightSecurityPluginOptions } from "../src/plugin";
+import { buildCspHeader } from "../src/runtime";
 
 describe("Security Plugin Config Serialization", () => {
   it("serializes primitives, arrays, and RegExps into disk artifacts", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "security-plugin-"));
-    const options: SecurityPluginOptions = {
+    const options: RimelightSecurityPluginOptions = {
       domain: "example.com",
       ratelimit: {
         routes: ["/auth/sign-in", /^\/api\/secure\//],
@@ -44,7 +43,7 @@ describe("Security Plugin Config Serialization", () => {
       // Test dynamic import via data: URL
       const dataUrl = `data:text/javascript;charset=utf-8,${encodeURIComponent(code)}`;
       const mod = await import(dataUrl);
-      const loadedConfig: SecurityPluginOptions = mod.config;
+      const loadedConfig: RimelightSecurityPluginOptions = mod.config;
 
       expect(loadedConfig.domain).toBe("example.com");
       expect(loadedConfig.turnstile).toEqual({

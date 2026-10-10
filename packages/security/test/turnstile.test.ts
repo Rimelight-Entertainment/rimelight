@@ -4,8 +4,8 @@ import {
   verifyTurnstile,
   getTurnstileSiteKey,
   getTurnstileSecretKey,
-} from "../src/turnstile";
-import { buildCspHeader } from "../src/csp";
+  buildCspHeader,
+} from "../src/runtime";
 
 describe("Turnstile Module", () => {
   beforeEach(() => {
