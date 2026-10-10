@@ -5,6 +5,7 @@ export const config = {
   defaultLocale: (generatedConfig?.defaultLocale ?? "en") as string,
   prefixDefaultLocale: (generatedConfig?.prefixDefaultLocale ?? true) as boolean,
   skipPaths: (generatedConfig?.skipPaths ?? ["/api", "/_"]) as readonly string[],
+  translations: (generatedConfig?.translations ?? {}) as Record<string, Record<string, any>>,
 };
 
 let currentLocale = config.defaultLocale;

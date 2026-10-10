@@ -1,43 +1,35 @@
 import { config, localeFromPathname, setCurrentLocale, stripLocalePrefix } from "./locale";
 
-const FILE_SUFFIX = /\.[A-Za-z0-9]{1,8}$/;
+const isLocalizedPage = (p: string) =>
+  !config.skipPaths.some((s) => p === s || p.startsWith(`${s}/`)) &&
+  !/\.[A-Za-z0-9]{1,8}$/.test(p.slice(p.lastIndexOf("/") + 1));
 
-function isLocalizedPage(pathname: string): boolean {
-  if (config.skipPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return false;
-  return !FILE_SUFFIX.test(pathname.slice(pathname.lastIndexOf("/") + 1));
+function matchAcceptLanguage(header: string | null): string | undefined {
+  if (!header) return undefined;
+  for (const entry of header.split(",")) {
+    const code = entry.split(";")[0]?.trim().toLowerCase();
+    if (!code) continue;
+    const match = config.locales.find((l) => l === code || l === code.split("-")[0]);
+    if (match) return match;
+  }
+  return undefined;
 }
 
 export function resolveLocale(request: Request): string | null {
   const url = new URL(request.url);
   const pathname = url.pathname;
-  const segmentLocale = localeFromPathname(pathname, config.locales);
+  const segmentLocale = localeFromPathname(pathname);
 
   setCurrentLocale(segmentLocale ?? config.defaultLocale);
 
-  if (request.method !== "GET" && request.method !== "HEAD") return null;
-  if (!isLocalizedPage(pathname)) return null;
+  if ((request.method !== "GET" && request.method !== "HEAD") || !isLocalizedPage(pathname)) {
+    return null;
+  }
 
   if (config.prefixDefaultLocale) {
     if (!segmentLocale) {
-      const header = request.headers.get("accept-language");
-      let locale = config.defaultLocale;
-
-      if (header) {
-        for (const entry of header.split(",")) {
-          const code = entry.split(";")[0]?.trim().toLowerCase();
-          if (!code) continue;
-          if (config.locales.includes(code)) {
-            locale = code;
-            break;
-          }
-          const base = code.split("-")[0];
-          if (base && config.locales.includes(base)) {
-            locale = base;
-            break;
-          }
-        }
-      }
-
+      const locale =
+        matchAcceptLanguage(request.headers.get("accept-language")) ?? config.defaultLocale;
       setCurrentLocale(locale);
       return `/${locale}${pathname}${url.search}`;
     }
@@ -45,7 +37,7 @@ export function resolveLocale(request: Request): string | null {
   }
 
   if (segmentLocale === config.defaultLocale) {
-    const clean = stripLocalePrefix(pathname, config.locales);
+    const clean = stripLocalePrefix(pathname);
     return `${clean || "/"}${url.search}`;
   }
 
@@ -58,8 +50,6 @@ export function i18n() {
     next: () => Promise<void>,
   ): Promise<Response | void> => {
     const redirectTo = resolveLocale(c.req.raw);
-    if (redirectTo) return c.redirect(redirectTo, 302);
-
-    return next();
+    return redirectTo ? c.redirect(redirectTo, 302) : next();
   };
 }
