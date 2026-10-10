@@ -9,17 +9,18 @@ export const i18n =
     const { method, headers, url } = context.req.raw;
     const { pathname, search } = new URL(url);
 
-    const segment = pathname.split("/")[1]?.toLowerCase();
-    const segmentLocale = config.locales.find((l) => l.toLowerCase() === segment);
+    const segmentLocale = config.locales.find(
+      (l) => l.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
+    );
 
     const preferredLocale =
       segmentLocale ??
       headers
         .get("accept-language")
         ?.split(",")
-        .flatMap((e) => {
-          const code = e.split(";")[0]?.trim().toLowerCase();
-          return config.locales.find((l) => l === code || l === code?.split("-")[0]) ?? [];
+        .flatMap((entry) => {
+          const [tag] = entry.trim().toLowerCase().split(";");
+          return config.locales.find((l) => l === tag || l === tag?.split("-")[0]) ?? [];
         })[0] ??
       config.defaultLocale;
 
@@ -30,12 +31,9 @@ export const i18n =
       !config.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`)) &&
       !/\.[a-z0-9]{1,8}$/i.test(pathname);
 
-    const target =
-      config.prefixDefaultLocale && !segmentLocale
-        ? `/${preferredLocale}${pathname}`
-        : !config.prefixDefaultLocale && segmentLocale === config.defaultLocale
-          ? pathname.slice(segmentLocale.length + 1) || "/"
-          : null;
+    const target = config.prefixDefaultLocale
+      ? !segmentLocale && `/${preferredLocale}${pathname}`
+      : segmentLocale === config.defaultLocale && (pathname.slice(segmentLocale.length + 1) || "/");
 
     return isLocalized && target ? context.redirect(`${target}${search}`, 302) : next();
   };
