@@ -1,9 +1,9 @@
 import {
   defaultLocale,
-  setCurrentLocale,
   localeFromPathname,
   locales,
   prefixDefaultLocale,
+  setCurrentLocale,
   skipPaths,
   stripLocalePrefix,
 } from "./locale";

@@ -54,7 +54,7 @@ export function flatten(
     if (value != null && typeof value === "object") {
       flatten(value, fullPath, result);
     } else {
-      result[fullPath] = value != null ? String(value) : "";
+      result[fullPath] = value;
     }
   }
 

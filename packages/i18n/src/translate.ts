@@ -1,8 +1,9 @@
 import generatedConfig from "#rimelight/i18n";
 import { defaultLocale, getCurrentLocale, setLocaleConfig } from "./locale";
+import { flatten } from "./cli";
 
 export interface TFunction {
-  (key: string, params?: Record<string, any>): string;
+  <K extends string = string>(key: K | (string & {}), params?: Record<string, any>): string;
   raw: <T = unknown>(key: string, fallback?: T) => T;
   array: <T = string>(key: string, fallback?: T[]) => T[];
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
@@ -10,6 +11,10 @@ export interface TFunction {
 
 export let translations: Record<string, Record<string, any>> = generatedConfig?.translations
   ? { ...generatedConfig.translations }
+  : {};
+
+export let flatTranslations: Record<string, Record<string, any>> = generatedConfig?.flatTranslations
+  ? { ...generatedConfig.flatTranslations }
   : {};
 
 export function isObjectRecord(obj: unknown): obj is Record<string, any> {
@@ -27,64 +32,34 @@ export function setTranslations(
   },
 ): void {
   translations = { ...data };
+  flatTranslations = {};
+  for (const [locale, dict] of Object.entries(data)) {
+    flatTranslations[locale] = flatten(dict);
+  }
   if (options) {
     setLocaleConfig(options);
   }
 }
 
-/** Resolves dot-notation or array paths inside a translation dictionary. */
-export function resolvePath(obj: unknown, path: string): unknown {
-  if (obj == null || typeof obj !== "object") return undefined;
-  if (Object.hasOwn(obj, path)) {
-    return (obj as Record<string, unknown>)[path];
+function resolveFromDict(dict: Record<string, any> | undefined, key: string): unknown {
+  if (!dict) return undefined;
+  if (key in dict) return dict[key];
+  const parts = key.split(".");
+  let cur: any = dict;
+  for (const p of parts) {
+    if (cur == null || typeof cur !== "object") return undefined;
+    cur = cur[p];
   }
-
-  const segments = path.split(".");
-  let current: any = obj;
-
-  for (let i = 0; i < segments.length; i++) {
-    const segment = segments[i]!;
-    if (current == null || typeof current !== "object") return undefined;
-
-    if (Object.hasOwn(current, segment) || (Array.isArray(current) && segment in current)) {
-      current = current[segment];
-    } else {
-      const literalKey = segments.slice(i).join(".");
-      return Object.hasOwn(current, literalKey) ? current[literalKey] : undefined;
-    }
-  }
-
-  return current;
+  return cur;
 }
 
 function resolveKey(key: string, targetLocale: string): unknown {
-  const dotIndex = key.indexOf(".");
-  const component = dotIndex === -1 ? key : key.slice(0, dotIndex);
-  const subKey = dotIndex === -1 ? undefined : key.slice(dotIndex + 1);
-
-  // 1. Try target locale
-  const targetDict = translations[targetLocale];
-  if (isObjectRecord(targetDict)) {
-    const compData = targetDict[component];
-    if (compData !== undefined) {
-      const val = subKey === undefined ? compData : resolvePath(compData, subKey);
-      if (val !== undefined) return val;
-    }
-  }
-
-  // 2. Fallback to default locale
-  if (targetLocale !== defaultLocale) {
-    const defaultDict = translations[defaultLocale];
-    if (isObjectRecord(defaultDict)) {
-      const compData = defaultDict[component];
-      if (compData !== undefined) {
-        const val = subKey === undefined ? compData : resolvePath(compData, subKey);
-        if (val !== undefined) return val;
-      }
-    }
-  }
-
-  return undefined;
+  return (
+    flatTranslations[targetLocale]?.[key] ??
+    resolveFromDict(translations[targetLocale], key) ??
+    flatTranslations[defaultLocale]?.[key] ??
+    resolveFromDict(translations[defaultLocale], key)
+  );
 }
 
 function tRaw<T = unknown>(key: string, fallback?: T): T {
