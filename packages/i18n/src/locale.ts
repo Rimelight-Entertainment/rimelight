@@ -18,6 +18,12 @@ export const config: I18nConfig = {
 
 let currentLocale = config.defaultLocale;
 
+/** Returns the supported locale codes. */
+export const getLocales = (): string[] => [...config.locales];
+
+/** Returns the default locale code. */
+export const getDefaultLocale = (): string => config.defaultLocale;
+
 /** Returns the active locale code. */
 export const getCurrentLocale = (): string => currentLocale;
 
@@ -25,12 +31,6 @@ export const getCurrentLocale = (): string => currentLocale;
 export const setCurrentLocale = (locale: string): void => {
   currentLocale = locale;
 };
-
-/** Returns the supported locale codes. */
-export const getLocales = (): string[] => [...config.locales];
-
-/** Returns the default locale code. */
-export const getDefaultLocale = (): string => config.defaultLocale;
 
 /** Returns the configured locale from the first pathname segment, or null. */
 export const localeFromPathname = (
@@ -55,3 +55,7 @@ export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string 
   /^(?:[a-z]+:|\/\/|#)/i.test(path)
     ? path
     : `${config.prefixDefaultLocale || locale !== config.defaultLocale ? `/${locale}` : ""}/${stripLocalePrefix(path).replace(/^\/+/, "")}`;
+
+/** Resolves an asset for the current or fallback locale. */
+export const getLocaleAsset = <T>(assets: Record<string, T>, locale = getCurrentLocale()): T =>
+  (assets[locale] ?? assets[config.defaultLocale]) as T;

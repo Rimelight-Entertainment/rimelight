@@ -4,6 +4,7 @@ export {
   getCurrentLocale,
   setCurrentLocale,
   getLocaleUrl,
+  getLocaleAsset,
 } from "./locale";
 
 export { t, type TFunction } from "./translate";

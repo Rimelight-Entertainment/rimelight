@@ -1,4 +1,4 @@
-import { config, localeFromPathname, setCurrentLocale, stripLocalePrefix } from "./locale";
+import { config, setCurrentLocale, localeFromPathname, stripLocalePrefix } from "./locale";
 
 const isLocalizedPage = (p: string) =>
   !config.skipPaths.some((s) => p === s || p.startsWith(`${s}/`)) &&

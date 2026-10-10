@@ -9,7 +9,7 @@ import {
   formatAuditReport,
   fixTranslations,
 } from "../src/cli";
-import { getLocaleUrl, setCurrentLocale, t } from "../src/index";
+import { setCurrentLocale, getLocaleUrl, getLocaleAsset, t } from "../src/index";
 import { localeFromPathname, stripLocalePrefix } from "../src/locale";
 import { getPluralCategory } from "../src/translate";
 import { setLocaleConfig, setTranslations } from "./helpers";
@@ -209,5 +209,25 @@ describe("t.localize", () => {
     setCurrentLocale("en");
     expect(t.localize(null)).toBe("");
     expect(t.localize(undefined)).toBe("");
+  });
+});
+
+describe("getLocaleAsset", () => {
+  it("resolves the asset for the active locale", () => {
+    setLocaleConfig({ defaultLocale: "en" });
+    setCurrentLocale("es");
+    expect(getLocaleAsset({ en: "/hero-en.png", es: "/hero-es.png" })).toBe("/hero-es.png");
+  });
+
+  it("falls back to defaultLocale when active locale is not in dictionary", () => {
+    setLocaleConfig({ defaultLocale: "en" });
+    setCurrentLocale("fr");
+    expect(getLocaleAsset({ en: "/hero-en.png", es: "/hero-es.png" })).toBe("/hero-en.png");
+  });
+
+  it("supports explicit locale argument", () => {
+    setLocaleConfig({ defaultLocale: "en" });
+    setCurrentLocale("en");
+    expect(getLocaleAsset({ en: "/hero-en.png", es: "/hero-es.png" }, "es")).toBe("/hero-es.png");
   });
 });

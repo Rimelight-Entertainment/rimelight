@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
 import * as i18n from "../src/index";
 import {
+  getLocales,
   getDefaultLocale,
   getCurrentLocale,
-  getLocales,
-  getLocaleUrl,
   setCurrentLocale,
+  getLocaleUrl,
+  getLocaleAsset,
   t,
 } from "../src/index";
 
@@ -13,23 +14,25 @@ describe("index exports", () => {
   it("exposes exactly the documented public surface", () => {
     expect(Object.keys(i18n).sort()).toEqual(
       [
+        "getLocales",
         "getDefaultLocale",
         "getCurrentLocale",
-        "getLocales",
-        "getLocaleUrl",
         "setCurrentLocale",
+        "getLocaleUrl",
+        "getLocaleAsset",
         "t",
       ].sort(),
     );
   });
 
   it("exposes the full API through the module namespace", () => {
-    expect(typeof i18n.t).toBe("function");
-    expect(typeof i18n.getCurrentLocale).toBe("function");
-    expect(typeof i18n.setCurrentLocale).toBe("function");
     expect(typeof i18n.getLocales).toBe("function");
     expect(typeof i18n.getDefaultLocale).toBe("function");
+    expect(typeof i18n.getCurrentLocale).toBe("function");
+    expect(typeof i18n.setCurrentLocale).toBe("function");
     expect(typeof i18n.getLocaleUrl).toBe("function");
+    expect(typeof i18n.getLocaleAsset).toBe("function");
+    expect(typeof i18n.t).toBe("function");
     expect(typeof i18n.t.raw).toBe("function");
     expect(typeof i18n.t.array).toBe("function");
     expect(typeof i18n.t.plural).toBe("function");
@@ -47,6 +50,7 @@ describe("index exports", () => {
     expect(getLocales()).toEqual(i18n.getLocales());
     expect(getDefaultLocale()).toBe(i18n.getDefaultLocale());
     expect(typeof getLocaleUrl("/")).toBe("string");
+    expect(getLocaleAsset).toBe(i18n.getLocaleAsset);
     expect(t.localize({ en: "Hello" }, "en")).toBe("Hello");
   });
 
