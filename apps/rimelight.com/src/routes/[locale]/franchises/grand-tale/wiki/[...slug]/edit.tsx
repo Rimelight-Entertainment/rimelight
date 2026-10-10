@@ -70,9 +70,7 @@ export const WikiEditPage: Component = () => {
         <header class="h-12 w-full border-b border-neutral-800 flex items-center justify-between px-4 shrink-0 z-30">
           <div class="flex items-center gap-2.5">
             <RLButton
-              href={getLocaleUrl("/franchises/grand-tale/wiki", {
-                locale: currentLocale(),
-              })}
+              href={getLocaleUrl("/franchises/grand-tale/wiki")}
               variant="ghost"
               color="neutral"
               size="xs"

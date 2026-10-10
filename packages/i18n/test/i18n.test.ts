@@ -114,18 +114,18 @@ describe("relative locale urls", () => {
   it("prefixes the current locale when prefixDefaultLocale is true", () => {
     setCurrentLocale("en");
     expect(getLocaleUrl("/about")).toBe("/en/about");
-    expect(getLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
+    expect(getLocaleUrl("/about", "pt")).toBe("/pt/about");
   });
 
   it("handles trailing slashes without creating double slashes", () => {
     expect(getLocaleUrl("/about/")).toBe("/en/about/");
-    expect(getLocaleUrl("/pt/about/", { locale: "en" })).toBe("/en/about/");
+    expect(getLocaleUrl("/pt/about/", "en")).toBe("/en/about/");
     expect(getLocaleUrl("/pt/about/")).toBe("/en/about/");
   });
 
   it("replaces existing locale prefix when changing locale", () => {
-    expect(getLocaleUrl("/en/about", { locale: "pt" })).toBe("/pt/about");
-    expect(getLocaleUrl("/pt/about?tab=1", { locale: "en" })).toBe("/en/about?tab=1");
+    expect(getLocaleUrl("/en/about", "pt")).toBe("/pt/about");
+    expect(getLocaleUrl("/pt/about?tab=1", "en")).toBe("/en/about?tab=1");
   });
 
   it("preserves query strings and hashes", () => {
@@ -134,7 +134,7 @@ describe("relative locale urls", () => {
 
   it("handles root paths", () => {
     expect(getLocaleUrl("/")).toBe("/en/");
-    expect(getLocaleUrl("/", { locale: "pt" })).toBe("/pt/");
+    expect(getLocaleUrl("/", "pt")).toBe("/pt/");
   });
 
   it("passes external urls through unchanged", () => {

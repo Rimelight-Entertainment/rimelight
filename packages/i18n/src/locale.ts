@@ -73,12 +73,9 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
 }
 
 /** Generates a localized relative URL path. */
-export function getLocaleUrl(
-  path: string,
-  { locale = getCurrentLocale() }: { locale?: string } = {},
-): string {
+export function getLocaleUrl(path: string, locale = getCurrentLocale()): string {
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
-  const clean = stripLocalePrefix(path.startsWith("/") ? path : `/${path}`);
-  const prefix = prefixDefaultLocale || locale !== defaultLocale ? `/${locale}` : "";
-  return `${prefix}${clean.startsWith("/") ? clean : `/${clean}`}`;
+  const clean = stripLocalePrefix(path);
+  const target = clean.startsWith("/") ? clean : `/${clean}`;
+  return prefixDefaultLocale || locale !== defaultLocale ? `/${locale}${target}` : target;
 }

@@ -25,7 +25,7 @@ export const DebugLocalePage: Component = () => {
   };
 
   const handleI18n = (code: string) => {
-    window.location.href = getLocaleUrl(`/${code}`, { locale: code });
+    window.location.href = getLocaleUrl(`/${code}`, code);
   };
 
   return (
