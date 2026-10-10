@@ -51,7 +51,20 @@ describe("@rimelight/i18n Vite plugin", () => {
       expect(contentJs).toContain(`export const locales = ["en", "es", "pt-BR"];`);
       expect(contentJs).toContain(`export const defaultLocale = "en";`);
       expect(contentJs).toContain(`export const prefixDefaultLocale = false;`);
-      expect(contentJs).toContain(`"Início"`);
+      expect(contentJs).not.toContain(`"Início"`);
+      expect(contentJs).not.toContain(`export const translations =`);
+
+      // Translations are in server.js (SSR), not in config.js (client bundle remains 0 KB)
+      const generatedServerJs = path.join(
+        tmpDir,
+        "node_modules",
+        ".rimelight",
+        "i18n",
+        "server.js",
+      );
+      expect(fs.existsSync(generatedServerJs)).toBe(true);
+      const contentServerJs = fs.readFileSync(generatedServerJs, "utf-8");
+      expect(contentServerJs).toContain(`"Início"`);
 
       const generatedTypes = path.join(tmpDir, "node_modules", ".rimelight", "i18n", "types.d.ts");
       expect(fs.existsSync(generatedTypes)).toBe(true);
@@ -169,8 +182,17 @@ describe("@rimelight/i18n Vite plugin", () => {
 
       expect(contentJs).toContain(`export const locales = ["en", "pt"];`);
       expect(contentJs).toContain(`export const defaultLocale = "en";`);
-      expect(contentJs).toContain(`"Olá"`);
-      expect(contentJs).toContain(`"Hello"`);
+
+      const generatedServerJs = path.join(
+        tmpDir,
+        "node_modules",
+        ".rimelight",
+        "i18n",
+        "server.js",
+      );
+      const contentServerJs = fs.readFileSync(generatedServerJs, "utf-8");
+      expect(contentServerJs).toContain(`"Olá"`);
+      expect(contentServerJs).toContain(`"Hello"`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }

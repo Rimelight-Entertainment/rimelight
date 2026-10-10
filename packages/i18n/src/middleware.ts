@@ -1,4 +1,5 @@
 import { config, i18nContext, setCurrentLocale } from "./runtime";
+import serverTranslations from "#rimelight/i18n/server";
 
 /**
  * Universal i18n middleware for locale resolution and route redirection.
@@ -43,5 +44,13 @@ export const i18n =
         ? !prefix && `/${locale}${pathname}`
         : prefix === config.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
 
-    return target ? context.redirect(`${target}${search}`, 302) : i18nContext.run({ locale }, next);
+    return target
+      ? context.redirect(`${target}${search}`, 302)
+      : i18nContext.run(
+          {
+            locale,
+            translations: serverTranslations?.[locale] ?? config.translations?.[locale],
+          },
+          next,
+        );
   };

@@ -36,7 +36,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
         const defaultLocale =
           options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en";
 
-        return { ...options, locales, defaultLocale, translations };
+        return { ...options, locales, defaultLocale };
       },
       emit: () => {
         const locales = Object.keys(translations).sort();
@@ -51,6 +51,8 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
 
         return {
           files: {
+            "server.js": `export const translations = ${JSON.stringify(translations)};\nexport default translations;\n`,
+            "server.d.ts": `export declare const translations: Record<string, Record<string, string>>;\nexport default translations;\n`,
             "types.d.ts": `declare module "@rimelight/i18n" {\n  interface RimelightTranslationKeys {\n    keys: ${keyUnion};\n  }\n}\n`,
           },
         };

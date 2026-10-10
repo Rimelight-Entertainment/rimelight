@@ -1,7 +1,12 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import generatedConfig from "#rimelight/i18n";
 
-export const i18nContext = new AsyncLocalStorage<{ locale: string }>();
+export interface I18nContext {
+  locale: string;
+  translations?: Record<string, unknown> | undefined;
+}
+
+export const i18nContext = new AsyncLocalStorage<I18nContext>();
 
 export interface RimelightTranslationKeys {
   keys: string;
@@ -9,7 +14,7 @@ export interface RimelightTranslationKeys {
 
 export type TranslationKey = RimelightTranslationKeys["keys"];
 
-interface I18nConfig {
+export interface I18nConfig {
   locales: readonly string[];
   defaultLocale: string;
   prefixDefaultLocale: boolean;
@@ -91,7 +96,10 @@ export const t: TFunction = Object.assign(
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
       const get = (targetLocale: string) => {
-        const dict = config.translations[targetLocale];
+        const store = i18nContext.getStore();
+        const dict =
+          (store && (store.locale === targetLocale || !targetLocale) && store.translations) ||
+          config.translations[targetLocale];
         if (!dict) return undefined;
         if (key in dict) return dict[key];
         return key
