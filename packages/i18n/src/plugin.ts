@@ -13,30 +13,32 @@ export interface RimelightI18nPluginOptions {
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let translations: Record<string, any> = {};
 
-  const flatten = (obj: any, prefix = "", out: Record<string, any> = {}) => {
-    for (const [k, v] of Object.entries(obj || {})) {
-      if (k in Object.prototype) continue;
-      const key = prefix ? `${prefix}.${k}` : k;
-      out[key] = v;
-      if (v?.constructor === Object) flatten(v, key, out);
+  const flatten = (target: any, prefix = "", result: Record<string, any> = {}) => {
+    for (const [key, value] of Object.entries(target || {})) {
+      if (key in Object.prototype) continue;
+      const fullKey = prefix ? `${prefix}.${key}` : key;
+      result[fullKey] = value;
+      if (value?.constructor === Object) flatten(value, fullKey, result);
     }
-    return out;
+    return result;
   };
+
+  const resolvePath = (root: string) => path.resolve(root, options.translationsDir ?? "src/i18n");
 
   return {
     ...defineRimelightArtifactPlugin({
       pkgName: "i18n",
-      watch: ({ root }) => [path.resolve(root, options.translationsDir ?? "src/i18n")],
+      watch: ({ root }) => [resolvePath(root)],
       config: ({ root }) => {
-        const dir = path.resolve(root, options.translationsDir ?? "src/i18n");
-        translations = fs.existsSync(dir)
+        const directory = resolvePath(root);
+        translations = fs.existsSync(directory)
           ? Object.fromEntries(
               fs
-                .readdirSync(dir)
-                .filter((f) => f.endsWith(".json"))
-                .map((f) => [
-                  path.basename(f, ".json"),
-                  flatten(JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"))),
+                .readdirSync(directory)
+                .filter((file) => file.endsWith(".json"))
+                .map((file) => [
+                  path.basename(file, ".json"),
+                  flatten(JSON.parse(fs.readFileSync(path.join(directory, file), "utf-8"))),
                 ]),
             )
           : {};
@@ -51,14 +53,14 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
         };
       },
     }),
-    generateBundle(this: any) {
-      Object.entries(translations).forEach(([locale, data]) =>
+    generateBundle() {
+      Object.entries(translations).forEach(([locale, data]) => {
         this.emitFile({
           type: "asset",
           fileName: `locales/${locale}.json`,
           source: JSON.stringify(data, null, 2),
-        }),
-      );
+        });
+      });
     },
   };
 };
