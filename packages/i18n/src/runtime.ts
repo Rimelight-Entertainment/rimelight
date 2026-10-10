@@ -71,23 +71,24 @@ export const t: TFunction = Object.assign(
     if (typeof params?.["count"] === "number") {
       const category = t.plural(params["count"], locale);
       value =
-        typeof value === "object" && value
+        (value && typeof value === "object"
           ? ((value as Record<string, unknown>)[category] ??
             (value as Record<string, unknown>)["other"])
-          : (t.raw(`${key}.${category}`, undefined, locale) ??
-            t.raw(`${key}.other`, value, locale));
+          : undefined) ??
+        t.raw(`${key}.${category}`, undefined, locale) ??
+        t.raw(`${key}.other`, value, locale);
     }
 
     const resolved = value ?? key;
     if (typeof resolved === "function") return String(resolved(params));
     if (typeof resolved === "string" && params) {
-      return resolved.replace(/\{\s*(\w+)\s*}/g, (match, paramKey) =>
-        params[paramKey] == null
-          ? match
-          : paramKey === "count" && typeof params[paramKey] === "number"
-            ? (params[paramKey] as number).toLocaleString(locale)
-            : String(params[paramKey] as string | number | boolean),
-      );
+      return resolved.replace(/\{\s*(\w+)\s*}/g, (match, paramKey) => {
+        const paramValue = params[paramKey];
+        if (paramValue == null) return match;
+        return paramKey === "count" && typeof paramValue === "number"
+          ? paramValue.toLocaleString(locale)
+          : String(paramValue as string | number | boolean);
+      });
     }
     return typeof resolved === "object" && resolved
       ? JSON.stringify(resolved)
@@ -96,10 +97,10 @@ export const t: TFunction = Object.assign(
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
       const store = i18nContext.getStore();
-      const get = (loc: string) => {
+      const get = (targetLocale: string) => {
         const dict =
-          (store && (store.locale === loc || !loc) && store.translations) ||
-          config.translations[loc];
+          (store && (store.locale === targetLocale || !targetLocale) && store.translations) ||
+          config.translations[targetLocale];
         if (!dict) return undefined;
         if (key in dict) return dict[key];
         return key
