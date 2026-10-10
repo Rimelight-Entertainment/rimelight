@@ -29,7 +29,7 @@ export const i18n =
     const isLocalized =
       (method === "GET" || method === "HEAD") &&
       !config.skipPaths.some((skip) => `${pathname}/`.startsWith(`${skip}/`)) &&
-      !/\/[^/]+\.[A-Za-z0-9]{1,8}$/.test(pathname);
+      !/\.[a-z0-9]{1,8}$/i.test(pathname);
 
     const redirectPath =
       isLocalized && config.prefixDefaultLocale && !segmentLocale
