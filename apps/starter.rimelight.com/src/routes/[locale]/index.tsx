@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getCurrentLocale, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
@@ -46,7 +46,7 @@ export const HomePage: Component = () => {
       variant: "solid",
       label: t("page_home.section_hero_link_use-template_label"),
       trailingIcon: "i-lucide-arrow-right",
-      href: getRelativeLocaleUrl("/docs/"),
+      href: getLocaleUrl("/docs/"),
     },
   ];
 
@@ -118,7 +118,7 @@ export const HomePage: Component = () => {
                     title={title}
                     description={description}
                     date={postDate}
-                    to={getRelativeLocaleUrl(`/blog/${post.slug}/`)}
+                    to={getLocaleUrl(`/blog/${post.slug}/`)}
                   />
                 );
               }}
@@ -129,7 +129,7 @@ export const HomePage: Component = () => {
             <RLLink
               label={t("page_home.section_posts_view_all")}
               trailingIcon="i-lucide-arrow-right"
-              href={getRelativeLocaleUrl("/blog")}
+              href={getLocaleUrl("/blog")}
             />
           </Show>
         </div>

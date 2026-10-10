@@ -11,7 +11,7 @@ import {
   RLDashboardSidebarToggle,
   RLButton,
 } from "@rimelight/ui";
-import { getRelativeLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
 
 export interface DashboardLayoutProps {
   title?: string | undefined;
@@ -64,7 +64,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
                 <For each={footerLinks}>
                   {(item) => (
                     <a
-                      href={getRelativeLocaleUrl(item.to)}
+                      href={getLocaleUrl(item.to)}
                       class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-100"
                     >
                       <span class={`${item.icon} size-5 shrink-0`} />
@@ -75,7 +75,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
               </nav>
               <div class="h-[1px] bg-neutral-200 my-2" />
               <div class="flex flex-row gap-2 justify-between items-center">
-                <a href={getRelativeLocaleUrl("/dashboard/settings")}>
+                <a href={getLocaleUrl("/dashboard/settings")}>
                   <RLButton
                     color="neutral"
                     variant="soft"
@@ -85,7 +85,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
                     <span class="i-lucide-cog size-4" />
                   </RLButton>
                 </a>
-                <a href={getRelativeLocaleUrl("/dashboard/help")}>
+                <a href={getLocaleUrl("/dashboard/help")}>
                   <RLButton
                     color="neutral"
                     variant="soft"
@@ -95,7 +95,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
                     <span class="i-lucide-circle-help size-4" />
                   </RLButton>
                 </a>
-                <a href={getRelativeLocaleUrl("/dashboard/report-issue")}>
+                <a href={getLocaleUrl("/dashboard/report-issue")}>
                   <RLButton
                     color="neutral"
                     variant="soft"
@@ -113,7 +113,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
             <For each={links}>
               {(item) => (
                 <a
-                  href={getRelativeLocaleUrl(item.to)}
+                  href={getLocaleUrl(item.to)}
                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-100"
                 >
                   <span class={`${item.icon} size-5 shrink-0`} />

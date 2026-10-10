@@ -1,7 +1,7 @@
 import type { Component, ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DashboardLayout from "./DashboardLayout";
-import { getRelativeLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
 
 export interface NotesLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -18,25 +18,25 @@ export const NotesLayout: Component<NotesLayoutProps> = (props) => {
     {
       label: "Notes",
       icon: "i-lucide-sticky-note",
-      href: getRelativeLocaleUrl("/dashboard/notes"),
+      href: getLocaleUrl("/dashboard/notes"),
       active: props.activeTab === "notes",
     },
     {
       label: "Todos",
       icon: "i-lucide-check-square",
-      href: getRelativeLocaleUrl("/dashboard/notes/todos"),
+      href: getLocaleUrl("/dashboard/notes/todos"),
       active: props.activeTab === "todos",
     },
     {
       label: "Archive",
       icon: "i-lucide-archive",
-      href: getRelativeLocaleUrl("/dashboard/notes/archive"),
+      href: getLocaleUrl("/dashboard/notes/archive"),
       active: props.activeTab === "archive",
     },
     {
       label: "Trash",
       icon: "i-lucide-trash-2",
-      href: getRelativeLocaleUrl("/dashboard/notes/trash"),
+      href: getLocaleUrl("/dashboard/notes/trash"),
       active: props.activeTab === "trash",
     },
   ];

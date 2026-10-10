@@ -1,7 +1,7 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import WikiLayout from "#layouts/WikiLayout";
-import { getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 
 const categoryToType: Record<string, string> = {
   timeline: "Timeline",
@@ -79,7 +79,7 @@ export const LoreCategoryPage: Component = () => {
                       <td class="p-4 flex items-center gap-3">
                         <span class="i-lucide-file-text size-5 text-indigo-500 shrink-0" />
                         <a
-                          href={getRelativeLocaleUrl(`/${page.slug}`)}
+                          href={getLocaleUrl(`/${page.slug}`)}
                           class="font-bold text-white hover:text-indigo-400 uppercase transition-colors"
                         >
                           {titleStr}
@@ -88,7 +88,7 @@ export const LoreCategoryPage: Component = () => {
                       <td class="p-4 text-neutral-400 truncate max-w-md">{descStr}</td>
                       <td class="p-4 text-right">
                         <a
-                          href={getRelativeLocaleUrl(`/${page.slug}`)}
+                          href={getLocaleUrl(`/${page.slug}`)}
                           class="inline-flex items-center gap-2 text-xs text-indigo-500 font-bold uppercase hover:text-indigo-400 transition-colors"
                         >
                           Read More <span class="i-lucide-arrow-right size-3" />

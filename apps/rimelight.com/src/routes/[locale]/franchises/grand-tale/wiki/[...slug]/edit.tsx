@@ -2,7 +2,7 @@ import { type Component, createSignal, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DashboardLayout from "#layouts/DashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 
 export const WikiEditPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
@@ -70,7 +70,7 @@ export const WikiEditPage: Component = () => {
         <header class="h-12 w-full border-b border-neutral-800 flex items-center justify-between px-4 shrink-0 z-30">
           <div class="flex items-center gap-2.5">
             <RLButton
-              href={getRelativeLocaleUrl("/franchises/grand-tale/wiki", {
+              href={getLocaleUrl("/franchises/grand-tale/wiki", {
                 locale: currentLocale(),
               })}
               variant="ghost"

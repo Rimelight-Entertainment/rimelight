@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { getRelativeLocaleUrl, t, getCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl, t, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
@@ -39,7 +39,7 @@ export const HomePage: Component = () => {
   const heroLinks = (): RLButtonProps[] => [
     {
       label: t("page_home.section_hero_actions_join-us"),
-      href: getRelativeLocaleUrl("/auth/sign-up"),
+      href: getLocaleUrl("/auth/sign-up"),
       color: "blurple",
       variant: "solid",
       class:
@@ -47,7 +47,7 @@ export const HomePage: Component = () => {
     },
     {
       label: t("page_home.section_hero_actions_learn-more"),
-      href: getRelativeLocaleUrl("/company/about"),
+      href: getLocaleUrl("/company/about"),
       color: "neutral",
       variant: "outline",
       trailingIcon: "i-lucide-arrow-right",
@@ -59,7 +59,7 @@ export const HomePage: Component = () => {
   const ctaLinks = (): RLButtonProps[] => [
     {
       label: t("page_home.section_cta_actions_create-account"),
-      href: getRelativeLocaleUrl("/auth/sign-up"),
+      href: getLocaleUrl("/auth/sign-up"),
       color: "blurple",
       variant: "solid",
       class:
@@ -67,7 +67,7 @@ export const HomePage: Component = () => {
     },
     {
       label: t("page_home.section_cta_actions_explore-careers"),
-      href: getRelativeLocaleUrl("/company/careers"),
+      href: getLocaleUrl("/company/careers"),
       color: "neutral",
       variant: "outline",
       class:
@@ -180,7 +180,7 @@ export const HomePage: Component = () => {
           class="flex flex-wrap justify-center gap-lg mt-12 w-full max-w-7xl mx-auto px-4"
         >
           <a
-            href={getRelativeLocaleUrl("/franchises/grand-tale")}
+            href={getLocaleUrl("/franchises/grand-tale")}
             class="block relative h-128 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] group rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 transition-all duration-300"
           >
             <div class="relative h-full w-full overflow-hidden isolate transition-transform duration-700 ease-out group-hover:scale-[1.02] rounded-[inherit] will-change-transform bg-neutral-900">
@@ -273,7 +273,7 @@ export const HomePage: Component = () => {
                     description={description}
                     date={postDate}
                     image={heroImage}
-                    to={getRelativeLocaleUrl(`/company/blog/${post.slug}/`)}
+                    to={getLocaleUrl(`/company/blog/${post.slug}/`)}
                     variant="ghost"
                   />
                 );
@@ -285,7 +285,7 @@ export const HomePage: Component = () => {
             <div class="flex justify-center mt-14">
               <RLButton
                 label={t("page_home.section_news_actions_view-all")}
-                href={getRelativeLocaleUrl("/blog")}
+                href={getLocaleUrl("/blog")}
                 color="primary"
                 variant="link"
                 trailingIcon="i-lucide-arrow-right"

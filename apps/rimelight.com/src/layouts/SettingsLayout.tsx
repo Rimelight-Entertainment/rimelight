@@ -1,7 +1,7 @@
 import type { Component, ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DashboardLayout from "./DashboardLayout";
-import { getRelativeLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
 
 export interface SettingsLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -18,19 +18,19 @@ export const SettingsLayout: Component<SettingsLayoutProps> = (props) => {
     {
       label: "General",
       icon: "i-lucide-user",
-      href: getRelativeLocaleUrl("/dashboard/settings"),
+      href: getLocaleUrl("/dashboard/settings"),
       active: props.activeTab === "general",
     },
     {
       label: "Notifications",
       icon: "i-lucide-bell",
-      href: getRelativeLocaleUrl("/dashboard/settings/notifications"),
+      href: getLocaleUrl("/dashboard/settings/notifications"),
       active: props.activeTab === "notifications",
     },
     {
       label: "Security",
       icon: "i-lucide-shield",
-      href: getRelativeLocaleUrl("/dashboard/settings/security"),
+      href: getLocaleUrl("/dashboard/settings/security"),
       active: props.activeTab === "security",
     },
   ];

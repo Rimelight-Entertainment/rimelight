@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { getLocaleUrl } from "@rimelight/i18n";
 
 export const StoreSidebar: Component = () => {
   const categories = [
@@ -19,7 +19,7 @@ export const StoreSidebar: Component = () => {
         <nav class="flex flex-col gap-1">
           {categories.map((cat) => (
             <a
-              href={getRelativeLocaleUrl(cat.to)}
+              href={getLocaleUrl(cat.to)}
               class="text-sm font-medium text-gray-600 hover:text-primary-500 px-4 py-2 transition-colors"
             >
               {cat.label}
@@ -43,7 +43,7 @@ export const StoreSidebar: Component = () => {
         <nav class="flex flex-col gap-1 px-4 text-sm">
           {supportLinks.map((link) => (
             <a
-              href={getRelativeLocaleUrl(link.to)}
+              href={getLocaleUrl(link.to)}
               class="text-gray-500 hover:text-primary-500 transition-colors py-1"
             >
               {link.label}

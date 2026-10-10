@@ -79,7 +79,7 @@ export function stripLocalePrefix(path: string, supported: readonly string[] = l
 }
 
 /** Generates a localized relative URL path. */
-export function getRelativeLocaleUrl(
+export function getLocaleUrl(
   path: string,
   { locale: targetLocale = getCurrentLocale() }: { locale?: string } = {},
 ): string {

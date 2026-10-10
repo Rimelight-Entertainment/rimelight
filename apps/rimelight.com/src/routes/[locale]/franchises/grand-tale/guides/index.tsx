@@ -1,7 +1,7 @@
 import { type Component } from "solid-js";
 import GuidesLayout from "#layouts/GuidesLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const GuidesIndexPage: Component = () => {
   return (
@@ -27,7 +27,7 @@ export const GuidesIndexPage: Component = () => {
               </p>
               <RLButton
                 label="Open Build Planner"
-                href={getRelativeLocaleUrl("/franchises/grand-tale/guides/build-planners")}
+                href={getLocaleUrl("/franchises/grand-tale/guides/build-planners")}
                 color="primary"
                 variant="solid"
               />
@@ -39,7 +39,7 @@ export const GuidesIndexPage: Component = () => {
               </p>
               <RLButton
                 label="Open Calculators"
-                href={getRelativeLocaleUrl("/franchises/grand-tale/guides/calculators")}
+                href={getLocaleUrl("/franchises/grand-tale/guides/calculators")}
                 color="primary"
                 variant="solid"
               />

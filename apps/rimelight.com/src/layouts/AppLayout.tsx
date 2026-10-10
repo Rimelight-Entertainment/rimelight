@@ -13,7 +13,7 @@ import {
   RLToast,
   RLButton,
 } from "@rimelight/ui";
-import { t, getRelativeLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
+import { t, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
 
 export interface AppLayoutProps {
   title?: string | undefined;
@@ -121,7 +121,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
                 {t("cookie_notice.description_prefix") ||
                   "We use cookies to enhance your experience."}{" "}
                 <a
-                  href={getRelativeLocaleUrl("/legal/cookie-policy")}
+                  href={getLocaleUrl("/legal/cookie-policy")}
                   class="underline hover:text-primary transition-colors font-medium"
                 >
                   {t("cookie_notice.cookie_policy_label") || "Cookie Policy"}

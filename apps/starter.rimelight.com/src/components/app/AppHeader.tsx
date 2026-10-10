@@ -15,7 +15,7 @@ import {
 } from "@rimelight/ui";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
 import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.types.ts";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export interface AppHeaderProps {
   session?: any;
@@ -41,15 +41,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_foundations_links_tokens"),
-        href: getRelativeLocaleUrl("/docs/tokens"),
+        href: getLocaleUrl("/docs/tokens"),
       },
       {
         label: t("app_header.link-groups_center_foundations_links_colors"),
-        href: getRelativeLocaleUrl("/docs/colors"),
+        href: getLocaleUrl("/docs/colors"),
       },
       {
         label: t("app_header.link-groups_center_foundations_links_typography"),
-        href: getRelativeLocaleUrl("/docs/typography"),
+        href: getLocaleUrl("/docs/typography"),
       },
     ],
   });
@@ -60,15 +60,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_components_links_astro"),
-        href: getRelativeLocaleUrl("/docs/astro"),
+        href: getLocaleUrl("/docs/astro"),
       },
       {
         label: t("app_header.link-groups_center_components_links_solid"),
-        href: getRelativeLocaleUrl("/docs/solid"),
+        href: getLocaleUrl("/docs/solid"),
       },
       {
         label: t("app_header.link-groups_center_components_links_integrations"),
-        href: getRelativeLocaleUrl("/docs/integrations"),
+        href: getLocaleUrl("/docs/integrations"),
       },
     ],
   });
@@ -93,7 +93,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   const leftLinks = (): NavigationMenuItem[] => [
     {
       label: t("app_header.left-links_features_label"),
-      to: getRelativeLocaleUrl("/features"),
+      to: getLocaleUrl("/features"),
       slot: "features" as const,
       children: [
         {
@@ -112,27 +112,27 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     },
     {
       label: t("app_header.left-links_about_label"),
-      to: getRelativeLocaleUrl("/about"),
+      to: getLocaleUrl("/about"),
     },
     {
       label: t("app_header.left-links_blog_label"),
-      to: getRelativeLocaleUrl("/blog"),
+      to: getLocaleUrl("/blog"),
     },
     {
       label: t("app_header.left-links_docs_label"),
-      to: getRelativeLocaleUrl("/docs"),
+      to: getLocaleUrl("/docs"),
     },
     {
       label: t("app_header.left-links_dashboard_label"),
-      to: getRelativeLocaleUrl("/dashboard"),
+      to: getLocaleUrl("/dashboard"),
     },
     {
       label: t("app_header.left-links_chat_label"),
-      to: getRelativeLocaleUrl("/chat"),
+      to: getLocaleUrl("/chat"),
     },
     {
       label: "Contact",
-      to: getRelativeLocaleUrl("/contact"),
+      to: getLocaleUrl("/contact"),
     },
   ];
 
@@ -140,13 +140,13 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     {
       color: "neutral",
       variant: "outline",
-      href: getRelativeLocaleUrl("/auth/sign-up"),
+      href: getLocaleUrl("/auth/sign-up"),
       label: t("app_header.actions_sign-up"),
     },
     {
       variant: "solid",
       color: "primary",
-      href: getRelativeLocaleUrl("/auth/sign-in"),
+      href: getLocaleUrl("/auth/sign-in"),
       label: t("app_header.actions_sign-in"),
     },
   ];
@@ -164,17 +164,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           {
             label: "Dashboard",
             icon: "i-lucide-layout-dashboard",
-            to: getRelativeLocaleUrl("/dashboard"),
+            to: getLocaleUrl("/dashboard"),
           },
           {
             label: "Profile",
             icon: "i-lucide-user",
-            to: getRelativeLocaleUrl("/dashboard/profile"),
+            to: getLocaleUrl("/dashboard/profile"),
           },
           {
             label: "Settings",
             icon: "i-lucide-cog",
-            to: getRelativeLocaleUrl("/dashboard/settings"),
+            to: getLocaleUrl("/dashboard/settings"),
           },
           {
             type: "separator",
@@ -182,7 +182,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           {
             label: "Sign Out",
             icon: "i-lucide-log-out",
-            to: getRelativeLocaleUrl("/auth/sign-out"),
+            to: getLocaleUrl("/auth/sign-out"),
             color: "error",
           },
         ]

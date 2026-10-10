@@ -3,7 +3,7 @@ export {
   getDefaultLocale,
   getCurrentLocale,
   setCurrentLocale,
-  getRelativeLocaleUrl,
+  getLocaleUrl,
 } from "./locale";
 
 export { t, type TFunction } from "./translate";

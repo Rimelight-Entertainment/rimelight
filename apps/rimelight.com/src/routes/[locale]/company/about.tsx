@@ -1,7 +1,7 @@
 import { type Component } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const CompanyAboutPage: Component = () => {
   return (
@@ -43,13 +43,13 @@ export const CompanyAboutPage: Component = () => {
           <div class="flex gap-4">
             <RLButton
               label="Explore Careers"
-              href={getRelativeLocaleUrl("/company/careers")}
+              href={getLocaleUrl("/company/careers")}
               color="primary"
               variant="solid"
             />
             <RLButton
               label="Get in Touch"
-              href={getRelativeLocaleUrl("/company/contact")}
+              href={getLocaleUrl("/company/contact")}
               color="neutral"
               variant="outline"
             />

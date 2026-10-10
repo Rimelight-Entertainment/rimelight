@@ -9,7 +9,7 @@ import {
   formatAuditReport,
   fixTranslations,
 } from "../src/cli";
-import { getRelativeLocaleUrl, setCurrentLocale, t } from "../src/index";
+import { getLocaleUrl, setCurrentLocale, t } from "../src/index";
 import { getPluralCategory, setTranslations } from "../src/translate";
 
 describe("translation dictionary utils", () => {
@@ -107,22 +107,22 @@ describe("translation dictionary utils", () => {
 describe("relative locale urls", () => {
   it("prefixes the current locale when prefixDefaultLocale is true", () => {
     setCurrentLocale("en");
-    expect(getRelativeLocaleUrl("/about")).toBe("/en/about");
-    expect(getRelativeLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
+    expect(getLocaleUrl("/about")).toBe("/en/about");
+    expect(getLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
   });
 
   it("preserves query strings and hashes", () => {
-    expect(getRelativeLocaleUrl("/about?page=2#top")).toBe("/en/about?page=2#top");
+    expect(getLocaleUrl("/about?page=2#top")).toBe("/en/about?page=2#top");
   });
 
   it("handles root paths", () => {
-    expect(getRelativeLocaleUrl("/")).toBe("/en/");
+    expect(getLocaleUrl("/")).toBe("/en/");
   });
 
   it("passes external urls through unchanged", () => {
-    expect(getRelativeLocaleUrl("https://example.com/x")).toBe("https://example.com/x");
-    expect(getRelativeLocaleUrl("#anchor")).toBe("#anchor");
-    expect(getRelativeLocaleUrl("mailto:hi@example.com")).toBe("mailto:hi@example.com");
+    expect(getLocaleUrl("https://example.com/x")).toBe("https://example.com/x");
+    expect(getLocaleUrl("#anchor")).toBe("#anchor");
+    expect(getLocaleUrl("mailto:hi@example.com")).toBe("mailto:hi@example.com");
   });
 });
 

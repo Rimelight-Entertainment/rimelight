@@ -4,7 +4,7 @@ import {
   getDefaultLocale,
   getCurrentLocale,
   getLocales,
-  getRelativeLocaleUrl,
+  getLocaleUrl,
   setCurrentLocale,
   t,
 } from "../src/index";
@@ -16,7 +16,7 @@ describe("index exports", () => {
         "getDefaultLocale",
         "getCurrentLocale",
         "getLocales",
-        "getRelativeLocaleUrl",
+        "getLocaleUrl",
         "setCurrentLocale",
         "t",
       ].sort(),
@@ -29,7 +29,7 @@ describe("index exports", () => {
     expect(typeof i18n.setCurrentLocale).toBe("function");
     expect(typeof i18n.getLocales).toBe("function");
     expect(typeof i18n.getDefaultLocale).toBe("function");
-    expect(typeof i18n.getRelativeLocaleUrl).toBe("function");
+    expect(typeof i18n.getLocaleUrl).toBe("function");
     expect(typeof i18n.t.raw).toBe("function");
     expect(typeof i18n.t.array).toBe("function");
     expect(typeof i18n.t.plural).toBe("function");
@@ -46,7 +46,7 @@ describe("index exports", () => {
     expect(t).toBe(i18n.t);
     expect(getLocales()).toEqual(i18n.getLocales());
     expect(getDefaultLocale()).toBe(i18n.getDefaultLocale());
-    expect(typeof getRelativeLocaleUrl("/")).toBe("string");
+    expect(typeof getLocaleUrl("/")).toBe("string");
     expect(t.localize({ en: "Hello" }, "en")).toBe("Hello");
   });
 

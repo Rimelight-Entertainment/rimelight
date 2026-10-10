@@ -1,7 +1,7 @@
 import type { Component } from "solid-js";
 import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { getLocaleUrl } from "@rimelight/i18n";
 
 export const GrandTaleHeader: Component = () => {
   const links = [
@@ -22,7 +22,7 @@ export const GrandTaleHeader: Component = () => {
       class="bg-indigo-950 border-b border-indigo-900 shadow-md"
       left={
         <div class="flex flex-row items-center gap-6">
-          <a href={getRelativeLocaleUrl("/franchises/grand-tale")}>
+          <a href={getLocaleUrl("/franchises/grand-tale")}>
             <img
               src="https://cdn.rimelight.com/Franchises/Grand%20Tale/Logos/Grand%20Tale%20-%20Logomark.png"
               alt="Grand Tale Logo"
@@ -33,7 +33,7 @@ export const GrandTaleHeader: Component = () => {
           <nav class="hidden lg:flex items-center gap-4">
             {links.map((link) => (
               <a
-                href={getRelativeLocaleUrl(link.to)}
+                href={getLocaleUrl(link.to)}
                 class="text-sm font-medium text-indigo-300 hover:text-white transition-colors"
               >
                 {link.label}
@@ -47,14 +47,14 @@ export const GrandTaleHeader: Component = () => {
           <nav class="hidden lg:flex items-center gap-4">
             {rightLinks.map((link) => (
               <a
-                href={getRelativeLocaleUrl(link.to)}
+                href={getLocaleUrl(link.to)}
                 class="text-sm font-medium text-indigo-300 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
             ))}
           </nav>
-          <a href={getRelativeLocaleUrl("/franchises/grand-tale/download")}>
+          <a href={getLocaleUrl("/franchises/grand-tale/download")}>
             <RLButton
               variant="solid"
               label="Play Now"

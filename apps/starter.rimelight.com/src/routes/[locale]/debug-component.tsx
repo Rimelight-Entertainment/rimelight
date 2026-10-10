@@ -1,12 +1,12 @@
 import { type Component } from "solid-js";
 import BlankLayout from "#layouts/BlankLayout";
 import { RLLocaleSelector, RLThemeSelector } from "@rimelight/ui";
-import { getCurrentLocale, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
 
 export const DebugComponentPage: Component = () => {
   const locales = () => [
-    { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
-    { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") },
+    { code: "en", label: "English", href: getLocaleUrl("/en") },
+    { code: "pt", label: "Português", href: getLocaleUrl("/pt") },
   ];
 
   return (

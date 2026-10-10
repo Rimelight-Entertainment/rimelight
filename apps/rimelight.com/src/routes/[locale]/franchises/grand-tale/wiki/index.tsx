@@ -3,7 +3,7 @@ import WikiLayout from "#layouts/WikiLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { getLocaleUrl } from "@rimelight/i18n";
 
 const quickNavItems = [
   {
@@ -111,7 +111,7 @@ export const WikiIndexPage: Component = () => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <For each={quickNavItems}>
               {(item) => (
-                <a href={getRelativeLocaleUrl(item.href)} class="group block no-underline">
+                <a href={getLocaleUrl(item.href)} class="group block no-underline">
                   <RLCard class="bg-neutral-900/40 border-neutral-800 hover:bg-neutral-850 hover:border-indigo-500/50 transition-all h-full rounded-2xl p-6">
                     <div class="flex items-start gap-4">
                       <div class="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30 shrink-0">

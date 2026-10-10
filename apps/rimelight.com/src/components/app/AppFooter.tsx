@@ -9,7 +9,7 @@ import {
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
-import { t, getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { t, getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import NewsletterSignup from "./NewsletterSignup";
 
 export const AppFooter: Component = () => {
@@ -19,7 +19,7 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app_footer.links_resources_branding"),
-          href: getRelativeLocaleUrl("/branding"),
+          href: getLocaleUrl("/branding"),
         },
       ],
     },
@@ -28,27 +28,27 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app_footer.links_legal_terms-of-service"),
-          href: getRelativeLocaleUrl("/legal/terms-of-service"),
+          href: getLocaleUrl("/legal/terms-of-service"),
         },
         {
           label: t("app_footer.links_legal_code-of-conduct"),
-          href: getRelativeLocaleUrl("/legal/code-of-conduct"),
+          href: getLocaleUrl("/legal/code-of-conduct"),
         },
         {
           label: t("app_footer.links_legal_privacy-policy"),
-          href: getRelativeLocaleUrl("/legal/privacy-policy"),
+          href: getLocaleUrl("/legal/privacy-policy"),
         },
         {
           label: t("app_footer.links_legal_cookie-policy"),
-          href: getRelativeLocaleUrl("/legal/cookie-policy"),
+          href: getLocaleUrl("/legal/cookie-policy"),
         },
         {
           label: t("app_footer.links_legal_shipping-policy"),
-          href: getRelativeLocaleUrl("/legal/shipping-policy"),
+          href: getLocaleUrl("/legal/shipping-policy"),
         },
         {
           label: t("app_footer.links_legal_other-documents"),
-          href: getRelativeLocaleUrl("/legal"),
+          href: getLocaleUrl("/legal"),
         },
       ],
     },
@@ -78,9 +78,9 @@ export const AppFooter: Component = () => {
   ];
 
   const targetLanguages = () => [
-    { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
-    { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") },
-    { code: "es", label: "Español", href: getRelativeLocaleUrl("/es") },
+    { code: "en", label: "English", href: getLocaleUrl("/en") },
+    { code: "pt", label: "Português", href: getLocaleUrl("/pt") },
+    { code: "es", label: "Español", href: getLocaleUrl("/es") },
   ];
 
   return (

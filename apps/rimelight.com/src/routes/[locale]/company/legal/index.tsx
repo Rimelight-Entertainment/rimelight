@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { t, getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
@@ -56,7 +56,7 @@ export const LegalIndexPage: Component = () => {
                     title={title}
                     description={description}
                     date={postDate}
-                    to={getRelativeLocaleUrl(`/company/legal/${post.slug}/`)}
+                    to={getLocaleUrl(`/company/legal/${post.slug}/`)}
                     variant="ghost"
                   />
                 );

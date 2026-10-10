@@ -1,6 +1,6 @@
 import { type Component, createSignal } from "solid-js";
 import BlankLayout from "#layouts/BlankLayout";
-import { getCurrentLocale, getRelativeLocaleUrl, getLocales, t } from "@rimelight/i18n";
+import { getCurrentLocale, getLocaleUrl, getLocales, t } from "@rimelight/i18n";
 import { RLLocaleSelector } from "@rimelight/ui";
 
 export const DebugLocalePage: Component = () => {
@@ -25,7 +25,7 @@ export const DebugLocalePage: Component = () => {
   };
 
   const handleI18n = (code: string) => {
-    window.location.href = getRelativeLocaleUrl(`/${code}`, { locale: code });
+    window.location.href = getLocaleUrl(`/${code}`, { locale: code });
   };
 
   return (
@@ -60,18 +60,16 @@ export const DebugLocalePage: Component = () => {
         </div>
 
         <div class="flex flex-col gap-2">
-          <h2 class="font-semibold">i18n getRelativeLocaleUrl (locale=code)</h2>
+          <h2 class="font-semibold">i18n getLocaleUrl (locale=code)</h2>
           <div class="flex gap-2">
             <button class="border rounded p-2" onClick={() => handleI18n("en")}>
-              Go to /en (via getRelativeLocaleUrl)
+              Go to /en (via getLocaleUrl)
             </button>
             <button class="border rounded p-2" onClick={() => handleI18n("pt")}>
-              Go to /pt (via getRelativeLocaleUrl)
+              Go to /pt (via getLocaleUrl)
             </button>
           </div>
-          <div class="text-xs text-neutral-500">
-            Clicking uses getRelativeLocaleUrl with locale param.
-          </div>
+          <div class="text-xs text-neutral-500">Clicking uses getLocaleUrl with locale param.</div>
         </div>
       </div>
     </BlankLayout>

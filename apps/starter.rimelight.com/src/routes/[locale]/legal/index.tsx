@@ -1,6 +1,6 @@
 import { type Component, For, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const LegalIndexPage: Component = () => {
   const legalPages = createMemo<any[]>(
@@ -33,7 +33,7 @@ export const LegalIndexPage: Component = () => {
                     <h3 class="text-xl font-bold text-white mb-2">
                       <a
                         class="text-primary-400 hover:text-primary-300 transition-colors"
-                        href={getRelativeLocaleUrl(`/legal/${doc.slug}/`)}
+                        href={getLocaleUrl(`/legal/${doc.slug}/`)}
                       >
                         {title}
                       </a>

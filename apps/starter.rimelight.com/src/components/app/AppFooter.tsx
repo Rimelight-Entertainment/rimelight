@@ -9,7 +9,7 @@ import {
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const AppFooter: Component = () => {
   const footerGroups = (): RLLinkGroupProps[] => [
@@ -18,7 +18,7 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app_footer.links_resources_branding"),
-          href: getRelativeLocaleUrl("/branding"),
+          href: getLocaleUrl("/branding"),
         },
       ],
     },
@@ -27,15 +27,15 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app_footer.links_legal_privacy-policy"),
-          href: getRelativeLocaleUrl("/legal/privacy-policy"),
+          href: getLocaleUrl("/legal/privacy-policy"),
         },
         {
           label: t("app_footer.links_legal_cookie-policy"),
-          href: getRelativeLocaleUrl("/legal/cookie-policy"),
+          href: getLocaleUrl("/legal/cookie-policy"),
         },
         {
           label: t("app_footer.links_legal_other-documents"),
-          href: getRelativeLocaleUrl("/legal"),
+          href: getLocaleUrl("/legal"),
         },
       ],
     },
@@ -53,8 +53,8 @@ export const AppFooter: Component = () => {
   ];
 
   const targetLanguages = () => [
-    { code: "en", label: "English", href: getRelativeLocaleUrl("/en") },
-    { code: "pt", label: "Português", href: getRelativeLocaleUrl("/pt") },
+    { code: "en", label: "English", href: getLocaleUrl("/en") },
+    { code: "pt", label: "Português", href: getLocaleUrl("/pt") },
   ];
 
   return (

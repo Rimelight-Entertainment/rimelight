@@ -1,6 +1,6 @@
 import { type Component, For, createSignal, createMemo } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
-import { t, getRelativeLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { t, getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
@@ -80,7 +80,7 @@ export const BlogIndexPage: Component = () => {
                     date={postDate}
                     title={titleVal}
                     description={content?.properties?.description}
-                    to={getRelativeLocaleUrl(`/blog/${page.slug}/`)}
+                    to={getLocaleUrl(`/blog/${page.slug}/`)}
                     badge={
                       categoryMessages()[category as keyof ReturnType<typeof categoryMessages>] ??
                       category

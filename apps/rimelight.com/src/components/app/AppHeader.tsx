@@ -15,7 +15,7 @@ import {
 } from "@rimelight/ui";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
 import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.types.ts";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export interface AppHeaderProps {
   session?: any;
@@ -42,27 +42,27 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_grand-tale_main_news"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/news"),
+        href: getLocaleUrl("/franchises/grand-tale/news"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_main_about"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/about"),
+        href: getLocaleUrl("/franchises/grand-tale/about"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_main_wiki"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki"),
+        href: getLocaleUrl("/franchises/grand-tale/wiki"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_main_guides"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/guides"),
+        href: getLocaleUrl("/franchises/grand-tale/guides"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_main_forums"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/forums"),
+        href: getLocaleUrl("/franchises/grand-tale/forums"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_main_leaderboards"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/leaderboards"),
+        href: getLocaleUrl("/franchises/grand-tale/leaderboards"),
       },
     ],
   });
@@ -72,15 +72,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_grand-tale_series_children-of-the-light"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light"),
+        href: getLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_series_grand-academy"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy"),
+        href: getLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy"),
       },
       {
         label: t("app_header.link-groups_center_grand-tale_series_goldy-adventures"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures"),
+        href: getLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures"),
       },
     ],
   });
@@ -90,7 +90,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_grand-tale_books_the-first-tale"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale"),
+        href: getLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale"),
       },
     ],
   });
@@ -100,7 +100,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_grand-tale_comics_ori-friends"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends"),
+        href: getLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends"),
       },
     ],
   });
@@ -110,12 +110,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_right_grand-tale_resources_download"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/download"),
+        href: getLocaleUrl("/franchises/grand-tale/download"),
         leadingIcon: "i-lucide-download",
       },
       {
         label: t("app_header.link-groups_right_grand-tale_resources_support"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/support"),
+        href: getLocaleUrl("/franchises/grand-tale/support"),
         leadingIcon: "i-lucide-headset",
       },
     ],
@@ -147,11 +147,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_community_forums_rimelight"),
-        href: getRelativeLocaleUrl("/forums/rimelight"),
+        href: getLocaleUrl("/forums/rimelight"),
       },
       {
         label: t("app_header.link-groups_center_community_forums_grand-tale"),
-        href: getRelativeLocaleUrl("/forums/grand-tale"),
+        href: getLocaleUrl("/forums/grand-tale"),
       },
     ],
   });
@@ -161,7 +161,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_community_events_lightcon"),
-        href: getRelativeLocaleUrl("/events/lightcon"),
+        href: getLocaleUrl("/events/lightcon"),
       },
     ],
   });
@@ -192,11 +192,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_company_main_studio_about-us"),
-        href: getRelativeLocaleUrl("/company/about"),
+        href: getLocaleUrl("/company/about"),
       },
       {
         label: t("app_header.link-groups_center_company_main_studio_partnerships"),
-        href: getRelativeLocaleUrl("/company/studio/partnerships"),
+        href: getLocaleUrl("/company/studio/partnerships"),
       },
     ],
   });
@@ -206,11 +206,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_company_main_careers_life"),
-        href: getRelativeLocaleUrl("/company/careers/culture"),
+        href: getLocaleUrl("/company/careers/culture"),
       },
       {
         label: t("app_header.link-groups_center_company_main_careers_jobs"),
-        href: getRelativeLocaleUrl("/company/careers"),
+        href: getLocaleUrl("/company/careers"),
       },
     ],
   });
@@ -220,7 +220,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_company_main_news_blog"),
-        href: getRelativeLocaleUrl("/company/blog"),
+        href: getLocaleUrl("/company/blog"),
       },
     ],
   });
@@ -230,22 +230,22 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_right_company_resources_docs"),
-        href: getRelativeLocaleUrl("/company/docs"),
+        href: getLocaleUrl("/company/docs"),
         leadingIcon: "i-lucide-file-text",
       },
       {
         label: t("app_header.link-groups_right_company_resources_branding"),
-        href: getRelativeLocaleUrl("/company/branding"),
+        href: getLocaleUrl("/company/branding"),
         leadingIcon: "i-lucide-image",
       },
       {
         label: t("app_header.link-groups_right_company_resources_legal"),
-        href: getRelativeLocaleUrl("/company/legal"),
+        href: getLocaleUrl("/company/legal"),
         leadingIcon: "i-lucide-scale",
       },
       {
         label: t("app_header.link-groups_right_company_resources_contact"),
-        href: getRelativeLocaleUrl("/company/contact"),
+        href: getLocaleUrl("/company/contact"),
         leadingIcon: "i-lucide-mail",
       },
     ],
@@ -272,15 +272,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_store_main_deals_new-releases"),
-        href: getRelativeLocaleUrl("/store/deals/new"),
+        href: getLocaleUrl("/store/deals/new"),
       },
       {
         label: t("app_header.link-groups_center_store_main_deals_sales"),
-        href: getRelativeLocaleUrl("/store/deals/sales"),
+        href: getLocaleUrl("/store/deals/sales"),
       },
       {
         label: t("app_header.link-groups_center_store_main_deals_bundles"),
-        href: getRelativeLocaleUrl("/store/deals/bundles"),
+        href: getLocaleUrl("/store/deals/bundles"),
       },
     ],
   });
@@ -290,15 +290,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_store_main_clothing_headwear"),
-        href: getRelativeLocaleUrl("/store/clothing/headwear"),
+        href: getLocaleUrl("/store/clothing/headwear"),
       },
       {
         label: t("app_header.link-groups_center_store_main_clothing_tops"),
-        href: getRelativeLocaleUrl("/store/clothing/tops"),
+        href: getLocaleUrl("/store/clothing/tops"),
       },
       {
         label: t("app_header.link-groups_center_store_main_clothing_bottoms"),
-        href: getRelativeLocaleUrl("/store/clothing/bottoms"),
+        href: getLocaleUrl("/store/clothing/bottoms"),
       },
     ],
   });
@@ -308,15 +308,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_store_main_accessories_jewelry"),
-        href: getRelativeLocaleUrl("/store/accessories/jewelry"),
+        href: getLocaleUrl("/store/accessories/jewelry"),
       },
       {
         label: t("app_header.link-groups_center_store_main_accessories_pins-patches"),
-        href: getRelativeLocaleUrl("/store/merch/pins"),
+        href: getLocaleUrl("/store/merch/pins"),
       },
       {
         label: t("app_header.link-groups_center_store_main_accessories_keychains"),
-        href: getRelativeLocaleUrl("/store/accessories/keychains"),
+        href: getLocaleUrl("/store/accessories/keychains"),
       },
     ],
   });
@@ -326,7 +326,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_store_main_apparel_bottles-mugs"),
-        href: getRelativeLocaleUrl("/store/apparel/bottles-mugs"),
+        href: getLocaleUrl("/store/apparel/bottles-mugs"),
       },
     ],
   });
@@ -336,11 +336,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_store_main_collectibles_figurines-statues"),
-        href: getRelativeLocaleUrl("/store/collectibles/figurines"),
+        href: getLocaleUrl("/store/collectibles/figurines"),
       },
       {
         label: t("app_header.link-groups_center_store_main_collectibles_plushies"),
-        href: getRelativeLocaleUrl("/store/merch/plushies"),
+        href: getLocaleUrl("/store/merch/plushies"),
       },
     ],
   });
@@ -350,15 +350,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_center_store_main_art_posters-prints"),
-        href: getRelativeLocaleUrl("/store/merch/posters"),
+        href: getLocaleUrl("/store/merch/posters"),
       },
       {
         label: t("app_header.link-groups_center_store_main_art_comics-books"),
-        href: getRelativeLocaleUrl("/store/art/books"),
+        href: getLocaleUrl("/store/art/books"),
       },
       {
         label: t("app_header.link-groups_center_store_main_art_physical-games"),
-        href: getRelativeLocaleUrl("/store/art/games"),
+        href: getLocaleUrl("/store/art/games"),
       },
     ],
   });
@@ -368,12 +368,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app_header.link-groups_right_store_assistance_orders"),
-        href: getRelativeLocaleUrl("/store/orders"),
+        href: getLocaleUrl("/store/orders"),
         leadingIcon: "i-lucide-shopping-bag",
       },
       {
         label: t("app_header.link-groups_right_store_assistance_customer-support"),
-        href: getRelativeLocaleUrl("/franchises/grand-tale/support"),
+        href: getLocaleUrl("/franchises/grand-tale/support"),
         leadingIcon: "i-lucide-help-circle",
       },
     ],
@@ -382,7 +382,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   const leftLinks = (): NavigationMenuItem[] => [
     {
       label: t("app_header.left-links_grand-tale_label"),
-      to: getRelativeLocaleUrl("/franchises/grand-tale"),
+      to: getLocaleUrl("/franchises/grand-tale"),
       slot: "grand-tale" as const,
       children: [
         {
@@ -390,27 +390,27 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_grand-tale_main_news"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/news"),
+              to: getLocaleUrl("/franchises/grand-tale/news"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_main_about"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/about"),
+              to: getLocaleUrl("/franchises/grand-tale/about"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_main_wiki"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki"),
+              to: getLocaleUrl("/franchises/grand-tale/wiki"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_main_guides"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/guides"),
+              to: getLocaleUrl("/franchises/grand-tale/guides"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_main_forums"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/forums"),
+              to: getLocaleUrl("/franchises/grand-tale/forums"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_main_leaderboards"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/leaderboards"),
+              to: getLocaleUrl("/franchises/grand-tale/leaderboards"),
             },
           ],
         },
@@ -419,15 +419,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_grand-tale_series_children-of-the-light"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light"),
+              to: getLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_series_grand-academy"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy"),
+              to: getLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy"),
             },
             {
               label: t("app_header.link-groups_center_grand-tale_series_goldy-adventures"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures"),
+              to: getLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures"),
             },
           ],
         },
@@ -436,7 +436,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_grand-tale_books_the-first-tale"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale"),
+              to: getLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale"),
             },
           ],
         },
@@ -445,7 +445,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_grand-tale_comics_ori-friends"),
-              to: getRelativeLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends"),
+              to: getLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends"),
             },
           ],
         },
@@ -460,11 +460,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_community_forums_rimelight"),
-              to: getRelativeLocaleUrl("/forums/rimelight"),
+              to: getLocaleUrl("/forums/rimelight"),
             },
             {
               label: t("app_header.link-groups_center_community_forums_grand-tale"),
-              to: getRelativeLocaleUrl("/forums/grand-tale"),
+              to: getLocaleUrl("/forums/grand-tale"),
             },
           ],
         },
@@ -473,7 +473,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_community_events_lightcon"),
-              to: getRelativeLocaleUrl("/events/lightcon"),
+              to: getLocaleUrl("/events/lightcon"),
             },
           ],
         },
@@ -481,7 +481,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     },
     {
       label: t("app_header.left-links_company_label"),
-      to: getRelativeLocaleUrl("/company"),
+      to: getLocaleUrl("/company"),
       slot: "company" as const,
       children: [
         {
@@ -489,11 +489,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_company_main_studio_about-us"),
-              to: getRelativeLocaleUrl("/company/about"),
+              to: getLocaleUrl("/company/about"),
             },
             {
               label: t("app_header.link-groups_center_company_main_studio_partnerships"),
-              to: getRelativeLocaleUrl("/company/studio/partnerships"),
+              to: getLocaleUrl("/company/studio/partnerships"),
             },
           ],
         },
@@ -502,11 +502,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_company_main_careers_life"),
-              to: getRelativeLocaleUrl("/company/careers/culture"),
+              to: getLocaleUrl("/company/careers/culture"),
             },
             {
               label: t("app_header.link-groups_center_company_main_careers_jobs"),
-              to: getRelativeLocaleUrl("/company/careers"),
+              to: getLocaleUrl("/company/careers"),
             },
           ],
         },
@@ -515,7 +515,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_company_main_news_blog"),
-              to: getRelativeLocaleUrl("/company/blog"),
+              to: getLocaleUrl("/company/blog"),
             },
           ],
         },
@@ -524,7 +524,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_right_company_resources_docs"),
-              to: getRelativeLocaleUrl("/company/docs"),
+              to: getLocaleUrl("/company/docs"),
             },
           ],
         },
@@ -532,27 +532,27 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     },
     {
       label: t("app_header.left-links_store_label"),
-      to: getRelativeLocaleUrl("/store"),
+      to: getLocaleUrl("/store"),
       slot: "store" as const,
       children: [
         {
           label: t("app_header.link-groups_center_store_main_digital-goods_title"),
-          to: getRelativeLocaleUrl("/store/digital"),
+          to: getLocaleUrl("/store/digital"),
         },
         {
           label: t("app_header.link-groups_center_store_main_deals_title"),
           children: [
             {
               label: t("app_header.link-groups_center_store_main_deals_new-releases"),
-              to: getRelativeLocaleUrl("/store/deals/new"),
+              to: getLocaleUrl("/store/deals/new"),
             },
             {
               label: t("app_header.link-groups_center_store_main_deals_sales"),
-              to: getRelativeLocaleUrl("/store/deals/sales"),
+              to: getLocaleUrl("/store/deals/sales"),
             },
             {
               label: t("app_header.link-groups_center_store_main_deals_bundles"),
-              to: getRelativeLocaleUrl("/store/deals/bundles"),
+              to: getLocaleUrl("/store/deals/bundles"),
             },
           ],
         },
@@ -561,15 +561,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_store_main_clothing_headwear"),
-              to: getRelativeLocaleUrl("/store/clothing/headwear"),
+              to: getLocaleUrl("/store/clothing/headwear"),
             },
             {
               label: t("app_header.link-groups_center_store_main_clothing_tops"),
-              to: getRelativeLocaleUrl("/store/clothing/tops"),
+              to: getLocaleUrl("/store/clothing/tops"),
             },
             {
               label: t("app_header.link-groups_center_store_main_clothing_bottoms"),
-              to: getRelativeLocaleUrl("/store/clothing/bottoms"),
+              to: getLocaleUrl("/store/clothing/bottoms"),
             },
           ],
         },
@@ -578,15 +578,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_store_main_accessories_jewelry"),
-              to: getRelativeLocaleUrl("/store/accessories/jewelry"),
+              to: getLocaleUrl("/store/accessories/jewelry"),
             },
             {
               label: t("app_header.link-groups_center_store_main_accessories_pins-patches"),
-              to: getRelativeLocaleUrl("/store/merch/pins"),
+              to: getLocaleUrl("/store/merch/pins"),
             },
             {
               label: t("app_header.link-groups_center_store_main_accessories_keychains"),
-              to: getRelativeLocaleUrl("/store/accessories/keychains"),
+              to: getLocaleUrl("/store/accessories/keychains"),
             },
           ],
         },
@@ -595,7 +595,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_store_main_apparel_bottles-mugs"),
-              to: getRelativeLocaleUrl("/store/apparel/bottles-mugs"),
+              to: getLocaleUrl("/store/apparel/bottles-mugs"),
             },
           ],
         },
@@ -604,11 +604,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_store_main_collectibles_figurines-statues"),
-              to: getRelativeLocaleUrl("/store/collectibles/figurines"),
+              to: getLocaleUrl("/store/collectibles/figurines"),
             },
             {
               label: t("app_header.link-groups_center_store_main_collectibles_plushies"),
-              to: getRelativeLocaleUrl("/store/merch/plushies"),
+              to: getLocaleUrl("/store/merch/plushies"),
             },
           ],
         },
@@ -617,15 +617,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           children: [
             {
               label: t("app_header.link-groups_center_store_main_art_posters-prints"),
-              to: getRelativeLocaleUrl("/store/merch/posters"),
+              to: getLocaleUrl("/store/merch/posters"),
             },
             {
               label: t("app_header.link-groups_center_store_main_art_comics-books"),
-              to: getRelativeLocaleUrl("/store/art/books"),
+              to: getLocaleUrl("/store/art/books"),
             },
             {
               label: t("app_header.link-groups_center_store_main_art_physical-games"),
-              to: getRelativeLocaleUrl("/store/art/games"),
+              to: getLocaleUrl("/store/art/games"),
             },
           ],
         },
@@ -663,17 +663,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           {
             label: t("app_header.user_dropdown_dashboard"),
             icon: "i-lucide-layout-dashboard",
-            to: getRelativeLocaleUrl("/dashboard"),
+            to: getLocaleUrl("/dashboard"),
           },
           {
             label: t("app_header.user_dropdown_profile"),
             icon: "i-lucide-user",
-            to: getRelativeLocaleUrl("/dashboard/profile"),
+            to: getLocaleUrl("/dashboard/profile"),
           },
           {
             label: t("app_header.user_dropdown_settings"),
             icon: "i-lucide-cog",
-            to: getRelativeLocaleUrl("/dashboard/settings"),
+            to: getLocaleUrl("/dashboard/settings"),
           },
           {
             type: "separator",
