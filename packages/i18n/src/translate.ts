@@ -5,60 +5,64 @@ export interface TFunction {
   raw: <T = unknown>(key: string, fallback?: T) => T;
   array: <T = string>(key: string, fallback?: T[]) => T[];
   plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
-  localize: (val: unknown, locale?: string) => string;
+  localize: (value: unknown, locale?: string) => string;
 }
 
-const isRecord = (v: unknown): v is Record<string, any> =>
-  Boolean(v && typeof v === "object" && !Array.isArray(v));
+const isRecord = (value: unknown): value is Record<string, any> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
-const cache = new Map<string, any>();
-const intl = (type: "p" | "n", loc: string) =>
-  cache.get(type + loc) ??
-  cache
-    .set(type + loc, type === "p" ? new Intl.PluralRules(loc) : new Intl.NumberFormat(loc))
-    .get(type + loc);
+const pluralRules = new Map<string, Intl.PluralRules>();
+const numberFormats = new Map<string, Intl.NumberFormat>();
 
-const resolve = (key: string, loc = getCurrentLocale()): unknown => {
-  const get = (d: any) => d?.[key] ?? key.split(".").reduce((a, p) => a?.[p], d);
-  return get(config.translations[loc]) ?? get(config.translations[config.defaultLocale]);
+const resolve = (key: string, locale = getCurrentLocale()): unknown => {
+  const get = (dict?: Record<string, unknown>) =>
+    dict?.[key] ??
+    key.split(".").reduce<unknown>((target: any, segment) => target?.[segment], dict);
+  return get(config.translations[locale]) ?? get(config.translations[config.defaultLocale]);
 };
-
-export const getPluralCategory = (count: number, locale = "en"): Intl.LDMLPluralRule =>
-  intl("p", locale).select(count);
 
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, any>): string => {
-    if (!key.includes(".")) return key;
-    const loc = getCurrentLocale();
-    let val = resolve(key, loc) ?? key;
+    const locale = getCurrentLocale();
+    let value = resolve(key, locale) ?? key;
 
-    if (params && typeof params["count"] === "number" && isRecord(val)) {
-      val = val[getPluralCategory(params["count"], loc)] ?? val["other"] ?? key;
+    if (params && typeof params["count"] === "number" && isRecord(value)) {
+      value = value[t.plural(params["count"], locale)] ?? value["other"] ?? key;
     }
-    if (typeof val === "function") return val(params);
-    if (typeof val === "string" && params) {
-      return val.replace(/\{(\w+)\}/g, (_, k) =>
-        k === "count" && typeof params[k] === "number"
-          ? intl("n", loc).format(params[k])
-          : String(params[k] ?? `{${k}}`),
-      );
+
+    if (typeof value === "function") return value(params);
+
+    if (typeof value === "string" && params) {
+      return value.replace(/\{(\w+)\}/g, (_, placeholder) => {
+        const param = params[placeholder];
+        if (placeholder === "count" && typeof param === "number") {
+          let formatter = numberFormats.get(locale);
+          if (!formatter) numberFormats.set(locale, (formatter = new Intl.NumberFormat(locale)));
+          return formatter.format(param);
+        }
+        return String(param ?? `{${placeholder}}`);
+      });
     }
-    return isRecord(val)
-      ? JSON.stringify(val)
-      : val != null
-        ? String(val as string | number | boolean)
-        : "";
+
+    if (isRecord(value)) return JSON.stringify(value);
+    return value != null ? String(value as string | number | boolean) : "";
   },
   {
-    raw: <T = unknown>(k: string, fb?: T): T => (resolve(k) ?? fb) as T,
-    array: <T = string>(k: string, fb: T[] = []): T[] =>
-      (Array.isArray(resolve(k)) ? resolve(k) : fb) as T[],
-    plural: (c: number, loc?: string) => getPluralCategory(c, loc ?? getCurrentLocale()),
-    localize: (v: unknown, loc = getCurrentLocale()): string =>
-      isRecord(v)
-        ? String(v[loc] || v[config.defaultLocale] || "")
-        : v != null && typeof v !== "object"
-          ? String(v as string | number | boolean)
-          : "",
+    raw: <T = unknown>(key: string, fallback?: T): T => (resolve(key) ?? fallback) as T,
+    array: <T = string>(key: string, fallback: T[] = []): T[] => {
+      const value = resolve(key);
+      return (Array.isArray(value) ? value : fallback) as T[];
+    },
+    plural: (count: number, locale = getCurrentLocale()): Intl.LDMLPluralRule => {
+      let rules = pluralRules.get(locale);
+      if (!rules) pluralRules.set(locale, (rules = new Intl.PluralRules(locale)));
+      return rules.select(count);
+    },
+    localize: (value: unknown, locale = getCurrentLocale()): string => {
+      if (isRecord(value)) return String(value[locale] || value[config.defaultLocale] || "");
+      return value != null && typeof value !== "object"
+        ? String(value as string | number | boolean)
+        : "";
+    },
   },
 );
