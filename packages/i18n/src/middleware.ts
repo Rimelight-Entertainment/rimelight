@@ -1,4 +1,4 @@
-import { config, setCurrentLocale, stripLocalePrefix } from "./locale";
+import { config, setCurrentLocale } from "./locale";
 
 const isLocalizedPage = (p: string) =>
   !config.skipPaths.some((s) => p === s || p.startsWith(`${s}/`)) &&
@@ -38,7 +38,7 @@ export const resolveLocale = (request: Request): string | null => {
   }
 
   if (segmentLocale === config.defaultLocale) {
-    const clean = stripLocalePrefix(pathname);
+    const clean = pathname.slice(segmentLocale.length + 1);
     return `${clean || "/"}${url.search}`;
   }
 

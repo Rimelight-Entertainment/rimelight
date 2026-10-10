@@ -32,20 +32,11 @@ export const setCurrentLocale = (locale: string): void => {
   currentLocale = locale;
 };
 
-/** Removes leading locale prefix from pathname. */
-export const stripLocalePrefix = (
-  path: string,
-  supported: readonly string[] = config.locales,
-): string =>
-  supported.length
-    ? path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "")
-    : path;
-
 /** Generates a localized relative URL path. */
 export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string =>
   /^(?:[a-z]+:|\/\/|#)/i.test(path)
     ? path
-    : `${config.prefixDefaultLocale || locale !== config.defaultLocale ? `/${locale}` : ""}/${stripLocalePrefix(path).replace(/^\/+/, "")}`;
+    : `${config.prefixDefaultLocale || locale !== config.defaultLocale ? `/${locale}` : ""}/${path.replace(new RegExp(`^/(?:${config.locales.join("|")})(?=[/?#]|$)`, "i"), "").replace(/^\/+/, "")}`;
 
 /** Resolves an asset for the current or fallback locale. */
 export const getLocaleAsset = <T>(assets: Record<string, T>, locale = getCurrentLocale()): T =>
