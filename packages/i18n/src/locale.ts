@@ -63,37 +63,22 @@ export function localeFromPathname(
   pathname: string,
   supported: readonly string[] = locales,
 ): string | null {
-  const segment = pathname.split("/").find(Boolean);
-  if (!segment) return null;
-  return supported.find((code) => code.toLowerCase() === segment.toLowerCase()) ?? null;
+  const segment = pathname.split(/[/?#]/)[1]?.toLowerCase();
+  return supported.find((code) => code.toLowerCase() === segment) ?? null;
 }
 
 /** Removes leading locale prefix from pathname. */
 export function stripLocalePrefix(path: string, supported: readonly string[] = locales): string {
-  const segments = path.replace(/^\/+/, "").split("/");
-  const first = segments[0];
-  if (first && supported.some((code) => code.toLowerCase() === first.toLowerCase())) {
-    segments.shift();
-  }
-  return segments.join("/");
+  return path.replace(new RegExp(`^/(?:${supported.join("|")})(?=[/?#]|$)`, "i"), "");
 }
 
 /** Generates a localized relative URL path. */
 export function getLocaleUrl(
   path: string,
-  { locale: targetLocale = getCurrentLocale() }: { locale?: string } = {},
+  { locale = getCurrentLocale() }: { locale?: string } = {},
 ): string {
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path)) return path;
-
-  const splitAt = path.search(/[?#]/);
-  const pathname = splitAt === -1 ? path : path.slice(0, splitAt);
-  const suffix = splitAt === -1 ? "" : path.slice(splitAt);
-
-  const cleanPath = stripLocalePrefix(pathname);
-  const prefix = prefixDefaultLocale || targetLocale !== defaultLocale ? `/${targetLocale}` : "";
-
-  if (!cleanPath) return `${prefix}/${suffix}`;
-
-  const trailingSlash = pathname.endsWith("/") ? "/" : "";
-  return `${prefix}/${cleanPath}${trailingSlash}${suffix}`;
+  const clean = stripLocalePrefix(path.startsWith("/") ? path : `/${path}`);
+  const prefix = prefixDefaultLocale || locale !== defaultLocale ? `/${locale}` : "";
+  return `${prefix}${clean.startsWith("/") ? clean : `/${clean}`}`;
 }

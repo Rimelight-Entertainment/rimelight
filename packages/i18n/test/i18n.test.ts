@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vite-plus/test";
+import { beforeEach, describe, expect, it } from "vite-plus/test";
 import {
   flatten,
   unflatten,
@@ -10,6 +10,7 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { getLocaleUrl, setCurrentLocale, t } from "../src/index";
+import { setLocaleConfig } from "../src/locale";
 import { getPluralCategory, setTranslations } from "../src/translate";
 
 describe("translation dictionary utils", () => {
@@ -105,10 +106,26 @@ describe("translation dictionary utils", () => {
 });
 
 describe("relative locale urls", () => {
+  beforeEach(() => {
+    setLocaleConfig({ locales: ["en", "pt"], defaultLocale: "en", prefixDefaultLocale: true });
+    setCurrentLocale("en");
+  });
+
   it("prefixes the current locale when prefixDefaultLocale is true", () => {
     setCurrentLocale("en");
     expect(getLocaleUrl("/about")).toBe("/en/about");
     expect(getLocaleUrl("/about", { locale: "pt" })).toBe("/pt/about");
+  });
+
+  it("handles trailing slashes without creating double slashes", () => {
+    expect(getLocaleUrl("/about/")).toBe("/en/about/");
+    expect(getLocaleUrl("/pt/about/", { locale: "en" })).toBe("/en/about/");
+    expect(getLocaleUrl("/pt/about/")).toBe("/en/about/");
+  });
+
+  it("replaces existing locale prefix when changing locale", () => {
+    expect(getLocaleUrl("/en/about", { locale: "pt" })).toBe("/pt/about");
+    expect(getLocaleUrl("/pt/about?tab=1", { locale: "en" })).toBe("/en/about?tab=1");
   });
 
   it("preserves query strings and hashes", () => {
@@ -117,6 +134,7 @@ describe("relative locale urls", () => {
 
   it("handles root paths", () => {
     expect(getLocaleUrl("/")).toBe("/en/");
+    expect(getLocaleUrl("/", { locale: "pt" })).toBe("/pt/");
   });
 
   it("passes external urls through unchanged", () => {

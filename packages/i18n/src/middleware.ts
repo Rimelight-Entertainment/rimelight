@@ -53,7 +53,8 @@ export function resolveLocale(request: Request): string | null {
   }
 
   if (segmentLocale === defaultLocale) {
-    return `/${stripLocalePrefix(pathname, locales)}${url.search}`;
+    const clean = stripLocalePrefix(pathname, locales);
+    return `${clean || "/"}${url.search}`;
   }
 
   return null;
