@@ -1,5 +1,18 @@
 import virtualConfig from "virtual:rimelight-i18n";
-import { getI18nStore } from "./context";
+
+export interface I18nContextStore {
+  locale: string;
+  translations?: Record<string, unknown> | undefined;
+}
+
+declare global {
+  var __rimelight_i18n:
+    | {
+        getStore: () => I18nContextStore | undefined;
+        run: <R>(store: I18nContextStore, callback: () => R) => R;
+      }
+    | undefined;
+}
 
 export interface RimelightTranslationKeys {
   keys: string;
@@ -24,7 +37,8 @@ export const getLocales = (): string[] => [...config.locales];
 export const getDefaultLocale = (): string => config.defaultLocale;
 
 /** Returns the active locale code. */
-export const getCurrentLocale = (): string => getI18nStore()?.locale ?? currentLocale;
+export const getCurrentLocale = (): string =>
+  globalThis.__rimelight_i18n?.getStore()?.locale ?? currentLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -80,7 +94,7 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const store = getI18nStore();
+      const store = globalThis.__rimelight_i18n?.getStore();
       const get = (loc: string) => {
         const dict = ((store && (store.locale === loc || !loc) && store.translations) ||
           config.translations[loc]) as Record<string, unknown> | undefined;

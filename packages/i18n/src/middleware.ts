@@ -1,6 +1,6 @@
-import { config, t } from "./runtime";
+import { AsyncLocalStorage } from "node:async_hooks";
+import { config, t, type I18nContextStore } from "./runtime";
 import serverTranslations from "virtual:rimelight-i18n/server";
-import { i18nContext } from "./context";
 
 /**
  * Universal i18n middleware for locale resolution, route redirection,
@@ -33,7 +33,7 @@ export const i18n = () => async (c: any, next: () => Promise<void>) => {
 
   return target
     ? c.redirect(`${target}${search}`, 302)
-    : i18nContext.run(
+    : (globalThis.__rimelight_i18n ??= new AsyncLocalStorage<I18nContextStore>()).run(
         { locale, translations: serverTranslations?.[locale] ?? config.translations?.[locale] },
         next,
       );
