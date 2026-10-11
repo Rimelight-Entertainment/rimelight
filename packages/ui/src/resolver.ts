@@ -4,7 +4,8 @@ import type { ClassValue, ThemeConfig, UIConfig } from "./types";
 let testOverrides: Partial<UIConfig> | null = null;
 
 export function getUIConfig(): UIConfig {
-  return testOverrides ? { ...uiConfig, ...testOverrides } : uiConfig;
+  const base = (uiConfig as any)?.config ?? (uiConfig as any)?.default ?? uiConfig ?? {};
+  return testOverrides ? { ...base, ...testOverrides } : base;
 }
 
 export function setRimelightUITestConfig(overrides: Partial<UIConfig> | null): void {

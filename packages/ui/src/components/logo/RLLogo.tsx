@@ -1,7 +1,7 @@
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
 import { createMemo, omit, type Component } from "solid-js";
-import uiConfig from "virtual:rimelight-ui";
+import { getUIConfig } from "../../resolver";
 
 export const RLLogo: Component<RLLogoProps> = (allProps) => {
   const props = allProps;
@@ -48,7 +48,7 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
       return { logoSrc: props.src, darkSrc: null, lightSrc: null };
     }
 
-    const cfgLogos = (uiConfig as any)?.logos;
+    const cfgLogos = getUIConfig()?.logos;
     const logoVariant = cfgLogos?.[variant()];
 
     let logoSrc: string | null = null;
