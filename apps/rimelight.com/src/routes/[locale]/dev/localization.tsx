@@ -159,37 +159,43 @@ export default function DevLocalizationPage() {
         <For each={sections()}>
           {(section) => (
             <section class="bg-elevated/20">
-              <header class="border-b border-default/60 bg-elevated/40 px-xl py-sm">
+              <header class="bg-elevated/40 px-xl py-sm">
                 <h2 class="text-xs text-muted">
                   {section.mono ? <code>{section.title}</code> : section.title}
                 </h2>
               </header>
+              <hr class="border-default" />
               <div class="flex flex-col">
                 <For each={section.rows}>
-                  {(row) => (
-                    <div class="flex items-start gap-xl border-t border-default/60 px-xl py-md first:border-t-0">
-                      <div class="flex min-w-0 flex-1 flex-col gap-xs">
-                        <Show when={row.label}>
-                          {row.mono ? (
-                            <code class="text-sm text-highlighted">{row.label}</code>
-                          ) : (
-                            <span class="text-sm text-highlighted">{row.label}</span>
-                          )}
-                        </Show>
-                        <Show when={row.code}>
-                          <pre class="text-xs text-muted">{row.code}</pre>
-                        </Show>
-                        <Show when={row.description}>
-                          <p class="text-xs text-muted">{row.description}</p>
-                        </Show>
+                  {(row, index) => (
+                    <>
+                      <Show when={index() > 0}>
+                        <hr class="border-default" />
+                      </Show>
+                      <div class="flex items-start gap-xl px-xl py-md">
+                        <div class="flex min-w-0 flex-1 flex-col gap-xs">
+                          <Show when={row.label}>
+                            {row.mono ? (
+                              <code class="text-sm text-highlighted">{row.label}</code>
+                            ) : (
+                              <span class="text-sm text-highlighted">{row.label}</span>
+                            )}
+                          </Show>
+                          <Show when={row.code}>
+                            <pre class="text-xs text-muted">{row.code}</pre>
+                          </Show>
+                          <Show when={row.description}>
+                            <p class="text-xs text-muted">{row.description}</p>
+                          </Show>
+                        </div>
+                        <div class="min-w-0 text-right text-sm text-highlighted">
+                          <Show when={row.value}>
+                            <pre>{row.value}</pre>
+                          </Show>
+                          {row.content}
+                        </div>
                       </div>
-                      <div class="min-w-0 text-right text-sm text-highlighted">
-                        <Show when={row.value}>
-                          <pre>{row.value}</pre>
-                        </Show>
-                        {row.content}
-                      </div>
-                    </div>
+                    </>
                   )}
                 </For>
               </div>
