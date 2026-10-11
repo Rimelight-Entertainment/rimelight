@@ -1,6 +1,6 @@
 import DevLayout from "#layouts/DevLayout";
-import { getLocaleUrl } from "@rimelight/i18n";
 import { RLCard, RLGrid, RLPageSection } from "@rimelight/ui";
+import { getLocaleUrl } from "@rimelight/i18n";
 
 export default function DevIndexPage() {
   return (
