@@ -1,7 +1,7 @@
+import DevLayout from "#layouts/DevLayout";
 import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
-import DevLayout from "#layouts/DevLayout";
 import {
   getCurrentLocale,
   getDefaultLocale,
