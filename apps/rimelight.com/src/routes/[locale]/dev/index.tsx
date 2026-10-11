@@ -4,10 +4,10 @@ import { getLocaleUrl } from "@rimelight/i18n";
 
 const dashboardCards = [
   {
-    href: "/dev/design-system",
-    title: "Design System",
+    href: "/dev/user-interface",
+    title: "User Interface",
     description:
-      "Interactive hybrid OKLCH palette scales, 8x8 intent contrast matrix, 11x11 shade grid, dual-mode preview sandbox, and component theming.",
+      "Interactive hybrid OKLCH palette scales, typography & fonts, icon library, intent contrast matrix, and component theming.",
   },
   {
     href: "/dev/components",
