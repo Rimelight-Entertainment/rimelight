@@ -924,7 +924,10 @@ export default function DevSeoPage() {
   ];
 
   return (
-    <DevLayout>
+    <DevLayout
+      title="SEO"
+      description="Head tags generation, meta tags, Open Graph images, JSON-LD schemas, sitemap, robots.txt, RSS feeds, LLMs.txt, and web manifest audit"
+    >
       <div class="flex flex-col gap-2xl">
         <header class="flex flex-col gap-xs">
           <h1 class="text-3xl text-highlighted">SEO</h1>

@@ -234,7 +234,7 @@ export default function DevLocalizationPage() {
   ];
 
   return (
-    <DevLayout>
+    <DevLayout title={t("dev_localization.title")} description={t("dev_localization.description")}>
       <div class="flex flex-col gap-2xl">
         <header class="flex flex-col gap-xs">
           <h1 class="text-3xl text-highlighted">{t("dev_localization.title")}</h1>

@@ -223,7 +223,10 @@ export default function DevSecurityPage() {
   ];
 
   return (
-    <DevLayout>
+    <DevLayout
+      title="Security"
+      description="CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics"
+    >
       <div class="flex flex-col gap-2xl">
         <header class="flex flex-col gap-xs">
           <h1 class="text-3xl text-highlighted">Security</h1>

@@ -355,7 +355,10 @@ export default function DevUserInterfacePage() {
   ];
 
   return (
-    <DevLayout>
+    <DevLayout
+      title="User Interface"
+      description="Verifying @rimelight/ui OKLCH hybrid palette scales, dynamic typography families, icon library and collections, semantic intent utilities, and component theming"
+    >
       <div class="flex flex-col gap-2xl">
         <header class="flex flex-col gap-xs">
           <h1 class="text-3xl text-highlighted">User Interface</h1>

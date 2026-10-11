@@ -1,15 +1,8 @@
 import { type Component, Show } from "solid-js";
-import { type JSX, useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
-import { getCurrentLocale, getLocaleUrl, getLocales } from "@rimelight/i18n";
-import {
-  RLMain,
-  RLContainer,
-  RLHeader,
-  RLLogo,
-  RLLocaleSelector,
-  RLThemeSelector,
-} from "@rimelight/ui";
+import { type JSX } from "@solidjs/web";
+import AppLayout from "#layouts/AppLayout";
+import { getLocaleUrl } from "@rimelight/i18n";
+import { RLContainer, RLHeader, RLLogo } from "@rimelight/ui";
 
 export const DEV_BRAND = "Rimelight Developer Workspace";
 
@@ -21,18 +14,15 @@ export interface DevLayoutProps {
 }
 
 export const DevLayout: Component<DevLayoutProps> = (props) => {
-  useHead(
-    () =>
-      createSeoHead({
-        title: `${props.title ?? DEV_BRAND} | Dev`,
-        description: props.description,
-        noindex: true,
-      }).tags,
-  );
-
   return (
-    <>
+    <AppLayout
+      title={`${props.title ?? DEV_BRAND} | Dev`}
+      description={props.description}
+      noindex={true}
+    >
       <RLHeader
+        stackIndex={2}
+        fixed={true}
         class="bg-primary-400"
         left={
           <a href={getLocaleUrl("/dev")} class="flex flex-row items-center gap-3 min-w-0">
@@ -46,23 +36,11 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
             </Show>
           </a>
         }
-        right={
-          <div class="flex items-center gap-2">
-            <RLLocaleSelector
-              mode="icon"
-              locales={getLocales()}
-              currentLocale={getCurrentLocale()}
-            />
-            <RLThemeSelector mode="icon" />
-            {props.actions}
-          </div>
-        }
+        right={<div class="flex items-center gap-2">{props.actions}</div>}
       />
 
-      <RLMain>
-        <RLContainer>{props.children}</RLContainer>
-      </RLMain>
-    </>
+      <RLContainer class="py-xl">{props.children}</RLContainer>
+    </AppLayout>
   );
 };
 
