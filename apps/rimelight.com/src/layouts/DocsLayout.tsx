@@ -6,7 +6,7 @@ import { RLSidebar, RLTableOfContents, RLSurround, RLSelect, RLInput } from "@ri
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
-import { t, getCurrentLocale, setCurrentLocale } from "@rimelight/i18n";
+import { t, getCurrentLocale, getLocales, setCurrentLocale } from "@rimelight/i18n";
 
 export interface DocsLayoutProps {
   title: string;
@@ -26,7 +26,7 @@ export interface DocsLayoutProps {
 
 export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   const params = useParams<{ locale?: string; slug?: string }>();
-  if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
+  if (params.locale && getLocales().includes(params.locale)) {
     setCurrentLocale(params.locale);
   }
 

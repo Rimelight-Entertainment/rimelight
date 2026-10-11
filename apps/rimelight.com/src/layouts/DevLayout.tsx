@@ -1,30 +1,11 @@
-import { type Component, For, Show } from "solid-js";
+import { Show, type Component } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { type JSX, useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
-import { getCurrentLocale, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
-import { RLMain, RLThemeSelector } from "@rimelight/ui";
+import { getCurrentLocale, getLocaleUrl, getLocales, setCurrentLocale } from "@rimelight/i18n";
+import { RLLocaleSelector, RLLogo, RLMain, RLThemeSelector } from "@rimelight/ui";
 
-export interface DevNavSection {
-  id: string;
-  label: string;
-  href: string;
-  icon?: string;
-  badge?: string;
-}
-
-export const DEV_NAV_ITEMS: DevNavSection[] = [
-  { id: "hub", label: "Dev Hub", href: "/dev", icon: "i-lucide-layout-grid" },
-  { id: "components", label: "Components", href: "/dev/components", icon: "i-lucide-component" },
-  {
-    id: "design-system",
-    label: "Design System",
-    href: "/dev/design-system",
-    icon: "i-lucide-layers",
-  },
-  { id: "locale", label: "Locale", href: "/dev/locale", icon: "i-lucide-globe" },
-  { id: "og", label: "OG Images", href: "/dev/og", icon: "i-lucide-image" },
-];
+const BRAND = "Rimelight Developer Workspace";
 
 export interface DevLayoutProps {
   title: string;
@@ -38,7 +19,7 @@ export interface DevLayoutProps {
 
 export const DevLayout: Component<DevLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
+  if (params.locale && getLocales().includes(params.locale)) {
     setCurrentLocale(params.locale);
   }
 
@@ -89,75 +70,41 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
     <div class="min-h-screen flex flex-col bg-default text-default font-sans antialiased">
       {/* Lean Dev Header Navigation */}
       <header class="sticky top-0 z-40 w-full border-b border-default bg-elevated/80 backdrop-blur-md">
-        <div class="container mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          {/* Dev Branding & Section Breadcrumb */}
-          <div class="flex items-center gap-3 shrink-0">
+        <div
+          class={`container mx-auto px-4 w-full h-14 flex items-center justify-between gap-4 ${getWidthClass()}`}
+        >
+          {/* Dev Homepage Link & Section Breadcrumb */}
+          <div class="flex items-center gap-3 shrink-0 min-w-0">
+            <RLLogo
+              variant="logomark"
+              mode="color"
+              href={navHref("/dev")}
+              class="h-5 w-auto shrink-0"
+              alt={BRAND}
+            />
             <a
               href={navHref("/dev")}
-              class="flex items-center gap-2 font-mono text-xs font-bold text-highlighted hover:text-primary transition-colors"
+              class="font-mono text-xs font-bold text-highlighted hover:text-primary transition-colors shrink-0"
             >
-              <span class="size-2 rounded-full bg-primary" />
-              <span>Dev Workspace</span>
+              {BRAND}
             </a>
-            <span class="text-muted/40 font-mono text-xs">/</span>
-            <span class="font-mono text-xs text-muted truncate max-w-[200px] sm:max-w-xs">
-              {props.title}
-            </span>
+            <Show when={props.title !== BRAND}>
+              <span class="text-muted/40 font-mono text-xs shrink-0">/</span>
+              <span class="font-mono text-xs text-muted truncate">{props.title}</span>
+            </Show>
           </div>
-
-          {/* Quick Switcher Nav Tabs */}
-          <nav class="hidden md:flex items-center gap-1 overflow-x-auto py-1 scrollbar-none">
-            <For each={DEV_NAV_ITEMS}>
-              {(item) => {
-                const isActive = () => props.currentSection === item.id;
-                return (
-                  <a
-                    href={navHref(item.href)}
-                    class={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 ${
-                      isActive()
-                        ? "bg-primary text-inverted font-bold shadow-xs"
-                        : "text-muted hover:text-highlighted hover:bg-elevated/80"
-                    }`}
-                  >
-                    <Show when={item.icon}>
-                      <span class={`${item.icon} size-3.5`} />
-                    </Show>
-                    <span>{item.label}</span>
-                  </a>
-                );
-              }}
-            </For>
-          </nav>
 
           {/* Utility Controls */}
           <div class="flex items-center gap-2 shrink-0">
+            <RLLocaleSelector
+              mode="icon"
+              size="xs"
+              locales={getLocales()}
+              currentLocale={getCurrentLocale()}
+            />
             <RLThemeSelector size="xs" mode="icon" />
             {props.actions}
           </div>
-        </div>
-
-        {/* Mobile Navigation Sub-bar */}
-        <div class="md:hidden border-t border-default/40 px-4 py-2 flex items-center gap-1 overflow-x-auto scrollbar-none bg-muted/20">
-          <For each={DEV_NAV_ITEMS}>
-            {(item) => {
-              const isActive = () => props.currentSection === item.id;
-              return (
-                <a
-                  href={navHref(item.href)}
-                  class={`px-2 py-1 rounded-md text-[11px] font-medium whitespace-nowrap flex items-center gap-1 shrink-0 ${
-                    isActive()
-                      ? "bg-primary text-inverted font-bold"
-                      : "text-muted hover:text-highlighted"
-                  }`}
-                >
-                  <Show when={item.icon}>
-                    <span class={`${item.icon} size-3`} />
-                  </Show>
-                  <span>{item.label}</span>
-                </a>
-              );
-            }}
-          </For>
         </div>
       </header>
 

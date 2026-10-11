@@ -108,7 +108,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => 
           variant={isIconMode() ? "icon" : "default"}
           aria-label="Select language"
           class={resolvedClasses().select}
-          leadingIcon={props.leadingIcon || "globe"}
+          leadingIcon={props.leadingIcon || "i-lucide-globe"}
           leading={props.leading}
         />
       </div>

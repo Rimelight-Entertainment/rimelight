@@ -2,7 +2,7 @@ import type { Component, ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "./AppLayout";
 import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
-import { setCurrentLocale } from "@rimelight/i18n";
+import { getLocales, setCurrentLocale } from "@rimelight/i18n";
 
 export interface GrandTaleLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -12,7 +12,7 @@ export interface GrandTaleLayoutProps extends ParentProps {
 
 export const GrandTaleLayout: Component<GrandTaleLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
+  if (params.locale && getLocales().includes(params.locale)) {
     setCurrentLocale(params.locale);
   }
 

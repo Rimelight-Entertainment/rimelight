@@ -15,7 +15,7 @@ export const DevLocalePage: Component = () => {
     const code = e.currentTarget.value;
     const path = currentPath();
     const segments = path.split("/").filter(Boolean);
-    const known = ["en", "pt", "es"];
+    const known = getLocales();
     if (segments.length > 0 && known.includes(segments[0]!)) {
       segments[0] = code;
       window.location.href = `/${segments.join("/")}`;

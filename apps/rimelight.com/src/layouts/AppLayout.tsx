@@ -13,7 +13,7 @@ import {
   RLToast,
   RLButton,
 } from "@rimelight/ui";
-import { t, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
+import { t, getLocales, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
 
 export interface AppLayoutProps {
   title?: string | undefined;
@@ -31,7 +31,7 @@ export interface AppLayoutProps {
 
 export const AppLayout: Component<AppLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && ["en", "pt", "es"].includes(params.locale)) {
+  if (params.locale && getLocales().includes(params.locale)) {
     setCurrentLocale(params.locale);
   }
 
