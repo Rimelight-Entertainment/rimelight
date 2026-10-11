@@ -8,5 +8,3 @@ export {
   t,
   type TFunction,
 } from "./runtime";
-
-export type { RimelightI18nPluginOptions } from "./plugin";

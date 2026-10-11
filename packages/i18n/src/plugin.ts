@@ -8,7 +8,7 @@ export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 export const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
 export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
-export interface RimelightI18nPluginOptions {
+interface RimelightI18nPluginOptions {
   defaultLocale?: string;
   translationsDir?: string;
   prefixDefaultLocale?: boolean;
@@ -18,10 +18,13 @@ export interface RimelightI18nPluginOptions {
 
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let root = process.cwd();
+  let cachedTranslations: Record<string, Record<string, string>> | null = null;
 
   const getTranslations = () => {
+    if (cachedTranslations) return cachedTranslations;
+
     const dir = path.resolve(root, options.translationsDir ?? "src/i18n");
-    return fs.existsSync(dir)
+    cachedTranslations = fs.existsSync(dir)
       ? Object.fromEntries(
           fs
             .readdirSync(dir)
@@ -32,6 +35,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
             ]),
         )
       : {};
+    return cachedTranslations;
   };
 
   const emitTypes = () => {
@@ -52,11 +56,16 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   return {
     name: "rimelight:i18n",
     configResolved(c) {
-      root = c.root ? path.resolve(c.root) : root;
+      const newRoot = c.root ? path.resolve(c.root) : root;
+      if (newRoot !== root) {
+        root = newRoot;
+        cachedTranslations = null;
+      }
       emitTypes();
     },
     handleHotUpdate({ file }) {
       if (file.endsWith(".json")) {
+        cachedTranslations = null;
         emitTypes();
       }
     },
