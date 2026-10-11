@@ -1,4 +1,4 @@
-import { type Component, For, Show, createMemo } from "solid-js";
+import { untrack, type Component, For, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import type { JSX } from "@solidjs/web";
 import AppLayout from "./AppLayout";
@@ -26,9 +26,11 @@ export interface DocsLayoutProps {
 
 export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   const params = useParams<{ locale?: string; slug?: string }>();
-  if (params.locale && getLocales().includes(params.locale)) {
-    setCurrentLocale(params.locale);
-  }
+  untrack(() => {
+    if (params.locale && getLocales().includes(params.locale)) {
+      setCurrentLocale(params.locale);
+    }
+  });
 
   const locale = () => getCurrentLocale();
   const currentPath = () =>

@@ -1,4 +1,4 @@
-import type { Component, ParentProps } from "solid-js";
+import { untrack, type Component, type ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import DashboardLayout from "./DashboardLayout";
 import { getLocales, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
@@ -11,9 +11,11 @@ export interface AdminLayoutProps extends ParentProps {
 
 export const AdminLayout: Component<AdminLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && getLocales().includes(params.locale)) {
-    setCurrentLocale(params.locale);
-  }
+  untrack(() => {
+    if (params.locale && getLocales().includes(params.locale)) {
+      setCurrentLocale(params.locale);
+    }
+  });
 
   const links = [
     {

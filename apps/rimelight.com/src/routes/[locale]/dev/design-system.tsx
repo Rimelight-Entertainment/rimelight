@@ -38,10 +38,7 @@ export const DevDesignSystemPage: Component = () => {
 
   return (
     <DevLayout
-      title="Design System Showcase"
-      description="Interactive hybrid OKLCH palettes, 8x8 intent contrast matrix, 11x11 shade grid, component theming, and layout showcase"
-      currentSection="design-system"
-      maxWidth="7xl"
+      section="design-system"
       actions={
         <div class="flex items-center gap-1 bg-muted p-1 rounded-lg">
           <button

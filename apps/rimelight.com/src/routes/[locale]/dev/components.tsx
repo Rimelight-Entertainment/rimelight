@@ -11,12 +11,7 @@ export const DevComponentsPage: Component = () => {
   };
 
   return (
-    <DevLayout
-      title="Component Audit Hub"
-      description="Isolated testing, interactive sandboxes, and quality checklists for Rimelight UI components"
-      currentSection="components"
-      maxWidth="7xl"
-    >
+    <DevLayout section="components">
       <ComponentAuditShell initialComponentId={untrack(requestedComp)} />
     </DevLayout>
   );

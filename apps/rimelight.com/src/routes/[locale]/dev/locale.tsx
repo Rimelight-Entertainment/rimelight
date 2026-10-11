@@ -1,4 +1,4 @@
-import { type Component, createSignal } from "solid-js";
+import { type Component, createSignal, For } from "solid-js";
 import DevLayout from "#layouts/DevLayout";
 import { getCurrentLocale, getLocaleUrl, getLocales, t } from "@rimelight/i18n";
 import { RLLocaleSelector } from "@rimelight/ui";
@@ -29,12 +29,7 @@ export const DevLocalePage: Component = () => {
   };
 
   return (
-    <DevLayout
-      title="Locale & i18n Diagnostics"
-      description="Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n"
-      currentSection="locale"
-      maxWidth="2xl"
-    >
+    <DevLayout section="locale">
       <div class="flex flex-col gap-6">
         <div class="border-b border-default pb-6">
           <h1 class="text-3xl font-bold tracking-tight text-highlighted">
@@ -61,7 +56,7 @@ export const DevLocalePage: Component = () => {
           </div>
           <div class="flex justify-between py-1">
             <span class="text-muted">Sample Translation:</span>
-            <span class="font-bold text-highlighted">{t("app_header.links_home_label")}</span>
+            <span class="font-bold text-highlighted">{t("page_home.meta_title")}</span>
           </div>
         </div>
 
@@ -90,9 +85,7 @@ export const DevLocalePage: Component = () => {
               value={value()}
               onChange={handleNative}
             >
-              <option value="en">en (English)</option>
-              <option value="pt">pt (Português)</option>
-              <option value="es">es (Español)</option>
+              <For each={getLocales()}>{(code) => <option value={code}>{code}</option>}</For>
             </select>
           </div>
         </div>
@@ -104,27 +97,17 @@ export const DevLocalePage: Component = () => {
           </h2>
           <div class="p-4 border border-default rounded-xl bg-elevated/20 flex flex-col gap-3">
             <div class="flex flex-wrap gap-2">
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg border border-default bg-default hover:bg-elevated text-xs font-medium"
-                onClick={() => handleI18n("en")}
-              >
-                Go to /en
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg border border-default bg-default hover:bg-elevated text-xs font-medium"
-                onClick={() => handleI18n("pt")}
-              >
-                Go to /pt
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg border border-default bg-default hover:bg-elevated text-xs font-medium"
-                onClick={() => handleI18n("es")}
-              >
-                Go to /es
-              </button>
+              <For each={getLocales()}>
+                {(code) => (
+                  <button
+                    type="button"
+                    class="px-3 py-1.5 rounded-lg border border-default bg-default hover:bg-elevated text-xs font-medium"
+                    onClick={() => handleI18n(code)}
+                  >
+                    Go to /{code}
+                  </button>
+                )}
+              </For>
             </div>
             <div class="text-[11px] text-muted">
               Triggering programmatic navigation via getLocaleUrl with specific target locale

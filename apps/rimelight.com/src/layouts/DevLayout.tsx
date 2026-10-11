@@ -1,17 +1,21 @@
-import { Show, type Component } from "solid-js";
+import { Show, untrack, type Component } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { type JSX, useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
 import { getCurrentLocale, getLocaleUrl, getLocales, setCurrentLocale } from "@rimelight/i18n";
 import { RLLocaleSelector, RLLogo, RLHeader, RLMain, RLThemeSelector } from "@rimelight/ui";
-
-const BRAND = "Rimelight Developer Workspace";
+import {
+  DEV_BRAND,
+  getDevSection,
+  type DevSectionId,
+  type DevSectionMaxWidth,
+} from "#dev/sections";
 
 export interface DevLayoutProps {
-  title: string;
+  section?: DevSectionId;
+  title?: string;
   description?: string;
-  currentSection?: string;
-  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl" | "full";
+  maxWidth?: DevSectionMaxWidth;
   noContainerPadding?: boolean;
   actions?: JSX.Element;
   children?: JSX.Element;
@@ -19,15 +23,22 @@ export interface DevLayoutProps {
 
 export const DevLayout: Component<DevLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && getLocales().includes(params.locale)) {
-    setCurrentLocale(params.locale);
-  }
+  untrack(() => {
+    if (params.locale && getLocales().includes(params.locale)) {
+      setCurrentLocale(params.locale);
+    }
+  });
+
+  const section = () => (props.section ? getDevSection(props.section) : undefined);
+  const title = () => props.title ?? section()?.title ?? DEV_BRAND;
+  const description = () => props.description ?? section()?.description;
+  const maxWidth = () => props.maxWidth ?? section()?.maxWidth;
 
   useHead(
     () =>
       createSeoHead({
-        title: `${props.title} | Dev`,
-        description: props.description,
+        title: `${title()} | Dev`,
+        description: description(),
         noindex: true,
       }).tags,
   );
@@ -35,7 +46,7 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
   const locale = () => getCurrentLocale();
 
   const getWidthClass = () => {
-    switch (props.maxWidth) {
+    switch (maxWidth()) {
       case "sm":
         return "max-w-sm";
       case "md":
@@ -78,17 +89,17 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
               mode="color"
               href={navHref("/dev")}
               class="h-5 w-auto"
-              alt={BRAND}
+              alt={DEV_BRAND}
             />
             <a
               href={navHref("/dev")}
               class="flex items-center font-mono text-xs font-bold leading-none text-highlighted hover:text-primary transition-colors"
             >
-              {BRAND}
+              {DEV_BRAND}
             </a>
-            <Show when={props.title !== BRAND}>
+            <Show when={title() !== DEV_BRAND}>
               <span class="font-mono text-xs leading-none text-muted/40">/</span>
-              <span class="truncate font-mono text-xs leading-none text-muted">{props.title}</span>
+              <span class="truncate font-mono text-xs leading-none text-muted">{title()}</span>
             </Show>
           </div>
         }

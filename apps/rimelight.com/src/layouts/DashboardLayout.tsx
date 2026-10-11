@@ -1,4 +1,4 @@
-import { type Component, For } from "solid-js";
+import { untrack, type Component, For } from "solid-js";
 import { useParams } from "@solidjs/router";
 import type { JSX } from "@solidjs/web";
 import AppLayout from "./AppLayout";
@@ -23,9 +23,11 @@ export interface DashboardLayoutProps {
 
 export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && getLocales().includes(params.locale)) {
-    setCurrentLocale(params.locale);
-  }
+  untrack(() => {
+    if (params.locale && getLocales().includes(params.locale)) {
+      setCurrentLocale(params.locale);
+    }
+  });
 
   const links = [
     { label: "Home", icon: "i-lucide-home", to: "/dashboard" },

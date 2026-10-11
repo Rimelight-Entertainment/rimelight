@@ -76,6 +76,8 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
   );
 
   const renderRoot = (content: JSX.Element) => {
+    // Reactive values are exposed as getters so `spread` reads them inside its
+    // effect (tracking scope) rather than eagerly in the component body.
     const rootProps = {
       ref: (el: HTMLElement) => {
         rootEl = el;
@@ -83,15 +85,34 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
       },
       id: layerId,
       "data-slot": "root",
-      class: resolvedClasses().root,
-      "data-contain": contain() ? "true" : "false",
-      "data-collapsed": layer.isCollapsed() ? "true" : "false",
-      "data-rl-header": isBanner() ? undefined : "true",
-      "data-rl-banner": isBanner() ? "true" : undefined,
-      "data-stack-index": stackIndex(),
-      "data-hide-on-scroll": String(hideOnScroll()),
+      get class() {
+        return resolvedClasses().root;
+      },
+      get "data-contain"() {
+        return contain() ? "true" : "false";
+      },
+      get "data-collapsed"() {
+        return layer.isCollapsed() ? "true" : "false";
+      },
+      get "data-rl-header"() {
+        return isBanner() ? undefined : "true";
+      },
+      get "data-rl-banner"() {
+        return isBanner() ? "true" : undefined;
+      },
+      get "data-stack-index"() {
+        return stackIndex();
+      },
+      get "data-hide-on-scroll"() {
+        return String(hideOnScroll());
+      },
       "data-header-layer-id": layerId,
-      "data-layer-type": layerType(),
+      get "data-layer-type"() {
+        return layerType();
+      },
+      get children() {
+        return content;
+      },
       ...rest,
     };
 
@@ -105,7 +126,7 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
       return <nav {...rootProps}>{content}</nav>;
     }
     if (typeof props.as === "function") {
-      return createComponent(props.as as any, { ...rootProps, children: content });
+      return createComponent(props.as as any, rootProps);
     }
     return <header {...rootProps}>{content}</header>;
   };

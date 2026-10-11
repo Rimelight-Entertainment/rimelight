@@ -1,4 +1,4 @@
-import type { Component, ParentProps } from "solid-js";
+import { untrack, type Component, type ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "./AppLayout";
 import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
@@ -13,9 +13,11 @@ export interface WikiLayoutProps extends ParentProps {
 
 export const WikiLayout: Component<WikiLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && getLocales().includes(params.locale)) {
-    setCurrentLocale(params.locale);
-  }
+  untrack(() => {
+    if (params.locale && getLocales().includes(params.locale)) {
+      setCurrentLocale(params.locale);
+    }
+  });
 
   return (
     <AppLayout

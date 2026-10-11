@@ -1,4 +1,4 @@
-import type { Component, ParentProps } from "solid-js";
+import { untrack, type Component, type ParentProps } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "./AppLayout";
 import StoreSidebar from "#components/store/StoreSidebar";
@@ -11,9 +11,11 @@ export interface StoreLayoutProps extends ParentProps {
 
 export const StoreLayout: Component<StoreLayoutProps> = (props) => {
   const params = useParams<{ locale?: string }>();
-  if (params.locale && getLocales().includes(params.locale)) {
-    setCurrentLocale(params.locale);
-  }
+  untrack(() => {
+    if (params.locale && getLocales().includes(params.locale)) {
+      setCurrentLocale(params.locale);
+    }
+  });
 
   return (
     <AppLayout
