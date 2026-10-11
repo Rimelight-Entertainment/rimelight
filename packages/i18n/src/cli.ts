@@ -269,6 +269,29 @@ export function fixTranslations(
   );
 }
 
+/**
+ * Generates a TypeScript declaration file string typing all dot-notated translation keys.
+ */
+export function generateTypeDeclarations(baseDict: Record<string, any>): string {
+  const keys = extractKeys(baseDict).sort();
+  const keyUnion = keys.length > 0 ? keys.map((k) => JSON.stringify(k)).join(" | ") : "string";
+
+  return `declare module "@rimelight/i18n" {\n  interface RimelightTranslationKeys {\n    keys: ${keyUnion};\n  }\n}\n`;
+}
+
+/**
+ * Writes the declaration file only if content changed to avoid touching filesystem mtime.
+ */
+export function writeTypeDeclarations(targetPath: string, content: string): boolean {
+  if (fs.existsSync(targetPath)) {
+    const existing = fs.readFileSync(targetPath, "utf-8");
+    if (existing === content) return false;
+  }
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  fs.writeFileSync(targetPath, content, "utf-8");
+  return true;
+}
+
 // ── CLI ───────────────────────────────────────────────────────────────────────────────────────
 
 const HELP_TEXT = `
@@ -277,10 +300,13 @@ Usage:
 
 Actions:
   check (default)  Verify translation files across locales for missing, stale, or invalid keys
+  types            Generate TypeScript declaration file for translation keys
 
 Options:
   -d, --dir <path>     Directory containing <locale>.json files (auto-discovered if omitted)
   -b, --base <locale>  Base/default locale code to compare against (default: "en")
+  -o, --out <path>     Output path for declaration file (default: ".rimelight/i18n/keys.d.ts")
+  -t, --types          Generate declaration file during check
   -f, --fix            Auto-prune stale keys and generate missing key skeletons
   --allow-empty        Do not treat empty strings as missing/invalid translations
   -h, --help           Show this help message
@@ -292,6 +318,8 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     options: {
       dir: { type: "string", short: "d" },
       base: { type: "string", short: "b", default: "en" },
+      out: { type: "string", short: "o" },
+      types: { type: "boolean", short: "t", default: false },
       fix: { type: "boolean", short: "f", default: false },
       "allow-empty": { type: "boolean", default: false },
       help: { type: "boolean", short: "h", default: false },
@@ -305,7 +333,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
   }
 
   const action = positionals[0] || "check";
-  if (action !== "check") {
+  if (action !== "check" && action !== "types") {
     console.error(`Unknown action: '${action}'. Run 'rimelight-i18n --help' for usage.`);
     return 1;
   }
@@ -353,6 +381,19 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
+  if (action === "types") {
+    const outPath = path.resolve(process.cwd(), values.out || ".rimelight/i18n/keys.d.ts");
+    const dts = generateTypeDeclarations(translations[baseLocale]!);
+    const written = writeTypeDeclarations(outPath, dts);
+    const keyCount = extractKeys(translations[baseLocale]!).length;
+    console.log(
+      written
+        ? `✔ [i18n] Generated types for ${keyCount} keys at ${outPath}`
+        : `✔ [i18n] Types at ${outPath} are already up to date.`,
+    );
+    return 0;
+  }
+
   let report = verifyTranslations(translations, {
     defaultLocale: baseLocale,
     allowEmpty: values["allow-empty"],
@@ -370,6 +411,16 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
       allowEmpty: values["allow-empty"],
     });
     console.log(`✔ [i18n] Successfully updated translation files.`);
+  }
+
+  if (values.types) {
+    const outPath = path.resolve(process.cwd(), values.out || ".rimelight/i18n/keys.d.ts");
+    const dts = generateTypeDeclarations(
+      (values.fix && !report.isValid ? fixTranslations(translations, baseLocale) : translations)[
+        baseLocale
+      ]!,
+    );
+    writeTypeDeclarations(outPath, dts);
   }
 
   const formatted = formatAuditReport(report);

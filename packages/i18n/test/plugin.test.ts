@@ -159,4 +159,58 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
+
+  it("generates type declarations on configResolved and updates them on handleHotUpdate", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-types-"));
+    const i18nDir = path.join(tmpDir, "src", "i18n");
+    fs.mkdirSync(i18nDir, { recursive: true });
+
+    const enPath = path.join(i18nDir, "en.json");
+    fs.writeFileSync(enPath, JSON.stringify({ hero: { title: "Title" } }));
+
+    const typesPath = ".rimelight/i18n/keys.d.ts";
+    const fullTypesPath = path.join(tmpDir, typesPath);
+
+    try {
+      const plugin: Plugin = i18n({
+        translationsDir: i18nDir,
+        types: typesPath,
+      });
+
+      await callHook(plugin.configResolved, { root: tmpDir });
+
+      expect(fs.existsSync(fullTypesPath)).toBe(true);
+      let dts = fs.readFileSync(fullTypesPath, "utf-8");
+      expect(dts).toContain('"hero.title"');
+
+      // Update en.json and trigger handleHotUpdate
+      fs.writeFileSync(enPath, JSON.stringify({ hero: { title: "Title", subtitle: "Subtitle" } }));
+
+      await callHook(plugin.handleHotUpdate, { file: enPath });
+
+      dts = fs.readFileSync(fullTypesPath, "utf-8");
+      expect(dts).toContain('"hero.subtitle" | "hero.title"');
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("respects types: false to disable declaration emission", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-no-types-"));
+    const i18nDir = path.join(tmpDir, "src", "i18n");
+    fs.mkdirSync(i18nDir, { recursive: true });
+    fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ key: "val" }));
+
+    try {
+      const plugin: Plugin = i18n({
+        translationsDir: i18nDir,
+        types: false,
+      });
+
+      await callHook(plugin.configResolved, { root: tmpDir });
+      expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });

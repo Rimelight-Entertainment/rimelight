@@ -119,4 +119,51 @@ describe("rimelight-i18n CLI", () => {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
+
+  it("generates type declaration file via 'types' action and custom --out", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-cli-types-"));
+    try {
+      const en = { nav: { home: "Home", contact: "Contact" }, buttons: { save: "Save" } };
+      fs.writeFileSync(path.join(tmpDir, "en.json"), JSON.stringify(en));
+
+      const outPath = path.join(tmpDir, "custom", "keys.d.ts");
+      const exitCode = await runCli(["types", "--dir", tmpDir, "--base", "en", "--out", outPath]);
+      expect(exitCode).toBe(0);
+
+      expect(fs.existsSync(outPath)).toBe(true);
+      const content = fs.readFileSync(outPath, "utf-8");
+      expect(content).toContain('declare module "@rimelight/i18n"');
+      expect(content).toContain("interface RimelightTranslationKeys");
+      expect(content).toContain('"buttons.save" | "nav.contact" | "nav.home"');
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("generates type declaration file via 'check --types'", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-cli-check-types-"));
+    try {
+      const en = { hero: { title: "Title" } };
+      fs.writeFileSync(path.join(tmpDir, "en.json"), JSON.stringify(en));
+
+      const outPath = path.join(tmpDir, "keys.d.ts");
+      const exitCode = await runCli([
+        "check",
+        "--dir",
+        tmpDir,
+        "--base",
+        "en",
+        "--types",
+        "--out",
+        outPath,
+      ]);
+      expect(exitCode).toBe(0);
+
+      expect(fs.existsSync(outPath)).toBe(true);
+      const content = fs.readFileSync(outPath, "utf-8");
+      expect(content).toContain('"hero.title"');
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });

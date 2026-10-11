@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import { flatten } from "./cli";
+import { flatten, generateTypeDeclarations, writeTypeDeclarations } from "./cli";
 
 export const VIRTUAL_ID = "virtual:rimelight-i18n";
 export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
@@ -13,6 +13,7 @@ export interface RimelightI18nPluginOptions {
   translationsDir?: string;
   prefixDefaultLocale?: boolean;
   skipPaths?: string[];
+  types?: boolean | string;
 }
 
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
@@ -33,10 +34,31 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
       : {};
   };
 
+  const emitTypes = () => {
+    if (options.types === false) return;
+    const typesPath =
+      typeof options.types === "string" ? options.types : ".rimelight/i18n/keys.d.ts";
+    const trans = getTranslations();
+    const locales = Object.keys(trans).sort();
+    if (locales.length === 0) return;
+    const defaultLocale =
+      options.defaultLocale ?? (locales.includes("en") ? "en" : locales[0]) ?? "en";
+    const baseDict = trans[defaultLocale];
+    if (!baseDict) return;
+
+    writeTypeDeclarations(path.resolve(root, typesPath), generateTypeDeclarations(baseDict));
+  };
+
   return {
     name: "rimelight:i18n",
     configResolved(c) {
       root = c.root ? path.resolve(c.root) : root;
+      emitTypes();
+    },
+    handleHotUpdate({ file }) {
+      if (file.endsWith(".json")) {
+        emitTypes();
+      }
     },
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
