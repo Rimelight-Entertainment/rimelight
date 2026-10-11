@@ -7,20 +7,12 @@ export interface RimelightTranslationKeys {
 
 export type TranslationKey = RimelightTranslationKeys["keys"];
 
-export interface I18nConfig {
-  locales: readonly string[];
-  defaultLocale: string;
-  prefixDefaultLocale: boolean;
-  skipPaths: readonly string[];
-  translations: Record<string, Record<string, unknown>>;
-}
-
-export const config: I18nConfig = {
-  locales: virtualConfig?.locales ?? ["en"],
+export const config = {
+  locales: [...(virtualConfig?.locales ?? ["en"])],
   defaultLocale: virtualConfig?.defaultLocale ?? "en",
   prefixDefaultLocale: virtualConfig?.prefixDefaultLocale ?? true,
-  skipPaths: virtualConfig?.skipPaths ?? ["/api", "/_"],
-  translations: virtualConfig?.translations ?? {},
+  skipPaths: [...(virtualConfig?.skipPaths ?? ["/api", "/_"])],
+  translations: (virtualConfig?.translations ?? {}) as Record<string, Record<string, unknown>>,
 };
 
 let currentLocale = config.defaultLocale;

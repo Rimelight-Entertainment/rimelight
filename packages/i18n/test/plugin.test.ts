@@ -48,9 +48,9 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       await callHook(plugin.configResolved, { root: tmpDir });
 
       const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-      expect(configCode).toContain(`export const locales = ["en","es","pt-BR"];`);
-      expect(configCode).toContain(`export const defaultLocale = "en";`);
-      expect(configCode).toContain(`export const prefixDefaultLocale = false;`);
+      expect(configCode).toContain(`"locales":["en","es","pt-BR"]`);
+      expect(configCode).toContain(`"defaultLocale":"en"`);
+      expect(configCode).toContain(`"prefixDefaultLocale":false`);
       expect(configCode).not.toContain(`"Início"`);
 
       const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
@@ -75,8 +75,8 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       await callHook(plugin.configResolved, { root: tmpDir });
 
       const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-      expect(configCode).toContain(`export const defaultLocale = "en";`);
-      expect(configCode).toContain(`export const locales = [];`);
+      expect(configCode).toContain(`"defaultLocale":"en"`);
+      expect(configCode).toContain(`"locales":[]`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
@@ -148,7 +148,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       });
       await callHook(pluginA.configResolved, { root: tmpDir });
       const configA = (await callHook(pluginA.load, RESOLVED_VIRTUAL_ID)) as string;
-      expect(configA).toContain(`export const defaultLocale = "pt";`);
+      expect(configA).toContain(`"defaultLocale":"pt"`);
 
       // Now add "en.json"
       fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ a: { b: "0" } }));
@@ -157,7 +157,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       });
       await callHook(pluginB.configResolved, { root: tmpDir });
       const configB = (await callHook(pluginB.load, RESOLVED_VIRTUAL_ID)) as string;
-      expect(configB).toContain(`export const defaultLocale = "en";`);
+      expect(configB).toContain(`"defaultLocale":"en"`);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
