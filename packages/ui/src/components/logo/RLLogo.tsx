@@ -1,7 +1,6 @@
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
 import { createMemo, omit, type Component } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { getUIConfig } from "../../resolver";
 
 export const RLLogo: Component<RLLogoProps> = (allProps) => {
@@ -44,7 +43,6 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
 
   const variant = () => props.variant || "logomark";
   const href = () => props.href ?? "/";
-  const Tag = dynamic(() => props.as ?? "a");
 
   const logoInfo = createMemo(() => {
     if (props.src) {
@@ -127,16 +125,29 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
     );
   };
 
-  return (
-    <Tag
-      class={resolvedClasses().root}
-      href={(props.as ?? "a") === "a" ? href() : undefined}
-      aria-label={props.alt || variant()}
-      data-slot="root"
-      data-theme={props.theme}
-      {...rest}
-    >
-      {renderContent()}
-    </Tag>
-  );
+  const rootProps = {
+    get class() {
+      return resolvedClasses().root;
+    },
+    get "aria-label"() {
+      return props.alt || variant();
+    },
+    "data-slot": "root",
+    get "data-theme"() {
+      return props.theme;
+    },
+    ...rest,
+  };
+
+  const renderRoot = () => {
+    if (props.as === "span") return <span {...rootProps}>{renderContent()}</span>;
+    if (props.as === "div") return <div {...rootProps}>{renderContent()}</div>;
+    return (
+      <a {...rootProps} href={href()}>
+        {renderContent()}
+      </a>
+    );
+  };
+
+  return renderRoot();
 };
