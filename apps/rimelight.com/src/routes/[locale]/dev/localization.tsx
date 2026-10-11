@@ -5,10 +5,9 @@ import DevLayout from "#layouts/DevLayout";
 import { getCurrentLocale, getLocaleUrl, getLocales, t } from "@rimelight/i18n";
 import { RLButton, RLLocaleSelector } from "@rimelight/ui";
 
-const EXPLICIT_LOCALE = "pt";
-
 export default function DevLocalizationPage() {
   const location = useLocation();
+  const EXPLICIT_LOCALE = "pt";
 
   const sections = (): {
     title: string;
