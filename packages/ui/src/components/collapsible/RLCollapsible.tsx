@@ -35,7 +35,8 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
   const unmountOnHide = () => props.unmountOnHide !== false;
   const isDisabled = () => props.disabled === true;
 
-  const instanceId = () => props.id || `rl-collapsible-${createUniqueId()}`;
+  const fallbackId = createUniqueId();
+  const instanceId = () => props.id || `rl-collapsible-${fallbackId}`;
   const triggerId = () => `${instanceId()}-trigger`;
   const contentId = () => `${instanceId()}-content`;
 
