@@ -120,6 +120,21 @@ describe("rimelight-i18n CLI", () => {
     }
   });
 
+  it("exits code 0 on dictionaries with numeric and boolean values", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-cli-primitives-"));
+    try {
+      const en = { meta: { founded: 2023, featured: true }, nav: { home: "Home" } };
+      const pt = { meta: { founded: 2022, featured: false }, nav: { home: "Início" } };
+      fs.writeFileSync(path.join(tmpDir, "en.json"), JSON.stringify(en));
+      fs.writeFileSync(path.join(tmpDir, "pt.json"), JSON.stringify(pt));
+
+      const exitCode = await runCli(["check", "--dir", tmpDir, "--base", "en"]);
+      expect(exitCode).toBe(0);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("generates type declaration file via 'types' action and custom --out", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-cli-types-"));
     try {

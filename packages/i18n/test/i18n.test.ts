@@ -3,6 +3,7 @@ import {
   flatten,
   unflatten,
   extractKeys,
+  extractPlaceholders,
   findMissingKeys,
   findStaleKeys,
   verifyTranslations,
@@ -63,6 +64,35 @@ describe("translation dictionary utils", () => {
       legacy_nav: { item: "Old" },
     });
     expect(stale).toEqual(["hero.old_cta", "legacy_nav.item"]);
+  });
+
+  it("handles non-string values when extracting placeholders", () => {
+    expect(extractPlaceholders("Hello {name}")).toEqual(["name"]);
+    expect(extractPlaceholders(2023)).toEqual([]);
+    expect(extractPlaceholders(true)).toEqual([]);
+  });
+
+  it("verifies dictionaries containing numeric and boolean values without crashing", () => {
+    const translations = {
+      en: { meta: { founded: 2023, featured: true }, nav: { home: "Home" } },
+      pt: { meta: { founded: 2022, featured: false }, nav: { home: "Início" } },
+    };
+
+    const report = verifyTranslations(translations, { defaultLocale: "en" });
+    expect(report.isValid).toBe(true);
+  });
+
+  it("flags placeholder mismatches while ignoring non-string values", () => {
+    const translations = {
+      en: { meta: { count: "{count} items" }, nav: { home: "Home" } },
+      pt: { meta: { count: 3 }, nav: { home: "Início" } },
+    };
+
+    const report = verifyTranslations(translations, { defaultLocale: "en" });
+    expect(report.isValid).toBe(false);
+    expect(report.placeholderMismatches["pt"]).toEqual([
+      { key: "meta.count", basePlaceholders: ["count"], targetPlaceholders: [] },
+    ]);
   });
 
   it("runs full translation verification and formats audit reports", () => {

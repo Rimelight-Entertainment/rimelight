@@ -70,8 +70,10 @@ export function unflatten(flat: FlattenedTranslations): Record<string, any> {
 
 export const extractKeys = (source: Record<string, any>): string[] => Object.keys(flatten(source));
 
-export const extractPlaceholders = (str: string): string[] =>
-  Array.from(new Set(str.match(/\{(\w+)\}/g)?.map((m) => m.slice(1, -1)) ?? []));
+export const extractPlaceholders = (str: string | number | boolean): string[] =>
+  typeof str === "string"
+    ? Array.from(new Set(str.match(/\{(\w+)\}/g)?.map((m) => m.slice(1, -1)) ?? []))
+    : [];
 
 const diffKeys = (baseFlat: FlattenedTranslations, targetFlat: FlattenedTranslations) => ({
   missing: Object.keys(baseFlat).filter((k) => !(k in targetFlat)),
