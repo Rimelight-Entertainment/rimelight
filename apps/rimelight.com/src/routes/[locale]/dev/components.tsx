@@ -11,7 +11,7 @@ export const DevComponentsPage: Component = () => {
   };
 
   return (
-    <DevLayout section="components">
+    <DevLayout>
       <ComponentAuditShell initialComponentId={untrack(requestedComp)} />
     </DevLayout>
   );

@@ -29,7 +29,7 @@ export const DevLocalePage: Component = () => {
   };
 
   return (
-    <DevLayout section="locale">
+    <DevLayout>
       <div class="flex flex-col gap-6">
         <div class="border-b border-default pb-6">
           <h1 class="text-3xl font-bold tracking-tight text-highlighted">

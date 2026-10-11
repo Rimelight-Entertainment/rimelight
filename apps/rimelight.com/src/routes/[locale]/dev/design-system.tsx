@@ -38,7 +38,6 @@ export const DevDesignSystemPage: Component = () => {
 
   return (
     <DevLayout
-      section="design-system"
       actions={
         <div class="flex items-center gap-1 bg-muted p-1 rounded-lg">
           <button

@@ -2,7 +2,7 @@ import { type Component, For } from "solid-js";
 import DevLayout from "#layouts/DevLayout";
 import { getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
 import { RLCard, RLPageSection } from "@rimelight/ui";
-import { devHub, devSections } from "#dev/sections";
+import { devHub, devSections } from "#layouts/DevLayout";
 
 export const DevIndexPage: Component = () => {
   const locale = () => getCurrentLocale();

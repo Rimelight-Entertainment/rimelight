@@ -93,7 +93,7 @@ export const DevOgPage: Component = () => {
   };
 
   return (
-    <DevLayout section="og">
+    <DevLayout>
       <div class="flex flex-col gap-8">
         <div class="border-b border-default pb-6">
           <h1 class="text-3xl font-bold tracking-tight text-highlighted">OG Image Preview</h1>

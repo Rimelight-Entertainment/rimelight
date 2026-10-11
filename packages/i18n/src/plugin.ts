@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Plugin } from "vite-plus";
+import type { Plugin, ViteDevServer } from "vite-plus";
 import { flatten, generateTypeDeclarations, writeTypeDeclarations } from "./cli";
 
 const CLIENT_ID = "virtual:rimelight-i18n";
@@ -19,9 +19,11 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let root = process.cwd();
   let cache: Record<string, Record<string, string>> | null = null;
 
+  const getTranslationsDir = () => path.resolve(root, options.translationsDir ?? "src/i18n");
+
   const loadTranslations = () => {
     if (cache) return cache;
-    const dir = path.resolve(root, options.translationsDir ?? "src/i18n");
+    const dir = getTranslationsDir();
     if (!fs.existsSync(dir)) return (cache = {});
 
     return (cache = Object.fromEntries(
@@ -52,6 +54,32 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
     writeTypeDeclarations(target, generateTypeDeclarations(trans[defaultLocale]!));
   };
 
+  const isTranslationFile = (file: string): boolean => {
+    if (!file.endsWith(".json")) return false;
+    const rel = path.relative(getTranslationsDir(), file);
+    return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+  };
+
+  const resetTranslations = () => {
+    cache = null;
+    emitTypes();
+  };
+
+  const invalidateVirtualModules = (server: ViteDevServer) => {
+    const graphs: Array<{
+      getModuleById?: (id: string) => unknown;
+      invalidateModule?: (mod: unknown) => void;
+    }> = server.environments
+      ? Object.values(server.environments).map((env) => env.moduleGraph)
+      : ([server.moduleGraph].filter(Boolean) as { getModuleById?: (id: string) => unknown }[]);
+    for (const graph of graphs) {
+      for (const id of [RESOLVED(CLIENT_ID), RESOLVED(SERVER_ID)]) {
+        const mod = graph.getModuleById?.(id);
+        if (mod) graph.invalidateModule?.(mod);
+      }
+    }
+  };
+
   return {
     name: "rimelight:i18n",
 
@@ -63,11 +91,13 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
       emitTypes();
     },
 
-    handleHotUpdate({ file }) {
-      if (file.endsWith(".json")) {
-        cache = null;
-        emitTypes();
-      }
+    hotUpdate(options) {
+      if ((this as { environment?: { name?: string } }).environment?.name !== "client") return;
+      if (!isTranslationFile(options.file)) return;
+      resetTranslations();
+      invalidateVirtualModules(options.server);
+      options.server.ws.send({ type: "full-reload" });
+      return [];
     },
 
     resolveId(id) {
