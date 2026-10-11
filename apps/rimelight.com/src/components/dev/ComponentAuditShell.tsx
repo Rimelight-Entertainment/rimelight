@@ -1,7 +1,6 @@
 import { createSignal, createMemo, For, Show, type Component } from "solid-js";
 import { COMPONENT_AUDITS, getAllAudits, getAuditById } from "./audits/registry";
 import type { ComponentCategory, AuditStatus } from "./audits/types";
-import { RLThemeSelector } from "@rimelight/ui/components";
 
 interface ComponentAuditShellProps {
   initialComponentId?: string;
@@ -46,14 +45,17 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
   };
 
   return (
-    <div class="flex flex-col lg:flex-row gap-6 items-start w-full">
+    <div class="flex flex-col lg:flex-row gap-xl items-start w-full">
       {/* Sidebar Navigation */}
-      <aside class="w-full lg:w-64 shrink-0 flex flex-col gap-3 rounded-xl border border-default bg-elevated/20 p-3 lg:sticky lg:top-4">
-        <div class="flex flex-col gap-3 max-h-[calc(100vh-160px)] overflow-y-auto">
+      <aside class="w-full lg:w-64 shrink-0 flex flex-col bg-elevated/20 border border-default lg:sticky lg:top-4">
+        <header class="bg-elevated/40 px-md py-sm border-b border-default">
+          <h2 class="text-xs text-muted font-mono">Components</h2>
+        </header>
+        <div class="flex flex-col gap-sm p-sm max-h-[calc(100vh-220px)] overflow-y-auto">
           <For each={categories()}>
             {([categoryName, items]) => (
               <div class="flex flex-col gap-1">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-muted px-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-muted px-2 py-0.5">
                   {categoryName}
                 </span>
                 <div class="flex flex-col gap-0.5">
@@ -67,9 +69,9 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
                             setSelectedId(item.id);
                             window.history.replaceState(null, "", `?comp=${item.id}`);
                           }}
-                          class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-left transition-all ${
+                          class={`flex items-center justify-between px-2.5 py-1.5 rounded text-xs font-medium text-left transition-all ${
                             isSelected()
-                              ? "bg-primary text-inverted font-bold shadow-xs"
+                              ? "bg-primary text-inverted font-bold"
                               : "text-toned hover:text-highlighted hover:bg-elevated/60"
                           }`}
                         >
@@ -95,30 +97,28 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
       </aside>
 
       {/* Main Audit Workspace */}
-      <section class="flex-1 min-w-0 w-full flex flex-col gap-5">
+      <section class="flex-1 min-w-0 w-full flex flex-col gap-xl">
         <Show when={activeAudit()}>
           {(audit) => (
             <>
               {/* Header Bar */}
-              <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-col gap-3">
-                <div class="flex items-center justify-between gap-3">
+              <div class="bg-elevated/20 border border-default">
+                <header class="bg-elevated/40 px-xl py-sm flex items-center justify-between gap-3 border-b border-default">
                   <div class="flex items-center gap-3">
-                    <h1 class="text-xl font-black tracking-tight text-highlighted">
-                      {audit().name}
-                    </h1>
+                    <h2 class="text-sm font-semibold text-highlighted">{audit().name}</h2>
                     <span
-                      class={`text-[11px] font-mono px-2 py-0.5 rounded-full border font-semibold ${getStatusBadge(
+                      class={`text-[10px] font-mono px-2 py-0.5 rounded-full border font-semibold ${getStatusBadge(
                         audit().status,
                       )}`}
                     >
                       {audit().status}
                     </span>
                   </div>
-                  <RLThemeSelector size="sm" />
-                </div>
+                  <code class="text-xs text-muted font-mono">{audit().importPath}</code>
+                </header>
 
                 {/* Tabs */}
-                <div class="flex items-center gap-1 border-b border-default pt-1 -mb-1">
+                <div class="flex items-center gap-1 px-xl pt-2 border-b border-default bg-elevated/10">
                   <button
                     type="button"
                     onClick={() => setActiveTab("sandbox")}
@@ -164,25 +164,29 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
                     Specs
                   </button>
                 </div>
+
+                <div class="px-xl py-sm bg-elevated/5 text-xs text-muted">
+                  {audit().description}
+                </div>
               </div>
 
               {/* Tab 1: Interactive Sandbox */}
               <Show when={activeTab() === "sandbox"}>
-                <div class="flex flex-col gap-4">{audit().renderSandbox()}</div>
+                <div class="flex flex-col gap-lg">{audit().renderSandbox()}</div>
               </Show>
 
               {/* Tab 2: Test Scenarios */}
               <Show when={activeTab() === "scenarios"}>
-                <div class="flex flex-col gap-5">
+                <div class="flex flex-col gap-lg">
                   <For each={audit().testScenarios}>
                     {(scenario) => (
-                      <div class="flex flex-col gap-3 p-4 rounded-xl border border-default bg-elevated/10">
-                        <div>
-                          <h2 class="text-xs font-bold text-highlighted">{scenario.title}</h2>
+                      <section class="bg-elevated/20 border border-default">
+                        <header class="bg-elevated/40 px-xl py-sm border-b border-default">
+                          <h3 class="text-xs font-semibold text-highlighted">{scenario.title}</h3>
                           <p class="text-[11px] text-muted mt-0.5">{scenario.description}</p>
-                        </div>
-                        {scenario.render()}
-                      </div>
+                        </header>
+                        <div class="p-xl">{scenario.render()}</div>
+                      </section>
                     )}
                   </For>
                 </div>
@@ -190,14 +194,19 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
 
               {/* Tab 3: Audit Checklist */}
               <Show when={activeTab() === "checklist"}>
-                <div class="flex flex-col gap-3 p-4 rounded-xl border border-default bg-elevated/10">
-                  <div class="flex flex-col divide-y divide-border">
+                <section class="bg-elevated/20 border border-default">
+                  <header class="bg-elevated/40 px-xl py-sm border-b border-default">
+                    <h3 class="text-xs font-semibold text-highlighted">
+                      WCAG & Usability Checklist
+                    </h3>
+                  </header>
+                  <div class="flex flex-col divide-y divide-default">
                     <For each={audit().checklist ?? []}>
                       {(item) => (
-                        <div class="py-2.5 flex items-start justify-between gap-4">
+                        <div class="px-xl py-md flex items-start justify-between gap-xl">
                           <div class="flex items-center gap-2">
                             <span
-                              class={`size-4 rounded-full flex items-center justify-center text-[10px] ${
+                              class={`size-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
                                 item.status === "pass"
                                   ? "bg-emerald-500/20 text-emerald-500"
                                   : item.status === "warn"
@@ -218,16 +227,21 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
                       )}
                     </For>
                   </div>
-                </div>
+                </section>
               </Show>
 
               {/* Tab 4: Code & Specs */}
               <Show when={activeTab() === "code"}>
-                <div class="p-4 rounded-xl border border-default bg-default flex flex-col gap-3 font-mono text-xs">
-                  <pre class="p-3 rounded bg-elevated border border-default text-primary overflow-x-auto">
-                    {`import ${audit().name} from "${audit().importPath}"`}
-                  </pre>
-                </div>
+                <section class="bg-elevated/20 border border-default">
+                  <header class="bg-elevated/40 px-xl py-sm border-b border-default">
+                    <h3 class="text-xs font-semibold text-highlighted">Import & Usage</h3>
+                  </header>
+                  <div class="p-xl font-mono text-xs">
+                    <pre class="p-md rounded bg-elevated/40 border border-default text-primary overflow-x-auto">
+                      {`import ${audit().name} from "${audit().importPath}";`}
+                    </pre>
+                  </div>
+                </section>
               </Show>
             </>
           )}
