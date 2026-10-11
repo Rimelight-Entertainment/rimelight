@@ -1,5 +1,13 @@
-import { config, i18nContext, setCurrentLocale, t } from "./runtime";
+import { AsyncLocalStorage } from "node:async_hooks";
+import { config, t } from "./runtime";
 import serverTranslations from "virtual:rimelight-i18n/server";
+
+export const i18nContext = new AsyncLocalStorage<{
+  locale: string;
+  translations?: Record<string, unknown> | undefined;
+}>();
+
+globalThis.__rimelight_i18n = i18nContext;
 
 /**
  * Universal i18n middleware for locale resolution, route redirection,
@@ -19,7 +27,6 @@ export const i18n = () => async (c: any, next: () => Promise<void>) => {
     })[0] ??
     config.defaultLocale;
 
-  setCurrentLocale(locale);
   c.set?.("locale", locale);
   c.set?.("t", t);
 

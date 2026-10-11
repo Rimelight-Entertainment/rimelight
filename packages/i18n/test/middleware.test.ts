@@ -10,16 +10,19 @@ function req(path: string, init?: RequestInit): Request {
 const runMiddleware = async (path: string, init?: RequestInit) => {
   const middleware = i18n();
   let nextCalled = false;
+  let activeLocale = "";
   const ctx = createMockContext(req(path, init));
 
   const response = await middleware(ctx as any, async () => {
     nextCalled = true;
+    activeLocale = getCurrentLocale();
   });
 
   return {
     response,
     nextCalled,
     location: response?.headers.get("location") ?? null,
+    activeLocale: activeLocale || (ctx.get("locale") ?? getCurrentLocale()),
   };
 };
 
@@ -64,14 +67,14 @@ describe("@rimelight/i18n middleware", () => {
       headers: { "accept-language": "pt-BR,pt;q=0.9,en;q=0.8" },
     });
     expect(result.location).toBe("/pt/about");
-    expect(getCurrentLocale()).toBe("pt");
+    expect(result.activeLocale).toBe("pt");
   });
 
   it("serves locale-prefixed paths as-is, matching the prefix case-insensitively", async () => {
     for (const path of ["/en/about", "/EN/about"]) {
       const result = await runMiddleware(path);
       expect(result.nextCalled).toBe(true);
-      expect(getCurrentLocale()).toBe("en");
+      expect(result.activeLocale).toBe("en");
     }
   });
 
@@ -90,22 +93,25 @@ describe("@rimelight/i18n middleware", () => {
     config({ prefixDefaultLocale: false, locales: ["en", "pt"] });
 
     // Redundant default-locale prefix is stripped
-    expect((await runMiddleware("/en/about")).location).toBe("/about");
-    expect(getCurrentLocale()).toBe("en");
+    const resEn = await runMiddleware("/en/about");
+    expect(resEn.location).toBe("/about");
+    expect(resEn.activeLocale).toBe("en");
 
     // Non-default locale is served as-is
-    expect((await runMiddleware("/pt/about")).nextCalled).toBe(true);
-    expect(getCurrentLocale()).toBe("pt");
+    const resPt = await runMiddleware("/pt/about");
+    expect(resPt.nextCalled).toBe(true);
+    expect(resPt.activeLocale).toBe("pt");
 
     // Unprefixed path resolves to the default locale
-    expect((await runMiddleware("/about")).nextCalled).toBe(true);
-    expect(getCurrentLocale()).toBe("en");
+    const resUnprefixed = await runMiddleware("/about");
+    expect(resUnprefixed.nextCalled).toBe(true);
+    expect(resUnprefixed.activeLocale).toBe("en");
   });
 
   it("calls next and sets the current locale when no redirect is needed", async () => {
     const result = await runMiddleware("/en/about");
     expect(result.nextCalled).toBe(true);
-    expect(getCurrentLocale()).toBe("en");
+    expect(result.activeLocale).toBe("en");
   });
 
   it("injects locale and t into Hono Context c.set / c.get", async () => {

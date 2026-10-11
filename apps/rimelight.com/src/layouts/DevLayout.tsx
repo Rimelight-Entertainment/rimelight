@@ -82,15 +82,8 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
                 href={navHref("/dev")}
                 class="flex items-center gap-2 font-mono text-xs font-bold text-highlighted hover:text-primary transition-colors"
               >
-                <span class="size-6 rounded-md bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-black">
-                  λ
-                </span>
-                <span class="tracking-tight">DEV</span>
-              </a>
-              <span class="text-dimmed text-xs font-mono">/</span>
-              <span class="text-xs font-semibold text-toned truncate max-w-[140px] sm:max-w-xs">
                 {props.title}
-              </span>
+              </a>
             </div>
 
             {/* Quick Switcher Nav Tabs */}
@@ -119,7 +112,7 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
 
             {/* Utility Controls */}
             <div class="flex items-center gap-2 shrink-0">
-              <RLThemeSelector size="xs" />
+              <RLThemeSelector size="xs" mode="icon" />
               {props.actions}
             </div>
           </div>

@@ -53,14 +53,6 @@ const sections: DevSectionCard[] = [
     icon: "i-lucide-globe",
   },
   {
-    title: "Selector Controls Debugger",
-    href: "/dev/selectors",
-    tag: "UI Primitives",
-    description:
-      "Isolated testing of RLLocaleSelector and RLThemeSelector components across initial values, reactive state, and props.",
-    icon: "i-lucide-sliders",
-  },
-  {
     title: "OpenGraph Image Previewer",
     href: "/dev/og",
     tag: "SEO & Social",
@@ -76,14 +68,6 @@ const sections: DevSectionCard[] = [
       "Live render previews and test dispatch triggers for verification, password reset, and signup notification emails.",
     icon: "i-lucide-mail",
   },
-  {
-    title: "Accordion Deep-Dive Audit",
-    href: "/dev/accordion",
-    tag: "Detailed Audit",
-    description:
-      "Dedicated multi-section audit for RLAccordion covering SSR HTML5 details/summary, reactive islands, and custom slots.",
-    icon: "i-lucide-chevrons-up-down",
-  },
 ];
 
 export const DevIndexPage: Component = () => {
@@ -91,7 +75,7 @@ export const DevIndexPage: Component = () => {
 
   return (
     <DevLayout
-      title="Developer Workspace"
+      title="Rimelight Developer Workspace"
       description="Central hub for component auditing, runtime benchmarks, and testing utilities"
       currentSection="hub"
       maxWidth="6xl"

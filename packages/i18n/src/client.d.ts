@@ -20,3 +20,14 @@ declare module "virtual:rimelight-i18n/server" {
   export const translations: Record<string, Record<string, string>>;
   export default translations;
 }
+
+declare var __rimelight_i18n:
+  | {
+      getStore():
+        | {
+            locale: string;
+            translations?: Record<string, unknown> | undefined;
+          }
+        | undefined;
+    }
+  | undefined;
