@@ -1,65 +1,112 @@
-import { For, Show, createSignal, type Component } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import DevLayout from "#layouts/DevLayout";
-import ColorTestingMatrix, {
-  PALETTES,
-  SHADES,
-  INTENTS,
-} from "#components/dev/ColorTestingMatrix.tsx";
-import {
-  RLBadge,
-  RLButton,
-  RLCard,
-  RLGrid,
-  RLIcon,
-  ICONS,
-  DEFAULT_UI_FONTS,
-  getUIConfig,
-} from "@rimelight/ui";
+import { RLBadge, RLButton, RLIcon, ICONS, getUIConfig } from "@rimelight/ui";
 
-const FONT_SAMPLES = [
-  {
-    family: "sans",
-    name: "Noto Sans",
-    role: "Body & Primary UI",
-    class: "font-sans",
-    weights: [
-      { label: "Regular (400)", class: "font-normal" },
-      { label: "Medium (500)", class: "font-medium" },
-      { label: "Semibold (600)", class: "font-semibold" },
-      { label: "Bold (700)", class: "font-bold" },
-    ],
+// Inlined here to avoid importing fonts.ts (which pulls unocss → oxc-parser WASM into the client bundle)
+const DEFAULT_UI_FONTS = {
+  provider: "fontsource" as const,
+  fonts: {
+    sans: [{ name: "Noto Sans", weights: [400, 500, 600, 700] }],
+    serif: [{ name: "Noto Serif", weights: [400, 700] }],
+    mono: [{ name: "JetBrains Mono", weights: [400, 500, 700] }],
   },
-  {
-    family: "serif",
-    name: "Noto Serif",
-    role: "Editorial & Rich Content",
-    class: "font-serif",
-    weights: [
-      { label: "Regular (400)", class: "font-normal" },
-      { label: "Bold (700)", class: "font-bold" },
-    ],
-  },
-  {
-    family: "mono",
-    name: "JetBrains Mono",
-    role: "Code & Monospace Diagnostics",
-    class: "font-mono",
-    weights: [
-      { label: "Regular (400)", class: "font-normal" },
-      { label: "Medium (500)", class: "font-medium" },
-      { label: "Bold (700)", class: "font-bold" },
-    ],
-  },
+};
+
+const PALETTES = [
+  "neutral",
+  "primary",
+  "secondary",
+  "info",
+  "success",
+  "warning",
+  "error",
+  "commentary",
+  "ideation",
+  "source",
 ] as const;
 
-export const DevUserInterfacePage: Component = () => {
-  const [viewMode, setViewMode] = createSignal<"standard" | "interactive">("standard");
+const SHADES = [
+  "50",
+  "100",
+  "200",
+  "300",
+  "400",
+  "500",
+  "600",
+  "700",
+  "800",
+  "900",
+  "950",
+] as const;
+
+const INTENTS = [
+  "default",
+  "muted",
+  "elevated",
+  "accented",
+  "dimmed",
+  "toned",
+  "highlighted",
+  "inverted",
+] as const;
+
+interface ActiveFontFamily {
+  key: string;
+  name: string;
+  weights: number[];
+  cssClass: string;
+}
+
+export default function DevUserInterfacePage() {
   const [iconSearch, setIconSearch] = createSignal("");
   const [copiedIcon, setCopiedIcon] = createSignal<string | null>(null);
 
   const uiConfig = getUIConfig();
   const iconNames = Object.keys(ICONS);
+  const userIconOverrides = uiConfig?.icons ?? {};
+  const overrideCount = Object.keys(userIconOverrides).length;
+
+  // Dynamically resolve currently active fonts by merging DEFAULT_UI_FONTS with user uiConfig.fonts
+  const resolvedFontsConfig = () => {
+    const userFonts =
+      typeof uiConfig?.fonts === "object" && uiConfig.fonts !== null
+        ? uiConfig.fonts.fonts
+        : undefined;
+    return {
+      provider:
+        (typeof uiConfig?.fonts === "object" && uiConfig.fonts?.provider) ||
+        DEFAULT_UI_FONTS.provider,
+      fonts: {
+        ...DEFAULT_UI_FONTS.fonts,
+        ...userFonts,
+      },
+    };
+  };
+
+  const activeFontFamilies = (): ActiveFontFamily[] => {
+    const fontsObj = resolvedFontsConfig().fonts;
+    return Object.entries(fontsObj).map(([familyKey, fontDefs]) => {
+      const firstDef = Array.isArray(fontDefs) ? fontDefs[0] : fontDefs;
+      const name =
+        typeof firstDef === "string"
+          ? firstDef
+          : typeof firstDef === "object" && firstDef !== null
+            ? (firstDef.name ?? familyKey)
+            : familyKey;
+      const weights =
+        typeof firstDef === "object" && Array.isArray(firstDef?.weights)
+          ? firstDef.weights
+          : [400, 700];
+
+      return {
+        key: familyKey,
+        name: String(name),
+        weights: weights as number[],
+        cssClass: `font-${familyKey}`,
+      };
+    });
+  };
 
   const filteredIcons = () => {
     const q = iconSearch().toLowerCase().trim();
@@ -99,7 +146,7 @@ export const DevUserInterfacePage: Component = () => {
         },
         {
           label: "Palettes & Scales",
-          code: `Object.keys(PALETTES)`,
+          code: `PALETTES`,
           description: "Ten hybrid OKLCH palettes with 11 lightness/chroma shade stops each.",
           value: PALETTES.join(", "),
         },
@@ -117,33 +164,38 @@ export const DevUserInterfacePage: Component = () => {
       mono: true,
       rows: [
         {
-          label: "Font Provider & Defaults",
-          code: `DEFAULT_UI_FONTS`,
+          label: "Active Web Font Preset Config",
+          code: `resolveWebFontsPreset(getUIConfig().fonts)`,
           description:
-            "Downloaded into node_modules/.cache and served locally via Astro-style Vite middleware. No third-party CDN hits in production or dev.",
-          value: JSON.stringify(DEFAULT_UI_FONTS, null, 2),
+            "Active font configuration merged from DEFAULT_UI_FONTS and virtual:rimelight-ui. Fonts are downloaded into node_modules/.cache and served locally with zero CDN requests.",
+          value: JSON.stringify(resolvedFontsConfig(), null, 2),
         },
         {
-          label: "Font Family Showcase",
-          code: `font-sans, font-serif, font-mono`,
-          description: "Visual rendering of primary font families across configured weights.",
+          label: "Active Font Families",
+          code: `Object.keys(resolvedFontsConfig().fonts)`,
+          description:
+            "Dynamically resolved families and configured weights actively applied to CSS utility classes.",
           content: (
             <div class="flex flex-col gap-md w-full">
-              <For each={FONT_SAMPLES}>
-                {(sample) => (
+              <For each={activeFontFamilies()}>
+                {(family) => (
                   <div class="flex flex-col gap-xs rounded-xl border border-default bg-elevated/30 p-md">
                     <div class="flex items-center justify-between border-b border-default pb-xs">
                       <span class="text-xs font-bold text-highlighted">
-                        {sample.name} <span class="text-muted font-normal">({sample.role})</span>
+                        {family.name}{" "}
+                        <span class="text-muted font-normal font-mono">({family.key})</span>
                       </span>
-                      <code class="text-xs text-primary">{sample.class}</code>
+                      <code class="text-xs text-primary">{family.cssClass}</code>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-sm pt-xs">
-                      <For each={sample.weights}>
+                      <For each={family.weights}>
                         {(weight) => (
                           <div class="flex flex-col gap-0.5">
-                            <span class="text-[10px] text-muted">{weight.label}</span>
-                            <p class={`text-sm text-highlighted ${sample.class} ${weight.class}`}>
+                            <span class="text-[10px] text-muted">Weight {weight}</span>
+                            <p
+                              class={`text-sm text-highlighted ${family.cssClass}`}
+                              style={{ "font-weight": String(weight) }}
+                            >
                               Sphinx of black quartz, judge my vow. 1234567890
                             </p>
                           </div>
@@ -159,19 +211,19 @@ export const DevUserInterfacePage: Component = () => {
       ],
     },
     {
-      title: "Built-in Icon System",
+      title: "Icon System",
       mono: true,
       rows: [
         {
-          label: "Total Registered Icons",
-          code: `Object.keys(ICONS).length`,
+          label: "Loaded Collections & Resolution",
+          code: `presetIcons({ collections: { rl: getIconSvg } })`,
           description:
-            "Lightweight Lucide-derived SVG vector nodes rendered via Solid Dynamic without icon-font bloat.",
-          value: `${iconNames.length} icons available`,
+            "The default collection registered with UnoCSS presetIcons is 'rl' (containing the built-in SVG node definitions). Any Iconify collection or class name like 'i-lucide-*' or 'i-carbon-*' can also be resolved if configured.",
+          value: `Built-in collection: "rl" (${iconNames.length} default icons)\nConfigured overrides: ${overrideCount}`,
         },
         {
-          label: "Icon Library & Inspector",
-          code: `<RLIcon name="..." size="md" />`,
+          label: "Default Rimelight Icons (Collection 'rl')",
+          code: `<RLIcon name="..." /> or class="i-rl-..."`,
           description:
             "Click any icon cell to copy its JSX component invocation. Supports searching by keyword.",
           content: (
@@ -179,12 +231,14 @@ export const DevUserInterfacePage: Component = () => {
               <div class="flex items-center gap-sm">
                 <input
                   type="text"
-                  placeholder="Filter icons by name..."
+                  placeholder="Filter default icons by name..."
                   value={iconSearch()}
                   onInput={(e) => setIconSearch(e.currentTarget.value)}
                   class="w-full max-w-xs rounded-lg border border-default bg-elevated/40 px-sm py-xs text-xs text-highlighted placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
-                <span class="text-xs text-muted">{filteredIcons().length} matches</span>
+                <span class="text-xs text-muted">
+                  {filteredIcons().length} of {iconNames.length} icons
+                </span>
                 <Show when={copiedIcon()}>
                   <span class="text-xs text-emerald-500 font-mono">
                     Copied &lt;RLIcon name="{copiedIcon()}" /&gt;!
@@ -199,7 +253,7 @@ export const DevUserInterfacePage: Component = () => {
                       type="button"
                       onClick={() => copyIconSnippet(name)}
                       class="flex flex-col items-center justify-center gap-1 p-2 rounded-lg border border-default bg-elevated/30 hover:bg-elevated hover:border-primary-500/50 transition-all text-center group"
-                      title={`Click to copy: <RLIcon name="${name}" />`}
+                      title={`Click to copy: <RLIcon name="${name}" /> (collection: rl)`}
                     >
                       <RLIcon
                         name={name}
@@ -298,131 +352,68 @@ export const DevUserInterfacePage: Component = () => {
         },
       ],
     },
-    {
-      title: "Grid & Slot Customization",
-      rows: [
-        {
-          label: "Responsive Grid & Cards",
-          code: `<RLGrid cols={3}><RLCard ... /></RLGrid>`,
-          description: "Composite layout components with standard slot definitions.",
-          content: (
-            <RLGrid cols={3}>
-              <RLCard
-                title="Hybrid Seed Matrix"
-                description="Generates lightweight OKLCH scales without 200+ hardcoded number strings."
-              />
-              <RLCard
-                title="Component Scoping"
-                description="Single-class rl-color-* resolver drives button, badge, and input variants."
-              />
-              <RLCard
-                title="Web Fonts & Icons"
-                description="Locally-cached typography presets and zero-dependency SVG icon system."
-              />
-            </RLGrid>
-          ),
-        },
-      ],
-    },
   ];
 
   return (
-    <DevLayout
-      title="User Interface"
-      description="Verifying @rimelight/ui palettes, typography, icon library, intent tokens, and component theming."
-      actions={
-        <div class="flex items-center gap-1 bg-muted p-1 rounded-lg">
-          <button
-            type="button"
-            onClick={() => setViewMode("standard")}
-            class={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-              viewMode() === "standard"
-                ? "bg-default text-highlighted shadow-xs"
-                : "text-muted hover:text-highlighted"
-            }`}
-          >
-            Standard View
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode("interactive")}
-            class={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-              viewMode() === "interactive"
-                ? "bg-default text-highlighted shadow-xs"
-                : "text-muted hover:text-highlighted"
-            }`}
-          >
-            Interactive Matrix
-          </button>
-        </div>
-      }
-    >
-      <Show when={viewMode() === "interactive"}>
-        <ColorTestingMatrix />
-      </Show>
+    <DevLayout>
+      <div class="flex flex-col gap-2xl">
+        <header class="flex flex-col gap-xs">
+          <h1 class="text-3xl text-highlighted">User Interface</h1>
+          <p class="text-sm text-muted">
+            Verifying @rimelight/ui OKLCH hybrid palette scales, dynamic typography families, icon
+            library and collections, semantic intent utilities, and component theming.
+          </p>
+        </header>
 
-      <Show when={viewMode() === "standard"}>
-        <div class="flex flex-col gap-2xl">
-          <header class="flex flex-col gap-xs">
-            <h1 class="text-3xl text-highlighted">User Interface</h1>
-            <p class="text-sm text-muted">
-              Verifying @rimelight/ui OKLCH hybrid palette scales, font presets, icon library,
-              semantic intent utilities, and component theming.
-            </p>
-          </header>
-
-          <For each={sections()}>
-            {(section) => (
-              <section class="bg-elevated/20">
-                <header class="bg-elevated/40 px-xl py-sm">
-                  <h2 class="text-xs text-muted">
-                    {section.mono ? <code>{section.title}</code> : section.title}
-                  </h2>
-                </header>
-                <hr class="border-default" />
-                <div class="flex flex-col">
-                  <For each={section.rows}>
-                    {(row, index) => (
-                      <>
-                        <Show when={index() > 0}>
-                          <hr class="border-default" />
-                        </Show>
-                        <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
-                          <div class="flex min-w-0 flex-col gap-xs">
-                            <Show when={row.label}>
-                              {row.mono ? (
-                                <code class="text-sm text-highlighted">{row.label}</code>
-                              ) : (
-                                <span class="text-sm text-highlighted">{row.label}</span>
-                              )}
-                            </Show>
-                            <Show when={row.code}>
-                              <pre class="whitespace-pre-wrap break-words text-xs text-muted">
-                                {row.code}
-                              </pre>
-                            </Show>
-                            <Show when={row.description}>
-                              <p class="text-xs text-muted">{row.description}</p>
-                            </Show>
-                          </div>
-                          <div class="min-w-0 text-sm text-highlighted">
-                            <Show when={row.value}>
-                              <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
-                            </Show>
-                            {row.content}
-                          </div>
+        <For each={sections()}>
+          {(section) => (
+            <section class="bg-elevated/20">
+              <header class="bg-elevated/40 px-xl py-sm">
+                <h2 class="text-xs text-muted">
+                  {section.mono ? <code>{section.title}</code> : section.title}
+                </h2>
+              </header>
+              <hr class="border-default" />
+              <div class="flex flex-col">
+                <For each={section.rows}>
+                  {(row, index) => (
+                    <>
+                      <Show when={index() > 0}>
+                        <hr class="border-default" />
+                      </Show>
+                      <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+                        <div class="flex min-w-0 flex-col gap-xs">
+                          <Show when={row.label}>
+                            {row.mono ? (
+                              <code class="text-sm text-highlighted">{row.label}</code>
+                            ) : (
+                              <span class="text-sm text-highlighted">{row.label}</span>
+                            )}
+                          </Show>
+                          <Show when={row.code}>
+                            <pre class="whitespace-pre-wrap break-words text-xs text-muted">
+                              {row.code}
+                            </pre>
+                          </Show>
+                          <Show when={row.description}>
+                            <p class="text-xs text-muted">{row.description}</p>
+                          </Show>
                         </div>
-                      </>
-                    )}
-                  </For>
-                </div>
-              </section>
-            )}
-          </For>
-        </div>
-      </Show>
+                        <div class="min-w-0 text-sm text-highlighted">
+                          <Show when={row.value}>
+                            <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
+                          </Show>
+                          {row.content}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </For>
+              </div>
+            </section>
+          )}
+        </For>
+      </div>
     </DevLayout>
   );
-};
-
-export default DevUserInterfacePage;
+}
