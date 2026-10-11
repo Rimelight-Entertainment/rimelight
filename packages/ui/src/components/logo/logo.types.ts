@@ -1,6 +1,7 @@
 import type { JSX } from "@solidjs/web";
 
 export interface RLLogoProps {
+  as?: any;
   variant?: string;
   mode?: string;
   theme?: string;

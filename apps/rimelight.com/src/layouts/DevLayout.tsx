@@ -36,12 +36,7 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
         class="bg-primary-400"
         left={
           <a href={getLocaleUrl("/dev")} class="flex flex-row items-center gap-3 min-w-0">
-            <RLLogo
-              variant="logomark"
-              mode="color"
-              class="pointer-events-none h-5 w-auto"
-              alt={DEV_BRAND}
-            />
+            <RLLogo as="span" variant="logomark" mode="color" class="h-5 w-auto" alt={DEV_BRAND} />
             <span class="font-mono text-xs font-bold leading-none text-highlighted">
               {DEV_BRAND}
             </span>

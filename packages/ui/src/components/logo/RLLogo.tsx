@@ -1,12 +1,14 @@
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
 import { createMemo, omit, type Component } from "solid-js";
+import { dynamic } from "@solidjs/web";
 import { getUIConfig } from "../../resolver";
 
 export const RLLogo: Component<RLLogoProps> = (allProps) => {
   const props = allProps;
   const rest = omit(
     allProps,
+    "as",
     "variant",
     "mode",
     "theme",
@@ -42,6 +44,7 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
 
   const variant = () => props.variant || "logomark";
   const href = () => props.href ?? "/";
+  const Tag = dynamic(() => props.as ?? "a");
 
   const logoInfo = createMemo(() => {
     if (props.src) {
@@ -125,15 +128,15 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
   };
 
   return (
-    <a
+    <Tag
       class={resolvedClasses().root}
-      href={href()}
+      href={(props.as ?? "a") === "a" ? href() : undefined}
       aria-label={props.alt || variant()}
       data-slot="root"
       data-theme={props.theme}
       {...rest}
     >
       {renderContent()}
-    </a>
+    </Tag>
   );
 };
