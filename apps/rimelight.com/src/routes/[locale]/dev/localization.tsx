@@ -1,4 +1,4 @@
-import { children, For, Show, type Component } from "solid-js";
+import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
@@ -7,50 +7,21 @@ import { RLButton, RLLocaleSelector } from "@rimelight/ui";
 
 const EXPLICIT_LOCALE = "pt";
 
-interface RowEntry {
-  label?: string;
-  mono?: boolean;
-  code?: string;
-  description?: string;
-  value?: string;
-  content?: JSX.Element;
-}
-
-interface SectionEntry {
-  title: string;
-  mono?: boolean;
-  rows: RowEntry[];
-}
-
-const Row: Component<RowEntry> = (props) => {
-  const content = children(() => props.content);
-  return (
-    <div class="flex items-start gap-6 border-t border-default/60 px-5 py-4 first:border-t-0">
-      <div class="flex min-w-0 flex-1 flex-col gap-1">
-        <Show when={props.label !== undefined}>
-          <span class={`text-sm font-semibold text-highlighted${props.mono ? " font-mono" : ""}`}>
-            {props.label}
-          </span>
-        </Show>
-        <Show when={props.code !== undefined}>
-          <code class="text-xs text-muted whitespace-pre-wrap">{props.code}</code>
-        </Show>
-        <Show when={props.description !== undefined}>
-          <p class="text-xs text-muted">{props.description}</p>
-        </Show>
-      </div>
-      <div class="min-w-0 text-right font-mono text-sm text-highlighted whitespace-pre-line break-words">
-        {props.value}
-        {content()}
-      </div>
-    </div>
-  );
-};
-
 export default function DevLocalizationPage() {
   const location = useLocation();
 
-  const sections = (): SectionEntry[] => [
+  const sections = (): {
+    title: string;
+    mono?: boolean;
+    rows: {
+      label?: string;
+      mono?: boolean;
+      code?: string;
+      description?: string;
+      value?: string;
+      content?: JSX.Element;
+    }[];
+  }[] => [
     {
       title: t("dev_localization.current_values"),
       rows: [
@@ -180,22 +151,48 @@ export default function DevLocalizationPage() {
 
   return (
     <DevLayout>
-      <div class="flex flex-col gap-6">
-        <header class="flex flex-col gap-3">
-          <h1 class="text-3xl font-bold text-highlighted">{t("dev_localization.title")}</h1>
+      <div class="flex flex-col gap-2xl">
+        <header class="flex flex-col gap-xs">
+          <h1 class="text-3xl text-highlighted">{t("dev_localization.title")}</h1>
           <p class="text-sm text-muted">{t("dev_localization.description")}</p>
         </header>
 
         <For each={sections()}>
           {(section) => (
-            <section class="overflow-hidden rounded-2xl border border-default bg-elevated/20">
-              <header class="border-b border-default/60 bg-elevated/40 px-5 py-2.5">
-                <h2 class={`text-xs font-semibold text-muted${section.mono ? " font-mono" : ""}`}>
-                  {section.title}
+            <section class="bg-elevated/20">
+              <header class="border-b border-default/60 bg-elevated/40 px-xl py-sm">
+                <h2 class="text-xs text-muted">
+                  {section.mono ? <code>{section.title}</code> : section.title}
                 </h2>
               </header>
               <div class="flex flex-col">
-                <For each={section.rows}>{(row) => <Row {...row} />}</For>
+                <For each={section.rows}>
+                  {(row) => (
+                    <div class="flex items-start gap-xl border-t border-default/60 px-xl py-md first:border-t-0">
+                      <div class="flex min-w-0 flex-1 flex-col gap-xs">
+                        <Show when={row.label}>
+                          {row.mono ? (
+                            <code class="text-sm text-highlighted">{row.label}</code>
+                          ) : (
+                            <span class="text-sm text-highlighted">{row.label}</span>
+                          )}
+                        </Show>
+                        <Show when={row.code}>
+                          <pre class="text-xs text-muted">{row.code}</pre>
+                        </Show>
+                        <Show when={row.description}>
+                          <p class="text-xs text-muted">{row.description}</p>
+                        </Show>
+                      </div>
+                      <div class="min-w-0 text-right text-sm text-highlighted">
+                        <Show when={row.value}>
+                          <pre>{row.value}</pre>
+                        </Show>
+                        {row.content}
+                      </div>
+                    </div>
+                  )}
+                </For>
               </div>
             </section>
           )}
