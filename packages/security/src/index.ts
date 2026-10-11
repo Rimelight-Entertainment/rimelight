@@ -9,6 +9,7 @@ export {
   CONSTRUCTION_GUEST_COOKIE,
   getSecurityConfig,
   setSecurityConfig,
+  buildCspHeader,
 } from "./runtime";
 
 export { createSecurityHead } from "./head";

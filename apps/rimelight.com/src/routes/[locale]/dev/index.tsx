@@ -22,6 +22,12 @@ const dashboardCards = [
       "Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n client/server sync.",
   },
   {
+    href: "/dev/security",
+    title: "Security",
+    description:
+      "CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics.",
+  },
+  {
     href: "/dev/og",
     title: "OpenGraph",
     description:

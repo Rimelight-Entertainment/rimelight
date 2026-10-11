@@ -267,15 +267,17 @@ export default function DevLocalizationPage() {
                             )}
                           </Show>
                           <Show when={row.code}>
-                            <pre class="text-xs text-muted">{row.code}</pre>
+                            <pre class="whitespace-pre-wrap break-words text-xs text-muted">
+                              {row.code}
+                            </pre>
                           </Show>
                           <Show when={row.description}>
                             <p class="text-xs text-muted">{row.description}</p>
                           </Show>
                         </div>
-                        <div class="min-w-0 text-right text-sm text-highlighted">
+                        <div class="min-w-0 text-sm text-highlighted">
                           <Show when={row.value}>
-                            <pre>{row.value}</pre>
+                            <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
                           </Show>
                           {row.content}
                         </div>

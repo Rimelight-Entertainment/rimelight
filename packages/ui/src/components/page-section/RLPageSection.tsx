@@ -1,7 +1,7 @@
 import type { RLPageSectionProps } from "./page-section.types";
 import { RLPageSectionTheme } from "./page-section.theme";
 import { createMemo, omit, For, children, type Component, Show } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
 
@@ -72,8 +72,8 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     }),
   );
 
-  const tag = () => props.as ?? "section";
-  const titleTag = () => (resolvedVariant() === "hero" ? "h1" : "h2");
+  const Tag = dynamic(() => props.as ?? "section");
+  const TitleTag = dynamic(() => (resolvedVariant() === "hero" ? "h1" : "h2"));
 
   const showHeader = () =>
     !!(
@@ -97,8 +97,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     );
 
   return (
-    <Dynamic
-      component={tag()}
+    <Tag
       data-orientation={props.orientation ?? "vertical"}
       class={`${resolvedClasses().root}  ${
         props.contentVisibility === "auto"
@@ -154,9 +153,9 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
                     </Show>
 
                     <Show when={props.title || resolvedTitleSlot()}>
-                      <Dynamic component={titleTag()} class={resolvedClasses().title}>
+                      <TitleTag class={resolvedClasses().title}>
                         {resolvedTitleSlot() ?? props.title}
-                      </Dynamic>
+                      </TitleTag>
                     </Show>
 
                     <Show when={props.description || resolvedDescriptionSlot()}>
@@ -212,6 +211,6 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       </div>
 
       {resolvedBottom()}
-    </Dynamic>
+    </Tag>
   );
 };
