@@ -2,12 +2,43 @@ import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
-import { getCurrentLocale, getLocaleUrl, getLocales, t } from "@rimelight/i18n";
+import {
+  getCurrentLocale,
+  getDefaultLocale,
+  getLocaleAsset,
+  getLocaleUrl,
+  getLocales,
+  t,
+} from "@rimelight/i18n";
 import { RLButton, RLLocaleSelector } from "@rimelight/ui";
+
+type TranslationFunction = (params?: Record<string, unknown>) => string;
+
+// Translation dictionaries ship as JSON, so function values can't live in them.
+// Re-run the resolver inside a scoped store to exercise runtime.ts function values.
+const withComputedTranslation = <R,>(fn: TranslationFunction, callback: () => R): R => {
+  const storage = globalThis.__rimelight_i18n;
+  const store = storage?.getStore();
+  if (!storage || !store) return callback();
+  return storage.run(
+    {
+      ...store,
+      translations: {
+        ...store.translations,
+        dev_localization: {
+          ...(store.translations?.["dev_localization"] as Record<string, unknown> | undefined),
+          sample_computed: fn,
+        },
+      },
+    },
+    callback,
+  );
+};
 
 export default function DevLocalizationPage() {
   const location = useLocation();
   const EXPLICIT_LOCALE = "pt";
+  const LOCALE_ASSETS = { en: "🇬🇧 English", pt: "🇧🇷 Português" };
 
   const sections = (): {
     title: string;
@@ -53,6 +84,18 @@ export default function DevLocalizationPage() {
       ],
     },
     {
+      title: "getDefaultLocale()",
+      mono: true,
+      rows: [
+        {
+          label: t("dev_localization.default_locale_title"),
+          code: `getDefaultLocale()`,
+          description: t("dev_localization.default_locale_description"),
+          value: getDefaultLocale(),
+        },
+      ],
+    },
+    {
       title: "getLocaleUrl()",
       mono: true,
       rows: getLocales().map((code) => ({
@@ -72,6 +115,21 @@ export default function DevLocalizationPage() {
           />
         ),
       })),
+    },
+    {
+      title: "getLocaleAsset()",
+      mono: true,
+      rows: [
+        {
+          label: t("dev_localization.locale_asset_title"),
+          code: `getLocaleAsset({ en: "🇬🇧 English", pt: "🇧🇷 Português" })\ngetLocaleAsset({ en: "🇬🇧 English", pt: "🇧🇷 Português" }, "es")`,
+          description: t("dev_localization.locale_asset_description"),
+          value: `${getCurrentLocale()}: ${getLocaleAsset(LOCALE_ASSETS)}\nes: ${getLocaleAsset(
+            LOCALE_ASSETS,
+            "es",
+          )}`,
+        },
+      ],
     },
     {
       title: "t()",
@@ -96,6 +154,21 @@ export default function DevLocalizationPage() {
           value: `${t("dev_localization.sample_items", { count: 1 })}\n${t("dev_localization.sample_items", { count: 1234 })}`,
         },
         {
+          label: t("dev_localization.t_count_branch_title"),
+          code: `t("dev_localization.sample_other_only", { count: 1 })`,
+          description: t("dev_localization.t_count_branch_description"),
+          value: t("dev_localization.sample_other_only", { count: 1 }),
+        },
+        {
+          label: t("dev_localization.t_function_title"),
+          code: `t("dev_localization.sample_computed", { value: 21 })`,
+          description: t("dev_localization.t_function_description"),
+          value: withComputedTranslation(
+            (params) => `Computed: ${Number(params?.["value"] ?? 0) * 2}`,
+            () => t("dev_localization.sample_computed", { value: 21 }),
+          ),
+        },
+        {
           label: t("dev_localization.t_locale_title"),
           code: `t("dev_localization.sample_hello", undefined, "${EXPLICIT_LOCALE}")`,
           description: t("dev_localization.t_locale_description"),
@@ -112,6 +185,12 @@ export default function DevLocalizationPage() {
           value: JSON.stringify(t.raw("dev_localization.sample_object") ?? null),
         },
         {
+          label: t("dev_localization.t_raw_locale_title"),
+          code: `t.raw("dev_localization.sample_hello", undefined, "${EXPLICIT_LOCALE}")`,
+          description: t("dev_localization.t_raw_locale_description"),
+          value: String(t.raw("dev_localization.sample_hello", undefined, EXPLICIT_LOCALE) ?? null),
+        },
+        {
           label: t("dev_localization.t_raw_fallback_title"),
           code: `t.raw("dev_localization.missing_key", "fallback value")`,
           description: t("dev_localization.t_raw_fallback_description"),
@@ -122,6 +201,12 @@ export default function DevLocalizationPage() {
           code: `t.array("dev_localization.sample_tags")`,
           description: t("dev_localization.t_array_description"),
           value: JSON.stringify(t.array("dev_localization.sample_tags") ?? []),
+        },
+        {
+          label: t("dev_localization.t_array_fallback_title"),
+          code: `t.array("dev_localization.missing_key", ["Fallback", "Items"])`,
+          description: t("dev_localization.t_array_fallback_description"),
+          value: JSON.stringify(t.array("dev_localization.missing_key", ["Fallback", "Items"])),
         },
         {
           label: t("dev_localization.t_plural_title"),
