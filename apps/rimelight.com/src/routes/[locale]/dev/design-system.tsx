@@ -1,6 +1,6 @@
 import { type Component, createSignal, For, Show } from "solid-js";
 import DevLayout from "#layouts/DevLayout";
-import ColorTestingMatrix from "../../../components/dev/ColorTestingMatrix.tsx";
+import ColorTestingMatrix from "#components/dev/ColorTestingMatrix.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";

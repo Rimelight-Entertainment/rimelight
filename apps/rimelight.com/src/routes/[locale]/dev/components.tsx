@@ -1,7 +1,7 @@
 import { untrack, type Component } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
-import ComponentAuditShell from "../../../components/dev/ComponentAuditShell.tsx";
+import ComponentAuditShell from "#components/dev/ComponentAuditShell.tsx";
 
 export const DevComponentsPage: Component = () => {
   const [searchParams] = useSearchParams();

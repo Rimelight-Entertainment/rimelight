@@ -29,14 +29,6 @@ const sections: DevSectionCard[] = [
     icon: "i-lucide-layers",
   },
   {
-    title: "Data Table Benchmark",
-    href: "/dev/components?comp=table",
-    tag: "Performance",
-    description:
-      "High-performance native SolidJS RLTable with 500+ row virtualization, multi-sort, column reorder, grouping, and sub-rows.",
-    icon: "i-lucide-table",
-  },
-  {
     title: "Locale & i18n Debugger",
     href: "/dev/locale",
     tag: "Internationalization",
@@ -51,14 +43,6 @@ const sections: DevSectionCard[] = [
     description:
       "Live preview and validation tool for dynamic OG banner generation with customizable title, description, and tags.",
     icon: "i-lucide-image",
-  },
-  {
-    title: "Email Templates Previewer",
-    href: "/dev/email",
-    tag: "Transactional",
-    description:
-      "Live render previews and test dispatch triggers for verification, password reset, and signup notification emails.",
-    icon: "i-lucide-mail",
   },
 ];
 

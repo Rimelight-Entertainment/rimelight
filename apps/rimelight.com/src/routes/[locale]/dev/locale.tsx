@@ -36,9 +36,11 @@ export const DevLocalePage: Component = () => {
       maxWidth="2xl"
     >
       <div class="flex flex-col gap-6">
-        <div class="border-b border-default pb-4">
-          <h1 class="text-2xl font-bold text-highlighted">Bare Locale Debug & Diagnostics</h1>
-          <p class="text-xs text-muted mt-1">
+        <div class="border-b border-default pb-6">
+          <h1 class="text-3xl font-bold tracking-tight text-highlighted">
+            Locale & i18n Diagnostics
+          </h1>
+          <p class="text-sm text-muted mt-2">
             Validating i18n URL rewriting, router params, and RLLocaleSelector reactive sync.
           </p>
         </div>

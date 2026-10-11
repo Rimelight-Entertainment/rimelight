@@ -100,15 +100,15 @@ export const DevOgPage: Component = () => {
       maxWidth="7xl"
     >
       <div class="flex flex-col gap-8">
-        <header class="pb-6 border-b border-default">
-          <h1 class="text-3xl font-bold text-highlighted mb-2">OG Image Preview</h1>
-          <p class="text-muted text-sm">
+        <div class="border-b border-default pb-6">
+          <h1 class="text-3xl font-bold tracking-tight text-highlighted">OG Image Preview</h1>
+          <p class="text-sm text-muted mt-2">
             Live previews of generated Open Graph images via{" "}
             <code class="bg-elevated text-primary px-2 py-0.5 rounded text-xs font-mono">
               /open-graph/page.png
             </code>
           </p>
-        </header>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <For each={pages}>
