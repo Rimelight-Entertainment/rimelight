@@ -57,9 +57,12 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       expect(serverCode).toContain(`"Início"`);
       expect(serverCode).toContain(`"nav.home":"Home"`);
 
-      // Verify no physical .rimelight directory was written to disk!
-      const diskDir = path.join(tmpDir, "node_modules", ".rimelight");
-      expect(fs.existsSync(diskDir)).toBe(false);
+      // Verify no physical top-level .rimelight directory was written to disk!
+      expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
+      // Verify types were emitted into node_modules/.rimelight
+      expect(
+        fs.existsSync(path.join(tmpDir, "node_modules", ".rimelight", "i18n", "keys.d.ts")),
+      ).toBe(true);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
@@ -168,18 +171,18 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     const enPath = path.join(i18nDir, "en.json");
     fs.writeFileSync(enPath, JSON.stringify({ hero: { title: "Title" } }));
 
-    const typesPath = ".rimelight/i18n/keys.d.ts";
+    const typesPath = "node_modules/.rimelight/i18n/keys.d.ts";
     const fullTypesPath = path.join(tmpDir, typesPath);
 
     try {
       const plugin: Plugin = i18n({
         translationsDir: i18nDir,
-        types: typesPath,
       });
 
       await callHook(plugin.configResolved, { root: tmpDir });
 
       expect(fs.existsSync(fullTypesPath)).toBe(true);
+      expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
       let dts = fs.readFileSync(fullTypesPath, "utf-8");
       expect(dts).toContain('"hero.title"');
 

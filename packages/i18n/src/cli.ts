@@ -305,7 +305,7 @@ Actions:
 Options:
   -d, --dir <path>     Directory containing <locale>.json files (auto-discovered if omitted)
   -b, --base <locale>  Base/default locale code to compare against (default: "en")
-  -o, --out <path>     Output path for declaration file (default: ".rimelight/i18n/keys.d.ts")
+  -o, --out <path>     Output path for declaration file (default: "node_modules/.rimelight/i18n/keys.d.ts")
   -t, --types          Generate declaration file during check
   -f, --fix            Auto-prune stale keys and generate missing key skeletons
   --allow-empty        Do not treat empty strings as missing/invalid translations
@@ -382,7 +382,10 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
   }
 
   if (action === "types") {
-    const outPath = path.resolve(process.cwd(), values.out || ".rimelight/i18n/keys.d.ts");
+    const outPath = path.resolve(
+      process.cwd(),
+      values.out || "node_modules/.rimelight/i18n/keys.d.ts",
+    );
     const dts = generateTypeDeclarations(translations[baseLocale]!);
     const written = writeTypeDeclarations(outPath, dts);
     const keyCount = extractKeys(translations[baseLocale]!).length;
@@ -414,7 +417,10 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
   }
 
   if (values.types) {
-    const outPath = path.resolve(process.cwd(), values.out || ".rimelight/i18n/keys.d.ts");
+    const outPath = path.resolve(
+      process.cwd(),
+      values.out || "node_modules/.rimelight/i18n/keys.d.ts",
+    );
     const dts = generateTypeDeclarations(
       (values.fix && !report.isValid ? fixTranslations(translations, baseLocale) : translations)[
         baseLocale

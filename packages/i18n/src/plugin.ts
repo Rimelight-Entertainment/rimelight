@@ -37,7 +37,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   const emitTypes = () => {
     if (options.types === false) return;
     const typesPath =
-      typeof options.types === "string" ? options.types : ".rimelight/i18n/keys.d.ts";
+      typeof options.types === "string" ? options.types : "node_modules/.rimelight/i18n/keys.d.ts";
     const trans = getTranslations();
     const locales = Object.keys(trans).sort();
     if (locales.length === 0) return;
