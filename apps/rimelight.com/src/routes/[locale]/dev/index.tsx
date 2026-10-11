@@ -21,24 +21,16 @@ const sections: DevSectionCard[] = [
     icon: "i-lucide-component",
   },
   {
-    title: "Colors & Intent Matrix",
-    href: "/dev/colors",
-    tag: "OKLCH Tokens",
-    description:
-      "Hybrid OKLCH palette scales, 8x8 semantic intent contrast matrix, 11x11 shade grid, and dual-mode live preview sandbox.",
-    icon: "i-lucide-palette",
-  },
-  {
     title: "Design System Showcase",
     href: "/dev/design-system",
-    tag: "Design Tokens",
+    tag: "Design Tokens & Colors",
     description:
-      "Live verification of hybrid seed-matrix palettes, component scoped theming (rl-color-*), layout grids, and slot UI overrides.",
+      "Interactive hybrid OKLCH palette scales, 8x8 intent contrast matrix, 11x11 shade grid, dual-mode preview sandbox, and component theming.",
     icon: "i-lucide-layers",
   },
   {
     title: "Data Table Benchmark",
-    href: "/dev/table",
+    href: "/dev/components?comp=table",
     tag: "Performance",
     description:
       "High-performance native SolidJS RLTable with 500+ row virtualization, multi-sort, column reorder, grouping, and sub-rows.",

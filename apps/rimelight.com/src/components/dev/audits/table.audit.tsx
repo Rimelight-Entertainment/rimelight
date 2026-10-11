@@ -1,4 +1,5 @@
 import { createSignal, createMemo, Show, For } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx";
 import type {
   TableColumn,
@@ -14,9 +15,44 @@ import {
   formatShowcaseDate,
   formatShowcaseCurrency,
   type PaymentItem,
-} from "./showcase-table-data";
+} from "./table-showcase-data";
+import type { ComponentAuditDefinition } from "./types";
 
-export default function TableShowcase() {
+interface SimpleUser {
+  id: number;
+  name: string;
+  role: string;
+  department: string;
+  status: "active" | "invited" | "suspended";
+}
+
+const SAMPLE_USERS: SimpleUser[] = [
+  { id: 1, name: "Alice Morgan", role: "Design Lead", department: "Product", status: "active" },
+  {
+    id: 2,
+    name: "David Kim",
+    role: "Software Architect",
+    department: "Engineering",
+    status: "active",
+  },
+  {
+    id: 3,
+    name: "Elena Rostova",
+    role: "Product Manager",
+    department: "Product",
+    status: "invited",
+  },
+  {
+    id: 4,
+    name: "Marcus Vance",
+    role: "Security Engineer",
+    department: "Infrastructure",
+    status: "suspended",
+  },
+  { id: 5, name: "Sophia Chen", role: "Frontend Dev", department: "Engineering", status: "active" },
+];
+
+export const TableSandbox = (): JSX.Element => {
   const [data, setData] = createSignal<PaymentItem[]>(SHOWCASE_PAYMENTS_DATA);
   const [loading, setLoading] = createSignal<boolean>(false);
   const [striped, setStriped] = createSignal<boolean>(true);
@@ -83,7 +119,7 @@ export default function TableShowcase() {
     return Object.values(selectedRows()).filter(Boolean).length;
   });
 
-  const largeDataset = Array.from({ length: 500 }, (_, i) => ({
+  const largeDataset: PaymentItem[] = Array.from({ length: 500 }, (_, i) => ({
     id: `PAY-VIRT-${2000 + i}`,
     date: "2026-03-12T12:00:00",
     status: (i % 3 === 0 ? "paid" : i % 3 === 1 ? "failed" : "refunded") as
@@ -292,7 +328,7 @@ export default function TableShowcase() {
   return (
     <div class="flex flex-col gap-6 w-full">
       {/* Controls Bar */}
-      <div class="flex flex-wrap items-center gap-2.5 p-4 rounded-xl border border-default bg-muted/20">
+      <div class="flex flex-wrap items-center gap-2.5 p-4 rounded-xl border border-default bg-elevated/20">
         <RLButton
           size="sm"
           color={striped() ? "primary" : "neutral"}
@@ -447,17 +483,17 @@ export default function TableShowcase() {
 
       {/* Faceted Statistics & Event state readouts */}
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
-        <div class="p-3 rounded-lg border border-default bg-muted/10">
+        <div class="p-3 rounded-lg border border-default bg-elevated/20">
           <span class="text-muted block">Selected rows:</span>
           <span class="font-bold text-highlighted">
             {totalRowCount()} total rows ({data().length} root) | {selectedCount()} selected
           </span>
         </div>
-        <div class="p-3 rounded-lg border border-default bg-muted/10">
+        <div class="p-3 rounded-lg border border-default bg-elevated/20">
           <span class="text-muted block">Last clicked (onSelect):</span>
           <span class="font-bold text-highlighted truncate block">{lastClickedRow()}</span>
         </div>
-        <div class="p-3 rounded-lg border border-default bg-muted/10">
+        <div class="p-3 rounded-lg border border-default bg-elevated/20">
           <span class="text-muted block">Faceted Status Counts:</span>
           <div class="flex items-center gap-2 mt-1">
             <For each={facetedStatusCounts()}>
@@ -469,11 +505,166 @@ export default function TableShowcase() {
             </For>
           </div>
         </div>
-        <div class="p-3 rounded-lg border border-default bg-muted/10">
+        <div class="p-3 rounded-lg border border-default bg-elevated/20">
           <span class="text-muted block">Amount Range (Min / Max):</span>
           <span class="font-bold text-highlighted">{facetedAmountRange()}</span>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export const tableAudit: ComponentAuditDefinition = {
+  id: "table",
+  name: "Table",
+  category: "Data Display",
+  status: "Passed",
+  description:
+    "Reactive high-performance table component supporting virtualization, multi-sort, global/column filtering, column resizing & reordering, row pinning, grouping, sub-rows, and export.",
+  importPath: "@rimelight/ui/components/table/RLTable.tsx",
+  renderSandbox: () => <TableSandbox />,
+  testScenarios: [
+    {
+      id: "basic-inferred-columns",
+      title: "Basic Inferred Columns",
+      description:
+        "Auto-infers column headers and formatters directly from data objects without manual column definitions.",
+      render: () => {
+        return (
+          <RLTable
+            data={[
+              { id: 101, name: "Project Alpha", budget: "$12,000", lead: "Alice M." },
+              { id: 102, name: "Project Beta", budget: "$45,000", lead: "Bob T." },
+              { id: 103, name: "Project Gamma", budget: "$8,500", lead: "Clara K." },
+            ]}
+          />
+        );
+      },
+    },
+    {
+      id: "selection-and-pagination",
+      title: "Selection & Pagination",
+      description:
+        "Multi-row checkbox selection with synchronized header master-checkbox and client-side pagination.",
+      render: () => {
+        const [selected, setSelected] = createSignal<Record<string, boolean>>({});
+        const columns: TableColumn<SimpleUser>[] = [
+          {
+            id: "select",
+            size: 40,
+            header: ({ table }) => (
+              <RLCheckbox
+                checked={table?.getIsAllRowsSelected() ?? false}
+                indeterminate={table?.getIsSomeRowsSelected() ?? false}
+                onChange={() => table?.toggleAllRowsSelected()}
+              />
+            ),
+            cell: ({ row }) => (
+              <RLCheckbox
+                checked={row.getIsSelected()}
+                indeterminate={row.getIsSomeSelected()}
+                onChange={() => row.toggleSelected()}
+              />
+            ),
+          },
+          { accessorKey: "name", header: "Name" },
+          { accessorKey: "role", header: "Role" },
+          { accessorKey: "department", header: "Department" },
+          {
+            accessorKey: "status",
+            header: "Status",
+            cell: ({ row }) => {
+              const s = row.getValue("status");
+              return (
+                <RLBadge
+                  size="sm"
+                  color={s === "active" ? "success" : s === "invited" ? "info" : "error"}
+                  variant="soft"
+                >
+                  {s}
+                </RLBadge>
+              );
+            },
+          },
+        ];
+
+        return (
+          <div class="flex flex-col gap-2">
+            <RLTable<SimpleUser>
+              data={SAMPLE_USERS}
+              columns={columns}
+              rowSelection={selected()}
+              onRowSelectionChange={setSelected}
+              pagination={{ pageIndex: 0, pageSize: 3 }}
+            />
+            <div class="text-xs font-mono text-muted">
+              Selected count: {Object.values(selected()).filter(Boolean).length}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      id: "striped-bordered-hoverable",
+      title: "Striped, Bordered & Hoverable States",
+      description:
+        "Visual appearance variations with alternating row backgrounds and cell borders.",
+      render: () => (
+        <RLTable data={SAMPLE_USERS.slice(0, 3)} striped={true} bordered={true} hoverable={true} />
+      ),
+    },
+    {
+      id: "empty-and-loading-states",
+      title: "Empty & Loading Feedback",
+      description: "Empty placeholder slot and animated top loading progress indicator.",
+      render: () => {
+        const [loading, setLoading] = createSignal(true);
+        return (
+          <div class="flex flex-col gap-3">
+            <div class="flex gap-2">
+              <RLButton size="xs" variant="outline" onClick={() => setLoading(!loading())}>
+                Toggle Loading Bar: {loading() ? "ON" : "OFF"}
+              </RLButton>
+            </div>
+            <RLTable
+              data={[]}
+              loading={loading()}
+              empty="No audit records found matching the query."
+            />
+          </div>
+        );
+      },
+    },
+  ],
+  checklist: [
+    {
+      criterion: "Reactive SolidJS Architecture",
+      status: "pass",
+      notes:
+        "Pure SolidJS reactive primitives with fine-grained reactivity, 0 TanStack/external table runtime dependencies.",
+    },
+    {
+      criterion: "Virtualization & Large Dataset Scaling",
+      status: "pass",
+      notes: "High-performance windowing virtualization supporting 500+ items smoothly.",
+    },
+    {
+      criterion: "Full WAI-ARIA and Accessibility",
+      status: "pass",
+      notes:
+        "Accessible semantic <table>, <thead>, <tbody>, <tfoot> elements with aria-sort, aria-selected, and accessible keyboard navigation.",
+    },
+    {
+      criterion: "Interactive Features Parity",
+      status: "pass",
+      notes:
+        "Supports sorting, global filtering, column filtering, column reorder/resize, row grouping, sub-rows expansion, and CSV/JSON export.",
+    },
+    {
+      criterion: "Theming & Styling Token Compliance",
+      status: "pass",
+      notes:
+        "Consistent styling token usage matching design system (bg-elevated, border-default, text-highlighted).",
+    },
+  ],
+};

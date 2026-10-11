@@ -15,14 +15,12 @@ export interface DevNavSection {
 export const DEV_NAV_ITEMS: DevNavSection[] = [
   { id: "hub", label: "Dev Hub", href: "/dev", icon: "i-lucide-layout-grid" },
   { id: "components", label: "Components", href: "/dev/components", icon: "i-lucide-component" },
-  { id: "colors", label: "Colors", href: "/dev/colors", icon: "i-lucide-palette" },
   {
     id: "design-system",
     label: "Design System",
     href: "/dev/design-system",
     icon: "i-lucide-layers",
   },
-  { id: "table", label: "Table", href: "/dev/table", icon: "i-lucide-table" },
   { id: "locale", label: "Locale", href: "/dev/locale", icon: "i-lucide-globe" },
   { id: "selectors", label: "Selectors", href: "/dev/selectors", icon: "i-lucide-sliders" },
   { id: "og", label: "OG Images", href: "/dev/og", icon: "i-lucide-image" },

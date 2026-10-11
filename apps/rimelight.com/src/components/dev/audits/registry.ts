@@ -17,6 +17,7 @@ import { collapsibleAudit } from "./collapsible.audit";
 import { compareAudit } from "./compare.audit";
 import { confirmAudit } from "./confirm.audit";
 import { modalAudit } from "./modal.audit";
+import { tableAudit } from "./table.audit";
 import type { ComponentAuditDefinition } from "./types";
 
 export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
@@ -39,6 +40,7 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   compare: compareAudit,
   confirm: confirmAudit,
   modal: modalAudit,
+  table: tableAudit,
 };
 
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);
