@@ -28,7 +28,7 @@ const dashboardCards = [
       "CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics.",
   },
   {
-    href: "/dev/og",
+    href: "/dev/seo",
     title: "SEO",
     description:
       "Full @rimelight/seo audit — head generation, meta utilities, structured data (JSON-LD), OG images, sitemap, robots.txt, RSS, LLMs.txt, web manifest, security.txt, and API catalog.",

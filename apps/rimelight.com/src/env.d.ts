@@ -1,5 +1,6 @@
 /// <reference types="vite-plus/client" />
 /// <reference types="@solidjs/start/env" />
+/// <reference types="@rimelight/seo/client" />
 
 declare module "virtual:rimelight/ui" {
   import type { UIConfig } from "@rimelight/ui/types";
