@@ -257,8 +257,8 @@ export default function DevLocalizationPage() {
                       <Show when={index() > 0}>
                         <hr class="border-default" />
                       </Show>
-                      <div class="flex items-start gap-xl px-xl py-md">
-                        <div class="flex min-w-0 flex-1 flex-col gap-xs">
+                      <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+                        <div class="flex min-w-0 flex-col gap-xs">
                           <Show when={row.label}>
                             {row.mono ? (
                               <code class="text-sm text-highlighted">{row.label}</code>
