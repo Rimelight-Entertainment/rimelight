@@ -56,12 +56,16 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
     let lightSrc: string | null = null;
 
     if (logoVariant && typeof logoVariant === "object") {
+      const v = logoVariant as Record<string, string | undefined>;
+      const color = v["color"] ?? null;
+      const black = v["black"] ?? null;
+      const white = v["white"] ?? null;
       if (props.mode) {
-        logoSrc = logoVariant[props.mode] || logoVariant.color;
+        logoSrc = v[props.mode] || color;
       } else {
-        logoSrc = logoVariant.color || logoVariant.black || logoVariant.white;
-        darkSrc = logoVariant.white || logoVariant.color;
-        lightSrc = logoVariant.black || logoVariant.color;
+        logoSrc = color || black || white;
+        darkSrc = white || color;
+        lightSrc = black || color;
       }
     } else if (typeof logoVariant === "string") {
       logoSrc = logoVariant;

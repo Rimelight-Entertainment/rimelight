@@ -1,5 +1,5 @@
 import { type Component, For } from "solid-js";
-import AppLayout from "#layouts/AppLayout";
+import DevLayout from "#layouts/DevLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
@@ -32,39 +32,45 @@ const PALETTE_NAMES = [
   "source",
 ] as const;
 
-export const TestPage: Component = () => {
+export const DevDesignSystemPage: Component = () => {
   return (
-    <AppLayout
+    <DevLayout
       title="Design System Showcase"
-      description="Palette, component, and semantic token verification"
+      description="Live verification of the Hybrid Seed-Matrix Palette, Component Theming, and Semantic Intent Utilities"
+      currentSection="design-system"
+      maxWidth="6xl"
     >
-      <main class="container mx-auto px-md py-xl flex flex-col gap-2xl">
-        <div class="flex flex-col gap-xs">
-          <h1 class="text-3xl font-bold">Rimelight UI Design System Showcase</h1>
-          <p class="text-neutral-500">
+      <div class="flex flex-col gap-10">
+        <div class="border-b border-default pb-6">
+          <h1 class="text-3xl font-bold tracking-tight text-highlighted">
+            Rimelight UI Design System Showcase
+          </h1>
+          <p class="text-sm text-muted mt-2">
             Live verification of the Hybrid Seed-Matrix Palette, Component Theming, and Semantic
             Intent Utilities.
           </p>
         </div>
 
         {/* 1. Color Palette Scales */}
-        <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-          <h2 class="text-xl font-bold">Active Hybrid Palette Scales</h2>
+        <section class="flex flex-col gap-4 border border-default p-6 rounded-2xl bg-elevated/20">
+          <h2 class="text-xl font-bold text-highlighted">Active Hybrid Palette Scales</h2>
 
-          <div class="flex flex-col gap-md">
+          <div class="flex flex-col gap-4">
             <For each={PALETTE_NAMES}>
               {(name) => (
-                <div class="flex flex-col sm:flex-row sm:items-center gap-xs">
-                  <span class="w-28 text-sm font-semibold capitalize">{name}</span>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <span class="w-28 text-xs font-mono font-bold capitalize text-highlighted">
+                    {name}
+                  </span>
                   <div class="grid grid-cols-11 gap-1 flex-1">
                     <For each={COLOR_SHADES}>
                       {(shade) => (
                         <div class="flex flex-col items-center gap-1">
                           <div
-                            class={`w-full h-10 rounded shadow-sm border border-neutral-200 dark:border-neutral-700 bg-[var(--rl-${name}-${shade})]`}
+                            class={`w-full h-10 rounded shadow-xs border border-default bg-[var(--rl-${name}-${shade})]`}
                             title={`${name}-${shade}`}
                           />
-                          <span class="text-[10px] font-mono text-neutral-500">{shade}</span>
+                          <span class="text-[9px] font-mono text-muted">{shade}</span>
                         </div>
                       )}
                     </For>
@@ -76,10 +82,10 @@ export const TestPage: Component = () => {
         </section>
 
         {/* 2. Component Scoped Color Theming (rl-color-*) */}
-        <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-          <h2 class="text-xl font-bold">Component Variants & Theming</h2>
+        <section class="flex flex-col gap-4 border border-default p-6 rounded-2xl bg-elevated/20">
+          <h2 class="text-xl font-bold text-highlighted">Component Variants & Theming</h2>
 
-          <div class="flex flex-wrap items-center gap-md">
+          <div class="flex flex-wrap items-center gap-3">
             <RLButton label="Primary Solid" color="primary" variant="solid" />
             <RLButton label="Secondary Soft" color="secondary" variant="soft" />
             <RLButton label="Success Outline" color="success" variant="outline" />
@@ -88,7 +94,7 @@ export const TestPage: Component = () => {
             <RLButton label="Info Link" color="info" variant="link" />
           </div>
 
-          <div class="flex flex-wrap items-center gap-sm">
+          <div class="flex flex-wrap items-center gap-2">
             <RLBadge label="Neutral" color="neutral" />
             <RLBadge label="Primary" color="primary" />
             <RLBadge label="Secondary" color="secondary" />
@@ -103,42 +109,42 @@ export const TestPage: Component = () => {
         </section>
 
         {/* 3. Semantic Intent Utility Tokens */}
-        <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-          <h2 class="text-xl font-bold">Semantic Intent Utility Matrix</h2>
+        <section class="flex flex-col gap-4 border border-default p-6 rounded-2xl bg-elevated/20">
+          <h2 class="text-xl font-bold text-highlighted">Semantic Intent Utility Matrix</h2>
 
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
-            <div class="p-md rounded-lg bg-default text-default border border-default shadow-sm">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="p-4 rounded-xl bg-default text-default border border-default shadow-xs">
               <span class="text-xs font-mono block mb-1">bg-default / text-default</span>
               Default surface
             </div>
-            <div class="p-md rounded-lg bg-muted text-muted border border-muted shadow-sm">
+            <div class="p-4 rounded-xl bg-muted text-muted border border-muted shadow-xs">
               <span class="text-xs font-mono block mb-1">bg-muted / text-muted</span>
               Muted surface
             </div>
-            <div class="p-md rounded-lg bg-elevated text-toned border border-elevated shadow-sm">
+            <div class="p-4 rounded-xl bg-elevated text-toned border border-elevated shadow-xs">
               <span class="text-xs font-mono block mb-1">bg-elevated / text-toned</span>
               Elevated surface
             </div>
-            <div class="p-md rounded-lg bg-accented text-accented border border-accented shadow-sm">
+            <div class="p-4 rounded-xl bg-accented text-accented border border-accented shadow-xs">
               <span class="text-xs font-mono block mb-1">bg-accented / text-accented</span>
               Accented surface
             </div>
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
-            <div class="p-md rounded-lg bg-dimmed text-dimmed border border-dimmed">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="p-4 rounded-xl bg-dimmed text-dimmed border border-dimmed">
               <span class="text-xs font-mono block mb-1">bg-dimmed / text-dimmed</span>
               Dimmed
             </div>
-            <div class="p-md rounded-lg bg-toned text-highlighted border border-toned">
+            <div class="p-4 rounded-xl bg-toned text-highlighted border border-toned">
               <span class="text-xs font-mono block mb-1">bg-toned / text-highlighted</span>
               Toned
             </div>
-            <div class="p-md rounded-lg bg-highlighted text-inverted border border-highlighted">
+            <div class="p-4 rounded-xl bg-highlighted text-inverted border border-highlighted">
               <span class="text-xs font-mono block mb-1">bg-highlighted / text-inverted</span>
               Highlighted
             </div>
-            <div class="p-md rounded-lg bg-inverted text-inverted border border-inverted">
+            <div class="p-4 rounded-xl bg-inverted text-inverted border border-inverted">
               <span class="text-xs font-mono block mb-1">bg-inverted / text-inverted</span>
               Inverted
             </div>
@@ -146,8 +152,8 @@ export const TestPage: Component = () => {
         </section>
 
         {/* 4. Grid Layout Showcase */}
-        <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-          <h2 class="text-xl font-bold">Layout Grid Showcase</h2>
+        <section class="flex flex-col gap-4 border border-default p-6 rounded-2xl bg-elevated/20">
+          <h2 class="text-xl font-bold text-highlighted">Layout Grid Showcase</h2>
 
           <RLGrid cols={3}>
             <RLCard
@@ -166,14 +172,16 @@ export const TestPage: Component = () => {
         </section>
 
         {/* 5. UI Slot Overrides */}
-        <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-          <h2 class="text-xl font-bold">Slot UI Overrides & Theme Customization</h2>
-          <p class="text-sm text-neutral-500">
+        <section class="flex flex-col gap-4 border border-default p-6 rounded-2xl bg-elevated/20">
+          <h2 class="text-xl font-bold text-highlighted">
+            Slot UI Overrides & Theme Customization
+          </h2>
+          <p class="text-xs text-muted">
             Testing slot class extension strings and function-based replacements via the{" "}
-            <code>ui</code> prop.
+            <code class="font-mono text-primary">ui</code> prop.
           </p>
 
-          <div class="flex flex-wrap items-center gap-md">
+          <div class="flex flex-wrap items-center gap-4">
             <RLButton
               label="String Override (Border + Shadow)"
               color="primary"
@@ -209,15 +217,15 @@ export const TestPage: Component = () => {
             ui={{
               root: "border-2 border-primary-500/30 bg-primary-50/50 dark:bg-primary-950/20 shadow-xl",
               title: "text-primary-600 font-extrabold text-lg",
-              description: "italic text-neutral-600 dark:text-neutral-400",
+              description: "italic text-muted",
             }}
           >
-            <p class="text-sm text-neutral-500">Body content within styled container slot.</p>
+            <p class="text-xs text-muted">Body content within styled container slot.</p>
           </RLCard>
         </section>
-      </main>
-    </AppLayout>
+      </div>
+    </DevLayout>
   );
 };
 
-export default TestPage;
+export default DevDesignSystemPage;

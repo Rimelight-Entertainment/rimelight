@@ -1,5 +1,5 @@
 import { type Component } from "solid-js";
-import AppLayout from "#layouts/AppLayout";
+import DevLayout from "#layouts/DevLayout";
 import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
 import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.types.ts";
 import { AccordionSandbox } from "../../../components/dev/audits/accordion.audit.tsx";
@@ -67,20 +67,15 @@ const mixedDisabledItems: AccordionItem[] = [
 
 export const DevAccordionPage: Component = () => {
   return (
-    <AppLayout
-      title="Accordion Component Audit"
-      description="Audit and test page for Rimelight UI Accordion (RLAccordion) component"
+    <DevLayout
+      title="Accordion Audit"
+      description="Detailed testing and sandbox for RLAccordion component"
+      currentSection="components"
+      maxWidth="5xl"
     >
-      <main class="container mx-auto px-4 py-10 flex flex-col gap-10 max-w-5xl">
+      <div class="flex flex-col gap-10">
         {/* Header */}
         <div class="border-b border-default pb-6">
-          <div class="flex items-center gap-2 text-xs font-mono text-primary mb-2">
-            <a href="/dev" class="hover:underline">
-              dev
-            </a>
-            <span>/</span>
-            <span class="text-highlighted">accordion</span>
-          </div>
           <h1 class="text-3xl font-extrabold tracking-tight text-highlighted">
             Accordion Component Audit
           </h1>
@@ -197,8 +192,8 @@ export const DevAccordionPage: Component = () => {
             </RLAccordion>
           </div>
         </section>
-      </main>
-    </AppLayout>
+      </div>
+    </DevLayout>
   );
 };
 
