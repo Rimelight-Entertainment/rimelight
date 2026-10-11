@@ -54,24 +54,24 @@ export const t: TFunction = Object.assign(
     let value: unknown = t.raw(key, undefined, locale);
 
     if (typeof params?.["count"] === "number") {
-      const category = t.plural(params["count"], locale);
+      const cat = t.plural(params["count"], locale);
       const obj = value && typeof value === "object" ? (value as Record<string, unknown>) : null;
       value =
-        obj?.[category] ??
+        obj?.[cat] ??
         obj?.["other"] ??
-        t.raw(`${key}.${category}`, undefined, locale) ??
+        t.raw(`${key}.${cat}`, undefined, locale) ??
         t.raw(`${key}.other`, value, locale);
     }
 
     const resolved = value ?? key;
     if (typeof resolved === "function") return String(resolved(params));
     if (typeof resolved === "string" && params) {
-      return resolved.replace(/\{\s*(\w+)\s*}/g, (match, paramKey) => {
-        const paramValue = params[paramKey];
-        if (paramValue == null) return match;
-        return paramKey === "count" && typeof paramValue === "number"
-          ? paramValue.toLocaleString(locale)
-          : String(paramValue as string | number | boolean);
+      return resolved.replace(/\{\s*(\w+)\s*\}/g, (match, paramKey) => {
+        const val = params[paramKey];
+        if (val == null) return match;
+        return paramKey === "count" && typeof val === "number"
+          ? val.toLocaleString(locale)
+          : String(val as string | number | boolean);
       });
     }
     return typeof resolved === "object" && resolved
@@ -81,12 +81,12 @@ export const t: TFunction = Object.assign(
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
       const store = getI18nStore();
-      const get = (targetLocale: string) => {
-        const dict =
-          (store && (store.locale === targetLocale || !targetLocale) && store.translations) ||
-          config.translations[targetLocale];
+      const get = (loc: string) => {
+        const dict = ((store && (store.locale === loc || !loc) && store.translations) ||
+          config.translations[loc]) as Record<string, unknown> | undefined;
         if (!dict) return undefined;
         if (key in dict) return dict[key];
+        if (!key.includes(".")) return undefined;
         return key
           .split(".")
           .reduce<unknown>(
@@ -95,7 +95,8 @@ export const t: TFunction = Object.assign(
             dict,
           );
       };
-      return (get(locale) ?? get(config.defaultLocale) ?? fallback) as T;
+      const val = get(locale) ?? get(config.defaultLocale);
+      return (val !== undefined ? val : fallback) as T;
     },
     array: <T = string>(key: string, fallback: T[] = [], locale = getCurrentLocale()): T[] => {
       const value = t.raw(key, undefined, locale);
