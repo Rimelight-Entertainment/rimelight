@@ -24,8 +24,8 @@ export default function DevIndexPage() {
             description="Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for 19+ Rimelight UI components."
           />
           <RLCard
-            href={getLocaleUrl("/dev/locale")}
-            title="i18n"
+            href={getLocaleUrl("/dev/localization")}
+            title="Localization"
             description="Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n client/server sync."
           />
           <RLCard

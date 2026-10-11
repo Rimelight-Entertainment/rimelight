@@ -838,7 +838,7 @@
     "form_remember_me_label": "Remember me",
     "form_sign_in_button": "Sign In"
   },
-  "dev_locale": {
+  "dev_localization": {
     "title": "Localization",
     "description": "Validating i18n URL rewriting, router params, and RLLocaleSelector reactive sync.",
     "current_values": "Current Values",
