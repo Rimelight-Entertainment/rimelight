@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin, ViteDevServer } from "vite-plus";
-import { flatten, generateTypeDeclarations, writeTypeDeclarations } from "./cli";
+import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
 
 const CLIENT_ID = "virtual:rimelight-i18n";
 const SERVER_ID = "virtual:rimelight-i18n/server";
@@ -17,7 +17,7 @@ export interface RimelightI18nPluginOptions {
 
 export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
   let root = process.cwd();
-  let cache: Record<string, Record<string, string>> | null = null;
+  let cache: Record<string, Record<string, unknown>> | null = null;
 
   const getTranslationsDir = () => path.resolve(root, options.translationsDir ?? "src/i18n");
 
@@ -32,7 +32,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
         .filter((f) => f.endsWith(".json"))
         .map((f) => [
           path.basename(f, ".json"),
-          flatten(JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"))),
+          JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8")) as Record<string, unknown>,
         ]),
     ));
   };

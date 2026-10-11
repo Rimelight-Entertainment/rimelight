@@ -837,5 +837,46 @@
     "form_passphrase_placeholder": "Enter passphrase...",
     "form_remember_me_label": "Remember me",
     "form_sign_in_button": "Sign In"
+  },
+  "dev_locale": {
+    "title": "Localization",
+    "description": "Validating i18n URL rewriting, router params, and RLLocaleSelector reactive sync.",
+    "current_values": "Current Values",
+    "current_locale": "Current Locale",
+    "window_pathname": "Window Pathname",
+    "available_locales": "Available Locales",
+    "goto_locale": "Go to /{locale}",
+    "t_basic_title": "Basic key",
+    "t_basic_description": "Resolves a translation key for the active locale.",
+    "t_interpolation_title": "Interpolation",
+    "t_interpolation_description": "Replaces placeholders in the string using the params object.",
+    "t_count_title": "Plural + number formatting",
+    "t_count_description": "A numeric count selects the plural branch and is locale-formatted.",
+    "t_locale_title": "Explicit locale override",
+    "t_locale_description": "The third argument resolves a locale other than the active one.",
+    "t_raw_title": "t.raw()",
+    "t_raw_description": "Returns the underlying value instead of stringifying it.",
+    "t_raw_fallback_title": "t.raw() fallback",
+    "t_raw_fallback_description": "Returns the fallback when the key does not exist.",
+    "t_array_title": "t.array()",
+    "t_array_description": "Returns a typed array from the dictionary.",
+    "t_plural_title": "t.plural()",
+    "t_plural_description": "Returns the CLDR plural category for a count.",
+    "t_localize_title": "t.localize()",
+    "t_localize_description": "Picks a value from an inline locale dictionary.",
+    "t_missing_title": "Missing key",
+    "t_missing_description": "Unknown keys resolve to the key itself.",
+    "sample_hello": "Hello from Rimelight!",
+    "sample_greeting": "Hello, {name}!",
+    "sample_items": {
+      "one": "{count} item in your cart",
+      "other": "{count} items in your cart"
+    },
+    "sample_tags": ["TypeScript", "SolidJS", "Vite+"],
+    "sample_object": {
+      "name": "Rimelight Entertainment",
+      "founded": 2023,
+      "featured": true
+    }
   }
 }

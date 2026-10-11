@@ -2,6 +2,8 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { config, t, type I18nContextStore } from "./runtime";
 import serverTranslations from "virtual:rimelight-i18n/server";
 
+Object.assign(config.translations, serverTranslations);
+
 /**
  * Universal i18n middleware for locale resolution, route redirection,
  * and Hono context injection (`c.set('locale')` & `c.set('t')`).

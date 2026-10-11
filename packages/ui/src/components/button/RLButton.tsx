@@ -13,6 +13,16 @@ import { resolveLinkAttrs } from "../link/helpers";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 
+const shallowEqual = <T extends Record<string, unknown>>(prev: T, next: T): boolean => {
+  if (prev === next) return true;
+  const prevKeys = Object.keys(prev);
+  if (prevKeys.length !== Object.keys(next).length) return false;
+  for (const key of prevKeys) {
+    if (!Object.is(prev[key], next[key])) return false;
+  }
+  return true;
+};
+
 const NATIVE_BUTTON_TAGS = new Set(["button", "input", "select", "textarea", "summary"]);
 const DISABLED_TAGS = new Set([
   "button",
@@ -109,17 +119,19 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
   const href = () => props.href || (props["to"] as string | undefined);
   const isLink = () => Boolean(href());
 
-  const linkAttrs = createMemo(() =>
-    resolveLinkAttrs({
-      href: href(),
-      external: props.external,
-      target: props.target,
-      rel: props.noRel ? "" : (props.rel ?? undefined),
-      prefetch: props.prefetch,
-      active: props.active,
-      ariaCurrentValue: props.ariaCurrentValue,
-      disabled: isDisabled(),
-    }),
+  const linkAttrs = createMemo(
+    () =>
+      resolveLinkAttrs({
+        href: href(),
+        external: props.external,
+        target: props.target,
+        rel: props.noRel ? "" : (props.rel ?? undefined),
+        prefetch: props.prefetch,
+        active: props.active,
+        ariaCurrentValue: props.ariaCurrentValue,
+        disabled: isDisabled(),
+      }),
+    { equals: shallowEqual },
   );
 
   const externalIconName = () => {
@@ -177,30 +189,32 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     return activeCls || directClass || undefined;
   };
 
-  const classes = createMemo<Record<string, string>>(() =>
-    RLButtonTheme({
-      variant:
-        props.active && props.activeVariant ? props.activeVariant : (props.variant ?? "solid"),
-      color: props.active && props.activeColor ? props.activeColor : (props.color ?? "primary"),
-      size: props.size ?? "md",
-      justify: props.justify,
-      block: props.block,
-      square: isSquare(),
-      fieldGroup: props.fieldGroup,
-      rounded: (props["rounded"] as boolean | string | undefined) ?? false,
-      leading: isLeadingPosition(),
-      trailing: isTrailingPosition(),
-      loading: isLoading(),
-      active: props.active,
-      theme: props.theme,
-      ui: props.ui
-        ? {
-            ...props.ui,
-            root: props.ui.root ?? props.ui.base,
-          }
-        : undefined,
-      class: rootClassOverride(),
-    }),
+  const classes = createMemo<Record<string, string>>(
+    () =>
+      RLButtonTheme({
+        variant:
+          props.active && props.activeVariant ? props.activeVariant : (props.variant ?? "solid"),
+        color: props.active && props.activeColor ? props.activeColor : (props.color ?? "primary"),
+        size: props.size ?? "md",
+        justify: props.justify,
+        block: props.block,
+        square: isSquare(),
+        fieldGroup: props.fieldGroup,
+        rounded: (props["rounded"] as boolean | string | undefined) ?? false,
+        leading: isLeadingPosition(),
+        trailing: isTrailingPosition(),
+        loading: isLoading(),
+        active: props.active,
+        theme: props.theme,
+        ui: props.ui
+          ? {
+              ...props.ui,
+              root: props.ui.root ?? props.ui.base,
+            }
+          : undefined,
+        class: rootClassOverride(),
+      }),
+    { equals: shallowEqual },
   );
 
   const handleClick = (e: MouseEvent) => {

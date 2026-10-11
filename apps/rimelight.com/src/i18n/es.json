@@ -67,5 +67,46 @@
     "sections_cta_description": "Únete a nosotros y contemos nuestra historia juntos.",
     "sections_cta_actions_createAccount": "Crear cuenta",
     "sections_cta_actions_exploreCareers": "Explorar empleos"
+  },
+  "dev_locale": {
+    "title": "Localización",
+    "description": "Validando la reescritura de URL de i18n, los parámetros de ruta y la sincronización reactiva de RLLocaleSelector.",
+    "current_values": "Valores actuales",
+    "current_locale": "Idioma actual",
+    "window_pathname": "Ruta de la ventana",
+    "available_locales": "Idiomas disponibles",
+    "goto_locale": "Ir a /{locale}",
+    "t_basic_title": "Clave básica",
+    "t_basic_description": "Resuelve una clave de traducción para el idioma activo.",
+    "t_interpolation_title": "Interpolación",
+    "t_interpolation_description": "Reemplaza los marcadores de posición en la cadena usando el objeto de parámetros.",
+    "t_count_title": "Plural + formato numérico",
+    "t_count_description": "Un recuento numérico selecciona la variante plural y se formatea por idioma.",
+    "t_locale_title": "Anulación explícita de idioma",
+    "t_locale_description": "El tercer argumento resuelve un idioma distinto al activo.",
+    "t_raw_title": "t.raw()",
+    "t_raw_description": "Devuelve el valor subyacente en lugar de convertirlo en cadena.",
+    "t_raw_fallback_title": "Fallback de t.raw()",
+    "t_raw_fallback_description": "Devuelve el fallback cuando la clave no existe.",
+    "t_array_title": "t.array()",
+    "t_array_description": "Devuelve un array tipado del diccionario.",
+    "t_plural_title": "t.plural()",
+    "t_plural_description": "Devuelve la categoría plural CLDR para un recuento.",
+    "t_localize_title": "t.localize()",
+    "t_localize_description": "Elige un valor de un diccionario de idiomas en línea.",
+    "t_missing_title": "Clave ausente",
+    "t_missing_description": "Las claves desconocidas devuelven la propia clave.",
+    "sample_hello": "¡Hola desde Rimelight!",
+    "sample_greeting": "¡Hola, {name}!",
+    "sample_items": {
+      "one": "{count} artículo en tu carrito",
+      "other": "{count} artículos en tu carrito"
+    },
+    "sample_tags": ["TypeScript", "SolidJS", "Vite+"],
+    "sample_object": {
+      "name": "Rimelight Entertainment",
+      "founded": 2023,
+      "featured": true
+    }
   }
 }

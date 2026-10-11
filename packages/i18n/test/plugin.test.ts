@@ -82,7 +82,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
 
       const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
       expect(serverCode).toContain(`"Início"`);
-      expect(serverCode).toContain(`"nav.home":"Home"`);
+      expect(serverCode).toContain(`"nav":{"home":"Home"}`);
 
       // Verify no physical top-level .rimelight directory was written to disk!
       expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
@@ -138,7 +138,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
           fileName: "locales/en.json",
           source: JSON.stringify(
             {
-              "nav.home": "Home",
+              nav: { home: "Home" },
             },
             null,
             2,
@@ -149,7 +149,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
           fileName: "locales/pt.json",
           source: JSON.stringify(
             {
-              "nav.home": "Início",
+              nav: { home: "Início" },
             },
             null,
             2,
