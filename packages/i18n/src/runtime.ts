@@ -55,11 +55,10 @@ export const t: TFunction = Object.assign(
 
     if (typeof params?.["count"] === "number") {
       const category = t.plural(params["count"], locale);
+      const obj = value && typeof value === "object" ? (value as Record<string, unknown>) : null;
       value =
-        (value && typeof value === "object"
-          ? ((value as Record<string, unknown>)[category] ??
-            (value as Record<string, unknown>)["other"])
-          : undefined) ??
+        obj?.[category] ??
+        obj?.["other"] ??
         t.raw(`${key}.${category}`, undefined, locale) ??
         t.raw(`${key}.other`, value, locale);
     }
@@ -104,13 +103,14 @@ export const t: TFunction = Object.assign(
     },
     plural: (count: number, locale = getCurrentLocale()): Intl.LDMLPluralRule =>
       new Intl.PluralRules(locale).select(count),
-    localize: (value: unknown, locale = getCurrentLocale()): string =>
-      String(
-        (value && typeof value === "object"
-          ? ((value as Record<string, unknown>)[locale] ??
-            (value as Record<string, unknown>)[config.defaultLocale] ??
-            "")
-          : (value ?? "")) as string | number | boolean,
-      ),
+    localize: (value: unknown, locale = getCurrentLocale()): string => {
+      if (value && typeof value === "object") {
+        const dict = value as Record<string, unknown>;
+        return String(
+          (dict[locale] ?? dict[config.defaultLocale] ?? "") as string | number | boolean,
+        );
+      }
+      return value != null ? String(value as string | number | boolean) : "";
+    },
   },
 );

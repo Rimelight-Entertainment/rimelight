@@ -3,13 +3,12 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import type { Plugin } from "vite-plus";
-import {
-  i18n,
-  RESOLVED_VIRTUAL_ID,
-  RESOLVED_VIRTUAL_SERVER_ID,
-  VIRTUAL_ID,
-  VIRTUAL_SERVER_ID,
-} from "../src/plugin";
+import { i18n } from "../src/plugin";
+
+const VIRTUAL_ID = "virtual:rimelight-i18n";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
+const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Invoke a Vite object-hook the way the container does (function or { handler }).
