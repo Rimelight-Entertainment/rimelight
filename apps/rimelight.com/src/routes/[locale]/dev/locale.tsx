@@ -1,7 +1,7 @@
 import { For } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
-import { getCurrentLocale, getLocaleUrl, getLocales, t } from "@rimelight/i18n";
+import { getCurrentLocale, getLocaleUrl, getLocales } from "@rimelight/i18n";
 import { RLButton, RLLocaleSelector } from "@rimelight/ui";
 
 export default function DevLocalizationPage() {
