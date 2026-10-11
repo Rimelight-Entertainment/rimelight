@@ -693,7 +693,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       fixed={true}
       stackIndex={props.stackIndex ?? 1}
       data-theme="dark"
-      class="scroll-header bg-black left-1/2"
+      class="scroll-header bg-black"
       left={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
