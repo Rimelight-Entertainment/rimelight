@@ -29,9 +29,9 @@ const dashboardCards = [
   },
   {
     href: "/dev/og",
-    title: "OpenGraph",
+    title: "SEO",
     description:
-      "Live preview and validation tool for dynamic OG banner generation with customizable title, description, and tags.",
+      "Full @rimelight/seo audit — head generation, meta utilities, structured data (JSON-LD), OG images, sitemap, robots.txt, RSS, LLMs.txt, web manifest, security.txt, and API catalog.",
   },
 ];
 
