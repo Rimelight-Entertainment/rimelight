@@ -367,24 +367,40 @@ describe("RLButton", () => {
       expect(html).not.toContain('data-slot="external-hint"');
     });
 
-    it("appends a trailing external icon for new-tab links", () => {
-      const html = render(() => <RLButton href="https://example.com" label="Open" />);
+    it("appends a trailing external icon for explicit external links", () => {
+      const html = render(() => <RLButton href="https://example.com" external label="Open" />);
       expect(html).toContain('data-slot="trailing-icon"');
       expect(html).toContain("<svg");
     });
 
+    it("omits the external icon for auto-detected external links", () => {
+      const html = render(() => <RLButton href="https://example.com" label="Open" />);
+      expect(html).not.toContain('data-slot="trailing-icon"');
+    });
+
+    it("omits the external icon on icon-only buttons even when external", () => {
+      const html = render(() => (
+        <RLButton href="https://example.com" external icon="twitter" aria-label="Twitter" />
+      ));
+      expect(html).not.toContain('data-slot="trailing-icon"');
+      expect(html).toContain('data-slot="leading-icon"');
+    });
+
     it("removes the external icon via noExternalIcon", () => {
       const html = render(() => (
-        <RLButton href="https://example.com" label="Open" noExternalIcon />
+        <RLButton href="https://example.com" external label="Open" noExternalIcon />
       ));
       expect(html).not.toContain('data-slot="trailing-icon"');
     });
 
     it("renders a custom externalIcon instead of the default one", () => {
-      const defaultHtml = render(() => <RLButton href="https://example.com" label="Open" />);
+      const defaultHtml = render(() => (
+        <RLButton href="https://example.com" external label="Open" />
+      ));
       const customHtml = render(() => (
         <RLButton
           href="https://example.com"
+          external
           label="Open"
           externalIcon="arrowUpFromLine"
           trailingIcon="arrowUpFromLine"

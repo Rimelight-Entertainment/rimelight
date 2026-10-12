@@ -134,8 +134,10 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     { equals: shallowEqual },
   );
 
+  const isIconOnly = () => !props.label && !props.children;
+
   const externalIconName = () => {
-    if (!linkAttrs().isExternal || props.noExternalIcon) return undefined;
+    if (isIconOnly() || !props.external || props.noExternalIcon) return undefined;
     return props.externalIcon || "externalLink";
   };
 

@@ -194,7 +194,9 @@ export interface RLButtonProps {
    */
   to?: string | undefined;
   /**
-   * Forces the link to be treated as an external link.
+   * Marks the link as external. External URLs are still detected for `target`/`rel` and the
+   * screen-reader hint, but the external icon is only rendered when this prop is explicitly `true`.
+   * Never rendered on icon-only buttons.
    *
    * @default false
    */
@@ -206,7 +208,7 @@ export interface RLButtonProps {
    */
   externalIcon?: string | undefined;
   /**
-   * Suppress the automatic external link icon.
+   * Suppress the external link icon.
    *
    * @default false
    */
