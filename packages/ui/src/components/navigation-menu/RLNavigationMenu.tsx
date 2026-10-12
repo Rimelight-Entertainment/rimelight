@@ -18,7 +18,17 @@ import { RLIcon } from "../icon/RLIcon";
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
   const props = allProps;
-  const rest = omit(allProps, "items", "color", "orientation", "theme", "ui", "class", "children");
+  const rest = omit(
+    allProps,
+    "items",
+    "color",
+    "orientation",
+    "theme",
+    "ui",
+    "class",
+    "children",
+    "slots",
+  );
 
   let navRef: HTMLElement | undefined;
   let viewportRef: HTMLDivElement | undefined;
@@ -39,29 +49,46 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
 
   const resolvedChildren = resolveChildren(() => props.children);
 
+  const slotNameOf = (child: any): string | undefined => {
+    if (!child || typeof child !== "object") return undefined;
+    const direct =
+      child.slot ?? child["data-slot"] ?? child?.props?.slot ?? child?.props?.["data-slot"];
+    if (typeof direct === "string") return direct;
+    if (typeof child.getAttribute === "function") {
+      const attr = child.getAttribute("slot") || child.getAttribute("data-slot");
+      if (attr) return attr;
+    }
+    // SSR renders elements as { t: string | string[] } — inspect the opening tag.
+    const t = child.t;
+    const head = Array.isArray(t) ? t[0] : t;
+    if (typeof head === "string") {
+      const m = /\sslot="?([^\s">]+)/.exec(head);
+      if (m) return m[1];
+    }
+    return undefined;
+  };
+
+  const slotCache = new Map<string, unknown>();
   const getSlotContent = (slotName?: string) => {
     if (!slotName) return null;
-    // Astro passes slot="name-content" as a prop named "name-content" to SolidJS client:load components
-    const fromProp = allProps[`${slotName}-content`] ?? allProps[slotName];
-    if (fromProp) return fromProp;
-    const all = resolvedChildren();
-    const arr = Array.isArray(all) ? all : all ? [all] : [];
-    const match = arr.find((child: any) => {
-      if (!child) return false;
-      if (typeof child === "object") {
-        const s =
-          child.slot ??
-          child["data-slot"] ??
-          child?.props?.slot ??
-          child?.props?.["data-slot"] ??
-          (typeof child.getAttribute === "function"
-            ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined);
+    if (slotCache.has(slotName)) return slotCache.get(slotName) ?? null;
+    const slots = allProps["slots"] as Record<string, any> | undefined;
+    let raw: any = slots ? slots[slotName] : undefined;
+    if (raw === undefined) {
+      raw = allProps[`${slotName}-content`] ?? allProps[slotName];
+    }
+    if (raw === undefined) {
+      const all = resolvedChildren();
+      const arr = Array.isArray(all) ? all : all ? [all] : [];
+      raw = arr.find((child: any) => {
+        const s = slotNameOf(child);
         return s === `${slotName}-content` || s === slotName;
-      }
-      return false;
-    });
-    return match || null;
+      });
+    }
+    const content = typeof raw === "function" ? raw() : raw;
+    const resolved = content ?? null;
+    slotCache.set(slotName, resolved);
+    return resolved;
   };
 
   const currentPath = () => {

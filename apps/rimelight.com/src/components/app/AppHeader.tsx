@@ -701,6 +701,144 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLNavigationMenu
               items={leftLinks()}
               variant="link"
+              slots={{
+                "grand-tale": () => (
+                  <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                    <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                      <RLImage
+                        class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                        src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
+                        alt=""
+                      />
+                      <div class="flex flex-col gap-sm flex-2">
+                        <div class="grid grid-cols-2 gap-xl gap-y-4">
+                          <RLLinkGroup
+                            {...grandTaleLinkGroup()}
+                            ui={{ title: "!text-primary-500" }}
+                          />
+                          <div class="flex flex-col gap-lg">
+                            <RLLinkGroup
+                              {...grandTaleSeriesLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup
+                              {...grandTaleBooksLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup
+                              {...grandTaleComicsLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bg-muted p-lg w-64 shrink-0">
+                      <RLLinkGroup
+                        {...grandTaleResourcesGroup()}
+                        ui={{ title: "!text-primary-500" }}
+                      />
+                      <RLLinkGroup
+                        {...grandTaleSocialsGroup()}
+                        ui={{ title: "!text-primary-500" }}
+                      />
+                    </div>
+                  </div>
+                ),
+                community: () => (
+                  <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                    <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                      <RLImage
+                        class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                        src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
+                        alt=""
+                      />
+                      <div class="flex flex-col gap-sm flex-2">
+                        <div class="grid grid-cols-2 gap-1">
+                          <RLLinkGroup {...commForumsGroup()} ui={{ title: "!text-primary-500" }} />
+                          <RLLinkGroup {...commEventsGroup()} ui={{ title: "!text-primary-500" }} />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bg-muted p-lg w-64 shrink-0">
+                      <RLLinkGroup {...commSocialsGroup()} ui={{ title: "!text-primary-500" }} />
+                    </div>
+                  </div>
+                ),
+                company: () => (
+                  <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                    <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                      <RLImage
+                        class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                        src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
+                        alt=""
+                      />
+                      <div class="flex flex-col gap-sm flex-2">
+                        <div class="grid grid-cols-3 gap-1">
+                          <RLLinkGroup {...compStudioGroup()} ui={{ title: "!text-primary-500" }} />
+                          <RLLinkGroup
+                            {...compCareersGroup()}
+                            ui={{ title: "!text-primary-500" }}
+                          />
+                          <RLLinkGroup {...compNewsGroup()} ui={{ title: "!text-primary-500" }} />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bg-muted p-lg w-64 shrink-0">
+                      <RLLinkGroup {...compResourcesGroup()} ui={{ title: "!text-primary-500" }} />
+                      <RLLinkGroup {...compSocialsGroup()} ui={{ title: "!text-primary-500" }} />
+                    </div>
+                  </div>
+                ),
+                store: () => (
+                  <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                    <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                      <RLImage
+                        class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                        src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
+                        alt=""
+                      />
+                      <div class="flex flex-col gap-sm flex-2">
+                        <div class="grid grid-cols-3 gap-xl gap-y-4">
+                          <div class="flex flex-col gap-lg">
+                            <RLLinkGroup
+                              {...storeDealsGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                          </div>
+                          <div class="flex flex-col gap-lg">
+                            <RLLinkGroup
+                              {...storeClothingGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup
+                              {...storeAccessoriesGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                          </div>
+                          <div class="flex flex-col gap-lg">
+                            <RLLinkGroup
+                              {...storeApparelGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup
+                              {...storeCollectiblesGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup {...storeArtGroup()} ui={{ title: "!text-primary-500" }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bg-muted p-lg w-64 shrink-0">
+                      <RLLinkGroup
+                        {...storeAssistanceGroup()}
+                        ui={{ title: "!text-primary-500" }}
+                      />
+                    </div>
+                  </div>
+                ),
+              }}
               ui={{
                 viewportWrapper:
                   "top-[var(--rl-total-header-height,64px)] flex justify-center fixed left-0 right-0 z-[150] mt-0 bg-transparent",
@@ -708,131 +846,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                   "w-full rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden",
                 link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
               }}
-            >
-              {/* Grand Tale Mega Menu */}
-              <div
-                slot="grand-tale-content"
-                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
-              >
-                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                  <RLImage
-                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                    src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
-                    alt=""
-                  />
-                  <div class="flex flex-col gap-sm flex-2">
-                    <div class="grid grid-cols-2 gap-xl gap-y-4">
-                      <RLLinkGroup {...grandTaleLinkGroup()} ui={{ title: "!text-primary-500" }} />
-                      <div class="flex flex-col gap-lg">
-                        <RLLinkGroup
-                          {...grandTaleSeriesLinkGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
-                        <RLLinkGroup
-                          {...grandTaleBooksLinkGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
-                        <RLLinkGroup
-                          {...grandTaleComicsLinkGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="bg-muted p-lg w-64 shrink-0">
-                  <RLLinkGroup {...grandTaleResourcesGroup()} ui={{ title: "!text-primary-500" }} />
-                  <RLLinkGroup {...grandTaleSocialsGroup()} ui={{ title: "!text-primary-500" }} />
-                </div>
-              </div>
-
-              {/* Community Mega Menu */}
-              <div
-                slot="community-content"
-                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
-              >
-                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                  <RLImage
-                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                    src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
-                    alt=""
-                  />
-                  <div class="flex flex-col gap-sm flex-2">
-                    <div class="grid grid-cols-2 gap-1">
-                      <RLLinkGroup {...commForumsGroup()} ui={{ title: "!text-primary-500" }} />
-                      <RLLinkGroup {...commEventsGroup()} ui={{ title: "!text-primary-500" }} />
-                    </div>
-                  </div>
-                </div>
-                <div class="bg-muted p-lg w-64 shrink-0">
-                  <RLLinkGroup {...commSocialsGroup()} ui={{ title: "!text-primary-500" }} />
-                </div>
-              </div>
-
-              {/* Company Mega Menu */}
-              <div
-                slot="company-content"
-                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
-              >
-                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                  <RLImage
-                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                    src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
-                    alt=""
-                  />
-                  <div class="flex flex-col gap-sm flex-2">
-                    <div class="grid grid-cols-3 gap-1">
-                      <RLLinkGroup {...compStudioGroup()} ui={{ title: "!text-primary-500" }} />
-                      <RLLinkGroup {...compCareersGroup()} ui={{ title: "!text-primary-500" }} />
-                      <RLLinkGroup {...compNewsGroup()} ui={{ title: "!text-primary-500" }} />
-                    </div>
-                  </div>
-                </div>
-                <div class="bg-muted p-lg w-64 shrink-0">
-                  <RLLinkGroup {...compResourcesGroup()} ui={{ title: "!text-primary-500" }} />
-                  <RLLinkGroup {...compSocialsGroup()} ui={{ title: "!text-primary-500" }} />
-                </div>
-              </div>
-
-              {/* Store Mega Menu */}
-              <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
-                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                  <RLImage
-                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                    src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
-                    alt=""
-                  />
-                  <div class="flex flex-col gap-sm flex-2">
-                    <div class="grid grid-cols-3 gap-xl gap-y-4">
-                      <div class="flex flex-col gap-lg">
-                        <RLLinkGroup {...storeDealsGroup()} ui={{ title: "!text-primary-500" }} />
-                      </div>
-                      <div class="flex flex-col gap-lg">
-                        <RLLinkGroup
-                          {...storeClothingGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
-                        <RLLinkGroup
-                          {...storeAccessoriesGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
-                      </div>
-                      <div class="flex flex-col gap-lg">
-                        <RLLinkGroup {...storeApparelGroup()} ui={{ title: "!text-primary-500" }} />
-                        <RLLinkGroup
-                          {...storeCollectiblesGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
-                        <RLLinkGroup {...storeArtGroup()} ui={{ title: "!text-primary-500" }} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="bg-muted p-lg w-64 shrink-0">
-                  <RLLinkGroup {...storeAssistanceGroup()} ui={{ title: "!text-primary-500" }} />
-                </div>
-              </div>
-            </RLNavigationMenu>
+            />
           </div>
 
           <div class="block md:hidden">

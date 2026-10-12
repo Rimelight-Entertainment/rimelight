@@ -35,6 +35,8 @@ export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, "type"
   [key: string]: any;
 }
 
+export type NavigationMenuSlotRenderer = (item?: NavigationMenuItem, index?: number) => JSX.Element;
+
 export interface RLNavigationMenuProps {
   theme?: string;
   /**
@@ -58,5 +60,9 @@ export interface RLNavigationMenuProps {
    */
   class?: any;
   children?: JSX.Element;
+  /**
+   * Named mega-menu content keyed by `item.slot` (e.g. `slots["grand-tale"]`).
+   */
+  slots?: Record<string, NavigationMenuSlotRenderer | JSX.Element>;
   [key: string]: any;
 }

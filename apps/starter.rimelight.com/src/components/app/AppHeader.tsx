@@ -201,39 +201,37 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLNavigationMenu
               items={leftLinks()}
               variant="link"
-              ui={{
-                viewportWrapper:
-                  "top-[var(--rl-total-header-height,64px)] flex justify-center fixed left-0 right-0 z-[150] mt-0 bg-transparent",
-                viewport:
-                  "w-full rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden",
-                link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
-              }}
-            >
-              {/* Features Mega Menu */}
-              <div
-                slot="features-content"
-                class="flex flex-col lg:flex-row gap-lg bg-default w-full"
-              >
-                <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                  <RLImage
-                    class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                    src="https://cdn.rimelight.com/images/placeholder.webp"
-                    alt=""
-                  />
+              slots={{
+                features: () => (
+                  <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                    <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                      <RLImage
+                        class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                        src="https://cdn.rimelight.com/images/placeholder.webp"
+                        alt=""
+                      />
 
-                  <div class="flex flex-col gap-sm flex-2">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                      <RLLinkGroup {...foundationLinkGroup()} ui={{ title: "!text-primary-500" }} />
-                      <RLLinkGroup {...componentsLinkGroup()} ui={{ title: "!text-primary-500" }} />
+                      <div class="flex flex-col gap-sm flex-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                          <RLLinkGroup
+                            {...foundationLinkGroup()}
+                            ui={{ title: "!text-primary-500" }}
+                          />
+                          <RLLinkGroup
+                            {...componentsLinkGroup()}
+                            ui={{ title: "!text-primary-500" }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="bg-muted p-lg w-64 shrink-0">
+                      <RLLinkGroup {...resourcesLinkGroup()} ui={{ title: "!text-primary-500" }} />
                     </div>
                   </div>
-                </div>
-
-                <div class="bg-muted p-lg w-64 shrink-0">
-                  <RLLinkGroup {...resourcesLinkGroup()} ui={{ title: "!text-primary-500" }} />
-                </div>
-              </div>
-            </RLNavigationMenu>
+                ),
+              }}
+            />
           </div>
 
           <div class="block md:hidden">
@@ -255,45 +253,44 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 items={leftLinks()}
                 orientation="vertical"
                 variant="link"
-                ui={{
-                  link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
-                }}
-              >
-                {/* Features Mega Menu (Mobile/Vertical) */}
-                <div
-                  slot="features-content"
-                  class="flex flex-col lg:flex-row gap-lg bg-default w-full"
-                >
-                  <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                    <RLImage
-                      class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
-                      src="https://cdn.rimelight.com/images/placeholder.webp"
-                      alt=""
-                      ui={{
-                        trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
-                        triggerImage: "w-full h-full object-cover",
-                      }}
-                    />
-
-                    <div class="flex flex-col gap-sm flex-2">
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                        <RLLinkGroup
-                          {...foundationLinkGroup()}
-                          ui={{ title: "!text-primary-500" }}
+                slots={{
+                  features: () => (
+                    <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                      <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                        <RLImage
+                          class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
+                          src="https://cdn.rimelight.com/images/placeholder.webp"
+                          alt=""
+                          ui={{
+                            trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
+                            triggerImage: "w-full h-full object-cover",
+                          }}
                         />
+
+                        <div class="flex flex-col gap-sm flex-2">
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                            <RLLinkGroup
+                              {...foundationLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup
+                              {...componentsLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="bg-muted p-lg w-64 shrink-0">
                         <RLLinkGroup
-                          {...componentsLinkGroup()}
+                          {...resourcesLinkGroup()}
                           ui={{ title: "!text-primary-500" }}
                         />
                       </div>
                     </div>
-                  </div>
-
-                  <div class="bg-muted p-lg w-64 shrink-0">
-                    <RLLinkGroup {...resourcesLinkGroup()} ui={{ title: "!text-primary-500" }} />
-                  </div>
-                </div>
-              </RLNavigationMenu>
+                  ),
+                }}
+              />
             </RLSlideover>
           </div>
         </div>
