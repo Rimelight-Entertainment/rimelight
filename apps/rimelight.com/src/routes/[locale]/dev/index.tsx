@@ -37,25 +37,25 @@ const dashboardCards = [
 
 export default function DevIndexPage() {
   return (
-    /*<DevLayout
-      title="Dashboard"
-      description="Central hub for component auditing, runtime benchmarks, and testing utilities"
-    >*/
-    <RLPageSection
+    <DevLayout
       title="Dashboard"
       description="Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy."
     >
-      <RLGrid cols={3} gap="lg">
-        {dashboardCards.map((card) => (
-          <RLCard
-            key={card.href}
-            href={getLocaleUrl(card.href)}
-            title={card.title}
-            description={card.description}
-          />
-        ))}
-      </RLGrid>
-    </RLPageSection>
-    /*</DevLayout>*/
+      <RLPageSection
+        title="Dashboard"
+        description="Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy."
+      >
+        <RLGrid cols={3} gap="lg">
+          {dashboardCards.map((card) => (
+            <RLCard
+              key={card.href}
+              href={getLocaleUrl(card.href)}
+              title={card.title}
+              description={card.description}
+            />
+          ))}
+        </RLGrid>
+      </RLPageSection>
+    </DevLayout>
   );
 }

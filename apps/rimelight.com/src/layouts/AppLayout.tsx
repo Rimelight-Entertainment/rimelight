@@ -41,7 +41,9 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
 
   onSettled(() => {
     if (typeof document !== "undefined") {
-      setHasConsent(document.cookie.includes("cookie-consent="));
+      queueMicrotask(() => {
+        setHasConsent(document.cookie.includes("cookie-consent="));
+      });
     }
   });
 

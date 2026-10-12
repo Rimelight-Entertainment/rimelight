@@ -83,9 +83,9 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     }),
   );
 
-  const resolvedChildren = resolveChildren(() => props.children);
-
   const getSlotChild = (name: string) => {
+    if (!props.children) return undefined;
+    const resolvedChildren = resolveChildren(() => props.children);
     const all = resolvedChildren();
     const arr = Array.isArray(all) ? all : all ? [all] : [];
     return arr.find((child: any) => {
@@ -106,9 +106,21 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   };
 
   const getBodyChildren = () => {
+    if (!props.children) return null;
+    if (
+      props.trigger ||
+      props.triggerSlot ||
+      props.footer ||
+      props.footerSlot ||
+      props.titleSlot ||
+      props.descriptionSlot
+    ) {
+      return props.children;
+    }
+    const resolvedChildren = resolveChildren(() => props.children);
     const all = resolvedChildren();
     const arr = Array.isArray(all) ? all : all ? [all] : [];
-    return arr.filter((child: any) => {
+    const filtered = arr.filter((child: any) => {
       if (!child) return false;
       if (typeof child === "object") {
         const s =
@@ -123,17 +135,25 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
       }
       return true;
     });
+    return filtered.length > 0 ? filtered : props.children;
   };
 
   const triggerContent = () => props.trigger ?? props.triggerSlot ?? getSlotChild("trigger");
   const footerContent = () => props.footer ?? props.footerSlot ?? getSlotChild("footer");
-  const titleContent = () => props.titleSlot ?? getSlotChild("title") ?? props.title;
+  const titleContent = () => props.titleSlot ?? props.title ?? getSlotChild("title");
   const descriptionContent = () =>
-    props.descriptionSlot ?? getSlotChild("description") ?? props.description;
+    props.descriptionSlot ?? props.description ?? getSlotChild("description");
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
-      {props.triggerLabel ? (
+      <Show
+        when={props.triggerLabel}
+        fallback={
+          <span class="inline-flex cursor-pointer" onClick={() => setOpenState(true)}>
+            {triggerContent()}
+          </span>
+        }
+      >
         <button
           type="button"
           class={resolvedClasses().trigger}
@@ -142,11 +162,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
         >
           {props.triggerLabel}
         </button>
-      ) : triggerContent() ? (
-        <span class="inline-flex cursor-pointer" onClick={() => setOpenState(true)}>
-          {triggerContent()}
-        </span>
-      ) : null}
+      </Show>
 
       <Show when={!unmountOnHide() || isOpen()}>
         <Portal>
@@ -175,26 +191,26 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
             </button>
 
             <div class={resolvedClasses().header} data-slot="header">
-              {titleContent() && (
+              <Show when={titleContent()}>
                 <h3 class={resolvedClasses().title} data-slot="title">
                   {titleContent()}
                 </h3>
-              )}
+              </Show>
 
-              {descriptionContent() && (
+              <Show when={descriptionContent()}>
                 <p class={resolvedClasses().description} data-slot="description">
                   {descriptionContent()}
                 </p>
-              )}
+              </Show>
             </div>
 
             <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{getBodyChildren()}</div>
 
-            {footerContent() !== undefined && (
+            <Show when={footerContent() !== undefined}>
               <div class={resolvedClasses().footer} data-slot="footer">
                 {footerContent()}
               </div>
-            )}
+            </Show>
           </div>
         </Portal>
       </Show>

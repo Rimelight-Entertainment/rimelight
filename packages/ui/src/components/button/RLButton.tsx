@@ -279,92 +279,76 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
   const CustomRoot = dynamic(() => (props.as ?? "div") as string);
   const isCustomRoot = () => !isLink() && Boolean(props.as) && props.as !== "button";
 
-  const renderLeading = () => {
-    if (props.leadingSlot !== undefined && props.leadingSlot !== null) {
-      return props.leadingSlot;
-    }
-    if (props.leading !== undefined && typeof props.leading !== "boolean") {
-      return props.leading as JSX.Element;
-    }
+  const buttonContent = () => (
+    <>
+      <Show when={props.leadingSlot !== undefined && props.leadingSlot !== null}>
+        {props.leadingSlot}
+      </Show>
+      <Show when={props.leadingSlot === undefined || props.leadingSlot === null}>
+        <Show when={props.leading !== undefined && typeof props.leading !== "boolean"}>
+          {props.leading as JSX.Element}
+        </Show>
+        <Show when={props.leading === undefined || typeof props.leading === "boolean"}>
+          <Show when={leadingIconName()}>
+            {(iconName) => (
+              <RLIcon
+                name={iconName()}
+                size="none"
+                class={classes()["leadingIcon"]}
+                data-slot="leading-icon"
+                aria-hidden="true"
+              />
+            )}
+          </Show>
+          <Show when={!leadingIconName() && props.avatar && !isLoading()}>
+            <span class={classes()["leadingAvatar"]} data-slot="leading-avatar">
+              <RLAvatar
+                {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
+                size={
+                  (typeof props.avatar === "object" && props.avatar?.size) ||
+                  (classes()["leadingAvatarSize"] as any)
+                }
+                class={classes()["leadingAvatar"]}
+              />
+            </span>
+          </Show>
+        </Show>
+      </Show>
 
-    const iconName = leadingIconName();
-    if (iconName) {
-      return (
-        <RLIcon
-          name={iconName}
-          size="none"
-          class={classes()["leadingIcon"]}
-          data-slot="leading-icon"
-          aria-hidden="true"
-        />
-      );
-    }
-
-    if (props.avatar && !isLoading()) {
-      return (
-        <span class={classes()["leadingAvatar"]} data-slot="leading-avatar">
-          <RLAvatar
-            {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-            size={
-              (typeof props.avatar === "object" && props.avatar?.size) ||
-              (classes()["leadingAvatarSize"] as any)
-            }
-            class={classes()["leadingAvatar"]}
-          />
-        </span>
-      );
-    }
-
-    return null;
-  };
-
-  const renderContent = () => {
-    if (props.children !== undefined && props.children !== null) {
-      return props.children;
-    }
-    if (props.label !== undefined && props.label !== null) {
-      return (
+      <Show when={props.children !== undefined && props.children !== null}>{props.children}</Show>
+      <Show
+        when={
+          (props.children === undefined || props.children === null) &&
+          props.label !== undefined &&
+          props.label !== null
+        }
+      >
         <span class={classes()["label"]} data-slot="label">
           {props.label}
         </span>
-      );
-    }
-    return null;
-  };
+      </Show>
 
-  const renderTrailing = () => {
-    if (props.trailingSlot !== undefined && props.trailingSlot !== null) {
-      return props.trailingSlot;
-    }
-    if (props.trailing !== undefined && typeof props.trailing !== "boolean") {
-      return props.trailing as JSX.Element;
-    }
-
-    const iconName = trailingIconName();
-    if (iconName) {
-      return (
-        <RLIcon
-          name={iconName}
-          size="none"
-          class={classes()["trailingIcon"]}
-          data-slot="trailing-icon"
-          aria-hidden="true"
-        />
-      );
-    }
-
-    return null;
-  };
-
-  const leadingNode = createMemo(() => renderLeading());
-  const contentNode = createMemo(() => renderContent());
-  const trailingNode = createMemo(() => renderTrailing());
-
-  const buttonContent = () => (
-    <>
-      <Show when={leadingNode()}>{leadingNode()}</Show>
-      <Show when={contentNode()}>{contentNode()}</Show>
-      <Show when={trailingNode()}>{trailingNode()}</Show>
+      <Show when={props.trailingSlot !== undefined && props.trailingSlot !== null}>
+        {props.trailingSlot}
+      </Show>
+      <Show when={props.trailingSlot === undefined || props.trailingSlot === null}>
+        <Show when={props.trailing !== undefined && typeof props.trailing !== "boolean"}>
+          {props.trailing as JSX.Element}
+        </Show>
+        <Show when={props.trailing === undefined || typeof props.trailing === "boolean"}>
+          <Show when={trailingIconName()}>
+            {(iconName) => (
+              <RLIcon
+                name={iconName()}
+                size="none"
+                class={classes()["trailingIcon"]}
+                data-slot="trailing-icon"
+                aria-hidden="true"
+              />
+            )}
+          </Show>
+        </Show>
+      </Show>
     </>
   );
 
