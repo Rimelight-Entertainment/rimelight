@@ -1,0 +1,273 @@
+import { createSignal, For } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
+import { ICONS } from "@rimelight/ui/icons.raw.ts";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+
+const SIZES = ["xs", "sm", "md", "lg", "xl", "none"] as const;
+const COLORS = AUDIT_COLORS;
+
+const FEATURED = [
+  "star",
+  "rocket",
+  "sparkles",
+  "image",
+  "download",
+  "externalLink",
+  "search",
+  "settings",
+  "user",
+  "lock",
+  "eye",
+  "bell",
+  "check",
+  "info",
+  "moon",
+  "sun",
+  "play",
+  "quote",
+  "share",
+  "layers",
+] as const;
+
+const ALL_ICONS = Object.keys(ICONS);
+
+export const IconSandbox = (): JSX.Element => {
+  const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
+  const [color, setColor] = createSignal<string>("primary");
+
+  return (
+    <div class="flex flex-col gap-6">
+      {/* Control Toolbar */}
+      <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="text-muted mr-1">Size:</span>
+          <For each={SIZES}>
+            {(s) => (
+              <button
+                type="button"
+                onClick={() => setSize(s)}
+                class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+                  size() === s
+                    ? "bg-primary text-inverted font-bold"
+                    : "bg-elevated text-muted hover:text-highlighted border border-default"
+                }`}
+              >
+                {s}
+              </button>
+            )}
+          </For>
+        </div>
+
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="text-muted mr-1">Color:</span>
+          <For each={COLORS}>
+            {(c) => (
+              <button
+                type="button"
+                onClick={() => setColor(c)}
+                class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+                  color() === c
+                    ? "bg-primary text-inverted font-bold"
+                    : "bg-elevated text-muted hover:text-highlighted border border-default"
+                }`}
+              >
+                {c}
+              </button>
+            )}
+          </For>
+        </div>
+      </div>
+
+      {/* Preview Area */}
+      <div class="p-8 rounded-xl border border-default bg-elevated/10 flex flex-col gap-6">
+        <div class="flex items-center justify-center gap-8">
+          <For each={FEATURED}>
+            {(name) => <RLIcon name={name} size={size()} class={`text-${color()}`} />}
+          </For>
+        </div>
+        <div class="text-center text-xs text-muted font-mono">
+          size="{size()}" class="text-{color()}"
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const iconAudit: ComponentAuditDefinition = {
+  id: "icon",
+  name: "Icon",
+  category: "Media & Visuals",
+  status: "Passed",
+  description:
+    "A polymorphic SVG icon primitive resolving built-in collection nodes, raw SVG strings, Iconify class names, custom node arrays, and per-instance name overrides through the UI resolver, with scale tokens and full currentColor inheritance.",
+  importPath: "@rimelight/ui/components/icon/RLIcon.tsx",
+  renderSandbox: () => <IconSandbox />,
+  testScenarios: [
+    {
+      id: "size-scale",
+      title: "All Size Variants (xs to xl + none)",
+      description:
+        "Scale tokens from xs (12px) through xl (32px), plus an unstyled option that inherits the parent font size.",
+      render: () => (
+        <div class="flex items-center gap-6 flex-wrap">
+          <For each={SIZES}>
+            {(s) => (
+              <div class="flex flex-col items-center gap-2">
+                <RLIcon name="star" size={s} class="text-highlighted" />
+                <span class="text-[10px] font-mono text-muted">{s}</span>
+              </div>
+            )}
+          </For>
+        </div>
+      ),
+    },
+    {
+      id: "color-inheritance",
+      title: "Color Inheritance via currentColor",
+      description:
+        "Icons inherit text color from any utility class, enabling full palette theming with no color prop.",
+      render: () => (
+        <div class="flex items-center gap-4 flex-wrap">
+          <For each={COLORS}>
+            {(c) => (
+              <div class="flex flex-col items-center gap-2">
+                <RLIcon name="rocket" size="lg" class={`text-${c}`} />
+                <span class="text-[10px] font-mono text-muted">{c}</span>
+              </div>
+            )}
+          </For>
+        </div>
+      ),
+    },
+    {
+      id: "default-collection",
+      title: `Default Collection (${ALL_ICONS.length} icons)`,
+      description:
+        "Every built-in SVG node definition shipped with the 'rl' collection, resolved synchronously at render time.",
+      render: () => (
+        <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+          <For each={ALL_ICONS}>
+            {(name) => (
+              <div class="flex flex-col items-center justify-center gap-1 p-2 rounded-lg border border-default bg-elevated/20">
+                <RLIcon name={name} class="text-highlighted" />
+                <span class="w-full truncate text-center text-[9px] font-mono text-muted">
+                  {name}
+                </span>
+              </div>
+            )}
+          </For>
+        </div>
+      ),
+    },
+    {
+      id: "custom-raw-svg",
+      title: "Custom Raw SVG String",
+      description:
+        "Passing a raw SVG markup string through the custom prop renders it verbatim when no built-in node matches.",
+      render: () => (
+        <div class="flex items-center gap-6">
+          <RLIcon
+            name="customSvg"
+            size="xl"
+            class="text-primary"
+            custom={
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+            }
+          />
+          <RLIcon
+            name="customNodes"
+            size="xl"
+            class="text-secondary"
+            custom={[
+              ["circle", { cx: "12", cy: "12", r: "9" }],
+              ["path", { d: "M12 7v5l3 2" }],
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "inline-inline-flow",
+      title: "Inline Flow with Text & Badges",
+      description:
+        "Icons align seamlessly inline within text runs and controls thanks to inline-flex leading-none sizing.",
+      render: () => (
+        <div class="flex flex-col gap-3 text-sm text-highlighted">
+          <p class="flex items-center gap-2">
+            <RLIcon name="info" class="text-info" />
+            <span>Deployments are synced automatically.</span>
+          </p>
+          <p class="flex items-center gap-2">
+            <RLIcon name="circleCheck" class="text-success" />
+            <span>All checks passed with no warnings.</span>
+          </p>
+          <p class="flex items-center gap-2">
+            <RLIcon name="alertTriangle" class="text-warning" />
+            <span>Rate limit approaching — 82% consumed.</span>
+          </p>
+          <p class="flex items-center gap-2">
+            <RLIcon name="circleX" class="text-error" />
+            <span>Build failed at step 4 of 9.</span>
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: "missing-icon",
+      title: "Missing / Empty Icon Resolution",
+      description:
+        "Unresolvable names render an empty, accessible span without throwing or emitting stray markup.",
+      render: () => (
+        <div class="flex items-center gap-6 p-4 rounded-lg border border-dashed border-default bg-elevated/10">
+          <RLIcon name="does-not-exist" size="lg" class="text-muted" />
+          <RLIcon name="" size="lg" class="text-muted" />
+          <span class="text-xs text-muted">Empty spans, no crash.</span>
+        </div>
+      ),
+    },
+  ],
+  checklist: [
+    {
+      criterion: "Nuxt UI v4 API parity (Icon)",
+      status: "pass",
+      notes: "Matches name, size, class, ui and custom overrides with an extended resolver.",
+    },
+    {
+      criterion: "Multi-source icon resolution cascade",
+      status: "pass",
+      notes:
+        "Resolves custom node arrays -> raw SVG -> built-in collection nodes -> Iconify class names -> empty.",
+    },
+    {
+      criterion: "Deterministic SSR-safe node rendering",
+      status: "pass",
+      notes: "Uses Dynamic tag rendering over cached node maps, avoiding hydration mismatches.",
+    },
+    {
+      criterion: "Full currentColor inheritance",
+      status: "pass",
+      notes: "SVG uses stroke='currentColor' so any text-* utility drives the icon color.",
+    },
+    {
+      criterion: "Accessible decorative default",
+      status: "pass",
+      notes: "Root span and SVG both carry aria-hidden='true' for decorative use.",
+    },
+    {
+      criterion: "No inline styles (CSP-safe, UnoCSS only)",
+      status: "pass",
+      notes: "All sizing lives in the icon theme slots, no style attributes emitted.",
+    },
+    {
+      criterion: "No innerHTML / dangerouslySetInnerHTML",
+      status: "pass",
+      notes: "Nodes are rendered as real Solid elements via Dynamic, not injected markup.",
+    },
+    {
+      criterion: "Audited components render bare (no harness wrappers)",
+      status: "pass",
+      notes: "All scenario renders return bare RLIcon components directly.",
+    },
+  ],
+};

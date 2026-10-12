@@ -16,6 +16,8 @@ import { chipAudit } from "./chip.audit";
 import { collapsibleAudit } from "./collapsible.audit";
 import { compareAudit } from "./compare.audit";
 import { confirmAudit } from "./confirm.audit";
+import { iconAudit } from "./icon.audit";
+import { imageAudit } from "./image.audit";
 import { modalAudit } from "./modal.audit";
 import { pageSectionAudit } from "./page-section.audit";
 import { tableAudit } from "./table.audit";
@@ -40,6 +42,8 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   collapsible: collapsibleAudit,
   compare: compareAudit,
   confirm: confirmAudit,
+  icon: iconAudit,
+  image: imageAudit,
   modal: modalAudit,
   "page-section": pageSectionAudit,
   table: tableAudit,
