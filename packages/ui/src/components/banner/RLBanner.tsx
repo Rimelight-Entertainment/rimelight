@@ -18,7 +18,7 @@ import { useHeaderStack } from "../header/useHeaderStack";
 import { resolveLinkAttrs } from "../link/helpers";
 import type { RLButtonProps } from "../button/button.types";
 
-/** Value written to localStorage; must match the pre-hydration head script check. */
+/** Value written to localStorage to persist dismissal across visits. */
 const DISMISSED_VALUE = "true";
 
 export const RLBanner: Component<RLBannerProps> = (props) => {
@@ -87,8 +87,8 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
 
   const isClosable = () => Boolean(props.close !== undefined ? props.close : props.dismissable);
 
-  // Always start visible so SSR and the first client render match. The head
-  // script hides dismissed banners pre-hydration; we sync after settling.
+  // Always start visible so SSR and the first client render match, then hide
+  // after settling if a persisted dismissal key is present.
   const [dismissed, setDismissed] = createSignal(false);
 
   onSettled(() => {
