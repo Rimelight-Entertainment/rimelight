@@ -170,7 +170,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
                 onClick={closeHelp}
                 data-slot="close"
               >
-                <RLIcon name="close" class="size-4" />
+                <RLIcon name="x" class="size-4" />
               </button>
             </div>
 

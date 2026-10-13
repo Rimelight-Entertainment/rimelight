@@ -140,7 +140,7 @@ export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
                 onKeyDown={(e) => handleKeyDown(i(), e)}
               >
                 <RLIcon
-                  name={isHorizontal() ? "gripVertical" : "gripHorizontal"}
+                  name={isHorizontal() ? "grip-vertical" : "grip-horizontal"}
                   class="size-3.5 text-muted/50"
                   aria-hidden="true"
                 />

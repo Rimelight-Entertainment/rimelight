@@ -53,16 +53,16 @@ describe("RLLink", () => {
   });
 
   describe("Icons & semantics", () => {
-    it("renders leading and trailing icons as inline svg", () => {
-      const html = render(() => <RLLink to="/docs" label="Docs" leadingIcon="bookOpen" />);
+    it("renders leading and trailing icons as icon classes", () => {
+      const html = render(() => <RLLink to="/docs" label="Docs" leadingIcon="book-open" />);
       expect(html).toContain('data-slot="leading-icon"');
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-book-open");
 
       const trailingHtml = render(() => (
-        <RLLink to="/docs" label="Docs" trailingIcon="arrowRight" />
+        <RLLink to="/docs" label="Docs" trailingIcon="arrow-right" />
       ));
       expect(trailingHtml).toContain('data-slot="trailing-icon"');
-      expect(trailingHtml).toContain("<svg");
+      expect(trailingHtml).toContain("i-lucide-arrow-right");
     });
 
     it("applies active and disabled semantics", () => {

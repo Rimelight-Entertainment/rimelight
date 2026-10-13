@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
-import { ICONS } from "@rimelight/ui/icons.raw.ts";
+import { DEFAULT_ICON_NAMES } from "@rimelight/ui";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl", "none"] as const;
@@ -13,7 +13,7 @@ const FEATURED = [
   "sparkles",
   "image",
   "download",
-  "externalLink",
+  "external-link",
   "search",
   "settings",
   "user",
@@ -30,7 +30,7 @@ const FEATURED = [
   "layers",
 ] as const;
 
-const ALL_ICONS = Object.keys(ICONS);
+const ALL_ICONS: readonly string[] = DEFAULT_ICON_NAMES;
 
 export const IconSandbox = (): JSX.Element => {
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
@@ -100,7 +100,7 @@ export const iconAudit: ComponentAuditDefinition = {
   category: "Media & Visuals",
   status: "Passed",
   description:
-    "A polymorphic SVG icon primitive resolving built-in collection nodes, raw SVG strings, Iconify class names, custom node arrays, and per-instance name overrides through the UI resolver, with scale tokens and full currentColor inheritance.",
+    "A polymorphic icon primitive resolving Lucide icon names, UnoCSS/Iconify class names, and per-instance overrides through the UI resolver, with scale tokens and full currentColor inheritance via CSS mask icons.",
   importPath: "@rimelight/ui/components/icon/RLIcon.tsx",
   renderSandbox: () => <IconSandbox />,
   testScenarios: [
@@ -142,9 +142,9 @@ export const iconAudit: ComponentAuditDefinition = {
     },
     {
       id: "default-collection",
-      title: `Default Collection (${ALL_ICONS.length} icons)`,
+      title: `Default Icons (${ALL_ICONS.length} Lucide icons)`,
       description:
-        "Every built-in SVG node definition shipped with the 'rl' collection, resolved synchronously at render time.",
+        "Every safelisted default icon from the bundled Lucide collection, resolved synchronously to i-lucide-* classes at render time.",
       render: () => (
         <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
           <For each={ALL_ICONS}>
@@ -161,29 +161,14 @@ export const iconAudit: ComponentAuditDefinition = {
       ),
     },
     {
-      id: "custom-raw-svg",
-      title: "Custom Raw SVG String",
+      id: "custom-class",
+      title: "Custom Class Name",
       description:
-        "Passing a raw SVG markup string through the custom prop renders it verbatim when no built-in node matches.",
+        "Passing a full UnoCSS/Iconify class name through the custom prop passes it through verbatim.",
       render: () => (
         <div class="flex items-center gap-6">
-          <RLIcon
-            name="customSvg"
-            size="xl"
-            class="text-primary"
-            custom={
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
-            }
-          />
-          <RLIcon
-            name="customNodes"
-            size="xl"
-            class="text-secondary"
-            custom={[
-              ["circle", { cx: "12", cy: "12", r: "9" }],
-              ["path", { d: "M12 7v5l3 2" }],
-            ]}
-          />
+          <RLIcon name="customSvg" size="xl" class="text-primary" custom="i-lucide-circle-gauge" />
+          <RLIcon name="customNodes" size="xl" class="text-secondary" custom="i-lucide-compass" />
         </div>
       ),
     },
@@ -199,15 +184,15 @@ export const iconAudit: ComponentAuditDefinition = {
             <span>Deployments are synced automatically.</span>
           </p>
           <p class="flex items-center gap-2">
-            <RLIcon name="circleCheck" class="text-success" />
+            <RLIcon name="circle-check" class="text-success" />
             <span>All checks passed with no warnings.</span>
           </p>
           <p class="flex items-center gap-2">
-            <RLIcon name="alertTriangle" class="text-warning" />
+            <RLIcon name="triangle-alert" class="text-warning" />
             <span>Rate limit approaching — 82% consumed.</span>
           </p>
           <p class="flex items-center gap-2">
-            <RLIcon name="circleX" class="text-error" />
+            <RLIcon name="circle-x" class="text-error" />
             <span>Build failed at step 4 of 9.</span>
           </p>
         </div>
@@ -231,28 +216,30 @@ export const iconAudit: ComponentAuditDefinition = {
     {
       criterion: "Nuxt UI v4 API parity (Icon)",
       status: "pass",
-      notes: "Matches name, size, class, ui and custom overrides with an extended resolver.",
+      notes: "Matches name, size, class, ui and custom overrides with the lucide-backed resolver.",
     },
     {
       criterion: "Multi-source icon resolution cascade",
       status: "pass",
       notes:
-        "Resolves custom node arrays -> raw SVG -> built-in collection nodes -> Iconify class names -> empty.",
+        "Resolves custom class -> config overrides -> i- prefixed class names -> i-lucide-<name> for bare lucide names -> empty.",
     },
     {
-      criterion: "Deterministic SSR-safe node rendering",
+      criterion: "Deterministic SSR-safe class rendering",
       status: "pass",
-      notes: "Uses Dynamic tag rendering over cached node maps, avoiding hydration mismatches.",
+      notes:
+        "Icons render as CSS mask classes via UnoCSS presetIcons — no DOM nodes, no hydration mismatch.",
     },
     {
       criterion: "Full currentColor inheritance",
       status: "pass",
-      notes: "SVG uses stroke='currentColor' so any text-* utility drives the icon color.",
+      notes:
+        "Mask icons use background-color: currentColor so any text-* utility drives the icon color.",
     },
     {
       criterion: "Accessible decorative default",
       status: "pass",
-      notes: "Root span and SVG both carry aria-hidden='true' for decorative use.",
+      notes: "Root span carries aria-hidden='true' for decorative use.",
     },
     {
       criterion: "No inline styles (CSP-safe, UnoCSS only)",
@@ -262,7 +249,7 @@ export const iconAudit: ComponentAuditDefinition = {
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
       status: "pass",
-      notes: "Nodes are rendered as real Solid elements via Dynamic, not injected markup.",
+      notes: "Icons are pure CSS classes — no injected markup.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",

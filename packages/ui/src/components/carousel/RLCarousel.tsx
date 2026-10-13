@@ -625,7 +625,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
             data-slot="prev-button"
             onClick={prev}
           >
-            <RLIcon name={props.prevIcon || "chevronLeft"} class="size-4" />
+            <RLIcon name={props.prevIcon || "chevron-left"} class="size-4" />
           </button>
           <button
             type="button"
@@ -635,7 +635,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
             data-slot="next-button"
             onClick={next}
           >
-            <RLIcon name={props.nextIcon || "chevronRight"} class="size-4" />
+            <RLIcon name={props.nextIcon || "chevron-right"} class="size-4" />
           </button>
         </div>
       </Show>

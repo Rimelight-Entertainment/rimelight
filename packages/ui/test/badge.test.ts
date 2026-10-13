@@ -111,7 +111,7 @@ describe("RLBadge Solid Component Suite", () => {
     it("renders leading icon via icon prop by default", () => {
       const html = renderSolid(RLBadge, { icon: "rocket", label: "Featured" });
       expect(html).toContain('data-slot="leading-icon"');
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-rocket");
       expect(html).toContain("Featured");
     });
 
@@ -124,14 +124,14 @@ describe("RLBadge Solid Component Suite", () => {
     it("renders trailing icon via trailingIcon prop", () => {
       const html = renderSolid(RLBadge, { trailingIcon: "arrow-right", label: "Next" });
       expect(html).toContain('data-slot="trailing-icon"');
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-arrow-right");
       expect(html).toContain("Next");
     });
 
     it("renders trailing icon via trailing-icon kebab prop", () => {
       const html = renderSolid(RLBadge, { "trailing-icon": "arrow-right", label: "Next" } as any);
       expect(html).toContain('data-slot="trailing-icon"');
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-arrow-right");
       expect(html).toContain("Next");
     });
 

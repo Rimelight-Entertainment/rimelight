@@ -1,6 +1,7 @@
 export interface RLIconProps {
   /**
-   * The name of the icon to display.
+   * The name of the icon to display — a Lucide icon name (e.g. `check`, `chevron-down`)
+   * or a full UnoCSS/Iconify class name (e.g. `i-lucide-check`).
    */
   name: string;
   /**

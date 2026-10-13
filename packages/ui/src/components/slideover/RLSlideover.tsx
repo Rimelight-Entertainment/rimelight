@@ -187,7 +187,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
               aria-label="Close slideover"
               onClick={() => setOpenState(false)}
             >
-              <RLIcon name="i-rl-close" class="size-4" aria-hidden="true" />
+              <RLIcon name="x" class="size-4" aria-hidden="true" />
             </button>
 
             <div class={resolvedClasses().header} data-slot="header">

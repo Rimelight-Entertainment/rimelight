@@ -172,7 +172,7 @@ describe("RLCallout", () => {
       const icon = slotTag(html, "icon");
       expect(icon).not.toBe("");
       expect(attr(icon, "aria-hidden")).toBe("true");
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-star");
     });
 
     it("renders an avatar when avatar src string is provided", () => {
@@ -285,7 +285,7 @@ describe("RLCallout", () => {
 
     it("customizes close button icon with closeIcon prop", () => {
       const html = render(() => <RLCallout title="Dismissible" close closeIcon="arrow-right" />);
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-arrow-right");
     });
 
     it("closeSlot replaces close button", () => {

@@ -211,7 +211,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
                   trailing={
                     <div class="flex items-center gap-2">
                       <Show when={loading()}>
-                        <RLIcon name="loaderCircle" class="size-4 animate-spin text-muted" />
+                        <RLIcon name="loader-circle" class="size-4 animate-spin text-muted" />
                       </Show>
                       <RLKbd size="sm">Esc</RLKbd>
                       <button
@@ -221,7 +221,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
                         onClick={closeModal}
                         data-slot="close"
                       >
-                        <RLIcon name="close" class={resolvedClasses().closeIcon} />
+                        <RLIcon name="x" class={resolvedClasses().closeIcon} />
                       </button>
                     </div>
                   }

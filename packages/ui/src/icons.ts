@@ -1,53 +1,80 @@
 import { getUIConfig } from "./resolver";
-import { getIconNodes, getIconSvg, ICONS, svg, type IconNode } from "./icons.raw";
 
-export { ICONS, svg, type IconNode };
-
-export const getSvgIcon = (k: string): string => getIconSvg(k) ?? "";
-
-export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = Object.fromEntries(
-  Object.keys(ICONS).map((k) => [k, getSvgIcon(k)]),
-) as Record<keyof typeof ICONS, string>;
-
-export type RimelightIcons = Partial<
-  Record<keyof typeof ICONS | (string & {}), string | IconNode[]>
->;
+export type RimelightIcons = Record<string, string>;
 
 export interface ResolvedIcon {
   isClass: boolean;
   content: string;
-  nodes?: IconNode[];
 }
+
+export const DEFAULT_ICON_NAMES = [
+  "align-left",
+  "arrow-down",
+  "arrow-left",
+  "arrow-right",
+  "arrow-up",
+  "bell",
+  "check",
+  "chevron-down",
+  "chevron-left",
+  "chevron-right",
+  "chevrons-left",
+  "chevrons-right",
+  "chevrons-up-down",
+  "circle-check",
+  "cloud-upload",
+  "copy",
+  "download",
+  "external-link",
+  "fast-forward",
+  "file-question-mark",
+  "grip-horizontal",
+  "grip-vertical",
+  "hard-drive",
+  "image",
+  "image-upscale",
+  "info",
+  "layers",
+  "laptop",
+  "list",
+  "loader-circle",
+  "lock",
+  "menu",
+  "minus",
+  "moon",
+  "pause",
+  "play",
+  "quote",
+  "repeat",
+  "repeat-1",
+  "rotate-cw",
+  "search",
+  "skip-back",
+  "skip-forward",
+  "sparkles",
+  "star",
+  "sun",
+  "triangle-alert",
+  "user",
+  "volume-1",
+  "volume-2",
+  "volume-x",
+  "x",
+] as const;
 
 const EMPTY_ICON: ResolvedIcon = { isClass: false, content: "" };
 const cache = new Map<string, ResolvedIcon>();
 
-export const resolveIcon = (name = "", custom?: string | IconNode[]): ResolvedIcon => {
-  if (!name && !custom) return EMPTY_ICON;
-  if (Array.isArray(custom)) {
-    return { isClass: false, content: "", nodes: custom };
-  }
-  const iconOverride = getUIConfig()?.icons?.[name as keyof typeof ICONS];
-  if (Array.isArray(iconOverride)) {
-    return { isClass: false, content: "", nodes: iconOverride };
-  }
-  const raw: string =
-    (typeof custom === "string" ? custom : undefined) ||
-    (typeof iconOverride === "string" ? iconOverride : undefined) ||
-    name;
+const toClass = (name: string): string =>
+  name.startsWith("i-") || name.includes(":") ? name : `i-lucide-${name}`;
+
+export const resolveIcon = (name = "", custom?: string): ResolvedIcon => {
+  const override = name ? getUIConfig()?.icons?.[name] : undefined;
+  const raw = custom || override || name;
+  if (!raw || raw.startsWith("<")) return EMPTY_ICON;
   let res = cache.get(raw);
   if (!res) {
-    const nodes = getIconNodes(raw);
-    if (nodes !== undefined) {
-      res = { isClass: false, content: getIconSvg(raw) ?? "", nodes };
-    } else if (raw.startsWith("i-") || raw.includes(":")) {
-      res = { isClass: true, content: raw };
-    } else {
-      res = {
-        isClass: false,
-        content: raw.startsWith("<svg") ? raw : raw.startsWith("<") ? svg(raw) : "",
-      };
-    }
+    res = { isClass: true, content: toClass(raw) };
     cache.set(raw, res);
   }
   return res;

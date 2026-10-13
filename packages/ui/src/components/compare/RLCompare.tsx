@@ -304,8 +304,8 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
     const defaultIconName = props.handleIcon
       ? props.handleIcon
       : isHorizontal()
-        ? "chevronsUpDown"
-        : "gripHorizontal";
+        ? "chevrons-up-down"
+        : "grip-horizontal";
 
     return (
       <RLIcon name={defaultIconName} class={resolvedClasses().handleIcon} aria-hidden="true" />

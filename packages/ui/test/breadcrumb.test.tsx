@@ -101,7 +101,7 @@ describe("RLBreadcrumb Solid Component Suite", () => {
         separatorIcon: "slash",
       });
       expect(html).toContain('data-slot="separator"');
-      expect(html).toContain('d="M16 4 8 20"');
+      expect(html).toContain("i-lucide-slash");
     });
 
     it("renders item leading icons", () => {

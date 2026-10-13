@@ -179,7 +179,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
       color: "neutral",
       variant: "ghost",
       square: true,
-      leadingIcon: props.closeIcon || "close",
+      leadingIcon: props.closeIcon || "x",
       ariaLabel: "Close banner",
     };
     return typeof props.close === "object" && props.close !== null

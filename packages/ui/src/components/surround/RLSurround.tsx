@@ -23,7 +23,7 @@ export const RLSurround: Component<RLSurroundProps> = (props) => {
             return (
               <a href={prev().href} class={prevTheme().link}>
                 <span class={`${theme().label} ${prevTheme().labelPrev}`}>
-                  <RLIcon name="arrowLeft" class="size-3" /> Previous
+                  <RLIcon name="arrow-left" class="size-3" /> Previous
                 </span>
                 <span class={theme().title}>{prev().label}</span>
               </a>
@@ -41,7 +41,7 @@ export const RLSurround: Component<RLSurroundProps> = (props) => {
             return (
               <a href={next().href} class={nextTheme().link}>
                 <span class={`${theme().label} ${nextTheme().labelNext}`}>
-                  Next <RLIcon name="arrowRight" class="size-3" />
+                  Next <RLIcon name="arrow-right" class="size-3" />
                 </span>
                 <span class={theme().title}>{next().label}</span>
               </a>

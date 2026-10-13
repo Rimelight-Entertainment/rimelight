@@ -1,7 +1,7 @@
 import { For, Show, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import DevLayout from "#layouts/DevLayout";
-import { RLBadge, RLButton, RLIcon, ICONS, getUIConfig } from "@rimelight/ui";
+import { RLBadge, RLButton, RLIcon, DEFAULT_ICON_NAMES, getUIConfig } from "@rimelight/ui";
 
 // Inlined here to avoid importing fonts.ts (which pulls unocss → oxc-parser WASM into the client bundle)
 const DEFAULT_UI_FONTS = {
@@ -63,7 +63,7 @@ export default function DevUserInterfacePage() {
   const [copiedIcon, setCopiedIcon] = createSignal<string | null>(null);
 
   const uiConfig = getUIConfig();
-  const iconNames = Object.keys(ICONS);
+  const iconNames: readonly string[] = DEFAULT_ICON_NAMES;
   const userIconOverrides = uiConfig?.icons ?? {};
   const overrideCount = Object.keys(userIconOverrides).length;
 
@@ -215,15 +215,15 @@ export default function DevUserInterfacePage() {
       mono: true,
       rows: [
         {
-          label: "Loaded Collections & Resolution",
-          code: `presetIcons({ collections: { rl: getIconSvg } })`,
+          label: "Lucide Collection & Resolution",
+          code: `presetIcons() // resolves i-lucide-* via @iconify-json/lucide`,
           description:
-            "The default collection registered with UnoCSS presetIcons is 'rl' (containing the built-in SVG node definitions). Any Iconify collection or class name like 'i-lucide-*' or 'i-carbon-*' can also be resolved if configured.",
-          value: `Built-in collection: "rl" (${iconNames.length} default icons)\nConfigured overrides: ${overrideCount}`,
+            "Icons resolve to UnoCSS icon classes backed by the bundled Lucide collection. Bare lucide names (e.g. `check`) are prefixed to `i-lucide-check`; full class names like 'i-lucide-*' or 'i-carbon-*' pass through as-is.",
+          value: `Default icons: ${iconNames.length} (safelisted)\nConfigured overrides: ${overrideCount}`,
         },
         {
-          label: "Default Rimelight Icons (Collection 'rl')",
-          code: `<RLIcon name="..." /> or class="i-rl-..."`,
+          label: "Default Icons (Lucide)",
+          code: `<RLIcon name="..." /> or class="i-lucide-..."`,
           description:
             "Click any icon cell to copy its JSX component invocation. Supports searching by keyword.",
           content: (
@@ -253,7 +253,7 @@ export default function DevUserInterfacePage() {
                       type="button"
                       onClick={() => copyIconSnippet(name)}
                       class="flex flex-col items-center justify-center gap-1 p-2 rounded-lg border border-default bg-elevated/30 hover:bg-elevated hover:border-primary-500/50 transition-all text-center group"
-                      title={`Click to copy: <RLIcon name="${name}" /> (collection: rl)`}
+                      title={`Click to copy: <RLIcon name="${name}" /> (lucide)`}
                     >
                       <RLIcon
                         name={name}

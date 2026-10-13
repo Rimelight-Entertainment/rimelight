@@ -385,7 +385,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 {props.metaFormat !== false && (
                   <div class="flex flex-row gap-xs items-center">
                     <RLIcon
-                      name="fileQuestion"
+                      name="file-question-mark"
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
@@ -398,7 +398,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 {props.metaDimensions !== false && (
                   <div class="flex flex-row gap-xs items-center">
                     <RLIcon
-                      name="imageUpscale"
+                      name="image-upscale"
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
@@ -411,7 +411,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 {props.metaSize !== false && (
                   <div class="flex flex-row gap-xs items-center">
                     <RLIcon
-                      name="hardDrive"
+                      name="hard-drive"
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
@@ -424,7 +424,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 {props.metaAlt !== false && (
                   <div class="flex flex-row gap-xs items-center">
                     <RLIcon
-                      name="alignLeft"
+                      name="align-left"
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
@@ -458,7 +458,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 aria-label="Close"
                 onClick={() => setOpen(false)}
               >
-                <RLIcon name="close" class="size-4" aria-hidden="true" />
+                <RLIcon name="x" class="size-4" aria-hidden="true" />
               </button>
             </form>
           </div>

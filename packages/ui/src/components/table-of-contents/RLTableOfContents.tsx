@@ -99,11 +99,11 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) =
       >
         <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
           <span class="flex items-center gap-2">
-            <RLIcon name="i-rl-list" class="size-4 text-primary shrink-0" aria-hidden="true" />
+            <RLIcon name="list" class="size-4 text-primary shrink-0" aria-hidden="true" />
             <span>On this page</span>
           </span>
           <RLIcon
-            name="i-rl-chevronDown"
+            name="chevron-down"
             class={`rl-toc-chevron size-4 text-muted shrink-0 transition-transform duration-200 ${
               open() ? "rotate-180" : ""
             }`}

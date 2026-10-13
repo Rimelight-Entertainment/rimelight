@@ -53,7 +53,7 @@ export interface RLBannerProps {
   /**
    * The icon displayed in the close button.
    *
-   * @default "close"
+   * @default "x"
    */
   closeIcon?: string | undefined;
 
@@ -160,7 +160,7 @@ export interface RLBannerProps {
   /**
    * Custom external link icon name.
    *
-   * @default "externalLink"
+   * @default "external-link"
    */
   externalIcon?: string | undefined;
   /**

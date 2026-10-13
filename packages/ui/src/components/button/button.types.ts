@@ -204,7 +204,7 @@ export interface RLButtonProps {
   /**
    * Custom external link icon name.
    *
-   * @default "externalLink"
+   * @default "external-link"
    */
   externalIcon?: string | undefined;
   /**

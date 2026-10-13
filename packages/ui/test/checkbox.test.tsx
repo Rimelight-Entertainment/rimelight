@@ -125,7 +125,7 @@ describe("RLCheckbox & RLCheckboxGroup", () => {
           label="Plus Indeterminate"
         />
       ));
-      expect(html).toContain('d="M5 12h14M12 5v14"');
+      expect(html).toContain("i-lucide-plus");
     });
 
     it("renders disabled state", () => {

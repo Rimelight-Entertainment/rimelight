@@ -181,7 +181,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
       );
     }
 
-    const iconName = () => props.separatorIcon ?? "chevronRight";
+    const iconName = () => props.separatorIcon ?? "chevron-right";
 
     return (
       <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">

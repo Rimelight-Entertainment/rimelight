@@ -7,7 +7,7 @@ export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
 
   const showTrailingIcon =
     isExternal && !props.noExternalIcon && !props.trailingIcon
-      ? props.externalIcon || "externalLink"
+      ? props.externalIcon || "external-link"
       : props.trailingIcon;
 
   const target = props.target || (isExternal ? "_blank" : undefined);

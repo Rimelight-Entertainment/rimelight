@@ -85,6 +85,7 @@
     "prepack": "vp pack"
   },
   "dependencies": {
+    "@iconify-json/lucide": "1.2.140",
     "@unocss/vite": "66.10.5",
     "unocss": "66.10.5"
   },

@@ -86,7 +86,7 @@ describe("RLBanner", () => {
       const icon = slotTag(html, "icon");
       expect(icon).not.toBe("");
       expect(attr(icon, "aria-hidden")).toBe("true");
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-rocket");
     });
 
     it("leading slot replaces the icon", () => {

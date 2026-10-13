@@ -140,7 +140,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
                         class={`${resolvedClasses().navButton} ${resolvedClasses().navBack}`}
                         data-slot="nav-back"
                       >
-                        <RLIcon name="arrowLeft" class="w-3.5 h-3.5" aria-hidden="true" />
+                        <RLIcon name="arrow-left" class="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                       <button
                         type="button"
@@ -148,7 +148,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
                         class={`${resolvedClasses().navButton} ${resolvedClasses().navForward}`}
                         data-slot="nav-forward"
                       >
-                        <RLIcon name="arrowRight" class="w-3.5 h-3.5" aria-hidden="true" />
+                        <RLIcon name="arrow-right" class="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                       <button
                         type="button"
@@ -156,7 +156,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
                         class={`${resolvedClasses().navButton} ${resolvedClasses().navReload}`}
                         data-slot="nav-reload"
                       >
-                        <RLIcon name="rotateCw" class="w-3.5 h-3.5" aria-hidden="true" />
+                        <RLIcon name="rotate-cw" class="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                     </div>
                   }

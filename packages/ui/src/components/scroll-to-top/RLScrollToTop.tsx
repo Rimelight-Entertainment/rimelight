@@ -79,7 +79,7 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
             />
           ) : null}
           <div class={resolvedClasses().iconContainer}>
-            <RLIcon name="arrowUp" class={resolvedClasses().icon} />
+            <RLIcon name="arrow-up" class={resolvedClasses().icon} />
           </div>
         </div>
       </button>

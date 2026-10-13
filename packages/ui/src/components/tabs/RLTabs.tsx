@@ -231,7 +231,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
               onClick={() => setPopoverOpen(!popoverOpen())}
             >
               <span class="rl-tb-label">+{overflowItems().length} more</span>
-              <RLIcon name="chevronDown" class="ml-1 size-3.5 opacity-70" />
+              <RLIcon name="chevron-down" class="ml-1 size-3.5 opacity-70" />
             </button>
 
             <Show when={popoverOpen()}>

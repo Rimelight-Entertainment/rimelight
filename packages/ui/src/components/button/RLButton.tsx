@@ -133,7 +133,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
 
   const externalIconName = () => {
     if (isIconOnly() || !props.external || props.noExternalIcon) return undefined;
-    return props.externalIcon || "externalLink";
+    return props.externalIcon || "external-link";
   };
 
   const showExternalHint = () => isLink() && linkAttrs().target === "_blank" && !ariaLabel();
@@ -161,14 +161,14 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
 
   const leadingIconName = () => {
     if (isLoading() && !isTrailingPosition()) {
-      return props.loadingIcon || "loaderCircle";
+      return props.loadingIcon || "loader-circle";
     }
     return leadingIconProp() || (iconProp() && trailingFlag() !== true ? iconProp() : undefined);
   };
 
   const trailingIconName = () => {
     if (isLoading() && isTrailingPosition()) {
-      return props.loadingIcon || "loaderCircle";
+      return props.loadingIcon || "loader-circle";
     }
     return (
       trailingIconProp() ||

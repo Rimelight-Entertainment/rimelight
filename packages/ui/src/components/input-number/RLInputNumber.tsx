@@ -142,7 +142,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
             disabled={props.disabled || props.readonly}
             onClick={() => stepBy(1)}
           >
-            <RLIcon name="arrowUp" size="xs" aria-hidden="true" />
+            <RLIcon name="arrow-up" size="xs" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -153,7 +153,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
             disabled={props.disabled || props.readonly}
             onClick={() => stepBy(-1)}
           >
-            <RLIcon name="arrowDown" size="xs" aria-hidden="true" />
+            <RLIcon name="arrow-down" size="xs" aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -370,7 +370,7 @@ describe("RLButton", () => {
     it("appends a trailing external icon for explicit external links", () => {
       const html = render(() => <RLButton href="https://example.com" external label="Open" />);
       expect(html).toContain('data-slot="trailing-icon"');
-      expect(html).toContain("<svg");
+      expect(html).toContain("i-lucide-external-link");
     });
 
     it("omits the external icon for auto-detected external links", () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLIcon } from "../src/components/icon/RLIcon";
-import { getIconNodes, getIconSvg, nodesToSvg, ICONS } from "../src/icons.raw";
+import { DEFAULT_ICON_NAMES, resolveIcon } from "../src/icons";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -13,40 +13,49 @@ function renderRaw(fn: () => any): string {
   return renderToString(fn);
 }
 
-describe("structured icon system", () => {
-  it("serializes structured nodes to SVG markup for preset/UnoCSS", () => {
-    const nodes = getIconNodes("check");
-    expect(nodes).toBeDefined();
-    const svgString = getIconSvg("check");
-    expect(svgString).toContain("<svg");
-    expect(svgString).toContain('<path d="M20 6 9 17l-5-5"/>');
+describe("icon resolution", () => {
+  it("resolves bare lucide names to i-lucide classes", () => {
+    expect(resolveIcon("check")).toEqual({ isClass: true, content: "i-lucide-check" });
   });
 
-  it("normalizes kebab-case icon names to camelCase keys", () => {
-    const nodes = getIconNodes("external-link");
-    expect(nodes).toBeDefined();
-    expect(nodes).toEqual(ICONS["externalLink"]);
+  it("passes through full i- prefixed class names", () => {
+    expect(resolveIcon("i-lucide-check")).toEqual({ isClass: true, content: "i-lucide-check" });
   });
 
-  it("converts custom icon nodes via nodesToSvg", () => {
-    const custom = nodesToSvg([["circle", { cx: "5", cy: "5", r: "5" }]]);
-    expect(custom).toBe('<circle cx="5" cy="5" r="5"/>');
+  it("passes through collection:name class names", () => {
+    expect(resolveIcon("lucide:check")).toEqual({ isClass: true, content: "lucide:check" });
+  });
+
+  it("prefers the custom prop over the name", () => {
+    expect(resolveIcon("check", "i-custom-icon")).toEqual({
+      isClass: true,
+      content: "i-custom-icon",
+    });
+  });
+
+  it("returns an empty icon for empty input and raw markup strings", () => {
+    expect(resolveIcon("")).toEqual({ isClass: false, content: "" });
+    expect(resolveIcon("custom", "<svg><path/></svg>")).toEqual({ isClass: false, content: "" });
+  });
+
+  it("ships a non-empty default icon name list", () => {
+    expect(DEFAULT_ICON_NAMES.length).toBeGreaterThan(0);
+    expect(DEFAULT_ICON_NAMES).toContain("check");
   });
 });
 
-describe("RLIcon structured rendering", () => {
-  it("renders built-in icons as real svg nodes", () => {
+describe("RLIcon class rendering", () => {
+  it("renders bare names as lucide icon classes", () => {
     const html = render(() => <RLIcon name="rocket" />);
-    expect(html).toContain("<svg");
-    expect(html).toContain("<path");
+    expect(html).toContain("i-lucide-rocket");
+    expect(html).not.toContain("<svg");
     expect(html).toContain('data-slot="icon"');
     expect(html).toContain('aria-hidden="true"');
   });
 
-  it("normalizes kebab-case icon names to the camelCase dictionary keys", () => {
+  it("normalizes kebab-case lucide names", () => {
     const html = render(() => <RLIcon name="external-link" />);
-    expect(html).toContain("<svg");
-    expect(html).toContain("<path");
+    expect(html).toContain("i-lucide-external-link");
   });
 
   it("keeps class based icons class-only (no svg markup)", () => {
@@ -55,7 +64,7 @@ describe("RLIcon structured rendering", () => {
     expect(html).not.toContain("<svg");
   });
 
-  it("renders nothing but the wrapper for unknown icon names", () => {
+  it("renders only the wrapper for unknown icon names", () => {
     const html = render(() => <RLIcon name="definitely-not-an-icon" />);
     expect(html).toContain('data-slot="icon"');
     expect(html).not.toContain("<svg");
@@ -73,14 +82,6 @@ describe("RLIcon structured rendering", () => {
     ));
     expect(html).toContain('data-slot="leading-icon"');
     expect(html).toContain("custom-icon");
-  });
-
-  it("renders custom structured icon nodes passed through custom prop", () => {
-    const html = render(() => (
-      <RLIcon name="custom" custom={[["rect", { width: "8", height: "8" }]]} />
-    ));
-    expect(html).toContain("<svg");
-    expect(html).toContain('<rect width="8" height="8"');
   });
 
   it("renders identically on repeated renders (deterministic SSR output)", () => {

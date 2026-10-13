@@ -4,11 +4,11 @@ import { createMemo, createSignal, onSettled, omit, type Component } from "solid
 import { RLIcon } from "../icon/RLIcon";
 
 const variantIcons: Record<string, string> = {
-  default: "i-rl-bell",
-  error: "i-rl-circleCheck",
-  success: "i-rl-circleCheck",
-  warning: "i-rl-alertTriangle",
-  info: "i-rl-info",
+  default: "bell",
+  error: "circle-check",
+  success: "circle-check",
+  warning: "triangle-alert",
+  info: "info",
 };
 
 export const RLToast: Component<RLToastProps> = (allProps) => {
@@ -155,7 +155,7 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
           aria-label="Dismiss notification"
           onClick={dismiss}
         >
-          <RLIcon name="i-rl-close" class="size-3.5" aria-hidden="true" />
+          <RLIcon name="x" class="size-3.5" aria-hidden="true" />
         </button>
       )}
     </div>

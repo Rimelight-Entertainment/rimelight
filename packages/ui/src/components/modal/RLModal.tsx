@@ -344,7 +344,7 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
                               color="neutral"
                               size="sm"
                               square
-                              leadingIcon={props.closeIcon ?? "close"}
+                              leadingIcon={props.closeIcon ?? "x"}
                               aria-label="Close modal"
                               data-slot="close"
                               class={resolvedClasses().close}

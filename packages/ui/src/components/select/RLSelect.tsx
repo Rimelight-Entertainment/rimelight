@@ -182,7 +182,7 @@ export const RLSelect: Component<RLSelectProps> = (allProps) => {
       {/* Custom Chevron arrow */}
       {resolvedVariant() !== "icon" ? (
         <span class={classes().icon} data-slot="icon">
-          <RLIcon name="chevronDown" size="sm" class="size-4" aria-hidden="true" />
+          <RLIcon name="chevron-down" size="sm" class="size-4" aria-hidden="true" />
         </span>
       ) : null}
     </div>

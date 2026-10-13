@@ -87,7 +87,7 @@ export interface RLModalProps {
 
   /**
    * Icon displayed inside the header close button.
-   * @default "close"
+   * @default "x"
    */
   closeIcon?: any;
 

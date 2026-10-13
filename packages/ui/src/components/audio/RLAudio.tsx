@@ -417,23 +417,23 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
   const playIconName = () => props.icons?.play ?? "play";
   const pauseIconName = () => props.icons?.pause ?? "pause";
   const skipBackIconName = () => props.icons?.skipBack ?? "rewind";
-  const skipForwardIconName = () => props.icons?.skipForward ?? "fastForward";
-  const prevTrackIconName = () => props.icons?.prevTrack ?? "skipBack";
-  const nextTrackIconName = () => props.icons?.nextTrack ?? "skipForward";
+  const skipForwardIconName = () => props.icons?.skipForward ?? "fast-forward";
+  const prevTrackIconName = () => props.icons?.prevTrack ?? "skip-back";
+  const nextTrackIconName = () => props.icons?.nextTrack ?? "skip-forward";
   const downloadIconName = () => props.icons?.download ?? "download";
-  const externalLinkIconName = () => props.icons?.externalLink ?? "externalLink";
+  const externalLinkIconName = () => props.icons?.externalLink ?? "external-link";
 
   const repeatIconName = () => {
     const mode = repeatMode();
-    if (mode === "one") return props.icons?.repeatOne ?? "repeat1";
+    if (mode === "one") return props.icons?.repeatOne ?? "repeat-1";
     if (mode === "all") return props.icons?.repeat ?? "repeat";
     return props.icons?.repeatOff ?? "repeat";
   };
 
   const volumeIconName = createMemo(() => {
-    if (isMuted() || volume() === 0) return props.icons?.volumeMuted ?? "volumeX";
-    if (volume() < 0.5) return props.icons?.volumeLow ?? "volume1";
-    return props.icons?.volumeHigh ?? "volume2";
+    if (isMuted() || volume() === 0) return props.icons?.volumeMuted ?? "volume-x";
+    if (volume() < 0.5) return props.icons?.volumeLow ?? "volume-1";
+    return props.icons?.volumeHigh ?? "volume-2";
   });
 
   onSettled(() => {
@@ -1125,7 +1125,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
               aria-expanded={isTranscriptOpen() ? "true" : "false"}
             >
               <RLIcon
-                name={isTranscriptOpen() ? "chevronDown" : "chevronRight"}
+                name={isTranscriptOpen() ? "chevron-down" : "chevron-right"}
                 class="size-3.5"
                 aria-hidden="true"
               />

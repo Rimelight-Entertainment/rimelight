@@ -229,7 +229,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                     {item.icon && <span class={`${item.icon} mr-1.5 size-4`} aria-hidden="true" />}
                     {item.label}
                     <RLIcon
-                      name="chevronDown"
+                      name="chevron-down"
                       class={`ml-1 size-3.5 transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
                       aria-hidden="true"
                       data-chevron

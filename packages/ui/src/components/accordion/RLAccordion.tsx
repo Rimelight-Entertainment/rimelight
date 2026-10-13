@@ -117,7 +117,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     }),
   );
 
-  const defaultTrailingIcon = () => props.trailingIcon ?? "chevronDown";
+  const defaultTrailingIcon = () => props.trailingIcon ?? "chevron-down";
 
   const handleSummaryClick = (event: MouseEvent, item: AccordionItem, val: string) => {
     if (props.disabled || item.disabled) {

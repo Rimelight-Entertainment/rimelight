@@ -107,7 +107,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) =
                 class="shrink-0 size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted"
                 onClick={() => setOpenState(false)}
               >
-                <RLIcon name="close" class="size-4" />
+                <RLIcon name="x" class="size-4" />
               </button>
             </div>
             <div class="p-4 text-sm text-muted text-center">Type to search...</div>

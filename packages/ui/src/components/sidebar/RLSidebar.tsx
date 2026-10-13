@@ -131,7 +131,7 @@ const RLSidebarItems: Component<{
                       </RLBadge>
                     )}
                     <RLIcon
-                      name="i-rl-chevronRight"
+                      name="chevron-right"
                       class="size-3 ml-auto transition-transform group-open/details:rotate-90"
                     />
                   </summary>
@@ -207,7 +207,7 @@ export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
       resolvedHeaderSlot()
     ) : props.logo ? (
       <span data-slot="sidebar-logo" class="flex items-center gap-2">
-        <RLIcon name="i-rl-layers" class="size-5 text-primary" />
+        <RLIcon name="i-lucide-layers" class="size-5 text-primary" />
         <span class="truncate">{props.logo}</span>
       </span>
     ) : null;
@@ -255,7 +255,7 @@ export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
           aria-label="Toggle sidebar"
           onClick={toggleSidebar}
         >
-          <RLIcon name="i-rl-panelLeft" class="size-4" />
+          <RLIcon name="i-lucide-panel-left" class="size-4" />
         </button>
       </Show>
     </Show>

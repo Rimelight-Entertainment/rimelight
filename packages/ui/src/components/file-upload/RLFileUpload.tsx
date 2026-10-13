@@ -118,7 +118,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
           props.iconSlot
         ) : (
           <RLIcon
-            name={props.icon ?? "uploadCloud"}
+            name={props.icon ?? "cloud-upload"}
             class={resolvedClasses().icon}
             aria-hidden="true"
           />

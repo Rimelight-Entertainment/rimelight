@@ -107,7 +107,7 @@ export const RLCallout: Component<RLCalloutProps> = (allProps) => {
       size: "md",
       color: "neutral",
       variant: "link",
-      leadingIcon: props.closeIcon || "close",
+      leadingIcon: props.closeIcon || "x",
       ariaLabel: "Close",
     };
     return typeof props.close === "object" && props.close !== null

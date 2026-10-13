@@ -75,7 +75,7 @@ export interface RLAccordionProps {
   value?: string | string[] | undefined;
   /**
    * The icon displayed on the right side of the trigger. Resolved via RLIcon (configurable default
-   * `"chevronDown"`).
+   * `"chevron-down"`).
    */
   trailingIcon?: string;
   /**

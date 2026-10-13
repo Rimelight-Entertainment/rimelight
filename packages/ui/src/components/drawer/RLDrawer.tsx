@@ -128,7 +128,7 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
             aria-label="Close drawer"
             onClick={() => handleOpenChange(false)}
           >
-            <RLIcon name="close" size="sm" aria-hidden="true" />
+            <RLIcon name="x" size="sm" aria-hidden="true" />
           </button>
 
           <div class={resolvedClasses().header} data-slot="header">

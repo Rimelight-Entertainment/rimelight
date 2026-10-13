@@ -91,17 +91,17 @@ describe("@rimelight/ui core icon resolution", () => {
     expect(icon.content).toBe("i-lucide-check");
   });
 
-  it("should resolve built-in collection icons", () => {
-    const icon = resolveIcon("i-rl-check");
+  it("should resolve bare lucide names to i-lucide classes", () => {
+    const icon = resolveIcon("check");
     expect(icon.isClass).toBe(true);
-    expect(icon.content).toBe("i-rl-check");
+    expect(icon.content).toBe("i-lucide-check");
   });
 
-  it("should resolve custom raw SVG icons", () => {
+  it("should return an empty icon for raw SVG strings", () => {
     const rawSvg = '<svg><path d="M0 0"/></svg>';
     const icon = resolveIcon("customSvg", rawSvg);
     expect(icon.isClass).toBe(false);
-    expect(icon.content).toBe(rawSvg);
+    expect(icon.content).toBe("");
   });
 
   it("should resolve custom icon configured in uiConfig", () => {

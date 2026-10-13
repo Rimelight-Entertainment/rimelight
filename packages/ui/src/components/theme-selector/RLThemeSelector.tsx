@@ -5,9 +5,9 @@ import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
 
 const themeItems = [
-  { label: "System", value: "system", icon: "i-lucide-laptop" },
-  { label: "Light", value: "light", icon: "i-rl-sun" },
-  { label: "Dark", value: "dark", icon: "i-rl-moon" },
+  { label: "System", value: "system", icon: "laptop" },
+  { label: "Light", value: "light", icon: "sun" },
+  { label: "Dark", value: "dark", icon: "moon" },
 ];
 
 export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
@@ -72,8 +72,8 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
 
   const activeIcon = () => {
     const pref = currentPreference();
-    if (pref === "light") return "i-rl-sun";
-    if (pref === "dark") return "i-rl-moon";
+    if (pref === "light") return "sun";
+    if (pref === "dark") return "moon";
     return "i-lucide-laptop";
   };
 

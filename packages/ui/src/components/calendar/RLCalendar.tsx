@@ -752,7 +752,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
             <RLButton
               {...controlBase(
                 props.prevYear,
-                props.prevYearIcon ?? "chevronDoubleLeft",
+                props.prevYearIcon ?? "chevrons-left",
                 "Previous year",
               )}
               data-slot="prevYear"
@@ -761,7 +761,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
           </Show>
           <Show when={showSideControls()}>
             <RLButton
-              {...controlBase(props.prevMonth, props.prevMonthIcon ?? "chevronLeft", prevLabel())}
+              {...controlBase(props.prevMonth, props.prevMonthIcon ?? "chevron-left", prevLabel())}
               data-slot="prevMonth"
               onClick={prevPage}
             />
@@ -804,18 +804,14 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 
           <Show when={showSideControls()}>
             <RLButton
-              {...controlBase(props.nextMonth, props.nextMonthIcon ?? "chevronRight", nextLabel())}
+              {...controlBase(props.nextMonth, props.nextMonthIcon ?? "chevron-right", nextLabel())}
               data-slot="nextMonth"
               onClick={nextPage}
             />
           </Show>
           <Show when={showPrevYear()}>
             <RLButton
-              {...controlBase(
-                props.nextYear,
-                props.nextYearIcon ?? "chevronDoubleRight",
-                "Next year",
-              )}
+              {...controlBase(props.nextYear, props.nextYearIcon ?? "chevrons-right", "Next year")}
               data-slot="nextYear"
               onClick={nextYear}
             />

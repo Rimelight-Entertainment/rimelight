@@ -1,6 +1,6 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss";
 import type { ColorModeInput, UIConfig } from "./types";
-import { getIconSvg } from "./icons.raw";
+import { DEFAULT_ICON_NAMES } from "./icons";
 import {
   createLocalFontProcessor,
   emittedFonts,
@@ -111,6 +111,7 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
     outputToCssLayers: true,
     safelist: [
       ...Object.keys(themeColors).map((c) => `rl-color-${c}`),
+      ...DEFAULT_ICON_NAMES.map((n) => `i-lucide-${n}`),
       ...Object.values(icons ?? {}).filter(
         (v): v is string => typeof v === "string" && v.startsWith("i-"),
       ),
@@ -118,7 +119,7 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
     presets: [
       presets.wind !== false && presetWind4(),
       presets.typography !== false && presetTypography(),
-      presets.icons !== false && presetIcons({ collections: { rl: getIconSvg } }),
+      presets.icons !== false && presetIcons(),
       webFontsPreset,
       {
         name: "rimelight-theme",

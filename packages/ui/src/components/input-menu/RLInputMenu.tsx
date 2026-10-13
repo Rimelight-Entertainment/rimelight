@@ -136,7 +136,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
           onClick={handleTriggerClick}
         >
           <span data-inputMenu-value>{visibleLabel()}</span>
-          <RLIcon name="i-rl-chevronsUpDown" class="opacity-50" aria-hidden="true" />
+          <RLIcon name="chevrons-up-down" class="opacity-50" aria-hidden="true" />
         </button>
 
         <Show when={open()}>
@@ -169,7 +169,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
                   >
                     <span class={resolvedClasses().itemText}>{item.label}</span>
                     <RLIcon
-                      name="i-rl-check"
+                      name="check"
                       class={`${resolvedClasses().itemIcon} ${
                         String(item.value) === String(currentValue()) ? "" : "hidden"
                       }`}

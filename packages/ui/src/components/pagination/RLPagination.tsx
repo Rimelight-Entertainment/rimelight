@@ -68,7 +68,7 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
               props.onPageChange?.(currentPage() - 1);
             }}
           >
-            <RLIcon name="chevronLeft" size="sm" aria-hidden="true" />
+            <RLIcon name="chevron-left" size="sm" aria-hidden="true" />
           </button>
         </li>
 
@@ -106,7 +106,7 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
               props.onPageChange?.(currentPage() + 1);
             }}
           >
-            <RLIcon name="chevronRight" size="sm" aria-hidden="true" />
+            <RLIcon name="chevron-right" size="sm" aria-hidden="true" />
           </button>
         </li>
       </ul>
