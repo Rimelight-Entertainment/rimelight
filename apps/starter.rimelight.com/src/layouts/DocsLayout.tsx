@@ -81,7 +81,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
     <AppLayout title={props.title} description={props.description} session={props.session}>
       <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 items-start relative min-h-[calc(100vh-200px)]">
         {/* Sidebar column */}
-        <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
+        <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
           <div class="mb-4 px-2">
             <RLInput
               type="text"
@@ -117,7 +117,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
 
         {/* TOC right column */}
         <Show when={hasToc()}>
-          <div class="hidden xl:block w-[240px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto pl-4">
+          <div class="hidden xl:block w-[240px] shrink-0 sticky top-[calc(var(--rl-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] overflow-y-auto pl-4">
             <RLTableOfContents headings={headings()} tableOfContents={resolvedToc() as any} />
           </div>
         </Show>

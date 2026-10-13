@@ -94,7 +94,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
 
       <div
         class="sticky z-30 bg-neutral-50/95 backdrop-blur-sm"
-        style={{ top: "var(--rl-total-header-height, 64px)" }}
+        style={{ top: "var(--rl-header-height, 64px)" }}
       >
         <details id="docs-nav-details" class="lg:hidden border-b border-default docs-mobile-bar">
           <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
@@ -180,7 +180,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
       </div>
 
       <div class="docs-container max-w-[1400px] mx-auto px-4 lg:px-8 py-8 flex flex-col lg:flex-row gap-8 items-start relative min-h-[calc(100vh-200px)]">
-        <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
+        <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
           <Show when={versions().length > 1}>
             <div class="mb-4 px-2">
               <label class="block text-[10px] text-muted font-bold uppercase tracking-wider mb-1.5 px-1">
@@ -260,7 +260,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
         </main>
 
         <Show when={hasToc()}>
-          <div class="hidden xl:block w-[240px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto pl-4">
+          <div class="hidden xl:block w-[240px] shrink-0 sticky top-[calc(var(--rl-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] overflow-y-auto pl-4">
             <RLTableOfContents headings={headings()} tableOfContents={resolvedToc()} />
           </div>
         </Show>

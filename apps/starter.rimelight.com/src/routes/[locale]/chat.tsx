@@ -178,7 +178,7 @@ export const ChatPage: Component = () => {
 
   return (
     <AppLayout title={t("chat_page.title")} description={t("chat_page.description")}>
-      <div class="min-h-[calc(100vh-var(--rl-total-header-height,64px)-80px)] flex items-center justify-center p-4 md:p-6 lg:p-8">
+      <div class="min-h-[calc(100vh-var(--rl-header-height,64px)-80px)] flex items-center justify-center p-4 md:p-6 lg:p-8">
         <div class="w-full max-w-6xl h-[650px] rounded-2xl overflow-hidden flex flex-col md:flex-row relative bg-zinc-900/60 border border-white/10 backdrop-blur-md shadow-2xl">
           {/* Side panel: Channels & Nickname */}
           <div class="w-full md:w-64 bg-zinc-900/80 border-b md:border-b-0 md:border-r border-white/10 p-5 flex flex-col justify-between shrink-0">

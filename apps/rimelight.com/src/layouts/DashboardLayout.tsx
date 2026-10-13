@@ -46,7 +46,7 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
       favicon={props.favicon}
       session={props.session}
     >
-      <RLDashboardGroup style={{ "padding-top": "var(--rl-total-header-height, 0px)" }}>
+      <RLDashboardGroup style={{ "padding-top": "var(--rl-header-height, 0px)" }}>
         <RLDashboardSidebar
           side="left"
           collapsible

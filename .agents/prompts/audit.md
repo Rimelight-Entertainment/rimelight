@@ -55,6 +55,7 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - No `cx` calls directly in the component.
 - No hydration mismatches.
 - Do not surround the component in any wrapper on the audit page.
+- The audit page must include a test scenario where every slot of the component is passed children (a single dedicated example per slot, including the default slot).
 - Create a robust test suite for the component in question to avoid regressions.
 - If you notice another component with the same issue, always fix it alongside.
 - If you have suggestions or remarks, say them.
@@ -66,7 +67,7 @@ Audit a component file to ensure strict adherence to our design patterns and fun
   - `<name>.ts` — props interface extending the base component props, JSDoc on every prop.
   - `<name>.theme.ts` — the only place classes/Uno utilities live; the component reads them from the theme.
   - `<name>.helpers.ts` — non-rendering logic, only when it is worth splitting out.
-- Audit page: `apps/starter.rimelight.com/src/components/dev/audits/<name>.audit.tsx`, importing the component from `@rimelight/ui/components/<name>/RL<Name>.tsx` and following an existing audit as the pattern reference.
+- Audit page: `apps/rimelight.com/src/components/dev/audits/<name>.audit.tsx`, importing the component from `@rimelight/ui/components/<name>/RL<Name>.tsx` and following an existing audit as the pattern reference.
 - Tests: `packages/ui/test/<name>.test.tsx` (plus `<name>.helpers.test.ts` / `<name>.browser.test.tsx` when applicable). Mirror an existing component's test file for setup and conventions.
 - Read one healthy existing component end to end (component, theme, tests, audit page) before writing anything; conform to it rather than inventing structure.
 
@@ -78,7 +79,9 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Manual verification by me must be requested for any hydration errors or other console warnings. You never run `dev` directly to verify.
 - Do not mark audits as passed unless specifically told to, after my manual verification.
 
-## Deliverables
+## Deliverables\
+
+{ getLocaleUrl("/about") }
 
 - Updated component (`RL<Name>.tsx`), props, theme, helpers.
 - Test suite covering the component's props, states, slots, and interaction behavior.

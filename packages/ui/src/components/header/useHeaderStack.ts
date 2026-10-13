@@ -57,9 +57,9 @@ function initGlobalScroll() {
   window.addEventListener("scroll", handleScroll, { passive: true });
 }
 
-function syncTotalHeaderHeight(total: number) {
+function syncHeaderHeight(total: number) {
   if (typeof document !== "undefined") {
-    document.documentElement.style.setProperty("--rl-total-header-height", `${total}px`);
+    document.documentElement.style.setProperty("--rl-header-height", `${total}px`);
   }
 }
 
@@ -67,7 +67,7 @@ function syncTotalHeaderHeight(total: number) {
  * SolidJS composable for managing stacked and collapsible headers/banners.
  *
  * Automatically tracks dynamic heights via ResizeObserver, computes dynamic top offsets, smoothly
- * collapses on scroll, and synchronizes the `--rl-total-header-height` CSS variable.
+ * collapses on scroll, and synchronizes the `--rl-header-height` CSS variable.
  */
 export function useHeaderStack() {
   onSettled(() => {
@@ -258,14 +258,14 @@ export function useHeaderStack() {
         total += h.height;
       }
     }
-    syncTotalHeaderHeight(total);
+    syncHeaderHeight(total);
     return total;
   });
 
   createEffect(
     () => totalOffset(),
     (offset) => {
-      syncTotalHeaderHeight(offset);
+      syncHeaderHeight(offset);
     },
   );
 

@@ -28,7 +28,7 @@ export const WikiLayout: Component<WikiLayoutProps> = (props) => {
       <GrandTaleHeader />
       <div
         class="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8"
-        style={{ "padding-top": "var(--rl-total-header-height, 1px)" }}
+        style={{ "padding-top": "var(--rl-header-height, 1px)" }}
       >
         <aside class="w-full lg:w-64 shrink-0">
           <WikiSidebar />
