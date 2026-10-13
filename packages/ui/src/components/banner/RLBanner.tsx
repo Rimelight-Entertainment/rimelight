@@ -1,7 +1,6 @@
 import type { RLBannerProps } from "./banner.types";
 import { RLBannerTheme } from "./banner.theme";
 import {
-  createComponent,
   createEffect,
   createMemo,
   createSignal,
@@ -12,7 +11,7 @@ import {
   Show,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import { useHeaderStack } from "../header/useHeaderStack";
@@ -68,6 +67,8 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     "theme",
   );
 
+  const Tag = dynamic(() => props.as ?? "div");
+
   const fixed = () => props.fixed ?? false;
   const sticky = () => (fixed() ? false : (props.sticky ?? false));
   const isStacked = () => fixed() || sticky();
@@ -78,10 +79,11 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
 
   // Explicit id (or legacy dismissId) enables persistence. Otherwise a
   // createUniqueId() fallback keeps the DOM id unique and SSR/hydration stable.
-  const persistId = (props.id as string | undefined) || props.dismissId || "";
-  const layerId = persistId || `rl-banner-${createUniqueId()}`;
-  const titleId = `${layerId}-title`;
-  const storageKey = persistId ? `banner-${persistId}` : undefined;
+  const fallbackId = `rl-banner-${createUniqueId()}`;
+  const persistId = () => (props["id"] as string | undefined) || props.dismissId || "";
+  const layerId = () => persistId() || fallbackId;
+  const titleId = () => `${layerId()}-title`;
+  const storageKey = () => (persistId() ? `banner-${persistId()}` : undefined);
 
   const isClosable = () => Boolean(props.close !== undefined ? props.close : props.dismissable);
 
@@ -90,17 +92,19 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const [dismissed, setDismissed] = createSignal(false);
 
   onSettled(() => {
-    if (!storageKey) return;
+    const key = storageKey();
+    if (!key) return;
     try {
-      if (window.localStorage.getItem(storageKey) !== null) setDismissed(true);
+      if (window.localStorage.getItem(key) !== null) setDismissed(true);
     } catch {}
   });
 
   const handleClose = (e?: MouseEvent) => {
     e?.stopPropagation();
-    if (storageKey) {
+    const key = storageKey();
+    if (key) {
       try {
-        window.localStorage.setItem(storageKey, DISMISSED_VALUE);
+        window.localStorage.setItem(key, DISMISSED_VALUE);
       } catch {}
     }
     setDismissed(true);
@@ -129,11 +133,11 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({
     id: layerId,
-    order: stackIndex(),
+    order: stackIndex,
     type: "banner",
-    sticky: sticky(),
-    fixed: fixed(),
-    hideOnScroll: hideOnScroll(),
+    sticky: sticky,
+    fixed: fixed,
+    hideOnScroll: hideOnScroll,
     visible: () => !dismissed() && isStacked(),
   });
 
@@ -185,140 +189,120 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
       : base;
   });
 
-  const renderRoot = (content: JSX.Element) => {
-    const rootProps = {
-      ref: (el: HTMLElement) => {
-        rootEl = el;
-        layer.ref(el);
-      },
-      id: layerId,
-      "data-slot": "root",
-      role: hasTitle() || props.ariaLabel ? ("region" as const) : undefined,
-      "aria-labelledby": hasTitle() ? titleId : undefined,
-      "aria-label": !hasTitle() ? props.ariaLabel : undefined,
-      class: classes().root,
-      "data-color": props.color ?? "primary",
-      "data-contain": (props.contain ?? true) ? "true" : "false",
-      "data-collapsed": isStacked() && layer.isCollapsed() ? "true" : "false",
-      "data-rl-banner": isStacked() ? "true" : undefined,
-      "data-stack-index": stackIndex(),
-      "data-hide-on-scroll": String(hideOnScroll()),
-      "data-header-layer-id": layerId,
-      "data-layer-type": "banner",
-      "data-dismiss-key": storageKey,
-      ...rest,
-    };
-
-    if (props.as === "section") {
-      return <section {...rootProps}>{content}</section>;
-    }
-    if (props.as === "header") {
-      return <header {...rootProps}>{content}</header>;
-    }
-    if (props.as === "aside") {
-      return <aside {...rootProps}>{content}</aside>;
-    }
-    if (typeof props.as === "function") {
-      return createComponent(props.as as any, { ...rootProps, children: content });
-    }
-    return <div {...rootProps}>{content}</div>;
-  };
-
   return (
     <Show when={!dismissed()}>
-      {renderRoot(
-        <>
-          {/* Full-surface overlay link (never wraps interactive children). */}
-          <Show when={linkAttrs()}>
-            {(attrs) => (
-              <a
-                class={classes().link}
-                data-slot="link"
-                href={attrs().href}
-                target={attrs().target}
-                rel={attrs().rel}
-                aria-current={attrs().ariaCurrent}
-                aria-disabled={attrs().ariaDisabled}
-                data-astro-prefetch={attrs().prefetchAttr}
-                aria-labelledby={!props.ariaLabel && hasTitle() ? titleId : undefined}
-                aria-label={props.ariaLabel}
-              />
-            )}
-          </Show>
+      <Tag
+        ref={(el: HTMLElement) => {
+          rootEl = el;
+          layer.ref(el);
+        }}
+        id={layerId()}
+        data-slot="root"
+        role={hasTitle() || props.ariaLabel ? "region" : undefined}
+        aria-labelledby={hasTitle() ? titleId() : undefined}
+        aria-label={!hasTitle() ? props.ariaLabel : undefined}
+        class={classes().root}
+        data-color={props.color ?? "primary"}
+        data-contain={(props.contain ?? true) ? "true" : "false"}
+        data-collapsed={isStacked() && layer.isCollapsed() ? "true" : "false"}
+        data-rl-banner={isStacked() ? "true" : undefined}
+        data-stack-index={stackIndex()}
+        data-hide-on-scroll={String(hideOnScroll())}
+        data-header-layer-id={layerId()}
+        data-layer-type="banner"
+        data-dismiss-key={storageKey()}
+        {...rest}
+      >
+        {/* Full-surface overlay link (never wraps interactive children). */}
+        <Show when={linkAttrs()}>
+          {(attrs) => (
+            <a
+              class={classes().link}
+              data-slot="link"
+              href={attrs().href}
+              target={attrs().target}
+              rel={attrs().rel}
+              aria-current={attrs().ariaCurrent}
+              aria-disabled={attrs().ariaDisabled}
+              data-astro-prefetch={attrs().prefetchAttr}
+              aria-labelledby={!props.ariaLabel && hasTitle() ? titleId() : undefined}
+              aria-label={props.ariaLabel}
+            />
+          )}
+        </Show>
 
-          <div class={classes().content} data-slot="content" data-header-content>
-            <div class={classes().container} data-slot="container">
-              <div class={classes().left} data-slot="left">
-                {props.left}
-              </div>
+        <div class={classes().content} data-slot="content" data-header-content>
+          <div class={classes().container} data-slot="container">
+            <div class={classes().left} data-slot="left">
+              {props.left}
+            </div>
 
-              <div class={classes().center} data-slot="center">
-                <Show when={!props.center} fallback={props.center}>
-                  <Show
-                    when={props.leading}
-                    fallback={
-                      <Show when={props.icon}>
-                        {(icon) => (
-                          <span class={classes().icon} data-slot="icon" aria-hidden="true">
-                            <RLIcon name={icon()} size="sm" aria-hidden="true" />
-                          </span>
-                        )}
-                      </Show>
-                    }
-                  >
-                    {props.leading}
-                  </Show>
-
-                  <Show when={hasTitle()}>
-                    <div id={titleId} class={classes().title} data-slot="title">
-                      {props.titleSlot ?? props.title ?? props.children}
-                    </div>
-                  </Show>
-                </Show>
-              </div>
-
-              <div class={classes().right} data-slot="right">
-                {props.right}
-
-                {/* Actions off to the rightmost next to the close button */}
-                <Show when={hasActions()}>
-                  <div class={classes().actions} data-slot="actions">
-                    <Show
-                      when={props.actionsSlot}
-                      fallback={
-                        <For each={props.actions}>
-                          {(action) => <RLButton color="neutral" size="xs" {...action} />}
-                        </For>
-                      }
-                    >
-                      {props.actionsSlot}
-                    </Show>
-                  </div>
-                </Show>
-
-                {/* Close Button */}
+            <div class={classes().center} data-slot="center">
+              <Show when={!props.center} fallback={props.center}>
                 <Show
-                  when={props.closeSlot}
+                  when={props.leading}
                   fallback={
-                    <Show when={isClosable()}>
-                      <RLButton
-                        type="button"
-                        class={classes().close}
-                        data-slot="close"
-                        data-banner-close
-                        onClick={handleClose}
-                        {...closeButtonProps()}
-                      />
+                    <Show when={props.icon}>
+                      {(icon) => (
+                        <span class={classes().icon} data-slot="icon" aria-hidden="true">
+                          <RLIcon name={icon()} size="sm" aria-hidden="true" />
+                        </span>
+                      )}
                     </Show>
                   }
                 >
-                  {props.closeSlot}
+                  {props.leading}
                 </Show>
-              </div>
+
+                <Show when={hasTitle()}>
+                  <div id={titleId()} class={classes().title} data-slot="title">
+                    {props.titleSlot ?? props.title ?? props.children}
+                  </div>
+                </Show>
+              </Show>
+            </div>
+
+            <div class={classes().right} data-slot="right">
+              {props.right}
+
+              {/* Actions off to the rightmost next to the close button */}
+              <Show when={hasActions()}>
+                <div class={classes().actions} data-slot="actions">
+                  <Show
+                    when={props.actionsSlot}
+                    fallback={
+                      <For each={props.actions}>
+                        {(action) => <RLButton color="neutral" size="xs" {...action} />}
+                      </For>
+                    }
+                  >
+                    {props.actionsSlot}
+                  </Show>
+                </div>
+              </Show>
+
+              {/* Close Button */}
+              <Show
+                when={props.closeSlot}
+                fallback={
+                  <Show when={isClosable()}>
+                    <RLButton
+                      type="button"
+                      class={classes().close}
+                      data-slot="close"
+                      data-banner-close
+                      onClick={handleClose}
+                      {...closeButtonProps()}
+                    />
+                  </Show>
+                }
+              >
+                {props.closeSlot}
+              </Show>
             </div>
           </div>
-        </>,
-      )}
+        </div>
+      </Tag>
     </Show>
   );
 };

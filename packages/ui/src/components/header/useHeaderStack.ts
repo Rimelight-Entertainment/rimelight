@@ -19,14 +19,16 @@ export interface HeaderLayer {
   element?: HTMLElement | null | undefined;
 }
 
+export type MaybeAccessor<T> = T | Accessor<T>;
+
 export interface RegisterHeaderOptions {
-  id: string;
-  order?: number;
-  type?: "banner" | "header";
-  sticky?: boolean;
-  fixed?: boolean;
-  hideOnScroll?: boolean;
-  visible?: boolean | Accessor<boolean>;
+  id: MaybeAccessor<string>;
+  order?: MaybeAccessor<number | undefined>;
+  type?: MaybeAccessor<"banner" | "header" | undefined>;
+  sticky?: MaybeAccessor<boolean | undefined>;
+  fixed?: MaybeAccessor<boolean | undefined>;
+  hideOnScroll?: MaybeAccessor<boolean | undefined>;
+  visible?: MaybeAccessor<boolean | undefined>;
 }
 
 // Global singleton state shared across all header and banner islands
@@ -76,10 +78,50 @@ export function useHeaderStack() {
     let el: HTMLElement | undefined;
     let observer: ResizeObserver | undefined;
 
+    const idOpt = options.id;
+    const idAccessor: () => string = typeof idOpt === "function" ? idOpt : () => idOpt;
+
+    const typeOpt = options.type;
+    const typeAccessor: () => "banner" | "header" =
+      typeof typeOpt === "function" ? () => typeOpt() ?? "header" : () => typeOpt ?? "header";
+
+    const orderOpt = options.order;
+    const orderAccessor: () => number =
+      typeof orderOpt === "function"
+        ? () => orderOpt() ?? (typeAccessor() === "banner" ? 0 : 1)
+        : () => orderOpt ?? (typeAccessor() === "banner" ? 0 : 1);
+
+    const stickyOpt = options.sticky;
+    const stickyAccessor: () => boolean =
+      typeof stickyOpt === "function" ? () => stickyOpt() ?? true : () => stickyOpt ?? true;
+
+    const fixedOpt = options.fixed;
+    const fixedAccessor: () => boolean =
+      typeof fixedOpt === "function" ? () => fixedOpt() ?? false : () => fixedOpt ?? false;
+
+    const hideOnScrollOpt = options.hideOnScroll;
+    const hideOnScrollAccessor: () => boolean =
+      typeof hideOnScrollOpt === "function"
+        ? () => hideOnScrollOpt() ?? false
+        : () => hideOnScrollOpt ?? false;
+
+    const visibleOpt = options.visible;
     const isVisibleAccessor: () => boolean =
-      typeof options.visible === "function"
-        ? options.visible
-        : () => Boolean(options.visible ?? true);
+      typeof visibleOpt === "function"
+        ? () => Boolean(visibleOpt())
+        : () => Boolean(visibleOpt ?? true);
+
+    const getHeaderEntry = (height: number): HeaderLayer => ({
+      id: idAccessor(),
+      order: orderAccessor(),
+      type: typeAccessor(),
+      height,
+      sticky: stickyAccessor(),
+      fixed: fixedAccessor(),
+      hideOnScroll: hideOnScrollAccessor(),
+      visible: isVisibleAccessor(),
+      element: el,
+    });
 
     onSettled(() => {
       initGlobalScroll();
@@ -88,32 +130,22 @@ export function useHeaderStack() {
       const updateHeight = () => {
         if (!el) return;
         const height = Math.round(el.getBoundingClientRect().height);
-        const visible: boolean = isVisibleAccessor();
+        const newEntry = getHeaderEntry(height);
 
         untrack(() => {
           setHeaders((prev) => {
-            const index = prev.findIndex((h) => h.id === options.id);
-            const newEntry: HeaderLayer = {
-              id: options.id,
-              order: options.order ?? (options.type === "banner" ? 0 : 1),
-              type: options.type ?? "header",
-              height,
-              sticky: options.sticky ?? true,
-              fixed: options.fixed ?? false,
-              hideOnScroll: options.hideOnScroll ?? false,
-              visible,
-              element: el,
-            };
-
+            const index = prev.findIndex((h) => h.id === newEntry.id);
             if (index !== -1) {
               const existing = prev[index];
               if (
                 existing &&
                 existing.height === height &&
-                existing.visible === visible &&
+                existing.visible === newEntry.visible &&
                 existing.hideOnScroll === newEntry.hideOnScroll &&
                 existing.order === newEntry.order &&
-                existing.type === newEntry.type
+                existing.type === newEntry.type &&
+                existing.sticky === newEntry.sticky &&
+                existing.fixed === newEntry.fixed
               ) {
                 return prev;
               }
@@ -139,42 +171,49 @@ export function useHeaderStack() {
         if (observer) {
           observer.disconnect();
         }
+        const currentId = idAccessor();
         queueMicrotask(() => {
-          setHeaders((prev) => prev.filter((h) => h.id !== options.id));
+          setHeaders((prev) => prev.filter((h) => h.id !== currentId));
         });
       };
     });
 
-    if (typeof options.visible === "function") {
-      const vis = options.visible;
-      createEffect(
-        () => vis(),
-        (visible) => {
-          if (!el) return;
-          const height = Math.round(el.getBoundingClientRect().height);
-          untrack(() => {
-            setHeaders((prev) => {
-              const index = prev.findIndex((h) => h.id === options.id);
-              if (index === -1) return prev;
-              const copy = [...prev];
-              const existing = copy[index];
-              if (existing) {
-                copy[index] = { ...existing, height, visible: Boolean(visible) };
-              }
-              return copy;
-            });
+    createEffect(
+      () => ({
+        id: idAccessor(),
+        order: orderAccessor(),
+        type: typeAccessor(),
+        sticky: stickyAccessor(),
+        fixed: fixedAccessor(),
+        hideOnScroll: hideOnScrollAccessor(),
+        visible: isVisibleAccessor(),
+      }),
+      (entryProps) => {
+        if (!el) return;
+        const height = Math.round(el.getBoundingClientRect().height);
+        untrack(() => {
+          setHeaders((prev) => {
+            const index = prev.findIndex((h) => h.id === entryProps.id);
+            if (index === -1) return prev;
+            const copy = [...prev];
+            const existing = copy[index];
+            if (existing) {
+              copy[index] = { ...existing, ...entryProps, height, element: el };
+            }
+            return copy;
           });
-        },
-      );
-    }
+        });
+      },
+    );
 
     const isCollapsed = createMemo(() => {
-      const hide = options.hideOnScroll ?? false;
+      const hide = hideOnScrollAccessor();
       if (!hide) return false;
       return scrollY() > 50 && (scrollDirection() === "down" || scrollY() > 100);
     });
 
     const topOffset = createMemo(() => {
+      const currentId = idAccessor();
       const list = headers()
         .slice()
         .sort((a, b) => {
@@ -182,7 +221,7 @@ export function useHeaderStack() {
           return a.order - b.order;
         });
 
-      const index = list.findIndex((h) => h.id === options.id);
+      const index = list.findIndex((h) => h.id === currentId);
       if (index <= 0) return 0;
 
       let top = 0;
