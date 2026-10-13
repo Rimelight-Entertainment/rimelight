@@ -62,7 +62,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
     ) : null;
 
   const leftContent = () => {
-    if (props.leftSlot !== undefined) {
+    if ("leftSlot" in props) {
       return props.leftSlot;
     }
     return (
@@ -72,7 +72,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
             <RLIcon name={props.icon} class={resolvedClasses().icon} data-slot="icon" />
           ) : null)}
         <h1 data-slot="title" class={resolvedClasses().title}>
-          {props.titleSlot !== undefined ? props.titleSlot : props.title}
+          {"titleSlot" in props ? props.titleSlot : props.title}
         </h1>
         {props.trailingSlot}
       </>
@@ -80,9 +80,9 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
   };
 
   const centerContent = () =>
-    props.centerSlot !== undefined || props.children !== undefined ? (
+    "centerSlot" in props || "children" in props ? (
       <div data-slot="center" class={resolvedClasses().center}>
-        {props.centerSlot !== undefined ? props.centerSlot : props.children}
+        {"centerSlot" in props ? props.centerSlot : props.children}
       </div>
     ) : null;
 

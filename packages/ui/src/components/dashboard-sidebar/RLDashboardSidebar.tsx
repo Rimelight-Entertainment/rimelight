@@ -103,14 +103,14 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
   );
 
   const headerContent = () =>
-    props.headerSlot !== undefined ? (
+    "headerSlot" in props ? (
       <div data-slot="header" class={resolvedClasses().header}>
         {props.headerSlot}
       </div>
     ) : null;
 
   const footerContent = () =>
-    props.footerSlot !== undefined ? (
+    "footerSlot" in props ? (
       <div data-slot="footer" class={resolvedClasses().footer}>
         {props.footerSlot}
       </div>
