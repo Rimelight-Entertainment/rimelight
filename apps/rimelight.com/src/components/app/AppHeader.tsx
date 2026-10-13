@@ -639,14 +639,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       variant: "outline",
       href: "/api/auth/login?screen_hint=signup",
       label: t("app_header.actions_sign-up"),
-      prefetch: false,
     },
     {
       variant: "solid",
       color: "primary",
       href: "/api/auth/login",
       label: t("app_header.actions_sign-in"),
-      prefetch: false,
     },
   ];
 
@@ -683,7 +681,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             icon: "i-lucide-log-out",
             to: "/api/auth/logout",
             color: "error",
-            prefetch: false,
           },
         ]
       : [];
