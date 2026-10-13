@@ -23,8 +23,8 @@
   "exports": {
     ".": {
       "types": "./src/index.ts",
-      "solid": "./src/index.tsx",
-      "import": "./src/index.tsx"
+      "solid": "./src/index.ts",
+      "import": "./src/index.ts"
     },
     "./plugin": {
       "types": "./dist/plugin.d.mts",
@@ -35,8 +35,8 @@
     },
     "./components": {
       "types": "./src/components/index.ts",
-      "solid": "./src/components/index.tsx",
-      "import": "./src/components/index.tsx"
+      "solid": "./src/components/index.ts",
+      "import": "./src/components/index.ts"
     },
     "./preset": {
       "types": "./dist/preset.d.mts",
