@@ -54,12 +54,6 @@ export interface RLLinkProps {
    */
   rel?: string | null | undefined;
   /**
-   * Enables Astro's built-in prefetch strategy.
-   *
-   * @default undefined;
-   */
-  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
-  /**
    * Applies active styling to the link.
    *
    * @default undefined

@@ -52,7 +52,7 @@ describe("RLLink", () => {
     });
   });
 
-  describe("Icons & prefetch", () => {
+  describe("Icons & semantics", () => {
     it("renders leading and trailing icons as inline svg", () => {
       const html = render(() => <RLLink to="/docs" label="Docs" leadingIcon="bookOpen" />);
       expect(html).toContain('data-slot="leading-icon"');
@@ -63,13 +63,6 @@ describe("RLLink", () => {
       ));
       expect(trailingHtml).toContain('data-slot="trailing-icon"');
       expect(trailingHtml).toContain("<svg");
-    });
-
-    it("emits data-astro-prefetch on links", () => {
-      expect(render(() => <RLLink to="/docs" label="Docs" prefetch />)).toContain(
-        'data-astro-prefetch="viewport"',
-      );
-      expect(render(() => <RLLink to="/docs" label="Docs" />)).not.toContain("data-astro-prefetch");
     });
 
     it("applies active and disabled semantics", () => {

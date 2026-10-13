@@ -423,27 +423,6 @@ describe("RLButton", () => {
     });
   });
 
-  describe("Prefetch attribute", () => {
-    it("emits data-astro-prefetch on links", () => {
-      expect(render(() => <RLButton to="/docs" label="Docs" prefetch />)).toContain(
-        'data-astro-prefetch="viewport"',
-      );
-      expect(render(() => <RLButton to="/docs" label="Docs" prefetch={false} />)).toContain(
-        'data-astro-prefetch="false"',
-      );
-      expect(render(() => <RLButton to="/docs" label="Docs" prefetch="hover" />)).toContain(
-        'data-astro-prefetch="hover"',
-      );
-    });
-
-    it("omits the attribute when prefetch is not set or the button is not a link", () => {
-      expect(render(() => <RLButton to="/docs" label="Docs" />)).not.toContain(
-        "data-astro-prefetch",
-      );
-      expect(render(() => <RLButton label="Plain" />)).not.toContain("data-astro-prefetch");
-    });
-  });
-
   describe("Polymorphic semantics", () => {
     it("keeps native button semantics without an explicit role", () => {
       const html = render(() => <RLButton label="Native" />);

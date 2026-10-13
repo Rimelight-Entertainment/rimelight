@@ -29,7 +29,6 @@ export interface BreadcrumbItem {
   noExternalIcon?: boolean | undefined;
   target?: string | undefined;
   rel?: string | null | undefined;
-  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
   active?: boolean | undefined;
   disabled?: boolean | undefined;
   raw?: boolean | undefined;

@@ -58,7 +58,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     "externalIcon",
     "noExternalIcon",
     "trailingIcon",
-    "prefetch",
     "active",
     "disabled",
     "raw",
@@ -165,7 +164,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
           noExternalIcon: props.noExternalIcon,
           target: props.target,
           rel: props.rel,
-          prefetch: props.prefetch,
           active: props.active,
           disabled: props.disabled,
           raw: props.raw,
@@ -224,7 +222,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
               rel={attrs().rel}
               aria-current={attrs().ariaCurrent}
               aria-disabled={attrs().ariaDisabled}
-              data-astro-prefetch={attrs().prefetchAttr}
               aria-labelledby={!props.ariaLabel && hasTitle() ? titleId() : undefined}
               aria-label={props.ariaLabel}
             />

@@ -174,12 +174,6 @@ export interface RLCopyMarkdownProps {
    */
   rel?: string | null | undefined;
   /**
-   * Enables Astro's built-in prefetch strategy.
-   *
-   * @default undefined;
-   */
-  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined;
-  /**
    * Raw markdown content to copy to the clipboard.
    */
   raw: string;

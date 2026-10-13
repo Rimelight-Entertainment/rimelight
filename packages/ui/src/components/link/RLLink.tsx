@@ -17,7 +17,6 @@ export const RLLink: Component<RLLinkProps> = (allProps) => {
     "noExternalIcon",
     "target",
     "rel",
-    "prefetch",
     "active",
     "disabled",
     "raw",
@@ -60,7 +59,6 @@ export const RLLink: Component<RLLinkProps> = (allProps) => {
       aria-label={ariaLabelValue()}
       aria-current={attrs().ariaCurrent}
       aria-disabled={attrs().ariaDisabled}
-      data-astro-prefetch={attrs().prefetchAttr}
       {...rest}
     >
       {props.leading ? (

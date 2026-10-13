@@ -414,7 +414,7 @@ export const buttonAudit: ComponentAuditDefinition = {
       criterion: "API parity (Button)",
       status: "pass",
       notes:
-        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, exactActiveClass, to, href, target, rel, noRel, external, prefetch, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array. square uses `square || (!label && !children)` rule.",
+        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, exactActiveClass, to, href, target, rel, noRel, external, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array. square uses `square || (!label && !children)` rule.",
     },
     {
       criterion: "Slot pattern parity (leading, default, trailing)",

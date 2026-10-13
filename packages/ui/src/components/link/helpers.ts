@@ -22,15 +22,6 @@ export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
   const ariaCurrent =
     rawAriaCurrent === true ? "true" : rawAriaCurrent === false ? "false" : rawAriaCurrent;
 
-  const prefetchAttr =
-    props.prefetch !== undefined
-      ? props.prefetch === true
-        ? "viewport"
-        : props.prefetch === false
-          ? "false"
-          : props.prefetch
-      : undefined;
-
   const href = props.disabled ? undefined : props.href;
   const ariaDisabled: "true" | undefined = props.disabled ? "true" : undefined;
 
@@ -40,7 +31,6 @@ export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
     target,
     rel,
     ariaCurrent,
-    prefetchAttr,
     href,
     ariaDisabled,
   };

@@ -257,7 +257,7 @@ describe("RLBanner", () => {
 
     it("does not leak resolver internals as DOM attributes", () => {
       const html = render(() => <RLBanner to="https://a.com" title="t" />);
-      expect(html).not.toMatch(/isExternal|showTrailingIcon|prefetchAttr|ariaDisabled/);
+      expect(html).not.toMatch(/isExternal|showTrailingIcon|ariaDisabled/);
     });
 
     it("does not render a link without to/href", () => {

@@ -88,10 +88,6 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     "target",
     "rel",
     "noRel",
-    "prefetch",
-    "prefetchOn" as any,
-    "noPrefetch" as any,
-    "prefetchedClass" as any,
     "trailingSlash" as any,
     "replace" as any,
     "exact" as any,
@@ -126,7 +122,6 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
         external: props.external,
         target: props.target,
         rel: props.noRel ? "" : (props.rel ?? undefined),
-        prefetch: props.prefetch,
         active: props.active,
         ariaCurrentValue: props.ariaCurrentValue,
         disabled: isDisabled(),
@@ -418,7 +413,6 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
         aria-disabled={isDisabled() ? "true" : undefined}
         aria-current={linkAttrs().ariaCurrent}
         tabindex={isDisabled() ? -1 : undefined}
-        data-astro-prefetch={linkAttrs().prefetchAttr}
         class={rootClass()}
         data-slot="root"
         data-theme={props.theme}
