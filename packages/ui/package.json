@@ -96,6 +96,7 @@
     "solid-js": "2.0.0-rc.13"
   },
   "peerDependencies": {
+    "@solidjs/web": ">=2.0.0-rc.11",
     "solid-js": ">=2.0.0-rc.11",
     "vite-plus": "^1.0.0"
   },

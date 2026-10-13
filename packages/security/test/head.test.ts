@@ -3,19 +3,18 @@ import { createSecurityHead } from "../src/head";
 
 describe("createSecurityHead generator", () => {
   it("should generate Trusted Types, CSP nonce sync, and dev reporter scripts", () => {
-    const head = createSecurityHead({ nonce: "test-nonce-123", devReporter: true });
-    expect(head.html).toContain('nonce="test-nonce-123"');
-    expect(head.html).toContain("trustedTypes.createPolicy");
-    expect(head.html).toContain("initialCspNonce");
-    expect(head.html).toContain("securitypolicyviolation");
-    expect(head.tags.length).toBe(3);
+    const tags = createSecurityHead({ devReporter: true });
+    const scripts = tags.filter((t) => t.tag === "script");
+    expect(scripts.length).toBe(3);
+    expect(String(scripts[0]?.props?.["children"])).toContain("trustedTypes.createPolicy");
+    expect(String(scripts[1]?.props?.["children"])).toContain("initialCspNonce");
+    expect(String(scripts[2]?.props?.["children"])).toContain("securitypolicyviolation");
   });
 
   it("should support disabling individual components", () => {
-    const head = createSecurityHead({ trustedTypes: false, devReporter: false });
-    expect(head.html).not.toContain("trustedTypes.createPolicy");
-    expect(head.html).not.toContain("securitypolicyviolation");
-    expect(head.html).toContain("initialCspNonce");
-    expect(head.tags.length).toBe(1);
+    const tags = createSecurityHead({ trustedTypes: false, devReporter: false });
+    const scripts = tags.filter((t) => t.tag === "script");
+    expect(scripts.length).toBe(1);
+    expect(String(scripts[0]?.props?.["children"])).toContain("initialCspNonce");
   });
 });

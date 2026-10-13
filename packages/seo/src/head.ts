@@ -11,42 +11,9 @@ import {
 } from "./meta";
 import { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
 import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize";
+import type { HeadTag } from "@solidjs/web";
 
-/**
- * Discriminated union of all supported head tag shapes. Typed per-tag so JSX consumers get
- * autocomplete and safety on .tags without needing to fall back to raw .html.
- */
-export type HeadTag =
-  | { tag: "title"; props: { children: string }; children?: string; key?: string }
-  | {
-      tag: "meta";
-      props:
-        | { name: string; content: string; [k: string]: string | undefined }
-        | { property: string; content: string; [k: string]: string | undefined }
-        | { charset: string; [k: string]: string | undefined }
-        | { "http-equiv": string; content: string; [k: string]: string | undefined }
-        | Record<string, string | undefined>;
-      children?: never;
-      key?: string;
-    }
-  | {
-      tag: "link";
-      props: { rel: string; href: string; [k: string]: string | undefined };
-      children?: never;
-      key?: string;
-    }
-  | {
-      tag: "script";
-      props: { type?: string; nonce?: string; children?: string; [k: string]: string | undefined };
-      children?: string;
-      key?: string;
-    }
-  | {
-      tag: "style";
-      props: { nonce?: string; children?: string; [k: string]: string | undefined };
-      children?: string;
-      key?: string;
-    };
+export type { HeadTag } from "@solidjs/web";
 
 export interface HeadResult {
   /**
@@ -76,7 +43,7 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
 
   for (const t of tags) {
     if (t.tag === "title") {
-      const text = t.props?.children ?? t.children ?? "";
+      const text = t.props?.["children"] ?? "";
       lines.push(`<title>${escapeHtml(text)}</title>`);
     } else if (t.tag === "meta") {
       const attrs = Object.entries(t.props || {})
@@ -97,7 +64,7 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
       lines.push(`<link ${attrs} />`);
     } else if (t.tag === "script") {
       const { children: bodyText, ...otherProps } = (t.props || {}) as Record<string, unknown>;
-      const scriptBody = (bodyText ?? t.children ?? "") as string;
+      const scriptBody = (bodyText ?? "") as string;
       const attrs = Object.entries(otherProps)
         .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
@@ -106,7 +73,7 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
       lines.push(`<script${attrStr}>${scriptBody}</script>`);
     } else if (t.tag === "style") {
       const { children: bodyText, ...otherProps } = (t.props || {}) as Record<string, unknown>;
-      const styleBody = (bodyText ?? t.children ?? "") as string;
+      const styleBody = (bodyText ?? "") as string;
       const attrs = Object.entries(otherProps)
         .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
@@ -117,70 +84,6 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
   }
 
   return lines.join("\n");
-}
-
-function getTagKey(tag: HeadTag): string | null {
-  if (tag.tag === "title") return "title";
-  if (tag.tag === "meta") {
-    const props = tag.props as Record<string, string | undefined>;
-    if (props["name"]) return `meta:name:${props["name"].toLowerCase()}`;
-    if (props["property"]) return `meta:property:${props["property"].toLowerCase()}`;
-    if (props["charset"]) return "meta:charset";
-    if (props["http-equiv"]) return `meta:http-equiv:${props["http-equiv"].toLowerCase()}`;
-    return null;
-  }
-  if (tag.tag === "link") {
-    const props = tag.props;
-    const rel = props.rel.toLowerCase();
-    if (rel === "alternate") {
-      if (props["hreflang"]) return `link:alternate:hreflang:${props["hreflang"].toLowerCase()}`;
-      if (props["type"]) return `link:alternate:type:${props["type"].toLowerCase()}`;
-      if (props["data-version"]) return `link:alternate:version:${props["data-version"]}`;
-      return `link:alternate:${props.href}`;
-    }
-    if (rel === "icon") {
-      if (props["sizes"]) return `link:icon:${props["sizes"]}`;
-      if (props["type"]) return `link:icon:${props["type"]}`;
-      return "link:icon";
-    }
-    return `link:${rel}`;
-  }
-  // LD+JSON scripts accumulate (never deduplicated)
-  if (tag.tag === "script" && tag.props?.type === "application/ld+json") {
-    return null;
-  }
-  return null;
-}
-
-/**
- * Merges two HeadTag lists with deterministic last-wins deduplication.
- */
-export function mergeHeadTags(parentTags: HeadTag[], childTags: HeadTag[]): HeadTag[] {
-  const merged: HeadTag[] = [];
-  const keyIndexMap = new Map<string, number>();
-
-  for (const tag of parentTags) {
-    const key = getTagKey(tag);
-    if (key) {
-      keyIndexMap.set(key, merged.length);
-    }
-    merged.push(tag);
-  }
-
-  for (const tag of childTags) {
-    const key = getTagKey(tag);
-    if (key && keyIndexMap.has(key)) {
-      const idx = keyIndexMap.get(key)!;
-      merged[idx] = tag;
-    } else {
-      if (key) {
-        keyIndexMap.set(key, merged.length);
-      }
-      merged.push(tag);
-    }
-  }
-
-  return merged;
 }
 
 const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -420,7 +323,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   }
 
   // Title & SEO
-  tags.push({ tag: "title", props: { children: displayTitle }, children: displayTitle });
+  tags.push({ tag: "title", props: { children: displayTitle } });
   if (safeDescription) {
     tags.push({ tag: "meta", props: { name: "description", content: safeDescription } });
   }
@@ -634,7 +537,6 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tags.push({
       tag: "script",
       props: { ...scriptProps, children: content },
-      children: content,
     });
   }
 
@@ -644,7 +546,6 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tags.push({
       tag: "script",
       props: { ...scriptProps, children: content },
-      children: content,
     });
   }
 
@@ -654,7 +555,6 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tags.push({
       tag: "script",
       props: { ...scriptProps, children: content },
-      children: content,
     });
   }
 

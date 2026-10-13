@@ -33,6 +33,18 @@ const summarizeHeadTags = (tags: { tag: string; children?: string }[]): string =
   return lines.length ? lines.join("\n") : "(no tags)";
 };
 
+const renderTagsToHtml = (tags: { tag: string; props: Record<string, unknown> }[]): string =>
+  tags
+    .map((t) => {
+      const { children, ...attrs } = t.props;
+      const attrStr = Object.entries(attrs)
+        .filter(([, v]) => v !== undefined && v !== null)
+        .map(([k, v]) => `${k}="${String(v)}"`)
+        .join(" ");
+      return `<${t.tag}${attrStr ? ` ${attrStr}` : ""}>${children == null ? "" : String(children as string)}</${t.tag}>`;
+    })
+    .join("\n");
+
 export default function DevSecurityPage() {
   const config = getSecurityConfig();
   const ratelimitOptions =
@@ -135,21 +147,21 @@ export default function DevSecurityPage() {
     {
       title: "createSecurityHead()",
       mono: true,
-      output: fullHead.html,
+      output: renderTagsToHtml(fullHead),
       rows: [
         {
           label: "Full head",
           code: `createSecurityHead({ devReporter: true })`,
           description:
             "Emits Trusted Types fallback, nonce sync, and a dev-only CSP violation reporter. In production, nonces/SRI are injected by the middleware via HTMLRewriter instead.",
-          value: summarizeHeadTags(fullHead.tags),
+          value: summarizeHeadTags(fullHead),
         },
         {
           label: "Minimal head",
           code: `createSecurityHead({ trustedTypes: false, nonceSync: false, devReporter: false })`,
           description:
             "All optional scripts disabled; used when the middleware is the only security layer.",
-          value: minimalHead.html || "(empty)",
+          value: renderTagsToHtml(minimalHead) || "(empty)",
         },
       ],
     },
