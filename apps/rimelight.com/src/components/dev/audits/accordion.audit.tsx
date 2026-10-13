@@ -9,7 +9,7 @@ const BASE_ITEMS: AccordionItem[] = [
     label: "What is Rimelight UI?",
     icon: "i-lucide-sparkles",
     content:
-      "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS and Astro.",
+      "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS.",
   },
   {
     label: "How does Accordion grouping work?",

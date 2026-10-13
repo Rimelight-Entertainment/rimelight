@@ -25,7 +25,7 @@ export interface ResolvedFontPaths {
 /**
  * Resolves the on-disk cache locations for fonts. Fonts never touch `public/`: binaries live under
  * `node_modules/.cache` and are served via Vite middleware in dev and emitted as bundle assets in
- * build (Astro-style).
+ * build.
  */
 export function resolveFontPaths(options?: LocalFontProcessorOptions): ResolvedFontPaths {
   const cwd = options?.cwd || process.cwd();

@@ -51,7 +51,7 @@ docs.post("/metadata/extract", async (c) => {
     const record = {
       componentName,
       version: "latest",
-      framework: "astro",
+      framework: "solid",
       filePath: componentPath,
       props,
       slots,
@@ -128,7 +128,7 @@ docs.post("/render", async (c) => {
   try {
     const body = await c.req.json();
     const componentCode = body.componentCode;
-    const framework = body.framework || "astro";
+    const framework = body.framework || "solid";
     const height = body.height || "300px";
     const width = body.width || "100%";
 

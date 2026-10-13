@@ -188,7 +188,7 @@ describe("@rimelight/security construction middleware", () => {
     expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 });
   });
 
-  it("should support zero-dep cookie extraction from Astro c.cookies and Hono c.req.header", async () => {
+  it("should support zero-dep cookie extraction from cookies.get contexts and Hono c.req.header", async () => {
     const middleware = construction();
     let setCookieVal: any = null;
 
@@ -213,8 +213,8 @@ describe("@rimelight/security construction middleware", () => {
     const match = setCookieVal.match(new RegExp(`${CONSTRUCTION_GUEST_COOKIE}=([^;]+)`));
     const token = match[1];
 
-    // 1. Verify access with Astro c.cookies.get
-    const astroCtx = {
+    // 1. Verify access with a cookies.get-style context
+    const cookiesCtx = {
       req: { path: "/protected" },
       cookies: {
         get: (name: string) => (name === CONSTRUCTION_GUEST_COOKIE ? { value: token } : undefined),
@@ -222,9 +222,9 @@ describe("@rimelight/security construction middleware", () => {
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
       redirect: vi.fn(),
     };
-    const nextAstro = vi.fn();
-    await middleware(astroCtx, nextAstro);
-    expect(nextAstro).toHaveBeenCalled();
+    const nextCookies = vi.fn();
+    await middleware(cookiesCtx, nextCookies);
+    expect(nextCookies).toHaveBeenCalled();
 
     // 2. Verify access with Hono c.req.header("cookie")
     const honoReqCtx = {

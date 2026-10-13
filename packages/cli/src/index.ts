@@ -537,7 +537,7 @@ export function reorderKeys(
 // Resolve domains in injected lines specifically for cloudflare.config.ts
 export function resolveDomainInLine(line: string, targetContent: string): string {
   // targetContent is the target project's package.json, which carries the site
-  // as `homepage` now that there is no astro.config.ts.
+  // as `homepage`.
   const siteMatch = targetContent.match(/"homepage":\s*["']https?:\/\/([^"']+)["']/);
   const targetDomain = siteMatch ? siteMatch[1] : "";
   if (targetDomain) {
@@ -682,8 +682,7 @@ export function getStructuredLineDiffs(
       .replace(/starter\.rimelight\.com/g, "example.com")
       .replace(/starter-dot-rimelight-dot-com/g, "example-dot-com");
 
-    // The domain now lives in `worker.domains`, so read it from there instead of
-    // from the astro `site` field that used to hold it.
+    // The domain now lives in `worker.domains`, so read it from there.
     const domainsMatch = targetContent.match(/domains:\s*\[([^\]]*)\]/);
     const domain = domainsMatch?.[1]?.match(/["']([^"']+)["']/)?.[1];
     if (domain) {

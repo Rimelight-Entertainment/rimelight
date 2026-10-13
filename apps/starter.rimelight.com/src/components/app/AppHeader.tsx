@@ -59,10 +59,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     leadingIcon: "i-lucide-blocks",
     links: [
       {
-        label: t("app_header.link-groups_center_components_links_astro"),
-        href: getLocaleUrl("/docs/astro"),
-      },
-      {
         label: t("app_header.link-groups_center_components_links_solid"),
         href: getLocaleUrl("/docs/solid"),
       },

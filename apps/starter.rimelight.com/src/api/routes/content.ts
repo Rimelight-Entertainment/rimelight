@@ -89,7 +89,7 @@ content.get("/docs", async (c) => {
   }
 });
 
-// Public markdown rendering for a doc slug (replaces the Astro .md.ts endpoint)
+// Public markdown rendering for a doc slug
 content.get("/docs/:slug/md", async (c) => {
   let slug = c.req.param("slug") || "index";
   const locale = c.req.query("locale") || "en";

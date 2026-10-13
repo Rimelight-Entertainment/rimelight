@@ -77,7 +77,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
         <div class="flex-1 max-w-xs">
           <RLInput
             type="text"
-            placeholder="e.g. pnpm, Astro, TypeScript"
+            placeholder="e.g. pnpm, Vite, TypeScript"
             value={componentProps.props["label"] || ""}
             onBlur={(e) => saveLabel(e.currentTarget.value)}
             size="sm"

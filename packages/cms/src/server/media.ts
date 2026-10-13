@@ -36,7 +36,7 @@ async function requireSession(
 
 /**
  * Framework-agnostic media library handlers. Mount these in any router (Hono, Solid Start, Vite dev
- * middleware) — no Astro dependency.
+ * middleware).
  */
 export async function handleMediaList(request: Request, ctx: MediaRouteContext = {}) {
   const auth = await requireSession(request, ctx);

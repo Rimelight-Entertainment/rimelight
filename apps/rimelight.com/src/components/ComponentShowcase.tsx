@@ -18,7 +18,6 @@ interface ComponentShowcaseProps {
   themeSlots?: string[];
   children?: any;
   "code-solid"?: any;
-  "code-astro"?: any;
 }
 
 export const ComponentShowcase: Component<ComponentShowcaseProps> = (props) => {

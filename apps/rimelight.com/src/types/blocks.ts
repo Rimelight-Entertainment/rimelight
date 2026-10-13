@@ -130,12 +130,11 @@ export interface DialogueContentBlock extends BaseBlock {
 export interface ComponentShowcaseBlockProps {
   componentName: string;
   componentPath: string;
-  framework: "astro" | "solid";
+  framework: "solid";
   defaultProps: Record<string, any>;
   propsConfig: Record<string, string[]>;
   togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
   codeExamples: {
-    astro?: string;
     solid?: string;
   };
   playgroundUrl?: string;
@@ -156,7 +155,7 @@ export interface ApiDocumentationBlockProps {
 
 export interface LivePreviewBlockProps {
   componentCode: string;
-  framework: "astro" | "solid";
+  framework: "solid";
   height?: string;
   width?: string;
   editable?: boolean;

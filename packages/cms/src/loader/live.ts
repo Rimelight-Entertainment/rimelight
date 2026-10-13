@@ -237,8 +237,7 @@ export interface CmsLoader {
 
 /**
  * Framework-agnostic CMS collection loader. Works with any runtime — call `loadCollection()` /
- * `loadEntry()` from Solid resources, Hono handlers, or build scripts. (Previously an Astro
- * live-collection loader.)
+ * `loadEntry()` from Solid resources, Hono handlers, or build scripts.
  */
 export function rimelightCmsLoader(loaderOptions: CmsLoaderOptions = {}): CmsLoader {
   return {

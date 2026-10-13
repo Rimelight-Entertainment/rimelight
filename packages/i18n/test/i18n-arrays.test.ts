@@ -7,7 +7,7 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     en: {
       resume: {
         title: "Resume",
-        tags: ["TypeScript", "Astro", "Unreal Engine"],
+        tags: ["TypeScript", "SolidJS", "Unreal Engine"],
         experiences: [
           {
             role: "Game Programmer",
@@ -34,7 +34,7 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     pt: {
       resume: {
         title: "Currículo",
-        tags: ["TypeScript", "Astro", "Unreal Engine"],
+        tags: ["TypeScript", "SolidJS", "Unreal Engine"],
         experiences: [
           {
             role: "Programador de Jogos",
@@ -75,7 +75,7 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
 
   it("retrieves string arrays via t.array()", () => {
     setCurrentLocale("en");
-    expect(t.array("resume.tags")).toEqual(["TypeScript", "Astro", "Unreal Engine"]);
+    expect(t.array("resume.tags")).toEqual(["TypeScript", "SolidJS", "Unreal Engine"]);
     expect(t.array("resume.experiences.0.bullets")).toEqual([
       "Training in Unreal Engine",
       "Implemented gameplay mechanics",
@@ -108,6 +108,6 @@ describe("@rimelight/i18n array, object, and deep path support", () => {
     const resumeComp = t.raw<any>("resume");
     expect(resumeComp).toBeDefined();
     expect(resumeComp.title).toBe("Resume");
-    expect(resumeComp.tags).toEqual(["TypeScript", "Astro", "Unreal Engine"]);
+    expect(resumeComp.tags).toEqual(["TypeScript", "SolidJS", "Unreal Engine"]);
   });
 });

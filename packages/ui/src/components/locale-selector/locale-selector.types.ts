@@ -17,8 +17,8 @@ export interface RLLocaleSelectorProps {
    * Array of available locales to display in the selector.
    *
    * Accepts plain locale code strings (`"en"`, `"pt"`) or full `LocaleItem` objects. Supply an
-   * `href` on each `LocaleItem` to make the component fully routing-agnostic — when every item has
-   * an `href` the component no longer depends on Astro's i18n APIs at all.
+   * `href` on each `LocaleItem` to navigate directly to a pre-resolved URL — when every item has
+   * an `href` the component performs no URL manipulation at all.
    *
    * When omitted the selector renders an empty list, so pass it explicitly.
    */
@@ -26,9 +26,8 @@ export interface RLLocaleSelectorProps {
   /**
    * The currently active locale code. Used to pre-select the right option in the dropdown.
    *
-   * When omitted the component falls back to `Astro.currentLocale`, which requires Astro's i18n
-   * middleware to be running. Pass this prop explicitly when your project manages locale state
-   * outside of Astro's built-in routing.
+   * When omitted the selector falls back to `"en"`. Pass the active locale explicitly so the
+   * correct option is pre-selected.
    */
   currentLocale?: string;
   /**

@@ -30,21 +30,19 @@ export function generateThemeCode(componentName: string, theme: ThemeMeta): stri
       : {}),
   };
 
-  return `// astro.config.ts
-import { ui } from "@rimelight/ui"
-import { defineConfig } from "astro/config"
+  return `// vite.config.ts
+import { defineConfig } from "vite"
+import { ui } from "@rimelight/ui/plugin"
 
 export default defineConfig({
-  vite: {
-    plugins: [
-      ui({
-        components: {
-          themes: {
-            ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
-          }
+  plugins: [
+    ui({
+      components: {
+        themes: {
+          ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
         }
-      })
-    ]
-  }
+      }
+    })
+  ]
 })`;
 }

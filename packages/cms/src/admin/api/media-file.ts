@@ -1,7 +1,7 @@
 /**
  * CMS media file proxy (framework-agnostic).
  *
- * Previously an Astro `APIRoute`. Call `handleMediaFile(request, key, ctx)` from any router — e.g.
+ * Call `handleMediaFile(request, key, ctx)` from any router — e.g.
  * Hono: `app.get("/cms/api/media/file/:key", (c) => handleMediaFile(c.req.raw, c.req.param("key"),
  * ctx))`.
  */

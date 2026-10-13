@@ -28,9 +28,8 @@ export interface ThemeMeta {
 
 export interface ComponentMeta {
   name: string;
-  astroComponent: string | null;
   solidComponent: string | null;
-  frameworks: ("astro" | "solid")[];
+  frameworks: "solid"[];
   props: PropMeta[];
   slots: SlotMeta[];
   emits: EmitMeta[];

@@ -316,7 +316,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
                   handleNameChange(e.currentTarget.value)
                 }
                 placeholder={
-                  isCategory() ? "e.g. Engineering, Tutorials" : "e.g. typescript, astro"
+                  isCategory() ? "e.g. Engineering, Tutorials" : "e.g. typescript, solid"
                 }
               />
             </div>

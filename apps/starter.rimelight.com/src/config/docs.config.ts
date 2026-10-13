@@ -35,7 +35,6 @@ const config: DocsConfig = {
       icon: "i-lucide-blocks",
       items: [
         { label: "Overview", href: "/{locale}/docs/components" },
-        { label: "Astro Components", href: "/{locale}/docs/astro" },
         { label: "Solid Components", href: "/{locale}/docs/solid" },
         { label: "Integrations", href: "/{locale}/docs/integrations" },
       ],

@@ -2,7 +2,7 @@ import type { BaseBlock } from "../core/types/blocks";
 import type { UserSessionContext } from "./permissions";
 
 /**
- * Pure immutable function for Astro SSR Reader. Returns new array; never mutates input AST
+ * Pure immutable function for SSR readers. Returns new array; never mutates input AST
  */
 export function filterBlocksForReader(
   blocks: BaseBlock[],

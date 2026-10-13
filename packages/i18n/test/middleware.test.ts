@@ -45,7 +45,7 @@ beforeEach(() => config());
 describe("@rimelight/i18n middleware", () => {
   it("passes through API routes, internal routes, and static assets", async () => {
     expect((await runMiddleware("/api/users")).nextCalled).toBe(true);
-    expect((await runMiddleware("/_astro/entry.js")).nextCalled).toBe(true);
+    expect((await runMiddleware("/_assets/entry.js")).nextCalled).toBe(true);
     expect((await runMiddleware("/assets/style.css")).nextCalled).toBe(true);
   });
 

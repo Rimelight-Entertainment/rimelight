@@ -179,7 +179,7 @@ export const bannerAudit: ComponentAuditDefinition = {
                 NEW
               </span>
             }
-            title="Astro 5.0 and Solid 2.0 now supported"
+            title="Solid 2.0 and UnoCSS now supported"
             actions={[{ label: "Changelog", size: "xs" }]}
             close
           />

@@ -1,9 +1,8 @@
 /**
  * CMS media library API (framework-agnostic).
  *
- * Previously Astro `APIRoute` handlers (`GET` / `POST` / `DELETE`). Mount the handlers from
- * `../../server/media.ts` in any router — see `registerCmsMediaRoutes()` for Hono-compatible
- * wiring.
+ * Mount the handlers from `../../server/media.ts` in any router — see `registerCmsMediaRoutes()`
+ * for Hono-compatible wiring.
  */
 export {
   handleMediaList as GET,

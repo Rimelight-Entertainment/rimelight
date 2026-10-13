@@ -12,7 +12,7 @@ function pascalToKebab(name: string): string {
 }
 
 function getComponentNameFromFilename(filename: string): string {
-  return filename.replace(/^RL/, "").replace(/\.(astro|tsx)$/, "");
+  return filename.replace(/^RL/, "").replace(/\.tsx$/, "");
 }
 
 export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
@@ -55,7 +55,6 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
 
       result[pascalToKebab(name)] = {
         name,
-        astroComponent: null,
         solidComponent: solid ? solid.filename : null,
         frameworks,
         props,
