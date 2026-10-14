@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export interface TimelineItem {
@@ -24,7 +25,7 @@ export interface TimelineItem {
 }
 
 export interface TimelineItemProps extends TimelineItem {
-  as?: any;
+  as?: ValidComponent;
   isLast?: boolean;
   state?: "active" | "completed";
   size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
@@ -37,7 +38,7 @@ export interface RLTimelineProps<T extends TimelineItem = TimelineItem> {
   /**
    * The element or component this component should render as.
    */
-  as?: any;
+  as?: ValidComponent;
   items?: T[];
   size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
   color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral";
@@ -54,7 +55,7 @@ export interface RLTimelineProps<T extends TimelineItem = TimelineItem> {
    */
   valueKey?: string;
   defaultValue?: string | number;
-  modelValue?: string | number;
+  value?: string | number;
   reverse?: boolean;
   ui?: {
     root?: any;

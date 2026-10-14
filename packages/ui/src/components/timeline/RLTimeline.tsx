@@ -17,7 +17,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     "orientation",
     "valueKey",
     "defaultValue",
-    "modelValue",
+    "value",
     "reverse",
     "ui",
     "class",
@@ -38,7 +38,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     item[valueKey()] !== undefined ? item[valueKey()] : index;
 
   const getItemState = (_item: TimelineItem, index: number): "active" | "completed" | undefined => {
-    const activeVal = props.modelValue !== undefined ? props.modelValue : props.defaultValue;
+    const activeVal = props.value !== undefined ? props.value : props.defaultValue;
     if (activeVal === undefined) return undefined;
 
     let currentIndex = -1;

@@ -31,7 +31,6 @@ export const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
   const classes = createMemo(() =>
     RLSkeletonTheme({
       shape: props.shape ?? "rounded",
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),

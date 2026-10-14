@@ -11,7 +11,7 @@ export const RLPost: Component<RLPostProps> = (allProps) => {
     "description",
     "date",
     "image",
-    "to",
+    "href",
     "badge",
     "badgeColor",
     "variant",
@@ -112,8 +112,8 @@ export const RLPost: Component<RLPostProps> = (allProps) => {
     </>
   );
 
-  return props.to ? (
-    <a href={props.to} class={classes()["root"]} data-slot="root" {...rest}>
+  return props.href ? (
+    <a href={props.href} class={classes()["root"]} data-slot="root" {...rest}>
       {body()}
     </a>
   ) : (

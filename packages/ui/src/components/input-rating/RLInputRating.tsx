@@ -18,7 +18,6 @@ export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
     "disabled",
     "required",
     "name",
-    "modelValue",
     "defaultValue",
     "value",
     "length",
@@ -57,18 +56,9 @@ export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
   };
 
   const [internalValue, setInternalValue] = createSignal<number>(
-    props.value !== undefined
-      ? props.value
-      : props.modelValue !== undefined
-        ? props.modelValue
-        : (props.defaultValue ?? 0),
+    props.value !== undefined ? props.value : (props.defaultValue ?? 0),
   );
-  const value = () =>
-    props.value !== undefined
-      ? props.value
-      : props.modelValue !== undefined
-        ? props.modelValue
-        : internalValue();
+  const value = () => (props.value !== undefined ? props.value : internalValue());
 
   const [hoverValue, setHoverValue] = createSignal<number | null>(null);
   const display = (): number => (hoverValue() !== null ? hoverValue()! : value());

@@ -38,16 +38,12 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
 
   const openHelp = () => {
     setIsOpen(true);
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = "hidden";
-    }
+    document.body.style.overflow = "hidden";
   };
 
   const closeHelp = () => {
     setIsOpen(false);
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = "";
   };
 
   onSettled(() => {
@@ -84,9 +80,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
       document.removeEventListener("rla-shortcuts:open", handleOpenHelp);
       document.removeEventListener("shortcuts:open", handleOpenHelp);
       window.removeEventListener("keydown", onKeyDown);
-      if (typeof document !== "undefined") {
-        document.body.style.overflow = "";
-      }
+      document.body.style.overflow = "";
       qShortcutCleanup();
     };
   });

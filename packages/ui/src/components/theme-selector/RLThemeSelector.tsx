@@ -17,24 +17,20 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
   const [currentPreference, setCurrentPreference] = createSignal<string>("system");
 
   const getPreference = () => {
-    if (typeof localStorage === "undefined") return "system";
     const stored = localStorage.getItem("theme");
     return stored === "system" || stored === "light" || stored === "dark" ? stored : "system";
   };
 
   const applyTheme = (next: string) => {
     setCurrentPreference(next);
-    if (typeof document !== "undefined") {
-      const resolved =
-        next === "system"
-          ? typeof window !== "undefined" &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light"
-          : next;
-      document.documentElement.setAttribute("data-theme", resolved);
-      localStorage.setItem("theme", next);
-    }
+    const resolved =
+      next === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+        : next;
+    document.documentElement.setAttribute("data-theme", resolved);
+    localStorage.setItem("theme", next);
     props.onChange?.(next);
   };
 

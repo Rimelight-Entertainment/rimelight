@@ -15,6 +15,7 @@ import {
   type Component,
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { findSlotChild, toArray } from "../../internal/slots";
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
   const props = allProps;
@@ -49,25 +50,6 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
 
   const resolvedChildren = resolveChildren(() => props.children);
 
-  const slotNameOf = (child: any): string | undefined => {
-    if (!child || typeof child !== "object") return undefined;
-    const direct =
-      child.slot ?? child["data-slot"] ?? child?.props?.slot ?? child?.props?.["data-slot"];
-    if (typeof direct === "string") return direct;
-    if (typeof child.getAttribute === "function") {
-      const attr = child.getAttribute("slot") || child.getAttribute("data-slot");
-      if (attr) return attr;
-    }
-    // SSR renders elements as { t: string | string[] } — inspect the opening tag.
-    const t = child.t;
-    const head = Array.isArray(t) ? t[0] : t;
-    if (typeof head === "string") {
-      const m = /\sslot="?([^\s">]+)/.exec(head);
-      if (m) return m[1];
-    }
-    return undefined;
-  };
-
   const slotCache = new Map<string, unknown>();
   const getSlotContent = (slotName?: string) => {
     if (!slotName) return null;
@@ -78,12 +60,10 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
       raw = allProps[`${slotName}-content`] ?? allProps[slotName];
     }
     if (raw === undefined) {
-      const all = resolvedChildren();
-      const arr = Array.isArray(all) ? all : all ? [all] : [];
-      raw = arr.find((child: any) => {
-        const s = slotNameOf(child);
-        return s === `${slotName}-content` || s === slotName;
-      });
+      raw = findSlotChild(toArray(resolvedChildren() as unknown), [
+        `${slotName}-content`,
+        slotName,
+      ]);
     }
     const content = typeof raw === "function" ? raw() : raw;
     const resolved = content ?? null;
@@ -102,7 +82,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
 
   const isItemActive = (item: NavigationMenuItem) => {
     if (item["active"] !== undefined) return !!item["active"];
-    const rawPath = (item["href"] ?? (item["to"] as string | undefined) ?? "#") as string;
+    const rawPath = (item["href"] ?? "#") as string;
     const normalizedPath =
       rawPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "").replace(/\/+$/, "") || "/";
     const path = currentPath();
@@ -149,18 +129,10 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
   });
 
   const itemHref = (item: NavigationMenuItem) =>
-    typeof item["href"] === "string"
-      ? item["href"]
-      : typeof item["to"] === "string"
-        ? item["to"]
-        : "#";
+    typeof item["href"] === "string" ? item["href"] : "#";
 
   const childHref = (child: NavigationMenuChildItem) =>
-    typeof child["href"] === "string"
-      ? child["href"]
-      : typeof child["to"] === "string"
-        ? child["to"]
-        : "#";
+    typeof child["href"] === "string" ? child["href"] : "#";
 
   const activeItem = createMemo(() => (openIndex() !== null ? items()[openIndex()!] : null));
   const activeItemHasContent = createMemo(() => {

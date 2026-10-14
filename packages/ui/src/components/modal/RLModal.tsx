@@ -1,7 +1,6 @@
 import type { RLModalProps } from "./modal.types";
 import { RLModalTheme } from "./modal.theme";
 import {
-  children as resolveChildren,
   createEffect,
   createMemo,
   createSignal,
@@ -14,6 +13,7 @@ import {
 } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
+import { createSlotResolver, evalSlot } from "../../internal/slots";
 
 export const RLModal: Component<RLModalProps> = (allProps) => {
   const props = allProps;
@@ -49,7 +49,6 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
     "aria-describedby" as any,
     "ui",
     "class",
-    "className",
     "children",
     "trigger",
     "triggerSlot",
@@ -67,7 +66,6 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
     "footer",
     "footerSlot",
     "onOpenChange",
-    "onUpdateOpen",
     "onClose",
     "onClosePrevent",
     "onEnter",
@@ -95,7 +93,6 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
       setUncontrolledOpen(next);
     }
     props.onOpenChange?.(next);
-    props.onUpdateOpen?.(next);
     if (!next) {
       props.onClose?.();
       props.onLeave?.();
@@ -122,20 +119,12 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
   createEffect(
     () => ({ open: isOpen(), lock: props.lockScroll !== false && isModal() }),
     ({ open, lock }) => {
-      if (typeof document !== "undefined") {
-        if (open && lock) {
-          document.body.style.overflow = "hidden";
-        } else {
-          document.body.style.overflow = "";
-        }
-      }
+      document.body.style.overflow = open && lock ? "hidden" : "";
     },
   );
 
   onCleanup(() => {
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = "";
   });
 
   // Escape key listener
@@ -146,13 +135,10 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
         handleDismiss();
       }
     };
-    if (typeof window !== "undefined") {
-      window.addEventListener("keydown", onKeyDown);
-      return () => {
-        window.removeEventListener("keydown", onKeyDown);
-      };
-    }
-    return () => {};
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   });
 
   // Non-modal outside click listener
@@ -163,13 +149,10 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
         handleDismiss();
       }
     };
-    if (typeof document !== "undefined") {
-      document.addEventListener("click", onDocClick, true);
-      return () => {
-        document.removeEventListener("click", onDocClick, true);
-      };
-    }
-    return () => {};
+    document.addEventListener("click", onDocClick, true);
+    return () => {
+      document.removeEventListener("click", onDocClick, true);
+    };
   });
 
   const resolvedClasses = createMemo(() =>
@@ -181,82 +164,44 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
       modal: isModal(),
       scrollable: isScrollable(),
       ui: props.ui,
-      class: props.class ?? props.className,
+      class: props.class,
     }),
   );
 
-  const resolvedChildren = resolveChildren(() =>
-    typeof props.children === "function" ? (props.children as () => any)() : props.children,
-  );
-
-  const getSlotChild = (name: string) => {
-    const all = resolvedChildren();
-    const arr = Array.isArray(all) ? all : all ? [all] : [];
-    return arr.find((child: any) => {
-      if (!child) return false;
-      if (typeof child === "object") {
-        const s =
-          child.slot ??
-          child["data-slot"] ??
-          child?.props?.slot ??
-          child?.props?.["data-slot"] ??
-          (typeof child.getAttribute === "function"
-            ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined);
-        return s === name;
-      }
-      return false;
-    });
-  };
-
-  const getBodyChildren = () => {
-    const all = resolvedChildren();
-    const arr = Array.isArray(all) ? all : all ? [all] : [];
-    return arr.filter((child: any) => {
-      if (!child) return false;
-      if (typeof child === "object") {
-        const s =
-          child.slot ??
-          child["data-slot"] ??
-          child?.props?.slot ??
-          child?.props?.["data-slot"] ??
-          (typeof child.getAttribute === "function"
-            ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined);
-        if (
-          s === "trigger" ||
-          s === "header" ||
-          s === "title" ||
-          s === "description" ||
-          s === "actions" ||
-          s === "close" ||
-          s === "footer" ||
-          s === "content"
-        ) {
-          return false;
-        }
-      }
-      return true;
-    });
-  };
-
-  const evalSlot = (slot: any) => (typeof slot === "function" ? slot() : slot);
+  const resolvedChildren = createSlotResolver(() => props.children);
+  const BODY_EXCLUDE = [
+    "trigger",
+    "header",
+    "title",
+    "description",
+    "actions",
+    "close",
+    "footer",
+    "content",
+  ] as const;
 
   const triggerContent = () =>
-    evalSlot(props.triggerSlot ?? props.trigger ?? getSlotChild("trigger"));
+    evalSlot(props.triggerSlot ?? props.trigger ?? resolvedChildren.find("trigger"));
   const contentSlotContent = () =>
-    evalSlot(props.contentSlot ?? props.content ?? getSlotChild("content"));
+    evalSlot(props.contentSlot ?? props.content ?? resolvedChildren.find("content"));
   const headerSlotContent = () =>
-    evalSlot(props.headerSlot ?? props.header ?? getSlotChild("header"));
-  const titleContent = () => evalSlot(props.titleSlot ?? getSlotChild("title") ?? props.title);
+    evalSlot(props.headerSlot ?? props.header ?? resolvedChildren.find("header"));
+  const titleContent = () =>
+    evalSlot(props.titleSlot ?? resolvedChildren.find("title") ?? props.title);
   const descriptionContent = () =>
-    evalSlot(props.descriptionSlot ?? getSlotChild("description") ?? props.description);
+    evalSlot(props.descriptionSlot ?? resolvedChildren.find("description") ?? props.description);
   const actionsContent = () =>
-    evalSlot(props.actionsSlot ?? props.actions ?? getSlotChild("actions"));
-  const closeSlotContent = () => evalSlot(props.closeSlot ?? getSlotChild("close"));
-  const footerContent = () => evalSlot(props.footerSlot ?? props.footer ?? getSlotChild("footer"));
+    evalSlot(props.actionsSlot ?? props.actions ?? resolvedChildren.find("actions"));
+  const closeSlotContent = () => evalSlot(props.closeSlot ?? resolvedChildren.find("close"));
+  const footerContent = () =>
+    evalSlot(props.footerSlot ?? props.footer ?? resolvedChildren.find("footer"));
   const bodyContent = () =>
-    evalSlot(props.bodySlot ?? props.body ?? getSlotChild("body") ?? getBodyChildren());
+    evalSlot(
+      props.bodySlot ??
+        props.body ??
+        resolvedChildren.find("body") ??
+        resolvedChildren.body(BODY_EXCLUDE),
+    );
 
   const showCloseButton = () => props.close !== false;
   const closeProps = () => (typeof props.close === "object" ? props.close : {});

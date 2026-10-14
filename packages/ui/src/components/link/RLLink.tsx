@@ -40,7 +40,6 @@ export const RLLink: Component<RLLinkProps> = (allProps) => {
     }
 
     return RLLinkTheme({
-      theme: props.theme,
       ...(props.active !== undefined ? { active: props.active } : {}),
       disabled: !!props.disabled,
       ui: props.ui,

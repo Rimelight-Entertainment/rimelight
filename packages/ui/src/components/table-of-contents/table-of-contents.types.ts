@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 export interface TableOfContentsHeading {
   depth: number;
   slug: string;
@@ -31,7 +32,7 @@ export interface RLTableOfContentsProps {
    *
    * @default "div"
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * Slot-specific CSS class overrides.
    */

@@ -40,9 +40,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
 
   const openModal = () => {
     setIsOpen(true);
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = "hidden";
-    }
+    document.body.style.overflow = "hidden";
     setTimeout(() => {
       inputRef?.focus();
       inputRef?.select();
@@ -51,9 +49,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
 
   const closeModal = () => {
     setIsOpen(false);
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = "";
     setQuery("");
     setResults([]);
     setHasSearched(false);
@@ -109,9 +105,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
       document.removeEventListener("search:open", handleOpen);
       document.removeEventListener("rl-search:toggle", handleToggle);
       window.removeEventListener("keydown", onKeyDown);
-      if (typeof document !== "undefined") {
-        document.body.style.overflow = "";
-      }
+      document.body.style.overflow = "";
       if (debounceTimer) clearTimeout(debounceTimer);
       searchShortcutCleanup();
     };

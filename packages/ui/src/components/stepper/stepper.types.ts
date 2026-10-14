@@ -17,7 +17,6 @@ export interface RLStepperProps {
   items?: StepperItem[];
   value?: string | number;
   defaultValue?: string | number;
-  modelValue?: string | number;
   valueKey?: string;
   linear?: boolean;
   disabled?: boolean;

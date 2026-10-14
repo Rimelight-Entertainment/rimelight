@@ -1,7 +1,6 @@
 import type { RLSlideoverProps } from "./slideover.types";
 import { RLSlideoverTheme } from "./slideover.theme";
 import {
-  children as resolveChildren,
   createEffect,
   createMemo,
   createSignal,
@@ -12,6 +11,7 @@ import {
 } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { createSlotResolver, evalSlot } from "../../internal/slots";
 
 export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   const props = allProps;
@@ -54,9 +54,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     if (props.open === undefined) {
       setIsOpen(open);
     }
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = open ? "hidden" : "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
     props.onOpenChange?.(open);
   };
 
@@ -69,9 +67,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      if (typeof document !== "undefined") {
-        document.body.style.overflow = "";
-      }
+      document.body.style.overflow = "";
     };
   });
 
@@ -83,27 +79,8 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     }),
   );
 
-  const getSlotChild = (name: string) => {
-    if (!props.children) return undefined;
-    const resolvedChildren = resolveChildren(() => props.children);
-    const all = resolvedChildren();
-    const arr = Array.isArray(all) ? all : all ? [all] : [];
-    return arr.find((child: any) => {
-      if (!child) return false;
-      if (typeof child === "object") {
-        const s =
-          child.slot ??
-          child["data-slot"] ??
-          child?.props?.slot ??
-          child?.props?.["data-slot"] ??
-          (typeof child.getAttribute === "function"
-            ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined);
-        return s === name;
-      }
-      return false;
-    });
-  };
+  const resolvedChildren = createSlotResolver(() => props.children);
+  const BODY_EXCLUDE = ["trigger", "footer", "title", "description"] as const;
 
   const getBodyChildren = () => {
     if (!props.children) return null;
@@ -117,32 +94,18 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     ) {
       return props.children;
     }
-    const resolvedChildren = resolveChildren(() => props.children);
-    const all = resolvedChildren();
-    const arr = Array.isArray(all) ? all : all ? [all] : [];
-    const filtered = arr.filter((child: any) => {
-      if (!child) return false;
-      if (typeof child === "object") {
-        const s =
-          child.slot ??
-          child["data-slot"] ??
-          child?.props?.slot ??
-          child?.props?.["data-slot"] ??
-          (typeof child.getAttribute === "function"
-            ? child.getAttribute("slot") || child.getAttribute("data-slot")
-            : undefined);
-        if (s === "trigger" || s === "footer" || s === "title" || s === "description") return false;
-      }
-      return true;
-    });
+    const filtered = resolvedChildren.body(BODY_EXCLUDE);
     return filtered.length > 0 ? filtered : props.children;
   };
 
-  const triggerContent = () => props.trigger ?? props.triggerSlot ?? getSlotChild("trigger");
-  const footerContent = () => props.footer ?? props.footerSlot ?? getSlotChild("footer");
-  const titleContent = () => props.titleSlot ?? props.title ?? getSlotChild("title");
+  const triggerContent = () =>
+    evalSlot(props.trigger ?? props.triggerSlot ?? resolvedChildren.find("trigger"));
+  const footerContent = () =>
+    evalSlot(props.footer ?? props.footerSlot ?? resolvedChildren.find("footer"));
+  const titleContent = () =>
+    evalSlot(props.titleSlot ?? props.title ?? resolvedChildren.find("title"));
   const descriptionContent = () =>
-    props.descriptionSlot ?? props.description ?? getSlotChild("description");
+    evalSlot(props.descriptionSlot ?? props.description ?? resolvedChildren.find("description"));
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>

@@ -1124,7 +1124,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
           label: rawLabel.charAt(0).toUpperCase() + rawLabel.slice(1),
           type: "checkbox" as const,
           checked: currentColumnVisibility()[colId] !== false,
-          onUpdateChecked: (checked: boolean) => {
+          onCheckedChange: (checked: boolean) => {
             tableApi.setColumnVisibility(colId, checked);
           },
         };

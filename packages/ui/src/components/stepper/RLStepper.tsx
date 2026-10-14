@@ -10,7 +10,6 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
     "items",
     "value",
     "defaultValue",
-    "modelValue",
     "valueKey",
     "linear",
     "disabled",
@@ -34,7 +33,6 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
 
   const initialActiveValue =
     props.value ??
-    props.modelValue ??
     props.defaultValue ??
     (items().length > 0 ? (items()[0]?.[valueKey()] ?? items()[0]?.value ?? 0) : 0);
 

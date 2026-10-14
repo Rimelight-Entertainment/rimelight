@@ -223,7 +223,7 @@ describe("RLTable Theme & Logic Suite", () => {
         {
           id: "actions",
           actions: (row) => [
-            { label: "Edit", icon: "i-lucide-pencil", to: `/edit/${row.original.id}` },
+            { label: "Edit", icon: "i-lucide-pencil", href: `/edit/${row.original.id}` },
             { type: "separator" },
             { label: "Delete", icon: "i-lucide-trash-2", color: "error" },
           ],
@@ -241,7 +241,7 @@ describe("RLTable Theme & Logic Suite", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
         columns: [{ accessorKey: "name", header: "Name" }],
-        rowActions: (row: any) => [{ label: "View Profile", to: `/profile/${row.original.id}` }],
+        rowActions: (row: any) => [{ label: "View Profile", href: `/profile/${row.original.id}` }],
       });
       expect(html).toContain('data-col-id="actions"');
       expect(html).toContain('data-slot="trigger"');
