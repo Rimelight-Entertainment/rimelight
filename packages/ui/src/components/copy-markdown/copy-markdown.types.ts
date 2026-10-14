@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 import type { RLAvatarProps } from "../avatar/avatar.types";
@@ -87,7 +88,7 @@ export interface RLCopyMarkdownProps {
    * The element or component this component should render as when not a link.
    * @default 'button'
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * Field group style variation when grouped in input or button groups.
    */
@@ -138,10 +139,6 @@ export interface RLCopyMarkdownProps {
    * @default false
    */
   disabled?: boolean | undefined;
-  /**
-   * Alias for `href`.
-   */
-  to?: string | undefined;
   /**
    * Forces the link to be treated as an external link.
    *

@@ -8,7 +8,6 @@ export interface RLColorFieldProps {
   disabled?: boolean;
   disableWheelChange?: boolean;
   locale?: string;
-  modelValue?: string;
   name?: string;
   placeholder?: string;
   readonly?: boolean;
@@ -20,7 +19,6 @@ export interface RLColorFieldProps {
   class?: any;
   children?: JSX.Element;
   value?: string;
-  onChange?: (val: string) => void;
-  "onUpdate:modelValue"?: (val: string) => void;
+  onValueChange?: (val: string) => void;
   [key: string]: unknown;
 }

@@ -253,11 +253,11 @@ export function weekDaysOfGrid(
 export function resolveInitialPlaceholder(
   placeholder: Date | undefined,
   defaultPlaceholder: Date | undefined,
-  modelValue: unknown,
+  value: unknown,
 ): Date {
   if (placeholder) return startOfDay(placeholder);
   if (defaultPlaceholder) return startOfDay(defaultPlaceholder);
-  const fromValue = firstDateOf(modelValue);
+  const fromValue = firstDateOf(value);
   if (fromValue) return startOfDay(fromValue);
   return startOfDay(new Date());
 }
@@ -293,7 +293,7 @@ export interface DayCellState {
 }
 
 export interface DayMatchContext {
-  modelValue: unknown;
+  value: unknown;
   month: Date;
   today: Date;
   weekStartsOn: WeekStartsOn;
@@ -319,7 +319,7 @@ export function dayCellState(day: Date, month: Date, ctx: DayMatchContext): DayC
     (!!ctx.disableDaysOutsideCurrentView && outsideView);
   const unavailable = !!ctx.isDateUnavailable?.(day);
   const today = isSameDay(day, ctx.today);
-  const selected = rangeContains(ctx.modelValue, day);
+  const selected = rangeContains(ctx.value, day);
   const focused = !outsideView && !disabled && isSameDay(day, ctx.placeholder);
   return { selected, today, outsideView, disabled, unavailable, focused };
 }

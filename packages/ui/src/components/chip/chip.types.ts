@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
@@ -6,7 +7,7 @@ export interface RLChipProps {
    * The element or component this component should render as.
    * @defaultValue 'div'
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * Display some text or numeric count inside the chip.

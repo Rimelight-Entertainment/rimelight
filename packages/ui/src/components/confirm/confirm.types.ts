@@ -98,14 +98,9 @@ export interface RLConfirmProps {
   class?: any;
 
   /**
-   * Alias for class.
-   */
-  className?: any;
-
-  /**
    * Body content.
    */
-  children?: JSX.Element | (() => JSX.Element) | undefined;
+  children?: JSX.Element | undefined;
 
   /**
    * Custom trigger element.
@@ -141,11 +136,6 @@ export interface RLConfirmProps {
    * Callback fired when open state changes.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
-
-  /**
-   * Alias for onOpenChange matching v-model:open pattern.
-   */
-  onUpdateOpen?: ((open: boolean) => void) | undefined;
 
   /**
    * Callback fired when confirmation action button is clicked.

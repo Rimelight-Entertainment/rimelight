@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 
@@ -23,12 +24,12 @@ export interface RLCheckboxUiSlots {
   [key: string]: any;
 }
 
-export interface RLCheckboxProps<T = any> {
+export interface RLCheckboxProps {
   /**
    * The element or component this component should render as.
    * @default 'div'
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * Text label for the checkbox.
@@ -119,29 +120,14 @@ export interface RLCheckboxProps<T = any> {
   id?: string | undefined;
 
   /**
-   * The value of the checkbox when it is initially rendered (uncontrolled).
+   * The checked state of the checkbox when it is initially rendered (uncontrolled).
    */
-  defaultValue?: T | "indeterminate" | undefined;
+  defaultChecked?: boolean | "indeterminate" | undefined;
 
   /**
-   * The controlled value of the checkbox (bindable).
-   */
-  modelValue?: T | "indeterminate" | null | undefined;
-
-  /**
-   * Legacy / alias for controlled checked state.
+   * The controlled checked state of the checkbox.
    */
   checked?: boolean | "indeterminate" | undefined;
-
-  /**
-   * The value used when the checkbox is checked. Defaults to `true`.
-   */
-  trueValue?: T | undefined;
-
-  /**
-   * The value used when the checkbox is unchecked. Defaults to `false`.
-   */
-  falseValue?: T | undefined;
 
   /**
    * Whether the checkbox is in indeterminate state.
@@ -170,9 +156,9 @@ export interface RLCheckboxProps<T = any> {
   onChange?: ((e: Event & { currentTarget: HTMLInputElement }) => void) | undefined;
 
   /**
-   * Model update callback for reactive binding.
+   * Checked state change callback for reactive binding.
    */
-  "onUpdate:modelValue"?: ((value: any) => void) | undefined;
+  onCheckedChange?: ((checked: boolean) => void) | undefined;
 
   /**
    * Slot overrides.

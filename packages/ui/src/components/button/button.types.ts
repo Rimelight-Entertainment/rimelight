@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 import type { RLAvatarProps } from "../avatar/avatar.types";
@@ -133,7 +134,7 @@ export interface RLButtonProps {
    * The element or component this component should render as when not a link.
    * @default 'button'
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * Field group style variation when grouped in input or button groups.
    */
@@ -170,7 +171,6 @@ export interface RLButtonProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
-  className?: any;
   /**
    * Default slot children.
    */
@@ -189,10 +189,6 @@ export interface RLButtonProps {
    * The URL the link points to.
    */
   href?: string | undefined;
-  /**
-   * Alias for `href`.
-   */
-  to?: string | undefined;
   /**
    * Marks the link as external. External URLs are still detected for `target`/`rel` and the
    * screen-reader hint, but the external icon is only rendered when this prop is explicitly `true`.

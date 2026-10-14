@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme } from "../../types";
 import type {
@@ -46,7 +47,7 @@ export interface RLCheckboxGroupProps<
    * The element or component this component should render as.
    * @default 'div'
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * Group legend or title.
@@ -79,7 +80,7 @@ export interface RLCheckboxGroupProps<
   /**
    * The controlled value array of selected values.
    */
-  modelValue?: V[] | undefined;
+  value?: V[] | undefined;
 
   /**
    * The initial uncontrolled value array.
@@ -180,9 +181,9 @@ export interface RLCheckboxGroupProps<
   onChange?: ((e: Event) => void) | undefined;
 
   /**
-   * Model update callback for reactive binding.
+   * Value change callback for reactive binding.
    */
-  "onUpdate:modelValue"?: ((value: V[]) => void) | undefined;
+  onValueChange?: ((value: V[]) => void) | undefined;
 
   /**
    * Custom legend slot.

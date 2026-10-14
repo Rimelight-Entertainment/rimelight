@@ -256,7 +256,7 @@ describe("placeholder resolution", () => {
 
 describe("day cell state", () => {
   const base = {
-    modelValue: undefined,
+    value: undefined,
     month: new Date(2022, 1, 15),
     today: new Date(2022, 1, 15),
     weekStartsOn: 1 as const,
@@ -317,7 +317,7 @@ describe("day cell state", () => {
   it("marks selection from a single value", () => {
     const s = dayCellState(new Date(2022, 1, 15), base.month, {
       ...base,
-      modelValue: new Date(2022, 1, 15),
+      value: new Date(2022, 1, 15),
     });
     expect(s.selected).toBe(true);
   });
@@ -325,7 +325,7 @@ describe("day cell state", () => {
   it("marks selection from an array value", () => {
     const s = dayCellState(new Date(2022, 1, 16), base.month, {
       ...base,
-      modelValue: [new Date(2022, 1, 15), new Date(2022, 1, 16)],
+      value: [new Date(2022, 1, 15), new Date(2022, 1, 16)],
     });
     expect(s.selected).toBe(true);
   });
@@ -333,12 +333,12 @@ describe("day cell state", () => {
   it("marks selection from a range value", () => {
     const s = dayCellState(new Date(2022, 1, 17), base.month, {
       ...base,
-      modelValue: { start: new Date(2022, 1, 15), end: new Date(2022, 1, 20) },
+      value: { start: new Date(2022, 1, 15), end: new Date(2022, 1, 20) },
     });
     expect(s.selected).toBe(true);
     const out = dayCellState(new Date(2022, 1, 21), base.month, {
       ...base,
-      modelValue: { start: new Date(2022, 1, 15), end: new Date(2022, 1, 20) },
+      value: { start: new Date(2022, 1, 15), end: new Date(2022, 1, 20) },
     });
     expect(out.selected).toBe(false);
   });

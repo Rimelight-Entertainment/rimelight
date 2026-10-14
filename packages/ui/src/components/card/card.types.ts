@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export type CardVariant = "solid" | "outline" | "soft" | "subtle";
@@ -8,7 +9,7 @@ export interface RLCardProps {
    *
    * @default "div"
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * Text or node displayed as the title of the card header.
@@ -43,11 +44,6 @@ export interface RLCardProps {
    * Target URL when card acts as a link.
    */
   href?: string | undefined;
-
-  /**
-   * Target URL when card acts as a link (alias for `href`).
-   */
-  to?: string | undefined;
 
   /**
    * Where to open the linked URL when card is a link.

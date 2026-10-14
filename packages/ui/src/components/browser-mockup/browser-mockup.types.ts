@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export type BrowserMockupVariant =
@@ -31,7 +32,7 @@ export interface RLBrowserMockupProps {
   padded?: boolean;
   shadow?: boolean;
   rounded?: boolean;
-  as?: any;
+  as?: ValidComponent;
   navigation?: boolean;
   url?: string | URL;
   urlSlot?: JSX.Element;

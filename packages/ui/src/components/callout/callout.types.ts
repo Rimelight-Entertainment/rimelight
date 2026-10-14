@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export interface RLCalloutProps {
@@ -5,7 +6,7 @@ export interface RLCalloutProps {
    * The element or component this component should render as.
    * @defaultValue 'div'
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * The visual color scheme of the callout.
    * @defaultValue 'primary'
@@ -80,10 +81,6 @@ export interface RLCalloutProps {
    * Callback fired when the open state changes.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
-  /**
-   * Callback fired when the open state changes.
-   */
-  onUpdateOpen?: ((open: boolean) => void) | undefined;
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */

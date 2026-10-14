@@ -5,7 +5,7 @@ export interface RLColorAreaProps {
   colorSpace?: "hsl" | "rgb" | "hsb";
   defaultValue?: string;
   disabled?: boolean;
-  modelValue?: string;
+  value?: string;
   name?: string;
   required?: boolean;
   xChannel?: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness";
@@ -16,7 +16,6 @@ export interface RLColorAreaProps {
   theme?: Theme;
   ui?: any;
   class?: any;
-  onChange?: (value: string) => void;
   onValueChange?: (value: string) => void;
   onChangeEnd?: (value: string) => void;
   children?: JSX.Element;

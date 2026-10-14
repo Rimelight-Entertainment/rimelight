@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 import type { Theme, ThemeColor } from "../../types";
@@ -23,7 +24,6 @@ export interface BreadcrumbItem {
   leadingIcon?: string | undefined;
   trailingIcon?: string | undefined;
   href?: string | undefined;
-  to?: string | undefined;
   external?: boolean | undefined;
   externalIcon?: string | undefined;
   noExternalIcon?: boolean | undefined;
@@ -53,7 +53,7 @@ export interface RLBreadcrumbProps<T = BreadcrumbItem> {
    * The element or component this component should render as.
    * @default 'nav'
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * Array of breadcrumb items to render.

@@ -1,4 +1,4 @@
-import type { ValidComponent } from "solid-js";
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { ClassValue } from "../../types";
 
@@ -22,7 +22,7 @@ export interface RLCollapsibleProps {
    * The element or component this component should render as.
    * @default 'div'
    */
-  as?: ValidComponent | string;
+  as?: ValidComponent;
 
   /**
    * Slot-specific CSS class overrides.
@@ -86,16 +86,6 @@ export interface RLCollapsibleProps {
    * Callback fired when the open state of the collapsible changes.
    */
   onOpenChange?: (open: boolean) => void;
-
-  /**
-   * Event handler alias for `update:open`.
-   */
-  onUpdateOpen?: (open: boolean) => void;
-
-  /**
-   * Event handler alias for Vue `v-model:open` compatibility.
-   */
-  "onUpdate:open"?: (open: boolean) => void;
 
   /**
    * Optional HTML id for the root element.

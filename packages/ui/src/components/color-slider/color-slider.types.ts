@@ -8,7 +8,6 @@ export interface RLColorSliderProps {
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   inverted?: boolean;
-  modelValue?: string;
   name?: string;
   orientation?: "vertical" | "horizontal";
   required?: boolean;
@@ -19,8 +18,7 @@ export interface RLColorSliderProps {
   class?: any;
   children?: JSX.Element;
   value?: string;
-  onChange?: (val: string) => void;
+  onValueChange?: (val: string) => void;
   onChangeEnd?: (val: string) => void;
-  "onUpdate:modelValue"?: (val: string) => void;
   [key: string]: unknown;
 }

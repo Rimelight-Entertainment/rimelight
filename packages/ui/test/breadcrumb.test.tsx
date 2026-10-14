@@ -7,9 +7,9 @@ import { renderSolid } from "./utils/normalize";
 
 describe("RLBreadcrumb Solid Component Suite", () => {
   const standardItems: BreadcrumbItem[] = [
-    { label: "Home", to: "/" },
-    { label: "Components", to: "/components" },
-    { label: "Breadcrumb", to: "/components/breadcrumb" },
+    { label: "Home", href: "/" },
+    { label: "Components", href: "/components" },
+    { label: "Breadcrumb", href: "/components/breadcrumb" },
   ];
 
   describe("Basic & Items Rendering", () => {
@@ -31,9 +31,9 @@ describe("RLBreadcrumb Solid Component Suite", () => {
       expect(html).toContain("Breadcrumb");
     });
 
-    it("renders span instead of link when neither 'to' nor 'href' is defined", () => {
+    it("renders span instead of link when 'href' is not defined", () => {
       const items: BreadcrumbItem[] = [
-        { label: "Docs", to: "/docs" },
+        { label: "Docs", href: "/docs" },
         { label: "Static Category" },
         { label: "Current Page" },
       ];
@@ -68,8 +68,8 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
     it("supports custom labelKey prop", () => {
       const customItems = [
-        { title: "Dashboard", to: "/dashboard" },
-        { title: "Settings", to: "/settings" },
+        { title: "Dashboard", href: "/dashboard" },
+        { title: "Settings", href: "/settings" },
       ];
       const html = renderSolid(RLBreadcrumb, {
         items: customItems,
@@ -106,8 +106,8 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
     it("renders item leading icons", () => {
       const itemsWithIcons: BreadcrumbItem[] = [
-        { label: "Docs", icon: "book-open", to: "/docs" },
-        { label: "Components", icon: "box", to: "/docs/components" },
+        { label: "Docs", icon: "book-open", href: "/docs" },
+        { label: "Components", icon: "box", href: "/docs/components" },
         { label: "Breadcrumb", icon: "link" },
       ];
       const html = renderSolid(RLBreadcrumb, { items: itemsWithIcons });
@@ -122,7 +122,7 @@ describe("RLBreadcrumb Solid Component Suite", () => {
         {
           label: "Team",
           avatar: { src: "https://github.com/rimelight.png", alt: "Rimelight" },
-          to: "/team",
+          href: "/team",
         },
         { label: "Profile" },
       ];
@@ -153,8 +153,8 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
     it("handles disabled item state properly", () => {
       const items: BreadcrumbItem[] = [
-        { label: "Home", to: "/" },
-        { label: "Disabled Page", to: "/disabled", disabled: true },
+        { label: "Home", href: "/" },
+        { label: "Disabled Page", href: "/disabled", disabled: true },
         { label: "Current Page" },
       ];
       const html = renderSolid(RLBreadcrumb, { items });
@@ -177,7 +177,7 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
     it("renders custom item slot override via slots dictionary", () => {
       const customSlotItems: BreadcrumbItem[] = [
-        { label: "Home", to: "/" },
+        { label: "Home", href: "/" },
         { slot: "dropdown", label: "Menu" },
         { label: "End Page" },
       ];
@@ -211,11 +211,11 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
   describe("Overflow and maxVisible Collapse", () => {
     const longItems: BreadcrumbItem[] = [
-      { label: "Home", to: "/" },
-      { label: "Level 1", to: "/1" },
-      { label: "Level 2", to: "/2" },
-      { label: "Level 3", to: "/3" },
-      { label: "Level 4", to: "/4" },
+      { label: "Home", href: "/" },
+      { label: "Level 1", href: "/1" },
+      { label: "Level 2", href: "/2" },
+      { label: "Level 3", href: "/3" },
+      { label: "Level 4", href: "/4" },
       { label: "Current Page" },
     ];
 
@@ -271,7 +271,9 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
     it("layers per-item ui and class onto the item link", () => {
       const html = renderSolid(RLBreadcrumb, {
-        items: [{ label: "Home", to: "/", ui: { link: "item-link-cls" }, class: "item-class-cls" }],
+        items: [
+          { label: "Home", href: "/", ui: { link: "item-link-cls" }, class: "item-class-cls" },
+        ],
       });
 
       expect(html).toContain("item-link-cls");
@@ -282,11 +284,11 @@ describe("RLBreadcrumb Solid Component Suite", () => {
 
   describe("Overflow indicator theming", () => {
     const longItems: BreadcrumbItem[] = [
-      { label: "Home", to: "/" },
-      { label: "Level 1", to: "/1" },
-      { label: "Level 2", to: "/2" },
-      { label: "Level 3", to: "/3" },
-      { label: "Level 4", to: "/4" },
+      { label: "Home", href: "/" },
+      { label: "Level 1", href: "/1" },
+      { label: "Level 2", href: "/2" },
+      { label: "Level 3", href: "/3" },
+      { label: "Level 4", href: "/4" },
       { label: "Current Page" },
     ];
 

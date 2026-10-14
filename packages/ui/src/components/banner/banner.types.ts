@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
 import type { RLButtonProps } from "../button/button.types";
@@ -8,7 +9,7 @@ export interface RLBannerProps {
    *
    * @default "div"
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * A unique id saved to local storage to remember if the banner has been dismissed. Without an
@@ -20,11 +21,6 @@ export interface RLBannerProps {
    * The icon displayed next to the title.
    */
   icon?: string | undefined;
-
-  /**
-   * The URL the banner links to (alias for href).
-   */
-  to?: string | undefined;
 
   /**
    * Text or node title of the banner.

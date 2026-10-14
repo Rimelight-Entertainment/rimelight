@@ -54,14 +54,16 @@ describe("RLButton", () => {
   });
 
   describe("Polymorphic rendering & Link support", () => {
-    it("renders as anchor tag when href or to is provided", () => {
+    it("renders as anchor tag when href is provided", () => {
       const hrefHtml = render(() => <RLButton href="https://example.com" label="External Link" />);
       expect(hrefHtml.startsWith("<a")).toBe(true);
       expect(hrefHtml).toContain('href="https://example.com"');
 
-      const toHtml = render(() => <RLButton to="/docs/getting-started" label="Internal Link" />);
-      expect(toHtml.startsWith("<a")).toBe(true);
-      expect(toHtml).toContain('href="/docs/getting-started"');
+      const internalHtml = render(() => (
+        <RLButton href="/docs/getting-started" label="Internal Link" />
+      ));
+      expect(internalHtml.startsWith("<a")).toBe(true);
+      expect(internalHtml).toContain('href="/docs/getting-started"');
     });
 
     it("handles external links with rel and target defaults", () => {
@@ -293,10 +295,7 @@ describe("RLButton", () => {
   });
 
   describe("Slot overrides via ui prop", () => {
-    it("accepts ui.base and ui.root overrides seamlessly", () => {
-      const uiBaseHtml = render(() => <RLButton label="Custom" ui={{ base: "shadow-2xl" }} />);
-      expect(uiBaseHtml).toContain("shadow-2xl");
-
+    it("accepts ui.root overrides", () => {
       const uiRootHtml = render(() => (
         <RLButton label="Custom" ui={{ root: "backdrop-blur-md" }} />
       ));
@@ -351,7 +350,7 @@ describe("RLButton", () => {
     });
 
     it("omits the hint for internal links", () => {
-      const html = render(() => <RLButton to="/docs" label="Docs" />);
+      const html = render(() => <RLButton href="/docs" label="Docs" />);
       expect(html).not.toContain('data-slot="external-hint"');
     });
 

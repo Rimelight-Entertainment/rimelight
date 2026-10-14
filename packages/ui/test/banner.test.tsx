@@ -61,8 +61,8 @@ describe("RLBanner", () => {
       expect(render(() => <RLBanner as="section" title="x" />)).toMatch(/^<section/);
     });
 
-    it("renders as a div even with `to` (link is an overlay, not the root)", () => {
-      expect(render(() => <RLBanner to="/a" title="x" />)).toMatch(/^<div/);
+    it("renders as a div even with `href` (link is an overlay, not the root)", () => {
+      expect(render(() => <RLBanner href="/a" title="x" />)).toMatch(/^<div/);
     });
   });
 
@@ -222,7 +222,7 @@ describe("RLBanner", () => {
 
   describe("Link mode", () => {
     it("renders an overlay link with resolved external attributes", () => {
-      const html = render(() => <RLBanner to="https://rimelight.com" title="Visit" />);
+      const html = render(() => <RLBanner href="https://rimelight.com" title="Visit" />);
       const link = slotTag(html, "link");
       expect(link).toMatch(/^<a/);
       expect(attr(link, "href")).toBe("https://rimelight.com");
@@ -230,37 +230,37 @@ describe("RLBanner", () => {
       expect(attr(link, "rel")).toBe("noopener noreferrer");
     });
 
-    it("accepts href as an alias of to", () => {
+    it("renders a link for a relative href", () => {
       const html = render(() => <RLBanner href="/announcement" title="Read" />);
       expect(attr(slotTag(html, "link"), "href")).toBe("/announcement");
     });
 
     it("never nests interactive content inside the anchor", () => {
       const html = render(() => (
-        <RLBanner to="/x" title="t" actions={[{ label: "Act" }]} close={true} />
+        <RLBanner href="/x" title="t" actions={[{ label: "Act" }]} close={true} />
       ));
       expect(html).toMatch(/<a[^>]*data-slot="link"[^>]*><\/a>/);
     });
 
     it("labels the link by the title", () => {
-      const html = render(() => <RLBanner to="/x" title="Link title" />);
+      const html = render(() => <RLBanner href="/x" title="Link title" />);
       const titleId = attr(slotTag(html, "title"), "id");
       expect(attr(slotTag(html, "link"), "aria-labelledby")).toBe(titleId);
     });
 
     it("uses ariaLabel on the link when provided", () => {
-      const html = render(() => <RLBanner to="/x" title="t" ariaLabel="Open news" />);
+      const html = render(() => <RLBanner href="/x" title="t" ariaLabel="Open news" />);
       const link = slotTag(html, "link");
       expect(attr(link, "aria-label")).toBe("Open news");
       expect(attr(link, "aria-labelledby")).toBeUndefined();
     });
 
     it("does not leak resolver internals as DOM attributes", () => {
-      const html = render(() => <RLBanner to="https://a.com" title="t" />);
+      const html = render(() => <RLBanner href="https://a.com" title="t" />);
       expect(html).not.toMatch(/isExternal|showTrailingIcon|ariaDisabled/);
     });
 
-    it("does not render a link without to/href", () => {
+    it("does not render a link without href", () => {
       expect(
         slotTag(
           render(() => <RLBanner title="t" />),
@@ -270,7 +270,7 @@ describe("RLBanner", () => {
     });
 
     it("does not use role=link on the root", () => {
-      const html = render(() => <RLBanner to="/x" title="t" />);
+      const html = render(() => <RLBanner href="/x" title="t" />);
       expect(attr(slotTag(html, "root"), "role")).toBe("region");
     });
   });

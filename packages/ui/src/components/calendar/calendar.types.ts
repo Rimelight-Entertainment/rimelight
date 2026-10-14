@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export type CalendarModelValue = string | Date | number | CalendarRangeValue | Date[] | null;
@@ -9,8 +9,7 @@ export interface RLCalendarProps {
   view?: "day" | "month" | "year";
   weekdayFormat?: "narrow" | "short" | "long";
   defaultOptions?: Intl.DateTimeFormatOptions;
-  modelValue?: CalendarModelValue;
-  onUpdateModelValue?: (value: string | Date) => void;
+  value?: CalendarModelValue;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -80,8 +79,8 @@ export interface RLCalendarProps {
   monthControls?: boolean;
   yearControls?: boolean;
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-  onUpdatePlaceholder?: (date: Date) => void;
-  onUpdateValue?: (value: CalendarModelValue | undefined) => void;
+  onPlaceholderChange?: (date: Date) => void;
+  onValueChange?: (value: CalendarModelValue | undefined) => void;
   disableDaysOutsideCurrentView?: boolean;
   preventDeselect?: boolean;
   fixedDate?: "start" | "end";
@@ -101,8 +100,8 @@ export interface RLCalendarProps {
   isMonthUnavailable?: (date: Date) => boolean;
   isYearDisabled?: (date: Date) => boolean;
   isYearUnavailable?: (date: Date) => boolean;
-  onUpdateStartValue?: (value: Date | undefined) => void;
-  onUpdateValidValue?: (value: CalendarRangeValue) => void;
-  as?: string | Component<Record<string, unknown>>;
+  onStartValueChange?: (value: Date | undefined) => void;
+  onValidValueChange?: (value: CalendarRangeValue) => void;
+  as?: ValidComponent;
   [key: string]: unknown;
 }

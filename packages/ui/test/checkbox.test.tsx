@@ -96,22 +96,22 @@ describe("RLCheckbox & RLCheckboxGroup", () => {
       expect(html).toContain("checked");
     });
 
-    it("renders checked state via modelValue", () => {
-      const html = render(() => <RLCheckbox modelValue={true} label="Model Value" />);
+    it("renders checked state via defaultChecked", () => {
+      const html = render(() => <RLCheckbox defaultChecked label="Default Checked" />);
       const root = slotTag(html, "root");
       expect(attr(root, "data-state")).toBe("checked");
     });
 
-    it("renders indeterminate state via modelValue='indeterminate'", () => {
-      const html = render(() => <RLCheckbox modelValue="indeterminate" label="Indeterminate" />);
+    it("renders indeterminate state via checked='indeterminate'", () => {
+      const html = render(() => <RLCheckbox checked="indeterminate" label="Indeterminate" />);
       const root = slotTag(html, "root");
       expect(attr(root, "data-state")).toBe("indeterminate");
       expect(html).toContain('aria-checked="mixed"');
     });
 
-    it("renders indeterminate state via defaultValue='indeterminate'", () => {
+    it("renders indeterminate state via defaultChecked='indeterminate'", () => {
       const html = render(() => (
-        <RLCheckbox defaultValue="indeterminate" label="Indeterminate Default" />
+        <RLCheckbox defaultChecked="indeterminate" label="Indeterminate Default" />
       ));
       const root = slotTag(html, "root");
       expect(attr(root, "data-state")).toBe("indeterminate");
@@ -120,7 +120,7 @@ describe("RLCheckbox & RLCheckboxGroup", () => {
     it("renders custom indeterminateIcon", () => {
       const html = render(() => (
         <RLCheckbox
-          defaultValue="indeterminate"
+          defaultChecked="indeterminate"
           indeterminateIcon="plus"
           label="Plus Indeterminate"
         />
@@ -205,10 +205,8 @@ describe("RLCheckbox & RLCheckboxGroup", () => {
       expect(html).toContain("Always uses dark theme.");
     });
 
-    it("renders selected items according to modelValue or defaultValue", () => {
-      const html = render(() => (
-        <RLCheckboxGroup items={objectItems} modelValue={["light", "dark"]} />
-      ));
+    it("renders selected items according to value or defaultValue", () => {
+      const html = render(() => <RLCheckboxGroup items={objectItems} value={["light", "dark"]} />);
       expect(html).toContain("checked");
     });
 

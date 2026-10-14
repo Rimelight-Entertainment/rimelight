@@ -297,15 +297,13 @@ describe("RLCalendar", () => {
   });
 
   describe("values & callbacks", () => {
-    it("renders a controlled modelValue as selected", () => {
-      const html = render(() => (
-        <RLCalendar placeholder={feb2022} modelValue={new Date(2022, 1, 15)} />
-      ));
+    it("renders a controlled value as selected", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} value={new Date(2022, 1, 15)} />);
       expect(countMatches(html, /<td[^>]*data-slot="cell"[^>]*aria-selected="true"/g)).toBe(1);
     });
 
-    it("renders null modelValue as empty", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} modelValue={null} />);
+    it("renders null value as empty", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} value={null} />);
       expect(countMatches(html, /<td[^>]*aria-selected="true"/g)).toBe(0);
     });
 

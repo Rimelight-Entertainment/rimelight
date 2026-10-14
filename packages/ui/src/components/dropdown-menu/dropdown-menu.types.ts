@@ -27,9 +27,9 @@ export interface DropdownMenuItem {
   disabled?: boolean | undefined;
   slot?: string | undefined;
   onSelect?: ((e: Event) => void) | undefined;
-  onUpdateChecked?: ((checked: boolean) => void) | undefined;
+  onCheckedChange?: ((checked: boolean) => void) | undefined;
   children?: DropdownMenuItem[] | DropdownMenuItem[][] | undefined;
-  to?: string | undefined;
+  href?: string | undefined;
   target?: string | undefined;
   class?: any;
   ui?: any;

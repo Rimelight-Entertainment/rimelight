@@ -223,12 +223,6 @@ describe("RLCard", () => {
       expect(html).toContain('href="https://example.com"');
     });
 
-    it("supports to prop alias for href", () => {
-      const html = render(() => <RLCard to="/dashboard" title="Dashboard Card" />);
-      expect(html).toMatch(/^<a/);
-      expect(html).toContain('href="/dashboard"');
-    });
-
     it("applies target and rel attributes for external links", () => {
       const html = render(() => (
         <RLCard href="https://example.com" target="_blank" title="External Link" />

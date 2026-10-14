@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { RLButtonProps } from "../button/button.types";
 
@@ -68,7 +69,7 @@ export interface RLCarouselProps<T = any> {
    * The element or component this component should render as.
    * @default 'div'
    */
-  as?: any;
+  as?: ValidComponent;
 
   /**
    * List of items to render in the carousel.
@@ -294,7 +295,6 @@ export interface RLCarouselProps<T = any> {
   /**
    * Root class name alias.
    */
-  className?: any;
 
   /**
    * Theme identifier.
