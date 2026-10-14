@@ -15,12 +15,18 @@ describe("Security Middleware Headers", () => {
     });
 
     const ctx = {
-      req: { raw: req },
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
       res,
     };
 
     const next = async () => {};
-    const result = await middleware(ctx, next);
+    const result = await middleware(ctx as any, next);
     const response = result || ctx.res;
 
     expect(response.headers.get("Cross-Origin-Embedder-Policy")).toBe("credentialless");
@@ -41,9 +47,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res.headers.get("Cross-Origin-Embedder-Policy")).toBe("require-corp");
   });
 
@@ -56,9 +71,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res.headers.get("Cross-Origin-Opener-Policy")).toBe("same-origin-allow-popups");
   });
 
@@ -73,9 +97,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res.headers.get("Cross-Origin-Embedder-Policy")).toBeNull();
     expect(ctx.res.headers.get("Cross-Origin-Opener-Policy")).toBeNull();
     expect(ctx.res.headers.get("Cross-Origin-Resource-Policy")).toBeNull();
@@ -93,9 +126,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res.headers.get("Cross-Origin-Embedder-Policy")).toBe("unsafe-none");
     expect(ctx.res.headers.get("Cross-Origin-Opener-Policy")).toBe("noopener-allow-popups");
   });
@@ -106,9 +148,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response("<!DOCTYPE html><html><head></head><body>Hello</body></html>", {
       headers: { "content-type": "text/html; charset=utf-8" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res.headers.get("Cross-Origin-Embedder-Policy")).toBe("credentialless");
     expect(ctx.res.headers.get("Cross-Origin-Opener-Policy")).toBe("same-origin");
   });
@@ -125,9 +176,18 @@ describe("Security Middleware Headers", () => {
         "public-key-pins": "max-age=5184000",
       },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res.headers.get("x-powered-by")).toBeNull();
     expect(ctx.res.headers.get("server")).toBeNull();
     expect(ctx.res.headers.get("x-aspnet-version")).toBeNull();
@@ -142,9 +202,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    const result = await middleware(ctx, async () => {});
+    const result = await middleware(ctx as any, async () => {});
     expect(result).toBeDefined();
     expect(result?.status).toBe(400);
     const text = await result?.text();
@@ -160,9 +229,18 @@ describe("Security Middleware Headers", () => {
         headers: { "content-type": "text/html; charset=utf-8" },
       },
     );
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     const csp = ctx.res.headers.get("Content-Security-Policy");
     expect(csp).toBeDefined();
     // Extract nonce
@@ -185,9 +263,18 @@ describe("Security Middleware Headers", () => {
     const res = new Response('{"ok":true}', {
       headers: { "content-type": "application/json" },
     });
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(ctx.res).toBeDefined();
   });
 
@@ -219,9 +306,18 @@ describe("Security Middleware Headers", () => {
         headers: { "content-type": "text/html" },
       },
     );
-    const ctx = { req: { raw: req }, res };
+    const ctx = {
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
+      res,
+    };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
 
     // Verify selector handlers were registered
     expect(handlers["script[src]"]).toBeDefined();
@@ -254,9 +350,18 @@ describe("Security Middleware Headers", () => {
       const res = new Response("<html><head></head><body>Hello</body></html>", {
         headers: { "content-type": "text/html" },
       });
-      const ctx = { req: { raw: req }, res };
+      const ctx = {
+        req: {
+          raw: req,
+          url: req.url,
+          path: new URL(req.url).pathname,
+          method: req.method,
+          header: (n: string) => req.headers.get(n) ?? undefined,
+        },
+        res,
+      };
 
-      await middleware(ctx, async () => {});
+      await middleware(ctx as any, async () => {});
 
       const activeCsp = ctx.res.headers.get("Content-Security-Policy");
       const reportOnlyCsp = ctx.res.headers.get("Content-Security-Policy-Report-Only");
@@ -285,7 +390,7 @@ describe("Security Middleware Headers", () => {
           notFound: () => new Response("Not Found", { status: 404 }),
         };
 
-        const result = await middleware(ctx, async () => {
+        const result = await middleware(ctx as any, async () => {
           nextCalled = true;
         });
         expect(nextCalled).toBe(false);
@@ -303,12 +408,19 @@ describe("Security Middleware Headers", () => {
         setSecurityConfig({ devOnly: false });
         const middleware = security();
         let nextCalled = false;
+        const raw = new Request("https://rimelight.com/dev/preview");
         const ctx = {
-          req: { path: "/dev/preview", raw: new Request("https://rimelight.com/dev/preview") },
+          req: {
+            path: "/dev/preview",
+            method: "GET",
+            url: raw.url,
+            raw,
+            header: (n: string) => raw.headers.get(n) ?? undefined,
+          },
           res: new Response("OK", { headers: { "content-type": "text/plain" } }),
         };
 
-        await middleware(ctx, async () => {
+        await middleware(ctx as any, async () => {
           nextCalled = true;
         });
         expect(nextCalled).toBe(true);
@@ -340,7 +452,7 @@ describe("Security Middleware Headers", () => {
         json: (data: any, status: number) => new Response(JSON.stringify(data), { status }),
       };
 
-      const result = await middleware(ctx, async () => {
+      const result = await middleware(ctx as any, async () => {
         nextCalled = true;
       });
 
@@ -360,6 +472,8 @@ describe("Security Middleware Headers", () => {
       const ctx = {
         req: {
           path: "/auth/sign-in",
+          method: "GET",
+          url: "https://rimelight.com/auth/sign-in",
           header: () => "1.2.3.4",
           raw: new Request("https://rimelight.com/auth/sign-in"),
         },
@@ -369,7 +483,7 @@ describe("Security Middleware Headers", () => {
         res: new Response("OK", { headers: { "content-type": "text/plain" } }),
       };
 
-      await middleware(ctx, async () => {
+      await middleware(ctx as any, async () => {
         nextCalled = true;
       });
 
@@ -388,12 +502,16 @@ describe("Security Middleware Headers", () => {
       let nextCalled = false;
       let redirectedTo: string | null = null;
       let backingRes: Response | undefined;
+      const raw = new Request("https://rimelight.com/dashboard", {
+        headers: { "sec-fetch-dest": "document", accept: "text/html" },
+      });
       const ctx = {
         req: {
           path: "/dashboard",
-          raw: new Request("https://rimelight.com/dashboard", {
-            headers: { "sec-fetch-dest": "document", accept: "text/html" },
-          }),
+          method: "GET",
+          url: raw.url,
+          raw,
+          header: (n: string) => raw.headers.get(n) ?? undefined,
         },
         env: {
           CONSTRUCTION_MODE: "true",
@@ -414,7 +532,7 @@ describe("Security Middleware Headers", () => {
         },
       };
 
-      const result = (await middleware(ctx, async () => {
+      const result = (await middleware(ctx as any, async () => {
         nextCalled = true;
       })) as Response;
 
@@ -446,7 +564,7 @@ describe("Security Middleware Headers", () => {
         res: new Response("OK", { headers: { "content-type": "text/plain" } }),
       };
 
-      await middleware(ctx, async () => {
+      await middleware(ctx as any, async () => {
         nextCalled = true;
       });
 

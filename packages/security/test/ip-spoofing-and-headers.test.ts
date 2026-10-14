@@ -11,10 +11,16 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
     const middleware = security();
     const req = new Request("https://rimelight.com/secure");
     const ctx = {
-      req: { raw: req },
+      req: {
+        raw: req,
+        url: req.url,
+        path: new URL(req.url).pathname,
+        method: req.method,
+        header: (n: string) => req.headers.get(n) ?? undefined,
+      },
       res: new Response('{"ok":true}', { headers: { "content-type": "application/json" } }),
     };
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
 
     expect(ctx.res.headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect(ctx.res.headers.get("X-Frame-Options")).toBe("DENY");
@@ -53,7 +59,7 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
 
     const ctxAllowed = createCtx("198.51.100.22");
     let calledNext = false;
-    await limiter(ctxAllowed, async () => {
+    await limiter(ctxAllowed as any, async () => {
       calledNext = true;
     });
     expect(calledNext).toBe(true);
@@ -61,7 +67,7 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
 
     const ctxBlocked = createCtx("203.0.113.195-blocked");
     let calledNextBlocked = false;
-    const blockedRes = await limiter(ctxBlocked, async () => {
+    const blockedRes = await limiter(ctxBlocked as any, async () => {
       calledNextBlocked = true;
     });
     expect(calledNextBlocked).toBe(false);

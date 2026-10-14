@@ -443,7 +443,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
               legend="Select Themes (Vertical List)"
               items={["System", "Light", "Dark"]}
               modelValue={groupVal()}
-              onUpdate:modelValue={(v) => setGroupVal(v as string[])}
+              onUpdate:modelValue={(v: string[]) => setGroupVal(v)}
             />
 
             <RLCheckboxGroup
@@ -461,7 +461,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
               variant="table"
               items={themeItems}
               modelValue={tableVal()}
-              onUpdate:modelValue={(v) => setTableVal(v as string[])}
+              onUpdate:modelValue={(v: string[]) => setTableVal(v)}
             />
           </div>
         );

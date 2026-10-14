@@ -92,10 +92,12 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/web": "2.0.0-rc.13"
+    "@solidjs/web": "2.0.0-rc.13",
+    "hono": "4.13.13"
   },
   "peerDependencies": {
     "@solidjs/web": ">=2.0.0-rc.11",
+    "hono": "^4.13.13",
     "vite-plus": "^1.0.0"
   },
   "engines": {

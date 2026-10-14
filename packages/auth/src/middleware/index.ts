@@ -1,3 +1,4 @@
+import type { MiddlewareHandler } from "hono";
 import type {
   AuthMiddlewareOptions,
   AuthPluginConfig,
@@ -44,7 +45,7 @@ function matchesPattern(
 }
 
 /**
- * Universal Authentication & Authorization middleware for web applications. Automatically uses the
+ * Hono Authentication & Authorization middleware. Automatically uses the
  * default auth adapter (CF Access or Auth0 based on env) if `auth` is not provided.
  *
  * @example
@@ -52,7 +53,7 @@ function matchesPattern(
  *
  *   app.use(auth())
  */
-export function auth(options: AuthMiddlewareOptions = {}) {
+export function auth(options: AuthMiddlewareOptions = {}): MiddlewareHandler {
   const authAdapterInstance = options.auth ?? defaultPluginConfig.auth ?? getDefaultAuth();
   const skipStaticAssets = options.skipStaticAssets ?? defaultPluginConfig.skipStaticAssets ?? true;
   const ignoredRoutes =
@@ -73,10 +74,8 @@ export function auth(options: AuthMiddlewareOptions = {}) {
   const onUnauthorized = options.onUnauthorized ?? defaultPluginConfig.onUnauthorized;
   const onForbidden = options.onForbidden ?? defaultPluginConfig.onForbidden;
 
-  return async (c: any, next: () => Promise<any>): Promise<any> => {
-    const rawUrl = c?.req?.url || "http://localhost/";
-    const url = new URL(rawUrl);
-    const pathname = url.pathname;
+  return async (c, next) => {
+    const pathname = new URL(c.req.url).pathname;
     const isApi = pathname.startsWith("/api/");
 
     // 1. Skip static assets
@@ -98,46 +97,32 @@ export function auth(options: AuthMiddlewareOptions = {}) {
         ? ignoredRoutes(pathname)
         : ignoredRoutes.some((pattern) => matchesPattern(pathname, pattern));
 
-    if (isIgnored) {
-      if (typeof c?.set === "function") {
-        c.set("user", null);
-        c.set("session", null);
-      }
-    } else {
-      // 3. Resolve session from adapter or custom resolver
-      let sessionCtx: UserSessionContext | null = null;
-      if (authAdapterInstance) {
-        try {
-          if (typeof authAdapterInstance === "function") {
-            sessionCtx = await authAdapterInstance(c);
-          } else if (typeof authAdapterInstance.getSession === "function") {
-            const req =
-              c.req?.raw instanceof Request ? c.req.raw : new Request(c.req?.url || rawUrl);
-            sessionCtx = await authAdapterInstance.getSession(req);
-          }
-        } catch (err) {
-          console.error("[auth] Failed to resolve session:", err);
+    // 3. Resolve session from adapter or custom resolver
+    let sessionCtx: UserSessionContext | null = null;
+    if (!isIgnored && authAdapterInstance) {
+      try {
+        if (typeof authAdapterInstance === "function") {
+          sessionCtx = await authAdapterInstance(c);
+        } else {
+          sessionCtx = await authAdapterInstance.getSession(c.req.raw);
         }
-      }
-
-      const user: UserSessionContext | null = sessionCtx;
-      const session = sessionCtx
-        ? {
-            id: sessionCtx.userId,
-            userId: sessionCtx.userId,
-            roles: sessionCtx.roles,
-            userType: sessionCtx.userType,
-          }
-        : null;
-
-      if (typeof c?.set === "function") {
-        c.set("user", user);
-        c.set("session", session);
+      } catch (err) {
+        console.error("[auth] Failed to resolve session:", err);
       }
     }
 
-    const session = typeof c?.get === "function" ? c.get("session") : null;
-    const user: UserSessionContext | null = typeof c?.get === "function" ? c.get("user") : null;
+    const user: UserSessionContext | null = sessionCtx;
+    const session = sessionCtx
+      ? {
+          id: sessionCtx.userId,
+          userId: sessionCtx.userId,
+          roles: sessionCtx.roles,
+          userType: sessionCtx.userType,
+        }
+      : null;
+
+    c.set("user", user);
+    c.set("session", session);
 
     // 4. Handle direct /auth path
     if (pathname === "/auth") {
@@ -161,13 +146,7 @@ export function auth(options: AuthMiddlewareOptions = {}) {
         return onUnauthorized(c, { isApi, path: pathname });
       }
       if (isApi) {
-        if (typeof c.json === "function") {
-          return c.json({ error: "Unauthorized", message: "Authentication required." }, 401);
-        }
-        return new Response(
-          JSON.stringify({ error: "Unauthorized", message: "Authentication required." }),
-          { status: 401, headers: { "Content-Type": "application/json" } },
-        );
+        return c.json({ error: "Unauthorized", message: "Authentication required." }, 401);
       }
       return c.redirect(signInUrl);
     }
@@ -180,13 +159,7 @@ export function auth(options: AuthMiddlewareOptions = {}) {
             return onUnauthorized(c, { isApi, path: pathname });
           }
           if (isApi) {
-            if (typeof c.json === "function") {
-              return c.json({ error: "Unauthorized", message: "Authentication required." }, 401);
-            }
-            return new Response(
-              JSON.stringify({ error: "Unauthorized", message: "Authentication required." }),
-              { status: 401, headers: { "Content-Type": "application/json" } },
-            );
+            return c.json({ error: "Unauthorized", message: "Authentication required." }, 401);
           }
           return c.redirect(signInUrl);
         }
@@ -222,18 +195,9 @@ export function auth(options: AuthMiddlewareOptions = {}) {
             return onForbidden(c, { isApi, path: pathname, requiredRoles });
           }
           if (isApi) {
-            if (typeof c.json === "function") {
-              return c.json(
-                { error: "Forbidden", message: "Forbidden: insufficient permissions." },
-                403,
-              );
-            }
-            return new Response(
-              JSON.stringify({
-                error: "Forbidden",
-                message: "Forbidden: insufficient permissions.",
-              }),
-              { status: 403, headers: { "Content-Type": "application/json" } },
+            return c.json(
+              { error: "Forbidden", message: "Forbidden: insufficient permissions." },
+              403,
             );
           }
           return c.redirect(homeUrl);

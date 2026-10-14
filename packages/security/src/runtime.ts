@@ -1,4 +1,5 @@
 import generated from "virtual:rimelight-security";
+import type { Context } from "hono";
 import type { RimelightSecurityPluginOptions } from "./plugin";
 
 function isRecord(val: unknown): val is Record<string, unknown> {
@@ -233,28 +234,15 @@ export const signHmac = async (payload: string, secret: string) => {
   return { key, signature };
 };
 
-export const isConstructionGuest = async (c: any): Promise<boolean> => {
+export const isConstructionGuest = async (c: Context): Promise<boolean> => {
   const rawConstruction = getSecurityConfig().construction;
   const opts =
     typeof rawConstruction === "object" && rawConstruction !== null ? rawConstruction : undefined;
   const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
 
-  let token: string | undefined;
-  if (typeof c.cookies?.get === "function") {
-    const val = c.cookies.get(cookieName);
-    token = typeof val === "string" ? val : val?.value;
-  }
-  if (!token) {
-    const cookieHeader =
-      (typeof c.req?.header === "function"
-        ? c.req.header("cookie") || c.req.header("Cookie")
-        : undefined) ||
-      c.req?.raw?.headers?.get?.("cookie") ||
-      c.req?.raw?.headers?.get?.("Cookie") ||
-      "";
-    const match = cookieHeader.match(new RegExp(`(?:^|; )${cookieName}=([^;]*)`));
-    token = match ? decodeURIComponent(match[1]!) : undefined;
-  }
+  const cookieHeader = c.req.header("cookie") || "";
+  const match = cookieHeader.match(new RegExp(`(?:^|; )${cookieName}=([^;]*)`));
+  const token = match ? decodeURIComponent(match[1]!) : undefined;
 
   const envKey = opts?.passphraseEnvKey ?? "CONSTRUCTION_PASSPHRASE";
   const passphrase =
@@ -283,7 +271,7 @@ export const isConstructionGuest = async (c: any): Promise<boolean> => {
 };
 
 export const signInConstructionGuest = async (
-  c: any,
+  c: Context,
   passphrase: string,
   rememberMe = true,
 ): Promise<boolean> => {
@@ -309,8 +297,7 @@ export const signInConstructionGuest = async (
   if (rememberMe) parts.push(`Max-Age=${maxAge}`);
   const headerStr = parts.join("; ");
 
-  if (typeof c.header === "function") c.header("Set-Cookie", headerStr, { append: true });
-  else if (c.res?.headers?.append) c.res.headers.append("Set-Cookie", headerStr);
+  c.header("Set-Cookie", headerStr, { append: true });
 
   return true;
 };

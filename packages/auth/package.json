@@ -76,9 +76,11 @@
     "prepack": "vp pack"
   },
   "devDependencies": {
-    "@rimelight/config": "workspace:*"
+    "@rimelight/config": "workspace:*",
+    "hono": "4.13.13"
   },
   "peerDependencies": {
+    "hono": "^4.13.13",
     "vite-plus": "^1.0.0"
   },
   "engines": {

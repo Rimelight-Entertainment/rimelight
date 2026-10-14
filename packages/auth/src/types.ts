@@ -1,3 +1,5 @@
+import type { Context } from "hono";
+
 export type UserType = "user" | "employee" | "guest" | (string & {});
 
 export interface UserSessionContext {
@@ -69,7 +71,7 @@ export interface AuthAdapter {
 export interface RoleGuard {
   roles?: string[];
   userTypes?: UserType[];
-  check?: (user: UserSessionContext | null, c: any) => boolean | Promise<boolean>;
+  check?: (user: UserSessionContext | null, c: Context) => boolean | Promise<boolean>;
 }
 
 export interface AuthMiddlewareOptions {
@@ -79,7 +81,7 @@ export interface AuthMiddlewareOptions {
   auth?:
     | AuthAdapter
     | { getSession(req: Request): Promise<UserSessionContext | null> }
-    | ((c: any) => Promise<UserSessionContext | null>);
+    | ((c: Context) => Promise<UserSessionContext | null>);
 
   /**
    * Whether to automatically skip static asset paths.
@@ -140,13 +142,16 @@ export interface AuthMiddlewareOptions {
   /**
    * Custom response when unauthorized (not logged in).
    */
-  onUnauthorized?: (c: any, meta: { isApi: boolean; path: string }) => Response | Promise<Response>;
+  onUnauthorized?: (
+    c: Context,
+    meta: { isApi: boolean; path: string },
+  ) => Response | Promise<Response>;
 
   /**
    * Custom response when forbidden (insufficient role/permissions).
    */
   onForbidden?: (
-    c: any,
+    c: Context,
     meta: { isApi: boolean; path: string; requiredRoles?: string[] | undefined },
   ) => Response | Promise<Response>;
 }

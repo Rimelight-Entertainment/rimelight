@@ -2,31 +2,38 @@ import { describe, expect, it } from "vite-plus/test";
 import { construction, isConstructionGuest } from "../src/middleware";
 
 describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
+  const createCtx = (path: string) => ({
+    req: {
+      path,
+      method: "GET",
+      raw: { headers: new Headers() },
+      url: "http://localhost" + path,
+      header: () => undefined,
+    },
+    env: {
+      CONSTRUCTION_MODE: "true",
+      CONSTRUCTION_PASSPHRASE: "secret",
+    },
+    redirect: () => ({ status: 302 }),
+    json: () => {},
+  });
+
   it("safely and quickly evaluates regex and string route rules against hostile inputs", async () => {
     const middleware = construction();
     const evilPath = "/assets/" + "a".repeat(2500) + "!!!!.exe";
 
     let redirected = false;
-    const ctx = {
-      req: {
-        path: evilPath,
-        method: "GET",
-        raw: { headers: new Headers() },
-        url: "http://localhost" + evilPath,
-      },
-      env: {
-        CONSTRUCTION_MODE: "true",
-        CONSTRUCTION_PASSPHRASE: "secret",
-      },
-      redirect: () => {
-        redirected = true;
-        return { status: 302 };
-      },
-      json: () => {},
+    const ctx = createCtx(evilPath);
+    ctx.redirect = () => {
+      redirected = true;
+      return { status: 302 };
     };
 
     const startTime = Date.now();
-    const result = await middleware(ctx, async () => "next-called");
+    const result = await middleware(
+      ctx as any,
+      (async () => "next-called") as unknown as () => Promise<void>,
+    );
     const elapsedMs = Date.now() - startTime;
 
     expect(elapsedMs).toBeLessThan(100);
@@ -40,33 +47,20 @@ describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
     const middleware = construction();
     const evilPath = "/" + "a".repeat(4000) + "/x.png";
 
-    const ctx = {
-      req: {
-        path: evilPath,
-        method: "GET",
-        raw: { headers: new Headers() },
-        url: "http://localhost" + evilPath,
-      },
-      env: {
-        CONSTRUCTION_MODE: "true",
-        CONSTRUCTION_PASSPHRASE: "secret",
-      },
-      redirect: () => ({ status: 302 }),
-      json: () => {},
-    };
+    const ctx = createCtx(evilPath);
 
     const startTime = Date.now();
-    const res = (await middleware(ctx, async () => {})) as Response;
+    const res = (await middleware(ctx as any, async () => {})) as Response;
     expect(Date.now() - startTime).toBeLessThan(100);
     expect(res.status).toBe(404);
   });
 
   it("evaluates guest cookie verification correctly", async () => {
     const mockContext = {
-      req: { raw: { headers: new Headers() } },
+      req: { header: () => undefined },
       env: { CONSTRUCTION_PASSPHRASE: "pass" },
     };
-    const isGuest = await isConstructionGuest(mockContext);
+    const isGuest = await isConstructionGuest(mockContext as any);
     expect(isGuest).toBe(false);
   });
 });

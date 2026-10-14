@@ -1,3 +1,4 @@
+import type { MiddlewareHandler } from "hono";
 import generated from "virtual:rimelight-security";
 import type { RimelightSecurityPluginOptions } from "./plugin";
 import {
@@ -17,30 +18,24 @@ declare const HTMLRewriter: any;
 const manifest: Record<string, string> =
   typeof generated?.manifest === "object" && generated.manifest !== null ? generated.manifest : {};
 
+const isDevEnv = () =>
+  process.env["NODE_ENV"] === "development" ||
+  (import.meta.env?.DEV === true &&
+    process.env["NODE_ENV"] !== "production" &&
+    process.env["NODE_ENV"] !== "test");
+
 /**
  * Hono middleware to block /dev/ routes in non-development environments.
  */
-export const devOnly =
-  () =>
-  async (c: any, next: () => Promise<any>): Promise<Response | void> => {
-    const isDev =
-      process.env["NODE_ENV"] === "development" ||
-      (import.meta.env?.DEV === true &&
-        process.env["NODE_ENV"] !== "production" &&
-        process.env["NODE_ENV"] !== "test");
-
-    if (!isDev && c.req?.path?.includes?.("/dev/")) {
-      return typeof c.notFound === "function"
-        ? c.notFound()
-        : new Response("Not Found", { status: 404 });
-    }
-    return next();
-  };
+export const devOnly = (): MiddlewareHandler => async (c, next) => {
+  if (!isDevEnv() && c.req.path.includes("/dev/")) return c.notFound();
+  return next();
+};
 
 /**
  * Hono middleware for Cloudflare rate limiting on sensitive routes.
  */
-export const ratelimit = () => {
+export const ratelimit = (): MiddlewareHandler => {
   const raw = getSecurityConfig().ratelimit;
   const options = typeof raw === "object" && raw !== null ? raw : {};
   const {
@@ -48,46 +43,20 @@ export const ratelimit = () => {
     routes = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"],
     retryAfter = 60,
     fallback = "pass",
-    keyGenerator = (c: any) =>
-      (typeof c.req?.header === "function"
-        ? c.req.header("CF-Connecting-IP") ||
-          c.req.header("cf-connecting-ip") ||
-          c.req.header("x-forwarded-for")
-        : undefined) ||
-      c.req?.raw?.headers?.get?.("cf-connecting-ip") ||
-      c.req?.raw?.headers?.get?.("CF-Connecting-IP") ||
-      "unknown",
-    onRateLimited = (c: any, retry: number) => {
-      if (typeof c.json === "function") {
-        return c.json(
-          {
-            error: "Too Many Requests",
-            message: "Rate limit exceeded. Please try again later.",
-          },
-          429,
-          {
-            "Retry-After": String(retry),
-          },
-        );
-      }
-      return new Response(
-        JSON.stringify({
+    keyGenerator = (c) => c.req.header("CF-Connecting-IP") || "unknown",
+    onRateLimited = (c, retry) =>
+      c.json(
+        {
           error: "Too Many Requests",
           message: "Rate limit exceeded. Please try again later.",
-        }),
-        {
-          status: 429,
-          headers: {
-            "Content-Type": "application/json",
-            "Retry-After": String(retry),
-          },
         },
-      );
-    },
+        429,
+        { "Retry-After": String(retry) },
+      ),
   } = options;
 
-  return async (c: any, next: () => Promise<any>): Promise<any> => {
-    const path = c.req?.path || "";
+  return async (c, next) => {
+    const path = c.req.path;
     const matches =
       typeof routes === "function"
         ? routes(c)
@@ -100,12 +69,7 @@ export const ratelimit = () => {
     const limiter = options.limiter ? options.limiter(c) : c.env?.[bindingName];
     if (!limiter || typeof limiter.limit !== "function") {
       if (fallback === "pass") return next();
-      if (typeof c.json === "function")
-        return c.json({ error: "Rate limiter not configured" }, 500);
-      return new Response(JSON.stringify({ error: "Rate limiter not configured" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return c.json({ error: "Rate limiter not configured" }, 500);
     }
 
     try {
@@ -113,13 +77,7 @@ export const ratelimit = () => {
       const { success } = await limiter.limit({ key });
       if (!success) return onRateLimited(c, retryAfter);
     } catch {
-      if (fallback !== "pass") {
-        if (typeof c.json === "function") return c.json({ error: "Rate limit check failed" }, 500);
-        return new Response(JSON.stringify({ error: "Rate limit check failed" }), {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
+      if (fallback !== "pass") return c.json({ error: "Rate limit check failed" }, 500);
     }
     return next();
   };
@@ -128,38 +86,28 @@ export const ratelimit = () => {
 /**
  * Hono middleware to verify Cloudflare Turnstile token from form body.
  */
-export const turnstile = () => {
+export const turnstile = (): MiddlewareHandler => {
   const raw = getSecurityConfig().turnstile;
   const options = typeof raw === "object" && raw !== null ? raw : {};
   const { field = "cf-turnstile-response", ...verifyOptions } = options;
 
-  return async (c: any, next: () => Promise<any>): Promise<any> => {
-    let body: any = {};
-    if (typeof c.req?.parseBody === "function") {
-      body = await c.req.parseBody().catch(() => ({}));
-    } else if (typeof c.req?.json === "function") {
-      body = await c.req.json().catch(() => ({}));
-    }
+  return async (c, next) => {
+    const ct = (c.req.header("content-type") || "").toLowerCase();
+    const body: any = ct.includes("form")
+      ? await c.req.parseBody().catch(() => ({}))
+      : await c.req.json().catch(() => ({}));
     const token = body?.[field];
 
     const result = await verifyTurnstile({
       ...verifyOptions,
       token: typeof token === "string" ? token : undefined,
       env: c.env,
-      remoteIp:
-        typeof c.req?.header === "function"
-          ? c.req.header("CF-Connecting-IP") || c.req.header("cf-connecting-ip")
-          : c.req?.raw?.headers?.get?.("cf-connecting-ip"),
+      remoteIp: c.req.header("CF-Connecting-IP"),
     });
 
     if (result.success) return next();
 
-    const payload = { success: false, error: result.error };
-    if (typeof c.json === "function") return c.json(payload, 400);
-    return new Response(JSON.stringify(payload), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return c.json({ success: false, error: result.error }, 400);
   };
 };
 
@@ -184,37 +132,21 @@ const DEFAULT_WHITELIST = [
 /**
  * Hono middleware for site maintenance and construction mode gating.
  */
-export const construction = () => {
+export const construction = (): MiddlewareHandler => {
   const raw = getSecurityConfig().construction;
   const options = typeof raw === "object" && raw !== null ? raw : {};
   const apiPath = options.apiPath !== undefined ? options.apiPath : "/api/construction-guest";
   const constructionPath = options.constructionPath ?? "/construction";
 
-  const resolveRedirect = (c: any, target: string) => {
-    if (typeof c.redirect === "function") return c.redirect(target);
-    const full = target.startsWith("http")
-      ? target
-      : new URL(target, c.req?.url || "http://localhost").toString();
-    return Response.redirect(full, 302);
-  };
-
-  const getHeader = (c: any, name: string): string | undefined => {
-    if (typeof c.req?.header === "function") {
-      const val = c.req.header(name) || c.req.header(name.toLowerCase());
-      if (val) return val;
-    }
-    return c.req?.raw?.headers?.get?.(name) || c.req?.raw?.headers?.get?.(name.toLowerCase());
-  };
-
-  return async (c: any, next: () => Promise<any>): Promise<any> => {
-    const path: string = c.req?.path || new URL(c.req?.url || "http://localhost/").pathname || "/";
-    const method: string = (c.req?.method || "GET").toUpperCase();
-    const search: string = c.req?.url ? new URL(c.req.url).search : "";
+  return async (c, next) => {
+    const path = c.req.path;
+    const method = c.req.method.toUpperCase();
+    const search = new URL(c.req.url).search;
 
     // Handle guest sign-in endpoint
     if (apiPath && path === apiPath && method === "POST") {
       try {
-        const ct = (getHeader(c, "content-type") || "").toLowerCase();
+        const ct = (c.req.header("content-type") || "").toLowerCase();
         const isForm =
           ct.includes("application/x-www-form-urlencoded") || ct.includes("multipart/form-data");
         let passphrase = "";
@@ -222,24 +154,17 @@ export const construction = () => {
         let redirectUrl = "/";
 
         if (isForm) {
-          let formData: any;
-          if (typeof c.req?.parseBody === "function") {
-            formData = await c.req.parseBody().catch(() => ({}));
-            passphrase = String(formData["passphrase"] ?? "");
-            rememberMe = formData["rememberMe"] !== "false" && formData["rememberMe"] !== false;
-            redirectUrl = String(formData["redirect"] ?? "/");
-          } else if (typeof c.req?.formData === "function") {
-            formData = await c.req.formData().catch(() => undefined);
-            if (formData) {
-              passphrase = String(formData.get("passphrase") ?? "");
-              rememberMe =
-                formData.get("rememberMe") !== "false" && formData.get("rememberMe") !== null;
-              redirectUrl = String(formData.get("redirect") ?? "/");
-            }
+          const formData = await c.req.formData().catch(() => undefined);
+          if (formData) {
+            const pass = formData.get("passphrase");
+            const rem = formData.get("rememberMe");
+            const red = formData.get("redirect");
+            passphrase = typeof pass === "string" ? pass : "";
+            rememberMe = rem !== "false" && rem !== null;
+            redirectUrl = typeof red === "string" ? red : "/";
           }
         } else {
-          let body: any = {};
-          if (typeof c.req?.json === "function") body = await c.req.json().catch(() => ({}));
+          const body: any = await c.req.json().catch(() => ({}));
           passphrase = String(body?.["passphrase"] ?? "");
           rememberMe = body?.["rememberMe"] !== false;
           redirectUrl = String(body?.["redirect"] ?? "/");
@@ -250,33 +175,15 @@ export const construction = () => {
           if (!signedIn) {
             const loc = options.getLocale ? options.getLocale(redirectUrl) : "en";
             const fallbackTarget = `${options.constructionPath ?? `/${loc}/construction`}?error=invalid&redirect=${encodeURIComponent(redirectUrl)}`;
-            return resolveRedirect(c, fallbackTarget);
+            return c.redirect(fallbackTarget);
           }
-          return resolveRedirect(c, redirectUrl);
+          return c.redirect(redirectUrl);
         }
 
-        if (!signedIn) {
-          return typeof c.json === "function"
-            ? c.json({ error: "Invalid credentials" }, 401)
-            : new Response('{"error":"Invalid credentials"}', {
-                status: 401,
-                headers: { "Content-Type": "application/json" },
-              });
-        }
-        return typeof c.json === "function"
-          ? c.json({ success: true }, 200)
-          : new Response('{"success":true}', {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            });
+        if (!signedIn) return c.json({ error: "Invalid credentials" }, 401);
+        return c.json({ success: true }, 200);
       } catch (err: any) {
-        if (typeof c.json === "function") {
-          return c.json({ error: err?.message || "Authentication failed" }, 400);
-        }
-        return new Response(JSON.stringify({ error: err?.message || "Authentication failed" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
+        return c.json({ error: err?.message || "Authentication failed" }, 400);
       }
     }
 
@@ -294,8 +201,8 @@ export const construction = () => {
         locMatch?.[1]?.toLowerCase() ??
         "en");
 
-    const accept = getHeader(c, "accept");
-    const secFetchDest = getHeader(c, "sec-fetch-dest");
+    const accept = c.req.header("accept");
+    const secFetchDest = c.req.header("sec-fetch-dest");
     const isDocNav =
       !/\.[a-z0-9]{2,8}$/i.test(path) &&
       (secFetchDest
@@ -314,7 +221,7 @@ export const construction = () => {
       (await isConstructionGuest(c));
 
     if (isConstPage) {
-      return !enabled || (await isAuthorized()) ? resolveRedirect(c, `/${locale}`) : next();
+      return !enabled || (await isAuthorized()) ? c.redirect(`/${locale}`) : next();
     }
 
     if (!enabled || DEFAULT_WHITELIST.some((p) => path.includes(p))) return next();
@@ -359,7 +266,7 @@ export const construction = () => {
       });
     }
 
-    return resolveRedirect(c, targetUrl);
+    return c.redirect(targetUrl);
   };
 };
 
@@ -408,7 +315,7 @@ function applyHeaders(
   }
 
   headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   headers.set("No-Vary-Search", 'except=("q" "search" "locale"), params=?1');
 
   const csp = buildCspHeader(opts, nonce);
@@ -445,10 +352,10 @@ function applyHeaders(
 }
 
 /**
- * Universal Hono Security Middleware orchestrating TLS, dev-only, rate limiting,
+ * Hono Security Middleware orchestrating TLS, dev-only, rate limiting,
  * construction gating, CSP headers, nonces, and SRI injection with Cloudflare HTMLRewriter.
  */
-export const security = () => {
+export const security = (): MiddlewareHandler => {
   const pluginConfig = getSecurityConfig();
   const merged: RimelightSecurityPluginOptions = {
     ...pluginConfig,
@@ -460,29 +367,25 @@ export const security = () => {
     pluginConfig.devOnly !== false && devOnly(),
     pluginConfig.ratelimit !== false && ratelimit(),
     pluginConfig.construction !== false && construction(),
-  ].filter(Boolean) as Array<(c: any, next: () => Promise<any>) => Promise<any>>;
+  ].filter(Boolean) as MiddlewareHandler[];
 
-  return async (c: any, next: any): Promise<Response | void> => {
-    const isDev =
-      process.env["NODE_ENV"] === "development" ||
-      (import.meta.env?.DEV === true &&
-        process.env["NODE_ENV"] !== "production" &&
-        process.env["NODE_ENV"] !== "test");
+  return async (c, next) => {
+    const isDev = isDevEnv();
     const isTest =
       !isDev && (import.meta.env?.MODE === "test" || process.env["NODE_ENV"] === "test");
     const isProd =
       !isDev &&
       (import.meta.env?.PROD === true || process.env["NODE_ENV"] === "production" || isTest);
 
-    const rawReq = c.req?.raw || c.request;
-    const cf = rawReq?.cf || c.req?.cf || c.env?.cf;
+    const rawReq = c.req.raw as Request & { cf?: { tlsVersion?: string } };
+    const cf = rawReq.cf || (c.env as any)?.cf;
     const tls = cf?.tlsVersion;
 
     if (merged.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
       return new Response("TLS 1.2 or higher is required.", { status: 400 });
     }
 
-    if (isProd && rawReq?.headers?.get?.("x-forwarded-proto") === "http" && rawReq?.url) {
+    if (isProd && rawReq.headers.get("x-forwarded-proto") === "http" && rawReq.url) {
       return Response.redirect(rawReq.url.replace(/^http:/, "https:"), 301);
     }
 
@@ -494,7 +397,7 @@ export const security = () => {
     if (!res) return early;
 
     const ct = res.headers.get("content-type") || "";
-    const origin = rawReq?.url ? new URL(rawReq.url).origin : undefined;
+    const origin = rawReq.url ? new URL(rawReq.url).origin : undefined;
 
     if (!ct.includes("text/html")) {
       c.res = applyHeaders(res, merged, origin);

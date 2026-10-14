@@ -9,7 +9,7 @@ describe("Auth Middleware", () => {
       nextCalled = true;
     };
 
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/assets/logo.png",
       },
@@ -25,7 +25,7 @@ describe("Auth Middleware", () => {
     });
 
     const setMock = vi.fn();
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/docs/getting-started",
       },
@@ -61,7 +61,7 @@ describe("Auth Middleware", () => {
     });
 
     const state: Record<string, any> = {};
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/dashboard",
         raw: new Request("https://example.com/dashboard"),
@@ -89,9 +89,10 @@ describe("Auth Middleware", () => {
     });
 
     const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }));
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/dashboard",
+        raw: new Request("https://example.com/dashboard"),
       },
       set: () => {},
       get: () => null,
@@ -109,9 +110,10 @@ describe("Auth Middleware", () => {
     });
 
     const jsonMock = vi.fn((data: any, status: number) => ({ data, status }));
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/api/private/data",
+        raw: new Request("https://example.com/api/private/data"),
       },
       set: () => {},
       get: () => null,
@@ -147,7 +149,7 @@ describe("Auth Middleware", () => {
 
     const state: Record<string, any> = {};
     const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }));
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/admin/settings",
       },
@@ -179,7 +181,7 @@ describe("Auth Middleware", () => {
 
     const state: Record<string, any> = {};
     const redirectMock = vi.fn((url: string) => ({ redirectedTo: url }));
-    const ctx = {
+    const ctx: any = {
       req: {
         url: "https://example.com/auth/sign-in",
       },

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { Plugin } from "vite-plus";
+import type { Context } from "hono";
 import { resolveSecurityDomain } from "./domain";
 
 export interface RimelightSecurityPluginOptions {
@@ -45,13 +46,13 @@ export interface RimelightSecurityPluginOptions {
     | {
         bindingName?: string;
         limiter?: (
-          c: any,
+          c: Context,
         ) => { limit(options: { key: string }): Promise<{ success: boolean }> } | undefined;
-        routes?: (string | RegExp)[] | ((c: any) => boolean);
-        keyGenerator?: (c: any) => string | Promise<string>;
+        routes?: (string | RegExp)[] | ((c: Context) => boolean);
+        keyGenerator?: (c: Context) => string | Promise<string>;
         retryAfter?: number;
         fallback?: "pass" | "block";
-        onRateLimited?: (c: any, retryAfter: number) => Response | Promise<Response>;
+        onRateLimited?: (c: Context, retryAfter: number) => Response | Promise<Response>;
       };
   construction?:
     | false
@@ -67,9 +68,9 @@ export interface RimelightSecurityPluginOptions {
         apiPath?: string | false;
         renderFallback?: boolean;
         whitelist?: (string | RegExp)[] | ((path: string) => boolean);
-        isAuthorized?: (c: any) => boolean | Promise<boolean>;
+        isAuthorized?: (c: Context) => boolean | Promise<boolean>;
         onUnauthorized?: (
-          c: any,
+          c: Context,
           meta: { locale: string; path: string; redirectUrl: string },
         ) => Response | Promise<Response>;
       };

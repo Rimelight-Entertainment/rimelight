@@ -436,6 +436,9 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
+      hono:
+        specifier: 4.13.13
+        version: 4.13.13
 
   packages/cli:
     dependencies:
@@ -502,6 +505,9 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
+      hono:
+        specifier: 4.13.13
+        version: 4.13.13
 
   packages/security:
     dependencies:
@@ -515,6 +521,9 @@ importers:
       '@solidjs/web':
         specifier: 2.0.0-rc.13
         version: 2.0.0-rc.13(solid-js@2.0.0-rc.13)
+      hono:
+        specifier: 4.13.13
+        version: 4.13.13
 
   packages/seo:
     dependencies:
@@ -534,6 +543,9 @@ importers:
       '@solidjs/web':
         specifier: 2.0.0-rc.13
         version: 2.0.0-rc.13(solid-js@2.0.0-rc.13)
+      hono:
+        specifier: 4.13.13
+        version: 4.13.13
 
   packages/ui:
     dependencies:

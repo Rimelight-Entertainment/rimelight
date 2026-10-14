@@ -1,4 +1,4 @@
-import { getUIConfig } from "./resolver";
+import { getUIConfig } from "./ui-config";
 
 export type RimelightIcons = Record<string, string>;
 

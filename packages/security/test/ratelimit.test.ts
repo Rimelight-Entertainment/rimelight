@@ -28,7 +28,7 @@ describe("Rate Limit Middleware", () => {
       nextCalled = true;
     };
 
-    await middleware(ctx, next);
+    await middleware(ctx as any, next);
     expect(nextCalled).toBe(true);
     expect(limitMock).not.toHaveBeenCalled();
   });
@@ -54,7 +54,7 @@ describe("Rate Limit Middleware", () => {
       nextCalled = true;
     };
 
-    await middleware(ctx, next);
+    await middleware(ctx as any, next);
     expect(limitMock).toHaveBeenCalledWith({ key: "1.2.3.4" });
     expect(nextCalled).toBe(true);
   });
@@ -87,7 +87,7 @@ describe("Rate Limit Middleware", () => {
       nextCalled = true;
     };
 
-    await middleware(ctx, next);
+    await middleware(ctx as any, next);
     expect(nextCalled).toBe(false);
     expect(limitMock).toHaveBeenCalledWith({ key: "9.9.9.9" });
     expect(jsonMock).toHaveBeenCalledWith(
@@ -131,7 +131,7 @@ describe("Rate Limit Middleware", () => {
       json: jsonMock,
     };
 
-    await middleware(ctx, async () => {});
+    await middleware(ctx as any, async () => {});
     expect(limitMock).toHaveBeenCalledWith({ key: "Bearer token-123" });
     expect(jsonMock).toHaveBeenCalledWith(expect.anything(), 429, { "Retry-After": "120" });
   });
@@ -152,7 +152,7 @@ describe("Rate Limit Middleware", () => {
       nextCalled = true;
     };
 
-    await middleware(ctx, next);
+    await middleware(ctx as any, next);
     expect(nextCalled).toBe(true);
   });
 
@@ -179,7 +179,7 @@ describe("Rate Limit Middleware", () => {
       nextCalled = true;
     };
 
-    await middleware(ctx, next);
+    await middleware(ctx as any, next);
     expect(nextCalled).toBe(false);
     expect(jsonMock).toHaveBeenCalledWith({ error: "Rate limiter not configured" }, 500);
   });

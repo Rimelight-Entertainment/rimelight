@@ -1,3 +1,4 @@
+import type { MiddlewareHandler } from "hono";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { config, t, type I18nContextStore } from "./runtime";
 import serverTranslations from "virtual:rimelight-i18n/server";
@@ -5,10 +6,18 @@ import serverTranslations from "virtual:rimelight-i18n/server";
 Object.assign(config.translations, serverTranslations);
 
 /**
- * Universal i18n middleware for locale resolution, route redirection,
- * and Hono context injection (`c.set('locale')` & `c.set('t')`).
+ * Hono context variables injected by the i18n middleware.
  */
-export const i18n = () => async (c: any, next: () => Promise<void>) => {
+export interface I18nVariables {
+  locale: string;
+  t: typeof t;
+}
+
+/**
+ * Hono i18n middleware for locale resolution, route redirection,
+ * and context injection (`c.set('locale')` & `c.set('t')`).
+ */
+export const i18n = (): MiddlewareHandler => async (c, next) => {
   const { pathname, search } = new URL(c.req.url);
   const prefix = config.locales.find(
     (l) => l.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
@@ -22,8 +31,8 @@ export const i18n = () => async (c: any, next: () => Promise<void>) => {
     })[0] ??
     config.defaultLocale;
 
-  c.set?.("locale", locale);
-  c.set?.("t", t);
+  c.set("locale", locale);
+  c.set("t", t);
 
   const target =
     /^(GET|HEAD)$/i.test(c.req.method) &&
