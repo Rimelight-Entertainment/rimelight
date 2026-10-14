@@ -51,6 +51,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
   };
 
   onSettled(() => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
       if (
