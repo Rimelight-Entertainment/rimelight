@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { RLButtonProps } from "../button/button.types";
 
@@ -7,7 +8,7 @@ export interface RLPageSectionProps {
    *
    * @default "section"
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * The variant of the section.
    *

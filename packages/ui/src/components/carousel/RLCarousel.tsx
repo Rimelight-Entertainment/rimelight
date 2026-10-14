@@ -101,7 +101,6 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
     "breakpoints",
     "ui",
     "class",
-    "className",
     "theme",
     "onSelect",
     "children",
@@ -152,9 +151,8 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       orientation: orientation(),
       controls: controlsPlacement(),
       active: false,
-      theme: props.theme,
       ui: props.ui,
-      class: props.class ?? props.className,
+      class: props.class,
     }),
   );
 
@@ -163,9 +161,8 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       orientation: orientation(),
       controls: controlsPlacement(),
       active: true,
-      theme: props.theme,
       ui: props.ui,
-      class: props.class ?? props.className,
+      class: props.class,
     }),
   );
 

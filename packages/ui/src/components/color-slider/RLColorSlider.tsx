@@ -22,7 +22,6 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     "dir",
     "disabled",
     "inverted",
-    "modelValue",
     "value",
     "name",
     "orientation",
@@ -32,22 +31,21 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     "theme",
     "ui",
     "class",
+    "onValueChange",
     "children",
-    "onChange",
     "onChangeEnd",
-    "onUpdate:modelValue",
   );
 
   const channel = () => props.channel || "hue";
   const colorSpace = () => props.colorSpace ?? "hsl";
   const orientation = () => props.orientation ?? "horizontal";
   const stepValue = () => props.step ?? 1;
-  const initialHex = () => props.modelValue ?? props.value ?? props.defaultValue ?? "#000000";
+  const initialHex = () => props.value ?? props.defaultValue ?? "#000000";
 
   const [currentHex, setCurrentHex] = createSignal(initialHex());
 
   createEffect(
-    () => props.modelValue ?? props.value,
+    () => props.value,
     (controlled) => {
       if (controlled !== undefined) {
         setCurrentHex(controlled);
@@ -56,11 +54,10 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
   );
 
   const updateColor = (newHex: string, isFinal = false) => {
-    if (props.modelValue === undefined && props.value === undefined) {
+    if (props.value === undefined) {
       setCurrentHex(newHex);
     }
-    props.onChange?.(newHex);
-    props["onUpdate:modelValue"]?.(newHex);
+    props.onValueChange?.(newHex);
     if (isFinal) {
       props.onChangeEnd?.(newHex);
     }

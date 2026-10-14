@@ -20,7 +20,7 @@ export interface RLPostProps {
   /**
    * The link to the post.
    */
-  to?: string;
+  href?: string;
   /**
    * The variant of the post.
    */

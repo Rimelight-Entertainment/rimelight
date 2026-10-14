@@ -15,7 +15,6 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
     "overlay",
     "overlaySlot",
     "href",
-    "to",
     "target",
     "rel",
     "id",
@@ -43,7 +42,7 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
   const titleId = `${cardId}-title`;
   const descriptionId = `${cardId}-description`;
 
-  const isInteractive = () => Boolean(props.href || props.to);
+  const isInteractive = () => Boolean(props.href);
   const isOverlay = () => Boolean(props.overlaySlot !== undefined || props.overlay);
 
   const Tag = dynamic(() => props.as ?? (isInteractive() ? "a" : "div"));
@@ -68,13 +67,12 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
     RLCardTheme({
       variant: props.variant ?? "outline",
       overlay: isOverlay(),
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
   );
 
-  const linkHref = () => props.href ?? props.to;
+  const linkHref = () => props.href;
   const linkRel = () =>
     props.rel ?? (props.target === "_blank" ? "noopener noreferrer" : undefined);
 

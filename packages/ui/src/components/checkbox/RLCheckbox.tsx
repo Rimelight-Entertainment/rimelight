@@ -31,12 +31,9 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     "ui",
     "class",
     "value",
-    "defaultValue",
-    "modelValue",
-    "trueValue",
-    "falseValue",
+    "defaultChecked",
+    "onCheckedChange",
     "onChange",
-    "onUpdate:modelValue",
     "labelSlot",
     "descriptionSlot",
     "children",
@@ -49,41 +46,21 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
     "formtarget",
   );
 
-  const trueVal = () => (props.trueValue !== undefined ? props.trueValue : true);
-  const falseVal = () => (props.falseValue !== undefined ? props.falseValue : false);
-
   // Uncontrolled state fallback
-  const [internalValue, setInternalValue] = createSignal<any>(
-    props.defaultValue !== undefined
-      ? props.defaultValue
-      : props.falseValue !== undefined
-        ? props.falseValue
-        : false,
+  const [internalChecked, setInternalChecked] = createSignal<boolean | "indeterminate">(
+    props.defaultChecked ?? false,
   );
 
   const isIndeterminate = () => {
     if (props.indeterminate === true) return true;
-    if (props.modelValue === "indeterminate") return true;
-    if (props.checked === "indeterminate") return true;
-    if (
-      props.defaultValue === "indeterminate" &&
-      props.modelValue === undefined &&
-      props.checked === undefined
-    ) {
-      return internalValue() === "indeterminate";
-    }
-    return false;
+    if (props.checked !== undefined) return props.checked === "indeterminate";
+    return internalChecked() === "indeterminate";
   };
 
   const isChecked = () => {
     if (isIndeterminate()) return false;
-    if (props.modelValue !== undefined) {
-      return props.modelValue === trueVal() || props.modelValue === true;
-    }
-    if (props.checked !== undefined) {
-      return props.checked === true;
-    }
-    return internalValue() === trueVal() || internalValue() === true;
+    if (props.checked !== undefined) return props.checked === true;
+    return internalChecked() === true;
   };
 
   const checkState = () => {
@@ -113,7 +90,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
       disabled: disabled(),
       required: required(),
       checked: isChecked() || isIndeterminate(),
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
@@ -122,14 +98,11 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
   const handleChange = (e: Event & { currentTarget: HTMLInputElement }) => {
     if (disabled()) return;
 
-    const checked = e.currentTarget.checked;
-    const nextVal = checked ? trueVal() : falseVal();
-
-    setInternalValue(nextVal);
-
-    if (props["onUpdate:modelValue"]) {
-      props["onUpdate:modelValue"](nextVal);
+    const next = e.currentTarget.checked;
+    if (props.checked === undefined) {
+      setInternalChecked(next);
     }
+    props.onCheckedChange?.(next);
     if (props.onChange) {
       props.onChange(e);
     }

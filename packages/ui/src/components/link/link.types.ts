@@ -19,10 +19,6 @@ export interface RLLinkProps {
    */
   href?: string | undefined;
   /**
-   * Alias for `href`.
-   */
-  to?: string | undefined;
-  /**
    * Forces the link to be treated as an external link.
    *
    * @default false

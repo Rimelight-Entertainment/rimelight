@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export interface RLMainProps {
@@ -6,7 +7,7 @@ export interface RLMainProps {
    *
    * @default "main"
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * Slot-specific CSS class overrides.
    */

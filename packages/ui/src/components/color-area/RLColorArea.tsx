@@ -190,8 +190,8 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     allProps,
     "colorSpace",
     "defaultValue",
+    "value",
     "disabled",
-    "modelValue",
     "name",
     "required",
     "xChannel",
@@ -202,7 +202,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     "theme",
     "ui",
     "class",
-    "onChange",
     "onValueChange",
     "onChangeEnd",
     "children",
@@ -212,7 +211,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
   const xChannel: Channel = props.xChannel ?? "saturation";
   const yChannel: Channel = props.yChannel ?? "lightness";
 
-  const initialValue = props.modelValue || props.defaultValue || "#ff0000";
+  const initialValue = props.value || props.defaultValue || "#ff0000";
 
   const [value, setValue] = createSignal<string>(initialValue);
   const [isDragging, setIsDragging] = createSignal(false);
@@ -254,7 +253,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     RLColorAreaTheme({
       color: props.color ?? "primary",
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
@@ -381,7 +379,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
         blue: newRgb[2],
       });
       setValue(newValue);
-      props.onChange?.(newValue);
       props.onValueChange?.(newValue);
     }
   };
@@ -490,7 +487,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
           blue: newRgb[2],
         });
         setValue(newValue);
-        props.onChange?.(newValue);
         props.onValueChange?.(newValue);
       }
     }

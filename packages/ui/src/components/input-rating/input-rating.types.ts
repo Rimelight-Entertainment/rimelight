@@ -10,7 +10,6 @@ export interface RLInputRatingProps {
   disabled?: boolean;
   required?: boolean;
   name?: string;
-  modelValue?: number;
   defaultValue?: number;
   value?: number;
   length?: number;

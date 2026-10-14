@@ -23,7 +23,6 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     "disabled",
     "disableWheelChange",
     "locale",
-    "modelValue",
     "value",
     "name",
     "placeholder",
@@ -34,19 +33,18 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     "theme",
     "ui",
     "class",
+    "onValueChange",
     "children",
-    "onChange",
-    "onUpdate:modelValue",
   );
 
   const colorSpace = () => props.colorSpace ?? "hsl";
   const stepValue = () => props.step ?? 1;
-  const initialHex = () => props.modelValue ?? props.value ?? props.defaultValue ?? "#000000";
+  const initialHex = () => props.value ?? props.defaultValue ?? "#000000";
 
   const [currentHex, setCurrentHex] = createSignal(initialHex());
 
   createEffect(
-    () => props.modelValue ?? props.value,
+    () => props.value,
     (controlled) => {
       if (controlled !== undefined) {
         setCurrentHex(controlled);
@@ -84,11 +82,10 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
   );
 
   const updateColor = (newHex: string) => {
-    if (props.modelValue === undefined && props.value === undefined) {
+    if (props.value === undefined) {
       setCurrentHex(newHex);
     }
-    props.onChange?.(newHex);
-    props["onUpdate:modelValue"]?.(newHex);
+    props.onValueChange?.(newHex);
   };
 
   const updateFromChannelValue = (val: number) => {

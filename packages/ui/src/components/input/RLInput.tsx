@@ -46,7 +46,6 @@ export const RLInput: Component<RLInputProps> = (allProps) => {
       hasLeading: hasLeading(),
       hasTrailing: hasTrailing(),
       error: !!props.error,
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),

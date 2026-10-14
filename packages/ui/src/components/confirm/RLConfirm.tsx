@@ -24,7 +24,6 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     "unmountOnHide",
     "ui",
     "class",
-    "className",
     "children",
     "trigger",
     "triggerSlot",
@@ -33,7 +32,6 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     "footer",
     "footerSlot",
     "onOpenChange",
-    "onUpdateOpen",
     "onConfirm",
     "onCancel",
     "onClose",
@@ -46,7 +44,7 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
     RLConfirmTheme({
       variant: props.variant ?? "default",
       ui: props.ui,
-      class: props.class ?? props.className,
+      class: props.class,
     }),
   );
 
@@ -55,7 +53,6 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
       setUncontrolledOpen(next);
     }
     props.onOpenChange?.(next);
-    props.onUpdateOpen?.(next);
     if (!next) {
       props.onClose?.();
     }
@@ -103,7 +100,7 @@ export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
         footer: resolvedTheme().footer,
         ...props.ui,
       }}
-      class={props.class ?? props.className}
+      class={props.class}
       onOpenChange={(next) => {
         if (!next) {
           handleCancel();

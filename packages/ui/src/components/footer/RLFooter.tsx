@@ -19,7 +19,6 @@ export const RLFooter: Component<RLFooterProps> = (allProps) => {
   const resolvedClasses = createMemo(() =>
     RLFooterTheme({
       contain: props.contain,
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),

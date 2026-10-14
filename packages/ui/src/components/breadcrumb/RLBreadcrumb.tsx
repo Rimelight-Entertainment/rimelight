@@ -129,7 +129,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
   });
 
   const getThemeClasses = (item: any, isLast: boolean) => {
-    const hasTo = Boolean(item && (item.to || item.href));
+    const hasTo = Boolean(item && item.href);
     const active = item?.active !== undefined ? Boolean(item.active) : isLast;
     const disabled = Boolean(item?.disabled);
 
@@ -283,8 +283,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (allProps) => {
     if (hasTo()) {
       const linkAttrs = () =>
         resolveLinkAttrs({
-          to: item.to,
-          href: item.href ?? item.to,
+          href: item.href,
           target: item.target,
           rel: item.rel,
           external: item.external,

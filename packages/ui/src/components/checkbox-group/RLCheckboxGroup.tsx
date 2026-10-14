@@ -28,7 +28,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
     "id",
     "legend",
     "items",
-    "modelValue",
+    "value",
     "defaultValue",
     "size",
     "variant",
@@ -49,7 +49,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
     "class",
     "theme",
     "onChange",
-    "onUpdate:modelValue",
+    "onValueChange",
     "legendSlot",
     "labelSlot",
     "descriptionSlot",
@@ -73,8 +73,8 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
   );
 
   const selectedValues = (): any[] => {
-    if (props.modelValue !== undefined) {
-      return Array.isArray(props.modelValue) ? props.modelValue : [];
+    if (props.value !== undefined) {
+      return Array.isArray(props.value) ? props.value : [];
     }
     return internalValue();
   };
@@ -138,7 +138,6 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
       required: required(),
       highlight: highlight(),
       disabled: disabled(),
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
@@ -159,8 +158,8 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
 
     setInternalValue(next);
 
-    if (props["onUpdate:modelValue"]) {
-      props["onUpdate:modelValue"](next);
+    if (props.onValueChange) {
+      props.onValueChange(next);
     }
     if (props.onChange) {
       props.onChange(event);

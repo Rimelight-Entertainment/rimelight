@@ -47,7 +47,6 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     "color",
     "size",
     "href",
-    "to",
     "label",
     "leadingIcon",
     "trailingIcon",
@@ -72,7 +71,6 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     "theme",
     "ui",
     "class",
-    "className",
     "disabled",
     "children",
     "leading",
@@ -88,13 +86,6 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
     "target",
     "rel",
     "noRel",
-    "trailingSlash" as any,
-    "replace" as any,
-    "exact" as any,
-    "exactQuery" as any,
-    "exactHash" as any,
-    "locale" as any,
-    "viewTransition" as any,
     "raw",
     "ariaLabel",
     "aria-label" as any,
@@ -112,7 +103,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
   const isLoading = () => Boolean(props.loading || autoLoading());
   const isDisabled = () => Boolean(props.disabled || isLoading());
 
-  const href = () => props.href || (props["to"] as string | undefined);
+  const href = () => props.href;
   const isLink = () => Boolean(href());
 
   const linkAttrs = createMemo(
@@ -181,7 +172,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
 
   const rootClassOverride = () => {
     const activeCls = props.active ? props.activeClass : props.inactiveClass;
-    const directClass = props.class ?? props.className;
+    const directClass = props.class;
     if (activeCls && directClass) return `${activeCls} ${directClass}`;
     return activeCls || directClass || undefined;
   };
@@ -202,13 +193,7 @@ export const RLButton: Component<RLButtonProps> = (allProps) => {
         trailing: isTrailingPosition(),
         loading: isLoading(),
         active: props.active,
-        theme: props.theme,
-        ui: props.ui
-          ? {
-              ...props.ui,
-              root: props.ui.root ?? props.ui.base,
-            }
-          : undefined,
+        ui: props.ui,
         class: rootClassOverride(),
       }),
     { equals: shallowEqual },

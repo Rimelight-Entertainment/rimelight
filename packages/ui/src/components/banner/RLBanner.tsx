@@ -51,7 +51,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     "center",
     "right",
     "href",
-    "to",
     "target",
     "rel",
     "external",
@@ -73,7 +72,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const isStacked = () => fixed() || sticky();
   const hideOnScroll = () => props.hideOnScroll ?? false;
   const stackIndex = () => props.stackIndex ?? 0;
-  const href = () => props.href || props.to;
+  const href = () => props.href;
   const isLink = () => Boolean(href());
 
   // Explicit id (or legacy dismissId) enables persistence. Otherwise a
@@ -155,7 +154,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     isLink()
       ? resolveLinkAttrs({
           href: href() as string | undefined,
-          to: props.to,
           label: props.label,
           leadingIcon: props.leadingIcon,
           trailingIcon: props.trailingIcon,

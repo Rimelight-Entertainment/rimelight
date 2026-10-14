@@ -20,8 +20,6 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
     "trigger",
     "triggerSlot",
     "onOpenChange",
-    "onUpdateOpen",
-    "onUpdate:open",
     "id",
     "theme",
     "ariaLabel",
@@ -47,15 +45,12 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
       setInternalOpen(next);
     }
     props.onOpenChange?.(next);
-    props.onUpdateOpen?.(next);
-    props["onUpdate:open"]?.(next);
   };
 
   const resolvedClasses = createMemo(() =>
     RLCollapsibleTheme({
       open: isOpen(),
       disabled: isDisabled(),
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),

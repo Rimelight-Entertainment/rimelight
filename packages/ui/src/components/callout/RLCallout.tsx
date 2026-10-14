@@ -35,7 +35,6 @@ export const RLCallout: Component<RLCalloutProps> = (allProps) => {
     "defaultOpen",
     "onClose",
     "onOpenChange",
-    "onUpdateOpen",
     "theme",
     "ui",
     "class",
@@ -86,7 +85,6 @@ export const RLCallout: Component<RLCalloutProps> = (allProps) => {
       color: props.color ?? "primary",
       orientation: props.orientation ?? "vertical",
       title: hasTitle(),
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),
@@ -98,7 +96,6 @@ export const RLCallout: Component<RLCalloutProps> = (allProps) => {
       setInternalOpen(false);
     }
     props.onClose?.();
-    props.onUpdateOpen?.(false);
     props.onOpenChange?.(false);
   };
 

@@ -33,7 +33,6 @@ export const RLChip: Component<RLChipProps> = (allProps) => {
       position: props.position ?? "top-right",
       inset: isInset(),
       standalone: isStandalone(),
-      theme: props.theme,
       ui: props.ui,
       class: props.class,
     }),

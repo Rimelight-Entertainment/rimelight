@@ -25,7 +25,7 @@ describe("RLLink", () => {
     });
 
     it("omits the hint for internal links and same-tab targets", () => {
-      expect(render(() => <RLLink to="/docs" label="Docs" />)).not.toContain(
+      expect(render(() => <RLLink href="/docs" label="Docs" />)).not.toContain(
         'data-slot="external-hint"',
       );
       expect(
@@ -54,19 +54,19 @@ describe("RLLink", () => {
 
   describe("Icons & semantics", () => {
     it("renders leading and trailing icons as icon classes", () => {
-      const html = render(() => <RLLink to="/docs" label="Docs" leadingIcon="book-open" />);
+      const html = render(() => <RLLink href="/docs" label="Docs" leadingIcon="book-open" />);
       expect(html).toContain('data-slot="leading-icon"');
       expect(html).toContain("i-lucide-book-open");
 
       const trailingHtml = render(() => (
-        <RLLink to="/docs" label="Docs" trailingIcon="arrow-right" />
+        <RLLink href="/docs" label="Docs" trailingIcon="arrow-right" />
       ));
       expect(trailingHtml).toContain('data-slot="trailing-icon"');
       expect(trailingHtml).toContain("i-lucide-arrow-right");
     });
 
     it("applies active and disabled semantics", () => {
-      const activeHtml = render(() => <RLLink to="/docs" label="Docs" active />);
+      const activeHtml = render(() => <RLLink href="/docs" label="Docs" active />);
       expect(activeHtml).toContain('aria-current="page"');
 
       const disabledHtml = render(() => <RLLink href="/docs" label="Docs" disabled />);

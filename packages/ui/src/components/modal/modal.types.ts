@@ -169,14 +169,9 @@ export interface RLModalProps {
   class?: any;
 
   /**
-   * Alias for class.
-   */
-  className?: any;
-
-  /**
    * Default slot / modal body content.
    */
-  children?: JSX.Element | (() => JSX.Element) | undefined;
+  children?: JSX.Element;
 
   /**
    * Trigger element slot.
@@ -257,11 +252,6 @@ export interface RLModalProps {
    * Callback fired when open state changes.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
-
-  /**
-   * Alias for onOpenChange matching v-model:open pattern.
-   */
-  onUpdateOpen?: ((open: boolean) => void) | undefined;
 
   /**
    * Callback fired when modal is closed.

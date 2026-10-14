@@ -69,13 +69,7 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
       shape: props.shape ?? "rounded",
       square: isSquare(),
       fieldGroup: props.fieldGroup,
-      theme: props.theme,
-      ui: props.ui
-        ? {
-            ...props.ui,
-            root: props.ui.root ?? props.ui.base,
-          }
-        : undefined,
+      ui: props.ui,
       class: props.class,
     }),
   );

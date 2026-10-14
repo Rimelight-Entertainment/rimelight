@@ -1,7 +1,8 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export interface RLLogoProps {
-  as?: any;
+  as?: ValidComponent;
   variant?: string;
   mode?: string;
   theme?: string;

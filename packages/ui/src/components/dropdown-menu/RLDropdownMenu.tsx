@@ -51,7 +51,6 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
   };
 
   onSettled(() => {
-    if (typeof window === "undefined" || typeof document === "undefined") return;
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
       if (
@@ -224,10 +223,10 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                           );
                         };
 
-                        if (item.to) {
+                        if (item.href) {
                           return (
                             <a
-                              href={item.to}
+                              href={item.href}
                               target={item.target}
                               class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
                               data-slot="item"
@@ -256,7 +255,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               aria-checked={isChecked() ? "true" : "false"}
                               onClick={(e) => {
                                 const next = !isChecked();
-                                item.onUpdateChecked?.(next);
+                                item.onCheckedChange?.(next);
                                 item.onSelect?.(e);
                               }}
                             >

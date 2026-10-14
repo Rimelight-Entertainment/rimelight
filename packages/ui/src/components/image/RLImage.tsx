@@ -105,12 +105,10 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
   const handleLoad = () => setStatus("ok");
 
   const activeModalSrc = () => {
-    if (typeof document === "undefined") return activeUrl ?? "";
     const rootTheme = document.documentElement.getAttribute("data-theme");
     const isDark =
       rootTheme === "dark" ||
-      (typeof window !== "undefined" &&
-        (window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false) &&
+      ((window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false) &&
         rootTheme !== "light");
     if (isDark && darkUrl) return darkUrl;
     return lightUrl || activeUrl || "";

@@ -68,12 +68,12 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const switchable = () => minView() !== maxView;
   const cycle = () => setViewRaw(cycleView(view(), minView()) as View);
 
-  const controlledValue = () => props.modelValue !== undefined;
+  const controlledValue = () => props.value !== undefined;
   const [innerValue, setInnerValue] = createSignal<CalendarModelValue | undefined>(
     props.defaultValue,
   );
-  const modelValue = createMemo<CalendarModelValue | undefined>(() =>
-    controlledValue() ? props.modelValue : innerValue(),
+  const currentValue = createMemo<CalendarModelValue | undefined>(() =>
+    controlledValue() ? props.value : innerValue(),
   );
 
   const [innerPlaceholder, setInnerPlaceholder] = createSignal<Date>(
@@ -82,7 +82,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
       resolveInitialPlaceholder(
         props.placeholder,
         props.defaultPlaceholder,
-        props.modelValue ?? props.defaultValue,
+        props.value ?? props.defaultValue,
       ),
     ),
   );
@@ -90,29 +90,29 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 
   const setPlaceholder = (d: Date) => {
     setInnerPlaceholder(startOfDay(d));
-    props.onUpdatePlaceholder?.(startOfDay(d));
+    props.onPlaceholderChange?.(startOfDay(d));
   };
 
   // Range session state (start/end commits happen progressively like reka-ui).
   // untrack: initial values are deliberately read once and not tracked.
   const [innerStart, setInnerStart] = createSignal<Date | undefined>(
-    untrack(() => firstRangeDate(untrack(() => modelValue()))),
+    untrack(() => firstRangeDate(untrack(() => currentValue()))),
   );
   const [innerEnd, setInnerEnd] = createSignal<Date | undefined>(
-    untrack(() => secondRangeDate(untrack(() => modelValue()))),
+    untrack(() => secondRangeDate(untrack(() => currentValue()))),
   );
   const controlledRange = () => props.range && controlledValue();
   const rangeStart = () =>
-    controlledRange() ? firstRangeDate(untrack(() => modelValue())) : innerStart();
+    controlledRange() ? firstRangeDate(untrack(() => currentValue())) : innerStart();
   const rangeEnd = () =>
-    controlledRange() ? secondRangeDate(untrack(() => modelValue())) : innerEnd();
+    controlledRange() ? secondRangeDate(untrack(() => currentValue())) : innerEnd();
 
   const today = createMemo(() => startOfDay(new Date()));
   const currentPlaceholder = createMemo(() => placeholder());
   const currentToday = createMemo(() => today());
 
   const isInvalid = createMemo(() => {
-    const v = untrack(() => modelValue());
+    const v = untrack(() => currentValue());
     if (!v) return false;
     const dates = Array.isArray(v)
       ? v
@@ -132,13 +132,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     const rs = untrack(() => rangeStart());
     const re = untrack(() => rangeEnd());
     const base: DayMatchContext = {
-      modelValue: props.range
+      value: props.range
         ? rs && re
           ? { start: rs, end: re }
           : rs
             ? null
-            : untrack(() => modelValue())
-        : untrack(() => modelValue()),
+            : untrack(() => currentValue())
+        : untrack(() => currentValue()),
       month: placeholder(),
       today: today(),
       weekStartsOn: weekStartsOn(),
@@ -187,9 +187,9 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     }),
   );
 
-  const commitModel = (next: CalendarModelValue | null | undefined) => {
+  const commitValue = (next: CalendarModelValue | null | undefined) => {
     if (!controlledValue()) setInnerValue(next);
-    props.onUpdateValue?.(next ?? undefined);
+    props.onValueChange?.(next ?? undefined);
   };
 
   const isRangeDay = (d: Date): boolean => {
@@ -224,28 +224,28 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
         setInnerStart(next.start);
         setInnerEnd(next.end);
       }
-      props.onUpdateStartValue?.(next.start);
+      props.onStartValueChange?.(next.start);
       if (next.start && next.end) {
         const range: CalendarRangeValue = { start: next.start, end: next.end };
         if (!controlledRange()) {
           /* already stored in innerStart/innerEnd */
         }
-        commitModel(range);
+        commitValue(range);
         const valid = isRangeValid(next.start, next.end);
-        if (valid) props.onUpdateValidValue?.(range);
+        if (valid) props.onValidValueChange?.(range);
       } else if (!controlledRange()) {
         // Partial range still clears committed model
-        if (controlledValue()) props.onUpdateValue?.(null);
+        if (controlledValue()) props.onValueChange?.(null);
         else setInnerValue(undefined);
       }
       return;
     }
 
     if (props.multiple) {
-      commitModel(
+      commitValue(
         toggleMultiValue(
-          Array.isArray(untrack(() => modelValue()))
-            ? (untrack(() => modelValue()) as unknown as Date[])
+          Array.isArray(untrack(() => currentValue()))
+            ? (untrack(() => currentValue()) as unknown as Date[])
             : undefined,
           day,
           props.preventDeselect,
@@ -255,13 +255,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     }
 
     const next = toggleSingleValue(
-      untrack(() => modelValue()) instanceof Date
-        ? (untrack(() => modelValue()) as unknown as Date)
+      untrack(() => currentValue()) instanceof Date
+        ? (untrack(() => currentValue()) as unknown as Date)
         : undefined,
       day,
       props.preventDeselect,
     );
-    commitModel(next ?? null);
+    commitValue(next ?? null);
     if (next) setPlaceholder(day);
   };
 
@@ -284,7 +284,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (props.disabled || props.readonly) return;
     if (props.isMonthDisabled?.(month) || props.isMonthUnavailable?.(month)) return;
     if (isMinView()) {
-      commitValue(month, month);
+      commitDay(month, month);
       setPlaceholder(month);
       return;
     }
@@ -296,7 +296,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     if (props.disabled || props.readonly) return;
     if (props.isYearDisabled?.(year) || props.isYearUnavailable?.(year)) return;
     if (isMinView()) {
-      commitValue(year, year);
+      commitDay(year, year);
       setPlaceholder(year);
       return;
     }
@@ -304,13 +304,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     setView(minView() === "day" ? "month" : minView());
   };
 
-  const commitValue = (day: Date, _month: Date) => {
+  const commitDay = (day: Date, _month: Date) => {
     if (props.range) return;
     if (props.multiple) {
-      commitModel(
+      commitValue(
         toggleMultiValue(
-          Array.isArray(untrack(() => modelValue()))
-            ? (untrack(() => modelValue()) as unknown as Date[])
+          Array.isArray(untrack(() => currentValue()))
+            ? (untrack(() => currentValue()) as unknown as Date[])
             : undefined,
           day,
           props.preventDeselect,
@@ -318,8 +318,8 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
       );
       return;
     }
-    const current = untrack(() => modelValue());
-    commitModel(
+    const current = untrack(() => currentValue());
+    commitValue(
       toggleSingleValue(
         current instanceof Date ? (current as unknown as Date) : undefined,
         day,
@@ -436,7 +436,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 
   onSettled(() => {
     if (!props.initialFocus) return;
-    const sel = firstDateOf(untrack(() => modelValue()));
+    const sel = firstDateOf(untrack(() => currentValue()));
     const target = sel && isSameMonth(sel, placeholder()) ? sel : today();
     queueMicrotask(() => {
       const el = rootEl?.querySelector<HTMLElement>(`[data-value="${dateKey(target)}"]`);
@@ -564,7 +564,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   );
 
   const monthSelected = (m: Date) => {
-    const v = untrack(() => modelValue());
+    const v = untrack(() => currentValue());
     if (!v) return false;
     if (Array.isArray(v)) return v.some((d) => isSameMonth(d, m));
     if (v instanceof Date) return isSameMonth(v, m);
@@ -575,7 +575,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   };
 
   const yearSelected = (y: Date) => {
-    const v = untrack(() => modelValue());
+    const v = untrack(() => currentValue());
     if (!v) return false;
     const has = (d?: Date | null) => d instanceof Date && d.getFullYear() === y.getFullYear();
     if (Array.isArray(v)) return v.some(has);
