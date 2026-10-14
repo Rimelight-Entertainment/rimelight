@@ -21,13 +21,12 @@ export const BlankLayout: Component<BlankLayoutProps> = (props) => {
     }
   });
 
-  useHead(
-    () =>
-      createSeoHead({
-        title: props.title,
-        description: props.description,
-        noindex: props.noindex,
-      }).tags,
+  useHead(() =>
+    createSeoHead({
+      title: props.title,
+      description: props.description,
+      noindex: props.noindex,
+    }),
   );
 
   return (

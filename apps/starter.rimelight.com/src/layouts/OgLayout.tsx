@@ -9,8 +9,8 @@ export interface OgLayoutProps {
 }
 
 export const OgLayout: Component<OgLayoutProps> = (props) => {
-  useHead(
-    () => createSeoHead({ title: props.title, description: props.description, noindex: true }).tags,
+  useHead(() =>
+    createSeoHead({ title: props.title, description: props.description, noindex: true }),
   );
   return (
     <>

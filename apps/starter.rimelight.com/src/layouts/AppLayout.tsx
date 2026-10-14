@@ -39,7 +39,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
     }
   };
 
-  useHead(() => createSeoHead({ title: props.title, description: props.description }).tags);
+  useHead(() => createSeoHead({ title: props.title, description: props.description }));
 
   return (
     <>

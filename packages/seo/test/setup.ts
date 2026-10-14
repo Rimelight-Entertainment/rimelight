@@ -16,9 +16,9 @@ vi.mock("virtual:rimelight-seo", () => ({
   SEO_LOCALES: {},
   PRIVATE_PATH_PREFIXES: [],
   seoConfig: { SEO_LOCALES: {}, PRIVATE_PATH_PREFIXES: [] },
-  createHead: () => ({}),
-  createSeoHead: () => ({}),
-  defineSeoConfig: () => () => ({}),
+  createHead: () => [],
+  createSeoHead: () => [],
+  defineSeoConfig: () => () => [],
   default: {
     id: "test",
     name: "Test Site",

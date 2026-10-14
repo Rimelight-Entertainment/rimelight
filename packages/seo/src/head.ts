@@ -10,81 +10,10 @@ import {
   deepMerge,
 } from "./meta";
 import { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
-import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize";
+import { sanitizeUrl, serializeJsonLd } from "./sanitize";
 import type { HeadTag } from "@solidjs/web";
 
 export type { HeadTag } from "@solidjs/web";
-
-export interface HeadResult {
-  /**
-   * Sanitized raw HTML ready for direct insertion into <head>. Attribute values are
-   * escapeHtml()-encoded; JSON-LD content is serializeJsonLd()-encoded; URLs are
-   * sanitizeUrl()-encoded. Safe for set:html / dangerouslySetInnerHTML.
-   */
-  readonly html: string;
-
-  /**
-   * Strongly-typed tag list for JSX, SSR AST walkers, or client meta-managers.
-   */
-  readonly tags: HeadTag[];
-
-  /**
-   * Return a new HeadResult with the given props merged on top of this one. Deduplication is
-   * last-wins per identity key.
-   */
-  extend(overrides: HeadProps): HeadResult;
-}
-
-/**
- * Renders an array of HeadTag objects into a clean HTML string.
- */
-export function renderTagsToHtml(tags: HeadTag[]): string {
-  const lines: string[] = [];
-
-  for (const t of tags) {
-    if (t.tag === "title") {
-      const text = t.props?.["children"] ?? "";
-      lines.push(`<title>${escapeHtml(text)}</title>`);
-    } else if (t.tag === "meta") {
-      const attrs = Object.entries(t.props || {})
-        .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
-        .join(" ");
-      lines.push(`<meta ${attrs} />`);
-    } else if (t.tag === "link") {
-      const attrs = Object.entries(t.props || {})
-        .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => {
-          if (k === "href") {
-            return `${k}="${escapeHtml(sanitizeUrl(String(v)))}"`;
-          }
-          return `${k}="${escapeHtml(String(v))}"`;
-        })
-        .join(" ");
-      lines.push(`<link ${attrs} />`);
-    } else if (t.tag === "script") {
-      const { children: bodyText, ...otherProps } = (t.props || {}) as Record<string, unknown>;
-      const scriptBody = (bodyText ?? "") as string;
-      const attrs = Object.entries(otherProps)
-        .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
-        .join(" ");
-      const attrStr = attrs ? ` ${attrs}` : "";
-      lines.push(`<script${attrStr}>${scriptBody}</script>`);
-    } else if (t.tag === "style") {
-      const { children: bodyText, ...otherProps } = (t.props || {}) as Record<string, unknown>;
-      const styleBody = (bodyText ?? "") as string;
-      const attrs = Object.entries(otherProps)
-        .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
-        .join(" ");
-      const attrStr = attrs ? ` ${attrs}` : "";
-      lines.push(`<style${attrStr}>${styleBody}</style>`);
-    }
-  }
-
-  return lines.join("\n");
-}
 
 const DEFAULT_SITE_CONFIG: SiteConfig = {
   id: "rimelight",
@@ -562,23 +491,11 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
 }
 
 /**
- * Creates a strongly-typed HeadResult containing sanitized HTML and HeadTag AST.
+ * Builds the strongly-typed head tag list for a page's <head>. Feed the result directly to
+ * `useHead()` from @solidjs/web.
  */
-export function createSeoHead(
-  props: HeadProps = {},
-  boundConfig?: Partial<SiteConfig>,
-): HeadResult {
-  const tags = generateTags(props, boundConfig);
-  const html = renderTagsToHtml(tags);
-
-  return {
-    html,
-    tags,
-    extend(overrides: HeadProps): HeadResult {
-      const mergedProps = deepMerge(props, overrides);
-      return createSeoHead(mergedProps, boundConfig);
-    },
-  };
+export function createSeoHead(props: HeadProps = {}, boundConfig?: Partial<SiteConfig>): HeadTag[] {
+  return generateTags(props, boundConfig);
 }
 
 /**
@@ -591,7 +508,7 @@ export const createHead = createSeoHead;
  * multi-tenant apps, edge workers, and contexts outside Vite virtual modules.
  */
 export function defineSeoConfig(siteConfig: Partial<SiteConfig>) {
-  return function configuredCreateSeoHead(props: HeadProps = {}): HeadResult {
+  return function configuredCreateSeoHead(props: HeadProps = {}): HeadTag[] {
     return createSeoHead(props, siteConfig);
   };
 }

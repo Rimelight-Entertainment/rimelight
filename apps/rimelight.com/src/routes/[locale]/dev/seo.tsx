@@ -318,14 +318,14 @@ export default function DevSeoPage() {
     {
       title: "createSeoHead()",
       mono: true,
-      output: liveHead().html,
+      output: summarizeHeadTags(liveHead()),
       rows: [
         {
           label: "Resolved head tags",
           code: `createSeoHead({ title: "SEO Audit", description, ogType: "website", url, noindex: false, config: siteConfig })`,
           description:
             "Builds strongly-typed head tags — title, canonical, OG, Twitter, JSON-LD, icons, and web manifest link.",
-          value: summarizeHeadTags(liveHead().tags),
+          value: summarizeHeadTags(liveHead()),
         },
       ],
     },

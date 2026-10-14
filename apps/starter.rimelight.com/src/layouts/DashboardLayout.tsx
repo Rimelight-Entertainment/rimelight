@@ -20,7 +20,7 @@ export interface DashboardLayoutProps {
 }
 
 export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
-  useHead(() => createSeoHead({ title: props.title, description: props.description }).tags);
+  useHead(() => createSeoHead({ title: props.title, description: props.description }));
   return (
     <>
       <div class="isolate flex flex-col min-h-screen">
