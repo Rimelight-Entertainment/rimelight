@@ -3,6 +3,7 @@ import { RLThemeSelectorTheme } from "./theme-selector.theme";
 import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
+import { getThemePreference, parseThemePreference, serializeThemePreference } from "../../theme";
 
 const themeItems = [
   { label: "System", value: "system", icon: "laptop" },
@@ -17,8 +18,14 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
   const [currentPreference, setCurrentPreference] = createSignal<string>("system");
 
   const getPreference = () => {
-    const stored = localStorage.getItem("theme");
-    return stored === "system" || stored === "light" || stored === "dark" ? stored : "system";
+    const stored = getThemePreference();
+    if (stored) return stored;
+    const legacy = parseThemePreference(localStorage.getItem("theme"));
+    if (legacy) {
+      document.cookie = serializeThemePreference(legacy);
+      return legacy;
+    }
+    return "system";
   };
 
   const applyTheme = (next: string) => {
@@ -30,6 +37,8 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
           : "light"
         : next;
     document.documentElement.setAttribute("data-theme", resolved);
+    const preference = parseThemePreference(next) ?? "system";
+    document.cookie = serializeThemePreference(preference);
     localStorage.setItem("theme", next);
     props.onChange?.(next);
   };

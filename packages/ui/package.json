@@ -63,10 +63,10 @@
       "solid": "./dist/icons.mjs",
       "import": "./dist/icons.mjs"
     },
-    "./head": {
-      "types": "./dist/head.d.mts",
-      "solid": "./dist/head.mjs",
-      "import": "./dist/head.mjs"
+    "./theme": {
+      "types": "./src/theme.ts",
+      "solid": "./src/theme.ts",
+      "import": "./src/theme.ts"
     },
     "./fonts": {
       "types": "./dist/fonts.d.mts",
