@@ -13,7 +13,6 @@ import {
   RLToast,
   RLButton,
   RLRouteAnnouncer,
-  RLNavigationProgress,
 } from "@rimelight/ui";
 import { t, getLocales, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
 
@@ -92,7 +91,6 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
         <RLLayoutGrid />
         <RLToaster />
         <RLRouteAnnouncer />
-        <RLNavigationProgress />
 
         <Show when={!hasConsent()}>
           <div

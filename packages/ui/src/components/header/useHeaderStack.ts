@@ -127,6 +127,8 @@ export function useHeaderStack() {
       initGlobalScroll();
       if (!el) return;
 
+      let rafId: number | undefined;
+
       const updateHeight = () => {
         if (!el) return;
         const height = Math.round(el.getBoundingClientRect().height);
@@ -158,7 +160,11 @@ export function useHeaderStack() {
         });
       };
 
-      updateHeight();
+      if (typeof window !== "undefined" && typeof requestAnimationFrame !== "undefined") {
+        rafId = requestAnimationFrame(updateHeight);
+      } else {
+        updateHeight();
+      }
 
       if (typeof ResizeObserver !== "undefined") {
         observer = new ResizeObserver(() => {
@@ -168,6 +174,9 @@ export function useHeaderStack() {
       }
 
       return () => {
+        if (rafId !== undefined && typeof cancelAnimationFrame !== "undefined") {
+          cancelAnimationFrame(rafId);
+        }
         if (observer) {
           observer.disconnect();
         }

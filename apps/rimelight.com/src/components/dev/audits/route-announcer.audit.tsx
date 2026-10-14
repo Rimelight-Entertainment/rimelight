@@ -1,11 +1,18 @@
-import { createSignal } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import { RLRouteAnnouncer, RLCard } from "@rimelight/ui";
-import type { ComponentAuditDefinition } from "./types";
+import { RLRouteAnnouncer, type RLRouteAnnouncerProgressSize } from "@rimelight/ui";
+import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+
+const SIZES: RLRouteAnnouncerProgressSize[] = ["xs", "sm", "md", "lg"];
+const COLORS = AUDIT_COLORS;
 
 export const RouteAnnouncerSandbox = (): JSX.Element => {
   const [prefix, setPrefix] = createSignal("Navigated to");
   const [lastAnnouncement, setLastAnnouncement] = createSignal("");
+  const [progressEnabled, setProgressEnabled] = createSignal(true);
+  const [selectedColor, setSelectedColor] = createSignal<string>("primary");
+  const [selectedSize, setSelectedSize] = createSignal<RLRouteAnnouncerProgressSize>("sm");
+  const [isSimulatedRouting, setIsSimulatedRouting] = createSignal(true);
 
   const triggerSimulation = (title: string, path: string) => {
     if (typeof document !== "undefined") {
@@ -19,6 +26,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
     <div class="flex flex-col gap-6">
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-col gap-4 text-xs">
+        {/* Announcer Controls */}
         <div class="flex items-center gap-3 flex-wrap">
           <label class="flex items-center gap-2">
             <span class="text-muted font-medium">Custom Prefix:</span>
@@ -33,7 +41,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
 
         {/* Quick Nav Simulation Buttons */}
         <div class="flex flex-col gap-2">
-          <span class="text-muted font-medium">Simulate Navigation To:</span>
+          <span class="text-muted font-medium">Simulate Navigation:</span>
           <div class="flex items-center gap-2 flex-wrap">
             <button
               type="button"
@@ -60,19 +68,153 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
             </button>
           </div>
         </div>
+
+        <div class="border-t border-default/50 pt-3 flex flex-col gap-3">
+          {/* Progress Bar Toggle */}
+          <div class="flex items-center gap-4 flex-wrap">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={progressEnabled()}
+                onInput={(e) => setProgressEnabled(e.currentTarget.checked)}
+                onChange={(e) => setProgressEnabled(e.currentTarget.checked)}
+                class="rounded border-default"
+              />
+              <span class="text-muted font-medium">Enable Visual Progress Bar</span>
+            </label>
+
+            <Show when={progressEnabled()}>
+              <button
+                type="button"
+                onClick={() => setIsSimulatedRouting((prev) => !prev)}
+                class={`px-2.5 py-0.5 rounded text-xs font-mono font-medium transition-colors border ${
+                  isSimulatedRouting()
+                    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+                    : "bg-rose-500/20 text-rose-400 border-rose-500/40"
+                }`}
+              >
+                {isSimulatedRouting() ? "Simulated Routing: ACTIVE" : "Simulated Routing: IDLE"}
+              </button>
+            </Show>
+          </div>
+
+          <Show when={progressEnabled()}>
+            {/* Colors */}
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-muted font-medium mr-1">Progress Color:</span>
+              <For each={COLORS}>
+                {(c) => (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedColor(c)}
+                    class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+                      selectedColor() === c
+                        ? "bg-primary text-inverted font-bold"
+                        : "bg-elevated text-muted hover:text-highlighted border border-default"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                )}
+              </For>
+            </div>
+
+            {/* Sizes */}
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-muted font-medium mr-1">Progress Size:</span>
+              <For each={SIZES}>
+                {(s) => (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSize(s)}
+                    class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+                      selectedSize() === s
+                        ? "bg-primary text-inverted font-bold"
+                        : "bg-elevated text-muted hover:text-highlighted border border-default"
+                    }`}
+                  >
+                    {s} ({s === "xs" ? "h-0.5" : s === "sm" ? "h-1" : s === "md" ? "h-1.5" : "h-2"})
+                  </button>
+                )}
+              </For>
+            </div>
+          </Show>
+        </div>
       </div>
 
       {/* Screen Reader Output Display */}
-      <div class="max-w-xl w-full">
-        <RLCard title="Screen Reader Output" description="aria-live='polite' status region">
-          <div class="p-3 rounded bg-elevated/40 border border-default font-mono text-sm text-highlighted min-h-[48px] flex items-center">
-            {lastAnnouncement() || "Ready for navigation simulation..."}
-          </div>
-        </RLCard>
+      <div class="p-6 rounded-xl border border-default bg-elevated/10 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted">
+            Screen Reader Announcement (aria-live='polite')
+          </span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            role="status" aria-atomic="true"
+          </span>
+        </div>
+        <div class="p-3 rounded bg-elevated/40 border border-default font-mono text-sm text-highlighted min-h-[48px] flex items-center">
+          {lastAnnouncement() || "Ready for navigation simulation..."}
+        </div>
+        <p class="text-[11px] text-muted">
+          Screen readers will announce page updates when navigation settles.
+        </p>
       </div>
 
+      {/* Simulated Top Loading Bar Preview */}
+      <Show when={progressEnabled()}>
+        <div
+          class={`p-6 rounded-xl border border-default bg-elevated/10 flex flex-col gap-3 rl-color-${selectedColor()}`}
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase tracking-wider text-muted">
+              Visual Navigation Progress Preview
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30">
+              role="progressbar" size="{selectedSize()}"
+            </span>
+          </div>
+
+          <div class="relative w-full h-20 rounded border border-default bg-elevated/30 overflow-hidden flex flex-col">
+            <Show when={isSimulatedRouting()}>
+              <div
+                role="progressbar"
+                aria-label="Simulated loading"
+                class={`w-full overflow-hidden ${
+                  selectedSize() === "xs"
+                    ? "h-0.5"
+                    : selectedSize() === "sm"
+                      ? "h-1"
+                      : selectedSize() === "md"
+                        ? "h-1.5"
+                        : "h-2"
+                }`}
+              >
+                <div class="h-full w-full origin-left-right animate-pulse bg-[var(--rl-bg)]" />
+              </div>
+            </Show>
+            <div class="flex-1 flex items-center justify-center p-3 text-center">
+              <span class="text-xs text-muted font-mono">
+                {isSimulatedRouting()
+                  ? "Simulating active async page routing..."
+                  : "Page routing completed. Progress bar unmounted."}
+              </span>
+            </div>
+          </div>
+        </div>
+      </Show>
+
       {/* Actual Component Mount in Sandbox */}
-      <RLRouteAnnouncer prefix={prefix()} />
+      <RLRouteAnnouncer
+        prefix={prefix()}
+        progress={
+          progressEnabled()
+            ? {
+                color: selectedColor(),
+                size: selectedSize(),
+              }
+            : false
+        }
+      />
     </div>
   );
 };
@@ -83,15 +225,14 @@ export const routeAnnouncerAudit: ComponentAuditDefinition = {
   category: "Navigation",
   status: "Passed",
   description:
-    "A visually hidden aria-live region that announces page title updates to assistive technologies on client-side SPA navigations.",
+    "Unified routing feedback component providing accessible aria-live screen reader announcements and an optional Nuxt-style top progress bar during async page transitions.",
   importPath: "@rimelight/ui",
   renderSandbox: () => <RouteAnnouncerSandbox />,
   testScenarios: [
     {
-      id: "default-announcement",
-      title: "Default Navigation Announcement",
-      description:
-        "Announces document.title immediately after navigation settles via onSettled hook.",
+      id: "unified-default",
+      title: "Default Navigation Feedback",
+      description: "Screen reader live announcements enabled with default top loading indicator.",
       render: () => (
         <div class="p-4 rounded border border-default bg-elevated/20 text-xs">
           <RLRouteAnnouncer />
@@ -100,57 +241,51 @@ export const routeAnnouncerAudit: ComponentAuditDefinition = {
       ),
     },
     {
-      id: "custom-prefix-fallback",
-      title: "Custom Prefix Fallback",
-      description: "When page title is blank, formats announcement as '{prefix} {pathname}'.",
+      id: "announcer-only",
+      title: "Announcer Only (Headless)",
+      description: "Visual progress bar disabled via progress={false}.",
       render: () => (
-        <div class="p-4 rounded border border-default bg-elevated/20 text-xs flex flex-col gap-2">
-          <RLRouteAnnouncer prefix="Currently viewing" />
-          <p class="text-muted">Mounted with prefix="Currently viewing".</p>
+        <div class="p-4 rounded border border-default bg-elevated/20 text-xs">
+          <RLRouteAnnouncer progress={false} />
+          <p class="text-muted">Mounted with progress=false for zero visual footprint.</p>
         </div>
       ),
     },
     {
-      id: "sr-only-hidden",
-      title: "Zero Visual Footprint (sr-only)",
+      id: "custom-styling",
+      title: "Configured Progress Color & Size",
       description:
-        "Applies UnoCSS sr-only class without injecting inline style tags for strict CSP compatibility.",
+        "Supports discrete semantic sizes (xs to lg) and all design system theme colors.",
       render: () => (
-        <div class="p-4 rounded border border-default bg-elevated/20 text-xs">
-          <span class="text-emerald-500 font-mono">Passed:</span> No layout shift or visual DOM
-          artifact present.
-          <RLRouteAnnouncer />
+        <div class="p-4 rounded border border-default bg-elevated/20 text-xs flex flex-col gap-2">
+          <RLRouteAnnouncer color="secondary" size="md" />
+          <p class="text-muted">Customized color='secondary' and size='md'.</p>
         </div>
       ),
     },
   ],
   checklist: [
     {
-      criterion: "API parity with RFC",
+      criterion: "Unified API parity",
       status: "pass",
-      notes: "prefix prop, class override, and ui slots matching RFC specification.",
+      notes: "prefix, progress boolean or options object, color, size, and custom slots.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "role='status', aria-live='polite', and aria-atomic='true' ensure polite speech delivery for screen readers without interruption.",
+        "aria-live='polite', aria-atomic='true', role='status' for announcer, and role='progressbar' for visual transition feedback.",
     },
     {
-      criterion: "No inline styles (CSP-safe, UnoCSS only)",
+      criterion: "100% CSP Safe (Zero Inline Styles)",
       status: "pass",
       notes:
-        "Uses UnoCSS sr-only utility exclusively; zero style={{}} attributes, complying fully with style-src 'self'.",
+        "All visual bar dimensions handled through UnoCSS semantic sizing classes with color: 'auto' tokens, avoiding style={{}} attributes entirely.",
     },
     {
-      criterion: "No hydration mismatches",
+      criterion: "Conditional DOM Cleanup",
       status: "pass",
-      notes: "Deterministic initial state and declarative lifecycle hooks with onSettled.",
-    },
-    {
-      criterion: "Bare component rendering",
-      status: "pass",
-      notes: "Component mounts cleanly without requiring external wrappers or providers.",
+      notes: "Visual progress bar unmounts cleanly when routing is idle.",
     },
   ],
 };
