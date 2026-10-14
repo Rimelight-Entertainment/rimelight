@@ -1,7 +1,7 @@
 import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
 import { RLDashboardNavbarTheme } from "./dashboard-navbar.theme";
 import { createMemo, omit, type Component } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
@@ -102,17 +102,11 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
     </>
   );
 
-  if (props.as) {
-    return (
-      <Dynamic component={props.as} class={resolvedClasses().root} data-slot="root" {...rest}>
-        {navbarBody()}
-      </Dynamic>
-    );
-  }
+  const Root = dynamic(() => props.as ?? "header");
 
   return (
-    <header class={resolvedClasses().root} data-slot="root" {...rest}>
+    <Root class={resolvedClasses().root} data-slot="root" {...rest}>
       {navbarBody()}
-    </header>
+    </Root>
   );
 };

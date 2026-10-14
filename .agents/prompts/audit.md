@@ -53,7 +53,11 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - No CSS/Uno inside the component itself; all of it lives solely in the `component.theme.ts` file.
 - No type declarations inside the component itself, all of its types live solely in the `component.types.ts` file.
 - No `cx` calls directly in the component.
-- No hydration mismatches.
+- No hydration mismatches. Follow strict SolidJS SSR & hydration invariants:
+  - **Polymorphic elements (`as` prop):** Never use `<Dynamic component={...}>` from `@solidjs/web` in JSX. Always use the hoisted instance factory: `const Root = dynamic(() => props.as ?? "defaultTag")` (imported as `import { dynamic } from "@solidjs/web"`).
+  - **Control Flow:** Always use `<Show when={...} fallback={...}>` for conditional JSX elements; never use raw ternary expressions (`condition ? <A /> : <B />`) or logical AND (`cond && <A />`) for rendering DOM branches.
+  - **List Rendering:** Always use `<For each={...}>` (for reference-keyed collections) or `<Index each={...}>` (for primitive/index-keyed lists); never use raw array `.map(...)` inside JSX.
+  - **Server/Client State Parity:** Never branch JSX rendering on client-only globals (`window`, `localStorage`, `matchMedia`, etc.) during initial render without an explicit client-only boundary; SSR output and initial client hydration DOM must match identically.
 - Do not surround the component in any wrapper on the audit page.
 - The audit page must include a test scenario where every slot of the component is passed children (a single dedicated example per slot, including the default slot).
 - Create a robust test suite for the component in question to avoid regressions.

@@ -13,7 +13,7 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
 function parseBasisPercent(customClass?: string): number {
@@ -549,9 +549,10 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
     Boolean(props.arrows || props.prev !== undefined || props.next !== undefined);
   const showDots = () => Boolean(props.dots) && dots().length > 0;
 
+  const Root = dynamic(() => props.as ?? "div");
+
   return (
-    <Dynamic
-      component={props.as || "div"}
+    <Root
       role="region"
       aria-roledescription="carousel"
       aria-label={props.ariaLabel || (props["aria-label"] as string) || "Carousel"}
@@ -582,7 +583,24 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
           style={containerStyle()}
           aria-live={autoplayTimer ? "off" : "polite"}
         >
-          {resolvedItems().length > 0 ? (
+          <Show
+            when={resolvedItems().length > 0}
+            fallback={
+              <For each={resolvedChildren.toArray()}>
+                {(child, i) => (
+                  <div
+                    data-slot="item"
+                    class={itemClassNames(null, i())}
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${i() + 1} of ${slideCount()}`}
+                  >
+                    {child}
+                  </div>
+                )}
+              </For>
+            }
+          >
             <For each={resolvedItems()}>
               {(item, i) => (
                 <div
@@ -596,19 +614,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
                 </div>
               )}
             </For>
-          ) : (
-            resolvedChildren.toArray().map((child, i) => (
-              <div
-                data-slot="item"
-                class={itemClassNames(null, i)}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`${i + 1} of ${slideCount()}`}
-              >
-                {child}
-              </div>
-            ))
-          )}
+          </Show>
         </div>
       </div>
 
@@ -655,6 +661,6 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
           </For>
         </div>
       </Show>
-    </Dynamic>
+    </Root>
   );
 };

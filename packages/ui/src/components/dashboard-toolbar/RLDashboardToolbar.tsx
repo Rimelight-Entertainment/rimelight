@@ -1,13 +1,13 @@
 import type { RLDashboardToolbarProps } from "./dashboard-toolbar.types";
 import { RLDashboardToolbarTheme } from "./dashboard-toolbar.theme";
 import { createMemo, omit, type Component } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 
 export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
   const props = allProps;
   const rest = omit(allProps, "as", "ui", "class", "children", "leftSlot", "rightSlot");
 
-  const Tag = () => props.as || "div";
+  const Root = dynamic(() => props.as ?? "div");
 
   const resolvedClasses = createMemo(() =>
     RLDashboardToolbarTheme({
@@ -17,7 +17,7 @@ export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps)
   );
 
   return (
-    <Dynamic component={Tag()} class={resolvedClasses().root} data-slot="root" {...rest}>
+    <Root class={resolvedClasses().root} data-slot="root" {...rest}>
       {props.children !== undefined ? (
         props.children
       ) : (
@@ -30,6 +30,6 @@ export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps)
           </div>
         </>
       )}
-    </Dynamic>
+    </Root>
   );
 };

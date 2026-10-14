@@ -9,7 +9,7 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { defineShortcuts } from "../../shortcuts";
 
 const isDev = (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV === true;
@@ -365,10 +365,11 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     },
   );
 
+  const Root = dynamic(() => "rl-layout-grid");
+
   return (
     <Show when={shouldRender()}>
-      <Dynamic
-        component={"rl-layout-grid"}
+      <Root
         ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
         class={resolvedClasses().root}
         data-cols={props.cols ?? 4}
@@ -414,7 +415,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
             class={resolvedClasses().indicator}
           />
         </aside>
-      </Dynamic>
+      </Root>
     </Show>
   );
 };

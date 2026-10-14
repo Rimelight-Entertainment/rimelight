@@ -1,7 +1,7 @@
 import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
 import { RLCalendarTheme } from "./calendar.theme";
 import { createMemo, createSignal, For, onSettled, Show, untrack, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
+import { dynamic, type JSX } from "@solidjs/web";
 import {
   addMonths,
   addYears,
@@ -718,25 +718,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     },
   });
 
-  return (
-    <Show
-      when={props.as === undefined || props.as === "div" || typeof props.as === "string"}
-      fallback={<DynamicAs />}
-    >
-      <div {...rootProps()} class={theme().root}>
-        {renderInternal()}
-      </div>
-    </Show>
-  );
+  const Root = dynamic(() => props.as ?? "div");
 
-  function DynamicAs(): JSX.Element {
-    const El = props.as as any;
-    return (
-      <El {...rootProps()} class={theme().root}>
-        {renderInternal()}
-      </El>
-    );
-  }
+  return (
+    <Root {...rootProps()} class={theme().root}>
+      {renderInternal()}
+    </Root>
+  );
 
   function renderInternal(): JSX.Element {
     return (

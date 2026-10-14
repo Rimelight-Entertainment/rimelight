@@ -1,7 +1,7 @@
 import type { RLTimelineProps, TimelineItem } from "./timeline.types";
 import { RLTimelineTheme } from "./timeline.theme";
 import { createMemo, For, omit, type Component } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
@@ -80,9 +80,10 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     return fallback ? fallback() : null;
   };
 
+  const Root = dynamic(() => props.as ?? "div");
+
   return (
-    <Dynamic
-      component={props.as || "div"}
+    <Root
       data-slot="root"
       class={resolvedClasses().root}
       data-orientation={orientation()}
@@ -181,6 +182,6 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
       ) : typeof props.children !== "function" ? (
         props.children
       ) : null}
-    </Dynamic>
+    </Root>
   );
 };
