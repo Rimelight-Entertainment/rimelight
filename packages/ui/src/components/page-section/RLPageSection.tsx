@@ -58,8 +58,6 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
     }),
   );
 
-  const Tag = dynamic(() => props.as ?? "section");
-
   const showHeader = () =>
     !!(
       props.header ||
@@ -81,10 +79,115 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       (props.links?.length ?? 0) > 0
     );
 
+  const Tag = dynamic(() => props.as!);
+
+  if (props.as && props.as !== "section") {
+    return (
+      <Tag
+        data-orientation={props.orientation ?? "vertical"}
+        class={`${resolvedClasses().root} ${
+          props.contentVisibility === "auto"
+            ? "[content-visibility:auto] [contain-intrinsic-size:var(--rl-contain-intrinsic-size,auto_500px)]"
+            : ""
+        }`}
+        style={
+          props.containIntrinsicSize
+            ? { "--rl-contain-intrinsic-size": props.containIntrinsicSize }
+            : undefined
+        }
+        {...rest}
+      >
+        <Show when={props.background}>
+          <div class={resolvedClasses().background} data-slot="background">
+            {props.background}
+          </div>
+        </Show>
+
+        {props.top}
+
+        <div class={resolvedClasses().container}>
+          <Show when={showWrapper()}>
+            <div class={resolvedClasses().wrapper}>
+              <Show when={props.header}>
+                <div class={resolvedClasses().header}>{props.header}</div>
+              </Show>
+
+              <Show when={!props.header && showHeader()}>
+                <div class={resolvedClasses().header}>
+                  <Show when={props.icon || props.leading}>
+                    <div class={resolvedClasses().leading}>
+                      <Show
+                        when={props.leading}
+                        fallback={
+                          <RLIcon
+                            name={props.icon!}
+                            size="md"
+                            ui={{ root: resolvedClasses().leadingIcon }}
+                          />
+                        }
+                      >
+                        {props.leading}
+                      </Show>
+                    </div>
+                  </Show>
+
+                  <Show when={props.headline || props.headlineSlot}>
+                    <div class={resolvedClasses().headline}>
+                      {props.headlineSlot ?? props.headline}
+                    </div>
+                  </Show>
+
+                  <Show when={props.title || props.titleSlot}>
+                    {resolvedVariant() === "hero" ? (
+                      <h1 class={resolvedClasses().title}>{props.titleSlot ?? props.title}</h1>
+                    ) : (
+                      <h2 class={resolvedClasses().title}>{props.titleSlot ?? props.title}</h2>
+                    )}
+                  </Show>
+
+                  <Show when={props.description || props.descriptionSlot}>
+                    <div class={resolvedClasses().description}>
+                      {props.descriptionSlot ?? props.description}
+                    </div>
+                  </Show>
+                </div>
+              </Show>
+
+              <Show when={props.body}>
+                <div class={resolvedClasses().body}>{props.body}</div>
+              </Show>
+
+              <Show when={props.footer}>
+                <div class={resolvedClasses().footer}>{props.footer}</div>
+              </Show>
+
+              <Show when={!props.footer && (props.linksSlot || (props.links?.length ?? 0) > 0)}>
+                <div class={resolvedClasses().footer}>
+                  <div class={resolvedClasses().links}>
+                    <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
+                    {props.linksSlot}
+                  </div>
+                </div>
+              </Show>
+            </div>
+          </Show>
+
+          {props.children}
+
+          <Show when={props.content}>
+            <div class="col-span-full w-full">{props.content}</div>
+          </Show>
+        </div>
+
+        {props.bottom}
+      </Tag>
+    );
+  }
+
   return (
-    <Tag
+    <section
       data-orientation={props.orientation ?? "vertical"}
-      class={`${resolvedClasses().root}  ${
+      class={`${resolvedClasses().root} ${
         props.contentVisibility === "auto"
           ? "[content-visibility:auto] [contain-intrinsic-size:var(--rl-contain-intrinsic-size,auto_500px)]"
           : ""
@@ -107,93 +210,71 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       <div class={resolvedClasses().container}>
         <Show when={showWrapper()}>
           <div class={resolvedClasses().wrapper}>
-            <Show
-              when={props.header}
-              fallback={
-                <Show when={showHeader()}>
-                  <div class={resolvedClasses().header}>
-                    <Show when={props.icon || props.leading}>
-                      <div class={resolvedClasses().leading}>
-                        <Show
-                          when={props.leading}
-                          fallback={
-                            <Show when={props.icon}>
-                              <RLIcon
-                                name={props.icon!}
-                                size="md"
-                                ui={{ root: resolvedClasses().leadingIcon }}
-                              />
-                            </Show>
-                          }
-                        >
-                          {props.leading}
-                        </Show>
-                      </div>
-                    </Show>
+            <Show when={props.header}>
+              <div class={resolvedClasses().header}>{props.header}</div>
+            </Show>
 
-                    <Show when={props.headline || props.headlineSlot}>
-                      <div class={resolvedClasses().headline}>
-                        {props.headlineSlot ?? props.headline}
-                      </div>
-                    </Show>
-
-                    <Show when={props.title || props.titleSlot}>
-                      <Show
-                        when={resolvedVariant() === "hero"}
-                        fallback={
-                          <h2 class={resolvedClasses().title}>{props.titleSlot ?? props.title}</h2>
-                        }
-                      >
-                        <h1 class={resolvedClasses().title}>{props.titleSlot ?? props.title}</h1>
-                      </Show>
-                    </Show>
-
-                    <Show when={props.description || props.descriptionSlot}>
-                      <div class={resolvedClasses().description}>
-                        {props.descriptionSlot ?? props.description}
-                      </div>
+            <Show when={!props.header && showHeader()}>
+              <div class={resolvedClasses().header}>
+                <Show when={props.icon || props.leading}>
+                  <div class={resolvedClasses().leading}>
+                    <Show
+                      when={props.leading}
+                      fallback={
+                        <RLIcon
+                          name={props.icon!}
+                          size="md"
+                          ui={{ root: resolvedClasses().leadingIcon }}
+                        />
+                      }
+                    >
+                      {props.leading}
                     </Show>
                   </div>
                 </Show>
-              }
-            >
-              <div class={resolvedClasses().header}>{props.header}</div>
+
+                <Show when={props.headline || props.headlineSlot}>
+                  <div class={resolvedClasses().headline}>
+                    {props.headlineSlot ?? props.headline}
+                  </div>
+                </Show>
+
+                <Show when={props.title || props.titleSlot}>
+                  {resolvedVariant() === "hero" ? (
+                    <h1 class={resolvedClasses().title}>{props.titleSlot ?? props.title}</h1>
+                  ) : (
+                    <h2 class={resolvedClasses().title}>{props.titleSlot ?? props.title}</h2>
+                  )}
+                </Show>
+
+                <Show when={props.description || props.descriptionSlot}>
+                  <div class={resolvedClasses().description}>
+                    {props.descriptionSlot ?? props.description}
+                  </div>
+                </Show>
+              </div>
             </Show>
 
             <Show when={props.body}>
               <div class={resolvedClasses().body}>{props.body}</div>
             </Show>
 
-            <Show when={props.footer || props.linksSlot || (props.links?.length ?? 0) > 0}>
+            <Show when={props.footer}>
+              <div class={resolvedClasses().footer}>{props.footer}</div>
+            </Show>
+
+            <Show when={!props.footer && (props.linksSlot || (props.links?.length ?? 0) > 0)}>
               <div class={resolvedClasses().footer}>
-                <Show
-                  when={props.footer}
-                  fallback={
-                    <div class={resolvedClasses().links}>
-                      <For each={props.links ?? []}>
-                        {(link) => <RLButton size="lg" {...link} />}
-                      </For>
-                      {props.linksSlot}
-                    </div>
-                  }
-                >
-                  {props.footer}
-                </Show>
+                <div class={resolvedClasses().links}>
+                  <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
+                  {props.linksSlot}
+                </div>
               </div>
             </Show>
           </div>
         </Show>
 
-        <Show
-          when={props.children !== undefined && props.children !== null}
-          fallback={
-            <Show when={(props.orientation ?? "vertical") === "horizontal"}>
-              <div class="hidden lg:block" />
-            </Show>
-          }
-        >
-          {props.children}
-        </Show>
+        {props.children}
 
         <Show when={props.content}>
           <div class="col-span-full w-full">{props.content}</div>
@@ -201,6 +282,6 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       </div>
 
       {props.bottom}
-    </Tag>
+    </section>
   );
 };
