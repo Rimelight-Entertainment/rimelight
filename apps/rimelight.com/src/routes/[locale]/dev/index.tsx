@@ -1,3 +1,4 @@
+import { For } from "solid-js";
 import DevLayout from "#layouts/DevLayout";
 import { RLCard, RLGrid, RLPageSection } from "@rimelight/ui";
 import { getLocaleUrl } from "@rimelight/i18n";
@@ -46,14 +47,15 @@ export default function DevIndexPage() {
         description="Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy."
       >
         <RLGrid cols={3} gap="lg">
-          {dashboardCards.map((card) => (
-            <RLCard
-              key={card.href}
-              href={getLocaleUrl(card.href)}
-              title={card.title}
-              description={card.description}
-            />
-          ))}
+          <For each={dashboardCards}>
+            {(card) => (
+              <RLCard
+                href={getLocaleUrl(card.href)}
+                title={card.title}
+                description={card.description}
+              />
+            )}
+          </For>
         </RLGrid>
       </RLPageSection>
     </DevLayout>

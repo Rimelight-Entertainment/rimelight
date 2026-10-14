@@ -187,6 +187,12 @@ export { RLModal } from "./modal/RLModal";
 export type { RLModalProps } from "./modal/modal.types";
 export { RLNavigationMenu } from "./navigation-menu/RLNavigationMenu";
 export type { RLNavigationMenuProps } from "./navigation-menu/navigation-menu.types";
+export { RLNavigationProgress } from "./navigation-progress/RLNavigationProgress";
+export { RLNavigationProgressTheme } from "./navigation-progress/navigation-progress.theme";
+export type {
+  RLNavigationProgressProps,
+  RLNavigationProgressSize,
+} from "./navigation-progress/navigation-progress.types";
 export { RLPackageManagers } from "./package-managers/RLPackageManagers";
 export type { RLPackageManagersProps } from "./package-managers/package-managers.types";
 export { RLPage } from "./page/RLPage";
@@ -227,6 +233,9 @@ export { RLRadioGroup } from "./radio-group/RLRadioGroup";
 export type { RLRadioGroupProps } from "./radio-group/radio-group.types";
 export { RLRating } from "./rating/RLRating";
 export type { RLRatingProps } from "./rating/rating.types";
+export { RLRouteAnnouncer } from "./route-announcer/RLRouteAnnouncer";
+export { RLRouteAnnouncerTheme } from "./route-announcer/route-announcer.theme";
+export type { RLRouteAnnouncerProps } from "./route-announcer/route-announcer.types";
 export { RLScrollArea } from "./scroll-area/RLScrollArea";
 export type { RLScrollAreaProps } from "./scroll-area/scroll-area.types";
 export { RLScrollToTop } from "./scroll-to-top/RLScrollToTop";

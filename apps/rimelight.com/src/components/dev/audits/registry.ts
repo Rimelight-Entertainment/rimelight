@@ -20,7 +20,9 @@ import { iconAudit } from "./icon.audit";
 import { imageAudit } from "./image.audit";
 import { mainAudit } from "./main.audit";
 import { modalAudit } from "./modal.audit";
+import { navigationProgressAudit } from "./navigation-progress.audit";
 import { pageSectionAudit } from "./page-section.audit";
+import { routeAnnouncerAudit } from "./route-announcer.audit";
 import { tableAudit } from "./table.audit";
 import type { ComponentAuditDefinition } from "./types";
 
@@ -47,7 +49,9 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   image: imageAudit,
   main: mainAudit,
   modal: modalAudit,
+  "navigation-progress": navigationProgressAudit,
   "page-section": pageSectionAudit,
+  "route-announcer": routeAnnouncerAudit,
   table: tableAudit,
 };
 
