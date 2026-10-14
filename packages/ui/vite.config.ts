@@ -10,7 +10,6 @@ export default defineConfig({
   pack: {
     entry: [
       "src/plugin.ts",
-      "src/head.ts",
       "src/preset.ts",
       "src/resolver.ts",
       "src/shortcuts.ts",
