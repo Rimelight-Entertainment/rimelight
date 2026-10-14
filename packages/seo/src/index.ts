@@ -40,7 +40,7 @@ export type {
   OgRouteOptions,
 } from "./types";
 
-export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize";
+export { serializeJsonLd, sanitizeUrl } from "./sanitize";
 
 export {
   buildSitemapUrls,

@@ -1,17 +1,9 @@
 import { describe, it, expect } from "vite-plus/test";
 import { createSeoHead, createHead, defineSeoConfig } from "../src/head";
 import { deepMerge } from "../src/meta";
-import { escapeHtml, serializeJsonLd, sanitizeUrl } from "../src/sanitize";
+import { serializeJsonLd, sanitizeUrl } from "../src/sanitize";
 
 describe("sanitize helpers", () => {
-  describe("escapeHtml", () => {
-    it("escapes special HTML characters", () => {
-      expect(escapeHtml("<script>alert(\"XSS & 'attack'\")</script>")).toBe(
-        "&lt;script&gt;alert(&quot;XSS &amp; &#039;attack&#039;&quot;)&lt;/script&gt;",
-      );
-    });
-  });
-
   describe("serializeJsonLd", () => {
     it("neutralizes </script> tag breakouts and HTML comments", () => {
       const payload = {

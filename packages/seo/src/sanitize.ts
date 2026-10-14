@@ -1,17 +1,4 @@
 /**
- * HTML attribute and text content escaping. Escapes &, <, >, ", and ' to prevent HTML/attribute
- * injection.
- */
-export function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-/**
  * Escapes <, >, and / in JSON-LD to neutralize </script> breakouts in all browser parsing modes.
  * Matches the strategy used by React's server renderer and Next.js. Note: > and / are escaped in
  * addition to < to handle legacy quirks-mode parsers and the --> HTML comment terminator.

@@ -21,7 +21,6 @@ import {
   buildSitemapXml,
   buildWebManifest,
   buildWebSiteSchema,
-  escapeHtml,
   sanitizeUrl,
   serializeJsonLd,
   type SeoEntry,
@@ -482,12 +481,6 @@ export default function DevSeoPage() {
     {
       title: "Serialization & Sanitization",
       rows: [
-        {
-          label: "escapeHtml()",
-          code: `escapeHtml('<meta name="author" content="Rimelight & Co">')`,
-          description: "Encodes HTML entities for safe attribute insertion.",
-          value: escapeHtml('<meta name="author" content="Rimelight & Co">'),
-        },
         {
           label: "serializeJsonLd()",
           code: `serializeJsonLd({ "@type": "WebSite", name: "<Rimelight>" })`,
