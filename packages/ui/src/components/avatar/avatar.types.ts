@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
 import type { RLChipProps } from "../chip/chip.types";
@@ -8,7 +9,7 @@ export interface RLAvatarProps {
    *
    * @default "span"
    */
-  as?: any;
+  as?: ValidComponent;
   src?: string | undefined;
   alt?: string | undefined;
   icon?: any;

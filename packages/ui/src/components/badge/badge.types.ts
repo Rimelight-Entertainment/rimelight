@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
 import type { RLAvatarProps } from "../avatar/avatar.types";
@@ -8,7 +9,7 @@ export interface RLBadgeProps {
    *
    * @default "span"
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * Text label to display.
    */
@@ -86,7 +87,6 @@ export interface RLBadgeProps {
   ui?:
     | {
         root?: any;
-        base?: any;
         label?: any;
         leadingIcon?: any;
         leadingAvatar?: any;

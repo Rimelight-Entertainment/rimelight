@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
 
@@ -50,7 +51,7 @@ export interface RLAvatarGroupProps {
    *
    * @default "div"
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * Array of avatar data to render automatically. When omitted, renders default children.
    */

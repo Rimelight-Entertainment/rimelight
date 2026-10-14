@@ -191,16 +191,6 @@ describe("RLBadge Solid Component Suite", () => {
       expect(html).toContain("custom-root-class");
       expect(html).toContain("custom-label-class");
     });
-
-    it("supports ui.base alias for root slot override", () => {
-      const html = renderSolid(RLBadge, {
-        ui: {
-          base: "base-slot-override",
-        },
-        label: "Base Override",
-      });
-      expect(html).toContain("base-slot-override");
-    });
   });
 
   describe("Accessibility & WAI-ARIA", () => {

@@ -1,10 +1,11 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export interface RLAspectRatioProps {
   /**
    * The element or component the root should render as.
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * The aspect ratio fraction/decimal (e.g. 16/9, 4/3, 1). Non-finite or non-positive values fall
    * back to 1 (square).

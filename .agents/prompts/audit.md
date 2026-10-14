@@ -87,6 +87,7 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Test suite covering the component's props, states, slots, and interaction behavior.
 - Audit page entry exercising every prop, variant, and state.
 - Completion report in the structure below.
+- Ensure you follow current package standards, and not mocking of nuxt ui/vue patterns just because they are the reference.
 
 ## Completion report
 

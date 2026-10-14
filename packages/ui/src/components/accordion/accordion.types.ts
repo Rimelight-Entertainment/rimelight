@@ -1,3 +1,4 @@
+import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 
 export type AccordionSlotRenderer = (item: AccordionItem, index: number) => JSX.Element;
@@ -36,7 +37,7 @@ export interface RLAccordionProps {
    * The element or component the items root should render as (items mode). The single-summary root
    * always renders `<details>` (or `as` when provided).
    */
-  as?: any;
+  as?: ValidComponent;
   /**
    * An array of accordion items to render.
    */
