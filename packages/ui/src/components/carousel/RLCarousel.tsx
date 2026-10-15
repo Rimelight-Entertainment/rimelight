@@ -62,10 +62,9 @@ function wrapSlideItem<T>(item: T, index: number): any {
   return { item, index };
 }
 
-export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
-  const props = allProps;
+export const RLCarousel: Component<RLCarouselProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "items",
     "slides",
@@ -146,7 +145,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
   let autoplayTimer: ReturnType<typeof setInterval> | undefined;
   let wheelThrottleTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLCarouselTheme({
       orientation: orientation(),
       controls: controlsPlacement(),
@@ -198,26 +197,26 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
 
   const prevButtonClass = () => {
     const custom = props.prev;
-    if (!custom) return resolvedClasses().prev;
+    if (!custom) return classes().prev;
     const btnCls = RLButtonTheme({
       variant: custom["variant"] || "link",
       color: custom["color"],
       size: custom["size"] || "md",
       class: custom["class"],
     }).root;
-    return `${resolvedClasses().prev} ${btnCls}`.trim();
+    return `${classes().prev} ${btnCls}`.trim();
   };
 
   const nextButtonClass = () => {
     const custom = props.next;
-    if (!custom) return resolvedClasses().next;
+    if (!custom) return classes().next;
     const btnCls = RLButtonTheme({
       variant: custom["variant"] || "link",
       color: custom["color"],
       size: custom["size"] || "md",
       class: custom["class"],
     }).root;
-    return `${resolvedClasses().next} ${btnCls}`.trim();
+    return `${classes().next} ${btnCls}`.trim();
   };
 
   const stopAutoplay = () => {
@@ -486,7 +485,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
   };
 
   const containerClasses = () => {
-    const baseContainer = resolvedClasses().container;
+    const baseContainer = classes().container;
     if (isFade()) {
       return "grid grid-cols-1 grid-rows-1 relative w-full items-start overflow-hidden";
     }
@@ -495,9 +494,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
 
   const itemClassNames = (item: any, i: number) => {
     const isSnapped = index() === i;
-    const rawBaseItemClass = isFade()
-      ? "col-start-1 row-start-1 w-full min-w-0"
-      : resolvedClasses().item;
+    const rawBaseItemClass = isFade() ? "col-start-1 row-start-1 w-full min-w-0" : classes().item;
     const customItemClass =
       typeof item === "object" && item !== null ? `${item.class || ""} ${item.ui?.item || ""}` : "";
 
@@ -507,25 +504,25 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       ? rawBaseItemClass.replace(/(?:^|\s)basis-full(?:\s|$)/g, " ")
       : rawBaseItemClass;
 
-    let classes = `${baseItemClass} ${customItemClass}`;
+    let itemClasses = `${baseItemClass} ${customItemClass}`;
 
     if (props.classNames) {
       const opt = typeof props.classNames === "object" ? props.classNames : {};
       const snappedCls = opt.snapped || "is-snapped";
       const inViewCls = opt.inView || "is-in-view";
       if (isSnapped) {
-        classes = `${classes} ${snappedCls} ${inViewCls}`;
+        itemClasses = `${itemClasses} ${snappedCls} ${inViewCls}`;
       }
     }
 
     if (isFade()) {
       const duration = props.duration ?? 500;
-      classes = `${classes} transition-opacity duration-${duration} ease-in-out ${
+      itemClasses = `${itemClasses} transition-opacity duration-${duration} ease-in-out ${
         isSnapped ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
       }`;
     }
 
-    return classes.trim();
+    return itemClasses.trim();
   };
 
   const containerStyle = () => {
@@ -560,7 +557,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       aria-label={props.ariaLabel || (props["aria-label"] as string) || "Carousel"}
       data-orientation={orientation()}
       data-slot="root"
-      class={resolvedClasses().root}
+      class={classes().root}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
@@ -570,7 +567,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       <div
         ref={(el) => (viewportRef = el)}
         data-slot="viewport"
-        class={resolvedClasses().viewport}
+        class={classes().viewport}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -621,7 +618,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       </div>
 
       <Show when={showArrows()}>
-        <div data-slot="arrows" class={resolvedClasses().arrows}>
+        <div data-slot="arrows" class={classes().arrows}>
           <button
             type="button"
             aria-label="Previous slide"
@@ -646,7 +643,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
       </Show>
 
       <Show when={showDots()}>
-        <div data-slot="dots" role="tablist" aria-label="Slides" class={resolvedClasses().dots}>
+        <div data-slot="dots" role="tablist" aria-label="Slides" class={classes().dots}>
           <For each={dots()}>
             {(i) => (
               <button
@@ -656,7 +653,7 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
                 data-state={index() === i ? "active" : undefined}
                 aria-selected={index() === i ? ("true" as any) : ("false" as any)}
                 aria-label={`Go to slide ${i + 1}`}
-                class={index() === i ? dotActiveClasses().dot : resolvedClasses().dot}
+                class={index() === i ? dotActiveClasses().dot : classes().dot}
                 onClick={() => scrollTo(i)}
               />
             )}

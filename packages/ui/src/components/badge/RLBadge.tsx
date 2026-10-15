@@ -5,10 +5,9 @@ import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 
-export const RLBadge: Component<RLBadgeProps> = (allProps) => {
-  const props = allProps;
+export const RLBadge: Component<RLBadgeProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "label",
     "variant",
@@ -61,7 +60,7 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
 
   const isSquare = () => Boolean(props.square ?? (props as any)["square"]);
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLBadgeTheme({
       variant: props.variant ?? "solid",
       color: props.color ?? "primary",
@@ -87,14 +86,14 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
         return (
           <RLIcon
             name={iconName}
-            class={resolvedClasses().leadingIcon}
+            class={classes().leadingIcon}
             data-slot="leading-icon"
             aria-hidden="true"
           />
         );
       }
       return (
-        <span class={resolvedClasses().leadingIcon} data-slot="leading-icon" aria-hidden="true">
+        <span class={classes().leadingIcon} data-slot="leading-icon" aria-hidden="true">
           {iconName}
         </span>
       );
@@ -105,8 +104,8 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
         return (
           <RLAvatar
             src={props.avatar}
-            size={resolvedClasses().leadingAvatarSize as any}
-            class={resolvedClasses().leadingAvatar}
+            size={classes().leadingAvatarSize as any}
+            class={classes().leadingAvatar}
             data-slot="leading-avatar"
           />
         );
@@ -114,8 +113,8 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
       return (
         <RLAvatar
           {...props.avatar}
-          size={(props.avatar.size || resolvedClasses().leadingAvatarSize) as any}
-          class={resolvedClasses().leadingAvatar}
+          size={(props.avatar.size || classes().leadingAvatarSize) as any}
+          class={classes().leadingAvatar}
           data-slot="leading-avatar"
         />
       );
@@ -135,14 +134,14 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
         return (
           <RLIcon
             name={iconName}
-            class={resolvedClasses().trailingIcon}
+            class={classes().trailingIcon}
             data-slot="trailing-icon"
             aria-hidden="true"
           />
         );
       }
       return (
-        <span class={resolvedClasses().trailingIcon} data-slot="trailing-icon" aria-hidden="true">
+        <span class={classes().trailingIcon} data-slot="trailing-icon" aria-hidden="true">
           {iconName}
         </span>
       );
@@ -157,7 +156,7 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
     }
     if (props.label !== undefined && props.label !== null) {
       return (
-        <span class={resolvedClasses().label} data-slot="label">
+        <span class={classes().label} data-slot="label">
           {props.label}
         </span>
       );
@@ -166,7 +165,7 @@ export const RLBadge: Component<RLBadgeProps> = (allProps) => {
   };
 
   return (
-    <Root class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <Root class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
       {isLeading() ? renderLeading() : null}
       {renderContent()}
       {isTrailing() ? renderTrailing() : null}

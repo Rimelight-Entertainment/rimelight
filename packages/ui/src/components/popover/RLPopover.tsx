@@ -2,10 +2,9 @@ import type { RLPopoverProps } from "./popover.types";
 import { RLPopoverTheme } from "./popover.theme";
 import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js";
 
-export const RLPopover: Component<RLPopoverProps> = (allProps) => {
-  const props = allProps;
+export const RLPopover: Component<RLPopoverProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "open",
     "defaultOpen",
     "triggerLabel",
@@ -49,7 +48,7 @@ export const RLPopover: Component<RLPopoverProps> = (allProps) => {
     return () => document.removeEventListener("click", handleOutsideClick);
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLPopoverTheme({
       size: props.size ?? "md",
       placement: props.placement ?? "bottom",
@@ -61,14 +60,14 @@ export const RLPopover: Component<RLPopoverProps> = (allProps) => {
   return (
     <div
       ref={(el) => (containerRef = el)}
-      class={`rl-popover-host ${resolvedClasses().root}`}
+      class={`rl-popover-host ${classes().root}`}
       data-slot="popover-container"
       data-placement={props.placement ?? "bottom"}
       data-mode={mode()}
       {...rest}
     >
       <div
-        class={resolvedClasses().trigger}
+        class={classes().trigger}
         data-slot="trigger"
         onClick={(e) => {
           e.stopPropagation();
@@ -90,7 +89,7 @@ export const RLPopover: Component<RLPopoverProps> = (allProps) => {
       </div>
 
       <Show when={isVisible()}>
-        <div class={resolvedClasses().content} data-slot="content">
+        <div class={classes().content} data-slot="content">
           {props.children}
         </div>
       </Show>

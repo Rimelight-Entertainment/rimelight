@@ -11,9 +11,8 @@ const themeItems = [
   { label: "Dark", value: "dark", icon: "moon" },
 ];
 
-export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "mode", "size", "theme", "ui", "class", "children", "onChange");
+export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
+  const rest = omit(props, "mode", "size", "theme", "ui", "class", "children", "onChange");
 
   const initialPref = getThemePreference() ?? "system";
   const [currentPreference, setCurrentPreference] = createSignal<string>(initialPref);
@@ -91,7 +90,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
   const mode = () => props.mode || "select";
   const size = () => props.size || "md";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLThemeSelectorTheme({
       ui: props.ui,
       class: props.class,
@@ -107,14 +106,14 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-theme-selector
       data-mode={mode()}
       data-theme={props.theme}
       data-theme-preference={currentPreference()}
       {...rest}
     >
-      <div class={resolvedClasses().wrapper}>
+      <div class={classes().wrapper}>
         <RLSelect
           items={themeItems}
           value={currentPreference()}
@@ -122,7 +121,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (allProps) => {
           size={size() as any}
           variant={mode() === "icon" ? "icon" : "default"}
           aria-label="Toggle theme"
-          class={resolvedClasses().select}
+          class={classes().select}
           leadingIcon={activeIcon()}
         />
       </div>

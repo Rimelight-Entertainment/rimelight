@@ -12,10 +12,9 @@ import {
   rgbToHsl,
 } from "../color-picker/color";
 
-export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
-  const props = allProps;
+export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "channel",
     "colorSpace",
     "defaultValue",
@@ -294,7 +293,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     }
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLColorSliderTheme({
       color: props.color,
       ui: props.ui,
@@ -304,7 +303,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
 
   return (
     <div
-      class={`${resolvedClasses().root} ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
+      class={`${classes().root} ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
       data-slot="root"
       data-theme={props.theme}
       data-orientation={orientation()}
@@ -317,7 +316,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
     >
       <div
         ref={(el) => (trackRef = el)}
-        class={resolvedClasses().track}
+        class={classes().track}
         data-slot="track"
         style={{ background: trackGradient() }}
         onPointerDown={handlePointerDown}
@@ -325,7 +324,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (allProps) => {
         onPointerUp={handlePointerUp}
       >
         <div
-          class={resolvedClasses().thumb}
+          class={classes().thumb}
           data-slot="thumb"
           role="slider"
           aria-label="Color Slider Thumb"

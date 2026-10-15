@@ -4,11 +4,10 @@ import { createMemo, For, onSettled, omit, type Component } from "solid-js";
 import { toasts, removeToast, addToast, type ToastItem } from "../toast/store";
 import { RLToast } from "../toast/RLToast";
 
-export const RLToaster: Component<RLToasterProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "class");
+export const RLToaster: Component<RLToasterProps> = (props) => {
+  const rest = omit(props, "class");
 
-  const theme = createMemo(() =>
+  const classes = createMemo(() =>
     RLToasterTheme({
       class: props.class,
     }),
@@ -57,7 +56,7 @@ export const RLToaster: Component<RLToasterProps> = (allProps) => {
   return (
     <div
       id="rl-toaster-container"
-      class={theme().root}
+      class={classes().root}
       aria-live="polite"
       aria-atomic="false"
       role="status"

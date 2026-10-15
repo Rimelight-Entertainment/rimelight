@@ -15,10 +15,9 @@ const getLocaleDisplayName = (localeCode: string): string => {
   }
 };
 
-export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => {
-  const props = allProps;
+export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "locales",
     "currentLocale",
     "mode",
@@ -70,7 +69,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => 
     }),
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLLocaleSelectorTheme({
       ui: props.ui,
       class: props.class,
@@ -93,13 +92,13 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => 
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-locale-selector
       data-mode={isIconMode() ? "icon" : "select"}
       data-theme={props.theme}
       {...rest}
     >
-      <div class={resolvedClasses().wrapper}>
+      <div class={classes().wrapper}>
         <RLSelect
           items={items()}
           value={currentCode()}
@@ -107,7 +106,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (allProps) => 
           size={(props.size as any) || "md"}
           variant={isIconMode() ? "icon" : "default"}
           aria-label="Select language"
-          class={resolvedClasses().select}
+          class={classes().select}
           leadingIcon={props.leadingIcon || "i-lucide-globe"}
           leading={props.leading}
         />

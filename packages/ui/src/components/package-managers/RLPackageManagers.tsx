@@ -64,9 +64,7 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
   },
 };
 
-export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) => {
-  const props = allProps;
-
+export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
   const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
     let cmd = commands[mgr][cmdType];
     if (cmd === undefined) return undefined;
@@ -100,7 +98,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) =
   const [activeIdx, setActiveIdx] = createSignal(0);
   const [copied, setCopied] = createSignal<string | null>(null);
 
-  const theme = createMemo(() =>
+  const classes = createMemo(() =>
     RLPackageManagersTheme({
       class: props.class,
     }),
@@ -119,8 +117,8 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) =
   };
 
   return (
-    <div class={theme().root} data-slot="root">
-      <div class={theme().list} role="tablist" data-slot="list">
+    <div class={classes().root} data-slot="root">
+      <div class={classes().list} role="tablist" data-slot="list">
         <For each={tabs()}>
           {(tab, idx) => {
             const active = idx() === activeIdx();
@@ -128,7 +126,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) =
               <button
                 type="button"
                 role="tab"
-                class={`${theme().trigger} ${active ? "bg-default text-highlighted border border-default border-b-transparent" : "text-muted hover:text-highlighted"}`}
+                class={`${classes().trigger} ${active ? "bg-default text-highlighted border border-default border-b-transparent" : "text-muted hover:text-highlighted"}`}
                 data-slot="trigger"
                 data-state={active ? "active" : "inactive"}
                 data-value={tab.mgr}
@@ -147,13 +145,13 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) =
           <div
             role="tabpanel"
             data-value={tab.mgr}
-            class={theme().content}
+            class={classes().content}
             data-slot="content"
             hidden={idx() !== activeIdx() ? "until-found" : undefined}
           >
             <Show when={idx() === activeIdx()}>
               <div class="relative">
-                <pre class={theme().codeBlock}>
+                <pre class={classes().codeBlock}>
                   <code aria-hidden="true">{tab.cmd!}</code>
                 </pre>
                 <RLButton
@@ -161,7 +159,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (allProps) =
                   variant="ghost"
                   color="neutral"
                   size="sm"
-                  class={theme().copyButton}
+                  class={classes().copyButton}
                   leadingIcon={copied() === tab.mgr ? "check" : "copy"}
                   aria-label="Copy command"
                   data-slot="copy-button"

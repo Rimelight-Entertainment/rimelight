@@ -11,9 +11,8 @@ import {
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children", "open", "onOpenChange");
+export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children", "open", "onOpenChange");
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? false);
   let inputRef: HTMLInputElement | null = null;
@@ -64,7 +63,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) =
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardSearchTheme({
       ui: props.ui,
       class: props.class,
@@ -81,7 +80,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) =
         <div
           data-dashboard-search
           data-slot="modal"
-          class={`${resolvedClasses().modal} fixed inset-0 z-50 flex items-start justify-center sm:pt-16`}
+          class={`${classes().modal} fixed inset-0 z-50 flex items-start justify-center sm:pt-16`}
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpenState(false);
           }}
@@ -91,7 +90,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (allProps) =
             onClick={() => setOpenState(false)}
           />
           <div
-            class={`relative w-full bg-default border border-default sm:rounded-xl shadow-2xl overflow-hidden ${resolvedClasses().modal}`}
+            class={`relative w-full bg-default border border-default sm:rounded-xl shadow-2xl overflow-hidden ${classes().modal}`}
           >
             <div class="flex items-center gap-2 border-b border-default px-4">
               <RLIcon name="search" class="size-5 shrink-0 text-muted" />

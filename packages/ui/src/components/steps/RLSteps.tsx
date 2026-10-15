@@ -2,13 +2,12 @@ import type { RLStepsProps } from "./steps.types";
 import { RLStepsTheme } from "./steps.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLSteps: Component<RLStepsProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "size", "ui", "class", "children");
+export const RLSteps: Component<RLStepsProps> = (props) => {
+  const rest = omit(props, "size", "ui", "class", "children");
 
   const size = () => props.size || "md";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLStepsTheme({
       ui: props.ui,
       class: props.class,
@@ -16,7 +15,7 @@ export const RLSteps: Component<RLStepsProps> = (allProps) => {
   );
 
   return (
-    <div class={`${resolvedClasses().root} rl-steps`} data-slot="root" data-size={size()} {...rest}>
+    <div class={`${classes().root} rl-steps`} data-slot="root" data-size={size()} {...rest}>
       <ol class="rl-steps-list">{props.children}</ol>
       <style>{`
         .rl-steps-list {

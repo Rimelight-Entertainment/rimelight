@@ -3,14 +3,13 @@ import { RLSeparatorTheme } from "./separator.theme";
 import { children, createMemo, omit, type Component } from "solid-js";
 import { RLAvatar } from "../avatar/RLAvatar";
 
-export const RLSeparator: Component<RLSeparatorProps> = (allProps) => {
-  const props = allProps;
+export const RLSeparator: Component<RLSeparatorProps> = (props) => {
   const resolvedChildren = children(() => props.children);
   const resolvedAvatarSlot = children(() => props.avatarSlot);
   const resolvedIconSlot = children(() => props.iconSlot);
 
   const rest = omit(
-    allProps,
+    props,
     "color",
     "size",
     "type",

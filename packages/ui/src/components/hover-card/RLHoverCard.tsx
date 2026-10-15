@@ -2,13 +2,12 @@ import type { RLHoverCardProps } from "./hover-card.types";
 import { RLHoverCardTheme } from "./hover-card.theme";
 import { createMemo, createSignal, omit, type Component } from "solid-js";
 
-export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "triggerLabel", "placement", "ui", "class", "children", "trigger");
+export const RLHoverCard: Component<RLHoverCardProps> = (props) => {
+  const rest = omit(props, "triggerLabel", "placement", "ui", "class", "children", "trigger");
 
   const [isOpen, setIsOpen] = createSignal(false);
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLHoverCardTheme({
       placement: props.placement ?? "bottom",
       ui: props.ui,
@@ -17,21 +16,21 @@ export const RLHoverCard: Component<RLHoverCardProps> = (allProps) => {
   );
 
   const contentClass = () =>
-    resolvedClasses()["content"].replace(
+    classes()["content"].replace(
       /\s*(invisible|opacity-0|scale-95|pointer-events-none|group-hover\/hover-card:(visible|opacity-100|scale-100|pointer-events-auto))/g,
       "",
     );
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="hover-card-container"
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
       {...rest}
     >
       <div
-        class={resolvedClasses().trigger}
+        class={classes().trigger}
         data-slot="trigger"
         tabindex="0"
         onFocus={() => setIsOpen(true)}

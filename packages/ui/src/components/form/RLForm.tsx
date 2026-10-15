@@ -2,11 +2,10 @@ import type { RLFormProps } from "./form.types";
 import { RLFormTheme } from "./form.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLForm: Component<RLFormProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "schema", "state", "ui", "class", "children", "onSubmit");
+export const RLForm: Component<RLFormProps> = (props) => {
+  const rest = omit(props, "schema", "state", "ui", "class", "children", "onSubmit");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLFormTheme({
       ui: props.ui,
       class: props.class,
@@ -14,7 +13,7 @@ export const RLForm: Component<RLFormProps> = (allProps) => {
   );
 
   return (
-    <form class={resolvedClasses().root} data-slot="root" onSubmit={props.onSubmit} {...rest}>
+    <form class={classes().root} data-slot="root" onSubmit={props.onSubmit} {...rest}>
       {props.children}
     </form>
   );

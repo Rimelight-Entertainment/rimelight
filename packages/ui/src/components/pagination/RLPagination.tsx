@@ -3,10 +3,9 @@ import { RLPaginationTheme } from "./pagination.theme";
 import { createMemo, omit, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLPagination: Component<RLPaginationProps> = (allProps) => {
-  const props = allProps;
+export const RLPagination: Component<RLPaginationProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "currentPage",
     "page",
     "totalPages",
@@ -19,7 +18,7 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
   const currentPage = () => props.page ?? props.currentPage ?? 1;
   const totalPages = () => props.totalPages ?? 1;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLPaginationTheme({
       ui: props.ui,
       class: props.class,
@@ -50,17 +49,12 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
   const itemLinkClasses = (isActive: boolean) => RLPaginationTheme({ active: isActive }).link;
 
   return (
-    <nav
-      class={resolvedClasses().root}
-      data-slot="pagination-root"
-      aria-label="pagination"
-      {...rest}
-    >
-      <ul class={resolvedClasses().list} data-slot="list">
-        <li class={resolvedClasses().item}>
+    <nav class={classes().root} data-slot="pagination-root" aria-label="pagination" {...rest}>
+      <ul class={classes().list} data-slot="list">
+        <li class={classes().item}>
           <button
             type="button"
-            class={`${resolvedClasses().link} ${currentPage() === 1 ? "pointer-events-none opacity-50" : ""}`}
+            class={`${classes().link} ${currentPage() === 1 ? "pointer-events-none opacity-50" : ""}`}
             aria-label="Go to previous page"
             aria-disabled={currentPage() === 1 ? "true" : "false"}
             disabled={currentPage() === 1}
@@ -74,9 +68,9 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
 
         <For each={pageNumbers()}>
           {(p) => (
-            <li class={resolvedClasses().item}>
+            <li class={classes().item}>
               {p === "ellipsis" ? (
-                <span class={resolvedClasses().ellipsis} aria-hidden="true">
+                <span class={classes().ellipsis} aria-hidden="true">
                   &hellip;
                 </span>
               ) : (
@@ -95,10 +89,10 @@ export const RLPagination: Component<RLPaginationProps> = (allProps) => {
           )}
         </For>
 
-        <li class={resolvedClasses().item}>
+        <li class={classes().item}>
           <button
             type="button"
-            class={`${resolvedClasses().link} ${currentPage() === totalPages() ? "pointer-events-none opacity-50" : ""}`}
+            class={`${classes().link} ${currentPage() === totalPages() ? "pointer-events-none opacity-50" : ""}`}
             aria-label="Go to next page"
             aria-disabled={currentPage() === totalPages() ? "true" : "false"}
             disabled={currentPage() === totalPages()}

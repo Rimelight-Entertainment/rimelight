@@ -2,10 +2,9 @@ import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
 import { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
 import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 
-export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps) => {
-  const props = allProps;
+export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "side",
     "collapsible",
     "collapsed",
@@ -93,7 +92,7 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardSidebarTheme({
       side: side(),
       collapsed: isCollapsible() && isCollapsed(),
@@ -104,14 +103,14 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
 
   const headerContent = () =>
     "headerSlot" in props ? (
-      <div data-slot="header" class={resolvedClasses().header}>
+      <div data-slot="header" class={classes().header}>
         {props.headerSlot}
       </div>
     ) : null;
 
   const footerContent = () =>
     "footerSlot" in props ? (
-      <div data-slot="footer" class={resolvedClasses().footer}>
+      <div data-slot="footer" class={classes().footer}>
         {props.footerSlot}
       </div>
     ) : null;
@@ -121,7 +120,7 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
       <div
         data-dashboard-sidebar-overlay
         data-slot="overlay"
-        class={`${resolvedClasses().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 ${
+        class={`${classes().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 ${
           isMobileOpen() ? "block" : "hidden"
         } lg:hidden`}
         onClick={() => setMobileOpenState(false)}
@@ -134,7 +133,7 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
         data-collapsed={isCollapsible() && isCollapsed() ? "true" : "false"}
         data-mobile-open={isMobileOpen() ? "true" : "false"}
         data-slot="root"
-        class={`${resolvedClasses().root} ${
+        class={`${classes().root} ${
           isMobileOpen()
             ? "!flex fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default"
             : "hidden lg:flex"
@@ -143,7 +142,7 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (allProps)
       >
         {headerContent()}
 
-        <div data-slot="body" class={resolvedClasses().body}>
+        <div data-slot="body" class={classes().body}>
           {props.children}
         </div>
 

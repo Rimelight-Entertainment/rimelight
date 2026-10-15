@@ -3,10 +3,9 @@ import { RLInputTagsTheme } from "./input-tags.theme";
 import { createMemo, createSignal, For, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
-export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
-  const props = allProps;
+export const RLInputTags: Component<RLInputTagsProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "items",
     "displayLimit",
     "estimatedTagWidth",
@@ -43,7 +42,7 @@ export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
     }
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputTagsTheme({
       ui: props.ui,
       class: props.class,
@@ -51,12 +50,12 @@ export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       <Show when={normalizedItems().length > 0} fallback={props.children}>
         <For each={renderedItems()}>
           {(item) => (
-            <span class={resolvedClasses().tag} data-slot="tag">
-              <span class={resolvedClasses().tagLabel}>{item.label}</span>
+            <span class={classes().tag} data-slot="tag">
+              <span class={classes().tagLabel}>{item.label}</span>
               <Show when={props.name}>
                 <input type="hidden" name={props.name} value={item.value ?? item.label} />
               </Show>
@@ -65,7 +64,7 @@ export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
         </For>
 
         <Show when={overflowCount() > 0}>
-          <span class={resolvedClasses().more} data-slot="more" aria-hidden="true">
+          <span class={classes().more} data-slot="more" aria-hidden="true">
             +{overflowCount()} more
           </span>
         </Show>
@@ -79,7 +78,7 @@ export const RLInputTags: Component<RLInputTagsProps> = (allProps) => {
           value={inputValue()}
           onInput={(e) => setInputValue(e.currentTarget.value)}
           onKeyDown={handleKeyDown}
-          class={resolvedClasses().input}
+          class={classes().input}
           data-slot="input"
           autocomplete="off"
         />

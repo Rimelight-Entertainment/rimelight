@@ -2,21 +2,18 @@ import type { RLStickySurfaceProps } from "./sticky-surface.types";
 import { RLStickySurfaceTheme } from "./sticky-surface.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLStickySurface: Component<RLStickySurfaceProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children");
+export const RLStickySurface: Component<RLStickySurfaceProps> = (props) => {
+  const rest = omit(props, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children");
 
   const stuckShadow = () => props.stuckShadow ?? true;
 
   const id = `sticky-${Math.random().toString(36).substring(2, 9)}`;
 
-  const resolvedClasses = createMemo(() =>
-    RLStickySurfaceTheme({ ui: props.ui, class: props.class }),
-  );
+  const classes = createMemo(() => RLStickySurfaceTheme({ ui: props.ui, class: props.class }));
 
   return (
     <div
-      class={`${resolvedClasses().root}  ${id}  ${stuckShadow() ? "rl-sticky-shadow" : ""}`}
+      class={`${classes().root}  ${id}  ${stuckShadow() ? "rl-sticky-shadow" : ""}`}
       data-slot="root"
       {...rest}
     >

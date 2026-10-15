@@ -4,10 +4,9 @@ import { createMemo, createSignal, omit, onSettled, type Component } from "solid
 import { trackScroll, scrollToTop } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
-  const props = allProps;
+export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "color",
     "progressWidth",
     "duration",
@@ -29,7 +28,7 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
     return unsubscribe;
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLScrollToTopTheme({
       color: props.color ?? "primary",
       ui: props.ui,
@@ -55,7 +54,7 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
 
   return (
     <div
-      class={`fixed bottom-6 right-6 z-50 transition-opacity duration-300 ${resolvedClasses().root} ${
+      class={`fixed bottom-6 right-6 z-50 transition-opacity duration-300 ${classes().root} ${
         isVisible() ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
       data-slot="root"
@@ -64,12 +63,12 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
     >
       <button
         type="button"
-        class={resolvedClasses().button}
+        class={classes().button}
         aria-label="Scroll to top"
         data-scroll-to-top-button
         onClick={scrollToTop}
       >
-        <div class={`relative size-full ${resolvedClasses().progressBase}`}>
+        <div class={`relative size-full ${classes().progressBase}`}>
           <div class="absolute inset-0 rounded-full border-solid" style={trackStyle()} />
           {props.showProgress ? (
             <div
@@ -78,8 +77,8 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (allProps) => {
               style={progressStyle()}
             />
           ) : null}
-          <div class={resolvedClasses().iconContainer}>
-            <RLIcon name="arrow-up" class={resolvedClasses().icon} />
+          <div class={classes().iconContainer}>
+            <RLIcon name="arrow-up" class={classes().icon} />
           </div>
         </div>
       </button>

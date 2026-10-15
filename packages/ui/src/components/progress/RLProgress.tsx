@@ -2,15 +2,14 @@ import type { RLProgressProps } from "./progress.types";
 import { RLProgressTheme } from "./progress.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLProgress: Component<RLProgressProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "value", "max", "theme", "color", "ui", "class", "children");
+export const RLProgress: Component<RLProgressProps> = (props) => {
+  const rest = omit(props, "value", "max", "theme", "color", "ui", "class", "children");
 
   const value = () => props.value ?? 0;
   const max = () => props.max ?? 100;
   const percentage = createMemo(() => Math.min(100, Math.max(0, (value() / max()) * 100)));
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLProgressTheme({
       color: props.color,
       ui: props.ui,
@@ -35,7 +34,7 @@ export const RLProgress: Component<RLProgressProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="progress-root"
       role="progressbar"
       aria-valuemin={0}
@@ -44,7 +43,7 @@ export const RLProgress: Component<RLProgressProps> = (allProps) => {
       data-theme={props.theme}
       {...rest}
     >
-      <div class={`${resolvedClasses().indicator} ${widthClass()}`} data-slot="indicator" />
+      <div class={`${classes().indicator} ${widthClass()}`} data-slot="indicator" />
       {props.children}
     </div>
   );

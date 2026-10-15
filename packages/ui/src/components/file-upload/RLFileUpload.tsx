@@ -3,10 +3,9 @@ import { RLFileUploadTheme } from "./file-upload.theme";
 import { createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
-  const props = allProps;
+export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "accept",
     "multiple",
     "disabled",
@@ -21,7 +20,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
     "iconSlot",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLFileUploadTheme({
       color: props.color,
       disabled: !!props.disabled,
@@ -86,7 +85,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root + (dragging() ? " border-primary bg-primary/5" : "")}
+      class={classes().root + (dragging() ? " border-primary bg-primary/5" : "")}
       data-slot="root"
       data-fileUpload
       data-disabled={props.disabled ? "true" : undefined}
@@ -102,7 +101,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
     >
       <input
         type="file"
-        class={resolvedClasses().input}
+        class={classes().input}
         accept={props.accept}
         multiple={props.multiple}
         disabled={props.disabled}
@@ -113,26 +112,22 @@ export const RLFileUpload: Component<RLFileUploadProps> = (allProps) => {
         onChange={handleInputChange}
       />
 
-      <div class={resolvedClasses().content} data-slot="content">
+      <div class={classes().content} data-slot="content">
         {props.iconSlot ? (
           props.iconSlot
         ) : (
-          <RLIcon
-            name={props.icon ?? "cloud-upload"}
-            class={resolvedClasses().icon}
-            aria-hidden="true"
-          />
+          <RLIcon name={props.icon ?? "cloud-upload"} class={classes().icon} aria-hidden="true" />
         )}
 
         {props.children ? (
           props.children
         ) : (
           <>
-            <p class={resolvedClasses().title} data-slot="title">
+            <p class={classes().title} data-slot="title">
               {uploadTitle()}
             </p>
             {props.description ? (
-              <p class={resolvedClasses().description} data-slot="description">
+              <p class={classes().description} data-slot="description">
                 {props.description}
               </p>
             ) : null}

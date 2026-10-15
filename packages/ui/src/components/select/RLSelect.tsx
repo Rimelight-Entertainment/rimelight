@@ -5,10 +5,9 @@ import { RLButton } from "../button/RLButton";
 import type { RLButtonProps } from "../button/button.types";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLSelect: Component<RLSelectProps> = (allProps) => {
-  const props = allProps;
+export const RLSelect: Component<RLSelectProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "id",
     "name",
     "value",

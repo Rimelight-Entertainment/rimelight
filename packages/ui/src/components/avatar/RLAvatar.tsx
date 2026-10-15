@@ -16,10 +16,9 @@ function getInitials(alt?: string): string | undefined {
   return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
 }
 
-export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
-  const props = allProps;
+export const RLAvatar: Component<RLAvatarProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "src",
     "alt",
@@ -55,7 +54,7 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
 
   const [imageError, setImageError] = createSignal(false);
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLAvatarTheme({
       size: props.size ?? "md",
       color: props.color ?? "neutral",
@@ -78,20 +77,20 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
       return (
         <RLIcon
           name={props.icon}
-          class={resolvedClasses().icon}
-          ui={{ root: resolvedClasses().icon }}
+          class={classes().icon}
+          ui={{ root: classes().icon }}
           aria-hidden="true"
         />
       );
     }
-    return <span class={resolvedClasses().icon}>{props.icon}</span>;
+    return <span class={classes().icon}>{props.icon}</span>;
   };
 
   const renderFallback = () => {
     const customSlot = props.fallbackSlot;
     if (customSlot !== undefined && customSlot !== null) {
       return (
-        <span class={resolvedClasses().fallback} data-slot="fallback">
+        <span class={classes().fallback} data-slot="fallback">
           {customSlot}
         </span>
       );
@@ -99,7 +98,7 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
 
     if (props.icon) {
       return (
-        <span class={resolvedClasses().fallback} data-slot="fallback">
+        <span class={classes().fallback} data-slot="fallback">
           {renderIcon()}
         </span>
       );
@@ -108,18 +107,18 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
     const textVal = fallbackText();
     if (textVal) {
       return (
-        <span class={resolvedClasses().fallback} data-slot="fallback">
+        <span class={classes().fallback} data-slot="fallback">
           {textVal}
         </span>
       );
     }
 
     return (
-      <span class={resolvedClasses().fallback} data-slot="fallback">
+      <span class={classes().fallback} data-slot="fallback">
         <RLIcon
           name="user"
-          class={resolvedClasses().icon}
-          ui={{ root: resolvedClasses().icon }}
+          class={classes().icon}
+          ui={{ root: classes().icon }}
           aria-hidden="true"
         />
       </span>
@@ -133,7 +132,7 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
         <img
           src={props.src}
           alt={props.alt ?? ""}
-          class={resolvedClasses().image}
+          class={classes().image}
           data-slot="image"
           loading={props.loading}
           referrerpolicy={props.referrerpolicy || undefined}
@@ -154,7 +153,7 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
 
   const avatarElement = () => (
     <Root
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       aria-label={props.label || props.title || props.alt}
       role={props.label || props.title || (!hasImage() && props.alt) ? "img" : undefined}
@@ -205,16 +204,16 @@ export const RLAvatar: Component<RLAvatarProps> = (allProps) => {
 
   return (
     <Show when={hasProfile()} fallback={withChip()}>
-      <div class={resolvedClasses().wrapper} data-slot="profile-wrapper">
+      <div class={classes().wrapper} data-slot="profile-wrapper">
         {withChip()}
-        <div class={resolvedClasses().text} data-slot="text">
+        <div class={classes().text} data-slot="text">
           <Show when={props.title}>
-            <span class={resolvedClasses().title} data-slot="title">
+            <span class={classes().title} data-slot="title">
               {props.title}
             </span>
           </Show>
           <Show when={props.subtitle}>
-            <span class={resolvedClasses().subtitle} data-slot="subtitle">
+            <span class={classes().subtitle} data-slot="subtitle">
               {props.subtitle}
             </span>
           </Show>

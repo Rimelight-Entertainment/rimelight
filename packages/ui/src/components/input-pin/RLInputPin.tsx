@@ -3,10 +3,9 @@ import { RLInputPinTheme } from "./input-pin.theme";
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 
-export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
-  const props = allProps;
+export const RLInputPin: Component<RLInputPinProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "children",
     "length",
     "value",
@@ -24,7 +23,7 @@ export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
     "onComplete",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputPinTheme({
       ui: props.ui,
       class: props.class,
@@ -125,7 +124,7 @@ export const RLInputPin: Component<RLInputPinProps> = (allProps) => {
   };
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       <div
         role="group"
         aria-label="One-time code"

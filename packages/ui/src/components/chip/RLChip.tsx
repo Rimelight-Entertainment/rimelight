@@ -3,10 +3,9 @@ import { RLChipTheme } from "./chip.theme";
 import { createMemo, omit, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
-export const RLChip: Component<RLChipProps> = (allProps) => {
-  const props = allProps;
+export const RLChip: Component<RLChipProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "text",
     "standalone",

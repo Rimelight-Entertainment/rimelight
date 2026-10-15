@@ -3,10 +3,9 @@ import { RLInputTheme } from "./input.theme";
 import { createMemo, omit, children, type Component, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLInput: Component<RLInputProps> = (allProps) => {
-  const props = allProps;
+export const RLInput: Component<RLInputProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "type",
     "value",
     "placeholder",
@@ -39,7 +38,7 @@ export const RLInput: Component<RLInputProps> = (allProps) => {
   const hasLeading = () => !!(props.leadingIcon || resolvedLeading());
   const hasTrailing = () => !!(props.trailingIcon || resolvedTrailing());
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputTheme({
       variant: props.variant ?? "default",
       size: props.size ?? "md",
@@ -52,10 +51,10 @@ export const RLInput: Component<RLInputProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme}>
+    <div class={classes().root} data-slot="root" data-theme={props.theme}>
       <Show when={resolvedLeading()}>{resolvedLeading()}</Show>
       <Show when={!resolvedLeading() && props.leadingIcon}>
-        <span class={resolvedClasses().leading} data-slot="leading">
+        <span class={classes().leading} data-slot="leading">
           <RLIcon name={props.leadingIcon!} size="sm" aria-hidden="true" />
         </span>
       </Show>
@@ -69,7 +68,7 @@ export const RLInput: Component<RLInputProps> = (allProps) => {
         disabled={props.disabled}
         readonly={props.readonly}
         required={props.required}
-        class={resolvedClasses().input}
+        class={classes().input}
         data-slot="input"
         onInput={props.onInput}
         onChange={props.onChange}
@@ -81,7 +80,7 @@ export const RLInput: Component<RLInputProps> = (allProps) => {
 
       <Show when={resolvedTrailing()}>{resolvedTrailing()}</Show>
       <Show when={!resolvedTrailing() && props.trailingIcon}>
-        <span class={resolvedClasses().trailing} data-slot="trailing">
+        <span class={classes().trailing} data-slot="trailing">
           <RLIcon name={props.trailingIcon!} size="sm" aria-hidden="true" />
         </span>
       </Show>

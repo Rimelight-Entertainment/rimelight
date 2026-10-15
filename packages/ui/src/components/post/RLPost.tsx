@@ -3,10 +3,9 @@ import { RLPostTheme } from "./post.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 
-export const RLPost: Component<RLPostProps> = (allProps) => {
-  const props = allProps;
+export const RLPost: Component<RLPostProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "title",
     "description",
     "date",

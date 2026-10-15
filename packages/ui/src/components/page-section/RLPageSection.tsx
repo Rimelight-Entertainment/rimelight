@@ -5,10 +5,9 @@ import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
 
-export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
-  const props = allProps;
+export const RLPageSection: Component<RLPageSectionProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "variant",
     "ctaVariant",
@@ -47,7 +46,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
   const resolvedTitle = () => props.title ?? props.titleSlot;
   const resolvedDescription = () => props.description ?? props.descriptionSlot;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLPageSectionTheme({
       variant: resolvedVariant(),
       ...(resolvedVariant() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
@@ -86,7 +85,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
   return (
     <Root
       data-orientation={props.orientation ?? "vertical"}
-      class={`${resolvedClasses().root} ${
+      class={`${classes().root} ${
         props.contentVisibility === "auto"
           ? "[content-visibility:auto] [contain-intrinsic-size:var(--rl-contain-intrinsic-size,auto_500px)]"
           : ""
@@ -99,30 +98,26 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       {...rest}
     >
       <Show when={props.background}>
-        <div class={resolvedClasses().background} data-slot="background">
+        <div class={classes().background} data-slot="background">
           {props.background}
         </div>
       </Show>
 
       {props.top}
 
-      <div class={resolvedClasses().container}>
+      <div class={classes().container}>
         <Show when={showWrapper()}>
-          <div class={resolvedClasses().wrapper}>
+          <div class={classes().wrapper}>
             <Show when={props.header}>{props.header}</Show>
 
             <Show when={!props.header && showHeader()}>
-              <div class={resolvedClasses().header}>
+              <div class={classes().header}>
                 <Show when={props.icon || props.leading}>
-                  <div class={resolvedClasses().leading}>
+                  <div class={classes().leading}>
                     <Show
                       when={props.leading}
                       fallback={
-                        <RLIcon
-                          name={props.icon!}
-                          size="md"
-                          ui={{ root: resolvedClasses().leadingIcon }}
-                        />
+                        <RLIcon name={props.icon!} size="md" ui={{ root: classes().leadingIcon }} />
                       }
                     >
                       {props.leading}
@@ -131,35 +126,35 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
                 </Show>
 
                 <Show when={resolvedHeadline()}>
-                  <div class={resolvedClasses().headline}>{resolvedHeadline()}</div>
+                  <div class={classes().headline}>{resolvedHeadline()}</div>
                 </Show>
 
                 <Show when={resolvedTitle()}>
                   <Show
                     when={resolvedVariant() === "hero"}
-                    fallback={<h2 class={resolvedClasses().title}>{resolvedTitle()}</h2>}
+                    fallback={<h2 class={classes().title}>{resolvedTitle()}</h2>}
                   >
-                    <h1 class={resolvedClasses().title}>{resolvedTitle()}</h1>
+                    <h1 class={classes().title}>{resolvedTitle()}</h1>
                   </Show>
                 </Show>
 
                 <Show when={resolvedDescription()}>
-                  <div class={resolvedClasses().description}>{resolvedDescription()}</div>
+                  <div class={classes().description}>{resolvedDescription()}</div>
                 </Show>
               </div>
             </Show>
 
             <Show when={props.body}>
-              <div class={resolvedClasses().body}>{props.body}</div>
+              <div class={classes().body}>{props.body}</div>
             </Show>
 
             <Show when={props.footer}>
-              <div class={resolvedClasses().footer}>{props.footer}</div>
+              <div class={classes().footer}>{props.footer}</div>
             </Show>
 
             <Show when={!props.footer && (props.linksSlot || (props.links?.length ?? 0) > 0)}>
-              <div class={resolvedClasses().footer}>
-                <div class={resolvedClasses().links}>
+              <div class={classes().footer}>
+                <div class={classes().links}>
                   <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
                   {props.linksSlot}
                 </div>

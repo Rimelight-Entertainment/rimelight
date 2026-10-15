@@ -3,10 +3,9 @@ import { RLImageTheme } from "./image.theme";
 import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLImage: Component<RLImageProps> = (allProps) => {
-  const props = allProps;
+export const RLImage: Component<RLImageProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "src",
     "lightSrc",
     "darkSrc",
@@ -80,7 +79,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
     imgFormat?.toUpperCase() ||
     (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLImageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
   );
 
@@ -218,7 +217,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
             alt={alt()}
             loading={loading}
             decoding={decoding}
-            class={resolvedClasses().triggerImage}
+            class={classes().triggerImage}
             onError={handleError}
             onLoad={handleLoad}
           />
@@ -234,7 +233,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
             alt={alt()}
             loading={loading}
             decoding={decoding}
-            class={`${resolvedClasses().triggerImage} rl-img-light w-full h-full object-cover rounded-[inherit]`}
+            class={`${classes().triggerImage} rl-img-light w-full h-full object-cover rounded-[inherit]`}
             onError={handleError}
             onLoad={handleLoad}
           />
@@ -243,7 +242,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
             alt={alt()}
             loading={loading}
             decoding={decoding}
-            class={`${resolvedClasses().triggerImage} rl-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
+            class={`${classes().triggerImage} rl-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
           />
         </div>
       );
@@ -258,7 +257,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
         width={imgWidth !== undefined ? String(imgWidth) : undefined}
         height={imgHeight !== undefined ? String(imgHeight) : undefined}
         sizes={props.sizes}
-        class={resolvedClasses().triggerImage}
+        class={classes().triggerImage}
         onError={handleError}
         onLoad={handleLoad}
       />
@@ -269,12 +268,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
     props.trigger ? (
       props.trigger
     ) : isInteractive ? (
-      <button
-        type="button"
-        class={resolvedClasses().trigger}
-        data-image-trigger
-        onClick={openDialog}
-      >
+      <button type="button" class={classes().trigger} data-image-trigger onClick={openDialog}>
         {triggerImage()}
       </button>
     ) : (
@@ -284,16 +278,16 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
   return (
     <div
       ref={(el) => (rootRef = el)}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-theme={props.theme}
       {...rest}
     >
       {isFigure ? (
-        <figure class={resolvedClasses().figure} data-slot="figure">
+        <figure class={classes().figure} data-slot="figure">
           {renderTrigger()}
           {props.caption && (
-            <figcaption class={resolvedClasses().caption} data-slot="caption">
+            <figcaption class={classes().caption} data-slot="caption">
               {props.caption}
             </figcaption>
           )}
@@ -303,7 +297,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
         <>
           {renderTrigger()}
           {props.caption && (
-            <p class={resolvedClasses().caption} data-slot="caption">
+            <p class={classes().caption} data-slot="caption">
               {props.caption}
             </p>
           )}
@@ -314,7 +308,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
       {isInteractive && (
         <dialog
           ref={(el) => (dialogRef = el)}
-          class={resolvedClasses().dialog}
+          class={classes().dialog}
           data-image-dialog
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
@@ -340,7 +334,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                   <img
                     src={show() ? urlOf(props.desktopSrc) : undefined}
                     alt={alt()}
-                    class={`${resolvedClasses().image}${zoom() ? " max-w-none max-h-none" : ""}`}
+                    class={`${classes().image}${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img
                   />
                 </picture>
@@ -349,7 +343,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                   <img
                     src={show() ? lightUrl : undefined}
                     alt={alt()}
-                    class={`${resolvedClasses().image} rl-img-light${zoom() ? " max-w-none max-h-none" : ""}`}
+                    class={`${classes().image} rl-img-light${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img
                     data-light-src={lightUrl}
                     data-dark-src={darkUrl}
@@ -357,7 +351,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                   <img
                     src={show() ? darkUrl : undefined}
                     alt={alt()}
-                    class={`${resolvedClasses().image} rl-img-dark hidden${zoom() ? " max-w-none max-h-none" : ""}`}
+                    class={`${classes().image} rl-img-dark hidden${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img-dark
                   />
                 </div>
@@ -365,7 +359,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
                 <img
                   src={show() ? activeUrl : undefined}
                   alt={alt()}
-                  class={`${resolvedClasses().image}${zoom() ? " max-w-none max-h-none" : ""}`}
+                  class={`${classes().image}${zoom() ? " max-w-none max-h-none" : ""}`}
                   data-modal-img
                 />
               )}
@@ -373,7 +367,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
 
             <hr class="border-default mx-4 mb-3 shrink-0" />
 
-            <div class={resolvedClasses().fileInfo}>
+            <div class={classes().fileInfo}>
               <div class="flex flex-col gap-xs text-sm">
                 {props.metaSource !== false && (
                   <div class="flex flex-row gap-xs items-center">
@@ -441,7 +435,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
               {props.metaDownload !== false && (
                 <button
                   type="button"
-                  class={resolvedClasses().download}
+                  class={classes().download}
                   data-image-download
                   onClick={handleDownload}
                 >
@@ -454,7 +448,7 @@ export const RLImage: Component<RLImageProps> = (allProps) => {
             <form method="dialog" class="absolute top-2 right-2">
               <button
                 type="submit"
-                class={resolvedClasses().closeButton}
+                class={classes().closeButton}
                 aria-label="Close"
                 onClick={() => setOpen(false)}
               >

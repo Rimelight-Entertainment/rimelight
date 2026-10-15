@@ -12,10 +12,9 @@ import {
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
-  const props = allProps;
+export const RLSlideover: Component<RLSlideoverProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "side",
     "open",
     "defaultOpen",
@@ -70,7 +69,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLSlideoverTheme({
       side: side(),
       ui: props.ui,
@@ -85,7 +84,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   const getBodyChildren = () => props.children;
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       <Show
         when={props.triggerLabel}
         fallback={
@@ -96,7 +95,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
       >
         <button
           type="button"
-          class={resolvedClasses().trigger}
+          class={classes().trigger}
           data-slot="trigger"
           onClick={() => setOpenState(true)}
         >
@@ -108,20 +107,20 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
         <Portal>
           <Show when={isOpen()}>
             <div
-              class={resolvedClasses().backdrop}
+              class={classes().backdrop}
               data-slot="backdrop"
               onClick={() => setOpenState(false)}
             />
           </Show>
 
           <div
-            class={resolvedClasses().content}
+            class={classes().content}
             data-slot="content"
             data-state={isOpen() ? "open" : "closed"}
             style={{ display: isOpen() ? undefined : "none" }}
           >
             <button
-              class={resolvedClasses().closeButton}
+              class={classes().closeButton}
               data-slot="close-button"
               type="button"
               aria-label="Close slideover"
@@ -130,15 +129,15 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
               <RLIcon name="x" class="size-4" aria-hidden="true" />
             </button>
 
-            <div class={resolvedClasses().header} data-slot="header">
+            <div class={classes().header} data-slot="header">
               <Show when={titleContent()}>
-                <h3 class={resolvedClasses().title} data-slot="title">
+                <h3 class={classes().title} data-slot="title">
                   {titleContent()}
                 </h3>
               </Show>
 
               <Show when={descriptionContent()}>
-                <p class={resolvedClasses().description} data-slot="description">
+                <p class={classes().description} data-slot="description">
                   {descriptionContent()}
                 </p>
               </Show>
@@ -147,7 +146,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
             <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{getBodyChildren()}</div>
 
             <Show when={footerContent() !== undefined}>
-              <div class={resolvedClasses().footer} data-slot="footer">
+              <div class={classes().footer} data-slot="footer">
                 {footerContent()}
               </div>
             </Show>

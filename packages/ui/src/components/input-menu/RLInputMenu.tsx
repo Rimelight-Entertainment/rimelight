@@ -14,10 +14,9 @@ import { RLIcon } from "../icon/RLIcon";
 
 type InputMenuItem = { label: string; value: string; [key: string]: any };
 
-export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
-  const props = allProps;
+export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "items",
     "value",
     "defaultValue",
@@ -32,7 +31,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
     "onValueChange",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputMenuTheme({
       size: props.size ?? "md",
       color: props.color,
@@ -115,13 +114,13 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-disabled={props.disabled ? "" : undefined}
       {...rest}
     >
       {props.label ? (
-        <label class={resolvedClasses().label} data-slot="label">
+        <label class={classes().label} data-slot="label">
           {props.label}
         </label>
       ) : null}
@@ -129,7 +128,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
       <div class="relative w-full" data-inputMenu-wrapper>
         <button
           type="button"
-          class={resolvedClasses().trigger}
+          class={classes().trigger}
           data-slot="trigger"
           disabled={props.disabled}
           data-inputMenu-trigger
@@ -141,13 +140,13 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
 
         <Show when={open()}>
           <div
-            class={`${resolvedClasses().content} absolute z-50`}
+            class={`${classes().content} absolute z-50`}
             data-inputMenu-dropdown
             data-slot="content"
           >
             <input
               type="text"
-              class={resolvedClasses().input}
+              class={classes().input}
               placeholder="Search..."
               data-inputMenu-search
               ref={(el) => (searchRef = el)}
@@ -157,7 +156,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
               <For each={filteredItems()}>
                 {(item) => (
                   <div
-                    class={resolvedClasses().item}
+                    class={classes().item}
                     data-slot="item"
                     data-value={item.value}
                     data-label={item.label}
@@ -167,10 +166,10 @@ export const RLInputMenu: Component<RLInputMenuProps> = (allProps) => {
                     }
                     onClick={(e) => handleItemClick(e, item)}
                   >
-                    <span class={resolvedClasses().itemText}>{item.label}</span>
+                    <span class={classes().itemText}>{item.label}</span>
                     <RLIcon
                       name="check"
-                      class={`${resolvedClasses().itemIcon} ${
+                      class={`${classes().itemIcon} ${
                         String(item.value) === String(currentValue()) ? "" : "hidden"
                       }`}
                       data-check-icon

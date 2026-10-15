@@ -4,13 +4,12 @@ import { createMemo, createSignal, createUniqueId, omit, Show, type Component } 
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
-  const props = allProps;
+export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
   const generatedId = createUniqueId();
   const id = () => props.id || `rl-checkbox-${generatedId}`;
 
   const rest = omit(
-    allProps,
+    props,
     "as",
     "id",
     "checked",
@@ -80,7 +79,7 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
   const activeIcon = () =>
     isIndeterminate() ? props.indeterminateIcon || "minus" : props.icon || "check";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLCheckboxTheme({
       color: color(),
       variant: variant(),
@@ -139,13 +138,13 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
 
   return (
     <Root
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-theme={props.theme}
       data-state={checkState()}
       data-disabled={disabled() ? "true" : undefined}
     >
-      <div class={resolvedClasses().container} data-slot="container">
+      <div class={classes().container} data-slot="container">
         <input
           id={id()}
           type="checkbox"
@@ -170,21 +169,17 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
         />
 
         <span
-          class={resolvedClasses().base}
+          class={classes().base}
           data-slot="base"
           data-state={checkState()}
           data-disabled={disabled() ? "true" : undefined}
         >
           <Show when={indicator() !== "hidden"}>
-            <span
-              class={resolvedClasses().indicator}
-              data-slot="indicator"
-              data-state={checkState()}
-            >
+            <span class={classes().indicator} data-slot="indicator" data-state={checkState()}>
               <RLIcon
                 name={activeIcon()}
                 size="none"
-                class={resolvedClasses().icon}
+                class={classes().icon}
                 data-slot="icon"
                 aria-hidden="true"
               />
@@ -194,23 +189,23 @@ export const RLCheckbox: Component<RLCheckboxProps> = (allProps) => {
       </div>
 
       <Show when={hasWrapper()}>
-        <div class={resolvedClasses().wrapper} data-slot="wrapper">
+        <div class={classes().wrapper} data-slot="wrapper">
           <Show when={labelIcon()}>
             <RLIcon
               name={labelIcon()!}
               size="none"
-              class={resolvedClasses().icon}
+              class={classes().icon}
               data-slot="icon"
               aria-hidden="true"
             />
           </Show>
           <Show when={hasLabel()}>
-            <span class={resolvedClasses().label} data-slot="label">
+            <span class={classes().label} data-slot="label">
               {renderLabel()}
             </span>
           </Show>
           <Show when={hasDescription()}>
-            <p class={resolvedClasses().description} data-slot="description">
+            <p class={classes().description} data-slot="description">
               {renderDescription()}
             </p>
           </Show>

@@ -2,10 +2,9 @@ import type { RLRadioGroupProps } from "./radio-group.types";
 import { RLRadioGroupTheme } from "./radio-group.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
-  const props = allProps;
+export const RLRadioGroup: Component<RLRadioGroupProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "ui",
     "class",
     "children",
@@ -17,16 +16,16 @@ export const RLRadioGroup: Component<RLRadioGroupProps> = (allProps) => {
     "trailing",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLRadioGroupTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps,
+      ...props,
     }),
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

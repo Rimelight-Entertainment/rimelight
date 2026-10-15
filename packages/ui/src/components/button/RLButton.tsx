@@ -36,12 +36,11 @@ const DISABLED_TAGS = new Set([
 ]);
 const TYPE_TAGS = new Set(["button", "input"]);
 
-export const RLButton: Component<RLButtonProps> = (allProps) => {
-  const props = allProps;
+export const RLButton: Component<RLButtonProps> = (props) => {
   const [autoLoading, setAutoLoading] = createSignal(false);
 
   const rest = omit(
-    allProps,
+    props,
     "as",
     "variant",
     "color",

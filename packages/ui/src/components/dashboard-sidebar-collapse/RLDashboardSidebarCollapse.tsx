@@ -3,13 +3,10 @@ import { RLDashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.th
 import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (
-  allProps,
-) => {
-  const props = allProps;
-  const rest = omit(allProps, "icon", "ui", "class", "children", "side");
+export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (props) => {
+  const rest = omit(props, "icon", "ui", "class", "children", "side");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardSidebarCollapseTheme({
       side: props.side ?? "left",
       ui: props.ui,
@@ -21,7 +18,7 @@ export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapsePro
     <button
       type="button"
       data-dashboard-toggle="collapse"
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       aria-label="Collapse sidebar"
       {...rest}

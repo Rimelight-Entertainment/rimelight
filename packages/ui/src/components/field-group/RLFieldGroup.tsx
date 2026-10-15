@@ -2,11 +2,10 @@ import type { RLFieldGroupProps } from "./field-group.types";
 import { RLFieldGroupTheme } from "./field-group.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "prepend", "append", "size", "ui", "class", "children");
+export const RLFieldGroup: Component<RLFieldGroupProps> = (props) => {
+  const rest = omit(props, "prepend", "append", "size", "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLFieldGroupTheme({
       size: props["size"] ?? "md",
       ui: props["ui"],
@@ -15,15 +14,15 @@ export const RLFieldGroup: Component<RLFieldGroupProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.prepend ? (
-        <div class={resolvedClasses().prepend} data-slot="prepend">
+        <div class={classes().prepend} data-slot="prepend">
           {props.prepend}
         </div>
       ) : null}
       {props.children}
       {props.append ? (
-        <div class={resolvedClasses().append} data-slot="append">
+        <div class={classes().append} data-slot="append">
           {props.append}
         </div>
       ) : null}

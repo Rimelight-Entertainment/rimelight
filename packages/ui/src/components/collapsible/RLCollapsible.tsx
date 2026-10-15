@@ -3,10 +3,9 @@ import { RLCollapsibleTheme } from "./collapsible.theme";
 import { createMemo, createSignal, createUniqueId, omit, Show, type Component } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 
-export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
-  const props = allProps;
+export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "ui",
     "class",
@@ -47,7 +46,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
     props.onOpenChange?.(next);
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLCollapsibleTheme({
       open: isOpen(),
       disabled: isDisabled(),
@@ -99,7 +98,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
   return (
     <Tag
       id={props.id}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-state={isOpen() ? "open" : "closed"}
       data-disabled={isDisabled() ? "" : undefined}
@@ -112,7 +111,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
       <Show when={hasTrigger()}>
         <div
           id={triggerId()}
-          class={resolvedClasses().trigger}
+          class={classes().trigger}
           data-slot="trigger"
           aria-controls={contentId()}
           aria-expanded={isOpen() ? "true" : "false"}
@@ -144,7 +143,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
           fallback={
             <div
               id={contentId()}
-              class={resolvedClasses().content}
+              class={classes().content}
               data-slot="content"
               data-state={isOpen() ? "open" : "closed"}
               data-disabled={isDisabled() ? "" : undefined}
@@ -157,7 +156,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (allProps) => {
           <Show when={isOpen()}>
             <div
               id={contentId()}
-              class={resolvedClasses().content}
+              class={classes().content}
               data-slot="content"
               data-state="open"
               data-disabled={isDisabled() ? "" : undefined}

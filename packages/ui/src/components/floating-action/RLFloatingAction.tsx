@@ -2,11 +2,10 @@ import type { RLFloatingActionProps } from "./floating-action.types";
 import { RLFloatingActionTheme } from "./floating-action.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLFloatingAction: Component<RLFloatingActionProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLFloatingActionTheme({
       ui: props.ui,
       class: props.class,
@@ -14,7 +13,7 @@ export const RLFloatingAction: Component<RLFloatingActionProps> = (allProps) => 
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

@@ -4,7 +4,7 @@ import { createMemo, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLSurround: Component<RLSurroundProps> = (props) => {
-  const theme = createMemo(() =>
+  const classes = createMemo(() =>
     RLSurroundTheme({
       class: props.class,
     }),
@@ -12,7 +12,7 @@ export const RLSurround: Component<RLSurroundProps> = (props) => {
 
   return (
     <Show when={props.prev || props.next}>
-      <div class={theme().root}>
+      <div class={classes().root}>
         <Show when={props.prev} fallback={<div />}>
           {(prev) => {
             const prevTheme = createMemo(() =>
@@ -22,10 +22,10 @@ export const RLSurround: Component<RLSurroundProps> = (props) => {
             );
             return (
               <a href={prev().href} class={prevTheme().link}>
-                <span class={`${theme().label} ${prevTheme().labelPrev}`}>
+                <span class={`${classes().label} ${prevTheme().labelPrev}`}>
                   <RLIcon name="arrow-left" class="size-3" /> Previous
                 </span>
-                <span class={theme().title}>{prev().label}</span>
+                <span class={classes().title}>{prev().label}</span>
               </a>
             );
           }}
@@ -40,10 +40,10 @@ export const RLSurround: Component<RLSurroundProps> = (props) => {
             );
             return (
               <a href={next().href} class={nextTheme().link}>
-                <span class={`${theme().label} ${nextTheme().labelNext}`}>
+                <span class={`${classes().label} ${nextTheme().labelNext}`}>
                   Next <RLIcon name="arrow-right" class="size-3" />
                 </span>
-                <span class={theme().title}>{next().label}</span>
+                <span class={classes().title}>{next().label}</span>
               </a>
             );
           }}

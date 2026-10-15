@@ -4,9 +4,9 @@ import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
+export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "variant",
     "size",
@@ -35,51 +35,51 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
 
   const titleId = createUniqueId();
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLBrowserMockupTheme({
-      variant: allProps.variant,
-      size: allProps.size,
-      color: allProps.color,
-      controlsVariant: allProps.controls === false ? "none" : allProps.controlsVariant,
-      padded: allProps.padded,
-      shadow: allProps.shadow,
-      rounded: allProps.rounded,
-      ui: allProps.ui,
-      class: allProps.class,
+      variant: props.variant,
+      size: props.size,
+      color: props.color,
+      controlsVariant: props.controls === false ? "none" : props.controlsVariant,
+      padded: props.padded,
+      shadow: props.shadow,
+      rounded: props.rounded,
+      ui: props.ui,
+      class: props.class,
     }),
   );
 
-  const RootTag = dynamic(() => allProps.as ?? "div");
+  const RootTag = dynamic(() => props.as ?? "div");
 
-  const showControls = () => allProps.controls !== false && allProps.controlsVariant !== "none";
+  const showControls = () => props.controls !== false && props.controlsVariant !== "none";
 
-  const showNavigation = () => Boolean(allProps.navigation);
+  const showNavigation = () => Boolean(props.navigation);
 
   const showUrlBar = () =>
-    allProps.url !== undefined ||
-    Boolean(allProps.urlSlot) ||
-    Boolean(allProps.urlPrefixSlot) ||
-    Boolean(allProps.urlSuffixSlot);
+    props.url !== undefined ||
+    Boolean(props.urlSlot) ||
+    Boolean(props.urlPrefixSlot) ||
+    Boolean(props.urlSuffixSlot);
 
-  const urlIconName = () => allProps.urlIcon ?? "lock";
+  const urlIconName = () => props.urlIcon ?? "lock";
 
   const renderUrlPrefix = () => {
-    if (allProps.urlPrefixSlot) {
-      return allProps.urlPrefixSlot;
+    if (props.urlPrefixSlot) {
+      return props.urlPrefixSlot;
     }
-    if (allProps.urlPrefix === false) {
+    if (props.urlPrefix === false) {
       return null;
     }
-    if (typeof allProps.urlPrefix === "string") {
+    if (typeof props.urlPrefix === "string") {
       return (
-        <span class={resolvedClasses().urlPrefix} data-slot="url-prefix">
-          {allProps.urlPrefix}
+        <span class={classes().urlPrefix} data-slot="url-prefix">
+          {props.urlPrefix}
         </span>
       );
     }
     return (
-      <span class={resolvedClasses().urlPrefix} data-slot="url-prefix">
-        <RLIcon name={urlIconName()} class={resolvedClasses().urlIcon} aria-hidden="true" />
+      <span class={classes().urlPrefix} data-slot="url-prefix">
+        <RLIcon name={urlIconName()} class={classes().urlIcon} aria-hidden="true" />
       </span>
     );
   };
@@ -88,56 +88,56 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
     <RootTag
       role="region"
       aria-label={
-        allProps.ariaLabel ?? (allProps.url ? `Browser mockup: ${allProps.url}` : "Browser Mockup")
+        props.ariaLabel ?? (props.url ? `Browser mockup: ${props.url}` : "Browser Mockup")
       }
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       {...rest}
     >
-      <header class={resolvedClasses().header} data-slot="header">
+      <header class={classes().header} data-slot="header">
         <Show
-          when={allProps.headerSlot}
+          when={props.headerSlot}
           fallback={
             <>
               {/* Window Controls (macOS / neutral dots) */}
               <Show when={showControls()}>
                 <Show
-                  when={allProps.controlsSlot}
+                  when={props.controlsSlot}
                   fallback={
-                    <div class={resolvedClasses().controls} data-slot="controls" aria-hidden="true">
+                    <div class={classes().controls} data-slot="controls" aria-hidden="true">
                       <span
-                        class={`${resolvedClasses().dot} ${resolvedClasses().dotClose}`}
+                        class={`${classes().dot} ${classes().dotClose}`}
                         data-slot="dot-close"
                       />
                       <span
-                        class={`${resolvedClasses().dot} ${resolvedClasses().dotMinimize}`}
+                        class={`${classes().dot} ${classes().dotMinimize}`}
                         data-slot="dot-minimize"
                       />
                       <span
-                        class={`${resolvedClasses().dot} ${resolvedClasses().dotMaximize}`}
+                        class={`${classes().dot} ${classes().dotMaximize}`}
                         data-slot="dot-maximize"
                       />
                     </div>
                   }
                 >
-                  {allProps.controlsSlot}
+                  {props.controlsSlot}
                 </Show>
               </Show>
 
               {/* Navigation controls (back, forward, reload) */}
               <Show when={showNavigation()}>
                 <Show
-                  when={allProps.navigationSlot}
+                  when={props.navigationSlot}
                   fallback={
                     <div
-                      class={resolvedClasses().navigation}
+                      class={classes().navigation}
                       data-slot="navigation"
                       aria-label="Browser navigation"
                     >
                       <button
                         type="button"
                         aria-label="Back"
-                        class={`${resolvedClasses().navButton} ${resolvedClasses().navBack}`}
+                        class={`${classes().navButton} ${classes().navBack}`}
                         data-slot="nav-back"
                       >
                         <RLIcon name="arrow-left" class="w-3.5 h-3.5" aria-hidden="true" />
@@ -145,7 +145,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
                       <button
                         type="button"
                         aria-label="Forward"
-                        class={`${resolvedClasses().navButton} ${resolvedClasses().navForward}`}
+                        class={`${classes().navButton} ${classes().navForward}`}
                         data-slot="nav-forward"
                       >
                         <RLIcon name="arrow-right" class="w-3.5 h-3.5" aria-hidden="true" />
@@ -153,7 +153,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
                       <button
                         type="button"
                         aria-label="Reload"
-                        class={`${resolvedClasses().navButton} ${resolvedClasses().navReload}`}
+                        class={`${classes().navButton} ${classes().navReload}`}
                         data-slot="nav-reload"
                       >
                         <RLIcon name="rotate-cw" class="w-3.5 h-3.5" aria-hidden="true" />
@@ -161,50 +161,50 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (allProps) => {
                     </div>
                   }
                 >
-                  {allProps.navigationSlot}
+                  {props.navigationSlot}
                 </Show>
               </Show>
 
               {/* URL Address Bar */}
               <Show when={showUrlBar()}>
                 <Show
-                  when={allProps.urlSlot}
+                  when={props.urlSlot}
                   fallback={
-                    <div class={resolvedClasses().urlBar} data-slot="url-bar">
+                    <div class={classes().urlBar} data-slot="url-bar">
                       {renderUrlPrefix()}
-                      <Show when={allProps.url}>
-                        <span id={titleId} class={resolvedClasses().urlText} data-slot="url-text">
-                          {allProps.url}
+                      <Show when={props.url}>
+                        <span id={titleId} class={classes().urlText} data-slot="url-text">
+                          {props.url}
                         </span>
                       </Show>
-                      <Show when={allProps.urlSuffixSlot}>
-                        <span class={resolvedClasses().urlSuffix} data-slot="url-suffix">
-                          {allProps.urlSuffixSlot}
+                      <Show when={props.urlSuffixSlot}>
+                        <span class={classes().urlSuffix} data-slot="url-suffix">
+                          {props.urlSuffixSlot}
                         </span>
                       </Show>
                     </div>
                   }
                 >
-                  {allProps.urlSlot}
+                  {props.urlSlot}
                 </Show>
               </Show>
 
               {/* Actions slot */}
-              <Show when={allProps.actionsSlot}>
-                <div class={resolvedClasses().actions} data-slot="actions">
-                  {allProps.actionsSlot}
+              <Show when={props.actionsSlot}>
+                <div class={classes().actions} data-slot="actions">
+                  {props.actionsSlot}
                 </div>
               </Show>
             </>
           }
         >
-          {allProps.headerSlot}
+          {props.headerSlot}
         </Show>
       </header>
 
       {/* Mockup Body Content */}
-      <div class={resolvedClasses().body} data-slot="body">
-        {allProps.children}
+      <div class={classes().body} data-slot="body">
+        {props.children}
       </div>
     </RootTag>
   );

@@ -4,10 +4,9 @@ import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) => {
-  const props = allProps;
+export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "icon",
     "title",
@@ -27,7 +26,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
   const showToggle = () => props.toggle ?? true;
   const toggleSide = () => props.toggleSide ?? "left";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardNavbarTheme({
       toggleSide: toggleSide(),
       ui: props.ui,
@@ -40,7 +39,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
       <button
         type="button"
         data-dashboard-toggle="mobile"
-        class={`${resolvedClasses().toggle} lg:hidden`}
+        class={`${classes().toggle} lg:hidden`}
         data-slot="toggle"
         aria-label="Toggle sidebar"
       >
@@ -53,7 +52,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
       <button
         type="button"
         data-dashboard-toggle="mobile"
-        class={`${resolvedClasses().toggle} lg:hidden`}
+        class={`${classes().toggle} lg:hidden`}
         data-slot="toggle"
         aria-label="Toggle sidebar"
       >
@@ -69,9 +68,9 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
       <>
         {props.leadingSlot ??
           (props.icon ? (
-            <RLIcon name={props.icon} class={resolvedClasses().icon} data-slot="icon" />
+            <RLIcon name={props.icon} class={classes().icon} data-slot="icon" />
           ) : null)}
-        <h1 data-slot="title" class={resolvedClasses().title}>
+        <h1 data-slot="title" class={classes().title}>
           {"titleSlot" in props ? props.titleSlot : props.title}
         </h1>
         {props.trailingSlot}
@@ -81,21 +80,21 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
 
   const centerContent = () =>
     "centerSlot" in props || "children" in props ? (
-      <div data-slot="center" class={resolvedClasses().center}>
+      <div data-slot="center" class={classes().center}>
         {"centerSlot" in props ? props.centerSlot : props.children}
       </div>
     ) : null;
 
   const navbarBody = () => (
     <>
-      <div data-slot="left" class={resolvedClasses().left}>
+      <div data-slot="left" class={classes().left}>
         {leftToggle()}
         {leftContent()}
       </div>
 
       {centerContent()}
 
-      <div data-slot="right" class={resolvedClasses().right}>
+      <div data-slot="right" class={classes().right}>
         {props.rightSlot}
         {rightToggle()}
       </div>
@@ -105,7 +104,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (allProps) =
   const Root = dynamic(() => props.as ?? "header");
 
   return (
-    <Root class={resolvedClasses().root} data-slot="root" {...rest}>
+    <Root class={classes().root} data-slot="root" {...rest}>
       {navbarBody()}
     </Root>
   );

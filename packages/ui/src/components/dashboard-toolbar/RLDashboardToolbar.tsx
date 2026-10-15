@@ -3,13 +3,12 @@ import { RLDashboardToolbarTheme } from "./dashboard-toolbar.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
-export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "as", "ui", "class", "children", "leftSlot", "rightSlot");
+export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (props) => {
+  const rest = omit(props, "as", "ui", "class", "children", "leftSlot", "rightSlot");
 
   const Root = dynamic(() => props.as ?? "div");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardToolbarTheme({
       ui: props.ui,
       class: props.class,
@@ -17,15 +16,15 @@ export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (allProps)
   );
 
   return (
-    <Root class={resolvedClasses().root} data-slot="root" {...rest}>
+    <Root class={classes().root} data-slot="root" {...rest}>
       {props.children !== undefined ? (
         props.children
       ) : (
         <>
-          <div data-slot="left" class={resolvedClasses().left}>
+          <div data-slot="left" class={classes().left}>
             {props.leftSlot}
           </div>
-          <div data-slot="right" class={resolvedClasses().right}>
+          <div data-slot="right" class={classes().right}>
             {props.rightSlot}
           </div>
         </>

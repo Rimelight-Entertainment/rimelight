@@ -15,9 +15,8 @@ interface CategorySection {
 
 const modalId = `rl-shortcuts-${Math.random().toString(36).substring(2, 9)}`;
 
-export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "categories", "ui", "class");
+export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
+  const rest = omit(props, "categories", "ui", "class");
 
   const configCategories = (): Record<string, { label: string }> =>
     uiConfig.shortcuts?.categories || {};
@@ -85,7 +84,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLShortcutsTheme({
       ui: props.ui,
       class: props.class,
@@ -138,7 +137,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
     <Show when={isOpen()}>
       <Portal>
         <div
-          class={resolvedClasses().modal}
+          class={classes().modal}
           data-slot="modal"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeHelp();
@@ -147,19 +146,19 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
         >
           <div
             id={modalId}
-            class={resolvedClasses().dialog}
+            class={classes().dialog}
             data-slot="dialog"
             role="dialog"
             aria-modal="true"
             aria-labelledby={`${modalId}-title`}
           >
-            <div class={resolvedClasses().header} data-slot="header">
-              <h3 id={`${modalId}-title`} class={resolvedClasses().title} data-slot="title">
+            <div class={classes().header} data-slot="header">
+              <h3 id={`${modalId}-title`} class={classes().title} data-slot="title">
                 Keyboard Shortcuts
               </h3>
               <button
                 type="button"
-                class={resolvedClasses().close}
+                class={classes().close}
                 aria-label="Close shortcuts help"
                 onClick={closeHelp}
                 data-slot="close"
@@ -168,36 +167,36 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
               </button>
             </div>
 
-            <div class={resolvedClasses().body} data-slot="body">
+            <div class={classes().body} data-slot="body">
               <Show
                 when={activeShortcutsStore.length > 0}
                 fallback={
-                  <div class={resolvedClasses().empty} data-slot="empty">
+                  <div class={classes().empty} data-slot="empty">
                     No active shortcuts found on this page.
                   </div>
                 }
               >
                 <For each={sections()}>
                   {(section) => (
-                    <div class={resolvedClasses().categorySection} data-slot="category-section">
-                      <h4 class={resolvedClasses().categoryTitle} data-slot="category-title">
+                    <div class={classes().categorySection} data-slot="category-section">
+                      <h4 class={classes().categoryTitle} data-slot="category-title">
                         {section.label}
                       </h4>
-                      <div class={resolvedClasses().grid} data-slot="grid">
+                      <div class={classes().grid} data-slot="grid">
                         <For each={section.items}>
                           {(shortcut) => (
-                            <div class={resolvedClasses().row} data-slot="row">
-                              <div class={resolvedClasses().info} data-slot="info">
-                                <span class={resolvedClasses().name} data-slot="name">
+                            <div class={classes().row} data-slot="row">
+                              <div class={classes().info} data-slot="info">
+                                <span class={classes().name} data-slot="name">
                                   {shortcut.label || shortcut.id}
                                 </span>
                                 <Show when={shortcut.description}>
-                                  <span class={resolvedClasses().desc} data-slot="desc">
+                                  <span class={classes().desc} data-slot="desc">
                                     {shortcut.description}
                                   </span>
                                 </Show>
                               </div>
-                              <div class={resolvedClasses().keys} data-slot="keys">
+                              <div class={classes().keys} data-slot="keys">
                                 <For each={shortcut.keys}>
                                   {(key) => <RLKbd size="sm">{key}</RLKbd>}
                                 </For>
@@ -212,7 +211,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (allProps) => {
               </Show>
             </div>
 
-            <div class={resolvedClasses().footer} data-slot="footer">
+            <div class={classes().footer} data-slot="footer">
               <span class="flex items-center gap-1">
                 Press <RLKbd size="sm">?</RLKbd> or <RLKbd size="sm">Esc</RLKbd> to close
               </span>

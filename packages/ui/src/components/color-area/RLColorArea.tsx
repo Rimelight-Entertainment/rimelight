@@ -184,10 +184,9 @@ const getChannelRange = (channel: string): { min: number; max: number } => {
   }
 };
 
-export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
-  const props = allProps;
+export const RLColorArea: Component<RLColorAreaProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "colorSpace",
     "defaultValue",
     "value",
@@ -250,7 +249,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     },
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLColorAreaTheme({
       color: props.color ?? "primary",
       ui: props.ui,
@@ -494,7 +493,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
 
   return (
     <div
-      class={`${resolvedClasses().root}  ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
+      class={`${classes().root}  ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
       data-slot="root"
       data-color-space={colorSpace}
       data-value={value()}
@@ -506,7 +505,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
     >
       <div
         ref={(el) => (areaRef = el)}
-        class={resolvedClasses().area}
+        class={classes().area}
         data-slot="area"
         style={areaStyle()}
         onPointerDown={handlePointerDown}
@@ -515,7 +514,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
         onPointerCancel={handlePointerUp}
       >
         <div
-          class={resolvedClasses().thumb}
+          class={classes().thumb}
           data-slot="thumb"
           role="slider"
           aria-label="Color Area Thumb"

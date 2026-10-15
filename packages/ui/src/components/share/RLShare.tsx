@@ -2,9 +2,8 @@ import type { RLShareProps } from "./share.types";
 import { createSignal, onCleanup, omit, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 
-export const RLShare: Component<RLShareProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "class", "ui");
+export const RLShare: Component<RLShareProps> = (props) => {
+  const rest = omit(props, "class", "ui");
   const [copied, setCopied] = createSignal(false);
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 

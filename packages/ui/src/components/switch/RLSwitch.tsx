@@ -2,10 +2,9 @@ import type { RLSwitchProps } from "./switch.types";
 import { RLSwitchTheme } from "./switch.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLSwitch: Component<RLSwitchProps> = (allProps) => {
-  const props = allProps;
+export const RLSwitch: Component<RLSwitchProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "ui",
     "class",
     "children",
@@ -18,32 +17,32 @@ export const RLSwitch: Component<RLSwitchProps> = (allProps) => {
     "theme",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLSwitchTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps,
+      ...props,
     }),
   );
 
   return (
-    <label class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <label class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
       <input
         type="checkbox"
-        class={resolvedClasses().input}
+        class={classes().input}
         checked={!!props.checked}
         disabled={props.disabled}
         name={props.name}
       />
-      <div class={resolvedClasses().track} data-slot="track">
-        <div class={resolvedClasses().thumb} data-slot="thumb" />
+      <div class={classes().track} data-slot="track">
+        <div class={classes().thumb} data-slot="thumb" />
       </div>
       {props.label !== undefined && props.label !== null ? (
-        <span class={resolvedClasses().label} data-slot="label">
+        <span class={classes().label} data-slot="label">
           {props.label}
         </span>
       ) : props.children ? (
-        <span class={resolvedClasses().label} data-slot="label">
+        <span class={classes().label} data-slot="label">
           {props.children}
         </span>
       ) : null}

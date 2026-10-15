@@ -3,10 +3,9 @@ import { RLSliderTheme } from "./slider.theme";
 import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
-export const RLSlider: Component<RLSliderProps> = (allProps) => {
-  const props = allProps;
+export const RLSlider: Component<RLSliderProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "value",
     "defaultValue",
     "min",
@@ -55,7 +54,7 @@ export const RLSlider: Component<RLSliderProps> = (allProps) => {
     }
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLSliderTheme({
       color: props.color,
       ui: props.ui,
@@ -64,11 +63,11 @@ export const RLSlider: Component<RLSliderProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="slider-root" data-theme={props.theme} {...rest}>
-      <div class={resolvedClasses().track} data-slot="track">
+    <div class={classes().root} data-slot="slider-root" data-theme={props.theme} {...rest}>
+      <div class={classes().track} data-slot="track">
         <svg class="h-full w-full overflow-visible pointer-events-none">
           <rect
-            class={`${resolvedClasses().range} h-full`}
+            class={`${classes().range} h-full`}
             width={`${percentage()}%`}
             fill="currentColor"
             rx="2"
@@ -93,7 +92,7 @@ export const RLSlider: Component<RLSliderProps> = (allProps) => {
           cx={`${percentage()}%`}
           cy="50%"
           r="8"
-          class={`${resolvedClasses().thumb} pointer-events-auto border-none`}
+          class={`${classes().thumb} pointer-events-auto border-none`}
           data-slot="thumb"
           fill="currentColor"
         />

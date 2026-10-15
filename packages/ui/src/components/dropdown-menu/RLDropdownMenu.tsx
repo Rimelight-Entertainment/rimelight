@@ -4,10 +4,9 @@ import { createSignal, createMemo, omit, onSettled, For, Show, type Component } 
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
-  const props = allProps;
+export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "items",
     "label",
     "icon",
@@ -76,7 +75,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDropdownMenuTheme({
       size: props.size ?? "md",
       ui: props.ui,
@@ -99,7 +98,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
       ref={(el) => {
         menuContainer = el;
       }}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       {...rest}
     >
@@ -115,7 +114,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
           if (next) updatePosition();
           setIsOpen(next);
         }}
-        class={`${resolvedClasses().trigger} ${!props.label && !triggerElement() ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
+        class={`${classes().trigger} ${!props.label && !triggerElement() ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
         data-slot="trigger"
       >
         <Show
@@ -149,7 +148,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
             ref={(el) => {
               menuContentRef = el;
             }}
-            class={resolvedClasses().content}
+            class={classes().content}
             style={{
               position: "fixed",
               "z-index": "99999",
@@ -163,22 +162,22 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
             role="menu"
           >
             <Show when={props.arrow}>
-              <div class={resolvedClasses().arrow} />
+              <div class={classes().arrow} />
             </Show>
-            <div class={resolvedClasses().viewport}>
+            <div class={classes().viewport}>
               <For each={itemGroups()}>
                 {(group, groupIdx) => (
-                  <div class={resolvedClasses().group}>
+                  <div class={classes().group}>
                     <Show when={groupIdx() > 0}>
-                      <div class={resolvedClasses().separator} />
+                      <div class={classes().separator} />
                     </Show>
                     <For each={group}>
                       {(item) => {
                         if (item.type === "separator") {
-                          return <div class={resolvedClasses().separator} />;
+                          return <div class={classes().separator} />;
                         }
                         if (item.type === "label") {
-                          return <div class={resolvedClasses().label}>{item.label}</div>;
+                          return <div class={classes().label}>{item.label}</div>;
                         }
 
                         const itemColor = () =>
@@ -194,7 +193,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               <img
                                 src={item.avatar.src}
                                 alt={item.avatar.alt || item.label || ""}
-                                class={resolvedClasses().itemLeadingAvatar}
+                                class={classes().itemLeadingAvatar}
                               />
                             );
                           }
@@ -203,7 +202,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               <RLIcon
                                 name={item.icon}
                                 size="sm"
-                                class={resolvedClasses().itemLeadingIcon}
+                                class={classes().itemLeadingIcon}
                               />
                             );
                           }
@@ -213,15 +212,13 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                         const renderTrailingContent = () => {
                           if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null;
                           return (
-                            <span class={resolvedClasses().itemTrailing}>
+                            <span class={classes().itemTrailing}>
                               {item.shortcut && (
-                                <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
+                                <span class={classes().shortcut}>{item.shortcut}</span>
                               )}
                               {item.kbds && (
                                 <For each={item.kbds}>
-                                  {(kbd) => (
-                                    <kbd class={resolvedClasses().itemTrailingKbds}>{kbd}</kbd>
-                                  )}
+                                  {(kbd) => <kbd class={classes().itemTrailingKbds}>{kbd}</kbd>}
                                 </For>
                               )}
                             </span>
@@ -233,7 +230,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                             <a
                               href={item.href}
                               target={item.target}
-                              class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
+                              class={`${classes().item} ${itemColor()} ${item.class || ""}`}
                               data-slot="item"
                               role="menuitem"
                               onClick={(e) => {
@@ -242,7 +239,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                               }}
                             >
                               {renderLeadingContent()}
-                              <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                              <span class={classes().itemLabel}>{item.label}</span>
                               {renderTrailingContent()}
                             </a>
                           );
@@ -254,7 +251,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                             <button
                               type="button"
                               disabled={item.disabled}
-                              class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
+                              class={`${classes().item} ${itemColor()} ${item.class || ""}`}
                               data-slot="item"
                               role="menuitemcheckbox"
                               aria-checked={isChecked() ? "true" : "false"}
@@ -270,7 +267,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                                 </Show>
                               </span>
                               {renderLeadingContent()}
-                              <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                              <span class={classes().itemLabel}>{item.label}</span>
                               {renderTrailingContent()}
                             </button>
                           );
@@ -280,7 +277,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                           <button
                             type="button"
                             disabled={item.disabled}
-                            class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
+                            class={`${classes().item} ${itemColor()} ${item.class || ""}`}
                             data-slot="item"
                             role="menuitem"
                             onClick={(e) => {
@@ -289,7 +286,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
                             }}
                           >
                             {renderLeadingContent()}
-                            <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                            <span class={classes().itemLabel}>{item.label}</span>
                             {renderTrailingContent()}
                           </button>
                         );

@@ -2,20 +2,19 @@ import type { RLChatReasoningProps } from "./chat-reasoning.types";
 import { RLChatReasoningTheme } from "./chat-reasoning.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLChatReasoning: Component<RLChatReasoningProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLChatReasoning: Component<RLChatReasoningProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLChatReasoningTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps,
+      ...props,
     }),
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

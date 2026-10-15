@@ -3,18 +3,15 @@ import { RLAspectRatioTheme } from "./aspect-ratio.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
-export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "as", "ratio", "ui", "class", "children");
+export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
+  const rest = omit(props, "as", "ratio", "ui", "class", "children");
 
   const safeRatio = () => {
     const value = props.ratio ?? 1;
     return Number.isFinite(value) && value > 0 ? value : 1;
   };
 
-  const resolvedClasses = createMemo(() =>
-    RLAspectRatioTheme({ ui: props.ui, class: props.class }),
-  );
+  const classes = createMemo(() => RLAspectRatioTheme({ ui: props.ui, class: props.class }));
 
   const spacerHeight = () => (1 / safeRatio()) * 100;
 
@@ -22,11 +19,11 @@ export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
     <>
       <svg
         viewBox={`0 0 100 ${spacerHeight()}`}
-        class={resolvedClasses().spacer}
+        class={classes().spacer}
         data-slot="spacer"
         aria-hidden="true"
       />
-      <div class={resolvedClasses().content} data-slot="content">
+      <div class={classes().content} data-slot="content">
         {props.children}
       </div>
     </>
@@ -35,7 +32,7 @@ export const RLAspectRatio: Component<RLAspectRatioProps> = (allProps) => {
   const Root = dynamic(() => props.as ?? "div");
 
   return (
-    <Root class={resolvedClasses().root} data-slot="root" data-ratio={safeRatio()} {...rest}>
+    <Root class={classes().root} data-slot="root" data-ratio={safeRatio()} {...rest}>
       {inner()}
     </Root>
   );

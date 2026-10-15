@@ -13,10 +13,9 @@ import {
   rgbToHsl,
 } from "../color-picker/color";
 
-export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
-  const props = allProps;
+export const RLColorField: Component<RLColorFieldProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "channel",
     "colorSpace",
     "defaultValue",
@@ -177,7 +176,7 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
     updateFromChannelValue(currentVal + stepSize);
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLColorFieldTheme({
       color: props.color,
       ui: props.ui,
@@ -187,7 +186,7 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-theme={props.theme}
       data-channel={props.channel}
@@ -204,7 +203,7 @@ export const RLColorField: Component<RLColorFieldProps> = (allProps) => {
       />
       <input
         type="text"
-        class={resolvedClasses().input}
+        class={classes().input}
         placeholder={props.placeholder}
         required={props.required}
         disabled={props.disabled}

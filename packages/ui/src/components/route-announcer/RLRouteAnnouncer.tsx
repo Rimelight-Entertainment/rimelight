@@ -38,7 +38,7 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
   const resolvedSize = (): RLRouteAnnouncerProgressSize =>
     progressOptions()?.size ?? props.size ?? "sm";
 
-  const slots = () =>
+  const classes = () =>
     RLRouteAnnouncerTheme({
       color: resolvedColor(),
       size: resolvedSize(),
@@ -47,9 +47,9 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
     });
 
   return (
-    <div class={slots().root}>
+    <div class={classes().root}>
       {/* 1. Visually-hidden live region for screen readers */}
-      <div aria-live="polite" aria-atomic="true" role="status" class={slots().announcer}>
+      <div aria-live="polite" aria-atomic="true" role="status" class={classes().announcer}>
         {announcement()}
       </div>
 
@@ -60,9 +60,9 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
           aria-label="Page loading"
           aria-valuemin={0}
           aria-valuemax={100}
-          class={`${slots().progressBar} ${progressOptions()?.class ?? ""}`.trim()}
+          class={`${classes().progressBar} ${progressOptions()?.class ?? ""}`.trim()}
         >
-          <div class={slots().progressIndicator} />
+          <div class={classes().progressIndicator} />
         </div>
       </Show>
     </div>

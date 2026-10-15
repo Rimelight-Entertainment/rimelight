@@ -56,14 +56,13 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
   return null;
 }
 
-export const RLVideo: Component<RLVideoProps> = (allProps) => {
-  const props = allProps;
+export const RLVideo: Component<RLVideoProps> = (props) => {
   const resolvedChildren = children(() => props.children);
   const resolvedIconSlot = children(() => props.iconSlot);
   const resolvedTranscriptSlot = children(() => props.transcriptSlot);
 
   const rest = omit(
-    allProps,
+    props,
     "src",
     "title",
     "icon",
@@ -89,7 +88,7 @@ export const RLVideo: Component<RLVideoProps> = (allProps) => {
   const iconName = () => props.icon || "play";
   const isPlayable = () => Boolean(embedUrl());
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLVideoTheme({
       title: !!props.title,
       icon: !!props.icon,
@@ -100,13 +99,13 @@ export const RLVideo: Component<RLVideoProps> = (allProps) => {
 
   return (
     <div>
-      <div class={resolvedClasses().root} data-slot="root" {...rest}>
+      <div class={classes().root} data-slot="root" {...rest}>
         <Show
           when={isPlaying() && embedUrl()}
           fallback={
             <button
               type="button"
-              class={resolvedClasses().trigger}
+              class={classes().trigger}
               data-slot="trigger"
               aria-label={isPlayable() ? "Play YouTube Video" : "YouTube Video Unavailable"}
               disabled={!isPlayable()}
@@ -116,7 +115,7 @@ export const RLVideo: Component<RLVideoProps> = (allProps) => {
                 src={props.thumbnail || defaultThumbnail()}
                 alt={titleText()}
                 loading="lazy"
-                class={resolvedClasses().image}
+                class={classes().image}
                 data-slot="image"
               />
 
@@ -125,7 +124,7 @@ export const RLVideo: Component<RLVideoProps> = (allProps) => {
               ) : (
                 <RLIcon
                   name={iconName()}
-                  class={resolvedClasses().icon}
+                  class={classes().icon}
                   data-slot="icon"
                   aria-hidden="true"
                 />
@@ -140,14 +139,14 @@ export const RLVideo: Component<RLVideoProps> = (allProps) => {
             allowfullscreen
             loading="lazy"
             referrerpolicy="strict-origin-when-cross-origin"
-            class={resolvedClasses().iframe}
+            class={classes().iframe}
             data-slot="iframe"
           />
         </Show>
       </div>
 
       <Show when={resolvedTranscriptSlot() || resolvedChildren()}>
-        <div class={resolvedClasses().transcript} data-slot="transcript">
+        <div class={classes().transcript} data-slot="transcript">
           {resolvedTranscriptSlot() ? resolvedTranscriptSlot() : resolvedChildren()}
         </div>
       </Show>

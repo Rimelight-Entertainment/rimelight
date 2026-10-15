@@ -2,9 +2,8 @@ import type { RLLabelProps } from "./label.types";
 import { RLLabelTheme } from "./label.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLLabel: Component<RLLabelProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "for", "size", "ui", "class", "children");
+export const RLLabel: Component<RLLabelProps> = (props) => {
+  const rest = omit(props, "for", "size", "ui", "class", "children");
 
   const classes = createMemo(() =>
     RLLabelTheme({

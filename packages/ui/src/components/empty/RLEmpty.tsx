@@ -5,8 +5,7 @@ import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLEmpty: Component<RLEmptyProps> = (allProps) => {
-  const props = allProps;
+export const RLEmpty: Component<RLEmptyProps> = (props) => {
   const resolvedChildren = children(() => props.children);
   const resolvedHeaderSlot = children(() => props.headerSlot);
   const resolvedLeadingSlot = children(() => props.leadingSlot);
@@ -17,7 +16,7 @@ export const RLEmpty: Component<RLEmptyProps> = (allProps) => {
   const resolvedFooterSlot = children(() => props.footerSlot);
 
   const rest = omit(
-    allProps,
+    props,
     "icon",
     "avatar",
     "loading",

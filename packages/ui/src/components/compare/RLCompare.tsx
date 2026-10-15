@@ -12,10 +12,9 @@ import {
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLCompare: Component<RLCompareProps> = (allProps) => {
-  const props = allProps;
+export const RLCompare: Component<RLCompareProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "value",
     "defaultValue",
     "min",
@@ -211,7 +210,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
     },
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLCompareTheme({
       orientation: orientation(),
       size: props.size ?? "md",
@@ -258,7 +257,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
         <img
           src={props.beforeSrc}
           alt={props.beforeAlt ?? "Before"}
-          class={resolvedClasses().image}
+          class={classes().image}
           draggable={false}
         />
       );
@@ -282,7 +281,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
         <img
           src={props.afterSrc}
           alt={props.afterAlt ?? "After"}
-          class={resolvedClasses().image}
+          class={classes().image}
           draggable={false}
         />
       );
@@ -307,9 +306,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
         ? "chevrons-up-down"
         : "grip-horizontal";
 
-    return (
-      <RLIcon name={defaultIconName} class={resolvedClasses().handleIcon} aria-hidden="true" />
-    );
+    return <RLIcon name={defaultIconName} class={classes().handleIcon} aria-hidden="true" />;
   };
 
   const clipStyle = () => ({
@@ -329,7 +326,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
   return (
     <Root
       ref={(el: HTMLElement) => (rootRef = el)}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-orientation={orientation()}
       data-disabled={isDisabled() ? "true" : undefined}
@@ -340,21 +337,21 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
       onPointerCancel={handlePointerUp}
       {...rest}
     >
-      <div class={resolvedClasses().container} data-slot="container">
+      <div class={classes().container} data-slot="container">
         {/* Base Layer: After */}
-        <div class={resolvedClasses().after} data-slot="after">
+        <div class={classes().after} data-slot="after">
           {renderAfterContent()}
         </div>
 
         {/* Clipped Top Layer: Before */}
-        <div class={resolvedClasses().before} data-slot="before" style={clipStyle()}>
+        <div class={classes().before} data-slot="before" style={clipStyle()}>
           {renderBeforeContent()}
         </div>
 
         {/* Before Label */}
         {shouldShowLabels() && props.beforeLabel ? (
           <span
-            class={`${resolvedClasses().beforeLabel} ${beforeLabelPlacementClass()}`}
+            class={`${classes().beforeLabel} ${beforeLabelPlacementClass()}`}
             data-slot="before-label"
           >
             {props.beforeLabel}
@@ -364,7 +361,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
         {/* After Label */}
         {shouldShowLabels() && props.afterLabel ? (
           <span
-            class={`${resolvedClasses().afterLabel} ${afterLabelPlacementClass()}`}
+            class={`${classes().afterLabel} ${afterLabelPlacementClass()}`}
             data-slot="after-label"
           >
             {props.afterLabel}
@@ -374,7 +371,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
         {/* Divider Line */}
         {showDivider() ? (
           <div
-            class={resolvedClasses().divider}
+            class={classes().divider}
             data-slot="divider"
             style={dividerStyle()}
             aria-hidden="true"
@@ -384,7 +381,7 @@ export const RLCompare: Component<RLCompareProps> = (allProps) => {
         {/* Interactive Handle */}
         {showHandle() ? (
           <div
-            class={resolvedClasses().handle}
+            class={classes().handle}
             data-slot="handle"
             role="slider"
             tabindex={isDisabled() ? -1 : 0}

@@ -11,10 +11,9 @@ import {
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
-  const props = allProps;
+export const RLDrawer: Component<RLDrawerProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "open",
     "defaultOpen",
     "direction",
@@ -84,7 +83,7 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDrawerTheme({
       direction: props.direction ?? "bottom",
       ui: props.ui,
@@ -96,10 +95,10 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
   const footerContent = () => props.footer ?? props.footerSlot;
 
   return (
-    <div class={resolvedClasses().root} data-slot="drawer-container">
+    <div class={classes().root} data-slot="drawer-container">
       {props.triggerLabel ? (
         <button
-          class={resolvedClasses().trigger}
+          class={classes().trigger}
           data-slot="trigger"
           type="button"
           onClick={() => handleOpenChange(true)}
@@ -113,16 +112,16 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
       <Show when={isOpen()}>
         <dialog
           ref={(el) => (dialogRef = el)}
-          class={`${resolvedClasses().content} ${isOpen() ? "" : "hidden"}`}
+          class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
           data-slot="content"
           aria-modal="true"
           data-state={isOpen() ? "open" : "closed"}
           {...rest}
         >
-          <div class={resolvedClasses().handle} data-slot="handle" />
+          <div class={classes().handle} data-slot="handle" />
 
           <button
-            class={resolvedClasses().closeButton}
+            class={classes().closeButton}
             data-slot="close-button"
             type="button"
             aria-label="Close drawer"
@@ -131,11 +130,11 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
             <RLIcon name="x" size="sm" aria-hidden="true" />
           </button>
 
-          <div class={resolvedClasses().header} data-slot="header">
+          <div class={classes().header} data-slot="header">
             {props.titleSlot ? (
               props.titleSlot
             ) : props.title ? (
-              <h3 class={resolvedClasses().title} data-slot="title">
+              <h3 class={classes().title} data-slot="title">
                 {props.title}
               </h3>
             ) : null}
@@ -143,7 +142,7 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
             {props.descriptionSlot ? (
               props.descriptionSlot
             ) : props.description ? (
-              <p class={resolvedClasses().description} data-slot="description">
+              <p class={classes().description} data-slot="description">
                 {props.description}
               </p>
             ) : null}
@@ -152,7 +151,7 @@ export const RLDrawer: Component<RLDrawerProps> = (allProps) => {
           {props.children}
 
           {footerContent() ? (
-            <div class={resolvedClasses().footer} data-slot="footer">
+            <div class={classes().footer} data-slot="footer">
               {footerContent()}
             </div>
           ) : null}

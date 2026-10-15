@@ -53,10 +53,9 @@ function generateDefaultPeaks(count = 36): number[] {
 
 const SPEED_OPTIONS = [0.5, 1, 1.25, 1.5, 2, 3, 4];
 
-export const RLAudio: Component<RLAudioProps> = (allProps) => {
-  const props = allProps;
+export const RLAudio: Component<RLAudioProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "src",
     "title",
     "description",
@@ -177,7 +176,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
   const artworkZoomable = () => props.artworkZoomable ?? true;
   const skipSecs = () => props.skipSeconds ?? 15;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLAudioTheme({
       variant: props.variant ?? "outline",
       orientation: orientation(),
@@ -534,7 +533,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
     if (orientation() === "vertical") {
       return (
-        <div class={resolvedClasses().artwork} data-slot="artwork">
+        <div class={classes().artwork} data-slot="artwork">
           <RLAspectRatio ratio={1} class="w-full">
             {imageElement()}
           </RLAspectRatio>
@@ -543,7 +542,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
     }
 
     return (
-      <div class={resolvedClasses().artwork} data-slot="artwork">
+      <div class={classes().artwork} data-slot="artwork">
         {imageElement()}
       </div>
     );
@@ -551,7 +550,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       role="region"
       aria-label={trackTitle() ? `${trackTitle()} audio player` : "Audio player"}
@@ -580,12 +579,12 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
         </For>
       </audio>
 
-      <div class={resolvedClasses().container} data-slot="container">
+      <div class={classes().container} data-slot="container">
         {/* 1. Header with Artwork, Track Details & Top Actions */}
         <Show
           when={resolvedHeaderSlot()}
           fallback={
-            <div class={resolvedClasses().header} data-slot="header">
+            <div class={classes().header} data-slot="header">
               {renderArtwork()}
 
               <Show
@@ -597,19 +596,19 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   trackBitrate()
                 }
               >
-                <div class={resolvedClasses().details} data-slot="details">
+                <div class={classes().details} data-slot="details">
                   <Show when={trackTitle()}>
-                    <span id={titleId} class={resolvedClasses().title} data-slot="title">
+                    <span id={titleId} class={classes().title} data-slot="title">
                       {trackTitle()}
                     </span>
                   </Show>
                   <Show when={trackDescription()}>
-                    <span id={descId} class={resolvedClasses().description} data-slot="description">
+                    <span id={descId} class={classes().description} data-slot="description">
                       {trackDescription()}
                     </span>
                   </Show>
                   <Show when={trackFormat() || trackFileSize() || trackBitrate()}>
-                    <div class={resolvedClasses().metaBadge} data-slot="meta-badge">
+                    <div class={classes().metaBadge} data-slot="meta-badge">
                       <Show when={trackFormat()}>
                         <span>{trackFormat()}</span>
                       </Show>
@@ -636,14 +635,14 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
               {/* Optional Top Right Download & External Link Actions */}
               <Show when={showDownload() || showExternalLink()}>
-                <div class={resolvedClasses().actions} data-slot="actions">
+                <div class={classes().actions} data-slot="actions">
                   <Show when={showDownload() && currentMediaSrc()}>
                     <a
                       href={currentMediaSrc()}
                       download={trackTitle() ? `${trackTitle()}.mp3` : "audio.mp3"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class={resolvedClasses().actionButton}
+                      class={classes().actionButton}
                       data-slot="download-button"
                       aria-label="Download audio track"
                       title="Download audio track"
@@ -657,7 +656,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                       href={activeExternalUrl()}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class={resolvedClasses().actionButton}
+                      class={classes().actionButton}
                       data-slot="external-link-button"
                       aria-label="Open source link"
                       title="Open source link"
@@ -677,21 +676,21 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
         <Show
           when={resolvedTimelineSlot()}
           fallback={
-            <div class={resolvedClasses().timeline} data-slot="timeline">
+            <div class={classes().timeline} data-slot="timeline">
               <div
-                class={`${resolvedClasses().progressContainer} ${progressColorClass()}`}
+                class={`${classes().progressContainer} ${progressColorClass()}`}
                 data-slot="progress-container"
               >
                 <Show
                   when={progressVariant() === "waveform"}
                   fallback={
-                    <div class={resolvedClasses().progressTrack} data-slot="progress-track">
+                    <div class={classes().progressTrack} data-slot="progress-track">
                       <svg
                         class="h-full w-full overflow-visible pointer-events-none"
                         aria-hidden="true"
                       >
                         <rect
-                          class={resolvedClasses().progressRange}
+                          class={classes().progressRange}
                           data-slot="progress-range"
                           width={`${progressPercent()}%`}
                           fill="currentColor"
@@ -718,7 +717,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   }
                 >
                   <div
-                    class={resolvedClasses().waveformContainer}
+                    class={classes().waveformContainer}
                     data-slot="waveform-container"
                     role="slider"
                     tabindex={0}
@@ -735,7 +734,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                     }}
                   >
                     <svg
-                      class={resolvedClasses().waveformSvg}
+                      class={classes().waveformSvg}
                       viewBox={`0 0 ${peaks().length * 6} 100`}
                       preserveAspectRatio="none"
                       aria-hidden="true"
@@ -756,8 +755,8 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                               width="3"
                               height={height()}
                               rx="1.5"
-                              class={`${resolvedClasses().waveformBar} ${
-                                isActive() ? resolvedClasses().waveformBarActive : ""
+                              class={`${classes().waveformBar} ${
+                                isActive() ? classes().waveformBarActive : ""
                               }`}
                               fill="currentColor"
                             />
@@ -771,11 +770,11 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
               {/* Time Display */}
               <Show when={showTime()}>
-                <div class={resolvedClasses().timeDisplay} data-slot="time-display" aria-live="off">
-                  <span class={resolvedClasses().timeCurrent} data-slot="time-current">
+                <div class={classes().timeDisplay} data-slot="time-display" aria-live="off">
+                  <span class={classes().timeCurrent} data-slot="time-current">
                     {formatTime(currentTime())}
                   </span>
-                  <span class={resolvedClasses().timeDuration} data-slot="time-duration">
+                  <span class={classes().timeDuration} data-slot="time-duration">
                     {formatTime(duration())}
                   </span>
                 </div>
@@ -790,18 +789,18 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
         <Show
           when={resolvedControlsSlot()}
           fallback={
-            <div class={resolvedClasses().controls} data-slot="controls">
+            <div class={classes().controls} data-slot="controls">
               {/* Bottom-Left: Vertical Volume Popover & Mute */}
-              <div class={resolvedClasses().controlsLeft} data-slot="controls-left">
+              <div class={classes().controlsLeft} data-slot="controls-left">
                 <Show when={showVolume()}>
-                  <div class={resolvedClasses().volumeContainer} data-slot="volume-container">
+                  <div class={classes().volumeContainer} data-slot="volume-container">
                     <RLPopover
                       placement="top"
                       mode="click"
                       ui={{
                         root: () => "relative inline-flex items-center justify-center",
                         trigger: () => "inline-flex items-center justify-center",
-                        content: () => resolvedClasses().volumePopover,
+                        content: () => classes().volumePopover,
                       }}
                       trigger={
                         <button
@@ -811,7 +810,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                             e.stopPropagation();
                             toggleMute();
                           }}
-                          class={resolvedClasses().volumeButton}
+                          class={classes().volumeButton}
                           data-slot="volume-button"
                           aria-label={
                             isMuted()
@@ -822,20 +821,20 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                         >
                           <RLIcon
                             name={volumeIconName()}
-                            class={resolvedClasses().volumeIcon}
+                            class={classes().volumeIcon}
                             aria-hidden="true"
                           />
                         </button>
                       }
                     >
                       <Show when={showVolumeNumber()}>
-                        <span class={resolvedClasses().volumeText} data-slot="volume-text">
+                        <span class={classes().volumeText} data-slot="volume-text">
                           {Math.round(volumePercent())}%
                         </span>
                       </Show>
 
                       <div
-                        class={resolvedClasses().volumeSlider}
+                        class={classes().volumeSlider}
                         data-slot="volume-slider"
                         onClick={(e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
@@ -853,7 +852,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                           props.onVolumeChange?.(v, isMuted());
                         }}
                       >
-                        <div class={resolvedClasses().volumeTrack} data-slot="volume-track">
+                        <div class={classes().volumeTrack} data-slot="volume-track">
                           <svg
                             class="h-full w-full overflow-visible pointer-events-none"
                             viewBox="0 0 6 100"
@@ -867,7 +866,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                               height={volumePercent()}
                               rx="3"
                               fill="currentColor"
-                              class={resolvedClasses().volumeRange}
+                              class={classes().volumeRange}
                             />
                           </svg>
                           <input
@@ -892,20 +891,20 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
               </div>
 
               {/* Center: Prev Track, Skip Back (>> double triangle), Play/Pause, Skip Fwd (>> double triangle), Next Track */}
-              <div class={resolvedClasses().controlsCenter} data-slot="controls-center">
+              <div class={classes().controlsCenter} data-slot="controls-center">
                 {/* Previous Track Button (for playlists) */}
                 <Show when={playlist().length > 1}>
                   <button
                     type="button"
                     onClick={prevTrack}
-                    class={resolvedClasses().navButton}
+                    class={classes().navButton}
                     data-slot="nav-button-prev"
                     aria-label="Previous track"
                     disabled={activeTrackIndex() === 0 && repeatMode() !== "all"}
                   >
                     <RLIcon
                       name={prevTrackIconName()}
-                      class={resolvedClasses().navIcon}
+                      class={classes().navIcon}
                       aria-hidden="true"
                     />
                   </button>
@@ -916,16 +915,16 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   <button
                     type="button"
                     onClick={() => handleSkip(-skipSecs())}
-                    class={resolvedClasses().skipButton}
+                    class={classes().skipButton}
                     data-slot="skip-button-back"
                     aria-label={`Skip backward ${skipSecs()} seconds`}
                   >
                     <RLIcon
                       name={skipBackIconName()}
-                      class={resolvedClasses().skipIcon}
+                      class={classes().skipIcon}
                       aria-hidden="true"
                     />
-                    <span class={resolvedClasses().skipBadge} data-slot="skip-badge">
+                    <span class={classes().skipBadge} data-slot="skip-badge">
                       {skipSecs()}
                     </span>
                   </button>
@@ -935,13 +934,13 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                 <button
                   type="button"
                   onClick={togglePlay}
-                  class={resolvedClasses().playButton}
+                  class={classes().playButton}
                   data-slot="play-button"
                   aria-label={isPlaying() ? "Pause audio" : "Play audio"}
                 >
                   <RLIcon
                     name={isPlaying() ? pauseIconName() : playIconName()}
-                    class={resolvedClasses().playIcon}
+                    class={classes().playIcon}
                     aria-hidden="true"
                   />
                 </button>
@@ -951,16 +950,16 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   <button
                     type="button"
                     onClick={() => handleSkip(skipSecs())}
-                    class={resolvedClasses().skipButton}
+                    class={classes().skipButton}
                     data-slot="skip-button-forward"
                     aria-label={`Skip forward ${skipSecs()} seconds`}
                   >
                     <RLIcon
                       name={skipForwardIconName()}
-                      class={resolvedClasses().skipIcon}
+                      class={classes().skipIcon}
                       aria-hidden="true"
                     />
-                    <span class={resolvedClasses().skipBadge} data-slot="skip-badge">
+                    <span class={classes().skipBadge} data-slot="skip-badge">
                       {skipSecs()}
                     </span>
                   </button>
@@ -971,7 +970,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   <button
                     type="button"
                     onClick={nextTrack}
-                    class={resolvedClasses().navButton}
+                    class={classes().navButton}
                     data-slot="nav-button-next"
                     aria-label="Next track"
                     disabled={
@@ -980,7 +979,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   >
                     <RLIcon
                       name={nextTrackIconName()}
-                      class={resolvedClasses().navIcon}
+                      class={classes().navIcon}
                       aria-hidden="true"
                     />
                   </button>
@@ -988,13 +987,13 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
               </div>
 
               {/* Bottom-Right: Repeat Mode & Playback Speed */}
-              <div class={resolvedClasses().controlsRight} data-slot="controls-right">
+              <div class={classes().controlsRight} data-slot="controls-right">
                 {/* Repeat Mode Toggle Button */}
                 <Show when={showRepeat()}>
                   <button
                     type="button"
                     onClick={cycleRepeatMode}
-                    class={`${resolvedClasses().repeatButton} ${
+                    class={`${classes().repeatButton} ${
                       repeatMode() !== "off" ? "text-primary bg-primary/10" : "text-muted"
                     }`}
                     data-slot="repeat-button"
@@ -1002,7 +1001,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                   >
                     <RLIcon
                       name={repeatIconName()}
-                      class={resolvedClasses().repeatIcon}
+                      class={classes().repeatIcon}
                       aria-hidden="true"
                     />
                   </button>
@@ -1010,7 +1009,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
                 {/* Playback Speed Selector */}
                 <Show when={showSpeed()}>
-                  <div class={resolvedClasses().speedContainer} data-slot="speed-container">
+                  <div class={classes().speedContainer} data-slot="speed-container">
                     <Show
                       when={isEditingSpeed()}
                       fallback={
@@ -1021,7 +1020,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                             e.preventDefault();
                             setIsEditingSpeed(true);
                           }}
-                          class={resolvedClasses().speedButton}
+                          class={classes().speedButton}
                           data-slot="speed-button"
                           aria-label={`Playback speed ${playbackRate()}x (right click to type)`}
                           title="Click to cycle, right-click to enter value"
@@ -1035,7 +1034,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                         min="0.1"
                         step="0.05"
                         value={playbackRate()}
-                        class={resolvedClasses().speedInput}
+                        class={classes().speedInput}
                         data-slot="speed-input"
                         aria-label="Set specific playback speed"
                         onBlur={(e) => {
@@ -1063,13 +1062,13 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
         {/* 4. Playlist / Queue View */}
         <Show when={showPlaylist() && playlist().length > 1}>
-          <div class={resolvedClasses().playlistContainer} data-slot="playlist-container">
-            <div class={resolvedClasses().playlistHeader} data-slot="playlist-header">
-              <span class={resolvedClasses().playlistTitle} data-slot="playlist-title">
+          <div class={classes().playlistContainer} data-slot="playlist-container">
+            <div class={classes().playlistHeader} data-slot="playlist-header">
+              <span class={classes().playlistTitle} data-slot="playlist-title">
                 Playlist ({playlist().length} tracks)
               </span>
             </div>
-            <div class={resolvedClasses().playlistList} data-slot="playlist-list" role="listbox">
+            <div class={classes().playlistList} data-slot="playlist-list" role="listbox">
               <For each={playlist()}>
                 {(item, idx) => {
                   const isActive = () => idx() === activeTrackIndex();
@@ -1078,26 +1077,24 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
                       role="option"
                       aria-selected={isActive() ? "true" : "false"}
                       onClick={() => selectTrack(idx())}
-                      class={`${resolvedClasses().playlistItem} ${
-                        isActive() ? resolvedClasses().playlistItemActive : ""
+                      class={`${classes().playlistItem} ${
+                        isActive() ? classes().playlistItemActive : ""
                       }`}
                       data-slot="playlist-item"
                     >
                       <div class="flex items-center gap-2 min-w-0">
                         <span class="text-[10px] font-mono opacity-60 w-4">{idx() + 1}.</span>
                         <div class="min-w-0">
-                          <p class={resolvedClasses().playlistItemTitle}>
+                          <p class={classes().playlistItemTitle}>
                             {item.title || `Track ${idx() + 1}`}
                           </p>
                           <Show when={item.description}>
-                            <p class={resolvedClasses().playlistItemDescription}>
-                              {item.description}
-                            </p>
+                            <p class={classes().playlistItemDescription}>{item.description}</p>
                           </Show>
                         </div>
                       </div>
                       <Show when={item.duration}>
-                        <span class={resolvedClasses().playlistItemDuration}>
+                        <span class={classes().playlistItemDuration}>
                           {formatTime(item.duration!)}
                         </span>
                       </Show>
@@ -1116,11 +1113,11 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
 
         {/* 6. Transcript Collapsible Section */}
         <Show when={trackTranscript() !== undefined}>
-          <div class={resolvedClasses().transcript} data-slot="transcript">
+          <div class={classes().transcript} data-slot="transcript">
             <button
               type="button"
               onClick={() => setIsTranscriptOpen(!isTranscriptOpen())}
-              class={resolvedClasses().transcriptToggle}
+              class={classes().transcriptToggle}
               data-slot="transcript-toggle"
               aria-expanded={isTranscriptOpen() ? "true" : "false"}
             >
@@ -1132,7 +1129,7 @@ export const RLAudio: Component<RLAudioProps> = (allProps) => {
               <span>{isTranscriptOpen() ? "Hide transcript" : "Show transcript"}</span>
             </button>
             <Show when={isTranscriptOpen()}>
-              <div class={resolvedClasses().transcriptContent} data-slot="transcript-content">
+              <div class={classes().transcriptContent} data-slot="transcript-content">
                 {trackTranscript()}
               </div>
             </Show>

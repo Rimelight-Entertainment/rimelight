@@ -2,10 +2,9 @@ import type { RLFormFieldProps } from "./form-field.types";
 import { RLFormFieldTheme } from "./form-field.theme";
 import { createMemo, omit, children, type Component, Show } from "solid-js";
 
-export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
-  const props = allProps;
+export const RLFormField: Component<RLFormFieldProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "id",
     "label",
     "description",
@@ -22,7 +21,7 @@ export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
     "helpSlot",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLFormFieldTheme({
       size: props.size ?? "md",
       ui: props.ui,
@@ -37,10 +36,10 @@ export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
   const resolvedHelpSlot = children(() => props.helpSlot);
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       <Show when={props.label || resolvedLabelSlot() || resolvedHint()}>
         <div class="flex items-center justify-between gap-2">
-          <label for={props.id} class={resolvedClasses().label} data-slot="label">
+          <label for={props.id} class={classes().label} data-slot="label">
             {resolvedLabelSlot() ? resolvedLabelSlot() : props.label}
             <Show when={props.required}>
               <span class="text-error-500 ml-0.5">*</span>
@@ -51,7 +50,7 @@ export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
       </Show>
 
       <Show when={props.description || resolvedDescriptionSlot()}>
-        <p class={resolvedClasses().description} data-slot="description">
+        <p class={classes().description} data-slot="description">
           {resolvedDescriptionSlot() ? resolvedDescriptionSlot() : props.description}
         </p>
       </Show>
@@ -59,7 +58,7 @@ export const RLFormField: Component<RLFormFieldProps> = (allProps) => {
       <div class="relative w-full">{props.children}</div>
 
       <Show when={props.error || resolvedErrorSlot()}>
-        <p class={resolvedClasses().error} data-slot="error">
+        <p class={classes().error} data-slot="error">
           {resolvedErrorSlot() ? resolvedErrorSlot() : props.error}
         </p>
       </Show>

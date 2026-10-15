@@ -10,17 +10,8 @@ import {
   type Component,
 } from "solid-js";
 
-export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(
-    allProps,
-    "orientation",
-    "scrollHideDelay",
-    "height",
-    "ui",
-    "class",
-    "children",
-  );
+export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
+  const rest = omit(props, "orientation", "scrollHideDelay", "height", "ui", "class", "children");
 
   const orientation = () => props.orientation ?? "vertical";
   const hideDelay = () => props.scrollHideDelay ?? 600;
@@ -137,7 +128,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     },
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLScrollAreaTheme({
       orientation: orientation(),
       ui: props.ui,
@@ -154,7 +145,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
 
   return (
     <div
-      class={`${resolvedClasses().root} ${heightClass()}`}
+      class={`${classes().root} ${heightClass()}`}
       data-slot="root"
       data-scroll-area
       data-orientation={orientation()}
@@ -163,7 +154,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
     >
       <div
         ref={(el) => (viewportRef = el)}
-        class={resolvedClasses().viewport}
+        class={classes().viewport}
         data-slot="viewport"
         data-scroll-viewport
         onScroll={handleScroll}
@@ -174,7 +165,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
       <Show when={orientation() === "vertical" || orientation() === "both"}>
         <div
           ref={(el) => (vBarRef = el)}
-          class={`${resolvedClasses().scrollbar} transition-opacity ${
+          class={`${classes().scrollbar} transition-opacity ${
             barsVisible() ? "opacity-100" : "opacity-0"
           }`}
           data-slot="scrollbar"
@@ -183,7 +174,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
         >
           <div
             ref={(el) => (vThumbRef = el)}
-            class={resolvedClasses().thumb}
+            class={classes().thumb}
             data-scroll-thumb="vertical"
           />
         </div>
@@ -201,7 +192,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (allProps) => {
         >
           <div
             ref={(el) => (hThumbRef = el)}
-            class={resolvedClasses().thumb}
+            class={classes().thumb}
             data-scroll-thumb="horizontal"
           />
         </div>

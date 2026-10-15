@@ -2,10 +2,9 @@ import type { RLFooterProps } from "./footer.types";
 import { RLFooterTheme } from "./footer.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLFooter: Component<RLFooterProps> = (allProps) => {
-  const props = allProps;
+export const RLFooter: Component<RLFooterProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "contain",
     "theme",
     "ui",
@@ -16,7 +15,7 @@ export const RLFooter: Component<RLFooterProps> = (allProps) => {
     "children",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLFooterTheme({
       contain: props.contain,
       ui: props.ui,
@@ -26,20 +25,20 @@ export const RLFooter: Component<RLFooterProps> = (allProps) => {
 
   return (
     <footer
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-contain={props.contain ? "true" : "false"}
       data-theme={props.theme}
       {...rest}
     >
-      <div class={resolvedClasses().container} data-slot="container">
-        <div class={resolvedClasses().left} data-slot="left">
+      <div class={classes().container} data-slot="container">
+        <div class={classes().left} data-slot="left">
           {props.left}
         </div>
-        <div class={resolvedClasses().center} data-slot="center">
+        <div class={classes().center} data-slot="center">
           {props.center}
         </div>
-        <div class={resolvedClasses().right} data-slot="right">
+        <div class={classes().right} data-slot="right">
           {props.right}
         </div>
       </div>

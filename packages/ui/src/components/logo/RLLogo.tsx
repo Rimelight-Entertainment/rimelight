@@ -3,10 +3,9 @@ import { RLLogoTheme } from "./logo.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { getUIConfig } from "../../resolver";
 
-export const RLLogo: Component<RLLogoProps> = (allProps) => {
-  const props = allProps;
+export const RLLogo: Component<RLLogoProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "variant",
     "mode",
@@ -90,7 +89,7 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
     return Boolean(darkSrc && lightSrc && darkSrc !== lightSrc && !props.mode);
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLLogoTheme({
       variant: variant(),
       ui: props.ui,
@@ -127,7 +126,7 @@ export const RLLogo: Component<RLLogoProps> = (allProps) => {
 
   const rootProps = {
     get class() {
-      return resolvedClasses().root;
+      return classes().root;
     },
     get "aria-label"() {
       return props.alt || variant();

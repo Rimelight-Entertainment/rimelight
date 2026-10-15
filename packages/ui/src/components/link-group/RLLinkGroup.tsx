@@ -4,10 +4,9 @@ import { createMemo, omit, For, Show, type Component } from "solid-js";
 import { RLLink } from "../link/RLLink";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
-  const props = allProps;
+export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "label",
     "leadingIcon",
     "trailingIcon",
@@ -19,7 +18,7 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
     "children",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLLinkGroupTheme({
       ui: props.ui,
       class: props.class,
@@ -32,10 +31,10 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
   });
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <div class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
       <Show when={props.label}>
         {(label) => (
-          <h4 class={resolvedClasses().title} data-slot="title">
+          <h4 class={classes().title} data-slot="title">
             <Show
               when={props.href}
               fallback={
@@ -66,14 +65,14 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
         )}
       </Show>
 
-      <ul class={resolvedClasses().list} data-slot="list">
+      <ul class={classes().list} data-slot="list">
         <Show when={!props.children} fallback={props.children}>
           <For each={normalizedLinks()}>
             {(link) => (
-              <li class={resolvedClasses().item} data-slot="item">
+              <li class={classes().item} data-slot="item">
                 <RLLink
                   theme={link.theme ?? props.theme}
-                  class={`${resolvedClasses().link} w-full !justify-start`}
+                  class={`${classes().link} w-full !justify-start`}
                   data-slot="link"
                   {...link}
                 />

@@ -178,9 +178,7 @@ const numpadPositions: [number, number][] = [
   [2, 4],
 ];
 
-export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
-  const props = allProps;
-
+export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
   const keyGap = (): number => props.keyGap ?? 8;
   const sectionGap = (): number => props.sectionGap ?? 40;
   const keySize = (): number => props.keySize ?? 40;
@@ -334,18 +332,18 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
     ...numpadRenderKeys(),
   ]);
 
-  const theme = createMemo(() =>
+  const classes = createMemo(() =>
     RLKeyboardTheme({
       class: props.class,
     }),
   );
 
   return (
-    <div class={theme().root}>
-      <div class={theme().container}>
+    <div class={classes().root}>
+      <div class={classes().container}>
         <svg
           viewBox={`-16 -16 ${totalWidth() + 32} ${finalHeight() + 64}`}
-          class={theme().svg}
+          class={classes().svg}
           preserveAspectRatio="xMidYMid meet"
         >
           <Show when={backgroundColor() !== "transparent"}>
@@ -366,7 +364,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
               const label = getKeyLabel(key);
 
               return (
-                <g class={`${theme().keyGroup} ${highlight.active ? "highlighted" : ""}`}>
+                <g class={`${classes().keyGroup} ${highlight.active ? "highlighted" : ""}`}>
                   <rect
                     x={key.x}
                     y={key.y + 1}
@@ -391,7 +389,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
                       y={key.y + key.h / 2}
                       text-anchor="middle"
                       dominant-baseline="central"
-                      class={theme().keyLabel}
+                      class={classes().keyLabel}
                       fill={highlight.active ? "#fff" : "#e0e0e0"}
                     >
                       {label}
@@ -405,7 +403,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (allProps) => {
       </div>
 
       <Show when={groups().some((group) => group.label)}>
-        <div class={theme().legend}>
+        <div class={classes().legend}>
           <For each={groups().filter((group) => group.label)}>
             {(group) => (
               <div class="flex items-center gap-2 m-0 p-0 text-[10px] text-[#a0a0b0] uppercase tracking-[0.05em] font-medium whitespace-nowrap leading-none">

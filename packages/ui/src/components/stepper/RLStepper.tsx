@@ -3,10 +3,9 @@ import { RLStepperTheme } from "./stepper.theme";
 import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLStepper: Component<RLStepperProps> = (allProps) => {
-  const props = allProps;
+export const RLStepper: Component<RLStepperProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "items",
     "value",
     "defaultValue",
@@ -63,7 +62,7 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
     props.onChange?.({ index, value });
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLStepperTheme({
       size: props.size ?? "sm",
       color: props.color ?? "primary",
@@ -74,8 +73,8 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
-      <div class={resolvedClasses().header} data-slot="header">
+    <div class={classes().root} data-slot="root" {...rest}>
+      <div class={classes().header} data-slot="header">
         <For each={items()}>
           {(item, index) => {
             const isCompleted = index() < currentIndex();
@@ -91,30 +90,30 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
             return (
               <>
                 <div
-                  class={`${resolvedClasses().item}  ${item.class || ""}`}
+                  class={`${classes().item}  ${item.class || ""}`}
                   data-slot="item"
                   data-index={index()}
                   data-value={itemValue(item, index())}
                   data-state={state}
                   data-disabled={isItemDisabled ? "true" : undefined}
                 >
-                  <div class={resolvedClasses().container} data-slot="container">
+                  <div class={classes().container} data-slot="container">
                     <button
                       type="button"
-                      class={resolvedClasses().trigger}
+                      class={classes().trigger}
                       data-slot="trigger"
                       disabled={isItemDisabled}
                       data-step-trigger={index()}
                       onClick={() => goTo(index())}
                     >
-                      <span class={resolvedClasses().indicator} data-slot="indicator">
+                      <span class={classes().indicator} data-slot="indicator">
                         {props.indicator ? (
                           props.indicator({ item, index: index(), state })
                         ) : item.icon ? (
                           <RLIcon
                             name={item.icon}
                             size="sm"
-                            class={resolvedClasses().icon}
+                            class={classes().icon}
                             data-slot="icon"
                           />
                         ) : (
@@ -125,18 +124,18 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
                   </div>
 
                   {item.title || item.description ? (
-                    <div class={resolvedClasses().wrapper} data-slot="wrapper">
+                    <div class={classes().wrapper} data-slot="wrapper">
                       {props.wrapper ? (
                         props.wrapper({ item, index: index() })
                       ) : (
                         <>
                           {item.title ? (
-                            <div class={resolvedClasses().title} data-slot="title">
+                            <div class={classes().title} data-slot="title">
                               {item.title}
                             </div>
                           ) : null}
                           {item.description ? (
-                            <div class={resolvedClasses().description} data-slot="description">
+                            <div class={classes().description} data-slot="description">
                               {item.description}
                             </div>
                           ) : null}
@@ -148,7 +147,7 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
 
                 {index() < items().length - 1 ? (
                   <div
-                    class={`${resolvedClasses().separator} ${
+                    class={`${classes().separator} ${
                       index() < currentIndex() ? "bg-primary" : "bg-muted"
                     }`}
                     data-slot="separator"
@@ -161,7 +160,7 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
         </For>
       </div>
 
-      <div class={resolvedClasses().content} data-slot="content">
+      <div class={classes().content} data-slot="content">
         {props.children}
         <For each={items()}>
           {(item, index) => {

@@ -3,10 +3,9 @@ import { RLInputRatingTheme } from "./input-rating.theme";
 import { createMemo, createSignal, omit, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
-  const props = allProps;
+export const RLInputRating: Component<RLInputRatingProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "id",
     "readonly",
     "icon",
@@ -28,7 +27,7 @@ export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
     "onValueChange",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputRatingTheme({
       color: props.color ?? "primary",
       size: props.size ?? "md",
@@ -124,7 +123,7 @@ export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-step={step()}
       data-length={length()}
@@ -155,31 +154,31 @@ export const RLInputRating: Component<RLInputRatingProps> = (allProps) => {
       <For each={items()}>
         {(i) => (
           <div
-            class={`input-rating-item ${resolvedClasses().item} ${itemSizeClass()}`}
+            class={`input-rating-item ${classes().item} ${itemSizeClass()}`}
             data-slot="item"
             data-index={i}
             onMouseMove={(e) => handleMouseMove(e, e.currentTarget, i)}
             onMouseLeave={handleMouseLeave}
             onClick={(e) => handleClick(e, e.currentTarget, i)}
           >
-            <div class={resolvedClasses().emptyIcon} data-slot="emptyIcon">
+            <div class={classes().emptyIcon} data-slot="emptyIcon">
               <RLIcon
                 name={props.emptyIcon || props.icon || "star"}
                 size={props.size ?? "md"}
-                class={resolvedClasses().icon}
+                class={classes().icon}
                 aria-hidden="true"
               />
             </div>
 
             <div
-              class={`rating-item-indicator ${resolvedClasses().indicator} ${getWidthClass(display(), i)}`}
+              class={`rating-item-indicator ${classes().indicator} ${getWidthClass(display(), i)}`}
               data-slot="indicator"
               data-state={display() >= i - 0.99 ? "active" : "inactive"}
             >
               <RLIcon
                 name={props.icon || "star"}
                 size={props.size ?? "md"}
-                class={resolvedClasses().icon}
+                class={classes().icon}
                 aria-hidden="true"
               />
             </div>

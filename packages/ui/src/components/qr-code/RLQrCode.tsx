@@ -2,11 +2,10 @@ import type { RLQrCodeProps } from "./qr-code.types";
 import { RLQrCodeTheme } from "./qr-code.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLQrCode: Component<RLQrCodeProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLQrCodeTheme({
       ui: props.ui,
       class: props.class,
@@ -14,7 +13,7 @@ export const RLQrCode: Component<RLQrCodeProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

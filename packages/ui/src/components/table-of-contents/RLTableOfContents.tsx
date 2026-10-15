@@ -3,10 +3,9 @@ import { RLTableOfContentsTheme } from "./table-of-contents.theme";
 import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) => {
-  const props = allProps;
+export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "headings",
     "collapsible",
     "containerSelector",
@@ -44,7 +43,7 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) =
     ).join(", "),
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLTableOfContentsTheme({
       ui: props.ui,
       class: props.class,
@@ -147,31 +146,28 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (allProps) =
 `}</style>
       <div
         ref={(el) => (rootRef = el)}
-        class={resolvedClasses().root}
+        class={classes().root}
         data-slot="root"
         data-container-selector={containerSelector()}
         data-heading-selector={headingSelector()}
         {...rest}
       >
-        <div class={resolvedClasses().container} data-slot="container">
-          <h4 class={resolvedClasses().title} data-slot="title">
+        <div class={classes().container} data-slot="container">
+          <h4 class={classes().title} data-slot="title">
             On this page
           </h4>
-          <ul class={`${resolvedClasses().list} mt-2xl flex flex-col gap-xs`} data-slot="list">
+          <ul class={`${classes().list} mt-2xl flex flex-col gap-xs`} data-slot="list">
             <For each={filteredHeadings()}>
               {(heading: TableOfContentsHeading) => (
-                <li
-                  class={`${resolvedClasses().item} ${depthClass(heading.depth)}`}
-                  data-slot="item"
-                >
+                <li class={`${classes().item} ${depthClass(heading.depth)}`} data-slot="item">
                   <a
                     href={`#${heading.slug}`}
-                    class={`toc-link ${resolvedClasses().link} ${
+                    class={`toc-link ${classes().link} ${
                       activeId() === heading.slug ? "toc-active" : ""
                     }`}
                     data-slot="link"
                   >
-                    <span class={resolvedClasses().linkText} data-slot="link-text">
+                    <span class={classes().linkText} data-slot="link-text">
                       {heading.text}
                     </span>
                   </a>

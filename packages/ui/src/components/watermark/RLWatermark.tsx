@@ -2,20 +2,19 @@ import type { RLWatermarkProps } from "./watermark.types";
 import { RLWatermarkTheme } from "./watermark.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLWatermark: Component<RLWatermarkProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLWatermark: Component<RLWatermarkProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLWatermarkTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps,
+      ...props,
     }),
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

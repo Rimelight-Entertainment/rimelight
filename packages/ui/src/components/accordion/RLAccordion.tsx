@@ -24,10 +24,9 @@ const normalizeSingle = (value: string | string[] | undefined): string | undefin
 const normalizeMultiple = (value: string | string[] | undefined): string[] =>
   value === undefined ? [] : Array.isArray(value) ? [...value] : [value];
 
-export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
-  const props = allProps;
+export const RLAccordion: Component<RLAccordionProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "items",
     "summary",
@@ -109,7 +108,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
   const itemLabel = (item: AccordionItem): JSX.Element =>
     (getPath(item as Record<string, unknown>, labelKey()) ?? item.label) as JSX.Element;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLAccordionTheme({
       disabled: props.disabled ? true : false,
       ui: props.ui,
@@ -133,7 +132,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     if (custom !== undefined && custom !== null) return custom;
     if (!item.icon) return null;
     return (
-      <span class={resolvedClasses().leadingIcon} data-slot="leading-icon">
+      <span class={classes().leadingIcon} data-slot="leading-icon">
         <RLIcon name={item.icon} size="md" />
       </span>
     );
@@ -144,7 +143,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     if (custom !== undefined && custom !== null) return custom;
     if (props.trailingIconSlot) {
       return (
-        <span class={resolvedClasses().trailingIcon} data-slot="trailing-icon">
+        <span class={classes().trailingIcon} data-slot="trailing-icon">
           {props.trailingIconSlot}
         </span>
       );
@@ -152,7 +151,7 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     const iconName = (item.trailingIcon as string | undefined) || defaultTrailingIcon();
     if (!iconName) return null;
     return (
-      <span class={resolvedClasses().trailingIcon} data-slot="trailing-icon">
+      <span class={classes().trailingIcon} data-slot="trailing-icon">
         <RLIcon name={iconName} size="md" />
       </span>
     );
@@ -175,11 +174,11 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
     if (custom !== undefined && custom !== null) return custom;
     return (
       <div
-        class={resolvedClasses().content}
+        class={classes().content}
         data-slot="content"
         data-state={isOpen(val) ? "open" : "closed"}
       >
-        <div class={resolvedClasses().body} data-slot="body">
+        <div class={classes().body} data-slot="body">
           {renderBodyInner(item, index)}
         </div>
       </div>
@@ -253,38 +252,38 @@ export const RLAccordion: Component<RLAccordionProps> = (allProps) => {
       when={hasItems()}
       fallback={
         <SummaryRoot
-          class={`${resolvedClasses().root} ${resolvedClasses().item}`}
+          class={`${classes().root} ${classes().item}`}
           data-slot="root"
           name={props.name}
           {...rest}
         >
           <summary
-            class={resolvedClasses().trigger}
+            class={classes().trigger}
             data-slot="trigger"
             aria-disabled={props.disabled ? "true" : undefined}
             onClick={(event) => {
               if (props.disabled) event.preventDefault();
             }}
           >
-            <span class={resolvedClasses().label} data-slot="label">
+            <span class={classes().label} data-slot="label">
               {props.summary}
             </span>
             {defaultTrailingIcon() ? (
-              <span class={resolvedClasses().trailingIcon} data-slot="trailing-icon">
+              <span class={classes().trailingIcon} data-slot="trailing-icon">
                 {props.trailingIconSlot ?? <RLIcon name={defaultTrailingIcon()} size="md" />}
               </span>
             ) : null}
           </summary>
 
-          <div class={resolvedClasses().content} data-slot="content">
-            <div class={resolvedClasses().body} data-slot="body">
+          <div class={classes().content} data-slot="content">
+            <div class={classes().body} data-slot="body">
               {props.children}
             </div>
           </div>
         </SummaryRoot>
       }
     >
-      <ItemsRoot class={resolvedClasses().root} data-slot="root" data-value={rootValue()} {...rest}>
+      <ItemsRoot class={classes().root} data-slot="root" data-value={rootValue()} {...rest}>
         {rows()}
       </ItemsRoot>
     </Show>

@@ -2,11 +2,10 @@ import type { RLColorPickerProps } from "./color-picker.types";
 import { RLColorPickerTheme } from "./color-picker.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLColorPicker: Component<RLColorPickerProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLColorPickerTheme({
       ui: props.ui,
       class: props.class,
@@ -14,7 +13,7 @@ export const RLColorPicker: Component<RLColorPickerProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

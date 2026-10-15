@@ -2,9 +2,8 @@ import type { RLKbdProps } from "./kbd.types";
 import { RLKbdTheme } from "./kbd.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLKbd: Component<RLKbdProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "color", "variant", "size", "theme", "ui", "class", "children");
+export const RLKbd: Component<RLKbdProps> = (props) => {
+  const rest = omit(props, "color", "variant", "size", "theme", "ui", "class", "children");
 
   const classes = createMemo(() =>
     RLKbdTheme({

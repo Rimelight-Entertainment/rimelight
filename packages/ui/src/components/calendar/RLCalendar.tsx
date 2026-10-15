@@ -42,9 +42,7 @@ import { RLButton } from "../button/RLButton";
 
 type View = "day" | "month" | "year";
 
-export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
-  const props = allProps;
-
+export const RLCalendar: Component<RLCalendarProps> = (props) => {
   const locale = () => props.locale ?? "en";
   const type = () => props.type ?? "date";
   const minView = (): View => minViewFor(type()) as View;
@@ -175,7 +173,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 
   const fullLabel = createMemo(() => `${props.calendarLabel ?? "Event Date"}, ${headingValue()}`);
 
-  const theme = createMemo(() =>
+  const classes = createMemo(() =>
     RLCalendarTheme({
       color: props.color,
       variant: props.variant,
@@ -468,7 +466,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
 
   const renderDayGrid = (grid: CalendarMonthGrid) => (
     <table
-      class={theme().grid}
+      class={classes().grid}
       data-slot="grid"
       tabindex="-1"
       role="application"
@@ -478,23 +476,23 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
       data-disabled={props.disabled ? "" : undefined}
     >
       <thead aria-hidden="true" data-slot="gridHead">
-        <tr class={theme().gridWeekDaysRow} data-slot="gridWeekDaysRow">
+        <tr class={classes().gridWeekDaysRow} data-slot="gridWeekDaysRow">
           <For each={weekDaysOfGrid(grid, locale(), weekdayFormat())}>
             {(wd) => (
-              <th class={theme().headCell} data-slot="headCell">
+              <th class={classes().headCell} data-slot="headCell">
                 {props.weekDaySlot ? props.weekDaySlot({ day: wd }) : wd}
               </th>
             )}
           </For>
         </tr>
       </thead>
-      <tbody class={theme().gridBody} data-slot="gridBody">
+      <tbody class={classes().gridBody} data-slot="gridBody">
         <For each={grid.rows}>
           {(row) => (
-            <tr class={theme().gridRow} data-slot="gridRow">
+            <tr class={classes().gridRow} data-slot="gridRow">
               <Show when={view() === "day" && props.weekNumbers && row[0]}>
                 {(first) => (
-                  <td role="gridcell" class={theme().cellWeek} data-slot="cellWeek">
+                  <td role="gridcell" class={classes().cellWeek} data-slot="cellWeek">
                     {getWeekNumber(first(), weekStartsOn())}
                   </td>
                 )}
@@ -505,7 +503,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                   const isRangeSelected = createMemo(
                     () => untrack(() => props.range) && isRangeDay(day),
                   );
-                  const th = untrack(() => theme());
+                  const th = untrack(() => classes());
                   const loc = untrack(() => locale());
                   const pRange = untrack(() => props.range);
                   const pDaySlot = untrack(() => props.daySlot);
@@ -590,7 +588,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
     const cells = mode === "month" ? monthGrid() : yearGrid();
     return (
       <table
-        class={theme().grid}
+        class={classes().grid}
         data-slot="grid"
         tabindex="-1"
         role="application"
@@ -599,10 +597,10 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
         data-readonly={props.readonly ? "" : undefined}
         data-disabled={props.disabled ? "" : undefined}
       >
-        <tbody class={theme().gridBody} data-slot="gridBody">
+        <tbody class={classes().gridBody} data-slot="gridBody">
           <For each={chunkFour(cells)}>
             {(row) => (
-              <tr class={theme().gridRow} data-slot="gridRow">
+              <tr class={classes().gridRow} data-slot="gridRow">
                 <For each={row}>
                   {(cell) => {
                     const pDisabled = untrack(() => props.disabled);
@@ -620,7 +618,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                     return (
                       <td
                         role="gridcell"
-                        class={theme().cell}
+                        class={classes().cell}
                         data-slot="cell"
                         aria-selected={selected ? "true" : undefined}
                         aria-disabled={disabled ? "true" : undefined}
@@ -628,7 +626,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                       >
                         <div
                           role="button"
-                          class={theme().cellTrigger}
+                          class={classes().cellTrigger}
                           data-slot="cellTrigger"
                           data-value={dateKey(cell)}
                           data-selected={selected || undefined}
@@ -721,7 +719,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   const Root = dynamic(() => props.as ?? "div");
 
   return (
-    <Root {...rootProps()} class={theme().root}>
+    <Root {...rootProps()} class={classes().root}>
       {renderInternal()}
     </Root>
   );
@@ -729,13 +727,13 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
   function renderInternal(): JSX.Element {
     return (
       <>
-        <div class={theme().srLabel} data-slot="srLabel">
+        <div class={classes().srLabel} data-slot="srLabel">
           <div role="heading" aria-level="2">
             {fullLabel()}
           </div>
         </div>
 
-        <div class={theme().header} data-slot="header">
+        <div class={classes().header} data-slot="header">
           <Show when={showPrevYear()}>
             <RLButton
               {...controlBase(
@@ -756,7 +754,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
           </Show>
 
           <div
-            class={theme().heading}
+            class={classes().heading}
             data-slot="heading"
             data-disabled={props.disabled ? "" : undefined}
           >
@@ -766,7 +764,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
                 <Show
                   when={switchable() && viewControlEnabled()}
                   fallback={
-                    <span class={theme().headingLabel} data-slot="headingLabel">
+                    <span class={classes().headingLabel} data-slot="headingLabel">
                       {headingValue()}
                     </span>
                   }
@@ -806,7 +804,7 @@ export const RLCalendar: Component<RLCalendarProps> = (allProps) => {
           </Show>
         </div>
 
-        <div class={theme().body} data-slot="body">
+        <div class={classes().body} data-slot="body">
           <Show
             when={view() === "day"}
             fallback={view() === "month" ? renderPickerGrid("month") : renderPickerGrid("year")}

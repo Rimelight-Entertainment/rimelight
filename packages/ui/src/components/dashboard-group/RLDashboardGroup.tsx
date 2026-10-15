@@ -3,11 +3,10 @@ import { RLDashboardGroupTheme } from "./dashboard-group.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
-export const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "as", "ui", "class", "children");
+export const RLDashboardGroup: Component<RLDashboardGroupProps> = (props) => {
+  const rest = omit(props, "as", "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardGroupTheme({
       ui: props.ui,
       class: props.class,
@@ -19,7 +18,7 @@ export const RLDashboardGroup: Component<RLDashboardGroupProps> = (allProps) => 
   const GroupTag = dynamic(() => props.as ?? "div");
 
   return (
-    <GroupTag class={resolvedClasses().root} data-slot="root" {...rest}>
+    <GroupTag class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </GroupTag>
   );

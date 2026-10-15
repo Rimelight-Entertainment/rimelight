@@ -4,10 +4,9 @@ import { createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLModal } from "../modal/RLModal";
 import { RLButton } from "../button/RLButton";
 
-export const RLConfirm: Component<RLConfirmProps> = (allProps) => {
-  const props = allProps;
+export const RLConfirm: Component<RLConfirmProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "variant",
     "title",
     "description",

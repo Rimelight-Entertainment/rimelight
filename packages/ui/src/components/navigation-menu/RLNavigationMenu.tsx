@@ -7,10 +7,9 @@ import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import { createMemo, createSignal, omit, For, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
-  const props = allProps;
+export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "items",
     "color",
     "orientation",
@@ -29,7 +28,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
   const items = createMemo(() => props.items ?? []);
   const orientation = () => props.orientation ?? "horizontal";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLNavigationMenuTheme({
       color: props.color ?? "primary",
       orientation: orientation(),
@@ -42,10 +41,10 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
   const getSlotContent = (slotName?: string) => {
     if (!slotName) return null;
     if (slotCache.has(slotName)) return slotCache.get(slotName) ?? null;
-    const slots = allProps["slots"] as Record<string, any> | undefined;
+    const slots = props["slots"] as Record<string, any> | undefined;
     let raw: any = slots ? slots[slotName] : undefined;
     if (raw === undefined) {
-      raw = allProps[`${slotName}-content`] ?? allProps[slotName];
+      raw = props[`${slotName}-content`] ?? props[slotName];
     }
     const content = typeof raw === "function" ? raw() : raw;
     const resolved = content ?? null;
@@ -130,14 +129,14 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
   return (
     <nav
       ref={(el) => (navRef = el)}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-theme={props.theme}
       data-nav-menu
       data-orientation={orientation()}
       {...rest}
     >
-      <ul class={resolvedClasses().list} data-slot="list" role="list">
+      <ul class={classes().list} data-slot="list" role="list">
         <For each={items()}>
           {(item, i) => {
             const hasChildren = () =>
@@ -151,7 +150,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
 
             return (
               <li
-                class={resolvedClasses().item}
+                class={classes().item}
                 data-slot="item"
                 data-nav-item
                 data-index={i()}
@@ -167,7 +166,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                   fallback={
                     <a
                       href={itemHref(item)}
-                      class={resolvedClasses().link}
+                      class={classes().link}
                       data-slot="link"
                       aria-current={isActive() ? "page" : undefined}
                     >
@@ -180,7 +179,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                 >
                   <button
                     type="button"
-                    class={resolvedClasses().trigger}
+                    class={classes().trigger}
                     data-slot="trigger"
                     data-nav-trigger
                     aria-expanded={isOpen() ? "true" : "false"}
@@ -211,7 +210,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                 {/* Vertical Mode: Accordion Content */}
                 <Show when={orientation() === "vertical" && hasChildren()}>
                   <div
-                    class={`${resolvedClasses().content} ${isOpen() ? "" : "hidden"}`}
+                    class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
                     data-slot="content"
                     data-nav-content
                     data-item-index={i()}
@@ -266,7 +265,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                   }
                 >
                   <div
-                    class={`${resolvedClasses().content} ${isOpen() ? "" : "hidden"}`}
+                    class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
                     data-slot="content"
                     data-nav-content
                     data-item-index={i()}
@@ -311,7 +310,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
 
       {/* Horizontal Viewport Wrapper for Mega Menus */}
       <div
-        class={`${resolvedClasses().viewportWrapper} ${openIndex() !== null && activeItemHasContent() && orientation() === "horizontal" ? "" : "hidden"}`}
+        class={`${classes().viewportWrapper} ${openIndex() !== null && activeItemHasContent() && orientation() === "horizontal" ? "" : "hidden"}`}
         data-slot="viewport-wrapper"
         data-nav-viewport-wrapper
         data-state={openIndex() !== null ? "open" : "closed"}
@@ -324,7 +323,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
       >
         <div
           ref={(el) => (viewportRef = el)}
-          class={resolvedClasses().viewport}
+          class={classes().viewport}
           data-slot="viewport"
           data-nav-viewport
           data-state={openIndex() !== null ? "open" : "closed"}

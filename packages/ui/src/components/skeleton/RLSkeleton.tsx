@@ -12,10 +12,9 @@ import {
 } from "solid-js";
 import { createResizeObserver, extractSkeletonRects, type SkeletonRect } from "./skeleton.dom";
 
-export const RLSkeleton: Component<RLSkeletonProps> = (allProps) => {
-  const props = allProps;
+export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "shape",
     "loading",
     "fallbackBorderRadius",

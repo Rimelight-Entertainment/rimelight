@@ -4,10 +4,9 @@ import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";
 
-export const RLLink: Component<RLLinkProps> = (allProps) => {
-  const props = allProps;
+export const RLLink: Component<RLLinkProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "label",
     "leadingIcon",
     "trailingIcon",

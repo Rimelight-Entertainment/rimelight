@@ -31,24 +31,13 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
   return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`;
 };
 
-export const RLChart: Component<RLChartProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(
-    allProps,
-    "type",
-    "data",
-    "title",
-    "height",
-    "color",
-    "ui",
-    "class",
-    "children",
-  );
+export const RLChart: Component<RLChartProps> = (props) => {
+  const rest = omit(props, "type", "data", "title", "height", "color", "ui", "class", "children");
 
   const data = createMemo(() => props.data ?? []);
   const chartType = () => props.type ?? "bar";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLChartTheme({
       color: props.color ?? "primary",
       ui: props.ui,
@@ -120,15 +109,15 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
   .${id} .rl-chart-pie-wrap { height: ${height - 60}px; }
 `}</style>
 
-      <div class={`${resolvedClasses().root}  ${id}`} data-slot="root" {...rest}>
+      <div class={`${classes().root}  ${id}`} data-slot="root" {...rest}>
         {props.title ? (
-          <div class={resolvedClasses().title} data-slot="title">
+          <div class={classes().title} data-slot="title">
             {props.title}
           </div>
         ) : null}
 
         {chartType() === "bar" ? (
-          <div class={resolvedClasses().container} data-slot="container">
+          <div class={classes().container} data-slot="container">
             <For each={data()}>
               {(item, i) => {
                 const pct = max() > 0 ? (item.value / max()) * 100 : 0;
@@ -138,7 +127,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
                       {item.value}
                     </span>
                     <div
-                      class={`${resolvedClasses().bar} h-full w-full overflow-hidden !bg-transparent`}
+                      class={`${classes().bar} h-full w-full overflow-hidden !bg-transparent`}
                       title={`${item.label}: ${item.value}`}
                     >
                       <svg
@@ -156,7 +145,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
                         />
                       </svg>
                     </div>
-                    <span class={resolvedClasses().axis}>{item.label}</span>
+                    <span class={classes().axis}>{item.label}</span>
                   </div>
                 );
               }}
@@ -167,7 +156,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
         {chartType() === "line" || chartType() === "area" ? (
           <div class="relative w-full rl-chart-line-wrap">
             <svg
-              class={resolvedClasses().svg}
+              class={classes().svg}
               viewBox={`0 0 ${LINE_W} ${LINE_H}`}
               preserveAspectRatio="none"
               aria-label={props.title ?? "Line chart"}
@@ -194,7 +183,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
 
               <path
                 d={linePath()}
-                class={resolvedClasses().line}
+                class={classes().line}
                 stroke={palette[0] ?? "currentColor"}
                 stroke-width={2.5}
               />
@@ -218,7 +207,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
 
               <For each={linePoints()}>
                 {(p) => (
-                  <text x={p.x} y={LINE_H - 4} text-anchor="middle" class={resolvedClasses().axis}>
+                  <text x={p.x} y={LINE_H - 4} text-anchor="middle" class={classes().axis}>
                     {p.d.label}
                   </text>
                 )}
@@ -278,7 +267,7 @@ export const RLChart: Component<RLChartProps> = (allProps) => {
 
         {(chartType() === "bar" || chartType() === "line" || chartType() === "area") &&
         data().length > 0 ? (
-          <div class={resolvedClasses().legend} data-slot="legend">
+          <div class={classes().legend} data-slot="legend">
             <For each={data()}>
               {(item, i) => (
                 <div class="flex items-center gap-1.5">

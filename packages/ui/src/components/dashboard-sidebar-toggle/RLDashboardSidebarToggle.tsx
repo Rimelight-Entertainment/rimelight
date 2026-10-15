@@ -3,11 +3,10 @@ import { RLDashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme"
 import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "icon", "ui", "class", "children");
+export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (props) => {
+  const rest = omit(props, "icon", "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardSidebarToggleTheme({
       ui: props.ui,
       class: props.class,
@@ -18,7 +17,7 @@ export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> 
     <button
       type="button"
       data-dashboard-toggle="mobile"
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       aria-label="Toggle sidebar"
       {...rest}

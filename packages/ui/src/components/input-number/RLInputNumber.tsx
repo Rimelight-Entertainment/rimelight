@@ -4,10 +4,9 @@ import { createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
-  const props = allProps;
+export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "children",
     "value",
     "defaultValue",
@@ -30,7 +29,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
     "onValueChange",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputNumberTheme({
       ui: props.ui,
       class: props.class,
@@ -109,7 +108,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (allProps) => {
   };
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       <div class={`relative w-full ${inputClasses().root}`}>
         <input
           ref={(el) => (inputRef = el)}

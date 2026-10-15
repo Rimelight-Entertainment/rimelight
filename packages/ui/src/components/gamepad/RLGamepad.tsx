@@ -34,9 +34,7 @@ const mainButtons: GamepadButton[] = [
   { id: "Menu", label: "≡", x: 239, y: 105, w: 16, h: 10 },
 ];
 
-export const RLGamepad: Component<RLGamepadProps> = (allProps) => {
-  const props = allProps;
-
+export const RLGamepad: Component<RLGamepadProps> = (props) => {
   const highlighted = (): string[] => props.highlightedButtons ?? [];
   const groups = (): HighlightGroup[] => props.groups ?? [];
   const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)";

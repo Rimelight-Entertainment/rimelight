@@ -14,11 +14,10 @@ import {
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLTabs: Component<RLTabsProps> = (allProps) => {
-  const props = allProps;
+export const RLTabs: Component<RLTabsProps> = (props) => {
   const resolvedChildren = children(() => props.children);
   const rest = omit(
-    allProps,
+    props,
     "items",
     "value",
     "defaultValue",
@@ -82,7 +81,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
     props.onChange?.(val);
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLTabsTheme({
       variant: normalizedVariant(),
       orientation: orientation(),
@@ -156,22 +155,17 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-orientation={orientation()}
       data-variant={normalizedVariant()}
       data-value={currentValue()}
       {...rest}
     >
-      <div
-        ref={(el) => (listRef = el)}
-        class={resolvedClasses().list}
-        data-slot="list"
-        role="tablist"
-      >
+      <div ref={(el) => (listRef = el)} class={classes().list} data-slot="list" role="tablist">
         <div
           ref={(el) => (indicatorRef = el)}
-          class={resolvedClasses().indicator}
+          class={classes().indicator}
           data-slot="indicator"
           style={{ display: "none" }}
         />
@@ -185,7 +179,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
             return (
               <button
                 type="button"
-                class={resolvedClasses().trigger}
+                class={classes().trigger}
                 data-slot="trigger"
                 role="tab"
                 data-value={itemVal()}
@@ -194,14 +188,10 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
                 onClick={() => handleSelect(itemVal())}
               >
                 {item.icon && (
-                  <RLIcon
-                    name={item.icon}
-                    class={resolvedClasses().leadingIcon}
-                    data-slot="leadingIcon"
-                  />
+                  <RLIcon name={item.icon} class={classes().leadingIcon} data-slot="leadingIcon" />
                 )}
                 {itemLabel() && (
-                  <span class={resolvedClasses().label} data-slot="label">
+                  <span class={classes().label} data-slot="label">
                     {itemLabel()}
                   </span>
                 )}
@@ -210,7 +200,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
                     size="sm"
                     variant="soft"
                     color="neutral"
-                    class={resolvedClasses().trailingBadge}
+                    class={classes().trailingBadge}
                     data-slot="trailingBadge"
                   >
                     {typeof item.badge === "object" ? item.badge.label : item.badge}
@@ -225,7 +215,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
           <div class="relative inline-flex items-center ml-auto">
             <button
               type="button"
-              class={`${resolvedClasses().trigger} rl-tb-overflow-btn`}
+              class={`${classes().trigger} rl-tb-overflow-btn`}
               data-slot="overflow-trigger"
               aria-label="More tabs"
               onClick={() => setPopoverOpen(!popoverOpen())}
@@ -284,7 +274,7 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
                   return (
                     <Show when={props.unmountOnHide === false || active()}>
                       <div
-                        class={resolvedClasses().content}
+                        class={classes().content}
                         data-slot="content"
                         role="tabpanel"
                         data-value={itemVal()}

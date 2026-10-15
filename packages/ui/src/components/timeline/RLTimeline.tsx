@@ -6,10 +6,9 @@ import type { JSX } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
-  const props = allProps;
+export const RLTimeline: Component<RLTimelineProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "items",
     "size",
@@ -56,7 +55,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
     return index < currentIndex ? "completed" : undefined;
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLTimelineTheme({
       size: props.size ?? "md",
       color: props.color ?? "primary",
@@ -83,12 +82,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
   const Root = dynamic(() => props.as ?? "div");
 
   return (
-    <Root
-      data-slot="root"
-      class={resolvedClasses().root}
-      data-orientation={orientation()}
-      {...rest}
-    >
+    <Root data-slot="root" class={classes().root} data-orientation={orientation()} {...rest}>
       {items().length > 0 ? (
         <For each={items()}>
           {(item, index) => {
@@ -100,12 +94,12 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
             return (
               <div
                 data-slot="item"
-                class={`${resolvedClasses().item}  ${item.ui?.item || ""}  ${item.class || ""}`}
+                class={`${classes().item}  ${item.ui?.item || ""}  ${item.class || ""}`}
                 data-state={state}
               >
                 <div
                   data-slot="container"
-                  class={`${resolvedClasses().container}  ${item.ui?.container || ""}`}
+                  class={`${classes().container}  ${item.ui?.container || ""}`}
                 >
                   <RLAvatar
                     size={props.size ?? "md"}
@@ -113,7 +107,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
                     alt={avatar?.alt}
                     {...(avatar ? avatar : {})}
                     data-slot="indicator"
-                    class={`${resolvedClasses().indicator}  ${item.ui?.indicator || ""}`}
+                    class={`${classes().indicator}  ${item.ui?.indicator || ""}`}
                     ui={{
                       icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
                       fallback:
@@ -130,32 +124,26 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
                   {!isLast ? (
                     <div
                       data-slot="separator"
-                      class={`${resolvedClasses().separator}  ${item.ui?.separator || ""}`}
+                      class={`${classes().separator}  ${item.ui?.separator || ""}`}
                       data-orientation={orientation()}
                     />
                   ) : null}
                 </div>
 
-                <div
-                  data-slot="wrapper"
-                  class={`${resolvedClasses().wrapper}  ${item.ui?.wrapper || ""}`}
-                >
+                <div data-slot="wrapper" class={`${classes().wrapper}  ${item.ui?.wrapper || ""}`}>
                   {props.wrapper ? (
                     renderSlot(props.wrapper, item, index())
                   ) : (
                     <>
                       {item.date || props.date ? (
-                        <div
-                          data-slot="date"
-                          class={`${resolvedClasses().date}  ${item.ui?.date || ""}`}
-                        >
+                        <div data-slot="date" class={`${classes().date}  ${item.ui?.date || ""}`}>
                           {renderSlot(props.date, item, index(), () => item.date)}
                         </div>
                       ) : null}
                       {item.title || props.title ? (
                         <div
                           data-slot="title"
-                          class={`${resolvedClasses().title}  ${item.ui?.title || ""}`}
+                          class={`${classes().title}  ${item.ui?.title || ""}`}
                         >
                           {renderSlot(props.title, item, index(), () => item.title)}
                         </div>
@@ -165,7 +153,7 @@ export const RLTimeline: Component<RLTimelineProps> = (allProps) => {
                       typeof props.children === "function" ? (
                         <div
                           data-slot="description"
-                          class={`${resolvedClasses().description}  ${item.ui?.description || ""}`}
+                          class={`${classes().description}  ${item.ui?.description || ""}`}
                         >
                           {typeof props.children === "function"
                             ? renderSlot(props.children, item, index(), () => item.description)

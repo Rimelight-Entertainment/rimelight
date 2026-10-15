@@ -2,10 +2,9 @@ import type { RLDashboardPanelProps } from "./dashboard-panel.types";
 import { RLDashboardPanelTheme } from "./dashboard-panel.theme";
 import { createMemo, Show, omit, type Component } from "solid-js";
 
-export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => {
-  const props = allProps;
+export const RLDashboardPanel: Component<RLDashboardPanelProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "resizable",
     "ui",
     "class",
@@ -22,7 +21,7 @@ export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => 
 
   const resizable = () => props.resizable ?? false;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardPanelTheme({
       size: false,
       ui: props.ui,
@@ -42,10 +41,10 @@ export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => 
 
   return (
     <>
-      <div class={`${resolvedClasses().root} flex-1 min-w-0`} data-slot="root" {...rest}>
+      <div class={`${classes().root} flex-1 min-w-0`} data-slot="root" {...rest}>
         {headerContent()}
 
-        <div data-slot="body" class={resolvedClasses().body}>
+        <div data-slot="body" class={classes().body}>
           {bodyContent()}
         </div>
 
@@ -58,7 +57,7 @@ export const RLDashboardPanel: Component<RLDashboardPanelProps> = (allProps) => 
         ) : (
           <div
             data-slot="handle"
-            class={`${resolvedClasses().handle} hidden lg:block touch-none select-none cursor-ew-resize relative before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:z-1`}
+            class={`${classes().handle} hidden lg:block touch-none select-none cursor-ew-resize relative before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:z-1`}
           />
         )}
       </Show>

@@ -11,9 +11,8 @@ interface DragState {
   startB: number;
 }
 
-export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "direction", "defaultSizes", "ui", "class", "children", "panels");
+export const RLSplitter: Component<RLSplitterProps> = (props) => {
+  const rest = omit(props, "direction", "defaultSizes", "ui", "class", "children", "panels");
 
   const childContent = children(() => props.children);
 
@@ -35,7 +34,7 @@ export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
     return childContent.toArray();
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLSplitterTheme({
       direction: props.direction ?? "horizontal",
       ui: props.ui,
@@ -108,7 +107,7 @@ export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
   return (
     <div
       ref={(el) => (rootRef = el)}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-resizable
       data-direction={props.direction ?? "horizontal"}
@@ -118,7 +117,7 @@ export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
         {(size, i) => (
           <>
             <div
-              class={`${resolvedClasses().panel} ${panelClass(size)}`}
+              class={`${classes().panel} ${panelClass(size)}`}
               data-slot="panel"
               data-resizable-panel={i()}
             >
@@ -127,7 +126,7 @@ export const RLSplitter: Component<RLSplitterProps> = (allProps) => {
 
             {i() < sizes().length - 1 ? (
               <div
-                class={resolvedClasses().handle}
+                class={classes().handle}
                 data-slot="handle"
                 data-resizable-handle={i()}
                 role="separator"

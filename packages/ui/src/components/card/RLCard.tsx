@@ -3,10 +3,9 @@ import { RLCardTheme } from "./card.theme";
 import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
-export const RLCard: Component<RLCardProps> = (allProps) => {
-  const props = allProps;
+export const RLCard: Component<RLCardProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "title",
     "description",
@@ -63,7 +62,7 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
       props.mediaSlot !== undefined || props.media !== undefined || props.mediaSrc !== undefined,
     );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLCardTheme({
       variant: props.variant ?? "outline",
       overlay: isOverlay(),
@@ -79,7 +78,7 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
   return (
     <Tag
       id={props.id}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       role={props.role}
       aria-labelledby={props.ariaLabelledby ?? (hasTitle() ? titleId : undefined)}
@@ -98,7 +97,7 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
           fallback={
             <Show when={props.mediaSrc}>
               {(src) => (
-                <div class={resolvedClasses().media} data-slot="media">
+                <div class={classes().media} data-slot="media">
                   <img
                     src={src()}
                     alt={typeof props.title === "string" ? props.title : ""}
@@ -119,20 +118,20 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
           <>
             {/* Header */}
             <Show when={hasHeader()}>
-              <div class={resolvedClasses().header} data-slot="header">
+              <div class={classes().header} data-slot="header">
                 <Show
                   when={props.headerSlot ?? props.header}
                   fallback={
                     <>
                       <Show when={hasTitle()}>
-                        <div id={titleId} class={resolvedClasses().title} data-slot="title">
+                        <div id={titleId} class={classes().title} data-slot="title">
                           {props.titleSlot ?? props.title}
                         </div>
                       </Show>
                       <Show when={hasDescription()}>
                         <div
                           id={descriptionId}
-                          class={resolvedClasses().description}
+                          class={classes().description}
                           data-slot="description"
                         >
                           {props.descriptionSlot ?? props.description}
@@ -148,21 +147,21 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
 
             {/* Body */}
             <Show when={hasBody()}>
-              <div class={resolvedClasses().body} data-slot="body">
+              <div class={classes().body} data-slot="body">
                 {props.bodySlot ?? props.body ?? props.children}
               </div>
             </Show>
 
             {/* Footer */}
             <Show when={hasFooter()}>
-              <div class={resolvedClasses().footer} data-slot="footer">
+              <div class={classes().footer} data-slot="footer">
                 {props.footerSlot ?? props.footer}
               </div>
             </Show>
           </>
         }
       >
-        <div class={resolvedClasses().overlay} data-slot="overlay">
+        <div class={classes().overlay} data-slot="overlay">
           <Show
             when={
               props.overlaySlot ?? (typeof props.overlay !== "boolean" ? props.overlay : undefined)
@@ -170,26 +169,22 @@ export const RLCard: Component<RLCardProps> = (allProps) => {
             fallback={
               <>
                 <Show when={hasTitle()}>
-                  <div id={titleId} class={resolvedClasses().title} data-slot="title">
+                  <div id={titleId} class={classes().title} data-slot="title">
                     {props.titleSlot ?? props.title}
                   </div>
                 </Show>
                 <Show when={hasDescription()}>
-                  <div
-                    id={descriptionId}
-                    class={resolvedClasses().description}
-                    data-slot="description"
-                  >
+                  <div id={descriptionId} class={classes().description} data-slot="description">
                     {props.descriptionSlot ?? props.description}
                   </div>
                 </Show>
                 <Show when={hasBody()}>
-                  <div class={resolvedClasses().body} data-slot="body">
+                  <div class={classes().body} data-slot="body">
                     {props.bodySlot ?? props.body ?? props.children}
                   </div>
                 </Show>
                 <Show when={hasFooter()}>
-                  <div class={resolvedClasses().footer} data-slot="footer">
+                  <div class={classes().footer} data-slot="footer">
                     {props.footerSlot ?? props.footer}
                   </div>
                 </Show>

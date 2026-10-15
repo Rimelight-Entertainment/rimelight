@@ -35,10 +35,9 @@ const hexToRgba = (hex: string, alpha: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
-  const props = allProps;
+export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "cols",
     "smCols",
     "mdCols",
@@ -69,7 +68,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     "class",
   );
 
-  const resolvedClasses = createMemo(() => RLLayoutGridTheme({ ui: props.ui, class: props.class }));
+  const classes = createMemo(() => RLLayoutGridTheme({ ui: props.ui, class: props.class }));
 
   const gutterArray = createMemo(() => normalizeArray(props.gutter ?? [0.75, 1, 1.5, 2, 2], 1));
   const marginArray = createMemo(() => normalizeArray(props.margin ?? [0.75, 1, 1.5, 2, 2], 1));
@@ -256,8 +255,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
 
     if (indicatorElement) {
-      const { indicatorBreakpoint, indicatorDivider, indicatorWidth, indicatorColumns } =
-        resolvedClasses();
+      const { indicatorBreakpoint, indicatorDivider, indicatorWidth, indicatorColumns } = classes();
 
       const breakpointSpan = document.createElement("span");
       breakpointSpan.className = indicatorBreakpoint;
@@ -289,7 +287,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     }
 
     const gridWrapper = document.createElement("div");
-    gridWrapper.className = resolvedClasses().columns;
+    gridWrapper.className = classes().columns;
 
     const innerLeft = (width - innerMaxWidthPx) / 2;
     const innerRight = (width + innerMaxWidthPx) / 2;
@@ -300,7 +298,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       const isInner = colX >= innerLeft - 1 && colRight <= innerRight + 1;
 
       const col = document.createElement("div");
-      col.className = resolvedClasses().column;
+      col.className = classes().column;
       const color = isInner ? innerGridColor : gridColor;
       const opacity = isInner ? innerGridOpacity : gridOpacity;
       const bg = isInner ? showInnerBackground : showBackground;
@@ -314,7 +312,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     if (width > maxWidthPx && showFullWidth) {
       const drawOuterColumn = (x: number) => {
         const col = document.createElement("div");
-        col.className = resolvedClasses().outerColumn;
+        col.className = classes().outerColumn;
         col.style.left = `${x}px`;
         col.style.width = `${colWidth}px`;
         col.style.borderInline = `1px solid ${fullWidthColor}`;
@@ -371,7 +369,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
     <Show when={shouldRender()}>
       <Root
         ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
-        class={resolvedClasses().root}
+        class={classes().root}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}
         data-md-cols={props.mdCols ?? 8}
@@ -400,19 +398,19 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (allProps) => {
       >
         <aside
           ref={(el) => (overlayRef = el as HTMLElement | undefined)}
-          class={resolvedClasses().overlay}
+          class={classes().overlay}
           data-slot="overlay"
           id="rl-layout-grid-overlay"
         >
           <div
             ref={(el) => (columnsRef = el as HTMLElement | undefined)}
-            class={resolvedClasses().container}
+            class={classes().container}
             data-slot="columns-container"
           />
           <div
             ref={(el) => (indicatorRef = el as HTMLElement | undefined)}
             data-slot="indicator"
-            class={resolvedClasses().indicator}
+            class={classes().indicator}
           />
         </aside>
       </Root>

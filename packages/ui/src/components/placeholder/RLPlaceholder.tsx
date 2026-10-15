@@ -2,9 +2,8 @@ import type { RLPlaceholderProps } from "./placeholder.types";
 import { RLPlaceholderTheme } from "./placeholder.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLPlaceholder: Component<RLPlaceholderProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLPlaceholder: Component<RLPlaceholderProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
   const classes = createMemo(() =>
     RLPlaceholderTheme({

@@ -7,9 +7,8 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
   day: "numeric",
 };
 
-export const RLDate: Component<RLDateProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "date", "locale", "options");
+export const RLDate: Component<RLDateProps> = (props) => {
+  const rest = omit(props, "date", "locale", "options");
 
   const resolvedDate = props.date instanceof Date ? props.date : new Date(props.date);
   const valid = !isNaN(resolvedDate.getTime());

@@ -3,10 +3,9 @@ import { RLInputDateTheme } from "./input-date.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 
-export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
-  const props = allProps;
+export const RLInputDate: Component<RLInputDateProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "children",
     "value",
     "defaultValue",
@@ -28,7 +27,7 @@ export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
     "onKeyDown",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputDateTheme({
       ui: props.ui,
       class: props.class,
@@ -45,7 +44,7 @@ export const RLInputDate: Component<RLInputDateProps> = (allProps) => {
   );
 
   return (
-    <div class={`${resolvedClasses().root} ${inputClasses().root}`} data-slot="root">
+    <div class={`${classes().root} ${inputClasses().root}`} data-slot="root">
       <input
         type="date"
         name={props.name}

@@ -4,10 +4,9 @@ import { children, createMemo, omit, For, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 
-export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
-  const props = allProps;
+export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "items",
     "max",
@@ -33,7 +32,7 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
   const size = () => props.size ?? "md";
   const color = () => props.color ?? "neutral";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLAvatarGroupTheme({
       size: size(),
       color: color(),
@@ -77,17 +76,17 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
   };
 
   return (
-    <Root class={resolvedClasses().root} data-slot="avatar-group" {...rest}>
+    <Root class={classes().root} data-slot="avatar-group" {...rest}>
       {normalizedItems().length > 0 ? (
         <>
           {hiddenItemCount() > 0 && (
-            <span class={resolvedClasses().more} aria-hidden="true" data-slot="more">
+            <span class={classes().more} aria-hidden="true" data-slot="more">
               +{hiddenItemCount()}
             </span>
           )}
           <For each={[...renderedItems()].reverse()}>
             {(item) => (
-              <span class={resolvedClasses().base} data-slot="base">
+              <span class={classes().base} data-slot="base">
                 <RLAvatar
                   src={item.src}
                   alt={item.alt ?? ""}
@@ -107,13 +106,13 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (allProps) => {
       ) : (
         <>
           {hiddenChildCount() > 0 && (
-            <span class={resolvedClasses().more} aria-hidden="true" data-slot="more">
+            <span class={classes().more} aria-hidden="true" data-slot="more">
               +{hiddenChildCount()}
             </span>
           )}
           <For each={[...visibleChildren()].reverse()}>
             {(child) => (
-              <span class={resolvedClasses().base} data-slot="base">
+              <span class={classes().base} data-slot="base">
                 {child}
               </span>
             )}

@@ -2,20 +2,19 @@ import type { RLMeterProps } from "./meter.types";
 import { RLMeterTheme } from "./meter.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLMeter: Component<RLMeterProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "ui", "class", "children");
+export const RLMeter: Component<RLMeterProps> = (props) => {
+  const rest = omit(props, "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLMeterTheme({
       ui: props.ui,
       class: props.class,
-      ...allProps,
+      ...props,
     }),
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

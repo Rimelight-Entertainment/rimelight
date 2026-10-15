@@ -153,8 +153,7 @@ const RLSidebarItems: Component<{
   );
 };
 
-export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
-  const props = allProps;
+export const RLSidebar: Component<RLSidebarProps> = (props) => {
   const resolvedChildren = children(() => props.children);
   const resolvedHeader = children(() => props.header);
   const resolvedHeaderSlot = children(() => props.headerSlot);
@@ -162,7 +161,7 @@ export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
   const resolvedFooterSlot = children(() => props.footerSlot);
 
   const rest = omit(
-    allProps,
+    props,
     "items",
     "collapsible",
     "variant",
@@ -183,7 +182,7 @@ export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
   const items = () => props.items ?? [];
   const isRoot = () => depth() === 0;
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLSidebarTheme({
       collapsible: props.collapsible,
       variant: props.variant,
@@ -218,30 +217,30 @@ export const RLSidebar: Component<RLSidebarProps> = (allProps) => {
     <Show
       when={isRoot()}
       fallback={
-        <RLSidebarItems items={items()} t={t()} _depth={depth()} themeClasses={resolvedClasses()} />
+        <RLSidebarItems items={items()} t={t()} _depth={depth()} themeClasses={classes()} />
       }
     >
       <aside
         ref={(el) => (sidebarRef = el)}
-        class={resolvedClasses().root}
+        class={classes().root}
         data-slot="root"
         data-sidebar
         {...rest}
       >
-        <div class={resolvedClasses().header} data-slot="header">
+        <div class={classes().header} data-slot="header">
           {headerContent()}
         </div>
 
-        <div class={resolvedClasses().content} data-slot="content">
+        <div class={classes().content} data-slot="content">
           {resolvedChildren() ? (
             resolvedChildren()
           ) : (
-            <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={resolvedClasses()} />
+            <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={classes()} />
           )}
         </div>
 
         {footerContent() && (
-          <div class={resolvedClasses().footer} data-slot="footer">
+          <div class={classes().footer} data-slot="footer">
             {footerContent()}
           </div>
         )}

@@ -3,10 +3,9 @@ import { RLInputTimeTheme } from "./input-time.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 
-export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
-  const props = allProps;
+export const RLInputTime: Component<RLInputTimeProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "children",
     "value",
     "defaultValue",
@@ -28,7 +27,7 @@ export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
     "onKeyDown",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLInputTimeTheme({
       ui: props.ui,
       class: props.class,
@@ -45,7 +44,7 @@ export const RLInputTime: Component<RLInputTimeProps> = (allProps) => {
   );
 
   return (
-    <div class={`${resolvedClasses().root} ${inputClasses().root}`} data-slot="root">
+    <div class={`${classes().root} ${inputClasses().root}`} data-slot="root">
       <input
         type="time"
         name={props.name}

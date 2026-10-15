@@ -10,10 +10,9 @@ import { defineShortcuts } from "../../shortcuts";
 
 const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`;
 
-export const RLSearch: Component<RLSearchProps> = (allProps) => {
-  const props = allProps;
+export const RLSearch: Component<RLSearchProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "endpoint",
     "placeholder",
     "messages",
@@ -141,7 +140,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
     }, 200);
   };
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLSearchTheme({
       ui: props.ui,
       class: props.class,
@@ -149,7 +148,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
   );
 
   return (
-    <div class={`${resolvedClasses().root} rl-search-wrapper`} data-slot="root" {...rest}>
+    <div class={`${classes().root} rl-search-wrapper`} data-slot="root" {...rest}>
       {props.triggerSlot ? (
         <div class="cursor-pointer" onClick={toggleModal}>
           {props.triggerSlot}
@@ -172,7 +171,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
       <Show when={isOpen()}>
         <Portal>
           <div
-            class={resolvedClasses().modal}
+            class={classes().modal}
             data-slot="modal"
             onClick={(e) => {
               if (e.target === e.currentTarget) closeModal();
@@ -180,13 +179,13 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
           >
             <div
               id={modalId}
-              class={resolvedClasses().dialog}
+              class={classes().dialog}
               data-slot="dialog"
               role="dialog"
               aria-modal="true"
               aria-label="Search"
             >
-              <div class={resolvedClasses().header} data-slot="header">
+              <div class={classes().header} data-slot="header">
                 <RLInput
                   ref={(el) => (inputRef = el)}
                   variant="ghost"
@@ -201,7 +200,7 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
                       closeModal();
                     }
                   }}
-                  leading={<RLIcon name="search" class={resolvedClasses().headerIcon} />}
+                  leading={<RLIcon name="search" class={classes().headerIcon} />}
                   trailing={
                     <div class="flex items-center gap-2">
                       <Show when={loading()}>
@@ -210,12 +209,12 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
                       <RLKbd size="sm">Esc</RLKbd>
                       <button
                         type="button"
-                        class={resolvedClasses().close}
+                        class={classes().close}
                         aria-label="Close search"
                         onClick={closeModal}
                         data-slot="close"
                       >
-                        <RLIcon name="x" class={resolvedClasses().closeIcon} />
+                        <RLIcon name="x" class={classes().closeIcon} />
                       </button>
                     </div>
                   }
@@ -229,37 +228,29 @@ export const RLSearch: Component<RLSearchProps> = (allProps) => {
                 />
               </div>
 
-              <div class={resolvedClasses().results} data-slot="results">
+              <div class={classes().results} data-slot="results">
                 <For each={results()}>
                   {(item) => (
-                    <a
-                      href={item.url || "#"}
-                      class={resolvedClasses().resultItem}
-                      onClick={closeModal}
-                    >
-                      <div class={resolvedClasses().resultHeader}>
-                        <span class={resolvedClasses().resultTitle}>
-                          {item.title || "Untitled"}
-                        </span>
+                    <a href={item.url || "#"} class={classes().resultItem} onClick={closeModal}>
+                      <div class={classes().resultHeader}>
+                        <span class={classes().resultTitle}>{item.title || "Untitled"}</span>
                         {item.sourceType && (
-                          <span class={resolvedClasses().resultBadge}>{item.sourceType}</span>
+                          <span class={classes().resultBadge}>{item.sourceType}</span>
                         )}
                       </div>
-                      {item.snippet && (
-                        <p class={resolvedClasses().resultSnippet}>{item.snippet}</p>
-                      )}
+                      {item.snippet && <p class={classes().resultSnippet}>{item.snippet}</p>}
                     </a>
                   )}
                 </For>
               </div>
 
               <Show when={hasSearched() && results().length === 0 && !loading()}>
-                <div class={resolvedClasses().empty} data-slot="empty">
+                <div class={classes().empty} data-slot="empty">
                   {noResultsLabel()}
                 </div>
               </Show>
 
-              <div class={resolvedClasses().footer} data-slot="footer">
+              <div class={classes().footer} data-slot="footer">
                 <span class="flex items-center gap-1">
                   Press <RLKbd size="sm">Esc</RLKbd> to close
                 </span>

@@ -2,10 +2,9 @@ import type { RLTextareaProps } from "./textarea.types";
 import { RLTextareaTheme } from "./textarea.theme";
 import { createMemo, omit, type Component } from "solid-js";
 
-export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
-  const props = allProps;
+export const RLTextarea: Component<RLTextareaProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "value",
     "placeholder",
     "disabled",
@@ -27,7 +26,7 @@ export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
     "ref",
   );
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLTextareaTheme({
       size: props.size ?? "md",
       error: !!props.error,
@@ -37,7 +36,7 @@ export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root">
+    <div class={classes().root} data-slot="root">
       <textarea
         ref={props.ref}
         name={props.name}
@@ -48,7 +47,7 @@ export const RLTextarea: Component<RLTextareaProps> = (allProps) => {
         disabled={props.disabled}
         readonly={props.readonly}
         required={props.required}
-        class={resolvedClasses().textarea}
+        class={classes().textarea}
         data-slot="textarea"
         onInput={props.onInput}
         onChange={props.onChange}

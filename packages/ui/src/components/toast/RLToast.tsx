@@ -11,10 +11,9 @@ const variantIcons: Record<string, string> = {
   info: "info",
 };
 
-export const RLToast: Component<RLToastProps> = (allProps) => {
-  const props = allProps;
+export const RLToast: Component<RLToastProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "title",
     "description",
     "variant",
@@ -39,7 +38,7 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
 
   const isError = () => props.variant === "error";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLToastTheme({
       variant: ["success", "error", "warning", "info"].includes(props.variant ?? "")
         ? (props.variant as "success" | "error" | "warning" | "info")
@@ -103,7 +102,7 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
   return (
     <div
       ref={(el) => (rootRef = el)}
-      class={`${resolvedClasses().root}  ${leaving() ? "opacity-0 translate-y-2 pointer-events-none" : ""}`}
+      class={`${classes().root}  ${leaving() ? "opacity-0 translate-y-2 pointer-events-none" : ""}`}
       data-slot="root"
       data-toast
       data-duration={props.duration ?? 6000}
@@ -118,12 +117,12 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
 
       <div class="flex flex-col gap-0.5 flex-1 min-w-0">
         {props.titleSlot || props.title ? (
-          <div class={resolvedClasses().title} data-slot="title">
+          <div class={classes().title} data-slot="title">
             {props.titleSlot ? props.titleSlot : props.title}
           </div>
         ) : null}
         {props.descriptionSlot || props.description ? (
-          <div class={resolvedClasses().description} data-slot="description">
+          <div class={classes().description} data-slot="description">
             {props.descriptionSlot ? props.descriptionSlot : props.description}
           </div>
         ) : null}
@@ -133,12 +132,7 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
             {props.actionsSlot ? (
               props.actionsSlot
             ) : (
-              <button
-                type="button"
-                class={resolvedClasses().action}
-                data-slot="action"
-                data-toast-action
-              >
+              <button type="button" class={classes().action} data-slot="action" data-toast-action>
                 {props.actionLabel}
               </button>
             )}
@@ -149,7 +143,7 @@ export const RLToast: Component<RLToastProps> = (allProps) => {
       {props.dismissable !== false && (
         <button
           type="button"
-          class={resolvedClasses().close}
+          class={classes().close}
           data-slot="close"
           data-toast-close
           aria-label="Dismiss notification"

@@ -3,11 +3,10 @@ import { RLQuoteTheme } from "./quote.theme";
 import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLQuote: Component<RLQuoteProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "quote", "caption", "children", "ui", "class");
+export const RLQuote: Component<RLQuoteProps> = (props) => {
+  const rest = omit(props, "quote", "caption", "children", "ui", "class");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLQuoteTheme({
       ui: props.ui,
       class: props.class,
@@ -15,13 +14,13 @@ export const RLQuote: Component<RLQuoteProps> = (allProps) => {
   );
 
   return (
-    <figure class={resolvedClasses().root} data-slot="root" {...rest}>
-      <RLIcon name="quote" class={resolvedClasses().icon} data-slot="icon" />
-      <blockquote class={resolvedClasses().quote} data-slot="quote">
+    <figure class={classes().root} data-slot="root" {...rest}>
+      <RLIcon name="quote" class={classes().icon} data-slot="icon" />
+      <blockquote class={classes().quote} data-slot="quote">
         {props.quote !== undefined ? props.quote : props.children}
       </blockquote>
       {props.caption ? (
-        <figcaption class={resolvedClasses().caption} data-slot="caption">
+        <figcaption class={classes().caption} data-slot="caption">
           {props.caption}
         </figcaption>
       ) : null}

@@ -34,11 +34,10 @@ const MARQUEE_KEYFRAMES = `
 }
 `;
 
-export const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
-  const props = allProps;
-  const rest = omit(allProps, "speed", "direction", "pauseOnHover", "ui", "class", "children");
+export const RLMarquee: Component<RLMarqueeProps> = (props) => {
+  const rest = omit(props, "speed", "direction", "pauseOnHover", "ui", "class", "children");
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLMarqueeTheme({
       direction: props.direction ?? "left",
       pauseOnHover: props.pauseOnHover ?? true,
@@ -50,16 +49,11 @@ export const RLMarquee: Component<RLMarqueeProps> = (allProps) => {
   const trackStyle = () => ({ "animation-duration": `${props.speed ?? 40}s` });
 
   return (
-    <div class={resolvedClasses().root} data-slot="marquee-root" {...rest}>
-      <div class={resolvedClasses().track} data-slot="track" style={trackStyle()}>
+    <div class={classes().root} data-slot="marquee-root" {...rest}>
+      <div class={classes().track} data-slot="track" style={trackStyle()}>
         {props.children}
       </div>
-      <div
-        class={resolvedClasses().track}
-        data-slot="track"
-        style={trackStyle()}
-        aria-hidden="true"
-      >
+      <div class={classes().track} data-slot="track" style={trackStyle()} aria-hidden="true">
         {props.children}
       </div>
       <style>{MARQUEE_KEYFRAMES}</style>

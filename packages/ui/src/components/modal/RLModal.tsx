@@ -14,14 +14,13 @@ import {
 import { Portal, type JSX } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
 
-export const RLModal: Component<RLModalProps> = (allProps) => {
-  const props = allProps;
+export const RLModal: Component<RLModalProps> = (props) => {
   const uniqueId = createUniqueId();
   const titleId = `rl-modal-title-${uniqueId}`;
   const descId = `rl-modal-desc-${uniqueId}`;
 
   const rest = omit(
-    allProps,
+    props,
     "open",
     "defaultOpen",
     "title",
@@ -154,7 +153,7 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
     };
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLModalTheme({
       size: props.size ?? "md",
       transition: isTransition(),
@@ -185,7 +184,7 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
 
   const renderModalDialog = () => (
     <div
-      class={resolvedClasses().overlay}
+      class={classes().overlay}
       data-slot="overlay"
       data-state={isOpen() ? "open" : "closed"}
       style={{ display: isOpen() || !unmountOnHide() ? undefined : "none" }}
@@ -210,7 +209,7 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
         }
         data-state={isOpen() ? "open" : "closed"}
         data-slot="content"
-        class={resolvedClasses().content}
+        class={classes().content}
         tabindex={-1}
         onClick={(e) => e.stopPropagation()}
         {...rest}
@@ -232,26 +231,22 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
                 <Show
                   when={headerSlotContent()}
                   fallback={
-                    <div class={resolvedClasses().header} data-slot="header">
+                    <div class={classes().header} data-slot="header">
                       <div class="flex flex-col gap-1 min-w-0 flex-1">
                         <Show when={titleContent()}>
-                          <h2 id={titleId} class={resolvedClasses().title} data-slot="title">
+                          <h2 id={titleId} class={classes().title} data-slot="title">
                             {titleContent()}
                           </h2>
                         </Show>
                         <Show when={descriptionContent()}>
-                          <p
-                            id={descId}
-                            class={resolvedClasses().description}
-                            data-slot="description"
-                          >
+                          <p id={descId} class={classes().description} data-slot="description">
                             {descriptionContent()}
                           </p>
                         </Show>
                       </div>
 
                       <Show when={actionsContent()}>
-                        <div class={resolvedClasses().actions} data-slot="actions">
+                        <div class={classes().actions} data-slot="actions">
                           {actionsContent()}
                         </div>
                       </Show>
@@ -269,7 +264,7 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
                               leadingIcon={props.closeIcon ?? "x"}
                               aria-label="Close modal"
                               data-slot="close"
-                              class={resolvedClasses().close}
+                              class={classes().close}
                               onClick={handleClose}
                               {...closeProps()}
                             />
@@ -281,20 +276,20 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
                     </div>
                   }
                 >
-                  <div class={resolvedClasses().header} data-slot="header">
+                  <div class={classes().header} data-slot="header">
                     {headerSlotContent()}
                   </div>
                 </Show>
               </Show>
 
               {/* Body */}
-              <div class={resolvedClasses().body} data-slot="body">
+              <div class={classes().body} data-slot="body">
                 {bodyContent()}
               </div>
 
               {/* Footer */}
               <Show when={footerContent()}>
-                <div class={resolvedClasses().footer} data-slot="footer">
+                <div class={classes().footer} data-slot="footer">
                   {footerContent()}
                 </div>
               </Show>
@@ -308,14 +303,14 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
   );
 
   return (
-    <div class={resolvedClasses().root} data-slot="root">
+    <div class={classes().root} data-slot="root">
       <Show
         when={triggerContent()}
         fallback={
           <Show when={props.triggerLabel}>
             <RLButton
               type="button"
-              class={resolvedClasses().trigger}
+              class={classes().trigger}
               data-slot="trigger"
               onClick={() => setOpenState(true)}
             >

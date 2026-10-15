@@ -16,10 +16,9 @@ import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import type { RLButtonProps } from "../button/button.types";
 
-export const RLCallout: Component<RLCalloutProps> = (allProps) => {
-  const props = allProps;
+export const RLCallout: Component<RLCalloutProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "variant",
     "color",

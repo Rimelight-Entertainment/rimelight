@@ -4,10 +4,9 @@ import { createEffect, createMemo, createUniqueId, omit, type Component } from "
 import { dynamic } from "@solidjs/web";
 import { useHeaderStack } from "./useHeaderStack";
 
-export const RLHeader: Component<RLHeaderProps> = (allProps) => {
-  const props = allProps;
+export const RLHeader: Component<RLHeaderProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "as",
     "layerType",
     "contain",
@@ -37,7 +36,7 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
   const layerType = () => props.layerType ?? "header";
   const isBanner = () => layerType() === "banner";
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLHeaderTheme({
       contain: contain(),
       sticky: fixed() ? false : sticky(),
@@ -78,7 +77,7 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
       }}
       id={layerId()}
       data-slot="root"
-      class={resolvedClasses().root}
+      class={classes().root}
       data-contain={contain() ? "true" : "false"}
       data-collapsed={layer.isCollapsed() ? "true" : "false"}
       data-rl-header={isBanner() ? undefined : "true"}
@@ -89,15 +88,15 @@ export const RLHeader: Component<RLHeaderProps> = (allProps) => {
       data-layer-type={layerType()}
       {...rest}
     >
-      <div class={resolvedClasses().content} data-header-content>
-        <div class={resolvedClasses().container} data-slot="container">
-          <div class={resolvedClasses().left} data-slot="left">
+      <div class={classes().content} data-header-content>
+        <div class={classes().container} data-slot="container">
+          <div class={classes().left} data-slot="left">
             {props.left}
           </div>
-          <div class={resolvedClasses().center} data-slot="center">
+          <div class={classes().center} data-slot="center">
             {props.center ?? props.children}
           </div>
-          <div class={resolvedClasses().right} data-slot="right">
+          <div class={classes().right} data-slot="right">
             {props.right}
           </div>
         </div>

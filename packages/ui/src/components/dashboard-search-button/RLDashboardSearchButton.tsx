@@ -4,10 +4,9 @@ import { createMemo, For, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (allProps) => {
-  const props = allProps;
+export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (props) => {
   const rest = omit(
-    allProps,
+    props,
     "icon",
     "label",
     "kbds",
@@ -22,7 +21,7 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
   const labelText = () => props.label ?? "Search";
   const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }];
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLDashboardSearchButtonTheme({
       collapsed: props.collapsed ?? false,
       ui: props.ui,
@@ -34,7 +33,7 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
     <button
       type="button"
       data-dashboard-search-button
-      class={resolvedClasses().base}
+      class={classes().base}
       data-slot="root"
       {...rest}
     >
@@ -45,11 +44,11 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
         />
       )}
 
-      <span data-slot="label" class={resolvedClasses().label}>
+      <span data-slot="label" class={classes().label}>
         {labelText()}
       </span>
 
-      <span data-slot="trailing" class={resolvedClasses().trailing}>
+      <span data-slot="trailing" class={classes().trailing}>
         {props.trailingSlot ? (
           props.trailingSlot
         ) : props["trailing"] ? (

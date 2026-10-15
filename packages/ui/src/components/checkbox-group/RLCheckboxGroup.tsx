@@ -17,13 +17,12 @@ import { dynamic } from "@solidjs/web";
 import { RLCheckbox } from "../checkbox/RLCheckbox";
 import type { RLCheckboxVariant } from "../checkbox/checkbox.types";
 
-export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
-  const props = allProps;
+export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   const generatedId = createUniqueId();
   const id = () => props.id || `rl-checkbox-group-${generatedId}`;
 
   const rest = omit(
-    allProps,
+    props,
     "as",
     "id",
     "legend",
@@ -129,7 +128,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
     return props.items.map((item, index) => normalizeItem(item, index));
   });
 
-  const resolvedClasses = createMemo(() =>
+  const classes = createMemo(() =>
     RLCheckboxGroupTheme({
       size: size(),
       color: color(),
@@ -176,15 +175,15 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
   return (
     <Root
       id={id()}
-      class={resolvedClasses().root}
+      class={classes().root}
       data-slot="root"
       data-theme={props.theme}
       data-disabled={disabled() ? "true" : undefined}
       {...rest}
     >
-      <fieldset class={resolvedClasses().fieldset} data-slot="fieldset">
+      <fieldset class={classes().fieldset} data-slot="fieldset">
         <Show when={props.legend || props.legendSlot}>
-          <legend class={resolvedClasses().legend} data-slot="legend">
+          <legend class={classes().legend} data-slot="legend">
             {renderLegend()}
           </legend>
         </Show>
@@ -209,7 +208,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (allProps) => {
 
               return (
                 <div
-                  class={resolvedClasses().item}
+                  class={classes().item}
                   data-slot="item"
                   data-state={itemSelected() ? "checked" : "unchecked"}
                   aria-disabled={itemDisabled() ? "true" : undefined}
