@@ -2,10 +2,10 @@
 
 ## Structure
 
-### Apps (`/packages`)
+### Apps (`/apps`)
 
-- **`rimelight.com`**: The main company website.
-- **`starter.rimelight.com`**: Our standardized starter template for Astro websites.
+- **`rimelight.com`**: The main company website built with Solid 2.0.
+- **`starter.rimelight.com`**: Our standardized starter template for Solid 2.0 applications.
 
 ### Packages (`/packages`)
 
@@ -14,6 +14,6 @@
 - **`@rimelight/cms`**: Enterprise content management, block rendering, and wiki engine.
 - **`@rimelight/docs`**: Documentation components and utilities.
 - **`@rimelight/i18n`**: Internationalization and localization tools.
-- **`@rimelight/security`**: Astro security integration (CSP, SRI, and more).
-- **`@rimelight/seo`**: SEO utilities including sitemap, robots, and meta components.
-- **`@rimelight/ui`**: Our component library used in all our web projects.
+- **`@rimelight/security`**: Web security integration (CSP, SRI, and more) for Solid and Hono.
+- **`@rimelight/seo`**: SEO utilities including sitemap, robots, OG image generation, and meta components.
+- **`@rimelight/ui`**: 100% SolidJS 2.0 idiomatic component library.

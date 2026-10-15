@@ -9,16 +9,16 @@
 [![View on npmx](https://img.shields.io/badge/VIEW%20ON%20NPMX-A682FF?style=for-the-badge&logo=npm&logoColor=white)](https://npmx.dev/package/@rimelight/ui) &nbsp;
 [![pkg.pr.new](https://pkg.pr.new/badge/Rimelight-Entertainment/rimelight)](https://pkg.pr.new/~/Rimelight-Entertainment/rimelight) &nbsp;
 
-Rimelight UI is a comprehensive SolidJS component library used and maintained by [Rimelight Entertainment](https://rimelight.com).
-It offers a full suite of accessible, reactive, and highly performant components for [SolidJS](https://www.solidjs.com) and [Astro](https://astro.build) (via `@astrojs/solid-js` islands and SSR), and is available as a free and open source project for anyone to use.
+Rimelight UI is a comprehensive, 100% SolidJS 2.0 component library used and maintained by [Rimelight Entertainment](https://rimelight.com).
+It offers a full suite of accessible, fine-grained reactive, and highly performant components built exclusively for [SolidJS](https://www.solidjs.com) 2.0, and is available as a free and open source project for anyone to use.
 
 ## Features
 
-- **Pure SolidJS**: Reactive, zero-virtual-DOM performance with fine-grained reactivity.
-- **Astro Island & SSR Ready**: Seamlessly server-rendered and hydrated in Astro applications.
+- **Pure SolidJS 2.0**: Native fine-grained reactivity and signal primitives with zero virtual DOM overhead.
+- **SSR & Island Ready**: Server-rendered and client hydrated seamlessly across modern Vite, SolidStart, and full-stack runtimes.
 - **Accessible**: All components are WAI-ARIA compliant and include keyboard navigation, focus management, and screen reader support.
 - **Customizable**: Create your own design system by overriding styles and variants globally or per instance via UnoCSS.
-- **Performant**: Fully type-safe, modern and lean dependencies, and blazing fast.
+- **Performant**: Fully type-safe, memoized theme classes, modern and lean dependencies, and blazing fast.
 
 For a complete list of available components, refer to the [documentation](https://rimelight.com/company/docs/packages/rimelight-ui/).
 
@@ -37,28 +37,12 @@ npm install @rimelight/ui solid-js
 
 ## Usage
 
-### In SolidJS
-
 ```tsx
 import { RLButton } from "@rimelight/ui/components";
 
 export default function MyComponent() {
   return <RLButton label="Click Me" color="primary" variant="solid" />;
 }
-```
-
-### In Astro (as Islands or Static SSR)
-
-```astro
----
-import { RLButton } from "@rimelight/ui/components"
----
-
-<!-- Static SSR -->
-<RLButton label="Static Action" color="primary" />
-
-<!-- Interactive Island -->
-<RLButton client:load label="Interactive Island" color="secondary" />
 ```
 
 ## Frequently Asked Questions
@@ -69,8 +53,8 @@ import { RLButton } from "@rimelight/ui/components"
 </details>
 
 <details>
-  <summary><b>Can I use Rimelight UI without Astro?</b></summary>
-    Yes! Rimelight UI is a standard SolidJS component library and can be used in any SolidJS, SolidStart, or Vite project.
+  <summary><b>Which version of SolidJS is supported?</b></summary>
+    Rimelight UI is built exclusively for SolidJS 2.0+ with modern reactivity primitives and signals.
 </details>
 
 <details>

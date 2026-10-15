@@ -40,7 +40,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
         pipeline: unocss.content?.pipeline !== false && {
           ...unocss.content?.pipeline,
           include: [
-            /\.(svelte|[jt]sx?|mdx?|html)($|\?)/,
+            /\.([jt]sx?|mdx?|html)($|\?)/,
             /[\\/](@rimelight\/(ui|cms)|packages\/(ui|cms))[\\/]/,
             ...[unocss.content?.pipeline?.include]
               .flat()

@@ -56,10 +56,10 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
     if (isUnstyled) {
       const res = {} as Record<S, string>;
-      const hasClass = props.class || props.className;
+      const hasClass = props.class;
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i]!;
-        const base = slot === actualRootSlot && hasClass ? cx(props.class, props.className) : "";
+        const base = slot === actualRootSlot && hasClass ? cx(props.class) : "";
         const fn = props.ui?.[slot];
         res[slot] = typeof fn === "function" ? fn(base) : cx(base, fn);
       }
@@ -152,7 +152,7 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       let slotClass = res[slot]!;
       if (slot === actualRootSlot) {
         if (color) slotClass = slotClass ? `${slotClass} rl-color-${color}` : `rl-color-${color}`;
-        const extra = cx(props.class, props.className);
+        const extra = cx(props.class);
         if (extra) slotClass = slotClass ? `${slotClass} ${extra}` : extra;
       }
       const override = props.ui?.[slot];
