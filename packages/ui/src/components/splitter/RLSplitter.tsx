@@ -1,15 +1,8 @@
-import type { RLSplitterProps } from "./splitter.types";
+import type { RLSplitterProps, DragState } from "./splitter.types";
 import { RLSplitterTheme } from "./splitter.theme";
 import { children, createMemo, createSignal, For, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
-
-interface DragState {
-  i: number;
-  startPos: number;
-  startA: number;
-  startB: number;
-}
 
 export const RLSplitter: Component<RLSplitterProps> = (props) => {
   const rest = omit(props, "direction", "defaultSizes", "ui", "class", "children", "panels");

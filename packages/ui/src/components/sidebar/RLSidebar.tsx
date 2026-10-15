@@ -47,10 +47,9 @@ const RLSidebarItems: Component<{
   themeClasses: any;
 }> = (props) => {
   const indentClass = () => (props._depth === 0 ? "ml-6" : props._depth === 1 ? "ml-4" : "ml-3");
-  const textSizeClass = () => (props._depth === 0 ? "" : "text-xs");
 
   return (
-    <div class="flex flex-col gap-0.5">
+    <div class={props.themeClasses.itemsContainer}>
       <For each={props.items}>
         {(item) => {
           const hasChildren = () => (item.children?.length ?? 0) > 0;
@@ -70,32 +69,38 @@ const RLSidebarItems: Component<{
                     class={`${
                       props._depth === 1
                         ? props.themeClasses.itemLink
-                        : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors ${textSizeClass()}`
+                        : props.themeClasses.subItemLink
                     } ${isActive() ? " text-highlighted bg-muted" : ""}`}
                     aria-current={isActive() ? "page" : undefined}
                   >
-                    {item.icon && (
-                      <span
-                        class={`${
-                          props._depth === 1 ? props.themeClasses.itemIcon : "size-3.5 shrink-0"
-                        } ${item.icon}`}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span data-slot="item-text" class="truncate flex-1">
+                    <Show when={item.icon}>
+                      {(icon) => (
+                        <span
+                          class={`${
+                            props._depth === 1
+                              ? props.themeClasses.itemIcon
+                              : props.themeClasses.subItemIcon
+                          } ${icon()}`}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Show>
+                    <span data-slot="item-text" class={props.themeClasses.itemText}>
                       {props.t(item.label || "")}
                     </span>
-                    {b() && (
-                      <RLBadge
-                        variant={b()!.variant}
-                        color={b()!.color as any}
-                        size="sm"
-                        class={`ml-auto select-none ${b()!.class}`}
-                        data-slot="item-badge"
-                      >
-                        {props.t(b()!.text)}
-                      </RLBadge>
-                    )}
+                    <Show when={b()}>
+                      {(badge) => (
+                        <RLBadge
+                          variant={badge().variant}
+                          color={badge().color as any}
+                          size="sm"
+                          class={`ml-auto select-none ${badge().class}`}
+                          data-slot="item-badge"
+                        >
+                          {props.t(badge().text)}
+                        </RLBadge>
+                      )}
+                    </Show>
                   </a>
                 }
               >
@@ -103,37 +108,40 @@ const RLSidebarItems: Component<{
                   <summary
                     class={`${
                       props._depth === 1
-                        ? props.themeClasses.itemLink
-                        : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors ${textSizeClass()}`
-                    } ${isActive() ? " text-highlighted bg-muted" : ""} list-none cursor-pointer`}
+                        ? props.themeClasses.itemSummary
+                        : props.themeClasses.subItemLink
+                    } ${isActive() ? " text-highlighted bg-muted" : ""}`}
                     data-slot="item-summary"
                   >
-                    {item.icon && (
-                      <span
-                        class={`${
-                          props._depth === 1 ? props.themeClasses.itemIcon : "size-3.5 shrink-0"
-                        } ${item.icon}`}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span data-slot="item-text" class="truncate flex-1">
+                    <Show when={item.icon}>
+                      {(icon) => (
+                        <span
+                          class={`${
+                            props._depth === 1
+                              ? props.themeClasses.itemIcon
+                              : props.themeClasses.subItemIcon
+                          } ${icon()}`}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Show>
+                    <span data-slot="item-text" class={props.themeClasses.itemText}>
                       {props.t(item.label || "")}
                     </span>
-                    {b() && (
-                      <RLBadge
-                        variant={b()!.variant}
-                        color={b()!.color as any}
-                        size="sm"
-                        class={`ml-auto select-none ${b()!.class}`}
-                        data-slot="item-badge"
-                      >
-                        {props.t(b()!.text)}
-                      </RLBadge>
-                    )}
-                    <RLIcon
-                      name="chevron-right"
-                      class="size-3 ml-auto transition-transform group-open/details:rotate-90"
-                    />
+                    <Show when={b()}>
+                      {(badge) => (
+                        <RLBadge
+                          variant={badge().variant}
+                          color={badge().color as any}
+                          size="sm"
+                          class={`ml-auto select-none ${badge().class}`}
+                          data-slot="item-badge"
+                        >
+                          {props.t(badge().text)}
+                        </RLBadge>
+                      )}
+                    </Show>
+                    <RLIcon name="chevron-right" class={props.themeClasses.itemChevron} />
                   </summary>
                   <div class={`mt-0.5 ${indentClass()} flex flex-col gap-0.5`}>
                     <RLSidebarItems
@@ -199,17 +207,28 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
     }
   };
 
-  const headerContent = () =>
-    resolvedHeader() ? (
-      resolvedHeader()
-    ) : resolvedHeaderSlot() ? (
-      resolvedHeaderSlot()
-    ) : props.logo ? (
-      <span data-slot="sidebar-logo" class="flex items-center gap-2">
-        <RLIcon name="i-lucide-layers" class="size-5 text-primary" />
-        <span class="truncate">{props.logo}</span>
-      </span>
-    ) : null;
+  const headerContent = () => (
+    <Show
+      when={resolvedHeader()}
+      fallback={
+        <Show
+          when={resolvedHeaderSlot()}
+          fallback={
+            <Show when={props.logo}>
+              <span data-slot="sidebar-logo" class={classes().logoWrapper}>
+                <RLIcon name="i-lucide-layers" class="size-5 text-primary" />
+                <span class="truncate">{props.logo}</span>
+              </span>
+            </Show>
+          }
+        >
+          {resolvedHeaderSlot()}
+        </Show>
+      }
+    >
+      {resolvedHeader()}
+    </Show>
+  );
 
   const footerContent = () => resolvedFooter() || resolvedFooterSlot();
 
@@ -232,25 +251,28 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
         </div>
 
         <div class={classes().content} data-slot="content">
-          {resolvedChildren() ? (
-            resolvedChildren()
-          ) : (
-            <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={classes()} />
-          )}
+          <Show
+            when={resolvedChildren()}
+            fallback={
+              <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={classes()} />
+            }
+          >
+            {resolvedChildren()}
+          </Show>
         </div>
 
-        {footerContent() && (
+        <Show when={footerContent()}>
           <div class={classes().footer} data-slot="footer">
             {footerContent()}
           </div>
-        )}
+        </Show>
       </aside>
 
       <Show when={props.collapsible === "offcanvas"}>
         <button
           type="button"
           data-sidebar-toggle
-          class="fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-default border border-default shadow-sm hover:bg-muted transition-colors"
+          class={classes().toggleButton}
           aria-label="Toggle sidebar"
           onClick={toggleSidebar}
         >

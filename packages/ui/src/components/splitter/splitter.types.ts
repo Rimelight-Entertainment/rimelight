@@ -1,5 +1,12 @@
 import type { JSX } from "@solidjs/web";
 
+export interface DragState {
+  i: number;
+  startPos: number;
+  startA: number;
+  startB: number;
+}
+
 export interface RLSplitterProps {
   /**
    * Resizing orientation.

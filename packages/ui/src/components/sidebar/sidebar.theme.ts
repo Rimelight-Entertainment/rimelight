@@ -1,7 +1,24 @@
 import { defineTheme } from "../../resolver";
 
 export const RLSidebarTheme = defineTheme("sidebar", {
-  slots: ["root", "header", "content", "footer", "item", "itemLink", "itemIcon", "itemBadge"],
+  slots: [
+    "root",
+    "header",
+    "content",
+    "footer",
+    "item",
+    "itemLink",
+    "itemIcon",
+    "itemBadge",
+    "itemsContainer",
+    "itemText",
+    "itemSummary",
+    "itemChevron",
+    "subItemLink",
+    "subItemIcon",
+    "logoWrapper",
+    "toggleButton",
+  ],
   base: {
     root: "flex flex-col h-full w-64 bg-default border-r border-default shadow-sm transition-all duration-300",
     header:
@@ -14,6 +31,17 @@ export const RLSidebarTheme = defineTheme("sidebar", {
     itemIcon: "size-4 text-current",
     itemBadge:
       "ml-auto flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold",
+    itemsContainer: "flex flex-col gap-0.5",
+    itemText: "truncate flex-1",
+    itemSummary:
+      "list-none cursor-pointer flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted transition-colors",
+    itemChevron: "size-3 ml-auto transition-transform group-open/details:rotate-90",
+    subItemLink:
+      "flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors text-xs",
+    subItemIcon: "size-3.5 shrink-0",
+    logoWrapper: "flex items-center gap-2",
+    toggleButton:
+      "fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-default border border-default shadow-sm hover:bg-muted transition-colors",
   },
   variants: {
     side: {

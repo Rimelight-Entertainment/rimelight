@@ -1,21 +1,23 @@
-import type { RLShortcutsProps } from "./shortcuts.types";
+import type { RLShortcutsProps, CategorySection } from "./shortcuts.types";
 import { RLShortcutsTheme } from "./shortcuts.theme";
 import uiConfig from "virtual:rimelight-ui";
-import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  createUniqueId,
+  For,
+  onSettled,
+  Show,
+  omit,
+  type Component,
+} from "solid-js";
 import { Portal } from "@solidjs/web";
 import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts";
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
 
-interface CategorySection {
-  key: string;
-  label: string;
-  items: RegisteredShortcut[];
-}
-
-const modalId = `rl-shortcuts-${Math.random().toString(36).substring(2, 9)}`;
-
 export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
+  const modalId = `rl-shortcuts-${createUniqueId()}`;
   const rest = omit(props, "categories", "ui", "class");
 
   const configCategories = (): Record<string, { label: string }> =>

@@ -37,28 +37,21 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
     }),
   );
 
-  const slotCache = new Map<string, unknown>();
-  const getSlotContent = (slotName?: string) => {
-    if (!slotName) return null;
-    if (slotCache.has(slotName)) return slotCache.get(slotName) ?? null;
-    const slots = props["slots"] as Record<string, any> | undefined;
-    let raw: any = slots ? slots[slotName] : undefined;
-    if (raw === undefined) {
-      raw = props[`${slotName}-content`] ?? props[slotName];
-    }
-    const content = typeof raw === "function" ? raw() : raw;
-    const resolved = content ?? null;
-    slotCache.set(slotName, resolved);
-    return resolved;
-  };
+  const [currentPath, setCurrentPath] = createSignal("");
 
-  const currentPath = () => {
-    if (typeof window === "undefined") return "";
-    return (
+  onSettled(() => {
+    if (typeof window === "undefined") return;
+    const path =
       window.location.pathname
         .replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "")
-        .replace(/\/+$/, "") || "/"
-    );
+        .replace(/\/+$/, "") || "/";
+    setCurrentPath(path);
+  });
+
+  const getSlotContent = (slotName?: string) => {
+    if (!slotName || !props.slots) return null;
+    const raw = props.slots[slotName];
+    return typeof raw === "function" ? (raw as () => any)() : (raw ?? null);
   };
 
   const isItemActive = (item: NavigationMenuItem) => {
@@ -219,28 +212,23 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     <Show
                       when={getSlotContent(item.slot)}
                       fallback={
-                        <ul role="list" class="py-1">
+                        <ul role="list" class={classes().childList}>
                           <For each={item.children}>
                             {(child) => (
                               <li>
-                                <a
-                                  href={childHref(child)}
-                                  class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors"
-                                >
+                                <a href={childHref(child)} class={classes().childLink}>
                                   <Show when={child["icon"]}>
                                     {(icon) => (
                                       <span
-                                        class={`${icon()} mt-0.5 size-4 shrink-0 text-muted`}
+                                        class={`${icon()} ${classes().childIcon}`}
                                         aria-hidden="true"
                                       />
                                     )}
                                   </Show>
                                   <div>
-                                    <div class="font-medium leading-none">{child["label"]}</div>
+                                    <div class={classes().childLabel}>{child["label"]}</div>
                                     <Show when={child["description"]}>
-                                      {(desc) => (
-                                        <p class="mt-1 text-xs text-muted line-clamp-2">{desc()}</p>
-                                      )}
+                                      {(desc) => <p class={classes().childDescription}>{desc()}</p>}
                                     </Show>
                                   </div>
                                 </a>
@@ -271,28 +259,23 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     data-item-index={i()}
                     role="region"
                   >
-                    <ul role="list" class="py-1">
+                    <ul role="list" class={classes().childList}>
                       <For each={item.children}>
                         {(child) => (
                           <li>
-                            <a
-                              href={childHref(child)}
-                              class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors"
-                            >
+                            <a href={childHref(child)} class={classes().childLink}>
                               <Show when={child["icon"]}>
                                 {(icon) => (
                                   <span
-                                    class={`${icon()} mt-0.5 size-4 shrink-0 text-muted`}
+                                    class={`${icon()} ${classes().childIcon}`}
                                     aria-hidden="true"
                                   />
                                 )}
                               </Show>
                               <div>
-                                <div class="font-medium leading-none">{child["label"]}</div>
+                                <div class={classes().childLabel}>{child["label"]}</div>
                                 <Show when={child["description"]}>
-                                  {(desc) => (
-                                    <p class="mt-1 text-xs text-muted line-clamp-2">{desc()}</p>
-                                  )}
+                                  {(desc) => <p class={classes().childDescription}>{desc()}</p>}
                                 </Show>
                               </div>
                             </a>
@@ -343,27 +326,24 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     when={slotContent()}
                     fallback={
                       <Show when={item.children && item.children.length > 0}>
-                        <ul role="list" class="py-2 px-3 grid grid-cols-2 gap-2">
+                        <ul role="list" class={classes().childList}>
                           <For each={item.children}>
                             {(child) => (
                               <li>
-                                <a
-                                  href={childHref(child)}
-                                  class="flex items-start gap-3 rounded-md px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors"
-                                >
-                                  {child["icon"] && (
-                                    <span
-                                      class={`${child["icon"]} mt-0.5 size-4 shrink-0 text-muted`}
-                                      aria-hidden="true"
-                                    />
-                                  )}
-                                  <div>
-                                    <div class="font-medium leading-none">{child["label"]}</div>
-                                    {child["description"] && (
-                                      <p class="mt-1 text-xs text-muted line-clamp-2">
-                                        {child["description"]}
-                                      </p>
+                                <a href={childHref(child)} class={classes().childLink}>
+                                  <Show when={child["icon"]}>
+                                    {(icon) => (
+                                      <span
+                                        class={`${icon()} ${classes().childIcon}`}
+                                        aria-hidden="true"
+                                      />
                                     )}
+                                  </Show>
+                                  <div>
+                                    <div class={classes().childLabel}>{child["label"]}</div>
+                                    <Show when={child["description"]}>
+                                      {(desc) => <p class={classes().childDescription}>{desc()}</p>}
+                                    </Show>
                                   </div>
                                 </a>
                               </li>

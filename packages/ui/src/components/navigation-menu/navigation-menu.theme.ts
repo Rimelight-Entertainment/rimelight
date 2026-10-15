@@ -1,7 +1,21 @@
 import { defineTheme } from "../../resolver";
 
 export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
-  slots: ["root", "list", "item", "link", "trigger", "content", "viewport", "viewportWrapper"],
+  slots: [
+    "root",
+    "list",
+    "item",
+    "link",
+    "trigger",
+    "content",
+    "viewport",
+    "viewportWrapper",
+    "childList",
+    "childLink",
+    "childIcon",
+    "childLabel",
+    "childDescription",
+  ],
   base: {
     root: "relative z-10 flex w-full",
     list: "group flex flex-1 list-none",
@@ -14,6 +28,12 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     viewportWrapper: "absolute left-0 top-full flex justify-center w-full",
     viewport:
       "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md bg-default text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90",
+    childList: "py-1",
+    childLink:
+      "flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors",
+    childIcon: "mt-0.5 size-4 shrink-0 text-muted",
+    childLabel: "font-medium leading-none",
+    childDescription: "mt-1 text-xs text-muted line-clamp-2",
   },
   variants: {
     orientation: {

@@ -91,7 +91,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
     return [props.items as DropdownMenuItem[]];
   });
 
-  const triggerElement = () => props.trigger || (props as any)["slot:trigger"] || props.children;
+  const triggerElement = () => props.trigger || props.children;
 
   return (
     <div
@@ -213,14 +213,14 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                           if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null;
                           return (
                             <span class={classes().itemTrailing}>
-                              {item.shortcut && (
-                                <span class={classes().shortcut}>{item.shortcut}</span>
-                              )}
-                              {item.kbds && (
+                              <Show when={item.shortcut}>
+                                {(shortcut) => <span class={classes().shortcut}>{shortcut()}</span>}
+                              </Show>
+                              <Show when={item.kbds && item.kbds.length > 0}>
                                 <For each={item.kbds}>
                                   {(kbd) => <kbd class={classes().itemTrailingKbds}>{kbd}</kbd>}
                                 </For>
-                              )}
+                              </Show>
                             </span>
                           );
                         };

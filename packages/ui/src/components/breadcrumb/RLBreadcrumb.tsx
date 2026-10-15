@@ -132,21 +132,23 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     const active = item?.active !== undefined ? Boolean(item.active) : isLast;
     const disabled = Boolean(item?.disabled);
 
-    const baseClasses = RLBreadcrumbTheme({
-      color: resolvedColor(),
-      active,
-      disabled,
-      to: hasTo,
-      ui:
-        item?.ui || item?.class
-          ? {
-              ...props.ui,
-              ...item?.ui,
-              ...(item?.class ? { link: [props.ui?.link, item?.ui?.link, item.class] } : {}),
-            }
-          : props.ui,
-      class: props.class,
-    });
+    const baseClasses = createMemo(() =>
+      RLBreadcrumbTheme({
+        color: resolvedColor(),
+        active,
+        disabled,
+        to: hasTo,
+        ui:
+          item?.ui || item?.class
+            ? {
+                ...props.ui,
+                ...item?.ui,
+                ...(item?.class ? { link: [props.ui?.link, item?.ui?.link, item.class] } : {}),
+              }
+            : props.ui,
+        class: props.class,
+      }),
+    );
 
     return {
       active,
@@ -157,12 +159,13 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
   };
 
   const renderSeparator = (item?: any, idx?: number) => {
-    const themeClasses = () =>
+    const themeClasses = createMemo(() =>
       RLBreadcrumbTheme({
         color: resolvedColor(),
         ui: item?.ui ? { ...props.ui, ...item.ui } : props.ui,
         class: props.class,
-      });
+      }),
+    );
 
     if (props.separatorSlot) {
       return (
@@ -199,7 +202,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     const active = () => theme().active;
     const disabled = () => theme().disabled;
     const hasTo = () => theme().hasTo;
-    const classes = () => theme().classes;
+    const classes = () => theme().classes();
 
     const customSlotName = item?.slot;
     if (customSlotName && props.slots && props.slots[customSlotName]) {
@@ -324,7 +327,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     }),
   );
 
-  const overflowThemeClasses = () =>
+  const overflowThemeClasses = createMemo(() =>
     RLBreadcrumbTheme({
       color: resolvedColor(),
       ui:
@@ -332,7 +335,8 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
           ? { ...props.ui, overflow: props.ui.item }
           : props.ui,
       class: props.class,
-    });
+    }),
+  );
 
   return (
     <RootTag aria-label="Breadcrumb" class={rootClasses().root} data-slot="root" {...rest}>
@@ -341,13 +345,19 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
           <For each={visibleItemsWithMeta()}>
             {({ item, originalIndex, isLast, isOverflow, hiddenCount }) => {
               if (isOverflow) {
-                const overflowClasses = () => overflowThemeClasses();
                 return (
-                  <li class={overflowClasses().overflow} aria-hidden="true" data-slot="overflow">
-                    <span class={overflowClasses().overflowEllipsis} data-slot="overflow-ellipsis">
+                  <li
+                    class={overflowThemeClasses().overflow}
+                    aria-hidden="true"
+                    data-slot="overflow"
+                  >
+                    <span
+                      class={overflowThemeClasses().overflowEllipsis}
+                      data-slot="overflow-ellipsis"
+                    >
                       …
                     </span>
-                    <span class={overflowClasses().overflowCount} data-slot="overflow-count">
+                    <span class={overflowThemeClasses().overflowCount} data-slot="overflow-count">
                       +{hiddenCount}
                     </span>
                     {renderSeparator()}
@@ -357,7 +367,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
 
               const theme = () => getThemeClasses(item, isLast);
               return (
-                <li class={theme().classes.item} data-slot="item">
+                <li class={theme().classes().item} data-slot="item">
                   {renderItemContent(item, originalIndex, theme)}
                   {!isLast && renderSeparator(item, originalIndex)}
                 </li>

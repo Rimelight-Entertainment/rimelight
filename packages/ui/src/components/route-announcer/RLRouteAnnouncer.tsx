@@ -1,5 +1,5 @@
 import { useLocation, useIsRouting } from "@solidjs/router";
-import { createSignal, onSettled, Show, type Component } from "solid-js";
+import { createMemo, createSignal, omit, onSettled, Show, type Component } from "solid-js";
 import { RLRouteAnnouncerTheme } from "./route-announcer.theme";
 import type { RLRouteAnnouncerProps, RLRouteAnnouncerProgressSize } from "./route-announcer.types";
 
@@ -29,6 +29,8 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
     setAnnouncement(title);
   });
 
+  const rest = omit(props, "prefix", "progress", "color", "size", "class", "ui");
+
   const progressEnabled = () => props.progress !== false;
 
   const progressOptions = () =>
@@ -38,16 +40,17 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
   const resolvedSize = (): RLRouteAnnouncerProgressSize =>
     progressOptions()?.size ?? props.size ?? "sm";
 
-  const classes = () =>
+  const classes = createMemo(() =>
     RLRouteAnnouncerTheme({
       color: resolvedColor(),
       size: resolvedSize(),
       class: props.class,
       ui: props.ui,
-    });
+    }),
+  );
 
   return (
-    <div class={classes().root}>
+    <div class={classes().root} {...rest}>
       {/* 1. Visually-hidden live region for screen readers */}
       <div aria-live="polite" aria-atomic="true" role="status" class={classes().announcer}>
         {announcement()}

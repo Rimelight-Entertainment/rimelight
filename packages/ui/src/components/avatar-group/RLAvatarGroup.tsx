@@ -1,6 +1,6 @@
 import type { RLAvatarGroupProps } from "./avatar-group.types";
 import { RLAvatarGroupTheme } from "./avatar-group.theme";
-import { children, createMemo, omit, For, type Component } from "solid-js";
+import { children, createMemo, omit, For, Show, type Component } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 
@@ -77,48 +77,49 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
 
   return (
     <Root class={classes().root} data-slot="avatar-group" {...rest}>
-      {normalizedItems().length > 0 ? (
-        <>
-          {hiddenItemCount() > 0 && (
-            <span class={classes().more} aria-hidden="true" data-slot="more">
-              +{hiddenItemCount()}
+      <Show
+        when={normalizedItems().length > 0}
+        fallback={
+          <>
+            <Show when={hiddenChildCount() > 0}>
+              <span class={classes().more} aria-hidden="true" data-slot="more">
+                +{hiddenChildCount()}
+              </span>
+            </Show>
+            <For each={[...visibleChildren()].reverse()}>
+              {(child) => (
+                <span class={classes().base} data-slot="base">
+                  {child}
+                </span>
+              )}
+            </For>
+          </>
+        }
+      >
+        <Show when={hiddenItemCount() > 0}>
+          <span class={classes().more} aria-hidden="true" data-slot="more">
+            +{hiddenItemCount()}
+          </span>
+        </Show>
+        <For each={[...renderedItems()].reverse()}>
+          {(item) => (
+            <span class={classes().base} data-slot="base">
+              <RLAvatar
+                src={item.src}
+                alt={item.alt ?? ""}
+                icon={item.icon}
+                text={item.text}
+                fallback={item.fallback}
+                initials={item.initials}
+                size={size()}
+                color={(item.color ?? color()) as any}
+                chip={item.chip}
+                loading={item.loading}
+              />
             </span>
           )}
-          <For each={[...renderedItems()].reverse()}>
-            {(item) => (
-              <span class={classes().base} data-slot="base">
-                <RLAvatar
-                  src={item.src}
-                  alt={item.alt ?? ""}
-                  icon={item.icon}
-                  text={item.text}
-                  fallback={item.fallback}
-                  initials={item.initials}
-                  size={size()}
-                  color={(item.color ?? color()) as any}
-                  chip={item.chip}
-                  loading={item.loading}
-                />
-              </span>
-            )}
-          </For>
-        </>
-      ) : (
-        <>
-          {hiddenChildCount() > 0 && (
-            <span class={classes().more} aria-hidden="true" data-slot="more">
-              +{hiddenChildCount()}
-            </span>
-          )}
-          <For each={[...visibleChildren()].reverse()}>
-            {(child) => (
-              <span class={classes().base} data-slot="base">
-                {child}
-              </span>
-            )}
-          </For>
-        </>
-      )}
+        </For>
+      </Show>
     </Root>
   );
 };

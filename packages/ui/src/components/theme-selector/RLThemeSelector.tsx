@@ -14,8 +14,7 @@ const themeItems = [
 export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
   const rest = omit(props, "mode", "size", "theme", "ui", "class", "children", "onChange");
 
-  const initialPref = getThemePreference() ?? "system";
-  const [currentPreference, setCurrentPreference] = createSignal<string>(initialPref);
+  const [currentPreference, setCurrentPreference] = createSignal<string>("system");
 
   const getPreference = () => {
     const stored = getThemePreference();

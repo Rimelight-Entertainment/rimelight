@@ -1,6 +1,6 @@
 import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types";
 import { RLLocaleSelectorTheme } from "./locale-selector.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 
 const getLocaleDisplayName = (localeCode: string): string => {
@@ -44,11 +44,20 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
     ),
   );
 
+  const [currentSearch, setCurrentSearch] = createSignal("");
+  const [currentPathname, setCurrentPathname] = createSignal("/");
+
+  onSettled(() => {
+    if (typeof window === "undefined") return;
+    setCurrentSearch(window.location.search);
+    setCurrentPathname(window.location.pathname);
+  });
+
   const items = createMemo(() =>
     processedLocales().map((item) => {
       let targetUrl: string;
-      const search = typeof window !== "undefined" ? window.location.search : "";
-      const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+      const search = currentSearch();
+      const pathname = currentPathname();
       if (item.href !== undefined && item.href !== null) {
         targetUrl = item.href + (item.href.includes("?") ? "" : search);
       } else {

@@ -14,6 +14,8 @@ import type {
   TableColumnOrderState,
   TableEditingCellState,
   TableExportOptions,
+  AnyData,
+  GroupedItem,
 } from "./table.types";
 import { RLTableTheme } from "./table.theme";
 import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
@@ -24,8 +26,6 @@ import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
 import { RLIcon } from "../icon/RLIcon";
 export * from "./table.types";
 
-type AnyData = Record<string, any>;
-
 function getNestedValue(obj: AnyData, key: string): any {
   if (!obj || typeof obj !== "object") return undefined;
   if (key.includes(".")) {
@@ -34,7 +34,7 @@ function getNestedValue(obj: AnyData, key: string): any {
   return obj[key];
 }
 
-export function RLTable<T = any>(props: RLTableProps<T>) {
+export const RLTable = <T = any,>(props: RLTableProps<T>) => {
   let tableElementRef: HTMLTableElement | null = null;
   let containerRef: HTMLDivElement | null = null;
 
@@ -615,10 +615,6 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
   });
 
   // ─── Multi-level Grouping pipeline ──────────────────────────────────────────
-  type GroupedItem =
-    | { type: "group"; group: TableGroup<T>; depth: number }
-    | { type: "row"; row: TableRow<T> };
-
   function groupRowsRecursively(
     rows: TableRow<T>[],
     groupCols: string[],
@@ -709,7 +705,7 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       const result: GroupedItem[] = [];
       for (const item of items) {
         if (item.type === "group") {
-          if (item.group.rows.some((r) => pageRowIds.has(r.id))) result.push(item);
+          if (item.group.rows.some((r: TableRow<T>) => pageRowIds.has(r.id))) result.push(item);
         } else if (pageRowIds.has(item.row.id)) {
           result.push(item);
         }
@@ -1961,4 +1957,4 @@ export function RLTable<T = any>(props: RLTableProps<T>) {
       </div>
     </div>
   );
-}
+};

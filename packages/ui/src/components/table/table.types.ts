@@ -16,6 +16,12 @@ export interface TableColumnMeta {
   [key: string]: any;
 }
 
+export type AnyData = Record<string, any>;
+
+export type GroupedItem<T = any> =
+  | { type: "group"; group: TableGroup<T>; depth: number }
+  | { type: "row"; row: TableRow<T> };
+
 export type TableAggregationFn<T = any> =
   | "count"
   | "sum"
