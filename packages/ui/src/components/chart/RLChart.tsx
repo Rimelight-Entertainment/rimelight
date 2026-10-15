@@ -110,13 +110,15 @@ export const RLChart: Component<RLChartProps> = (props) => {
 `}</style>
 
       <div class={`${classes().root}  ${id}`} data-slot="root" {...rest}>
-        {props.title ? (
-          <div class={classes().title} data-slot="title">
-            {props.title}
-          </div>
-        ) : null}
+        <Show when={props.title}>
+          {(t) => (
+            <div class={classes().title} data-slot="title">
+              {t()}
+            </div>
+          )}
+        </Show>
 
-        {chartType() === "bar" ? (
+        <Show when={chartType() === "bar"}>
           <div class={classes().container} data-slot="container">
             <For each={data()}>
               {(item, i) => {
@@ -151,9 +153,9 @@ export const RLChart: Component<RLChartProps> = (props) => {
               }}
             </For>
           </div>
-        ) : null}
+        </Show>
 
-        {chartType() === "line" || chartType() === "area" ? (
+        <Show when={chartType() === "line" || chartType() === "area"}>
           <div class="relative w-full rl-chart-line-wrap">
             <svg
               class={classes().svg}
@@ -214,9 +216,9 @@ export const RLChart: Component<RLChartProps> = (props) => {
               </For>
             </svg>
           </div>
-        ) : null}
+        </Show>
 
-        {chartType() === "pie" || chartType() === "donut" ? (
+        <Show when={chartType() === "pie" || chartType() === "donut"}>
           <div class="flex items-center gap-6 justify-center rl-chart-pie-wrap">
             <svg
               viewBox="0 0 200 200"
@@ -261,12 +263,16 @@ export const RLChart: Component<RLChartProps> = (props) => {
               </For>
             </div>
           </div>
-        ) : null}
+        </Show>
 
         {props.children}
 
-        {(chartType() === "bar" || chartType() === "line" || chartType() === "area") &&
-        data().length > 0 ? (
+        <Show
+          when={
+            (chartType() === "bar" || chartType() === "line" || chartType() === "area") &&
+            data().length > 0
+          }
+        >
           <div class={classes().legend} data-slot="legend">
             <For each={data()}>
               {(item, i) => (
@@ -279,7 +285,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
               )}
             </For>
           </div>
-        ) : null}
+        </Show>
       </div>
     </>
   );

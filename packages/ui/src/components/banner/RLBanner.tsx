@@ -78,7 +78,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   // Explicit id (or legacy dismissId) enables persistence. Otherwise a
   // createUniqueId() fallback keeps the DOM id unique and SSR/hydration stable.
   const fallbackId = `rl-banner-${createUniqueId()}`;
-  const persistId = () => (props["id"] as string | undefined) || props.dismissId || "";
+  const persistId = () => props.id || props.dismissId || "";
   const layerId = () => persistId() || fallbackId;
   const titleId = () => `${layerId()}-title`;
   const storageKey = () => (persistId() ? `banner-${persistId()}` : undefined);

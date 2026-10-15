@@ -31,7 +31,7 @@ export const RLLink: Component<RLLinkProps> = (props) => {
 
   const attrs = createMemo(() => resolveLinkAttrs(props));
 
-  const ariaLabelValue = () => props.ariaLabel ?? (props["aria-label"] as string | undefined);
+  const ariaLabelValue = () => props.ariaLabel;
 
   const classes = createMemo<Record<string, string>>(() => {
     if (props.raw) {

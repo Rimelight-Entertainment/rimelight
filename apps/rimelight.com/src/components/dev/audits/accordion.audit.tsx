@@ -488,19 +488,22 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "named-item-slot",
-      title: "Per-item slot + slots Record (Nuxt: #{{ item.slot }})",
-      description:
-        "The middle item names slot='featured', rendered by the matching entry in the slots record.",
+      title: "Per-item custom body render prop",
+      description: "Custom item body rendered by the body render prop.",
       render: () => (
         <RLAccordion
           type="multiple"
           defaultValue={["s0", "s1"]}
-          slots={{
-            featured: (item) => <p class="text-sm text-primary font-medium">{item.content} ★</p>,
-          }}
+          body={(item) =>
+            item.value === "s1" ? (
+              <p class="text-sm text-primary font-medium">{item.content} ★</p>
+            ) : (
+              <p class="text-sm text-muted">{item.content}</p>
+            )
+          }
           items={[
             { label: "Standard", value: "s0", content: "Default body." },
-            { label: "Featured", value: "s1", slot: "featured", content: "Named slot body." },
+            { label: "Featured", value: "s1", content: "Named slot body." },
           ]}
         />
       ),

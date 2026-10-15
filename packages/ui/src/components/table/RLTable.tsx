@@ -19,7 +19,7 @@ import type {
 } from "./table.types";
 import { RLTableTheme } from "./table.theme";
 import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
-import { isServer } from "@solidjs/web";
+import { isServer, type JSX } from "@solidjs/web";
 import { RLDropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
 import { RLInput } from "../input/RLInput";
 import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
@@ -34,7 +34,7 @@ function getNestedValue(obj: AnyData, key: string): any {
   return obj[key];
 }
 
-export const RLTable = <T = any,>(props: RLTableProps<T>) => {
+export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   let tableElementRef: HTMLTableElement | null = null;
   let containerRef: HTMLDivElement | null = null;
 

@@ -44,8 +44,9 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 ## Requirements
 
 - Standardized Solid 2.0 component design: strictly native Solid 2.0 idioms.
-  - Zero Vue or Astro artifact patterns: no `v-*`, `v-model`, `modelValue`, `$slots`, `slots` record bags, `$attrs`, `$emit`, or Astro slot mechanisms.
+  - Zero Vue or Astro artifact patterns: no `v-*`, `v-model`, `modelValue`, `$slots`, `slots` record bags (e.g. `props.slots?.['header']`), `$attrs`, `$emit`, or Astro slot mechanisms.
   - Zero backwards compatibility requirements: do not support legacy prop aliases (e.g. `leading-icon`, `aria-label`, `slot:trigger`, or dynamic string bags) or runtime polyfills. Completely remove `(props as any)["kebab-case"]` fallbacks.
+  - No Vue-first abstractions: Rimelight is pure native Solid 2.0. Do not reproduce Vue-style slot-bag objects or dynamic lookup hashes just because Nuxt UI is the API reference.
 - Component signature and typing:
   - Exclusively named exports with the exact form: `export const RL<Name>: Component<RL<Name>Props> = (props) => { ... }`.
   - Generic components must export `export const RL<Name> = <T,>(props: RL<Name>Props<T>) => { ... }` or typed component interface. No `export default`.
@@ -53,7 +54,10 @@ Audit a component file to ensure strict adherence to our design patterns and fun
   - Clean typing: zero unsafe `as any` casts to access kebab-case or legacy props.
 - Theme and Styling isolation:
   - No CSS/Uno utility classes hardcoded inside the component JSX. All styling definitions live solely in the `component.theme.ts` file and are exposed as typed slots/classes.
-  - **All component classes must be computed via `createMemo`:** The component must compute theme classes via `const classes = createMemo(() => RL<Name>Theme({ ... }))`. Any sub-element, slot, separator, or item-level theme calls must also be wrapped in `createMemo` (never bare function calls or unmemoized getters `() => theme(...)`), ensuring reactivity is preserved without re-running expensive class resolution or thrashing DOM class bindings on unrelated updates.
+  - **All component classes must be computed via `createMemo`:**
+    - The component must compute theme classes via `const classes = createMemo(() => RL<Name>Theme({ ... }))`.
+    - Any sub-element, slot, separator, or item-level theme calls must also be wrapped in `createMemo` (never bare function calls or unmemoized getters `() => theme(...)`).
+    - _Why?_ In Solid 2.0's fine-grained reactivity, theme resolution inspects props (variant, size, color, etc.), merges base styles, evaluates compound variants, and generates a new record object. If not wrapped in `createMemo`, every access to `classes().slot` in JSX re-invokes the resolver on every signal read or DOM binding evaluation, thrashing string allocations and triggering unnecessary DOM class re-assignments. `createMemo` caches the resolved class dictionary and only updates when dependencies actually change.
   - No inline styles (`style={...}`), except for dynamic geometric coordinates or CSS variables that cannot be precomputed via UnoCSS classes, and even then, encapsulated in helpers.
   - No `cx` calls directly in the component JSX.
   - Use `color = "auto"` instead of hardcoding color variants when color is configurable.
@@ -63,14 +67,28 @@ Audit a component file to ensure strict adherence to our design patterns and fun
   - SSR/Hydration-safe automatic ID generation: use `createUniqueId()` for deterministic element associations (`aria-labelledby`, `aria-describedby`, `id`).
   - No `innerHTML` or `dangerouslySetInnerHTML`.
 - Strictly adhere to SolidJS 2.0 SSR & hydration invariants:
-  - **Polymorphic elements (`as` prop):** Never use `<Dynamic component={...}>` or runtime `createComponent(props.as, ...)` in JSX. Always use the hoisted instance factory: `const Root = dynamic(() => props.as ?? "defaultTag")` (imported as `import { dynamic } from "@solidjs/web"`).
-  - **Control Flow:** Always use `<Show when={...} fallback={...}>` for conditional JSX elements; never use raw ternary expressions (`condition ? <A /> : <B />`), null coalescing element fallbacks (`val ?? <Default />` inside JSX), or logical AND short-circuiting (`cond && <A />`) for rendering DOM branches.
-  - **List Rendering:** Always use `<For each={...}>` (for reference-keyed collections) or `<Index each={...}>` (for primitive/index-keyed lists); never use raw array `.map(...)` inside JSX.
-  - **Server/Client State Parity:** Initial render branches must NEVER depend on client-only globals (`window`, `localStorage`, `sessionStorage`, `document`, `matchMedia`, etc.) during component initialization or render. Access to browser globals must occur exclusively inside `onMount`, `onSettled`, or event handlers to avoid hydration mismatches.
-  - **Props Passthrough & Reactivity:** Do not destructure props. Use `props.propName` directly to preserve Solid's fine-grained reactivity. Always use `omit(props, ...)` from `solid-js` to strip internal props (`as`, `ui`, `class`, `children`, and component-specific props) before spreading `{...rest}` onto native elements, preventing invalid DOM attributes and hydration collisions.
-  - **Slots & Children:** Use native Solid JSX slot props (`props.leadingSlot`, `props.trailingSlot`, `props.children`), or typed render functions `(item: T) => JSX.Element`.
+  - **Polymorphic elements (`as` prop):**
+    - Never use `<Dynamic component={...}>` or runtime `createComponent(props.as, ...)` in JSX (`<Dynamic>` is deprecated in Solid 2.0).
+    - Always hoist polymorphic tag creation per component instance: `const Tag = dynamic(() => props.as ?? "defaultTag")` (imported via `import { dynamic } from "@solidjs/web"`).
+  - **Control Flow:**
+    - Always use `<Show when={...} fallback={...}>` for conditional JSX elements; never use raw ternary expressions (`condition ? <A /> : <B />`), null coalescing element fallbacks (`val ?? <Default />` inside JSX), or logical AND short-circuiting (`cond && <A />`) for rendering DOM branches.
+  - **List Rendering:**
+    - Always use `<For each={...}>` (for reference-keyed collections) or `<Index each={...}>` (for primitive/index-keyed lists); never use raw array `.map(...)` inside JSX.
+  - **Server/Client State Parity:**
+    - Initial render branches must NEVER depend on client-only globals (`window`, `localStorage`, `sessionStorage`, `document`, `matchMedia`, etc.) during component initialization or render.
+    - Access to browser globals must occur exclusively inside `onMount`, `onSettled`, or event handlers to avoid hydration mismatches.
+  - **Props Passthrough & Reactivity (`rest = omit(props, ...)`):**
+    - Do not destructure props (e.g. `const { as, ui, ...rest } = props` breaks Solid reactivity proxy traps).
+    - Use `props.propName` directly.
+    - Always use `const rest = omit(props, "as", "ui", "class", "children", ...componentProps)` from `solid-js` to separate internal component props before spreading `{...rest}` onto native DOM elements.
+    - _Why `omit` is strictly required?_
+      1. Spreading un-omitted props onto native HTML DOM elements attaches non-standard attributes (like `ui`, `as`, `color`, `variant`) directly to the DOM in SSR HTML. During client hydration, the browser's DOM mismatch causes hydration attribute warnings and bailouts.
+      2. Solid 2.0 `omit(props, ...)` creates a reactive proxy slice without consuming or breaking fine-grained tracking on the retained attributes.
+  - **Slots & Children:**
+    - Use native Solid JSX slot props (`props.leadingSlot`, `props.trailingSlot`, `props.children`), or typed render functions `(item: T) => JSX.Element`.
     - Never use Vue-like `props.slots` record bags or dynamic string lookups (`props.slots?.['header']`).
-    - Use `<Show when={props.slotName}>{(slot) => (typeof slot() === "function" ? (slot() as Function)() : slot())}</Show>` or children helper conventions.
+    - Resolve slots using Solid 2.0 idiomatic patterns:
+      `<Show when={props.slotName}>{(slot) => (typeof slot() === "function" ? (slot() as Function)() : slot())}</Show>`.
 - Audit & Test Coverage:
   - Do not surround the component in any wrapper on the audit page.
   - The audit page must include a test scenario where every slot of the component is passed children (a single dedicated example per slot, including the default slot).

@@ -153,10 +153,6 @@ export interface RLAccordionProps {
    */
   body?: AccordionSlotRenderer;
   /**
-   * Per-item named renderers, keyed by `item.slot` (and `item.slot + "-body"`).
-   */
-  slots?: Record<string, AccordionSlotRenderer>;
-  /**
    * Called with the next open value whenever it changes. Pair with `value` for controlled state.
    */
   onChange?: (value: string | string[] | undefined) => void;

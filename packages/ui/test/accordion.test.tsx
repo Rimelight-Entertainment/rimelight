@@ -439,13 +439,12 @@ describe("RLAccordion Solid Component Suite", () => {
       expect(html).toContain("<h4>Getting Started</h4>");
     });
 
-    it("renders named item slot from slots record", () => {
+    it("renders custom body via body render prop", () => {
       const items: AccordionItem[] = [
         { label: "Standard Item", value: "standard", content: "Standard text" },
         {
           label: "Special Item",
           value: "special",
-          slot: "specialSlot",
           content: "Special text",
         },
       ];
@@ -455,42 +454,19 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion
             items={items}
             defaultValue="special"
-            slots={{
-              specialSlot: (item) => <div class="named-slot-output">SPECIAL: {item.content}</div>,
-            }}
+            body={(item) =>
+              item.value === "special" ? (
+                <div class="named-slot-output">SPECIAL: {item.content}</div>
+              ) : (
+                <div>{item.content}</div>
+              )
+            }
           />
         )),
       );
 
       expect(html).toContain("named-slot-output");
       expect(html).toContain("SPECIAL: Special text");
-    });
-
-    it("prefers slot + '-body' named renderer when available", () => {
-      const items: AccordionItem[] = [
-        {
-          label: "Target Item",
-          value: "target",
-          slot: "targetSlot",
-          content: "Target text",
-        },
-      ];
-
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLAccordion
-            items={items}
-            defaultValue="target"
-            slots={{
-              targetSlot: () => <div>Fallback Slot</div>,
-              "targetSlot-body": (item) => <div>Specific Body Slot: {item.content}</div>,
-            }}
-          />
-        )),
-      );
-
-      expect(html).toContain("Specific Body Slot: Target text");
-      expect(html).not.toContain("Fallback Slot");
     });
   });
 

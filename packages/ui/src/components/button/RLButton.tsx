@@ -186,7 +186,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
         block: props.block,
         square: isSquare(),
         fieldGroup: props.fieldGroup,
-        rounded: (props["rounded"] as boolean | string | undefined) ?? false,
+        rounded: props.rounded ?? false,
         leading: isLeadingPosition(),
         trailing: isTrailingPosition(),
         loading: isLoading(),
@@ -216,7 +216,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    const userHandler = props["onKeyDown"] as ((event: KeyboardEvent) => unknown) | undefined;
+    const userHandler = props.onKeyDown as ((event: KeyboardEvent) => unknown) | undefined;
     if (userHandler) userHandler(e);
 
     const action = resolveKeyboardAction({

@@ -175,7 +175,7 @@ describe("RLBreadcrumb Solid Component Suite", () => {
       expect(html).toContain('data-slot="separator"');
     });
 
-    it("renders custom item slot override via slots dictionary", () => {
+    it("renders custom item slot override via itemSlot", () => {
       const customSlotItems: BreadcrumbItem[] = [
         { label: "Home", href: "/" },
         { slot: "dropdown", label: "Menu" },
@@ -184,9 +184,13 @@ describe("RLBreadcrumb Solid Component Suite", () => {
       const html = renderToString(() => (
         <RLBreadcrumb
           items={customSlotItems}
-          slots={{
-            dropdown: ({ item }) => <button class="dropdown-trigger">{item.label}</button>,
-          }}
+          itemSlot={({ item }) =>
+            item.slot === "dropdown" ? (
+              <button class="dropdown-trigger">{item.label}</button>
+            ) : (
+              <span class="default-item">{item.label}</span>
+            )
+          }
         />
       ));
       expect(html).toContain("dropdown-trigger");

@@ -44,7 +44,6 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
     "trailing",
     "content",
     "body",
-    "slots",
     "onChange",
     "trailingIconSlot",
     "ui",
@@ -158,12 +157,6 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   };
 
   const renderBodyInner = (item: AccordionItem, index: number) => {
-    if (item.slot && props.slots?.[`${item.slot}-body`]) {
-      return props.slots[`${item.slot}-body`]!(item, index);
-    }
-    if (item.slot && props.slots?.[item.slot]) {
-      return props.slots[item.slot]!(item, index);
-    }
     const custom = props.body?.(item, index);
     if (custom !== undefined && custom !== null) return custom;
     return item.content;

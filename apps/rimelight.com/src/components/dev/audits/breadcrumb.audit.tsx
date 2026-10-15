@@ -248,13 +248,13 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
             { label: "Products", to: "/products" },
             { label: "Detail" },
           ]}
-          slots={{
-            dropdown: ({ item }) => (
+          itemSlot={({ item }) =>
+            item.slot === "dropdown" ? (
               <span class="px-2 py-0.5 rounded bg-elevated border border-default text-xs font-semibold text-highlighted">
                 ▾ {item.label}
               </span>
-            ),
-          }}
+            ) : undefined
+          }
         />
       ),
     },

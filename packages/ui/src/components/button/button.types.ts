@@ -180,6 +180,10 @@ export interface RLButtonProps {
    */
   onClick?: ButtonClickHandler | ButtonClickHandler[] | undefined;
   /**
+   * Key down event handler.
+   */
+  onKeyDown?: ((event: KeyboardEvent) => unknown) | undefined;
+  /**
    * Disables the link, preventing navigation and applying disabled styling.
    *
    * @default false

@@ -17,7 +17,8 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
     "ui",
     "class",
     "children",
-    "slots",
+    "contentSlot",
+    "itemSlot",
   );
 
   let navRef: HTMLElement | undefined;
@@ -48,10 +49,11 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
     setCurrentPath(path);
   });
 
-  const getSlotContent = (slotName?: string) => {
-    if (!slotName || !props.slots) return null;
-    const raw = props.slots[slotName];
-    return typeof raw === "function" ? (raw as () => any)() : (raw ?? null);
+  const getContentForIndex = (item: NavigationMenuItem, index: number) => {
+    if (props.contentSlot) {
+      return props.contentSlot({ item, index });
+    }
+    return null;
   };
 
   const isItemActive = (item: NavigationMenuItem) => {
@@ -112,11 +114,8 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   const activeItemHasContent = createMemo(() => {
     const item = activeItem();
     if (!item) return false;
-    return !!(
-      (item.children && item.children.length > 0) ||
-      item.slot ||
-      getSlotContent(item.slot)
-    );
+    const idx = openIndex()!;
+    return !!((item.children && item.children.length > 0) || getContentForIndex(item, idx));
   });
 
   return (
@@ -133,11 +132,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
         <For each={items()}>
           {(item, i) => {
             const hasChildren = () =>
-              !!(
-                (item.children && item.children.length > 0) ||
-                item.slot ||
-                getSlotContent(item.slot)
-              );
+              !!((item.children && item.children.length > 0) || getContentForIndex(item, i()));
             const isActive = () => isItemActive(item);
             const isOpen = () => openIndex() === i();
 
@@ -210,7 +205,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     role="region"
                   >
                     <Show
-                      when={getSlotContent(item.slot)}
+                      when={getContentForIndex(item, i())}
                       fallback={
                         <ul role="list" class={classes().childList}>
                           <For each={item.children}>
@@ -238,18 +233,17 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                         </ul>
                       }
                     >
-                      {getSlotContent(item.slot)}
+                      {getContentForIndex(item, i())}
                     </Show>
                   </div>
                 </Show>
 
-                {/* Horizontal Mode: Standard Popover Dropdown when item does NOT have a custom slot */}
+                {/* Horizontal Mode: Standard Popover Dropdown when item does NOT have custom content */}
                 <Show
                   when={
                     orientation() === "horizontal" &&
                     hasChildren() &&
-                    !item.slot &&
-                    !getSlotContent(item.slot)
+                    !getContentForIndex(item, i())
                   }
                 >
                   <div
@@ -314,7 +308,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
           <For each={items()}>
             {(item, i) => {
               const isOpen = () => openIndex() === i();
-              const slotContent = () => getSlotContent(item.slot);
+              const slotContent = () => getContentForIndex(item, i());
 
               return (
                 <div

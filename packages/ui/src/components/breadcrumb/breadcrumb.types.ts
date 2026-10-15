@@ -133,9 +133,5 @@ export interface RLBreadcrumbProps<T = BreadcrumbItem> {
   itemLabelSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
   itemTrailingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
   separatorSlot?: (props: { item?: T | undefined; index?: number | undefined }) => JSX.Element;
-  slots?:
-    | Record<string, (props: { item: T; index: number; active: boolean }) => JSX.Element>
-    | undefined;
-
   [key: string]: unknown;
 }

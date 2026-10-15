@@ -554,7 +554,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     <Root
       role="region"
       aria-roledescription="carousel"
-      aria-label={props.ariaLabel || (props["aria-label"] as string) || "Carousel"}
+      aria-label={props.ariaLabel || "Carousel"}
       data-orientation={orientation()}
       data-slot="root"
       class={classes().root}

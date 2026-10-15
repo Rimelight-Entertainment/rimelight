@@ -202,12 +202,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     const active = () => theme().active;
     const disabled = () => theme().disabled;
     const hasTo = () => theme().hasTo;
-    const classes = () => theme().classes();
-
-    const customSlotName = item?.slot;
-    if (customSlotName && props.slots && props.slots[customSlotName]) {
-      return props.slots[customSlotName]!({ item, index, active: active() });
-    }
+    const classes = createMemo(() => theme().classes());
 
     if (props.itemSlot) {
       return props.itemSlot({ item, index, active: active() });
@@ -215,15 +210,9 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
 
     const labelText = () => getItemLabel(item);
 
-    const leadingSlot =
-      (customSlotName && props.slots && props.slots[`${customSlotName}-leading`]) ||
-      props.itemLeadingSlot;
-    const labelSlot =
-      (customSlotName && props.slots && props.slots[`${customSlotName}-label`]) ||
-      props.itemLabelSlot;
-    const trailingSlot =
-      (customSlotName && props.slots && props.slots[`${customSlotName}-trailing`]) ||
-      props.itemTrailingSlot;
+    const leadingSlot = props.itemLeadingSlot;
+    const labelSlot = props.itemLabelSlot;
+    const trailingSlot = props.itemTrailingSlot;
 
     const renderLeading = () => {
       if (leadingSlot) {

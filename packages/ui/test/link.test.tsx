@@ -19,7 +19,7 @@ describe("RLLink", () => {
 
     it("hides the hint when an explicit aria-label carries the name", () => {
       const html = render(() => (
-        <RLLink href="https://example.com" label="Open" aria-label="Open in a new tab" />
+        <RLLink href="https://example.com" label="Open" ariaLabel="Open in a new tab" />
       ));
       expect(html).not.toContain('data-slot="external-hint"');
     });

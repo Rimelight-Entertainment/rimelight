@@ -61,8 +61,12 @@ export interface RLNavigationMenuProps {
   class?: any;
   children?: JSX.Element;
   /**
-   * Named mega-menu content keyed by `item.slot` (e.g. `slots["grand-tale"]`).
+   * Custom mega-menu or child content renderer for an active item.
    */
-  slots?: Record<string, NavigationMenuSlotRenderer | JSX.Element>;
+  contentSlot?: (props: { item: NavigationMenuItem; index: number }) => JSX.Element;
+  /**
+   * Custom item renderer.
+   */
+  itemSlot?: (props: { item: NavigationMenuItem; index: number; active: boolean }) => JSX.Element;
   [key: string]: any;
 }
