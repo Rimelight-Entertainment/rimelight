@@ -68,7 +68,6 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     const handleToggle = () => toggleModal();
 
     document.addEventListener("rl-search:open", handleOpen);
-    document.addEventListener("rla-search:open", handleOpen);
     document.addEventListener("search:open", handleOpen);
     document.addEventListener("rl-search:toggle", handleToggle);
 
@@ -100,7 +99,6 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
 
     return () => {
       document.removeEventListener("rl-search:open", handleOpen);
-      document.removeEventListener("rla-search:open", handleOpen);
       document.removeEventListener("search:open", handleOpen);
       document.removeEventListener("rl-search:toggle", handleToggle);
       window.removeEventListener("keydown", onKeyDown);
