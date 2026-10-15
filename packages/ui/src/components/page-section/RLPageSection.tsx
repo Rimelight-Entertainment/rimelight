@@ -1,7 +1,7 @@
 import type { RLPageSectionProps } from "./page-section.types";
 import { RLPageSectionTheme } from "./page-section.theme";
 import { createMemo, omit, For, type Component, Show } from "solid-js";
-import { Dynamic } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
 
@@ -81,9 +81,10 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       (props.links?.length ?? 0) > 0,
     );
 
+  const Root = dynamic(() => props.as ?? "section");
+
   return (
-    <Dynamic
-      component={props.as || "section"}
+    <Root
       data-orientation={props.orientation ?? "vertical"}
       class={`${resolvedClasses().root} ${
         props.contentVisibility === "auto"
@@ -175,6 +176,6 @@ export const RLPageSection: Component<RLPageSectionProps> = (allProps) => {
       </div>
 
       {props.bottom}
-    </Dynamic>
+    </Root>
   );
 };
