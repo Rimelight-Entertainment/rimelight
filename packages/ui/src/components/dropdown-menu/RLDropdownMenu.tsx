@@ -162,12 +162,16 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (allProps) => {
             data-slot="content"
             role="menu"
           >
-            {props.arrow && <div class={resolvedClasses().arrow} />}
+            <Show when={props.arrow}>
+              <div class={resolvedClasses().arrow} />
+            </Show>
             <div class={resolvedClasses().viewport}>
               <For each={itemGroups()}>
                 {(group, groupIdx) => (
                   <div class={resolvedClasses().group}>
-                    {groupIdx() > 0 && <div class={resolvedClasses().separator} />}
+                    <Show when={groupIdx() > 0}>
+                      <div class={resolvedClasses().separator} />
+                    </Show>
                     <For each={group}>
                       {(item) => {
                         if (item.type === "separator") {

@@ -456,14 +456,16 @@ export const RLCarousel: Component<RLCarouselProps> = (allProps) => {
               class="w-full h-full object-cover rounded-lg pointer-events-none"
               draggable={false}
             />
-            {slide.title || slide.description ? (
+            <Show when={slide.title || slide.description}>
               <div class="absolute bottom-4 left-4 right-4 p-4 rounded-lg bg-black/60 backdrop-blur-sm text-white">
-                {slide.title ? <h4 class="text-sm font-semibold">{slide.title}</h4> : null}
-                {slide.description ? (
-                  <p class="text-xs opacity-95 mt-1">{slide.description}</p>
-                ) : null}
+                <Show when={slide.title}>
+                  {(title) => <h4 class="text-sm font-semibold">{title()}</h4>}
+                </Show>
+                <Show when={slide.description}>
+                  {(description) => <p class="text-xs opacity-95 mt-1">{description()}</p>}
+                </Show>
               </div>
-            ) : null}
+            </Show>
           </div>
         );
       }

@@ -1,6 +1,6 @@
 import type { RLStepperProps, StepperItem } from "./stepper.types";
 import { RLStepperTheme } from "./stepper.theme";
-import { createMemo, createSignal, For, omit, type Component } from "solid-js";
+import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLStepper: Component<RLStepperProps> = (allProps) => {
@@ -173,7 +173,7 @@ export const RLStepper: Component<RLStepperProps> = (allProps) => {
                 hidden={panelActive ? undefined : "until-found"}
                 class="w-full"
               >
-                {item.content ? <div>{item.content}</div> : null}
+                <Show when={item.content}>{(content) => <div>{content()}</div>}</Show>
               </div>
             );
           }}

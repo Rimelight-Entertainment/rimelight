@@ -257,7 +257,9 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
                         onClick={() => handleSelect(itemVal())}
                       >
                         <span class="truncate">{itemLabel()}</span>
-                        {active() && <RLIcon name="check" class="size-4 opacity-100" />}
+                        <Show when={active()}>
+                          <RLIcon name="check" class="size-4 opacity-100" />
+                        </Show>
                       </button>
                     );
                   }}
@@ -270,30 +272,34 @@ export const RLTabs: Component<RLTabsProps> = (allProps) => {
 
       <Show when={showContent()}>
         <div class="flex-1">
-          {resolvedChildren() ? (
-            resolvedChildren()
-          ) : (
-            <For each={items()}>
-              {(item, index) => {
-                const itemVal = () => (item[valueKey()] ?? item.value ?? String(index())) as string;
-                const active = () => itemVal() === currentValue();
+          <Show
+            when={resolvedChildren()}
+            fallback={
+              <For each={items()}>
+                {(item, index) => {
+                  const itemVal = () =>
+                    (item[valueKey()] ?? item.value ?? String(index())) as string;
+                  const active = () => itemVal() === currentValue();
 
-                return (
-                  <Show when={props.unmountOnHide === false || active()}>
-                    <div
-                      class={resolvedClasses().content}
-                      data-slot="content"
-                      role="tabpanel"
-                      data-value={itemVal()}
-                      style={{ display: active() ? undefined : "none" }}
-                    >
-                      {item.content}
-                    </div>
-                  </Show>
-                );
-              }}
-            </For>
-          )}
+                  return (
+                    <Show when={props.unmountOnHide === false || active()}>
+                      <div
+                        class={resolvedClasses().content}
+                        data-slot="content"
+                        role="tabpanel"
+                        data-value={itemVal()}
+                        style={{ display: active() ? undefined : "none" }}
+                      >
+                        {item.content}
+                      </div>
+                    </Show>
+                  );
+                }}
+              </For>
+            }
+          >
+            {resolvedChildren()}
+          </Show>
         </div>
       </Show>
     </div>

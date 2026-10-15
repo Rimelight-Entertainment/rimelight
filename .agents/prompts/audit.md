@@ -43,21 +43,24 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 
 ## Requirements
 
-- Match Nuxt UI's API and slot pattern when provided: no missing features, only additional ones. Report any differences. Do not list components by their Nuxt UI name anywhere in the audit pages, treat it as the name of our local library.
-- Do not reference Nuxt UI in comments or otherwise.
-- Use `color = "auto"` instead of hardcoding color variants.
-- Use `export const Component` instead of a default export or a separate export statement. Exclusively named exports, no double export.
-- Full WAI-ARIA compliance, with required props for aria labels on their respective elements and `aria-labelledby` handled automatically.
+- Standardized Solid 2.0 component design: no Vue/Astro artifact patterns (no `v-*`, `$slots`, Vue model conventions, or Astro-specific slot mechanisms).
+- Do not reference Nuxt UI in comments or otherwise. Treat design references purely as behavioral and structural specifications, not implementation code.
+- Zero backwards compatibility requirements: write clean, modern, native Solid 2.0 idioms.
+- Use `color = "auto"` instead of hardcoding color variants when color is configurable.
+- Use `export const Component: Component<ComponentProps>` instead of a default export or a separate export statement. Exclusively named exports, no double export (`export default` is forbidden).
+- Full WAI-ARIA compliance, with required props for aria labels on their respective elements (`ariaLabel`, `ariaLabelledby`) and `aria-labelledby` handled automatically with `createUniqueId()`.
 - No `innerHTML`/`dangerouslySetInnerHTML`.
-- No inline styles (CSP-breaking); use UnoCSS exclusively, save for very specific CSS cases upon asking permission.
-- No CSS/Uno inside the component itself; all of it lives solely in the `component.theme.ts` file.
-- No type declarations inside the component itself, all of its types live solely in the `component.types.ts` file.
+- No inline styles (`style={...}`), except for dynamic geometric coordinates or CSS variables that cannot be precomputed via UnoCSS classes, and even then, encapsulated in helpers.
+- No CSS/Uno utility classes hardcoded inside the component JSX; all styling definitions live solely in the `component.theme.ts` file and are exposed as typed slots/classes.
+- No type or interface declarations inside `RL<Name>.tsx`. All types live strictly in `<name>.types.ts`.
 - No `cx` calls directly in the component.
-- No hydration mismatches. Follow strict SolidJS SSR & hydration invariants:
-  - **Polymorphic elements (`as` prop):** Never use `<Dynamic component={...}>` from `@solidjs/web` in JSX. Always use the hoisted instance factory: `const Root = dynamic(() => props.as ?? "defaultTag")` (imported as `import { dynamic } from "@solidjs/web"`).
-  - **Control Flow:** Always use `<Show when={...} fallback={...}>` for conditional JSX elements; never use raw ternary expressions (`condition ? <A /> : <B />`) or logical AND (`cond && <A />`) for rendering DOM branches.
+- Strictly adhere to SolidJS 2.0 SSR & hydration invariants:
+  - **Polymorphic elements (`as` prop):** Never use `<Dynamic component={...}>` in JSX. Always use the hoisted instance factory: `const Root = dynamic(() => props.as ?? "defaultTag")` (imported as `import { dynamic } from "@solidjs/web"`).
+  - **Control Flow:** Always use `<Show when={...} fallback={...}>` for conditional JSX elements; never use raw ternary expressions (`condition ? <A /> : <B />`) or logical AND short-circuiting (`cond && <A />`) for rendering DOM branches.
   - **List Rendering:** Always use `<For each={...}>` (for reference-keyed collections) or `<Index each={...}>` (for primitive/index-keyed lists); never use raw array `.map(...)` inside JSX.
-  - **Server/Client State Parity:** Never branch JSX rendering on client-only globals (`window`, `localStorage`, `matchMedia`, etc.) during initial render without an explicit client-only boundary; SSR output and initial client hydration DOM must match identically.
+  - **Server/Client State Parity:** Initial render branches must NEVER depend on client-only globals (`window`, `localStorage`, `document`, `matchMedia`, etc.) without an explicit client-only boundary or `onMount` synchronization. SSR DOM and initial client hydration DOM must match identically to avoid hydration mismatches.
+  - **Props & Reactivity:** Do not destructure props. Use `props.propName` directly or access memoized/getter signals to preserve Solid's fine-grained reactivity. Use `omit(...)` or `splitProps(...)` consistently to isolate HTML attribute passthroughs (`rest`).
+  - **Slots & Children:** Use native Solid JSX slot props (`props.leadingSlot`, `props.trailingSlot`, `props.children`), or render functions `(item) => JSX.Element`. Never use Vue-like `slots` record bags or dynamic string lookups.
 - Do not surround the component in any wrapper on the audit page.
 - The audit page must include a test scenario where every slot of the component is passed children (a single dedicated example per slot, including the default slot).
 - Create a robust test suite for the component in question to avoid regressions.
@@ -68,7 +71,7 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 
 - Component package layout, `packages/ui/src/components/<name>/`:
   - `RL<Name>.tsx` — implementation, exported as `export const RL<Name>: Component<RL<Name>Props>`.
-  - `<name>.ts` — props interface extending the base component props, JSDoc on every prop.
+  - `<name>.types.ts` — props interface extending the base component props, JSDoc on every prop.
   - `<name>.theme.ts` — the only place classes/Uno utilities live; the component reads them from the theme.
   - `<name>.helpers.ts` — non-rendering logic, only when it is worth splitting out.
 - Audit page: `apps/rimelight.com/src/components/dev/audits/<name>.audit.tsx`, importing the component from `@rimelight/ui/components/<name>/RL<Name>.tsx` and following an existing audit as the pattern reference.
@@ -83,11 +86,9 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Manual verification by me must be requested for any hydration errors or other console warnings. You never run `dev` directly to verify.
 - Do not mark audits as passed unless specifically told to, after my manual verification.
 
-## Deliverables\
+## Deliverables
 
-{ getLocaleUrl("/about") }
-
-- Updated component (`RL<Name>.tsx`), props, theme, helpers.
+- Updated component (`RL<Name>.tsx`), props (`<name>.types.ts`), theme (`<name>.theme.ts`), helpers (`<name>.helpers.ts`).
 - Test suite covering the component's props, states, slots, and interaction behavior.
 - Audit page entry exercising every prop, variant, and state.
 - Completion report in the structure below.

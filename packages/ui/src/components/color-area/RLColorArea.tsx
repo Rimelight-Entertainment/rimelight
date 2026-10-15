@@ -1,6 +1,6 @@
 import type { RLColorAreaProps } from "./color-area.types";
 import { RLColorAreaTheme } from "./color-area.theme";
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
+import { createEffect, createMemo, createSignal, omit, Show, type Component } from "solid-js";
 
 type Channel =
   | "hue"
@@ -528,11 +528,15 @@ export const RLColorArea: Component<RLColorAreaProps> = (allProps) => {
           onKeyDown={handleKeyDown}
         />
       </div>
-      {props.name ? (
-        <input type="hidden" name={props.name} value={value()} data-main-input />
-      ) : null}
-      {props.xName ? <input type="hidden" name={props.xName} value={xVal()} data-x-input /> : null}
-      {props.yName ? <input type="hidden" name={props.yName} value={yVal()} data-y-input /> : null}
+      <Show when={props.name}>
+        {(name) => <input type="hidden" name={name()} value={value()} data-main-input />}
+      </Show>
+      <Show when={props.xName}>
+        {(xName) => <input type="hidden" name={xName()} value={xVal()} data-x-input />}
+      </Show>
+      <Show when={props.yName}>
+        {(yName) => <input type="hidden" name={yName()} value={yVal()} data-y-input />}
+      </Show>
     </div>
   );
 };

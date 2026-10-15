@@ -33,23 +33,38 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (allProps) => {
 
   return (
     <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
-      {props.label ? (
-        <h4 class={resolvedClasses().title} data-slot="title">
-          {props.href ? (
-            <a href={props.href} class="hover:underline flex items-center gap-1.5">
-              {props.leadingIcon && <RLIcon name={props.leadingIcon} size="sm" />}
-              <span>{props.label}</span>
-              {props.trailingIcon && <RLIcon name={props.trailingIcon} size="sm" />}
-            </a>
-          ) : (
-            <span class="flex items-center gap-1.5">
-              {props.leadingIcon && <RLIcon name={props.leadingIcon} size="sm" />}
-              <span>{props.label}</span>
-              {props.trailingIcon && <RLIcon name={props.trailingIcon} size="sm" />}
-            </span>
-          )}
-        </h4>
-      ) : null}
+      <Show when={props.label}>
+        {(label) => (
+          <h4 class={resolvedClasses().title} data-slot="title">
+            <Show
+              when={props.href}
+              fallback={
+                <span class="flex items-center gap-1.5">
+                  <Show when={props.leadingIcon}>
+                    {(icon) => <RLIcon name={icon()} size="sm" />}
+                  </Show>
+                  <span>{label()}</span>
+                  <Show when={props.trailingIcon}>
+                    {(icon) => <RLIcon name={icon()} size="sm" />}
+                  </Show>
+                </span>
+              }
+            >
+              {(href) => (
+                <a href={href()} class="hover:underline flex items-center gap-1.5">
+                  <Show when={props.leadingIcon}>
+                    {(icon) => <RLIcon name={icon()} size="sm" />}
+                  </Show>
+                  <span>{label()}</span>
+                  <Show when={props.trailingIcon}>
+                    {(icon) => <RLIcon name={icon()} size="sm" />}
+                  </Show>
+                </a>
+              )}
+            </Show>
+          </h4>
+        )}
+      </Show>
 
       <ul class={resolvedClasses().list} data-slot="list">
         <Show when={!props.children} fallback={props.children}>

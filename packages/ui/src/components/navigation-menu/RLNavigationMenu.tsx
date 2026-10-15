@@ -162,7 +162,22 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                   if (orientation() === "horizontal" && hasChildren()) scheduleClose();
                 }}
               >
-                {hasChildren() ? (
+                <Show
+                  when={hasChildren()}
+                  fallback={
+                    <a
+                      href={itemHref(item)}
+                      class={resolvedClasses().link}
+                      data-slot="link"
+                      aria-current={isActive() ? "page" : undefined}
+                    >
+                      <Show when={item.icon}>
+                        {(icon) => <span class={`${icon()} mr-1.5 size-4`} aria-hidden="true" />}
+                      </Show>
+                      {item.label}
+                    </a>
+                  }
+                >
                   <button
                     type="button"
                     class={resolvedClasses().trigger}
@@ -180,7 +195,9 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                       }
                     }}
                   >
-                    {item.icon && <span class={`${item.icon} mr-1.5 size-4`} aria-hidden="true" />}
+                    <Show when={item.icon}>
+                      {(icon) => <span class={`${icon()} mr-1.5 size-4`} aria-hidden="true" />}
+                    </Show>
                     {item.label}
                     <RLIcon
                       name="chevron-down"
@@ -189,20 +206,10 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                       data-chevron
                     />
                   </button>
-                ) : (
-                  <a
-                    href={itemHref(item)}
-                    class={resolvedClasses().link}
-                    data-slot="link"
-                    aria-current={isActive() ? "page" : undefined}
-                  >
-                    {item.icon && <span class={`${item.icon} mr-1.5 size-4`} aria-hidden="true" />}
-                    {item.label}
-                  </a>
-                )}
+                </Show>
 
                 {/* Vertical Mode: Accordion Content */}
-                {orientation() === "vertical" && hasChildren() ? (
+                <Show when={orientation() === "vertical" && hasChildren()}>
                   <div
                     class={`${resolvedClasses().content} ${isOpen() ? "" : "hidden"}`}
                     data-slot="content"
@@ -221,19 +228,21 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                                   href={childHref(child)}
                                   class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors"
                                 >
-                                  {child["icon"] && (
-                                    <span
-                                      class={`${child["icon"]} mt-0.5 size-4 shrink-0 text-muted`}
-                                      aria-hidden="true"
-                                    />
-                                  )}
+                                  <Show when={child["icon"]}>
+                                    {(icon) => (
+                                      <span
+                                        class={`${icon()} mt-0.5 size-4 shrink-0 text-muted`}
+                                        aria-hidden="true"
+                                      />
+                                    )}
+                                  </Show>
                                   <div>
                                     <div class="font-medium leading-none">{child["label"]}</div>
-                                    {child["description"] && (
-                                      <p class="mt-1 text-xs text-muted line-clamp-2">
-                                        {child["description"]}
-                                      </p>
-                                    )}
+                                    <Show when={child["description"]}>
+                                      {(desc) => (
+                                        <p class="mt-1 text-xs text-muted line-clamp-2">{desc()}</p>
+                                      )}
+                                    </Show>
                                   </div>
                                 </a>
                               </li>
@@ -245,13 +254,17 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                       {getSlotContent(item.slot)}
                     </Show>
                   </div>
-                ) : null}
+                </Show>
 
                 {/* Horizontal Mode: Standard Popover Dropdown when item does NOT have a custom slot */}
-                {orientation() === "horizontal" &&
-                hasChildren() &&
-                !item.slot &&
-                !getSlotContent(item.slot) ? (
+                <Show
+                  when={
+                    orientation() === "horizontal" &&
+                    hasChildren() &&
+                    !item.slot &&
+                    !getSlotContent(item.slot)
+                  }
+                >
                   <div
                     class={`${resolvedClasses().content} ${isOpen() ? "" : "hidden"}`}
                     data-slot="content"
@@ -267,19 +280,21 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                               href={childHref(child)}
                               class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors"
                             >
-                              {child["icon"] && (
-                                <span
-                                  class={`${child["icon"]} mt-0.5 size-4 shrink-0 text-muted`}
-                                  aria-hidden="true"
-                                />
-                              )}
+                              <Show when={child["icon"]}>
+                                {(icon) => (
+                                  <span
+                                    class={`${icon()} mt-0.5 size-4 shrink-0 text-muted`}
+                                    aria-hidden="true"
+                                  />
+                                )}
+                              </Show>
                               <div>
                                 <div class="font-medium leading-none">{child["label"]}</div>
-                                {child["description"] && (
-                                  <p class="mt-1 text-xs text-muted line-clamp-2">
-                                    {child["description"]}
-                                  </p>
-                                )}
+                                <Show when={child["description"]}>
+                                  {(desc) => (
+                                    <p class="mt-1 text-xs text-muted line-clamp-2">{desc()}</p>
+                                  )}
+                                </Show>
                               </div>
                             </a>
                           </li>
@@ -287,7 +302,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
                       </For>
                     </ul>
                   </div>
-                ) : null}
+                </Show>
               </li>
             );
           }}

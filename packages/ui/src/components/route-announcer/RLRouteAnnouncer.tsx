@@ -68,5 +68,3 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
     </div>
   );
 };
-
-export default RLRouteAnnouncer;
