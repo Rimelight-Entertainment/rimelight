@@ -42,17 +42,18 @@ export const GrandTaleIndexPage: Component = () => {
           title: "text-white text-5xl lg:text-7xl font-black uppercase tracking-tight",
           description: "text-neutral-300 max-w-2xl text-lg md:text-xl",
         }}
-      >
-        <div slot="background" class="w-full h-full">
-          <video autoplay loop muted playsinline class="h-full w-full object-cover opacity-60">
-            <source
-              src="https://cdn.rimelight.com/Videos/grandTale_home_hero_bg.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <div class="absolute inset-0 bg-black/40" />
-        </div>
-      </RLPageSection>
+        background={
+          <div class="w-full h-full">
+            <video autoplay loop muted playsinline class="h-full w-full object-cover opacity-60">
+              <source
+                src="https://cdn.rimelight.com/Videos/grandTale_home_hero_bg.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div class="absolute inset-0 bg-black/40" />
+          </div>
+        }
+      />
 
       <RLPageSection
         orientation="horizontal"
@@ -63,22 +64,23 @@ export const GrandTaleIndexPage: Component = () => {
           title: "text-white text-4xl font-extrabold uppercase",
           description: "text-neutral-400",
         }}
+        body={
+          <div class="grid grid-cols-2 gap-8 mt-8 max-w-xl">
+            <div>
+              <div class="text-4xl font-black text-white">3+</div>
+              <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
+                Unique Realms
+              </div>
+            </div>
+            <div>
+              <div class="text-4xl font-black text-white">100+</div>
+              <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
+                Abilities to Master
+              </div>
+            </div>
+          </div>
+        }
       >
-        <div slot="body" class="grid grid-cols-2 gap-8 mt-8 max-w-xl">
-          <div>
-            <div class="text-4xl font-black text-white">3+</div>
-            <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-              Unique Realms
-            </div>
-          </div>
-          <div>
-            <div class="text-4xl font-black text-white">100+</div>
-            <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-              Abilities to Master
-            </div>
-          </div>
-        </div>
-
         <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
           <RLVideo
             src="https://www.youtube.com/watch?v=QdXl3QtutQI"

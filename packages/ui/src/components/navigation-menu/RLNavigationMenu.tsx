@@ -4,18 +4,8 @@ import type {
   NavigationMenuChildItem,
 } from "./navigation-menu.types";
 import { RLNavigationMenuTheme } from "./navigation-menu.theme";
-import {
-  children as resolveChildren,
-  createMemo,
-  createSignal,
-  omit,
-  For,
-  Show,
-  onSettled,
-  type Component,
-} from "solid-js";
+import { createMemo, createSignal, omit, For, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
-import { findSlotChild, toArray } from "../../internal/slots";
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => {
   const props = allProps;
@@ -48,8 +38,6 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
     }),
   );
 
-  const resolvedChildren = resolveChildren(() => props.children);
-
   const slotCache = new Map<string, unknown>();
   const getSlotContent = (slotName?: string) => {
     if (!slotName) return null;
@@ -58,12 +46,6 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (allProps) => 
     let raw: any = slots ? slots[slotName] : undefined;
     if (raw === undefined) {
       raw = allProps[`${slotName}-content`] ?? allProps[slotName];
-    }
-    if (raw === undefined) {
-      raw = findSlotChild(toArray(resolvedChildren() as unknown), [
-        `${slotName}-content`,
-        slotName,
-      ]);
     }
     const content = typeof raw === "function" ? raw() : raw;
     const resolved = content ?? null;

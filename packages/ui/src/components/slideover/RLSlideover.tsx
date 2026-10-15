@@ -11,7 +11,6 @@ import {
 } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
-import { createSlotResolver, evalSlot } from "../../internal/slots";
 
 export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
   const props = allProps;
@@ -79,33 +78,11 @@ export const RLSlideover: Component<RLSlideoverProps> = (allProps) => {
     }),
   );
 
-  const resolvedChildren = createSlotResolver(() => props.children);
-  const BODY_EXCLUDE = ["trigger", "footer", "title", "description"] as const;
-
-  const getBodyChildren = () => {
-    if (!props.children) return null;
-    if (
-      props.trigger ||
-      props.triggerSlot ||
-      props.footer ||
-      props.footerSlot ||
-      props.titleSlot ||
-      props.descriptionSlot
-    ) {
-      return props.children;
-    }
-    const filtered = resolvedChildren.body(BODY_EXCLUDE);
-    return filtered.length > 0 ? filtered : props.children;
-  };
-
-  const triggerContent = () =>
-    evalSlot(props.trigger ?? props.triggerSlot ?? resolvedChildren.find("trigger"));
-  const footerContent = () =>
-    evalSlot(props.footer ?? props.footerSlot ?? resolvedChildren.find("footer"));
-  const titleContent = () =>
-    evalSlot(props.titleSlot ?? props.title ?? resolvedChildren.find("title"));
-  const descriptionContent = () =>
-    evalSlot(props.descriptionSlot ?? props.description ?? resolvedChildren.find("description"));
+  const triggerContent = () => props.trigger ?? props.triggerSlot;
+  const footerContent = () => props.footer ?? props.footerSlot;
+  const titleContent = () => props.titleSlot ?? props.title;
+  const descriptionContent = () => props.descriptionSlot ?? props.description;
+  const getBodyChildren = () => props.children;
 
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>

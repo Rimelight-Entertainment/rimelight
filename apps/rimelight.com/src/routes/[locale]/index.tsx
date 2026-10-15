@@ -87,19 +87,20 @@ export const HomePage: Component = () => {
           title: "text-white",
           description: "text-neutral-300",
         }}
+        background={
+          <div class="w-full h-full">
+            <RLImage
+              src="https://cdn.rimelight.com/images/placeholder_home_hero_background.png"
+              alt="Hero Background"
+              class="h-full w-full object-cover"
+              loading="eager"
+              width={1999}
+              height={833}
+            />
+            <div class="absolute inset-0 bg-black/45" />
+          </div>
+        }
       >
-        <div slot="background" class="w-full h-full">
-          <RLImage
-            src="https://cdn.rimelight.com/images/placeholder_home_hero_background.png"
-            alt="Hero Background"
-            class="h-full w-full object-cover"
-            loading="eager"
-            width={1999}
-            height={833}
-          />
-          <div class="absolute inset-0 bg-black/45" />
-        </div>
-
         <RLLogo
           class="pointer-events-none h-64 w-auto text-white"
           variant="logomark"
@@ -115,36 +116,35 @@ export const HomePage: Component = () => {
           title: "text-white",
           description: "text-neutral-300",
         }}
+        background={
+          <div class="w-full h-full">
+            <RLImage
+              src="https://cdn.rimelight.com/images/placeholder_home_company_background.jpg"
+              alt="Company Background"
+              class="h-full w-full object-cover opacity-10"
+              width={9000}
+              height={4000}
+            />
+            <div class="absolute inset-0 bg-black/90" />
+          </div>
+        }
+        body={
+          <div class="grid grid-cols-2 gap-lg mt-8 border-t border-neutral-800/50 pt-8 max-w-xl">
+            <div>
+              <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">3+</div>
+              <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
+                {t("page_home.section_company_stats_titles")}
+              </div>
+            </div>
+            <div>
+              <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">50+</div>
+              <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
+                {t("page_home.section_company_stats_creators")}
+              </div>
+            </div>
+          </div>
+        }
       >
-        <div slot="background" class="w-full h-full">
-          <RLImage
-            src="https://cdn.rimelight.com/images/placeholder_home_company_background.jpg"
-            alt="Company Background"
-            class="h-full w-full object-cover opacity-10"
-            width={9000}
-            height={4000}
-          />
-          <div class="absolute inset-0 bg-black/90" />
-        </div>
-
-        <div
-          slot="body"
-          class="grid grid-cols-2 gap-lg mt-8 border-t border-neutral-800/50 pt-8 max-w-xl"
-        >
-          <div>
-            <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">3+</div>
-            <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-              {t("page_home.section_company_stats_titles")}
-            </div>
-          </div>
-          <div>
-            <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">50+</div>
-            <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-              {t("page_home.section_company_stats_creators")}
-            </div>
-          </div>
-        </div>
-
         <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
           <RLVideo
             src="https://www.youtube.com/watch?v=uH1Hw6SDI1M"
@@ -163,76 +163,75 @@ export const HomePage: Component = () => {
             "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
           description: "hidden",
         }}
-      >
-        <div slot="background" class="w-full h-full">
-          <RLImage
-            src="https://cdn.rimelight.com/images/placeholder_home_projects_background.jpg"
-            alt="Projects Background"
-            class="h-full w-full object-cover opacity-15"
-            width={5000}
-            height={3542}
-          />
-          <div class="absolute inset-0 bg-neutral-950/80" />
-        </div>
-
-        <div
-          slot="body"
-          class="flex flex-wrap justify-center gap-lg mt-12 w-full max-w-7xl mx-auto px-4"
-        >
-          <a
-            href={getLocaleUrl("/franchises/grand-tale")}
-            class="block relative h-128 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] group rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 transition-all duration-300"
-          >
-            <div class="relative h-full w-full overflow-hidden isolate transition-transform duration-700 ease-out group-hover:scale-[1.02] rounded-[inherit] will-change-transform bg-neutral-900">
-              <div class="absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
-                <RLImage
-                  alt="Grand Tale"
-                  src="https://cdn.rimelight.com/images/placeholder_home_projects_grand-tale.png"
-                  class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 will-change-transform opacity-75"
-                  width={900}
-                  height={1512}
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
-              </div>
-
-              <div class="absolute inset-0 p-lg flex flex-col gap-sm justify-end z-10">
-                <div class="flex gap-sm">
-                  <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                    {t("page_home.section_projects_tags_franchise")}
-                  </span>
-                  <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                    {t("page_home.section_projects_tags_fantasy")}
-                  </span>
-                  <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                    {t("page_home.section_projects_tags_social")}
-                  </span>
+        background={
+          <div class="w-full h-full">
+            <RLImage
+              src="https://cdn.rimelight.com/images/placeholder_home_projects_background.jpg"
+              alt="Projects Background"
+              class="h-full w-full object-cover opacity-15"
+              width={5000}
+              height={3542}
+            />
+            <div class="absolute inset-0 bg-neutral-950/80" />
+          </div>
+        }
+        body={
+          <div class="flex flex-wrap justify-center gap-lg mt-12 w-full max-w-7xl mx-auto px-4">
+            <a
+              href={getLocaleUrl("/franchises/grand-tale")}
+              class="block relative h-128 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] group rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 transition-all duration-300"
+            >
+              <div class="relative h-full w-full overflow-hidden isolate transition-transform duration-700 ease-out group-hover:scale-[1.02] rounded-[inherit] will-change-transform bg-neutral-900">
+                <div class="absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
+                  <RLImage
+                    alt="Grand Tale"
+                    src="https://cdn.rimelight.com/images/placeholder_home_projects_grand-tale.png"
+                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 will-change-transform opacity-75"
+                    width={900}
+                    height={1512}
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
                 </div>
 
-                <h3 class="text-3xl font-extrabold uppercase text-white mt-2 tracking-tight">
-                  Grand Tale
-                </h3>
+                <div class="absolute inset-0 p-lg flex flex-col gap-sm justify-end z-10">
+                  <div class="flex gap-sm">
+                    <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
+                      {t("page_home.section_projects_tags_franchise")}
+                    </span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
+                      {t("page_home.section_projects_tags_fantasy")}
+                    </span>
+                    <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
+                      {t("page_home.section_projects_tags_social")}
+                    </span>
+                  </div>
 
-                <p class="text-neutral-300 text-sm mt-1 leading-relaxed">
-                  {t("page_home.section_projects_content_grand-tale_description")}
-                </p>
+                  <h3 class="text-3xl font-extrabold uppercase text-white mt-2 tracking-tight">
+                    Grand Tale
+                  </h3>
 
-                <div class="flex items-center text-primary-400 font-bold uppercase tracking-widest text-xs mt-4 group-hover:text-primary-300 transition-colors">
-                  <span>{t("page_home.section_projects_actions_discover")}</span>
-                  <svg
-                    class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1.5 duration-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+                  <p class="text-neutral-300 text-sm mt-1 leading-relaxed">
+                    {t("page_home.section_projects_content_grand-tale_description")}
+                  </p>
+
+                  <div class="flex items-center text-primary-400 font-bold uppercase tracking-widest text-xs mt-4 group-hover:text-primary-300 transition-colors">
+                    <span>{t("page_home.section_projects_actions_discover")}</span>
+                    <svg
+                      class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1.5 duration-300"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               </div>
-            </div>
-          </a>
-        </div>
-      </RLPageSection>
+            </a>
+          </div>
+        }
+      />
 
       <RLPageSection
         orientation="vertical"
@@ -244,57 +243,61 @@ export const HomePage: Component = () => {
             "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
           description: "text-neutral-400 text-center max-w-2xl mx-auto mt-4",
         }}
-      >
-        <div slot="background" class="w-full h-full">
-          <RLImage
-            src="https://cdn.rimelight.com/images/placeholder_home_news_background.jpg"
-            alt="News Background"
-            class="h-full w-full object-cover opacity-15"
-            width={1320}
-            height={743}
-          />
-          <div class="absolute inset-0 bg-black/85" />
-        </div>
+        background={
+          <div class="w-full h-full">
+            <RLImage
+              src="https://cdn.rimelight.com/images/placeholder_home_news_background.jpg"
+              alt="News Background"
+              class="h-full w-full object-cover opacity-15"
+              width={1320}
+              height={743}
+            />
+            <div class="absolute inset-0 bg-black/85" />
+          </div>
+        }
+        body={
+          <div class="w-full mt-12 max-w-7xl mx-auto px-4">
+            <RLGrid>
+              <For each={latestPosts() || []}>
+                {(post) => {
+                  const content =
+                    typeof post.content === "string"
+                      ? JSON.parse(post.content)
+                      : post.content || {};
+                  const title = t.localize(post.title);
+                  const description =
+                    t.localize(post.description) || content.properties?.description || "";
+                  const heroImage = content.properties?.heroImage;
+                  const postDate = post.postedAt || post.createdAt;
+                  return (
+                    <RLPost
+                      title={title}
+                      description={description}
+                      date={postDate}
+                      image={heroImage}
+                      to={getLocaleUrl(`/company/blog/${post.slug}/`)}
+                      variant="ghost"
+                    />
+                  );
+                }}
+              </For>
+            </RLGrid>
 
-        <div slot="body" class="w-full mt-12 max-w-7xl mx-auto px-4">
-          <RLGrid>
-            <For each={latestPosts() || []}>
-              {(post) => {
-                const content =
-                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-                const title = t.localize(post.title);
-                const description =
-                  t.localize(post.description) || content.properties?.description || "";
-                const heroImage = content.properties?.heroImage;
-                const postDate = post.postedAt || post.createdAt;
-                return (
-                  <RLPost
-                    title={title}
-                    description={description}
-                    date={postDate}
-                    image={heroImage}
-                    to={getLocaleUrl(`/company/blog/${post.slug}/`)}
-                    variant="ghost"
-                  />
-                );
-              }}
-            </For>
-          </RLGrid>
-
-          <Show when={(latestPosts() || []).length > 0}>
-            <div class="flex justify-center mt-14">
-              <RLButton
-                label={t("page_home.section_news_actions_view-all")}
-                href={getLocaleUrl("/blog")}
-                color="primary"
-                variant="link"
-                trailingIcon="i-lucide-arrow-right"
-                class="font-bold uppercase tracking-widest text-primary-500 hover:text-primary-400 transition-colors flex items-center gap-xs"
-              />
-            </div>
-          </Show>
-        </div>
-      </RLPageSection>
+            <Show when={(latestPosts() || []).length > 0}>
+              <div class="flex justify-center mt-14">
+                <RLButton
+                  label={t("page_home.section_news_actions_view-all")}
+                  href={getLocaleUrl("/blog")}
+                  color="primary"
+                  variant="link"
+                  trailingIcon="i-lucide-arrow-right"
+                  class="font-bold uppercase tracking-widest text-primary-500 hover:text-primary-400 transition-colors flex items-center gap-xs"
+                />
+              </div>
+            </Show>
+          </div>
+        }
+      />
 
       <RLPageSection
         variant="cta"
@@ -308,18 +311,19 @@ export const HomePage: Component = () => {
             "text-white text-5xl lg:text-6xl font-black uppercase tracking-tight text-center leading-none",
           description: "text-neutral-300 text-lg md:text-xl text-center max-w-xl mx-auto mt-4",
         }}
-      >
-        <div slot="background" class="w-full h-full">
-          <RLImage
-            src="https://cdn.rimelight.com/images/placeholder_home_cta_background.jpg"
-            alt="CTA Background"
-            class="h-full w-full object-cover opacity-20"
-            width={3000}
-            height={2000}
-          />
-          <div class="absolute inset-0 bg-neutral-950/80" />
-        </div>
-      </RLPageSection>
+        background={
+          <div class="w-full h-full">
+            <RLImage
+              src="https://cdn.rimelight.com/images/placeholder_home_cta_background.jpg"
+              alt="CTA Background"
+              class="h-full w-full object-cover opacity-20"
+              width={3000}
+              height={2000}
+            />
+            <div class="absolute inset-0 bg-neutral-950/80" />
+          </div>
+        }
+      />
     </AppLayout>
   );
 };

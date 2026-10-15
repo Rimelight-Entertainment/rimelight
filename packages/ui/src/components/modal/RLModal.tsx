@@ -11,9 +11,8 @@ import {
   omit,
   type Component,
 } from "solid-js";
-import { Portal } from "@solidjs/web";
+import { Portal, type JSX } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
-import { createSlotResolver, evalSlot } from "../../internal/slots";
 
 export const RLModal: Component<RLModalProps> = (allProps) => {
   const props = allProps;
@@ -168,40 +167,18 @@ export const RLModal: Component<RLModalProps> = (allProps) => {
     }),
   );
 
-  const resolvedChildren = createSlotResolver(() => props.children);
-  const BODY_EXCLUDE = [
-    "trigger",
-    "header",
-    "title",
-    "description",
-    "actions",
-    "close",
-    "footer",
-    "content",
-  ] as const;
+  const resolveSlot = (slot: unknown): JSX.Element =>
+    typeof slot === "function" ? (slot as () => JSX.Element)() : (slot as JSX.Element);
 
-  const triggerContent = () =>
-    evalSlot(props.triggerSlot ?? props.trigger ?? resolvedChildren.find("trigger"));
-  const contentSlotContent = () =>
-    evalSlot(props.contentSlot ?? props.content ?? resolvedChildren.find("content"));
-  const headerSlotContent = () =>
-    evalSlot(props.headerSlot ?? props.header ?? resolvedChildren.find("header"));
-  const titleContent = () =>
-    evalSlot(props.titleSlot ?? resolvedChildren.find("title") ?? props.title);
-  const descriptionContent = () =>
-    evalSlot(props.descriptionSlot ?? resolvedChildren.find("description") ?? props.description);
-  const actionsContent = () =>
-    evalSlot(props.actionsSlot ?? props.actions ?? resolvedChildren.find("actions"));
-  const closeSlotContent = () => evalSlot(props.closeSlot ?? resolvedChildren.find("close"));
-  const footerContent = () =>
-    evalSlot(props.footerSlot ?? props.footer ?? resolvedChildren.find("footer"));
-  const bodyContent = () =>
-    evalSlot(
-      props.bodySlot ??
-        props.body ??
-        resolvedChildren.find("body") ??
-        resolvedChildren.body(BODY_EXCLUDE),
-    );
+  const triggerContent = () => resolveSlot(props.triggerSlot ?? props.trigger);
+  const contentSlotContent = () => resolveSlot(props.contentSlot ?? props.content);
+  const headerSlotContent = () => resolveSlot(props.headerSlot ?? props.header);
+  const titleContent = () => resolveSlot(props.titleSlot ?? props.title);
+  const descriptionContent = () => resolveSlot(props.descriptionSlot ?? props.description);
+  const actionsContent = () => resolveSlot(props.actionsSlot ?? props.actions);
+  const closeSlotContent = () => resolveSlot(props.closeSlot);
+  const footerContent = () => resolveSlot(props.footerSlot ?? props.footer);
+  const bodyContent = () => resolveSlot(props.bodySlot ?? props.body ?? props.children);
 
   const showCloseButton = () => props.close !== false;
   const closeProps = () => (typeof props.close === "object" ? props.close : {});
