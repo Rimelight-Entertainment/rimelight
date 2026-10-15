@@ -1,7 +1,6 @@
 import type { RLCalloutProps } from "./callout.types";
 import { RLCalloutTheme } from "./callout.theme";
 import {
-  createComponent,
   createMemo,
   createSignal,
   createUniqueId,
@@ -10,7 +9,7 @@ import {
   Show,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
+import { dynamic } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
@@ -111,35 +110,24 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
       : base;
   });
 
-  const renderRoot = (content: JSX.Element) => {
-    const rootProps = {
-      id: calloutId,
-      "data-slot": "root",
-      "data-orientation": props.orientation ?? "vertical",
-      role: "alert" as const,
-      "aria-labelledby": hasTitle() ? titleId : props.ariaLabelledby,
-      "aria-describedby": hasDescription() ? descriptionId : props.ariaDescribedby,
-      "aria-label": !hasTitle() ? props.ariaLabel : undefined,
-      class: classes().root,
-      "data-theme": props.theme,
-      ...rest,
-    };
+  const Root = dynamic(() => props.as ?? "div");
 
-    if (props.as === "section") {
-      return <section {...rootProps}>{content}</section>;
-    }
-    if (props.as === "aside") {
-      return <aside {...rootProps}>{content}</aside>;
-    }
-    if (typeof props.as === "function") {
-      return createComponent(props.as as any, { ...rootProps, children: content });
-    }
-    return <div {...rootProps}>{content}</div>;
-  };
+  const rootProps = () => ({
+    id: calloutId,
+    "data-slot": "root",
+    "data-orientation": props.orientation ?? "vertical",
+    role: "alert" as const,
+    "aria-labelledby": hasTitle() ? titleId : props.ariaLabelledby,
+    "aria-describedby": hasDescription() ? descriptionId : props.ariaDescribedby,
+    "aria-label": !hasTitle() ? props.ariaLabel : undefined,
+    class: classes().root,
+    "data-theme": props.theme,
+    ...rest,
+  });
 
   return (
     <Show when={isOpen()}>
-      {renderRoot(
+      <Root {...rootProps()}>
         <>
           {/* Leading Icon / Avatar / Slot */}
           <Show when={hasLeading()}>
@@ -251,8 +239,8 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
               </Show>
             </div>
           </Show>
-        </>,
-      )}
+        </>
+      </Root>
     </Show>
   );
 };

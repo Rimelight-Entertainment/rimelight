@@ -40,11 +40,8 @@ export const RLModal: Component<RLModalProps> = (props) => {
     "triggerLabel",
     "role",
     "ariaLabel",
-    "aria-label" as any,
     "ariaLabelledby",
-    "aria-labelledby" as any,
     "ariaDescribedby",
-    "aria-describedby" as any,
     "ui",
     "class",
     "children",
@@ -198,15 +195,9 @@ export const RLModal: Component<RLModalProps> = (props) => {
         ref={(el) => (contentRef = el)}
         role={(props.role ?? "dialog") as any}
         aria-modal={isModal() ? "true" : undefined}
-        aria-label={props.ariaLabel ?? props["aria-label"]}
-        aria-labelledby={
-          props.ariaLabelledby ?? props["aria-labelledby"] ?? (titleContent() ? titleId : undefined)
-        }
-        aria-describedby={
-          props.ariaDescribedby ??
-          props["aria-describedby"] ??
-          (descriptionContent() ? descId : undefined)
-        }
+        aria-label={props.ariaLabel}
+        aria-labelledby={props.ariaLabelledby ?? (titleContent() ? titleId : undefined)}
+        aria-describedby={props.ariaDescribedby ?? (descriptionContent() ? descId : undefined)}
         data-state={isOpen() ? "open" : "closed"}
         data-slot="content"
         class={classes().content}

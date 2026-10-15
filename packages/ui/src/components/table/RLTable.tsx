@@ -273,6 +273,10 @@ export const RLTable = <T = any,>(props: RLTableProps<T>) => {
     return undefined;
   }
 
+  const actionsDropdownMenuTheme = createMemo(() =>
+    RLDropdownMenuTheme({ size: "xs", color: "neutral" }),
+  );
+
   function renderCellContent(
     row: TableRow<T>,
     col: TableColumn<T>,
@@ -282,7 +286,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>) => {
   ) {
     const actions = getCellActions(row, col);
     if (Array.isArray(actions) && actions.length > 0) {
-      const dmClasses = RLDropdownMenuTheme({ size: "xs", color: "neutral" });
+      const dmClasses = actionsDropdownMenuTheme();
       return (
         <div class="flex items-center justify-end">
           <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
@@ -309,7 +313,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>) => {
         table: tableApi,
       });
       if (Array.isArray(rendered) && rendered.length > 0) {
-        const dmClasses = RLDropdownMenuTheme({ size: "xs", color: "neutral" });
+        const dmClasses = actionsDropdownMenuTheme();
         return (
           <div class="flex items-center justify-end">
             <div class={dmClasses.root} data-slot="root" data-dropdown-menu>

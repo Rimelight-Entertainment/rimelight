@@ -128,13 +128,6 @@ describe("RLBadge Solid Component Suite", () => {
       expect(html).toContain("Next");
     });
 
-    it("renders trailing icon via trailing-icon kebab prop", () => {
-      const html = renderSolid(RLBadge, { "trailing-icon": "arrow-right", label: "Next" } as any);
-      expect(html).toContain('data-slot="trailing-icon"');
-      expect(html).toContain("i-lucide-arrow-right");
-      expect(html).toContain("Next");
-    });
-
     it("renders both leading and trailing icons simultaneously", () => {
       const html = renderSolid(RLBadge, { icon: "star", trailingIcon: "check", label: "Both" });
       expect(html).toContain('data-slot="leading-icon"');

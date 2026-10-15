@@ -22,8 +22,6 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
     "leadingIcon",
     "trailing",
     "trailingIcon",
-    "leading-icon" as any,
-    "trailing-icon" as any,
     "theme",
     "ui",
     "class",
@@ -32,11 +30,11 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
     "trailingSlot",
   );
 
-  const leadingIconProp = () => props.leadingIcon ?? (props as any)["leading-icon"];
-  const trailingIconProp = () => props.trailingIcon ?? (props as any)["trailing-icon"];
-  const leadingProp = () => props.leading ?? (props as any)["leading"];
-  const trailingProp = () => props.trailing ?? (props as any)["trailing"];
-  const iconProp = () => props.icon ?? (props as any)["icon"];
+  const leadingIconProp = () => props.leadingIcon;
+  const trailingIconProp = () => props.trailingIcon;
+  const leadingProp = () => props.leading;
+  const trailingProp = () => props.trailing;
+  const iconProp = () => props.icon;
 
   const isLeading = () =>
     Boolean(
@@ -58,7 +56,7 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
   const trailingIconName = () =>
     trailingIconProp() || (iconProp() && trailingProp() ? iconProp() : undefined);
 
-  const isSquare = () => Boolean(props.square ?? (props as any)["square"]);
+  const isSquare = () => Boolean(props.square);
 
   const classes = createMemo(() =>
     RLBadgeTheme({

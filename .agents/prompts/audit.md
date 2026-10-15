@@ -44,8 +44,8 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 ## Requirements
 
 - Standardized Solid 2.0 component design: strictly native Solid 2.0 idioms.
-  - Zero Vue or Astro artifact patterns: no `v-*`, `v-model`, `modelValue`, `$slots`, `$attrs`, `$emit`, or Astro slot mechanisms.
-  - Zero backwards compatibility requirements: do not support legacy prop aliases (e.g. `leading-icon`, `aria-label`, `slot:trigger`, or dynamic string bags) or runtime polyfills.
+  - Zero Vue or Astro artifact patterns: no `v-*`, `v-model`, `modelValue`, `$slots`, `slots` record bags, `$attrs`, `$emit`, or Astro slot mechanisms.
+  - Zero backwards compatibility requirements: do not support legacy prop aliases (e.g. `leading-icon`, `aria-label`, `slot:trigger`, or dynamic string bags) or runtime polyfills. Completely remove `(props as any)["kebab-case"]` fallbacks.
 - Component signature and typing:
   - Exclusively named exports with the exact form: `export const RL<Name>: Component<RL<Name>Props> = (props) => { ... }`.
   - Generic components must export `export const RL<Name> = <T,>(props: RL<Name>Props<T>) => { ... }` or typed component interface. No `export default`.
@@ -63,11 +63,11 @@ Audit a component file to ensure strict adherence to our design patterns and fun
   - SSR/Hydration-safe automatic ID generation: use `createUniqueId()` for deterministic element associations (`aria-labelledby`, `aria-describedby`, `id`).
   - No `innerHTML` or `dangerouslySetInnerHTML`.
 - Strictly adhere to SolidJS 2.0 SSR & hydration invariants:
-  - **Polymorphic elements (`as` prop):** Never use `<Dynamic component={...}>` in JSX. Always use the hoisted instance factory: `const Root = dynamic(() => props.as ?? "defaultTag")` (imported as `import { dynamic } from "@solidjs/web"`).
+  - **Polymorphic elements (`as` prop):** Never use `<Dynamic component={...}>` or runtime `createComponent(props.as, ...)` in JSX. Always use the hoisted instance factory: `const Root = dynamic(() => props.as ?? "defaultTag")` (imported as `import { dynamic } from "@solidjs/web"`).
   - **Control Flow:** Always use `<Show when={...} fallback={...}>` for conditional JSX elements; never use raw ternary expressions (`condition ? <A /> : <B />`), null coalescing element fallbacks (`val ?? <Default />` inside JSX), or logical AND short-circuiting (`cond && <A />`) for rendering DOM branches.
   - **List Rendering:** Always use `<For each={...}>` (for reference-keyed collections) or `<Index each={...}>` (for primitive/index-keyed lists); never use raw array `.map(...)` inside JSX.
   - **Server/Client State Parity:** Initial render branches must NEVER depend on client-only globals (`window`, `localStorage`, `sessionStorage`, `document`, `matchMedia`, etc.) during component initialization or render. Access to browser globals must occur exclusively inside `onMount`, `onSettled`, or event handlers to avoid hydration mismatches.
-  - **Props & Reactivity:** Do not destructure props. Use `props.propName` directly or access memoized/getter signals to preserve Solid's fine-grained reactivity. Use `omit(...)` consistently to isolate HTML attribute passthroughs (`rest`).
+  - **Props Passthrough & Reactivity:** Do not destructure props. Use `props.propName` directly to preserve Solid's fine-grained reactivity. Always use `omit(props, ...)` from `solid-js` to strip internal props (`as`, `ui`, `class`, `children`, and component-specific props) before spreading `{...rest}` onto native elements, preventing invalid DOM attributes and hydration collisions.
   - **Slots & Children:** Use native Solid JSX slot props (`props.leadingSlot`, `props.trailingSlot`, `props.children`), or typed render functions `(item: T) => JSX.Element`.
     - Never use Vue-like `props.slots` record bags or dynamic string lookups (`props.slots?.['header']`).
     - Use `<Show when={props.slotName}>{(slot) => (typeof slot() === "function" ? (slot() as Function)() : slot())}</Show>` or children helper conventions.

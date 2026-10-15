@@ -49,8 +49,6 @@ export const RLButton: Component<RLButtonProps> = (props) => {
     "label",
     "leadingIcon",
     "trailingIcon",
-    "leading-icon" as any,
-    "trailing-icon" as any,
     "icon",
     "avatar",
     "loading",
@@ -87,17 +85,15 @@ export const RLButton: Component<RLButtonProps> = (props) => {
     "noRel",
     "raw",
     "ariaLabel",
-    "aria-label" as any,
     "ariaLabelledby",
-    "aria-labelledby" as any,
     "ariaCurrentValue",
   );
 
-  const leadingIconProp = () => props.leadingIcon ?? (props as any)["leading-icon"];
-  const trailingIconProp = () => props.trailingIcon ?? (props as any)["trailing-icon"];
+  const leadingIconProp = () => props.leadingIcon;
+  const trailingIconProp = () => props.trailingIcon;
   const leadingFlag = () => (typeof props.leading === "boolean" ? props.leading : undefined);
   const trailingFlag = () => (typeof props.trailing === "boolean" ? props.trailing : undefined);
-  const iconProp = () => props.icon ?? (props as any)["icon"];
+  const iconProp = () => props.icon;
 
   const isLoading = () => Boolean(props.loading || autoLoading());
   const isDisabled = () => Boolean(props.disabled || isLoading());
@@ -125,6 +121,9 @@ export const RLButton: Component<RLButtonProps> = (props) => {
     if (isIconOnly() || !props.external || props.noExternalIcon) return undefined;
     return props.externalIcon || "external-link";
   };
+
+  const ariaLabel = () => props.ariaLabel;
+  const ariaLabelledby = () => props.ariaLabelledby;
 
   const showExternalHint = () => isLink() && linkAttrs().target === "_blank" && !ariaLabel();
 
@@ -236,9 +235,6 @@ export const RLButton: Component<RLButtonProps> = (props) => {
       (e.currentTarget as HTMLElement | null)?.click();
     }
   };
-
-  const ariaLabel = () => props.ariaLabel ?? (props as any)["aria-label"];
-  const ariaLabelledby = () => props.ariaLabelledby ?? (props as any)["aria-labelledby"];
 
   const asTag = () => (typeof props.as === "string" ? props.as.toLowerCase() : undefined);
 

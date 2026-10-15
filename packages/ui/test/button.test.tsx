@@ -344,7 +344,7 @@ describe("RLButton", () => {
 
     it("hides the hint when an explicit aria-label carries the name", () => {
       const html = render(() => (
-        <RLButton href="https://example.com" label="Open" aria-label="Open example in a new tab" />
+        <RLButton href="https://example.com" label="Open" ariaLabel="Open example in a new tab" />
       ));
       expect(html).not.toContain('data-slot="external-hint"');
     });
