@@ -12,7 +12,7 @@ export default defineConfig({
       "src/plugin.ts",
       "src/preset.ts",
       "src/resolver.ts",
-      "src/ui-config.ts",
+      "src/runtime.ts",
       "src/shortcuts.ts",
       "src/types.ts",
       "src/icons.ts",

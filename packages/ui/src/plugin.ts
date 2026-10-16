@@ -1,11 +1,6 @@
 import UnoCSS from "@unocss/vite";
 import type { Plugin, PluginOption } from "vite-plus";
 import { rimelightUiPreset } from "./preset";
-// Must import setUIConfig from "./ui-config", NEVER from "./resolver".
-// Loading vite.config.ts in Node (e.g. during vp staged / git hooks) executes this file.
-// If imported from resolver, Node's ESM loader immediately encounters `import "virtual:rimelight-ui"`
-// and throws ERR_UNSUPPORTED_ESM_URL_SCHEME.
-import { setUIConfig } from "./ui-config";
 import type { UIConfig } from "./types";
 
 export type RimelightUiPluginOptions = UIConfig;
@@ -21,8 +16,6 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
     ...(cfg.logos ? { logos: cfg.logos } : {}),
     ...(cfg.components ? { components: cfg.components } : {}),
   };
-
-  setUIConfig(runtimeCfg);
 
   const virtualPlugin: Plugin = {
     name: "rimelight:ui",
