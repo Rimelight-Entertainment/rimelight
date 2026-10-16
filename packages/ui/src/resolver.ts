@@ -1,13 +1,13 @@
-import virtualConfig from "virtual:rimelight-ui";
 import type { ClassValue, ThemeConfig } from "./types";
-import { getUIConfig, setUIConfig } from "./ui-config";
+import { getUIConfig } from "./runtime";
 
-// Sync virtual module config to active config
-if (virtualConfig) {
-  setUIConfig(virtualConfig as any);
-}
-
-export { getUIConfig, setUIConfig, setRimelightUITestConfig } from "./ui-config";
+export {
+  getUIConfig,
+  setUIConfig,
+  setRimelightUITestConfig,
+  getUiConfig,
+  setUiConfig,
+} from "./runtime";
 
 function toVal(val: ClassValue): string {
   if (!val) return "";
