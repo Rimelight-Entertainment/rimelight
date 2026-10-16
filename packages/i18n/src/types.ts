@@ -6,6 +6,14 @@ export interface I18nConfig {
   types?: boolean | string;
 }
 
+export interface ResolvedI18nConfig extends Omit<I18nConfig, "skipPaths"> {
+  readonly locales: readonly string[];
+  readonly defaultLocale: string;
+  readonly prefixDefaultLocale: boolean;
+  readonly skipPaths: readonly string[];
+  readonly translations: Record<string, Record<string, unknown>>;
+}
+
 export interface I18nContextStore {
   locale: string;
   translations?: Record<string, unknown> | undefined;

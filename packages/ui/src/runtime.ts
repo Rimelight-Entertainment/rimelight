@@ -1,4 +1,4 @@
-import { config as generatedConfig } from "virtual:rimelight-ui";
+import { config } from "virtual:rimelight-ui";
 import type { UIConfig } from "./types";
 
 function isRecord(val: unknown): val is Record<string, unknown> {
@@ -8,7 +8,7 @@ function isRecord(val: unknown): val is Record<string, unknown> {
 let configOverrides: Partial<UIConfig> | null = null;
 
 export const getUIConfig = (): UIConfig => {
-  const base: UIConfig = isRecord(generatedConfig) ? generatedConfig : {};
+  const base: UIConfig = isRecord(config) ? config : {};
 
   return configOverrides ? { ...base, ...configOverrides } : base;
 };
