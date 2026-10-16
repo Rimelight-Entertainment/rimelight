@@ -13,7 +13,7 @@ export function auth(options: AuthConfig = {}): Plugin {
     },
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify(options)};\nexport default config;`;
+        return `export const config = ${JSON.stringify(options)};`;
       }
       return null;
     },

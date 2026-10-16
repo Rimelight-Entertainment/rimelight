@@ -23,7 +23,7 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption {
     },
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify(runtimeCfg)};\nexport default config;`;
+        return `export const config = ${JSON.stringify(runtimeCfg)};`;
       }
       return null;
     },

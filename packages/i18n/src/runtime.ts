@@ -1,4 +1,4 @@
-import virtualConfig from "virtual:rimelight-i18n";
+import { config as virtualConfig } from "virtual:rimelight-i18n";
 import type { I18nContextStore, RimelightTranslationKeys, TranslationKey } from "./types";
 
 export type { I18nContextStore, RimelightTranslationKeys, TranslationKey };

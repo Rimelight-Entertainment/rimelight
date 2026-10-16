@@ -15,6 +15,4 @@ const testConfig = {
 
 vi.mock("virtual:rimelight-seo", () => ({
   config: testConfig,
-  siteConfig: testConfig,
-  default: testConfig,
 }));

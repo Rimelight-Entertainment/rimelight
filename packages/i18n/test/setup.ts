@@ -1,7 +1,7 @@
 import { vi } from "vite-plus/test";
 
 vi.mock("virtual:rimelight-i18n", () => ({
-  default: {
+  config: {
     locales: ["en"],
     defaultLocale: "en",
     prefixDefaultLocale: true,

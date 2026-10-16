@@ -3,7 +3,6 @@ import { Window } from "happy-dom";
 
 vi.mock("virtual:rimelight-ui", () => ({
   config: {},
-  default: {},
 }));
 
 const window = new Window();

@@ -6,5 +6,4 @@ declare module "virtual:rimelight-i18n" {
     readonly skipPaths: readonly string[];
     readonly translations: Record<string, Record<string, unknown>>;
   };
-  export default config;
 }

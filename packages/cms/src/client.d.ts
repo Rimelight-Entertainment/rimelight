@@ -1,6 +1,5 @@
 declare module "virtual:rimelight-cms" {
   export const config: import("./types").CmsConfig;
-  export default config;
 }
 
 declare module "virtual:rimelight-cms/db" {

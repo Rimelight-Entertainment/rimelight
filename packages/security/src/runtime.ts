@@ -1,4 +1,4 @@
-import generated from "virtual:rimelight-security";
+import { config as generatedConfig } from "virtual:rimelight-security";
 import type { Context } from "hono";
 import type { SecurityConfig } from "./types";
 
@@ -6,19 +6,11 @@ function isRecord(val: unknown): val is Record<string, unknown> {
   return typeof val === "object" && val !== null && !Array.isArray(val);
 }
 
-let config: SecurityConfig = isRecord((generated as any)?.config)
-  ? { ...((generated as any).config as SecurityConfig) }
-  : isRecord(generated) && !("config" in (generated as any))
-    ? { ...(generated as unknown as SecurityConfig) }
-    : {};
+let config: SecurityConfig = isRecord(generatedConfig) ? { ...generatedConfig } : {};
 
 export const getSecurityConfig = (): SecurityConfig => config;
 export const setSecurityConfig = (next?: SecurityConfig): void => {
-  config = next
-    ? { ...next }
-    : isRecord((generated as any)?.config)
-      ? { ...((generated as any).config as SecurityConfig) }
-      : {};
+  config = next ? { ...next } : isRecord(generatedConfig) ? { ...generatedConfig } : {};
 };
 import { normalizeDomain, resolveSecurityDomain } from "./domain";
 export { normalizeDomain, resolveSecurityDomain };

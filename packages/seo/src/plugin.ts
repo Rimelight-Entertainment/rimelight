@@ -164,11 +164,7 @@ export function seo(options: SeoConfig = {}): Plugin {
 
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
-        return [
-          `export const config = ${JSON.stringify(normalizedSiteConfig)};`,
-          `export const siteConfig = config;`,
-          `export default config;`,
-        ].join("\n");
+        return `export const config = ${JSON.stringify(normalizedSiteConfig)};`;
       }
 
       return null;

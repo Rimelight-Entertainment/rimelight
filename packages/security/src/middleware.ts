@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from "hono";
-import generated from "virtual:rimelight-security";
+import { config as generatedConfig } from "virtual:rimelight-security";
 import type { SecurityConfig } from "./types";
 import {
   buildCspHeader,
@@ -16,7 +16,9 @@ export { isConstructionGuest, signInConstructionGuest, CONSTRUCTION_GUEST_COOKIE
 declare const HTMLRewriter: any;
 
 const manifest: Record<string, string> =
-  typeof generated?.manifest === "object" && generated.manifest !== null ? generated.manifest : {};
+  typeof generatedConfig?.manifest === "object" && generatedConfig.manifest !== null
+    ? generatedConfig.manifest
+    : {};
 
 const isDevEnv = () =>
   process.env["NODE_ENV"] === "development" ||

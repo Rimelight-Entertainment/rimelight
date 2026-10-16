@@ -196,7 +196,7 @@ describe("@rimelight/ui inlined cx", () => {
 
 describe("@rimelight/ui unstyled mode", () => {
   it("should preserve props.class and props.ui overrides when unstyled", async () => {
-    (await import("virtual:rimelight-ui")).default.unstyled = true;
+    (await import("virtual:rimelight-ui")).config.unstyled = true;
     const { defineTheme } = await import("../src/resolver");
 
     const themeFn = defineTheme("testUnstyled", {
@@ -214,7 +214,7 @@ describe("@rimelight/ui unstyled mode", () => {
 
 describe("@rimelight/ui logo & image themes", () => {
   it("should export and resolve RLLogoTheme properly", async () => {
-    (await import("virtual:rimelight-ui")).default.unstyled = false;
+    (await import("virtual:rimelight-ui")).config.unstyled = false;
     const { RLLogoTheme } = await import("../src/components/logo/logo.theme");
     const slots = RLLogoTheme({ class: "custom-logo" });
     expect(slots["root"]).toContain("flex items-center");
@@ -222,7 +222,7 @@ describe("@rimelight/ui logo & image themes", () => {
   });
 
   it("should export and resolve RLImageTheme properly", async () => {
-    (await import("virtual:rimelight-ui")).default.unstyled = false;
+    (await import("virtual:rimelight-ui")).config.unstyled = false;
     const { RLImageTheme } = await import("../src/components/image/image.theme");
     const slots = RLImageTheme({ class: "custom-image", fit: "contain" });
     expect(slots["root"]).toContain("relative inline-block");

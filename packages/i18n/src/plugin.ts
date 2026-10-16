@@ -104,7 +104,7 @@ export function i18n(options: I18nConfig = {}): Plugin {
           skipPaths: options.skipPaths ?? ["/api", "/_"],
           translations: loadTranslations(),
         };
-        return `export const config = ${JSON.stringify(cfg)};\nexport default config;`;
+        return `export const config = ${JSON.stringify(cfg)};`;
       }
 
       return null;

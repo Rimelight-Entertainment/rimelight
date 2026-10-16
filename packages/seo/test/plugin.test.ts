@@ -37,7 +37,7 @@ describe("seo Vite Plugin", () => {
     expect(await callHook(plugin.resolveId, "other-id")).toBeNull();
 
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-    expect(configCode).toContain("export const siteConfig =");
+    expect(configCode).toContain("export const config =");
     expect(configCode).toContain('"name":"Test Site"');
   });
 
