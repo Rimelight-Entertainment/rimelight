@@ -1,4 +1,3 @@
 {
-  "extends": "@rimelight/config/tsconfig/base",
-  "exclude": ["**/dist"]
+  "extends": "@rimelight/config/tsconfig/base"
 }
