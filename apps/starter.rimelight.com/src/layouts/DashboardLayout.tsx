@@ -26,9 +26,9 @@ export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
       <div class="isolate flex flex-col min-h-screen">
         <div id="dashboard-header-wrapper">
           <RLBanner
+            id="v2-announcement"
             contain={false}
-            dismissable={true}
-            dismissId="v2-announcement"
+            close={true}
             class="bg-primary text-neutral-50 font-medium"
             actions={[
               { label: "Learn more", href: "/docs", variant: "solid" },

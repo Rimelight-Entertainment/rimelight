@@ -15,27 +15,24 @@ function renderRaw(fn: () => any): string {
 
 describe("icon resolution", () => {
   it("resolves bare lucide names to i-lucide classes", () => {
-    expect(resolveIcon("check")).toEqual({ isClass: true, content: "i-lucide-check" });
+    expect(resolveIcon("check")).toBe("i-lucide-check");
   });
 
   it("passes through full i- prefixed class names", () => {
-    expect(resolveIcon("i-lucide-check")).toEqual({ isClass: true, content: "i-lucide-check" });
+    expect(resolveIcon("i-lucide-check")).toBe("i-lucide-check");
   });
 
   it("passes through collection:name class names", () => {
-    expect(resolveIcon("lucide:check")).toEqual({ isClass: true, content: "lucide:check" });
+    expect(resolveIcon("lucide:check")).toBe("lucide:check");
   });
 
   it("prefers the custom prop over the name", () => {
-    expect(resolveIcon("check", "i-custom-icon")).toEqual({
-      isClass: true,
-      content: "i-custom-icon",
-    });
+    expect(resolveIcon("check", "i-custom-icon")).toBe("i-custom-icon");
   });
 
   it("returns an empty icon for empty input and raw markup strings", () => {
-    expect(resolveIcon("")).toEqual({ isClass: false, content: "" });
-    expect(resolveIcon("custom", "<svg><path/></svg>")).toEqual({ isClass: false, content: "" });
+    expect(resolveIcon("")).toBe("");
+    expect(resolveIcon("custom", "<svg><path/></svg>")).toBe("");
   });
 
   it("ships a non-empty default icon name list", () => {

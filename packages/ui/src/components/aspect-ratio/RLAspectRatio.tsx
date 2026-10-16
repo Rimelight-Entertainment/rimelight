@@ -1,6 +1,6 @@
 import type { RLAspectRatioProps } from "./aspect-ratio.types";
 import { RLAspectRatioTheme } from "./aspect-ratio.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
 export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
@@ -29,7 +29,7 @@ export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
     </>
   );
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root class={classes().root} data-slot="root" data-ratio={safeRatio()} {...rest}>

@@ -27,7 +27,7 @@ export const RLInputTagsTheme = defineTheme("input-tags", {
   compoundVariants: [
     {
       color: "neutral",
-      classNames: {
+      class: {
         tag: "bg-elevated text-highlighted ring-border/60",
       },
     },

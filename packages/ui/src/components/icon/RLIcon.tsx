@@ -10,7 +10,7 @@ export const RLIcon: Component<RLIconProps> = (props) => {
 
   return (
     <span
-      class={resolved().isClass ? `${classes().root} ${resolved().content}` : classes().root}
+      class={resolved() ? `${classes().root} ${resolved()}` : classes().root}
       data-slot="icon"
       aria-hidden="true"
       {...rest}

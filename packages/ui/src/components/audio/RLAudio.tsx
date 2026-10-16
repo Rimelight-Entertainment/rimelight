@@ -1,7 +1,6 @@
 import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio.types";
 import { RLAudioTheme } from "./audio.theme";
 import {
-  children,
   createMemo,
   createSignal,
   createUniqueId,
@@ -109,13 +108,6 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
     "onVolumeChange",
     "onRepeatModeChange",
   );
-
-  const resolvedChildren = children(() => props.children);
-  const resolvedHeaderSlot = children(() => props.headerSlot);
-  const resolvedTimelineSlot = children(() => props.timelineSlot);
-  const resolvedControlsSlot = children(() => props.controlsSlot);
-  const resolvedArtworkSlot = children(() => props.artworkSlot);
-  const resolvedTranscript = children(() => props.transcript);
 
   const titleId = createUniqueId();
   const descId = createUniqueId();
@@ -236,7 +228,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
   const trackTitle = () => currentTrack()?.title ?? props.title;
   const trackDescription = () => currentTrack()?.description ?? props.description;
   const trackArtwork = () => currentTrack()?.artwork ?? props.artwork;
-  const trackTranscript = () => currentTrack()?.transcript ?? resolvedTranscript();
+  const trackTranscript = () => currentTrack()?.transcript ?? props.transcript;
   const trackFormat = () => currentTrack()?.format ?? props.format;
   const trackFileSize = () => currentTrack()?.fileSize ?? props.fileSize;
   const trackBitrate = () => currentTrack()?.bitrate ?? props.bitrate;
@@ -503,11 +495,11 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
 
   const renderArtwork = () => {
     const art = trackArtwork();
-    if (!art && !resolvedArtworkSlot()) return null;
+    if (!art && !props.artworkSlot) return null;
 
     const imageElement = () =>
-      resolvedArtworkSlot() ? (
-        resolvedArtworkSlot()
+      props.artworkSlot ? (
+        props.artworkSlot
       ) : artworkZoomable() && art ? (
         <RLImage
           src={art}
@@ -582,7 +574,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
       <div class={classes().container} data-slot="container">
         {/* 1. Header with Artwork, Track Details & Top Actions */}
         <Show
-          when={resolvedHeaderSlot()}
+          when={props.headerSlot}
           fallback={
             <div class={classes().header} data-slot="header">
               {renderArtwork()}
@@ -669,12 +661,12 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             </div>
           }
         >
-          {resolvedHeaderSlot()}
+          {props.headerSlot}
         </Show>
 
         {/* 2. Timeline Section (Progress Scrub Bar or Waveform + Time) */}
         <Show
-          when={resolvedTimelineSlot()}
+          when={props.timelineSlot}
           fallback={
             <div class={classes().timeline} data-slot="timeline">
               <div
@@ -782,12 +774,12 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             </div>
           }
         >
-          {resolvedTimelineSlot()}
+          {props.timelineSlot}
         </Show>
 
         {/* 3. Controls Section: Left (Volume), Center (Playback), Right (Repeat & Speed) */}
         <Show
-          when={resolvedControlsSlot()}
+          when={props.controlsSlot}
           fallback={
             <div class={classes().controls} data-slot="controls">
               {/* Bottom-Left: Vertical Volume Popover & Mute */}
@@ -1057,7 +1049,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             </div>
           }
         >
-          {resolvedControlsSlot()}
+          {props.controlsSlot}
         </Show>
 
         {/* 4. Playlist / Queue View */}
@@ -1107,8 +1099,8 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
         </Show>
 
         {/* 5. Children Slot */}
-        <Show when={resolvedChildren()}>
-          <div data-slot="children">{resolvedChildren()}</div>
+        <Show when={props.children}>
+          <div data-slot="children">{props.children}</div>
         </Show>
 
         {/* 6. Transcript Collapsible Section */}

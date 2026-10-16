@@ -55,14 +55,14 @@ export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
       disabled: false,
       active: false,
       to: true,
-      classNames: {
+      class: {
         link: "hover:text-default transition-colors",
       },
     },
     {
       color: "neutral",
       active: true,
-      classNames: {
+      class: {
         link: "text-highlighted",
       },
     },

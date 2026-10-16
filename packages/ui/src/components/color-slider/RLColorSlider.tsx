@@ -1,6 +1,6 @@
 import type { RLColorSliderProps } from "./color-slider.types";
 import { RLColorSliderTheme } from "./color-slider.theme";
-import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import {
   clamp,
   getChannelRange,
@@ -39,17 +39,9 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
   const colorSpace = () => props.colorSpace ?? "hsl";
   const orientation = () => props.orientation ?? "horizontal";
   const stepValue = () => props.step ?? 1;
-  const initialHex = () => props.value ?? props.defaultValue ?? "#000000";
 
-  const [currentHex, setCurrentHex] = createSignal(initialHex());
-
-  createEffect(
-    () => props.value,
-    (controlled) => {
-      if (controlled !== undefined) {
-        setCurrentHex(controlled);
-      }
-    },
+  const [currentHex, setCurrentHex] = createSignal(
+    () => props.value ?? props.defaultValue ?? "#000000",
   );
 
   const updateColor = (newHex: string, isFinal = false) => {

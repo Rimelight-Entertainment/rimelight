@@ -11,13 +11,11 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
   const isHorizontal = () => (props.direction ?? "horizontal") === "horizontal";
 
-  const [sizes, setSizes] = createSignal<number[]>(
-    (() => {
-      const ds = props.defaultSizes ?? [50, 50];
-      const totalSize = ds.reduce((s, v) => s + v, 0);
-      return ds.map((s) => (s / (totalSize || 100)) * 100);
-    })(),
-  );
+  const [sizes, setSizes] = createSignal<number[]>(() => {
+    const ds = props.defaultSizes ?? [50, 50];
+    const totalSize = ds.reduce((s, v) => s + v, 0);
+    return ds.map((s) => (s / (totalSize || 100)) * 100);
+  });
 
   const [drag, setDrag] = createSignal<DragState | null>(null);
   let rootRef: HTMLDivElement | undefined;

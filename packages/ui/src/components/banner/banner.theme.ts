@@ -60,20 +60,20 @@ export const RLBannerTheme = defineTheme("banner", {
   compoundVariants: [
     {
       color: "neutral",
-      classNames: {
+      class: {
         root: "!bg-inverted",
       },
     },
     {
       to: true,
-      classNames: {
+      class: {
         root: "hover:bg-[var(--rl-bg-hover)]",
       },
     },
     {
       color: "neutral",
       to: true,
-      classNames: {
+      class: {
         root: "hover:!bg-inverted/90",
       },
     },

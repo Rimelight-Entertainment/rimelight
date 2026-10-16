@@ -1,6 +1,6 @@
 import type { RLInputProps } from "./input.types";
 import { RLInputTheme } from "./input.theme";
-import { createMemo, omit, children, type Component, Show } from "solid-js";
+import { createMemo, omit, type Component, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLInput: Component<RLInputProps> = (props) => {
@@ -32,11 +32,8 @@ export const RLInput: Component<RLInputProps> = (props) => {
     "trailing",
   );
 
-  const resolvedLeading = children(() => props.leading);
-  const resolvedTrailing = children(() => props.trailing);
-
-  const hasLeading = () => !!(props.leadingIcon || resolvedLeading());
-  const hasTrailing = () => !!(props.trailingIcon || resolvedTrailing());
+  const hasLeading = () => !!(props.leadingIcon || props.leading);
+  const hasTrailing = () => !!(props.trailingIcon || props.trailing);
 
   const classes = createMemo(() =>
     RLInputTheme({
@@ -52,8 +49,8 @@ export const RLInput: Component<RLInputProps> = (props) => {
 
   return (
     <div class={classes().root} data-slot="root" data-theme={props.theme}>
-      <Show when={resolvedLeading()}>{resolvedLeading()}</Show>
-      <Show when={!resolvedLeading() && props.leadingIcon}>
+      <Show when={props.leading}>{props.leading}</Show>
+      <Show when={!props.leading && props.leadingIcon}>
         <span class={classes().leading} data-slot="leading">
           <RLIcon name={props.leadingIcon!} size="sm" aria-hidden="true" />
         </span>
@@ -78,8 +75,8 @@ export const RLInput: Component<RLInputProps> = (props) => {
         {...rest}
       />
 
-      <Show when={resolvedTrailing()}>{resolvedTrailing()}</Show>
-      <Show when={!resolvedTrailing() && props.trailingIcon}>
+      <Show when={props.trailing}>{props.trailing}</Show>
+      <Show when={!props.trailing && props.trailingIcon}>
         <span class={classes().trailing} data-slot="trailing">
           <RLIcon name={props.trailingIcon!} size="sm" aria-hidden="true" />
         </span>

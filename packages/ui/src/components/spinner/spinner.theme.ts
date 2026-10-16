@@ -18,7 +18,7 @@ export const RLSpinnerTheme = defineTheme("spinner", {
   compoundVariants: [
     {
       color: "current",
-      classNames: { root: "text-current" },
+      class: { root: "text-current" },
     },
   ],
   defaultVariants: {

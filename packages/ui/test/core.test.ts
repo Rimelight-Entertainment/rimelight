@@ -87,21 +87,18 @@ describe("@rimelight/ui core resolver", () => {
 describe("@rimelight/ui core icon resolution", () => {
   it("should resolve class-based icons", () => {
     const icon = resolveIcon("i-lucide-check");
-    expect(icon.isClass).toBe(true);
-    expect(icon.content).toBe("i-lucide-check");
+    expect(icon).toBe("i-lucide-check");
   });
 
   it("should resolve bare lucide names to i-lucide classes", () => {
     const icon = resolveIcon("check");
-    expect(icon.isClass).toBe(true);
-    expect(icon.content).toBe("i-lucide-check");
+    expect(icon).toBe("i-lucide-check");
   });
 
   it("should return an empty icon for raw SVG strings", () => {
     const rawSvg = '<svg><path d="M0 0"/></svg>';
     const icon = resolveIcon("customSvg", rawSvg);
-    expect(icon.isClass).toBe(false);
-    expect(icon.content).toBe("");
+    expect(icon).toBe("");
   });
 
   it("should resolve custom icon configured in uiConfig", () => {
@@ -112,16 +109,14 @@ describe("@rimelight/ui core icon resolution", () => {
     });
 
     const icon = resolveIcon("customIcon");
-    expect(icon.isClass).toBe(true);
-    expect(icon.content).toBe("i-custom-icon");
+    expect(icon).toBe("i-custom-icon");
 
     setRimelightUITestConfig(null);
   });
 
   it("should return empty icon for empty name and custom", () => {
     const icon = resolveIcon("");
-    expect(icon.isClass).toBe(false);
-    expect(icon.content).toBe("");
+    expect(icon).toBe("");
   });
 
   it("should match compound variants when color is auto", () => {
@@ -138,7 +133,7 @@ describe("@rimelight/ui core icon resolution", () => {
         {
           color: "neutral",
           variant: "solid",
-          classNames: { root: "btn-neutral-solid" },
+          class: { root: "btn-neutral-solid" },
         },
       ],
       defaultVariants: {

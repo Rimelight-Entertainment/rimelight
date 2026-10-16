@@ -120,7 +120,7 @@ export const RLAvatarTheme = defineTheme("avatar", {
   compoundVariants: [
     {
       color: "neutral",
-      classNames: {
+      class: {
         root: "bg-elevated text-highlighted",
         fallback: "text-muted",
         icon: "text-muted",

@@ -3,7 +3,12 @@ import { RLThemeSelectorTheme } from "./theme-selector.theme";
 import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
-import { getThemePreference, parseThemePreference, serializeThemePreference } from "../../theme";
+import {
+  getThemePreference,
+  parseThemePreference,
+  serializeThemePreference,
+  type ThemePreference,
+} from "../../theme";
 
 const themeItems = [
   { label: "System", value: "system", icon: "laptop" },
@@ -14,75 +19,49 @@ const themeItems = [
 export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
   const rest = omit(props, "mode", "size", "theme", "ui", "class", "children", "onChange");
 
-  const [currentPreference, setCurrentPreference] = createSignal<string>("system");
-
-  const getPreference = () => {
-    const stored = getThemePreference();
-    if (stored) return stored;
-    if (typeof localStorage !== "undefined") {
-      const legacy = parseThemePreference(localStorage.getItem("theme"));
-      if (legacy) {
-        document.cookie = serializeThemePreference(legacy);
-        return legacy;
-      }
-    }
-    return "system";
-  };
+  const [currentPreference, setCurrentPreference] = createSignal<ThemePreference>(
+    getThemePreference() ?? "system",
+  );
 
   const applyTheme = (next: string) => {
-    setCurrentPreference(next);
+    const preference = parseThemePreference(next) ?? "system";
+    setCurrentPreference(preference);
     if (typeof document !== "undefined") {
-      const resolved =
-        next === "system"
-          ? window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light"
-          : next;
-      document.documentElement.setAttribute("data-theme", resolved);
-      const preference = parseThemePreference(next) ?? "system";
+      if (preference === "system") {
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        document.documentElement.setAttribute("data-theme", preference);
+      }
       document.cookie = serializeThemePreference(preference);
-      localStorage.setItem("theme", next);
     }
-    props.onChange?.(next);
+    props.onChange?.(preference);
   };
 
   onSettled(() => {
     if (typeof document === "undefined") return;
 
-    let cleanupShortcut: (() => void) | undefined;
+    const pref = getThemePreference() ?? "system";
+    if (pref !== currentPreference()) {
+      setCurrentPreference(pref);
+    }
 
-    const schedule =
-      typeof requestIdleCallback !== "undefined"
-        ? requestIdleCallback
-        : (cb: () => void) => setTimeout(cb, 50);
+    const cycle = () => {
+      const cur = currentPreference();
+      const next = cur === "system" ? "light" : cur === "light" ? "dark" : "system";
+      applyTheme(next);
+    };
 
-    const idleHandle = schedule(() => {
-      const pref = getPreference();
-      if (pref !== currentPreference()) {
-        setCurrentPreference(pref);
-      }
-
-      const cycle = () => {
-        const cur = currentPreference();
-        const next = cur === "system" ? "light" : cur === "light" ? "dark" : "system";
-        applyTheme(next);
-      };
-
-      cleanupShortcut = defineShortcuts({
-        meta_alt_t: {
-          handler: cycle,
-          label: "Cycle Theme",
-          description: "Cycle between system, light, and dark theme mode",
-          category: "system",
-        },
-      });
+    const cleanupShortcut = defineShortcuts({
+      meta_alt_t: {
+        handler: cycle,
+        label: "Cycle Theme",
+        description: "Cycle between system, light, and dark theme mode",
+        category: "system",
+      },
     });
 
     return () => {
-      if (typeof cancelIdleCallback !== "undefined" && typeof idleHandle === "number") {
-        cancelIdleCallback(idleHandle);
-      }
-      cleanupShortcut?.();
+      cleanupShortcut();
     };
   });
 

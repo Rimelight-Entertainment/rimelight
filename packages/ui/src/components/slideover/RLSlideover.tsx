@@ -1,14 +1,6 @@
 import type { RLSlideoverProps } from "./slideover.types";
 import { RLSlideoverTheme } from "./slideover.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  onSettled,
-  Show,
-  omit,
-  type Component,
-} from "solid-js";
+import { createMemo, createSignal, onSettled, Show, omit, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -37,16 +29,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
   const side = () => props.side ?? "left";
   const unmountOnHide = () => props.unmountOnHide ?? true;
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
-
-  createEffect(
-    () => props.open,
-    (open) => {
-      if (open !== undefined) {
-        setIsOpen(open);
-      }
-    },
-  );
+  const [isOpen, setIsOpen] = createSignal(() => props.open ?? props.defaultOpen ?? false);
 
   const setOpenState = (open: boolean) => {
     if (props.open === undefined) {

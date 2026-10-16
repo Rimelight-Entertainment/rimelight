@@ -1,4 +1,4 @@
-import { createStore } from "solid-js";
+import { createSignal, createStore } from "solid-js";
 
 export type Handler = (e: KeyboardEvent) => void;
 export interface ShortcutConfig {
@@ -27,23 +27,44 @@ interface Shortcut {
   usingInput?: boolean | string | undefined;
 }
 
-const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent),
-  KEYS: Record<string, string> = {
-    ctrl: "Ctrl",
-    meta: isMac ? "⌘" : "Ctrl",
-    alt: isMac ? "⌥" : "Alt",
-    shift: isMac ? "⇧" : "Shift",
-    enter: "↵",
-    delete: "⌦",
-    backspace: "⌫",
-    escape: "Esc",
-    tab: "⇥",
-    space: "Space",
-    arrowup: "↑",
-    arrowdown: "↓",
-    arrowleft: "←",
-    arrowright: "→",
-  };
+const isApplePlatform = () =>
+  typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent);
+
+const getKeySymbol = (norm: string): string | undefined => {
+  const mac = isApplePlatform();
+  switch (norm) {
+    case "ctrl":
+      return "Ctrl";
+    case "meta":
+      return mac ? "⌘" : "Ctrl";
+    case "alt":
+      return mac ? "⌥" : "Alt";
+    case "shift":
+      return mac ? "⇧" : "Shift";
+    case "enter":
+      return "↵";
+    case "delete":
+      return "⌦";
+    case "backspace":
+      return "⌫";
+    case "escape":
+      return "Esc";
+    case "tab":
+      return "⇥";
+    case "space":
+      return "Space";
+    case "arrowup":
+      return "↑";
+    case "arrowdown":
+      return "↓";
+    case "arrowleft":
+      return "←";
+    case "arrowright":
+      return "→";
+    default:
+      return undefined;
+  }
+};
 
 const MODS: Record<string, string> = {
   cmd: "meta",
@@ -58,12 +79,17 @@ export const normalizeModifier = (m: string) => MODS[m.toLowerCase()] || m.toLow
 export const formatShortcutKeys = (k: string): string[] =>
   k.split(/[_-]/).map((p) => {
     const norm = normalizeModifier(p);
-    return KEYS[norm] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "");
+    return getKeySymbol(norm) ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "");
   });
 
 export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<RegisteredShortcut[]>(
   [],
 );
+
+export const [shortcutsModalOpen, setShortcutsModalOpen] = createSignal(false);
+export const openShortcutsModal = () => setShortcutsModalOpen(true);
+export const closeShortcutsModal = () => setShortcutsModalOpen(false);
+export const toggleShortcutsModal = () => setShortcutsModalOpen((open) => !open);
 
 const isUsingInput = (el: Element | null): boolean | string => {
   const target = (el?.shadowRoot?.activeElement || el) as HTMLElement | null;
@@ -124,7 +150,12 @@ export function defineShortcuts(
 
   const ids = new Set(reg.map((i) => i.id));
   if (ids.size) {
-    setActiveShortcutsStore((prev) => [...prev.filter((i) => !ids.has(i.id)), ...reg]);
+    setActiveShortcutsStore((draft) => {
+      for (let i = draft.length - 1; i >= 0; i--) {
+        if (ids.has(draft[i]!.id)) draft.splice(i, 1);
+      }
+      draft.push(...reg);
+    });
   }
 
   const buffer: string[] = [];
@@ -158,10 +189,11 @@ export function defineShortcuts(
 
     // Unified event normalization
     const keysToCheck = Array.from(new Set([key, codeKey].filter(Boolean)));
+    const mac = isApplePlatform();
     for (const k of keysToCheck) {
       const sig = `${e.metaKey ? "meta_" : ""}${e.ctrlKey ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`;
       const primarySig =
-        !isMac && e.ctrlKey && !e.metaKey
+        !mac && e.ctrlKey && !e.metaKey
           ? `meta_${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`
           : sig;
 
@@ -182,7 +214,11 @@ export function defineShortcuts(
     window.removeEventListener("keydown", onKeyDown);
     clearTimeout(timer);
     if (ids.size) {
-      setActiveShortcutsStore((prev) => prev.filter((i) => !ids.has(i.id)));
+      setActiveShortcutsStore((draft) => {
+        for (let i = draft.length - 1; i >= 0; i--) {
+          if (ids.has(draft[i]!.id)) draft.splice(i, 1);
+        }
+      });
     }
   };
 }

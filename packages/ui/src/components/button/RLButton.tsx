@@ -1,6 +1,6 @@
 import type { RLButtonProps } from "./button.types";
 import { RLButtonTheme } from "./button.theme";
-import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { createMemo, createSignal, Show, type Component, isStatic } from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 import { omit } from "solid-js";
 import {
@@ -251,7 +251,9 @@ export const RLButton: Component<RLButtonProps> = (props) => {
   const targetValue = () => linkAttrs().target;
   const relValue = () => linkAttrs().rel;
 
-  const CustomRoot = dynamic(() => (props.as ?? "div") as string);
+  const CustomRoot = dynamic(() => (props.as ?? "div") as string, {
+    static: isStatic(props, "as"),
+  });
   const isCustomRoot = () => !isLink() && Boolean(props.as) && props.as !== "button";
 
   const buttonContent = () => (

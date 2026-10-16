@@ -1,6 +1,6 @@
 import type { RLChipProps } from "./chip.types";
 import { RLChipTheme } from "./chip.theme";
-import { createMemo, omit, Show, type Component } from "solid-js";
+import { createMemo, omit, Show, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
 export const RLChip: Component<RLChipProps> = (props) => {
@@ -39,7 +39,7 @@ export const RLChip: Component<RLChipProps> = (props) => {
 
   const isVisible = () => props.show ?? true;
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const renderContent = () => {
     if (props.contentSlot !== undefined && props.contentSlot !== null) {

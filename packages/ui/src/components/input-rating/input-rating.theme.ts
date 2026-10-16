@@ -56,7 +56,7 @@ export const RLInputRatingTheme = defineTheme("input-rating", {
   compoundVariants: [
     {
       color: "neutral",
-      classNames: {
+      class: {
         indicator: "text-highlighted",
         item: "focus-visible:ring-inverted",
       },
@@ -64,7 +64,7 @@ export const RLInputRatingTheme = defineTheme("input-rating", {
     {
       readonly: false,
       disabled: false,
-      classNames: {
+      class: {
         item: "hover:scale-110",
       },
     },

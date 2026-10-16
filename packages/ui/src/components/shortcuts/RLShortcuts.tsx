@@ -1,9 +1,9 @@
 import type { RLShortcutsProps, CategorySection } from "./shortcuts.types";
 import { RLShortcutsTheme } from "./shortcuts.theme";
-import uiConfig from "virtual:rimelight-ui";
+import { getUIConfig } from "../../resolver";
 import {
+  createEffect,
   createMemo,
-  createSignal,
   createUniqueId,
   For,
   onSettled,
@@ -12,7 +12,14 @@ import {
   type Component,
 } from "solid-js";
 import { Portal } from "@solidjs/web";
-import { activeShortcutsStore, defineShortcuts, type RegisteredShortcut } from "../../shortcuts";
+import {
+  activeShortcutsStore,
+  closeShortcutsModal,
+  defineShortcuts,
+  shortcutsModalOpen,
+  toggleShortcutsModal,
+  type RegisteredShortcut,
+} from "../../shortcuts";
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
 
@@ -21,7 +28,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   const rest = omit(props, "categories", "ui", "class");
 
   const configCategories = (): Record<string, { label: string }> =>
-    uiConfig.shortcuts?.categories || {};
+    getUIConfig().shortcuts?.categories || {};
 
   const resolvedCategories = createMemo<Record<string, string>>(() => {
     const configKeys = Object.keys(configCategories());
@@ -35,33 +42,20 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
 
   const categoryOrder = createMemo(() => Object.keys(configCategories()));
 
-  const [isOpen, setIsOpen] = createSignal(false);
-
-  const openHelp = () => {
-    setIsOpen(true);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeHelp = () => {
-    setIsOpen(false);
-    document.body.style.overflow = "";
-  };
+  createEffect(
+    () => shortcutsModalOpen(),
+    (open) => {
+      document.body.style.overflow = open ? "hidden" : "";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    },
+  );
 
   onSettled(() => {
-    const handleOpenHelp = () => openHelp();
-    document.addEventListener("rl-shortcuts:open", handleOpenHelp);
-    document.addEventListener("rla-shortcuts:open", handleOpenHelp);
-    document.addEventListener("shortcuts:open", handleOpenHelp);
-
     const qShortcutCleanup = defineShortcuts({
       "?": {
-        handler: () => {
-          if (isOpen()) {
-            closeHelp();
-          } else {
-            openHelp();
-          }
-        },
+        handler: () => toggleShortcutsModal(),
         label: "Show Keyboard Shortcuts",
         description: "Display this shortcuts help cheat sheet modal",
         category: "system",
@@ -70,18 +64,14 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     });
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen()) {
-        closeHelp();
+      if (e.key === "Escape" && shortcutsModalOpen()) {
+        closeShortcutsModal();
       }
     };
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.removeEventListener("rl-shortcuts:open", handleOpenHelp);
-      document.removeEventListener("rla-shortcuts:open", handleOpenHelp);
-      document.removeEventListener("shortcuts:open", handleOpenHelp);
       window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = "";
       qShortcutCleanup();
     };
   });
@@ -136,13 +126,13 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   });
 
   return (
-    <Show when={isOpen()}>
+    <Show when={shortcutsModalOpen()}>
       <Portal>
         <div
           class={classes().modal}
           data-slot="modal"
           onClick={(e) => {
-            if (e.target === e.currentTarget) closeHelp();
+            if (e.target === e.currentTarget) closeShortcutsModal();
           }}
           {...rest}
         >
@@ -162,7 +152,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
                 type="button"
                 class={classes().close}
                 aria-label="Close shortcuts help"
-                onClick={closeHelp}
+                onClick={closeShortcutsModal}
                 data-slot="close"
               >
                 <RLIcon name="x" class="size-4" />

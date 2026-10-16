@@ -3,7 +3,7 @@ import type { RimelightIcons } from "./icons";
 import type { PALETTES } from "./preset";
 import type { WebFontsOptions } from "./fonts";
 
-export type Theme = "light" | "dark" | "flat";
+export type Theme = "light" | "dark";
 export type BuiltinThemeColor = keyof typeof PALETTES;
 export type ThemeColor = BuiltinThemeColor | (string & {});
 
@@ -22,7 +22,6 @@ export interface ThemeConfig<S extends string = string> {
   variants?: Record<string, any>;
   compoundVariants?: Array<
     Record<string, any> & {
-      classNames?: Partial<Record<S, ClassValue>>;
       class?: Partial<Record<S, ClassValue>>;
     }
   >;

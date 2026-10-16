@@ -1,4 +1,4 @@
-import { type Component, For, Show, onSettled } from "solid-js";
+import { type Component, For, Show } from "solid-js";
 import {
   RLHeader,
   RLLogo,
@@ -10,6 +10,7 @@ import {
   RLImage,
   RLAvatar,
   RLDropdownMenu,
+  openShortcutsModal,
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
@@ -23,18 +24,6 @@ export interface AppHeaderProps {
 }
 
 export const AppHeader: Component<AppHeaderProps> = (props) => {
-  onSettled(() => {
-    const btn = document.getElementById("rla-shortcuts-btn");
-    const handler = () => {
-      document.dispatchEvent(new CustomEvent("rl-shortcuts:open"));
-      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"));
-    };
-    btn?.addEventListener("click", handler);
-    return () => {
-      btn?.removeEventListener("click", handler);
-    };
-  });
-
   const foundationLinkGroup = (): RLLinkGroupProps => ({
     label: t("app_header.link-groups_center_foundations_label"),
     leadingIcon: "i-lucide-layout",
@@ -302,11 +291,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         <div class="flex items-center gap-md">
           <RLSearch />
           <RLButton
-            id="rla-shortcuts-btn"
             variant="ghost"
             color="neutral"
             leadingIcon="i-lucide-keyboard"
             aria-label="Keyboard Shortcuts"
+            onClick={openShortcutsModal}
           />
           <div class="hidden md:flex flex-row gap-md">
             <Show

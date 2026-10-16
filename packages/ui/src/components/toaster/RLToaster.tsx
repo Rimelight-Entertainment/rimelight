@@ -55,8 +55,8 @@ export const RLToaster: Component<RLToasterProps> = (props) => {
 
   return (
     <div
-      id="rl-toaster-container"
       class={classes().root}
+      data-slot="root"
       aria-live="polite"
       aria-atomic="false"
       role="status"

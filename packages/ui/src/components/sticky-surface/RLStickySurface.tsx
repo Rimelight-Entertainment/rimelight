@@ -1,13 +1,12 @@
 import type { RLStickySurfaceProps } from "./sticky-surface.types";
 import { RLStickySurfaceTheme } from "./sticky-surface.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, createUniqueId, Show, omit, type Component } from "solid-js";
 
 export const RLStickySurface: Component<RLStickySurfaceProps> = (props) => {
   const rest = omit(props, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children");
 
   const stuckShadow = () => props.stuckShadow ?? true;
-
-  const id = `sticky-${Math.random().toString(36).substring(2, 9)}`;
+  const id = `sticky-${createUniqueId()}`;
 
   const classes = createMemo(() => RLStickySurfaceTheme({ ui: props.ui, class: props.class }));
 
@@ -26,7 +25,7 @@ export const RLStickySurface: Component<RLStickySurfaceProps> = (props) => {
           container-name: rl-sticky-${id};
         }
       `}</style>
-      {stuckShadow() ? (
+      <Show when={stuckShadow()}>
         <style>{`
           @container rl-sticky-${id} scroll-state(stuck: top) {
             .${id} {
@@ -44,7 +43,7 @@ export const RLStickySurface: Component<RLStickySurfaceProps> = (props) => {
             }
           }
         `}</style>
-      ) : null}
+      </Show>
     </div>
   );
 };

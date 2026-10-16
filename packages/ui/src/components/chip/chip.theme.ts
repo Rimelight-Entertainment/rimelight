@@ -37,27 +37,27 @@ export const RLChipTheme = defineTheme("chip", {
   compoundVariants: [
     {
       color: "neutral",
-      classNames: { base: "bg-inverted text-default" },
+      class: { base: "bg-inverted text-default" },
     },
     {
       position: "top-right",
       inset: false,
-      classNames: { base: "-translate-y-1/2 translate-x-1/2 transform" },
+      class: { base: "-translate-y-1/2 translate-x-1/2 transform" },
     },
     {
       position: "bottom-right",
       inset: false,
-      classNames: { base: "translate-y-1/2 translate-x-1/2 transform" },
+      class: { base: "translate-y-1/2 translate-x-1/2 transform" },
     },
     {
       position: "top-left",
       inset: false,
-      classNames: { base: "-translate-y-1/2 -translate-x-1/2 transform" },
+      class: { base: "-translate-y-1/2 -translate-x-1/2 transform" },
     },
     {
       position: "bottom-left",
       inset: false,
-      classNames: { base: "translate-y-1/2 -translate-x-1/2 transform" },
+      class: { base: "translate-y-1/2 -translate-x-1/2 transform" },
     },
   ],
   defaultVariants: {

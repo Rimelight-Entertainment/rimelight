@@ -1,6 +1,14 @@
 import type { RLCheckboxProps } from "./checkbox.types";
 import { RLCheckboxTheme } from "./checkbox.theme";
-import { createMemo, createSignal, createUniqueId, omit, Show, type Component } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  createUniqueId,
+  omit,
+  Show,
+  type Component,
+  isStatic,
+} from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -107,7 +115,7 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
     }
   };
 
-  const Root = dynamic(() => props.as ?? "label");
+  const Root = dynamic(() => props.as ?? "label", { static: isStatic(props, "as") });
 
   const hasLabel = () => Boolean(props.label || props.labelSlot || props.children);
   const hasDescription = () => Boolean(props.description || props.descriptionSlot);

@@ -81,7 +81,7 @@ export const RLCarouselTheme = defineTheme("carousel", {
     {
       orientation: "horizontal",
       controls: "inside",
-      classNames: {
+      class: {
         prev: "!start-3 !top-1/2 !-translate-y-1/2",
         next: "!end-3 !top-1/2 !-translate-y-1/2",
         buttonPrev: "!start-3 !top-1/2 !-translate-y-1/2",
@@ -92,7 +92,7 @@ export const RLCarouselTheme = defineTheme("carousel", {
     {
       orientation: "horizontal",
       controls: "outside",
-      classNames: {
+      class: {
         prev: "start-4 sm:-start-12 top-1/2 -translate-y-1/2",
         next: "end-4 sm:-end-12 top-1/2 -translate-y-1/2",
         buttonPrev: "start-4 sm:-start-12 top-1/2 -translate-y-1/2",
@@ -103,7 +103,7 @@ export const RLCarouselTheme = defineTheme("carousel", {
     {
       orientation: "vertical",
       controls: "inside",
-      classNames: {
+      class: {
         prev: "!top-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
         next: "!bottom-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
         buttonPrev: "!top-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
@@ -114,7 +114,7 @@ export const RLCarouselTheme = defineTheme("carousel", {
     {
       orientation: "vertical",
       controls: "outside",
-      classNames: {
+      class: {
         prev: "top-4 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
         next: "bottom-4 sm:-bottom-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
         buttonPrev: "top-4 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",

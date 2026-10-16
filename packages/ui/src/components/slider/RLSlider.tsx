@@ -1,6 +1,6 @@
 import type { RLSliderProps } from "./slider.types";
 import { RLSliderTheme } from "./slider.theme";
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
+import { createMemo, createSignal, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
 export const RLSlider: Component<RLSliderProps> = (props) => {
@@ -24,15 +24,8 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
   const max = () => props.max ?? 100;
   const step = () => props.step ?? 1;
 
-  const [internalVal, setInternalVal] = createSignal(props.value ?? props.defaultValue ?? min());
-
-  createEffect(
-    () => props.value,
-    (val) => {
-      if (val !== undefined) {
-        setInternalVal(val);
-      }
-    },
+  const [internalVal, setInternalVal] = createSignal(
+    () => props.value ?? props.defaultValue ?? min(),
   );
 
   const currentVal = () => (props.value !== undefined ? props.value : internalVal());

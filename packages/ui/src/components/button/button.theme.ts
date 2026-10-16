@@ -116,59 +116,59 @@ export const RLButtonTheme = defineTheme("button", {
     {
       color: "neutral",
       variant: "solid",
-      classNames: {
+      class: {
         root: "text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-inverted",
       },
     },
     {
       color: "neutral",
       variant: "outline",
-      classNames: {
+      class: {
         root: "ring ring-inset ring-accented text-default bg-default hover:bg-elevated active:bg-elevated disabled:bg-default aria-disabled:bg-default focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
       },
     },
     {
       color: "neutral",
       variant: "soft",
-      classNames: {
+      class: {
         root: "text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 focus:outline-none focus-visible:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated",
       },
     },
     {
       color: "neutral",
       variant: "subtle",
-      classNames: {
+      class: {
         root: "ring ring-inset ring-accented text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
       },
     },
     {
       color: "neutral",
       variant: "ghost",
-      classNames: {
+      class: {
         root: "text-default hover:bg-elevated active:bg-elevated focus:outline-none focus-visible:bg-elevated hover:disabled:bg-transparent hover:aria-disabled:bg-transparent",
       },
     },
     {
       color: "neutral",
       variant: "link",
-      classNames: {
+      class: {
         root: "text-muted hover:text-default active:text-default disabled:text-muted aria-disabled:text-muted focus:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-inverted",
       },
     },
-    { square: false, size: "xs", classNames: { root: "px-2 py-1" } },
-    { square: true, size: "xs", classNames: { root: "p-1" } },
-    { square: false, size: "sm", classNames: { root: "px-2.5 py-1.5" } },
-    { square: true, size: "sm", classNames: { root: "p-1.5" } },
-    { square: false, size: "md", classNames: { root: "px-2.5 py-1.5" } },
-    { square: true, size: "md", classNames: { root: "p-1.5" } },
-    { square: false, size: "lg", classNames: { root: "px-3 py-2" } },
-    { square: true, size: "lg", classNames: { root: "p-2" } },
-    { square: false, size: "xl", classNames: { root: "px-3 py-2" } },
-    { square: true, size: "xl", classNames: { root: "p-2" } },
+    { square: false, size: "xs", class: { root: "px-2 py-1" } },
+    { square: true, size: "xs", class: { root: "p-1" } },
+    { square: false, size: "sm", class: { root: "px-2.5 py-1.5" } },
+    { square: true, size: "sm", class: { root: "p-1.5" } },
+    { square: false, size: "md", class: { root: "px-2.5 py-1.5" } },
+    { square: true, size: "md", class: { root: "p-1.5" } },
+    { square: false, size: "lg", class: { root: "px-3 py-2" } },
+    { square: true, size: "lg", class: { root: "p-2" } },
+    { square: false, size: "xl", class: { root: "px-3 py-2" } },
+    { square: true, size: "xl", class: { root: "p-2" } },
     {
       loading: true,
       leading: true,
-      classNames: {
+      class: {
         leadingIcon: "animate-spin",
       },
     },
@@ -176,14 +176,14 @@ export const RLButtonTheme = defineTheme("button", {
       loading: true,
       leading: false,
       trailing: true,
-      classNames: {
+      class: {
         trailingIcon: "animate-spin",
       },
     },
     {
       loading: true,
       trailing: true,
-      classNames: {
+      class: {
         trailingIcon: "animate-spin",
       },
     },

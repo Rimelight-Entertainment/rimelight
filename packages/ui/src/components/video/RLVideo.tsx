@@ -1,6 +1,6 @@
 import type { RLVideoProps } from "./video.types";
 import { RLVideoTheme } from "./video.theme";
-import { children, createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
@@ -57,10 +57,6 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
 }
 
 export const RLVideo: Component<RLVideoProps> = (props) => {
-  const resolvedChildren = children(() => props.children);
-  const resolvedIconSlot = children(() => props.iconSlot);
-  const resolvedTranscriptSlot = children(() => props.transcriptSlot);
-
   const rest = omit(
     props,
     "src",
@@ -119,8 +115,8 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
                 data-slot="image"
               />
 
-              {resolvedIconSlot() ? (
-                resolvedIconSlot()
+              {props.iconSlot ? (
+                props.iconSlot
               ) : (
                 <RLIcon
                   name={iconName()}
@@ -145,9 +141,9 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
         </Show>
       </div>
 
-      <Show when={resolvedTranscriptSlot() || resolvedChildren()}>
+      <Show when={props.transcriptSlot || props.children}>
         <div class={classes().transcript} data-slot="transcript">
-          {resolvedTranscriptSlot() ? resolvedTranscriptSlot() : resolvedChildren()}
+          {props.transcriptSlot ? props.transcriptSlot : props.children}
         </div>
       </Show>
     </div>

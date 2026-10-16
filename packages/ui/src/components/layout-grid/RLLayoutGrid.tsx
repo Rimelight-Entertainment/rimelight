@@ -4,12 +4,12 @@ import {
   createMemo,
   createSignal,
   createEffect,
+  For,
   omit,
   Show,
   onSettled,
   type Component,
 } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { defineShortcuts } from "../../shortcuts";
 
 const isDev = (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV === true;
@@ -77,10 +77,10 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
 
   let hostRef: HTMLElement | undefined;
   let overlayRef: HTMLElement | undefined;
-  let columnsRef: HTMLElement | undefined;
-  let indicatorRef: HTMLElement | undefined;
 
   const [visible, setVisible] = createSignal(false);
+  const [viewportWidth, setViewportWidth] = createSignal(0);
+  const [rootFontSize, setRootFontSize] = createSignal(16);
   const [currentBreakpoint, setCurrentBreakpoint] = createSignal<
     "base" | "sm" | "md" | "lg" | "xl"
   >("base");
@@ -102,6 +102,10 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
 
     const updateBreakpoint = () => {
       const width = document.documentElement.clientWidth;
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      setViewportWidth(width);
+      setRootFontSize(fontSize);
+
       const sm = props.smBreakpoint ?? 640;
       const md = props.mdBreakpoint ?? 768;
       const lg = props.lgBreakpoint ?? 1024;
@@ -136,17 +140,13 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
     };
   });
 
-  const updateGrid = (
-    bp: "base" | "sm" | "md" | "lg" | "xl",
-    gutters: number[],
-    margins: number[],
-    isVisible: boolean,
-  ) => {
-    const columnsContainer = columnsRef;
-    const indicatorElement = indicatorRef;
-    if (!columnsContainer || !isVisible) return;
+  const gridMetrics = createMemo(() => {
+    const bp = currentBreakpoint();
+    const gutters = gutterArray();
+    const margins = marginArray();
+    const width = viewportWidth();
+    const fontSize = rootFontSize();
 
-    const width = document.documentElement.clientWidth;
     const smBreakpoint = props.smBreakpoint ?? 640;
     const mdBreakpoint = props.mdBreakpoint ?? 768;
     const lgBreakpoint = props.lgBreakpoint ?? 1024;
@@ -195,21 +195,14 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
     const fullWidthOpacity = props.fullWidthGridOpacity ?? 0.05;
     const showFullWidthBackground = props.showFullWidthBackground ?? true;
 
-    const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    const marginPx = marginValue * rootFontSize;
-    const gutterPx = gutterValue * rootFontSize;
+    const marginPx = marginValue * fontSize;
+    const gutterPx = gutterValue * fontSize;
 
     const maxWidthVal = props.maxWidth ?? "1440px";
-    let maxWidthPx = width;
-    if (!maxWidthVal.includes("vw")) {
-      maxWidthPx = parseInt(maxWidthVal);
-    }
+    const maxWidthPx = maxWidthVal.includes("vw") ? width : parseInt(maxWidthVal);
 
     const innerMaxWidthVal = props.innerMaxWidth ?? "768px";
-    let innerMaxWidthPx = width;
-    if (!innerMaxWidthVal.includes("vw")) {
-      innerMaxWidthPx = parseInt(innerMaxWidthVal);
-    }
+    const innerMaxWidthPx = innerMaxWidthVal.includes("vw") ? width : parseInt(innerMaxWidthVal);
 
     const innerGridColor = props.innerGridColor ?? "#10b981";
     const innerGridOpacity = props.innerGridOpacity ?? 0.1;
@@ -221,137 +214,93 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
 
     const containerLeft = (width - maxWidthPx) / 2;
     const containerRight = (width + maxWidthPx) / 2;
-
-    columnsContainer.replaceChildren();
-
-    hostRef?.style.setProperty("--rl-grid-cols", colCount.toString());
-    hostRef?.style.setProperty("--rl-grid-gap", `${gutterPx}px`);
-    hostRef?.style.setProperty("--rl-grid-margin", `${marginPx}px`);
-    hostRef?.style.setProperty("--rl-grid-max-width", maxWidthVal);
-
-    const rootStyle = document.documentElement.style;
-    rootStyle.setProperty("--rl-grid-cols", colCount.toString());
-    rootStyle.setProperty("--rl-grid-gap", `${gutterPx}px`);
-    rootStyle.setProperty("--rl-grid-gutter", `${gutterPx}px`);
-    rootStyle.setProperty("--rl-grid-col-width", `${colWidth}px`);
-    rootStyle.setProperty("--rl-grid-margin", `${marginPx}px`);
-    rootStyle.setProperty("--rl-grid-max-width", maxWidthVal);
-
     const containerStartX = width > maxWidthPx ? containerLeft + marginPx : marginPx;
     const step = colWidth + gutterPx;
-
-    let totalCols = colCount;
-    if (width > maxWidthPx && showFullWidth) {
-      let leftX = marginPx;
-      while (leftX + colWidth < containerLeft) {
-        totalCols++;
-        leftX += step;
-      }
-      let rightX = width - marginPx - colWidth;
-      while (rightX > containerRight) {
-        totalCols++;
-        rightX -= step;
-      }
-    }
-
-    if (indicatorElement) {
-      const { indicatorBreakpoint, indicatorDivider, indicatorWidth, indicatorColumns } = classes();
-
-      const breakpointSpan = document.createElement("span");
-      breakpointSpan.className = indicatorBreakpoint;
-      breakpointSpan.textContent = `${bp.toUpperCase()} (${breakpointThreshold}px)`;
-
-      const firstDivider = document.createElement("span");
-      firstDivider.className = indicatorDivider;
-      firstDivider.textContent = "|";
-
-      const widthSpan = document.createElement("span");
-      widthSpan.className = indicatorWidth;
-      widthSpan.textContent = `${width}px`;
-
-      const secondDivider = document.createElement("span");
-      secondDivider.className = indicatorDivider;
-      secondDivider.textContent = "|";
-
-      const columnsSpan = document.createElement("span");
-      columnsSpan.className = indicatorColumns;
-      columnsSpan.textContent = `${totalCols} Cols`;
-
-      indicatorElement.replaceChildren(
-        breakpointSpan,
-        firstDivider,
-        widthSpan,
-        secondDivider,
-        columnsSpan,
-      );
-    }
-
-    const gridWrapper = document.createElement("div");
-    gridWrapper.className = classes().columns;
 
     const innerLeft = (width - innerMaxWidthPx) / 2;
     const innerRight = (width + innerMaxWidthPx) / 2;
 
+    const innerColumns = [];
     for (let i = 0; i < colCount; i++) {
       const colX = containerStartX + i * step;
       const colRight = colX + colWidth;
       const isInner = colX >= innerLeft - 1 && colRight <= innerRight + 1;
-
-      const col = document.createElement("div");
-      col.className = classes().column;
       const color = isInner ? innerGridColor : gridColor;
       const opacity = isInner ? innerGridOpacity : gridOpacity;
       const bg = isInner ? showInnerBackground : showBackground;
-      col.style.borderInline = `1px solid ${color}`;
-      col.style.backgroundColor = bg ? hexToRgba(color, opacity) : "transparent";
-      gridWrapper.appendChild(col);
+      innerColumns.push({
+        "border-inline": `1px solid ${color}`,
+        "background-color": bg ? hexToRgba(color, opacity) : "transparent",
+      });
     }
 
-    columnsContainer.appendChild(gridWrapper);
-
-    if (width > maxWidthPx && showFullWidth) {
-      const drawOuterColumn = (x: number) => {
-        const col = document.createElement("div");
-        col.className = classes().outerColumn;
-        col.style.left = `${x}px`;
-        col.style.width = `${colWidth}px`;
-        col.style.borderInline = `1px solid ${fullWidthColor}`;
-        col.style.backgroundColor = showFullWidthBackground
-          ? hexToRgba(fullWidthColor, fullWidthOpacity)
-          : "transparent";
-        columnsContainer.appendChild(col);
-      };
+    const outerColumns = [];
+    if (width > maxWidthPx && showFullWidth && step > 0) {
+      const outerBg = showFullWidthBackground
+        ? hexToRgba(fullWidthColor, fullWidthOpacity)
+        : "transparent";
+      const outerBorder = `1px solid ${fullWidthColor}`;
 
       let leftX = marginPx;
       while (leftX + colWidth < containerLeft) {
-        drawOuterColumn(leftX);
+        outerColumns.push({
+          left: `${leftX}px`,
+          width: `${colWidth}px`,
+          "border-inline": outerBorder,
+          "background-color": outerBg,
+        });
         leftX += step;
       }
 
       let rightX = width - marginPx - colWidth;
       while (rightX > containerRight) {
-        drawOuterColumn(rightX);
+        outerColumns.push({
+          left: `${rightX}px`,
+          width: `${colWidth}px`,
+          "border-inline": outerBorder,
+          "background-color": outerBg,
+        });
         rightX -= step;
       }
     }
-  };
 
-  // Visibility + z-index are applied via classList / CSSOM (no SSR style
-  // attributes, keeping strict `style-src 'self'` CSP clean). All reactive
-  // deps are read inside the tracking scope.
+    return {
+      bp,
+      width,
+      colCount,
+      breakpointThreshold,
+      gutterPx,
+      marginPx,
+      colWidth,
+      maxWidthVal,
+      totalCols: colCount + outerColumns.length,
+      innerColumns,
+      outerColumns,
+    };
+  });
+
   createEffect(
-    () => {
-      const isVisible = visible();
-      const bp = currentBreakpoint();
-      const gutters = gutterArray();
-      const margins = marginArray();
-      return { isVisible, bp, gutters, margins };
-    },
-    ({ isVisible, bp, gutters, margins }) => {
+    () => ({ isVisible: visible(), metrics: gridMetrics() }),
+    ({ isVisible, metrics }) => {
       if (overlayRef) {
         overlayRef.classList.toggle("hidden", !isVisible);
       }
-      updateGrid(bp, gutters, margins, isVisible);
+      if (!isVisible) return;
+
+      const { colCount, gutterPx, marginPx, colWidth, maxWidthVal } = metrics;
+
+      hostRef?.style.setProperty("--rl-grid-cols", colCount.toString());
+      hostRef?.style.setProperty("--rl-grid-gap", `${gutterPx}px`);
+      hostRef?.style.setProperty("--rl-grid-margin", `${marginPx}px`);
+      hostRef?.style.setProperty("--rl-grid-max-width", maxWidthVal);
+
+      const rootStyle = document.documentElement.style;
+      rootStyle.setProperty("--rl-grid-cols", colCount.toString());
+      rootStyle.setProperty("--rl-grid-gap", `${gutterPx}px`);
+      rootStyle.setProperty("--rl-grid-gutter", `${gutterPx}px`);
+      rootStyle.setProperty("--rl-grid-col-width", `${colWidth}px`);
+      rootStyle.setProperty("--rl-grid-margin", `${marginPx}px`);
+      rootStyle.setProperty("--rl-grid-max-width", maxWidthVal);
     },
   );
 
@@ -363,12 +312,11 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
     },
   );
 
-  const Root = dynamic(() => "rl-layout-grid");
-
   return (
     <Show when={shouldRender()}>
-      <Root
-        ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
+      <div
+        ref={(el) => (hostRef = el)}
+        data-slot="root"
         class={classes().root}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}
@@ -396,24 +344,32 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
         data-shortcut={props.shortcut ?? "meta_shift_g"}
         {...rest}
       >
-        <aside
-          ref={(el) => (overlayRef = el as HTMLElement | undefined)}
-          class={classes().overlay}
-          data-slot="overlay"
-          id="rl-layout-grid-overlay"
-        >
-          <div
-            ref={(el) => (columnsRef = el as HTMLElement | undefined)}
-            class={classes().container}
-            data-slot="columns-container"
-          />
-          <div
-            ref={(el) => (indicatorRef = el as HTMLElement | undefined)}
-            data-slot="indicator"
-            class={classes().indicator}
-          />
+        <aside ref={(el) => (overlayRef = el)} class={classes().overlay} data-slot="overlay">
+          <div class={classes().container} data-slot="columns-container">
+            <Show when={visible()}>
+              <div class={classes().columns}>
+                <For each={gridMetrics().innerColumns}>
+                  {(col) => <div class={classes().column} style={col} />}
+                </For>
+              </div>
+              <For each={gridMetrics().outerColumns}>
+                {(col) => <div class={classes().outerColumn} style={col} />}
+              </For>
+            </Show>
+          </div>
+          <div data-slot="indicator" class={classes().indicator}>
+            <Show when={visible()}>
+              <span class={classes().indicatorBreakpoint}>
+                {`${gridMetrics().bp.toUpperCase()} (${gridMetrics().breakpointThreshold}px)`}
+              </span>
+              <span class={classes().indicatorDivider}>|</span>
+              <span class={classes().indicatorWidth}>{`${gridMetrics().width}px`}</span>
+              <span class={classes().indicatorDivider}>|</span>
+              <span class={classes().indicatorColumns}>{`${gridMetrics().totalCols} Cols`}</span>
+            </Show>
+          </div>
         </aside>
-      </Root>
+      </div>
     </Show>
   );
 };

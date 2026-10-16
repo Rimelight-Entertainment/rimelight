@@ -1,6 +1,6 @@
 import type { RLSidebarProps, SidebarItem } from "./sidebar.types";
 import { RLSidebarTheme } from "./sidebar.theme";
-import { children, createMemo, For, Show, omit, type Component } from "solid-js";
+import { createMemo, For, Show, omit, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -162,12 +162,6 @@ const RLSidebarItems: Component<{
 };
 
 export const RLSidebar: Component<RLSidebarProps> = (props) => {
-  const resolvedChildren = children(() => props.children);
-  const resolvedHeader = children(() => props.header);
-  const resolvedHeaderSlot = children(() => props.headerSlot);
-  const resolvedFooter = children(() => props.footer);
-  const resolvedFooterSlot = children(() => props.footerSlot);
-
   const rest = omit(
     props,
     "items",
@@ -209,10 +203,10 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
 
   const headerContent = () => (
     <Show
-      when={resolvedHeader()}
+      when={props.header}
       fallback={
         <Show
-          when={resolvedHeaderSlot()}
+          when={props.headerSlot}
           fallback={
             <Show when={props.logo}>
               <span data-slot="sidebar-logo" class={classes().logoWrapper}>
@@ -222,15 +216,15 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
             </Show>
           }
         >
-          {resolvedHeaderSlot()}
+          {props.headerSlot}
         </Show>
       }
     >
-      {resolvedHeader()}
+      {props.header}
     </Show>
   );
 
-  const footerContent = () => resolvedFooter() || resolvedFooterSlot();
+  const footerContent = () => props.footer || props.footerSlot;
 
   return (
     <Show
@@ -252,12 +246,12 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
 
         <div class={classes().content} data-slot="content">
           <Show
-            when={resolvedChildren()}
+            when={props.children}
             fallback={
               <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={classes()} />
             }
           >
-            {resolvedChildren()}
+            {props.children}
           </Show>
         </div>
 

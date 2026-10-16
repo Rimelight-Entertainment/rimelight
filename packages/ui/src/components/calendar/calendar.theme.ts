@@ -1,4 +1,4 @@
-﻿import { defineTheme } from "../../resolver";
+import { defineTheme } from "../../resolver";
 
 export const RLCalendarTheme = defineTheme("calendar", {
   slots: [
@@ -115,7 +115,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
     // so it keeps explicit classes (same as button/badge).
     {
       color: "neutral",
-      classNames: {
+      class: {
         headCell: "text-highlighted",
         cellTrigger: "outline-inverted/25",
       },
@@ -123,7 +123,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
     {
       color: "neutral",
       variant: "solid",
-      classNames: {
+      class: {
         cellTrigger:
           "[&[data-selected]]:bg-inverted [&[data-selected]]:text-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
       },
@@ -131,7 +131,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
     {
       color: "neutral",
       variant: "outline",
-      classNames: {
+      class: {
         cellTrigger:
           "[&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-accented [&[data-selected]]:text-default [&[data-selected]]:bg-default [&[data-selected]]:focus-visible:ring-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/10 hover:[&:not([data-selected])]:bg-inverted/10",
       },
@@ -139,7 +139,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
     {
       color: "neutral",
       variant: "soft",
-      classNames: {
+      class: {
         cellTrigger:
           "[&[data-selected]]:bg-elevated [&[data-selected]]:text-default [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
       },
@@ -147,28 +147,28 @@ export const RLCalendarTheme = defineTheme("calendar", {
     {
       color: "neutral",
       variant: "subtle",
-      classNames: {
+      class: {
         cellTrigger:
           "[&[data-selected]]:bg-elevated [&[data-selected]]:text-default [&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-accented [&[data-selected]]:focus-visible:ring-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
       },
     },
     // size x day
-    { size: "xs", view: "day", classNames: { cellTrigger: "size-6" } },
-    { size: "sm", view: "day", classNames: { cellTrigger: "size-7" } },
-    { size: "md", view: "day", classNames: { cellTrigger: "size-8" } },
-    { size: "lg", view: "day", classNames: { cellTrigger: "size-9" } },
-    { size: "xl", view: "day", classNames: { cellTrigger: "size-10" } },
+    { size: "xs", view: "day", class: { cellTrigger: "size-6" } },
+    { size: "sm", view: "day", class: { cellTrigger: "size-7" } },
+    { size: "md", view: "day", class: { cellTrigger: "size-8" } },
+    { size: "lg", view: "day", class: { cellTrigger: "size-9" } },
+    { size: "xl", view: "day", class: { cellTrigger: "size-10" } },
     // size x month/year
-    { size: "xs", view: ["month", "year"], classNames: { cellTrigger: "h-6 px-2" } },
-    { size: "sm", view: ["month", "year"], classNames: { cellTrigger: "h-7 px-2" } },
-    { size: "md", view: ["month", "year"], classNames: { cellTrigger: "h-8 px-3" } },
-    { size: "lg", view: ["month", "year"], classNames: { cellTrigger: "h-9 px-4" } },
-    { size: "xl", view: ["month", "year"], classNames: { cellTrigger: "h-10 px-5" } },
+    { size: "xs", view: ["month", "year"], class: { cellTrigger: "h-6 px-2" } },
+    { size: "sm", view: ["month", "year"], class: { cellTrigger: "h-7 px-2" } },
+    { size: "md", view: ["month", "year"], class: { cellTrigger: "h-8 px-3" } },
+    { size: "lg", view: ["month", "year"], class: { cellTrigger: "h-9 px-4" } },
+    { size: "xl", view: ["month", "year"], class: { cellTrigger: "h-10 px-5" } },
     // week numbers column
     {
       view: "day",
       weekNumbers: true,
-      classNames: {
+      class: {
         gridRow: "grid-cols-8",
         gridWeekDaysRow: "grid-cols-8 [&>*:first-child]:col-start-2",
       },

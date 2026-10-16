@@ -76,26 +76,14 @@ export const RLToast: Component<RLToastProps> = (props) => {
   };
 
   onSettled(() => {
-    const root = rootRef;
-    if (!root) return;
-
     const duration = props.duration ?? 6000;
     if (duration > 0) {
       startTimer();
-      root.addEventListener("mouseenter", pauseTimer);
-      root.addEventListener("mouseleave", startTimer);
-      root.addEventListener("focusin", pauseTimer);
-      root.addEventListener("focusout", (e) => {
-        if (!root.contains(e.relatedTarget as Node)) startTimer();
-      });
     }
 
     return () => {
       if (timerId !== null) clearTimeout(timerId);
       if (dismissTimerId !== undefined) clearTimeout(dismissTimerId);
-      root.removeEventListener("mouseenter", pauseTimer);
-      root.removeEventListener("mouseleave", startTimer);
-      root.removeEventListener("focusin", pauseTimer);
     };
   });
 
@@ -111,6 +99,20 @@ export const RLToast: Component<RLToastProps> = (props) => {
       aria-live={isError() ? "assertive" : "polite"}
       aria-atomic="true"
       tabindex="-1"
+      onMouseEnter={() => {
+        if ((props.duration ?? 6000) > 0) pauseTimer();
+      }}
+      onMouseLeave={() => {
+        if ((props.duration ?? 6000) > 0) startTimer();
+      }}
+      onFocusIn={() => {
+        if ((props.duration ?? 6000) > 0) pauseTimer();
+      }}
+      onFocusOut={(e) => {
+        if ((props.duration ?? 6000) > 0 && !rootRef?.contains(e.relatedTarget as Node)) {
+          startTimer();
+        }
+      }}
       {...rest}
     >
       <RLIcon name={icon()} class="size-4 shrink-0 mt-0.5" aria-hidden="true" />

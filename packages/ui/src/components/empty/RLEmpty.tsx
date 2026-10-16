@@ -1,20 +1,11 @@
 import type { RLEmptyProps } from "./empty.types";
 import { RLEmptyTheme } from "./empty.theme";
-import { children, createMemo, omit, For, Show, type Component } from "solid-js";
+import { createMemo, omit, For, Show, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLEmpty: Component<RLEmptyProps> = (props) => {
-  const resolvedChildren = children(() => props.children);
-  const resolvedHeaderSlot = children(() => props.headerSlot);
-  const resolvedLeadingSlot = children(() => props.leadingSlot);
-  const resolvedTitleSlot = children(() => props.titleSlot);
-  const resolvedDescriptionSlot = children(() => props.descriptionSlot);
-  const resolvedBodySlot = children(() => props.bodySlot);
-  const resolvedActionsSlot = children(() => props.actionsSlot);
-  const resolvedFooterSlot = children(() => props.footerSlot);
-
   const rest = omit(
     props,
     "icon",
@@ -39,8 +30,9 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
     "footerSlot",
   );
 
-  const activeIcon = props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
-  const actionList = props.actions ?? [];
+  const activeIcon = () =>
+    props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
+  const actionList = () => props.actions ?? [];
 
   const classes = createMemo(() =>
     RLEmptyTheme({
@@ -55,14 +47,14 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
   return (
     <div class={classes()["root"]} data-slot="root" {...rest}>
       <Show
-        when={resolvedHeaderSlot()}
+        when={props.headerSlot}
         fallback={
           <div class={classes()["header"]} data-slot="header">
             <Show
-              when={resolvedLeadingSlot()}
+              when={props.leadingSlot}
               fallback={
                 <Show
-                  when={activeIcon}
+                  when={activeIcon()}
                   fallback={
                     <Show when={props.avatar}>
                       <div class={classes()["avatar"]} data-slot="avatar">
@@ -73,7 +65,7 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
                 >
                   <div class={classes()["avatar"]} data-slot="avatar">
                     <RLIcon
-                      name={activeIcon!}
+                      name={activeIcon()!}
                       class={`size-full ${props.loading ? "animate-spin" : ""}`}
                       aria-hidden="true"
                     />
@@ -81,44 +73,44 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
                 </Show>
               }
             >
-              {resolvedLeadingSlot()}
+              {props.leadingSlot}
             </Show>
 
-            <Show when={props.title || resolvedTitleSlot()}>
+            <Show when={props.title || props.titleSlot}>
               <div class={classes()["title"]} data-slot="title">
-                <Show when={resolvedTitleSlot()} fallback={props.title}>
-                  {resolvedTitleSlot()}
+                <Show when={props.titleSlot} fallback={props.title}>
+                  {props.titleSlot}
                 </Show>
               </div>
             </Show>
 
-            <Show when={props.description || resolvedDescriptionSlot()}>
+            <Show when={props.description || props.descriptionSlot}>
               <div class={classes()["description"]} data-slot="description">
-                <Show when={resolvedDescriptionSlot()} fallback={props.description}>
-                  {resolvedDescriptionSlot()}
+                <Show when={props.descriptionSlot} fallback={props.description}>
+                  {props.descriptionSlot}
                 </Show>
               </div>
             </Show>
           </div>
         }
       >
-        {resolvedHeaderSlot()}
+        {props.headerSlot}
       </Show>
 
-      <Show when={resolvedBodySlot() || resolvedChildren()}>
+      <Show when={props.bodySlot || props.children}>
         <div class={classes()["body"]} data-slot="body">
-          <Show when={resolvedBodySlot()} fallback={resolvedChildren()}>
-            {resolvedBodySlot()}
+          <Show when={props.bodySlot} fallback={props.children}>
+            {props.bodySlot}
           </Show>
         </div>
       </Show>
 
-      <Show when={(props.actions?.length ?? 0) > 0 || resolvedActionsSlot()}>
+      <Show when={actionList().length > 0 || props.actionsSlot}>
         <div class={classes()["actions"]} data-slot="actions">
           <Show
-            when={resolvedActionsSlot()}
+            when={props.actionsSlot}
             fallback={
-              <For each={actionList}>
+              <For each={actionList()}>
                 {(action) => {
                   const { icon, label, color, variant, ...actionRest } = action;
                   return (
@@ -136,14 +128,14 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
               </For>
             }
           >
-            {resolvedActionsSlot()}
+            {props.actionsSlot}
           </Show>
         </div>
       </Show>
 
-      <Show when={resolvedFooterSlot()}>
+      <Show when={props.footerSlot}>
         <div class={classes()["footer"]} data-slot="footer">
-          {resolvedFooterSlot()}
+          {props.footerSlot}
         </div>
       </Show>
     </div>

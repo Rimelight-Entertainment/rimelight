@@ -1,5 +1,5 @@
 import type { RLCopyMarkdownProps } from "./copy-markdown.types";
-import { createSignal, onCleanup, omit, type Component } from "solid-js";
+import { createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 
 export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
@@ -7,8 +7,10 @@ export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
   const [copied, setCopied] = createSignal(false);
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  onCleanup(() => {
-    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  onSettled(() => {
+    return () => {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+    };
   });
 
   const handleCopy = async () => {

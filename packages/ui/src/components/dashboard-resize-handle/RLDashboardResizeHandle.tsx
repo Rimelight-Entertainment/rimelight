@@ -1,12 +1,12 @@
 import type { RLDashboardResizeHandleProps } from "./dashboard-resize-handle.types";
 import { RLDashboardResizeHandleTheme } from "./dashboard-resize-handle.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
 export const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (props) => {
   const rest = omit(props, "as", "ui", "class", "children");
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const classes = createMemo(() =>
     RLDashboardResizeHandleTheme({

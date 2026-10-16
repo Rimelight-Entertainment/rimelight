@@ -1,6 +1,6 @@
 import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
 import { RLDashboardNavbarTheme } from "./dashboard-navbar.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -101,7 +101,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
     </>
   );
 
-  const Root = dynamic(() => props.as ?? "header");
+  const Root = dynamic(() => props.as ?? "header", { static: isStatic(props, "as") });
 
   return (
     <Root class={classes().root} data-slot="root" {...rest}>

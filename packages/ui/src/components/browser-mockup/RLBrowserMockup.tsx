@@ -1,6 +1,6 @@
 import type { RLBrowserMockupProps } from "./browser-mockup.types";
 import { RLBrowserMockupTheme } from "./browser-mockup.theme";
-import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
+import { createMemo, createUniqueId, omit, Show, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -49,7 +49,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
     }),
   );
 
-  const RootTag = dynamic(() => props.as ?? "div");
+  const RootTag = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const showControls = () => props.controls !== false && props.controlsVariant !== "none";
 

@@ -8,6 +8,7 @@ import {
   For,
   Show,
   type Component,
+  isStatic,
 } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -110,7 +111,7 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
       : base;
   });
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const rootProps = () => ({
     id: calloutId,

@@ -16,13 +16,13 @@ export const RLScrollToTopTheme = defineTheme("scroll-to-top", {
   compoundVariants: [
     {
       color: "primary",
-      classNames: {
+      class: {
         icon: "text-neutral-50",
       },
     },
     {
       color: "secondary",
-      classNames: {
+      class: {
         icon: "text-neutral-50",
       },
     },

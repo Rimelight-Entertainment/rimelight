@@ -1,7 +1,6 @@
 import type { RLTabsProps } from "./tabs.types";
 import { RLTabsTheme } from "./tabs.theme";
 import {
-  children,
   createEffect,
   createMemo,
   createSignal,
@@ -15,7 +14,6 @@ import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLTabs: Component<RLTabsProps> = (props) => {
-  const resolvedChildren = children(() => props.children);
   const rest = omit(
     props,
     "items",
@@ -51,7 +49,7 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
     return v;
   });
 
-  const initialVal = createMemo(() => {
+  const [internalValue, setInternalValue] = createSignal(() => {
     if (props.value !== undefined) return props.value;
     if (props.defaultValue !== undefined) return props.defaultValue;
     const list = items();
@@ -60,17 +58,6 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
     }
     return "";
   });
-
-  const [internalValue, setInternalValue] = createSignal(initialVal());
-
-  createEffect(
-    () => props.value,
-    (val) => {
-      if (val !== undefined) {
-        setInternalValue(val);
-      }
-    },
-  );
 
   const currentValue = () => (props.value !== undefined ? props.value : internalValue());
 
@@ -263,7 +250,7 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
       <Show when={showContent()}>
         <div class="flex-1">
           <Show
-            when={resolvedChildren()}
+            when={props.children}
             fallback={
               <For each={items()}>
                 {(item, index) => {
@@ -288,7 +275,7 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
               </For>
             }
           >
-            {resolvedChildren()}
+            {props.children}
           </Show>
         </div>
       </Show>

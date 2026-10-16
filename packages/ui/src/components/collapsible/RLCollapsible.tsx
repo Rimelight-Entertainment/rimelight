@@ -1,6 +1,14 @@
 import type { RLCollapsibleProps } from "./collapsible.types";
 import { RLCollapsibleTheme } from "./collapsible.theme";
-import { createMemo, createSignal, createUniqueId, omit, Show, type Component } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  createUniqueId,
+  omit,
+  Show,
+  type Component,
+  isStatic,
+} from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 
 export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
@@ -90,7 +98,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
     return null;
   };
 
-  const Tag = dynamic(() => props.as ?? "div");
+  const Tag = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const hasTrigger = () => hasTriggerProp() || props.children !== undefined;
   const hasContent = () => hasContentProp() || (hasTriggerProp() && props.children !== undefined);

@@ -336,11 +336,4 @@ export interface RLCarouselHandle {
   slideCount: () => number;
   canScrollNext: () => boolean;
   canScrollPrev: () => boolean;
-  emblaApi?: {
-    scrollTo: (index: number) => void;
-    scrollNext: () => void;
-    scrollPrev: () => void;
-    selectedScrollSnap: () => number;
-    scrollSnapList: () => number[];
-  };
 }

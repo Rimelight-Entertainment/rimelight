@@ -5,7 +5,6 @@ import {
   createMemo,
   createSignal,
   createUniqueId,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -115,12 +114,11 @@ export const RLModal: Component<RLModalProps> = (props) => {
     () => ({ open: isOpen(), lock: props.lockScroll !== false && isModal() }),
     ({ open, lock }) => {
       document.body.style.overflow = open && lock ? "hidden" : "";
+      return () => {
+        document.body.style.overflow = "";
+      };
     },
   );
-
-  onCleanup(() => {
-    document.body.style.overflow = "";
-  });
 
   // Escape key listener
   onSettled(() => {

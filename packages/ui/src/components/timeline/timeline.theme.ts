@@ -81,56 +81,56 @@ export const RLTimelineTheme = defineTheme("timeline", {
     {
       color: "primary",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-primary",
       },
     },
     {
       color: "secondary",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-secondary",
       },
     },
     {
       color: "success",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-success",
       },
     },
     {
       color: "info",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-info",
       },
     },
     {
       color: "warning",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-warning",
       },
     },
     {
       color: "error",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-error",
       },
     },
     {
       color: "primary",
       reverse: true,
-      classNames: {
+      class: {
         separator: "group-data-[state=active]:bg-primary group-data-[state=completed]:bg-primary",
       },
     },
     {
       color: "secondary",
       reverse: true,
-      classNames: {
+      class: {
         separator:
           "group-data-[state=active]:bg-secondary group-data-[state=completed]:bg-secondary",
       },
@@ -138,168 +138,168 @@ export const RLTimelineTheme = defineTheme("timeline", {
     {
       color: "success",
       reverse: true,
-      classNames: {
+      class: {
         separator: "group-data-[state=active]:bg-success group-data-[state=completed]:bg-success",
       },
     },
     {
       color: "info",
       reverse: true,
-      classNames: {
+      class: {
         separator: "group-data-[state=active]:bg-info group-data-[state=completed]:bg-info",
       },
     },
     {
       color: "warning",
       reverse: true,
-      classNames: {
+      class: {
         separator: "group-data-[state=active]:bg-warning group-data-[state=completed]:bg-warning",
       },
     },
     {
       color: "error",
       reverse: true,
-      classNames: {
+      class: {
         separator: "group-data-[state=active]:bg-error group-data-[state=completed]:bg-error",
       },
     },
     {
       color: "neutral",
       reverse: false,
-      classNames: {
+      class: {
         separator: "group-data-[state=completed]:bg-inverted",
       },
     },
     {
       color: "neutral",
       reverse: true,
-      classNames: {
+      class: {
         separator: "group-data-[state=active]:bg-inverted group-data-[state=completed]:bg-inverted",
       },
     },
     {
       orientation: "horizontal",
       size: "3xs",
-      classNames: {
+      class: {
         wrapper: "pe-4.5",
       },
     },
     {
       orientation: "horizontal",
       size: "2xs",
-      classNames: {
+      class: {
         wrapper: "pe-5",
       },
     },
     {
       orientation: "horizontal",
       size: "xs",
-      classNames: {
+      class: {
         wrapper: "pe-5.5",
       },
     },
     {
       orientation: "horizontal",
       size: "sm",
-      classNames: {
+      class: {
         wrapper: "pe-6",
       },
     },
     {
       orientation: "horizontal",
       size: "md",
-      classNames: {
+      class: {
         wrapper: "pe-6.5",
       },
     },
     {
       orientation: "horizontal",
       size: "lg",
-      classNames: {
+      class: {
         wrapper: "pe-7",
       },
     },
     {
       orientation: "horizontal",
       size: "xl",
-      classNames: {
+      class: {
         wrapper: "pe-7.5",
       },
     },
     {
       orientation: "horizontal",
       size: "2xl",
-      classNames: {
+      class: {
         wrapper: "pe-8",
       },
     },
     {
       orientation: "horizontal",
       size: "3xl",
-      classNames: {
+      class: {
         wrapper: "pe-8.5",
       },
     },
     {
       orientation: "vertical",
       size: "3xs",
-      classNames: {
+      class: {
         wrapper: "-mt-0.5 pb-4.5",
       },
     },
     {
       orientation: "vertical",
       size: "2xs",
-      classNames: {
+      class: {
         wrapper: "pb-5",
       },
     },
     {
       orientation: "vertical",
       size: "xs",
-      classNames: {
+      class: {
         wrapper: "mt-0.5 pb-5.5",
       },
     },
     {
       orientation: "vertical",
       size: "sm",
-      classNames: {
+      class: {
         wrapper: "mt-1 pb-6",
       },
     },
     {
       orientation: "vertical",
       size: "md",
-      classNames: {
+      class: {
         wrapper: "mt-1.5 pb-6.5",
       },
     },
     {
       orientation: "vertical",
       size: "lg",
-      classNames: {
+      class: {
         wrapper: "mt-2 pb-7",
       },
     },
     {
       orientation: "vertical",
       size: "xl",
-      classNames: {
+      class: {
         wrapper: "mt-2.5 pb-7.5",
       },
     },
     {
       orientation: "vertical",
       size: "2xl",
-      classNames: {
+      class: {
         wrapper: "mt-3 pb-8",
       },
     },
     {
       orientation: "vertical",
       size: "3xl",
-      classNames: {
+      class: {
         wrapper: "mt-3.5 pb-8.5",
       },
     },

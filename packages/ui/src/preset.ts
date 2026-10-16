@@ -1,25 +1,7 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss";
 import type { ColorModeInput, UIConfig } from "./types";
 import { DEFAULT_ICON_NAMES } from "./icons";
-import {
-  createLocalFontProcessor,
-  emittedFonts,
-  resolveFontPaths,
-  resolveWebFontsPreset,
-  rimelightFontsVitePlugin,
-  DEFAULT_UI_FONTS,
-  type LocalFontProcessorOptions,
-} from "./fonts";
-
-export {
-  createLocalFontProcessor,
-  emittedFonts,
-  resolveFontPaths,
-  resolveWebFontsPreset,
-  rimelightFontsVitePlugin,
-  DEFAULT_UI_FONTS,
-  type LocalFontProcessorOptions,
-};
+import { resolveWebFontsPreset } from "./fonts";
 
 export const PALETTES = {
   neutral: [0, 0],

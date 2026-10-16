@@ -164,18 +164,6 @@ describe("RLBanner", () => {
       expect(attr(btn, "aria-label")).toBe("Close banner");
     });
 
-    it("supports legacy dismissable", () => {
-      expect(render(() => <RLBanner title="t" dismissable={true} />)).toContain(
-        "data-banner-close",
-      );
-    });
-
-    it("close=false wins over dismissable", () => {
-      expect(render(() => <RLBanner title="t" close={false} dismissable={true} />)).not.toContain(
-        "data-banner-close",
-      );
-    });
-
     it("merges object close props", () => {
       const html = render(() => (
         <RLBanner title="t" close={{ color: "error", ariaLabel: "Dismiss announcement" }} />
@@ -348,11 +336,6 @@ describe("RLBanner", () => {
     it("exposes the dismiss key matching the head script", () => {
       const html = render(() => <RLBanner id="promo" title="t" close={true} />);
       expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBe("banner-promo");
-    });
-
-    it("supports legacy dismissId", () => {
-      const html = render(() => <RLBanner dismissId="legacy" title="t" />);
-      expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBe("banner-legacy");
     });
 
     it("has no dismiss key without an id", () => {

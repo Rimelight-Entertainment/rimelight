@@ -77,35 +77,35 @@ export const RLBadgeTheme = defineTheme("badge", {
     {
       color: "neutral",
       variant: "solid",
-      classNames: {
+      class: {
         root: "text-inverted bg-inverted",
       },
     },
     {
       color: "neutral",
       variant: "outline",
-      classNames: {
+      class: {
         root: "ring ring-inset ring-accented text-default bg-default",
       },
     },
     {
       color: "neutral",
       variant: "soft",
-      classNames: {
+      class: {
         root: "text-default bg-elevated",
       },
     },
     {
       color: "neutral",
       variant: "subtle",
-      classNames: {
+      class: {
         root: "ring ring-inset ring-accented text-default bg-elevated",
       },
     },
     {
       color: "neutral",
       variant: "ghost",
-      classNames: {
+      class: {
         root: "text-default bg-transparent",
       },
     },
@@ -113,64 +113,64 @@ export const RLBadgeTheme = defineTheme("badge", {
     {
       size: "xs",
       square: false,
-      classNames: { root: "px-1 py-0.5" },
+      class: { root: "px-1 py-0.5" },
     },
     {
       size: "sm",
       square: false,
-      classNames: { root: "px-1.5 py-1" },
+      class: { root: "px-1.5 py-1" },
     },
     {
       size: "md",
       square: false,
-      classNames: { root: "px-2 py-1" },
+      class: { root: "px-2 py-1" },
     },
     {
       size: "lg",
       square: false,
-      classNames: { root: "px-2 py-1" },
+      class: { root: "px-2 py-1" },
     },
     {
       size: "xl",
       square: false,
-      classNames: { root: "px-2.5 py-1" },
+      class: { root: "px-2.5 py-1" },
     },
     // Square equal padding and min-width per size
     {
       size: "xs",
       square: true,
-      classNames: { root: "p-0.5 min-w-4" },
+      class: { root: "p-0.5 min-w-4" },
     },
     {
       size: "sm",
       square: true,
-      classNames: { root: "p-1 min-w-5" },
+      class: { root: "p-1 min-w-5" },
     },
     {
       size: "md",
       square: true,
-      classNames: { root: "p-1 min-w-6" },
+      class: { root: "p-1 min-w-6" },
     },
     {
       size: "lg",
       square: true,
-      classNames: { root: "p-1 min-w-7" },
+      class: { root: "p-1 min-w-7" },
     },
     {
       size: "xl",
       square: true,
-      classNames: { root: "p-1 min-w-8" },
+      class: { root: "p-1 min-w-8" },
     },
     // Rounded shape refinement for small sizes
     {
       size: "xs",
       shape: "rounded",
-      classNames: { root: "rounded-sm" },
+      class: { root: "rounded-sm" },
     },
     {
       size: "sm",
       shape: "rounded",
-      classNames: { root: "rounded-sm" },
+      class: { root: "rounded-sm" },
     },
   ],
   defaultVariants: {

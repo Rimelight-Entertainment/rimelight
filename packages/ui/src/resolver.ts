@@ -1,7 +1,20 @@
-import { getUIConfig } from "./ui-config";
-import type { ClassValue, ThemeConfig } from "./types";
-import "./virtual-config";
-export { getUIConfig, setUIConfig, setRimelightUITestConfig } from "./ui-config";
+import virtualConfig from "virtual:rimelight-ui";
+import type { ClassValue, ThemeConfig, UIConfig } from "./types";
+
+let activeUIConfig: UIConfig = (virtualConfig ?? {}) as UIConfig;
+let testOverrides: Partial<UIConfig> | null = null;
+
+export function setUIConfig(config: UIConfig | null | undefined): void {
+  activeUIConfig = config ?? {};
+}
+
+export function getUIConfig(): UIConfig {
+  return testOverrides ? { ...activeUIConfig, ...testOverrides } : activeUIConfig;
+}
+
+export function setRimelightUITestConfig(overrides: Partial<UIConfig> | null): void {
+  testOverrides = overrides;
+}
 
 export function cx(...args: ClassValue[]): string {
   let str = "";
@@ -24,21 +37,42 @@ export function cx(...args: ClassValue[]): string {
   return str;
 }
 
-export function defineTheme<const S extends string>(name: string, themeConfig: ThemeConfig<S>) {
-  const defaultSlots = (themeConfig.slots ?? ["root" as S]) as readonly S[];
+interface CompiledCV {
+  matchers: Array<{ key: string; exp: any }>;
+  cls: Record<string, ClassValue> | undefined;
+}
 
-  const defaultAutoColor = themeConfig.variants?.["color"] === "auto";
-  const defaultVariants = { ...themeConfig.defaultVariants };
-  const staticCompoundVariants = [...(themeConfig.compoundVariants ?? [])];
+interface CompiledTheme<S extends string> {
+  slots: readonly S[];
+  actualRootSlot: S;
+  autoColor: boolean;
+  defaultVariants: Record<string, any>;
+  compiledCV: CompiledCV[];
+  baseMap: Record<string, string>;
+  variants: Record<string, Record<string, any>>;
+  variantKeys: string[];
+}
 
-  const staticCompiledCV = staticCompoundVariants.map((cv) => {
-    const { classNames, class: cls, ...rest } = cv;
+function compileCompoundVariants(list: Array<Record<string, any>> | undefined): CompiledCV[] {
+  if (!list?.length) return [];
+  return list.map((cv) => {
+    const { class: cls, ...rest } = cv;
     const matchers: Array<{ key: string; exp: any }> = [];
     for (const k in rest) {
       matchers.push({ key: k, exp: rest[k] });
     }
-    return { matchers, cls: classNames || cls };
+    return { matchers, cls };
   });
+}
+
+export function defineTheme<const S extends string>(name: string, themeConfig: ThemeConfig<S>) {
+  const defaultSlots = (themeConfig.slots ?? ["root" as S]) as readonly S[];
+  const defaultRootSlot = (
+    defaultSlots.includes("root" as S) ? "root" : defaultSlots[0] || "root"
+  ) as S;
+  const defaultAutoColor = themeConfig.variants?.["color"] === "auto";
+  const defaultVariants = { ...themeConfig.defaultVariants };
+  const staticCompiledCV = compileCompoundVariants(themeConfig.compoundVariants);
 
   const staticBaseMap: Record<string, string> = {};
   for (let i = 0; i < defaultSlots.length; i++) {
@@ -46,15 +80,81 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     staticBaseMap[s] = themeConfig.base?.[s] ? cx(themeConfig.base[s]) : "";
   }
 
+  const staticVariants: Record<string, Record<string, any>> = { ...themeConfig.variants };
+  const staticVariantKeys = Object.keys(staticVariants).filter(
+    (k) => !(k === "color" && defaultAutoColor),
+  );
+
+  const staticCompiled: CompiledTheme<S> = {
+    slots: defaultSlots,
+    actualRootSlot: defaultRootSlot,
+    autoColor: defaultAutoColor,
+    defaultVariants,
+    compiledCV: staticCompiledCV,
+    baseMap: staticBaseMap,
+    variants: staticVariants,
+    variantKeys: staticVariantKeys,
+  };
+
+  let cachedCustomRef: ThemeConfig<string> | undefined;
+  let cachedCompiled: CompiledTheme<S> = staticCompiled;
+
+  const getCompiled = (custom: ThemeConfig<string> | undefined): CompiledTheme<S> => {
+    if (!custom) return staticCompiled;
+    if (custom === cachedCustomRef) return cachedCompiled;
+
+    const slots = (custom.slots ?? defaultSlots) as readonly S[];
+    const actualRootSlot = (slots.includes("root" as S) ? "root" : slots[0] || "root") as S;
+    const autoColor =
+      (custom.variants ?? themeConfig.variants)?.["color"] === "auto" || defaultAutoColor;
+    const mergedDefaultVariants = { ...defaultVariants, ...custom.defaultVariants };
+    const compiledCV = custom.compoundVariants?.length
+      ? [...staticCompiledCV, ...compileCompoundVariants(custom.compoundVariants)]
+      : staticCompiledCV;
+
+    const baseMap: Record<string, string> = {};
+    for (let i = 0; i < slots.length; i++) {
+      const s = slots[i]!;
+      baseMap[s] = cx(staticBaseMap[s], custom.base?.[s]);
+    }
+
+    const variants: Record<string, Record<string, any>> = { ...staticVariants };
+    if (custom.variants) {
+      for (const k in custom.variants) {
+        variants[k] = { ...variants[k], ...custom.variants[k] };
+      }
+    }
+    const variantKeys = Object.keys(variants).filter((k) => !(k === "color" && autoColor));
+
+    cachedCustomRef = custom;
+    cachedCompiled = {
+      slots,
+      actualRootSlot,
+      autoColor,
+      defaultVariants: mergedDefaultVariants,
+      compiledCV,
+      baseMap,
+      variants,
+      variantKeys,
+    };
+    return cachedCompiled;
+  };
+
   return (props: any = {}): Record<S, string> => {
     const currentConfig = getUIConfig();
     const custom = currentConfig?.components?.themes?.[name];
-    const isUnstyled = currentConfig?.unstyled;
+    const {
+      slots,
+      actualRootSlot,
+      autoColor,
+      defaultVariants: mergedDefaultVariants,
+      compiledCV,
+      baseMap,
+      variants,
+      variantKeys,
+    } = getCompiled(custom);
 
-    const slots = (custom?.slots ?? defaultSlots) as readonly S[];
-    const actualRootSlot = (slots.includes("root" as S) ? "root" : slots[0] || "root") as S;
-
-    if (isUnstyled) {
+    if (currentConfig?.unstyled) {
       const res = {} as Record<S, string>;
       const hasClass = props.class;
       for (let i = 0; i < slots.length; i++) {
@@ -65,38 +165,6 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       }
       return res;
     }
-
-    const autoColor =
-      (custom?.variants ?? themeConfig.variants)?.["color"] === "auto" || defaultAutoColor;
-    const mergedDefaultVariants = { ...defaultVariants, ...custom?.defaultVariants };
-    const customCV = custom?.compoundVariants ?? [];
-
-    const compiledCV = customCV.length
-      ? [
-          ...staticCompiledCV,
-          ...customCV.map((cv: any) => {
-            const { classNames, class: cls, ...rest } = cv;
-            const matchers: Array<{ key: string; exp: any }> = [];
-            for (const k in rest) {
-              matchers.push({ key: k, exp: rest[k] });
-            }
-            return { matchers, cls: classNames || cls };
-          }),
-        ]
-      : staticCompiledCV;
-
-    const baseMap: Record<string, string> = {};
-    for (let i = 0; i < slots.length; i++) {
-      const s = slots[i]!;
-      baseMap[s] = cx(staticBaseMap[s], custom?.base?.[s]);
-    }
-
-    const variants: Record<string, Record<string, any>> = { ...themeConfig.variants };
-    if (custom?.variants) {
-      for (const k in custom.variants) variants[k] = { ...variants[k], ...custom.variants[k] };
-    }
-
-    const variantKeys = Object.keys(variants).filter((k) => !(k === "color" && autoColor));
 
     const res = {} as Record<S, string>;
     for (let i = 0; i < slots.length; i++) {

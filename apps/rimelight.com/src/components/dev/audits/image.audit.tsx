@@ -126,7 +126,7 @@ export const ImageSandbox = (): JSX.Element => {
             src={src()}
             alt="Sandbox preview"
             fit={fit()}
-            interactive={interactive()}
+            lightbox={interactive()}
             figure={figure()}
             caption={caption() || undefined}
             theme={theme()}

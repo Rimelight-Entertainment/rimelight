@@ -133,42 +133,42 @@ export const RLStepperTheme = defineTheme("stepper", {
     {
       orientation: "horizontal",
       size: "xs",
-      classNames: {
+      class: {
         separator: "mt-3",
       },
     },
     {
       orientation: "horizontal",
       size: "sm",
-      classNames: {
+      class: {
         separator: "mt-4",
       },
     },
     {
       orientation: "horizontal",
       size: "md",
-      classNames: {
+      class: {
         separator: "mt-5",
       },
     },
     {
       orientation: "horizontal",
       size: "lg",
-      classNames: {
+      class: {
         separator: "mt-6",
       },
     },
     {
       orientation: "horizontal",
       size: "xl",
-      classNames: {
+      class: {
         separator: "mt-7",
       },
     },
     {
       orientation: "vertical",
       size: "xs",
-      classNames: {
+      class: {
         separator: "top-[24px] bottom-[-16px]",
         item: "gap-1.5",
       },
@@ -176,7 +176,7 @@ export const RLStepperTheme = defineTheme("stepper", {
     {
       orientation: "vertical",
       size: "sm",
-      classNames: {
+      class: {
         separator: "top-[32px] bottom-[-16px]",
         item: "gap-2",
       },
@@ -184,7 +184,7 @@ export const RLStepperTheme = defineTheme("stepper", {
     {
       orientation: "vertical",
       size: "md",
-      classNames: {
+      class: {
         separator: "top-[40px] bottom-[-16px]",
         item: "gap-2.5",
       },
@@ -192,7 +192,7 @@ export const RLStepperTheme = defineTheme("stepper", {
     {
       orientation: "vertical",
       size: "lg",
-      classNames: {
+      class: {
         separator: "top-[48px] bottom-[-16px]",
         item: "gap-3",
       },
@@ -200,7 +200,7 @@ export const RLStepperTheme = defineTheme("stepper", {
     {
       orientation: "vertical",
       size: "xl",
-      classNames: {
+      class: {
         separator: "top-[56px] bottom-[-16px]",
         item: "gap-3.5",
       },

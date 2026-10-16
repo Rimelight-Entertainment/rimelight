@@ -27,7 +27,6 @@ export interface RLImageProps {
   caption?: string | undefined;
   figure?: boolean | undefined;
   lightbox?: boolean | undefined;
-  interactive?: boolean | undefined;
   theme?: unknown;
   metadata?:
     | {

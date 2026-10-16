@@ -1,6 +1,6 @@
 import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-contents.types";
 import { RLTableOfContentsTheme } from "./table-of-contents.theme";
-import { createMemo, createSignal, For, onSettled, omit, type Component } from "solid-js";
+import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
@@ -81,102 +81,101 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
     return "pl-9";
   };
 
-  if (props.tableOfContents === false || filteredHeadings().length === 0) {
-    return null;
-  }
-
-  if (collapsible()) {
-    return (
-      <details
-        ref={(el) => (detailsRef = el)}
-        class={props.class}
-        data-rl-toc-collapsible
-        data-container-selector={containerSelector()}
-        data-heading-selector={headingSelector()}
-        onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
-        {...rest}
-      >
-        <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
-          <span class="flex items-center gap-2">
-            <RLIcon name="list" class="size-4 text-primary shrink-0" aria-hidden="true" />
-            <span>On this page</span>
-          </span>
-          <RLIcon
-            name="chevron-down"
-            class={`rl-toc-chevron size-4 text-muted shrink-0 transition-transform duration-200 ${
-              open() ? "rotate-180" : ""
-            }`}
-            aria-hidden="true"
-          />
-        </summary>
-        <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-default/50 bg-default">
-          <ul class="flex flex-col gap-0.5 pb-8">
-            <For each={filteredHeadings()}>
-              {(heading) => (
-                <li class={heading.depth === 3 ? "pl-4" : undefined}>
-                  <a
-                    href={`#${heading.slug}`}
-                    class={`toc-link block py-1.5 text-sm transition-colors hover:text-primary no-underline ${
-                      heading.depth === 2 ? "text-highlighted font-medium" : "text-muted"
-                    }`}
-                    data-rl-toc-link
-                    onClick={() => {
-                      if (detailsRef) detailsRef.open = false;
-                      setOpen(false);
-                    }}
-                  >
-                    {heading.text}
-                  </a>
-                </li>
-              )}
-            </For>
-          </ul>
-        </div>
-      </details>
-    );
-  }
-
   return (
-    <>
-      <style>{`
+    <Show when={props.tableOfContents !== false && filteredHeadings().length > 0}>
+      <Show
+        when={collapsible()}
+        fallback={
+          <>
+            <style>{`
   .toc-active {
     color: var(--rl-primary-500);
     font-weight: 600;
   }
 `}</style>
-      <div
-        ref={(el) => (rootRef = el)}
-        class={classes().root}
-        data-slot="root"
-        data-container-selector={containerSelector()}
-        data-heading-selector={headingSelector()}
-        {...rest}
+            <div
+              ref={(el) => (rootRef = el)}
+              class={classes().root}
+              data-slot="root"
+              data-container-selector={containerSelector()}
+              data-heading-selector={headingSelector()}
+              {...rest}
+            >
+              <div class={classes().container} data-slot="container">
+                <h4 class={classes().title} data-slot="title">
+                  On this page
+                </h4>
+                <ul class={`${classes().list} mt-2xl flex flex-col gap-xs`} data-slot="list">
+                  <For each={filteredHeadings()}>
+                    {(heading: TableOfContentsHeading) => (
+                      <li class={`${classes().item} ${depthClass(heading.depth)}`} data-slot="item">
+                        <a
+                          href={`#${heading.slug}`}
+                          class={`toc-link ${classes().link} ${
+                            activeId() === heading.slug ? "toc-active" : ""
+                          }`}
+                          data-slot="link"
+                        >
+                          <span class={classes().linkText} data-slot="link-text">
+                            {heading.text}
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                  </For>
+                </ul>
+              </div>
+            </div>
+          </>
+        }
       >
-        <div class={classes().container} data-slot="container">
-          <h4 class={classes().title} data-slot="title">
-            On this page
-          </h4>
-          <ul class={`${classes().list} mt-2xl flex flex-col gap-xs`} data-slot="list">
-            <For each={filteredHeadings()}>
-              {(heading: TableOfContentsHeading) => (
-                <li class={`${classes().item} ${depthClass(heading.depth)}`} data-slot="item">
-                  <a
-                    href={`#${heading.slug}`}
-                    class={`toc-link ${classes().link} ${
-                      activeId() === heading.slug ? "toc-active" : ""
-                    }`}
-                    data-slot="link"
-                  >
-                    <span class={classes().linkText} data-slot="link-text">
+        <details
+          ref={(el) => (detailsRef = el)}
+          class={props.class}
+          data-rl-toc-collapsible
+          data-container-selector={containerSelector()}
+          data-heading-selector={headingSelector()}
+          onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
+          {...rest}
+        >
+          <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
+            <span class="flex items-center gap-2">
+              <RLIcon name="list" class="size-4 text-primary shrink-0" aria-hidden="true" />
+              <span>On this page</span>
+            </span>
+            <RLIcon
+              name="chevron-down"
+              class={`rl-toc-chevron size-4 text-muted shrink-0 transition-transform duration-200 ${
+                open() ? "rotate-180" : ""
+              }`}
+              aria-hidden="true"
+            />
+          </summary>
+          <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-default/50 bg-default">
+            <ul class="flex flex-col gap-0.5 pb-8">
+              <For each={filteredHeadings()}>
+                {(heading) => (
+                  <li class={heading.depth === 3 ? "pl-4" : undefined}>
+                    <a
+                      href={`#${heading.slug}`}
+                      class={`toc-link block py-1.5 text-sm transition-colors hover:text-primary no-underline ${
+                        heading.depth === 2 ? "text-highlighted font-medium" : "text-muted"
+                      }`}
+                      data-rl-toc-link
+                      onClick={() => {
+                        if (detailsRef) detailsRef.open = false;
+                        setOpen(false);
+                      }}
+                    >
                       {heading.text}
-                    </span>
-                  </a>
-                </li>
-              )}
-            </For>
-          </ul>
-        </div>
-      </div>
-    </>
+                    </a>
+                  </li>
+                )}
+              </For>
+            </ul>
+          </div>
+        </details>
+      </Show>
+    </Show>
   );
 };

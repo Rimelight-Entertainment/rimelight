@@ -1,6 +1,15 @@
 import type { RLAccordionProps, AccordionItem } from "./accordion.types";
 import { RLAccordionTheme } from "./accordion.theme";
-import { createMemo, createSignal, omit, untrack, For, Show, type Component } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  omit,
+  untrack,
+  For,
+  Show,
+  type Component,
+  isStatic,
+} from "solid-js";
 import { dynamic, type JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -236,8 +245,8 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   // Hoisted per instance (not per render): <Dynamic> is deprecated because it
   // rebuilds a fresh factory at every call site. dynamic() defaults keep the
   // hot path on plain tags with identical output.
-  const ItemsRoot = dynamic(() => props.as ?? "div");
-  const SummaryRoot = dynamic(() => props.as ?? "details");
+  const ItemsRoot = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
+  const SummaryRoot = dynamic(() => props.as ?? "details", { static: isStatic(props, "as") });
   const hasItems = () => props.items !== undefined;
 
   return (

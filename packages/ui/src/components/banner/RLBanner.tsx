@@ -5,6 +5,7 @@ import {
   createMemo,
   createSignal,
   createUniqueId,
+  isStatic,
   omit,
   onSettled,
   For,
@@ -38,8 +39,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     "fixed",
     "stackIndex",
     "hideOnScroll",
-    "dismissable",
-    "dismissId",
     "ui",
     "class",
     "children",
@@ -65,7 +64,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     "theme",
   );
 
-  const Tag = dynamic(() => props.as ?? "div");
+  const Tag = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const fixed = () => props.fixed ?? false;
   const sticky = () => (fixed() ? false : (props.sticky ?? false));
@@ -75,15 +74,15 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const href = () => props.href;
   const isLink = () => Boolean(href());
 
-  // Explicit id (or legacy dismissId) enables persistence. Otherwise a
-  // createUniqueId() fallback keeps the DOM id unique and SSR/hydration stable.
+  // Explicit id enables persistence. Otherwise a createUniqueId() fallback
+  // keeps the DOM id unique and SSR/hydration stable.
   const fallbackId = `rl-banner-${createUniqueId()}`;
-  const persistId = () => props.id || props.dismissId || "";
+  const persistId = () => props.id || "";
   const layerId = () => persistId() || fallbackId;
   const titleId = () => `${layerId()}-title`;
   const storageKey = () => (persistId() ? `banner-${persistId()}` : undefined);
 
-  const isClosable = () => Boolean(props.close !== undefined ? props.close : props.dismissable);
+  const isClosable = () => Boolean(props.close);
 
   // Always start visible so SSR and the first client render match, then hide
   // after settling if a persisted dismissal key is present.

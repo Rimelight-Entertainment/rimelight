@@ -1,6 +1,6 @@
 import type { RLTimelineProps, TimelineItem } from "./timeline.types";
 import { RLTimelineTheme } from "./timeline.theme";
-import { createMemo, For, omit, type Component } from "solid-js";
+import { createMemo, For, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -79,7 +79,7 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
     return fallback ? fallback() : null;
   };
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root data-slot="root" class={classes().root} data-orientation={orientation()} {...rest}>

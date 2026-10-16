@@ -4,7 +4,7 @@ import {
   createMemo,
   createSignal,
   createEffect,
-  onCleanup,
+  isStatic,
   children,
   omit,
   type Component,
@@ -55,7 +55,7 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
     "children",
   );
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
   const resolvedChildren = children(() => props.children);
 
   const min = () => props.min ?? 0;
@@ -69,16 +69,7 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
   const showDivider = () => props.showDivider ?? true;
 
   const [internalValue, setInternalValue] = createSignal<number>(
-    props.value !== undefined ? props.value : (props.defaultValue ?? 50),
-  );
-
-  createEffect(
-    () => props.value,
-    (val) => {
-      if (val !== undefined) {
-        setInternalValue(val);
-      }
-    },
+    () => props.value ?? props.defaultValue ?? 50,
   );
 
   const clampedValue = createMemo(() => {
@@ -206,7 +197,7 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
       };
 
       animId = requestAnimationFrame(animate);
-      onCleanup(() => cancelAnimationFrame(animId));
+      return () => cancelAnimationFrame(animId);
     },
   );
 

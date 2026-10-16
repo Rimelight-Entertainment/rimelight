@@ -1,6 +1,6 @@
 import type { RLColorAreaProps } from "./color-area.types";
 import { RLColorAreaTheme } from "./color-area.theme";
-import { createEffect, createMemo, createSignal, omit, Show, type Component } from "solid-js";
+import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
 
 type Channel =
   | "hue"
@@ -206,33 +206,24 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     "children",
   );
 
-  const colorSpace = props.colorSpace ?? "hsl";
-  const xChannel: Channel = props.xChannel ?? "saturation";
-  const yChannel: Channel = props.yChannel ?? "lightness";
+  const colorSpace = () => props.colorSpace ?? "hsl";
+  const xChannel = (): Channel => props.xChannel ?? "saturation";
+  const yChannel = (): Channel => props.yChannel ?? "lightness";
 
-  const initialValue = props.value || props.defaultValue || "#ff0000";
-
-  const [value, setValue] = createSignal<string>(initialValue);
+  const [value, setValue] = createSignal<string>(
+    () => props.value || props.defaultValue || "#ff0000",
+  );
   const [isDragging, setIsDragging] = createSignal(false);
-  const [state, setState] = createSignal<ChannelState>({
-    hue: 0,
-    sat: 0,
-    light: 50,
-    bright: 100,
-    red: 255,
-    green: 0,
-    blue: 0,
-  });
   let areaRef: HTMLDivElement | undefined;
 
-  const syncChannelsFromValue = (hex: string, current: ChannelState): ChannelState => {
+  const syncChannelsFromValue = (hex: string, currentHue = 0): ChannelState => {
     const rgb = hexToRgb(hex);
     const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
     const hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]);
     const max = Math.max(rgb[0], rgb[1], rgb[2]);
     const min = Math.min(rgb[0], rgb[1], rgb[2]);
     return {
-      hue: max !== min ? hsl[0] : current.hue,
+      hue: max !== min ? hsl[0] : currentHue,
       sat: hsl[1],
       light: hsl[2],
       bright: hsb[2],
@@ -242,11 +233,8 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     };
   };
 
-  createEffect(
-    () => value(),
-    (hex) => {
-      setState((prev) => syncChannelsFromValue(hex, prev));
-    },
+  const [state, setState] = createSignal<ChannelState>((prev) =>
+    syncChannelsFromValue(value(), prev?.hue ?? 0),
   );
 
   const classes = createMemo(() =>
@@ -279,29 +267,34 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
   };
 
   const pctX = createMemo(() => {
-    const range = getChannelRange(xChannel);
+    const ch = xChannel();
+    const range = getChannelRange(ch);
     const s = state();
-    return ((channelValue(xChannel, s) - range.min) / (range.max - range.min)) * 100;
+    return ((channelValue(ch, s) - range.min) / (range.max - range.min)) * 100;
   });
 
   const pctY = createMemo(() => {
-    const range = getChannelRange(yChannel);
+    const ch = yChannel();
+    const range = getChannelRange(ch);
     const s = state();
-    return 100 - ((channelValue(yChannel, s) - range.min) / (range.max - range.min)) * 100;
+    return 100 - ((channelValue(ch, s) - range.min) / (range.max - range.min)) * 100;
   });
 
-  const xVal = createMemo(() => channelValue(xChannel, state()));
-  const yVal = createMemo(() => channelValue(yChannel, state()));
+  const xVal = createMemo(() => channelValue(xChannel(), state()));
+  const yVal = createMemo(() => channelValue(yChannel(), state()));
 
   const areaStyle = createMemo(() => {
     const hueVal = state().hue;
+    const cs = colorSpace();
+    const xCh = xChannel();
+    const yCh = yChannel();
     let background: string;
-    if (colorSpace === "hsl" && xChannel === "saturation" && yChannel === "lightness") {
+    if (cs === "hsl" && xCh === "saturation" && yCh === "lightness") {
       background =
         "linear-gradient(to top, #000 0%, transparent 50%, #fff 100%), linear-gradient(to right, #808080 0%, transparent 100%), hsl(" +
         hueVal +
         ", 100%, 50%)";
-    } else if (colorSpace === "hsb" && xChannel === "saturation" && yChannel === "brightness") {
+    } else if (cs === "hsb" && xCh === "saturation" && yCh === "brightness") {
       background =
         "linear-gradient(to top, #000 0%, transparent 100%), linear-gradient(to right, #fff 0%, transparent 100%), hsl(" +
         hueVal +
@@ -316,19 +309,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     };
   });
 
-  const applyPointer = (clientX: number, clientY: number) => {
-    const area = areaRef;
-    if (!area) return;
-    if (props.disabled) return;
-    const rect = area.getBoundingClientRect();
-    const x = clamp((clientX - rect.left) / rect.width, 0, 1);
-    const y = 1 - clamp((clientY - rect.top) / rect.height, 0, 1);
-
-    const xRange = getChannelRange(xChannel);
-    const yRange = getChannelRange(yChannel);
-    const newX = Math.round(xRange.min + x * (xRange.max - xRange.min));
-    const newY = Math.round(yRange.min + y * (yRange.max - yRange.min));
-
+  const applyChannelValues = (newX: number, newY: number) => {
     const cur = state();
     let hue = cur.hue;
     let saturation = cur.sat;
@@ -339,30 +320,33 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     let b = cur.blue;
 
     let newRgb: [number, number, number] = [r, g, b];
+    const cs = colorSpace();
+    const xCh = xChannel();
+    const yCh = yChannel();
 
-    if (colorSpace === "hsl") {
-      if (xChannel === "saturation") saturation = newX;
-      if (yChannel === "lightness") lightness = newY;
-      if (xChannel === "lightness") lightness = newX;
-      if (yChannel === "saturation") saturation = newY;
-      if (xChannel === "hue") hue = newX;
-      if (yChannel === "hue") hue = newY;
+    if (cs === "hsl") {
+      if (xCh === "saturation") saturation = newX;
+      if (yCh === "lightness") lightness = newY;
+      if (xCh === "lightness") lightness = newX;
+      if (yCh === "saturation") saturation = newY;
+      if (xCh === "hue") hue = newX;
+      if (yCh === "hue") hue = newY;
       newRgb = hslToRgb(hue, saturation, lightness);
-    } else if (colorSpace === "hsb") {
-      if (xChannel === "saturation") saturation = newX;
-      if (yChannel === "brightness") brightness = newY;
-      if (xChannel === "brightness") brightness = newX;
-      if (yChannel === "saturation") saturation = newY;
-      if (xChannel === "hue") hue = newX;
-      if (yChannel === "hue") hue = newY;
+    } else if (cs === "hsb") {
+      if (xCh === "saturation") saturation = newX;
+      if (yCh === "brightness") brightness = newY;
+      if (xCh === "brightness") brightness = newX;
+      if (yCh === "saturation") saturation = newY;
+      if (xCh === "hue") hue = newX;
+      if (yCh === "hue") hue = newY;
       newRgb = hsbToRgb(hue, saturation, brightness);
-    } else if (colorSpace === "rgb") {
-      if (xChannel === "red") r = newX;
-      if (yChannel === "green") g = newY;
-      if (xChannel === "green") g = newX;
-      if (yChannel === "red") r = newY;
-      if (xChannel === "blue") b = newX;
-      if (yChannel === "blue") b = newY;
+    } else if (cs === "rgb") {
+      if (xCh === "red") r = newX;
+      if (yCh === "green") g = newY;
+      if (xCh === "green") g = newX;
+      if (yCh === "red") r = newY;
+      if (xCh === "blue") b = newX;
+      if (yCh === "blue") b = newY;
       newRgb = [r, g, b];
     }
 
@@ -380,6 +364,20 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
       setValue(newValue);
       props.onValueChange?.(newValue);
     }
+  };
+
+  const applyPointer = (clientX: number, clientY: number) => {
+    const area = areaRef;
+    if (!area || props.disabled) return;
+    const rect = area.getBoundingClientRect();
+    const x = clamp((clientX - rect.left) / rect.width, 0, 1);
+    const y = 1 - clamp((clientY - rect.top) / rect.height, 0, 1);
+
+    const xRange = getChannelRange(xChannel());
+    const yRange = getChannelRange(yChannel());
+    const newX = Math.round(xRange.min + x * (xRange.max - xRange.min));
+    const newY = Math.round(yRange.min + y * (yRange.max - yRange.min));
+    applyChannelValues(newX, newY);
   };
 
   const handlePointerDown = (e: PointerEvent) => {
@@ -409,8 +407,8 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     if (props.disabled) return;
     const isShift = e.shiftKey;
     const stepSize = isShift ? 10 : 1;
-    const xRange = getChannelRange(xChannel);
-    const yRange = getChannelRange(yChannel);
+    const xRange = getChannelRange(xChannel());
+    const yRange = getChannelRange(yChannel());
     let posX = xVal();
     let posY = yVal();
     let handled = false;
@@ -437,57 +435,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
 
     if (handled) {
       e.preventDefault();
-      const cur = state();
-      let hue = cur.hue;
-      let saturation = cur.sat;
-      let lightness = cur.light;
-      let brightness = cur.bright;
-      let r = cur.red;
-      let g = cur.green;
-      let b = cur.blue;
-
-      let newRgb: [number, number, number] = [r, g, b];
-
-      if (colorSpace === "hsl") {
-        if (xChannel === "saturation") saturation = posX;
-        if (yChannel === "lightness") lightness = posY;
-        if (xChannel === "lightness") lightness = posX;
-        if (yChannel === "saturation") saturation = posY;
-        if (xChannel === "hue") hue = posX;
-        if (yChannel === "hue") hue = posY;
-        newRgb = hslToRgb(hue, saturation, lightness);
-      } else if (colorSpace === "hsb") {
-        if (xChannel === "saturation") saturation = posX;
-        if (yChannel === "brightness") brightness = posY;
-        if (xChannel === "brightness") brightness = posX;
-        if (yChannel === "saturation") saturation = posY;
-        if (xChannel === "hue") hue = posX;
-        if (yChannel === "hue") hue = posY;
-        newRgb = hsbToRgb(hue, saturation, brightness);
-      } else if (colorSpace === "rgb") {
-        if (xChannel === "red") r = posX;
-        if (yChannel === "green") g = posY;
-        if (xChannel === "green") g = posX;
-        if (yChannel === "red") r = posY;
-        if (xChannel === "blue") b = posX;
-        if (yChannel === "blue") b = posY;
-        newRgb = [r, g, b];
-      }
-
-      const newValue = rgbToHex(newRgb[0], newRgb[1], newRgb[2]);
-      if (newValue !== value()) {
-        setState({
-          hue,
-          sat: saturation,
-          light: lightness,
-          bright: brightness,
-          red: newRgb[0],
-          green: newRgb[1],
-          blue: newRgb[2],
-        });
-        setValue(newValue);
-        props.onValueChange?.(newValue);
-      }
+      applyChannelValues(posX, posY);
     }
   };
 
@@ -495,10 +443,10 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     <div
       class={`${classes().root}  ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
       data-slot="root"
-      data-color-space={colorSpace}
+      data-color-space={colorSpace()}
       data-value={value()}
-      data-x-channel={xChannel}
-      data-y-channel={yChannel}
+      data-x-channel={xChannel()}
+      data-y-channel={yChannel()}
       data-disabled={props.disabled ? "true" : "false"}
       data-theme={props.theme}
       {...rest}

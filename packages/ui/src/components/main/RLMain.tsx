@@ -1,12 +1,12 @@
 import type { RLMainProps } from "./main.types";
 import { RLMainTheme } from "./main.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
 export const RLMain: Component<RLMainProps> = (props) => {
   const rest = omit(props, "as", "ui", "class", "children");
 
-  const Tag = dynamic(() => props.as ?? "main");
+  const Tag = dynamic(() => props.as ?? "main", { static: isStatic(props, "as") });
 
   const classes = createMemo(() =>
     RLMainTheme({

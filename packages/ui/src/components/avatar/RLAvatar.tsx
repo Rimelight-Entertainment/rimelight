@@ -1,6 +1,6 @@
 import type { RLAvatarProps } from "./avatar.types";
 import { RLAvatarTheme } from "./avatar.theme";
-import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
+import { createMemo, createSignal, omit, Show, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";
@@ -69,7 +69,7 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
 
   const hasImage = () => Boolean(props.src && !imageError());
 
-  const Root = dynamic(() => props.as ?? "span");
+  const Root = dynamic(() => props.as ?? "span", { static: isStatic(props, "as") });
 
   const renderIcon = () => {
     if (!props.icon) return null;

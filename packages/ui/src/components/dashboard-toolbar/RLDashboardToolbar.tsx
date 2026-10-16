@@ -1,12 +1,12 @@
 import type { RLDashboardToolbarProps } from "./dashboard-toolbar.types";
 import { RLDashboardToolbarTheme } from "./dashboard-toolbar.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 
 export const RLDashboardToolbar: Component<RLDashboardToolbarProps> = (props) => {
   const rest = omit(props, "as", "ui", "class", "children", "leftSlot", "rightSlot");
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const classes = createMemo(() =>
     RLDashboardToolbarTheme({

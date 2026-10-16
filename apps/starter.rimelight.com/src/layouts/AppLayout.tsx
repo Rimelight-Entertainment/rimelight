@@ -53,9 +53,9 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
         </a>
 
         <RLBanner
+          id="v2-announcement"
           contain={false}
-          dismissable={true}
-          dismissId="v2-announcement"
+          close={true}
           stackIndex={0}
           class="bg-primary text-neutral-50 font-medium"
           actions={[

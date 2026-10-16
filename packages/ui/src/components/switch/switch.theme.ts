@@ -30,17 +30,17 @@ export const RLSwitchTheme = defineTheme("switch", {
     {
       size: "sm",
       checked: true,
-      classNames: { thumb: "translate-x-3" },
+      class: { thumb: "translate-x-3" },
     },
     {
       size: "md",
       checked: true,
-      classNames: { thumb: "translate-x-4" },
+      class: { thumb: "translate-x-4" },
     },
     {
       size: "lg",
       checked: true,
-      classNames: { thumb: "translate-x-5" },
+      class: { thumb: "translate-x-5" },
     },
   ],
   defaultVariants: {

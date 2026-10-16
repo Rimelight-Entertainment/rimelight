@@ -1,6 +1,6 @@
 import type { RLPageSectionProps } from "./page-section.types";
 import { RLPageSectionTheme } from "./page-section.theme";
-import { createMemo, omit, For, type Component, Show } from "solid-js";
+import { createMemo, omit, For, type Component, Show, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
@@ -80,7 +80,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       (props.links?.length ?? 0) > 0,
     );
 
-  const Root = dynamic(() => props.as ?? "section");
+  const Root = dynamic(() => props.as ?? "section", { static: isStatic(props, "as") });
 
   return (
     <Root

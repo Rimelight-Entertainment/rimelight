@@ -1,6 +1,6 @@
 import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
 import { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
-import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) => {
   const rest = omit(
@@ -20,26 +20,8 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
 
   const side = () => props.side ?? "left";
   const isCollapsible = () => props.collapsible ?? false;
-  const [isCollapsed, setIsCollapsed] = createSignal(props.collapsed ?? false);
-  const [isMobileOpen, setIsMobileOpen] = createSignal(props.openMobile ?? false);
-
-  createEffect(
-    () => props.collapsed,
-    (collapsed) => {
-      if (collapsed !== undefined) {
-        setIsCollapsed(collapsed);
-      }
-    },
-  );
-
-  createEffect(
-    () => props.openMobile,
-    (openMobile) => {
-      if (openMobile !== undefined) {
-        setIsMobileOpen(openMobile);
-      }
-    },
-  );
+  const [isCollapsed, setIsCollapsed] = createSignal(() => props.collapsed ?? false);
+  const [isMobileOpen, setIsMobileOpen] = createSignal(() => props.openMobile ?? false);
 
   const setCollapsedState = (collapsed: boolean) => {
     if (props.collapsed === undefined) {

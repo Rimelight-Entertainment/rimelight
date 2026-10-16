@@ -1,6 +1,6 @@
 import type { RLBadgeProps } from "./badge.types";
 import { RLBadgeTheme } from "./badge.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -71,7 +71,7 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
     }),
   );
 
-  const Root = dynamic(() => props.as ?? "span");
+  const Root = dynamic(() => props.as ?? "span", { static: isStatic(props, "as") });
 
   const renderLeading = () => {
     if (props.leadingSlot !== undefined && props.leadingSlot !== null) {

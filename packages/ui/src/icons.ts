@@ -1,11 +1,6 @@
-import { getUIConfig } from "./ui-config";
+import { getUIConfig } from "./resolver";
 
 export type RimelightIcons = Record<string, string>;
-
-export interface ResolvedIcon {
-  isClass: boolean;
-  content: string;
-}
 
 export const DEFAULT_ICON_NAMES = [
   "align-left",
@@ -62,20 +57,9 @@ export const DEFAULT_ICON_NAMES = [
   "x",
 ] as const;
 
-const EMPTY_ICON: ResolvedIcon = { isClass: false, content: "" };
-const cache = new Map<string, ResolvedIcon>();
-
-const toClass = (name: string): string =>
-  name.startsWith("i-") || name.includes(":") ? name : `i-lucide-${name}`;
-
-export const resolveIcon = (name = "", custom?: string): ResolvedIcon => {
+export const resolveIcon = (name = "", custom?: string): string => {
   const override = name ? getUIConfig()?.icons?.[name] : undefined;
   const raw = custom || override || name;
-  if (!raw || raw.startsWith("<")) return EMPTY_ICON;
-  let res = cache.get(raw);
-  if (!res) {
-    res = { isClass: true, content: toClass(raw) };
-    cache.set(raw, res);
-  }
-  return res;
+  if (!raw || raw.startsWith("<")) return "";
+  return raw.startsWith("i-") || raw.includes(":") ? raw : `i-lucide-${raw}`;
 };

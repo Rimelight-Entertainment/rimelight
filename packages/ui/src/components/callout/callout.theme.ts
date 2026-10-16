@@ -60,28 +60,28 @@ export const RLCalloutTheme = defineTheme("callout", {
     {
       color: "neutral",
       variant: "solid",
-      classNames: {
+      class: {
         root: "text-white bg-inverted",
       },
     },
     {
       color: "neutral",
       variant: "outline",
-      classNames: {
+      class: {
         root: "text-highlighted bg-default ring ring-inset ring-default",
       },
     },
     {
       color: "neutral",
       variant: "soft",
-      classNames: {
+      class: {
         root: "text-highlighted bg-elevated/50",
       },
     },
     {
       color: "neutral",
       variant: "subtle",
-      classNames: {
+      class: {
         root: "text-highlighted bg-elevated/50 ring ring-inset ring-accented",
       },
     },

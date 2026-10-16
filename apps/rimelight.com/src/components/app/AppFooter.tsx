@@ -100,7 +100,7 @@ export const AppFooter: Component = () => {
       }
       center={
         <div class="flex flex-col md:flex-row gap-12">
-          <For each={columns()}>{(column) => <RLLinkGroup {...column} theme="flat" />}</For>
+          <For each={columns()}>{(column) => <RLLinkGroup {...column} />}</For>
         </div>
       }
       right={

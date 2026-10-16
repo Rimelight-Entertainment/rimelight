@@ -1,4 +1,4 @@
-import type { RLCarouselProps, CarouselSlide, RLCarouselHandle } from "./carousel.types";
+import type { RLCarouselProps, CarouselSlide } from "./carousel.types";
 import { RLCarouselTheme } from "./carousel.theme";
 import { RLButtonTheme } from "../button/button.theme";
 import {
@@ -7,7 +7,7 @@ import {
   createMemo,
   createSignal,
   For,
-  onCleanup,
+  isStatic,
   onSettled,
   Show,
   omit,
@@ -29,37 +29,6 @@ function parseBasisPercent(customClass?: string): number {
     return parseFloat(percentMatch[1]);
   }
   return 100;
-}
-
-function wrapSlideItem<T>(item: T, index: number): any {
-  if (typeof item === "string") {
-    const s = new String(item) as any;
-    s.item = item;
-    s.index = index;
-    return s;
-  }
-  if (typeof item === "object" && item !== null) {
-    if (!("item" in item)) {
-      try {
-        Object.defineProperty(item, "item", {
-          value: item,
-          configurable: true,
-          enumerable: false,
-        });
-      } catch {}
-    }
-    if (!("index" in item)) {
-      try {
-        Object.defineProperty(item, "index", {
-          value: index,
-          configurable: true,
-          enumerable: false,
-        });
-      } catch {}
-    }
-    return item;
-  }
-  return { item, index };
 }
 
 export const RLCarousel: Component<RLCarouselProps> = (props) => {
@@ -260,12 +229,13 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
           scrollTo(cur + step);
         }
       }, delay);
+      return stopAutoplay;
     },
   );
 
   onSettled(() => {
     if (props.ref) {
-      const handle: RLCarouselHandle = {
+      props.ref({
         scrollTo,
         next,
         prev,
@@ -273,21 +243,12 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
         slideCount,
         canScrollNext,
         canScrollPrev,
-        emblaApi: {
-          scrollTo,
-          scrollNext: next,
-          scrollPrev: prev,
-          selectedScrollSnap: index,
-          scrollSnapList: dots,
-        },
-      };
-      props.ref(handle);
+      });
     }
-  });
-
-  onCleanup(() => {
-    stopAutoplay();
-    if (wheelThrottleTimer) clearTimeout(wheelThrottleTimer);
+    return () => {
+      stopAutoplay();
+      if (wheelThrottleTimer) clearTimeout(wheelThrottleTimer);
+    };
   });
 
   const handlePointerDown = (e: PointerEvent) => {
@@ -440,8 +401,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   const renderSingleSlideContent = (item: any, i: number) => {
     if (typeof props.children === "function") {
       const renderFn = props.children as any;
-      const wrapped = wrapSlideItem(item, i);
-      return renderFn(wrapped, () => i);
+      return renderFn({ item, index: i }, () => i);
     }
 
     if (typeof item === "object" && item !== null) {
@@ -548,7 +508,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     Boolean(props.arrows || props.prev !== undefined || props.next !== undefined);
   const showDots = () => Boolean(props.dots) && dots().length > 0;
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root

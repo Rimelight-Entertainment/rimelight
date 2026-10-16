@@ -1,6 +1,6 @@
 import type { RLChartProps, ChartDataPoint } from "./chart.types";
 import { RLChartTheme } from "./chart.theme";
-import { createMemo, For, Show, omit, type Component } from "solid-js";
+import { createMemo, createUniqueId, For, Show, omit, type Component } from "solid-js";
 
 const palette = [
   "hsl(221 83% 53%)",
@@ -97,16 +97,16 @@ export const RLChart: Component<RLChartProps> = (props) => {
 
   const gridLines = [0, 0.25, 0.5, 0.75, 1];
 
-  const id = `chart-${Math.random().toString(36).substring(2, 9)}`;
-  const height = props.height ?? 280;
+  const id = `chart-${createUniqueId()}`;
+  const height = () => props.height ?? 280;
 
   return (
     <>
       <style>{`
-  .${id} { min-height: ${height}px; }
-  .${id} [data-slot="container"] { height: ${height - 60}px; gap: 6px; align-items: flex-end; }
-  .${id} .rl-chart-line-wrap { height: ${height - 60}px; }
-  .${id} .rl-chart-pie-wrap { height: ${height - 60}px; }
+  .${id} { min-height: ${height()}px; }
+  .${id} [data-slot="container"] { height: ${height() - 60}px; gap: 6px; align-items: flex-end; }
+  .${id} .rl-chart-line-wrap { height: ${height() - 60}px; }
+  .${id} .rl-chart-pie-wrap { height: ${height() - 60}px; }
 `}</style>
 
       <div class={`${classes().root}  ${id}`} data-slot="root" {...rest}>

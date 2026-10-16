@@ -124,21 +124,21 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     {
       variant: "hero",
       reverse: true,
-      classNames: {
+      class: {
         wrapper: "order-first",
       },
     },
     {
       variant: "default",
       reverse: true,
-      classNames: {
+      class: {
         wrapper: "order-last",
       },
     },
     {
       variant: "cta",
       reverse: true,
-      classNames: {
+      class: {
         wrapper: "order-last",
       },
     },
@@ -146,7 +146,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       variant: "default",
       orientation: "vertical",
       title: true,
-      classNames: {
+      class: {
         body: "mt-16",
       },
     },
@@ -154,7 +154,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       variant: "default",
       orientation: "vertical",
       description: true,
-      classNames: {
+      class: {
         body: "mt-16",
       },
     },
@@ -162,21 +162,21 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       variant: "default",
       orientation: "vertical",
       body: true,
-      classNames: {
+      class: {
         footer: "mt-16",
       },
     },
     {
       variant: "cta",
       ctaVariant: "outline",
-      classNames: {
+      class: {
         root: "bg-default ring ring-default",
       },
     },
     {
       variant: "cta",
       ctaVariant: "solid",
-      classNames: {
+      class: {
         root: "bg-inverted text-inverted",
         title: "text-inverted",
         description: "text-dimmed",
@@ -185,7 +185,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     {
       variant: "cta",
       ctaVariant: "soft",
-      classNames: {
+      class: {
         root: "bg-elevated/50",
         description: "text-toned",
       },
@@ -193,7 +193,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     {
       variant: "cta",
       ctaVariant: "subtle",
-      classNames: {
+      class: {
         root: "bg-elevated/50 ring ring-default",
         description: "text-toned",
       },

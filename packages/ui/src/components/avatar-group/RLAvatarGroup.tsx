@@ -1,6 +1,6 @@
 import type { RLAvatarGroupProps } from "./avatar-group.types";
 import { RLAvatarGroupTheme } from "./avatar-group.theme";
-import { children, createMemo, omit, For, Show, type Component } from "solid-js";
+import { children, createMemo, omit, For, Show, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 
@@ -41,7 +41,7 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
     }),
   );
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   // For props.items mode
   const normalizedItems = () => props.items ?? [];
@@ -57,11 +57,7 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
 
   // For children mode
   const resolvedChildren = children(() => props.children);
-  const childArray = createMemo(() => {
-    const ch = resolvedChildren();
-    if (!ch) return [];
-    return Array.isArray(ch) ? ch : [ch];
-  });
+  const childArray = () => resolvedChildren.toArray();
 
   const visibleChildren = () => {
     const limit = maxCount();

@@ -1,15 +1,6 @@
 import type { RLSkeletonProps } from "./skeleton.types";
 import { RLSkeletonTheme } from "./skeleton.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  For,
-  omit,
-  onCleanup,
-  Show,
-  type Component,
-} from "solid-js";
+import { createEffect, createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { createResizeObserver, extractSkeletonRects, type SkeletonRect } from "./skeleton.dom";
 
 export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
@@ -35,12 +26,6 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
     }),
   );
 
-  // Standalone mode: simple placeholder box
-  if (!hasChildren()) {
-    return <div class={classes().root} data-slot="root" {...rest} />;
-  }
-
-  // Structural skeleton wrapper mode
   const [rects, setRects] = createSignal<SkeletonRect[]>([]);
   let measureRef: HTMLDivElement | undefined = undefined;
 
@@ -57,9 +42,9 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
   };
 
   createEffect(
-    () => isLoading(),
-    (loading) => {
-      if (!loading || !measureRef) {
+    () => hasChildren() && isLoading(),
+    (active) => {
+      if (!active || !measureRef) {
         setRects([]);
         return;
       }
@@ -78,48 +63,49 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
       measure();
 
       // Subscribe to resize / layout changes
-      const cleanup = createResizeObserver(measureRef, measure);
-      onCleanup(cleanup);
+      return createResizeObserver(measureRef, measure);
     },
   );
 
   return (
-    <Show when={isLoading()} fallback={<>{props.children}</>}>
-      <div class={classes().container} data-slot="container" {...rest}>
-        {/* Render actual child structure with invisible text / hidden media */}
-        <div
-          ref={(el) => {
-            measureRef = el;
-          }}
-          class={classes().measure}
-          data-slot="measure"
-          aria-hidden="true"
-        >
-          {props.children}
-        </div>
+    <Show when={hasChildren()} fallback={<div class={classes().root} data-slot="root" {...rest} />}>
+      <Show when={isLoading()} fallback={<>{props.children}</>}>
+        <div class={classes().container} data-slot="container" {...rest}>
+          {/* Render actual child structure with invisible text / hidden media */}
+          <div
+            ref={(el) => {
+              measureRef = el;
+            }}
+            class={classes().measure}
+            data-slot="measure"
+            aria-hidden="true"
+          >
+            {props.children}
+          </div>
 
-        {/* Shimmer overlay based on extracted child geometry */}
-        <div class={classes().overlay} data-slot="overlay">
-          <For each={rects()}>
-            {(rect) => (
-              <div
-                class={classes().shimmer}
-                data-slot="shimmer"
-                style={{
-                  position: "absolute",
-                  left: `${rect.x}px`,
-                  top: `${rect.y}px`,
-                  width: `${rect.width}px`,
-                  height: `${rect.height}px`,
-                  "border-radius": resolveBorderRadius(rect),
-                }}
-              >
-                <div class={classes().highlight} data-slot="highlight" />
-              </div>
-            )}
-          </For>
+          {/* Shimmer overlay based on extracted child geometry */}
+          <div class={classes().overlay} data-slot="overlay">
+            <For each={rects()}>
+              {(rect) => (
+                <div
+                  class={classes().shimmer}
+                  data-slot="shimmer"
+                  style={{
+                    position: "absolute",
+                    left: `${rect.x}px`,
+                    top: `${rect.y}px`,
+                    width: `${rect.width}px`,
+                    height: `${rect.height}px`,
+                    "border-radius": resolveBorderRadius(rect),
+                  }}
+                >
+                  <div class={classes().highlight} data-slot="highlight" />
+                </div>
+              )}
+            </For>
+          </div>
         </div>
-      </div>
+      </Show>
     </Show>
   );
 };

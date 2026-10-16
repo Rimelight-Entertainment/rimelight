@@ -94,20 +94,6 @@ export interface RLBannerProps {
   hideOnScroll?: boolean | undefined;
 
   /**
-   * Alias for dismissable in Rimelight UI.
-   *
-   * @deprecated use `close` prop instead
-   */
-  dismissable?: boolean | undefined;
-
-  /**
-   * Alias for id / persistence storage key.
-   *
-   * @deprecated use `id` prop instead
-   */
-  dismissId?: string | undefined;
-
-  /**
    * Slot-specific CSS class overrides.
    */
   ui?:

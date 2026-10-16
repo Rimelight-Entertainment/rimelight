@@ -1,6 +1,6 @@
 import type { RLColorFieldProps } from "./color-field.types";
 import { RLColorFieldTheme } from "./color-field.theme";
-import { createEffect, createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import {
   clamp,
@@ -38,17 +38,9 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
 
   const colorSpace = () => props.colorSpace ?? "hsl";
   const stepValue = () => props.step ?? 1;
-  const initialHex = () => props.value ?? props.defaultValue ?? "#000000";
 
-  const [currentHex, setCurrentHex] = createSignal(initialHex());
-
-  createEffect(
-    () => props.value,
-    (controlled) => {
-      if (controlled !== undefined) {
-        setCurrentHex(controlled);
-      }
-    },
+  const [currentHex, setCurrentHex] = createSignal(
+    () => props.value ?? props.defaultValue ?? "#000000",
   );
 
   const getDisplayValue = () => {
@@ -71,14 +63,7 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
     return "0";
   };
 
-  const [displayValue, setDisplayValue] = createSignal(getDisplayValue());
-
-  createEffect(
-    () => currentHex(),
-    () => {
-      setDisplayValue(getDisplayValue());
-    },
-  );
+  const [displayValue, setDisplayValue] = createSignal(getDisplayValue);
 
   const updateColor = (newHex: string) => {
     if (props.value === undefined) {

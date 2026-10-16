@@ -1,6 +1,6 @@
 import type { RLHeaderProps } from "./header.types";
 import { RLHeaderTheme } from "./header.theme";
-import { createEffect, createMemo, createUniqueId, omit, type Component } from "solid-js";
+import { createEffect, createMemo, createUniqueId, omit, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { useHeaderStack } from "./useHeaderStack";
 
@@ -26,7 +26,7 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
   const fallbackId = `rl-header-${createUniqueId()}`;
   const layerId = () => (typeof props["id"] === "string" ? props["id"] : fallbackId);
 
-  const Tag = dynamic(() => props.as ?? "header");
+  const Tag = dynamic(() => props.as ?? "header", { static: isStatic(props, "as") });
 
   const contain = () => props.contain ?? true;
   const sticky = () => props.sticky ?? true;

@@ -23,9 +23,7 @@ export interface ResolvedFontPaths {
 }
 
 /**
- * Resolves the on-disk cache locations for fonts. Fonts never touch `public/`: binaries live under
- * `node_modules/.cache` and are served via Vite middleware in dev and emitted as bundle assets in
- * build.
+ * Resolves the on-disk cache locations for fonts under `node_modules/.cache`.
  */
 export function resolveFontPaths(options?: LocalFontProcessorOptions): ResolvedFontPaths {
   const cwd = options?.cwd || process.cwd();
@@ -34,13 +32,6 @@ export function resolveFontPaths(options?: LocalFontProcessorOptions): ResolvedF
   const fontServeBaseUrl = options?.fontServeBaseUrl || "/assets/fonts";
   return { cwd, cacheDir, fontAssetsDir, fontServeBaseUrl };
 }
-
-/**
- * Shared in-memory font store. The Uno processor fills it on download and the Vite plugin
- * (`rimelightFontsVitePlugin`) serves/emits from it, so dev and build stay in sync within a single
- * Vite process.
- */
-export const emittedFonts = new Map<string, Buffer>();
 
 export const DEFAULT_UI_FONTS = {
   provider: "fontsource" as WebFontsProviders,
@@ -85,19 +76,10 @@ function withProtocol(input: string) {
 }
 
 /**
- * Creates a local font processor that downloads remote web fonts (Google, Fontshare, etc.) and
- * serves them locally. Binaries are cached outside `public/` (see `resolveFontPaths`) and served
- * via `rimelightFontsVitePlugin` in dev / emitted as bundle assets in build.
+ * Creates a local font processor that downloads remote web fonts and caches them locally.
  */
 export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
   const { cacheDir, fontAssetsDir } = resolveFontPaths(options);
-
-  async function remember(filename: string, buf: Buffer) {
-    emittedFonts.set(filename, buf);
-    if (options?.onDownload) {
-      await options.onDownload(filename, buf);
-    }
-  }
 
   async function _downloadFont(url: string, assetPath: string) {
     let buf: Buffer;
@@ -116,7 +98,9 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
     }
 
     const filename = assetPath.split(/[\\/]/).pop()!;
-    await remember(filename, buf);
+    if (options?.onDownload) {
+      await options.onDownload(filename, buf);
+    }
     await fsp.mkdir(fontAssetsDir, { recursive: true });
     await fsp.writeFile(assetPath, buf);
   }
@@ -152,22 +136,11 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
           const assetPath = join(fontAssetsDir, filename);
           if (!fs.existsSync(assetPath))
             await downloadFont(hasProtocol(url) ? url : withProtocol(url), assetPath);
-          else if (!emittedFonts.has(filename))
-            emittedFonts.set(filename, await fsp.readFile(assetPath));
           replacements.set(url, assetPath.replace(/\\/g, "/"));
         }),
       );
       return css.replace(fontUrlRegex, (match) => replacements.get(match) || match);
     },
-  };
-}
-
-/**
- * Vite plugin companion to `createLocalFontProcessor`.
- */
-export function rimelightFontsVitePlugin(_options?: LocalFontProcessorOptions) {
-  return {
-    name: "rimelight:fonts",
   };
 }
 
@@ -188,25 +161,13 @@ export interface WebFontsOptions {
 }
 
 /**
- * Creates the default web fonts preset with local font processing always enabled. Fonts are
- * downloaded once into `node_modules/.cache`, served from memory/disk in dev and emitted as bundle
- * assets in build — `public/` stays untouched.
+ * Creates the default web fonts preset with local font processing always enabled.
  */
 export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
   if (options === false) return null;
 
   const userOpts: WebFontsOptions = typeof options === "object" && options !== null ? options : {};
-  // `local` was the old opt-in flag; local serving is now unconditional.
-  // `processors`/`processorOptions` are ours — strip them so they don't leak
-  // into presetWebFonts (`processors` is re-attached resolved below).
-  const {
-    processors,
-    processorOptions,
-    local: _deprecatedLocal,
-    provider,
-    fonts,
-    ...restPresetOpts
-  } = userOpts;
+  const { processors, processorOptions, provider, fonts, ...restPresetOpts } = userOpts;
   const mergedFonts = {
     ...DEFAULT_UI_FONTS.fonts,
     ...fonts,

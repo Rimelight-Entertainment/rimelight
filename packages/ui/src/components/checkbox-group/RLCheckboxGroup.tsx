@@ -12,6 +12,7 @@ import {
   omit,
   Show,
   type Component,
+  isStatic,
 } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLCheckbox } from "../checkbox/RLCheckbox";
@@ -165,7 +166,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     }
   };
 
-  const Root = dynamic(() => props.as ?? "div");
+  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const renderLegend = () => {
     if (props.legendSlot !== undefined) return props.legendSlot;

@@ -1,6 +1,6 @@
 import type { RLBreadcrumbProps } from "./breadcrumb.types";
 import { RLBreadcrumbTheme } from "./breadcrumb.theme";
-import { createMemo, omit, For, type Component } from "solid-js";
+import { createMemo, omit, For, type Component, isStatic } from "solid-js";
 import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -37,7 +37,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     "slots",
   );
 
-  const RootTag = dynamic(() => props.as ?? "nav");
+  const RootTag = dynamic(() => props.as ?? "nav", { static: isStatic(props, "as") });
 
   const allItems = () => (Array.isArray(props.items) ? props.items : []);
   const count = () => allItems().length;

@@ -1,30 +1,13 @@
 import type { RLDashboardSearchProps } from "./dashboard-search.types";
 import { RLDashboardSearchTheme } from "./dashboard-search.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  onSettled,
-  Show,
-  omit,
-  type Component,
-} from "solid-js";
+import { createMemo, createSignal, onSettled, Show, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
   const rest = omit(props, "ui", "class", "children", "open", "onOpenChange");
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? false);
+  const [isOpen, setIsOpen] = createSignal(() => props.open ?? false);
   let inputRef: HTMLInputElement | null = null;
-
-  createEffect(
-    () => props.open,
-    (open) => {
-      if (open !== undefined) {
-        setIsOpen(open);
-      }
-    },
-  );
 
   const setOpenState = (open: boolean) => {
     if (props.open === undefined) {

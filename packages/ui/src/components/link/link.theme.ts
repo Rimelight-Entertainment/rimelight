@@ -23,12 +23,12 @@ export const RLLinkTheme = defineTheme("link", {
     {
       active: false,
       disabled: false,
-      classNames: { root: "hover:text-default" },
+      class: { root: "hover:text-default" },
     },
     {
       active: true,
       disabled: false,
-      classNames: { root: "hover:text-primary" },
+      class: { root: "hover:text-primary" },
     },
   ],
   defaultVariants: {

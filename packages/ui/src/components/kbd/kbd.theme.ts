@@ -25,22 +25,22 @@ export const RLKbdTheme = defineTheme("kbd", {
     {
       color: "neutral",
       variant: "solid",
-      classNames: { root: "text-inverted bg-inverted" },
+      class: { root: "text-inverted bg-inverted" },
     },
     {
       color: "neutral",
       variant: "outline",
-      classNames: { root: "ring ring-inset ring-accented text-default bg-default" },
+      class: { root: "ring ring-inset ring-accented text-default bg-default" },
     },
     {
       color: "neutral",
       variant: "soft",
-      classNames: { root: "text-default bg-elevated" },
+      class: { root: "text-default bg-elevated" },
     },
     {
       color: "neutral",
       variant: "subtle",
-      classNames: { root: "ring ring-inset ring-accented text-default bg-elevated" },
+      class: { root: "ring ring-inset ring-accented text-default bg-elevated" },
     },
   ],
   defaultVariants: {

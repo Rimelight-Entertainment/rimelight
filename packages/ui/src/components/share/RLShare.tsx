@@ -1,5 +1,5 @@
 import type { RLShareProps } from "./share.types";
-import { createSignal, onCleanup, omit, type Component } from "solid-js";
+import { createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 
 export const RLShare: Component<RLShareProps> = (props) => {
@@ -7,8 +7,10 @@ export const RLShare: Component<RLShareProps> = (props) => {
   const [copied, setCopied] = createSignal(false);
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  onCleanup(() => {
-    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  onSettled(() => {
+    return () => {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+    };
   });
 
   const handleShare = async () => {
@@ -35,7 +37,6 @@ export const RLShare: Component<RLShareProps> = (props) => {
 
   return (
     <RLButton
-      id="rl-share"
       class={props["class"]}
       color="neutral"
       variant="outline"

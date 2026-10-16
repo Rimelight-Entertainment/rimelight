@@ -1,6 +1,15 @@
 import type { RLSearchProps, SearchResultItem } from "./search.types";
 import { RLSearchTheme } from "./search.theme";
-import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  createUniqueId,
+  For,
+  onSettled,
+  Show,
+  omit,
+  type Component,
+} from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLInput } from "../input/RLInput";
@@ -8,9 +17,8 @@ import { RLKbd } from "../kbd/RLKbd";
 import { RLButton } from "../button/RLButton";
 import { defineShortcuts } from "../../shortcuts";
 
-const modalId = `rl-search-${Math.random().toString(36).substring(2, 9)}`;
-
 export const RLSearch: Component<RLSearchProps> = (props) => {
+  const modalId = `rl-search-${createUniqueId()}`;
   const rest = omit(
     props,
     "endpoint",
@@ -64,13 +72,6 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
   };
 
   onSettled(() => {
-    const handleOpen = () => openModal();
-    const handleToggle = () => toggleModal();
-
-    document.addEventListener("rl-search:open", handleOpen);
-    document.addEventListener("search:open", handleOpen);
-    document.addEventListener("rl-search:toggle", handleToggle);
-
     const searchShortcutCleanup = defineShortcuts({
       meta_k: {
         handler: () => toggleModal(),
@@ -98,9 +99,6 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.removeEventListener("rl-search:open", handleOpen);
-      document.removeEventListener("search:open", handleOpen);
-      document.removeEventListener("rl-search:toggle", handleToggle);
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "";
       if (debounceTimer) clearTimeout(debounceTimer);

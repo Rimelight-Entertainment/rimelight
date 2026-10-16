@@ -35,11 +35,17 @@ export const RLPost: Component<RLPostProps> = (props) => {
     }),
   );
 
-  const formattedDate = props.date
-    ? props.date instanceof Date
-      ? props.date.toLocaleDateString()
-      : props.date
-    : null;
+  const formattedDate = createMemo(() =>
+    props.date
+      ? props.date instanceof Date
+        ? props.date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
+        : props.date
+      : null,
+  );
 
   const imageSrc = () =>
     typeof props.image === "string"
@@ -94,9 +100,9 @@ export const RLPost: Component<RLPostProps> = (props) => {
 
         {props.dateSlot !== undefined ? (
           props.dateSlot
-        ) : formattedDate ? (
+        ) : formattedDate() ? (
           <time class={classes()["date"]} data-slot="date">
-            {formattedDate}
+            {formattedDate()}
           </time>
         ) : null}
 

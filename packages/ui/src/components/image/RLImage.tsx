@@ -1,7 +1,19 @@
 import type { RLImageProps, ImageMetadata } from "./image.types";
 import { RLImageTheme } from "./image.theme";
-import { createEffect, createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+
+const urlOf = (v?: string | ImageMetadata): string | undefined =>
+  typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src;
+
+const widthOf = (v?: string | ImageMetadata): string | number | undefined =>
+  v && typeof v !== "string" ? (v as ImageMetadata).width : undefined;
+
+const heightOf = (v?: string | ImageMetadata): string | number | undefined =>
+  v && typeof v !== "string" ? (v as ImageMetadata).height : undefined;
+
+const formatOf = (v?: string | ImageMetadata): string | undefined =>
+  v && typeof v !== "string" ? (v as ImageMetadata).format : undefined;
 
 export const RLImage: Component<RLImageProps> = (props) => {
   const rest = omit(
@@ -25,7 +37,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
     "caption",
     "figure",
     "lightbox",
-    "interactive",
     "theme",
     "metadata",
     "open",
@@ -42,59 +53,53 @@ export const RLImage: Component<RLImageProps> = (props) => {
     "children",
   );
 
-  const isInteractive = props.lightbox ?? props.interactive ?? true;
-  const isFigure = props.figure ?? !!props.caption;
-
-  const isResponsive = !!(props.mobileSrc && props.desktopSrc);
-  const effectiveLight =
+  const isInteractive = () => props.lightbox ?? true;
+  const isFigure = () => props.figure ?? Boolean(props.caption);
+  const isResponsive = () => Boolean(props.mobileSrc && props.desktopSrc);
+  const effectiveLight = () =>
     props.lightSrc || (!props.darkSrc ? props.src : props.src || props.lightSrc);
-  const effectiveDark = props.darkSrc;
-  const hasColorMode =
-    !isResponsive && !!(effectiveLight && effectiveDark && effectiveLight !== effectiveDark);
-  const breakpointVal = props.breakpoint ?? 768;
-  const activeSrc = isResponsive ? props.desktopSrc : effectiveLight || props.src;
+  const effectiveDark = () => props.darkSrc;
+  const hasColorMode = () =>
+    !isResponsive() &&
+    Boolean(effectiveLight() && effectiveDark() && effectiveLight() !== effectiveDark());
+  const breakpointVal = () => props.breakpoint ?? 768;
+  const activeSrc = () => (isResponsive() ? props.desktopSrc : effectiveLight() || props.src);
 
-  const urlOf = (v?: string | ImageMetadata): string | undefined =>
-    typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src;
+  const activeUrl = () => urlOf(activeSrc());
+  const lightUrl = () => (effectiveLight() ? (urlOf(effectiveLight()) ?? "") : "");
+  const darkUrl = () => (effectiveDark() ? (urlOf(effectiveDark()) ?? "") : "");
 
-  const widthOf = (v?: string | ImageMetadata): string | number | undefined =>
-    v && typeof v !== "string" ? (v as ImageMetadata).width : undefined;
-
-  const heightOf = (v?: string | ImageMetadata): string | number | undefined =>
-    v && typeof v !== "string" ? (v as ImageMetadata).height : undefined;
-
-  const formatOf = (v?: string | ImageMetadata): string | undefined =>
-    v && typeof v !== "string" ? (v as ImageMetadata).format : undefined;
-
-  const activeUrl = urlOf(activeSrc);
-  const lightUrl = effectiveLight ? (urlOf(effectiveLight) ?? "") : "";
-  const darkUrl = effectiveDark ? (urlOf(effectiveDark) ?? "") : "";
-
-  const imgWidth = props.width ?? widthOf(activeSrc);
-  const imgHeight = props.height ?? heightOf(activeSrc);
-  const imgFormat = formatOf(activeSrc) ?? props.metadata?.format;
-  const rawName = activeUrl ? activeUrl.split("/").pop() || "image" : "image";
-  const fileName = rawName.split("?")[0] ?? "";
-  const fileExtension =
-    imgFormat?.toUpperCase() ||
-    (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG");
+  const imgWidth = () => props.width ?? widthOf(activeSrc());
+  const imgHeight = () => props.height ?? heightOf(activeSrc());
+  const imgFormat = () => formatOf(activeSrc()) ?? props.metadata?.format;
+  const fileName = () => {
+    const url = activeUrl();
+    const rawName = url ? url.split("/").pop() || "image" : "image";
+    return rawName.split("?")[0] ?? "";
+  };
+  const fileExtension = () => {
+    const fmt = imgFormat();
+    if (fmt) return fmt.toUpperCase();
+    const fn = fileName();
+    return fn.includes(".") ? (fn.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG";
+  };
 
   const classes = createMemo(() =>
     RLImageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
   );
 
   const alt = () => props.alt ?? "";
-  const loading = props.loading ?? "lazy";
-  const decoding = props.decoding ?? "async";
+  const loading = () => props.loading ?? "lazy";
+  const decoding = () => props.decoding ?? "async";
 
-  const [show, setShow] = createSignal(loading !== "lazy");
+  const [show, setShow] = createSignal(() => loading() !== "lazy");
   const [status, setStatus] = createSignal<"loading" | "ok" | "error">("loading");
-  const [open, setOpen] = createSignal(Boolean(props.open));
+  const [open, setOpen] = createSignal(() => Boolean(props.open));
   const [zoom, setZoom] = createSignal(false);
-  const [metaSizeTxt, setMetaSizeTxt] = createSignal<string>(
+  const [metaSizeTxt, setMetaSizeTxt] = createSignal<string>(() =>
     props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : "fetching...",
   );
-  const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(fileExtension);
+  const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(() => fileExtension());
 
   let rootRef: HTMLDivElement | undefined;
   let dialogRef: HTMLDialogElement | undefined;
@@ -104,15 +109,15 @@ export const RLImage: Component<RLImageProps> = (props) => {
   const handleLoad = () => setStatus("ok");
 
   const activeModalSrc = () => {
-    if (typeof document === "undefined") return activeUrl ?? "";
+    if (typeof document === "undefined") return activeUrl() ?? "";
     const rootTheme = document.documentElement.getAttribute("data-theme");
     const isDark =
       rootTheme === "dark" ||
       (typeof window !== "undefined" &&
         (window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false) &&
         rootTheme !== "light");
-    if (isDark && darkUrl) return darkUrl;
-    return lightUrl || activeUrl || "";
+    if (isDark && darkUrl()) return darkUrl();
+    return lightUrl() || activeUrl() || "";
   };
 
   const openDialog = () => setOpen(true);
@@ -140,7 +145,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
     () => show(),
     (isShown) => {
       const el = rootRef;
-      if (!el || loading !== "lazy" || isShown) return;
+      if (!el || loading() !== "lazy" || isShown) return;
       const io = new IntersectionObserver(
         (entries) => {
           if (entries.some((e) => e.isIntersecting)) {
@@ -181,16 +186,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
     },
   );
 
-  onSettled(() => {
-    const dialog = dialogRef;
-    if (dialog) {
-      const onClose = () => setOpen(false);
-      dialog.addEventListener("close", onClose);
-      return () => dialog.removeEventListener("close", onClose);
-    }
-    return undefined;
-  });
-
   const fallbackBox = () => (
     <div class="flex w-full h-full min-h-40 items-center justify-center gap-2 rounded-lg bg-elevated text-muted">
       <RLIcon name="image" class="size-8" aria-hidden="true" />
@@ -201,22 +196,22 @@ export const RLImage: Component<RLImageProps> = (props) => {
   const triggerImage = () => {
     if (status() === "error") return fallbackBox();
 
-    if (isResponsive) {
+    if (isResponsive()) {
       return (
         <picture>
           <source
-            media={`(max-width: ${breakpointVal - 1}px)`}
+            media={`(max-width: ${breakpointVal() - 1}px)`}
             srcset={show() ? urlOf(props.mobileSrc) : undefined}
           />
           <source
-            media={`(min-width: ${breakpointVal}px)`}
+            media={`(min-width: ${breakpointVal()}px)`}
             srcset={show() ? urlOf(props.desktopSrc) : undefined}
           />
           <img
             src={show() ? urlOf(props.desktopSrc) : undefined}
             alt={alt()}
-            loading={loading}
-            decoding={decoding}
+            loading={loading()}
+            decoding={decoding()}
             class={classes().triggerImage}
             onError={handleError}
             onLoad={handleLoad}
@@ -225,23 +220,23 @@ export const RLImage: Component<RLImageProps> = (props) => {
       );
     }
 
-    if (hasColorMode) {
+    if (hasColorMode()) {
       return (
         <div class="rl-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center">
           <img
-            src={show() ? lightUrl : undefined}
+            src={show() ? lightUrl() : undefined}
             alt={alt()}
-            loading={loading}
-            decoding={decoding}
+            loading={loading()}
+            decoding={decoding()}
             class={`${classes().triggerImage} rl-img-light w-full h-full object-cover rounded-[inherit]`}
             onError={handleError}
             onLoad={handleLoad}
           />
           <img
-            src={show() ? darkUrl : undefined}
+            src={show() ? darkUrl() : undefined}
             alt={alt()}
-            loading={loading}
-            decoding={decoding}
+            loading={loading()}
+            decoding={decoding()}
             class={`${classes().triggerImage} rl-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
           />
         </div>
@@ -250,12 +245,12 @@ export const RLImage: Component<RLImageProps> = (props) => {
 
     return (
       <img
-        src={show() ? activeUrl : undefined}
+        src={show() ? activeUrl() : undefined}
         alt={alt()}
-        loading={loading}
-        decoding={decoding}
-        width={imgWidth !== undefined ? String(imgWidth) : undefined}
-        height={imgHeight !== undefined ? String(imgHeight) : undefined}
+        loading={loading()}
+        decoding={decoding()}
+        width={imgWidth() !== undefined ? String(imgWidth()) : undefined}
+        height={imgHeight() !== undefined ? String(imgHeight()) : undefined}
         sizes={props.sizes}
         class={classes().triggerImage}
         onError={handleError}
@@ -267,7 +262,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
   const renderTrigger = () =>
     props.trigger ? (
       props.trigger
-    ) : isInteractive ? (
+    ) : isInteractive() ? (
       <button type="button" class={classes().trigger} data-image-trigger onClick={openDialog}>
         {triggerImage()}
       </button>
@@ -283,7 +278,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
       data-theme={props.theme}
       {...rest}
     >
-      {isFigure ? (
+      {isFigure() ? (
         <figure class={classes().figure} data-slot="figure">
           {renderTrigger()}
           {props.caption && (
@@ -305,11 +300,12 @@ export const RLImage: Component<RLImageProps> = (props) => {
         </>
       )}
 
-      {isInteractive && (
+      {isInteractive() && (
         <dialog
           ref={(el) => (dialogRef = el)}
           class={classes().dialog}
           data-image-dialog
+          onClose={() => setOpen(false)}
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
           }}
@@ -321,14 +317,14 @@ export const RLImage: Component<RLImageProps> = (props) => {
             >
               {status() === "error" ? (
                 fallbackBox()
-              ) : isResponsive ? (
+              ) : isResponsive() ? (
                 <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
                   <source
-                    media={`(max-width: ${breakpointVal - 1}px)`}
+                    media={`(max-width: ${breakpointVal() - 1}px)`}
                     srcset={show() ? urlOf(props.mobileSrc) : undefined}
                   />
                   <source
-                    media={`(min-width: ${breakpointVal}px)`}
+                    media={`(min-width: ${breakpointVal()}px)`}
                     srcset={show() ? urlOf(props.desktopSrc) : undefined}
                   />
                   <img
@@ -338,18 +334,18 @@ export const RLImage: Component<RLImageProps> = (props) => {
                     data-modal-img
                   />
                 </picture>
-              ) : hasColorMode ? (
+              ) : hasColorMode() ? (
                 <div class="rl-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden">
                   <img
-                    src={show() ? lightUrl : undefined}
+                    src={show() ? lightUrl() : undefined}
                     alt={alt()}
                     class={`${classes().image} rl-img-light${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img
-                    data-light-src={lightUrl}
-                    data-dark-src={darkUrl}
+                    data-light-src={lightUrl()}
+                    data-dark-src={darkUrl()}
                   />
                   <img
-                    src={show() ? darkUrl : undefined}
+                    src={show() ? darkUrl() : undefined}
                     alt={alt()}
                     class={`${classes().image} rl-img-dark hidden${zoom() ? " max-w-none max-h-none" : ""}`}
                     data-modal-img-dark
@@ -357,7 +353,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                 </div>
               ) : (
                 <img
-                  src={show() ? activeUrl : undefined}
+                  src={show() ? activeUrl() : undefined}
                   alt={alt()}
                   class={`${classes().image}${zoom() ? " max-w-none max-h-none" : ""}`}
                   data-modal-img
@@ -373,7 +369,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                   <div class="flex flex-row gap-xs items-center">
                     <RLIcon name="image" class="size-4 shrink-0 text-muted" aria-hidden="true" />
                     <span class="text-muted">Source:</span>
-                    <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
+                    <span class="text-dimmed truncate max-w-[40vw]">{fileName()}</span>
                   </div>
                 )}
                 {props.metaFormat !== false && (
@@ -398,7 +394,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                     />
                     <span class="text-muted">Dimensions:</span>
                     <span class="text-dimmed">
-                      {imgWidth || "?"} x {imgHeight || "?"}
+                      {imgWidth() || "?"} x {imgHeight() || "?"}
                     </span>
                   </div>
                 )}
