@@ -30,11 +30,7 @@ const auditColors = [...new Set([...Object.keys(PALETTES), ...Object.keys(uiConf
 
 export default defineConfig({
   plugins: [
-    cloudflare({
-      viteEnvironment: {
-        name: "ssr",
-      },
-    }),
+    cloudflare(),
 
     solid({
       exclude: ["src/fetch.ts"],

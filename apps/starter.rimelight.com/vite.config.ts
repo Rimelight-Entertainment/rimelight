@@ -30,11 +30,7 @@ const uiConfig = {
 
 export default defineConfig({
   plugins: [
-    cloudflare({
-      viteEnvironment: {
-        name: "ssr",
-      },
-    }),
+    cloudflare(),
 
     solid({
       start: true,
