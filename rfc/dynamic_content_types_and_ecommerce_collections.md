@@ -71,7 +71,15 @@ export type CollectionMode = "document" | "data" | "singleton";
 
 export interface DynamicFieldDefinition {
   type:
-    "text" | "number" | "boolean" | "enum" | "media" | "relation" | "currency" | "array" | "json";
+    | "text"
+    | "number"
+    | "boolean"
+    | "enum"
+    | "media"
+    | "relation"
+    | "currency"
+    | "array"
+    | "json";
   label: Localized;
   description?: Localized;
   required?: boolean;

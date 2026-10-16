@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "pkg-pr-new": "0.0.90",
+    "pkg-pr-new": "0.0.91",
     "typescript": "7.0.2",
-    "vite-plus": "1.0.0"
+    "vite-plus": "1.2.0"
   },
-  "packageManager": "pnpm@12.10.1"
+  "packageManager": "pnpm@12.11.2"
 }
