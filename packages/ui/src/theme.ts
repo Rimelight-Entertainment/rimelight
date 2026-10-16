@@ -22,10 +22,12 @@ export const parseThemePreference = (
 
 /** The persisted preference: `document.cookie` on the client, the request's `Cookie` header during SSR. */
 export const getThemePreference = (): ThemePreference | undefined => {
-  const cookie =
-    typeof document !== "undefined"
+  const event = getRequestEvent();
+  const cookie = event
+    ? event.request.headers.get("cookie")
+    : typeof document !== "undefined"
       ? document.cookie
-      : getRequestEvent()?.request.headers.get("cookie");
+      : undefined;
   return parseThemePreference(parseCookieHeader(cookie)[THEME_COOKIE]);
 };
 

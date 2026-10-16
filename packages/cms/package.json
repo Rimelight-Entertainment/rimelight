@@ -86,23 +86,23 @@
   "dependencies": {
     "@rimelight/auth": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "@solidjs/web": "2.0.0-rc.13",
+    "@solidjs/web": "2.0.0-rc.15",
     "drizzle-orm": "1.0.0-rc.4",
     "hono": "4.13.13",
-    "solid-js": "2.0.0-rc.13",
+    "solid-js": "2.0.0-rc.15",
     "sortablejs": "1.15.7",
     "zod": "4.6.7"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/router": "2.0.0-next.35",
+    "@solidjs/router": "2.0.0-next.40",
     "@solidjs/vite-plugin": "3.0.0-next.50",
     "@types/sortablejs": "1.15.9",
     "unocss": "66.11.0"
   },
   "peerDependencies": {
-    "@solidjs/router": ">=2.0.0-next.35",
-    "solid-js": ">=2.0.0-rc.11",
+    "@solidjs/router": ">=2.0.0-next.40",
+    "solid-js": ">=2.0.0-rc.15",
     "vite-plus": "^1.0.0"
   },
   "engines": {

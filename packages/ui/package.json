@@ -91,16 +91,16 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/router": "2.0.0-next.35",
+    "@solidjs/router": "2.0.0-next.40",
     "@solidjs/vite-plugin": "3.0.0-next.50",
-    "@solidjs/web": "2.0.0-rc.13",
+    "@solidjs/web": "2.0.0-rc.15",
     "happy-dom": "21.0.1",
-    "solid-js": "2.0.0-rc.13"
+    "solid-js": "2.0.0-rc.15"
   },
   "peerDependencies": {
-    "@solidjs/router": ">=2.0.0-next.0",
-    "@solidjs/web": ">=2.0.0-rc.11",
-    "solid-js": ">=2.0.0-rc.11",
+    "@solidjs/router": ">=2.0.0-next.40",
+    "@solidjs/web": ">=2.0.0-rc.15",
+    "solid-js": ">=2.0.0-rc.15",
     "vite-plus": "^1.0.0"
   },
   "peerDependenciesMeta": {

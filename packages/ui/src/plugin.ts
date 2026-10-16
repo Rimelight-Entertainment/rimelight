@@ -14,7 +14,15 @@ export const VIRTUAL_ID = "virtual:rimelight-ui";
 export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
-  setUIConfig(cfg);
+  const runtimeCfg: UIConfig = {
+    ...(cfg.unstyled !== undefined ? { unstyled: cfg.unstyled } : {}),
+    ...(cfg.icons ? { icons: cfg.icons } : {}),
+    ...(cfg.shortcuts ? { shortcuts: cfg.shortcuts } : {}),
+    ...(cfg.logos ? { logos: cfg.logos } : {}),
+    ...(cfg.components ? { components: cfg.components } : {}),
+  };
+
+  setUIConfig(runtimeCfg);
 
   const virtualPlugin: Plugin = {
     name: "rimelight:ui",
@@ -25,7 +33,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
     },
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify(cfg)};\nexport default config;`;
+        return `export const config = ${JSON.stringify(runtimeCfg)};\nexport default config;`;
       }
       return null;
     },

@@ -1,4 +1,5 @@
 import { createSignal, createStore } from "solid-js";
+import { getRequestEvent } from "@solidjs/web";
 
 export type Handler = (e: KeyboardEvent) => void;
 export interface ShortcutConfig {
@@ -27,8 +28,19 @@ interface Shortcut {
   usingInput?: boolean | string | undefined;
 }
 
-const isApplePlatform = () =>
-  typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent);
+const APPLE_RE = /Mac|iP|macOS/i;
+
+const isApplePlatform = (): boolean => {
+  const event = getRequestEvent();
+  if (event) {
+    const ua =
+      event.request.headers.get("sec-ch-ua-platform") ||
+      event.request.headers.get("user-agent") ||
+      "";
+    return APPLE_RE.test(ua);
+  }
+  return typeof navigator !== "undefined" && APPLE_RE.test(navigator.userAgent);
+};
 
 const getKeySymbol = (norm: string): string | undefined => {
   const mac = isApplePlatform();
@@ -210,7 +222,11 @@ export function defineShortcuts(
   };
 
   window.addEventListener("keydown", onKeyDown);
-  return () => {
+
+  let cleaned = false;
+  const cleanup = () => {
+    if (cleaned) return;
+    cleaned = true;
     window.removeEventListener("keydown", onKeyDown);
     clearTimeout(timer);
     if (ids.size) {
@@ -221,4 +237,6 @@ export function defineShortcuts(
       });
     }
   };
+
+  return cleanup;
 }
