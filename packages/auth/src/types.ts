@@ -195,5 +195,3 @@ export interface AuthConfig extends AuthMiddlewareOptions {
    */
   [key: string]: any;
 }
-
-export type AuthPluginConfig = AuthConfig;

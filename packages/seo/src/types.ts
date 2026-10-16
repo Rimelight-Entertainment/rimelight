@@ -656,5 +656,3 @@ export interface OgRouteOptions {
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms";
 export type { ArticleSchemaOptions, BreadcrumbItem } from "./schema";
-
-export type RimelightSeoOptions = SeoConfig;

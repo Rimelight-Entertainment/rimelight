@@ -7,7 +7,6 @@ export type {
   RoleGuard,
   AuthMiddlewareOptions,
   AuthConfig,
-  AuthPluginConfig,
 } from "./types";
 
 export type { AuthClientSession, AuthClientOptions, AuthClient } from "./client/index";

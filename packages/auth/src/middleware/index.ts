@@ -3,7 +3,7 @@ import type { MiddlewareHandler } from "hono";
 import type {
   AuthEnv,
   AuthMiddlewareOptions,
-  AuthPluginConfig,
+  AuthConfig,
   AuthSession,
   RoleGuard,
   UserSessionContext,
@@ -13,11 +13,11 @@ import { createCfAccessFromEnv } from "../adapters/cf-access";
 import { createAuth0FromEnv } from "../adapters/auth0";
 import { config as pluginConfig } from "virtual:rimelight-auth";
 
-function isConfigRecord(obj: unknown): obj is AuthPluginConfig {
+function isConfigRecord(obj: unknown): obj is AuthConfig {
   return typeof obj === "object" && obj !== null && !Array.isArray(obj);
 }
 
-const defaultPluginConfig: AuthPluginConfig = isConfigRecord(pluginConfig) ? pluginConfig : {};
+const defaultPluginConfig: AuthConfig = isConfigRecord(pluginConfig) ? pluginConfig : {};
 
 let _defaultAuth: AuthAdapter | null = null;
 
