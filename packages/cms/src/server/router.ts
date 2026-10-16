@@ -7,6 +7,7 @@ import {
   pageTemplates as defaultPageTemplates,
   pageVersions as defaultPageVersions,
   pageVersionApprovals as defaultPageVersionApprovals,
+  contentTypes as defaultContentTypes,
 } from "../schema/sqlite";
 import { eq, and, desc, isNull } from "drizzle-orm";
 import {
@@ -41,6 +42,7 @@ export interface CmsRouterOptions {
     pageTemplates?: any;
     pageVersions?: any;
     pageVersionApprovals?: any;
+    contentTypes?: any;
   };
 }
 
@@ -69,6 +71,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
   const pageTemplates = options.schema?.pageTemplates || defaultPageTemplates;
   const pageVersions = options.schema?.pageVersions || defaultPageVersions;
   const pageVersionApprovals = options.schema?.pageVersionApprovals || defaultPageVersionApprovals;
+  const contentTypes = options.schema?.contentTypes || defaultContentTypes;
 
   async function checkApprovalRequirements(
     db: any,
@@ -947,6 +950,104 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     const id = c.req.param("id");
     await deleteByline(db, id);
     return c.json({ success: true });
+  });
+
+  // Content Types (Dynamic Schemas & E-Com)
+  cms.get("/content-types", async (c) => {
+    const db = await getDb();
+    const rows = await db.select().from(contentTypes).orderBy(desc(contentTypes.createdAt));
+    return c.json({ contentTypes: rows });
+  });
+
+  cms.get("/content-types/:slugOrId", async (c) => {
+    const db = await getDb();
+    const slugOrId = c.req.param("slugOrId");
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+    const row = await db
+      .select()
+      .from(contentTypes)
+      .where(isUuid ? eq(contentTypes.id, slugOrId) : eq(contentTypes.slug, slugOrId))
+      .limit(1);
+    if (!row[0]) return c.json({ error: "Content type not found" }, 404);
+    return c.json({ contentType: row[0] });
+  });
+
+  cms.post("/content-types", async (c) => {
+    const db = await getDb();
+    const session = await auth.getSession(c.req.raw);
+    if (!session) return c.json({ error: "Unauthorized" }, 401);
+
+    const body = await c.req.json();
+    const inserted = await db
+      .insert(contentTypes)
+      .values({
+        slug: body.slug,
+        name: body.name,
+        description: body.description ?? null,
+        icon: body.icon ?? "i-lucide-box",
+        mode: body.mode ?? "document",
+        fieldSchema: body.fieldSchema ?? {},
+        ecomSettings: body.ecomSettings ?? null,
+        initialBlocks: body.initialBlocks ?? [],
+        isSystem: body.isSystem ?? false,
+      })
+      .returning();
+    return c.json({ contentType: inserted[0] }, 201);
+  });
+
+  cms.put("/content-types/:id", async (c) => {
+    const db = await getDb();
+    const session = await auth.getSession(c.req.raw);
+    if (!session) return c.json({ error: "Unauthorized" }, 401);
+
+    const id = c.req.param("id");
+    const body = await c.req.json();
+    const updated = await db
+      .update(contentTypes)
+      .set({
+        ...body,
+        updatedAt: new Date(),
+      })
+      .where(eq(contentTypes.id, id))
+      .returning();
+    if (!updated[0]) return c.json({ error: "Content type not found" }, 404);
+    return c.json({ contentType: updated[0] });
+  });
+
+  cms.delete("/content-types/:id", async (c) => {
+    const db = await getDb();
+    const session = await auth.getSession(c.req.raw);
+    if (!session) return c.json({ error: "Unauthorized" }, 401);
+
+    const id = c.req.param("id");
+    await db.delete(contentTypes).where(eq(contentTypes.id, id));
+    return c.json({ success: true });
+  });
+
+  // CMS Dashboard Stats
+  cms.get("/stats", async (c) => {
+    const db = await getDb();
+    try {
+      const [allPagesList, allBylinesList, categoriesList, tagsList] = await Promise.all([
+        db.select().from(pages).where(isNull(pages.deletedAt)),
+        getBylines(db),
+        getTaxonomyTerms(db, "category"),
+        getTaxonomyTerms(db, "tag"),
+      ]);
+      return c.json({
+        totalPages: allPagesList.length,
+        totalBylines: allBylinesList.length,
+        totalCategories: categoriesList.length,
+        totalTags: tagsList.length,
+      });
+    } catch {
+      return c.json({
+        totalPages: 0,
+        totalBylines: 0,
+        totalCategories: 0,
+        totalTags: 0,
+      });
+    }
   });
 
   // MCP JSON-RPC Endpoint

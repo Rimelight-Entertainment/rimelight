@@ -5,9 +5,9 @@ import type { RichTextContent, InlineText } from "#types/blocks";
  */
 export function richTextToHtml(content: RichTextContent): string {
   return content
-    .map((item) => {
+    .map((item: any) => {
       if (item.type === "text" || item.type === "link") {
-        return item.props.content;
+        return item.props?.content || item.text || "";
       }
       if (item.type === "mention") {
         return "";

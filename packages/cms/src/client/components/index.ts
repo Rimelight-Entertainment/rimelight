@@ -27,3 +27,4 @@ export {
   type RimelightTaxonomyMasterDetailProps,
   type TaxonomyRecord,
 } from "./RimelightTaxonomyMasterDetail";
+export { CmsDashboard, type CmsDashboardProps } from "./CmsDashboard";
