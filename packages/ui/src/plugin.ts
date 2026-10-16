@@ -17,7 +17,6 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption {
 
   const virtualPlugin: Plugin = {
     name: "rimelight:ui",
-    enforce: "pre",
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
       return null;

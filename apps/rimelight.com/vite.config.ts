@@ -99,7 +99,6 @@ export default defineConfig({
 
     {
       name: "audits/colors",
-      enforce: "pre",
       resolveId: (id: string) =>
         id === "virtual:audits/colors" ? "\0virtual:audits/colors" : null,
       load: (id: string) =>

@@ -35,7 +35,6 @@ export function cms(options: CmsConfig = {}): Plugin {
 
   return {
     name: "rimelight:cms",
-    enforce: "pre",
     configResolved(config) {
       rootDir = config.root ? path.resolve(config.root) : rootDir;
     },

@@ -160,8 +160,6 @@ export function seo(options: SeoConfig = {}): Plugin {
 
   return {
     name: "rimelight:seo",
-    enforce: "pre",
-
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
       return null;
