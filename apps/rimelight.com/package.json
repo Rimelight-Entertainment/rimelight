@@ -35,7 +35,7 @@
     "prebuild": "pnpm -r --filter \"@rimelight/*\" run --if-present build",
     "build": "vp build",
     "preview": "vp preview",
-    "deploy": "vp build && wrangler deploy",
+    "deploy": "cf deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
@@ -67,8 +67,7 @@
     "filesystem-routing": "0.4.0",
     "typescript": "7.0.2",
     "unocss": "66.11.0",
-    "vite-plus": "1.2.0",
-    "wrangler": "4.151.0"
+    "vite-plus": "1.2.0"
   },
   "packageManager": "pnpm@12.11.2"
 }

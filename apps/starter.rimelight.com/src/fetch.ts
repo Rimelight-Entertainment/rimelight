@@ -10,7 +10,6 @@ import { db } from "#db";
 
 const app = new Hono<{ Bindings: Env }>();
 
-// Export Durable Object classes bound in wrangler.jsonc
 export { ChatRoom, Document } from "./chat/durableObject";
 
 // Middlewares
