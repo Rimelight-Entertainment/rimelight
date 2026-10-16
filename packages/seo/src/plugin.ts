@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import type { SeoConfig, SiteConfig } from "./types";
+import type { SeoConfig } from "./types";
 import { buildRobotsTxt } from "./robots";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap";
 import { buildRssXml } from "./rss";
@@ -13,8 +13,6 @@ import { generateIco, generatePng, generateMaskablePng, generateOgCard } from ".
 
 const VIRTUAL_ID = "virtual:rimelight-seo";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-const VIRTUAL_SERVER_ID = "virtual:rimelight-seo/server";
-const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Validates that a requested file path resolves strictly within the given root directory.
@@ -49,55 +47,33 @@ function createDefaultIconSvg(
 export function seo(options: SeoConfig = {}): Plugin {
   let rootDir = process.cwd();
 
-  const siteOpt = options.site || {};
-  const authorHandle = options.authorHandle || siteOpt.seo?.authorHandle;
-  const ogImage = options.ogImage || siteOpt.ogImage;
-  const normalizedSiteConfig: SiteConfig = {
-    id: options.id || siteOpt.id || "rimelight",
-    name: options.name || siteOpt.name || "Rimelight",
-    description: options.description || siteOpt.description || "",
-    url: options.url || siteOpt.url || "https://rimelight.com",
+  const authorHandle = options.authorHandle;
+  const ogImage = options.ogImage;
+  const normalizedSiteConfig = {
+    id: options.id || "rimelight",
+    name: options.name || "Rimelight",
+    description: options.description || "",
+    url: options.url || "https://rimelight.com",
     ...(ogImage !== undefined && { ogImage }),
-    author: options.author || siteOpt.author || options.name || siteOpt.name || "Rimelight",
-    email: options.email || siteOpt.email || "support@rimelight.com",
+    author: options.author || options.name || "Rimelight",
+    email: options.email || "support@rimelight.com",
     branding: {
       logo: {
-        alt:
-          options.branding?.logo?.alt ||
-          siteOpt.branding?.logo?.alt ||
-          options.name ||
-          siteOpt.name ||
-          "Logo",
-        ...siteOpt.branding?.logo,
+        alt: options.branding?.logo?.alt || options.name || "Logo",
         ...options.branding?.logo,
       },
       colors: {
-        themeColor:
-          options.branding?.colors?.themeColor || siteOpt.branding?.colors?.themeColor || "#ffffff",
-        backgroundColor:
-          options.branding?.colors?.backgroundColor ||
-          siteOpt.branding?.colors?.backgroundColor ||
-          "#0a0a0a",
+        themeColor: options.branding?.colors?.themeColor || "#ffffff",
+        backgroundColor: options.branding?.colors?.backgroundColor || "#0a0a0a",
       },
-      ...siteOpt.branding,
       ...options.branding,
     },
-    seo: {
-      ...siteOpt.seo,
-      titleTemplate:
-        options.titleTemplate ||
-        siteOpt.seo?.titleTemplate ||
-        (options.name ? `%s | ${options.name}` : "%s | Rimelight"),
-      maxDescriptionLength:
-        options.maxDescriptionLength || siteOpt.seo?.maxDescriptionLength || 160,
-      ...(authorHandle !== undefined && { authorHandle }),
-    },
-    ...(siteOpt.openGraph || options.openGraph
-      ? { openGraph: { ...siteOpt.openGraph, ...options.openGraph } }
-      : {}),
-    ...(siteOpt.twitter || options.twitter
-      ? { twitter: { ...siteOpt.twitter, ...options.twitter } }
-      : {}),
+    titleTemplate:
+      options.titleTemplate || (options.name ? `%s | ${options.name}` : "%s | Rimelight"),
+    maxDescriptionLength: options.maxDescriptionLength || 160,
+    ...(authorHandle !== undefined && { authorHandle }),
+    ...(options.openGraph ? { openGraph: options.openGraph } : {}),
+    ...(options.twitter ? { twitter: options.twitter } : {}),
   };
 
   const seoLocales = options.locales;
@@ -116,7 +92,9 @@ export function seo(options: SeoConfig = {}): Plugin {
   let masterIconSource: Buffer | string | null = null;
   let isSvg = false;
   const bgColor =
-    assetOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor || "#ffffff";
+    assetOpts.backgroundColor ||
+    normalizedSiteConfig.branding?.colors?.backgroundColor ||
+    "#ffffff";
 
   function resolveIcons() {
     const candidateIcon =
@@ -126,13 +104,7 @@ export function seo(options: SeoConfig = {}): Plugin {
         : options.branding?.favicon) ||
       options.branding?.appleTouchIcon ||
       options.branding?.icon ||
-      options.branding?.logo?.src ||
-      (typeof siteOpt.branding?.favicon === "object"
-        ? siteOpt.branding.favicon.svg || siteOpt.branding.favicon.png
-        : siteOpt.branding?.favicon) ||
-      siteOpt.branding?.appleTouchIcon ||
-      siteOpt.branding?.icon ||
-      siteOpt.branding?.logo?.src;
+      options.branding?.logo?.src;
 
     if (candidateIcon) {
       if (
@@ -180,7 +152,7 @@ export function seo(options: SeoConfig = {}): Plugin {
       masterIconSource = createDefaultIconSvg(
         normalizedSiteConfig.name,
         bgColor,
-        normalizedSiteConfig.branding.colors.themeColor || "#ffffff",
+        normalizedSiteConfig.branding?.colors?.themeColor || "#ffffff",
       );
       isSvg = true;
     }
@@ -192,7 +164,6 @@ export function seo(options: SeoConfig = {}): Plugin {
 
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      if (id === VIRTUAL_SERVER_ID) return RESOLVED_VIRTUAL_SERVER_ID;
       return null;
     },
 
@@ -200,27 +171,14 @@ export function seo(options: SeoConfig = {}): Plugin {
       if (id === RESOLVED_VIRTUAL_ID) {
         return [
           `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";`,
-          `export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};`,
+          `export const config = ${JSON.stringify(normalizedSiteConfig)};`,
+          `export const siteConfig = config;`,
           `export const SEO_LOCALES = ${JSON.stringify(seoLocales)};`,
           `export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};`,
           `export const seoConfig = { SEO_LOCALES: ${JSON.stringify(seoLocales)}, PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)} };`,
-          `export const createHead = defineSeoConfig(siteConfig);`,
+          `export const createHead = defineSeoConfig(config);`,
           `export { createHead as createSeoHead, defineSeoConfig };`,
-          `export default siteConfig;`,
-        ].join("\n");
-      }
-
-      if (id === RESOLVED_VIRTUAL_SERVER_ID) {
-        resolveIcons();
-        const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null;
-        return [
-          `const b64 = ${JSON.stringify(b64)};`,
-          `export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;`,
-          `export const isSvg = ${JSON.stringify(isSvg)};`,
-          `export const backgroundColor = ${JSON.stringify(bgColor)};`,
-          `export const db = null;`,
-          `export const corpusPages = [];`,
-          `export default { masterIconBuffer, isSvg, backgroundColor, db, corpusPages };`,
+          `export default config;`,
         ].join("\n");
       }
 
@@ -368,14 +326,16 @@ export function seo(options: SeoConfig = {}): Plugin {
 
         if (rawUrl === "/site.webmanifest" && options.manifest !== false) {
           const manOpts = typeof options.manifest === "object" ? options.manifest : {};
+          const bgColor =
+            manOpts.backgroundColor || normalizedSiteConfig.branding?.colors?.backgroundColor;
+          const thColor = manOpts.themeColor || normalizedSiteConfig.branding?.colors?.themeColor;
           const manifest = buildWebManifest({
             name: manOpts.name || normalizedSiteConfig.name,
             shortName: manOpts.shortName || normalizedSiteConfig.name,
             description: manOpts.description || normalizedSiteConfig.description,
             startUrl: manOpts.startUrl || "/",
-            backgroundColor:
-              manOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor,
-            themeColor: manOpts.themeColor || normalizedSiteConfig.branding.colors.themeColor,
+            ...(bgColor && { backgroundColor: bgColor }),
+            ...(thColor && { themeColor: thColor }),
             icons: manOpts.icons || [
               { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
               { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
@@ -580,14 +540,16 @@ export function seo(options: SeoConfig = {}): Plugin {
 
       if (options.manifest !== false) {
         const manOpts = typeof options.manifest === "object" ? options.manifest : {};
+        const bgColor =
+          manOpts.backgroundColor || normalizedSiteConfig.branding?.colors?.backgroundColor;
+        const thColor = manOpts.themeColor || normalizedSiteConfig.branding?.colors?.themeColor;
         const manifest = buildWebManifest({
           name: manOpts.name || normalizedSiteConfig.name,
           shortName: manOpts.shortName || normalizedSiteConfig.name,
           description: manOpts.description || normalizedSiteConfig.description,
           startUrl: manOpts.startUrl || "/",
-          backgroundColor:
-            manOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor,
-          themeColor: manOpts.themeColor || normalizedSiteConfig.branding.colors.themeColor,
+          ...(bgColor && { backgroundColor: bgColor }),
+          ...(thColor && { themeColor: thColor }),
           icons: manOpts.icons || [
             { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
             { src: "/icon-512.png", sizes: "512x512", type: "image/png" },

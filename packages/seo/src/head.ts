@@ -1,4 +1,4 @@
-import type { HeadProps, OpenGraphMeta, SiteConfig, TwitterMeta } from "./types";
+import type { HeadProps, OpenGraphMeta, SeoConfig, TwitterMeta } from "./types";
 export type { HeadProps } from "./types";
 import {
   buildCanonicalUrl,
@@ -15,7 +15,7 @@ import type { HeadTag } from "@solidjs/web";
 
 export type { HeadTag } from "@solidjs/web";
 
-const DEFAULT_SITE_CONFIG: SiteConfig = {
+const DEFAULT_SEO_CONFIG: SeoConfig = {
   id: "rimelight",
   name: "Rimelight",
   description: "",
@@ -31,16 +31,14 @@ const DEFAULT_SITE_CONFIG: SiteConfig = {
       backgroundColor: "#0a0a0a",
     },
   },
-  seo: {
-    titleTemplate: "%s | Rimelight",
-    maxDescriptionLength: 160,
-  },
+  titleTemplate: "%s | Rimelight",
+  maxDescriptionLength: 160,
 };
 
 /**
  * Internal tag generator from resolved HeadProps.
  */
-function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadTag[] {
+function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
   const {
     title,
     description,
@@ -70,7 +68,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     nonce,
   } = props;
 
-  const config: SiteConfig = deepMerge(DEFAULT_SITE_CONFIG, baseConfig || {}, propsConfig || {});
+  const config: SeoConfig = deepMerge(DEFAULT_SEO_CONFIG, baseConfig || {}, propsConfig || {});
 
   const siteName = config.name || "Rimelight";
   const siteDescription = config.description || "";
@@ -99,8 +97,8 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
 
   const appleTouchIcon =
     customAppleTouchIcon || config.branding?.appleTouchIcon || "/apple-touch-icon.png";
-  const twitterHandle = config.seo?.authorHandle;
-  const titleTemplate = config.seo?.titleTemplate || `%s | ${siteName}`;
+  const twitterHandle = config.authorHandle;
+  const titleTemplate = config.titleTemplate || `%s | ${siteName}`;
 
   // Calculated Values (strictly bounded per RFC)
   const displayTitle = buildPageTitle({
@@ -112,8 +110,8 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   }).slice(0, 200);
 
   const finalDescription = description || siteDescription;
-  const safeDescription = config.seo?.maxDescriptionLength
-    ? buildSafeDescription(finalDescription, Math.min(config.seo.maxDescriptionLength, 300))
+  const safeDescription = config.maxDescriptionLength
+    ? buildSafeDescription(finalDescription, Math.min(config.maxDescriptionLength, 300))
     : buildSafeDescription(finalDescription, 300);
 
   const defaultDynamicOg = buildDefaultOgImageUrl({
@@ -121,7 +119,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     description: finalDescription,
     siteName,
   });
-  const ogImageFallback = config.seo?.ogImageFallback || config.ogImage || defaultDynamicOg;
+  const ogImageFallback = config.ogImage || defaultDynamicOg;
 
   const rawOgImage = Array.isArray(ogImage)
     ? ogImage[0]
@@ -494,7 +492,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
  * Builds the strongly-typed head tag list for a page's <head>. Feed the result directly to
  * `useHead()` from @solidjs/web.
  */
-export function createSeoHead(props: HeadProps = {}, boundConfig?: Partial<SiteConfig>): HeadTag[] {
+export function createSeoHead(props: HeadProps = {}, boundConfig?: SeoConfig): HeadTag[] {
   return generateTags(props, boundConfig);
 }
 
@@ -504,11 +502,11 @@ export function createSeoHead(props: HeadProps = {}, boundConfig?: Partial<SiteC
 export const createHead = createSeoHead;
 
 /**
- * Factory that returns a pre-configured createSeoHead bound to a custom SiteConfig. Ideal for
+ * Factory that returns a pre-configured createSeoHead bound to a custom SeoConfig. Ideal for
  * multi-tenant apps, edge workers, and contexts outside Vite virtual modules.
  */
-export function defineSeoConfig(siteConfig: Partial<SiteConfig>) {
+export function defineSeoConfig(config: SeoConfig) {
   return function configuredCreateSeoHead(props: HeadProps = {}): HeadTag[] {
-    return createSeoHead(props, siteConfig);
+    return createSeoHead(props, config);
   };
 }

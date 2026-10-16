@@ -8,7 +8,7 @@ export type {
   SitemapUrl,
   SitemapOptions,
   UserAgentRule,
-  SiteConfig,
+  BrandingConfig,
   OGImage,
   RSSFeed,
   RssItem,

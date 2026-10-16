@@ -5,8 +5,6 @@ import { auth as authPlugin } from "../src/plugin";
 
 const VIRTUAL_ID = "virtual:rimelight-auth";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-const VIRTUAL_SERVER_ID = "virtual:rimelight-auth/server";
-const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Invoke a Vite object-hook the way the container does (function or { handler }).
@@ -71,14 +69,10 @@ describe("Auth Vite Plugin", () => {
     });
 
     expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
-    expect(await callHook(plugin.resolveId, VIRTUAL_SERVER_ID)).toBe(RESOLVED_VIRTUAL_SERVER_ID);
     expect(await callHook(plugin.resolveId, "some-other-id")).toBeNull();
 
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
     expect(configCode).toContain("export const config =");
     expect(configCode).toContain('"/admin"');
-
-    const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
-    expect(serverCode).toContain("createCfAccessFromEnv");
   });
 });

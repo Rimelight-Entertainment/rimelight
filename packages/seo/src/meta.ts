@@ -1,4 +1,4 @@
-import type { SiteConfig } from "./types";
+import type { SeoConfig } from "./types";
 
 /**
  * Build a canonical URL from a page URL and site base. - Strips trailing slash unless the path has
@@ -105,7 +105,7 @@ export function buildDefaultOgImageUrl(opts: {
  * type="application/ld+json">.
  */
 export function buildWebSiteSchema(
-  config: Pick<SiteConfig, "name" | "url" | "description">,
+  config: Pick<SeoConfig, "name" | "url" | "description">,
   site?: string,
 ): Record<string, unknown> {
   return {

@@ -7,8 +7,6 @@ import { i18n } from "../src/plugin";
 
 const VIRTUAL_ID = "virtual:rimelight-i18n";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
-const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Invoke a Vite object-hook the way the container does (function or { handler }).
@@ -52,11 +50,10 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
   it("resolves virtual module IDs", async () => {
     const plugin: Plugin = i18n();
     expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
-    expect(await callHook(plugin.resolveId, VIRTUAL_SERVER_ID)).toBe(RESOLVED_VIRTUAL_SERVER_ID);
     expect(await callHook(plugin.resolveId, "some-other-id")).toBeNull();
   });
 
-  it("loads virtual config and server translations in-memory with inferred locales", async () => {
+  it("loads virtual config and translations in-memory with inferred locales", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-virtual-"));
     const i18nDir = path.join(tmpDir, "src", "i18n");
     fs.mkdirSync(i18nDir, { recursive: true });
@@ -78,11 +75,8 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       expect(configCode).toContain(`"locales":["en","es","pt-BR"]`);
       expect(configCode).toContain(`"defaultLocale":"en"`);
       expect(configCode).toContain(`"prefixDefaultLocale":false`);
-      expect(configCode).not.toContain(`"Início"`);
-
-      const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
-      expect(serverCode).toContain(`"Início"`);
-      expect(serverCode).toContain(`"nav":{"home":"Home"}`);
+      expect(configCode).toContain(`"Início"`);
+      expect(configCode).toContain(`"nav":{"home":"Home"}`);
 
       // Verify no physical top-level .rimelight directory was written to disk!
       expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
@@ -233,11 +227,9 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       dts = fs.readFileSync(fullTypesPath, "utf-8");
       expect(dts).toContain('"hero.subtitle" | "hero.title"');
 
-      // Both virtual modules are invalidated in every environment, and the
+      // The virtual module is invalidated in every environment, and the
       // browser is told to fully reload so SSR re-renders fresh translations.
-      expect(new Set(invalidated)).toEqual(
-        new Set([RESOLVED_VIRTUAL_ID, RESOLVED_VIRTUAL_SERVER_ID]),
-      );
+      expect(new Set(invalidated)).toEqual(new Set([RESOLVED_VIRTUAL_ID]));
       expect(sent).toEqual([{ type: "full-reload" }]);
       expect(ret).toEqual([]);
     } finally {

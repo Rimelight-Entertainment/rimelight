@@ -4,8 +4,6 @@ import path from "node:path";
 
 const VIRTUAL_ID = "virtual:rimelight-seo";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-const VIRTUAL_SERVER_ID = "virtual:rimelight-seo/server";
-const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
   const fn =
@@ -36,15 +34,11 @@ describe("seo Vite Plugin", () => {
     });
 
     expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
-    expect(await callHook(plugin.resolveId, VIRTUAL_SERVER_ID)).toBe(RESOLVED_VIRTUAL_SERVER_ID);
     expect(await callHook(plugin.resolveId, "other-id")).toBeNull();
 
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
     expect(configCode).toContain("export const siteConfig =");
     expect(configCode).toContain('"name":"Test Site"');
-
-    const serverCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_SERVER_ID)) as string;
-    expect(serverCode).toContain("export const masterIconBuffer =");
   });
 
   it("emits static assets during generateBundle", async () => {

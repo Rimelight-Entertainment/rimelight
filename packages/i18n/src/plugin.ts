@@ -6,8 +6,6 @@ import type { I18nConfig } from "./types";
 
 const VIRTUAL_ID = "virtual:rimelight-i18n";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
-const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 export function i18n(options: I18nConfig = {}): Plugin {
   let root = process.cwd();
@@ -67,10 +65,8 @@ export function i18n(options: I18nConfig = {}): Plugin {
       ? Object.values(server.environments).map((env) => env.moduleGraph)
       : ([server.moduleGraph].filter(Boolean) as { getModuleById?: (id: string) => unknown }[]);
     for (const graph of graphs) {
-      for (const id of [RESOLVED_VIRTUAL_ID, RESOLVED_VIRTUAL_SERVER_ID]) {
-        const mod = graph.getModuleById?.(id);
-        if (mod) graph.invalidateModule?.(mod);
-      }
+      const mod = graph.getModuleById?.(RESOLVED_VIRTUAL_ID);
+      if (mod) graph.invalidateModule?.(mod);
     }
   };
 
@@ -97,7 +93,6 @@ export function i18n(options: I18nConfig = {}): Plugin {
 
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      if (id === VIRTUAL_SERVER_ID) return RESOLVED_VIRTUAL_SERVER_ID;
       return null;
     },
 
@@ -109,13 +104,10 @@ export function i18n(options: I18nConfig = {}): Plugin {
           defaultLocale: getDefaultLocale(locales),
           prefixDefaultLocale: options.prefixDefaultLocale ?? true,
           skipPaths: options.skipPaths ?? ["/api", "/_"],
-          translations: {},
+          translations: loadTranslations(),
         })};`;
       }
 
-      if (id === RESOLVED_VIRTUAL_SERVER_ID) {
-        return `export default ${JSON.stringify(loadTranslations())};`;
-      }
       return null;
     },
 

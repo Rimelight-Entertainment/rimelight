@@ -113,50 +113,28 @@ export interface TwitterMeta {
   [key: string]: unknown;
 }
 
-/**
- * Site identity and SEO defaults shared across all Rimelight applications. The UI-specific
- * overrides (component themes, shortcuts, etc.) live in UIConfig (packages/ui) and are passed
- * directly to the ui() integration.
- */
-export interface SiteConfig {
-  id: string;
-  name: string;
-  description: string;
-  url: string;
-  ogImage?: string;
-  author: string;
-  email: string;
-  branding: {
-    logo: {
-      alt: string;
-      src?: string;
-      [key: string]: unknown;
-    };
-    favicon?:
-      | {
-          svg?: string;
-          ico?: string;
-          png?: string;
-          [key: string]: string | undefined;
-        }
-      | string;
-    appleTouchIcon?: string;
-    icons?: WebManifestIcon[];
-    icon?: string;
-    colors: {
-      themeColor: string;
-      backgroundColor: string;
-    };
+export interface BrandingConfig {
+  logo?: {
+    alt?: string;
+    src?: string;
     [key: string]: unknown;
   };
-  seo: {
-    titleTemplate: string;
-    ogImageFallback?: string;
-    maxDescriptionLength: number;
-    authorHandle?: string;
+  favicon?:
+    | {
+        svg?: string;
+        ico?: string;
+        png?: string;
+        [key: string]: string | undefined;
+      }
+    | string;
+  appleTouchIcon?: string;
+  icons?: WebManifestIcon[];
+  icon?: string;
+  colors?: {
+    themeColor?: string;
+    backgroundColor?: string;
   };
-  openGraph?: OpenGraphMeta;
-  twitter?: TwitterMeta;
+  [key: string]: unknown;
 }
 
 /**
@@ -249,9 +227,9 @@ export interface HeadProps {
    */
   appleTouchIcon?: string | undefined;
   /**
-   * Site configuration for defaults
+   * SEO configuration for defaults
    */
-  config?: SiteConfig | undefined;
+  config?: SeoConfig | undefined;
   /**
    * Meta charset
    */
@@ -556,16 +534,12 @@ export interface SeoConfig {
   ogImage?: string;
   author?: string;
   email?: string;
-  branding?: Partial<SiteConfig["branding"]>;
+  branding?: BrandingConfig;
   titleTemplate?: string;
   maxDescriptionLength?: number;
   authorHandle?: string;
   openGraph?: OpenGraphMeta;
   twitter?: TwitterMeta;
-  /**
-   * Full or partial SiteConfig object
-   */
-  site?: Partial<SiteConfig>;
   /**
    * Locale mappings for hreflang / sitemaps
    */

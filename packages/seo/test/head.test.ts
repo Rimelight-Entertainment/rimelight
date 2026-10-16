@@ -150,7 +150,8 @@ describe("createSeoHead", () => {
     const customCreateHead = defineSeoConfig({
       name: "Acme Corp",
       url: "https://acme.org",
-      seo: { titleTemplate: "%s — Acme Platform", maxDescriptionLength: 160 },
+      titleTemplate: "%s — Acme Platform",
+      maxDescriptionLength: 160,
     });
 
     const tags = customCreateHead({

@@ -1,9 +1,6 @@
 import type { MiddlewareHandler } from "hono";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { config, t, type I18nContextStore } from "./runtime";
-import serverTranslations from "virtual:rimelight-i18n/server";
-
-Object.assign(config.translations, serverTranslations);
 
 /**
  * Hono context variables injected by the i18n middleware.
@@ -45,7 +42,7 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
   return target
     ? c.redirect(`${target}${search}`, 302)
     : (globalThis.__rimelight_i18n ??= new AsyncLocalStorage<I18nContextStore>()).run(
-        { locale, translations: serverTranslations?.[locale] ?? config.translations?.[locale] },
+        { locale, translations: config.translations?.[locale] },
         next,
       );
 };

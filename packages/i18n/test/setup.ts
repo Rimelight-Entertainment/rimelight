@@ -9,7 +9,3 @@ vi.mock("virtual:rimelight-i18n", () => ({
     translations: {},
   },
 }));
-
-vi.mock("virtual:rimelight-i18n/server", () => ({
-  default: {},
-}));

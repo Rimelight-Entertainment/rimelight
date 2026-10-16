@@ -130,8 +130,8 @@ export default function DevSeoPage() {
 
   const liveRssFeed = () =>
     buildRssXml({
-      title: `${liveConfig().name} Newsroom`,
-      description: liveConfig().description,
+      title: `${liveConfig().name || "Rimelight"} Newsroom`,
+      description: liveConfig().description || "",
       site: activeOrigin(),
       feedUrl: `${activeOrigin()}/rss.xml`,
       language: liveLocales()[defaultLocaleKey()] || "en-US",
@@ -140,7 +140,7 @@ export default function DevSeoPage() {
           title: "Platform Overview",
           link: "/",
           pubDate: new Date("2026-09-01"),
-          description: liveConfig().description,
+          description: liveConfig().description || "",
         },
         {
           title: "Developer Tools Release",
@@ -174,9 +174,9 @@ export default function DevSeoPage() {
 
   const liveWebManifest = () =>
     buildWebManifest({
-      name: liveConfig().name,
-      shortName: liveConfig().name,
-      description: liveConfig().description,
+      name: liveConfig().name || "Rimelight",
+      shortName: liveConfig().name || "Rimelight",
+      description: liveConfig().description || "",
       themeColor: liveConfig().branding?.colors?.themeColor || "#ffffff",
       backgroundColor: liveConfig().branding?.colors?.backgroundColor || "#0a0a0a",
     });
@@ -184,12 +184,12 @@ export default function DevSeoPage() {
   const liveArticleSchema = () =>
     buildArticleSchema({
       type: "BlogPosting",
-      title: `${liveConfig().name} Feature Showcase`,
-      description: liveConfig().description,
+      title: `${liveConfig().name || "Rimelight"} Feature Showcase`,
+      description: liveConfig().description || "",
       url: `${activeOrigin()}${location.pathname}`,
       datePublished: new Date("2026-10-11"),
-      authorName: liveConfig().author || liveConfig().name,
-      publisherName: liveConfig().name,
+      authorName: liveConfig().author || liveConfig().name || "Rimelight",
+      publisherName: liveConfig().name || "Rimelight",
     });
 
   const liveBreadcrumbSchema = () =>
@@ -221,14 +221,14 @@ export default function DevSeoPage() {
   const ogPreviewCards: OgPreviewItem[] = [
     {
       label: "Home",
-      title: liveConfig().name,
+      title: liveConfig().name || "Rimelight",
       description: liveConfig().description || "Interactive entertainment and software tools.",
       type: "",
       isDocs: false,
     },
     {
       label: "Company",
-      title: `About ${liveConfig().name}`,
+      title: `About ${liveConfig().name || "Rimelight"}`,
       description: "Creating interactive entertainment and software tools.",
       type: "Company",
       isDocs: false,
@@ -334,42 +334,42 @@ export default function DevSeoPage() {
       rows: [
         {
           label: "Templated title",
-          code: `buildPageTitle({ title: "SEO Audit", siteName: siteConfig.name, titleTemplate: siteConfig.seo.titleTemplate })`,
+          code: `buildPageTitle({ title: "SEO Audit", siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
           description: "Interpolates %s with the title according to the active template.",
           value: buildPageTitle({
             title: "SEO Audit",
-            siteName: liveConfig().name,
-            titleTemplate: liveConfig().seo.titleTemplate,
+            siteName: liveConfig().name || "Rimelight",
+            titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
           }),
         },
         {
           label: "Untitled fallback",
-          code: `buildPageTitle({ siteName: siteConfig.name, titleTemplate: siteConfig.seo.titleTemplate })`,
+          code: `buildPageTitle({ siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
           description: "Falls back to siteName when title is omitted.",
           value: buildPageTitle({
-            siteName: liveConfig().name,
-            titleTemplate: liveConfig().seo.titleTemplate,
+            siteName: liveConfig().name || "Rimelight",
+            titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
           }),
         },
         {
           label: "404 route",
-          code: `buildPageTitle({ is404: true, siteName: siteConfig.name, titleTemplate: siteConfig.seo.titleTemplate })`,
+          code: `buildPageTitle({ is404: true, siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
           description: "Standard 404 title format.",
           value: buildPageTitle({
             is404: true,
-            siteName: liveConfig().name,
-            titleTemplate: liveConfig().seo.titleTemplate,
+            siteName: liveConfig().name || "Rimelight",
+            titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
           }),
         },
         {
           label: "Absolute bypass",
-          code: `buildPageTitle({ title: "Custom Verbatim Title", absolute: true, siteName: siteConfig.name, titleTemplate: siteConfig.seo.titleTemplate })`,
+          code: `buildPageTitle({ title: "Custom Verbatim Title", absolute: true, siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
           description: "Bypasses the site template entirely.",
           value: buildPageTitle({
             title: "Custom Verbatim Title",
             absolute: true,
-            siteName: liveConfig().name,
-            titleTemplate: liveConfig().seo.titleTemplate,
+            siteName: liveConfig().name || "Rimelight",
+            titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
           }),
         },
       ],
@@ -380,11 +380,11 @@ export default function DevSeoPage() {
       rows: [
         {
           label: "Within character limit",
-          code: `buildSafeDescription(siteConfig.description, siteConfig.seo.maxDescriptionLength)`,
+          code: `buildSafeDescription(siteConfig.description, siteConfig.maxDescriptionLength)`,
           description: "Description passed through without truncation when under the limit.",
           value: buildSafeDescription(
-            liveConfig().description,
-            liveConfig().seo.maxDescriptionLength,
+            liveConfig().description || "",
+            liveConfig().maxDescriptionLength || 160,
           ),
         },
         {
@@ -431,17 +431,20 @@ export default function DevSeoPage() {
         {
           label: "Root URL",
           code: `buildCanonicalUrl("/", siteConfig.url)`,
-          value: buildCanonicalUrl("/", liveConfig().url),
+          value: buildCanonicalUrl("/", liveConfig().url || "https://rimelight.com"),
         },
         {
           label: "Current location path",
           code: `buildCanonicalUrl(location.pathname, siteConfig.url)`,
-          value: buildCanonicalUrl(location.pathname, liveConfig().url),
+          value: buildCanonicalUrl(location.pathname, liveConfig().url || "https://rimelight.com"),
         },
         {
           label: "Query string preserved",
           code: `buildCanonicalUrl("${location.pathname}?tab=audit", siteConfig.url)`,
-          value: buildCanonicalUrl(`${location.pathname}?tab=audit`, liveConfig().url),
+          value: buildCanonicalUrl(
+            `${location.pathname}?tab=audit`,
+            liveConfig().url || "https://rimelight.com",
+          ),
         },
       ],
     },
@@ -474,7 +477,11 @@ export default function DevSeoPage() {
           label: "Active WebSite JSON-LD",
           code: `buildWebSiteSchema(siteConfig, siteConfig.url)`,
           description: "Emits Schema.org WebSite node for search engines.",
-          value: JSON.stringify(buildWebSiteSchema(liveConfig(), liveConfig().url), null, 2),
+          value: JSON.stringify(
+            buildWebSiteSchema(liveConfig(), liveConfig().url || "https://rimelight.com"),
+            null,
+            2,
+          ),
         },
       ],
     },

@@ -8,8 +8,3 @@ declare module "virtual:rimelight-i18n" {
   };
   export default config;
 }
-
-declare module "virtual:rimelight-i18n/server" {
-  const translations: Record<string, Record<string, unknown>>;
-  export default translations;
-}

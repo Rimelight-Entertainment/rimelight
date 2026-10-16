@@ -32,18 +32,3 @@ vi.mock("virtual:rimelight-seo", () => ({
     },
   },
 }));
-
-vi.mock("virtual:rimelight-seo/server", () => ({
-  masterIconBuffer: null,
-  isSvg: false,
-  backgroundColor: "#000000",
-  db: null,
-  corpusPages: [],
-  default: {
-    masterIconBuffer: null,
-    isSvg: false,
-    backgroundColor: "#000000",
-    db: null,
-    corpusPages: [],
-  },
-}));
