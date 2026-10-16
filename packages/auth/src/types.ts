@@ -2,6 +2,27 @@ import type { Context } from "hono";
 
 export type UserType = "user" | "employee" | "guest" | (string & {});
 
+export interface AuthSession {
+  id: string;
+  userId: string;
+  roles?: string[] | undefined;
+  userType?: UserType | undefined;
+}
+
+export type AuthEnv = {
+  Variables: {
+    user: UserSessionContext | null;
+    session: AuthSession | null;
+  };
+};
+
+declare module "hono" {
+  interface ContextVariableMap {
+    user: UserSessionContext | null;
+    session: AuthSession | null;
+  }
+}
+
 export interface UserSessionContext {
   /**
    * Unique user identifier (e.g. Auth0 sub claim, user UUID, or email)

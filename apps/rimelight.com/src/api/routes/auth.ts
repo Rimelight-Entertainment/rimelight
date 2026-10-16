@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { setCookie, deleteCookie } from "hono/cookie";
 import { auth } from "@rimelight/auth";
 import {
   getAuth0ConfigFromEnv,
@@ -223,10 +224,14 @@ api.get("/callback", async (c) => {
       "rimelight_default_development_secret_key_32bytes_minimum_length";
     const sessionToken = await createSessionToken(session, sessionSecret, "7d");
 
-    const isSecure = url.protocol === "https:";
-    const cookieHeader = `${auth0Config.sessionCookieName || "rimelight_session"}=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}${isSecure ? "; Secure" : ""}`;
+    setCookie(c, auth0Config.sessionCookieName || "rimelight_session", sessionToken, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60,
+      secure: url.protocol === "https:",
+    });
 
-    c.header("Set-Cookie", cookieHeader);
     return c.redirect(returnTo);
   } catch (err: any) {
     console.error("Auth0 code exchange failed:", err);
@@ -241,10 +246,10 @@ api.get("/logout", (c) => {
   const baseUrl = getBaseUrl(c);
   const returnTo = `${baseUrl}/`;
 
-  const isSecure = new URL(c.req.url).protocol === "https:";
-  const clearCookie = `${auth0Config.sessionCookieName || "rimelight_session"}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${isSecure ? "; Secure" : ""}`;
-
-  c.header("Set-Cookie", clearCookie);
+  deleteCookie(c, auth0Config.sessionCookieName || "rimelight_session", {
+    path: "/",
+    secure: new URL(c.req.url).protocol === "https:",
+  });
 
   if (auth0Config.clientId && auth0Config.clientId !== "default_client_id") {
     const logoutUrl = createAuth0LogoutUrl({

@@ -1,4 +1,5 @@
 import type { AuthAdapter, UserSessionContext, UserType } from "../types";
+import { parse } from "hono/utils/cookie";
 import {
   decodeJwt,
   createSessionToken as createSessionTokenJwt,
@@ -283,14 +284,12 @@ export function createAuth0LogoutUrl(options: {
 
 function parseCookie(cookieHeader: string | null, name: string): string | null {
   if (!cookieHeader) return null;
-  const cookies = cookieHeader.split(";");
-  for (const cookie of cookies) {
-    const [k, v] = cookie.trim().split("=");
-    if (k === name && v) {
-      return decodeURIComponent(v);
-    }
+  try {
+    const parsed = parse(cookieHeader, name);
+    return parsed[name] ?? null;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 /**

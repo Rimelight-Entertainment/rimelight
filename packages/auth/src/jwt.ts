@@ -1,10 +1,9 @@
 /**
- * Zero-dependency Web Crypto JWT & JWKS engine for @rimelight/auth. Implements RFC 7519 (JWT), RFC
- * 7515 (JWS), RFC 7517 (JWK), and RFC 7518 (JWA). Works isomorphically across Cloudflare Workers,
- * Node.js (>=22), Bun, and Deno.
+ * Web Crypto JWT & JWKS engine for @rimelight/auth powered by hono/jwt.
  */
+import { decode, sign, verify, verifyWithJwks } from "hono/jwt";
 
-// --- Base64URL Utilities (Standard Web API) ---
+// --- Base64URL Utilities ---
 
 export function base64UrlEncode(data: Uint8Array | string): string {
   const bytes = typeof data === "string" ? new TextEncoder().encode(data) : data;
@@ -79,60 +78,39 @@ export function decodeJwtHeader(token: string): Record<string, any> {
   if (!token || typeof token !== "string") {
     throw new Error("Invalid JWT: token must be a non-empty string");
   }
-  const parts = token.split(".");
-  const headerPart = parts[0];
-  if (parts.length < 2 || !headerPart) {
+  try {
+    return decode(token).header as Record<string, any>;
+  } catch {
     throw new Error("Invalid JWT structure");
   }
-  return JSON.parse(base64UrlDecodeToString(headerPart));
 }
 
 export function decodeJwt<T = Record<string, any>>(token: string): T {
   if (!token || typeof token !== "string") {
     throw new Error("Invalid JWT: token must be a non-empty string");
   }
-  const parts = token.split(".");
-  const payloadPart = parts[1];
-  if (parts.length < 2 || !payloadPart) {
+  try {
+    return decode(token).payload as T;
+  } catch {
     throw new Error("Invalid JWT structure");
   }
-  return JSON.parse(base64UrlDecodeToString(payloadPart)) as T;
 }
 
-// --- HMAC-SHA256 (HS256) Session Tokens ---
+// --- HS256 Session Tokens ---
 
 export async function createSessionToken(
   session: Record<string, any>,
   secret: string,
   expiresIn: string | number = "7d",
 ): Promise<string> {
-  const enc = new TextEncoder();
-  const header = { alg: "HS256", typ: "JWT" };
   const now = Math.floor(Date.now() / 1000);
   const expSeconds = parseDuration(expiresIn);
-
   const payload = {
     ...session,
     iat: now,
     exp: now + expSeconds,
   };
-
-  const headerB64 = base64UrlEncode(JSON.stringify(header));
-  const payloadB64 = base64UrlEncode(JSON.stringify(payload));
-  const data = `${headerB64}.${payloadB64}`;
-
-  const key = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-
-  const signature = await crypto.subtle.sign("HMAC", key, enc.encode(data));
-  const signatureB64 = base64UrlEncode(new Uint8Array(signature));
-
-  return `${data}.${signatureB64}`;
+  return await sign(payload, secret, "HS256");
 }
 
 export async function verifySessionToken<T = Record<string, any>>(
@@ -142,40 +120,8 @@ export async function verifySessionToken<T = Record<string, any>>(
 ): Promise<T | null> {
   try {
     if (!token || typeof token !== "string") return null;
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-
-    const headerB64 = parts[0];
-    const payloadB64 = parts[1];
-    const signatureB64 = parts[2];
-    if (!headerB64 || !payloadB64 || !signatureB64) return null;
-
-    const header = JSON.parse(base64UrlDecodeToString(headerB64));
-    if (header["alg"] !== "HS256") return null;
-
-    const enc = new TextEncoder();
-    const data = `${headerB64}.${payloadB64}`;
-    const signatureBytes = base64UrlDecode(signatureB64);
-
-    const key = await crypto.subtle.importKey(
-      "raw",
-      enc.encode(secret),
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["verify"],
-    );
-
-    const isValid = await crypto.subtle.verify(
-      "HMAC",
-      key,
-      signatureBytes as unknown as BufferSource,
-      enc.encode(data),
-    );
-    if (!isValid) return null;
-
-    const payload = JSON.parse(base64UrlDecodeToString(payloadB64));
+    const payload = (await verify(token, secret, { alg: "HS256", exp: false, nbf: false })) as any;
     const now = Math.floor(Date.now() / 1000);
-    // First-party session tokens use tighter 5s tolerance against replay/expiration window
     const clockTolerance = options.clockTolerance ?? 5;
 
     if (payload["exp"] !== undefined && typeof payload["exp"] === "number") {
@@ -196,52 +142,13 @@ export async function verifySessionToken<T = Record<string, any>>(
   }
 }
 
-// --- RS256 / JWKS Remote Key Verification (Auth0 & Cloudflare Access) ---
+// --- RS256 / JWKS Remote Key Verification ---
 
-interface JwkKey {
-  kty: string;
-  kid?: string;
-  use?: string;
-  alg?: string;
-  n?: string;
-  e?: string;
-  [key: string]: any;
-}
-
-interface JwksCacheEntry {
-  keys: JwkKey[];
-  fetchedAt: number;
-}
-
-const jwksCache = new Map<string, JwksCacheEntry>();
-const cryptoKeyCache = new Map<string, CryptoKey>();
+const jwksCache = new Map<string, { keys: any[]; fetchedAt: number }>();
 const JWKS_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 export function clearJwksCache(): void {
   jwksCache.clear();
-  cryptoKeyCache.clear();
-}
-
-async function fetchJwks(url: string): Promise<JwkKey[]> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch JWKS from ${url} (status ${res.status})`);
-  }
-  const data = (await res.json()) as { keys?: JwkKey[] };
-  return data.keys || [];
-}
-
-async function getJwksKeys(url: string, forceRefresh = false): Promise<JwkKey[]> {
-  const now = Date.now();
-  const cached = jwksCache.get(url);
-
-  if (!forceRefresh && cached && now - cached.fetchedAt < JWKS_CACHE_TTL_MS) {
-    return cached.keys;
-  }
-
-  const keys = await fetchJwks(url);
-  jwksCache.set(url, { keys, fetchedAt: now });
-  return keys;
 }
 
 export interface VerifyJwtRs256Options {
@@ -257,98 +164,81 @@ export async function verifyJwtRs256<T = Record<string, any>>(
 ): Promise<T | null> {
   try {
     if (!token || typeof token !== "string") return null;
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
 
-    const headerB64 = parts[0];
-    const payloadB64 = parts[1];
-    const signatureB64 = parts[2];
-    if (!headerB64 || !payloadB64 || !signatureB64) return null;
+    let cached = jwksCache.get(jwksUrl);
+    const now = Date.now();
+    let keys = cached && now - cached.fetchedAt < JWKS_CACHE_TTL_MS ? cached.keys : undefined;
 
-    const header = JSON.parse(base64UrlDecodeToString(headerB64));
-    if (header["alg"] !== "RS256") return null;
-
-    const kid = header["kid"] as string | undefined;
-
-    // 1. Get JWKS keys (with cache & auto-refresh on unknown kid)
-    let keys = await getJwksKeys(jwksUrl, false);
-    let matchingJwk = keys.find((k) => (kid ? k.kid === kid : true) && k.kty === "RSA");
-
-    if (!matchingJwk && kid) {
-      // Retry once with a fresh fetch in case key was rotated
-      keys = await getJwksKeys(jwksUrl, true);
-      matchingJwk = keys.find((k) => k.kid === kid && k.kty === "RSA");
+    if (!keys) {
+      const res = await fetch(jwksUrl);
+      if (!res.ok) return null;
+      const data = (await res.json()) as { keys?: any[] };
+      keys = data.keys || [];
+      jwksCache.set(jwksUrl, { keys, fetchedAt: now });
     }
 
-    if (!matchingJwk) return null;
+    const verificationOpts: any = {
+      exp: false,
+      nbf: false,
+    };
 
-    // 2. Import or retrieve CryptoKey
-    const cacheKey = `${jwksUrl}#${matchingJwk.kid || "default"}`;
-    let cryptoKey = cryptoKeyCache.get(cacheKey);
-
-    if (!cryptoKey) {
-      cryptoKey = await crypto.subtle.importKey(
-        "jwk",
-        matchingJwk,
-        { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-        false,
-        ["verify"],
-      );
-      cryptoKeyCache.set(cacheKey, cryptoKey);
+    if (options.issuer) {
+      const cleanIss = options.issuer.replace(/\/$/, "");
+      verificationOpts.iss = new RegExp(`^${cleanIss}/?$`);
     }
 
-    // 3. Cryptographic Signature Verification
-    const enc = new TextEncoder();
-    const data = `${headerB64}.${payloadB64}`;
-    const signatureBytes = base64UrlDecode(signatureB64);
+    if (options.audience && typeof options.audience === "string") {
+      verificationOpts.aud = options.audience;
+    }
 
-    const isValid = await crypto.subtle.verify(
-      "RSASSA-PKCS1-v1_5",
-      cryptoKey,
-      signatureBytes as unknown as BufferSource,
-      enc.encode(data),
-    );
-    if (!isValid) return null;
+    let payload: any;
+    try {
+      payload = await verifyWithJwks(token, {
+        keys,
+        allowedAlgorithms: ["RS256"],
+        verification: verificationOpts,
+      });
+    } catch {
+      // Retry once by refreshing JWKS cache in case key was rotated
+      const res = await fetch(jwksUrl);
+      if (!res.ok) return null;
+      const data = (await res.json()) as { keys?: any[] };
+      keys = data.keys || [];
+      jwksCache.set(jwksUrl, { keys, fetchedAt: Date.now() });
 
-    // 4. Claims Validation (exp, nbf, iss, aud)
-    const payload = JSON.parse(base64UrlDecodeToString(payloadB64));
-    const now = Math.floor(Date.now() / 1000);
-    // Remote IdP tokens (Auth0, Cloudflare Access) use 60s tolerance for cross-provider network/clock drift
+      payload = await verifyWithJwks(token, {
+        keys,
+        allowedAlgorithms: ["RS256"],
+        verification: verificationOpts,
+      });
+    }
+
+    // Apply remote IdP clock tolerance check (default 60s)
+    const nowSec = Math.floor(Date.now() / 1000);
     const clockTolerance = options.clockTolerance ?? 60;
 
     if (payload["exp"] !== undefined && typeof payload["exp"] === "number") {
-      if (now > payload["exp"] + clockTolerance) {
-        return null; // Token expired
+      if (nowSec > payload["exp"] + clockTolerance) {
+        return null;
       }
     }
 
     if (payload["nbf"] !== undefined && typeof payload["nbf"] === "number") {
-      if (now < payload["nbf"] - clockTolerance) {
-        return null; // Token not active yet
+      if (nowSec < payload["nbf"] - clockTolerance) {
+        return null;
       }
     }
 
-    if (options.issuer) {
-      const payloadIss = payload["iss"];
-      const expectedIss = options.issuer.replace(/\/$/, "");
-      const actualIss = typeof payloadIss === "string" ? payloadIss.replace(/\/$/, "") : "";
-      if (actualIss !== expectedIss) {
-        return null; // Issuer mismatch
-      }
-    }
-
-    if (options.audience) {
-      const expectedAuds = Array.isArray(options.audience) ? options.audience : [options.audience];
+    // Additional check if audience was an array of acceptable audiences
+    if (Array.isArray(options.audience)) {
       const payloadAud = payload["aud"];
       const payloadAuds = Array.isArray(payloadAud)
         ? payloadAud
         : typeof payloadAud === "string"
           ? [payloadAud]
           : [];
-      const hasAudience = expectedAuds.some((aud) => payloadAuds.includes(aud));
-      if (!hasAudience) {
-        return null; // Audience mismatch
-      }
+      const hasAudience = options.audience.some((aud) => payloadAuds.includes(aud));
+      if (!hasAudience) return null;
     }
 
     return payload as T;

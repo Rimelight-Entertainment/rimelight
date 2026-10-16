@@ -1,7 +1,10 @@
+import { createMiddleware } from "hono/factory";
 import type { MiddlewareHandler } from "hono";
 import type {
+  AuthEnv,
   AuthMiddlewareOptions,
   AuthPluginConfig,
+  AuthSession,
   RoleGuard,
   UserSessionContext,
 } from "../types";
@@ -53,7 +56,7 @@ function matchesPattern(
  *
  *   app.use(auth())
  */
-export function auth(options: AuthMiddlewareOptions = {}): MiddlewareHandler {
+export function auth(options: AuthMiddlewareOptions = {}): MiddlewareHandler<AuthEnv> {
   const authAdapterInstance = options.auth ?? defaultPluginConfig.auth ?? getDefaultAuth();
   const skipStaticAssets = options.skipStaticAssets ?? defaultPluginConfig.skipStaticAssets ?? true;
   const ignoredRoutes =
@@ -74,7 +77,7 @@ export function auth(options: AuthMiddlewareOptions = {}): MiddlewareHandler {
   const onUnauthorized = options.onUnauthorized ?? defaultPluginConfig.onUnauthorized;
   const onForbidden = options.onForbidden ?? defaultPluginConfig.onForbidden;
 
-  return async (c, next) => {
+  return createMiddleware<AuthEnv>(async (c, next) => {
     const pathname = new URL(c.req.url).pathname;
     const isApi = pathname.startsWith("/api/");
 
@@ -112,7 +115,7 @@ export function auth(options: AuthMiddlewareOptions = {}): MiddlewareHandler {
     }
 
     const user: UserSessionContext | null = sessionCtx;
-    const session = sessionCtx
+    const session: AuthSession | null = sessionCtx
       ? {
           id: sessionCtx.userId,
           userId: sessionCtx.userId,
@@ -206,5 +209,5 @@ export function auth(options: AuthMiddlewareOptions = {}): MiddlewareHandler {
     }
 
     return await next();
-  };
+  });
 }

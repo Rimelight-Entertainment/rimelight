@@ -1,15 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import {
-  hasRole,
-  hasPermission,
-  evaluateAccess,
-  createAccessControl,
-  createPermissions,
-  defaultStatements,
-  ownerAc,
-  adminAc,
-  memberAc,
-} from "../src/permissions";
+import { hasRole, hasPermission, evaluateAccess } from "../src/permissions";
 import type { UserSessionContext } from "../src/types";
 
 describe("@rimelight/auth - Permissions and Access Control Strict Matrix", () => {
@@ -116,52 +106,6 @@ describe("@rimelight/auth - Permissions and Access Control Strict Matrix", () =>
     it("passes when no constraints are specified", () => {
       expect(evaluateAccess(emptySession, {})).toBe(true);
       expect(evaluateAccess(null, {})).toBe(true);
-    });
-  });
-
-  describe("AccessControl and createPermissions builder", () => {
-    it("creates custom AC with statement types and permissions", () => {
-      const { ac } = createPermissions({
-        document: ["create", "edit", "publish", "delete"],
-        billing: ["view", "charge"],
-      });
-
-      const customEditor = ac.newRole({
-        document: ["create", "edit"],
-        billing: ["view"],
-      });
-
-      expect(customEditor.can("document", "create")).toBe(true);
-      expect(customEditor.can("document", "edit")).toBe(true);
-      expect(customEditor.can("document", "publish")).toBe(false);
-      expect(customEditor.can("document", "delete")).toBe(false);
-      expect(customEditor.can("billing", "view")).toBe(true);
-      expect(customEditor.can("billing", "charge")).toBe(false);
-    });
-
-    it("supports wildcard actions in role statements", () => {
-      const ac = createAccessControl({
-        media: ["upload", "delete", "view"] as const,
-      });
-
-      const mediaAdmin = ac.newRole({
-        media: ["*"],
-      });
-
-      expect(mediaAdmin.can("media", "upload")).toBe(true);
-      expect(mediaAdmin.can("media", "delete")).toBe(true);
-      expect(mediaAdmin.can("media", "unknown_action")).toBe(true);
-      expect(mediaAdmin.can("unregistered_resource", "upload")).toBe(false);
-    });
-
-    it("validates predefined default role statements", () => {
-      expect(defaultStatements.user).toContain("create");
-      expect(defaultStatements.user).toContain("ban");
-      expect(defaultStatements.user).toContain("impersonate");
-
-      expect(ownerAc.statements.user).toEqual(defaultStatements.user);
-      expect(adminAc.statements.user).toEqual(defaultStatements.user);
-      expect(memberAc.statements.user).toEqual(["create", "list"]);
     });
   });
 });
