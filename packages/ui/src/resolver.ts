@@ -1,20 +1,13 @@
 import virtualConfig from "virtual:rimelight-ui";
-import type { ClassValue, ThemeConfig, UIConfig } from "./types";
+import type { ClassValue, ThemeConfig } from "./types";
+import { getUIConfig, setUIConfig } from "./ui-config";
 
-let activeUIConfig: UIConfig = (virtualConfig ?? {}) as UIConfig;
-let testOverrides: Partial<UIConfig> | null = null;
-
-export function setUIConfig(config: UIConfig | null | undefined): void {
-  activeUIConfig = config ?? {};
+// Sync virtual module config to active config
+if (virtualConfig) {
+  setUIConfig(virtualConfig as any);
 }
 
-export function getUIConfig(): UIConfig {
-  return testOverrides ? { ...activeUIConfig, ...testOverrides } : activeUIConfig;
-}
-
-export function setRimelightUITestConfig(overrides: Partial<UIConfig> | null): void {
-  testOverrides = overrides;
-}
+export { getUIConfig, setUIConfig, setRimelightUITestConfig } from "./ui-config";
 
 export function cx(...args: ClassValue[]): string {
   let str = "";

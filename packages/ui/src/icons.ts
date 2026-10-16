@@ -1,4 +1,7 @@
-import { getUIConfig } from "./resolver";
+// Must import getUIConfig from "./ui-config", NEVER from "./resolver".
+// Loading vite.config.ts in Node imports preset.ts -> icons.ts.
+// If imported from resolver, Node's ESM loader encounters `import "virtual:rimelight-ui"` and fails.
+import { getUIConfig } from "./ui-config";
 
 export type RimelightIcons = Record<string, string>;
 
