@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
-import type { RimelightSeoOptions, SiteConfig } from "./types";
+import type { SeoConfig, SiteConfig } from "./types";
 import { buildRobotsTxt } from "./robots";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap";
 import { buildRssXml } from "./rss";
@@ -10,8 +10,6 @@ import { buildSecurityTxt } from "./security";
 import { buildApiCatalog } from "./catalog";
 import { buildWebManifest } from "./manifest";
 import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets";
-
-export { type RimelightSeoOptions } from "./types";
 
 const VIRTUAL_ID = "virtual:rimelight-seo";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
@@ -48,7 +46,7 @@ function createDefaultIconSvg(
  * Consolidated Vite Plugin orchestrating SEO in-memory virtual modules,
  * dev-server asset middleware, and production static asset generation.
  */
-export function seo(options: RimelightSeoOptions = {}): Plugin {
+export function seo(options: SeoConfig = {}): Plugin {
   let rootDir = process.cwd();
 
   const siteOpt = options.site || {};

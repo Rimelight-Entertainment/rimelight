@@ -177,7 +177,7 @@ export interface AuthMiddlewareOptions {
   ) => Response | Promise<Response>;
 }
 
-export interface AuthPluginConfig extends AuthMiddlewareOptions {
+export interface AuthConfig extends AuthMiddlewareOptions {
   /**
    * Auth adapter to initialize: "cf-access" (default), "auth0", "mock", or "custom".
    *
@@ -195,3 +195,5 @@ export interface AuthPluginConfig extends AuthMiddlewareOptions {
    */
   [key: string]: any;
 }
+
+export type AuthPluginConfig = AuthConfig;

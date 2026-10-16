@@ -1,5 +1,5 @@
 declare module "virtual:rimelight-auth" {
-  export const config: import("./types").AuthPluginConfig;
+  export const config: import("./types").AuthConfig;
   export default config;
 }
 

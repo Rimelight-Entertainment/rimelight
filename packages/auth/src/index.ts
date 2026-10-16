@@ -6,6 +6,7 @@ export type {
   AuthAdapter,
   RoleGuard,
   AuthMiddlewareOptions,
+  AuthConfig,
   AuthPluginConfig,
 } from "./types";
 

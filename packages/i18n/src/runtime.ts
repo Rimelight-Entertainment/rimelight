@@ -1,24 +1,7 @@
 import virtualConfig from "virtual:rimelight-i18n";
+import type { I18nContextStore, RimelightTranslationKeys, TranslationKey } from "./types";
 
-export interface I18nContextStore {
-  locale: string;
-  translations?: Record<string, unknown> | undefined;
-}
-
-declare global {
-  var __rimelight_i18n:
-    | {
-        getStore: () => I18nContextStore | undefined;
-        run: <R>(store: I18nContextStore, callback: () => R) => R;
-      }
-    | undefined;
-}
-
-export interface RimelightTranslationKeys {
-  keys: string;
-}
-
-export type TranslationKey = RimelightTranslationKeys["keys"];
+export type { I18nContextStore, RimelightTranslationKeys, TranslationKey };
 
 export const config = {
   locales: [...(virtualConfig?.locales ?? ["en"])],

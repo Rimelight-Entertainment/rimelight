@@ -1,32 +1,29 @@
 import generated from "virtual:rimelight-security";
 import type { Context } from "hono";
-import type { RimelightSecurityPluginOptions } from "./plugin";
+import type { SecurityConfig } from "./types";
 
 function isRecord(val: unknown): val is Record<string, unknown> {
   return typeof val === "object" && val !== null && !Array.isArray(val);
 }
 
-let config: RimelightSecurityPluginOptions = isRecord((generated as any)?.config)
-  ? { ...((generated as any).config as RimelightSecurityPluginOptions) }
+let config: SecurityConfig = isRecord((generated as any)?.config)
+  ? { ...((generated as any).config as SecurityConfig) }
   : isRecord(generated) && !("config" in (generated as any))
-    ? { ...(generated as unknown as RimelightSecurityPluginOptions) }
+    ? { ...(generated as unknown as SecurityConfig) }
     : {};
 
-export const getSecurityConfig = (): RimelightSecurityPluginOptions => config;
-export const setSecurityConfig = (next?: RimelightSecurityPluginOptions): void => {
+export const getSecurityConfig = (): SecurityConfig => config;
+export const setSecurityConfig = (next?: SecurityConfig): void => {
   config = next
     ? { ...next }
     : isRecord((generated as any)?.config)
-      ? { ...((generated as any).config as RimelightSecurityPluginOptions) }
+      ? { ...((generated as any).config as SecurityConfig) }
       : {};
 };
 import { normalizeDomain, resolveSecurityDomain } from "./domain";
 export { normalizeDomain, resolveSecurityDomain };
 
-export function buildCspHeader(
-  options: RimelightSecurityPluginOptions = {},
-  nonce?: string,
-): string {
+export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): string {
   const domain = normalizeDomain(options.domain || "");
   const allowed = options.allowedDomains || [];
   const turnstile = Boolean(options.turnstile);

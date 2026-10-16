@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
-import { security, type RimelightSecurityPluginOptions } from "../src/plugin";
+import { security } from "../src/plugin";
+import type { SecurityConfig } from "../src/types";
 import { buildCspHeader } from "../src/runtime";
 
 const VIRTUAL_ID = "virtual:rimelight-security";
@@ -7,7 +8,7 @@ const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 describe("Security Plugin Virtual Module", () => {
   it("resolves and loads virtual module in-memory", async () => {
-    const options: RimelightSecurityPluginOptions = {
+    const options: SecurityConfig = {
       domain: "example.com",
       ratelimit: {
         routes: ["/auth/sign-in"],

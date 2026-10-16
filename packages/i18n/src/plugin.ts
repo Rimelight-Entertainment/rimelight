@@ -2,21 +2,14 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Plugin, ViteDevServer } from "vite-plus";
 import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
+import type { I18nConfig } from "./types";
 
 const VIRTUAL_ID = "virtual:rimelight-i18n";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
 const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
-export interface RimelightI18nPluginOptions {
-  defaultLocale?: string;
-  translationsDir?: string;
-  prefixDefaultLocale?: boolean;
-  skipPaths?: string[];
-  types?: boolean | string;
-}
-
-export function i18n(options: RimelightI18nPluginOptions = {}): Plugin {
+export function i18n(options: I18nConfig = {}): Plugin {
   let root = process.cwd();
   let cache: Record<string, Record<string, unknown>> | null = null;
 

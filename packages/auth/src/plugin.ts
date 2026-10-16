@@ -1,12 +1,12 @@
 import type { Plugin } from "vite-plus";
-import type { AuthPluginConfig } from "./types";
+import type { AuthConfig } from "./types";
 
 const VIRTUAL_ID = "virtual:rimelight-auth";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 const VIRTUAL_SERVER_ID = "virtual:rimelight-auth/server";
 const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
-export function auth(options: AuthPluginConfig = {}): Plugin {
+export function auth(options: AuthConfig = {}): Plugin {
   const adapter = options.adapter || "cf-access";
 
   const adapterImport =

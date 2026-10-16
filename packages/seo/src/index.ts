@@ -36,6 +36,7 @@ export type {
   ApiCatalogOptions,
   ApiCatalogRouteOptions,
   AssetRouteOptions,
+  SeoConfig,
   RimelightSeoOptions,
   OgRouteOptions,
 } from "./types";

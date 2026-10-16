@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from "hono";
 import generated from "virtual:rimelight-security";
-import type { RimelightSecurityPluginOptions } from "./plugin";
+import type { SecurityConfig } from "./types";
 import {
   buildCspHeader,
   getSecurityConfig,
@@ -272,10 +272,10 @@ export const construction = (): MiddlewareHandler => {
 
 function applyHeaders(
   res: Response,
-  opts: RimelightSecurityPluginOptions,
+  opts: SecurityConfig,
   origin?: string,
   nonce?: string,
-  reportOnly?: RimelightSecurityPluginOptions,
+  reportOnly?: SecurityConfig,
 ): Response {
   const headers = new Headers(res.headers);
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -357,7 +357,7 @@ function applyHeaders(
  */
 export const security = (): MiddlewareHandler => {
   const pluginConfig = getSecurityConfig();
-  const merged: RimelightSecurityPluginOptions = {
+  const merged: SecurityConfig = {
     ...pluginConfig,
     strictDynamic: pluginConfig.strictDynamic ?? true,
     enforceTls: pluginConfig.enforceTls ?? true,
@@ -444,7 +444,7 @@ export const security = (): MiddlewareHandler => {
           : userStyle
         : Array.from(new Set(["'self'", "'unsafe-inline'", ...(merged.styleResources || [])]));
 
-      const reportOnlySimulation: RimelightSecurityPluginOptions = {
+      const reportOnlySimulation: SecurityConfig = {
         ...merged,
         directives: {
           ...merged.directives,

@@ -1,22 +1,14 @@
 import path from "node:path";
 import fs from "node:fs";
 import type { Plugin } from "vite-plus";
-import type { StorageConfig } from "./storage/index";
-import type { AuthAdapter } from "@rimelight/auth";
-
-export interface RimelightCmsPluginOptions {
-  routePrefix?: string | undefined;
-  db?: string | undefined;
-  storage?: StorageConfig | undefined;
-  auth?: AuthAdapter | string | undefined;
-}
+import type { CmsConfig } from "./types";
 
 const VIRTUAL_ID = "virtual:rimelight-cms";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 const VIRTUAL_DB_ID = "virtual:rimelight-cms/db";
 const RESOLVED_VIRTUAL_DB_ID = `\0${VIRTUAL_DB_ID}`;
 
-export function cms(options: RimelightCmsPluginOptions = {}): Plugin {
+export function cms(options: CmsConfig = {}): Plugin {
   let rootDir = process.cwd();
 
   const storageConfig = {
