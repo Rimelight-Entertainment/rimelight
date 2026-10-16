@@ -50,7 +50,7 @@ function createDefaultIconSvg(
  * Consolidated Vite Plugin orchestrating SEO in-memory virtual modules,
  * dev-server asset middleware, and production static asset generation.
  */
-function seo(options: RimelightSeoOptions = {}): Plugin {
+export function seo(options: RimelightSeoOptions = {}): Plugin {
   let rootDir = process.cwd();
 
   const siteOpt = options.site || {};
@@ -664,5 +664,3 @@ function seo(options: RimelightSeoOptions = {}): Plugin {
     },
   };
 }
-
-export { seo };

@@ -68,5 +68,3 @@ export function cms(options: RimelightCmsPluginOptions = {}): Plugin {
     },
   };
 }
-
-export { cms as rimelightCmsPlugin };

@@ -84,10 +84,3 @@ export {
   type OgHandlerOptions,
   type HonoContext,
 } from "./og/index";
-
-// The `seo` Vite plugin factory is Node-only, so it is deliberately NOT
-// re-exported from this runtime entry point to prevent pulling Node APIs
-// into the browser bundle. Import it from `@rimelight/seo/plugin` in your
-// `vite.config.ts` instead. The types stay re-exported here because types
-// are erased at compile time.
-export type { RimelightSeoPluginOptions } from "./plugin";

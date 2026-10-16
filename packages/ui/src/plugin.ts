@@ -8,7 +8,7 @@ export type RimelightUiPluginOptions = UIConfig;
 export const VIRTUAL_ID = "virtual:rimelight-ui";
 export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
-export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
+export function ui({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption {
   const runtimeCfg: UIConfig = {
     ...(cfg.unstyled !== undefined ? { unstyled: cfg.unstyled } : {}),
     ...(cfg.icons ? { icons: cfg.icons } : {}),
@@ -52,4 +52,4 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption => {
     }) as unknown as Plugin[]),
     virtualPlugin,
   ];
-};
+}

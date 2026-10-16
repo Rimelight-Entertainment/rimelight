@@ -46,16 +46,6 @@ export * from "./search/query";
 // Database Schemas & Migration
 export * from "./schema/index";
 
-// Vite Plugin & CMS Integration types (Solid).
-//
-// The `cms` / `rimelightCms` plugin factories are Node-only (they read from
-// `node:fs` / `node:path`), so they are deliberately NOT re-exported from this
-// runtime entry point: doing so would drag the Node built-ins into the browser
-// bundle. Import them from `@rimelight/cms/plugin` or `@rimelight/cms/integration`
-// in your `vite.config.ts` instead. The option types stay re-exported here
-// because types are erased at compile time and cost nothing at runtime.
-export type { RimelightCmsPluginOptions } from "./plugin";
-
 // Toast API
 export * from "./client/toast";
 

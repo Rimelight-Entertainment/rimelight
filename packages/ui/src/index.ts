@@ -5,4 +5,3 @@ export * from "./icons";
 export * from "./resolver";
 export * from "./shortcuts";
 export * from "./runtime";
-export type { RimelightUiPluginOptions } from "./plugin";

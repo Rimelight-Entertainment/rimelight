@@ -3,9 +3,10 @@ import path from "node:path";
 import type { Plugin, ViteDevServer } from "vite-plus";
 import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
 
-const CLIENT_ID = "virtual:rimelight-i18n";
-const SERVER_ID = "virtual:rimelight-i18n/server";
-const RESOLVED = (id: string) => `\0${id}`;
+export const VIRTUAL_ID = "virtual:rimelight-i18n";
+export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+export const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
+export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 export interface RimelightI18nPluginOptions {
   defaultLocale?: string;
@@ -15,7 +16,7 @@ export interface RimelightI18nPluginOptions {
   types?: boolean | string;
 }
 
-export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
+export function i18n(options: RimelightI18nPluginOptions = {}): Plugin {
   let root = process.cwd();
   let cache: Record<string, Record<string, unknown>> | null = null;
 
@@ -73,7 +74,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
       ? Object.values(server.environments).map((env) => env.moduleGraph)
       : ([server.moduleGraph].filter(Boolean) as { getModuleById?: (id: string) => unknown }[]);
     for (const graph of graphs) {
-      for (const id of [RESOLVED(CLIENT_ID), RESOLVED(SERVER_ID)]) {
+      for (const id of [RESOLVED_VIRTUAL_ID, RESOLVED_VIRTUAL_SERVER_ID]) {
         const mod = graph.getModuleById?.(id);
         if (mod) graph.invalidateModule?.(mod);
       }
@@ -82,6 +83,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
 
   return {
     name: "rimelight:i18n",
+    enforce: "pre",
 
     configResolved(config) {
       if (config.root && config.root !== root) {
@@ -101,12 +103,13 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
     },
 
     resolveId(id) {
-      if (id === CLIENT_ID || id === SERVER_ID) return RESOLVED(id);
+      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+      if (id === VIRTUAL_SERVER_ID) return RESOLVED_VIRTUAL_SERVER_ID;
       return null;
     },
 
     load(id) {
-      if (id === RESOLVED(CLIENT_ID)) {
+      if (id === RESOLVED_VIRTUAL_ID) {
         const locales = getLocales();
         return `export default ${JSON.stringify({
           locales,
@@ -117,7 +120,7 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
         })};`;
       }
 
-      if (id === RESOLVED(SERVER_ID)) {
+      if (id === RESOLVED_VIRTUAL_SERVER_ID) {
         return `export default ${JSON.stringify(loadTranslations())};`;
       }
       return null;
@@ -133,4 +136,4 @@ export const i18n = (options: RimelightI18nPluginOptions = {}): Plugin => {
       }
     },
   };
-};
+}

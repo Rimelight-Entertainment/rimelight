@@ -13,5 +13,3 @@ export {
 } from "./runtime";
 
 export { createSecurityHead } from "./head";
-
-export type { RimelightSecurityPluginOptions } from "./plugin";

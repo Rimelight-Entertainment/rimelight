@@ -154,5 +154,3 @@ export function security(options: RimelightSecurityPluginOptions = {}): Plugin {
     },
   };
 }
-
-export { security as sri };

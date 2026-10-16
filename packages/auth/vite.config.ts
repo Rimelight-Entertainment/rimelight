@@ -16,6 +16,7 @@ export default defineConfig({
       "src/middleware/index.ts",
       "src/client/index.ts",
       "src/jwt.ts",
+      "src/runtime.ts",
       "src/plugin.ts",
     ],
     deps: {
