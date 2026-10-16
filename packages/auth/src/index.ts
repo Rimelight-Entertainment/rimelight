@@ -1,5 +1,25 @@
-export * from "./types";
-export * from "./permissions/index";
-export * from "./plugins/reserved-usernames/index";
-export * from "./client/index";
-export * from "./runtime";
+export type {
+  UserType,
+  AuthSession,
+  AuthEnv,
+  UserSessionContext,
+  AuthAdapter,
+  RoleGuard,
+  AuthMiddlewareOptions,
+  AuthPluginConfig,
+} from "./types";
+
+export type { AuthClientSession, AuthClientOptions, AuthClient } from "./client/index";
+
+export { hasRole, hasPermission, evaluateAccess } from "./permissions/index";
+
+export {
+  normalizeUsername,
+  DEFAULT_RESTRICTED_KEYWORDS,
+  createRestrictedUsernameSet,
+  RESTRICTED_SET,
+} from "./plugins/reserved-usernames/index";
+
+export { createAuthClient, authClient } from "./client/index";
+
+export { auth, authAdapter } from "./runtime";
