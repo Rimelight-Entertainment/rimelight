@@ -1,13 +1,11 @@
 import { describe, it, expect } from "vite-plus/test";
-import {
-  seo,
-  isContained,
-  VIRTUAL_ID,
-  RESOLVED_VIRTUAL_ID,
-  VIRTUAL_SERVER_ID,
-  RESOLVED_VIRTUAL_SERVER_ID,
-} from "../src/plugin";
+import { seo, isContained } from "../src/plugin";
 import path from "node:path";
+
+const VIRTUAL_ID = "virtual:rimelight-seo";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_SERVER_ID = "virtual:rimelight-seo/server";
+const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
   const fn =

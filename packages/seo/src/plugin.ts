@@ -11,14 +11,12 @@ import { buildApiCatalog } from "./catalog";
 import { buildWebManifest } from "./manifest";
 import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets";
 
-export type RimelightSeoPluginOptions = RimelightSeoOptions;
-
 export { type RimelightSeoOptions } from "./types";
 
-export const VIRTUAL_ID = "virtual:rimelight-seo";
-export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-export const VIRTUAL_SERVER_ID = "virtual:rimelight-seo/server";
-export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
+const VIRTUAL_ID = "virtual:rimelight-seo";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_SERVER_ID = "virtual:rimelight-seo/server";
+const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Validates that a requested file path resolves strictly within the given root directory.

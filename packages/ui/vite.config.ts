@@ -19,7 +19,7 @@ export default defineConfig({
       "src/fonts.ts",
     ],
     deps: {
-      neverBundle: [/^virtual:rimelight-ui/],
+      neverBundle: [/^virtual:/],
     },
   },
 });

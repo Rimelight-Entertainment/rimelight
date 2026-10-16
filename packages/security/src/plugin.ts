@@ -77,8 +77,8 @@ export interface RimelightSecurityPluginOptions {
   devOnly?: boolean;
 }
 
-export const VIRTUAL_ID = "virtual:rimelight-security";
-export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_ID = "virtual:rimelight-security";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")

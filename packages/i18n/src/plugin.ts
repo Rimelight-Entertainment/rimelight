@@ -3,10 +3,10 @@ import path from "node:path";
 import type { Plugin, ViteDevServer } from "vite-plus";
 import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
 
-export const VIRTUAL_ID = "virtual:rimelight-i18n";
-export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-export const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
-export const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
+const VIRTUAL_ID = "virtual:rimelight-i18n";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_SERVER_ID = "virtual:rimelight-i18n/server";
+const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 export interface RimelightI18nPluginOptions {
   defaultLocale?: string;

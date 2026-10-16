@@ -1,11 +1,9 @@
 import { describe, it, expect } from "vite-plus/test";
-import {
-  security,
-  VIRTUAL_ID,
-  RESOLVED_VIRTUAL_ID,
-  type RimelightSecurityPluginOptions,
-} from "../src/plugin";
+import { security, type RimelightSecurityPluginOptions } from "../src/plugin";
 import { buildCspHeader } from "../src/runtime";
+
+const VIRTUAL_ID = "virtual:rimelight-security";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 describe("Security Plugin Virtual Module", () => {
   it("resolves and loads virtual module in-memory", async () => {

@@ -11,10 +11,10 @@ export interface RimelightCmsPluginOptions {
   auth?: AuthAdapter | string | undefined;
 }
 
-export const VIRTUAL_ID = "virtual:rimelight-cms";
-export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-export const VIRTUAL_DB_ID = "virtual:rimelight-cms/db";
-export const RESOLVED_VIRTUAL_DB_ID = `\0${VIRTUAL_DB_ID}`;
+const VIRTUAL_ID = "virtual:rimelight-cms";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_DB_ID = "virtual:rimelight-cms/db";
+const RESOLVED_VIRTUAL_DB_ID = `\0${VIRTUAL_DB_ID}`;
 
 export function cms(options: RimelightCmsPluginOptions = {}): Plugin {
   let rootDir = process.cwd();

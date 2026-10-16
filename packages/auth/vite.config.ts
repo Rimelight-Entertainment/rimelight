@@ -20,7 +20,7 @@ export default defineConfig({
       "src/plugin.ts",
     ],
     deps: {
-      neverBundle: [/^virtual:rimelight-auth/],
+      neverBundle: [/^virtual:/],
     },
   },
 });

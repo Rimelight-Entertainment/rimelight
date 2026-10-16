@@ -21,7 +21,7 @@ export default defineConfig({
       "src/assets.ts",
     ],
     deps: {
-      neverBundle: [/^virtual:rimelight-seo/],
+      neverBundle: [/^virtual:/],
     },
   },
 });

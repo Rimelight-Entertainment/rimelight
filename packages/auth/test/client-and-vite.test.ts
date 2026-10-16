@@ -1,13 +1,12 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import type { Plugin } from "vite-plus";
 import { createAuthClient } from "../src/client/index";
-import {
-  auth as authPlugin,
-  VIRTUAL_ID,
-  RESOLVED_VIRTUAL_ID,
-  VIRTUAL_SERVER_ID,
-  RESOLVED_VIRTUAL_SERVER_ID,
-} from "../src/plugin";
+import { auth as authPlugin } from "../src/plugin";
+
+const VIRTUAL_ID = "virtual:rimelight-auth";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_SERVER_ID = "virtual:rimelight-auth/server";
+const RESOLVED_VIRTUAL_SERVER_ID = `\0${VIRTUAL_SERVER_ID}`;
 
 /**
  * Invoke a Vite object-hook the way the container does (function or { handler }).

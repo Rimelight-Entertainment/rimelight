@@ -15,7 +15,7 @@ export default defineConfig({
       "src/server/index.ts",
     ],
     deps: {
-      neverBundle: [/^virtual:rimelight-cms/],
+      neverBundle: [/^virtual:/],
     },
   },
 });

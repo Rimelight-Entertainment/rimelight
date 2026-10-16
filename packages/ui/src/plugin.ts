@@ -3,10 +3,8 @@ import type { Plugin, PluginOption } from "vite-plus";
 import { rimelightUiPreset } from "./preset";
 import type { UIConfig } from "./types";
 
-export type RimelightUiPluginOptions = UIConfig;
-
-export const VIRTUAL_ID = "virtual:rimelight-ui";
-export const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const VIRTUAL_ID = "virtual:rimelight-ui";
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 export function ui({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption {
   const runtimeCfg: UIConfig = {
