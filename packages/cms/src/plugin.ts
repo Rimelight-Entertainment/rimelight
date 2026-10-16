@@ -46,10 +46,11 @@ export function cms(options: CmsConfig = {}): Plugin {
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
         return [
+          `export const config = ${JSON.stringify({ routePrefix, storage: storageConfig })};`,
           `export const routePrefix = ${JSON.stringify(routePrefix)};`,
           `export const storageConfig = ${JSON.stringify(storageConfig)};`,
-          `export const cmsOptions = ${JSON.stringify({ routePrefix, storage: storageConfig })};`,
-          `export default cmsOptions;`,
+          `export const cmsOptions = config;`,
+          `export default config;`,
         ].join("\n");
       }
       if (id === RESOLVED_VIRTUAL_DB_ID) {

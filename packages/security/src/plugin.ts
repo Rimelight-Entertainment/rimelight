@@ -21,7 +21,6 @@ export function security(options: SecurityConfig = {}): Plugin {
 
   return {
     name: "rimelight:security",
-    enforce: "post",
 
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
@@ -30,10 +29,11 @@ export function security(options: SecurityConfig = {}): Plugin {
 
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
+        const cfg = { ...options, manifest: { ...sriManifest, ...options.manifest } };
         return [
-          `export const config = ${JSON.stringify(options)};`,
-          `export const manifest = ${JSON.stringify(sriManifest)};`,
-          `export default { config, manifest };`,
+          `export const config = ${JSON.stringify(cfg)};`,
+          `export const manifest = config.manifest;`,
+          `export default config;`,
         ].join("\n");
       }
       return null;

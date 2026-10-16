@@ -25,11 +25,7 @@ import {
   serializeJsonLd,
   type SeoEntry,
 } from "@rimelight/seo";
-import {
-  siteConfig as liveSiteConfig,
-  SEO_LOCALES as liveSeoLocales,
-  PRIVATE_PATH_PREFIXES as livePrivatePathPrefixes,
-} from "virtual:rimelight-seo";
+import { config as liveConfigRaw } from "virtual:rimelight-seo";
 
 interface OgPreviewItem {
   label: string;
@@ -87,11 +83,16 @@ export default function DevSeoPage() {
   const activeOrigin = () =>
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : liveSiteConfig.url || "https://rimelight.com";
+      : liveConfigRaw.url || "https://rimelight.com";
 
-  const liveConfig = () => liveSiteConfig;
-  const liveLocales = () => (liveSeoLocales as Record<string, string>) || { en: "en-US" };
-  const livePrivatePrefixes = () => livePrivatePathPrefixes || [];
+  const liveConfig = () => liveConfigRaw;
+  const liveLocales = (): Record<string, string> =>
+    typeof liveConfigRaw.locales === "object" && liveConfigRaw.locales !== null
+      ? "locales" in liveConfigRaw.locales && typeof liveConfigRaw.locales.locales === "object"
+        ? (liveConfigRaw.locales.locales as Record<string, string>)
+        : (liveConfigRaw.locales as Record<string, string>)
+      : { en: "en-US" };
+  const livePrivatePrefixes = () => liveConfigRaw.privatePathPrefixes || [];
 
   const defaultLocaleKey = () => Object.keys(liveLocales())[0] || "en";
 
@@ -295,20 +296,20 @@ export default function DevSeoPage() {
       rows: [
         {
           label: "Site Config",
-          code: `import { siteConfig } from "virtual:rimelight-seo"`,
+          code: `import { config } from "virtual:rimelight-seo"`,
           description:
             "Active metadata passed to the Vite plugin and exported by the virtual module at build/dev runtime.",
           value: JSON.stringify(liveConfig(), null, 2),
         },
         {
           label: "Configured Locales",
-          code: `import { SEO_LOCALES } from "virtual:rimelight-seo"`,
+          code: `config.locales`,
           description: "Locale to hreflang mappings used for alternate URLs and sitemaps.",
           value: JSON.stringify(liveLocales(), null, 2),
         },
         {
           label: "Private Path Prefixes",
-          code: `import { PRIVATE_PATH_PREFIXES } from "virtual:rimelight-seo"`,
+          code: `config.privatePathPrefixes`,
           description: "Prefixes excluded from public indexing and disallowed in robots.txt.",
           value: JSON.stringify(livePrivatePrefixes(), null, 2),
         },

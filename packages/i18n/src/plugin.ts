@@ -97,13 +97,14 @@ export function i18n(options: I18nConfig = {}): Plugin {
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
         const locales = getLocales();
-        return `export default ${JSON.stringify({
+        const cfg = {
           locales,
           defaultLocale: getDefaultLocale(locales),
           prefixDefaultLocale: options.prefixDefaultLocale ?? true,
           skipPaths: options.skipPaths ?? ["/api", "/_"],
           translations: loadTranslations(),
-        })};`;
+        };
+        return `export const config = ${JSON.stringify(cfg)};\nexport default config;`;
       }
 
       return null;

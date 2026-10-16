@@ -1,11 +1,6 @@
 declare module "virtual:rimelight-cms" {
-  export const routePrefix: string;
-  export const storageConfig: import("./storage/index").StorageConfig;
-  export const cmsOptions: {
-    routePrefix: string;
-    storage: import("./storage/index").StorageConfig;
-  };
-  export default cmsOptions;
+  export const config: import("./types").CmsConfig;
+  export default config;
 }
 
 declare module "virtual:rimelight-cms/db" {

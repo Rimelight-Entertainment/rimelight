@@ -76,9 +76,6 @@ export function seo(options: SeoConfig = {}): Plugin {
     ...(options.twitter ? { twitter: options.twitter } : {}),
   };
 
-  const seoLocales = options.locales;
-  const privatePathPrefixes = options.privatePathPrefixes || [];
-
   const findFile = (candidates: string[]): string | null => {
     for (const c of candidates) {
       const resolved = path.resolve(rootDir, c);
@@ -168,14 +165,8 @@ export function seo(options: SeoConfig = {}): Plugin {
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
         return [
-          `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";`,
           `export const config = ${JSON.stringify(normalizedSiteConfig)};`,
           `export const siteConfig = config;`,
-          `export const SEO_LOCALES = ${JSON.stringify(seoLocales)};`,
-          `export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};`,
-          `export const seoConfig = { SEO_LOCALES: ${JSON.stringify(seoLocales)}, PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)} };`,
-          `export const createHead = defineSeoConfig(config);`,
-          `export { createHead as createSeoHead, defineSeoConfig };`,
           `export default config;`,
         ].join("\n");
       }

@@ -1,5 +1,5 @@
 declare module "virtual:rimelight-i18n" {
-  const config: {
+  export const config: import("./types").I18nConfig & {
     readonly locales: readonly string[];
     readonly defaultLocale: string;
     readonly prefixDefaultLocale: boolean;
