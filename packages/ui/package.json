@@ -48,10 +48,15 @@
       "solid": "./dist/resolver.mjs",
       "import": "./dist/resolver.mjs"
     },
+    "./runtime": {
+      "types": "./src/runtime.ts",
+      "solid": "./src/runtime.ts",
+      "import": "./src/runtime.ts"
+    },
     "./shortcuts": {
-      "types": "./dist/shortcuts.d.mts",
-      "solid": "./dist/shortcuts.mjs",
-      "import": "./dist/shortcuts.mjs"
+      "types": "./src/shortcuts.ts",
+      "solid": "./src/shortcuts.ts",
+      "import": "./src/shortcuts.ts"
     },
     "./types": {
       "types": "./dist/types.d.mts",

@@ -10,10 +10,10 @@ import {
   RLImage,
   RLAvatar,
   RLDropdownMenu,
-  openShortcutsModal,
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
+import { useShortcuts } from "@rimelight/ui/shortcuts";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
 import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.types.ts";
 import { t, getLocaleUrl } from "@rimelight/i18n";
@@ -295,7 +295,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             color="neutral"
             leadingIcon="i-lucide-keyboard"
             aria-label="Keyboard Shortcuts"
-            onClick={openShortcutsModal}
+            onClick={() => useShortcuts().open()}
           />
           <div class="hidden md:flex flex-row gap-md">
             <Show

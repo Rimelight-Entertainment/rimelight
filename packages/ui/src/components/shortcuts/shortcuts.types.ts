@@ -8,6 +8,9 @@ export interface CategorySection {
 
 export interface RLShortcutsProps {
   categories?: Record<string, string>;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   ui?: any;
   class?: string;
 }

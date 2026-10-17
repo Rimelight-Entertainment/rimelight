@@ -1,7 +1,8 @@
 import { For, Show, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import DevLayout from "#layouts/DevLayout";
-import { RLBadge, RLButton, RLIcon, DEFAULT_ICON_NAMES, getUIConfig } from "@rimelight/ui";
+import { RLBadge, RLButton, RLIcon, DEFAULT_ICON_NAMES } from "@rimelight/ui";
+import { getUIConfig } from "@rimelight/ui/runtime";
 
 // Inlined here to avoid importing fonts.ts (which pulls unocss → oxc-parser WASM into the client bundle)
 const DEFAULT_UI_FONTS = {

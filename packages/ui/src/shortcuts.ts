@@ -98,10 +98,21 @@ export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<Regis
   [],
 );
 
-export const [shortcutsModalOpen, setShortcutsModalOpen] = createSignal(false);
-export const openShortcutsModal = () => setShortcutsModalOpen(true);
-export const closeShortcutsModal = () => setShortcutsModalOpen(false);
-export const toggleShortcutsModal = () => setShortcutsModalOpen((open) => !open);
+const [shortcutsModalOpen, setShortcutsModalOpen] = createSignal(false);
+
+/**
+ * Hook to access and control the shortcuts help dialog.
+ */
+export function useShortcuts() {
+  return {
+    isOpen: shortcutsModalOpen,
+    open: () => setShortcutsModalOpen(true),
+    close: () => setShortcutsModalOpen(false),
+    toggle: () => setShortcutsModalOpen((open) => !open),
+  };
+}
+
+export { shortcutsModalOpen, setShortcutsModalOpen };
 
 const isUsingInput = (el: Element | null): boolean | string => {
   const target = (el?.shadowRoot?.activeElement || el) as HTMLElement | null;

@@ -1,7 +1,7 @@
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
 import { createMemo, omit, type Component } from "solid-js";
-import { getUIConfig } from "../../resolver";
+import { getUIConfig } from "../../runtime";
 
 export const RLLogo: Component<RLLogoProps> = (props) => {
   const rest = omit(

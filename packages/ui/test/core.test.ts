@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vite-plus/test";
 
-import { defineTheme, setUIConfig } from "../src/resolver";
+import { defineTheme } from "../src/resolver";
+import { setUIConfig } from "../src/runtime";
 import { resolveIcon } from "../src/icons";
 
 describe("@rimelight/ui core resolver", () => {

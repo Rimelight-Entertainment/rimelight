@@ -12,7 +12,3 @@ export type {
 } from "./types";
 
 export { DEFAULT_ICON_NAMES, type RimelightIcons } from "./icons";
-
-export { getUIConfig } from "./resolver";
-
-export { openShortcutsModal } from "./shortcuts";

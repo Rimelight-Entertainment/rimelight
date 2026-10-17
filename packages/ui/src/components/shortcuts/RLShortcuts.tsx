@@ -1,9 +1,10 @@
 import type { RLShortcutsProps, CategorySection } from "./shortcuts.types";
 import { RLShortcutsTheme } from "./shortcuts.theme";
-import { getUIConfig } from "../../resolver";
+import { getUIConfig } from "../../runtime";
 import {
   createEffect,
   createMemo,
+  createSignal,
   createUniqueId,
   For,
   onSettled,
@@ -14,10 +15,9 @@ import {
 import { Portal } from "@solidjs/web";
 import {
   activeShortcutsStore,
-  closeShortcutsModal,
   defineShortcuts,
   shortcutsModalOpen,
-  toggleShortcutsModal,
+  setShortcutsModalOpen,
   type RegisteredShortcut,
 } from "../../shortcuts";
 import { RLIcon } from "../icon/RLIcon";
@@ -25,7 +25,24 @@ import { RLKbd } from "../kbd/RLKbd";
 
 export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   const modalId = `rl-shortcuts-${createUniqueId()}`;
-  const rest = omit(props, "categories", "ui", "class");
+  const rest = omit(props, "categories", "open", "defaultOpen", "onOpenChange", "ui", "class");
+
+  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
+  const isOpen = () => {
+    if (props.open !== undefined) return Boolean(props.open);
+    return uncontrolledOpen() || shortcutsModalOpen();
+  };
+
+  const setOpen = (next: boolean) => {
+    if (props.open === undefined) {
+      setUncontrolledOpen(next);
+      setShortcutsModalOpen(next);
+    }
+    props.onOpenChange?.(next);
+  };
+
+  const handleClose = () => setOpen(false);
+  const handleToggle = () => setOpen(!isOpen());
 
   const configCategories = (): Record<string, { label: string }> =>
     getUIConfig().shortcuts?.categories || {};
@@ -43,7 +60,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   const categoryOrder = createMemo(() => Object.keys(configCategories()));
 
   createEffect(
-    () => shortcutsModalOpen(),
+    () => isOpen(),
     (open) => {
       document.body.style.overflow = open ? "hidden" : "";
       return () => {
@@ -55,7 +72,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   onSettled(() => {
     const qShortcutCleanup = defineShortcuts({
       "?": {
-        handler: () => toggleShortcutsModal(),
+        handler: handleToggle,
         label: "Show Keyboard Shortcuts",
         description: "Display this shortcuts help cheat sheet modal",
         category: "system",
@@ -64,8 +81,8 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     });
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && shortcutsModalOpen()) {
-        closeShortcutsModal();
+      if (e.key === "Escape" && isOpen()) {
+        handleClose();
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -126,13 +143,13 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   });
 
   return (
-    <Show when={shortcutsModalOpen()}>
+    <Show when={isOpen()}>
       <Portal>
         <div
           class={classes().modal}
           data-slot="modal"
           onClick={(e) => {
-            if (e.target === e.currentTarget) closeShortcutsModal();
+            if (e.target === e.currentTarget) handleClose();
           }}
           {...rest}
         >
@@ -152,7 +169,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
                 type="button"
                 class={classes().close}
                 aria-label="Close shortcuts help"
-                onClick={closeShortcutsModal}
+                onClick={handleClose}
                 data-slot="close"
               >
                 <RLIcon name="x" class="size-4" />
