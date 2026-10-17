@@ -1,6 +1,7 @@
 import type { MiddlewareHandler } from "hono";
 import { config } from "virtual:rimelight-security";
 import type { SecurityConfig } from "./types";
+import { fetchRemoteSriManifest } from "./sri";
 import {
   buildCspHeader,
   getSecurityConfig,
@@ -15,8 +16,36 @@ export { isConstructionGuest, signInConstructionGuest, CONSTRUCTION_GUEST_COOKIE
 
 declare const HTMLRewriter: any;
 
-const manifest: Record<string, string> =
+const baseManifest: Record<string, string> =
   typeof config?.manifest === "object" && config.manifest !== null ? config.manifest : {};
+
+let cachedRemoteManifest: Record<string, string> | null = null;
+let remoteManifestPromise: Promise<Record<string, string>> | null = null;
+
+async function resolveActiveManifest(
+  explicitManifest?: Record<string, string>,
+  resources?: string[],
+): Promise<Record<string, string>> {
+  const targetResources = Array.from(new Set(resources || config?.resources || []));
+
+  if (targetResources.length > 0 && process.env["NODE_ENV"] !== "development") {
+    if (!cachedRemoteManifest) {
+      if (!remoteManifestPromise) {
+        remoteManifestPromise = fetchRemoteSriManifest(targetResources).then((res) => {
+          cachedRemoteManifest = res;
+          return res;
+        });
+      }
+      cachedRemoteManifest = await remoteManifestPromise;
+    }
+  }
+
+  return {
+    ...baseManifest,
+    ...cachedRemoteManifest,
+    ...explicitManifest,
+  };
+}
 
 const isDevEnv = () =>
   process.env["NODE_ENV"] === "development" ||
@@ -466,7 +495,7 @@ export const security = (): MiddlewareHandler => {
 
     const nonceBytes = crypto.getRandomValues(new Uint8Array(16));
     const nonce = btoa(String.fromCharCode(...nonceBytes));
-    const activeManifest = { ...manifest, ...merged.manifest };
+    const activeManifest = await resolveActiveManifest(merged.manifest, merged.resources);
 
     if (typeof HTMLRewriter !== "undefined") {
       const rewriter = new HTMLRewriter()
