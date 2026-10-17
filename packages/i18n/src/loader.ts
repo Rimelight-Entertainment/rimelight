@@ -14,6 +14,7 @@ export interface I18nLoader {
   resetTranslations: () => void;
   invalidateVirtualModules: (server: any, resolvedId: string) => void;
   handleHotUpdate: (pluginContext: any, ctx: any, resolvedId: string) => any[] | void;
+  loadVirtualModule: () => string;
   buildConfigPayload: () => {
     locales: string[];
     defaultLocale: string;
@@ -107,6 +108,8 @@ export function createI18nLoader(options: I18nConfig = {}): I18nLoader {
     };
   };
 
+  const loadVirtualModule = () => `export const config = ${JSON.stringify(buildConfigPayload())};`;
+
   return {
     root,
     getTranslationsDir,
@@ -118,6 +121,7 @@ export function createI18nLoader(options: I18nConfig = {}): I18nLoader {
     resetTranslations,
     invalidateVirtualModules,
     handleHotUpdate,
+    loadVirtualModule,
     buildConfigPayload,
   };
 }
