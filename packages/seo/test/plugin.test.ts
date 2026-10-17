@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
-import { seo, isContained } from "../src/plugin";
+import { seo } from "../src/plugin";
+import { isContained } from "../src/server";
 import path from "node:path";
 
 const VIRTUAL_ID = "virtual:rimelight-seo";

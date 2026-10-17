@@ -1,111 +1,31 @@
 import type { Plugin } from "vite-plus";
 import type { I18nConfig } from "./types";
-import fs from "node:fs";
-import path from "node:path";
-import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
+import { createI18nLoader } from "./loader";
 
 const ID = "virtual:rimelight-i18n";
 const RESOLVED_ID = `\0${ID}`;
 
 export function i18n(options: I18nConfig = {}): Plugin {
-  const root = options.root ? path.resolve(options.root) : process.cwd();
-  let cache: Record<string, Record<string, unknown>> | null = null;
-
-  const getTranslationsDir = () => path.resolve(root, options.translationsDir ?? "src/i18n");
-
-  const loadTranslations = () => {
-    if (cache) return cache;
-    const dir = getTranslationsDir();
-    if (!fs.existsSync(dir)) return (cache = {});
-
-    return (cache = Object.fromEntries(
-      fs
-        .readdirSync(dir)
-        .filter((f) => f.endsWith(".json"))
-        .map((f) => [
-          path.basename(f, ".json"),
-          JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8")) as Record<string, unknown>,
-        ]),
-    ));
-  };
-
-  const getLocales = () => Object.keys(loadTranslations()).sort();
-  const getDefaultLocale = (locales = getLocales()) =>
-    options.defaultLocale ?? (locales.includes("en") ? "en" : (locales[0] ?? "en"));
-
-  const emitTypes = () => {
-    if (options.types === false) return;
-    const trans = loadTranslations();
-    const defaultLocale = getDefaultLocale();
-    if (!trans[defaultLocale]) return;
-
-    const target = path.resolve(
-      root,
-      typeof options.types === "string" ? options.types : "node_modules/.rimelight/i18n/keys.d.ts",
-    );
-    writeTypeDeclarations(target, generateTypeDeclarations(trans[defaultLocale]!));
-  };
-
-  const isTranslationFile = (file: string): boolean => {
-    if (!file.endsWith(".json")) return false;
-    const rel = path.relative(getTranslationsDir(), file);
-    return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
-  };
-
-  const resetTranslations = () => {
-    cache = null;
-    emitTypes();
-  };
-
-  const invalidateVirtualModules = (server: any) => {
-    const graphs: Array<{
-      getModuleById?: (id: string) => unknown;
-      invalidateModule?: (mod: unknown) => void;
-    }> = server.environments
-      ? Object.values(server.environments).map((env: any) => env.moduleGraph)
-      : ([server.moduleGraph].filter(Boolean) as { getModuleById?: (id: string) => unknown }[]);
-    for (const graph of graphs) {
-      const mod = graph.getModuleById?.(RESOLVED_ID);
-      if (mod) graph.invalidateModule?.(mod);
-    }
-  };
+  const loader = createI18nLoader(options);
 
   return {
     name: "rimelight:i18n",
-
     resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
-
-    load: (id) => {
-      if (id === RESOLVED_ID) {
-        emitTypes();
-        const locales = getLocales();
-        const cfg = {
-          locales,
-          defaultLocale: getDefaultLocale(locales),
-          prefixDefaultLocale: options.prefixDefaultLocale ?? true,
-          skipPaths: options.skipPaths ?? ["/api", "/_"],
-          translations: loadTranslations(),
-        };
-        return `export const config = ${JSON.stringify(cfg)};`;
-      }
-      return undefined;
-    },
-
-    buildStart() {
-      emitTypes();
-    },
-
-    hotUpdate(options) {
+    load: (id) =>
+      id === RESOLVED_ID
+        ? `export const config = ${JSON.stringify(loader.buildConfigPayload())};`
+        : undefined,
+    buildStart: () => loader.emitTypes(),
+    hotUpdate(ctx) {
       if ((this as { environment?: { name?: string } }).environment?.name !== "client") return;
-      if (!isTranslationFile(options.file)) return;
-      resetTranslations();
-      invalidateVirtualModules(options.server);
-      options.server.ws.send({ type: "full-reload" });
+      if (!loader.isTranslationFile(ctx.file)) return;
+      loader.resetTranslations();
+      loader.invalidateVirtualModules(ctx.server, RESOLVED_ID);
+      ctx.server.ws.send({ type: "full-reload" });
       return [];
     },
-
     generateBundle() {
-      for (const [locale, data] of Object.entries(loadTranslations())) {
+      for (const [locale, data] of Object.entries(loader.loadTranslations())) {
         this.emitFile({
           type: "asset",
           fileName: `locales/${locale}.json`,
