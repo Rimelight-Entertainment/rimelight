@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
-import { DEFAULT_ICON_NAMES } from "@rimelight/ui";
+import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl", "none"] as const;
