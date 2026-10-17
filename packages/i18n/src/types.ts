@@ -17,16 +17,10 @@ declare global {
   var __rimelight_i18n: AsyncLocalStorage<I18nContextStore> | undefined;
 }
 
-export interface RimelightTranslationKeys {
-  keys: string;
-}
-
-type TranslationKey = RimelightTranslationKeys["keys"];
-
-export interface TFunction {
-  (key: TranslationKey, params?: Record<string, unknown>, locale?: string): string;
-  raw: <T = unknown>(key: TranslationKey, fallback?: T, locale?: string) => T;
-  array: <T = string>(key: TranslationKey, fallback?: T[], locale?: string) => T[];
-  plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
-  localize: (value: unknown, locale?: string) => string;
+export interface TFunction<K extends string = string> {
+  (key: K, params?: Record<string, unknown>, locale?: string): string;
+  raw<T = unknown>(key: K, fallback?: T, locale?: string): T;
+  array<T = string>(key: K, fallback?: T[], locale?: string): T[];
+  plural(count: number, locale?: string): Intl.LDMLPluralRule;
+  localize(value: unknown, locale?: string): string;
 }

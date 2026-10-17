@@ -148,7 +148,7 @@ describe("rimelight-i18n CLI", () => {
       expect(fs.existsSync(outPath)).toBe(true);
       const content = fs.readFileSync(outPath, "utf-8");
       expect(content).toContain('declare module "@rimelight/i18n"');
-      expect(content).toContain("interface RimelightTranslationKeys");
+      expect(content).toContain('export const t: import("@rimelight/i18n").TFunction<');
       expect(content).toContain('"buttons.save" | "nav.contact" | "nav.home"');
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });

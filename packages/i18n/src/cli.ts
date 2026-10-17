@@ -219,7 +219,7 @@ export function fixTranslations(
 export function generateTypeDeclarations(baseDict: Record<string, any>): string {
   const keys = extractKeys(baseDict).sort();
   const union = keys.length > 0 ? keys.map((k) => JSON.stringify(k)).join(" | ") : "string";
-  return `declare module "@rimelight/i18n" {\n  interface RimelightTranslationKeys {\n    keys: ${union};\n  }\n}\n`;
+  return `declare module "@rimelight/i18n" {\n  export const t: import("@rimelight/i18n").TFunction<${union}>;\n}\n`;
 }
 
 /** Writes declaration file only if content changed to avoid touching filesystem mtime. */
