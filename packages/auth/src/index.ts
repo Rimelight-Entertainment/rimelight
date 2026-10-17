@@ -1,20 +1,3 @@
-export type {
-  UserType,
-  AuthSession,
-  AuthEnv,
-  UserSessionContext,
-  AuthAdapter,
-  RoleGuard,
-  AuthMiddlewareOptions,
-  AuthConfig,
-} from "./types";
-
-export type { AuthClientSession, AuthClientOptions, AuthClient } from "./client/index";
-
-export { hasRole, hasPermission, evaluateAccess } from "./permissions/index";
-
-export { normalizeUsername } from "./plugins/reserved-usernames/index";
-
-export { createAuthClient, authClient } from "./client/index";
+export type { AuthAdapter, AuthConfig, AuthSession, UserSessionContext, UserType } from "./types";
 
 export { auth } from "./runtime";

@@ -1,4 +1,4 @@
-import { hasRole, hasPermission, evaluateAccess } from "@rimelight/auth";
+import { evaluateAccess, hasPermission, hasRole } from "@rimelight/auth/permissions";
 import { cmsStatements } from "@rimelight/cms";
 
 export { hasRole, hasPermission, evaluateAccess };
