@@ -32,6 +32,10 @@
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
     },
+    "./middleware": {
+      "types": "./dist/middleware.d.mts",
+      "import": "./dist/middleware.mjs"
+    },
     "./head": {
       "types": "./dist/head.d.mts",
       "import": "./dist/head.mjs"

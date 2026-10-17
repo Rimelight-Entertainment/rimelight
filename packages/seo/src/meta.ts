@@ -116,3 +116,38 @@ export function buildWebSiteSchema(
     description: config.description,
   };
 }
+
+/**
+ * Normalizes SEO options with sensible defaults.
+ */
+export function normalizeSeoConfig(options: SeoConfig = {}): SeoConfig {
+  const authorHandle = options.authorHandle;
+  const ogImage = options.ogImage;
+  return {
+    ...options,
+    id: options.id || "rimelight",
+    name: options.name || "Rimelight",
+    description: options.description || "",
+    url: options.url || "https://rimelight.com",
+    ...(ogImage !== undefined && { ogImage }),
+    author: options.author || options.name || "Rimelight",
+    email: options.email || "support@rimelight.com",
+    branding: {
+      logo: {
+        alt: options.branding?.logo?.alt || options.name || "Logo",
+        ...options.branding?.logo,
+      },
+      colors: {
+        themeColor: options.branding?.colors?.themeColor || "#ffffff",
+        backgroundColor: options.branding?.colors?.backgroundColor || "#0a0a0a",
+      },
+      ...options.branding,
+    },
+    titleTemplate:
+      options.titleTemplate || (options.name ? `%s | ${options.name}` : "%s | Rimelight"),
+    maxDescriptionLength: options.maxDescriptionLength || 160,
+    ...(authorHandle !== undefined && { authorHandle }),
+    ...(options.openGraph ? { openGraph: options.openGraph } : {}),
+    ...(options.twitter ? { twitter: options.twitter } : {}),
+  };
+}

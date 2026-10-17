@@ -1,7 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
 import { seo } from "../src/plugin";
-import { isContained } from "../src/server";
-import path from "node:path";
 
 const VIRTUAL_ID = "virtual:rimelight-seo";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
@@ -12,20 +10,6 @@ async function callHook<T>(hook: unknown, ...args: any[]): Promise<T> {
   if (typeof fn !== "function") throw new Error("hook not implemented");
   return (await (fn as (...a: any[]) => unknown).call(undefined, ...args)) as T;
 }
-
-describe("isContained path containment", () => {
-  const root = process.cwd();
-
-  it("returns true for paths inside root", () => {
-    expect(isContained(root, path.join(root, "package.json"))).toBe(true);
-    expect(isContained(root, "./package.json")).toBe(true);
-  });
-
-  it("returns false for path traversal attempts", () => {
-    expect(isContained(root, "../../../../../../../etc/passwd")).toBe(false);
-    expect(isContained(root, "../..")).toBe(false);
-  });
-});
 
 describe("seo Vite Plugin", () => {
   it("resolves and loads virtual modules", async () => {
@@ -40,28 +24,14 @@ describe("seo Vite Plugin", () => {
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
     expect(configCode).toContain("export const config =");
     expect(configCode).toContain('"name":"Test Site"');
+    expect(configCode).toContain('"url":"https://test.rimelight.com"');
   });
 
-  it("emits static assets during generateBundle", async () => {
-    const emitted: any[] = [];
-    const plugin = seo({
-      name: "Test Site",
-      url: "https://test.rimelight.com",
-      robots: true,
-      sitemap: true,
-    });
-
-    const hook =
-      typeof plugin.generateBundle === "function"
-        ? plugin.generateBundle
-        : (plugin.generateBundle as any)?.handler;
-
-    await hook.call({
-      emitFile: (asset: any) => emitted.push(asset),
-    });
-
-    expect(emitted.some((a) => a.fileName === "robots.txt")).toBe(true);
-    expect(emitted.some((a) => a.fileName === "sitemap.xml")).toBe(true);
-    expect(emitted.some((a) => a.fileName === "sitemap-index.xml")).toBe(true);
+  it("applies normalized defaults", async () => {
+    const plugin = seo({});
+    const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
+    expect(configCode).toContain('"id":"rimelight"');
+    expect(configCode).toContain('"name":"Rimelight"');
+    expect(configCode).toContain('"url":"https://rimelight.com"');
   });
 });

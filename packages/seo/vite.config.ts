@@ -8,6 +8,7 @@ export default defineConfig({
     entry: [
       "src/index.ts",
       "src/plugin.ts",
+      "src/middleware.ts",
       "src/head.ts",
       "src/sanitize.ts",
       "src/types.ts",
