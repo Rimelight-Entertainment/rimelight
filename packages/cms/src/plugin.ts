@@ -30,7 +30,7 @@ export function cms(options: CmsConfig = {}): Plugin {
     for (const candidate of candidates) {
       if (fs.existsSync(candidate)) return `export * from ${JSON.stringify(candidate)};`;
     }
-    return `export const db = null;\nexport default null;`;
+    return `export const db = null;`;
   };
 
   return {

@@ -4,6 +4,4 @@ declare module "virtual:rimelight-cms" {
 
 declare module "virtual:rimelight-cms/db" {
   export const db: any;
-  const defaultExport: any;
-  export default defaultExport;
 }

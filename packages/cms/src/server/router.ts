@@ -55,7 +55,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     if (resolvedDb) return resolvedDb;
     try {
       const dbModule = await import("virtual:rimelight-cms/db");
-      resolvedDb = dbModule.db || dbModule.default || dbModule;
+      resolvedDb = dbModule.db || dbModule;
       return resolvedDb;
     } catch {
       throw new Error(

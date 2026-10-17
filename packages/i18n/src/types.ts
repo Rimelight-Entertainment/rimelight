@@ -1,17 +1,11 @@
 export interface I18nConfig {
+  locales?: readonly string[];
   defaultLocale?: string;
   translationsDir?: string;
   prefixDefaultLocale?: boolean;
-  skipPaths?: string[];
+  skipPaths?: readonly string[];
   types?: boolean | string;
-}
-
-export interface ResolvedI18nConfig extends Omit<I18nConfig, "skipPaths"> {
-  readonly locales: readonly string[];
-  readonly defaultLocale: string;
-  readonly prefixDefaultLocale: boolean;
-  readonly skipPaths: readonly string[];
-  readonly translations: Record<string, Record<string, unknown>>;
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 export interface I18nContextStore {
