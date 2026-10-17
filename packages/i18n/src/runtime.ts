@@ -1,23 +1,25 @@
 import { config } from "virtual:rimelight-i18n";
 import type { TranslationKey } from "./types";
 
-const discovered = Object.fromEntries(
-  Object.entries(
-    import.meta.glob<Record<string, unknown>>("/src/i18n/*.json", {
-      eager: true,
-      import: "default",
-    }),
-  ).map(([path, data]) => [path.slice(10, -5), data]),
-);
-
-const locales = Object.keys(discovered).sort();
+const translations = (config?.translations ??
+  Object.fromEntries(
+    Object.entries(
+      import.meta.glob<Record<string, unknown>>("/src/i18n/*.json", {
+        eager: true,
+        import: "default",
+      }),
+    ).map(([path, data]) => [path.slice(10, -5), data]),
+  )) as Record<string, Record<string, unknown>>;
 
 export const activeConfig = {
-  locales: [...(config?.locales ?? (locales.length ? locales : ["en"]))],
+  locales: [
+    ...(config?.locales ??
+      (Object.keys(translations).length ? Object.keys(translations).sort() : ["en"])),
+  ],
   defaultLocale: config?.defaultLocale ?? "en",
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
   skipPaths: [...(config?.skipPaths ?? ["/api", "/_"])],
-  translations: (config?.translations ?? discovered) as Record<string, Record<string, unknown>>,
+  translations,
 };
 
 let currentLocale = activeConfig.defaultLocale;
