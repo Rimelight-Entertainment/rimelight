@@ -13,6 +13,7 @@ export interface I18nLoader {
   isTranslationFile: (file: string) => boolean;
   resetTranslations: () => void;
   invalidateVirtualModules: (server: any, resolvedId: string) => void;
+  handleHotUpdate: (pluginContext: any, ctx: any, resolvedId: string) => any[] | void;
   buildConfigPayload: () => {
     locales: string[];
     defaultLocale: string;
@@ -85,6 +86,15 @@ export function createI18nLoader(options: I18nConfig = {}): I18nLoader {
     }
   };
 
+  const handleHotUpdate = (pluginContext: any, ctx: any, resolvedId: string): any[] | void => {
+    if (pluginContext?.environment?.name && pluginContext.environment.name !== "client") return;
+    if (!isTranslationFile(ctx.file)) return;
+    resetTranslations();
+    invalidateVirtualModules(ctx.server, resolvedId);
+    ctx.server.ws.send({ type: "full-reload" });
+    return [];
+  };
+
   const buildConfigPayload = () => {
     emitTypes();
     const locales = getLocales();
@@ -107,6 +117,7 @@ export function createI18nLoader(options: I18nConfig = {}): I18nLoader {
     isTranslationFile,
     resetTranslations,
     invalidateVirtualModules,
+    handleHotUpdate,
     buildConfigPayload,
   };
 }
