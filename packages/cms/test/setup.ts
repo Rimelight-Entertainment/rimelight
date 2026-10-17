@@ -10,7 +10,3 @@ vi.mock("virtual:rimelight-cms", () => ({
     },
   },
 }));
-
-vi.mock("virtual:rimelight-cms/db", () => ({
-  db: null,
-}));

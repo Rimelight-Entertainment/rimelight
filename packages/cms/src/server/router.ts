@@ -49,19 +49,13 @@ export interface CmsRouterOptions {
 export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
   const cms = new Hono();
 
-  // Lazy / dynamic db resolution if not explicitly passed
+  // Database resolution
   let resolvedDb = options.db;
   const getDb = async () => {
     if (resolvedDb) return resolvedDb;
-    try {
-      const dbModule = await import("virtual:rimelight-cms/db");
-      resolvedDb = dbModule.db || dbModule;
-      return resolvedDb;
-    } catch {
-      throw new Error(
-        "[@rimelight/cms] No database instance found. Please pass `db` to `createCmsRouter({ db })` or ensure `src/db/index.ts` exists.",
-      );
-    }
+    throw new Error(
+      "[@rimelight/cms] No database instance found. Please pass `db` to `createCmsRouter({ db })`.",
+    );
   };
 
   const auth = options.auth || defaultAuth;
