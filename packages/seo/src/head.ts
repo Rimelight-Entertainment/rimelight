@@ -497,11 +497,6 @@ export function createSeoHead(props: HeadProps = {}, boundConfig?: SeoConfig): H
 }
 
 /**
- * Alias for createSeoHead for ergonomic imports.
- */
-export const createHead = createSeoHead;
-
-/**
  * Factory that returns a pre-configured createSeoHead bound to a custom SeoConfig. Ideal for
  * multi-tenant apps, edge workers, and contexts outside Vite virtual modules.
  */

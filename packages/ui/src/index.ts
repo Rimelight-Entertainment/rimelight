@@ -22,23 +22,13 @@ export {
 
 export { DEFAULT_ICON_NAMES, resolveIcon, type RimelightIcons } from "./icons";
 
-export {
-  cx,
-  defineTheme,
-  getUIConfig,
-  setUIConfig,
-  getUiConfig,
-  setUiConfig,
-  setRimelightUITestConfig,
-} from "./resolver";
+export { cx, defineTheme, getUIConfig, setUIConfig } from "./resolver";
 
 export {
   normalizeModifier,
   formatShortcutKeys,
   activeShortcutsStore,
-  setActiveShortcutsStore,
   shortcutsModalOpen,
-  setShortcutsModalOpen,
   openShortcutsModal,
   closeShortcutsModal,
   toggleShortcutsModal,

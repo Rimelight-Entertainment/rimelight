@@ -4,7 +4,7 @@ import { styleText } from "node:util";
 
 // --- Terminal Styling (Node 22+ styleText with graceful fallback) ---
 
-export type TextStyleFormat = "bold" | "dim" | "red" | "green" | "yellow" | "magenta" | "cyan";
+type TextStyleFormat = "bold" | "dim" | "red" | "green" | "yellow" | "magenta" | "cyan";
 
 const ANSI_CODES: Record<TextStyleFormat, [string, string]> = {
   bold: ["\x1b[1m", "\x1b[22m"],
@@ -40,7 +40,7 @@ function styleTextSafe(format: TextStyleFormat, text: unknown): string {
 
 // --- Cancellation Symbol & Global Terminal Cleanup ---
 
-export const CANCEL_SYMBOL = Symbol("rimelight:cancel");
+const CANCEL_SYMBOL = Symbol("rimelight:cancel");
 
 if (typeof process !== "undefined" && typeof process.on === "function") {
   process.on("exit", () => {

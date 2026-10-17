@@ -16,14 +16,3 @@ export const getUIConfig = (): UIConfig => {
 export const setUIConfig = (next?: UIConfig | null): void => {
   configOverrides = next ? { ...next } : null;
 };
-
-// Aliases matching standard naming and test helper conventions
-export const getUiConfig = getUIConfig;
-export const setUiConfig = setUIConfig;
-export const setRimelightUITestConfig = (overrides: Partial<UIConfig> | null): void => {
-  if (overrides === null) {
-    setUIConfig();
-  } else {
-    setUIConfig({ ...getUIConfig(), ...overrides });
-  }
-};

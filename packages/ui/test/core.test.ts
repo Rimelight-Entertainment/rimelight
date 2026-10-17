@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
-import { defineTheme, setRimelightUITestConfig } from "../src/resolver";
+import { defineTheme, setUIConfig } from "../src/resolver";
 import { resolveIcon } from "../src/icons";
 
 describe("@rimelight/ui core resolver", () => {
@@ -41,7 +41,7 @@ describe("@rimelight/ui core resolver", () => {
   });
 
   it("should deep merge custom overrides without losing base slots", () => {
-    setRimelightUITestConfig({
+    setUIConfig({
       components: {
         themes: {
           testOverride: {
@@ -80,7 +80,7 @@ describe("@rimelight/ui core resolver", () => {
     expect(slots["root"]).toContain("override-sm");
     expect(slots["label"]).toContain("overridden-label");
 
-    setRimelightUITestConfig(null);
+    setUIConfig(null);
   });
 });
 
@@ -102,7 +102,7 @@ describe("@rimelight/ui core icon resolution", () => {
   });
 
   it("should resolve custom icon configured in uiConfig", () => {
-    setRimelightUITestConfig({
+    setUIConfig({
       icons: {
         customIcon: "i-custom-icon",
       },
@@ -111,7 +111,7 @@ describe("@rimelight/ui core icon resolution", () => {
     const icon = resolveIcon("customIcon");
     expect(icon).toBe("i-custom-icon");
 
-    setRimelightUITestConfig(null);
+    setUIConfig(null);
   });
 
   it("should return empty icon for empty name and custom", () => {

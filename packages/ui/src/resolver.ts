@@ -1,13 +1,7 @@
 import type { ClassValue, ThemeConfig } from "./types";
 import { getUIConfig } from "./runtime";
 
-export {
-  getUIConfig,
-  setUIConfig,
-  setRimelightUITestConfig,
-  getUiConfig,
-  setUiConfig,
-} from "./runtime";
+export { getUIConfig, setUIConfig } from "./runtime";
 
 function toVal(val: ClassValue): string {
   if (!val) return "";

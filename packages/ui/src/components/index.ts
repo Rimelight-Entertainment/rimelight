@@ -228,7 +228,6 @@ export type { RLRadioGroupProps } from "./radio-group/radio-group.types";
 export { RLRating } from "./rating/RLRating";
 export type { RLRatingProps } from "./rating/rating.types";
 export { RLRouteAnnouncer } from "./route-announcer/RLRouteAnnouncer";
-export { RLRouteAnnouncerTheme } from "./route-announcer/route-announcer.theme";
 export type {
   RLRouteAnnouncerProps,
   RLRouteAnnouncerProgressOptions,

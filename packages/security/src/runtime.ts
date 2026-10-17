@@ -199,7 +199,7 @@ const decodeB64Url = (str: string): Uint8Array => {
   return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
 };
 
-export const timingSafeEqual = async (a: string, b: string): Promise<boolean> => {
+const timingSafeEqual = async (a: string, b: string): Promise<boolean> => {
   const enc = new TextEncoder();
   const [aHash, bHash] = await Promise.all([
     crypto.subtle.digest("SHA-256", enc.encode(a)),
@@ -211,7 +211,7 @@ export const timingSafeEqual = async (a: string, b: string): Promise<boolean> =>
   return diff === 0;
 };
 
-export const signHmac = async (payload: string, secret: string) => {
+const signHmac = async (payload: string, secret: string) => {
   const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(secret),

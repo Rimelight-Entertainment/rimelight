@@ -1,16 +1,16 @@
-export interface GeneratePngOptions {
+interface GeneratePngOptions {
   width: number;
   height: number;
   background?: string;
 }
 
-export interface GenerateMaskableOptions {
+interface GenerateMaskableOptions {
   size?: number;
   background?: string;
   paddingRatio?: number;
 }
 
-export interface GenerateOgCardOptions {
+interface GenerateOgCardOptions {
   width?: number;
   height?: number;
   background?: string;
@@ -39,7 +39,7 @@ function toDataUrl(source: Buffer | Uint8Array | string): string {
  */
 export async function generatePng(
   source: Buffer | Uint8Array | string,
-  options: { width: number; height: number; background?: string },
+  options: GeneratePngOptions,
 ): Promise<Buffer> {
   const { renderTakumi } = await import("./takumi.js");
   const src = toDataUrl(source);

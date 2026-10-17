@@ -3,14 +3,6 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { config, t, type I18nContextStore } from "./runtime";
 
 /**
- * Hono context variables injected by the i18n middleware.
- */
-export interface I18nVariables {
-  locale: string;
-  t: typeof t;
-}
-
-/**
  * Hono i18n middleware for locale resolution, route redirection,
  * context injection (`c.set('locale')` & `c.set('t')`), and serving
  * `/locales/:locale.json` for external consumers (e.g. game clients).

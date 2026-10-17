@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { createSeoHead, createHead, defineSeoConfig } from "../src/head";
+import { createSeoHead, defineSeoConfig } from "../src/head";
 import { deepMerge } from "../src/meta";
 import { serializeJsonLd, sanitizeUrl } from "../src/sanitize";
 
@@ -167,9 +167,5 @@ describe("createSeoHead", () => {
         "content"
       ],
     ).toBe("Acme Corp");
-  });
-
-  it("createHead is an alias of createSeoHead", () => {
-    expect(createHead).toBe(createSeoHead);
   });
 });

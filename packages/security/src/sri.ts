@@ -1,6 +1,4 @@
 import { createHash } from "node:crypto";
-import type { SecurityConfig } from "./types";
-import { resolveSecurityDomain } from "./domain";
 
 export function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")
@@ -32,41 +30,4 @@ export async function fetchRemoteSriManifest(
   );
 
   return manifest;
-}
-
-export function generateSriManifestFromBundle(bundle: Record<string, any>): Record<string, string> {
-  const manifest: Record<string, string> = {};
-
-  for (const [fileName, chunk] of Object.entries(bundle)) {
-    if (!fileName.endsWith(".js") && !fileName.endsWith(".css")) continue;
-
-    const content = chunk.type === "chunk" ? chunk.code : chunk.source;
-    if (content) {
-      const hash = hashContent(content);
-      manifest[`/${fileName.replace(/^\/+/, "")}`] = hash;
-      manifest[fileName] = hash;
-    }
-  }
-
-  return manifest;
-}
-
-export async function resolveSecurityConfig(options: SecurityConfig = {}): Promise<SecurityConfig> {
-  const domain = resolveSecurityDomain(options.domain);
-
-  let remoteManifest: Record<string, string> = {};
-  const externalUrls = Array.from(new Set(options.resources || []));
-
-  if (process.env["NODE_ENV"] !== "development" && externalUrls.length > 0) {
-    remoteManifest = await fetchRemoteSriManifest(externalUrls);
-  }
-
-  return {
-    ...options,
-    ...(domain !== undefined ? { domain } : {}),
-    manifest: {
-      ...remoteManifest,
-      ...options.manifest,
-    },
-  };
 }

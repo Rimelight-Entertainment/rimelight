@@ -31,5 +31,3 @@ export const auth: AuthAdapter = {
     );
   },
 };
-
-export const authAdapter = auth;

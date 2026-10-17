@@ -22,4 +22,4 @@ export {
 
 export { createAuthClient, authClient } from "./client/index";
 
-export { auth, authAdapter } from "./runtime";
+export { auth } from "./runtime";

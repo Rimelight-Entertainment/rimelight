@@ -5,7 +5,6 @@ export {
   isConstructionGuest,
   signInConstructionGuest,
   submitConstructionPassphrase,
-  getConstructionFallbackHtml,
   CONSTRUCTION_GUEST_COOKIE,
   getSecurityConfig,
   setSecurityConfig,
