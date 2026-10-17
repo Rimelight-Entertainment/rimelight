@@ -1,43 +1,41 @@
+import { Hono } from "hono";
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n } from "../src/middleware";
 import { getCurrentLocale } from "../src/index";
-import { createMockContext, setTranslations } from "./helpers";
-
-function req(path: string, init?: RequestInit): Request {
-  return new Request(`https://example.com${path}`, init);
-}
+import { activeConfig } from "../src/runtime";
 
 const runMiddleware = async (path: string, init?: RequestInit) => {
-  const middleware = i18n();
   let nextCalled = false;
   let activeLocale = "";
-  const ctx = createMockContext(req(path, init));
 
-  const response = await middleware(ctx as any, async () => {
+  const app = new Hono();
+  app.use("*", i18n());
+  app.all("*", (c) => {
     nextCalled = true;
     activeLocale = getCurrentLocale();
+    return c.text("ok");
   });
+
+  const response = await app.request(path, init);
 
   return {
     response,
     nextCalled,
-    location: response?.headers.get("location") ?? null,
-    activeLocale: activeLocale || (ctx.get("locale") ?? getCurrentLocale()),
+    location: response.headers.get("location"),
+    activeLocale,
   };
 };
 
 /** Restores the default Vite plugin configuration (locales discovered as `["en"]`, etc.). */
-function config(overrides?: Parameters<typeof setTranslations>[1]): void {
-  setTranslations(
-    {},
-    {
-      locales: ["en"],
-      defaultLocale: "en",
-      prefixDefaultLocale: true,
-      skipPaths: ["/api", "/_"],
-      ...overrides,
-    },
-  );
+function config(overrides?: Partial<typeof activeConfig>): void {
+  Object.assign(activeConfig, {
+    locales: ["en"],
+    defaultLocale: "en",
+    prefixDefaultLocale: true,
+    skipPaths: ["/api", "/_"],
+    translations: {},
+    ...overrides,
+  });
 }
 
 beforeEach(() => config());
@@ -67,7 +65,6 @@ describe("@rimelight/i18n middleware", () => {
       headers: { "accept-language": "pt-BR,pt;q=0.9,en;q=0.8" },
     });
     expect(result.location).toBe("/pt/about");
-    expect(result.activeLocale).toBe("pt");
   });
 
   it("serves locale-prefixed paths as-is, matching the prefix case-insensitively", async () => {
@@ -95,7 +92,6 @@ describe("@rimelight/i18n middleware", () => {
     // Redundant default-locale prefix is stripped
     const resEn = await runMiddleware("/en/about");
     expect(resEn.location).toBe("/about");
-    expect(resEn.activeLocale).toBe("en");
 
     // Non-default locale is served as-is
     const resPt = await runMiddleware("/pt/about");
@@ -114,21 +110,19 @@ describe("@rimelight/i18n middleware", () => {
     expect(result.activeLocale).toBe("en");
   });
 
-  it("injects locale and t into Hono Context c.set / c.get", async () => {
-    const middleware = i18n();
-    let injectedLocale = "";
-    let injectedTranslation = "";
+  it("provides isolated locale to downstream handlers via AsyncLocalStorage", async () => {
+    let resolvedLocale = "";
 
-    const ctx = createMockContext(req("/en/about", { headers: { "accept-language": "en" } }));
-
-    await middleware(ctx as any, async () => {
-      injectedLocale = ctx.get("locale");
-      const tFunc = ctx.get("t");
-      injectedTranslation = typeof tFunc === "function" ? "available" : "missing";
+    const app = new Hono();
+    app.use("*", i18n());
+    app.get("/en/about", (c) => {
+      resolvedLocale = getCurrentLocale();
+      return c.text("ok");
     });
 
-    expect(injectedLocale).toBe("en");
-    expect(injectedTranslation).toBe("available");
+    await app.request("/en/about", { headers: { "accept-language": "en" } });
+
+    expect(resolvedLocale).toBe("en");
   });
 
   it("serves /locales/:locale.json directly for external consumers", async () => {

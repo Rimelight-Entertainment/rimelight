@@ -1,11 +1,8 @@
+import { Hono } from "hono";
 import { describe, expect, it } from "vite-plus/test";
 import { i18n } from "../src/middleware";
 import { getCurrentLocale, t } from "../src/index";
-import { createMockContext, setTranslations } from "./helpers";
-
-function req(path: string, init?: RequestInit): Request {
-  return new Request(`https://example.com${path}`, init);
-}
+import { activeConfig } from "../src/runtime";
 
 describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
   it("DEMO of why the OLD code failed: global module variable bleeds across async pauses", async () => {
@@ -40,24 +37,19 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
   });
 
   it("PROOF that the NEW i18n middleware and AsyncLocalStorage isolates 10 concurrent async requests", async () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      locales: ["en", "es", "pt", "de", "fr"],
+      defaultLocale: "en",
+      prefixDefaultLocale: true,
+      translations: {
         en: { title: "Welcome" },
         es: { title: "Bienvenido" },
         pt: { title: "Bem-vindo" },
         de: { title: "Willkommen" },
         fr: { title: "Bienvenue" },
       },
-      {
-        locales: ["en", "es", "pt", "de", "fr"],
-        defaultLocale: "en",
-        prefixDefaultLocale: true,
-      },
-    );
+    });
 
-    const middleware = i18n();
-
-    // 10 concurrent requests fired simultaneously with different locales and varying random async latency
     const testCases = [
       { path: "/es/home", expectedLocale: "es", expectedTitle: "Bienvenido", delayMs: 45 },
       { path: "/pt/home", expectedLocale: "pt", expectedTitle: "Bem-vindo", delayMs: 15 },
@@ -71,18 +63,23 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
       { path: "/en/contact", expectedLocale: "en", expectedTitle: "Welcome", delayMs: 20 },
     ];
 
+    const app = new Hono();
+    app.use("*", i18n());
+    app.get("*", async (c) => {
+      const delayMs = Number(c.req.query("delay") ?? "0");
+      if (delayMs > 0) {
+        await new Promise((r) => setTimeout(r, delayMs));
+      }
+      return c.json({
+        actualLocale: getCurrentLocale(),
+        actualTitle: t("title"),
+      });
+    });
+
     const results = await Promise.all(
       testCases.map(async (tc) => {
-        let actualResult = { actualLocale: "", actualTitle: "" };
-        const ctx = createMockContext(req(tc.path));
-        await middleware(ctx as any, async () => {
-          await new Promise((r) => setTimeout(r, tc.delayMs));
-          actualResult = {
-            actualLocale: getCurrentLocale(),
-            actualTitle: t("title"),
-          };
-        });
-        return actualResult;
+        const res = await app.request(`${tc.path}?delay=${tc.delayMs}`);
+        return res.json();
       }),
     );
 
@@ -98,7 +95,7 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
   });
 
   it("PROOF that TranslationKey is strictly bound to RimelightTranslationKeys", () => {
-    const validKey: import("../src/runtime").TranslationKey = "title";
+    const validKey: import("../src/types").TranslationKey = "title";
     expect(t(validKey)).toBeDefined();
   });
 });

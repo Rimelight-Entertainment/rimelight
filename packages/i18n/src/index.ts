@@ -1,6 +1,4 @@
 export {
-  type TranslationKey,
-  type TFunction,
   getLocales,
   getDefaultLocale,
   getCurrentLocale,
@@ -9,3 +7,5 @@ export {
   getLocaleAsset,
   t,
 } from "./runtime";
+
+export type { TranslationKey, TFunction } from "./types";

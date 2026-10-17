@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { flatten, unflatten, findMissingKeys } from "../src/cli";
 import { setCurrentLocale, t } from "../src/index";
-import { setTranslations } from "./helpers";
+import { activeConfig } from "../src/runtime";
 
 describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety", () => {
   const translations = {
@@ -48,8 +48,9 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
   });
 
   it("handles runtime translations and interpolation", () => {
-    setTranslations(translations, {
+    Object.assign(activeConfig, {
       defaultLocale: "en",
+      translations,
     });
     setCurrentLocale("en");
     expect(t("nav.home")).toBe("Home");

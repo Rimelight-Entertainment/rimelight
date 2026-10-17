@@ -1,16 +1,24 @@
 import { config } from "virtual:rimelight-i18n";
-import type { I18nContextStore, RimelightTranslationKeys, TranslationKey } from "./types";
+import type { TranslationKey } from "./types";
 
-export type { I18nContextStore, RimelightTranslationKeys, TranslationKey };
+const discovered = Object.fromEntries(
+  Object.entries(
+    import.meta.glob<Record<string, unknown>>("/src/i18n/*.json", {
+      eager: true,
+      import: "default",
+    }),
+  ).map(([path, data]) => [path.slice(10, -5), data]),
+);
+
+const locales = Object.keys(discovered).sort();
 
 export const activeConfig = {
-  locales: [...(config?.locales ?? ["en"])],
+  locales: [...(config?.locales ?? (locales.length ? locales : ["en"]))],
   defaultLocale: config?.defaultLocale ?? "en",
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
   skipPaths: [...(config?.skipPaths ?? ["/api", "/_"])],
-  translations: (config?.translations ?? {}) as Record<string, Record<string, unknown>>,
+  translations: (config?.translations ?? discovered) as Record<string, Record<string, unknown>>,
 };
-export { activeConfig as config };
 
 let currentLocale = activeConfig.defaultLocale;
 

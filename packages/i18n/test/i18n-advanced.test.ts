@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { getCurrentLocale, setCurrentLocale, t } from "../src/index";
-import { setTranslations } from "./helpers";
+import { activeConfig } from "../src/runtime";
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
   it("should handle plural categories for multiple languages", () => {
@@ -18,7 +18,11 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should expose plural categories through t.plural", () => {
-    setTranslations({ en: {} }, { defaultLocale: "en", locales: ["en", "pt"] });
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      locales: ["en", "pt"],
+      translations: { en: {} },
+    });
 
     // Defaults to the active locale
     setCurrentLocale("en");
@@ -35,8 +39,9 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should format complex translations with placeholders", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           items: {
             count: "You have {count} items in your {container}.",
@@ -44,8 +49,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
 
     setCurrentLocale("en");
     expect(t("items.count", { count: 3, container: "cart" })).toBe(
@@ -55,8 +59,9 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle plural object structures via t() helper", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           messages: {
             unread: {
@@ -66,8 +71,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
 
     setCurrentLocale("en");
     expect(t("messages.unread", { count: 1 })).toBe("1 new message");
@@ -75,8 +79,9 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("selects the plural branch even without a {count} placeholder (self-rendered numbers)", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           comments: {
             summary: {
@@ -86,8 +91,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
 
     setCurrentLocale("en");
     // count drives branch selection; the caller renders the number itself
@@ -96,8 +100,10 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should locale-format the numeric count param during interpolation", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      locales: ["en", "pt"],
+      translations: {
         en: {
           messages: {
             unread: {
@@ -117,8 +123,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-      { defaultLocale: "en", locales: ["en", "pt"] },
-    );
+    });
 
     // Grouped per locale
     setCurrentLocale("en");
@@ -132,8 +137,9 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle regional sub-locales and fallback chain", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           common: { button: "Submit", cancel: "Cancel" },
         },
@@ -141,8 +147,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           common: { button: "Enviar" },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
 
     setCurrentLocale("pt-BR");
     expect(t("common.button")).toBe("Enviar");
@@ -151,8 +156,9 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle fallback across regional variants and custom default locales", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "es-MX",
+      translations: {
         "pt-BR": {
           shop: { checkout: "Finalizar Compra" },
         },
@@ -163,8 +169,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           shop: { help: "Help" },
         },
       },
-      { defaultLocale: "es-MX" },
-    );
+    });
 
     setCurrentLocale("pt-BR");
     // 1. Direct regional match (pt-BR)
@@ -177,16 +182,16 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should support function values in translations", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           computed: {
             dynamic: (p: { val: number }) => `Result is ${p.val * 2}`,
           },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
 
     setCurrentLocale("en");
     expect(t("computed.dynamic", { val: 21 })).toBe("Result is 42");
@@ -204,8 +209,9 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
   });
 
   it("should handle interpolation with booleans, numbers, and missing placeholders", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           misc: {
             details: "User {user} is active: {isActive}, rating: {score}, missing: {missingVar}",
@@ -216,8 +222,7 @@ describe("@rimelight/i18n advanced runtime & edge cases", () => {
           },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
 
     setCurrentLocale("en");
     expect(t("misc.details", { user: "Ada", isActive: true, score: 9.8 })).toBe(

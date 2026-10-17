@@ -11,7 +11,7 @@ import {
   fixTranslations,
 } from "../src/cli";
 import { setCurrentLocale, getLocaleUrl, getLocaleAsset, t } from "../src/index";
-import { setLocaleConfig, setTranslations } from "./helpers";
+import { activeConfig } from "../src/runtime";
 
 describe("translation dictionary utils", () => {
   const source = {
@@ -136,7 +136,11 @@ describe("translation dictionary utils", () => {
 
 describe("relative locale urls", () => {
   beforeEach(() => {
-    setLocaleConfig({ locales: ["en", "pt"], defaultLocale: "en", prefixDefaultLocale: true });
+    Object.assign(activeConfig, {
+      locales: ["en", "pt"],
+      defaultLocale: "en",
+      prefixDefaultLocale: true,
+    });
     setCurrentLocale("en");
   });
 
@@ -180,14 +184,14 @@ describe("translation runtime", () => {
   });
 
   it("translates keys after initialization", () => {
-    setTranslations(
-      {
+    Object.assign(activeConfig, {
+      defaultLocale: "en",
+      translations: {
         en: {
           hero: { title: "Hello", greeting: "Hi {name}" },
         },
       },
-      { defaultLocale: "en" },
-    );
+    });
     setCurrentLocale("en");
     expect(t("hero.title")).toBe("Hello");
     expect(t("hero.greeting", { name: "Ada" })).toBe("Hi Ada");
@@ -197,13 +201,13 @@ describe("translation runtime", () => {
 
 describe("t.localize", () => {
   it("resolves the current locale from a dictionary object", () => {
-    setTranslations({}, { defaultLocale: "en", locales: ["en", "pt", "es"] });
+    Object.assign(activeConfig, { defaultLocale: "en", locales: ["en", "pt", "es"] });
     setCurrentLocale("pt");
     expect(t.localize({ en: "Hello", pt: "Olá", es: "Hola" })).toBe("Olá");
   });
 
   it("falls back to defaultLocale when the locale is missing or empty", () => {
-    setTranslations({}, { defaultLocale: "en", locales: ["en", "de", "fr"] });
+    Object.assign(activeConfig, { defaultLocale: "en", locales: ["en", "de", "fr"] });
     setCurrentLocale("de");
     expect(t.localize({ en: "Hello World", fr: "" })).toBe("Hello World");
   });
@@ -229,19 +233,19 @@ describe("t.localize", () => {
 
 describe("getLocaleAsset", () => {
   it("resolves the asset for the active locale", () => {
-    setLocaleConfig({ defaultLocale: "en" });
+    Object.assign(activeConfig, { defaultLocale: "en" });
     setCurrentLocale("es");
     expect(getLocaleAsset({ en: "/hero-en.png", es: "/hero-es.png" })).toBe("/hero-es.png");
   });
 
   it("falls back to defaultLocale when active locale is not in dictionary", () => {
-    setLocaleConfig({ defaultLocale: "en" });
+    Object.assign(activeConfig, { defaultLocale: "en" });
     setCurrentLocale("fr");
     expect(getLocaleAsset({ en: "/hero-en.png", es: "/hero-es.png" })).toBe("/hero-en.png");
   });
 
   it("supports explicit locale argument", () => {
-    setLocaleConfig({ defaultLocale: "en" });
+    Object.assign(activeConfig, { defaultLocale: "en" });
     setCurrentLocale("en");
     expect(getLocaleAsset({ en: "/hero-en.png", es: "/hero-es.png" }, "es")).toBe("/hero-es.png");
   });
