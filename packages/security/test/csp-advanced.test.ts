@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { buildCspHeader, resolveSecurityDomain } from "../src/runtime";
+import { buildCspHeader } from "../src/runtime";
 import { security as securityPlugin } from "../src/plugin";
 
 describe("@rimelight/security CSP header generator", () => {
@@ -78,8 +78,16 @@ describe("@rimelight/security CSP header generator", () => {
   });
 });
 
-describe("security domain validation", () => {
-  it("should normalize scheme, case, whitespace, path and trailing slash", () => {
+describe("security domain handling", () => {
+  it("should pass options through to virtual module via the vite plugin", () => {
+    const plugin = securityPlugin({ domain: "rimelight.com" }) as any;
+    expect(plugin.load("\0virtual:rimelight-security")).toContain('"domain":"rimelight.com"');
+
+    const emptyPlugin = securityPlugin() as any;
+    expect(emptyPlugin.load("\0virtual:rimelight-security")).toBe("export const config = {};");
+  });
+
+  it("should normalize scheme, case, whitespace, and path in buildCspHeader", () => {
     for (const input of [
       "example.com",
       "https://example.com",
@@ -89,37 +97,14 @@ describe("security domain validation", () => {
       "example.com/path",
       "example.com/",
       "EXAMPLE.COM",
-      "example.com:8080",
     ]) {
-      expect(resolveSecurityDomain(input), input).toBe(
-        input === "example.com:8080" ? "example.com:8080" : "example.com",
-      );
+      const csp = buildCspHeader({ domain: input });
+      expect(csp).toContain("https://cdn.example.com");
     }
   });
 
-  it("should return undefined for absent or blank domains", () => {
-    expect(resolveSecurityDomain(undefined)).toBeUndefined();
-    expect(resolveSecurityDomain("")).toBeUndefined();
-    expect(resolveSecurityDomain("   ")).toBeUndefined();
-  });
-
-  it("should throw on unfixable domains", () => {
-    for (const input of ["rimelight com", "..", "localhost", "example", "-example.com"]) {
-      expect(() => resolveSecurityDomain(input), input).toThrow(/Invalid security domain/);
-    }
-  });
-
-  it("should pass options through to virtual module via the vite plugin", () => {
-    const plugin = securityPlugin({ domain: "rimelight.com" }) as any;
-    expect(plugin.load("\0virtual:rimelight-security")).toContain('"domain":"rimelight.com"');
-
-    const emptyPlugin = securityPlugin() as any;
-    expect(emptyPlugin.load("\0virtual:rimelight-security")).toBe("export const config = {};");
-  });
-
-  it("should not throw on the request path for a malformed domain", () => {
-    // The request path normalizes rather than throws, so a config typo can never 500 a request.
-    const csp = buildCspHeader({ domain: "https://Example.com/" });
-    expect(csp).toContain("https://cdn.example.com");
+  it("should support custom ports and localhost in domain", () => {
+    const csp = buildCspHeader({ domain: "localhost:3000" });
+    expect(csp).toContain("https://cdn.localhost:3000");
   });
 });

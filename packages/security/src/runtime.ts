@@ -12,11 +12,13 @@ export const getSecurityConfig = (): SecurityConfig => activeConfig;
 export const setSecurityConfig = (next?: SecurityConfig): void => {
   activeConfig = next ? { ...next } : isRecord(config) ? { ...config } : {};
 };
-import { normalizeDomain, resolveSecurityDomain } from "./domain";
-export { normalizeDomain, resolveSecurityDomain };
 
 export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): string {
-  const domain = normalizeDomain(options.domain || "");
+  const domain = options.domain
+    ?.trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .split(/[/?#]/)[0];
   const allowed = options.allowedDomains || [];
   const turnstile = Boolean(options.turnstile);
 
