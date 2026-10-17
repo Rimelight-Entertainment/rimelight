@@ -11,8 +11,8 @@ import { buildApiCatalog } from "./catalog";
 import { buildWebManifest } from "./manifest";
 import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets";
 
-const VIRTUAL_ID = "virtual:rimelight-seo";
-const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const ID = "virtual:rimelight-seo";
+const RESOLVED_ID = `\0${ID}`;
 
 /**
  * Validates that a requested file path resolves strictly within the given root directory.
@@ -157,18 +157,11 @@ export function seo(options: SeoConfig = {}): Plugin {
 
   return {
     name: "rimelight:seo",
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      return null;
-    },
-
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify(normalizedSiteConfig)};`;
-      }
-
-      return null;
-    },
+    resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
+    load: (id) =>
+      id === RESOLVED_ID
+        ? `export const config = ${JSON.stringify(normalizedSiteConfig)};`
+        : undefined,
 
     configureServer(server: any) {
       resolveIcons();

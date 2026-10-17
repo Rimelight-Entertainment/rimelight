@@ -69,7 +69,7 @@ describe("Auth Vite Plugin", () => {
     });
 
     expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
-    expect(await callHook(plugin.resolveId, "some-other-id")).toBeNull();
+    expect(await callHook(plugin.resolveId, "some-other-id")).toBeFalsy();
 
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
     expect(configCode).toContain("export const config =");

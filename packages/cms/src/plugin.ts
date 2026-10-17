@@ -3,10 +3,10 @@ import type { CmsConfig } from "./types";
 import path from "node:path";
 import fs from "node:fs";
 
-const VIRTUAL_ID = "virtual:rimelight-cms";
-const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
-const VIRTUAL_DB_ID = "virtual:rimelight-cms/db";
-const RESOLVED_VIRTUAL_DB_ID = `\0${VIRTUAL_DB_ID}`;
+const ID = "virtual:rimelight-cms";
+const RESOLVED_ID = `\0${ID}`;
+const DB_ID = "virtual:rimelight-cms/db";
+const RESOLVED_DB_ID = `\0${DB_ID}`;
 
 export function cms(options: CmsConfig = {}): Plugin {
   const storageConfig = {
@@ -29,19 +29,12 @@ export function cms(options: CmsConfig = {}): Plugin {
 
   return {
     name: "rimelight:cms",
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      if (id === VIRTUAL_DB_ID) return RESOLVED_VIRTUAL_DB_ID;
-      return null;
-    },
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify({ routePrefix, storage: storageConfig })};`;
-      }
-      if (id === RESOLVED_VIRTUAL_DB_ID) {
-        return resolveDbCode();
-      }
-      return null;
-    },
+    resolveId: (id) => (id === ID ? RESOLVED_ID : id === DB_ID ? RESOLVED_DB_ID : undefined),
+    load: (id) =>
+      id === RESOLVED_ID
+        ? `export const config = ${JSON.stringify({ routePrefix, storage: storageConfig })};`
+        : id === RESOLVED_DB_ID
+          ? resolveDbCode()
+          : undefined,
   };
 }

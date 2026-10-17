@@ -50,7 +50,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
   it("resolves virtual module IDs", async () => {
     const plugin: Plugin = i18n();
     expect(await callHook(plugin.resolveId, VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
-    expect(await callHook(plugin.resolveId, "some-other-id")).toBeNull();
+    expect(await callHook(plugin.resolveId, "some-other-id")).toBeFalsy();
   });
 
   it("loads virtual config and translations in-memory with inferred locales", async () => {

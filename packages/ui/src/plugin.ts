@@ -3,8 +3,8 @@ import type { UIConfig } from "./types";
 import UnoCSS from "@unocss/vite";
 import { rimelightUiPreset } from "./preset";
 
-const VIRTUAL_ID = "virtual:rimelight-ui";
-const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const ID = "virtual:rimelight-ui";
+const RESOLVED_ID = `\0${ID}`;
 
 export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
   const runtimeCfg: UIConfig = {
@@ -35,16 +35,9 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
     }) as unknown as Plugin[]),
     {
       name: "rimelight:ui",
-      resolveId(id) {
-        if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-        return null;
-      },
-      load(id) {
-        if (id === RESOLVED_VIRTUAL_ID) {
-          return `export const config = ${JSON.stringify(runtimeCfg)};`;
-        }
-        return null;
-      },
+      resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
+      load: (id) =>
+        id === RESOLVED_ID ? `export const config = ${JSON.stringify(runtimeCfg)};` : undefined,
     },
   ];
 }

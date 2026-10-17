@@ -3,8 +3,8 @@ import type { SecurityConfig } from "./types";
 import { createHash } from "node:crypto";
 import { resolveSecurityDomain } from "./domain";
 
-const VIRTUAL_ID = "virtual:rimelight-security";
-const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const ID = "virtual:rimelight-security";
+const RESOLVED_ID = `\0${ID}`;
 
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")
@@ -22,17 +22,14 @@ export function security(options: SecurityConfig = {}): Plugin {
   return {
     name: "rimelight:security",
 
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      return null;
-    },
+    resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
 
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
+    load: (id) => {
+      if (id === RESOLVED_ID) {
         const cfg = { ...options, manifest: { ...sriManifest, ...options.manifest } };
         return `export const config = ${JSON.stringify(cfg)};`;
       }
-      return null;
+      return undefined;
     },
 
     async buildStart() {

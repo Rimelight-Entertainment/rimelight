@@ -1,21 +1,12 @@
 import type { Plugin } from "vite-plus";
 import type { AuthConfig } from "./types";
 
-const VIRTUAL_ID = "virtual:rimelight-auth";
-const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const ID = "virtual:rimelight-auth";
+const RESOLVED_ID = `\0${ID}`;
 
-export function auth(options: AuthConfig = {}): Plugin {
-  return {
-    name: "rimelight:auth",
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      return null;
-    },
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify(options)};`;
-      }
-      return null;
-    },
-  };
-}
+export const auth = (options: AuthConfig = {}): Plugin => ({
+  name: "rimelight:auth",
+  resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
+  load: (id) =>
+    id === RESOLVED_ID ? `export const config = ${JSON.stringify(options)};` : undefined,
+});

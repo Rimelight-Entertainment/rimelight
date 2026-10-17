@@ -4,8 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
 
-const VIRTUAL_ID = "virtual:rimelight-i18n";
-const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const ID = "virtual:rimelight-i18n";
+const RESOLVED_ID = `\0${ID}`;
 
 export function i18n(options: I18nConfig = {}): Plugin {
   const root = options.root ? path.resolve(options.root) : process.cwd();
@@ -65,7 +65,7 @@ export function i18n(options: I18nConfig = {}): Plugin {
       ? Object.values(server.environments).map((env: any) => env.moduleGraph)
       : ([server.moduleGraph].filter(Boolean) as { getModuleById?: (id: string) => unknown }[]);
     for (const graph of graphs) {
-      const mod = graph.getModuleById?.(RESOLVED_VIRTUAL_ID);
+      const mod = graph.getModuleById?.(RESOLVED_ID);
       if (mod) graph.invalidateModule?.(mod);
     }
   };
@@ -73,13 +73,10 @@ export function i18n(options: I18nConfig = {}): Plugin {
   return {
     name: "rimelight:i18n",
 
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      return null;
-    },
+    resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
 
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
+    load: (id) => {
+      if (id === RESOLVED_ID) {
         emitTypes();
         const locales = getLocales();
         const cfg = {
@@ -91,8 +88,7 @@ export function i18n(options: I18nConfig = {}): Plugin {
         };
         return `export const config = ${JSON.stringify(cfg)};`;
       }
-
-      return null;
+      return undefined;
     },
 
     buildStart() {
