@@ -1,3 +1,5 @@
+import type { AsyncLocalStorage } from "node:async_hooks";
+
 export interface I18nConfig {
   locales?: readonly string[];
   defaultLocale?: string;
@@ -12,6 +14,10 @@ export interface I18nConfig {
 export interface I18nContextStore {
   locale: string;
   translations?: Record<string, unknown> | undefined;
+}
+
+declare global {
+  var __rimelight_i18n: AsyncLocalStorage<I18nContextStore> | undefined;
 }
 
 export interface RimelightTranslationKeys {

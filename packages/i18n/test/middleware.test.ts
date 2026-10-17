@@ -130,4 +130,25 @@ describe("@rimelight/i18n middleware", () => {
     expect(injectedLocale).toBe("en");
     expect(injectedTranslation).toBe("available");
   });
+
+  it("serves /locales/:locale.json directly for external consumers", async () => {
+    config({
+      locales: ["en", "pt"],
+      translations: {
+        en: { greeting: "Hello" },
+        pt: { greeting: "Olá" },
+      },
+    });
+
+    const enRes = await runMiddleware("/locales/en.json");
+    expect(enRes.nextCalled).toBe(false);
+    expect(enRes.response?.status).toBe(200);
+    expect(enRes.response?.headers.get("Cache-Control")).toContain("public");
+    const enJson = await enRes.response?.json();
+    expect(enJson).toEqual({ greeting: "Hello" });
+
+    const missingRes = await runMiddleware("/locales/fr.json");
+    expect(missingRes.nextCalled).toBe(false);
+    expect(missingRes.response?.status).toBe(404);
+  });
 });

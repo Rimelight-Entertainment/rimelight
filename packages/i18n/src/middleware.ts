@@ -12,10 +12,24 @@ export interface I18nVariables {
 
 /**
  * Hono i18n middleware for locale resolution, route redirection,
- * and context injection (`c.set('locale')` & `c.set('t')`).
+ * context injection (`c.set('locale')` & `c.set('t')`), and serving
+ * `/locales/:locale.json` for external consumers (e.g. game clients).
  */
 export const i18n = (): MiddlewareHandler => async (c, next) => {
   const { pathname, search } = new URL(c.req.url);
+
+  // Serve static JSON translations over HTTP for external consumers (e.g. game clients)
+  if (pathname.startsWith("/locales/") && pathname.endsWith(".json")) {
+    const reqLocale = pathname.slice("/locales/".length, -".json".length);
+    const translations = config.translations?.[reqLocale];
+    if (translations) {
+      return c.json(translations, 200, {
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      });
+    }
+    return c.notFound();
+  }
+
   const prefix = config.locales.find(
     (l) => l.toLowerCase() === pathname.split("/")[1]?.toLowerCase(),
   );

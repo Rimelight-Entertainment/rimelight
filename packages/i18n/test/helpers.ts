@@ -27,7 +27,8 @@ export interface MockHonoContext {
   set: (key: string, value: any) => void;
   get: (key: string) => any;
   redirect: (target: string, status?: number) => Response;
-  json: (data: any, status?: number) => Response;
+  json: (data: any, status?: number, headers?: Record<string, string>) => Response;
+  notFound: () => Response;
 }
 
 export function createMockContext(request: Request): MockHonoContext {
@@ -46,10 +47,11 @@ export function createMockContext(request: Request): MockHonoContext {
     get: (k: string) => store.get(k),
     redirect: (target: string, status = 302) =>
       new Response(null, { status, headers: { Location: target } }),
-    json: (data: any, status = 200) =>
+    json: (data: any, status = 200, headers: Record<string, string> = {}) =>
       new Response(JSON.stringify(data), {
         status,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...headers },
       }),
+    notFound: () => new Response("Not Found", { status: 404 }),
   };
 }

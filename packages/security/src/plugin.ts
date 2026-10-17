@@ -1,7 +1,7 @@
 import type { Plugin } from "vite-plus";
 import type { SecurityConfig } from "./types";
 import { resolveSecurityDomain } from "./domain";
-import { fetchRemoteSriManifest, generateSriManifestFromBundle } from "./sri";
+import { fetchRemoteSriManifest } from "./sri";
 
 const ID = "virtual:rimelight-security";
 const RESOLVED_ID = `\0${ID}`;
@@ -23,17 +23,6 @@ export function security(options: SecurityConfig = {}): Plugin {
     async buildStart() {
       if (process.env["NODE_ENV"] === "development") return;
       sriManifest = await fetchRemoteSriManifest(externalUrls);
-    },
-
-    generateBundle(_outputOptions, bundle) {
-      const bundleManifest = generateSriManifestFromBundle(bundle);
-      Object.assign(sriManifest, bundleManifest);
-
-      this.emitFile?.({
-        type: "asset",
-        fileName: "sri.json",
-        source: JSON.stringify(sriManifest, null, 2),
-      });
     },
   };
 }

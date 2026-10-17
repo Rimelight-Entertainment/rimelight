@@ -24,14 +24,5 @@ export function i18n(options: I18nConfig = {}): Plugin {
       ctx.server.ws.send({ type: "full-reload" });
       return [];
     },
-    generateBundle() {
-      for (const [locale, data] of Object.entries(loader.loadTranslations())) {
-        this.emitFile({
-          type: "asset",
-          fileName: `locales/${locale}.json`,
-          source: JSON.stringify(data, null, 2),
-        });
-      }
-    },
   };
 }

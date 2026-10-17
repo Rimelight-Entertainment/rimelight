@@ -101,58 +101,6 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     }
   });
 
-  it("generates static JSON assets on generateBundle", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-static-"));
-    const i18nDir = path.join(tmpDir, "src", "i18n");
-    fs.mkdirSync(i18nDir, { recursive: true });
-    fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ nav: { home: "Home" } }));
-    fs.writeFileSync(path.join(i18nDir, "pt.json"), JSON.stringify({ nav: { home: "Início" } }));
-
-    try {
-      const plugin: Plugin = i18n({
-        translationsDir: i18nDir,
-        root: tmpDir,
-      });
-
-      const emitted: any[] = [];
-      const hook =
-        typeof plugin.generateBundle === "function"
-          ? plugin.generateBundle
-          : (plugin.generateBundle as any)?.handler;
-
-      await hook.call({
-        emitFile: (asset: any) => emitted.push(asset),
-      });
-
-      expect(emitted).toEqual([
-        {
-          type: "asset",
-          fileName: "locales/en.json",
-          source: JSON.stringify(
-            {
-              nav: { home: "Home" },
-            },
-            null,
-            2,
-          ),
-        },
-        {
-          type: "asset",
-          fileName: "locales/pt.json",
-          source: JSON.stringify(
-            {
-              nav: { home: "Início" },
-            },
-            null,
-            2,
-          ),
-        },
-      ]);
-    } finally {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
-    }
-  });
-
   it("defaults to 'en' when 'en' is present, and to the first locale when 'en' is absent", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-fallback-"));
     const i18nDir = path.join(tmpDir, "src", "i18n");
