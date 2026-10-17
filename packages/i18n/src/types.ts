@@ -6,11 +6,6 @@ export interface I18nConfig {
   translations?: Record<string, Record<string, unknown>>;
 }
 
-export interface I18nContextStore {
-  locale: string;
-  translations?: Record<string, unknown> | undefined;
-}
-
 export interface TFunction<K extends string = string> {
   (key: K, params?: Record<string, unknown>, locale?: string): string;
   raw<T = unknown>(key: K, fallback?: T, locale?: string): T;

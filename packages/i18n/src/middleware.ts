@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from "hono";
-import { activeConfig, i18nStorage } from "./runtime";
+import { activeConfig, withLocale } from "./runtime";
 
 /**
  * Hono i18n middleware for locale resolution, route redirection,
@@ -40,7 +40,5 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
       ? !prefix && `/${locale}${pathname}`
       : prefix === activeConfig.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
 
-  return target
-    ? c.redirect(`${target}${search}`, 302)
-    : i18nStorage.run({ locale, translations: activeConfig.translations[locale] }, next);
+  return target ? c.redirect(`${target}${search}`, 302) : withLocale(locale, next);
 };

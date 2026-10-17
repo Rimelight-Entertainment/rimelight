@@ -1,8 +1,14 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { config } from "virtual:rimelight-i18n";
-import type { I18nContextStore, TFunction } from "./types";
+import type { TFunction } from "./types";
 
-export const i18nStorage = new AsyncLocalStorage<I18nContextStore>();
+const storage = new AsyncLocalStorage<{
+  locale: string;
+  translations?: Record<string, unknown> | undefined;
+}>();
+
+export const withLocale = <R>(locale: string, fn: () => R): R =>
+  storage.run({ locale, translations: activeConfig.translations[locale] }, fn);
 
 const translations = (config?.translations ??
   Object.fromEntries(
@@ -34,7 +40,7 @@ export const getLocales = (): string[] => [...activeConfig.locales];
 export const getDefaultLocale = (): string => activeConfig.defaultLocale;
 
 /** Returns the active locale code. */
-export const getCurrentLocale = (): string => i18nStorage.getStore()?.locale ?? currentLocale;
+export const getCurrentLocale = (): string => storage.getStore()?.locale ?? currentLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -82,7 +88,7 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const store = i18nStorage.getStore();
+      const store = storage.getStore();
       const get = (loc: string) => {
         const dict = ((store && (store.locale === loc || !loc) && store.translations) ||
           activeConfig.translations[loc]) as Record<string, unknown> | undefined;
