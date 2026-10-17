@@ -8,7 +8,7 @@ const VIRTUAL_ID = "virtual:rimelight-i18n";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
 export function i18n(options: I18nConfig = {}): Plugin {
-  let root = process.cwd();
+  const root = options.root ? path.resolve(options.root) : process.cwd();
   let cache: Record<string, Record<string, unknown>> | null = null;
 
   const getTranslationsDir = () => path.resolve(root, options.translationsDir ?? "src/i18n");
@@ -72,22 +72,6 @@ export function i18n(options: I18nConfig = {}): Plugin {
 
   return {
     name: "rimelight:i18n",
-    configResolved(config) {
-      if (config.root && config.root !== root) {
-        root = path.resolve(config.root);
-        cache = null;
-      }
-      emitTypes();
-    },
-
-    hotUpdate(options) {
-      if ((this as { environment?: { name?: string } }).environment?.name !== "client") return;
-      if (!isTranslationFile(options.file)) return;
-      resetTranslations();
-      invalidateVirtualModules(options.server);
-      options.server.ws.send({ type: "full-reload" });
-      return [];
-    },
 
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
@@ -96,6 +80,7 @@ export function i18n(options: I18nConfig = {}): Plugin {
 
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
+        emitTypes();
         const locales = getLocales();
         const cfg = {
           locales,
@@ -108,6 +93,19 @@ export function i18n(options: I18nConfig = {}): Plugin {
       }
 
       return null;
+    },
+
+    buildStart() {
+      emitTypes();
+    },
+
+    hotUpdate(options) {
+      if ((this as { environment?: { name?: string } }).environment?.name !== "client") return;
+      if (!isTranslationFile(options.file)) return;
+      resetTranslations();
+      invalidateVirtualModules(options.server);
+      options.server.ws.send({ type: "full-reload" });
+      return [];
     },
 
     generateBundle() {

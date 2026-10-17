@@ -4,6 +4,7 @@ export interface I18nConfig {
   translationsDir?: string;
   prefixDefaultLocale?: boolean;
   skipPaths?: readonly string[];
+  root?: string;
   types?: boolean | string;
   translations?: Record<string, Record<string, unknown>>;
 }

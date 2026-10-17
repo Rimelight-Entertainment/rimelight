@@ -67,9 +67,8 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
         defaultLocale: "en",
         prefixDefaultLocale: false,
         translationsDir: i18nDir,
+        root: tmpDir,
       });
-
-      await callHook(plugin.configResolved, { root: tmpDir });
 
       const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
       expect(configCode).toContain(`"locales":["en","es","pt-BR"]`);
@@ -92,8 +91,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
   it("handles default options when none are passed", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-default-"));
     try {
-      const plugin: Plugin = i18n();
-      await callHook(plugin.configResolved, { root: tmpDir });
+      const plugin: Plugin = i18n({ root: tmpDir });
 
       const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
       expect(configCode).toContain(`"defaultLocale":"en"`);
@@ -113,8 +111,8 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     try {
       const plugin: Plugin = i18n({
         translationsDir: i18nDir,
+        root: tmpDir,
       });
-      await callHook(plugin.configResolved, { root: tmpDir });
 
       const emitted: any[] = [];
       const hook =
@@ -166,8 +164,8 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     try {
       const pluginA: Plugin = i18n({
         translationsDir: i18nDir,
+        root: tmpDir,
       });
-      await callHook(pluginA.configResolved, { root: tmpDir });
       const configA = (await callHook(pluginA.load, RESOLVED_VIRTUAL_ID)) as string;
       expect(configA).toContain(`"defaultLocale":"pt"`);
 
@@ -175,8 +173,8 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       fs.writeFileSync(path.join(i18nDir, "en.json"), JSON.stringify({ a: { b: "0" } }));
       const pluginB: Plugin = i18n({
         translationsDir: i18nDir,
+        root: tmpDir,
       });
-      await callHook(pluginB.configResolved, { root: tmpDir });
       const configB = (await callHook(pluginB.load, RESOLVED_VIRTUAL_ID)) as string;
       expect(configB).toContain(`"defaultLocale":"en"`);
     } finally {
@@ -184,7 +182,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     }
   });
 
-  it("generates type declarations on configResolved and updates them on hotUpdate", async () => {
+  it("generates type declarations on load and updates them on hotUpdate", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-plugin-types-"));
     const i18nDir = path.join(tmpDir, "src", "i18n");
     fs.mkdirSync(i18nDir, { recursive: true });
@@ -198,9 +196,10 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     try {
       const plugin: Plugin = i18n({
         translationsDir: i18nDir,
+        root: tmpDir,
       });
 
-      await callHook(plugin.configResolved, { root: tmpDir });
+      await callHook(plugin.load, RESOLVED_VIRTUAL_ID);
 
       expect(fs.existsSync(fullTypesPath)).toBe(true);
       expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
@@ -246,8 +245,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     fs.writeFileSync(path.join(tmpDir, "package.json"), JSON.stringify({ name: "root" }));
 
     try {
-      const plugin: Plugin = i18n({ translationsDir: i18nDir });
-      await callHook(plugin.configResolved, { root: tmpDir });
+      const plugin: Plugin = i18n({ translationsDir: i18nDir, root: tmpDir });
 
       const { server, invalidated, sent } = makeDevServer();
       const opts = (file: string) => ({
@@ -294,8 +292,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     fs.writeFileSync(enPath, JSON.stringify({ hero: { title: "Title" } }));
 
     try {
-      const plugin: Plugin = i18n({ translationsDir: i18nDir });
-      await callHook(plugin.configResolved, { root: tmpDir });
+      const plugin: Plugin = i18n({ translationsDir: i18nDir, root: tmpDir });
 
       const { server, invalidated, sent } = makeDevServer();
       await callHookWithThis(
@@ -328,9 +325,10 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       const plugin: Plugin = i18n({
         translationsDir: i18nDir,
         types: false,
+        root: tmpDir,
       });
 
-      await callHook(plugin.configResolved, { root: tmpDir });
+      await callHook(plugin.load, RESOLVED_VIRTUAL_ID);
       expect(fs.existsSync(path.join(tmpDir, ".rimelight"))).toBe(false);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });

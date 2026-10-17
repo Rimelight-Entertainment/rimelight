@@ -9,8 +9,6 @@ const VIRTUAL_DB_ID = "virtual:rimelight-cms/db";
 const RESOLVED_VIRTUAL_DB_ID = `\0${VIRTUAL_DB_ID}`;
 
 export function cms(options: CmsConfig = {}): Plugin {
-  let rootDir = process.cwd();
-
   const storageConfig = {
     provider: options.storage?.provider ?? "r2",
     binding: options.storage?.binding ?? "BLOB",
@@ -19,14 +17,10 @@ export function cms(options: CmsConfig = {}): Plugin {
   };
   const routePrefix = options.routePrefix ?? "/[locale]/cms";
 
-  const resolveDbCode = (root: string): string => {
+  const resolveDbCode = (): string => {
     const candidates = options.db
-      ? [path.isAbsolute(options.db) ? options.db : path.resolve(root, options.db)]
-      : [
-          path.resolve(root, "src/db/index.ts"),
-          path.resolve(root, "src/db/index.js"),
-          path.resolve(root, "src/db"),
-        ];
+      ? [path.resolve(options.db)]
+      : [path.resolve("src/db/index.ts"), path.resolve("src/db/index.js"), path.resolve("src/db")];
     for (const candidate of candidates) {
       if (fs.existsSync(candidate)) return `export * from ${JSON.stringify(candidate)};`;
     }
@@ -35,9 +29,6 @@ export function cms(options: CmsConfig = {}): Plugin {
 
   return {
     name: "rimelight:cms",
-    configResolved(config) {
-      rootDir = config.root ? path.resolve(config.root) : rootDir;
-    },
     resolveId(id) {
       if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
       if (id === VIRTUAL_DB_ID) return RESOLVED_VIRTUAL_DB_ID;
@@ -48,7 +39,7 @@ export function cms(options: CmsConfig = {}): Plugin {
         return `export const config = ${JSON.stringify({ routePrefix, storage: storageConfig })};`;
       }
       if (id === RESOLVED_VIRTUAL_DB_ID) {
-        return resolveDbCode(rootDir);
+        return resolveDbCode();
       }
       return null;
     },

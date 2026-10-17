@@ -15,20 +15,6 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
     ...(cfg.components ? { components: cfg.components } : {}),
   };
 
-  const virtualPlugin: Plugin = {
-    name: "rimelight:ui",
-    resolveId(id) {
-      if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
-      return null;
-    },
-    load(id) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        return `export const config = ${JSON.stringify(runtimeCfg)};`;
-      }
-      return null;
-    },
-  };
-
   return [
     ...(UnoCSS({
       ...unocss,
@@ -47,6 +33,18 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
         },
       },
     }) as unknown as Plugin[]),
-    virtualPlugin,
+    {
+      name: "rimelight:ui",
+      resolveId(id) {
+        if (id === VIRTUAL_ID) return RESOLVED_VIRTUAL_ID;
+        return null;
+      },
+      load(id) {
+        if (id === RESOLVED_VIRTUAL_ID) {
+          return `export const config = ${JSON.stringify(runtimeCfg)};`;
+        }
+        return null;
+      },
+    },
   ];
 }

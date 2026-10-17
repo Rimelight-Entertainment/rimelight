@@ -170,12 +170,8 @@ export function seo(options: SeoConfig = {}): Plugin {
       return null;
     },
 
-    configResolved(config) {
-      rootDir = config.root || process.cwd();
-      resolveIcons();
-    },
-
     configureServer(server: any) {
+      resolveIcons();
       server.middlewares.use(async (req: any, res: any, next: any) => {
         const rawUrl = req.url?.split("?")[0] || "";
 
@@ -416,6 +412,7 @@ export function seo(options: SeoConfig = {}): Plugin {
     },
 
     async generateBundle() {
+      resolveIcons();
       if (options.robots !== false) {
         const robotsOpts = typeof options.robots === "object" ? options.robots : {};
         const siteUrl = normalizedSiteConfig.url || "https://rimelight.com";
