@@ -7,6 +7,6 @@ const RESOLVED_ID = `\0${ID}`;
 export const auth = (options: AuthConfig = {}): Plugin => ({
   name: "rimelight:auth",
   resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
-  load: (id) =>
+  load: async (id) =>
     id === RESOLVED_ID ? `export const config = ${JSON.stringify(options)};` : undefined,
 });

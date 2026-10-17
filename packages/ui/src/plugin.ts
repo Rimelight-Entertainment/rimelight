@@ -36,7 +36,7 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
     {
       name: "rimelight:ui",
       resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
-      load: (id) =>
+      load: async (id) =>
         id === RESOLVED_ID ? `export const config = ${JSON.stringify(runtimeCfg)};` : undefined,
     },
   ];

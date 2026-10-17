@@ -23,7 +23,7 @@ describe("Security Plugin Virtual Module", () => {
     const plugin = security(options) as any;
     expect(plugin.resolveId(VIRTUAL_ID)).toBe(RESOLVED_VIRTUAL_ID);
 
-    const code = plugin.load(RESOLVED_VIRTUAL_ID);
+    const code = await plugin.load(RESOLVED_VIRTUAL_ID);
     expect(code).toContain("export const config =");
     expect(code).toContain('"domain":"example.com"');
 

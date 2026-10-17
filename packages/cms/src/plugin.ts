@@ -30,7 +30,7 @@ export function cms(options: CmsConfig = {}): Plugin {
   return {
     name: "rimelight:cms",
     resolveId: (id) => (id === ID ? RESOLVED_ID : id === DB_ID ? RESOLVED_DB_ID : undefined),
-    load: (id) =>
+    load: async (id) =>
       id === RESOLVED_ID
         ? `export const config = ${JSON.stringify({ routePrefix, storage: storageConfig })};`
         : id === RESOLVED_DB_ID

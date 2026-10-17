@@ -11,7 +11,7 @@ export function i18n(options: I18nConfig = {}): Plugin {
   return {
     name: "rimelight:i18n",
     resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
-    load: (id) =>
+    load: async (id) =>
       id === RESOLVED_ID
         ? `export const config = ${JSON.stringify(loader.buildConfigPayload())};`
         : undefined,

@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import type { SecurityConfig } from "./types";
+import { resolveSecurityDomain } from "./domain";
 
 export function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")
@@ -47,4 +49,23 @@ export function generateSriManifestFromBundle(bundle: Record<string, any>): Reco
   }
 
   return manifest;
+}
+
+export async function resolveSecurityConfig(options: SecurityConfig = {}): Promise<SecurityConfig> {
+  resolveSecurityDomain(options.domain);
+
+  let remoteManifest: Record<string, string> = {};
+  const externalUrls = Array.from(new Set(options.resources || []));
+
+  if (process.env["NODE_ENV"] !== "development" && externalUrls.length > 0) {
+    remoteManifest = await fetchRemoteSriManifest(externalUrls);
+  }
+
+  return {
+    ...options,
+    manifest: {
+      ...remoteManifest,
+      ...options.manifest,
+    },
+  };
 }
