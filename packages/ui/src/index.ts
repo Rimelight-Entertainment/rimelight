@@ -11,31 +11,8 @@ export type {
   UIConfig,
 } from "./types";
 
-export {
-  THEME_COOKIE,
-  parseThemePreference,
-  getThemePreference,
-  getDocumentTheme,
-  serializeThemePreference,
-  type ThemePreference,
-} from "./theme";
+export { DEFAULT_ICON_NAMES, type RimelightIcons } from "./icons";
 
-export { DEFAULT_ICON_NAMES, resolveIcon, type RimelightIcons } from "./icons";
+export { getUIConfig } from "./resolver";
 
-export { cx, defineTheme, getUIConfig, setUIConfig } from "./resolver";
-
-export {
-  normalizeModifier,
-  formatShortcutKeys,
-  activeShortcutsStore,
-  shortcutsModalOpen,
-  openShortcutsModal,
-  closeShortcutsModal,
-  toggleShortcutsModal,
-  defineShortcuts,
-  type Handler,
-  type ShortcutConfig,
-  type ShortcutsConfig,
-  type ShortcutsOptions,
-  type RegisteredShortcut,
-} from "./shortcuts";
+export { openShortcutsModal } from "./shortcuts";

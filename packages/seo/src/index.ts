@@ -42,16 +42,11 @@ export type {
 
 export { serializeJsonLd, sanitizeUrl } from "./sanitize";
 
-export {
-  buildSitemapUrls,
-  buildSitemapXml,
-  buildSitemapIndexXml,
-  chunkSitemapUrls,
-} from "./sitemap";
+export { buildSitemapUrls, buildSitemapXml, buildSitemapIndexXml } from "./sitemap";
 
 export { buildRobotsTxt } from "./robots";
 
-export { buildRssXml, escapeXml } from "./rss";
+export { buildRssXml } from "./rss";
 
 export {
   buildCanonicalUrl,
@@ -60,7 +55,6 @@ export {
   buildRobotsMetaContent,
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
-  deepMerge,
 } from "./meta";
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms";
@@ -68,7 +62,6 @@ export { buildSecurityTxt } from "./security";
 export { buildWebManifest } from "./manifest";
 export { buildApiCatalog } from "./catalog";
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
-export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets";
 
 export {
   NOTO_SANS,

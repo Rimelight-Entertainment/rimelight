@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vite-plus/test";
 import { construction, CONSTRUCTION_GUEST_COOKIE } from "../src/middleware";
-import { setSecurityConfig } from "../src/index";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("@rimelight/security construction middleware", () => {
   beforeEach(() => {

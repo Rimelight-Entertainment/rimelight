@@ -28,19 +28,9 @@ export * from "./auth/permissions";
 export * from "./auth/filter-blocks";
 export * from "./auth/editor-guards";
 export * from "./auth/filter-templates";
-export { cfAccessAuth } from "@rimelight/auth/cf-access";
-export { auth0Auth } from "@rimelight/auth/auth0";
-export { mockAuth } from "@rimelight/auth/mock";
-export { hasRole, hasPermission, evaluateAccess } from "@rimelight/auth";
-export type {
-  AuthAdapter as CmsAuthAdapter,
-  AuthAdapter,
-  UserSessionContext,
-  UserType,
-} from "@rimelight/auth";
+export type { AuthAdapter, UserSessionContext, UserType } from "@rimelight/auth";
 
-// Edge Cache & Search
-export * from "./cache/purge";
+// Search
 export * from "./search/query";
 
 // Database Schemas & Migration

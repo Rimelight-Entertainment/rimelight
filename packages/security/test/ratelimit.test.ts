@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { ratelimit } from "../src/middleware";
-import { setSecurityConfig } from "../src/index";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("Rate Limit Middleware", () => {
   beforeEach(() => {

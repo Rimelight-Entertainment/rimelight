@@ -3,11 +3,9 @@ export {
   verifyTurnstile,
   isTurnstileEnabled,
   isConstructionGuest,
-  signInConstructionGuest,
   submitConstructionPassphrase,
   CONSTRUCTION_GUEST_COOKIE,
   getSecurityConfig,
-  setSecurityConfig,
   buildCspHeader,
 } from "./runtime";
 

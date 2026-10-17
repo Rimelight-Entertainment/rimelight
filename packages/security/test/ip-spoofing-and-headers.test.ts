@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { security, ratelimit } from "../src/middleware";
-import { setSecurityConfig } from "../src/index";
+import { setSecurityConfig } from "../src/runtime";
 
 describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
   beforeEach(() => {

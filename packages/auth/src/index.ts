@@ -13,12 +13,7 @@ export type { AuthClientSession, AuthClientOptions, AuthClient } from "./client/
 
 export { hasRole, hasPermission, evaluateAccess } from "./permissions/index";
 
-export {
-  normalizeUsername,
-  DEFAULT_RESTRICTED_KEYWORDS,
-  createRestrictedUsernameSet,
-  RESTRICTED_SET,
-} from "./plugins/reserved-usernames/index";
+export { normalizeUsername } from "./plugins/reserved-usernames/index";
 
 export { createAuthClient, authClient } from "./client/index";
 
