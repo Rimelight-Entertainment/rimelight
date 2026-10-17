@@ -109,10 +109,17 @@ describe("security domain validation", () => {
     }
   });
 
-  it("should fail fast at build time via the vite plugin", () => {
-    expect(() => securityPlugin({ domain: "rimelight com" })).toThrow(/Invalid security domain/);
-    expect(() => securityPlugin({ domain: "rimelight.com/" })).not.toThrow();
-    expect(() => securityPlugin()).not.toThrow();
+  it("should fail fast at build time via the vite plugin", async () => {
+    const invalidPlugin = securityPlugin({ domain: "rimelight com" }) as any;
+    await expect(invalidPlugin.load("\0virtual:rimelight-security")).rejects.toThrow(
+      /Invalid security domain/,
+    );
+
+    const validPlugin = securityPlugin({ domain: "rimelight.com/" }) as any;
+    await expect(validPlugin.load("\0virtual:rimelight-security")).resolves.not.toThrow();
+
+    const emptyPlugin = securityPlugin() as any;
+    await expect(emptyPlugin.load("\0virtual:rimelight-security")).resolves.not.toThrow();
   });
 
   it("should not throw on the request path for a malformed domain", () => {

@@ -52,7 +52,7 @@ export function generateSriManifestFromBundle(bundle: Record<string, any>): Reco
 }
 
 export async function resolveSecurityConfig(options: SecurityConfig = {}): Promise<SecurityConfig> {
-  resolveSecurityDomain(options.domain);
+  const domain = resolveSecurityDomain(options.domain);
 
   let remoteManifest: Record<string, string> = {};
   const externalUrls = Array.from(new Set(options.resources || []));
@@ -63,6 +63,7 @@ export async function resolveSecurityConfig(options: SecurityConfig = {}): Promi
 
   return {
     ...options,
+    ...(domain !== undefined ? { domain } : {}),
     manifest: {
       ...remoteManifest,
       ...options.manifest,
