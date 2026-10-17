@@ -1,8 +1,8 @@
+import type { Plugin } from "vite-plus";
+import type { I18nConfig } from "./types";
 import fs from "node:fs";
 import path from "node:path";
-import type { Plugin, ViteDevServer } from "vite-plus";
 import { generateTypeDeclarations, writeTypeDeclarations } from "./cli";
-import type { I18nConfig } from "./types";
 
 const VIRTUAL_ID = "virtual:rimelight-i18n";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
@@ -57,12 +57,12 @@ export function i18n(options: I18nConfig = {}): Plugin {
     emitTypes();
   };
 
-  const invalidateVirtualModules = (server: ViteDevServer) => {
+  const invalidateVirtualModules = (server: any) => {
     const graphs: Array<{
       getModuleById?: (id: string) => unknown;
       invalidateModule?: (mod: unknown) => void;
     }> = server.environments
-      ? Object.values(server.environments).map((env) => env.moduleGraph)
+      ? Object.values(server.environments).map((env: any) => env.moduleGraph)
       : ([server.moduleGraph].filter(Boolean) as { getModuleById?: (id: string) => unknown }[]);
     for (const graph of graphs) {
       const mod = graph.getModuleById?.(RESOLVED_VIRTUAL_ID);

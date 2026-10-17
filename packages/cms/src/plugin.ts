@@ -1,7 +1,7 @@
-import path from "node:path";
-import fs from "node:fs";
 import type { Plugin } from "vite-plus";
 import type { CmsConfig } from "./types";
+import path from "node:path";
+import fs from "node:fs";
 
 const VIRTUAL_ID = "virtual:rimelight-cms";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;

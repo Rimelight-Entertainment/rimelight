@@ -1,7 +1,7 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Plugin } from "vite-plus";
 import type { SeoConfig } from "./types";
+import fs from "node:fs";
+import path from "node:path";
 import { buildRobotsTxt } from "./robots";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap";
 import { buildRssXml } from "./rss";

@@ -1,7 +1,7 @@
-import { createHash } from "node:crypto";
 import type { Plugin } from "vite-plus";
-import { resolveSecurityDomain } from "./domain";
 import type { SecurityConfig } from "./types";
+import { createHash } from "node:crypto";
+import { resolveSecurityDomain } from "./domain";
 
 const VIRTUAL_ID = "virtual:rimelight-security";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;

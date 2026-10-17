@@ -1,12 +1,12 @@
-import UnoCSS from "@unocss/vite";
-import type { Plugin, PluginOption } from "vite-plus";
-import { rimelightUiPreset } from "./preset";
+import type { Plugin } from "vite-plus";
 import type { UIConfig } from "./types";
+import UnoCSS from "@unocss/vite";
+import { rimelightUiPreset } from "./preset";
 
 const VIRTUAL_ID = "virtual:rimelight-ui";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 
-export function ui({ unocss = {}, ...cfg }: UIConfig = {}): PluginOption {
+export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
   const runtimeCfg: UIConfig = {
     ...(cfg.unstyled !== undefined ? { unstyled: cfg.unstyled } : {}),
     ...(cfg.icons ? { icons: cfg.icons } : {}),
