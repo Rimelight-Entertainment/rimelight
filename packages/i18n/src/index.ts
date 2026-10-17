@@ -7,5 +7,3 @@ export {
   getLocaleAsset,
   t,
 } from "./runtime";
-
-export type { TranslationKey, TFunction } from "./types";

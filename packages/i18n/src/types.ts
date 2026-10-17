@@ -3,11 +3,8 @@ import type { AsyncLocalStorage } from "node:async_hooks";
 export interface I18nConfig {
   locales?: readonly string[];
   defaultLocale?: string;
-  translationsDir?: string;
   prefixDefaultLocale?: boolean;
   skipPaths?: readonly string[];
-  root?: string;
-  types?: boolean | string;
   translations?: Record<string, Record<string, unknown>>;
 }
 
@@ -24,12 +21,12 @@ export interface RimelightTranslationKeys {
   keys: string;
 }
 
-export type TranslationKey = RimelightTranslationKeys["keys"];
+type TranslationKey = RimelightTranslationKeys["keys"];
 
-export type TFunction = {
-  (key: TranslationKey, params?: Record<string, unknown>): string;
-  raw: (key: string, params?: Record<string, unknown>) => string;
-  array: (key: string) => string[];
-  plural: (key: string, count: number, params?: Record<string, unknown>) => string;
-  localize: (obj: unknown, locale?: string) => string;
-};
+export interface TFunction {
+  (key: TranslationKey, params?: Record<string, unknown>, locale?: string): string;
+  raw: <T = unknown>(key: TranslationKey, fallback?: T, locale?: string) => T;
+  array: <T = string>(key: TranslationKey, fallback?: T[], locale?: string) => T[];
+  plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
+  localize: (value: unknown, locale?: string) => string;
+}

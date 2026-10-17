@@ -94,8 +94,8 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
     });
   });
 
-  it("PROOF that TranslationKey is strictly bound to RimelightTranslationKeys", () => {
-    const validKey: import("../src/types").TranslationKey = "title";
+  it("PROOF that t() is strictly bound to RimelightTranslationKeys", () => {
+    const validKey: import("../src/types").RimelightTranslationKeys["keys"] = "title";
     expect(t(validKey)).toBeDefined();
   });
 });

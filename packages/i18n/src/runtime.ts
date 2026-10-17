@@ -1,5 +1,5 @@
 import { config } from "virtual:rimelight-i18n";
-import type { TranslationKey } from "./types";
+import type { TFunction } from "./types";
 
 const translations = (config?.translations ??
   Object.fromEntries(
@@ -48,14 +48,6 @@ export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string 
 /** Resolves an asset for the current or fallback locale. */
 export const getLocaleAsset = <T>(assets: Record<string, T>, locale = getCurrentLocale()): T =>
   (assets[locale] ?? assets[activeConfig.defaultLocale]) as T;
-
-export interface TFunction {
-  (key: TranslationKey, params?: Record<string, unknown>, locale?: string): string;
-  raw: <T = unknown>(key: TranslationKey, fallback?: T, locale?: string) => T;
-  array: <T = string>(key: TranslationKey, fallback?: T[], locale?: string) => T[];
-  plural: (count: number, locale?: string) => Intl.LDMLPluralRule;
-  localize: (value: unknown, locale?: string) => string;
-}
 
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, unknown>, locale = getCurrentLocale()): string => {
