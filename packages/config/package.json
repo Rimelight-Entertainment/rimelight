@@ -16,15 +16,10 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "dist",
     "tsconfig"
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
-    },
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/solid": "./tsconfig/solid.json"
   },
@@ -33,9 +28,7 @@
   },
   "scripts": {
     "check": "vp check --fix",
-    "test": "vp test",
-    "build": "vp pack",
-    "prepack": "vp pack"
+    "test": "vp test"
   },
   "peerDependencies": {
     "vite-plus": "^1.0.0"

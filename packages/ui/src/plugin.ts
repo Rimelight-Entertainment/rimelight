@@ -6,7 +6,7 @@ import { rimelightUiPreset } from "./preset";
 const ID = "virtual:rimelight-ui";
 const RESOLVED_ID = `\0${ID}`;
 
-export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
+export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] => {
   const runtimeCfg: UIConfig = {
     ...(cfg.unstyled !== undefined ? { unstyled: cfg.unstyled } : {}),
     ...(cfg.icons ? { icons: cfg.icons } : {}),
@@ -40,4 +40,4 @@ export function ui({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] {
         id === RESOLVED_ID ? `export const config = ${JSON.stringify(runtimeCfg)};` : undefined,
     },
   ];
-}
+};

@@ -13,11 +13,6 @@ describe("@rimelight/config package", () => {
       expect(pkg.exports["./tsconfig/solid"]).toBeDefined();
       expect(fs.existsSync(path.join(pkgDir, pkg.exports["./tsconfig/base"]))).toBe(true);
       expect(fs.existsSync(path.join(pkgDir, pkg.exports["./tsconfig/solid"]))).toBe(true);
-
-      expect(pkg.exports["."]).toBeDefined();
-
-      // Ensure source entrypoint exists
-      expect(fs.existsSync(path.join(pkgDir, "src", "index.ts"))).toBe(true);
     });
   });
 });

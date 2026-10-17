@@ -5,7 +5,7 @@ import { createI18nLoader } from "./loader";
 const ID = "virtual:rimelight-i18n";
 const RESOLVED_ID = `\0${ID}`;
 
-export function i18n(options: I18nConfig = {}): Plugin {
+export const i18n = (options: I18nConfig = {}): Plugin => {
   const loader = createI18nLoader(options);
 
   return {
@@ -16,4 +16,4 @@ export function i18n(options: I18nConfig = {}): Plugin {
       return loader.handleHotUpdate(this, ctx, RESOLVED_ID);
     },
   };
-}
+};
