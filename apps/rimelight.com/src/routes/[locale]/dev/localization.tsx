@@ -12,28 +12,10 @@ import {
 } from "@rimelight/i18n";
 import { RLButton, RLLocaleSelector } from "@rimelight/ui";
 
-type TranslationFunction = (params?: Record<string, unknown>) => string;
-
-// Translation dictionaries ship as JSON, so function values can't live in them.
-// Re-run the resolver inside a scoped store to exercise runtime.ts function values.
-const withComputedTranslation = <R,>(fn: TranslationFunction, callback: () => R): R => {
-  const storage = globalThis.__rimelight_i18n;
-  const store = storage?.getStore();
-  if (!storage || !store) return callback();
-  return storage.run(
-    {
-      ...store,
-      translations: {
-        ...store.translations,
-        dev_localization: {
-          ...(store.translations?.["dev_localization"] as Record<string, unknown> | undefined),
-          sample_computed: fn,
-        },
-      },
-    },
-    callback,
-  );
-};
+const withComputedTranslation = (
+  fn: (params?: Record<string, unknown>) => string,
+  params?: Record<string, unknown>,
+) => fn(params);
 
 export default function DevLocalizationPage() {
   const location = useLocation();
@@ -165,7 +147,7 @@ export default function DevLocalizationPage() {
           description: t("dev_localization.t_function_description"),
           value: withComputedTranslation(
             (params) => `Computed: ${Number(params?.["value"] ?? 0) * 2}`,
-            () => t("dev_localization.sample_computed", { value: 21 }),
+            { value: 21 },
           ),
         },
         {

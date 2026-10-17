@@ -1,7 +1,5 @@
 import type { MiddlewareHandler } from "hono";
-import { AsyncLocalStorage } from "node:async_hooks";
-import { activeConfig } from "./runtime";
-import type { I18nContextStore } from "./types";
+import { activeConfig, i18nStorage } from "./runtime";
 
 /**
  * Hono i18n middleware for locale resolution, route redirection,
@@ -44,8 +42,5 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
 
   return target
     ? c.redirect(`${target}${search}`, 302)
-    : (globalThis.__rimelight_i18n ??= new AsyncLocalStorage<I18nContextStore>()).run(
-        { locale, translations: activeConfig.translations[locale] },
-        next,
-      );
+    : i18nStorage.run({ locale, translations: activeConfig.translations[locale] }, next);
 };
