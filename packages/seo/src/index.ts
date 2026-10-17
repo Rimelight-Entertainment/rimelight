@@ -61,7 +61,6 @@ export {
   buildWebSiteSchema,
   buildDefaultOgImageUrl,
   deepMerge,
-  normalizeSeoConfig,
 } from "./meta";
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms";

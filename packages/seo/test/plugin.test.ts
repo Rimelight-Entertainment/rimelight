@@ -27,11 +27,9 @@ describe("seo Vite Plugin", () => {
     expect(configCode).toContain('"url":"https://test.rimelight.com"');
   });
 
-  it("applies normalized defaults", async () => {
+  it("directly serializes options into virtual module", async () => {
     const plugin = seo({});
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-    expect(configCode).toContain('"id":"rimelight"');
-    expect(configCode).toContain('"name":"Rimelight"');
-    expect(configCode).toContain('"url":"https://rimelight.com"');
+    expect(configCode).toBe("export const config = {};");
   });
 });
