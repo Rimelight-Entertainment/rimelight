@@ -201,51 +201,34 @@ const getGuestCookie = (c: Context): string | undefined => {
   return match ? decodeURIComponent(match[1]!) : undefined;
 };
 
-const signPayload = async (payload: string, secret: string) => {
+const hashToken = async (payload: string, secret: string): Promise<string> => {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw",
     enc.encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign", "verify"],
+    ["sign"],
   );
-  const signature = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
-  return { key, signature };
-};
-
-const toB64Url = (bytes: Uint8Array): string =>
-  btoa(String.fromCharCode(...bytes))
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
+  return btoa(String.fromCharCode(...new Uint8Array(sig)))
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
-
-const fromB64Url = (str: string): Uint8Array => {
-  const padded = str
-    .replace(/-/g, "+")
-    .replace(/_/g, "/")
-    .padEnd(Math.ceil(str.length / 4) * 4, "=");
-  return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
 };
 
 export const isConstructionGuest = async (c: Context): Promise<boolean> => {
   const token = getGuestCookie(c);
-  const passphrase = getConstructionPassphrase(c);
-  if (!token || !passphrase) return false;
+  const secret = getConstructionPassphrase(c);
+  if (!token || !secret) return false;
+
+  const [encodedPayload, sig] = token.split(".");
+  if (!encodedPayload || !sig) return false;
 
   try {
-    const [encodedPayload, encodedSignature] = token.split(".");
-    if (!encodedPayload || !encodedSignature) return false;
-
-    const payload = new TextDecoder().decode(fromB64Url(encodedPayload));
-    const { key } = await signPayload(payload, passphrase);
-    const valid = await crypto.subtle.verify(
-      "HMAC",
-      key,
-      fromB64Url(encodedSignature) as unknown as BufferSource,
-      new TextEncoder().encode(payload),
-    );
-    return valid && JSON.parse(payload).expiresAt > Date.now();
+    const payloadStr = atob(encodedPayload.replace(/-/g, "+").replace(/_/g, "/"));
+    const expectedSig = await hashToken(payloadStr, secret);
+    return sig === expectedSig && JSON.parse(payloadStr).expiresAt > Date.now();
   } catch {
     return false;
   }
@@ -257,28 +240,23 @@ export const signInConstructionGuest = async (
   rememberMe = true,
 ): Promise<boolean> => {
   const expected = getConstructionPassphrase(c);
-  if (!expected || !passphrase) return false;
-
-  const enc = new TextEncoder();
-  const [aHash, bHash] = await Promise.all([
-    crypto.subtle.digest("SHA-256", enc.encode(passphrase)),
-    crypto.subtle.digest("SHA-256", enc.encode(expected)),
-  ]);
-  const aBuf = new Uint8Array(aHash);
-  const bBuf = new Uint8Array(bHash);
-  let diff = 0;
-  for (let i = 0; i < aBuf.length; i++) diff |= aBuf[i]! ^ bBuf[i]!;
-  if (diff !== 0) return false;
+  if (!expected || !passphrase || passphrase !== expected) return false;
 
   const raw = activeConfig.construction;
   const opts = typeof raw === "object" && raw !== null ? raw : undefined;
   const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
   const maxAge = opts?.cookieMaxAge ?? 60 * 60 * 24 * 7;
   const payload = JSON.stringify({ expiresAt: Date.now() + maxAge * 1000 });
-  const { signature } = await signPayload(payload, expected);
-  const cookieValue = `${toB64Url(enc.encode(payload))}.${toB64Url(new Uint8Array(signature))}`;
+  const sig = await hashToken(payload, expected);
+  const b64Payload = btoa(payload).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
-  const parts = [`${cookieName}=${cookieValue}`, "Path=/", "HttpOnly", "Secure", "SameSite=Lax"];
+  const parts = [
+    `${cookieName}=${b64Payload}.${sig}`,
+    "Path=/",
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+  ];
   if (rememberMe) parts.push(`Max-Age=${maxAge}`);
   c.header("Set-Cookie", parts.join("; "), { append: true });
   return true;

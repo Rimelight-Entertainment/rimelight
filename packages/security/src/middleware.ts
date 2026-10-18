@@ -226,36 +226,6 @@ export const construction = (): MiddlewareHandler => {
       (typeof process !== "undefined" &&
         (process.env[envKey] === "true" || (import.meta as any).env?.[envKey] === "true"));
 
-    const locMatch = path.match(/^\/([a-zA-Z]{2}(?:-[a-zA-Z]{2})?)(\/|$)/);
-    const locale = options.getLocale
-      ? options.getLocale(path)
-      : (options.locales?.find((l: string) => path === `/${l}` || path.startsWith(`/${l}/`)) ??
-        locMatch?.[1]?.toLowerCase() ??
-        "en");
-
-    const accept = c.req.header("accept");
-    const secFetchDest = c.req.header("sec-fetch-dest");
-    const isDocNav =
-      !/\.[a-z0-9]{2,8}$/i.test(path) &&
-      (secFetchDest
-        ? secFetchDest === "document" || secFetchDest === "iframe"
-        : !accept || accept.includes("text/html"));
-
-    const normPath = path.length > 1 ? path.replace(/\/+$/, "") : path;
-    const normConstPath = constructionPath.startsWith("/")
-      ? constructionPath.replace(/\/+$/, "")
-      : "/" + constructionPath.replace(/\/+$/, "");
-    const isConstPage =
-      isDocNav && (normPath === normConstPath || normPath === `/${locale}${normConstPath}`);
-
-    const isAuthorized = async (): Promise<boolean> =>
-      (options.isAuthorized ? await options.isAuthorized(c) : false) ||
-      (await isConstructionGuest(c));
-
-    if (isConstPage) {
-      return !enabled || (await isAuthorized()) ? c.redirect(`/${locale}`) : next();
-    }
-
     if (!enabled || DEFAULT_WHITELIST.some((p) => path.includes(p))) return next();
 
     if (options.whitelist) {
@@ -268,13 +238,40 @@ export const construction = (): MiddlewareHandler => {
       if (match) return next();
     }
 
+    const isAuthorized = async (): Promise<boolean> =>
+      (options.isAuthorized ? await options.isAuthorized(c) : false) ||
+      (await isConstructionGuest(c));
+
     if (await isAuthorized()) return next();
+
+    const accept = c.req.header("accept");
+    const secFetchDest = c.req.header("sec-fetch-dest");
+    const isDocNav =
+      !/\.[a-z0-9]{2,8}$/i.test(path) &&
+      (secFetchDest
+        ? secFetchDest === "document" || secFetchDest === "iframe"
+        : !accept || accept.includes("text/html"));
 
     if (!isDocNav) {
       return new Response("Not Found", {
         status: 404,
         headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
       });
+    }
+
+    const locMatch = path.match(/^\/([a-zA-Z]{2}(?:-[a-zA-Z]{2})?)(\/|$)/);
+    const locale = options.getLocale
+      ? options.getLocale(path)
+      : (options.locales?.find((l: string) => path === `/${l}` || path.startsWith(`/${l}/`)) ??
+        locMatch?.[1]?.toLowerCase() ??
+        "en");
+
+    const normPath = path.length > 1 ? path.replace(/\/+$/, "") : path;
+    const normConstPath = constructionPath.startsWith("/")
+      ? constructionPath.replace(/\/+$/, "")
+      : "/" + constructionPath.replace(/\/+$/, "");
+    if (normPath === normConstPath || normPath === `/${locale}${normConstPath}`) {
+      return next();
     }
 
     const targetUrl = `/${locale}${constructionPath}?redirect=${encodeURIComponent(path + search)}`;
