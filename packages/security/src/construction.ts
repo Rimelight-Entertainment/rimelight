@@ -14,7 +14,7 @@ export const construction = (): MiddlewareHandler => async (c, next) => {
     maxAge: activeConfig.construction.cookieMaxAge!,
   };
 
-  const secret = activeConfig.construction.passphrase ?? c.env?.CONSTRUCTION_PASSPHRASE;
+  const secret = c.env?.CONSTRUCTION_PASSPHRASE;
   const path = c.req.path;
 
   // 1. Preview link (?preview=secret) -> cookie & redirect

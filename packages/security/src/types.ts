@@ -54,7 +54,6 @@ export interface SecurityConfig {
   construction?:
     | false
     | {
-        passphrase?: string;
         cookieName?: string;
         cookieMaxAge?: number;
         constructionPath?: string;
