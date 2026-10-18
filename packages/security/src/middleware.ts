@@ -7,35 +7,6 @@ import { getConstructionFallbackHtml } from "./fallback";
 
 declare const HTMLRewriter: any;
 
-const initTrustedTypes = () => {
-  const tt = (window as any).trustedTypes;
-  if (tt?.createPolicy && !tt.defaultPolicy) {
-    try {
-      tt.createPolicy("default", {
-        createHTML: (s: string) => s,
-        createScript: (s: string) => s,
-        createScriptURL: (s: string) => s,
-      });
-    } catch {}
-  }
-};
-
-const initDevReporter = () => {
-  const reported = new Set<string>();
-  window.addEventListener("securitypolicyviolation", (e) => {
-    const key = `${e.effectiveDirective}:${e.blockedURI || e.sample || ""}`;
-    if (e.disposition !== "report" || reported.has(key)) return;
-    reported.add(key);
-    console.warn(
-      `%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\nDirective: ${e.effectiveDirective}\n${e.blockedURI ? `Blocked URI: ${e.blockedURI}\n` : ""}${e.sourceFile ? `Source: ${e.sourceFile}:${e.lineNumber || 0}\n` : ""}${e.sample ? `Sample: ${e.sample.slice(0, 100)}\n` : ""}Fix: Add to imgSrc, scriptResources, styleResources or use nonces in your security configuration`,
-      "background: #e11d48; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;",
-      "color: inherit; font-weight: normal;",
-    );
-  });
-};
-
-const baseManifest: Record<string, string> =
-  typeof config?.manifest === "object" && config.manifest !== null ? config.manifest : {};
 const sriCache: Record<string, string> = {};
 const sriInflight: Record<string, Promise<string | undefined>> = {};
 
@@ -46,7 +17,7 @@ const resolveAssetSri = (
   env?: any,
 ): Promise<string | undefined> | string | undefined =>
   manifest[url] ??
-  baseManifest[url] ??
+  config?.manifest?.[url] ??
   sriCache[url] ??
   (sriInflight[url] ??= (async () => {
     try {
@@ -59,9 +30,13 @@ const resolveAssetSri = (
             ? await env.ASSETS.fetch(new Request(new URL(url, origin)))
             : await fetch(new URL(url, origin))
           : undefined;
-      if (!res?.ok) return undefined;
-      const digest = await crypto.subtle.digest("SHA-384", await res.arrayBuffer());
-      return (sriCache[url] = `sha384-${btoa(String.fromCharCode(...new Uint8Array(digest)))}`);
+      return res?.ok
+        ? (sriCache[url] = `sha384-${btoa(
+            String.fromCharCode(
+              ...new Uint8Array(await crypto.subtle.digest("SHA-384", await res.arrayBuffer())),
+            ),
+          )}`)
+        : undefined;
     } catch {
       return undefined;
     } finally {
@@ -88,13 +63,39 @@ const applyHeaders = (
   reportOnly?: SecurityConfig,
 ) => {
   const h = new Headers(res.headers);
-  h.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  h.set("X-Content-Type-Options", "nosniff");
-  h.set("X-Frame-Options", "DENY");
-  h.set("X-XSS-Protection", "0");
-  h.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-  h.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  h.set("No-Vary-Search", 'except=("q" "search" "locale"), params=?1');
+  for (const [k, v] of [
+    ["Referrer-Policy", "strict-origin-when-cross-origin"],
+    ["X-Content-Type-Options", "nosniff"],
+    ["X-Frame-Options", "DENY"],
+    ["X-XSS-Protection", "0"],
+    ["Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload"],
+    ["Permissions-Policy", "camera=(), microphone=(), geolocation=()"],
+    ["No-Vary-Search", 'except=("q" "search" "locale"), params=?1'],
+    ["Content-Security-Policy", buildCspHeader(opts, nonce)],
+    [
+      "Content-Security-Policy-Report-Only",
+      reportOnly &&
+        buildCspHeader(
+          {
+            ...reportOnly,
+            directives: { ...reportOnly.directives, "upgrade-insecure-requests": false },
+          },
+          nonce,
+        ),
+    ],
+    [
+      "Link",
+      origin &&
+        [
+          `<${origin}/sitemap-index.xml>; rel="sitemap"`,
+          `<${origin}/llms.txt>; rel="llms"`,
+          `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
+          `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
+        ].join(", "),
+    ],
+  ] as const) {
+    if (v) h.set(k, v);
+  }
 
   for (const k of opts.stripHeaders === false
     ? []
@@ -102,38 +103,12 @@ const applyHeaders = (
     h.delete(k);
   }
 
-  for (const [header, val, def] of [
+  for (const [k, val, def] of [
     ["Cross-Origin-Resource-Policy", opts.crossOriginResourcePolicy, "same-origin"],
     ["Cross-Origin-Opener-Policy", opts.crossOriginOpenerPolicy, "same-origin"],
     ["Cross-Origin-Embedder-Policy", opts.crossOriginEmbedderPolicy, "credentialless"],
   ] as const) {
-    if (val !== false) h.set(header, typeof val === "string" ? val : def);
-  }
-
-  const csp = buildCspHeader(opts, nonce);
-  if (csp) h.set("Content-Security-Policy", csp);
-
-  if (reportOnly) {
-    const reportCsp = buildCspHeader(
-      {
-        ...reportOnly,
-        directives: { ...reportOnly.directives, "upgrade-insecure-requests": false },
-      },
-      nonce,
-    );
-    if (reportCsp) h.set("Content-Security-Policy-Report-Only", reportCsp);
-  }
-
-  if (origin) {
-    h.set(
-      "Link",
-      [
-        `<${origin}/sitemap-index.xml>; rel="sitemap"`,
-        `<${origin}/llms.txt>; rel="llms"`,
-        `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
-        `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
-      ].join(", "),
-    );
+    if (val !== false) h.set(k, typeof val === "string" ? val : def);
   }
 
   for (const [k, v] of Object.entries(opts.headers || {})) h.set(k, v);
@@ -145,29 +120,18 @@ const applyHeaders = (
  * Turnstile verification, construction gating, CSP headers, nonces, head scripts, and SRI injection.
  */
 export const security = (): MiddlewareHandler => async (c, next) => {
-  const isDev =
-    process.env["NODE_ENV"] === "development" ||
-    (import.meta.env?.DEV === true &&
-      process.env["NODE_ENV"] !== "production" &&
-      process.env["NODE_ENV"] !== "test");
-  const isProd =
-    !isDev &&
-    (import.meta.env?.PROD === true ||
-      process.env["NODE_ENV"] === "production" ||
-      import.meta.env?.MODE === "test" ||
-      process.env["NODE_ENV"] === "test");
+  const isDev = process.env["NODE_ENV"] === "development";
 
   if (activeConfig.devOnly !== false && !isDev && c.req.path.startsWith("/dev")) {
     return c.notFound();
   }
 
-  const rawReq = c.req.raw as Request & { cf?: { tlsVersion?: string } };
-  const tls = (rawReq?.cf || (c.env as any)?.cf)?.tlsVersion;
+  const tls = ((c.req.raw as any)?.cf || (c.env as any)?.cf)?.tlsVersion;
   if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
     return new Response("TLS 1.2 or higher is required.", { status: 400 });
   }
-  if (isProd && rawReq?.headers?.get("x-forwarded-proto") === "http" && rawReq.url) {
-    return Response.redirect(rawReq.url.replace(/^http:/, "https:"), 301);
+  if (!isDev && c.req.raw?.headers?.get("x-forwarded-proto") === "http" && c.req.raw.url) {
+    return Response.redirect(c.req.raw.url.replace(/^http:/, "https:"), 301);
   }
 
   // 1. Rate Limit Gate
@@ -183,22 +147,25 @@ export const security = (): MiddlewareHandler => async (c, next) => {
         }
       } else {
         try {
-          const key = await (rl.keyGenerator
-            ? rl.keyGenerator(c)
-            : c.req.header("CF-Connecting-IP") || "unknown");
-          if (!(await limiter.limit({ key })).success) {
-            const retry = rl.retryAfter ?? 60;
-            const res = rl.onRateLimited
-              ? await rl.onRateLimited(c, retry)
+          if (
+            !(
+              await limiter.limit({
+                key: await (rl.keyGenerator
+                  ? rl.keyGenerator(c)
+                  : c.req.header("CF-Connecting-IP") || "unknown"),
+              })
+            ).success
+          ) {
+            return (c.res = rl.onRateLimited
+              ? await rl.onRateLimited(c, rl.retryAfter ?? 60)
               : c.json(
                   {
                     error: "Too Many Requests",
                     message: "Rate limit exceeded. Please try again later.",
                   },
                   429,
-                  { "Retry-After": String(retry) },
-                );
-            return (c.res = res);
+                  { "Retry-After": String(rl.retryAfter ?? 60) },
+                ));
           }
         } catch {
           if (rl.fallback && rl.fallback !== "pass") {
@@ -224,14 +191,17 @@ export const security = (): MiddlewareHandler => async (c, next) => {
       : cloned
         ? await cloned.json().catch(() => ({}))
         : await c.req.json?.().catch(() => ({}));
-    const field = ts.field || "cf-turnstile-response";
-    const ok = await verifyTurnstile(
-      typeof body?.[field] === "string" ? body[field] : undefined,
-      ts.secretKey ?? (c.env as any)?.TURNSTILE_SECRET_KEY,
-      c.req.header("CF-Connecting-IP"),
-    );
-    if (!ok)
+    if (
+      !(await verifyTurnstile(
+        typeof body?.[ts.field || "cf-turnstile-response"] === "string"
+          ? body[ts.field || "cf-turnstile-response"]
+          : undefined,
+        ts.secretKey ?? (c.env as any)?.TURNSTILE_SECRET_KEY,
+        c.req.header("CF-Connecting-IP"),
+      ))
+    ) {
       return (c.res = c.json({ success: false, error: "Turnstile verification failed" }, 400));
+    }
   }
 
   // 3. Construction Gate
@@ -251,17 +221,18 @@ export const security = (): MiddlewareHandler => async (c, next) => {
       return (c.res = c.redirect(path));
     }
 
-    const authorized =
-      c.req.header("cookie")?.includes(`${cfg.cookieName}=${secret}`) ||
-      /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
-      (typeof cfg.whitelist === "function"
-        ? cfg.whitelist(path)
-        : cfg.whitelist?.some((w) =>
-            typeof w === "string" ? path.startsWith(w) : w.test(path),
-          )) ||
-      (await cfg.isAuthorized?.(c));
-
-    if (!authorized) {
+    if (
+      !(
+        c.req.header("cookie")?.includes(`${cfg.cookieName}=${secret}`) ||
+        /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
+        (typeof cfg.whitelist === "function"
+          ? cfg.whitelist(path)
+          : cfg.whitelist?.some((w) =>
+              typeof w === "string" ? path.startsWith(w) : w.test(path),
+            )) ||
+        (await cfg.isAuthorized?.(c))
+      )
+    ) {
       if (c.req.method === "POST" && path.includes(cfg.constructionPath)) {
         const b: any = await (c.req.parseBody?.() ?? c.req.formData?.() ?? c.req.json?.())?.catch(
           () => ({}),
@@ -290,28 +261,52 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   const res: Response | undefined = downstream instanceof Response ? (c.res = downstream) : c.res;
   if (!res) return downstream;
 
-  const origin = rawReq?.url ? new URL(rawReq.url).origin : undefined;
+  const origin = c.req.raw?.url ? new URL(c.req.raw.url).origin : undefined;
   if (!(res.headers.get("content-type") || "").includes("text/html")) {
     return (c.res = applyHeaders(res, activeConfig, origin));
   }
 
-  const headTags = (nonce?: string) => {
-    const attr = nonce ? ` nonce="${nonce}"` : "";
-    return [
+  const headTags = (nonce?: string) =>
+    [
       nonce ? `<meta name="csp-nonce" content="${nonce}">` : "",
-      activeConfig.trustedTypes ? `<script${attr}>(${initTrustedTypes.toString()})()</script>` : "",
-      isDev ? `<script${attr}>(${initDevReporter.toString()})()</script>` : "",
+      activeConfig.trustedTypes
+        ? `<script${nonce ? ` nonce="${nonce}"` : ""}>(${(() => {
+            const tt = (window as any).trustedTypes;
+            if (tt?.createPolicy && !tt.defaultPolicy) {
+              try {
+                tt.createPolicy("default", {
+                  createHTML: (s: string) => s,
+                  createScript: (s: string) => s,
+                  createScriptURL: (s: string) => s,
+                });
+              } catch {}
+            }
+          }).toString()})()</script>`
+        : "",
+      isDev
+        ? `<script>(${(() => {
+            const reported = new Set<string>();
+            window.addEventListener("securitypolicyviolation", (e) => {
+              const key = `${e.effectiveDirective}:${e.blockedURI || e.sample || ""}`;
+              if (e.disposition !== "report" || reported.has(key)) return;
+              reported.add(key);
+              console.warn(
+                `%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\nDirective: ${e.effectiveDirective}\n${e.blockedURI ? `Blocked URI: ${e.blockedURI}\n` : ""}${e.sourceFile ? `Source: ${e.sourceFile}:${e.lineNumber || 0}\n` : ""}${e.sample ? `Sample: ${e.sample.slice(0, 100)}\n` : ""}Fix: Add to imgSrc, scriptResources, styleResources or use nonces in your security configuration`,
+                "background: #e11d48; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+                "color: inherit; font-weight: normal;",
+              );
+            });
+          }).toString()})()</script>`
+        : "",
     ].join("");
-  };
 
   if (isDev) {
     const userScript = activeConfig.directives?.["script-src"];
     const userStyle = activeConfig.directives?.["style-src"];
-    const html = headTags();
     return (c.res = applyHeaders(
-      typeof HTMLRewriter !== "undefined" && html
+      typeof HTMLRewriter !== "undefined"
         ? new HTMLRewriter()
-            .on("head", { element: (el: any) => el.append(html, { html: true }) })
+            .on("head", { element: (el: any) => el.append(headTags(), { html: true }) })
             .transform(res)
         : res,
       {
@@ -367,7 +362,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
   const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
   const manifest: Record<string, string> = {
-    ...baseManifest,
+    ...(typeof config?.manifest === "object" ? config.manifest : {}),
     ...sriCache,
     ...activeConfig.manifest,
   };
@@ -376,10 +371,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     ...(activeConfig.scriptResources || []),
     ...(activeConfig.styleResources || []),
   ])) {
-    if (!manifest[url]) {
-      const hash = await resolveAssetSri(url, manifest, origin, c.env);
-      if (hash) manifest[url] = hash;
-    }
+    manifest[url] ??= (await resolveAssetSri(url, manifest, origin, c.env))!;
   }
 
   const stampSri = (attr: string) => ({
@@ -398,7 +390,6 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     },
   });
 
-  const html = headTags(nonce);
   return (c.res = applyHeaders(
     typeof HTMLRewriter !== "undefined"
       ? new HTMLRewriter()
@@ -406,7 +397,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
           .on('link[rel="stylesheet"][href]', stampSri("href"))
           .on("script", { element: (el: any) => el.setAttribute("nonce", nonce) })
           .on("style", { element: (el: any) => el.setAttribute("nonce", nonce) })
-          .on("head", { element: (el: any) => html && el.append(html, { html: true }) })
+          .on("head", { element: (el: any) => el.append(headTags(nonce), { html: true }) })
           .transform(res)
       : res,
     activeConfig,
