@@ -1,7 +1,9 @@
 import { config } from "virtual:rimelight-security";
 import type { SecurityConfig } from "./types";
 
-export const activeConfig: SecurityConfig = {
+export const activeConfig: SecurityConfig & {
+  construction: NonNullable<SecurityConfig["construction"]>;
+} = {
   strictDynamic: true,
   enforceTls: true,
   ...config,

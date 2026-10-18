@@ -5,8 +5,7 @@ import { activeConfig } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 export const construction = (): MiddlewareHandler => async (c, next) => {
-  if (!activeConfig.construction || !["true", true].includes(c.env?.CONSTRUCTION_MODE))
-    return next();
+  if (!activeConfig.construction || String(c.env?.CONSTRUCTION_MODE) !== "true") return next();
 
   const cookieOpts: CookieOptions = {
     httpOnly: true,
