@@ -25,6 +25,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "development": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
@@ -36,6 +37,7 @@
       "import": "./dist/plugin.mjs"
     },
     "./middleware": {
+      "development": "./src/middleware.ts",
       "types": "./dist/middleware.d.mts",
       "import": "./dist/middleware.mjs"
     },
