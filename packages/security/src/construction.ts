@@ -5,18 +5,16 @@ import { activeConfig } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 export const construction = (): MiddlewareHandler => async (c, next) => {
-  const isMode = c.env?.CONSTRUCTION_MODE ?? process.env?.["CONSTRUCTION_MODE"];
-  if (!activeConfig.construction || (isMode !== "true" && isMode !== true)) return next();
+  if (!activeConfig.construction || !["true", true].includes(c.env?.CONSTRUCTION_MODE))
+    return next();
 
   const cookieOpts: CookieOptions = {
     httpOnly: true,
     secure: true,
     maxAge: activeConfig.construction.cookieMaxAge!,
   };
-  const secret =
-    activeConfig.construction.passphrase ??
-    c.env?.CONSTRUCTION_PASSPHRASE ??
-    process.env?.["CONSTRUCTION_PASSPHRASE"];
+
+  const secret = activeConfig.construction.passphrase ?? c.env?.CONSTRUCTION_PASSPHRASE;
   const path = c.req.path;
 
   // 1. Preview link (?preview=secret) -> cookie & redirect
