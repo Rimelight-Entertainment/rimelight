@@ -1,33 +1,28 @@
-import type { Context, MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 export const security = (): MiddlewareHandler => async (c, next) => {
   const isDev = process.env["NODE_ENV"] === "development";
-  const path = c.req.path;
+  const { path } = c.req;
+  const { origin, search } = new URL(c.req.url);
 
   // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS
   if (activeConfig.devOnly && !isDev && path.startsWith("/dev")) return c.notFound();
 
-  const tls = ((c.req.raw as { cf?: { tlsVersion?: string } })?.cf || c.env?.cf)?.tlsVersion;
+  const tls = ((c.req.raw as { cf?: { tlsVersion?: string } }).cf || c.env?.cf)?.tlsVersion;
   if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
-    return new Response("TLS 1.2 or higher is required.", { status: 400 });
+    return c.text("TLS 1.2 or higher is required.", 400);
   }
   if (!isDev && c.req.header("x-forwarded-proto") === "http") {
-    return Response.redirect(c.req.url.replace(/^http:/, "https:"), 301);
+    return c.redirect(c.req.url.replace(/^http:/, "https:"), 301);
   }
 
-  const matches = (
-    routes?: (string | RegExp)[] | ((c: Context) => boolean) | ((p: string) => boolean),
-    arg: Context & string = c as Context & string,
-    fallback = true,
-  ) =>
-    !routes
-      ? fallback
-      : typeof routes === "function"
-        ? routes(arg)
-        : routes.some((r) => (typeof r === "string" ? path.startsWith(r) : r.test(path)));
+  const matches = <T>(routes: (string | RegExp)[] | ((arg: T) => boolean) | undefined, arg: T) =>
+    typeof routes === "function"
+      ? routes(arg)
+      : routes?.some((r) => (typeof r === "string" ? path.startsWith(r) : r.test(path)));
 
   const readBody = async (): Promise<Record<string, unknown>> => {
     try {
@@ -42,18 +37,18 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
   // 2. Rate limiting
   const rl = activeConfig.ratelimit;
-  if (rl && matches(rl.routes, c as Context & string, true)) {
+  if (rl && (matches(rl.routes, c) ?? true)) {
     const limiter = rl.limiter ? rl.limiter(c) : c.env?.[rl.bindingName!];
     const failBlock = rl.fallback && rl.fallback !== "pass";
 
     if (typeof limiter?.limit !== "function") {
-      if (failBlock) return (c.res = c.json({ error: "Rate limiter not configured" }, 500));
+      if (failBlock) return c.json({ error: "Rate limiter not configured" }, 500);
     } else {
       try {
         const key = await (rl.keyGenerator?.(c) ?? (c.req.header("CF-Connecting-IP") || "unknown"));
         if (!(await limiter.limit({ key })).success) {
           const retry = rl.retryAfter!;
-          return (c.res = rl.onRateLimited
+          return rl.onRateLimited
             ? await rl.onRateLimited(c, retry)
             : c.json(
                 {
@@ -62,31 +57,24 @@ export const security = (): MiddlewareHandler => async (c, next) => {
                 },
                 429,
                 { "Retry-After": String(retry) },
-              ));
+              );
         }
       } catch {
-        if (failBlock) return (c.res = c.json({ error: "Rate limit check failed" }, 500));
+        if (failBlock) return c.json({ error: "Rate limit check failed" }, 500);
       }
     }
   }
 
   // 3. Turnstile verification
   const ts = typeof activeConfig.turnstile === "object" ? activeConfig.turnstile : undefined;
-  if (
-    ts?.routes &&
-    /^(POST|PUT|PATCH|DELETE)$/i.test(c.req.method) &&
-    matches(ts.routes, c as Context & string, false)
-  ) {
+  if (ts && /^(POST|PUT|PATCH|DELETE)$/i.test(c.req.method) && matches(ts.routes, c)) {
     const val = (await readBody())[ts.field || "cf-turnstile-response"];
-    if (
-      !(await verifyTurnstile(
-        typeof val === "string" ? val : undefined,
-        ts.secretKey ?? c.env?.TURNSTILE_SECRET_KEY,
-        c.req.header("CF-Connecting-IP"),
-      ))
-    ) {
-      return (c.res = c.json({ success: false, error: "Turnstile verification failed" }, 400));
-    }
+    const ok = await verifyTurnstile(
+      typeof val === "string" ? val : undefined,
+      ts.secretKey ?? c.env?.TURNSTILE_SECRET_KEY,
+      c.req.header("CF-Connecting-IP"),
+    );
+    if (!ok) return c.json({ success: false, error: "Turnstile verification failed" }, 400);
   }
 
   // 4. Construction mode
@@ -99,13 +87,13 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
     if (secret && c.req.query("preview") === secret) {
       setCookie(c, cookieName!, secret, cookieOpts);
-      return (c.res = c.redirect(path));
+      return c.redirect(path);
     }
 
     const authed =
       (secret && getCookie(c, cookieName!) === secret) ||
       /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
-      matches(whitelist, path as Context & string, false) ||
+      matches(whitelist, path) ||
       (await isAuthorized?.(c));
 
     if (!authed) {
@@ -114,18 +102,15 @@ export const security = (): MiddlewareHandler => async (c, next) => {
         const ok = Boolean(secret && body["passphrase"] === secret);
         const to = typeof body["redirect"] === "string" ? body["redirect"] : "/";
         if (ok) setCookie(c, cookieName!, secret!, cookieOpts);
-        return (c.res = c.redirect(
-          ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`,
-        ));
+        return c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`);
       }
 
       if (!path.includes(constructionPath!)) {
-        const { search } = new URL(c.req.url);
-        return (c.res = await (path.includes(".")
+        return path.includes(".")
           ? c.notFound()
           : renderFallback
             ? c.html(getConstructionFallbackHtml({ redirect: path }), 503)
-            : c.redirect(`${constructionPath}?redirect=${encodeURIComponent(path + search)}`)));
+            : c.redirect(`${constructionPath}?redirect=${encodeURIComponent(path + search)}`);
       }
     }
   }
@@ -134,22 +119,23 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   await next();
   if (!c.res) return;
 
-  const { origin } = new URL(c.req.url);
   const isHtml = (c.res.headers.get("content-type") || "").includes("text/html");
   const nonce =
     isHtml && !isDev
       ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
       : undefined;
 
-  type RewriterEl = Record<string, (a: string, b?: unknown) => string | null>;
-  const Rewriter = (
-    globalThis as {
-      HTMLRewriter?: new () => {
-        on(s: string, h: { element(e: RewriterEl): unknown }): void;
-        transform(r: Response): Response;
-      };
-    }
-  ).HTMLRewriter;
+  interface RewriterEl {
+    getAttribute(n: string): string | null;
+    setAttribute(n: string, v: string): void;
+    append(c: string, o?: { html?: boolean }): void;
+  }
+  const { HTMLRewriter: Rewriter } = globalThis as {
+    HTMLRewriter?: new () => {
+      on(s: string, h: { element(e: RewriterEl): unknown }): void;
+      transform(r: Response): Response;
+    };
+  };
 
   let res = c.res;
   if (isHtml && Rewriter) {
@@ -164,18 +150,18 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     ].join("");
 
     const rewriter = new Rewriter();
-    rewriter.on("head", { element: (el) => el["append"]!(headHtml, { html: true }) });
+    rewriter.on("head", { element: (el) => el.append(headHtml, { html: true }) });
 
     if (nonce) {
       const manifest = activeConfig.manifest!;
       const sri = (attr: string) => ({
         element(el: RewriterEl) {
-          const url = el["getAttribute"]!(attr);
+          const url = el.getAttribute(attr);
           if (!url) return;
           const apply = (val?: string) => {
             if (val) {
-              el["setAttribute"]!("integrity", val);
-              el["setAttribute"]!("crossorigin", "anonymous");
+              el.setAttribute("integrity", val);
+              el.setAttribute("crossorigin", "anonymous");
             }
           };
           if (manifest[url] || process.env["NODE_ENV"] !== "production")
@@ -203,8 +189,8 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
       rewriter.on("script[src]", sri("src"));
       rewriter.on('link[rel="stylesheet"][href]', sri("href"));
-      rewriter.on("script", { element: (el) => el["setAttribute"]!("nonce", nonce) });
-      rewriter.on("style", { element: (el) => el["setAttribute"]!("nonce", nonce) });
+      rewriter.on("script", { element: (el) => el.setAttribute("nonce", nonce) });
+      rewriter.on("style", { element: (el) => el.setAttribute("nonce", nonce) });
     }
 
     res = rewriter.transform(res);

@@ -75,10 +75,16 @@ vi.mock("../src/middleware", async (importOriginal) => {
           };
         }
 
+        const ctxRec = c as unknown as Record<string, unknown>;
+        ctxRec["text"] ??= (text: string, status = 200) => new Response(text, { status });
+        ctxRec["redirect"] ??= (location: string, status = 302) =>
+          Response.redirect(location, status);
+
         let downstream: unknown;
         const res = await mw(c, async () => {
           downstream = await next();
         });
+        if (res) c.res = res;
         return res ?? c.res ?? downstream;
       };
     },
