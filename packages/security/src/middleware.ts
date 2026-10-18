@@ -169,56 +169,37 @@ export const construction = (): MiddlewareHandler => {
 
   return async (c, next) => {
     const path = c.req.path;
-    const method = c.req.method.toUpperCase();
-    const search = new URL(c.req.url).search;
 
-    // Handle guest sign-in endpoint
-    if (apiPath && path === apiPath && method === "POST") {
-      try {
-        const ct = (c.req.header("content-type") || "").toLowerCase();
-        const isForm = ct.includes("form");
-        let passphrase = "";
-        let rememberMe = true;
-        let redirectUrl = "/";
+    // 1. Password sign-in endpoint (native form or JSON)
+    if (apiPath && path === apiPath && c.req.method.toUpperCase() === "POST") {
+      const isForm = (c.req.header("content-type") || "").toLowerCase().includes("form");
+      const fd =
+        isForm && typeof c.req.formData === "function"
+          ? await c.req.formData().catch(() => undefined)
+          : undefined;
+      const body: any = !fd
+        ? await (c.req.parseBody?.() ?? c.req.json?.() ?? {}).catch(() => ({}))
+        : {};
 
-        if (isForm) {
-          if (typeof c.req.formData === "function") {
-            const fd = await c.req.formData().catch(() => undefined);
-            const passVal = fd?.get("passphrase");
-            const remVal = fd?.get("rememberMe");
-            const redVal = fd?.get("redirect");
-            passphrase = typeof passVal === "string" ? passVal : "";
-            rememberMe = remVal !== "false" && remVal !== null;
-            redirectUrl = typeof redVal === "string" ? redVal : "/";
-          } else {
-            const body: any = await (c.req.parseBody?.() ?? {}).catch(() => ({}));
-            passphrase = String(body?.["passphrase"] ?? "");
-            rememberMe = body?.["rememberMe"] !== false && body?.["rememberMe"] !== "false";
-            redirectUrl = String(body?.["redirect"] ?? "/");
-          }
-        } else {
-          const body: any = await c.req.json().catch(() => ({}));
-          passphrase = String(body?.["passphrase"] ?? "");
-          rememberMe = body?.["rememberMe"] !== false;
-          redirectUrl = String(body?.["redirect"] ?? "/");
+      const pass = String(fd?.get("passphrase") ?? body?.["passphrase"] ?? "");
+      const remember = fd ? fd.get("rememberMe") !== "false" : body?.["rememberMe"] !== false;
+      const redirect = String(fd?.get("redirect") ?? body?.["redirect"] ?? "/");
+
+      const ok = signInConstructionGuest(c, pass, remember);
+      if (isForm) {
+        if (!ok) {
+          const loc = options.getLocale ? options.getLocale(redirect) : "en";
+          const base = constructionPath.startsWith("/") ? constructionPath : `/${constructionPath}`;
+          const targetPath =
+            base.startsWith(`/${loc}/`) || base === `/${loc}` ? base : `/${loc}${base}`;
+          return c.redirect(`${targetPath}?error=invalid&redirect=${encodeURIComponent(redirect)}`);
         }
-
-        const signedIn = await signInConstructionGuest(c, passphrase, rememberMe);
-        if (isForm) {
-          if (!signedIn) {
-            const loc = options.getLocale ? options.getLocale(redirectUrl) : "en";
-            const target = `${options.constructionPath ?? `/${loc}/construction`}?error=invalid&redirect=${encodeURIComponent(redirectUrl)}`;
-            return c.redirect(target);
-          }
-          return c.redirect(redirectUrl);
-        }
-
-        return signedIn ? c.json({ success: true }) : c.json({ error: "Invalid credentials" }, 401);
-      } catch (err: any) {
-        return c.json({ error: err?.message || "Authentication failed" }, 400);
+        return c.redirect(redirect);
       }
+      return ok ? c.json({ success: true }) : c.json({ error: "Invalid credentials" }, 401);
     }
 
+    // 2. Check if construction mode is active
     const envKey = options.modeEnvKey ?? "CONSTRUCTION_MODE";
     const enabled =
       c.env?.[envKey] === "true" ||
@@ -238,63 +219,50 @@ export const construction = (): MiddlewareHandler => {
       if (match) return next();
     }
 
-    const isAuthorized = async (): Promise<boolean> =>
-      (options.isAuthorized ? await options.isAuthorized(c) : false) ||
-      (await isConstructionGuest(c));
+    // 3. Authorized access check
+    if (
+      (options.isAuthorized && (await options.isAuthorized(c))) ||
+      (await isConstructionGuest(c))
+    ) {
+      return next();
+    }
 
-    if (await isAuthorized()) return next();
-
+    // 4. Block non-document assets
     const accept = c.req.header("accept");
     const secFetchDest = c.req.header("sec-fetch-dest");
-    const isDocNav =
+    const isDoc =
       !/\.[a-z0-9]{2,8}$/i.test(path) &&
       (secFetchDest
         ? secFetchDest === "document" || secFetchDest === "iframe"
         : !accept || accept.includes("text/html"));
-
-    if (!isDocNav) {
+    if (!isDoc) {
       return new Response("Not Found", {
         status: 404,
         headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
       });
     }
 
+    // 5. Allow construction page itself or redirect to it
     const locMatch = path.match(/^\/([a-zA-Z]{2}(?:-[a-zA-Z]{2})?)(\/|$)/);
     const locale = options.getLocale
       ? options.getLocale(path)
-      : (options.locales?.find((l: string) => path === `/${l}` || path.startsWith(`/${l}/`)) ??
-        locMatch?.[1]?.toLowerCase() ??
-        "en");
-
-    const normPath = path.length > 1 ? path.replace(/\/+$/, "") : path;
-    const normConstPath = constructionPath.startsWith("/")
-      ? constructionPath.replace(/\/+$/, "")
-      : "/" + constructionPath.replace(/\/+$/, "");
-    if (normPath === normConstPath || normPath === `/${locale}${normConstPath}`) {
+      : (locMatch?.[1]?.toLowerCase() ?? "en");
+    const norm = path.replace(/\/+$/, "") || "/";
+    if (norm === constructionPath || norm === `/${locale}${constructionPath}`) {
       return next();
     }
 
-    const targetUrl = `/${locale}${constructionPath}?redirect=${encodeURIComponent(path + search)}`;
-    if (options.onUnauthorized) {
-      return options.onUnauthorized(c, { locale, path, redirectUrl: targetUrl });
-    }
-
+    const targetUrl = `/${locale}${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`;
     if (options.renderFallback) {
-      const html = getConstructionFallbackHtml({
-        redirect: new URLSearchParams(search).get("redirect") || path || `/${locale}`,
-        endpoint: typeof apiPath === "string" ? apiPath : "/api/construction-guest",
-        error: search.includes("error=invalid") ? "invalid" : undefined,
-      });
-      return new Response(html, {
-        status: 503,
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          "Cache-Control": "no-store, no-cache, must-revalidate",
-          "Retry-After": "3600",
-        },
-      });
+      return new Response(
+        getConstructionFallbackHtml({
+          redirect: new URL(c.req.url).searchParams.get("redirect") || path,
+          endpoint: typeof apiPath === "string" ? apiPath : "/api/construction-guest",
+          error: c.req.url.includes("error=invalid") ? "invalid" : undefined,
+        }),
+        { status: 503, headers: { "Content-Type": "text/html; charset=utf-8" } },
+      );
     }
-
     return c.redirect(targetUrl);
   };
 };

@@ -201,63 +201,24 @@ const getGuestCookie = (c: Context): string | undefined => {
   return match ? decodeURIComponent(match[1]!) : undefined;
 };
 
-const hashToken = async (payload: string, secret: string): Promise<string> => {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
-  return btoa(String.fromCharCode(...new Uint8Array(sig)))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-};
-
 export const isConstructionGuest = async (c: Context): Promise<boolean> => {
   const token = getGuestCookie(c);
   const secret = getConstructionPassphrase(c);
-  if (!token || !secret) return false;
-
-  const [encodedPayload, sig] = token.split(".");
-  if (!encodedPayload || !sig) return false;
-
-  try {
-    const payloadStr = atob(encodedPayload.replace(/-/g, "+").replace(/_/g, "/"));
-    const expectedSig = await hashToken(payloadStr, secret);
-    return sig === expectedSig && JSON.parse(payloadStr).expiresAt > Date.now();
-  } catch {
-    return false;
-  }
+  return Boolean(token && secret && token === secret);
 };
 
-export const signInConstructionGuest = async (
+export const signInConstructionGuest = (
   c: Context,
   passphrase: string,
   rememberMe = true,
-): Promise<boolean> => {
+): boolean => {
   const expected = getConstructionPassphrase(c);
-  if (!expected || !passphrase || passphrase !== expected) return false;
+  if (!expected || passphrase !== expected) return false;
 
   const raw = activeConfig.construction;
-  const opts = typeof raw === "object" && raw !== null ? raw : undefined;
-  const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
-  const maxAge = opts?.cookieMaxAge ?? 60 * 60 * 24 * 7;
-  const payload = JSON.stringify({ expiresAt: Date.now() + maxAge * 1000 });
-  const sig = await hashToken(payload, expected);
-  const b64Payload = btoa(payload).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
-  const parts = [
-    `${cookieName}=${b64Payload}.${sig}`,
-    "Path=/",
-    "HttpOnly",
-    "Secure",
-    "SameSite=Lax",
-  ];
-  if (rememberMe) parts.push(`Max-Age=${maxAge}`);
+  const cookieName = (typeof raw === "object" && raw?.cookieName) || CONSTRUCTION_GUEST_COOKIE;
+  const parts = [`${cookieName}=${expected}`, "Path=/", "HttpOnly", "Secure", "SameSite=Lax"];
+  if (rememberMe) parts.push("Max-Age=604800");
   c.header("Set-Cookie", parts.join("; "), { append: true });
   return true;
 };
@@ -279,9 +240,9 @@ export async function submitConstructionPassphrase(options: {
       }),
     });
     const data = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
-    if (!res.ok || !data.success)
-      return { success: false, error: data.error || "Invalid passphrase" };
-    return { success: true };
+    return res.ok && data.success
+      ? { success: true }
+      : { success: false, error: data.error || "Invalid passphrase" };
   } catch (err: any) {
     return { success: false, error: err?.message || "An unexpected error occurred." };
   }
