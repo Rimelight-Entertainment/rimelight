@@ -1,7 +1,5 @@
 import type { HeadTag } from "@solidjs/web";
 
-export type { HeadTag } from "@solidjs/web";
-
 export interface SecurityHeadOptions {
   trustedTypes?: boolean;
   nonceSync?: boolean;

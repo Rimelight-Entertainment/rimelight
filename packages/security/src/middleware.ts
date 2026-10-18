@@ -2,17 +2,24 @@ import type { MiddlewareHandler } from "hono";
 import { config } from "virtual:rimelight-security";
 import type { SecurityConfig } from "./types";
 import { fetchRemoteSriManifest } from "./sri";
+import { buildCspHeader, activeConfig } from "./runtime";
+import { ratelimit } from "./ratelimit";
 import {
-  buildCspHeader,
-  activeConfig,
+  construction,
   isConstructionGuest,
   signInConstructionGuest,
-  verifyTurnstile,
-  getConstructionFallbackHtml,
   CONSTRUCTION_GUEST_COOKIE,
-} from "./runtime";
+} from "./construction";
+import { turnstile } from "./turnstile";
 
-export { isConstructionGuest, signInConstructionGuest, CONSTRUCTION_GUEST_COOKIE };
+export {
+  ratelimit,
+  construction,
+  turnstile,
+  isConstructionGuest,
+  signInConstructionGuest,
+  CONSTRUCTION_GUEST_COOKIE,
+};
 
 declare const HTMLRewriter: any;
 
@@ -46,226 +53,6 @@ async function resolveActiveManifest(
     ...explicitManifest,
   };
 }
-
-const isDevEnv = () =>
-  process.env["NODE_ENV"] === "development" ||
-  (import.meta.env?.DEV === true &&
-    process.env["NODE_ENV"] !== "production" &&
-    process.env["NODE_ENV"] !== "test");
-
-/**
- * Hono middleware to block /dev/ routes in non-development environments.
- */
-export const devOnly = (): MiddlewareHandler => async (c, next) => {
-  if (!isDevEnv() && c.req.path.includes("/dev/")) return c.notFound();
-  return next();
-};
-
-/**
- * Hono middleware for Cloudflare rate limiting on sensitive routes.
- */
-export const ratelimit = (): MiddlewareHandler => {
-  const raw = activeConfig.ratelimit;
-  const options = typeof raw === "object" && raw !== null ? raw : {};
-  const {
-    bindingName = "MY_RATE_LIMITER",
-    routes = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"],
-    retryAfter = 60,
-    fallback = "pass",
-    keyGenerator = (c) => c.req.header("CF-Connecting-IP") || "unknown",
-    onRateLimited = (c, retry) =>
-      c.json(
-        {
-          error: "Too Many Requests",
-          message: "Rate limit exceeded. Please try again later.",
-        },
-        429,
-        { "Retry-After": String(retry) },
-      ),
-  } = options;
-
-  return async (c, next) => {
-    const path = c.req.path;
-    const matches =
-      typeof routes === "function"
-        ? routes(c)
-        : routes.some((r: string | RegExp) =>
-            typeof r === "string" ? path.includes(r) : r.test(path),
-          );
-
-    if (!matches) return next();
-
-    const limiter = options.limiter ? options.limiter(c) : c.env?.[bindingName];
-    if (!limiter || typeof limiter.limit !== "function") {
-      if (fallback === "pass") return next();
-      return c.json({ error: "Rate limiter not configured" }, 500);
-    }
-
-    try {
-      const key = await keyGenerator(c);
-      const { success } = await limiter.limit({ key });
-      if (!success) return onRateLimited(c, retryAfter);
-    } catch {
-      if (fallback !== "pass") return c.json({ error: "Rate limit check failed" }, 500);
-    }
-    return next();
-  };
-};
-
-/**
- * Hono middleware to verify Cloudflare Turnstile token from form body.
- */
-export const turnstile = (): MiddlewareHandler => {
-  const raw = activeConfig.turnstile;
-  const options = typeof raw === "object" && raw !== null ? raw : {};
-  const { field = "cf-turnstile-response", ...verifyOptions } = options;
-
-  return async (c, next) => {
-    const ct = (c.req.header("content-type") || "").toLowerCase();
-    const body: any = ct.includes("form")
-      ? await c.req.parseBody().catch(() => ({}))
-      : await c.req.json().catch(() => ({}));
-    const token = body?.[field];
-
-    const result = await verifyTurnstile({
-      ...verifyOptions,
-      token: typeof token === "string" ? token : undefined,
-      env: c.env,
-      remoteIp: c.req.header("CF-Connecting-IP"),
-    });
-
-    if (result.success) return next();
-
-    return c.json({ success: false, error: result.error }, 400);
-  };
-};
-
-const DEFAULT_WHITELIST = [
-  "/construction",
-  "/api/auth",
-  "/api/construction-guest",
-  "/assets/",
-  "/_image",
-  "/favicon.",
-  "/apple-touch-icon",
-  "/site.webmanifest",
-  "manifest.json",
-  ".webmanifest",
-  "/robots.txt",
-  "/sitemap",
-  "/rss.xml",
-  "/llms.txt",
-  "/.well-known/",
-];
-
-/**
- * Hono middleware for site maintenance and construction mode gating.
- */
-export const construction = (): MiddlewareHandler => {
-  const raw = activeConfig.construction;
-  const options = typeof raw === "object" && raw !== null ? raw : {};
-  const apiPath = options.apiPath !== undefined ? options.apiPath : "/api/construction-guest";
-  const constructionPath = options.constructionPath ?? "/construction";
-
-  return async (c, next) => {
-    const path = c.req.path;
-
-    // 1. Password sign-in endpoint (native form or JSON)
-    if (apiPath && path === apiPath && c.req.method.toUpperCase() === "POST") {
-      const isForm = (c.req.header("content-type") || "").toLowerCase().includes("form");
-      const fd =
-        isForm && typeof c.req.formData === "function"
-          ? await c.req.formData().catch(() => undefined)
-          : undefined;
-      const body: any = !fd
-        ? await (c.req.parseBody?.() ?? c.req.json?.() ?? {}).catch(() => ({}))
-        : {};
-
-      const pass = String(fd?.get("passphrase") ?? body?.["passphrase"] ?? "");
-      const remember = fd ? fd.get("rememberMe") !== "false" : body?.["rememberMe"] !== false;
-      const redirect = String(fd?.get("redirect") ?? body?.["redirect"] ?? "/");
-
-      const ok = signInConstructionGuest(c, pass, remember);
-      if (isForm) {
-        if (!ok) {
-          const loc = options.getLocale ? options.getLocale(redirect) : "en";
-          const base = constructionPath.startsWith("/") ? constructionPath : `/${constructionPath}`;
-          const targetPath =
-            base.startsWith(`/${loc}/`) || base === `/${loc}` ? base : `/${loc}${base}`;
-          return c.redirect(`${targetPath}?error=invalid&redirect=${encodeURIComponent(redirect)}`);
-        }
-        return c.redirect(redirect);
-      }
-      return ok ? c.json({ success: true }) : c.json({ error: "Invalid credentials" }, 401);
-    }
-
-    // 2. Check if construction mode is active
-    const envKey = options.modeEnvKey ?? "CONSTRUCTION_MODE";
-    const enabled =
-      c.env?.[envKey] === "true" ||
-      c.env?.[envKey] === true ||
-      (typeof process !== "undefined" &&
-        (process.env[envKey] === "true" || (import.meta as any).env?.[envKey] === "true"));
-
-    if (!enabled || DEFAULT_WHITELIST.some((p) => path.includes(p))) return next();
-
-    if (options.whitelist) {
-      const match =
-        typeof options.whitelist === "function"
-          ? options.whitelist(path)
-          : options.whitelist.some((p: string | RegExp) =>
-              typeof p === "string" ? path.includes(p) : p.test(path),
-            );
-      if (match) return next();
-    }
-
-    // 3. Authorized access check
-    if (
-      (options.isAuthorized && (await options.isAuthorized(c))) ||
-      (await isConstructionGuest(c))
-    ) {
-      return next();
-    }
-
-    // 4. Block non-document assets
-    const accept = c.req.header("accept");
-    const secFetchDest = c.req.header("sec-fetch-dest");
-    const isDoc =
-      !/\.[a-z0-9]{2,8}$/i.test(path) &&
-      (secFetchDest
-        ? secFetchDest === "document" || secFetchDest === "iframe"
-        : !accept || accept.includes("text/html"));
-    if (!isDoc) {
-      return new Response("Not Found", {
-        status: 404,
-        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
-      });
-    }
-
-    // 5. Allow construction page itself or redirect to it
-    const locMatch = path.match(/^\/([a-zA-Z]{2}(?:-[a-zA-Z]{2})?)(\/|$)/);
-    const locale = options.getLocale
-      ? options.getLocale(path)
-      : (locMatch?.[1]?.toLowerCase() ?? "en");
-    const norm = path.replace(/\/+$/, "") || "/";
-    if (norm === constructionPath || norm === `/${locale}${constructionPath}`) {
-      return next();
-    }
-
-    const targetUrl = `/${locale}${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`;
-    if (options.renderFallback) {
-      return new Response(
-        getConstructionFallbackHtml({
-          redirect: new URL(c.req.url).searchParams.get("redirect") || path,
-          endpoint: typeof apiPath === "string" ? apiPath : "/api/construction-guest",
-          error: c.req.url.includes("error=invalid") ? "invalid" : undefined,
-        }),
-        { status: 503, headers: { "Content-Type": "text/html; charset=utf-8" } },
-      );
-    }
-    return c.redirect(targetUrl);
-  };
-};
 
 function applyHeaders(
   res: Response,
@@ -349,7 +136,7 @@ function applyHeaders(
 }
 
 /**
- * Hono Security Middleware orchestrating TLS, dev-only, rate limiting,
+ * Hono Security Middleware orchestrating TLS, dev-only route protection, rate limiting,
  * construction gating, CSP headers, nonces, and SRI injection with Cloudflare HTMLRewriter.
  */
 export const security = (): MiddlewareHandler => {
@@ -361,18 +148,26 @@ export const security = (): MiddlewareHandler => {
   };
 
   const sub = [
-    pluginConfig.devOnly !== false && devOnly(),
     pluginConfig.ratelimit !== false && ratelimit(),
     pluginConfig.construction !== false && construction(),
   ].filter(Boolean) as MiddlewareHandler[];
 
   return async (c, next) => {
-    const isDev = isDevEnv();
+    const isDev =
+      process.env["NODE_ENV"] === "development" ||
+      (import.meta.env?.DEV === true &&
+        process.env["NODE_ENV"] !== "production" &&
+        process.env["NODE_ENV"] !== "test");
     const isTest =
       !isDev && (import.meta.env?.MODE === "test" || process.env["NODE_ENV"] === "test");
     const isProd =
       !isDev &&
       (import.meta.env?.PROD === true || process.env["NODE_ENV"] === "production" || isTest);
+
+    // Block /dev routes in production if devOnly is enabled
+    if (merged.devOnly !== false && !isDev && c.req.path.startsWith("/dev")) {
+      return c.notFound();
+    }
 
     const rawReq = c.req.raw as Request & { cf?: { tlsVersion?: string } };
     const cf = rawReq.cf || (c.env as any)?.cf;

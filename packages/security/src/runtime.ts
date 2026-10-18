@@ -87,94 +87,31 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
     .join("; ");
 }
 
-export function isTurnstileEnabled(env?: any): boolean {
-  const siteKey =
-    env?.TURNSTILE_SITE_KEY ||
-    (typeof process !== "undefined" ? process.env?.["TURNSTILE_SITE_KEY"] : undefined);
-  const secretKey =
-    env?.TURNSTILE_SECRET_KEY ||
-    (typeof process !== "undefined" ? process.env?.["TURNSTILE_SECRET_KEY"] : undefined);
-  return Boolean(siteKey && secretKey);
-}
-
-export function getTurnstileSecretKey(optionsOrEnv?: any): string | undefined {
-  if (typeof optionsOrEnv === "object" && optionsOrEnv !== null) {
-    if (optionsOrEnv.secretKey) return optionsOrEnv.secretKey;
-    if (optionsOrEnv.env?.TURNSTILE_SECRET_KEY) return optionsOrEnv.env.TURNSTILE_SECRET_KEY;
-    if (optionsOrEnv.TURNSTILE_SECRET_KEY) return optionsOrEnv.TURNSTILE_SECRET_KEY;
-  }
-  return typeof process !== "undefined" ? process.env?.["TURNSTILE_SECRET_KEY"] : undefined;
-}
-
-export function getTurnstileSiteKey(env?: any): string | undefined {
-  return (
-    env?.TURNSTILE_SITE_KEY ||
-    (typeof process !== "undefined" ? process.env?.["TURNSTILE_SITE_KEY"] : undefined)
-  );
-}
-
 export async function verifyTurnstile(
-  tokenOrOptions: any,
-  legacyEnv?: any,
-  legacyRemoteIp?: string,
-): Promise<{ success: boolean; error?: string; errorCodes?: string[] }> {
-  const opts =
-    typeof tokenOrOptions === "object" && tokenOrOptions !== null
-      ? tokenOrOptions
-      : { token: tokenOrOptions, env: legacyEnv, remoteIp: legacyRemoteIp };
-
-  const failOpen = opts.failOpen ?? true;
-  const secretKey = getTurnstileSecretKey(opts);
-
-  if (!secretKey) {
-    if (failOpen) {
-      console.log("[Turnstile] Keys missing or not configured. Failing open.");
-      return { success: true };
-    }
-    return { success: false, error: "Turnstile secret key is not configured." };
-  }
-
-  if (!opts.token) {
-    return { success: false, error: "Security check token is missing." };
-  }
+  token?: string,
+  secretKey = typeof process !== "undefined" ? process.env?.["TURNSTILE_SECRET_KEY"] : undefined,
+  remoteIp?: string,
+): Promise<boolean> {
+  // Fail open in dev/preview if keys are not configured
+  if (!secretKey) return true;
+  if (!token) return false;
 
   try {
-    const res = await fetch(
-      opts.endpoint || "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ secret: secretKey, response: opts.token, remoteip: opts.remoteIp }),
-      },
-    );
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: secretKey,
+        response: token,
+        remoteip: remoteIp,
+      }),
+    });
 
-    if (!res.ok) {
-      if (failOpen) {
-        console.error(`[Turnstile] API returned status ${res.status}. Failing open.`);
-        return { success: true };
-      }
-      return { success: false, error: `Cloudflare Turnstile API returned status ${res.status}` };
-    }
-
-    const data = (await res.json()) as { success: boolean; "error-codes"?: string[] };
-    if (data.success) return { success: true };
-
-    const codes = data["error-codes"] || [];
-    const error = codes.includes("timeout-or-duplicate")
-      ? "Verification token expired or already used. Please refresh the security check."
-      : codes.includes("invalid-input-response")
-        ? "Invalid verification response. Please try again."
-        : "Bot check verification failed.";
-
-    return { success: false, error, errorCodes: codes };
-  } catch (err: any) {
-    console.error(`[Turnstile Exception] ${err?.message || "Unknown error"}`);
-    return failOpen
-      ? { success: true }
-      : {
-          success: false,
-          error: err?.message || "Turnstile verification encountered an exception.",
-        };
+    if (!res.ok) return true;
+    const data = (await res.json().catch(() => ({}))) as { success?: boolean };
+    return Boolean(data.success);
+  } catch {
+    return true; // Fail open on network errors
   }
 }
 

@@ -9,7 +9,38 @@ describe("Rate Limit Middleware", () => {
     }
   });
 
-  it("skips non-sensitive routes by default", async () => {
+  it("rate limits all routes by default when routes is not specified", async () => {
+    const middleware = ratelimit();
+    const limitMock = vi.fn().mockResolvedValue({ success: true });
+
+    const ctx = {
+      req: {
+        path: "/about",
+        header: () => "1.2.3.4",
+      },
+      env: {
+        MY_RATE_LIMITER: {
+          limit: limitMock,
+        },
+      },
+    };
+
+    let nextCalled = false;
+    const next = async () => {
+      nextCalled = true;
+    };
+
+    await middleware(ctx as any, next);
+    expect(nextCalled).toBe(true);
+    expect(limitMock).toHaveBeenCalledWith({ key: "1.2.3.4" });
+  });
+
+  it("skips routes that do not match when routes option is specified", async () => {
+    Object.assign(activeConfig, {
+      ratelimit: {
+        routes: ["/auth/sign-in"],
+      },
+    });
     const middleware = ratelimit();
     const limitMock = vi.fn().mockResolvedValue({ success: false });
 

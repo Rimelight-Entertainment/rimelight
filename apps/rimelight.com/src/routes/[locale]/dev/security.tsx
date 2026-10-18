@@ -7,8 +7,6 @@ import {
   buildCspHeader,
   createSecurityHead,
   activeConfig,
-  getTurnstileSiteKey,
-  isTurnstileEnabled,
 } from "@rimelight/security";
 
 const DEMO_NONCE = "abC0123def456GHI";
@@ -169,18 +167,10 @@ export default function DevSecurityPage() {
       title: "Turnstile",
       rows: [
         {
-          label: "Enabled",
-          code: `isTurnstileEnabled()`,
-          description:
-            "Requires both TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY to be present in the environment.",
-          value: String(isTurnstileEnabled()),
-        },
-        {
-          label: "Site Key",
-          code: `getTurnstileSiteKey()`,
-          description:
-            "Resolves the public site key from the environment; used to render the widget on forms.",
-          value: getTurnstileSiteKey() ?? "not configured",
+          label: "Turnstile Config",
+          code: `activeConfig.turnstile`,
+          description: "Configured turnstile options from security plugin.",
+          value: JSON.stringify(config.turnstile ?? false),
         },
       ],
     },
