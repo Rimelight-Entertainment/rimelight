@@ -5,23 +5,21 @@ import type { SecurityConfig } from "./types";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
-interface HTMLRewriterElement {
-  getAttribute(name: string): string | null;
-  setAttribute(name: string, value: string): HTMLRewriterElement;
-  append(content: string, options?: { html?: boolean }): HTMLRewriterElement;
-}
-
-interface HTMLRewriterInstance {
+declare class HTMLRewriter {
   on(
     selector: string,
-    handlers: { element(el: HTMLRewriterElement): unknown },
-  ): HTMLRewriterInstance;
+    handlers: {
+      element(el: {
+        getAttribute(name: string): string | null;
+        setAttribute(name: string, value: string): unknown;
+        append(content: string, options?: { html?: boolean }): unknown;
+      }): unknown;
+    },
+  ): this;
   transform(response: Response): Response;
 }
 
-declare const HTMLRewriter: { new (): HTMLRewriterInstance } | undefined;
-
-type SecurityEnv = {
+export const security = (): MiddlewareHandler<{
   Bindings: Record<string, unknown> & {
     CONSTRUCTION_MODE?: string;
     CONSTRUCTION_PASSPHRASE?: string;
@@ -29,9 +27,7 @@ type SecurityEnv = {
     ASSETS?: { fetch(req: Request): Promise<Response> };
     cf?: { tlsVersion?: string };
   };
-};
-
-export const security = (): MiddlewareHandler<SecurityEnv> => {
+}> => {
   const sriCache: Record<string, string | undefined> = {};
 
   return async (c, next) => {
@@ -39,64 +35,64 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
     const reqUrl = c.req.url || c.req.raw?.url;
     const path = c.req.path;
 
-    // 1. Block /dev routes in production
+    // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS
     if (activeConfig.devOnly !== false && !isDev && path.startsWith("/dev")) {
       return c.notFound();
     }
 
-    // 2. Enforce TLS 1.2+ and HTTPS redirect
-    const tls = ((c.req.raw as Request & { cf?: { tlsVersion?: string } })?.cf || c.env?.cf)
-      ?.tlsVersion;
+    const tls = ((c.req.raw as { cf?: { tlsVersion?: string } })?.cf || c.env?.cf)?.tlsVersion;
     if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
       return new Response("TLS 1.2 or higher is required.", { status: 400 });
     }
     if (
       !isDev &&
+      reqUrl &&
       (c.req.header?.("x-forwarded-proto") ?? c.req.raw?.headers?.get("x-forwarded-proto")) ===
-        "http" &&
-      reqUrl
+        "http"
     ) {
       return Response.redirect(reqUrl.replace(/^http:/, "https:"), 301);
     }
 
-    const matchRoute = (
-      routes?: (string | RegExp)[] | ((c: Context) => boolean),
+    const matches = (
+      routes?: (string | RegExp)[] | ((c: Context) => boolean) | ((p: string) => boolean),
+      arg: Context & string = c as Context & string,
       fallback = true,
     ) =>
       !routes
         ? fallback
         : typeof routes === "function"
-          ? routes(c)
+          ? routes(arg)
           : routes.some((r) => (typeof r === "string" ? path.startsWith(r) : r.test(path)));
 
     const readBody = async (): Promise<Record<string, unknown>> => {
       const raw = c.req.raw?.clone?.();
-      if ((c.req.header?.("content-type") || "").toLowerCase().includes("form")) {
-        return raw
-          ? Object.fromEntries((await raw.formData().catch(() => new FormData())).entries())
-          : ((await (c.req.parseBody?.() ?? c.req.formData?.())?.catch(() => ({}))) as Record<
-              string,
-              unknown
-            >);
+      try {
+        const body = (c.req.header?.("content-type") || "").toLowerCase().includes("form")
+          ? raw
+            ? await raw.formData()
+            : await (c.req.parseBody?.() ?? c.req.formData?.())
+          : await (raw ? raw.json() : c.req.json?.());
+        return body instanceof FormData
+          ? Object.fromEntries(body.entries())
+          : (body as Record<string, unknown>) || {};
+      } catch {
+        return {};
       }
-      return (
-        raw ? await raw.json().catch(() => ({})) : await c.req.json?.().catch(() => ({}))
-      ) as Record<string, unknown>;
     };
 
-    // 3. Rate limiting gate
+    // 2. Rate limiting
     if (activeConfig.ratelimit !== false) {
       const rl = typeof activeConfig.ratelimit === "object" ? activeConfig.ratelimit : {};
-      if (matchRoute(rl.routes, true)) {
+      if (matches(rl.routes, c as Context & string, true)) {
         const limiter = rl.limiter
           ? rl.limiter(c)
           : (c.env?.[rl.bindingName || "MY_RATE_LIMITER"] as
               | { limit(o: { key: string }): Promise<{ success: boolean }> }
               | undefined);
+        const failBlock = rl.fallback && rl.fallback !== "pass";
+
         if (typeof limiter?.limit !== "function") {
-          if (rl.fallback && rl.fallback !== "pass") {
-            return (c.res = c.json({ error: "Rate limiter not configured" }, 500));
-          }
+          if (failBlock) return (c.res = c.json({ error: "Rate limiter not configured" }, 500));
         } else {
           try {
             const key = await (rl.keyGenerator?.(c) ??
@@ -115,20 +111,18 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
                   ));
             }
           } catch {
-            if (rl.fallback && rl.fallback !== "pass") {
-              return (c.res = c.json({ error: "Rate limit check failed" }, 500));
-            }
+            if (failBlock) return (c.res = c.json({ error: "Rate limit check failed" }, 500));
           }
         }
       }
     }
 
-    // 4. Turnstile verification gate
+    // 3. Turnstile verification
     const ts = typeof activeConfig.turnstile === "object" ? activeConfig.turnstile : undefined;
     if (
       ts?.routes &&
       /^(POST|PUT|PATCH|DELETE)$/i.test(c.req.method) &&
-      matchRoute(ts.routes, false)
+      matches(ts.routes, c as Context & string, false)
     ) {
       const val = (await readBody())[ts.field || "cf-turnstile-response"];
       const ok = await verifyTurnstile(
@@ -141,7 +135,7 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
       }
     }
 
-    // 5. Construction mode gate
+    // 4. Construction mode
     if (activeConfig.construction !== false && String(c.env?.CONSTRUCTION_MODE) === "true") {
       const cfg = {
         constructionPath: "/construction",
@@ -157,31 +151,20 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
         return (c.res = c.redirect(path));
       }
 
-      const isAuthed =
+      const authed =
         (secret &&
           (c.req.raw?.headers
             ? getCookie(c, cfg.cookieName) === secret
             : c.req.header?.("cookie")?.includes(`${cfg.cookieName}=${secret}`))) ||
         /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
-        (typeof cfg.whitelist === "function"
-          ? cfg.whitelist(path)
-          : cfg.whitelist?.some((w) =>
-              typeof w === "string" ? path.startsWith(w) : w.test(path),
-            )) ||
+        matches(cfg.whitelist, path as Context & string, false) ||
         (await cfg.isAuthorized?.(c));
 
-      if (!isAuthed) {
+      if (!authed) {
         if (c.req.method === "POST" && path.includes(cfg.constructionPath)) {
-          const b = await readBody();
-          const get = (k: string) => {
-            const v =
-              typeof (b as { get?: (k: string) => unknown }).get === "function"
-                ? (b as { get: (k: string) => unknown }).get(k)
-                : b[k];
-            return typeof v === "string" ? v : undefined;
-          };
-          const ok = Boolean(secret && get("passphrase") === secret);
-          const to = get("redirect") ?? "/";
+          const body = await readBody();
+          const ok = Boolean(secret && body["passphrase"] === secret);
+          const to = typeof body["redirect"] === "string" ? body["redirect"] : "/";
           if (ok) setCookie(c, cfg.cookieName, secret!, cookieOpts);
           return (c.res = c.redirect(
             ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`,
@@ -201,9 +184,9 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
       }
     }
 
-    // 6. Execute downstream route handlers
+    // 5. Execute downstream & rewrite HTML
     const downstream: unknown = await next();
-    const res = downstream instanceof Response ? (c.res = downstream) : c.res;
+    let res = downstream instanceof Response ? (c.res = downstream) : c.res;
     if (!res) return downstream as Response | void;
 
     const origin = reqUrl ? new URL(reqUrl).origin : undefined;
@@ -213,46 +196,14 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
         ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
         : undefined;
 
-    // 7. Rewrite HTML (inject CSP nonce meta, Trusted Types, dev violation logger, and SRI)
-    let target = res;
     if (isHtml && typeof HTMLRewriter !== "undefined") {
       const headHtml = [
         nonce ? `<meta name="csp-nonce" content="${nonce}">` : "",
         activeConfig.trustedTypes
-          ? `<script${nonce ? ` nonce="${nonce}"` : ""}>(${(() => {
-              const tt = (
-                window as unknown as {
-                  trustedTypes?: {
-                    defaultPolicy?: unknown;
-                    createPolicy: (n: string, r: object) => void;
-                  };
-                }
-              ).trustedTypes;
-              if (tt?.createPolicy && !tt.defaultPolicy) {
-                try {
-                  tt.createPolicy("default", {
-                    createHTML: (s: string) => s,
-                    createScript: (s: string) => s,
-                    createScriptURL: (s: string) => s,
-                  });
-                } catch {}
-              }
-            }).toString()})()</script>`
+          ? `<script${nonce ? ` nonce="${nonce}"` : ""}>if(window.trustedTypes?.createPolicy&&!trustedTypes.defaultPolicy)try{trustedTypes.createPolicy("default",{createHTML:s=>s,createScript:s=>s,createScriptURL:s=>s})}catch{}</script>`
           : "",
         isDev
-          ? `<script>(${(() => {
-              const seen = new Set<string>();
-              window.addEventListener("securitypolicyviolation", (e) => {
-                const key = `${e.effectiveDirective}:${e.blockedURI || e.sample || ""}`;
-                if (e.disposition !== "report" || seen.has(key)) return;
-                seen.add(key);
-                console.warn(
-                  `%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\nDirective: ${e.effectiveDirective}\n${e.blockedURI ? `Blocked URI: ${e.blockedURI}\n` : ""}${e.sourceFile ? `Source: ${e.sourceFile}:${e.lineNumber || 0}\n` : ""}${e.sample ? `Sample: ${e.sample.slice(0, 100)}\n` : ""}Fix: Add to imgSrc, scriptResources, styleResources or use nonces in your security configuration`,
-                  "background: #e11d48; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;",
-                  "color: inherit; font-weight: normal;",
-                );
-              });
-            }).toString()})()</script>`
+          ? `<script>{const s=new Set();addEventListener("securitypolicyviolation",e=>{const k=e.effectiveDirective+":"+(e.blockedURI||e.sample||"");if(e.disposition==="report"&&!s.has(k)){s.add(k);console.warn("%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\\nDirective: "+e.effectiveDirective+(e.blockedURI?"\\nBlocked URI: "+e.blockedURI:"")+(e.sourceFile?"\\nSource: "+e.sourceFile+":"+(e.lineNumber||0):"")+(e.sample?"\\nSample: "+e.sample.slice(0,100):"")+"\\nFix: Add to imgSrc, scriptResources, styleResources or use nonces in your security configuration","background:#e11d48;color:white;padding:2px 6px;border-radius:4px;font-weight:bold","color:inherit;font-weight:normal")}})}</script>`
           : "",
       ].join("");
 
@@ -262,31 +213,30 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
 
       if (nonce) {
         const sri = (attr: string) => ({
-          element(el: HTMLRewriterElement) {
+          element(el: {
+            getAttribute(n: string): string | null;
+            setAttribute(n: string, v: string): unknown;
+          }) {
             const url = el.getAttribute(attr);
             if (!url) return;
-            const cached = activeConfig.manifest?.[url] ?? config?.manifest?.[url] ?? sriCache[url];
             const apply = (val?: string) => {
               if (val) {
                 el.setAttribute("integrity", val);
                 el.setAttribute("crossorigin", "anonymous");
               }
             };
+            const cached = activeConfig.manifest?.[url] ?? config?.manifest?.[url] ?? sriCache[url];
             if (cached || process.env["NODE_ENV"] !== "production") return apply(cached);
+
             return (async () => {
               try {
-                let assetRes: Response | undefined;
-                if (url.startsWith("https://")) {
-                  const u = new URL(url);
-                  if (!u.hostname.includes("*") && !u.pathname.endsWith("/")) {
-                    assetRes = await fetch(url);
-                  }
-                } else if (url.startsWith("/") && !url.startsWith("//") && origin) {
-                  const assetUrl = new URL(url, origin);
-                  assetRes = c.env?.ASSETS
-                    ? await c.env.ASSETS.fetch(new Request(assetUrl))
-                    : await fetch(assetUrl);
-                }
+                const assetRes = url.startsWith("https://")
+                  ? !url.includes("*") && !url.endsWith("/")
+                    ? await fetch(url)
+                    : undefined
+                  : url.startsWith("/") && !url.startsWith("//") && origin
+                    ? await (c.env?.ASSETS ?? { fetch }).fetch(new Request(new URL(url, origin)))
+                    : undefined;
                 if (assetRes?.ok) {
                   const buf = await crypto.subtle.digest("SHA-384", await assetRes.arrayBuffer());
                   apply(
@@ -305,16 +255,20 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
           .on("style", { element: (el) => el.setAttribute("nonce", nonce) });
       }
 
-      target = rewriter.transform(res);
+      res = rewriter.transform(res);
     }
 
-    // 8. Build and apply security headers
+    // 6. Apply security headers
     let cspOpts: SecurityConfig = activeConfig;
-    let reportOnlyOpts: SecurityConfig | undefined;
+    let reportOnlyCsp: string | undefined;
 
     if (isHtml && isDev) {
-      const devList = (val: string[] | string | boolean | undefined, fallback: string[]) =>
-        val ? (Array.isArray(val) ? [...new Set([...val, "'unsafe-inline'"])] : val) : fallback;
+      const devList = (val: string[] | string | boolean | undefined, extra: string[]) =>
+        val
+          ? Array.isArray(val)
+            ? [...new Set([...val, "'unsafe-inline'"])]
+            : val
+          : ["'self'", "'unsafe-inline'", ...extra];
 
       cspOpts = {
         ...activeConfig,
@@ -337,28 +291,25 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
         },
       };
 
-      reportOnlyOpts = {
+      reportOnlyCsp = buildCspHeader({
         ...activeConfig,
         directives: {
           ...activeConfig.directives,
           "upgrade-insecure-requests": false,
           "script-src": devList(activeConfig.directives?.["script-src"], [
-            "'self'",
-            "'unsafe-inline'",
             "'inline-speculation-rules'",
             ...(activeConfig.scriptResources || []),
           ]),
           "script-src-attr": ["'unsafe-inline'"],
-          "style-src": devList(activeConfig.directives?.["style-src"], [
-            "'self'",
-            "'unsafe-inline'",
-            ...(activeConfig.styleResources || []),
-          ]),
+          "style-src": devList(
+            activeConfig.directives?.["style-src"],
+            activeConfig.styleResources || [],
+          ),
         },
-      };
+      });
     }
 
-    const headers = new Headers(target.headers);
+    const headers = new Headers(res.headers);
     for (const [k, v] of [
       ["Referrer-Policy", "strict-origin-when-cross-origin"],
       ["X-Content-Type-Options", "nosniff"],
@@ -383,7 +334,7 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
           (cspOpts.crossOriginEmbedderPolicy || "credentialless"),
       ],
       ["Content-Security-Policy", buildCspHeader(cspOpts, nonce)],
-      ["Content-Security-Policy-Report-Only", reportOnlyOpts && buildCspHeader(reportOnlyOpts)],
+      ["Content-Security-Policy-Report-Only", reportOnlyCsp],
       [
         "Link",
         origin &&
@@ -399,17 +350,15 @@ export const security = (): MiddlewareHandler<SecurityEnv> => {
       if (v) headers.set(k, v);
     }
 
-    const stripList =
-      cspOpts.stripHeaders === false
-        ? []
-        : cspOpts.stripHeaders || ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"];
-    for (const k of stripList) {
+    for (const k of cspOpts.stripHeaders === false
+      ? []
+      : cspOpts.stripHeaders || ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"]) {
       headers.delete(k);
     }
 
-    return (c.res = new Response(target.body, {
-      status: target.status,
-      statusText: target.statusText,
+    return (c.res = new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
       headers,
     }));
   };
