@@ -1,6 +1,5 @@
 import type { MiddlewareHandler } from "hono";
 import { setCookie } from "hono/cookie";
-import { parse } from "hono/utils/cookie";
 import { activeConfig } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
@@ -19,26 +18,24 @@ export const construction = (): MiddlewareHandler => {
       conf.passphrase ?? c.env?.CONSTRUCTION_PASSPHRASE ?? process.env?.["CONSTRUCTION_PASSPHRASE"];
     const path = c.req.path;
 
-    // 1. Shareable preview link (?preview=secret) -> cookie & redirect
+    // 1. Preview link (?preview=secret) -> cookie & redirect
     if (secret && c.req.query?.("preview") === secret) {
       setCookie(c, GUEST_COOKIE, secret, COOKIE_OPTS);
       return c.redirect(path);
     }
 
-    // 2. Cookie check, custom auth, or whitelisted routes
-    const cookie = c.req.header("cookie");
+    // 2. Cookie check, public assets, whitelist, or custom auth
     if (
-      (cookie && parse(cookie, GUEST_COOKIE)[GUEST_COOKIE] === secret) ||
-      (await conf.isAuthorized?.(c)) ||
+      c.req.header("cookie")?.includes(`${GUEST_COOKIE}=${secret}`) ||
       /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
-      (Array.isArray(conf.whitelist)
-        ? conf.whitelist.some((w: any) => path.startsWith(w))
-        : conf.whitelist?.(path))
-    ) {
+      (typeof conf.whitelist === "function"
+        ? conf.whitelist(path)
+        : conf.whitelist?.some((w) => path.startsWith(w as string))) ||
+      (await conf.isAuthorized?.(c))
+    )
       return next();
-    }
 
-    // 3. Form/JSON password submit on construction page
+    // 3. Form/JSON password submitted on the construction page
     if (c.req.method === "POST" && path.includes(page)) {
       const b: any = await (
         c.req.formData?.() ??
@@ -56,7 +53,7 @@ export const construction = (): MiddlewareHandler => {
         : c.json(ok ? { success: true } : { error: "Invalid credentials" }, ok ? 200 : 401);
     }
 
-    // 4. Render construction page if already navigating it
+    // 4. Render the construction page if already navigating it
     if (path.includes(page)) return next();
 
     // 5. 404 for asset files; otherwise serve fallback or redirect
