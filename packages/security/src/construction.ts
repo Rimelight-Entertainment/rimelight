@@ -59,12 +59,11 @@ export const construction = (): MiddlewareHandler => {
     // 4. Render construction page if already navigating it
     if (path.includes(page)) return next();
 
-    // 5. 404 for subresource assets; otherwise serve fallback or redirect
-    const dest = c.req.header("sec-fetch-dest");
-    if (dest ? dest !== "document" : path.includes(".")) return c.notFound();
-
-    return conf.renderFallback
-      ? c.html(getConstructionFallbackHtml({ redirect: path }), 503)
-      : c.redirect(`${page}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`);
+    // 5. 404 for asset files; otherwise serve fallback or redirect
+    return path.includes(".")
+      ? c.notFound()
+      : conf.renderFallback
+        ? c.html(getConstructionFallbackHtml({ redirect: path }), 503)
+        : c.redirect(`${page}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`);
   };
 };
