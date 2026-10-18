@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { defaultOgLayout, handleOgRequest } from "../src/og/index";
+import { defaultOgLayout, handleOgRequest, renderOgResponse } from "../src/og";
 
 describe("@rimelight/seo defaultOgLayout", () => {
   it("should render clean vector SVG with title and brand", () => {
@@ -42,9 +42,15 @@ describe("@rimelight/seo defaultOgLayout", () => {
     expect(svg).toContain("PREVIEW");
   });
 
+  it("renderOgResponse should return synchronous 200 response with image/svg+xml", () => {
+    const res = renderOgResponse({ title: "Test SVG Response" });
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toContain("image/svg+xml");
+  });
+
   it("handleOgRequest should return 200 with image/svg+xml", async () => {
     const req = new Request("https://example.com/open-graph/card.svg?title=Hello+World&type=Blog");
-    const res = await handleOgRequest(req);
+    const res = handleOgRequest(req);
 
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toContain("image/svg+xml");

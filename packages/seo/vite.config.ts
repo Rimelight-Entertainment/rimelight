@@ -18,7 +18,7 @@ export default defineConfig({
       "src/security.ts",
       "src/manifest.ts",
       "src/catalog.ts",
-      "src/og/index.ts",
+      "src/og.ts",
     ],
     deps: {
       neverBundle: [/^virtual:/],

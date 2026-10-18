@@ -32,7 +32,6 @@ interface OgPreviewItem {
   title: string;
   description: string;
   type: string;
-  isDocs: boolean;
 }
 
 const summarizeHeadTags = (tags: HeadTag[]): string => {
@@ -64,9 +63,8 @@ const resolveOgUrl = (item: OgPreviewItem) => {
     title: item.title,
     description: item.description,
     ...(item.type ? { type: item.type } : {}),
-    ...(item.isDocs ? { isDocs: "true" } : {}),
   });
-  return `/open-graph/page.png?${params.toString()}`;
+  return `/open-graph/card.svg?${params.toString()}`;
 };
 
 export default function DevSeoPage() {
@@ -76,8 +74,12 @@ export default function DevSeoPage() {
   const [sandboxDesc, setSandboxDesc] = createSignal(
     "Testing Open Graph banner rendering using current site theme.",
   );
-  const [sandboxType, setSandboxType] = createSignal("");
-  const [sandboxDocs, setSandboxDocs] = createSignal(false);
+  const [sandboxBrand, setSandboxBrand] = createSignal("Rimelight");
+  const [sandboxType, setSandboxType] = createSignal("Documentation");
+  const [sandboxBg, setSandboxBg] = createSignal<"dark" | "gradient" | "custom">("dark");
+  const [sandboxCustomBg, setSandboxCustomBg] = createSignal("#1e1b4b");
+  const [sandboxDate, setSandboxDate] = createSignal("2026-10-18");
+  const [sandboxPreview, setSandboxPreview] = createSignal(false);
   const [copiedOg, setCopiedOg] = createSignal<string | null>(null);
 
   const activeOrigin = () =>
@@ -225,50 +227,51 @@ export default function DevSeoPage() {
       title: liveConfig().name || "Rimelight",
       description: liveConfig().description || "Interactive entertainment and software tools.",
       type: "",
-      isDocs: false,
     },
     {
       label: "Company",
       title: `About ${liveConfig().name || "Rimelight"}`,
       description: "Creating interactive entertainment and software tools.",
       type: "Company",
-      isDocs: false,
     },
     {
       label: "Products",
       title: "Products & Games",
       description: "Explore Grand Tale and our ecosystem of open-source tools.",
       type: "Products",
-      isDocs: false,
     },
     {
       label: "Documentation",
       title: "Getting Started",
       description: "Everything you need to get up and running with Rimelight.",
       type: "Documentation",
-      isDocs: true,
     },
     {
       label: "API Reference",
       title: "API Reference",
       description: "Complete API reference for integrations.",
-      type: "Documentation",
-      isDocs: true,
+      type: "Reference",
     },
     {
       label: "Blog Post",
       title: "Announcing Platform v2",
       description: "A look at what's new in our latest release.",
       type: "Blog Post",
-      isDocs: false,
     },
   ];
 
   const sandboxUrl = () => {
-    const params = new URLSearchParams({ title: sandboxTitle(), description: sandboxDesc() });
+    const params = new URLSearchParams({
+      title: sandboxTitle(),
+      description: sandboxDesc(),
+    });
+    if (sandboxBrand()) params.set("brand", sandboxBrand());
     if (sandboxType()) params.set("type", sandboxType());
-    if (sandboxDocs()) params.set("isDocs", "true");
-    return `/open-graph/page.png?${params.toString()}`;
+    if (sandboxDate()) params.set("date", sandboxDate());
+    if (sandboxPreview()) params.set("preview", "true");
+    const bg = sandboxBg() === "custom" ? sandboxCustomBg() : sandboxBg();
+    if (bg && bg !== "dark") params.set("bg", bg);
+    return `/open-graph/card.svg?${params.toString()}`;
   };
 
   const copyOgUrl = async (url: string) => {
@@ -719,9 +722,9 @@ export default function DevSeoPage() {
       rows: [
         {
           label: "Active card templates",
-          code: `/open-graph/page.png?title=...&description=...&type=...&isDocs=true`,
+          code: `/open-graph/page.png?title=...&description=...&type=...`,
           description:
-            "Live Open Graph images generated via the Takumi renderer with live site identity tokens.",
+            "Live Open Graph images generated via the SVG layout renderer with live site identity tokens.",
           content: (
             <div class="flex flex-col gap-md w-full">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
@@ -789,12 +792,13 @@ export default function DevSeoPage() {
       rows: [
         {
           label: "Live generator",
-          code: `/open-graph/page.png?title=...&description=...&type=...&isDocs=true`,
-          description: "Interactively test title, description, and badge parameters.",
+          code: sandboxUrl(),
+          description:
+            "Interactively test title, description, brand, background, date, and preview parameters.",
           content: (
             <div class="flex flex-col gap-md w-full">
-              <div class="flex flex-wrap gap-sm items-end">
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider flex-1 min-w-[160px]">
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-sm items-start">
+                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
                   Title
                   <input
                     type="text"
@@ -805,7 +809,7 @@ export default function DevSeoPage() {
                     class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
                   />
                 </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider flex-1 min-w-[160px]">
+                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
                   Description
                   <input
                     type="text"
@@ -816,36 +820,110 @@ export default function DevSeoPage() {
                     class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
                   />
                 </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider flex-1 min-w-[140px]">
-                  Type badge
+                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+                  Brand Name
+                  <input
+                    type="text"
+                    value={sandboxBrand()}
+                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                      setSandboxBrand(e.currentTarget.value)
+                    }
+                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+                  />
+                </label>
+                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+                  Type / Badge
                   <input
                     type="text"
                     value={sandboxType()}
-                    placeholder="e.g. Documentation"
+                    placeholder="e.g. Documentation, Blog, Changelog"
                     onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
                       setSandboxType(e.currentTarget.value)
                     }
                     class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
                   />
                 </label>
-                <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer mb-2">
+                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+                  Date
+                  <input
+                    type="text"
+                    value={sandboxDate()}
+                    placeholder="e.g. 2026-10-18"
+                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                      setSandboxDate(e.currentTarget.value)
+                    }
+                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+                  />
+                </label>
+                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+                  Background
+                  <select
+                    value={sandboxBg()}
+                    onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
+                      setSandboxBg(e.currentTarget.value as any)
+                    }
+                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+                  >
+                    <option value="dark">Dark (#0a0a0a)</option>
+                    <option value="gradient">Gradient (#0a0a0a → #1a1a2e)</option>
+                    <option value="custom">Custom Color</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-md">
+                <Show when={sandboxBg() === "custom"}>
+                  <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider">
+                    Custom Fill:
+                    <input
+                      type="text"
+                      value={sandboxCustomBg()}
+                      placeholder="#1e1b4b"
+                      onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                        setSandboxCustomBg(e.currentTarget.value)
+                      }
+                      class="px-2 py-1 bg-default border border-default rounded text-highlighted text-xs font-mono outline-none"
+                    />
+                  </label>
+                </Show>
+
+                <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={sandboxDocs()}
+                    checked={sandboxPreview()}
                     onChange={(e: Event & { currentTarget: HTMLInputElement }) =>
-                      setSandboxDocs(e.currentTarget.checked)
+                      setSandboxPreview(e.currentTarget.checked)
                     }
                     class="size-4 rounded accent-primary"
                   />
-                  Docs style
+                  PREVIEW Watermark Border
                 </label>
+
+                <div class="ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => copyOgUrl(sandboxUrl())}
+                    class="px-3 py-1.5 bg-elevated hover:bg-elevated/80 border border-default rounded-md text-xs font-medium text-toned transition-colors"
+                  >
+                    {copiedOg() === sandboxUrl() ? "Copied URL!" : "Copy Sandbox URL"}
+                  </button>
+                </div>
               </div>
-              <div class="rounded-xl overflow-hidden border border-default bg-elevated/20">
+
+              <div class="rounded-xl overflow-hidden border border-default bg-elevated/20 relative group">
                 <img
                   src={sandboxUrl()}
                   alt="Sandbox OG preview"
                   class="w-full aspect-[1200/630] object-cover"
                 />
+                <a
+                  href={sandboxUrl()}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  Open full size ↗
+                </a>
               </div>
             </div>
           ),

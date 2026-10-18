@@ -97,7 +97,7 @@ export function buildDefaultOgImageUrl(opts: {
   if (title) params.set("title", title);
   if (opts.description) params.set("description", opts.description);
   const qs = params.toString();
-  return qs ? `/open-graph/page.png?${qs}` : "/open-graph/page.png";
+  return qs ? `/open-graph/card.svg?${qs}` : "/open-graph/card.svg";
 }
 
 /**

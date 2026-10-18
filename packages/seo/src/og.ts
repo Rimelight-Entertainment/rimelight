@@ -1,3 +1,6 @@
+import type { Context } from "hono";
+import type { OgRouteOptions } from "./types";
+
 export interface OgLayoutOptions {
   title: string;
   description?: string | undefined;
@@ -12,6 +15,10 @@ export interface OgRenderConfig {
   width?: number;
   height?: number;
 }
+
+export interface OgHandlerOptions extends OgRouteOptions {}
+
+export type HonoContext = Context;
 
 function escapeXml(unsafe: string): string {
   return unsafe.replace(/[<>&'"]/g, (c) => {
@@ -130,12 +137,9 @@ export function defaultOgLayout(options: OgLayoutOptions): string {
 }
 
 /**
- * Renders an OG layout to an SVG `Response`.
+ * Synchronously renders an OG layout to an SVG `Response`.
  */
-export async function renderOgResponse(
-  options: OgLayoutOptions,
-  _config: OgRenderConfig = {},
-): Promise<Response> {
+export function renderOgResponse(options: OgLayoutOptions, _config: OgRenderConfig = {}): Response {
   const svg = defaultOgLayout(options);
   return new Response(svg, {
     status: 200,
@@ -148,14 +152,80 @@ export async function renderOgResponse(
 }
 
 /**
- * Renders the default OG layout to an SVG `Response`.
+ * Synchronously renders the default OG layout to an SVG `Response`.
  */
-export async function renderDefaultOg(
-  options: OgLayoutOptions,
-  config: OgRenderConfig = {},
-): Promise<Response> {
+export function renderDefaultOg(options: OgLayoutOptions, config: OgRenderConfig = {}): Response {
   return renderOgResponse(options, config);
 }
 
-export { handleOgRequest, type OgHandlerOptions } from "./handler";
-export { createHonoOgHandler, type HonoContext } from "./hono";
+/**
+ * Generic Web Request handler for dynamic Open Graph image generation.
+ * Emits pure vector SVG (1200x630) with strict input bounding and CDN cache headers.
+ */
+export function handleOgRequest(request: Request, options: OgHandlerOptions = {}): Response {
+  try {
+    const url = new URL(request.url);
+    const params = url.searchParams;
+
+    const rawTitle = params.get("title") || params.get("text") || options.brand || "Rimelight";
+    const rawDescription = params.get("description") || "";
+    const badge = params.get("badge") || params.get("type") || undefined;
+    const date = params.get("date") || undefined;
+
+    const brand = params.get("brand") || options.brand || "Rimelight";
+    const background =
+      (params.get("bg") as any) ||
+      (params.get("background") as any) ||
+      options.defaultBackground ||
+      "dark";
+    const preview = params.get("preview") === "true";
+
+    const title = rawTitle.slice(0, 200);
+    const description = rawDescription ? rawDescription.slice(0, 300) : undefined;
+
+    const layoutOptions: OgLayoutOptions = {
+      title,
+      brand,
+      background,
+      preview,
+      ...(description !== undefined && { description }),
+      ...(badge !== undefined && { badge }),
+      ...(date !== undefined && { date }),
+    };
+
+    const svg = defaultOgLayout(layoutOptions);
+
+    return new Response(svg, {
+      status: 200,
+      headers: {
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
+        "CDN-Cache-Control": "public, max-age=604800",
+      },
+    });
+  } catch (error) {
+    console.error("[OG Handler Error]:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Failed to render Open Graph image",
+        message: error instanceof Error ? error.message : String(error),
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      },
+    );
+  }
+}
+
+/**
+ * Creates a Hono route handler for dynamic OG cards.
+ */
+export function createHonoOgHandler(options: OgHandlerOptions = {}) {
+  return function handleOg(c: Context): Response {
+    return handleOgRequest(c.req.raw, options);
+  };
+}

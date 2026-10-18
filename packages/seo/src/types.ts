@@ -615,17 +615,11 @@ export interface OgRouteOptions {
    */
   brand?: string;
   /**
-   * Background style used for standard pages.
+   * Background style used for Open Graph images.
    *
    * @default "dark"
    */
   defaultBackground?: "dark" | "gradient" | (string & {});
-  /**
-   * Background style used when ?isDocs=true or the route segment contains "docs".
-   *
-   * @default "gradient"
-   */
-  docsBackground?: "dark" | "gradient" | (string & {});
 }
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms";

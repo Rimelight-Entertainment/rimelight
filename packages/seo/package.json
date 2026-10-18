@@ -73,8 +73,8 @@
       "import": "./dist/catalog.mjs"
     },
     "./og": {
-      "types": "./dist/og/index.d.mts",
-      "import": "./dist/og/index.mjs"
+      "types": "./dist/og.d.mts",
+      "import": "./dist/og.mjs"
     }
   },
   "publishConfig": {

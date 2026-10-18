@@ -8,7 +8,7 @@ import { buildLlmsTxt, buildLlmsFullTxt } from "./llms";
 import { buildSecurityTxt } from "./security";
 import { buildApiCatalog } from "./catalog";
 import { buildWebManifest } from "./manifest";
-import { handleOgRequest } from "./og/handler";
+import { handleOgRequest } from "./og";
 
 export type SeoMiddlewareOptions = SeoConfig;
 

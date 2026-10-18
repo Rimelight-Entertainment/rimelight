@@ -140,7 +140,7 @@ describe("buildDefaultOgImageUrl", () => {
       title: "My Page",
       description: "My description",
     });
-    expect(url).toBe("/open-graph/page.png?title=My+Page&description=My+description");
+    expect(url).toBe("/open-graph/card.svg?title=My+Page&description=My+description");
   });
 
   it("falls back to siteName if title is missing", () => {
@@ -148,11 +148,11 @@ describe("buildDefaultOgImageUrl", () => {
       siteName: "Rimelight",
       description: "Welcome",
     });
-    expect(url).toBe("/open-graph/page.png?title=Rimelight&description=Welcome");
+    expect(url).toBe("/open-graph/card.svg?title=Rimelight&description=Welcome");
   });
 
   it("returns base path when no params provided", () => {
     const url = buildDefaultOgImageUrl({});
-    expect(url).toBe("/open-graph/page.png");
+    expect(url).toBe("/open-graph/card.svg");
   });
 });

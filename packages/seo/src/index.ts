@@ -73,4 +73,4 @@ export {
   type OgRenderConfig,
   type OgHandlerOptions,
   type HonoContext,
-} from "./og/index";
+} from "./og";
