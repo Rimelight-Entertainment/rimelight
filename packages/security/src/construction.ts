@@ -13,15 +13,11 @@ export const construction = (): MiddlewareHandler => {
     const secret =
       conf.passphrase ?? c.env?.CONSTRUCTION_PASSPHRASE ?? process.env?.["CONSTRUCTION_PASSPHRASE"];
     const path = c.req.path;
+    const cookie = `rimelight-construction-guest=${secret}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`;
 
-    // 1. Shareable preview link: ?preview=secret -> set cookie & redirect to clean path
-    const preview = typeof c.req.query === "function" ? c.req.query("preview") : undefined;
-    if (secret && preview === secret) {
-      c.header(
-        "Set-Cookie",
-        `rimelight-construction-guest=${secret}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
-        { append: true },
-      );
+    // 1. Shareable preview link (?preview=secret) -> cookie & redirect
+    if (secret && c.req.query?.("preview") === secret) {
+      c.header("Set-Cookie", cookie, { append: true });
       return c.redirect(path);
     }
 
@@ -54,36 +50,28 @@ export const construction = (): MiddlewareHandler => {
       const to = String((typeof b?.get === "function" ? b.get("redirect") : b?.redirect) || "/");
       const ok = Boolean(secret && pass === secret);
 
-      if (ok) {
-        c.header(
-          "Set-Cookie",
-          `rimelight-construction-guest=${secret}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
-          { append: true },
-        );
-      }
+      if (ok) c.header("Set-Cookie", cookie, { append: true });
 
-      const isForm = (c.req.header("content-type") || "").includes("form");
-      if (isForm) {
-        return c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`);
-      }
-      return (
-        c.json?.(ok ? { success: true } : { error: "Invalid credentials" }, ok ? 200 : 401) ??
-        new Response(JSON.stringify(ok ? { success: true } : { error: "Invalid credentials" }), {
-          status: ok ? 200 : 401,
-          headers: { "Content-Type": "application/json" },
-        })
-      );
+      const res = ok ? { success: true } : { error: "Invalid credentials" };
+      const status = ok ? 200 : 401;
+
+      return (c.req.header("content-type") || "").includes("form")
+        ? c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`)
+        : (c.json?.(res, status) ??
+            new Response(JSON.stringify(res), {
+              status,
+              headers: { "Content-Type": "application/json" },
+            }));
     }
 
-    // 5. If already on construction page -> render it
-    if (path.includes(page)) return next();
-
-    // 6. Otherwise serve fallback or redirect to construction page
-    return conf.renderFallback
-      ? new Response(getConstructionFallbackHtml({ redirect: path }), {
-          status: 503,
-          headers: { "Content-Type": "text/html; charset=utf-8" },
-        })
-      : c.redirect(`${page}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`);
+    // 5. If on construction page -> render it; otherwise serve fallback or redirect
+    return path.includes(page)
+      ? next()
+      : conf.renderFallback
+        ? new Response(getConstructionFallbackHtml({ redirect: path }), {
+            status: 503,
+            headers: { "Content-Type": "text/html; charset=utf-8" },
+          })
+        : c.redirect(`${page}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`);
   };
 };
