@@ -22,7 +22,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     expect(await callHook(plugin.resolveId, "some-other-id")).toBeFalsy();
   });
 
-  it("loads virtual config options matching seo/auth/cms plugins", async () => {
+  it("loads virtual config with translations fallback", async () => {
     const plugin: Plugin = i18n({
       defaultLocale: "en",
       locales: ["en", "es", "pt"],
@@ -31,18 +31,20 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
 
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
     expect(configCode).toBe(
-      `export const config = ${JSON.stringify({
+      `export const config = { ...${JSON.stringify({
         defaultLocale: "en",
         locales: ["en", "es", "pt"],
         prefixDefaultLocale: false,
-      })};`,
+      })}, translations: null ?? import.meta.glob("/src/i18n/*.json", { eager: true, import: "default" }) };`,
     );
   });
 
   it("handles default options when none are passed", async () => {
     const plugin: Plugin = i18n();
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-    expect(configCode).toBe("export const config = {};");
+    expect(configCode).toBe(
+      'export const config = { ...{}, translations: null ?? import.meta.glob("/src/i18n/*.json", { eager: true, import: "default" }) };',
+    );
   });
 
   it("returns undefined for unknown module IDs in load", async () => {

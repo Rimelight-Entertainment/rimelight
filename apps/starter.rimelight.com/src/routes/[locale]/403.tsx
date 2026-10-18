@@ -1,7 +1,7 @@
 import { type Component, createSignal, onSettled } from "solid-js";
 import AppLayout from "#layouts/AppLayout";
 import AppError from "#components/app/AppError";
-import { authClient } from "@rimelight/auth";
+import { authClient } from "@rimelight/auth/client";
 
 export const Page403: Component = () => {
   const [userEmail, setUserEmail] = createSignal("");

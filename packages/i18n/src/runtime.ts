@@ -10,15 +10,12 @@ const storage = new AsyncLocalStorage<{
 export const withLocale = <R>(locale: string, fn: () => R): R =>
   storage.run({ locale, translations: activeConfig.translations[locale] }, fn);
 
-const translations = (config?.translations ??
-  Object.fromEntries(
-    Object.entries(
-      import.meta.glob<Record<string, unknown>>("/src/i18n/*.json", {
-        eager: true,
-        import: "default",
-      }),
-    ).map(([path, data]) => [path.slice(10, -5), data]),
-  )) as Record<string, Record<string, unknown>>;
+const translations: Record<string, Record<string, unknown>> = Object.fromEntries(
+  Object.entries(config?.translations ?? {}).map(([p, d]) => [
+    p.replace(/^.*[\\/]|\.json$/g, ""),
+    d,
+  ]),
+);
 
 export const activeConfig = {
   locales: [
