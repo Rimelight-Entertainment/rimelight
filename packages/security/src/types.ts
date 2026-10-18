@@ -54,22 +54,13 @@ export interface SecurityConfig {
   construction?:
     | false
     | {
-        modeEnvKey?: string;
-        passphraseEnvKey?: string;
         passphrase?: string;
         cookieName?: string;
         cookieMaxAge?: number;
-        locales?: string[];
-        getLocale?: (path: string) => string;
         constructionPath?: string;
-        apiPath?: string | false;
         renderFallback?: boolean;
         whitelist?: (string | RegExp)[] | ((path: string) => boolean);
         isAuthorized?: (c: Context) => boolean | Promise<boolean>;
-        onUnauthorized?: (
-          c: Context,
-          meta: { locale: string; path: string; redirectUrl: string },
-        ) => Response | Promise<Response>;
       };
   devOnly?: boolean;
 }

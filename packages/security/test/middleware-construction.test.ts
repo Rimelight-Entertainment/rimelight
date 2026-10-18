@@ -9,6 +9,13 @@ describe("@rimelight/security construction middleware", () => {
     for (const key of Object.keys(activeConfig)) {
       delete (activeConfig as any)[key];
     }
+    Object.assign(activeConfig, {
+      construction: {
+        constructionPath: "/construction",
+        cookieName: "rimelight-construction-guest",
+        cookieMaxAge: 604800,
+      },
+    });
   });
 
   const passphrase = "secret-passphrase-999";
@@ -359,5 +366,34 @@ describe("@rimelight/security construction middleware", () => {
     expect(next).not.toHaveBeenCalled();
     expect(cookieSet).toContain(CONSTRUCTION_GUEST_COOKIE);
     expect(redirectedTo).toBe("/blog/article");
+  });
+
+  it("should respect custom cookie name and maxAge from config", async () => {
+    Object.assign(activeConfig, {
+      construction: {
+        cookieName: "custom-gate-cookie",
+        cookieMaxAge: 3600,
+      },
+    });
+
+    const middleware = construction();
+    let setCookieVal: string | null = null;
+    const ctx = {
+      req: {
+        path: "/custom",
+        url: "http://localhost/custom?preview=secret-passphrase-999",
+        query: (key: string) => (key === "preview" ? "secret-passphrase-999" : null),
+        header: () => undefined,
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: "secret-passphrase-999" },
+      header: (name: string, val: string) => {
+        if (name === "Set-Cookie") setCookieVal = val;
+      },
+      redirect: (to: string) => ({ status: 302, to }),
+    };
+
+    await middleware(ctx as any, vi.fn());
+    expect(setCookieVal).toContain("custom-gate-cookie=secret-passphrase-999");
+    expect(setCookieVal).toContain("Max-Age=3600");
   });
 });

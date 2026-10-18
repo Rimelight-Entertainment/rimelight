@@ -5,6 +5,15 @@ export const activeConfig: SecurityConfig = {
   strictDynamic: true,
   enforceTls: true,
   ...config,
+  construction:
+    config?.construction === false
+      ? false
+      : {
+          constructionPath: "/construction",
+          cookieName: "rimelight-construction-guest",
+          cookieMaxAge: 604800,
+          ...(typeof config?.construction === "object" ? config.construction : {}),
+        },
 };
 
 export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): string {
