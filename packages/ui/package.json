@@ -90,7 +90,7 @@
     "prepack": "vp pack"
   },
   "dependencies": {
-    "@iconify-json/lucide": "1.2.144",
+    "@iconify-json/lucide": "1.2.145",
     "@unocss/vite": "66.11.0",
     "unocss": "66.11.0"
   },
@@ -99,7 +99,7 @@
     "@solidjs/router": "2.0.0-next.40",
     "@solidjs/vite-plugin": "3.0.0-next.50",
     "@solidjs/web": "2.0.0-rc.15",
-    "happy-dom": "21.0.1",
+    "happy-dom": "21.0.3",
     "solid-js": "2.0.0-rc.15"
   },
   "peerDependencies": {
@@ -116,5 +116,5 @@
   "engines": {
     "node": ">=26.10.0"
   },
-  "packageManager": "pnpm@12.11.2"
+  "packageManager": "pnpm@12.14.0"
 }
