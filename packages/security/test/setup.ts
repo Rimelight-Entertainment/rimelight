@@ -17,6 +17,7 @@ vi.mock("../src/middleware", async (importOriginal) => {
     crossOriginOpenerPolicy: "same-origin" as const,
     crossOriginEmbedderPolicy: "credentialless" as const,
     stripHeaders: ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"],
+    manifest: {},
     ratelimit: { bindingName: "MY_RATE_LIMITER", retryAfter: 60 },
     construction: {
       constructionPath: "/construction",

@@ -9,6 +9,7 @@ export const activeConfig: SecurityConfig = {
   crossOriginOpenerPolicy: "same-origin",
   crossOriginEmbedderPolicy: "credentialless",
   stripHeaders: ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"],
+  manifest: {},
   ...config,
   ratelimit:
     config?.ratelimit === false
