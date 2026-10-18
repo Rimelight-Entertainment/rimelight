@@ -317,12 +317,41 @@ describe("@rimelight/security construction middleware", () => {
     const middleware = construction();
     const ctx = createMockContext({ path: "/protected-page", mode: "true" });
     const next = vi.fn();
-
     const res = (await middleware(ctx, next)) as Response;
     expect(next).not.toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
     expect(res.status).toBe(503);
     const text = await res.text();
     expect(text).toContain("Under Construction");
+  });
+
+  it("should unlock and set cookie when valid ?preview= query param is provided", async () => {
+    const middleware = construction();
+    let cookieSet: string | null = null;
+    let redirectedTo: string | null = null;
+
+    const ctx = {
+      req: {
+        path: "/blog/article",
+        url: `http://localhost/blog/article?preview=${passphrase}`,
+        query: (key: string) => (key === "preview" ? passphrase : null),
+        header: () => undefined,
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      header: (name: string, val: string) => {
+        if (name === "Set-Cookie") cookieSet = val;
+      },
+      redirect: (to: string) => {
+        redirectedTo = to;
+        return { status: 302 };
+      },
+    };
+
+    const next = vi.fn();
+    await middleware(ctx as any, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(cookieSet).toContain(CONSTRUCTION_GUEST_COOKIE);
+    expect(redirectedTo).toBe("/blog/article");
   });
 });
