@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { security } from "../src/middleware";
-import { setSecurityConfig } from "../src/runtime";
+import { activeConfig } from "../src/runtime";
 
 describe("Security Middleware Headers", () => {
   beforeEach(() => {
-    setSecurityConfig();
+    for (const key of Object.keys(activeConfig)) {
+      delete (activeConfig as any)[key];
+    }
   });
 
   it("sets standard COEP (credentialless), COOP, and CORP headers by default", async () => {
@@ -39,7 +41,7 @@ describe("Security Middleware Headers", () => {
   });
 
   it("supports custom Cross-Origin-Embedder-Policy configuration", async () => {
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       crossOriginEmbedderPolicy: "require-corp",
     });
     const middleware = security();
@@ -63,7 +65,7 @@ describe("Security Middleware Headers", () => {
   });
 
   it("supports custom Cross-Origin-Opener-Policy configuration", async () => {
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       crossOriginOpenerPolicy: "same-origin-allow-popups",
     });
     const middleware = security();
@@ -87,7 +89,7 @@ describe("Security Middleware Headers", () => {
   });
 
   it("supports disabling COEP / COOP / CORP headers with false", async () => {
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       crossOriginEmbedderPolicy: false,
       crossOriginOpenerPolicy: false,
       crossOriginResourcePolicy: false,
@@ -115,7 +117,7 @@ describe("Security Middleware Headers", () => {
   });
 
   it("allows overriding headers via custom headers object", async () => {
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       headers: {
         "Cross-Origin-Embedder-Policy": "unsafe-none",
         "Cross-Origin-Opener-Policy": "noopener-allow-popups",
@@ -195,7 +197,7 @@ describe("Security Middleware Headers", () => {
   });
 
   it("enforces TLS 1.2+ when enforceTls is enabled and cf.tlsVersion is present", async () => {
-    setSecurityConfig({ enforceTls: true });
+    Object.assign(activeConfig, { enforceTls: true });
     const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     (req as any).cf = { tlsVersion: "TLSv1.1" };
@@ -257,7 +259,7 @@ describe("Security Middleware Headers", () => {
       "/app.js": "sha384-abc123custom",
       "/styles.css": "sha384-xyz789custom",
     };
-    setSecurityConfig({ manifest: customManifest });
+    Object.assign(activeConfig, { manifest: customManifest });
     const middleware = security();
     const req = new Request("https://rimelight.com/api/test");
     const res = new Response('{"ok":true}', {
@@ -297,7 +299,7 @@ describe("Security Middleware Headers", () => {
 
     (globalThis as any).HTMLRewriter = MockHTMLRewriter;
 
-    setSecurityConfig({ manifest: customManifest });
+    Object.assign(activeConfig, { manifest: customManifest });
     const middleware = security();
     const req = new Request("https://rimelight.com/");
     const res = new Response(
@@ -344,7 +346,7 @@ describe("Security Middleware Headers", () => {
     const originalEnv = process.env["NODE_ENV"];
     process.env["NODE_ENV"] = "development";
     try {
-      setSecurityConfig({ domain: "example.com" });
+      Object.assign(activeConfig, { domain: "example.com" });
       const middleware = security();
       const req = new Request("http://localhost:5173/");
       const res = new Response("<html><head></head><body>Hello</body></html>", {
@@ -382,7 +384,9 @@ describe("Security Middleware Headers", () => {
       const originalEnv = process.env["NODE_ENV"];
       process.env["NODE_ENV"] = "production";
       try {
-        setSecurityConfig();
+        for (const key of Object.keys(activeConfig)) {
+          delete (activeConfig as any)[key];
+        }
         const middleware = security();
         let nextCalled = false;
         const ctx = {
@@ -405,7 +409,7 @@ describe("Security Middleware Headers", () => {
       const originalEnv = process.env["NODE_ENV"];
       process.env["NODE_ENV"] = "production";
       try {
-        setSecurityConfig({ devOnly: false });
+        Object.assign(activeConfig, { devOnly: false });
         const middleware = security();
         let nextCalled = false;
         const raw = new Request("https://rimelight.com/dev/preview");
@@ -431,7 +435,7 @@ describe("Security Middleware Headers", () => {
 
     it("applies rate limiting when configured in plugin config", async () => {
       const limitMock = vi.fn().mockResolvedValue({ success: false });
-      setSecurityConfig({
+      Object.assign(activeConfig, {
         ratelimit: {
           routes: ["/auth/sign-in"],
           bindingName: "MY_RATE_LIMITER",
@@ -463,7 +467,7 @@ describe("Security Middleware Headers", () => {
 
     it("skips rate limiting when ratelimit is false", async () => {
       const limitMock = vi.fn().mockResolvedValue({ success: false });
-      setSecurityConfig({
+      Object.assign(activeConfig, {
         ratelimit: false,
       });
 
@@ -492,7 +496,7 @@ describe("Security Middleware Headers", () => {
     });
 
     it("gates traffic through construction mode when enabled", async () => {
-      setSecurityConfig({
+      Object.assign(activeConfig, {
         construction: {
           constructionPath: "/construction",
         },
@@ -544,7 +548,7 @@ describe("Security Middleware Headers", () => {
     });
 
     it("skips construction mode when construction is false", async () => {
-      setSecurityConfig({
+      Object.assign(activeConfig, {
         construction: false,
       });
 

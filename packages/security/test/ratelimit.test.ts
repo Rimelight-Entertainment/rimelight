@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { ratelimit } from "../src/middleware";
-import { setSecurityConfig } from "../src/runtime";
+import { activeConfig } from "../src/runtime";
 
 describe("Rate Limit Middleware", () => {
   beforeEach(() => {
-    setSecurityConfig();
+    for (const key of Object.keys(activeConfig)) {
+      delete (activeConfig as any)[key];
+    }
   });
 
   it("skips non-sensitive routes by default", async () => {
@@ -101,12 +103,12 @@ describe("Rate Limit Middleware", () => {
   });
 
   it("supports custom routes, bindingName, retryAfter, and custom keyGenerator", async () => {
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       ratelimit: {
         routes: ["/api/custom-endpoint"],
         bindingName: "CUSTOM_LIMITER",
         retryAfter: 120,
-        keyGenerator: (c) => c.req.header("Authorization") || "anonymous",
+        keyGenerator: (c: any) => c.req.header("Authorization") || "anonymous",
       },
     });
     const middleware = ratelimit();
@@ -157,7 +159,7 @@ describe("Rate Limit Middleware", () => {
   });
 
   it("fails closed when fallback is set to block and binding is missing", async () => {
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       ratelimit: {
         fallback: "block",
       },

@@ -5,7 +5,7 @@ export {
   isConstructionGuest,
   submitConstructionPassphrase,
   CONSTRUCTION_GUEST_COOKIE,
-  getSecurityConfig,
+  activeConfig,
   buildCspHeader,
 } from "./runtime";
 

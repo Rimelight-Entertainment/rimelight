@@ -2,15 +2,8 @@ import { config } from "virtual:rimelight-security";
 import type { Context } from "hono";
 import type { SecurityConfig } from "./types";
 
-function isRecord(val: unknown): val is Record<string, unknown> {
-  return typeof val === "object" && val !== null && !Array.isArray(val);
-}
-
-let activeConfig: SecurityConfig = isRecord(config) ? { ...config } : {};
-
-export const getSecurityConfig = (): SecurityConfig => activeConfig;
-export const setSecurityConfig = (next?: SecurityConfig): void => {
-  activeConfig = next ? { ...next } : isRecord(config) ? { ...config } : {};
+export const activeConfig = {
+  ...config,
 };
 
 export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): string {
@@ -185,15 +178,49 @@ export async function verifyTurnstile(
   }
 }
 
+export { getConstructionFallbackHtml } from "./fallback";
+
 export const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest";
 
-const encodeB64Url = (bytes: Uint8Array): string =>
+const getConstructionPassphrase = (c: Context): string | undefined => {
+  const raw = activeConfig.construction;
+  const opts = typeof raw === "object" && raw !== null ? raw : undefined;
+  const key = opts?.passphraseEnvKey ?? "CONSTRUCTION_PASSPHRASE";
+  return (
+    opts?.passphrase ??
+    c.env?.[key] ??
+    (typeof process !== "undefined" ? process.env?.[key] : undefined) ??
+    (import.meta as any)?.env?.[key]
+  );
+};
+
+const getGuestCookie = (c: Context): string | undefined => {
+  const raw = activeConfig.construction;
+  const name = (typeof raw === "object" && raw?.cookieName) || CONSTRUCTION_GUEST_COOKIE;
+  const match = (c.req.header("cookie") || "").match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]!) : undefined;
+};
+
+const signPayload = async (payload: string, secret: string) => {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign", "verify"],
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
+  return { key, signature };
+};
+
+const toB64Url = (bytes: Uint8Array): string =>
   btoa(String.fromCharCode(...bytes))
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 
-const decodeB64Url = (str: string): Uint8Array => {
+const fromB64Url = (str: string): Uint8Array => {
   const padded = str
     .replace(/-/g, "+")
     .replace(/_/g, "/")
@@ -201,58 +228,21 @@ const decodeB64Url = (str: string): Uint8Array => {
   return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
 };
 
-const timingSafeEqual = async (a: string, b: string): Promise<boolean> => {
-  const enc = new TextEncoder();
-  const [aHash, bHash] = await Promise.all([
-    crypto.subtle.digest("SHA-256", enc.encode(a)),
-    crypto.subtle.digest("SHA-256", enc.encode(b)),
-  ]);
-  const [aBuf, bBuf] = [new Uint8Array(aHash), new Uint8Array(bHash)];
-  let diff = 0;
-  for (let i = 0; i < aBuf.length; i++) diff |= aBuf[i]! ^ bBuf[i]!;
-  return diff === 0;
-};
-
-const signHmac = async (payload: string, secret: string) => {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign", "verify"],
-  );
-  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
-  return { key, signature };
-};
-
 export const isConstructionGuest = async (c: Context): Promise<boolean> => {
-  const rawConstruction = getSecurityConfig().construction;
-  const opts =
-    typeof rawConstruction === "object" && rawConstruction !== null ? rawConstruction : undefined;
-  const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
-
-  const cookieHeader = c.req.header("cookie") || "";
-  const match = cookieHeader.match(new RegExp(`(?:^|; )${cookieName}=([^;]*)`));
-  const token = match ? decodeURIComponent(match[1]!) : undefined;
-
-  const envKey = opts?.passphraseEnvKey ?? "CONSTRUCTION_PASSPHRASE";
-  const passphrase =
-    opts?.passphrase ??
-    c.env?.[envKey] ??
-    (typeof process !== "undefined" ? process.env?.[envKey] : undefined) ??
-    (import.meta as any)?.env?.[envKey];
-
+  const token = getGuestCookie(c);
+  const passphrase = getConstructionPassphrase(c);
   if (!token || !passphrase) return false;
 
   try {
     const [encodedPayload, encodedSignature] = token.split(".");
     if (!encodedPayload || !encodedSignature) return false;
-    const payload = new TextDecoder().decode(decodeB64Url(encodedPayload));
-    const { key } = await signHmac(payload, passphrase);
+
+    const payload = new TextDecoder().decode(fromB64Url(encodedPayload));
+    const { key } = await signPayload(payload, passphrase);
     const valid = await crypto.subtle.verify(
       "HMAC",
       key,
-      decodeB64Url(encodedSignature) as unknown as BufferSource,
+      fromB64Url(encodedSignature) as unknown as BufferSource,
       new TextEncoder().encode(payload),
     );
     return valid && JSON.parse(payload).expiresAt > Date.now();
@@ -266,30 +256,31 @@ export const signInConstructionGuest = async (
   passphrase: string,
   rememberMe = true,
 ): Promise<boolean> => {
-  const rawConstruction = getSecurityConfig().construction;
-  const opts =
-    typeof rawConstruction === "object" && rawConstruction !== null ? rawConstruction : undefined;
-  const envKey = opts?.passphraseEnvKey ?? "CONSTRUCTION_PASSPHRASE";
-  const expected =
-    opts?.passphrase ??
-    c.env?.[envKey] ??
-    (typeof process !== "undefined" ? process.env?.[envKey] : undefined) ??
-    (import.meta as any)?.env?.[envKey];
+  const expected = getConstructionPassphrase(c);
+  if (!expected || !passphrase) return false;
 
-  if (!expected || !passphrase || !(await timingSafeEqual(passphrase, expected))) return false;
+  const enc = new TextEncoder();
+  const [aHash, bHash] = await Promise.all([
+    crypto.subtle.digest("SHA-256", enc.encode(passphrase)),
+    crypto.subtle.digest("SHA-256", enc.encode(expected)),
+  ]);
+  const aBuf = new Uint8Array(aHash);
+  const bBuf = new Uint8Array(bHash);
+  let diff = 0;
+  for (let i = 0; i < aBuf.length; i++) diff |= aBuf[i]! ^ bBuf[i]!;
+  if (diff !== 0) return false;
 
+  const raw = activeConfig.construction;
+  const opts = typeof raw === "object" && raw !== null ? raw : undefined;
   const cookieName = opts?.cookieName ?? CONSTRUCTION_GUEST_COOKIE;
   const maxAge = opts?.cookieMaxAge ?? 60 * 60 * 24 * 7;
   const payload = JSON.stringify({ expiresAt: Date.now() + maxAge * 1000 });
-  const { signature } = await signHmac(payload, expected);
-  const cookieValue = `${encodeB64Url(new TextEncoder().encode(payload))}.${encodeB64Url(new Uint8Array(signature))}`;
+  const { signature } = await signPayload(payload, expected);
+  const cookieValue = `${toB64Url(enc.encode(payload))}.${toB64Url(new Uint8Array(signature))}`;
 
   const parts = [`${cookieName}=${cookieValue}`, "Path=/", "HttpOnly", "Secure", "SameSite=Lax"];
   if (rememberMe) parts.push(`Max-Age=${maxAge}`);
-  const headerStr = parts.join("; ");
-
-  c.header("Set-Cookie", headerStr, { append: true });
-
+  c.header("Set-Cookie", parts.join("; "), { append: true });
   return true;
 };
 
@@ -316,133 +307,4 @@ export async function submitConstructionPassphrase(options: {
   } catch (err: any) {
     return { success: false, error: err?.message || "An unexpected error occurred." };
   }
-}
-
-export function getConstructionFallbackHtml(
-  options: {
-    siteName?: string | undefined;
-    title?: string | undefined;
-    description?: string | undefined;
-    passphraseLabel?: string | undefined;
-    passphrasePlaceholder?: string | undefined;
-    rememberMeLabel?: string | undefined;
-    signInButtonLabel?: string | undefined;
-    error?: string | undefined;
-    redirect?: string | undefined;
-    endpoint?: string | undefined;
-  } = {},
-): string {
-  const {
-    siteName = "Rimelight",
-    title = "Under Construction",
-    description = "This site is currently undergoing scheduled maintenance. Please enter the access passphrase to preview.",
-    passphraseLabel = "Passphrase",
-    passphrasePlaceholder = "Enter passphrase...",
-    rememberMeLabel = "Remember me",
-    signInButtonLabel = "Unlock Site",
-    error,
-    redirect = "/",
-    endpoint = "/api/construction-guest",
-  } = options;
-
-  const escapedRedirect = redirect.replace(/"/g, "&quot;");
-  const escapedEndpoint = endpoint.replace(/"/g, "&quot;");
-
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${title} - ${siteName}</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #0a0a0a;
-      color: #ededed;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 1.5rem;
-    }
-    .card {
-      background-color: #141414;
-      border: 1px solid #262626;
-      border-radius: 0.75rem;
-      padding: 2rem;
-      max-width: 26rem;
-      width: 100%;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.5);
-    }
-    .header { text-align: center; margin-bottom: 1.5rem; }
-    .title { font-size: 1.5rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-    .description { font-size: 0.875rem; color: #a3a3a3; line-height: 1.5; }
-    .alert {
-      background-color: rgba(220, 38, 38, 0.15);
-      border: 1px solid rgba(220, 38, 38, 0.4);
-      color: #fca5a5;
-      font-size: 0.875rem;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      margin-bottom: 1.25rem;
-    }
-    .form { display: flex; flex-direction: column; gap: 1rem; }
-    .field { display: flex; flex-direction: column; gap: 0.375rem; text-align: left; }
-    .label { font-size: 0.8125rem; font-weight: 500; color: #d4d4d4; }
-    .input {
-      width: 100%;
-      padding: 0.625rem 0.875rem;
-      background-color: #0a0a0a;
-      border: 1px solid #333333;
-      border-radius: 0.5rem;
-      color: #ffffff;
-      font-size: 0.875rem;
-      outline: none;
-    }
-    .input:focus { border-color: #3b82f6; }
-    .checkbox-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: #a3a3a3; cursor: pointer; }
-    .checkbox { width: 1rem; height: 1rem; accent-color: #3b82f6; cursor: pointer; }
-    .button {
-      margin-top: 0.5rem;
-      width: 100%;
-      padding: 0.625rem 1rem;
-      background-color: #ffffff;
-      color: #0a0a0a;
-      border: none;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .button:hover { background-color: #e5e5e5; }
-    .footer { margin-top: 1.5rem; text-align: center; font-size: 0.75rem; color: #525252; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div class="header">
-      <h1 class="title">${title}</h1>
-      <p class="description">${description}</p>
-    </div>
-    ${error ? `<div class="alert" role="alert">Invalid credentials. Please try again.</div>` : ""}
-    <form class="form" method="POST" action="${escapedEndpoint}">
-      <input type="hidden" name="redirect" value="${escapedRedirect}" />
-      <div class="field">
-        <label class="label" for="passphrase">${passphraseLabel}</label>
-        <input id="passphrase" class="input" type="password" name="passphrase" placeholder="${passphrasePlaceholder}" required autofocus autocomplete="current-password" />
-      </div>
-      <label class="checkbox-row">
-        <input class="checkbox" type="checkbox" name="rememberMe" value="true" checked />
-        <span>${rememberMeLabel}</span>
-      </label>
-      <button class="button" type="submit">${signInButtonLabel}</button>
-    </form>
-    <div class="footer">
-      <span>&copy; ${new Date().getFullYear()} ${siteName}</span>
-    </div>
-  </div>
-</body>
-</html>`;
 }

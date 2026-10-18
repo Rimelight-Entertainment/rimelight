@@ -6,7 +6,7 @@ import {
   CONSTRUCTION_GUEST_COOKIE,
   buildCspHeader,
   createSecurityHead,
-  getSecurityConfig,
+  activeConfig,
   getTurnstileSiteKey,
   isTurnstileEnabled,
 } from "@rimelight/security";
@@ -46,7 +46,7 @@ const renderTagsToHtml = (tags: { tag: string; props: Record<string, unknown> }[
     .join("\n");
 
 export default function DevSecurityPage() {
-  const config = getSecurityConfig();
+  const config = activeConfig;
   const ratelimitOptions =
     typeof config.ratelimit === "object" && config.ratelimit !== null
       ? config.ratelimit
@@ -80,29 +80,29 @@ export default function DevSecurityPage() {
       rows: [
         {
           label: "Security Config",
-          code: `getSecurityConfig()`,
+          code: `activeConfig`,
           description:
             "The plugin options ship as JSON from the virtual module; the same object is consumed by the runtime, middleware, and head injection.",
           value: JSON.stringify(config, null, 2),
         },
         {
           label: "Domain",
-          code: `getSecurityConfig().domain`,
+          code: `activeConfig.domain`,
           value: String(config.domain ?? "(unset)"),
         },
         {
           label: "Image Sources",
-          code: `getSecurityConfig().imgSrc`,
+          code: `activeConfig.imgSrc`,
           value: JSON.stringify(config.imgSrc ?? []),
         },
         {
           label: "Rate Limited Routes",
-          code: `getSecurityConfig().ratelimit?.routes`,
+          code: `activeConfig.ratelimit?.routes`,
           value: JSON.stringify(ratelimitOptions?.routes ?? []),
         },
         {
           label: "Rate Limiter",
-          code: `typeof getSecurityConfig().ratelimit`,
+          code: `typeof activeConfig.ratelimit`,
           value: typeof config.ratelimit,
         },
       ],
@@ -113,21 +113,21 @@ export default function DevSecurityPage() {
       rows: [
         {
           label: "Production CSP",
-          code: `buildCspHeader(getSecurityConfig())`,
+          code: `buildCspHeader(activeConfig)`,
           description:
             "Default directive set resolved from the active plugin options, without a script nonce.",
           value: formatCsp(cspProd),
         },
         {
           label: "CSP with script nonce",
-          code: `buildCspHeader(getSecurityConfig(), "${DEMO_NONCE}")`,
+          code: `buildCspHeader(activeConfig, "${DEMO_NONCE}")`,
           description:
             "Passing a nonce opts into 'strict-dynamic' mode: first-party scripts are allowed via nonce, then load their own dependencies.",
           value: formatCsp(cspNonce),
         },
         {
           label: "Turnstile enabled",
-          code: `buildCspHeader({ ...getSecurityConfig(), turnstile: true })`,
+          code: `buildCspHeader({ ...activeConfig, turnstile: true })`,
           description:
             "Enabling the Turnstile option relaxes connect-src/frame-src to allow challenges.cloudflare.com.",
           value: formatCsp(cspTurnstile),

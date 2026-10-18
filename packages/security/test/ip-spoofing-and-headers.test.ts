@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
 import { security, ratelimit } from "../src/middleware";
-import { setSecurityConfig } from "../src/runtime";
+import { activeConfig } from "../src/runtime";
 
 describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
   beforeEach(() => {
-    setSecurityConfig();
+    for (const key of Object.keys(activeConfig)) {
+      delete (activeConfig as any)[key];
+    }
   });
 
   it("generates strict security headers with comprehensive defaults", async () => {
@@ -32,7 +34,7 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
       return { success: key !== "203.0.113.195-blocked" };
     });
 
-    setSecurityConfig({
+    Object.assign(activeConfig, {
       ratelimit: {
         routes: ["/api/test"],
         bindingName: "TEST_LIMITER",

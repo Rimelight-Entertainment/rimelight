@@ -4,7 +4,7 @@ import type { SecurityConfig } from "./types";
 import { fetchRemoteSriManifest } from "./sri";
 import {
   buildCspHeader,
-  getSecurityConfig,
+  activeConfig,
   isConstructionGuest,
   signInConstructionGuest,
   verifyTurnstile,
@@ -65,7 +65,7 @@ export const devOnly = (): MiddlewareHandler => async (c, next) => {
  * Hono middleware for Cloudflare rate limiting on sensitive routes.
  */
 export const ratelimit = (): MiddlewareHandler => {
-  const raw = getSecurityConfig().ratelimit;
+  const raw = activeConfig.ratelimit;
   const options = typeof raw === "object" && raw !== null ? raw : {};
   const {
     bindingName = "MY_RATE_LIMITER",
@@ -116,7 +116,7 @@ export const ratelimit = (): MiddlewareHandler => {
  * Hono middleware to verify Cloudflare Turnstile token from form body.
  */
 export const turnstile = (): MiddlewareHandler => {
-  const raw = getSecurityConfig().turnstile;
+  const raw = activeConfig.turnstile;
   const options = typeof raw === "object" && raw !== null ? raw : {};
   const { field = "cf-turnstile-response", ...verifyOptions } = options;
 
@@ -162,7 +162,7 @@ const DEFAULT_WHITELIST = [
  * Hono middleware for site maintenance and construction mode gating.
  */
 export const construction = (): MiddlewareHandler => {
-  const raw = getSecurityConfig().construction;
+  const raw = activeConfig.construction;
   const options = typeof raw === "object" && raw !== null ? raw : {};
   const apiPath = options.apiPath !== undefined ? options.apiPath : "/api/construction-guest";
   const constructionPath = options.constructionPath ?? "/construction";
@@ -176,21 +176,25 @@ export const construction = (): MiddlewareHandler => {
     if (apiPath && path === apiPath && method === "POST") {
       try {
         const ct = (c.req.header("content-type") || "").toLowerCase();
-        const isForm =
-          ct.includes("application/x-www-form-urlencoded") || ct.includes("multipart/form-data");
+        const isForm = ct.includes("form");
         let passphrase = "";
         let rememberMe = true;
         let redirectUrl = "/";
 
         if (isForm) {
-          const formData = await c.req.formData().catch(() => undefined);
-          if (formData) {
-            const pass = formData.get("passphrase");
-            const rem = formData.get("rememberMe");
-            const red = formData.get("redirect");
-            passphrase = typeof pass === "string" ? pass : "";
-            rememberMe = rem !== "false" && rem !== null;
-            redirectUrl = typeof red === "string" ? red : "/";
+          if (typeof c.req.formData === "function") {
+            const fd = await c.req.formData().catch(() => undefined);
+            const passVal = fd?.get("passphrase");
+            const remVal = fd?.get("rememberMe");
+            const redVal = fd?.get("redirect");
+            passphrase = typeof passVal === "string" ? passVal : "";
+            rememberMe = remVal !== "false" && remVal !== null;
+            redirectUrl = typeof redVal === "string" ? redVal : "/";
+          } else {
+            const body: any = await (c.req.parseBody?.() ?? {}).catch(() => ({}));
+            passphrase = String(body?.["passphrase"] ?? "");
+            rememberMe = body?.["rememberMe"] !== false && body?.["rememberMe"] !== "false";
+            redirectUrl = String(body?.["redirect"] ?? "/");
           }
         } else {
           const body: any = await c.req.json().catch(() => ({}));
@@ -203,14 +207,13 @@ export const construction = (): MiddlewareHandler => {
         if (isForm) {
           if (!signedIn) {
             const loc = options.getLocale ? options.getLocale(redirectUrl) : "en";
-            const fallbackTarget = `${options.constructionPath ?? `/${loc}/construction`}?error=invalid&redirect=${encodeURIComponent(redirectUrl)}`;
-            return c.redirect(fallbackTarget);
+            const target = `${options.constructionPath ?? `/${loc}/construction`}?error=invalid&redirect=${encodeURIComponent(redirectUrl)}`;
+            return c.redirect(target);
           }
           return c.redirect(redirectUrl);
         }
 
-        if (!signedIn) return c.json({ error: "Invalid credentials" }, 401);
-        return c.json({ success: true }, 200);
+        return signedIn ? c.json({ success: true }) : c.json({ error: "Invalid credentials" }, 401);
       } catch (err: any) {
         return c.json({ error: err?.message || "Authentication failed" }, 400);
       }
@@ -385,7 +388,7 @@ function applyHeaders(
  * construction gating, CSP headers, nonces, and SRI injection with Cloudflare HTMLRewriter.
  */
 export const security = (): MiddlewareHandler => {
-  const pluginConfig = getSecurityConfig();
+  const pluginConfig = activeConfig;
   const merged: SecurityConfig = {
     ...pluginConfig,
     strictDynamic: pluginConfig.strictDynamic ?? true,
