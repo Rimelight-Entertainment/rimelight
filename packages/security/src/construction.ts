@@ -5,13 +5,7 @@ import { activeConfig } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 const GUEST_COOKIE = "rimelight-construction-guest";
-const COOKIE_OPTS = {
-  path: "/",
-  httpOnly: true,
-  secure: true,
-  sameSite: "Lax" as const,
-  maxAge: 604800,
-};
+const COOKIE_OPTS = { httpOnly: true, secure: true, maxAge: 604800 };
 
 export const construction = (): MiddlewareHandler => {
   const conf = typeof activeConfig.construction === "object" ? activeConfig.construction : {};
