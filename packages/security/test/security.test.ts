@@ -541,9 +541,9 @@ describe("Security Middleware Headers", () => {
       })) as Response;
 
       expect(nextCalled).toBe(false);
-      expect(redirectedTo).toContain("/en/construction?redirect=");
+      expect(redirectedTo).toContain("/construction?redirect=");
       expect(result.status).toBe(302);
-      expect(result.headers.get("Location")).toContain("/en/construction?redirect=");
+      expect(result.headers.get("Location")).toContain("/construction?redirect=");
       expect(ctx.res.status).toBe(302);
     });
 

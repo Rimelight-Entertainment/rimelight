@@ -157,7 +157,7 @@ describe("@rimelight/security construction middleware", () => {
 
     await middleware(ctx as any, next);
     expect(next).not.toHaveBeenCalled();
-    expect(redirectedTo).toContain("/en/construction?redirect=");
+    expect(redirectedTo).toContain("/construction?redirect=");
   });
 
   it("should redirect unauthorized visitor to construction page", async () => {
@@ -167,7 +167,7 @@ describe("@rimelight/security construction middleware", () => {
 
     await middleware(ctx, next);
     expect(next).not.toHaveBeenCalled();
-    expect(ctx.getRedirected()).toContain("/en/construction?redirect=");
+    expect(ctx.getRedirected()).toContain("/construction?redirect=");
   });
 
   it("should handle guest sign-in endpoint properly", async () => {
@@ -309,7 +309,7 @@ describe("@rimelight/security construction middleware", () => {
     };
 
     await middleware(formCtx as any, vi.fn());
-    expect(redirectedTo).toContain("/en/construction?error=invalid&redirect=");
+    expect(redirectedTo).toContain("/construction?error=invalid&redirect=");
   });
 
   it("should serve standalone fallback HTML when renderFallback is enabled", async () => {
