@@ -19,15 +19,7 @@ declare class HTMLRewriter {
   transform(response: Response): Response;
 }
 
-export const security = (): MiddlewareHandler<{
-  Bindings: Record<string, unknown> & {
-    CONSTRUCTION_MODE?: string;
-    CONSTRUCTION_PASSPHRASE?: string;
-    TURNSTILE_SECRET_KEY?: string;
-    ASSETS?: { fetch(req: Request): Promise<Response> };
-    cf?: { tlsVersion?: string };
-  };
-}> => {
+export const security = (): MiddlewareHandler => {
   const sriCache: Record<string, string | undefined> = {};
 
   return async (c, next) => {
