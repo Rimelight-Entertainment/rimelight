@@ -1,14 +1,20 @@
-import { AsyncLocalStorage } from "node:async_hooks";
 import { config } from "virtual:rimelight-i18n";
 import type { TFunction } from "./types";
 
-const storage = new AsyncLocalStorage<{
-  locale: string;
-  translations?: Record<string, unknown> | undefined;
-}>();
+const AsyncLocalStorage =
+  typeof window === "undefined" && typeof document === "undefined"
+    ? (await import("node:async_hooks")).AsyncLocalStorage
+    : undefined;
+
+const storage = AsyncLocalStorage
+  ? new AsyncLocalStorage<{
+      locale: string;
+      translations?: Record<string, unknown> | undefined;
+    }>()
+  : undefined;
 
 export const withLocale = <R>(locale: string, fn: () => R): R =>
-  storage.run({ locale, translations: activeConfig.translations[locale] }, fn);
+  storage ? storage.run({ locale, translations: activeConfig.translations[locale] }, fn) : fn();
 
 const translations: Record<string, Record<string, unknown>> = Object.fromEntries(
   Object.entries(config?.translations ?? {}).map(([p, d]) => [
@@ -37,7 +43,7 @@ export const getLocales = (): string[] => [...activeConfig.locales];
 export const getDefaultLocale = (): string => activeConfig.defaultLocale;
 
 /** Returns the active locale code. */
-export const getCurrentLocale = (): string => storage.getStore()?.locale ?? currentLocale;
+export const getCurrentLocale = (): string => storage?.getStore()?.locale ?? currentLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -85,7 +91,7 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const store = storage.getStore();
+      const store = storage?.getStore();
       const get = (loc: string) => {
         const dict = ((store && (store.locale === loc || !loc) && store.translations) ||
           activeConfig.translations[loc]) as Record<string, unknown> | undefined;
