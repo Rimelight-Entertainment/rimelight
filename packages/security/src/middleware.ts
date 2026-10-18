@@ -1,6 +1,5 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import type { SecurityConfig } from "./types";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
@@ -221,44 +220,12 @@ export const security = (): MiddlewareHandler => {
     }
 
     // 6. Apply security headers
-    let cspOpts: SecurityConfig = activeConfig;
-    let reportOnlyCsp: string | undefined;
-
-    if (isHtml && isDev) {
-      const devList = (val: string[] | string | boolean | undefined, extra: string[] = []) =>
-        val
-          ? Array.isArray(val)
-            ? [...new Set([...val, "'unsafe-inline'"])]
-            : val
-          : ["'self'", "'unsafe-inline'", ...extra];
-
-      cspOpts = {
-        ...activeConfig,
-        directives: {
-          ...activeConfig.directives,
-          "default-src": false,
-          "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https: http: ws: wss:",
-          "script-src-attr": "'unsafe-inline'",
-          "style-src": "'self' 'unsafe-inline' https: http:",
-          "connect-src": "'self' ws: wss: http: https:",
-          "img-src": "'self' data: blob: https: http:",
-        },
-      };
-
-      reportOnlyCsp = buildCspHeader({
-        ...activeConfig,
-        directives: {
-          ...activeConfig.directives,
-          "upgrade-insecure-requests": false,
-          "script-src": devList(activeConfig.directives?.["script-src"], [
-            "'inline-speculation-rules'",
-            ...(activeConfig.scriptResources || []),
-          ]),
-          "script-src-attr": "'unsafe-inline'",
-          "style-src": devList(activeConfig.directives?.["style-src"], activeConfig.styleResources),
-        },
-      });
-    }
+    const devList = (val: string[] | string | boolean | undefined, extra: string[] = []) =>
+      val
+        ? Array.isArray(val)
+          ? [...new Set([...val, "'unsafe-inline'"])]
+          : val
+        : ["'self'", "'unsafe-inline'", ...extra];
 
     const headers = new Headers(res.headers);
     for (const [k, v] of Object.entries({
@@ -269,19 +236,53 @@ export const security = (): MiddlewareHandler => {
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
       "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
       "No-Vary-Search": 'except=("q" "search" "locale"), params=?1',
-      "Cross-Origin-Resource-Policy": cspOpts.crossOriginResourcePolicy,
-      "Cross-Origin-Opener-Policy": cspOpts.crossOriginOpenerPolicy,
-      "Cross-Origin-Embedder-Policy": cspOpts.crossOriginEmbedderPolicy,
-      "Content-Security-Policy": buildCspHeader(cspOpts, nonce),
-      "Content-Security-Policy-Report-Only": reportOnlyCsp,
+      "Cross-Origin-Resource-Policy": activeConfig.crossOriginResourcePolicy,
+      "Cross-Origin-Opener-Policy": activeConfig.crossOriginOpenerPolicy,
+      "Cross-Origin-Embedder-Policy": activeConfig.crossOriginEmbedderPolicy,
+      "Content-Security-Policy": buildCspHeader(
+        isHtml && isDev
+          ? {
+              ...activeConfig,
+              directives: {
+                ...activeConfig.directives,
+                "default-src": false,
+                "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https: http: ws: wss:",
+                "script-src-attr": "'unsafe-inline'",
+                "style-src": "'self' 'unsafe-inline' https: http:",
+                "connect-src": "'self' ws: wss: http: https:",
+                "img-src": "'self' data: blob: https: http:",
+              },
+            }
+          : activeConfig,
+        nonce,
+      ),
+      "Content-Security-Policy-Report-Only":
+        isHtml && isDev
+          ? buildCspHeader({
+              ...activeConfig,
+              directives: {
+                ...activeConfig.directives,
+                "upgrade-insecure-requests": false,
+                "script-src": devList(activeConfig.directives?.["script-src"], [
+                  "'inline-speculation-rules'",
+                  ...(activeConfig.scriptResources || []),
+                ]),
+                "script-src-attr": "'unsafe-inline'",
+                "style-src": devList(
+                  activeConfig.directives?.["style-src"],
+                  activeConfig.styleResources,
+                ),
+              },
+            })
+          : undefined,
       Link: `<${origin}/sitemap-index.xml>; rel="sitemap", <${origin}/llms.txt>; rel="llms", <${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
-      ...cspOpts.headers,
+      ...activeConfig.headers,
     })) {
       if (v) headers.set(k, v);
     }
 
-    if (cspOpts.stripHeaders) {
-      for (const k of cspOpts.stripHeaders) headers.delete(k);
+    if (activeConfig.stripHeaders) {
+      for (const k of activeConfig.stripHeaders) headers.delete(k);
     }
 
     return (c.res = new Response(res.body, {
