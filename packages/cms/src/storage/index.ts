@@ -69,11 +69,6 @@ export async function getR2Bucket(locals?: any, bindingName = "BLOB"): Promise<a
     }
   }
 
-  // 2. Global process.env fallback
-  if (typeof process !== "undefined" && process.env && (process.env as any)[bindingName]) {
-    return (process.env as any)[bindingName];
-  }
-
   return null;
 }
 

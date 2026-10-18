@@ -689,7 +689,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
     if (!page[0]) return c.json({ error: "Page not found" }, 404);
 
-    const secret = process.env["CMS_PREVIEW_SECRET"] || "rimelight-preview-secret-key";
+    const secret = (c.env as any)?.CMS_PREVIEW_SECRET || "rimelight-preview-secret-key";
     const { token, expiresAt } = await generatePreviewToken(id, secret, 86400 * 7);
 
     return c.json({

@@ -99,7 +99,7 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
 
 export async function verifyTurnstile(
   token?: string,
-  secretKey = typeof process !== "undefined" ? process.env?.["TURNSTILE_SECRET_KEY"] : undefined,
+  secretKey?: string,
   remoteIp?: string,
 ): Promise<boolean> {
   // Fail open in dev/preview if keys are not configured

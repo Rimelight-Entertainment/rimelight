@@ -4,6 +4,9 @@ export interface CachePurgeOptions {
   domain?: string;
   basePath?: string;
   isEnterpriseCloudflare?: boolean;
+  zoneId?: string;
+  apiToken?: string;
+  env?: Record<string, any>;
 }
 
 export async function invalidatePageCache(options: CachePurgeOptions): Promise<boolean> {
@@ -13,9 +16,10 @@ export async function invalidatePageCache(options: CachePurgeOptions): Promise<b
     domain = "rimelight.com",
     basePath = "",
     isEnterpriseCloudflare,
+    env,
   } = options;
-  const zoneId = process.env["CLOUDFLARE_ZONE_ID"];
-  const apiToken = process.env["CLOUDFLARE_API_TOKEN"];
+  const zoneId = options.zoneId ?? env?.["CLOUDFLARE_ZONE_ID"];
+  const apiToken = options.apiToken ?? env?.["CLOUDFLARE_API_TOKEN"];
 
   if (!zoneId || !apiToken) {
     return false;
