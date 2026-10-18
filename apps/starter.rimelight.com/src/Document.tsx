@@ -1,13 +1,12 @@
 import type { ParentProps } from "solid-js";
 import { HydrationScript, useHead } from "@solidjs/web";
 import { getDocumentTheme } from "@rimelight/ui/theme";
-import { createSecurityHead } from "@rimelight/security/head";
 import { createSeoHead } from "@rimelight/seo/head";
 import { getCurrentLocale } from "@rimelight/i18n";
 import "virtual:uno.css";
 
 export default function Document(props: ParentProps) {
-  useHead([...createSeoHead(), ...createSecurityHead()]);
+  useHead(createSeoHead());
 
   return (
     <html lang={getCurrentLocale()} data-theme={getDocumentTheme()}>

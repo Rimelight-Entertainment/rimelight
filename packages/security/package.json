@@ -35,10 +35,6 @@
     "./middleware": {
       "types": "./dist/middleware.d.mts",
       "import": "./dist/middleware.mjs"
-    },
-    "./head": {
-      "types": "./dist/head.d.mts",
-      "import": "./dist/head.mjs"
     }
   },
   "publishConfig": {
@@ -52,11 +48,9 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/web": "2.0.0-rc.15",
     "hono": "4.13.13"
   },
   "peerDependencies": {
-    "@solidjs/web": ">=2.0.0-rc.15",
     "hono": "^4.13.13",
     "vite-plus": "^1.0.0"
   },

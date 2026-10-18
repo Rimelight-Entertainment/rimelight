@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vite-plus/test";
-import { construction } from "../src/middleware";
-import { activeConfig } from "../src/runtime";
+import { security as construction } from "../src/middleware";
+import { activeConfig } from "../src";
 
 const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest";
 

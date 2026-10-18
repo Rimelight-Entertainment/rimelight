@@ -5,7 +5,7 @@ export default defineConfig({
     setupFiles: ["./test/setup.ts"],
   },
   pack: {
-    entry: ["src/index.ts", "src/plugin.ts", "src/middleware.ts", "src/head.ts"],
+    entry: ["src/index.ts", "src/plugin.ts", "src/middleware.ts"],
     deps: {
       neverBundle: [/^virtual:/],
     },

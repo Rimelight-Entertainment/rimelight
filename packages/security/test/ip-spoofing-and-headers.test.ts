@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vite-plus/test";
-import { security, ratelimit } from "../src/middleware";
+import { security } from "../src/middleware";
 import { activeConfig } from "../src/runtime";
 
 describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
@@ -44,7 +44,7 @@ describe("@rimelight/security - IP Spoofing and Header Integrity", () => {
       },
     });
 
-    const limiter = ratelimit();
+    const limiter = security();
 
     const createCtx = (ip: string) => ({
       req: {

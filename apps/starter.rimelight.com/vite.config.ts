@@ -66,6 +66,9 @@ export default defineConfig({
       ratelimit: {
         routes: ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat", "/api/contact"],
       },
+      turnstile: {
+        routes: ["/api/contact"],
+      },
     }),
 
     auth({

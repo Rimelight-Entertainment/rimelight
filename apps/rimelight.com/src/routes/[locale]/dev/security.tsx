@@ -2,7 +2,7 @@ import DevLayout from "#layouts/DevLayout";
 import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui";
-import { buildCspHeader, createSecurityHead, activeConfig } from "@rimelight/security";
+import { buildCspHeader, activeConfig } from "@rimelight/security";
 
 const DEMO_NONCE = "abC0123def456GHI";
 
@@ -18,26 +18,6 @@ const parseCsp = (csp: string): Record<string, string[]> => {
   return result;
 };
 
-const summarizeHeadTags = (tags: { tag: string; children?: string }[]): string => {
-  const lines = tags.map((t) => {
-    const snippet = (t.children ?? "").replace(/\s+/g, " ").trim().slice(0, 84);
-    return `${t.tag}${snippet ? `: ${snippet}…` : ""}`;
-  });
-  return lines.length ? lines.join("\n") : "(no tags)";
-};
-
-const renderTagsToHtml = (tags: { tag: string; props: Record<string, unknown> }[]): string =>
-  tags
-    .map((t) => {
-      const { children, ...attrs } = t.props;
-      const attrStr = Object.entries(attrs)
-        .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => `${k}="${String(v)}"`)
-        .join(" ");
-      return `<${t.tag}${attrStr ? ` ${attrStr}` : ""}>${children == null ? "" : String(children as string)}</${t.tag}>`;
-    })
-    .join("\n");
-
 export default function DevSecurityPage() {
   const config = activeConfig;
   const ratelimitOptions =
@@ -48,12 +28,6 @@ export default function DevSecurityPage() {
   const cspNonce = buildCspHeader(config, DEMO_NONCE);
   const cspTurnstile = buildCspHeader({ ...config, turnstile: true });
   const directives = parseCsp(cspProd);
-  const fullHead = createSecurityHead({ devReporter: true });
-  const minimalHead = createSecurityHead({
-    trustedTypes: false,
-    nonceSync: false,
-    devReporter: false,
-  });
 
   const sections = (): {
     title: string;
@@ -75,7 +49,7 @@ export default function DevSecurityPage() {
           label: "Security Config",
           code: `activeConfig`,
           description:
-            "The plugin options ship as JSON from the virtual module; the same object is consumed by the runtime, middleware, and head injection.",
+            "The plugin options ship as JSON from the virtual module; the same object is consumed by the runtime and unified security middleware.",
           value: JSON.stringify(config, null, 2),
         },
         {
@@ -138,27 +112,6 @@ export default function DevSecurityPage() {
       })),
     },
     {
-      title: "createSecurityHead()",
-      mono: true,
-      output: renderTagsToHtml(fullHead),
-      rows: [
-        {
-          label: "Full head",
-          code: `createSecurityHead({ devReporter: true })`,
-          description:
-            "Emits Trusted Types fallback, nonce sync, and a dev-only CSP violation reporter. In production, nonces/SRI are injected by the middleware via HTMLRewriter instead.",
-          value: summarizeHeadTags(fullHead),
-        },
-        {
-          label: "Minimal head",
-          code: `createSecurityHead({ trustedTypes: false, nonceSync: false, devReporter: false })`,
-          description:
-            "All optional scripts disabled; used when the middleware is the only security layer.",
-          value: renderTagsToHtml(minimalHead) || "(empty)",
-        },
-      ],
-    },
-    {
       title: "Turnstile",
       rows: [
         {
@@ -214,14 +167,14 @@ export default function DevSecurityPage() {
   return (
     <DevLayout
       title="Security"
-      description="CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics"
+      description="CSP header generation, unified middleware head & SRI injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics"
     >
       <div class="flex flex-col gap-2xl">
         <header class="flex flex-col gap-xs">
           <h1 class="text-3xl text-highlighted">Security</h1>
           <p class="text-sm text-muted">
-            Verifying @rimelight/security config resolution, generated CSP headers, nonce and
-            Trusted Types head injection, and Turnstile / construction runtime flags.
+            Verifying @rimelight/security config resolution, generated CSP headers, unified
+            middleware head/SRI injection, and Turnstile / construction runtime flags.
           </p>
         </header>
 

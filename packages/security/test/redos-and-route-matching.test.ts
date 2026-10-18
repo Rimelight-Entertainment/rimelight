@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { construction } from "../src/middleware";
+import { security as construction } from "../src/middleware";
 
 describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
   const createCtx = (path: string) => ({

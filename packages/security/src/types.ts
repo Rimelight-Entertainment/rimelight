@@ -16,8 +16,11 @@ export interface SecurityConfig {
         secretKey?: string;
         failOpen?: boolean;
         endpoint?: string;
+        routes?: (string | RegExp)[] | ((c: Context) => boolean);
       };
   trustedTypes?: boolean;
+  nonceSync?: boolean;
+  devReporter?: boolean;
   crossOriginEmbedderPolicy?:
     | "require-corp"
     | "credentialless"

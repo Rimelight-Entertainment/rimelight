@@ -574,5 +574,86 @@ describe("Security Middleware Headers", () => {
 
       expect(nextCalled).toBe(true);
     });
+
+    it("injects Trusted Types and Nonce Sync scripts into <head> via HTMLRewriter", async () => {
+      const appended: string[] = [];
+      class MockHTMLRewriter {
+        on(selector: string, handler: { element: (el: any) => void }) {
+          if (selector === "head") {
+            handler.element({
+              append: (html: string) => appended.push(html),
+            });
+          }
+          return this;
+        }
+        transform(res: Response) {
+          return res;
+        }
+      }
+      (globalThis as any).HTMLRewriter = MockHTMLRewriter;
+
+      try {
+        const middleware = security();
+        const req = new Request("https://rimelight.com/");
+        const ctx = {
+          req: {
+            raw: req,
+            url: req.url,
+            path: "/",
+            method: "GET",
+            header: (n: string) => req.headers.get(n) ?? undefined,
+          },
+          res: new Response("<html><head></head><body></body></html>", {
+            headers: { "content-type": "text/html" },
+          }),
+        };
+
+        await middleware(ctx as any, async () => {});
+        const headHtml = appended.join("");
+        expect(headHtml).toContain('<meta name="csp-nonce"');
+        expect(headHtml).toContain("trustedTypes.createPolicy");
+        expect(headHtml).toContain("initialCspNonce");
+      } finally {
+        delete (globalThis as any).HTMLRewriter;
+      }
+    });
+
+    it("gates configured routes with Turnstile verification in the unified pipeline", async () => {
+      Object.assign(activeConfig, {
+        turnstile: {
+          routes: ["/api/contact"],
+          secretKey: "test-secret",
+        },
+      });
+
+      const middleware = security();
+      let nextCalled = false;
+      const req = new Request("https://rimelight.com/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ message: "hello" }),
+      });
+
+      const ctx = {
+        req: {
+          raw: req,
+          url: req.url,
+          path: "/api/contact",
+          method: "POST",
+          header: (n: string) => req.headers.get(n) ?? undefined,
+          json: async () => ({ message: "hello" }),
+        },
+        json: (data: any, status: number) => new Response(JSON.stringify(data), { status }),
+      };
+
+      const res = (await middleware(ctx as any, async () => {
+        nextCalled = true;
+      })) as Response;
+
+      expect(nextCalled).toBe(false);
+      expect(res.status).toBe(400);
+      const payload = await res.json();
+      expect(payload.error).toBe("Turnstile verification failed");
+    });
   });
 });
