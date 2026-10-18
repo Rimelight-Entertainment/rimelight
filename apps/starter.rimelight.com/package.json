@@ -42,7 +42,7 @@
     "check": "cf workers types && vp check --fix"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "2.0.0-beta.sha-8c6014f9a",
+    "@cloudflare/vite-plugin": "2.0.0-beta.v.1",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
     "@rimelight/i18n": "workspace:*",
