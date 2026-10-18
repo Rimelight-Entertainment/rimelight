@@ -4,7 +4,20 @@ import type { SecurityConfig } from "./types";
 export const activeConfig: SecurityConfig = {
   strictDynamic: true,
   enforceTls: true,
+  devOnly: true,
+  crossOriginResourcePolicy: "same-origin",
+  crossOriginOpenerPolicy: "same-origin",
+  crossOriginEmbedderPolicy: "credentialless",
+  stripHeaders: ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"],
   ...config,
+  ratelimit:
+    config?.ratelimit === false
+      ? false
+      : {
+          bindingName: "MY_RATE_LIMITER",
+          retryAfter: 60,
+          ...config?.ratelimit,
+        },
   construction:
     config?.construction === false
       ? false
@@ -12,7 +25,7 @@ export const activeConfig: SecurityConfig = {
           constructionPath: "/construction",
           cookieName: "rimelight-construction-guest",
           cookieMaxAge: 604800,
-          ...(typeof config?.construction === "object" ? config.construction : {}),
+          ...config?.construction,
         },
 };
 

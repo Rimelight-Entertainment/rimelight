@@ -1,6 +1,5 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { config } from "virtual:rimelight-security";
 import type { SecurityConfig } from "./types";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
@@ -10,23 +9,17 @@ export const security = (): MiddlewareHandler => {
 
   return async (c, next) => {
     const isDev = process.env["NODE_ENV"] === "development";
-    const reqUrl = c.req.url || c.req.raw?.url;
     const path = c.req.path;
 
     // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS
-    if (activeConfig.devOnly !== false && !isDev && path.startsWith("/dev")) return c.notFound();
+    if (activeConfig.devOnly && !isDev && path.startsWith("/dev")) return c.notFound();
 
     const tls = ((c.req.raw as { cf?: { tlsVersion?: string } })?.cf || c.env?.cf)?.tlsVersion;
     if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
       return new Response("TLS 1.2 or higher is required.", { status: 400 });
     }
-    if (
-      !isDev &&
-      reqUrl &&
-      (c.req.header?.("x-forwarded-proto") ?? c.req.raw?.headers?.get("x-forwarded-proto")) ===
-        "http"
-    ) {
-      return Response.redirect(reqUrl.replace(/^http:/, "https:"), 301);
+    if (!isDev && c.req.header("x-forwarded-proto") === "http") {
+      return Response.redirect(c.req.url.replace(/^http:/, "https:"), 301);
     }
 
     const matches = (
@@ -41,16 +34,11 @@ export const security = (): MiddlewareHandler => {
           : routes.some((r) => (typeof r === "string" ? path.startsWith(r) : r.test(path)));
 
     const readBody = async (): Promise<Record<string, unknown>> => {
-      const raw = c.req.raw?.clone?.();
       try {
-        const body = (c.req.header?.("content-type") || "").toLowerCase().includes("form")
-          ? raw
-            ? await raw.formData()
-            : await (c.req.parseBody?.() ?? c.req.formData?.())
-          : await (raw ? raw.json() : c.req.json?.());
-        return body instanceof FormData
-          ? Object.fromEntries(body.entries())
-          : (body as Record<string, unknown>) || {};
+        const raw = c.req.raw.clone();
+        return (c.req.header("content-type") || "").toLowerCase().includes("form")
+          ? Object.fromEntries((await raw.formData()).entries())
+          : ((await raw.json()) as Record<string, unknown>);
       } catch {
         return {};
       }
@@ -58,36 +46,31 @@ export const security = (): MiddlewareHandler => {
 
     // 2. Rate limiting
     const rl = activeConfig.ratelimit;
-    if (rl !== false) {
-      const cfg = typeof rl === "object" ? rl : {};
-      if (matches(cfg.routes, c as Context & string, true)) {
-        const limiter = cfg.limiter
-          ? cfg.limiter(c)
-          : c.env?.[cfg.bindingName || "MY_RATE_LIMITER"];
-        const failBlock = cfg.fallback && cfg.fallback !== "pass";
+    if (rl && matches(rl.routes, c as Context & string, true)) {
+      const limiter = rl.limiter ? rl.limiter(c) : c.env?.[rl.bindingName!];
+      const failBlock = rl.fallback && rl.fallback !== "pass";
 
-        if (typeof limiter?.limit !== "function") {
-          if (failBlock) return (c.res = c.json({ error: "Rate limiter not configured" }, 500));
-        } else {
-          try {
-            const key = await (cfg.keyGenerator?.(c) ??
-              (c.req.header("CF-Connecting-IP") || "unknown"));
-            if (!(await limiter.limit({ key })).success) {
-              const retry = cfg.retryAfter ?? 60;
-              return (c.res = cfg.onRateLimited
-                ? await cfg.onRateLimited(c, retry)
-                : c.json(
-                    {
-                      error: "Too Many Requests",
-                      message: "Rate limit exceeded. Please try again later.",
-                    },
-                    429,
-                    { "Retry-After": String(retry) },
-                  ));
-            }
-          } catch {
-            if (failBlock) return (c.res = c.json({ error: "Rate limit check failed" }, 500));
+      if (typeof limiter?.limit !== "function") {
+        if (failBlock) return (c.res = c.json({ error: "Rate limiter not configured" }, 500));
+      } else {
+        try {
+          const key = await (rl.keyGenerator?.(c) ??
+            (c.req.header("CF-Connecting-IP") || "unknown"));
+          if (!(await limiter.limit({ key })).success) {
+            const retry = rl.retryAfter!;
+            return (c.res = rl.onRateLimited
+              ? await rl.onRateLimited(c, retry)
+              : c.json(
+                  {
+                    error: "Too Many Requests",
+                    message: "Rate limit exceeded. Please try again later.",
+                  },
+                  429,
+                  { "Retry-After": String(retry) },
+                ));
           }
+        } catch {
+          if (failBlock) return (c.res = c.json({ error: "Rate limit check failed" }, 500));
         }
       }
     }
@@ -112,45 +95,43 @@ export const security = (): MiddlewareHandler => {
     }
 
     // 4. Construction mode
-    if (activeConfig.construction !== false && String(c.env?.CONSTRUCTION_MODE) === "true") {
+    const cg = activeConfig.construction;
+    if (cg && String(c.env?.CONSTRUCTION_MODE) === "true") {
       const {
-        constructionPath = "/construction",
-        cookieName = "rimelight-construction-guest",
-        cookieMaxAge = 604800,
+        constructionPath,
+        cookieName,
+        cookieMaxAge,
         whitelist,
         isAuthorized,
         renderFallback,
-      } = typeof activeConfig.construction === "object" ? activeConfig.construction : {};
-      const cookieOpts = { httpOnly: true, secure: true, maxAge: cookieMaxAge };
+      } = cg;
+      const cookieOpts = { httpOnly: true, secure: true, maxAge: cookieMaxAge! };
       const secret = c.env?.CONSTRUCTION_PASSPHRASE;
 
-      if (secret && c.req.query?.("preview") === secret) {
-        setCookie(c, cookieName, secret, cookieOpts);
+      if (secret && c.req.query("preview") === secret) {
+        setCookie(c, cookieName!, secret, cookieOpts);
         return (c.res = c.redirect(path));
       }
 
       const authed =
-        (secret &&
-          (c.req.raw?.headers
-            ? getCookie(c, cookieName) === secret
-            : c.req.header?.("cookie")?.includes(`${cookieName}=${secret}`))) ||
+        (secret && getCookie(c, cookieName!) === secret) ||
         /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
         matches(whitelist, path as Context & string, false) ||
         (await isAuthorized?.(c));
 
       if (!authed) {
-        if (c.req.method === "POST" && path.includes(constructionPath)) {
+        if (c.req.method === "POST" && path.includes(constructionPath!)) {
           const body = await readBody();
           const ok = Boolean(secret && body["passphrase"] === secret);
           const to = typeof body["redirect"] === "string" ? body["redirect"] : "/";
-          if (ok) setCookie(c, cookieName, secret!, cookieOpts);
+          if (ok) setCookie(c, cookieName!, secret!, cookieOpts);
           return (c.res = c.redirect(
             ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`,
           ));
         }
 
-        if (!path.includes(constructionPath)) {
-          const search = reqUrl ? new URL(reqUrl).search : "";
+        if (!path.includes(constructionPath!)) {
+          const { search } = new URL(c.req.url);
           return (c.res = await (path.includes(".")
             ? c.notFound()
             : renderFallback
@@ -161,12 +142,11 @@ export const security = (): MiddlewareHandler => {
     }
 
     // 5. Execute downstream & rewrite HTML
-    const downstream: unknown = await next();
-    let res = downstream instanceof Response ? (c.res = downstream) : c.res;
-    if (!res) return downstream as Response | void;
+    await next();
+    if (!c.res) return;
 
-    const origin = reqUrl ? new URL(reqUrl).origin : undefined;
-    const isHtml = (res.headers.get("content-type") || "").includes("text/html");
+    const { origin } = new URL(c.req.url);
+    const isHtml = (c.res.headers.get("content-type") || "").includes("text/html");
     const nonce =
       isHtml && !isDev
         ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
@@ -182,6 +162,7 @@ export const security = (): MiddlewareHandler => {
       }
     ).HTMLRewriter;
 
+    let res = c.res;
     if (isHtml && Rewriter) {
       const headHtml = [
         nonce ? `<meta name="csp-nonce" content="${nonce}">` : "",
@@ -207,7 +188,7 @@ export const security = (): MiddlewareHandler => {
                 el["setAttribute"]!("crossorigin", "anonymous");
               }
             };
-            const cached = activeConfig.manifest?.[url] ?? config?.manifest?.[url] ?? sriCache[url];
+            const cached = activeConfig.manifest?.[url] ?? sriCache[url];
             if (cached || process.env["NODE_ENV"] !== "production") return apply(cached);
 
             return (async () => {
@@ -216,7 +197,7 @@ export const security = (): MiddlewareHandler => {
                   ? !url.includes("*") && !url.endsWith("/")
                     ? await fetch(url)
                     : undefined
-                  : url.startsWith("/") && !url.startsWith("//") && origin
+                  : url.startsWith("/") && !url.startsWith("//")
                     ? await (c.env?.ASSETS ?? { fetch }).fetch(new Request(new URL(url, origin)))
                     : undefined;
                 if (assetRes?.ok) {
@@ -288,29 +269,19 @@ export const security = (): MiddlewareHandler => {
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
       "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
       "No-Vary-Search": 'except=("q" "search" "locale"), params=?1',
-      "Cross-Origin-Resource-Policy":
-        cspOpts.crossOriginResourcePolicy !== false &&
-        (cspOpts.crossOriginResourcePolicy || "same-origin"),
-      "Cross-Origin-Opener-Policy":
-        cspOpts.crossOriginOpenerPolicy !== false &&
-        (cspOpts.crossOriginOpenerPolicy || "same-origin"),
-      "Cross-Origin-Embedder-Policy":
-        cspOpts.crossOriginEmbedderPolicy !== false &&
-        (cspOpts.crossOriginEmbedderPolicy || "credentialless"),
+      "Cross-Origin-Resource-Policy": cspOpts.crossOriginResourcePolicy,
+      "Cross-Origin-Opener-Policy": cspOpts.crossOriginOpenerPolicy,
+      "Cross-Origin-Embedder-Policy": cspOpts.crossOriginEmbedderPolicy,
       "Content-Security-Policy": buildCspHeader(cspOpts, nonce),
       "Content-Security-Policy-Report-Only": reportOnlyCsp,
-      Link:
-        origin &&
-        `<${origin}/sitemap-index.xml>; rel="sitemap", <${origin}/llms.txt>; rel="llms", <${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
+      Link: `<${origin}/sitemap-index.xml>; rel="sitemap", <${origin}/llms.txt>; rel="llms", <${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
       ...cspOpts.headers,
     })) {
       if (v) headers.set(k, v);
     }
 
-    for (const k of cspOpts.stripHeaders === false
-      ? []
-      : cspOpts.stripHeaders || ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"]) {
-      headers.delete(k);
+    if (cspOpts.stripHeaders) {
+      for (const k of cspOpts.stripHeaders) headers.delete(k);
     }
 
     return (c.res = new Response(res.body, {
