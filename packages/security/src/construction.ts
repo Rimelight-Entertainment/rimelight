@@ -5,6 +5,13 @@ import { activeConfig } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 const GUEST_COOKIE = "rimelight-construction-guest";
+const COOKIE_OPTS = {
+  path: "/",
+  httpOnly: true,
+  secure: true,
+  sameSite: "Lax" as const,
+  maxAge: 604800,
+};
 
 export const construction = (): MiddlewareHandler => {
   const conf = typeof activeConfig.construction === "object" ? activeConfig.construction : {};
@@ -17,26 +24,17 @@ export const construction = (): MiddlewareHandler => {
     const secret =
       conf.passphrase ?? c.env?.CONSTRUCTION_PASSPHRASE ?? process.env?.["CONSTRUCTION_PASSPHRASE"];
     const path = c.req.path;
-    const saveCookie = () =>
-      setCookie(c, GUEST_COOKIE, secret!, {
-        path: "/",
-        httpOnly: true,
-        secure: true,
-        sameSite: "Lax",
-        maxAge: 604800,
-      });
 
     // 1. Shareable preview link (?preview=secret) -> cookie & redirect
     if (secret && c.req.query?.("preview") === secret) {
-      saveCookie();
+      setCookie(c, GUEST_COOKIE, secret, COOKIE_OPTS);
       return c.redirect(path);
     }
 
     // 2. Cookie check, custom auth, or whitelisted routes
-    const cookieHeader = c.req.header("cookie");
-    const cookieVal = cookieHeader ? parse(cookieHeader, GUEST_COOKIE)[GUEST_COOKIE] : undefined;
+    const cookie = c.req.header("cookie");
     if (
-      cookieVal === secret ||
+      (cookie && parse(cookie, GUEST_COOKIE)[GUEST_COOKIE] === secret) ||
       (await conf.isAuthorized?.(c)) ||
       /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
       (Array.isArray(conf.whitelist)
@@ -48,20 +46,20 @@ export const construction = (): MiddlewareHandler => {
 
     // 3. 404 for subresources (file extension or non-document fetch)
     const dest = c.req.header("sec-fetch-dest");
-    if (/\.[a-z0-9]+$/i.test(path) || (dest && dest !== "document")) {
-      return c.notFound();
-    }
+    if (/\.[a-z0-9]+$/i.test(path) || (dest && dest !== "document")) return c.notFound();
 
     // 4. Form/JSON password submit on construction page
     if (c.req.method === "POST" && path.includes(page)) {
-      const b: any =
-        (await c.req.formData?.().catch(() => undefined)) ??
-        (await (c.req.parseBody?.() ?? c.req.json?.() ?? {}).catch(() => ({})));
-      const pass = typeof b?.get === "function" ? b.get("passphrase") : b?.passphrase;
-      const to = String((typeof b?.get === "function" ? b.get("redirect") : b?.redirect) || "/");
-      const ok = Boolean(secret && pass === secret);
+      const b: any = await (
+        c.req.formData?.() ??
+        c.req.parseBody?.() ??
+        c.req.json?.() ??
+        {}
+      ).catch(() => ({}));
+      const ok = Boolean(secret && (b?.passphrase ?? b?.get?.("passphrase")) === secret);
+      const to = String(b?.redirect ?? b?.get?.("redirect") ?? "/");
 
-      if (ok) saveCookie();
+      if (ok) setCookie(c, GUEST_COOKIE, secret!, COOKIE_OPTS);
 
       return (c.req.header("content-type") || "").includes("form")
         ? c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`)
