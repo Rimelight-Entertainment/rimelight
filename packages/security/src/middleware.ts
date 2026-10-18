@@ -5,20 +5,6 @@ import type { SecurityConfig } from "./types";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
-declare class HTMLRewriter {
-  on(
-    selector: string,
-    handlers: {
-      element(el: {
-        getAttribute(name: string): string | null;
-        setAttribute(name: string, value: string): unknown;
-        append(content: string, options?: { html?: boolean }): unknown;
-      }): unknown;
-    },
-  ): this;
-  transform(response: Response): Response;
-}
-
 export const security = (): MiddlewareHandler => {
   const sriCache: Record<string, string | undefined> = {};
 
@@ -188,7 +174,25 @@ export const security = (): MiddlewareHandler => {
         ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
         : undefined;
 
-    if (isHtml && typeof HTMLRewriter !== "undefined") {
+    const Rewriter = (
+      globalThis as {
+        HTMLRewriter?: new () => {
+          on(
+            s: string,
+            h: {
+              element(e: {
+                getAttribute(n: string): string | null;
+                setAttribute(n: string, v: string): void;
+                append(c: string, o?: { html?: boolean }): void;
+              }): unknown;
+            },
+          ): void;
+          transform(r: Response): Response;
+        };
+      }
+    ).HTMLRewriter;
+
+    if (isHtml && Rewriter) {
       const headHtml = [
         nonce ? `<meta name="csp-nonce" content="${nonce}">` : "",
         activeConfig.trustedTypes
@@ -199,15 +203,14 @@ export const security = (): MiddlewareHandler => {
           : "",
       ].join("");
 
-      const rewriter = new HTMLRewriter().on("head", {
-        element: (el) => el.append(headHtml, { html: true }),
-      });
+      const rewriter = new Rewriter();
+      rewriter.on("head", { element: (el) => el.append(headHtml, { html: true }) });
 
       if (nonce) {
         const sri = (attr: string) => ({
           element(el: {
             getAttribute(n: string): string | null;
-            setAttribute(n: string, v: string): unknown;
+            setAttribute(n: string, v: string): void;
           }) {
             const url = el.getAttribute(attr);
             if (!url) return;
@@ -240,11 +243,10 @@ export const security = (): MiddlewareHandler => {
           },
         });
 
-        rewriter
-          .on("script[src]", sri("src"))
-          .on('link[rel="stylesheet"][href]', sri("href"))
-          .on("script", { element: (el) => el.setAttribute("nonce", nonce) })
-          .on("style", { element: (el) => el.setAttribute("nonce", nonce) });
+        rewriter.on("script[src]", sri("src"));
+        rewriter.on('link[rel="stylesheet"][href]', sri("href"));
+        rewriter.on("script", { element: (el) => el.setAttribute("nonce", nonce) });
+        rewriter.on("style", { element: (el) => el.setAttribute("nonce", nonce) });
       }
 
       res = rewriter.transform(res);
