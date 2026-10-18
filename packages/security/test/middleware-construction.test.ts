@@ -52,6 +52,10 @@ describe("@rimelight/security construction middleware", () => {
         jsonResp = { data, status };
         return jsonResp;
       },
+      html: (htmlStr: string, status = 200) =>
+        new Response(htmlStr, { status, headers: { "Content-Type": "text/html; charset=utf-8" } }),
+      notFound: () =>
+        new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain" } }),
       getRedirected: () => redirected,
       getJson: () => jsonResp,
     };
@@ -125,6 +129,8 @@ describe("@rimelight/security construction middleware", () => {
       },
       env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
       redirect: vi.fn(),
+      notFound: () =>
+        new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain" } }),
     };
     const next = vi.fn();
 

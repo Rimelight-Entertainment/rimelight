@@ -16,6 +16,8 @@ describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
     },
     redirect: () => ({ status: 302 }),
     json: () => {},
+    notFound: () =>
+      new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain" } }),
   });
 
   it("safely and quickly evaluates regex and string route rules against hostile inputs", async () => {
