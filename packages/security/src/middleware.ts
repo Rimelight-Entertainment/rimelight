@@ -5,8 +5,9 @@ import { getConstructionFallbackHtml } from "./fallback";
 
 export const security = (): MiddlewareHandler => async (c, next) => {
   const isDev =
-    (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
-    (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV));
+    typeof process !== "undefined" && process.env?.["NODE_ENV"]
+      ? process.env["NODE_ENV"] === "development"
+      : typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV);
   const { path } = c.req;
 
   // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS
@@ -98,7 +99,9 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
     const authed =
       (secret && getCookie(c, cookieName!) === secret) ||
-      /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
+      /^\/(_image|assets|@|favicon\.ico|favicon\.svg|apple-touch-icon.*|site\.webmanifest|manifest\.json|robots\.txt|sitemap.*\.xml|open-graph)/.test(
+        path,
+      ) ||
       matches(whitelist) ||
       (await isAuthorized?.(c));
 
@@ -219,6 +222,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
                   "style-src": "'self' 'unsafe-inline' https: http:",
                   "connect-src": "'self' ws: wss: http: https:",
                   "img-src": "'self' data: blob: https: http:",
+                  "upgrade-insecure-requests": false,
                 },
               }
             : activeConfig,
