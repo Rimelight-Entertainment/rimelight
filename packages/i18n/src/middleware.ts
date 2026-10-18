@@ -10,14 +10,12 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
 
   // Serve static JSON translations over HTTP for external consumers (e.g. game clients)
   if (pathname.startsWith("/locales/") && pathname.endsWith(".json")) {
-    const reqLocale = pathname.slice("/locales/".length, -".json".length);
-    const translations = activeConfig.translations[reqLocale];
-    if (translations) {
-      return c.json(translations, 200, {
-        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
-      });
-    }
-    return c.notFound();
+    const translations = activeConfig.translations[pathname.slice(9, -5)];
+    return translations
+      ? c.json(translations, 200, {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+        })
+      : c.notFound();
   }
 
   const prefix = activeConfig.locales.find(
@@ -26,10 +24,15 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
 
   const locale =
     prefix ??
-    (c.req.header("accept-language") ?? "").split(",").flatMap((e: string) => {
-      const tag = e.split(";")[0]?.trim().toLowerCase();
-      return activeConfig.locales.find((l) => l === tag || l === tag?.split("-")[0]) ?? [];
-    })[0] ??
+    (c.req.header("accept-language") ?? "")
+      .split(",")
+      .map((e) => {
+        const tag = e.split(";")[0]?.trim().toLowerCase();
+        return activeConfig.locales.find(
+          (l) => l.toLowerCase() === tag || l.toLowerCase() === tag?.split("-")[0],
+        );
+      })
+      .find(Boolean) ??
     activeConfig.defaultLocale;
 
   const target =
