@@ -8,7 +8,6 @@ export interface SecurityConfig {
   frameSrc?: string[];
   scriptResources?: string[];
   styleResources?: string[];
-  resources?: string[];
   turnstile?:
     | boolean
     | {
@@ -59,7 +58,7 @@ export interface SecurityConfig {
         cookieMaxAge?: number;
         constructionPath?: string;
         renderFallback?: boolean;
-        whitelist?: (string | RegExp)[] | ((path: string) => boolean);
+        whitelist?: (string | RegExp)[] | ((c: Context) => boolean);
         isAuthorized?: (c: Context) => boolean | Promise<boolean>;
       };
   devOnly?: boolean;

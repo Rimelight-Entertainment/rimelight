@@ -225,6 +225,15 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
       });
     }
 
-    return next();
+    await next();
+    if ((c.res?.headers.get("content-type") || "").includes("text/html")) {
+      const links = [
+        config.sitemap !== false && `<${origin}/sitemap-index.xml>; rel="sitemap"`,
+        config.llms && `<${origin}/llms.txt>; rel="llms"`,
+        config.apiCatalog && `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
+        config.rss && `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
+      ].filter(Boolean);
+      if (links.length) c.header("Link", links.join(", "));
+    }
   };
 }

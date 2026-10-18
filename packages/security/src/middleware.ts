@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
@@ -6,10 +6,9 @@ import { getConstructionFallbackHtml } from "./fallback";
 export const security = (): MiddlewareHandler => async (c, next) => {
   const isDev = process.env["NODE_ENV"] === "development";
   const { path } = c.req;
-  const { origin, search } = new URL(c.req.url);
 
   // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS
-  if (activeConfig.devOnly && !isDev && path.startsWith("/dev")) return c.notFound();
+  if (activeConfig.devOnly && !isDev && /(?:^|\/)dev(?:\/|$)/.test(path)) return c.notFound();
 
   const tls = ((c.req.raw as { cf?: { tlsVersion?: string } }).cf || c.env?.cf)?.tlsVersion;
   if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
@@ -19,9 +18,9 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     return c.redirect(c.req.url.replace(/^http:/, "https:"), 301);
   }
 
-  const matches = <T>(routes: (string | RegExp)[] | ((arg: T) => boolean) | undefined, arg: T) =>
+  const matches = (routes?: (string | RegExp)[] | ((c: Context) => boolean)) =>
     typeof routes === "function"
-      ? routes(arg)
+      ? routes(c)
       : routes?.some((r) => (typeof r === "string" ? path.startsWith(r) : r.test(path)));
 
   const readBody = async (): Promise<Record<string, unknown>> => {
@@ -37,7 +36,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
   // 2. Rate limiting
   const rl = activeConfig.ratelimit;
-  if (rl && (matches(rl.routes, c) ?? true)) {
+  if (rl && (matches(rl.routes) ?? true)) {
     const limiter = rl.limiter ? rl.limiter(c) : c.env?.[rl.bindingName!];
     const failBlock = rl.fallback && rl.fallback !== "pass";
 
@@ -67,12 +66,13 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
   // 3. Turnstile verification
   const ts = typeof activeConfig.turnstile === "object" ? activeConfig.turnstile : undefined;
-  if (ts && /^(POST|PUT|PATCH|DELETE)$/i.test(c.req.method) && matches(ts.routes, c)) {
+  if (ts && /^(POST|PUT|PATCH|DELETE)$/i.test(c.req.method) && matches(ts.routes)) {
     const val = (await readBody())[ts.field || "cf-turnstile-response"];
     const ok = await verifyTurnstile(
       typeof val === "string" ? val : undefined,
       ts.secretKey ?? c.env?.TURNSTILE_SECRET_KEY,
       c.req.header("CF-Connecting-IP"),
+      ts,
     );
     if (!ok) return c.json({ success: false, error: "Turnstile verification failed" }, 400);
   }
@@ -82,35 +82,47 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   if (cg && String(c.env?.CONSTRUCTION_MODE) === "true") {
     const { constructionPath, cookieName, cookieMaxAge, whitelist, isAuthorized, renderFallback } =
       cg;
-    const cookieOpts = { httpOnly: true, secure: true, maxAge: cookieMaxAge! };
+    const cookieOpts = (remember = true) => ({
+      httpOnly: true,
+      secure: true,
+      ...(remember && cookieMaxAge ? { maxAge: cookieMaxAge } : {}),
+    });
     const secret = c.env?.CONSTRUCTION_PASSPHRASE;
 
     if (secret && c.req.query("preview") === secret) {
-      setCookie(c, cookieName!, secret, cookieOpts);
+      setCookie(c, cookieName!, secret, cookieOpts());
       return c.redirect(path);
     }
 
     const authed =
       (secret && getCookie(c, cookieName!) === secret) ||
       /^\/(_image|assets|@|favicon\.ico)/.test(path) ||
-      matches(whitelist, path) ||
+      matches(whitelist) ||
       (await isAuthorized?.(c));
 
     if (!authed) {
-      if (c.req.method === "POST" && path.includes(constructionPath!)) {
+      const isGate = path === constructionPath || path.endsWith(constructionPath!);
+
+      if (c.req.method === "POST" && (isGate || renderFallback)) {
         const body = await readBody();
         const ok = Boolean(secret && body["passphrase"] === secret);
-        const to = typeof body["redirect"] === "string" ? body["redirect"] : "/";
-        if (ok) setCookie(c, cookieName!, secret!, cookieOpts);
+        const rawTo = typeof body["redirect"] === "string" ? body["redirect"] : "/";
+        const to = rawTo.startsWith("/") && !rawTo.startsWith("//") ? rawTo : "/";
+        if (ok) setCookie(c, cookieName!, secret!, cookieOpts(body["rememberMe"] !== "false"));
         return c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`);
       }
 
-      if (!path.includes(constructionPath!)) {
-        return path.includes(".")
+      if (!isGate) {
+        return /\.[a-z0-9]{1,8}$/i.test(path)
           ? c.notFound()
           : renderFallback
-            ? c.html(getConstructionFallbackHtml({ redirect: path }), 503)
-            : c.redirect(`${constructionPath}?redirect=${encodeURIComponent(path + search)}`);
+            ? c.html(
+                getConstructionFallbackHtml({ redirect: path, error: c.req.query("error") }),
+                503,
+              )
+            : c.redirect(
+                `${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`,
+              );
       }
     }
   }
@@ -132,7 +144,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   }
   const { HTMLRewriter: Rewriter } = globalThis as {
     HTMLRewriter?: new () => {
-      on(s: string, h: { element(e: RewriterEl): unknown }): void;
+      on(s: string, h: { element(e: RewriterEl): void }): void;
       transform(r: Response): Response;
     };
   };
@@ -153,37 +165,13 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     rewriter.on("head", { element: (el) => el.append(headHtml, { html: true }) });
 
     if (nonce) {
-      const manifest = activeConfig.manifest!;
       const sri = (attr: string) => ({
         element(el: RewriterEl) {
-          const url = el.getAttribute(attr);
-          if (!url) return;
-          const apply = (val?: string) => {
-            if (val) {
-              el.setAttribute("integrity", val);
-              el.setAttribute("crossorigin", "anonymous");
-            }
-          };
-          if (manifest[url] || process.env["NODE_ENV"] !== "production")
-            return apply(manifest[url]);
-
-          return (async () => {
-            try {
-              const assetRes = url.startsWith("https://")
-                ? !url.includes("*") && !url.endsWith("/")
-                  ? await fetch(url)
-                  : undefined
-                : url.startsWith("/") && !url.startsWith("//")
-                  ? await (c.env?.ASSETS ?? { fetch }).fetch(new Request(new URL(url, origin)))
-                  : undefined;
-              if (assetRes?.ok) {
-                const buf = await crypto.subtle.digest("SHA-384", await assetRes.arrayBuffer());
-                apply(
-                  (manifest[url] = `sha384-${btoa(String.fromCharCode(...new Uint8Array(buf)))}`),
-                );
-              }
-            } catch {}
-          })();
+          const hash = activeConfig.manifest?.[el.getAttribute(attr) || ""];
+          if (hash) {
+            el.setAttribute("integrity", hash);
+            el.setAttribute("crossorigin", "anonymous");
+          }
         },
       });
 
@@ -216,23 +204,25 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     "Cross-Origin-Resource-Policy": activeConfig.crossOriginResourcePolicy,
     "Cross-Origin-Opener-Policy": activeConfig.crossOriginOpenerPolicy,
     "Cross-Origin-Embedder-Policy": activeConfig.crossOriginEmbedderPolicy,
-    "Content-Security-Policy": buildCspHeader(
-      isHtml && isDev
-        ? {
-            ...activeConfig,
-            directives: {
-              ...activeConfig.directives,
-              "default-src": false,
-              "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https: http: ws: wss:",
-              "script-src-attr": "'unsafe-inline'",
-              "style-src": "'self' 'unsafe-inline' https: http:",
-              "connect-src": "'self' ws: wss: http: https:",
-              "img-src": "'self' data: blob: https: http:",
-            },
-          }
-        : activeConfig,
-      nonce,
-    ),
+    "Content-Security-Policy": isHtml
+      ? buildCspHeader(
+          isDev
+            ? {
+                ...activeConfig,
+                directives: {
+                  ...activeConfig.directives,
+                  "default-src": false,
+                  "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https: http: ws: wss:",
+                  "script-src-attr": "'unsafe-inline'",
+                  "style-src": "'self' 'unsafe-inline' https: http:",
+                  "connect-src": "'self' ws: wss: http: https:",
+                  "img-src": "'self' data: blob: https: http:",
+                },
+              }
+            : activeConfig,
+          nonce,
+        )
+      : undefined,
     "Content-Security-Policy-Report-Only":
       isHtml && isDev
         ? buildCspHeader({
@@ -252,7 +242,6 @@ export const security = (): MiddlewareHandler => async (c, next) => {
             },
           })
         : undefined,
-    Link: `<${origin}/sitemap-index.xml>; rel="sitemap", <${origin}/llms.txt>; rel="llms", <${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
     ...activeConfig.headers,
   })) {
     if (v) headers.set(k, v);

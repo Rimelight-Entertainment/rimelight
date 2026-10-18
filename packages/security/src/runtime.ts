@@ -74,7 +74,9 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
       ...(options.scriptResources || []),
     ]),
   );
-  const styleSources = Array.from(new Set(["'self'", ...(options.styleResources || [])]));
+  const styleSources = Array.from(
+    new Set(["'self'", ...(nonce ? [`'nonce-${nonce}'`] : []), ...(options.styleResources || [])]),
+  );
 
   const directives: Record<string, string[]> = {
     "default-src": ["'none'"],
@@ -115,26 +117,30 @@ export async function verifyTurnstile(
   token?: string,
   secretKey?: string,
   remoteIp?: string,
+  options: { failOpen?: boolean; endpoint?: string } = {},
 ): Promise<boolean> {
-  // Fail open in dev/preview if keys are not configured
-  if (!secretKey) return true;
+  const failOpen = options.failOpen ?? true;
+  if (!secretKey) return failOpen;
   if (!token) return false;
 
   try {
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        secret: secretKey,
-        response: token,
-        remoteip: remoteIp,
-      }),
-    });
+    const res = await fetch(
+      options.endpoint || "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: secretKey,
+          response: token,
+          remoteip: remoteIp,
+        }),
+      },
+    );
 
-    if (!res.ok) return true;
+    if (!res.ok) return failOpen;
     const data = (await res.json().catch(() => ({}))) as { success?: boolean };
     return Boolean(data.success);
   } catch {
-    return true; // Fail open on network errors
+    return failOpen;
   }
 }
