@@ -34,20 +34,17 @@ export const construction = (): MiddlewareHandler => async (c, next) => {
   )
     return next();
 
-  // 3. Form/JSON password submitted on the construction page
+  // 3. Form password submitted on the construction page
   if (c.req.method === "POST" && path.includes(activeConfig.construction.constructionPath!)) {
-    const isForm = (c.req.header("content-type") || "").includes("form");
-    const b: any = await (
-      isForm ? (c.req.parseBody?.() ?? c.req.formData?.()) : c.req.json?.()
-    )?.catch(() => ({}));
+    const b: any = await (c.req.parseBody?.() ?? c.req.formData?.() ?? c.req.json?.())?.catch(
+      () => ({}),
+    );
     const ok = Boolean(secret && (b?.passphrase ?? b?.get?.("passphrase")) === secret);
     const to = String(b?.redirect ?? b?.get?.("redirect") ?? "/");
 
     if (ok) setCookie(c, activeConfig.construction.cookieName!, secret!, cookieOpts);
 
-    return isForm
-      ? c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`)
-      : c.json(ok ? { success: true } : { error: "Invalid credentials" }, ok ? 200 : 401);
+    return c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`);
   }
 
   // 4. Render the construction page if already navigating it

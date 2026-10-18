@@ -193,7 +193,7 @@ describe("@rimelight/security construction middleware", () => {
     const next = vi.fn();
 
     await middleware(ctx, next);
-    expect(ctx.getJson()).toEqual({ data: { success: true }, status: 200 });
+    expect(ctx.getRedirected()).toBe("/");
   });
 
   it("should reject guest sign-in with bad passphrase", async () => {
@@ -206,7 +206,7 @@ describe("@rimelight/security construction middleware", () => {
     const next = vi.fn();
 
     await middleware(ctx, next);
-    expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 });
+    expect(ctx.getRedirected()).toContain("/construction?error=invalid&redirect=");
   });
 
   it("should support cookie extraction via Hono c.req.header", async () => {
@@ -226,7 +226,7 @@ describe("@rimelight/security construction middleware", () => {
       header: (name: string, value: string) => {
         if (name === "Set-Cookie") setCookieVal = value;
       },
-      json: (data: any, status = 200) => ({ data, status }),
+      redirect: (url: string) => ({ status: 302, headers: { Location: url } }),
     };
 
     await middleware(honoCtx as any, vi.fn());
@@ -264,7 +264,7 @@ describe("@rimelight/security construction middleware", () => {
         body: { passphrase: testPass },
       });
       await middleware(ctx, vi.fn());
-      expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 });
+      expect(ctx.getRedirected()).toContain("/construction?error=invalid&redirect=");
     }
   });
 
