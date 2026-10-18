@@ -4,7 +4,9 @@ import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 export const security = (): MiddlewareHandler => async (c, next) => {
-  const isDev = process.env["NODE_ENV"] === "development";
+  const isDev =
+    (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
+    (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV));
   const { path } = c.req;
 
   // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS

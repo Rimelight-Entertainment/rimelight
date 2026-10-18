@@ -64,14 +64,11 @@ export { buildApiCatalog } from "./catalog";
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
 
 export {
-  NOTO_SANS,
   defaultOgLayout,
-  loadOgFonts,
   renderOgResponse,
   renderDefaultOg,
   handleOgRequest,
   createHonoOgHandler,
-  type OgFontConfig,
   type OgLayoutOptions,
   type OgRenderConfig,
   type OgHandlerOptions,

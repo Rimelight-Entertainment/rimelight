@@ -1,438 +1,160 @@
-/**
- * Font configuration for OG image rendering. Pass to `loadOgFonts()` or `renderOgResponse()`.
- */
-export interface OgFontConfig {
-  /**
-   * Font-family name referenced in layout styles
-   */
-  name: string;
-  /**
-   * URL to the regular-weight TTF
-   */
-  regularUrl: string;
-  /**
-   * URL to the bold-weight TTF
-   */
-  boldUrl: string;
-}
-
-/**
- * Default font: Noto Sans from jsDelivr Fontsource CDN.
- */
-export const NOTO_SANS: OgFontConfig = {
-  name: "Noto Sans",
-  regularUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-400-normal.ttf",
-  boldUrl: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-700-normal.ttf",
-};
-
-/**
- * Options for the default OG image layout. Build your own layout instead via `renderOgResponse()`
- * directly.
- */
 export interface OgLayoutOptions {
-  /**
-   * Main heading -- required
-   */
   title: string;
-  /**
-   * Subtitle / excerpt beneath the title
-   */
-  description?: string;
-  /**
-   * Branding shown top-left. Pass a plain string (site name) or a pre-built Takumi VNode for a
-   * custom logo treatment.
-   */
-  brand?: string | object;
-  /**
-   * Pill badge shown bottom-left. e.g. "Blog Post", "Documentation", "Legal"
-   */
-  badge?: string;
-  /**
-   * Date string shown bottom-right. e.g. new Date(postedAt).toLocaleDateString()
-   */
-  date?: string;
-  /**
-   * Background style. "dark" -> solid #0a0a0a (default) "gradient" -> diagonal dark-to-navy
-   * gradient any string -> treated as a CSS `background` value
-   */
-  background?: "dark" | "gradient" | (string & {});
-  /**
-   * When true, overlays a dashed red PREVIEW border. Useful during development.
-   */
-  preview?: boolean;
+  description?: string | undefined;
+  brand?: string | object | undefined;
+  badge?: string | undefined;
+  date?: string | undefined;
+  background?: "dark" | "gradient" | (string & {}) | undefined;
+  preview?: boolean | undefined;
 }
 
-/**
- * Rendering config shared by `renderOgResponse()` and `renderDefaultOg()`.
- */
 export interface OgRenderConfig {
-  /**
-   * Font to embed -- defaults to `NOTO_SANS`
-   */
-  font?: OgFontConfig;
-  /**
-   * Image width in px -- defaults to 1200
-   */
   width?: number;
-  /**
-   * Image height in px -- defaults to 630
-   */
   height?: number;
 }
 
-// ---------------------------------------------------------------------------
-// Font loading
-// ---------------------------------------------------------------------------
-
-const fontCaches = new Map<string, { regular: ArrayBuffer; bold: ArrayBuffer }>();
-
-/**
- * Fetches an ArrayBuffer with a timeout.
- */
-async function fetchArrayBuffer(url: string, timeoutMs = 5000): Promise<ArrayBuffer> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch font from ${url}: status ${res.status}`);
+function escapeXml(unsafe: string): string {
+  return unsafe.replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "&":
+        return "&amp;";
+      case "'":
+        return "&apos;";
+      case '"':
+        return "&quot;";
+      default:
+        return c;
     }
-    return await res.arrayBuffer();
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  });
 }
 
 /**
- * Fetches and caches the regular + bold TTF buffers for the given font config. Uses a module-level
- * cache keyed on `regularUrl`, so repeated calls within the same Worker lifetime are free after the
- * first fetch.
+ * Builds standard 1200x630 vector SVG Open Graph image markup.
+ * Framework-agnostic, zero runtime dependencies, instant edge rendering.
  */
-export async function loadOgFonts(
-  config: OgFontConfig = NOTO_SANS,
-  timeoutMs = 5000,
-): Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> {
-  const cached = fontCaches.get(config.regularUrl);
-  if (cached) return cached;
-
-  const [regular, bold] = await Promise.all([
-    fetchArrayBuffer(config.regularUrl, timeoutMs),
-    fetchArrayBuffer(config.boldUrl, timeoutMs),
-  ]);
-  const result = { regular, bold };
-  fontCaches.set(config.regularUrl, result);
-  return result;
-}
-
-// ---------------------------------------------------------------------------
-// Default layout builder
-// ---------------------------------------------------------------------------
-
-/**
- * Builds a Takumi-compatible VNode for the default Rimelight OG layout.
- *
- * Consumers that need a fully custom look should build their own VNode and call
- * `renderOgResponse()` directly -- this function is just the house style.
- */
-export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = NOTO_SANS): object {
+export function defaultOgLayout(options: OgLayoutOptions): string {
   const { title, description, brand, badge, date, background = "dark", preview = false } = options;
 
   const MAX_TITLE_LEN = 160;
   const MAX_DESC_LEN = 240;
-  const safeTitle = title.length > MAX_TITLE_LEN ? title.slice(0, MAX_TITLE_LEN - 1) + "…" : title;
-  const safeDescription =
-    description && description.length > MAX_DESC_LEN
-      ? description.slice(0, MAX_DESC_LEN - 1) + "…"
-      : description;
+  const safeTitle = escapeXml(
+    title.length > MAX_TITLE_LEN ? title.slice(0, MAX_TITLE_LEN - 1) + "…" : title,
+  );
+  const safeDescription = description
+    ? escapeXml(
+        description.length > MAX_DESC_LEN
+          ? description.slice(0, MAX_DESC_LEN - 1) + "…"
+          : description,
+      )
+    : "";
 
-  const bg =
-    background === "dark"
-      ? { backgroundColor: "#0a0a0a" }
-      : background === "gradient"
-        ? { background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)" }
-        : { background };
-
-  const isGradient = background !== "dark";
-
-  const brandNode: object =
-    typeof brand === "object" && brand !== null
+  const brandText = escapeXml(
+    typeof brand === "string"
       ? brand
-      : {
-          type: "span",
-          props: {
-            style: {
-              fontSize: "28px",
-              fontWeight: 700,
-              color: "#ffffff",
-              letterSpacing: "-0.02em",
-            },
-            children: brand ?? "",
-          },
-        };
+      : brand && typeof brand === "object"
+        ? "Rimelight"
+        : (brand ?? "Rimelight"),
+  );
 
-  const accentBar: object | null = isGradient
-    ? {
-        type: "div",
-        props: {
-          style: {
-            width: "60px",
-            height: "4px",
-            backgroundColor: "#60a5fa",
-            borderRadius: "2px",
-            marginBottom: "16px",
-          },
-        },
-      }
-    : null;
+  const isGradient = background === "gradient";
+  const bgFill =
+    background === "dark" ? "#0a0a0a" : isGradient ? "url(#bg-gradient)" : escapeXml(background);
 
-  const titleFontSize = isGradient ? "52px" : "56px";
+  const accentBar = isGradient
+    ? `<rect x="80" y="180" width="60" height="4" rx="2" fill="#60a5fa" />`
+    : "";
+
+  const titleFontSize = isGradient ? "52" : "56";
   const descColor = isGradient ? "#94a3b8" : "#a0a0a0";
-  const descFontSize = isGradient ? "22px" : "24px";
+  const descFontSize = isGradient ? "22" : "24";
 
-  const badgeNode: object | null = badge
-    ? isGradient
-      ? {
-          type: "div",
-          props: {
-            style: {
-              padding: "6px 16px",
-              borderRadius: "9999px",
-              backgroundColor: "rgba(96,165,250,0.15)",
-              border: "1px solid rgba(96,165,250,0.3)",
-              fontSize: "14px",
-              fontWeight: 600,
-              color: "#93c5fd",
-            },
-            children: badge,
-          },
-        }
-      : {
-          type: "div",
-          props: {
-            style: {
-              padding: "8px 20px",
-              borderRadius: "9999px",
-              border: "1px solid #333333",
-              fontSize: "16px",
-              fontWeight: 600,
-              color: "#e5e5e5",
-            },
-            children: badge,
-          },
-        }
-    : null;
+  const badgeXml = badge
+    ? (() => {
+        const safeBadge = escapeXml(badge);
+        const badgeWidth = safeBadge.length * 11 + 36;
+        const fill = isGradient ? "rgba(96,165,250,0.15)" : "#1a1a1a";
+        const stroke = isGradient ? "rgba(96,165,250,0.3)" : "#333333";
+        const textColor = isGradient ? "#93c5fd" : "#e5e5e5";
+        return `<g>
+          <rect x="80" y="520" width="${badgeWidth}" height="38" rx="19" fill="${fill}" stroke="${stroke}" stroke-width="1" />
+          <text x="${80 + badgeWidth / 2}" y="544" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="${textColor}">${safeBadge}</text>
+        </g>`;
+      })()
+    : "";
 
-  const dateNode: object | null = date
-    ? {
-        type: "div",
-        props: {
-          style: { fontSize: "16px", color: "#666666" },
-          children: date,
-        },
-      }
-    : null;
+  const dateXml = date
+    ? `<text x="1120" y="545" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#666666">${escapeXml(date)}</text>`
+    : "";
 
-  const previewOverlay: object | null = preview
-    ? {
-        type: "div",
-        props: {
-          style: {
-            position: "absolute",
-            inset: 0,
-            border: "6px dashed #ff4444",
-            pointerEvents: "none",
-          },
-        },
-      }
-    : null;
+  const previewXml = preview
+    ? `<g>
+        <rect x="4" y="4" width="1192" height="622" fill="none" stroke="#ff4444" stroke-width="6" stroke-dasharray="16 8" />
+        <rect x="1030" y="20" width="130" height="38" rx="4" fill="#ff4444" />
+        <text x="1095" y="44" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ffffff" letter-spacing="0.05em">PREVIEW</text>
+      </g>`
+    : "";
 
-  const previewLabel: object | null = preview
-    ? {
-        type: "div",
-        props: {
-          style: {
-            position: "absolute",
-            top: "12px",
-            right: "12px",
-            backgroundColor: "#ff4444",
-            color: "#ffffff",
-            fontSize: "14px",
-            fontWeight: 700,
-            padding: "6px 16px",
-            borderRadius: "4px",
-            letterSpacing: "0.05em",
-          },
-          children: "PREVIEW",
-        },
-      }
-    : null;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a" />
+      <stop offset="100%" stop-color="#1a1a2e" />
+    </linearGradient>
+    <style>
+      .og-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: ${titleFontSize}px; font-weight: 700; fill: #ffffff; letter-spacing: -0.02em; }
+      .og-desc { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: ${descFontSize}px; font-weight: 400; fill: ${descColor}; }
+      .og-brand { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 700; fill: #ffffff; letter-spacing: -0.02em; }
+    </style>
+  </defs>
 
-  return {
-    type: "div",
-    props: {
-      style: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        padding: "56px",
-        color: "#e5e5e5",
-        fontFamily: font.name,
-        position: "relative",
-        overflow: "hidden",
-        ...bg,
-      },
-      children: [
-        {
-          type: "div",
-          props: {
-            style: { display: "flex", alignItems: "center" },
-            children: [brandNode],
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              flexGrow: 1,
-              paddingTop: "24px",
-            },
-            children: [
-              accentBar,
-              {
-                type: "div",
-                props: {
-                  style: {
-                    fontSize: titleFontSize,
-                    fontWeight: 700,
-                    color: "#ffffff",
-                    lineHeight: 1.15,
-                    maxWidth: "950px",
-                  },
-                  children: safeTitle,
-                },
-              },
-              safeDescription
-                ? {
-                    type: "div",
-                    props: {
-                      style: {
-                        fontSize: descFontSize,
-                        fontWeight: 400,
-                        color: descColor,
-                        marginTop: isGradient ? "12px" : "16px",
-                        lineHeight: 1.4,
-                        maxWidth: isGradient ? "800px" : "850px",
-                      },
-                      children: safeDescription,
-                    },
-                  }
-                : null,
-            ].filter(Boolean),
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: isGradient ? "flex-start" : "space-between",
-              gap: "12px",
-              marginTop: "auto",
-            },
-            children: [badgeNode, dateNode].filter(Boolean),
-          },
-        },
-        previewOverlay,
-        previewLabel,
-      ].filter(Boolean),
-    },
-  };
+  <rect width="1200" height="630" fill="${bgFill}" />
+
+  <!-- Brand Row -->
+  <text x="80" y="105" class="og-brand">${brandText}</text>
+
+  <!-- Content -->
+  ${accentBar}
+  <text x="80" y="300" class="og-title">${safeTitle}</text>
+  ${safeDescription ? `<text x="80" y="360" class="og-desc">${safeDescription}</text>` : ""}
+
+  <!-- Footer Row -->
+  ${badgeXml}
+  ${dateXml}
+
+  ${previewXml}
+</svg>`;
 }
 
-// ---------------------------------------------------------------------------
-// Render helpers
-// ---------------------------------------------------------------------------
-
 /**
- * Renders any Takumi VNode to a PNG `Response` with standard OG headers. Use this when you supply
- * your own layout entirely.
- *
- * @example
- *   const vnode = myBrandedLayout({ title, description })
- *   return renderOgResponse(vnode, { font: MY_FONT })
+ * Renders an OG layout to an SVG `Response`.
  */
 export async function renderOgResponse(
-  vnode: object,
-  config: OgRenderConfig = {},
+  options: OgLayoutOptions,
+  _config: OgRenderConfig = {},
 ): Promise<Response> {
-  const { font = NOTO_SANS, width = 1200, height = 630 } = config;
-
-  try {
-    const { renderTakumi } = await import("../takumi");
-    const { regular, bold } = await loadOgFonts(font);
-
-    const pngBuffer = await renderTakumi(vnode, {
-      width,
-      height,
-      fonts: [
-        { name: font.name, data: regular, weight: 400, style: "normal" },
-        { name: font.name, data: bold, weight: 700, style: "normal" },
-      ],
-    });
-
-    return new Response(new Blob([new Uint8Array(pngBuffer)], { type: "image/png" }), {
-      status: 200,
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=31536000, immutable",
-        "CDN-Cache-Control": "public, max-age=31536000",
-      },
-    });
-  } catch (error) {
-    console.error("[OG Render Error]:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Failed to render Open Graph image",
-        message: error instanceof Error ? error.message : String(error),
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
-        },
-      },
-    );
-  }
+  const svg = defaultOgLayout(options);
+  return new Response(svg, {
+    status: 200,
+    headers: {
+      "Content-Type": "image/svg+xml; charset=utf-8",
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "CDN-Cache-Control": "public, max-age=31536000",
+    },
+  });
 }
 
 /**
- * Renders the default OG layout to a PNG `Response`. The 90% case -- use `renderOgResponse()` for
- * full layout control.
- *
- * @example
- *   export const GET: APIRoute = async ({ request }) => {
- *     const url = new URL(request.url)
- *     return renderDefaultOg({
- *       title: url.searchParams.get("title") ?? "Untitled",
- *       description: url.searchParams.get("description") ?? "",
- *       brand: "My Site",
- *       badge: url.searchParams.get("type") ?? ""
- *     })
- *   }
+ * Renders the default OG layout to an SVG `Response`.
  */
 export async function renderDefaultOg(
   options: OgLayoutOptions,
   config: OgRenderConfig = {},
 ): Promise<Response> {
-  const { font = NOTO_SANS } = config;
-  const vnode = defaultOgLayout(options, font);
-  return renderOgResponse(vnode, config);
+  return renderOgResponse(options, config);
 }
 
 export { handleOgRequest, type OgHandlerOptions } from "./handler";

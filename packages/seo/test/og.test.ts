@@ -1,48 +1,56 @@
 import { describe, it, expect } from "vite-plus/test";
-import { defaultOgLayout, NOTO_SANS } from "../src/og/index";
+import { defaultOgLayout, handleOgRequest } from "../src/og/index";
 
 describe("@rimelight/seo defaultOgLayout", () => {
-  it("should construct default dark layout VNode with title and brand", () => {
-    const vnode: any = defaultOgLayout({
+  it("should render clean vector SVG with title and brand", () => {
+    const svg = defaultOgLayout({
       title: "My Amazing Blog Post",
       brand: "Rimelight",
       badge: "Blog",
       description: "A deep dive into testing and safety.",
     });
 
-    expect(vnode.type).toBe("div");
-    expect(vnode.props.style.backgroundColor).toBe("#0a0a0a");
-    expect(vnode.props.style.fontFamily).toBe(NOTO_SANS.name);
-    expect(vnode.props.children).toHaveLength(3); // brand row, content row, footer row
+    expect(typeof svg).toBe("string");
+    expect(svg).toContain("<svg");
+    expect(svg).toContain('viewBox="0 0 1200 630"');
+    expect(svg).toContain("My Amazing Blog Post");
+    expect(svg).toContain("Rimelight");
+    expect(svg).toContain("Blog");
+    expect(svg).toContain("A deep dive into testing and safety.");
   });
 
   it("should truncate overly long titles and descriptions safely", () => {
     const longTitle = "A".repeat(200);
     const longDesc = "B".repeat(300);
 
-    const vnode: any = defaultOgLayout({
+    const svg = defaultOgLayout({
       title: longTitle,
       description: longDesc,
     });
 
-    const titleNode = vnode.props.children[1].props.children[0];
-    const descNode = vnode.props.children[1].props.children[1];
-
-    expect(titleNode.props.children.length).toBe(160);
-    expect(titleNode.props.children.endsWith("\u2026")).toBe(true);
-    expect(descNode.props.children.length).toBe(240);
-    expect(descNode.props.children.endsWith("\u2026")).toBe(true);
+    expect(svg).toContain("…");
   });
 
   it("should support gradient background and preview overlay", () => {
-    const vnode: any = defaultOgLayout({
+    const svg = defaultOgLayout({
       title: "Preview Post",
       background: "gradient",
       preview: true,
     });
 
-    expect(vnode.props.style.background).toContain("linear-gradient");
-    // Contains previewOverlay and previewLabel
-    expect(vnode.props.children.some((c: any) => c?.props?.children === "PREVIEW")).toBe(true);
+    expect(svg).toContain("url(#bg-gradient)");
+    expect(svg).toContain("PREVIEW");
+  });
+
+  it("handleOgRequest should return 200 with image/svg+xml", async () => {
+    const req = new Request("https://example.com/open-graph/card.svg?title=Hello+World&type=Blog");
+    const res = await handleOgRequest(req);
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toContain("image/svg+xml");
+    const text = await res.text();
+    expect(text).toContain("<svg");
+    expect(text).toContain("Hello World");
+    expect(text).toContain("Blog");
   });
 });
