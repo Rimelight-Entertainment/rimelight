@@ -5,17 +5,14 @@ import { activeConfig } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 
 export const construction = (): MiddlewareHandler => async (c, next) => {
-  if (!activeConfig.construction) return next();
-
   const isMode = c.env?.CONSTRUCTION_MODE ?? process.env?.["CONSTRUCTION_MODE"];
-  if (isMode !== "true" && isMode !== true) return next();
+  if (!activeConfig.construction || (isMode !== "true" && isMode !== true)) return next();
 
   const cookieOpts: CookieOptions = {
     httpOnly: true,
     secure: true,
     maxAge: activeConfig.construction.cookieMaxAge!,
   };
-
   const secret =
     activeConfig.construction.passphrase ??
     c.env?.CONSTRUCTION_PASSPHRASE ??
