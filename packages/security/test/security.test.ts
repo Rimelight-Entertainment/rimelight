@@ -575,7 +575,7 @@ describe("Security Middleware Headers", () => {
       expect(nextCalled).toBe(true);
     });
 
-    it("injects Trusted Types and Nonce Sync scripts into <head> via HTMLRewriter", async () => {
+    it("injects csp-nonce meta tag and opt-in Trusted Types policy into <head> via HTMLRewriter", async () => {
       const appended: string[] = [];
       class MockHTMLRewriter {
         on(selector: string, handler: { element: (el: any) => void }) {
@@ -593,6 +593,7 @@ describe("Security Middleware Headers", () => {
       (globalThis as any).HTMLRewriter = MockHTMLRewriter;
 
       try {
+        Object.assign(activeConfig, { trustedTypes: true });
         const middleware = security();
         const req = new Request("https://rimelight.com/");
         const ctx = {
@@ -611,8 +612,7 @@ describe("Security Middleware Headers", () => {
         await middleware(ctx as any, async () => {});
         const headHtml = appended.join("");
         expect(headHtml).toContain('<meta name="csp-nonce"');
-        expect(headHtml).toContain("trustedTypes.createPolicy");
-        expect(headHtml).toContain("initialCspNonce");
+        expect(headHtml).toContain("createPolicy");
       } finally {
         delete (globalThis as any).HTMLRewriter;
       }

@@ -19,8 +19,6 @@ export interface SecurityConfig {
         routes?: (string | RegExp)[] | ((c: Context) => boolean);
       };
   trustedTypes?: boolean;
-  nonceSync?: boolean;
-  devReporter?: boolean;
   crossOriginEmbedderPolicy?:
     | "require-corp"
     | "credentialless"
