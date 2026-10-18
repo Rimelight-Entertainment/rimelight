@@ -38,11 +38,7 @@ export const construction = (): MiddlewareHandler => {
       return next();
     }
 
-    // 3. 404 for subresources (file extension or non-document fetch)
-    const dest = c.req.header("sec-fetch-dest");
-    if (/\.[a-z0-9]+$/i.test(path) || (dest && dest !== "document")) return c.notFound();
-
-    // 4. Form/JSON password submit on construction page
+    // 3. Form/JSON password submit on construction page
     if (c.req.method === "POST" && path.includes(page)) {
       const b: any = await (
         c.req.formData?.() ??
@@ -60,11 +56,15 @@ export const construction = (): MiddlewareHandler => {
         : c.json(ok ? { success: true } : { error: "Invalid credentials" }, ok ? 200 : 401);
     }
 
-    // 5. If on construction page -> render it; otherwise serve fallback or redirect
-    return path.includes(page)
-      ? next()
-      : conf.renderFallback
-        ? c.html(getConstructionFallbackHtml({ redirect: path }), 503)
-        : c.redirect(`${page}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`);
+    // 4. Render construction page if already navigating it
+    if (path.includes(page)) return next();
+
+    // 5. 404 for subresource assets; otherwise serve fallback or redirect
+    const dest = c.req.header("sec-fetch-dest");
+    if (dest ? dest !== "document" : path.includes(".")) return c.notFound();
+
+    return conf.renderFallback
+      ? c.html(getConstructionFallbackHtml({ redirect: path }), 503)
+      : c.redirect(`${page}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`);
   };
 };
