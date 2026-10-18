@@ -8,7 +8,6 @@ export interface ConstructionFallbackHtmlOptions {
   signInButtonLabel?: string | undefined;
   error?: string | undefined;
   redirect?: string | undefined;
-  endpoint?: string | undefined;
 }
 
 export function getConstructionFallbackHtml(options: ConstructionFallbackHtmlOptions = {}): string {
@@ -22,11 +21,9 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackHtmlOpt
     signInButtonLabel = "Unlock Site",
     error,
     redirect = "/",
-    endpoint = "/api/construction-guest",
   } = options;
 
   const escapedRedirect = redirect.replace(/"/g, "&quot;");
-  const escapedEndpoint = endpoint.replace(/"/g, "&quot;");
 
   return `<!doctype html>
 <html lang="en">
@@ -107,7 +104,7 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackHtmlOpt
       <p class="description">${description}</p>
     </div>
     ${error ? `<div class="alert" role="alert">Invalid credentials. Please try again.</div>` : ""}
-    <form class="form" method="POST" action="${escapedEndpoint}">
+    <form class="form" method="POST">
       <input type="hidden" name="redirect" value="${escapedRedirect}" />
       <div class="field">
         <label class="label" for="passphrase">${passphraseLabel}</label>

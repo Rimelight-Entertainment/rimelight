@@ -1,131 +1,117 @@
 import type { MiddlewareHandler } from "hono";
-import {
-  activeConfig,
-  isConstructionGuest,
-  signInConstructionGuest,
-  getConstructionFallbackHtml,
-  CONSTRUCTION_GUEST_COOKIE,
-} from "./runtime";
-
-export { isConstructionGuest, signInConstructionGuest, CONSTRUCTION_GUEST_COOKIE };
+import { activeConfig } from "./runtime";
+import { getConstructionFallbackHtml } from "./fallback";
 
 /**
  * Hono middleware for site maintenance and construction mode gating.
  */
 export const construction = (): MiddlewareHandler => {
-  const raw = activeConfig.construction;
-  const options = typeof raw === "object" && raw !== null ? raw : {};
-  const apiPath = options.apiPath !== undefined ? options.apiPath : "/api/construction-guest";
-  const constructionPath = options.constructionPath ?? "/construction";
+  const conf = typeof activeConfig.construction === "object" ? activeConfig.construction : {};
+  const baseConstructionPath = conf?.constructionPath ?? "/construction";
 
   return async (c, next) => {
+    const env = (c.env || {}) as Record<string, any>;
+    const enabled =
+      env["CONSTRUCTION_MODE"] === "true" ||
+      env["CONSTRUCTION_MODE"] === true ||
+      (typeof process !== "undefined" && process.env?.["CONSTRUCTION_MODE"] === "true");
+
+    const secret =
+      conf?.passphrase ??
+      env["CONSTRUCTION_PASSPHRASE"] ??
+      (typeof process !== "undefined" ? process.env?.["CONSTRUCTION_PASSPHRASE"] : undefined);
+
+    const getConstructionUrl = (targetPath: string) => {
+      const loc = conf?.getLocale
+        ? conf.getLocale(targetPath)
+        : (targetPath.match(/^\/([a-zA-Z]{2}(?:-[a-zA-Z]{2})?)(\/|$)/)?.[1]?.toLowerCase() ?? "en");
+      const base = baseConstructionPath.startsWith("/")
+        ? baseConstructionPath
+        : `/${baseConstructionPath}`;
+      return base.startsWith(`/${loc}/`) || base === `/${loc}` ? base : `/${loc}${base}`;
+    };
+
     const path = c.req.path;
 
-    // 1. Password sign-in endpoint (native form or JSON)
-    if (apiPath && path === apiPath && c.req.method.toUpperCase() === "POST") {
+    // 1. Password unlock (POST directly to the construction page)
+    if (c.req.method.toUpperCase() === "POST" && path.endsWith(baseConstructionPath)) {
       const isForm = (c.req.header("content-type") || "").toLowerCase().includes("form");
       const fd =
-        isForm && typeof c.req.formData === "function"
+        typeof c.req.formData === "function"
           ? await c.req.formData().catch(() => undefined)
           : undefined;
-      const body: any = !fd
-        ? await (c.req.parseBody?.() ?? c.req.json?.() ?? {}).catch(() => ({}))
+      const parsed: any = !fd
+        ? typeof c.req.parseBody === "function"
+          ? await c.req.parseBody().catch(() => ({}))
+          : typeof c.req.json === "function"
+            ? await c.req.json().catch(() => ({}))
+            : {}
         : {};
 
-      const pass = String(fd?.get("passphrase") ?? body?.["passphrase"] ?? "");
-      const remember = fd ? fd.get("rememberMe") !== "false" : body?.["rememberMe"] !== false;
-      const redirect = String(fd?.get("redirect") ?? body?.["redirect"] ?? "/");
+      const pass = String(fd?.get("passphrase") ?? parsed?.passphrase ?? "");
+      const redirect = String(fd?.get("redirect") ?? parsed?.redirect ?? "/");
+      const ok = Boolean(secret && pass === secret);
 
-      const ok = signInConstructionGuest(c, pass, remember);
-      if (isForm) {
-        if (!ok) {
-          const loc = options.getLocale ? options.getLocale(redirect) : "en";
-          const base = constructionPath.startsWith("/") ? constructionPath : `/${constructionPath}`;
-          const targetPath =
-            base.startsWith(`/${loc}/`) || base === `/${loc}` ? base : `/${loc}${base}`;
-          return c.redirect(`${targetPath}?error=invalid&redirect=${encodeURIComponent(redirect)}`);
-        }
-        return c.redirect(redirect);
+      if (ok) {
+        c.header(
+          "Set-Cookie",
+          `rimelight-construction-guest=${secret}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
+          { append: true },
+        );
+        return isForm ? c.redirect(redirect) : c.json({ success: true });
       }
-      return ok ? c.json({ success: true }) : c.json({ error: "Invalid credentials" }, 401);
-    }
 
-    // 2. Check if construction mode is active
-    const envKey = options.modeEnvKey ?? "CONSTRUCTION_MODE";
-    const enabled =
-      c.env?.[envKey] === "true" ||
-      c.env?.[envKey] === true ||
-      (typeof process !== "undefined" &&
-        (process.env[envKey] === "true" || (import.meta as any).env?.[envKey] === "true"));
+      const target = getConstructionUrl(redirect);
+      return isForm
+        ? c.redirect(`${target}?error=invalid&redirect=${encodeURIComponent(redirect)}`)
+        : c.json({ error: "Invalid credentials" }, 401);
+    }
 
     if (!enabled) return next();
 
-    // 3. Block non-document subresource requests when not authorized (prevent redirect loops for scripts/images)
-    const accept = c.req.header("accept");
-    const secFetchDest = c.req.header("sec-fetch-dest");
-    const isDoc =
-      !/\.[a-z0-9]{2,8}$/i.test(path) &&
-      (secFetchDest
-        ? secFetchDest === "document" || secFetchDest === "iframe"
-        : !accept || accept.includes("text/html"));
-
-    // 4. Bypass static files for whitelisted assets (e.g. assets needed by construction page)
-    const isBuildAsset =
+    // 2. Bypass static assets, whitelists, or existing unlocked session
+    if (
       path.startsWith("/assets/") ||
       path.startsWith("/_image") ||
-      path.startsWith("/@fs/") ||
-      path.startsWith("/@vite/") ||
-      path.startsWith("/@id/") ||
-      path === "/favicon.ico";
-
-    if (isBuildAsset) return next();
-
-    if (options.whitelist) {
-      const match =
-        typeof options.whitelist === "function"
-          ? options.whitelist(path)
-          : options.whitelist.some((p: string | RegExp) =>
-              typeof p === "string" ? path.startsWith(p) || path === p : p.test(path),
-            );
-      if (match) return next();
-    }
-
-    // 5. Authorized access check (admin check or signed-in guest cookie)
-    if (
-      (options.isAuthorized && (await options.isAuthorized(c))) ||
-      (await isConstructionGuest(c))
+      path === "/favicon.ico" ||
+      path.startsWith("/@") ||
+      c.req.header("cookie")?.includes(`rimelight-construction-guest=${secret}`) ||
+      (conf?.isAuthorized && (await conf.isAuthorized(c))) ||
+      (conf?.whitelist &&
+        (typeof conf.whitelist === "function"
+          ? conf.whitelist(path)
+          : conf.whitelist.some((w: any) => path.startsWith(w))))
     ) {
       return next();
     }
 
-    if (!isDoc) {
-      return new Response("Not Found", {
-        status: 404,
-        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
-      });
+    // 3. Subresources / static files return 404 instead of redirect loop
+    const dest = c.req.header("sec-fetch-dest");
+    if (/\.[a-z0-9]+$/i.test(path) || (dest && dest !== "document" && dest !== "iframe")) {
+      return typeof c.notFound === "function"
+        ? c.notFound()
+        : new Response("Not Found", {
+            status: 404,
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+          });
     }
 
-    // 6. Allow construction page itself or redirect to it
-    const locMatch = path.match(/^\/([a-zA-Z]{2}(?:-[a-zA-Z]{2})?)(\/|$)/);
-    const locale = options.getLocale
-      ? options.getLocale(path)
-      : (locMatch?.[1]?.toLowerCase() ?? "en");
-    const norm = path.replace(/\/+$/, "") || "/";
-    if (norm === constructionPath || norm === `/${locale}${constructionPath}`) {
+    // 4. If already on the construction page, allow rendering
+    const localizedConstruction = getConstructionUrl(path);
+    if (path === baseConstructionPath || path === localizedConstruction) {
       return next();
     }
 
-    const targetUrl = `/${locale}${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`;
-    if (options.renderFallback) {
-      return new Response(
-        getConstructionFallbackHtml({
-          redirect: new URL(c.req.url).searchParams.get("redirect") || path,
-          endpoint: typeof apiPath === "string" ? apiPath : "/api/construction-guest",
-          error: c.req.url.includes("error=invalid") ? "invalid" : undefined,
-        }),
-        { status: 503, headers: { "Content-Type": "text/html; charset=utf-8" } },
-      );
+    // 5. Fallback HTML or redirect to custom construction page
+    if (conf?.renderFallback) {
+      return new Response(getConstructionFallbackHtml({ redirect: path }), {
+        status: 503,
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
     }
-    return c.redirect(targetUrl);
+
+    return c.redirect(
+      `${localizedConstruction}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`,
+    );
   };
 };

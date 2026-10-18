@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { construction, isConstructionGuest } from "../src/middleware";
+import { construction } from "../src/middleware";
 
 describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
   const createCtx = (path: string) => ({
@@ -53,14 +53,5 @@ describe("@rimelight/security - ReDoS and Route Matching Robustness", () => {
     const res = (await middleware(ctx as any, async () => {})) as Response;
     expect(Date.now() - startTime).toBeLessThan(100);
     expect(res.status).toBe(404);
-  });
-
-  it("evaluates guest cookie verification correctly", async () => {
-    const mockContext = {
-      req: { header: () => undefined },
-      env: { CONSTRUCTION_PASSPHRASE: "pass" },
-    };
-    const isGuest = await isConstructionGuest(mockContext as any);
-    expect(isGuest).toBe(false);
   });
 });

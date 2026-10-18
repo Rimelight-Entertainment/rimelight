@@ -4,22 +4,10 @@ import type { SecurityConfig } from "./types";
 import { fetchRemoteSriManifest } from "./sri";
 import { buildCspHeader, activeConfig } from "./runtime";
 import { ratelimit } from "./ratelimit";
-import {
-  construction,
-  isConstructionGuest,
-  signInConstructionGuest,
-  CONSTRUCTION_GUEST_COOKIE,
-} from "./construction";
+import { construction } from "./construction";
 import { turnstile } from "./turnstile";
 
-export {
-  ratelimit,
-  construction,
-  turnstile,
-  isConstructionGuest,
-  signInConstructionGuest,
-  CONSTRUCTION_GUEST_COOKIE,
-};
+export { ratelimit, construction, turnstile };
 
 declare const HTMLRewriter: any;
 
@@ -140,16 +128,9 @@ function applyHeaders(
  * construction gating, CSP headers, nonces, and SRI injection with Cloudflare HTMLRewriter.
  */
 export const security = (): MiddlewareHandler => {
-  const pluginConfig = activeConfig;
-  const merged: SecurityConfig = {
-    ...pluginConfig,
-    strictDynamic: pluginConfig.strictDynamic ?? true,
-    enforceTls: pluginConfig.enforceTls ?? true,
-  };
-
   const sub = [
-    pluginConfig.ratelimit !== false && ratelimit(),
-    pluginConfig.construction !== false && construction(),
+    activeConfig.ratelimit !== false && ratelimit(),
+    activeConfig.construction !== false && construction(),
   ].filter(Boolean) as MiddlewareHandler[];
 
   return async (c, next) => {
@@ -165,7 +146,7 @@ export const security = (): MiddlewareHandler => {
       (import.meta.env?.PROD === true || process.env["NODE_ENV"] === "production" || isTest);
 
     // Block /dev routes in production if devOnly is enabled
-    if (merged.devOnly !== false && !isDev && c.req.path.startsWith("/dev")) {
+    if (activeConfig.devOnly !== false && !isDev && c.req.path.startsWith("/dev")) {
       return c.notFound();
     }
 
@@ -173,7 +154,7 @@ export const security = (): MiddlewareHandler => {
     const cf = rawReq.cf || (c.env as any)?.cf;
     const tls = cf?.tlsVersion;
 
-    if (merged.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
+    if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
       return new Response("TLS 1.2 or higher is required.", { status: 400 });
     }
 
@@ -192,13 +173,13 @@ export const security = (): MiddlewareHandler => {
     const origin = rawReq.url ? new URL(rawReq.url).origin : undefined;
 
     if (!ct.includes("text/html")) {
-      c.res = applyHeaders(res, merged, origin);
+      c.res = applyHeaders(res, activeConfig, origin);
       return c.res;
     }
 
     if (isDev) {
       const devDirectives = {
-        ...merged.directives,
+        ...activeConfig.directives,
         "default-src": false,
         "script-src": [
           "'self'",
@@ -215,7 +196,7 @@ export const security = (): MiddlewareHandler => {
         "img-src": ["'self'", "data:", "blob:", "https:", "http:"],
       };
 
-      const userScript = merged.directives?.["script-src"];
+      const userScript = activeConfig.directives?.["script-src"];
       const reportScript = userScript
         ? Array.isArray(userScript)
           ? Array.from(new Set([...userScript, "'unsafe-inline'"]))
@@ -225,21 +206,23 @@ export const security = (): MiddlewareHandler => {
               "'self'",
               "'unsafe-inline'",
               "'inline-speculation-rules'",
-              ...(merged.scriptResources || []),
+              ...(activeConfig.scriptResources || []),
             ]),
           );
 
-      const userStyle = merged.directives?.["style-src"];
+      const userStyle = activeConfig.directives?.["style-src"];
       const reportStyle = userStyle
         ? Array.isArray(userStyle)
           ? Array.from(new Set([...userStyle, "'unsafe-inline'"]))
           : userStyle
-        : Array.from(new Set(["'self'", "'unsafe-inline'", ...(merged.styleResources || [])]));
+        : Array.from(
+            new Set(["'self'", "'unsafe-inline'", ...(activeConfig.styleResources || [])]),
+          );
 
       const reportOnlySimulation: SecurityConfig = {
-        ...merged,
+        ...activeConfig,
         directives: {
-          ...merged.directives,
+          ...activeConfig.directives,
           "script-src": reportScript,
           "script-src-attr": ["'unsafe-inline'"],
           "style-src": reportStyle,
@@ -248,7 +231,7 @@ export const security = (): MiddlewareHandler => {
 
       c.res = applyHeaders(
         res,
-        { ...merged, directives: devDirectives },
+        { ...activeConfig, directives: devDirectives },
         origin,
         undefined,
         reportOnlySimulation,
@@ -258,7 +241,10 @@ export const security = (): MiddlewareHandler => {
 
     const nonceBytes = crypto.getRandomValues(new Uint8Array(16));
     const nonce = btoa(String.fromCharCode(...nonceBytes));
-    const activeManifest = await resolveActiveManifest(merged.manifest, merged.resources);
+    const activeManifest = await resolveActiveManifest(
+      activeConfig.manifest,
+      activeConfig.resources,
+    );
 
     if (typeof HTMLRewriter !== "undefined") {
       const rewriter = new HTMLRewriter()
@@ -296,11 +282,11 @@ export const security = (): MiddlewareHandler => {
           },
         });
 
-      c.res = applyHeaders(rewriter.transform(res), merged, origin, nonce);
+      c.res = applyHeaders(rewriter.transform(res), activeConfig, origin, nonce);
       return c.res;
     }
 
-    c.res = applyHeaders(res, merged, origin, nonce);
+    c.res = applyHeaders(res, activeConfig, origin, nonce);
     return c.res;
   };
 };

@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vite-plus/test";
-import { construction, CONSTRUCTION_GUEST_COOKIE } from "../src/middleware";
+import { construction } from "../src/middleware";
 import { activeConfig } from "../src/runtime";
+
+const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest";
 
 describe("@rimelight/security construction middleware", () => {
   beforeEach(() => {
@@ -171,7 +173,7 @@ describe("@rimelight/security construction middleware", () => {
   it("should handle guest sign-in endpoint properly", async () => {
     const middleware = construction();
     const ctx = createMockContext({
-      path: "/api/construction-guest",
+      path: "/construction",
       method: "POST",
       body: { passphrase },
     });
@@ -184,7 +186,7 @@ describe("@rimelight/security construction middleware", () => {
   it("should reject guest sign-in with bad passphrase", async () => {
     const middleware = construction();
     const ctx = createMockContext({
-      path: "/api/construction-guest",
+      path: "/construction",
       method: "POST",
       body: { passphrase: "wrong" },
     });
@@ -201,8 +203,8 @@ describe("@rimelight/security construction middleware", () => {
     // Sign in to generate valid cookie
     const honoCtx = {
       req: {
-        path: "/api/construction-guest",
-        url: "http://localhost/api/construction-guest",
+        path: "/construction",
+        url: "http://localhost/construction",
         method: "POST",
         header: () => undefined,
         json: async () => ({ passphrase }),
@@ -244,7 +246,7 @@ describe("@rimelight/security construction middleware", () => {
 
     for (const testPass of testCases) {
       const ctx = createMockContext({
-        path: "/api/construction-guest",
+        path: "/construction",
         method: "POST",
         body: { passphrase: testPass },
       });
@@ -263,8 +265,8 @@ describe("@rimelight/security construction middleware", () => {
     let redirectedTo: string | null = null;
     const formCtx = {
       req: {
-        path: "/api/construction-guest",
-        url: "http://localhost/api/construction-guest",
+        path: "/construction",
+        url: "http://localhost/construction",
         method: "POST",
         header: (name: string) =>
           name.toLowerCase() === "content-type" ? "application/x-www-form-urlencoded" : undefined,
@@ -291,8 +293,8 @@ describe("@rimelight/security construction middleware", () => {
     let redirectedTo: string | null = null;
     const formCtx = {
       req: {
-        path: "/api/construction-guest",
-        url: "http://localhost/api/construction-guest",
+        path: "/construction",
+        url: "http://localhost/construction",
         method: "POST",
         header: (name: string) =>
           name.toLowerCase() === "content-type" ? "application/x-www-form-urlencoded" : undefined,
@@ -322,6 +324,5 @@ describe("@rimelight/security construction middleware", () => {
     expect(res.status).toBe(503);
     const text = await res.text();
     expect(text).toContain("Under Construction");
-    expect(text).toContain('action="/api/construction-guest"');
   });
 });

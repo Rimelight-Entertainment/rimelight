@@ -2,12 +2,7 @@ import DevLayout from "#layouts/DevLayout";
 import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui";
-import {
-  CONSTRUCTION_GUEST_COOKIE,
-  buildCspHeader,
-  createSecurityHead,
-  activeConfig,
-} from "@rimelight/security";
+import { buildCspHeader, createSecurityHead, activeConfig } from "@rimelight/security";
 
 const DEMO_NONCE = "abC0123def456GHI";
 
@@ -178,18 +173,10 @@ export default function DevSecurityPage() {
       title: "Construction Mode",
       rows: [
         {
-          label: "Guest Cookie",
-          code: `CONSTRUCTION_GUEST_COOKIE`,
-          description:
-            "HMAC-signed guest token set by signInConstructionGuest() when the site is in construction mode.",
-          value: CONSTRUCTION_GUEST_COOKIE,
-        },
-        {
-          label: "Passphrase auth",
-          code: `submitConstructionPassphrase({ passphrase: "••••", rememberMe: true })`,
-          description:
-            "Client helper that POSTs the passphrase to the guest sign-in endpoint for a session cookie.",
-          value: "POST /api/construction-guest",
+          label: "Construction Config",
+          code: `activeConfig.construction`,
+          description: "Active construction mode configuration from security plugin.",
+          value: JSON.stringify(config.construction ?? false),
         },
       ],
     },

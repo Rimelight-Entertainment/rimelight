@@ -40,8 +40,8 @@ export const ConstructionPage: Component = () => {
               </div>
             </Show>
 
-            {/* Native Server-Side Form POST */}
-            <form method="post" action="/api/construction-guest" class="flex flex-col gap-4">
+            {/* Native Server-Side Form POST directly to current page */}
+            <form method="post" class="flex flex-col gap-4">
               <input type="hidden" name="redirect" value={redirect()} />
 
               <RLFormField label={t("page_construction.form_passphrase_label")} required>
