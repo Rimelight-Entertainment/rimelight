@@ -31,10 +31,10 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
               class="h-8 w-auto"
               alt={t("dev_layout.brand")}
             />
-            <span class="font-bold text-highlighted">{t("dev_layout.brand")}</span>
+            <span class="truncate font-bold text-highlighted">{t("dev_layout.brand")}</span>
             <Show when={props.title}>
               <span class="text-toned">/</span>
-              <span class="text-toned">{props.title}</span>
+              <span class="truncate text-toned">{props.title}</span>
             </Show>
           </a>
         }
