@@ -1,17 +1,16 @@
+import type { Component } from "solid-js";
 import type { RLAspectRatioProps } from "./aspect-ratio.types";
 import { RLAspectRatioTheme } from "./aspect-ratio.theme";
-import { createMemo, omit, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
+
+const OMIT_KEYS = ["ratio"] as const;
 
 export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
-  const rest = omit(props, "as", "ratio", "ui", "class", "children");
+  const { Tag: Root, classes, rest } = RLAspectRatioTheme.setup(props, { omit: OMIT_KEYS });
 
   const safeRatio = () => {
     const value = props.ratio ?? 1;
     return Number.isFinite(value) && value > 0 ? value : 1;
   };
-
-  const classes = createMemo(() => RLAspectRatioTheme({ ui: props.ui, class: props.class }));
 
   const spacerHeight = () => (1 / safeRatio()) * 100;
 
@@ -28,8 +27,6 @@ export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
       </div>
     </>
   );
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root class={classes().root} data-slot="root" data-ratio={safeRatio()} {...rest}>

@@ -1,63 +1,39 @@
 import type { RLCalloutProps } from "./callout.types";
 import { RLCalloutTheme } from "./callout.theme";
-import {
-  createMemo,
-  createSignal,
-  createUniqueId,
-  omit,
-  For,
-  Show,
-  type Component,
-  isStatic,
-} from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { createMemo, createSignal, For, Show, untrack, type Component } from "solid-js";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import type { RLButtonProps } from "../button/button.types";
 
+const OMIT_KEYS = [
+  "description",
+  "icon",
+  "avatar",
+  "actions",
+  "close",
+  "closeIcon",
+  "open",
+  "defaultOpen",
+  "onClose",
+  "onOpenChange",
+  "id",
+  "ariaLabel",
+  "ariaLabelledby",
+  "ariaDescribedby",
+  "leading",
+  "iconSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "headerSlot",
+  "avatarSlot",
+  "closeSlot",
+  "actionsSlot",
+] as const;
+
 export const RLCallout: Component<RLCalloutProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "variant",
-    "color",
-    "orientation",
-    "title",
-    "description",
-    "icon",
-    "avatar",
-    "actions",
-    "close",
-    "closeIcon",
-    "open",
-    "defaultOpen",
-    "onClose",
-    "onOpenChange",
-    "theme",
-    "ui",
-    "class",
-    "id",
-    "ariaLabel",
-    "ariaLabelledby",
-    "ariaDescribedby",
-    "children",
-    "leading",
-    "iconSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "headerSlot",
-    "avatarSlot",
-    "closeSlot",
-    "actionsSlot",
-  );
-
-  const [internalOpen, setInternalOpen] = createSignal(props.defaultOpen ?? true);
+  const [internalOpen, setInternalOpen] = createSignal(untrack(() => props.defaultOpen ?? true));
   const isOpen = () => (props.open !== undefined ? props.open : internalOpen());
-
-  const calloutId = props.id || `rl-callout-${createUniqueId()}`;
-  const titleId = `${calloutId}-title`;
-  const descriptionId = `${calloutId}-description`;
 
   const hasTitle = () => Boolean(props.title !== undefined || props.titleSlot !== undefined);
   const hasDescription = () =>
@@ -78,16 +54,18 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
     );
   const hasClose = () => Boolean(props.closeSlot !== undefined || props.close);
 
-  const classes = createMemo(() =>
-    RLCalloutTheme({
-      variant: props.variant ?? "solid",
-      color: props.color ?? "primary",
-      orientation: props.orientation ?? "vertical",
-      title: hasTitle(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const {
+    Tag: Root,
+    classes,
+    rest,
+    id: calloutId,
+  } = RLCalloutTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ title: hasTitle() }),
+  });
+
+  const titleId = () => `${calloutId()}-title`;
+  const descriptionId = () => `${calloutId()}-description`;
 
   const handleClose = (e?: MouseEvent) => {
     e?.stopPropagation();
@@ -111,15 +89,13 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
       : base;
   });
 
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
-
   const rootProps = () => ({
-    id: calloutId,
+    id: calloutId(),
     "data-slot": "root",
     "data-orientation": props.orientation ?? "vertical",
     role: "alert" as const,
-    "aria-labelledby": hasTitle() ? titleId : props.ariaLabelledby,
-    "aria-describedby": hasDescription() ? descriptionId : props.ariaDescribedby,
+    "aria-labelledby": hasTitle() ? titleId() : props.ariaLabelledby,
+    "aria-describedby": hasDescription() ? descriptionId() : props.ariaDescribedby,
     "aria-label": !hasTitle() ? props.ariaLabel : undefined,
     class: classes().root,
     "data-theme": props.theme,
@@ -172,7 +148,7 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
           {/* Body / Content Wrapper */}
           <div class={classes().wrapper} data-slot="wrapper">
             <Show when={hasTitle()}>
-              <div id={titleId} class={classes().title} data-slot="title">
+              <div id={titleId()} class={classes().title} data-slot="title">
                 {props.titleSlot ?? props.title}
               </div>
             </Show>
@@ -180,7 +156,7 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
             {props.headerSlot}
 
             <Show when={hasDescription()}>
-              <div id={descriptionId} class={classes().description} data-slot="description">
+              <div id={descriptionId()} class={classes().description} data-slot="description">
                 {props.descriptionSlot ?? props.description ?? props.children}
               </div>
             </Show>

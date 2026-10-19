@@ -1,4 +1,14 @@
-import type { ClassValue, ThemeConfig } from "./types";
+import {
+  createMemo,
+  createUniqueId,
+  isStatic,
+  omit,
+  untrack,
+  type Accessor,
+  type Component,
+} from "solid-js";
+import { dynamic, type ValidComponent } from "@solidjs/web";
+import type { BaseThemeProps, ClassValue, InferThemeVariants, ThemeConfig, ThemeUI } from "./types";
 import { getUIConfig } from "./runtime";
 
 function toVal(val: ClassValue): string {
@@ -30,8 +40,15 @@ export function cx(...args: ClassValue[]): string {
 
 type SlotEntry<S extends string> = readonly [slot: S, cls: string];
 
+function normalizeKey(val: unknown): string | undefined {
+  if (val === undefined || val === null) return undefined;
+  if (typeof val === "string") return val;
+  if (typeof val === "number" || typeof val === "boolean") return String(val);
+  return undefined;
+}
+
 interface CompiledCV<S extends string> {
-  matchers: Array<{ key: string; exp: any }>;
+  matchers: Array<{ key: string; exp: string | string[] }>;
   entries: SlotEntry<S>[];
 }
 
@@ -40,6 +57,7 @@ interface CompiledTheme<S extends string> {
   actualRootSlot: S;
   autoColor: boolean;
   defaultVariants: Record<string, any>;
+  normalizedDefaults: Record<string, string | undefined>;
   compiledCV: CompiledCV<S>[];
   baseMap: Record<S, string>;
   variants: Record<string, Record<string, SlotEntry<S>[]>>;
@@ -62,9 +80,11 @@ function compileCompoundVariants<S extends string>(
       if (resolved) entries.push([slot, resolved]);
     }
     if (!entries.length) continue;
-    const matchers: Array<{ key: string; exp: any }> = [];
+    const matchers: Array<{ key: string; exp: string | string[] }> = [];
     for (const k in rest) {
-      matchers.push({ key: k, exp: rest[k] });
+      const rawExp = rest[k];
+      const exp = Array.isArray(rawExp) ? rawExp.map((v) => String(v)) : String(rawExp);
+      matchers.push({ key: k, exp });
     }
     result.push({ matchers, entries });
   }
@@ -72,8 +92,8 @@ function compileCompoundVariants<S extends string>(
 }
 
 function compileTheme<S extends string>(
-  baseConfig: ThemeConfig<S>,
-  customConfig?: ThemeConfig<string>,
+  baseConfig: ThemeConfig<S, any>,
+  customConfig?: ThemeConfig<string, any>,
 ): CompiledTheme<S> {
   const slots = (customConfig?.slots ?? baseConfig.slots ?? ["root" as S]) as readonly S[];
   const actualRootSlot = (slots.includes("root" as S) ? "root" : slots[0] || "root") as S;
@@ -83,6 +103,10 @@ function compileTheme<S extends string>(
     ...baseConfig.defaultVariants,
     ...customConfig?.defaultVariants,
   };
+  const normalizedDefaults: Record<string, string | undefined> = {};
+  for (const k in defaultVariants) {
+    normalizedDefaults[k] = normalizeKey(defaultVariants[k]);
+  }
 
   const baseMap = {} as Record<S, string>;
   for (let i = 0; i < slots.length; i++) {
@@ -150,6 +174,7 @@ function compileTheme<S extends string>(
     actualRootSlot,
     autoColor,
     defaultVariants,
+    normalizedDefaults,
     compiledCV,
     baseMap,
     variants,
@@ -157,8 +182,111 @@ function compileTheme<S extends string>(
   };
 }
 
-export function defineTheme<const S extends string>(name: string, themeConfig: ThemeConfig<S>) {
+export interface ThemeSetupOptions<T extends Record<string, any>, K extends keyof T = never> {
+  /**
+   * Default HTML tag or component when `props.as` is not provided, or a reactive
+   * accessor returning the fallback tag (e.g. `() => isInteractive() ? "a" : "div"`).
+   * @default "div"
+   */
+  as?: ValidComponent | (() => ValidComponent);
+  /**
+   * Additional component-specific prop keys to strip from `rest` (on top of
+   * `"as"`, `"ui"`, `"class"`, `"children"`, `"theme"`, and all theme variant keys).
+   */
+  omit?: readonly K[];
+  /**
+   * Optional reactive accessor for computed variant overrides.
+   */
+  variants?: () => Record<string, any>;
+  /**
+   * Optional prefix (e.g. `"rl-card"`) to generate a hydration-safe reactive `id()`
+   * accessor (`() => props.id || "${idPrefix}-${createUniqueId()}"`).
+   */
+  idPrefix?: string;
+}
+
+export interface ThemeSetupResult<
+  S extends string,
+  T extends Record<string, any>,
+  K extends keyof T = never,
+> {
+  Tag: Component<any>;
+  classes: Accessor<Record<S, string>>;
+  rest: Omit<T, "as" | "ui" | "class" | "children" | "theme" | K>;
+  id: Accessor<string>;
+}
+
+export interface ThemeResolver<
+  S extends string = string,
+  V extends Record<string, any> = Record<string, any>,
+> {
+  (props?: any, overrides?: Record<string, any>): Record<S, string>;
+  readonly $slots?: S;
+  readonly $variants?: V;
+  /**
+   * One-line component setup returning `{ Tag, classes, rest, id }`.
+   */
+  setup: <T extends Record<string, any>, K extends keyof T = never>(
+    props: T,
+    options?: ThemeSetupOptions<T, K>,
+  ) => ThemeSetupResult<S, T, K>;
+  /**
+   * Creates a reactive `createMemo` of resolved slot classes from component `props`
+   * and optional computed variant overrides.
+   */
+  use: (props: any, overrides?: () => Record<string, any>) => Accessor<Record<S, string>>;
+  /**
+   * Returns a reactive `omit(props, ...)` view that automatically strips `"as"`, `"ui"`,
+   * `"class"`, `"children"`, `"theme"`, all theme variant keys, plus any `extraKeys`.
+   */
+  omit: <T extends Record<string, any>, K extends keyof T = never>(
+    props: T,
+    ...extraKeys: K[]
+  ) => Omit<T, "as" | "ui" | "class" | "children" | "theme" | K>;
+  /**
+   * Creates a polymorphic root component (`dynamic`) for `props.as ?? defaultTag`,
+   * automatically applying `{ static: isStatic(props, "as") }` inside `untrack`.
+   */
+  tag: (
+    props: { as?: ValidComponent; [key: string]: unknown },
+    defaultTag?: ValidComponent | (() => ValidComponent),
+  ) => Component<any>;
+  /**
+   * Creates a hydration-safe, reactive ID accessor (`() => props.id || "${prefix}-${uid}"`).
+   * Calls `createUniqueId()` unconditionally during component setup so SSR hydration counters
+   * never drift, while reading `props.id` lazily inside the accessor so reactive IDs track.
+   */
+  id: (
+    props: { id?: string | undefined; [key: string]: unknown },
+    prefix?: string,
+  ) => Accessor<string>;
+}
+
+/**
+ * Infers the full component props type (`as`, `ui` with exact slot names, `class`, `theme`,
+ * `children`, plus all variant and `color` props) directly from a `defineTheme(...)` resolver.
+ */
+export type InferThemeProps<R> =
+  R extends ThemeResolver<infer S, infer V> ? BaseThemeProps<S> & InferThemeVariants<V> : never;
+
+export type InferThemeUI<R> = R extends ThemeResolver<infer S, any> ? ThemeUI<S> : never;
+
+const BASE_OMIT_KEYS = ["as", "ui", "class", "children", "theme"] as const;
+
+export function defineTheme<
+  const S extends string,
+  const V extends Record<string, any> = Record<string, any>,
+>(name: string, themeConfig: ThemeConfig<S, V>): ThemeResolver<S, V> {
   const staticCompiled = compileTheme(themeConfig);
+  const defaultOmitKeys = Array.from(
+    new Set([
+      ...BASE_OMIT_KEYS,
+      ...staticCompiled.variantKeys,
+      ...(staticCompiled.autoColor ? ["color"] : []),
+    ]),
+  );
+  let cachedExtraRef: readonly PropertyKey[] | undefined;
+  let cachedMergedOmitKeys: PropertyKey[] | undefined;
 
   let cachedCustomRef: ThemeConfig<string> | undefined;
   let cachedCompiled: CompiledTheme<S> = staticCompiled;
@@ -171,14 +299,14 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     return cachedCompiled;
   };
 
-  return (props: any = {}): Record<S, string> => {
+  const resolve = (props: any = {}, overrides?: Record<string, any>): Record<S, string> => {
     const currentConfig = getUIConfig();
     const custom = currentConfig?.components?.themes?.[name];
     const {
       slots,
       actualRootSlot,
       autoColor,
-      defaultVariants,
+      normalizedDefaults,
       compiledCV,
       baseMap,
       variants,
@@ -187,8 +315,9 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
     if (currentConfig?.unstyled) {
       const res = {} as Record<S, string>;
-      const rootBase = props.class ? toVal(props.class) : "";
-      const ui = props.ui;
+      const rawClass = overrides && "class" in overrides ? overrides["class"] : props.class;
+      const rootBase = rawClass ? toVal(rawClass) : "";
+      const ui = overrides && "ui" in overrides ? overrides["ui"] : props.ui;
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i]!;
         const base = slot === actualRootSlot ? rootBase : "";
@@ -209,8 +338,9 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
     for (let k = 0; k < variantKeys.length; k++) {
       const key = variantKeys[k]!;
-      const selected = props[key] !== undefined ? props[key] : defaultVariants[key];
-      const entries = selected != null ? variants[key]?.[selected] : undefined;
+      const rawVal = overrides && key in overrides ? overrides[key] : props[key];
+      const selected = rawVal !== undefined ? normalizeKey(rawVal) : normalizedDefaults[key];
+      const entries = selected !== undefined ? variants[key]?.[selected] : undefined;
       if (entries) {
         for (let i = 0; i < entries.length; i++) {
           const [s, cls] = entries[i]!;
@@ -224,8 +354,9 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       let match = true;
       for (let m = 0; m < matchers.length; m++) {
         const { key, exp } = matchers[m]!;
-        const actual = props[key] !== undefined ? props[key] : defaultVariants[key];
-        if (Array.isArray(exp) ? !exp.includes(actual) : actual !== exp) {
+        const rawVal = overrides && key in overrides ? overrides[key] : props[key];
+        const actual = rawVal !== undefined ? normalizeKey(rawVal) : normalizedDefaults[key];
+        if (actual === undefined || (Array.isArray(exp) ? !exp.includes(actual) : actual !== exp)) {
           match = false;
           break;
         }
@@ -239,22 +370,25 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     }
 
     if (autoColor) {
-      const color = props.color ?? defaultVariants["color"];
+      const color =
+        (overrides && "color" in overrides ? overrides["color"] : props.color) ??
+        normalizedDefaults["color"];
       if (color) {
         const rootCls = res[actualRootSlot];
         res[actualRootSlot] = rootCls ? `${rootCls} rl-color-${color}` : `rl-color-${color}`;
       }
     }
 
-    if (props.class) {
-      const extra = toVal(props.class);
+    const rawClass = overrides && "class" in overrides ? overrides["class"] : props.class;
+    if (rawClass) {
+      const extra = toVal(rawClass);
       if (extra) {
         const rootCls = res[actualRootSlot];
         res[actualRootSlot] = rootCls ? `${rootCls} ${extra}` : extra;
       }
     }
 
-    const ui = props.ui;
+    const ui = overrides && "ui" in overrides ? overrides["ui"] : props.ui;
     if (ui) {
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i]!;
@@ -272,4 +406,64 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
     return res;
   };
+
+  const omitWithList = (props: any, extra?: readonly PropertyKey[]) => {
+    if (!extra?.length) {
+      return omit(props, ...(defaultOmitKeys as any));
+    }
+    if (extra === cachedExtraRef && cachedMergedOmitKeys) {
+      return omit(props, ...(cachedMergedOmitKeys as any));
+    }
+    const merged = [...defaultOmitKeys, ...extra];
+    cachedExtraRef = extra;
+    cachedMergedOmitKeys = merged;
+    return omit(props, ...(merged as any));
+  };
+
+  resolve.use = (props: any, overrides?: () => Record<string, any>) =>
+    createMemo(() => resolve(props, overrides?.()));
+
+  resolve.omit = <T extends Record<string, any>, K extends keyof T = never>(
+    props: T,
+    ...extraKeys: K[]
+  ) => omitWithList(props, extraKeys) as any;
+
+  resolve.tag = (
+    props: { as?: ValidComponent; [key: string]: unknown },
+    defaultTag: ValidComponent | (() => ValidComponent) = "div",
+  ) =>
+    typeof defaultTag === "function"
+      ? dynamic(() => props.as ?? (defaultTag as () => ValidComponent)())
+      : dynamic(() => props.as ?? defaultTag, {
+          static: untrack(() => isStatic(props, "as")),
+        });
+
+  resolve.id = (
+    props: { id?: string | undefined; [key: string]: unknown },
+    prefix = `rl-${name}`,
+  ): Accessor<string> => {
+    const uid = createUniqueId();
+    const fallback = prefix ? `${prefix}-${uid}` : uid;
+    return () => (props.id as string | undefined) || fallback;
+  };
+
+  resolve.setup = <T extends Record<string, any>, K extends keyof T = never>(
+    props: T,
+    options?: ThemeSetupOptions<T, K>,
+  ): ThemeSetupResult<S, T, K> => {
+    let idAccessor: Accessor<string> | undefined;
+    return {
+      Tag: resolve.tag(props, options?.as),
+      classes: resolve.use(props, options?.variants),
+      rest: omitWithList(props, options?.omit) as any,
+      get id() {
+        if (!idAccessor) {
+          idAccessor = resolve.id(props as any, options?.idPrefix);
+        }
+        return idAccessor;
+      },
+    };
+  };
+
+  return resolve;
 }

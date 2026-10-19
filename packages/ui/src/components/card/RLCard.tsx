@@ -1,50 +1,49 @@
+import { Show, type Component } from "solid-js";
 import type { RLCardProps } from "./card.types";
 import { RLCardTheme } from "./card.theme";
-import { createMemo, createUniqueId, omit, Show, type Component } from "solid-js";
-import { dynamic } from "@solidjs/web";
+
+const OMIT_KEYS = [
+  "title",
+  "description",
+  "mediaSrc",
+  "overlaySlot",
+  "href",
+  "target",
+  "rel",
+  "id",
+  "role",
+  "ariaLabel",
+  "ariaLabelledby",
+  "ariaDescribedby",
+  "header",
+  "headerSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "body",
+  "bodySlot",
+  "footer",
+  "footerSlot",
+  "media",
+  "mediaSlot",
+] as const;
 
 export const RLCard: Component<RLCardProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "title",
-    "description",
-    "variant",
-    "mediaSrc",
-    "overlay",
-    "overlaySlot",
-    "href",
-    "target",
-    "rel",
-    "id",
-    "role",
-    "ariaLabel",
-    "ariaLabelledby",
-    "ariaDescribedby",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "header",
-    "headerSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "body",
-    "bodySlot",
-    "footer",
-    "footerSlot",
-    "media",
-    "mediaSlot",
-  );
-
-  const cardId = props.id || `rl-card-${createUniqueId()}`;
-  const titleId = `${cardId}-title`;
-  const descriptionId = `${cardId}-description`;
-
   const isInteractive = () => Boolean(props.href);
   const isOverlay = () => Boolean(props.overlaySlot !== undefined || props.overlay);
 
-  const Tag = dynamic(() => props.as ?? (isInteractive() ? "a" : "div"));
+  const {
+    Tag,
+    classes,
+    rest,
+    id: cardId,
+  } = RLCardTheme.setup(props, {
+    as: () => (isInteractive() ? "a" : "div"),
+    omit: OMIT_KEYS,
+    variants: () => ({ overlay: isOverlay() }),
+  });
+
+  const titleId = () => `${cardId()}-title`;
+  const descriptionId = () => `${cardId()}-description`;
 
   const hasHeaderSlot = () => Boolean(props.headerSlot !== undefined || props.header !== undefined);
   const hasTitle = () => Boolean(props.titleSlot !== undefined || props.title !== undefined);
@@ -62,15 +61,6 @@ export const RLCard: Component<RLCardProps> = (props) => {
       props.mediaSlot !== undefined || props.media !== undefined || props.mediaSrc !== undefined,
     );
 
-  const classes = createMemo(() =>
-    RLCardTheme({
-      variant: props.variant ?? "outline",
-      overlay: isOverlay(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const linkHref = () => props.href;
   const linkRel = () =>
     props.rel ?? (props.target === "_blank" ? "noopener noreferrer" : undefined);
@@ -81,8 +71,8 @@ export const RLCard: Component<RLCardProps> = (props) => {
       class={classes().root}
       data-slot="root"
       role={props.role}
-      aria-labelledby={props.ariaLabelledby ?? (hasTitle() ? titleId : undefined)}
-      aria-describedby={props.ariaDescribedby ?? (hasDescription() ? descriptionId : undefined)}
+      aria-labelledby={props.ariaLabelledby ?? (hasTitle() ? titleId() : undefined)}
+      aria-describedby={props.ariaDescribedby ?? (hasDescription() ? descriptionId() : undefined)}
       aria-label={props.ariaLabel}
       href={linkHref()}
       target={props.target}
@@ -124,13 +114,13 @@ export const RLCard: Component<RLCardProps> = (props) => {
                   fallback={
                     <>
                       <Show when={hasTitle()}>
-                        <div id={titleId} class={classes().title} data-slot="title">
+                        <div id={titleId()} class={classes().title} data-slot="title">
                           {props.titleSlot ?? props.title}
                         </div>
                       </Show>
                       <Show when={hasDescription()}>
                         <div
-                          id={descriptionId}
+                          id={descriptionId()}
                           class={classes().description}
                           data-slot="description"
                         >
@@ -169,12 +159,12 @@ export const RLCard: Component<RLCardProps> = (props) => {
             fallback={
               <>
                 <Show when={hasTitle()}>
-                  <div id={titleId} class={classes().title} data-slot="title">
+                  <div id={titleId()} class={classes().title} data-slot="title">
                     {props.titleSlot ?? props.title}
                   </div>
                 </Show>
                 <Show when={hasDescription()}>
-                  <div id={descriptionId} class={classes().description} data-slot="description">
+                  <div id={descriptionId()} class={classes().description} data-slot="description">
                     {props.descriptionSlot ?? props.description}
                   </div>
                 </Show>

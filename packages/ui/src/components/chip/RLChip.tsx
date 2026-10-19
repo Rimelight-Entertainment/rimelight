@@ -1,45 +1,13 @@
+import { Show, type Component } from "solid-js";
 import type { RLChipProps } from "./chip.types";
 import { RLChipTheme } from "./chip.theme";
-import { createMemo, omit, Show, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
+
+const OMIT_KEYS = ["text", "show", "content", "contentSlot"] as const;
 
 export const RLChip: Component<RLChipProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "text",
-    "standalone",
-    "show",
-    "theme",
-    "color",
-    "size",
-    "position",
-    "inset",
-    "ui",
-    "class",
-    "children",
-    "content",
-    "contentSlot",
-  );
-
-  const isStandalone = () => Boolean(props.standalone);
-  const isInset = () => Boolean(props.inset);
-
-  const classes = createMemo(() =>
-    RLChipTheme({
-      color: props.color ?? "primary",
-      size: props.size ?? "md",
-      position: props.position ?? "top-right",
-      inset: isInset(),
-      standalone: isStandalone(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { Tag: Root, classes, rest } = RLChipTheme.setup(props, { omit: OMIT_KEYS });
 
   const isVisible = () => props.show ?? true;
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const renderContent = () => {
     if (props.contentSlot !== undefined && props.contentSlot !== null) {

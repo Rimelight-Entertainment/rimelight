@@ -1,3 +1,4 @@
+import type { JSX, ValidComponent } from "@solidjs/web";
 import type { UserConfig } from "unocss";
 import type { RimelightIcons } from "./icons";
 import type { PALETTES } from "./preset";
@@ -16,16 +17,56 @@ export type ClassValue =
   | { [key: string]: any }
   | ClassValue[];
 
-export interface ThemeConfig<S extends string = string> {
+export type SlotOverride = ClassValue | ((base: string) => string);
+
+export type ThemeUI<S extends string = string> = Partial<Record<S, SlotOverride>>;
+
+export interface ThemeConfig<
+  S extends string = string,
+  V extends Record<string, any> = Record<string, any>,
+> {
   slots?: readonly S[] | S[];
   base?: Partial<Record<S, ClassValue>>;
-  variants?: Record<string, any>;
+  variants?: V;
   compoundVariants?: Array<
     Record<string, any> & {
       class?: Partial<Record<S, ClassValue>>;
     }
   >;
   defaultVariants?: Record<string, any>;
+}
+
+type InferVariantValue<Group> = Group extends "auto"
+  ? ThemeColor
+  : Group extends Record<string, any>
+    ? [keyof Group] extends ["true" | "false"]
+      ? boolean
+      : keyof Group & string
+    : unknown;
+
+export type InferThemeVariants<V extends Record<string, any>> = {
+  [K in keyof V & string]?: InferVariantValue<V[K]> | undefined;
+};
+
+export interface BaseThemeProps<S extends string = string> {
+  /**
+   * The element or component this component should render as.
+   */
+  as?: ValidComponent;
+  /**
+   * Slot-specific CSS class overrides.
+   */
+  ui?: ThemeUI<S>;
+  /**
+   * Additional CSS classes to apply to the root element.
+   */
+  class?: ClassValue;
+  /**
+   * Optional theme override (`"light"` or `"dark"`).
+   */
+  theme?: Theme | (string & {});
+  children?: JSX.Element;
+  [key: string]: unknown;
 }
 
 export type ColorModeInput =
