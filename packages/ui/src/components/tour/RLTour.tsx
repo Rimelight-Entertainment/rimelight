@@ -1,16 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLTourProps } from "./tour.types";
 import { RLTourTheme } from "./tour.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLTour: Component<RLTourProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() =>
-    RLTourTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLTourTheme.setup(props);
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>
