@@ -66,7 +66,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
           New: Rimelight v2 is out
         </RLBanner>
 
-        <AppHeader stackIndex={1} session={props.session} />
+        <AppHeader stackIndex={0} session={props.session} />
 
         <RLMain id="main-content" class="flex-1">
           {props.children}

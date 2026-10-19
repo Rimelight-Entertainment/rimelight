@@ -31,7 +31,7 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
   const contain = () => props.contain ?? true;
   const sticky = () => props.sticky ?? true;
   const fixed = () => props.fixed ?? false;
-  const stackIndex = () => props.stackIndex ?? 1;
+  const stackIndex = () => props.stackIndex ?? 0;
   const hideOnScroll = () => props.hideOnScroll ?? false;
   const layerType = () => props.layerType ?? "header";
   const isBanner = () => layerType() === "banner";

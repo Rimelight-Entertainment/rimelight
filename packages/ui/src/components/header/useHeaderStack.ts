@@ -87,9 +87,7 @@ export function useHeaderStack() {
 
     const orderOpt = options.order;
     const orderAccessor: () => number =
-      typeof orderOpt === "function"
-        ? () => orderOpt() ?? (typeAccessor() === "banner" ? 0 : 1)
-        : () => orderOpt ?? (typeAccessor() === "banner" ? 0 : 1);
+      typeof orderOpt === "function" ? () => orderOpt() ?? 0 : () => orderOpt ?? 0;
 
     const stickyOpt = options.sticky;
     const stickyAccessor: () => boolean =

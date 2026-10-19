@@ -70,7 +70,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
           {t("app_layout.skipToContent") || "Skip to content"}
         </a>
 
-        {!props.minimal && <AppHeader stackIndex={1} session={props.session} />}
+        {!props.minimal && <AppHeader stackIndex={0} session={props.session} />}
 
         <RLMain id="main-content" class="flex-1">
           {props.children}

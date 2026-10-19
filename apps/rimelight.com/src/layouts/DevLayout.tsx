@@ -1,10 +1,8 @@
 import { type Component, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import AppLayout from "#layouts/AppLayout";
-import { getLocaleUrl } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 import { RLContainer, RLHeader, RLLogo } from "@rimelight/ui";
-
-export const DEV_BRAND = "Rimelight Developer Workspace";
 
 export interface DevLayoutProps {
   title?: string;
@@ -16,31 +14,33 @@ export interface DevLayoutProps {
 export const DevLayout: Component<DevLayoutProps> = (props) => {
   return (
     <AppLayout
-      title={`${props.title ?? DEV_BRAND} | Dev`}
+      title={`${props.title ?? t("dev_layout.brand")} | Dev`}
       description={props.description}
       noindex={true}
     >
       <RLHeader
-        stackIndex={2}
+        stackIndex={1}
         fixed={true}
         class="bg-primary-400"
         left={
-          <a href={getLocaleUrl("/dev")} class="flex flex-row items-center gap-3 min-w-0">
-            <RLLogo as="span" variant="logomark" mode="color" class="h-5 w-auto" alt={DEV_BRAND} />
-            <span class="font-mono text-xs font-bold leading-none text-highlighted">
-              {DEV_BRAND}
-            </span>
+          <a href={getLocaleUrl("/dev")} class="flex flex-row items-center gap-sm min-w-0">
+            <RLLogo
+              as="span"
+              variant="logomark"
+              mode="color"
+              class="h-8 w-auto"
+              alt={t("dev_layout.brand")}
+            />
+            <span class="font-bold text-highlighted">{t("dev_layout.brand")}</span>
             <Show when={props.title}>
-              <span class="font-mono text-xs leading-none text-muted/40">/</span>
-              <span class="truncate font-mono text-xs leading-none text-muted">{props.title}</span>
+              <span class="text-toned">/</span>
+              <span class="text-toned">{props.title}</span>
             </Show>
           </a>
         }
-        right={<div class="flex items-center gap-2">{props.actions}</div>}
+        right={<div class="flex items-center gap-sm">{props.actions}</div>}
       />
       <RLContainer class="py-xl">{props.children}</RLContainer>
     </AppLayout>
   );
 };
-
-export default DevLayout;

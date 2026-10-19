@@ -79,6 +79,9 @@
     "sections_cta_actions_createAccount": "Criar conta",
     "sections_cta_actions_exploreCareers": "Explorar carreiras"
   },
+  "dev_layout": {
+    "brand": "Rimelight Developer Workspace"
+  },
   "dev_localization": {
     "title": "Localização",
     "description": "Validando a reescrita de URL de i18n, parâmetros de rota e sincronização reativa do RLLocaleSelector.",

@@ -838,6 +838,9 @@
     "form_remember_me_label": "Remember me",
     "form_sign_in_button": "Sign In"
   },
+  "dev_layout": {
+    "brand": "Rimelight Developer Workspace"
+  },
   "dev_localization": {
     "title": "Localization",
     "description": "Validating i18n URL rewriting, router params, and RLLocaleSelector reactive sync.",

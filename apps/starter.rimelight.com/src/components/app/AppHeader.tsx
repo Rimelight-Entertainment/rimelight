@@ -176,7 +176,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   return (
     <RLHeader
       fixed={true}
-      stackIndex={props.stackIndex ?? 1}
+      stackIndex={props.stackIndex ?? 0}
       data-theme="dark"
       class="scroll-header bg-black left-1/2"
       left={
