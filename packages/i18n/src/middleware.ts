@@ -1,12 +1,9 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { MiddlewareHandler } from "hono";
-import { activeConfig, registerStoreGetter, type LocaleStore } from "./runtime";
+import { activeConfig } from "./runtime";
 
-const storage = new AsyncLocalStorage<LocaleStore>();
-registerStoreGetter(() => storage.getStore());
-
-export const withLocale = <R>(locale: string, fn: () => R): R =>
-  storage.run({ locale, translations: activeConfig.translations[locale] }, fn);
+const storage = new AsyncLocalStorage<string>();
+activeConfig.getLocale = () => storage.getStore();
 
 /**
  * Hono i18n middleware for locale resolution, route redirection,
@@ -50,5 +47,5 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
       ? !prefix && `/${locale}${pathname}`
       : prefix === activeConfig.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
 
-  return target ? c.redirect(`${target}${search}`, 302) : withLocale(locale, next);
+  return target ? c.redirect(`${target}${search}`, 302) : storage.run(locale, next);
 };

@@ -1,17 +1,6 @@
 import { config } from "virtual:rimelight-i18n";
 import type { TFunction } from "./types";
 
-export interface LocaleStore {
-  locale: string;
-  translations?: Record<string, unknown> | undefined;
-}
-
-let storeGetter: (() => LocaleStore | undefined) | undefined;
-
-export const registerStoreGetter = (getter: () => LocaleStore | undefined): void => {
-  storeGetter = getter;
-};
-
 const translations: Record<string, Record<string, unknown>> = Object.fromEntries(
   Object.entries(config?.translations ?? {}).map(([p, d]) => [
     p.replace(/^.*[\\/]|\.json$/g, ""),
@@ -28,6 +17,7 @@ export const activeConfig = {
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
   skipPaths: [...(config?.skipPaths ?? ["/api", "/_"])],
   translations,
+  getLocale: undefined as (() => string | undefined) | undefined,
 };
 
 let currentLocale: string | undefined;
@@ -55,7 +45,10 @@ export const getDefaultLocale = (): string => activeConfig.defaultLocale;
 
 /** Returns the active locale code. */
 export const getCurrentLocale = (): string =>
-  storeGetter?.()?.locale ?? currentLocale ?? resolveBrowserLocale() ?? activeConfig.defaultLocale;
+  activeConfig.getLocale?.() ??
+  currentLocale ??
+  resolveBrowserLocale() ??
+  activeConfig.defaultLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -103,10 +96,8 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const store = storeGetter?.();
       const get = (loc: string) => {
-        const dict = ((store && (store.locale === loc || !loc) && store.translations) ||
-          activeConfig.translations[loc]) as Record<string, unknown> | undefined;
+        const dict = activeConfig.translations[loc];
         if (!dict) return undefined;
         if (key in dict) return dict[key];
         if (!key.includes(".")) return undefined;
