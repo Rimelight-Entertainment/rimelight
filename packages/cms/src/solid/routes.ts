@@ -1,10 +1,7 @@
-import { type Component, lazy } from "solid-js";
+import type { Component } from "solid-js";
 import type { RouteDefinition } from "@solidjs/router";
 import { fileRoutes as baseFileRoutes } from "@solidjs/router/fs";
-
-const CmsDashboard = lazy(() =>
-  import("@rimelight/cms/client/components").then((m) => ({ default: m.CmsDashboard })),
-);
+import { CmsDashboard } from "../client/components/CmsDashboard";
 
 export interface CmsRouteOptions {
   basePath?: string;
@@ -38,11 +35,15 @@ export function createCmsRoutes(options: CmsRouteOptions = {}): RouteDefinition[
 
 /**
  * Helper to combine filesystem routes with CMS routes.
+ * If routes are omitted, automatically injects CMS routes.
  */
 export function withCmsRoutes(
-  routes: RouteDefinition[] | Parameters<typeof baseFileRoutes>[0],
+  routes?: RouteDefinition[] | Parameters<typeof baseFileRoutes>[0],
   options?: CmsRouteOptions,
 ): RouteDefinition[] {
+  if (!routes) {
+    return createCmsRoutes(options);
+  }
   const baseRoutes = Array.isArray(routes) ? routes : baseFileRoutes(routes as any);
   return [...createCmsRoutes(options), ...baseRoutes];
 }

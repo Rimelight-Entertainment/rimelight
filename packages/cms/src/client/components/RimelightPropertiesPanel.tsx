@@ -260,7 +260,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     if (field.type === "text") {
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
+          <span class="text-xs font-semibold text-muted block">{label}</span>
           <RLInput
             value={getTextValue(value)}
             onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -276,7 +276,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     if (field.type === "number") {
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
+          <span class="text-xs font-semibold text-muted block">{label}</span>
           <RLInput
             type="number"
             value={value !== undefined ? String(value) : ""}
@@ -294,7 +294,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       const selectItems = (field.options || []).map((opt) => getTextValue(opt));
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
+          <span class="text-xs font-semibold text-muted block">{label}</span>
           <RLSelect
             items={selectItems}
             value={getTextValue(value)}
@@ -326,7 +326,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
+          <span class="text-xs font-semibold text-muted block">{label}</span>
           <div class="flex flex-wrap gap-1 mb-1">
             <For each={arr}>
               {(item, idx) => (
@@ -397,7 +397,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
           {/* Category */}
           <div class="flex flex-col gap-1 w-full">
-            <span class="text-xs font-semibold text-neutral-600 block">Category</span>
+            <span class="text-xs font-semibold text-muted block">Category</span>
             <select
               value={selectedCategory()}
               onChange={(e) => handleCategoryChange(e.currentTarget.value)}
@@ -416,7 +416,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
           {/* Tags */}
           <div class="flex flex-col gap-1 w-full">
-            <span class="text-xs font-semibold text-neutral-600 block">Tags</span>
+            <span class="text-xs font-semibold text-muted block">Tags</span>
             <div class="flex flex-wrap gap-1 mb-1">
               <For each={tagsList()}>
                 {(tag) => (

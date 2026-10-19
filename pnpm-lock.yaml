@@ -445,6 +445,9 @@ importers:
 
   packages/cms:
     dependencies:
+      '@neondatabase/serverless':
+        specifier: 1.2.0
+        version: 1.2.0
       '@rimelight/auth':
         specifier: workspace:*
         version: link:../auth

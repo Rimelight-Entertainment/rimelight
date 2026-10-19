@@ -205,7 +205,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     "X-XSS-Protection": "0",
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-    "No-Vary-Search": 'except=("q" "search" "locale"), params=?1',
+    "No-Vary-Search": isHtml ? 'except=("q" "search" "locale"), params=?1' : undefined,
     "Cross-Origin-Resource-Policy": activeConfig.crossOriginResourcePolicy,
     "Cross-Origin-Opener-Policy": activeConfig.crossOriginOpenerPolicy,
     "Cross-Origin-Embedder-Policy": activeConfig.crossOriginEmbedderPolicy,

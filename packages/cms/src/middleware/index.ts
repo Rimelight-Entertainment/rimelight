@@ -1,12 +1,22 @@
 import type { MiddlewareHandler } from "hono";
-import { cmsRouter, type CmsRouterType } from "../server/router";
+import * as virtualCms from "virtual:rimelight-cms";
+import {
+  createCmsRouter,
+  cmsRouter,
+  type CmsRouterOptions,
+  type CmsRouterType,
+} from "../server/router";
 
-export interface CmsMiddlewareOptions {
+export interface CmsMiddlewareOptions extends CmsRouterOptions {
   /**
    * Path prefix where the CMS API router is served.
    * Defaults to "/api/cms".
    */
   prefix?: string | undefined;
+  /**
+   * Optional custom CmsRouter instance.
+   */
+  router?: CmsRouterType | undefined;
 }
 
 /**
@@ -18,11 +28,23 @@ export interface CmsMiddlewareOptions {
  *   app.use(cms());
  */
 export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
-  const prefix = options.prefix ?? "/api/cms";
+  const virtualConfig = (virtualCms as any)?.config ?? {};
+  const virtualDb = (virtualCms as any)?.db;
+  const prefix = options.prefix ?? virtualConfig.routePrefix ?? "/api/cms";
+  let activeRouter: CmsRouterType | null = options.router ?? null;
+
   return async (c, next) => {
     const { pathname } = new URL(c.req.url);
     if (pathname === prefix || pathname.startsWith(`${prefix}/`)) {
-      return cmsRouter.fetch(c.req.raw, c.env, c.executionCtx);
+      if (!activeRouter) {
+        const db = options.db ?? virtualDb ?? (c.env as any)?.DB;
+        activeRouter = createCmsRouter({
+          ...options,
+          prefix,
+          db,
+        });
+      }
+      return activeRouter.fetch(c.req.raw, c.env, c.executionCtx);
     }
     return await next();
   };

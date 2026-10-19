@@ -5,11 +5,13 @@ export interface TaxonomyTerm {
   taxonomy: string;
   slug: string;
   label: Localized | string;
+  name?: string;
   description?: Localized | string | null;
   parentId?: string | null;
   displayOrder?: number;
   children?: TaxonomyTerm[];
   count?: number;
+  postCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

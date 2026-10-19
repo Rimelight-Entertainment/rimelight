@@ -46,19 +46,9 @@ export async function getTaxonomyTerms(
     }
   }
 
-  const termsWithCounts: TaxonomyTerm[] = rawTerms.map((t: any) => ({
-    id: t.id,
-    taxonomy: t.taxonomy,
-    slug: t.slug,
-    label: t.label,
-    description: t.description,
-    parentId: t.parentId,
-    displayOrder: t.displayOrder,
-    count: countsMap.get(t.id) ?? 0,
-    children: [],
-    createdAt: t.createdAt,
-    updatedAt: t.updatedAt,
-  }));
+  const termsWithCounts: TaxonomyTerm[] = rawTerms.map((t: any) =>
+    normalizeTermRecord(t, countsMap.get(t.id) ?? 0),
+  );
 
   // Determine if this taxonomy is hierarchical (any term has parentId)
   const isHierarchical = termsWithCounts.some((t) => !!t.parentId);
@@ -118,11 +108,7 @@ export async function getTerm(
     count = 0;
   }
 
-  return {
-    ...results[0],
-    count,
-    children: [],
-  };
+  return normalizeTermRecord(results[0], count);
 }
 
 /**
@@ -227,6 +213,36 @@ export async function assignEntryTerms(
   }
 }
 
+function normalizeTermRecord(t: any, count = 0): TaxonomyTerm {
+  const rawLabel = t?.label ?? t?.name ?? "";
+  const nameStr =
+    typeof rawLabel === "object" && rawLabel !== null
+      ? rawLabel.en || Object.values(rawLabel)[0] || ""
+      : String(rawLabel);
+  const rawDesc = t?.description ?? "";
+  const descStr =
+    typeof rawDesc === "object" && rawDesc !== null
+      ? rawDesc.en || Object.values(rawDesc)[0] || ""
+      : rawDesc
+        ? String(rawDesc)
+        : undefined;
+  return {
+    id: t.id,
+    taxonomy: t.taxonomy,
+    slug: t.slug,
+    label: rawLabel,
+    name: nameStr,
+    description: descStr,
+    parentId: t.parentId,
+    displayOrder: t.displayOrder,
+    count,
+    postCount: count,
+    children: [],
+    createdAt: t.createdAt,
+    updatedAt: t.updatedAt,
+  };
+}
+
 /**
  * Creates a new taxonomy term.
  */
@@ -235,14 +251,23 @@ export async function createTerm(
   data: {
     taxonomy: string;
     slug: string;
-    label: any;
+    label?: any;
+    name?: string;
     description?: any;
     parentId?: string | null;
     displayOrder?: number;
   },
 ) {
-  const result = await db.insert(taxonomyTerms).values(data).returning();
-  return result[0];
+  const insertData = {
+    taxonomy: data.taxonomy,
+    slug: data.slug,
+    label: data.label ?? data.name ?? data.slug,
+    description: data.description,
+    parentId: data.parentId,
+    displayOrder: data.displayOrder ?? 0,
+  };
+  const result = await db.insert(taxonomyTerms).values(insertData).returning();
+  return result[0] ? normalizeTermRecord(result[0], 0) : null;
 }
 
 /**
@@ -254,17 +279,23 @@ export async function updateTerm(
   updates: Partial<{
     slug: string;
     label: any;
+    name: string;
     description: any;
     parentId: string | null;
     displayOrder: number;
   }>,
 ) {
+  const updatePayload: any = { ...updates, updatedAt: new Date() };
+  if (updates.name && !updates.label) {
+    updatePayload.label = updates.name;
+    delete updatePayload.name;
+  }
   const result = await db
     .update(taxonomyTerms)
-    .set({ ...updates, updatedAt: new Date() })
+    .set(updatePayload)
     .where(eq(taxonomyTerms.id, id))
     .returning();
-  return result[0];
+  return result[0] ? normalizeTermRecord(result[0], 0) : null;
 }
 
 /**

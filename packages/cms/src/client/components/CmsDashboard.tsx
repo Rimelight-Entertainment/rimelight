@@ -24,13 +24,50 @@ export interface CmsDashboardProps {
   routePrefix?: string;
 }
 
+const VALID_TABS = new Set([
+  "overview",
+  "pages",
+  "categories",
+  "tags",
+  "bylines",
+  "taxonomies",
+  "templates",
+]);
+
+function resolveInitialTab(initialTab?: string): string {
+  if (initialTab) return initialTab;
+  if (typeof window !== "undefined") {
+    const segments = window.location.pathname.replace(/\/$/, "").split("/");
+    const last = segments[segments.length - 1];
+    if (last && VALID_TABS.has(last)) {
+      return last;
+    }
+  }
+  return "overview";
+}
+
 export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
-  const [activeTab, setActiveTab] = createSignal<string>(props.initialTab || "overview");
+  const [activeTab, setActiveTab] = createSignal<string>(resolveInitialTab(props.initialTab));
   const [pagesList, setPagesList] = createSignal<any[]>([]);
   const [selectedPageId, setSelectedPageId] = createSignal<string | null>(null);
   const [selectedPageBlocks, setSelectedPageBlocks] = createSignal<any[]>([]);
 
   const apiBase = () => props.apiBase || "/api/cms";
+
+  const switchTab = (tabId: string) => {
+    setActiveTab(tabId);
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const cmsIdx = path.indexOf("/cms");
+      if (cmsIdx !== -1) {
+        const basePath = path.slice(0, cmsIdx + 4);
+        const nextUrl = tabId === "overview" ? basePath : `${basePath}/${tabId}`;
+        if (window.location.pathname !== nextUrl) {
+          window.history.pushState(null, "", nextUrl);
+        }
+      }
+    }
+  };
 
   const fetchPages = async () => {
     try {
@@ -102,23 +139,21 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
   ];
 
   return (
-    <div class="rimelight-cms-dashboard flex flex-col h-full min-h-screen bg-neutral-950 text-neutral-100 font-sans">
+    <div class="rimelight-cms-dashboard flex flex-col h-full min-h-screen bg-default text-default font-sans">
       {/* Top Header */}
-      <header class="border-b border-neutral-800 bg-neutral-900/50 backdrop-blur px-6 py-4 flex items-center justify-between">
+      <header class="border-b border-default bg-elevated/50 backdrop-blur px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-primary-500/10 text-primary-400">
             <RLIcon name="i-lucide-box" class="size-6" />
           </div>
           <div>
-            <h1 class="text-lg font-bold text-white flex items-center gap-2">
+            <h1 class="text-lg font-bold text-highlighted flex items-center gap-2">
               Rimelight CMS
               <RLBadge variant="subtle" color="primary" class="text-xs">
                 Injected Dashboard
               </RLBadge>
             </h1>
-            <p class="text-xs text-neutral-400">
-              Manage pages, content models, bylines, and taxonomies
-            </p>
+            <p class="text-xs text-muted">Manage pages, content models, bylines, and taxonomies</p>
           </div>
         </div>
 
@@ -131,7 +166,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
               leadingIcon="i-lucide-arrow-left"
               onClick={() => {
                 setSelectedPageId(null);
-                setActiveTab("pages");
+                switchTab("pages");
                 void fetchPages();
               }}
             >
@@ -142,20 +177,20 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
       </header>
 
       {/* Navigation Tabs */}
-      <div class="border-b border-neutral-800 bg-neutral-900/30 px-6">
+      <div class="border-b border-default bg-elevated/30 px-6">
         <nav class="flex gap-2 overflow-x-auto">
           <For each={navItems}>
             {(item) => (
               <button
                 type="button"
                 onClick={() => {
-                  setActiveTab(item.id);
+                  switchTab(item.id);
                   if (item.id === "pages") void fetchPages();
                 }}
-                class={`flex items-center gap-2 px-4 py-3 border-b-2 text-sm font-medium transition-colors ${
+                class={`flex items-center gap-2 px-4 py-3 border-b-2 text-sm font-medium transition-colors cursor-pointer ${
                   activeTab() === item.id
-                    ? "border-primary-500 text-primary-400 font-semibold"
-                    : "border-transparent text-neutral-400 hover:text-white hover:border-neutral-700"
+                    ? "border-primary-500 text-primary-500 font-semibold"
+                    : "border-transparent text-muted hover:text-highlighted hover:border-default"
                 }`}
               >
                 <RLIcon name={item.icon} class="size-4" />
@@ -172,9 +207,9 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
         <Show when={activeTab() === "overview"}>
           <div class="max-w-7xl mx-auto flex flex-col gap-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <RLCard class="p-5 flex flex-col justify-between gap-4 border-neutral-800 bg-neutral-900/50">
+              <RLCard class="p-5 flex flex-col justify-between gap-4 border-default bg-elevated/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-muted">
                     Pages
                   </span>
                   <div class="p-2 rounded-lg bg-primary-500/10 text-primary-400">
@@ -182,20 +217,22 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                   </div>
                 </div>
                 <div class="flex items-baseline justify-between">
-                  <span class="text-3xl font-bold text-white">{metrics()?.totalPages ?? 0}</span>
+                  <span class="text-3xl font-bold text-highlighted">
+                    {metrics()?.totalPages ?? 0}
+                  </span>
                   <button
                     type="button"
-                    onClick={() => setActiveTab("pages")}
-                    class="text-xs text-primary-400 hover:underline font-medium"
+                    onClick={() => switchTab("pages")}
+                    class="text-xs text-primary-500 hover:underline font-medium cursor-pointer"
                   >
                     View Pages &rarr;
                   </button>
                 </div>
               </RLCard>
 
-              <RLCard class="p-5 flex flex-col justify-between gap-4 border-neutral-800 bg-neutral-900/50">
+              <RLCard class="p-5 flex flex-col justify-between gap-4 border-default bg-elevated/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-muted">
                     Categories
                   </span>
                   <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
@@ -203,22 +240,22 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                   </div>
                 </div>
                 <div class="flex items-baseline justify-between">
-                  <span class="text-3xl font-bold text-white">
+                  <span class="text-3xl font-bold text-highlighted">
                     {metrics()?.totalCategories ?? 0}
                   </span>
                   <button
                     type="button"
-                    onClick={() => setActiveTab("categories")}
-                    class="text-xs text-emerald-400 hover:underline font-medium"
+                    onClick={() => switchTab("categories")}
+                    class="text-xs text-emerald-500 hover:underline font-medium cursor-pointer"
                   >
                     Manage &rarr;
                   </button>
                 </div>
               </RLCard>
 
-              <RLCard class="p-5 flex flex-col justify-between gap-4 border-neutral-800 bg-neutral-900/50">
+              <RLCard class="p-5 flex flex-col justify-between gap-4 border-default bg-elevated/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-muted">
                     Tags
                   </span>
                   <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400">
@@ -226,20 +263,22 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                   </div>
                 </div>
                 <div class="flex items-baseline justify-between">
-                  <span class="text-3xl font-bold text-white">{metrics()?.totalTags ?? 0}</span>
+                  <span class="text-3xl font-bold text-highlighted">
+                    {metrics()?.totalTags ?? 0}
+                  </span>
                   <button
                     type="button"
-                    onClick={() => setActiveTab("tags")}
-                    class="text-xs text-amber-400 hover:underline font-medium"
+                    onClick={() => switchTab("tags")}
+                    class="text-xs text-amber-500 hover:underline font-medium cursor-pointer"
                   >
                     Manage &rarr;
                   </button>
                 </div>
               </RLCard>
 
-              <RLCard class="p-5 flex flex-col justify-between gap-4 border-neutral-800 bg-neutral-900/50">
+              <RLCard class="p-5 flex flex-col justify-between gap-4 border-default bg-elevated/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-muted">
                     Bylines
                   </span>
                   <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400">
@@ -247,11 +286,13 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                   </div>
                 </div>
                 <div class="flex items-baseline justify-between">
-                  <span class="text-3xl font-bold text-white">{metrics()?.totalBylines ?? 0}</span>
+                  <span class="text-3xl font-bold text-highlighted">
+                    {metrics()?.totalBylines ?? 0}
+                  </span>
                   <button
                     type="button"
-                    onClick={() => setActiveTab("bylines")}
-                    class="text-xs text-purple-400 hover:underline font-medium"
+                    onClick={() => switchTab("bylines")}
+                    class="text-xs text-purple-500 hover:underline font-medium cursor-pointer"
                   >
                     Manage &rarr;
                   </button>
@@ -259,11 +300,13 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
               </RLCard>
             </div>
 
-            <RLCard class="p-6 border-neutral-800 bg-neutral-900/30">
-              <h2 class="text-base font-semibold text-white mb-2">CMS Injection Health & Status</h2>
-              <p class="text-sm text-neutral-400 mb-4">
+            <RLCard class="p-6 border-default bg-elevated/30">
+              <h2 class="text-base font-semibold text-highlighted mb-2">
+                CMS Injection Health & Status
+              </h2>
+              <p class="text-sm text-muted mb-4">
                 This dashboard is shipped directly from{" "}
-                <code class="text-primary-400 font-mono">@rimelight/cms</code>. Consumer
+                <code class="text-primary-500 font-mono">@rimelight/cms</code>. Consumer
                 applications do not need custom admin code or duplicate schema forms.
               </p>
               <div class="flex flex-wrap gap-3">
@@ -272,7 +315,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                   color="primary"
                   size="sm"
                   leadingIcon="i-lucide-file-plus"
-                  onClick={() => setActiveTab("pages")}
+                  onClick={() => switchTab("pages")}
                 >
                   Manage Pages
                 </RLButton>
@@ -281,7 +324,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                   color="neutral"
                   size="sm"
                   leadingIcon="i-lucide-copy"
-                  onClick={() => setActiveTab("templates")}
+                  onClick={() => switchTab("templates")}
                 >
                   Edit Templates
                 </RLButton>
@@ -294,7 +337,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
         <Show when={activeTab() === "pages"}>
           <div class="max-w-7xl mx-auto flex flex-col gap-4">
             <div class="flex items-center justify-between mb-2">
-              <h2 class="text-xl font-bold text-white">Pages</h2>
+              <h2 class="text-xl font-bold text-highlighted">Pages</h2>
               <RLButton
                 variant="solid"
                 color="primary"
@@ -309,14 +352,14 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
             <Show
               when={pagesList().length > 0}
               fallback={
-                <div class="p-12 text-center text-neutral-500 border border-neutral-800 rounded-2xl bg-neutral-900/20">
+                <div class="p-12 text-center text-muted border border-default rounded-2xl bg-elevated/20">
                   No pages found in database. Create your first page via MCP or template seeder.
                 </div>
               }
             >
-              <div class="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-900/40">
+              <div class="border border-default rounded-xl overflow-hidden bg-elevated/40">
                 <table class="w-full text-left text-sm">
-                  <thead class="bg-neutral-900/80 text-neutral-400 border-b border-neutral-800">
+                  <thead class="bg-elevated/80 text-muted border-b border-default">
                     <tr>
                       <th class="px-4 py-3 font-semibold">Title</th>
                       <th class="px-4 py-3 font-semibold">Slug</th>
@@ -324,7 +367,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                       <th class="px-4 py-3 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-neutral-800">
+                  <tbody class="divide-y divide-default">
                     <For each={pagesList()}>
                       {(p) => {
                         const title =
@@ -332,9 +375,11 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                             ? p.title.en || Object.values(p.title)[0]
                             : p.title;
                         return (
-                          <tr class="hover:bg-neutral-800/40 transition-colors">
-                            <td class="px-4 py-3 font-medium text-white">{title || "Untitled"}</td>
-                            <td class="px-4 py-3 text-neutral-400 font-mono text-xs">{p.slug}</td>
+                          <tr class="hover:bg-elevated/60 transition-colors">
+                            <td class="px-4 py-3 font-medium text-highlighted">
+                              {title || "Untitled"}
+                            </td>
+                            <td class="px-4 py-3 text-muted font-mono text-xs">{p.slug}</td>
                             <td class="px-4 py-3">
                               <RLBadge variant="subtle" color="neutral" class="text-xs">
                                 {p.type || "page"}
@@ -364,7 +409,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
 
         {/* 3. VISUAL EDITOR */}
         <Show when={activeTab() === "editor" && selectedPageId()}>
-          <div class="h-[calc(100vh-180px)] w-full border border-neutral-800 rounded-2xl overflow-hidden">
+          <div class="h-[calc(100vh-180px)] w-full border border-default rounded-2xl overflow-hidden">
             <RimelightEditorLayout
               pageId={selectedPageId()!}
               initialBlocks={selectedPageBlocks()}

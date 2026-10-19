@@ -309,7 +309,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
           <form onSubmit={handleSave} class="flex flex-col gap-4">
             {/* Name */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Display name *</label>
+              <label class="text-xs font-semibold text-muted">Display name *</label>
               <RLInput
                 value={form().name}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -323,7 +323,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
 
             {/* Slug */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Slug</label>
+              <label class="text-xs font-semibold text-muted">Slug</label>
               <RLInput
                 value={form().slug}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -336,7 +336,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
             {/* Parent Category (if category) */}
             <Show when={isCategory()}>
               <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-neutral-700">Parent Category</label>
+                <label class="text-xs font-semibold text-muted">Parent Category</label>
                 <select
                   value={form().parentId}
                   onChange={(e) =>
@@ -354,7 +354,7 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
 
             {/* Description */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Description</label>
+              <label class="text-xs font-semibold text-muted">Description</label>
               <RLTextarea
                 value={form().description}
                 onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>

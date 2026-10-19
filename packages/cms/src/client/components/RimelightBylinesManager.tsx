@@ -308,7 +308,7 @@ export const RimelightBylinesManager: Component = () => {
           <form onSubmit={handleSave} class="flex flex-col gap-4">
             {/* Display Name */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Display name *</label>
+              <label class="text-xs font-semibold text-muted">Display name *</label>
               <RLInput
                 value={form().name}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -320,7 +320,7 @@ export const RimelightBylinesManager: Component = () => {
 
             {/* Slug */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Slug</label>
+              <label class="text-xs font-semibold text-muted">Slug</label>
               <RLInput
                 value={form().slug}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -332,7 +332,7 @@ export const RimelightBylinesManager: Component = () => {
 
             {/* Website URL */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Website URL</label>
+              <label class="text-xs font-semibold text-muted">Website URL</label>
               <RLInput
                 value={form().websiteUrl}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -344,7 +344,7 @@ export const RimelightBylinesManager: Component = () => {
 
             {/* Bio */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Bio</label>
+              <label class="text-xs font-semibold text-muted">Bio</label>
               <RLTextarea
                 value={form().bio}
                 onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
@@ -362,7 +362,7 @@ export const RimelightBylinesManager: Component = () => {
 
             {/* Avatar URL & Preview */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Avatar Image URL</label>
+              <label class="text-xs font-semibold text-muted">Avatar Image URL</label>
               <div class="flex items-center gap-3">
                 <Show
                   when={form().avatar}
@@ -392,7 +392,7 @@ export const RimelightBylinesManager: Component = () => {
 
             {/* Linked User ID */}
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-neutral-700">Linked user</label>
+              <label class="text-xs font-semibold text-muted">Linked user</label>
               <RLInput
                 value={form().userId}
                 onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
