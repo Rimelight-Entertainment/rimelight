@@ -19,6 +19,7 @@ describe("RLMain Solid Component Suite", () => {
       const html = renderSolid(RLMain, {}, "Themed Content");
 
       expect(html).toContain("min-h-[calc(100vh-var(--rl-header-height))]");
+      expect(html).toContain("pt-[var(--rl-header-height,0px)]");
     });
   });
 
