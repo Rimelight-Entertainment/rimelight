@@ -44,3 +44,5 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
     </AppLayout>
   );
 };
+
+export default DevLayout;
