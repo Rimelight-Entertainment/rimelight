@@ -12,7 +12,13 @@ export function buildWebManifest(options: WebManifestOptions): WebManifest {
     display = "standalone",
     backgroundColor = "#ffffff",
     themeColor = "#ffffff",
-    icons = [
+    icons = options.icons ?? [
+      {
+        src: "/favicon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
       {
         src: "/icon-192.png",
         sizes: "192x192",
