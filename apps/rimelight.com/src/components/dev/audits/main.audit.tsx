@@ -85,7 +85,7 @@ export const MainSandbox = (): JSX.Element => {
         <RLMain
           as={tag()}
           class={customClass() || undefined}
-          {...(overrideHeight() ? { ui: { root: HEIGHT_CAP } } : {})}
+          ui={overrideHeight() ? { root: HEIGHT_CAP } : undefined}
         >
           <MainContent />
         </RLMain>
@@ -94,7 +94,7 @@ export const MainSandbox = (): JSX.Element => {
         <RLMain
           as={tag()}
           class={customClass() || undefined}
-          {...(overrideHeight() ? { ui: { root: HEIGHT_CAP } } : {})}
+          ui={overrideHeight() ? { root: HEIGHT_CAP } : undefined}
         />
       </Show>
     </div>
