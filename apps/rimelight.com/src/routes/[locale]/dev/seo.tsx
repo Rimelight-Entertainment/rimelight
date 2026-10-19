@@ -2,7 +2,7 @@ import { For, Show, createMemo, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
-import { RLButton } from "@rimelight/ui";
+import { RLButton, RLCarousel } from "@rimelight/ui";
 import { createSeoHead, type HeadTag } from "@rimelight/seo/head";
 import {
   buildApiCatalog,
@@ -887,61 +887,60 @@ export default function DevSeoPage() {
             "Live Open Graph images generated via the SVG layout renderer with live site identity tokens.",
           content: (
             <div class="flex flex-col gap-md w-full">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-                <For each={ogPreviewCards}>
-                  {(page) => {
-                    const url = resolveOgUrl(page);
-                    const isCopied = () => copiedOg() === url;
-                    return (
-                      <article class="bg-elevated/20 border border-default rounded-xl overflow-hidden shadow-xs">
-                        <div class="flex items-center gap-sm px-md py-xs border-b border-default/40">
-                          <span class="text-sm font-semibold text-highlighted">{page.label}</span>
-                          <Show when={page.type}>
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                              {page.type}
-                            </span>
+              <RLCarousel items={ogPreviewCards} dots arrows>
+                {(ctx: { item: OgPreviewItem; index: number }) => {
+                  const page = ctx.item;
+                  const url = resolveOgUrl(page);
+                  const isCopied = () => copiedOg() === url;
+                  return (
+                    <article class="bg-elevated/20 border border-default rounded-xl overflow-hidden shadow-xs">
+                      <div class="flex items-center gap-sm px-md py-xs border-b border-default/40">
+                        <span class="text-sm font-semibold text-highlighted">{page.label}</span>
+                        <Show when={page.type}>
+                          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                            {page.type}
+                          </span>
+                        </Show>
+                      </div>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        class="block relative group overflow-hidden bg-default"
+                      >
+                        <img
+                          src={url}
+                          alt={`OG image for ${page.label}`}
+                          class="w-full aspect-[1200/630] object-cover"
+                          loading="lazy"
+                        />
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                          Open full size ↗
+                        </div>
+                      </a>
+                      <div class="flex items-center justify-between gap-sm px-md py-xs border-t border-default/40">
+                        <div class="flex flex-col min-w-0">
+                          <strong class="text-sm text-highlighted truncate">{page.title}</strong>
+                          <Show when={page.description}>
+                            <span class="text-xs text-muted truncate">{page.description}</span>
                           </Show>
                         </div>
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noreferrer"
-                          class="block relative group overflow-hidden bg-default"
+                        <button
+                          type="button"
+                          onClick={() => copyOgUrl(url)}
+                          class="px-3 py-1.5 bg-elevated hover:bg-elevated/80 border border-default rounded-md text-xs font-medium text-toned transition-colors shrink-0"
+                          style={{
+                            color: isCopied() ? "#4ade80" : undefined,
+                            "border-color": isCopied() ? "rgba(74, 222, 128, 0.4)" : undefined,
+                          }}
                         >
-                          <img
-                            src={url}
-                            alt={`OG image for ${page.label}`}
-                            class="w-full aspect-[1200/630] object-cover"
-                            loading="lazy"
-                          />
-                          <div class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                            Open full size ↗
-                          </div>
-                        </a>
-                        <div class="flex items-center justify-between gap-sm px-md py-xs border-t border-default/40">
-                          <div class="flex flex-col min-w-0">
-                            <strong class="text-sm text-highlighted truncate">{page.title}</strong>
-                            <Show when={page.description}>
-                              <span class="text-xs text-muted truncate">{page.description}</span>
-                            </Show>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => copyOgUrl(url)}
-                            class="px-3 py-1.5 bg-elevated hover:bg-elevated/80 border border-default rounded-md text-xs font-medium text-toned transition-colors shrink-0"
-                            style={{
-                              color: isCopied() ? "#4ade80" : undefined,
-                              "border-color": isCopied() ? "rgba(74, 222, 128, 0.4)" : undefined,
-                            }}
-                          >
-                            {isCopied() ? "Copied!" : "Copy URL"}
-                          </button>
-                        </div>
-                      </article>
-                    );
-                  }}
-                </For>
-              </div>
+                          {isCopied() ? "Copied!" : "Copy URL"}
+                        </button>
+                      </div>
+                    </article>
+                  );
+                }}
+              </RLCarousel>
             </div>
           ),
         },
