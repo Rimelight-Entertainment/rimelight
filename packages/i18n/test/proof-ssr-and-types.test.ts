@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { describe, expect, it } from "vite-plus/test";
 import { i18n } from "../src/middleware";
-import { getCurrentLocale, t } from "../src/index";
+import { getCurrentLocale, setCurrentLocale, t } from "../src/index";
 import { activeConfig } from "../src/runtime";
 
 describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
@@ -97,5 +97,43 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
   it("PROOF that t() is strictly bound to TFunction keys", () => {
     const typedT: import("../src/types").TFunction<"title"> = t as any;
     expect(typedT("title")).toBeDefined();
+  });
+
+  it("auto-resolves active locale on the client from window.location.pathname and document.documentElement.lang", () => {
+    Object.assign(activeConfig, {
+      locales: ["en", "es", "pt"],
+      defaultLocale: "en",
+      translations: {
+        en: { title: "Welcome" },
+        es: { title: "Bienvenido" },
+        pt: { title: "Bem-vindo" },
+      },
+    });
+
+    const origWindow = globalThis.window;
+    const origDocument = globalThis.document;
+
+    try {
+      // Clear any manual override so browser detection runs
+      (setCurrentLocale as (l: any) => void)(undefined);
+
+      // 1. Resolves from URL pathname segment (/pt/about -> "pt")
+      globalThis.window = { location: { pathname: "/pt/about" } } as any;
+      expect(getCurrentLocale()).toBe("pt");
+      expect(t("title")).toBe("Bem-vindo");
+
+      // 2. Navigating to /es/docs immediately updates getCurrentLocale() & t()
+      globalThis.window = { location: { pathname: "/es/docs" } } as any;
+      expect(getCurrentLocale()).toBe("es");
+      expect(t("title")).toBe("Bienvenido");
+
+      // 3. Falls back to <html lang="..."> when URL has no locale prefix
+      globalThis.window = { location: { pathname: "/about" } } as any;
+      globalThis.document = { documentElement: { lang: "pt" } } as any;
+      expect(getCurrentLocale()).toBe("pt");
+    } finally {
+      globalThis.window = origWindow;
+      globalThis.document = origDocument;
+    }
   });
 });

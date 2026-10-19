@@ -35,12 +35,6 @@ export default defineConfig({
           remote: true,
         },
       }),
-      "starter-dot-rimelight-dot-com_translations": bindings.kv({
-        id: "8c09f90741704096bd1dcdf2abadc974",
-        dev: {
-          remote: true,
-        },
-      }),
       BLOB: bindings.r2({
         name: "starter-dot-rimelight-dot-com",
         dev: {

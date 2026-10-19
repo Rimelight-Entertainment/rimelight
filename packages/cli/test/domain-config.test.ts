@@ -13,7 +13,6 @@ const config = defineConfig({
     domains: ["starter.rimelight.com", "www.starter.rimelight.com"],
     env: {
       DB: bindings.d1({ id: "a6610294-e214-4d35-b841-174469da54d2" }),
-      "starter-dot-rimelight-dot-com_translations": bindings.kv({ id: "8c09f90741704096bd1dcdf2abadc974" }),
       BLOB: bindings.r2({ name: "starter-dot-rimelight-dot-com" }),
       ChatRoom: bindings.durableObject({
         worker: "starter-dot-rimelight-dot-com",
@@ -59,7 +58,6 @@ describe("@rimelight/cli domain configuration updates", () => {
     expect(content).toContain('name: "my-app-dot-com"');
     expect(content).toContain('domains: ["my-app.com", "www.my-app.com"]');
     // Names derived from the worker must stay in sync with `worker.name`.
-    expect(content).toContain('"my-app-dot-com_translations"');
     expect(content).toContain('BLOB: bindings.r2({ name: "my-app-dot-com" })');
     expect(content).toContain('worker: "my-app-dot-com"');
     // Nothing should be left pointing at the starter.
@@ -86,7 +84,6 @@ describe("@rimelight/cli domain configuration updates", () => {
     // There is no domain to derive a worker name from, so it falls back to the
     // project name, while the starter domain itself is left alone.
     expect(cloudflare).toContain('name: "my-super-app"');
-    expect(cloudflare).toContain('"my-super-app_translations"');
     expect(cloudflare).toContain('domains: ["starter.rimelight.com", "www.starter.rimelight.com"]');
     // No domain means the site plugins are left untouched.
     expect(vite).toContain('id: "starter.rimelight.com"');

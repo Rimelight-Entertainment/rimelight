@@ -75,9 +75,9 @@ export async function updateDomainConfigs(
     : toWorkerName(displayProjectName);
 
   // Every occurrence of the starter worker name in cloudflare.config.ts is
-  // derived from it (worker.name, the KV namespace key, the R2 bucket name and
-  // the ChatRoom worker binding), so one pass of substitutions keeps them all
-  // consistent with each other.
+  // derived from it (worker.name, the R2 bucket name and the ChatRoom worker
+  // binding), so one pass of substitutions keeps them all consistent with
+  // each other.
   const cloudflareConfigPath = path.join(resolvedTargetDir, "cloudflare.config.ts");
   if (existsSync(cloudflareConfigPath)) {
     let content = await fs.readFile(cloudflareConfigPath, "utf-8");
