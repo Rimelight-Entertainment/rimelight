@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createMemo, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
@@ -21,6 +21,7 @@ import {
   buildSitemapXml,
   buildWebManifest,
   buildWebSiteSchema,
+  defaultOgLayout,
   sanitizeUrl,
   serializeJsonLd,
   type SeoEntry,
@@ -67,9 +68,7 @@ const resolveOgUrl = (item: OgPreviewItem) => {
   return `/open-graph/card.svg?${params.toString()}`;
 };
 
-export default function DevSeoPage() {
-  const location = useLocation();
-
+const OgSandbox = () => {
   const [sandboxTitle, setSandboxTitle] = createSignal("Interactive Sandbox Title");
   const [sandboxDesc, setSandboxDesc] = createSignal(
     "Testing Open Graph banner rendering using current site theme.",
@@ -80,6 +79,164 @@ export default function DevSeoPage() {
   const [sandboxCustomBg, setSandboxCustomBg] = createSignal("#1e1b4b");
   const [sandboxDate, setSandboxDate] = createSignal("2026-10-18");
   const [sandboxPreview, setSandboxPreview] = createSignal(false);
+  const [copiedOg, setCopiedOg] = createSignal<string | null>(null);
+
+  const activeOrigin = () =>
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : liveConfigRaw.url || "https://rimelight.com";
+
+  const sandboxUrl = createMemo(() => {
+    const params = new URLSearchParams({
+      title: sandboxTitle(),
+      description: sandboxDesc(),
+    });
+    if (sandboxBrand()) params.set("brand", sandboxBrand());
+    if (sandboxType()) params.set("type", sandboxType());
+    if (sandboxDate()) params.set("date", sandboxDate());
+    if (sandboxPreview()) params.set("preview", "true");
+    const bg = sandboxBg() === "custom" ? sandboxCustomBg() : sandboxBg();
+    if (bg && bg !== "dark") params.set("bg", bg);
+    return `/open-graph/card.svg?${params.toString()}`;
+  });
+
+  const ogSvg = createMemo(() =>
+    defaultOgLayout({
+      title: sandboxTitle(),
+      description: sandboxDesc() || undefined,
+      brand: sandboxBrand(),
+      badge: sandboxType() || undefined,
+      date: sandboxDate() || undefined,
+      background: sandboxBg() === "custom" ? sandboxCustomBg() : sandboxBg(),
+      preview: sandboxPreview(),
+    }),
+  );
+
+  const previewSrc = createMemo(
+    () => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(ogSvg()),
+  );
+  const copyOgUrl = async (url: string) => {
+    const full = new URL(url, activeOrigin()).toString();
+    await navigator.clipboard.writeText(full);
+    setCopiedOg(url);
+    setTimeout(() => setCopiedOg(null), 2000);
+  };
+
+  return (
+    <div class="flex flex-col gap-md w-full">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-sm items-start">
+        <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+          Title
+          <input
+            type="text"
+            value={sandboxTitle()}
+            onInput={(e) => setSandboxTitle(e.currentTarget.value)}
+            class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+          Description
+          <input
+            type="text"
+            value={sandboxDesc()}
+            onInput={(e) => setSandboxDesc(e.currentTarget.value)}
+            class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+          Brand Name
+          <input
+            type="text"
+            value={sandboxBrand()}
+            onInput={(e) => setSandboxBrand(e.currentTarget.value)}
+            class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+          Type / Badge
+          <input
+            type="text"
+            value={sandboxType()}
+            placeholder="e.g. Documentation, Blog, Changelog"
+            onInput={(e) => setSandboxType(e.currentTarget.value)}
+            class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+          Date
+          <input
+            type="text"
+            value={sandboxDate()}
+            placeholder="e.g. 2026-10-18"
+            onInput={(e) => setSandboxDate(e.currentTarget.value)}
+            class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
+          Background
+          <select
+            value={sandboxBg()}
+            onChange={(e) => setSandboxBg(e.currentTarget.value as any)}
+            class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
+          >
+            <option value="dark">Dark (#0a0a0a)</option>
+            <option value="gradient">Gradient (#0a0a0a → #1a1a2e)</option>
+            <option value="custom">Custom Color</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-md">
+        <Show when={sandboxBg() === "custom"}>
+          <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider">
+            Custom Fill:
+            <input
+              type="text"
+              value={sandboxCustomBg()}
+              placeholder="#1e1b4b"
+              onInput={(e) => setSandboxCustomBg(e.currentTarget.value)}
+              class="px-2 py-1 bg-default border border-default rounded text-highlighted text-xs font-mono outline-none"
+            />
+          </label>
+        </Show>
+
+        <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer">
+          <input
+            type="checkbox"
+            checked={sandboxPreview()}
+            onChange={(e) => setSandboxPreview(e.currentTarget.checked)}
+            class="size-4 rounded accent-primary"
+          />
+          PREVIEW Watermark Border
+        </label>
+
+        <div class="ml-auto">
+          <button
+            type="button"
+            onClick={() => copyOgUrl(sandboxUrl())}
+            class="px-3 py-1.5 bg-elevated hover:bg-elevated/80 border border-default rounded-md text-xs font-medium text-toned transition-colors"
+          >
+            {copiedOg() === sandboxUrl() ? "Copied URL!" : "Copy Sandbox URL"}
+          </button>
+        </div>
+      </div>
+
+      <pre class="text-xs text-muted break-all">{sandboxUrl()}</pre>
+      <img
+        src={previewSrc()}
+        alt="Sandbox OG preview"
+        class="w-full aspect-[1200/630] object-cover rounded-xl border border-default bg-elevated/20"
+      />
+      <a href={sandboxUrl()} target="_blank" rel="noreferrer" class="text-xs text-muted underline">
+        Open full size ?
+      </a>
+    </div>
+  );
+};
+
+export default function DevSeoPage() {
+  const location = useLocation();
+
   const [copiedOg, setCopiedOg] = createSignal<string | null>(null);
 
   const activeOrigin = () =>
@@ -276,20 +433,6 @@ export default function DevSeoPage() {
       type: "Blog Post",
     },
   ];
-
-  const sandboxUrl = () => {
-    const params = new URLSearchParams({
-      title: sandboxTitle(),
-      description: sandboxDesc(),
-    });
-    if (sandboxBrand()) params.set("brand", sandboxBrand());
-    if (sandboxType()) params.set("type", sandboxType());
-    if (sandboxDate()) params.set("date", sandboxDate());
-    if (sandboxPreview()) params.set("preview", "true");
-    const bg = sandboxBg() === "custom" ? sandboxCustomBg() : sandboxBg();
-    if (bg && bg !== "dark") params.set("bg", bg);
-    return `/open-graph/card.svg?${params.toString()}`;
-  };
 
   const copyOgUrl = async (url: string) => {
     const full = new URL(url, activeOrigin()).toString();
@@ -809,141 +952,10 @@ export default function DevSeoPage() {
       rows: [
         {
           label: "Live generator",
-          code: sandboxUrl(),
+          code: "/open-graph/card.svg?title=...&description=...&type=...&brand=...&bg=...&date=...&preview=true",
           description:
             "Interactively test title, description, brand, background, date, and preview parameters.",
-          content: (
-            <div class="flex flex-col gap-md w-full">
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-sm items-start">
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                  Title
-                  <input
-                    type="text"
-                    value={sandboxTitle()}
-                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
-                      setSandboxTitle(e.currentTarget.value)
-                    }
-                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
-                  />
-                </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                  Description
-                  <input
-                    type="text"
-                    value={sandboxDesc()}
-                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
-                      setSandboxDesc(e.currentTarget.value)
-                    }
-                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
-                  />
-                </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                  Brand Name
-                  <input
-                    type="text"
-                    value={sandboxBrand()}
-                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
-                      setSandboxBrand(e.currentTarget.value)
-                    }
-                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
-                  />
-                </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                  Type / Badge
-                  <input
-                    type="text"
-                    value={sandboxType()}
-                    placeholder="e.g. Documentation, Blog, Changelog"
-                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
-                      setSandboxType(e.currentTarget.value)
-                    }
-                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
-                  />
-                </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                  Date
-                  <input
-                    type="text"
-                    value={sandboxDate()}
-                    placeholder="e.g. 2026-10-18"
-                    onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
-                      setSandboxDate(e.currentTarget.value)
-                    }
-                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
-                  />
-                </label>
-                <label class="flex flex-col gap-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                  Background
-                  <select
-                    value={sandboxBg()}
-                    onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
-                      setSandboxBg(e.currentTarget.value as any)
-                    }
-                    class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
-                  >
-                    <option value="dark">Dark (#0a0a0a)</option>
-                    <option value="gradient">Gradient (#0a0a0a → #1a1a2e)</option>
-                    <option value="custom">Custom Color</option>
-                  </select>
-                </label>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-md">
-                <Show when={sandboxBg() === "custom"}>
-                  <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider">
-                    Custom Fill:
-                    <input
-                      type="text"
-                      value={sandboxCustomBg()}
-                      placeholder="#1e1b4b"
-                      onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
-                        setSandboxCustomBg(e.currentTarget.value)
-                      }
-                      class="px-2 py-1 bg-default border border-default rounded text-highlighted text-xs font-mono outline-none"
-                    />
-                  </label>
-                </Show>
-
-                <label class="flex items-center gap-2 text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={sandboxPreview()}
-                    onChange={(e: Event & { currentTarget: HTMLInputElement }) =>
-                      setSandboxPreview(e.currentTarget.checked)
-                    }
-                    class="size-4 rounded accent-primary"
-                  />
-                  PREVIEW Watermark Border
-                </label>
-
-                <div class="ml-auto">
-                  <button
-                    type="button"
-                    onClick={() => copyOgUrl(sandboxUrl())}
-                    class="px-3 py-1.5 bg-elevated hover:bg-elevated/80 border border-default rounded-md text-xs font-medium text-toned transition-colors"
-                  >
-                    {copiedOg() === sandboxUrl() ? "Copied URL!" : "Copy Sandbox URL"}
-                  </button>
-                </div>
-              </div>
-
-              <div class="rounded-xl overflow-hidden border border-default bg-elevated/20 relative group">
-                <img
-                  src={sandboxUrl()}
-                  alt="Sandbox OG preview"
-                  class="w-full aspect-[1200/630] object-cover"
-                />
-                <a
-                  href={sandboxUrl()}
-                  target="_blank"
-                  rel="noreferrer"
-                  class="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  Open full size ↗
-                </a>
-              </div>
-            </div>
-          ),
+          content: <OgSandbox />,
         },
       ],
     },
