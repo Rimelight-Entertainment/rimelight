@@ -1,5 +1,4 @@
-import { untrack, type Component, For } from "solid-js";
-import { useParams } from "@solidjs/router";
+import { type Component, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import AppLayout from "./AppLayout";
 import {
@@ -11,7 +10,7 @@ import {
   RLDashboardSidebarToggle,
   RLButton,
 } from "@rimelight/ui";
-import { getLocaleUrl, getLocales, setCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl } from "@rimelight/i18n";
 
 export interface DashboardLayoutProps {
   title?: string | undefined;
@@ -22,13 +21,6 @@ export interface DashboardLayoutProps {
 }
 
 export const DashboardLayout: Component<DashboardLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>();
-  untrack(() => {
-    if (params.locale && getLocales().includes(params.locale)) {
-      setCurrentLocale(params.locale);
-    }
-  });
-
   const links = [
     { label: "Home", icon: "i-lucide-home", to: "/dashboard" },
     { label: "Inbox", icon: "i-lucide-inbox", to: "/dashboard/inbox" },

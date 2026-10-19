@@ -1,5 +1,4 @@
-import { untrack, type Component, createSignal, onSettled, Show } from "solid-js";
-import { useParams } from "@solidjs/router";
+import { type Component, createSignal, onSettled, Show } from "solid-js";
 import { type JSX, useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
 import AppHeader from "#components/app/AppHeader";
@@ -14,7 +13,7 @@ import {
   RLButton,
   RLRouteAnnouncer,
 } from "@rimelight/ui";
-import { t, getLocales, getLocaleUrl, setCurrentLocale } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export interface AppLayoutProps {
   title?: string | undefined;
@@ -31,13 +30,6 @@ export interface AppLayoutProps {
 }
 
 export const AppLayout: Component<AppLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>();
-  untrack(() => {
-    if (params.locale && getLocales().includes(params.locale)) {
-      setCurrentLocale(params.locale);
-    }
-  });
-
   const [hasConsent, setHasConsent] = createSignal(true);
 
   onSettled(() => {

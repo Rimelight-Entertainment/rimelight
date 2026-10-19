@@ -1,9 +1,7 @@
-import { untrack, type Component } from "solid-js";
-import { useParams } from "@solidjs/router";
+import type { Component } from "solid-js";
 import { type JSX, useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
 import { RLMain } from "@rimelight/ui";
-import { getLocales, setCurrentLocale } from "@rimelight/i18n";
 
 export interface BlankLayoutProps {
   title?: string | undefined;
@@ -14,13 +12,6 @@ export interface BlankLayoutProps {
 }
 
 export const BlankLayout: Component<BlankLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>();
-  untrack(() => {
-    if (params.locale && getLocales().includes(params.locale)) {
-      setCurrentLocale(params.locale);
-    }
-  });
-
   useHead(() =>
     createSeoHead({
       title: props.title,

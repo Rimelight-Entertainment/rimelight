@@ -1,7 +1,6 @@
-import { untrack, type Component, type ParentProps } from "solid-js";
-import { useParams } from "@solidjs/router";
+import type { Component, ParentProps } from "solid-js";
 import DashboardLayout from "./DashboardLayout";
-import { getLocaleUrl, getLocales, setCurrentLocale } from "@rimelight/i18n";
+import { getLocaleUrl } from "@rimelight/i18n";
 
 export interface NotesLayoutProps extends ParentProps {
   title?: string | undefined;
@@ -9,13 +8,6 @@ export interface NotesLayoutProps extends ParentProps {
 }
 
 export const NotesLayout: Component<NotesLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string }>();
-  untrack(() => {
-    if (params.locale && getLocales().includes(params.locale)) {
-      setCurrentLocale(params.locale);
-    }
-  });
-
   const links = [
     {
       label: "Notes",

@@ -1,20 +1,16 @@
 import { config } from "virtual:rimelight-i18n";
 import type { TFunction } from "./types";
 
-const AsyncLocalStorage =
-  typeof window === "undefined" && typeof document === "undefined"
-    ? (await import("node:async_hooks")).AsyncLocalStorage
-    : undefined;
+export interface LocaleStore {
+  locale: string;
+  translations?: Record<string, unknown> | undefined;
+}
 
-const storage = AsyncLocalStorage
-  ? new AsyncLocalStorage<{
-      locale: string;
-      translations?: Record<string, unknown> | undefined;
-    }>()
-  : undefined;
+let storeGetter: (() => LocaleStore | undefined) | undefined;
 
-export const withLocale = <R>(locale: string, fn: () => R): R =>
-  storage ? storage.run({ locale, translations: activeConfig.translations[locale] }, fn) : fn();
+export const registerStoreGetter = (getter: () => LocaleStore | undefined): void => {
+  storeGetter = getter;
+};
 
 const translations: Record<string, Record<string, unknown>> = Object.fromEntries(
   Object.entries(config?.translations ?? {}).map(([p, d]) => [
@@ -34,7 +30,22 @@ export const activeConfig = {
   translations,
 };
 
-let currentLocale = activeConfig.defaultLocale;
+let currentLocale: string | undefined;
+
+const resolveBrowserLocale = (): string | undefined => {
+  if (typeof window !== "undefined" && window.location?.pathname) {
+    const seg = window.location.pathname.split("/")[1];
+    if (seg) {
+      const match = activeConfig.locales.find((l) => l.toLowerCase() === seg.toLowerCase());
+      if (match) return match;
+    }
+  }
+  if (typeof document !== "undefined" && document.documentElement?.lang) {
+    const lang = document.documentElement.lang;
+    return activeConfig.locales.find((l) => l.toLowerCase() === lang.toLowerCase()) ?? lang;
+  }
+  return undefined;
+};
 
 /** Returns the supported locale codes. */
 export const getLocales = (): string[] => [...activeConfig.locales];
@@ -43,7 +54,8 @@ export const getLocales = (): string[] => [...activeConfig.locales];
 export const getDefaultLocale = (): string => activeConfig.defaultLocale;
 
 /** Returns the active locale code. */
-export const getCurrentLocale = (): string => storage?.getStore()?.locale ?? currentLocale;
+export const getCurrentLocale = (): string =>
+  storeGetter?.()?.locale ?? currentLocale ?? resolveBrowserLocale() ?? activeConfig.defaultLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -91,7 +103,7 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      const store = storage?.getStore();
+      const store = storeGetter?.();
       const get = (loc: string) => {
         const dict = ((store && (store.locale === loc || !loc) && store.translations) ||
           activeConfig.translations[loc]) as Record<string, unknown> | undefined;

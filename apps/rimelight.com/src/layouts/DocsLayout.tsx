@@ -1,12 +1,11 @@
-import { untrack, type Component, For, Show, createMemo } from "solid-js";
-import { useParams } from "@solidjs/router";
+import { type Component, For, Show, createMemo } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import AppLayout from "./AppLayout";
 import { RLSidebar, RLTableOfContents, RLSurround, RLSelect, RLInput } from "@rimelight/ui";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
-import { t, getCurrentLocale, getLocales, setCurrentLocale } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export interface DocsLayoutProps {
   title: string;
@@ -25,13 +24,6 @@ export interface DocsLayoutProps {
 }
 
 export const DocsLayout: Component<DocsLayoutProps> = (props) => {
-  const params = useParams<{ locale?: string; slug?: string }>();
-  untrack(() => {
-    if (params.locale && getLocales().includes(params.locale)) {
-      setCurrentLocale(params.locale);
-    }
-  });
-
   const locale = () => getCurrentLocale();
   const currentPath = () =>
     typeof window !== "undefined" ? window.location.pathname : `/${locale()}/docs`;
