@@ -1,29 +1,14 @@
+import type { Component } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import type { RLLinkGroupProps } from "./link-group.types";
 import { RLLinkGroupTheme } from "./link-group.theme";
-import { createMemo, omit, For, Show, type Component } from "solid-js";
 import { RLLink } from "../link/RLLink";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
-  const rest = omit(
-    props,
-    "label",
-    "leadingIcon",
-    "trailingIcon",
-    "href",
-    "links",
-    "theme",
-    "ui",
-    "class",
-    "children",
-  );
+const OMIT_KEYS = ["label", "leadingIcon", "trailingIcon", "href", "links"] as const;
 
-  const classes = createMemo(() =>
-    RLLinkGroupTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
+  const { classes, rest } = RLLinkGroupTheme.setup(props, { omit: OMIT_KEYS });
 
   const normalizedLinks = createMemo(() => {
     if (!props.links) return [];

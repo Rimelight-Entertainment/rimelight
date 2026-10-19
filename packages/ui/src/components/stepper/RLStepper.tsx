@@ -1,29 +1,25 @@
+import type { Component } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import type { RLStepperProps, StepperItem } from "./stepper.types";
 import { RLStepperTheme } from "./stepper.theme";
-import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "items",
+  "value",
+  "defaultValue",
+  "valueKey",
+  "linear",
+  "disabled",
+  "indicator",
+  "wrapper",
+  "onChange",
+  "onNext",
+  "onPrev",
+] as const;
+
 export const RLStepper: Component<RLStepperProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "value",
-    "defaultValue",
-    "valueKey",
-    "linear",
-    "disabled",
-    "orientation",
-    "size",
-    "color",
-    "ui",
-    "class",
-    "children",
-    "indicator",
-    "wrapper",
-    "onChange",
-    "onNext",
-    "onPrev",
-  );
+  const { classes, rest } = RLStepperTheme.setup(props, { omit: OMIT_KEYS });
 
   const items = (): StepperItem[] => props.items ?? [];
   const valueKey = (): string => props.valueKey ?? "value";
@@ -61,16 +57,6 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
     }
     props.onChange?.({ index, value });
   };
-
-  const classes = createMemo(() =>
-    RLStepperTheme({
-      size: props.size ?? "sm",
-      color: props.color ?? "primary",
-      orientation: props.orientation ?? "horizontal",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

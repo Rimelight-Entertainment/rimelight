@@ -1,36 +1,41 @@
+import type { Component } from "solid-js";
+import { For } from "solid-js";
 import type { RLTimelineProps, TimelineItem } from "./timeline.types";
 import { RLTimelineTheme } from "./timeline.theme";
-import { createMemo, For, omit, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "items",
+  "valueKey",
+  "defaultValue",
+  "value",
+  "reverse",
+  "indicator",
+  "wrapper",
+  "date",
+  "title",
+  "description",
+] as const;
+
 export const RLTimeline: Component<RLTimelineProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "items",
-    "size",
-    "color",
-    "orientation",
-    "valueKey",
-    "defaultValue",
-    "value",
-    "reverse",
-    "ui",
-    "class",
-    "children",
-    "indicator",
-    "wrapper",
-    "date",
-    "title",
-    "description",
-  );
+  const reverse = (): boolean => props.reverse === true;
+
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLTimelineTheme.setup(props, {
+    as: "div",
+    omit: OMIT_KEYS,
+    variants: () => ({
+      reverse: reverse(),
+    }),
+  });
 
   const items = (): TimelineItem[] => props.items ?? [];
   const valueKey = (): string => props.valueKey ?? "value";
-  const reverse = (): boolean => props.reverse === true;
   const orientation = (): string => props.orientation ?? "vertical";
 
   const getItemValue = (item: TimelineItem, index: number): string | number =>
@@ -55,17 +60,6 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
     return index < currentIndex ? "completed" : undefined;
   };
 
-  const classes = createMemo(() =>
-    RLTimelineTheme({
-      size: props.size ?? "md",
-      color: props.color ?? "primary",
-      orientation: props.orientation ?? "vertical",
-      reverse: props.reverse ?? false,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const renderSlot = (
     slotFn: any,
     item: TimelineItem,
@@ -78,8 +72,6 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
     }
     return fallback ? fallback() : null;
   };
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root data-slot="root" class={classes().root} data-orientation={orientation()} {...rest}>

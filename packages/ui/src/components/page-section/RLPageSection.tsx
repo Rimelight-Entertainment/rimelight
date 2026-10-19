@@ -1,42 +1,35 @@
+import type { Component } from "solid-js";
+import { For, Show } from "solid-js";
 import type { RLPageSectionProps } from "./page-section.types";
 import { RLPageSectionTheme } from "./page-section.theme";
-import { createMemo, omit, For, type Component, Show, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
 
-export const RLPageSection: Component<RLPageSectionProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "variant",
-    "ctaVariant",
-    "headline",
-    "icon",
-    "title",
-    "description",
-    "links",
-    "orientation",
-    "reverse",
-    "contentVisibility",
-    "containIntrinsicSize",
-    "ui",
-    "class",
-    "background",
-    "top",
-    "header",
-    "leading",
-    "headlineSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "body",
-    "footer",
-    "linksSlot",
-    "content",
-    "bottom",
-    "children",
-  );
+const OMIT_KEYS = [
+  "ctaVariant",
+  "headline",
+  "icon",
+  "title",
+  "description",
+  "links",
+  "reverse",
+  "contentVisibility",
+  "containIntrinsicSize",
+  "background",
+  "top",
+  "header",
+  "leading",
+  "headlineSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "body",
+  "footer",
+  "linksSlot",
+  "content",
+  "bottom",
+] as const;
 
+export const RLPageSection: Component<RLPageSectionProps> = (props) => {
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "hero" || props.variant === "cta"
       ? props.variant
@@ -46,8 +39,14 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
   const resolvedTitle = () => props.title ?? props.titleSlot;
   const resolvedDescription = () => props.description ?? props.descriptionSlot;
 
-  const classes = createMemo(() =>
-    RLPageSectionTheme({
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLPageSectionTheme.setup(props, {
+    as: "section",
+    omit: OMIT_KEYS,
+    variants: () => ({
       variant: resolvedVariant(),
       ...(resolvedVariant() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
       orientation: props.orientation ?? "vertical",
@@ -56,10 +55,8 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       title: Boolean(resolvedTitle()),
       description: Boolean(resolvedDescription()),
       body: Boolean(props.body),
-      ui: props.ui,
-      class: props.class,
     }),
-  );
+  });
 
   const showHeader = () =>
     Boolean(
@@ -79,8 +76,6 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       props.linksSlot ||
       (props.links?.length ?? 0) > 0,
     );
-
-  const Root = dynamic(() => props.as ?? "section", { static: isStatic(props, "as") });
 
   return (
     <Root

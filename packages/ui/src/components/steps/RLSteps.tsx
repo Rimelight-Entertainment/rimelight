@@ -1,18 +1,13 @@
+import type { Component } from "solid-js";
 import type { RLStepsProps } from "./steps.types";
 import { RLStepsTheme } from "./steps.theme";
-import { createMemo, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["size"] as const;
 
 export const RLSteps: Component<RLStepsProps> = (props) => {
-  const rest = omit(props, "size", "ui", "class", "children");
+  const { classes, rest } = RLStepsTheme.setup(props, { omit: OMIT_KEYS });
 
   const size = () => props.size || "md";
-
-  const classes = createMemo(() =>
-    RLStepsTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div class={`${classes().root} rl-steps`} data-slot="root" data-size={size()} {...rest}>

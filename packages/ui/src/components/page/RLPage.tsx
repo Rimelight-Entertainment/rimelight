@@ -1,11 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLPageProps } from "./page.types";
 import { RLPageTheme } from "./page.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLPage: Component<RLPageProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() => RLPageTheme({ ui: props.ui, class: props.class }));
+  const { classes, rest } = RLPageTheme.setup(props);
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

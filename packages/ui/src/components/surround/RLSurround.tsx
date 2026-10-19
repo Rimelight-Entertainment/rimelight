@@ -1,16 +1,13 @@
+import type { Component } from "solid-js";
+import { createMemo, Show } from "solid-js";
 import type { RLSurroundProps } from "./surround.types";
 import { RLSurroundTheme } from "./surround.theme";
-import { createMemo, omit, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLSurround: Component<RLSurroundProps> = (props) => {
-  const rest = omit(props, "prev", "next", "theme", "ui", "class");
+const OMIT_KEYS = ["prev", "next"] as const;
 
-  const classes = createMemo(() =>
-    RLSurroundTheme({
-      class: props.class,
-    }),
-  );
+export const RLSurround: Component<RLSurroundProps> = (props) => {
+  const { classes, rest } = RLSurroundTheme.setup(props, { omit: OMIT_KEYS });
 
   const prevTheme = createMemo(() =>
     RLSurroundTheme({
