@@ -44,6 +44,24 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
     ),
   );
 
+  const resolveTargetUrl = (item: LocaleItem, pathname: string, search: string): string => {
+    if (item.href !== undefined && item.href !== null) {
+      return item.href + (item.href.includes("?") ? "" : search);
+    }
+    const knownCodes = new Set(processedLocales().map((l) => l.code));
+    const segments = pathname.split("/").filter(Boolean);
+    const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!);
+
+    if (firstIsLocale) {
+      segments[0] = item.code;
+      return `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
+    }
+    if (segments.length > 0) {
+      return `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
+    }
+    return `/${item.code}/${search}`;
+  };
+
   const [currentSearch, setCurrentSearch] = createSignal("");
   const [currentPathname, setCurrentPathname] = createSignal("/");
 
@@ -54,28 +72,11 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
   });
 
   const items = createMemo(() =>
-    processedLocales().map((item) => {
-      let targetUrl: string;
-      const search = currentSearch();
-      const pathname = currentPathname();
-      if (item.href !== undefined && item.href !== null) {
-        targetUrl = item.href + (item.href.includes("?") ? "" : search);
-      } else {
-        const knownCodes = new Set(processedLocales().map((l) => l.code));
-        const segments = pathname.split("/").filter(Boolean);
-        const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!);
-
-        if (firstIsLocale) {
-          segments[0] = item.code;
-          targetUrl = `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
-        } else if (segments.length > 0) {
-          targetUrl = `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
-        } else {
-          targetUrl = `/${item.code}/${search}`;
-        }
-      }
-      return { label: item.label, value: item.code, href: targetUrl };
-    }),
+    processedLocales().map((item) => ({
+      label: item.label,
+      value: item.code,
+      href: resolveTargetUrl(item, currentPathname(), currentSearch()),
+    })),
   );
 
   const classes = createMemo(() =>
@@ -89,11 +90,14 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
 
   const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
     const selectedCode = e.currentTarget.value;
-    const found = items().find((i) => i.value === selectedCode);
+    const found = processedLocales().find((i) => i.code === selectedCode);
     if (found) {
-      props.onSelect?.({ label: found.label, code: found.value, href: found.href });
-      if (found.href && typeof window !== "undefined") {
-        window.location.href = found.href;
+      const pathname = typeof window !== "undefined" ? window.location.pathname : currentPathname();
+      const search = typeof window !== "undefined" ? window.location.search : currentSearch();
+      const href = resolveTargetUrl(found, pathname, search);
+      props.onSelect?.({ label: found.label, code: found.code, href });
+      if (href && typeof window !== "undefined") {
+        window.location.href = href;
       }
     }
     props.onChange?.(e);

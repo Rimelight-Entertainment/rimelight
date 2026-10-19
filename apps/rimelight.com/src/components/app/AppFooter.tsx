@@ -78,9 +78,9 @@ export const AppFooter: Component = () => {
   ];
 
   const targetLanguages = () => [
-    { code: "en", label: "English", href: getLocaleUrl("/en") },
-    { code: "pt", label: "Português", href: getLocaleUrl("/pt") },
-    { code: "es", label: "Español", href: getLocaleUrl("/es") },
+    { code: "en", label: "English" },
+    { code: "pt", label: "Português" },
+    { code: "es", label: "Español" },
   ];
 
   return (
