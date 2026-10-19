@@ -175,14 +175,31 @@ export default function DevSeoPage() {
       ],
     });
 
-  const liveWebManifest = () =>
-    buildWebManifest({
-      name: liveConfig().name || "Rimelight",
-      shortName: liveConfig().name || "Rimelight",
-      description: liveConfig().description || "",
-      themeColor: liveConfig().branding?.colors?.themeColor || "#ffffff",
-      backgroundColor: liveConfig().branding?.colors?.backgroundColor || "#0a0a0a",
+  const liveWebManifest = () => {
+    const cfg = liveConfig();
+    const faviconSrc =
+      typeof cfg.branding?.favicon === "string"
+        ? cfg.branding.favicon.startsWith("<svg")
+          ? "/favicon.svg"
+          : cfg.branding.favicon
+        : cfg.branding?.favicon?.svg || cfg.branding?.favicon?.png || "/favicon.svg";
+
+    return buildWebManifest({
+      name: cfg.name || "Rimelight",
+      shortName: cfg.name || "Rimelight",
+      description: cfg.description || "",
+      themeColor: cfg.branding?.colors?.themeColor || "#ffffff",
+      backgroundColor: cfg.branding?.colors?.backgroundColor || "#0a0a0a",
+      icons: cfg.branding?.icons || [
+        {
+          src: faviconSrc,
+          sizes: "any",
+          type: "image/svg+xml",
+          purpose: "any",
+        },
+      ],
     });
+  };
 
   const liveArticleSchema = () =>
     buildArticleSchema({
@@ -956,36 +973,15 @@ export default function DevSeoPage() {
               <RLButton
                 variant="soft"
                 color="neutral"
-                href="/apple-touch-icon.png"
-                label="/apple-touch-icon.png"
+                href="/site.webmanifest"
+                label="/site.webmanifest"
                 rel="external"
               />
               <RLButton
                 variant="soft"
                 color="neutral"
-                href="/icon-192.png"
-                label="/icon-192.png"
-                rel="external"
-              />
-              <RLButton
-                variant="soft"
-                color="neutral"
-                href="/icon-512.png"
-                label="/icon-512.png"
-                rel="external"
-              />
-              <RLButton
-                variant="soft"
-                color="neutral"
-                href="/icon-maskable-512.png"
-                label="/icon-maskable-512.png"
-                rel="external"
-              />
-              <RLButton
-                variant="soft"
-                color="neutral"
-                href="/og.png"
-                label="/og.png"
+                href="/open-graph/card.svg"
+                label="/open-graph/card.svg"
                 rel="external"
               />
               <RLButton

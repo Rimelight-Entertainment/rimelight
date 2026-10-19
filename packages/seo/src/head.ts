@@ -96,7 +96,12 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
       : "image/svg+xml";
 
   const appleTouchIcon =
-    customAppleTouchIcon || config.branding?.appleTouchIcon || "/apple-touch-icon.png";
+    customAppleTouchIcon ||
+    config.branding?.appleTouchIcon ||
+    (typeof config.branding?.favicon === "string"
+      ? config.branding.favicon
+      : config.branding?.favicon?.svg) ||
+    "/favicon.svg";
   const twitterHandle = config.authorHandle;
   const titleTemplate = config.titleTemplate || `%s | ${siteName}`;
 
@@ -418,11 +423,6 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
     tags.push({
       tag: "link",
       props: { rel: "icon", href: sanitizeUrl(rawFaviconIco), sizes: "32x32" },
-    });
-  } else if (!customFavicon) {
-    tags.push({
-      tag: "link",
-      props: { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
     });
   }
   tags.push({

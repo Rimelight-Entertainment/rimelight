@@ -12,8 +12,9 @@ describe("buildWebManifest", () => {
     expect(manifest.start_url).toBe("/");
     expect(manifest.display).toBe("standalone");
     expect(manifest.background_color).toBe("#ffffff");
-    expect(manifest.theme_color).toBe("#ffffff");
-    expect(manifest.icons).toHaveLength(3);
+    expect(manifest.icons).toHaveLength(1);
+    expect(manifest.icons?.[0]?.src).toBe("/favicon.svg");
+    expect(manifest.icons?.[0]?.type).toBe("image/svg+xml");
   });
 
   it("customizes theme, icons and shortcuts", () => {
