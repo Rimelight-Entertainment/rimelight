@@ -1,6 +1,6 @@
+import type { Component } from "solid-js";
 import type { RLMarqueeProps } from "./marquee.types";
 import { RLMarqueeTheme } from "./marquee.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 const MARQUEE_KEYFRAMES = `
 @keyframes marquee-left {
@@ -34,17 +34,10 @@ const MARQUEE_KEYFRAMES = `
 }
 `;
 
-export const RLMarquee: Component<RLMarqueeProps> = (props) => {
-  const rest = omit(props, "speed", "direction", "pauseOnHover", "ui", "class", "children");
+const OMIT_KEYS = ["speed", "direction", "pauseOnHover"] as const;
 
-  const classes = createMemo(() =>
-    RLMarqueeTheme({
-      direction: props.direction ?? "left",
-      pauseOnHover: props.pauseOnHover ?? true,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLMarquee: Component<RLMarqueeProps> = (props) => {
+  const { classes, rest } = RLMarqueeTheme.setup(props, { omit: OMIT_KEYS });
 
   const trackStyle = () => ({ "animation-duration": `${props.speed ?? 40}s` });
 

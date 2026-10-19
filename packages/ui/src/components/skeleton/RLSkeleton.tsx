@@ -1,30 +1,16 @@
+import type { Component } from "solid-js";
+import { createEffect, createSignal, For, Show } from "solid-js";
 import type { RLSkeletonProps } from "./skeleton.types";
 import { RLSkeletonTheme } from "./skeleton.theme";
-import { createEffect, createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { createResizeObserver, extractSkeletonRects, type SkeletonRect } from "./skeleton.dom";
 
+const OMIT_KEYS = ["loading", "fallbackBorderRadius"] as const;
+
 export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
-  const rest = omit(
-    props,
-    "shape",
-    "loading",
-    "fallbackBorderRadius",
-    "theme",
-    "ui",
-    "class",
-    "children",
-  );
+  const { classes, rest } = RLSkeletonTheme.setup(props, { omit: OMIT_KEYS });
 
   const isLoading = () => props.loading ?? true;
   const hasChildren = () => props.children !== undefined && props.children !== null;
-
-  const classes = createMemo(() =>
-    RLSkeletonTheme({
-      shape: props.shape ?? "rounded",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const [rects, setRects] = createSignal<SkeletonRect[]>([]);
   let measureRef: HTMLDivElement | undefined = undefined;

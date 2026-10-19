@@ -1,55 +1,46 @@
+import type { Component } from "solid-js";
+import { Show } from "solid-js";
 import type { RLBrowserMockupProps } from "./browser-mockup.types";
 import { RLBrowserMockupTheme } from "./browser-mockup.theme";
-import { createMemo, createUniqueId, omit, Show, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "url",
+  "urlPrefix",
+  "urlIcon",
+  "controls",
+  "controlsVariant",
+  "navigation",
+  "padded",
+  "shadow",
+  "rounded",
+  "headerSlot",
+  "controlsSlot",
+  "navigationSlot",
+  "urlSlot",
+  "urlPrefixSlot",
+  "urlSuffixSlot",
+  "actionsSlot",
+  "ariaLabel",
+] as const;
+
 export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "variant",
-    "size",
-    "color",
-    "url",
-    "urlPrefix",
-    "urlIcon",
-    "controls",
-    "controlsVariant",
-    "navigation",
-    "padded",
-    "shadow",
-    "rounded",
-    "ui",
-    "class",
-    "children",
-    "headerSlot",
-    "controlsSlot",
-    "navigationSlot",
-    "urlSlot",
-    "urlPrefixSlot",
-    "urlSuffixSlot",
-    "actionsSlot",
-    "ariaLabel",
-  );
-
-  const titleId = createUniqueId();
-
-  const classes = createMemo(() =>
-    RLBrowserMockupTheme({
-      variant: props.variant,
-      size: props.size,
-      color: props.color,
+  const {
+    Tag: RootTag,
+    classes,
+    rest,
+    id,
+  } = RLBrowserMockupTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
       controlsVariant: props.controls === false ? "none" : props.controlsVariant,
       padded: props.padded,
       shadow: props.shadow,
       rounded: props.rounded,
-      ui: props.ui,
-      class: props.class,
     }),
-  );
+  });
 
-  const RootTag = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
+  const titleId = id;
 
   const showControls = () => props.controls !== false && props.controlsVariant !== "none";
 
@@ -173,7 +164,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                     <div class={classes().urlBar} data-slot="url-bar">
                       {renderUrlPrefix()}
                       <Show when={props.url}>
-                        <span id={titleId} class={classes().urlText} data-slot="url-text">
+                        <span id={titleId()} class={classes().urlText} data-slot="url-text">
                           {props.url}
                         </span>
                       </Show>

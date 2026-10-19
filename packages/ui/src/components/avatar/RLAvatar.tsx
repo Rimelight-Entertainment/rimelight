@@ -1,7 +1,7 @@
+import type { Component } from "solid-js";
+import { createMemo, createSignal, Show } from "solid-js";
 import type { RLAvatarProps } from "./avatar.types";
 import { RLAvatarTheme } from "./avatar.theme";
-import { createMemo, createSignal, omit, Show, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";
 
@@ -16,60 +16,49 @@ function getInitials(alt?: string): string | undefined {
   return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
 }
 
+const OMIT_KEYS = [
+  "src",
+  "alt",
+  "icon",
+  "text",
+  "fallback",
+  "initials",
+  "title",
+  "subtitle",
+  "label",
+  "chip",
+  "badge",
+  "badgeColor",
+  "loading",
+  "referrerpolicy",
+  "crossorigin",
+  "decoding",
+  "height",
+  "width",
+  "sizes",
+  "srcset",
+  "usemap",
+  "fallbackSlot",
+  "badgeSlot",
+  "imgProps",
+] as const;
+
 export const RLAvatar: Component<RLAvatarProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "src",
-    "alt",
-    "icon",
-    "text",
-    "fallback",
-    "initials",
-    "title",
-    "subtitle",
-    "label",
-    "chip",
-    "badge",
-    "badgeColor",
-    "badgePosition",
-    "size",
-    "color",
-    "loading",
-    "referrerpolicy",
-    "crossorigin",
-    "decoding",
-    "height",
-    "width",
-    "sizes",
-    "srcset",
-    "usemap",
-    "ui",
-    "class",
-    "children",
-    "fallbackSlot",
-    "badgeSlot",
-    "imgProps",
-  );
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLAvatarTheme.setup(props, {
+    as: "span",
+    omit: OMIT_KEYS,
+  });
 
   const [imageError, setImageError] = createSignal(false);
-
-  const classes = createMemo(() =>
-    RLAvatarTheme({
-      size: props.size ?? "md",
-      color: props.color ?? "neutral",
-      badgePosition: props.badgePosition ?? "bottom-right",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const fallbackText = () =>
     props.text || props.fallback || props.initials || getInitials(props.alt);
 
   const hasImage = () => Boolean(props.src && !imageError());
-
-  const Root = dynamic(() => props.as ?? "span", { static: isStatic(props, "as") });
 
   const renderIcon = () => {
     if (!props.icon) return null;

@@ -1,27 +1,11 @@
+import type { Component } from "solid-js";
 import type { RLFooterProps } from "./footer.types";
 import { RLFooterTheme } from "./footer.theme";
-import { createMemo, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["left", "center", "right"] as const;
 
 export const RLFooter: Component<RLFooterProps> = (props) => {
-  const rest = omit(
-    props,
-    "contain",
-    "theme",
-    "ui",
-    "class",
-    "left",
-    "center",
-    "right",
-    "children",
-  );
-
-  const classes = createMemo(() =>
-    RLFooterTheme({
-      contain: props.contain,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLFooterTheme.setup(props, { omit: OMIT_KEYS });
 
   return (
     <footer

@@ -1,17 +1,12 @@
+import type { Component } from "solid-js";
 import type { RLQuoteProps } from "./quote.types";
 import { RLQuoteTheme } from "./quote.theme";
-import { createMemo, omit, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLQuote: Component<RLQuoteProps> = (props) => {
-  const rest = omit(props, "quote", "caption", "children", "ui", "class");
+const OMIT_KEYS = ["quote", "caption"] as const;
 
-  const classes = createMemo(() =>
-    RLQuoteTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLQuote: Component<RLQuoteProps> = (props) => {
+  const { classes, rest } = RLQuoteTheme.setup(props, { omit: OMIT_KEYS });
 
   return (
     <figure class={classes().root} data-slot="root" {...rest}>

@@ -1,11 +1,13 @@
+import type { Component } from "solid-js";
+import { createMemo } from "solid-js";
 import type { RLIconProps } from "./icon.types";
 import { RLIconTheme } from "./icon.theme";
-import { createMemo, omit, type Component } from "solid-js";
 import { resolveIcon } from "../../icons";
 
+const OMIT_KEYS = ["name", "unstyled"] as const;
+
 export const RLIcon: Component<RLIconProps> = (props) => {
-  const rest = omit(props, "name", "size", "class", "unstyled");
-  const classes = createMemo(() => RLIconTheme({ size: props.size, class: props.class }));
+  const { classes, rest } = RLIconTheme.setup(props, { omit: OMIT_KEYS });
   const resolved = createMemo(() => resolveIcon(props.name));
 
   return (

@@ -1,18 +1,7 @@
+import type { Component } from "solid-js";
+import { createEffect, createMemo, createSignal, For, onSettled, Show } from "solid-js";
 import type { RLBannerProps } from "./banner.types";
 import { RLBannerTheme } from "./banner.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  createUniqueId,
-  isStatic,
-  omit,
-  onSettled,
-  For,
-  Show,
-  type Component,
-} from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import { useHeaderStack } from "../header/useHeaderStack";
@@ -22,50 +11,40 @@ import type { RLButtonProps } from "../button/button.types";
 /** Value written to localStorage to persist dismissal across visits. */
 const DISMISSED_VALUE = "true";
 
+const OMIT_KEYS = [
+  "icon",
+  "title",
+  "actions",
+  "close",
+  "closeIcon",
+  "onClose",
+  "contain",
+  "sticky",
+  "fixed",
+  "stackIndex",
+  "hideOnScroll",
+  "leading",
+  "titleSlot",
+  "actionsSlot",
+  "closeSlot",
+  "left",
+  "center",
+  "right",
+  "href",
+  "target",
+  "rel",
+  "external",
+  "externalIcon",
+  "noExternalIcon",
+  "trailingIcon",
+  "active",
+  "disabled",
+  "raw",
+  "ariaLabel",
+  "ariaCurrentValue",
+] as const;
+
 export const RLBanner: Component<RLBannerProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "id",
-    "icon",
-    "title",
-    "actions",
-    "color",
-    "close",
-    "closeIcon",
-    "onClose",
-    "contain",
-    "sticky",
-    "fixed",
-    "stackIndex",
-    "hideOnScroll",
-    "ui",
-    "class",
-    "children",
-    "leading",
-    "titleSlot",
-    "actionsSlot",
-    "closeSlot",
-    "left",
-    "center",
-    "right",
-    "href",
-    "target",
-    "rel",
-    "external",
-    "externalIcon",
-    "noExternalIcon",
-    "trailingIcon",
-    "active",
-    "disabled",
-    "raw",
-    "ariaLabel",
-    "ariaCurrentValue",
-    "theme",
-  );
-
-  const Tag = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
-
   const fixed = () => props.fixed ?? false;
   const sticky = () => (fixed() ? false : (props.sticky ?? false));
   const isStacked = () => fixed() || sticky();
@@ -74,13 +53,22 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const href = () => props.href;
   const isLink = () => Boolean(href());
 
+  const { Tag, classes, rest, id } = RLBannerTheme.setup(props, {
+    as: "div",
+    omit: OMIT_KEYS,
+    variants: () => ({
+      contain: props.contain ?? true,
+      sticky: sticky(),
+      fixed: fixed(),
+      to: isLink(),
+    }),
+  });
+
   // Explicit id enables persistence. Otherwise a createUniqueId() fallback
   // keeps the DOM id unique and SSR/hydration stable.
-  const fallbackId = `rl-banner-${createUniqueId()}`;
-  const persistId = () => props.id || "";
-  const layerId = () => persistId() || fallbackId;
+  const layerId = id;
   const titleId = () => `${layerId()}-title`;
-  const storageKey = () => (persistId() ? `banner-${persistId()}` : undefined);
+  const storageKey = () => (props.id ? `banner-${props.id}` : undefined);
 
   const isClosable = () => Boolean(props.close);
 
@@ -114,18 +102,6 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     );
   const hasActions = () =>
     Boolean(props.actionsSlot !== undefined || (props.actions && props.actions.length > 0));
-
-  const classes = createMemo(() =>
-    RLBannerTheme({
-      color: props.color ?? "primary",
-      contain: props.contain ?? true,
-      sticky: sticky(),
-      fixed: fixed(),
-      to: isLink(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({

@@ -1,22 +1,19 @@
+import type { Component } from "solid-js";
+import { children, For, Show } from "solid-js";
 import type { RLAvatarGroupProps } from "./avatar-group.types";
 import { RLAvatarGroupTheme } from "./avatar-group.theme";
-import { children, createMemo, omit, For, Show, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLAvatar } from "../avatar/RLAvatar";
 
+const OMIT_KEYS = ["items", "max", "displayLimit"] as const;
+
 export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "items",
-    "max",
-    "displayLimit",
-    "size",
-    "color",
-    "ui",
-    "class",
-    "children",
-  );
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLAvatarGroupTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const maxCount = () => {
     if (props.max !== undefined) {
@@ -31,17 +28,6 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
 
   const size = () => props.size ?? "md";
   const color = () => props.color ?? "neutral";
-
-  const classes = createMemo(() =>
-    RLAvatarGroupTheme({
-      size: size(),
-      color: color(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   // For props.items mode
   const normalizedItems = () => props.items ?? [];

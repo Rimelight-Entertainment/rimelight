@@ -1,48 +1,34 @@
+import type { Component } from "solid-js";
+import { For, Show } from "solid-js";
 import type { RLEmptyProps } from "./empty.types";
 import { RLEmptyTheme } from "./empty.theme";
-import { createMemo, omit, For, Show, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "icon",
+  "avatar",
+  "loading",
+  "loadingIcon",
+  "title",
+  "description",
+  "actions",
+  "headerSlot",
+  "leadingSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "bodySlot",
+  "actionsSlot",
+  "footerSlot",
+] as const;
+
 export const RLEmpty: Component<RLEmptyProps> = (props) => {
-  const rest = omit(
-    props,
-    "icon",
-    "avatar",
-    "loading",
-    "loadingIcon",
-    "title",
-    "description",
-    "actions",
-    "variant",
-    "size",
-    "as",
-    "ui",
-    "class",
-    "children",
-    "headerSlot",
-    "leadingSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "bodySlot",
-    "actionsSlot",
-    "footerSlot",
-  );
+  const { classes, rest } = RLEmptyTheme.setup(props, { omit: OMIT_KEYS });
 
   const activeIcon = () =>
     props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
   const actionList = () => props.actions ?? [];
-
-  const classes = createMemo(() =>
-    RLEmptyTheme({
-      variant: props.variant ?? "outline",
-      size: props.size ?? "md",
-      loading: props.loading ?? false,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div class={classes()["root"]} data-slot="root" {...rest}>

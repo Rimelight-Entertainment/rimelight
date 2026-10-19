@@ -1,35 +1,22 @@
+import type { Component } from "solid-js";
 import type { RLBadgeProps } from "./badge.types";
 import { RLBadgeTheme } from "./badge.theme";
-import { createMemo, omit, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 
-export const RLBadge: Component<RLBadgeProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "label",
-    "variant",
-    "color",
-    "size",
-    "shape",
-    "square",
-    "fieldGroup",
-    "icon",
-    "avatar",
-    "leading",
-    "leadingIcon",
-    "trailing",
-    "trailingIcon",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "leadingSlot",
-    "trailingSlot",
-  );
+const OMIT_KEYS = [
+  "label",
+  "icon",
+  "avatar",
+  "leading",
+  "leadingIcon",
+  "trailing",
+  "trailingIcon",
+  "leadingSlot",
+  "trailingSlot",
+] as const;
 
+export const RLBadge: Component<RLBadgeProps> = (props) => {
   const leadingIconProp = () => props.leadingIcon;
   const trailingIconProp = () => props.trailingIcon;
   const leadingProp = () => props.leading;
@@ -58,20 +45,15 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
 
   const isSquare = () => Boolean(props.square);
 
-  const classes = createMemo(() =>
-    RLBadgeTheme({
-      variant: props.variant ?? "solid",
-      color: props.color ?? "primary",
-      size: props.size ?? "md",
-      shape: props.shape ?? "rounded",
-      square: isSquare(),
-      fieldGroup: props.fieldGroup,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
-  const Root = dynamic(() => props.as ?? "span", { static: isStatic(props, "as") });
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLBadgeTheme.setup(props, {
+    as: "span",
+    omit: OMIT_KEYS,
+    variants: () => ({ square: isSquare() }),
+  });
 
   const renderLeading = () => {
     if (props.leadingSlot !== undefined && props.leadingSlot !== null) {
