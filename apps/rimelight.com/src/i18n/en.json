@@ -838,6 +838,24 @@
     "form_remember_me_label": "Remember me",
     "form_sign_in_button": "Sign In"
   },
+  "dev_components": {
+    "title": "Components",
+    "description": "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for Rimelight UI components."
+  },
+  "dev_index": {
+    "title": "Dashboard",
+    "description": "Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy.",
+    "card_user_interface_title": "User Interface",
+    "card_user_interface_description": "Interactive hybrid OKLCH palette scales, typography & fonts, icon library, intent contrast matrix, and component theming.",
+    "card_components_title": "Components",
+    "card_components_description": "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for 19+ Rimelight UI components.",
+    "card_localization_title": "Localization",
+    "card_localization_description": "Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n client/server sync.",
+    "card_security_title": "Security",
+    "card_security_description": "CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics.",
+    "card_seo_title": "SEO",
+    "card_seo_description": "Full @rimelight/seo audit — head generation, meta utilities, structured data (JSON-LD), OG images, sitemap, robots.txt, RSS, LLMs.txt, web manifest, security.txt, and API catalog."
+  },
   "dev_layout": {
     "brand": "Rimelight Developer Workspace"
   },

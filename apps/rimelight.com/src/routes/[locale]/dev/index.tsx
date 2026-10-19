@@ -1,58 +1,47 @@
 import { For } from "solid-js";
 import DevLayout from "#layouts/DevLayout";
 import { RLCard, RLGrid, RLPageSection } from "@rimelight/ui";
-import { getLocaleUrl } from "@rimelight/i18n";
+import { getLocaleUrl, t } from "@rimelight/i18n";
 
 const dashboardCards = [
   {
     href: "/dev/user-interface",
-    title: "User Interface",
-    description:
-      "Interactive hybrid OKLCH palette scales, typography & fonts, icon library, intent contrast matrix, and component theming.",
+    titleKey: "dev_index.card_user_interface_title",
+    descriptionKey: "dev_index.card_user_interface_description",
   },
   {
     href: "/dev/components",
-    title: "Components",
-    description:
-      "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for 19+ Rimelight UI components.",
+    titleKey: "dev_index.card_components_title",
+    descriptionKey: "dev_index.card_components_description",
   },
   {
     href: "/dev/localization",
-    title: "Localization",
-    description:
-      "Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n client/server sync.",
+    titleKey: "dev_index.card_localization_title",
+    descriptionKey: "dev_index.card_localization_description",
   },
   {
     href: "/dev/security",
-    title: "Security",
-    description:
-      "CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics.",
+    titleKey: "dev_index.card_security_title",
+    descriptionKey: "dev_index.card_security_description",
   },
   {
     href: "/dev/seo",
-    title: "SEO",
-    description:
-      "Full @rimelight/seo audit — head generation, meta utilities, structured data (JSON-LD), OG images, sitemap, robots.txt, RSS, LLMs.txt, web manifest, security.txt, and API catalog.",
+    titleKey: "dev_index.card_seo_title",
+    descriptionKey: "dev_index.card_seo_description",
   },
 ];
 
 export default function DevIndexPage() {
   return (
-    <DevLayout
-      title="Dashboard"
-      description="Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy."
-    >
-      <RLPageSection
-        title="Dashboard"
-        description="Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy."
-      >
+    <DevLayout title={t("dev_index.title")} description={t("dev_index.description")}>
+      <RLPageSection title={t("dev_index.title")} description={t("dev_index.description")}>
         <RLGrid cols={3} gap="lg">
           <For each={dashboardCards}>
             {(card) => (
               <RLCard
                 href={getLocaleUrl(card.href)}
-                title={card.title}
-                description={card.description}
+                title={t(card.titleKey)}
+                description={t(card.descriptionKey)}
               />
             )}
           </For>

@@ -2,6 +2,7 @@ import { untrack, type Component } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import DevLayout from "#layouts/DevLayout";
 import ComponentAuditShell from "#components/dev/ComponentAuditShell.tsx";
+import { t } from "@rimelight/i18n";
 
 export const DevComponentsPage: Component = () => {
   const [searchParams] = useSearchParams();
@@ -11,17 +12,11 @@ export const DevComponentsPage: Component = () => {
   };
 
   return (
-    <DevLayout
-      title="Components"
-      description="Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for Rimelight UI components"
-    >
+    <DevLayout title={t("dev_components.title")} description={t("dev_components.description")}>
       <div class="flex flex-col gap-2xl">
         <header class="flex flex-col gap-xs">
-          <h1 class="text-3xl text-highlighted">Components</h1>
-          <p class="text-sm text-muted">
-            Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets
-            for Rimelight UI components.
-          </p>
+          <h1 class="text-3xl text-highlighted">{t("dev_components.title")}</h1>
+          <p class="text-sm text-muted">{t("dev_components.description")}</p>
         </header>
 
         <ComponentAuditShell initialComponentId={untrack(requestedComp)} />
