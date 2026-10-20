@@ -11,12 +11,8 @@ export const ContactPage: Component = () => {
   const [contactStatus, setContactStatus] = createSignal<{ text: string; error?: boolean } | null>(
     null,
   );
-  const [uploadStatus, setUploadStatus] = createSignal<{ text: string; error?: boolean } | null>(
-    null,
-  );
 
   let contactFormRef!: HTMLFormElement;
-  let uploadFormRef!: HTMLFormElement;
 
   const handleContactSubmit = async (e: Event) => {
     e.preventDefault();
@@ -51,32 +47,6 @@ export const ContactPage: Component = () => {
     }
   };
 
-  const handleUploadSubmit = async (e: Event) => {
-    e.preventDefault();
-    if (!uploadFormRef) return;
-
-    setUploadStatus({ text: "Uploading file..." });
-
-    try {
-      const res = await api.upload.$post({
-        form: new FormData(uploadFormRef) as any,
-      });
-      const result = await res.json();
-
-      if (!res.ok || !result.success) {
-        const errorMsg =
-          !result.success && "error" in result ? (result as any).error : "Failed to upload file.";
-        setUploadStatus({ text: errorMsg || "Failed to upload file.", error: true });
-        return;
-      }
-
-      setUploadStatus({ text: `File uploaded! Key: ${result.key} ✅`, error: false });
-      uploadFormRef.reset();
-    } catch {
-      setUploadStatus({ text: "Failed to upload file.", error: true });
-    }
-  };
-
   return (
     <AppLayout title={t("page_contact.title")} description={t("page_contact.description")}>
       <RLPageSection
@@ -87,7 +57,7 @@ export const ContactPage: Component = () => {
       />
 
       <RLPageSection orientation="vertical">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl max-w-6xl mx-auto w-full">
+        <div class="max-w-2xl mx-auto w-full">
           {/* Contact Form Card */}
           <RLCard class="p-6 md:p-8 flex flex-col justify-between">
             <div>
@@ -189,64 +159,6 @@ export const ContactPage: Component = () => {
                     role="status"
                   >
                     {contactStatus()?.text}
-                  </p>
-                )}
-              </form>
-            </div>
-          </RLCard>
-
-          {/* File Upload Card */}
-          <RLCard class="p-6 md:p-8 flex flex-col justify-between">
-            <div>
-              <h2 class="text-2xl font-bold text-[var(--rl-text)] mb-2 flex items-center gap-2">
-                <span class="i-lucide-upload-cloud size-6 text-primary-500" />
-                {t("page_contact.upload_form_title")}
-              </h2>
-              <p class="text-sm text-[var(--rl-text-muted)] mb-6">
-                {t("page_contact.upload_form_description")}
-              </p>
-
-              <form
-                ref={(el) => (uploadFormRef = el)}
-                onSubmit={handleUploadSubmit}
-                class="flex flex-col gap-4"
-              >
-                <div class="flex flex-col gap-1">
-                  <label for="upload-file" class="text-sm font-medium text-[var(--rl-text-muted)]">
-                    {t("page_contact.upload_form_file_label")}
-                  </label>
-                  <input
-                    id="upload-file"
-                    name="file"
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp,application/pdf"
-                    required
-                    class="w-full px-4 py-3 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-500 file:text-white hover:file:bg-primary-600 cursor-pointer"
-                  />
-                </div>
-
-                <RLButton
-                  type="submit"
-                  color="primary"
-                  variant="outline"
-                  block={true}
-                  leadingIcon="i-lucide-upload"
-                  label={t("page_contact.upload_form_upload_button")}
-                  class="mt-4"
-                />
-
-                {uploadStatus() && (
-                  <p
-                    class={`text-sm min-h-[1.5rem] mt-2 font-medium ${
-                      uploadStatus()?.error
-                        ? "text-red-500"
-                        : uploadStatus()?.text.includes("✅")
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-neutral-500"
-                    }`}
-                    role="status"
-                  >
-                    {uploadStatus()?.text}
                   </p>
                 )}
               </form>

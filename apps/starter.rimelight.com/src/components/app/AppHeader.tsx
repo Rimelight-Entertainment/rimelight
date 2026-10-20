@@ -117,20 +117,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     },
   ];
 
-  const actions = (): RLButtonProps[] => [
-    {
-      color: "neutral",
-      variant: "outline",
-      href: getLocaleUrl("/auth/sign-up"),
-      label: t("app_header.actions_sign-up"),
-    },
-    {
-      variant: "solid",
-      color: "primary",
-      href: getLocaleUrl("/auth/sign-in"),
-      label: t("app_header.actions_sign-in"),
-    },
-  ];
+  const actions = (): RLButtonProps[] => [];
 
   const userDropdownItems = (): DropdownMenuItem[] =>
     props.session
@@ -146,25 +133,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             label: "Dashboard",
             icon: "i-lucide-layout-dashboard",
             to: getLocaleUrl("/dashboard"),
-          },
-          {
-            label: "Profile",
-            icon: "i-lucide-user",
-            to: getLocaleUrl("/dashboard/profile"),
-          },
-          {
-            label: "Settings",
-            icon: "i-lucide-cog",
-            to: getLocaleUrl("/dashboard/settings"),
-          },
-          {
-            type: "separator",
-          },
-          {
-            label: "Sign Out",
-            icon: "i-lucide-log-out",
-            to: getLocaleUrl("/auth/sign-out"),
-            color: "error",
           },
         ]
       : [];
