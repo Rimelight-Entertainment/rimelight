@@ -63,7 +63,11 @@ api.get("/login", (c) => {
  */
 const handleHeadlessLogin = async (c: any) => {
   try {
-    const body = await c.req.json().catch(() => ({}));
+    const body = (await c.req.json().catch(() => ({}))) as {
+      username?: string;
+      email?: string;
+      password?: string;
+    };
     const username = (body.username || body.email || "").trim();
     const password = body.password;
 
@@ -120,7 +124,10 @@ api.post("/token", handleHeadlessLogin);
  */
 api.post("/refresh", async (c) => {
   try {
-    const body = await c.req.json().catch(() => ({}));
+    const body = (await c.req.json().catch(() => ({}))) as {
+      refresh_token?: string;
+      refreshToken?: string;
+    };
     const refreshToken = (body.refresh_token || body.refreshToken || "").trim();
 
     if (!refreshToken) {

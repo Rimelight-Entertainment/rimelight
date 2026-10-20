@@ -80,10 +80,10 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "hono": "4.13.13"
+    "hono": "5.0.0-rc.1"
   },
   "peerDependencies": {
-    "hono": "^4.13.13",
+    "hono": "^5.0.0-rc.1",
     "vite-plus": "^1.0.0"
   },
   "engines": {

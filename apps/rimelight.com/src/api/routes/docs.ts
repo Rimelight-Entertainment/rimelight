@@ -25,7 +25,7 @@ docs.get("/metadata/:componentName", async (c) => {
 
 docs.post("/metadata/extract", async (c) => {
   try {
-    const body = await c.req.json();
+    const body = await c.req.json<{ componentPath?: string }>();
     const componentPath = body.componentPath;
     if (!componentPath || typeof componentPath !== "string" || componentPath.length === 0) {
       return c.json({ error: "componentPath is required" }, 400);
@@ -85,7 +85,7 @@ docs.post("/metadata/extract", async (c) => {
 docs.put("/metadata/:componentName", async (c) => {
   try {
     const componentName = c.req.param("componentName");
-    const body = await c.req.json();
+    const body = await c.req.json<Record<string, any>>();
 
     const existing = await db
       .select()
@@ -126,7 +126,12 @@ docs.delete("/metadata/:componentName", async (c) => {
 
 docs.post("/render", async (c) => {
   try {
-    const body = await c.req.json();
+    const body = await c.req.json<{
+      componentCode?: string;
+      framework?: string;
+      height?: string;
+      width?: string;
+    }>();
     const componentCode = body.componentCode;
     const framework = body.framework || "solid";
     const height = body.height || "300px";
@@ -152,7 +157,7 @@ docs.post("/render", async (c) => {
 
 docs.post("/validate-props", async (c) => {
   try {
-    const body = await c.req.json();
+    const body = await c.req.json<{ componentName?: string; props?: Record<string, any> }>();
     const componentName = body.componentName;
     const props = body.props;
 
@@ -206,7 +211,7 @@ docs.get("/content/:pageId", async (c) => {
 docs.put("/content/:pageId", async (c) => {
   try {
     const pageId = c.req.param("pageId");
-    const body = await c.req.json();
+    const body = await c.req.json<Record<string, any>>();
     const result = await db
       .update(componentMetadata)
       .set({ ...body, updatedAt: new Date() })
@@ -220,7 +225,7 @@ docs.put("/content/:pageId", async (c) => {
 
 docs.post("/content", async (c) => {
   try {
-    const body = await c.req.json();
+    const body = await c.req.json<typeof componentMetadata.$inferInsert>();
     const result = await db.insert(componentMetadata).values(body).returning();
     return c.json({ content: result[0] });
   } catch (err: any) {
