@@ -18,7 +18,7 @@ import type {
   GroupedItem,
 } from "./table.types";
 import { RLTableTheme } from "./table.theme";
-import { createMemo, createSignal, For, onSettled, Show } from "solid-js";
+import { createMemo, createSignal, For, onSettled, Show, untrack } from "solid-js";
 import { isServer, type JSX } from "@solidjs/web";
 import { RLDropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
 import { RLInput } from "../input/RLInput";
@@ -39,39 +39,41 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   let containerRef: HTMLDivElement | null = null;
 
   // ─── Controlled / Uncontrolled State Store ──────────────────────────────────
-  const [internalSorting, setInternalSorting] = createSignal<SortingState>(props.sorting ?? []);
+  const [internalSorting, setInternalSorting] = createSignal<SortingState>(
+    untrack(() => props.sorting ?? []),
+  );
   const [internalGlobalFilter, setInternalGlobalFilter] = createSignal<string>(
-    props.globalFilter ?? "",
+    untrack(() => props.globalFilter ?? ""),
   );
   const [internalColumnFilters, setInternalColumnFilters] = createSignal<ColumnFiltersState>(
-    props.columnFilters ?? [],
+    untrack(() => props.columnFilters ?? []),
   );
   const [internalColumnVisibility, setInternalColumnVisibility] = createSignal<
     Record<string, boolean>
-  >(props.columnVisibility ?? {});
+  >(untrack(() => props.columnVisibility ?? {}));
   const [internalColumnPinning, setInternalColumnPinning] = createSignal<TableColumnPinningState>(
-    props.columnPinning ?? {},
+    untrack(() => props.columnPinning ?? {}),
   );
   const [internalRowSelection, setInternalRowSelection] = createSignal<Record<string, boolean>>(
-    props.rowSelection ?? {},
+    untrack(() => props.rowSelection ?? {}),
   );
   const [internalExpanded, setInternalExpanded] = createSignal<Record<string, boolean>>(
-    props.expanded ?? {},
+    untrack(() => props.expanded ?? {}),
   );
   const [internalRowPinning, setInternalRowPinning] = createSignal<TableRowPinningState>(
-    props.rowPinning ?? {},
+    untrack(() => props.rowPinning ?? {}),
   );
   const [internalPagination, setInternalPagination] = createSignal<
     TablePaginationState | undefined
-  >(props.pagination);
+  >(untrack(() => props.pagination));
   const [internalColumnSizing, setInternalColumnSizing] = createSignal<TableColumnSizingState>(
-    props.columnSizing ?? {},
+    untrack(() => props.columnSizing ?? {}),
   );
   const [internalColumnOrder, setInternalColumnOrder] = createSignal<TableColumnOrderState>(
-    props.columnOrder ?? [],
+    untrack(() => props.columnOrder ?? []),
   );
   const [internalEditingCell, setInternalEditingCell] = createSignal<TableEditingCellState>(
-    props.editingCell ?? null,
+    untrack(() => props.editingCell ?? null),
   );
 
   // Drag & drop indicator states
@@ -1089,7 +1091,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   }
 
   // ─── Theme Resolution ────────────────────────────────────────────────────────
-  const { Tag, classes } = RLTableTheme.setup(props, {
+  const { classes } = RLTableTheme.setup(props, {
     variants: () => ({ externalScroll: false, pinned: false }),
   });
 
@@ -1149,7 +1151,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   );
 
   return (
-    <Tag class={classes().root} data-slot="root">
+    <div class={classes().root} data-slot="root">
       <Show when={showToolbar()}>
         <div class={classes().toolbar} data-slot="toolbar">
           <Show when={props.searchable}>
@@ -1203,21 +1205,24 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
             <For each={visibleColumns()}>
               {(col) => {
                 const colId = () => String(col.id || col.accessorKey || "");
-                const sizeVal = () => currentColumnSizing()[colId()] ?? col.size;
-                const styles: string[] = [];
-                if (typeof sizeVal() === "number") styles.push(`width: ${sizeVal()}px;`);
-                else if (sizeVal()) styles.push(`width: ${sizeVal()};`);
-                if (col.minSize) {
-                  styles.push(
-                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
-                  );
-                }
-                if (col.maxSize) {
-                  styles.push(
-                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
-                  );
-                }
-                return <col data-col-id={colId()} style={styles.join(" ") || undefined} />;
+                const styles = () => {
+                  const sizeVal = currentColumnSizing()[colId()] ?? col.size;
+                  const list: string[] = [];
+                  if (typeof sizeVal === "number") list.push(`width: ${sizeVal}px;`);
+                  else if (sizeVal) list.push(`width: ${sizeVal};`);
+                  if (col.minSize) {
+                    list.push(
+                      `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
+                    );
+                  }
+                  if (col.maxSize) {
+                    list.push(
+                      `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
+                    );
+                  }
+                  return list.join(" ") || undefined;
+                };
+                return <col data-col-id={colId()} style={styles()} />;
               }}
             </For>
           </colgroup>
@@ -1397,14 +1402,27 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                               when={!slotHeader}
                               fallback={slotHeader?.({ column: col, table: tableApi })}
                             >
-                              <Show when={canSort()} fallback={<span>{headerLabel()}</span>}>
+                              <Show
+                                when={canSort()}
+                                fallback={
+                                  typeof col.header === "function" ? (
+                                    col.header({ column: col, table: tableApi })
+                                  ) : (
+                                    <span>{headerLabel()}</span>
+                                  )
+                                }
+                              >
                                 <button
                                   type="button"
                                   class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
                                   onClick={(e) => toggleSort(colId(), e.shiftKey)}
                                   aria-label={`Sort by ${colId()}`}
                                 >
-                                  <span>{headerLabel()}</span>
+                                  {typeof col.header === "function" ? (
+                                    col.header({ column: col, table: tableApi })
+                                  ) : (
+                                    <span>{headerLabel()}</span>
+                                  )}
                                   <span
                                     class={`size-3.5 transition-all shrink-0 ${
                                       sortDir() === "asc"
@@ -1948,6 +1966,6 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
           </Show>
         </table>
       </div>
-    </Tag>
+    </div>
   );
 };
