@@ -1,32 +1,16 @@
+import type { Component } from "solid-js";
 import type { RLDashboardSearchButtonProps } from "./dashboard-search-button.types";
 import { RLDashboardSearchButtonTheme } from "./dashboard-search-button.theme";
-import { createMemo, For, Show, omit, type Component } from "solid-js";
+import { For, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["icon", "label", "kbds", "trailingSlot"] as const;
+
 export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (props) => {
-  const rest = omit(
-    props,
-    "icon",
-    "label",
-    "kbds",
-    "collapsed",
-    "trailing",
-    "trailingSlot",
-    "ui",
-    "class",
-    "children",
-  );
+  const { classes, rest } = RLDashboardSearchButtonTheme.setup(props, { omit: OMIT_KEYS });
 
   const labelText = () => props.label ?? "Search";
   const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }];
-
-  const classes = createMemo(() =>
-    RLDashboardSearchButtonTheme({
-      collapsed: props.collapsed ?? false,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <button

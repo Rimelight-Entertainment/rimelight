@@ -1,7 +1,20 @@
 import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types";
 import { RLLocaleSelectorTheme } from "./locale-selector.theme";
-import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js";
+import { createMemo, createSignal, onSettled, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
+
+const OMIT_KEYS = [
+  "locales",
+  "currentLocale",
+  "mode",
+  "variant",
+  "size",
+  "labelSlot",
+  "leading",
+  "leadingIcon",
+  "onSelect",
+  "onChange",
+] as const;
 
 const getLocaleDisplayName = (localeCode: string): string => {
   try {
@@ -16,23 +29,7 @@ const getLocaleDisplayName = (localeCode: string): string => {
 };
 
 export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
-  const rest = omit(
-    props,
-    "locales",
-    "currentLocale",
-    "mode",
-    "variant",
-    "size",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "labelSlot",
-    "leading",
-    "leadingIcon",
-    "onSelect",
-    "onChange",
-  );
+  const { classes, rest } = RLLocaleSelectorTheme.setup(props, { omit: OMIT_KEYS });
 
   const currentCode = (): string => props.currentLocale ?? "en";
 
@@ -77,13 +74,6 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
       value: item.code,
       href: resolveTargetUrl(item, currentPathname(), currentSearch()),
     })),
-  );
-
-  const classes = createMemo(() =>
-    RLLocaleSelectorTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
   );
 
   const isIconMode = () => props.mode === "icon" || props.variant === "icon";

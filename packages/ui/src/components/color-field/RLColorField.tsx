@@ -1,6 +1,6 @@
 import type { RLColorFieldProps } from "./color-field.types";
 import { RLColorFieldTheme } from "./color-field.theme";
-import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { createSignal, Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import {
   clamp,
@@ -13,28 +13,24 @@ import {
   rgbToHsl,
 } from "../color-picker/color";
 
+const OMIT_KEYS = [
+  "channel",
+  "colorSpace",
+  "defaultValue",
+  "disabled",
+  "disableWheelChange",
+  "locale",
+  "value",
+  "name",
+  "placeholder",
+  "readonly",
+  "required",
+  "step",
+  "onValueChange",
+] as const;
+
 export const RLColorField: Component<RLColorFieldProps> = (props) => {
-  const rest = omit(
-    props,
-    "channel",
-    "colorSpace",
-    "defaultValue",
-    "disabled",
-    "disableWheelChange",
-    "locale",
-    "value",
-    "name",
-    "placeholder",
-    "readonly",
-    "required",
-    "step",
-    "color",
-    "theme",
-    "ui",
-    "class",
-    "onValueChange",
-    "children",
-  );
+  const { classes, rest } = RLColorFieldTheme.setup(props, { omit: OMIT_KEYS });
 
   const colorSpace = () => props.colorSpace ?? "hsl";
   const stepValue = () => props.step ?? 1;
@@ -160,14 +156,6 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
     const currentVal = parseFloat(displayValue()) || 0;
     updateFromChannelValue(currentVal + stepSize);
   };
-
-  const classes = createMemo(() =>
-    RLColorFieldTheme({
-      color: props.color,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div

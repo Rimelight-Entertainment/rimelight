@@ -1,6 +1,6 @@
 import type { RLSidebarProps, SidebarItem } from "./sidebar.types";
 import { RLSidebarTheme } from "./sidebar.theme";
-import { createMemo, For, Show, omit, type Component } from "solid-js";
+import { For, Show, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
@@ -161,37 +161,28 @@ const RLSidebarItems: Component<{
   );
 };
 
+const OMIT_KEYS = [
+  "items",
+  "logo",
+  "t",
+  "_depth",
+  "header",
+  "headerSlot",
+  "footer",
+  "footerSlot",
+] as const;
+
 export const RLSidebar: Component<RLSidebarProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "collapsible",
-    "variant",
-    "logo",
-    "t",
-    "_depth",
-    "ui",
-    "class",
-    "children",
-    "header",
-    "headerSlot",
-    "footer",
-    "footerSlot",
-  );
+  const { Tag, classes, rest } = RLSidebarTheme.setup(props, {
+    as: "aside",
+    omit: OMIT_KEYS,
+    variants: () => ({ side: "left" }),
+  });
 
   const t = () => props.t ?? ((key: string) => key);
   const depth = () => props._depth ?? 0;
   const items = () => props.items ?? [];
   const isRoot = () => depth() === 0;
-
-  const classes = createMemo(() =>
-    RLSidebarTheme({
-      collapsible: props.collapsible,
-      variant: props.variant,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   let sidebarRef: HTMLElement | null = null;
 
@@ -233,8 +224,8 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
         <RLSidebarItems items={items()} t={t()} _depth={depth()} themeClasses={classes()} />
       }
     >
-      <aside
-        ref={(el) => (sidebarRef = el)}
+      <Tag
+        ref={(el: HTMLElement) => (sidebarRef = el)}
         class={classes().root}
         data-slot="root"
         data-sidebar
@@ -260,7 +251,7 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
             {footerContent()}
           </div>
         </Show>
-      </aside>
+      </Tag>
 
       <Show when={props.collapsible === "offcanvas"}>
         <button

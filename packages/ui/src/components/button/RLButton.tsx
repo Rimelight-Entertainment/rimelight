@@ -1,8 +1,7 @@
 import type { RLButtonProps } from "./button.types";
 import { RLButtonTheme } from "./button.theme";
-import { createMemo, createSignal, Show, type Component, isStatic } from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
-import { omit } from "solid-js";
+import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import {
   isThenable,
   resolveKeyboardAction,
@@ -12,6 +11,38 @@ import {
 import { resolveLinkAttrs } from "../link/helpers";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
+
+const OMIT_KEYS = [
+  "href",
+  "label",
+  "leadingIcon",
+  "trailingIcon",
+  "icon",
+  "avatar",
+  "loadingAuto",
+  "loadingIcon",
+  "activeColor",
+  "activeVariant",
+  "activeClass",
+  "inactiveClass",
+  "exactActiveClass",
+  "disabled",
+  "leadingSlot",
+  "trailingSlot",
+  "onClick",
+  "onKeyDown",
+  "type",
+  "external",
+  "externalIcon",
+  "noExternalIcon",
+  "target",
+  "rel",
+  "noRel",
+  "raw",
+  "ariaLabel",
+  "ariaLabelledby",
+  "ariaCurrentValue",
+] as const;
 
 const shallowEqual = <T extends Record<string, unknown>>(prev: T, next: T): boolean => {
   if (prev === next) return true;
@@ -38,56 +69,6 @@ const TYPE_TAGS = new Set(["button", "input"]);
 
 export const RLButton: Component<RLButtonProps> = (props) => {
   const [autoLoading, setAutoLoading] = createSignal(false);
-
-  const rest = omit(
-    props,
-    "as",
-    "variant",
-    "color",
-    "size",
-    "href",
-    "label",
-    "leadingIcon",
-    "trailingIcon",
-    "icon",
-    "avatar",
-    "loading",
-    "loadingAuto",
-    "loadingIcon",
-    "square",
-    "block",
-    "justify",
-    "active",
-    "activeColor",
-    "activeVariant",
-    "activeClass",
-    "inactiveClass",
-    "exactActiveClass",
-    "fieldGroup",
-    "rounded",
-    "theme",
-    "ui",
-    "class",
-    "disabled",
-    "children",
-    "leading",
-    "trailing",
-    "leadingSlot",
-    "trailingSlot",
-    "onClick",
-    "onKeyDown",
-    "type",
-    "external",
-    "externalIcon",
-    "noExternalIcon",
-    "target",
-    "rel",
-    "noRel",
-    "raw",
-    "ariaLabel",
-    "ariaLabelledby",
-    "ariaCurrentValue",
-  );
 
   const leadingIconProp = () => props.leadingIcon;
   const trailingIconProp = () => props.trailingIcon;
@@ -175,27 +156,29 @@ export const RLButton: Component<RLButtonProps> = (props) => {
     return activeCls || directClass || undefined;
   };
 
-  const classes = createMemo<Record<string, string>>(
-    () =>
-      RLButtonTheme({
-        variant:
-          props.active && props.activeVariant ? props.activeVariant : (props.variant ?? "solid"),
-        color: props.active && props.activeColor ? props.activeColor : (props.color ?? "primary"),
-        size: props.size ?? "md",
-        justify: props.justify,
-        block: props.block,
-        square: isSquare(),
-        fieldGroup: props.fieldGroup,
-        rounded: props.rounded ?? false,
-        leading: isLeadingPosition(),
-        trailing: isTrailingPosition(),
-        loading: isLoading(),
-        active: props.active,
-        ui: props.ui,
-        class: rootClassOverride(),
-      }),
-    { equals: shallowEqual },
-  );
+  const {
+    Tag: CustomRoot,
+    classes,
+    rest,
+  } = RLButtonTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
+      variant:
+        props.active && props.activeVariant ? props.activeVariant : (props.variant ?? "solid"),
+      color: props.active && props.activeColor ? props.activeColor : (props.color ?? "primary"),
+      size: props.size ?? "md",
+      justify: props.justify,
+      block: props.block,
+      square: isSquare(),
+      fieldGroup: props.fieldGroup,
+      rounded: props.rounded ?? false,
+      leading: isLeadingPosition(),
+      trailing: isTrailingPosition(),
+      loading: isLoading(),
+      active: props.active,
+      class: rootClassOverride(),
+    }),
+  });
 
   const handleClick = (e: MouseEvent) => {
     if (isDisabled()) {
@@ -251,9 +234,6 @@ export const RLButton: Component<RLButtonProps> = (props) => {
   const targetValue = () => linkAttrs().target;
   const relValue = () => linkAttrs().rel;
 
-  const CustomRoot = dynamic(() => (props.as ?? "div") as string, {
-    static: isStatic(props, "as"),
-  });
   const isCustomRoot = () => !isLink() && Boolean(props.as) && props.as !== "button";
 
   const buttonContent = () => (

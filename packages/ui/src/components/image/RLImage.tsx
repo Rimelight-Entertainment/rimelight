@@ -1,6 +1,6 @@
 import type { RLImageProps, ImageMetadata } from "./image.types";
 import { RLImageTheme } from "./image.theme";
-import { createEffect, createMemo, createSignal, omit, type Component } from "solid-js";
+import { createEffect, createSignal, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const urlOf = (v?: string | ImageMetadata): string | undefined =>
@@ -15,43 +15,39 @@ const heightOf = (v?: string | ImageMetadata): string | number | undefined =>
 const formatOf = (v?: string | ImageMetadata): string | undefined =>
   v && typeof v !== "string" ? (v as ImageMetadata).format : undefined;
 
+const OMIT_KEYS = [
+  "src",
+  "lightSrc",
+  "darkSrc",
+  "mobileSrc",
+  "desktopSrc",
+  "breakpoint",
+  "formats",
+  "widths",
+  "sizes",
+  "densities",
+  "alt",
+  "height",
+  "width",
+  "loading",
+  "decoding",
+  "caption",
+  "figure",
+  "lightbox",
+  "metadata",
+  "open",
+  "metaSource",
+  "metaFormat",
+  "metaDimensions",
+  "metaSize",
+  "metaAlt",
+  "metaDownload",
+  "trigger",
+  "captionSlot",
+] as const;
+
 export const RLImage: Component<RLImageProps> = (props) => {
-  const rest = omit(
-    props,
-    "src",
-    "lightSrc",
-    "darkSrc",
-    "mobileSrc",
-    "desktopSrc",
-    "breakpoint",
-    "formats",
-    "widths",
-    "sizes",
-    "densities",
-    "alt",
-    "height",
-    "width",
-    "loading",
-    "decoding",
-    "fit",
-    "caption",
-    "figure",
-    "lightbox",
-    "theme",
-    "metadata",
-    "open",
-    "metaSource",
-    "metaFormat",
-    "metaDimensions",
-    "metaSize",
-    "metaAlt",
-    "metaDownload",
-    "ui",
-    "class",
-    "trigger",
-    "captionSlot",
-    "children",
-  );
+  const { classes, rest } = RLImageTheme.setup(props, { omit: OMIT_KEYS });
 
   const isInteractive = () => props.lightbox ?? true;
   const isFigure = () => props.figure ?? Boolean(props.caption);
@@ -83,10 +79,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
     const fn = fileName();
     return fn.includes(".") ? (fn.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG";
   };
-
-  const classes = createMemo(() =>
-    RLImageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class }),
-  );
 
   const alt = () => props.alt ?? "";
   const loading = () => props.loading ?? "lazy";

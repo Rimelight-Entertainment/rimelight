@@ -1,19 +1,16 @@
+import type { Component } from "solid-js";
 import type { RLTooltipProps } from "./tooltip.types";
 import { RLTooltipTheme } from "./tooltip.theme";
-import { createMemo, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["content", "contentSlot"] as const;
 
 export const RLTooltip: Component<RLTooltipProps> = (props) => {
-  const rest = omit(props, "content", "placement", "ui", "class", "children", "contentSlot");
-
   const placement = () => props.placement ?? "top";
 
-  const classes = createMemo(() =>
-    RLTooltipTheme({
-      placement: placement(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLTooltipTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ placement: placement() }),
+  });
 
   return (
     <div

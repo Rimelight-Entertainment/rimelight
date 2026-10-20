@@ -1,49 +1,45 @@
 import type { RLLinkProps } from "./link.types";
 import { RLLinkTheme } from "./link.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";
 
-export const RLLink: Component<RLLinkProps> = (props) => {
-  const rest = omit(
-    props,
-    "label",
-    "leadingIcon",
-    "trailingIcon",
-    "href",
-    "external",
-    "externalIcon",
-    "noExternalIcon",
-    "target",
-    "rel",
-    "active",
-    "disabled",
-    "raw",
-    "ariaLabel",
-    "ariaCurrentValue",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "leading",
-    "trailing",
-  );
+const OMIT_KEYS = [
+  "label",
+  "leadingIcon",
+  "trailingIcon",
+  "href",
+  "external",
+  "externalIcon",
+  "noExternalIcon",
+  "target",
+  "rel",
+  "ariaLabel",
+  "ariaCurrentValue",
+  "raw",
+  "leading",
+  "trailing",
+] as const;
 
+export const RLLink: Component<RLLinkProps> = (props) => {
   const attrs = createMemo(() => resolveLinkAttrs(props));
 
   const ariaLabelValue = () => props.ariaLabel;
+
+  const { classes: themeClasses, rest } = RLLinkTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
+      active: props.active,
+      disabled: !!props.disabled,
+    }),
+  });
 
   const classes = createMemo<Record<string, string>>(() => {
     if (props.raw) {
       return { root: props.class || "", externalHint: "sr-only" };
     }
 
-    return RLLinkTheme({
-      ...(props.active !== undefined ? { active: props.active } : {}),
-      disabled: !!props.disabled,
-      ui: props.ui,
-      class: props.class,
-    });
+    return themeClasses();
   });
 
   return (

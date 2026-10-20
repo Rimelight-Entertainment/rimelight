@@ -1,16 +1,7 @@
 import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
 import { RLCalendarTheme } from "./calendar.theme";
-import {
-  createMemo,
-  createSignal,
-  For,
-  isStatic,
-  onSettled,
-  Show,
-  untrack,
-  type Component,
-} from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
+import { createMemo, createSignal, For, onSettled, Show, untrack, type Component } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import {
   addMonths,
   addYears,
@@ -173,17 +164,9 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
 
   const fullLabel = createMemo(() => `${props.calendarLabel ?? "Event Date"}, ${headingValue()}`);
 
-  const classes = createMemo(() =>
-    RLCalendarTheme({
-      color: props.color,
-      variant: props.variant,
-      size: props.size,
-      view: view(),
-      weekNumbers: props.weekNumbers ?? false,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { Tag: Root, classes } = RLCalendarTheme.setup(props, {
+    variants: () => ({ view: view() }),
+  });
 
   const commitValue = (next: CalendarModelValue | null | undefined) => {
     if (!controlledValue()) setInnerValue(next);
@@ -694,8 +677,6 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
       rootEl = el;
     },
   });
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root {...rootProps()} class={classes().root}>

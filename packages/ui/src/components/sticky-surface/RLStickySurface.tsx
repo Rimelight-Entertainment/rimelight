@@ -1,14 +1,15 @@
+import type { Component } from "solid-js";
+import { createUniqueId, Show } from "solid-js";
 import type { RLStickySurfaceProps } from "./sticky-surface.types";
 import { RLStickySurfaceTheme } from "./sticky-surface.theme";
-import { createMemo, createUniqueId, Show, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["stuckShadow", "offsetTop", "zIndex"] as const;
 
 export const RLStickySurface: Component<RLStickySurfaceProps> = (props) => {
-  const rest = omit(props, "stuckShadow", "offsetTop", "zIndex", "ui", "class", "children");
+  const { classes, rest } = RLStickySurfaceTheme.setup(props, { omit: OMIT_KEYS });
 
   const stuckShadow = () => props.stuckShadow ?? true;
   const id = `sticky-${createUniqueId()}`;
-
-  const classes = createMemo(() => RLStickySurfaceTheme({ ui: props.ui, class: props.class }));
 
   return (
     <div

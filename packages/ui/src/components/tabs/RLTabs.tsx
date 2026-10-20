@@ -7,39 +7,30 @@ import {
   For,
   onSettled,
   Show,
-  omit,
   type Component,
 } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLTabs: Component<RLTabsProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "value",
-    "defaultValue",
-    "variant",
-    "orientation",
-    "size",
-    "color",
-    "content",
-    "unmountOnHide",
-    "valueKey",
-    "labelKey",
-    "maxTabs",
-    "estimatedTabWidth",
-    "onChange",
-    "class",
-    "ui",
-    "children",
-  );
+const OMIT_KEYS = [
+  "items",
+  "value",
+  "defaultValue",
+  "color",
+  "content",
+  "unmountOnHide",
+  "valueKey",
+  "labelKey",
+  "maxTabs",
+  "estimatedTabWidth",
+  "onChange",
+] as const;
 
+export const RLTabs: Component<RLTabsProps> = (props) => {
   const items = () => props.items ?? [];
   const valueKey = () => props.valueKey ?? "value";
   const labelKey = () => props.labelKey ?? "label";
   const orientation = () => props.orientation ?? "horizontal";
-  const size = () => props.size ?? "md";
   const showContent = () => props.content ?? true;
 
   const normalizedVariant = createMemo(() => {
@@ -47,6 +38,11 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
     if (v === "solid" || v === "pills") return "pill";
     if (v === "link") return "underline";
     return v;
+  });
+
+  const { Tag, classes, rest } = RLTabsTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ variant: normalizedVariant() }),
   });
 
   const [internalValue, setInternalValue] = createSignal(() => {
@@ -67,17 +63,6 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
     }
     props.onChange?.(val);
   };
-
-  const classes = createMemo(() =>
-    RLTabsTheme({
-      variant: normalizedVariant(),
-      orientation: orientation(),
-      size: size(),
-      color: props.color,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   let listRef: HTMLDivElement | null = null;
   let indicatorRef: HTMLDivElement | null = null;
@@ -141,7 +126,7 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
   const needsOverflow = () => items().length > 1 && orientation() === "horizontal";
 
   return (
-    <div
+    <Tag
       class={classes().root}
       data-slot="root"
       data-orientation={orientation()}
@@ -279,6 +264,6 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
           </Show>
         </div>
       </Show>
-    </div>
+    </Tag>
   );
 };

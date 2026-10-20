@@ -1,21 +1,16 @@
+import type { Component } from "solid-js";
+import { createMemo } from "solid-js";
 import type { RLProgressProps } from "./progress.types";
 import { RLProgressTheme } from "./progress.theme";
-import { createMemo, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["value", "max"] as const;
 
 export const RLProgress: Component<RLProgressProps> = (props) => {
-  const rest = omit(props, "value", "max", "theme", "color", "ui", "class", "children");
+  const { classes, rest } = RLProgressTheme.setup(props, { omit: OMIT_KEYS });
 
   const value = () => props.value ?? 0;
   const max = () => props.max ?? 100;
   const percentage = createMemo(() => Math.min(100, Math.max(0, (value() / max()) * 100)));
-
-  const classes = createMemo(() =>
-    RLProgressTheme({
-      color: props.color,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const widthClass = () => {
     const pct = Math.round(percentage());

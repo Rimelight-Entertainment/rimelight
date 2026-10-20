@@ -1,9 +1,13 @@
+import type { Component } from "solid-js";
+import { createSignal, onSettled } from "solid-js";
 import type { RLShareProps } from "./share.types";
-import { createSignal, onSettled, omit, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
+import { RLButtonTheme } from "../button/button.theme";
+import type { RLButtonProps } from "../button/button.types";
 
 export const RLShare: Component<RLShareProps> = (props) => {
-  const rest = omit(props, "class", "ui");
+  const { rest } = RLButtonTheme.setup(props);
+  const buttonProps = props as RLButtonProps;
   const [copied, setCopied] = createSignal(false);
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -38,14 +42,24 @@ export const RLShare: Component<RLShareProps> = (props) => {
   return (
     <RLButton
       class={props["class"]}
-      color="neutral"
-      variant="outline"
-      size="sm"
+      color={buttonProps.color ?? "neutral"}
+      variant={buttonProps.variant ?? "outline"}
+      size={buttonProps.size ?? "sm"}
+      block={buttonProps.block}
+      rounded={buttonProps.rounded}
+      fieldGroup={buttonProps.fieldGroup}
+      justify={buttonProps.justify}
+      leading={buttonProps.leading}
+      trailing={buttonProps.trailing}
+      {...(buttonProps.as !== undefined ? { as: buttonProps.as } : {})}
+      theme={buttonProps.theme}
       leadingIcon="share"
       label={copied() ? "Link Copied!" : "Share"}
       ui={props["ui"]}
       onClick={handleShare}
       {...rest}
-    />
+    >
+      {buttonProps.children}
+    </RLButton>
   );
 };

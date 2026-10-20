@@ -1,33 +1,21 @@
 import type { RLFileUploadProps } from "./file-upload.types";
 import { RLFileUploadTheme } from "./file-upload.theme";
-import { createMemo, createSignal, omit, type Component } from "solid-js";
+import { createSignal, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
-  const rest = omit(
-    props,
-    "accept",
-    "multiple",
-    "disabled",
-    "title",
-    "description",
-    "icon",
-    "color",
-    "ui",
-    "class",
-    "onChange",
-    "children",
-    "iconSlot",
-  );
+const OMIT_KEYS = [
+  "accept",
+  "multiple",
+  "title",
+  "description",
+  "icon",
+  "color",
+  "onChange",
+  "iconSlot",
+] as const;
 
-  const classes = createMemo(() =>
-    RLFileUploadTheme({
-      color: props.color,
-      disabled: !!props.disabled,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
+  const { classes, rest } = RLFileUploadTheme.setup(props, { omit: OMIT_KEYS });
 
   const [dragging, setDragging] = createSignal(false);
   const [fileLabel, setFileLabel] = createSignal("");

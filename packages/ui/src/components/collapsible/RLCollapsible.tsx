@@ -1,49 +1,37 @@
 import type { RLCollapsibleProps } from "./collapsible.types";
 import { RLCollapsibleTheme } from "./collapsible.theme";
-import {
-  createMemo,
-  createSignal,
-  createUniqueId,
-  omit,
-  Show,
-  type Component,
-  isStatic,
-} from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
+import { createSignal, Show, type Component } from "solid-js";
+import { type JSX } from "@solidjs/web";
+
+const OMIT_KEYS = [
+  "defaultOpen",
+  "unmountOnHide",
+  "content",
+  "contentSlot",
+  "trigger",
+  "triggerSlot",
+  "onOpenChange",
+  "id",
+  "ariaLabel",
+  "ariaLabelledby",
+  "ariaDescribedby",
+] as const;
 
 export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "ui",
-    "class",
-    "disabled",
-    "defaultOpen",
-    "open",
-    "unmountOnHide",
-    "children",
-    "content",
-    "contentSlot",
-    "trigger",
-    "triggerSlot",
-    "onOpenChange",
-    "id",
-    "theme",
-    "ariaLabel",
-    "ariaLabelledby",
-    "ariaDescribedby",
-  );
-
   const [internalOpen, setInternalOpen] = createSignal(props.defaultOpen ?? false);
 
   const isOpen = () => (props.open !== undefined ? Boolean(props.open) : internalOpen());
   const unmountOnHide = () => props.unmountOnHide !== false;
   const isDisabled = () => props.disabled === true;
 
-  const fallbackId = createUniqueId();
-  const instanceId = () => props.id || `rl-collapsible-${fallbackId}`;
-  const triggerId = () => `${instanceId()}-trigger`;
-  const contentId = () => `${instanceId()}-content`;
+  const { Tag, classes, rest, id } = RLCollapsibleTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-collapsible",
+    variants: () => ({ open: isOpen(), disabled: isDisabled() }),
+  });
+
+  const triggerId = () => `${id()}-trigger`;
+  const contentId = () => `${id()}-content`;
 
   const handleToggle = () => {
     if (isDisabled()) return;
@@ -53,15 +41,6 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
     }
     props.onOpenChange?.(next);
   };
-
-  const classes = createMemo(() =>
-    RLCollapsibleTheme({
-      open: isOpen(),
-      disabled: isDisabled(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const hasContentProp = () => props.content !== undefined || props.contentSlot !== undefined;
   const hasTriggerProp = () => props.trigger !== undefined || props.triggerSlot !== undefined;
@@ -97,8 +76,6 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
     }
     return null;
   };
-
-  const Tag = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const hasTrigger = () => hasTriggerProp() || props.children !== undefined;
   const hasContent = () => hasContentProp() || (hasTriggerProp() && props.children !== undefined);

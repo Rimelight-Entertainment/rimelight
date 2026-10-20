@@ -1,19 +1,12 @@
+import type { Component } from "solid-js";
 import type { RLProseProps } from "./prose.types";
 import { RLProseTheme } from "./prose.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLProse: Component<RLProseProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() =>
-    RLProseTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLProseTheme.setup(props);
 
   return (
-    <div class={classes()["root"]} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

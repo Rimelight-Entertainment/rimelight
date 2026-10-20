@@ -1,10 +1,15 @@
 import type { RLDashboardSearchProps } from "./dashboard-search.types";
 import { RLDashboardSearchTheme } from "./dashboard-search.theme";
-import { createMemo, createSignal, onSettled, Show, omit, type Component } from "solid-js";
+import { createSignal, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["open", "onOpenChange"] as const;
+
 export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children", "open", "onOpenChange");
+  const { classes, rest } = RLDashboardSearchTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ fullscreen: false, size: "md" }),
+  });
 
   const [isOpen, setIsOpen] = createSignal(() => props.open ?? false);
   let inputRef: HTMLInputElement | null = null;
@@ -45,15 +50,6 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
       document.removeEventListener("click", onClick);
     };
   });
-
-  const classes = createMemo(() =>
-    RLDashboardSearchTheme({
-      ui: props.ui,
-      class: props.class,
-      fullscreen: false,
-      size: "md",
-    }),
-  );
 
   return (
     <div data-dashboard-search-target data-slot="root" {...rest}>

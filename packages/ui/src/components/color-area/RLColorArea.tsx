@@ -1,6 +1,21 @@
 import type { RLColorAreaProps } from "./color-area.types";
 import { RLColorAreaTheme } from "./color-area.theme";
-import { createMemo, createSignal, omit, Show, type Component } from "solid-js";
+import { createMemo, createSignal, Show, type Component } from "solid-js";
+
+const OMIT_KEYS = [
+  "colorSpace",
+  "defaultValue",
+  "value",
+  "disabled",
+  "name",
+  "required",
+  "xChannel",
+  "xName",
+  "yChannel",
+  "yName",
+  "onValueChange",
+  "onChangeEnd",
+] as const;
 
 type Channel =
   | "hue"
@@ -185,26 +200,7 @@ const getChannelRange = (channel: string): { min: number; max: number } => {
 };
 
 export const RLColorArea: Component<RLColorAreaProps> = (props) => {
-  const rest = omit(
-    props,
-    "colorSpace",
-    "defaultValue",
-    "value",
-    "disabled",
-    "name",
-    "required",
-    "xChannel",
-    "xName",
-    "yChannel",
-    "yName",
-    "color",
-    "theme",
-    "ui",
-    "class",
-    "onValueChange",
-    "onChangeEnd",
-    "children",
-  );
+  const { classes, rest } = RLColorAreaTheme.setup(props, { omit: OMIT_KEYS });
 
   const colorSpace = () => props.colorSpace ?? "hsl";
   const xChannel = (): Channel => props.xChannel ?? "saturation";
@@ -235,14 +231,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
 
   const [state, setState] = createSignal<ChannelState>((prev) =>
     syncChannelsFromValue(value(), prev?.hue ?? 0),
-  );
-
-  const classes = createMemo(() =>
-    RLColorAreaTheme({
-      color: props.color ?? "primary",
-      ui: props.ui,
-      class: props.class,
-    }),
   );
 
   const channelValue = (ch: Channel, s: ChannelState): number => {

@@ -1,29 +1,11 @@
+import type { Component } from "solid-js";
 import type { RLSwitchProps } from "./switch.types";
 import { RLSwitchTheme } from "./switch.theme";
-import { createMemo, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["disabled", "name", "label", "value", "trailing"] as const;
 
 export const RLSwitch: Component<RLSwitchProps> = (props) => {
-  const rest = omit(
-    props,
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing",
-    "theme",
-  );
-
-  const classes = createMemo(() =>
-    RLSwitchTheme({
-      ui: props.ui,
-      class: props.class,
-      ...props,
-    }),
-  );
+  const { classes, rest } = RLSwitchTheme.setup(props, { omit: OMIT_KEYS });
 
   return (
     <label class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>

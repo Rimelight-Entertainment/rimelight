@@ -1,38 +1,34 @@
 import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
 import { RLDashboardNavbarTheme } from "./dashboard-navbar.theme";
-import { createMemo, omit, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "icon",
-    "title",
-    "toggle",
-    "toggleSide",
-    "ui",
-    "class",
-    "children",
-    "leftSlot",
-    "rightSlot",
-    "centerSlot",
-    "titleSlot",
-    "leadingSlot",
-    "trailingSlot",
-  );
+const OMIT_KEYS = [
+  "icon",
+  "title",
+  "toggle",
+  "toggleSide",
+  "leftSlot",
+  "rightSlot",
+  "centerSlot",
+  "titleSlot",
+  "leadingSlot",
+  "trailingSlot",
+] as const;
 
+export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
   const showToggle = () => props.toggle ?? true;
   const toggleSide = () => props.toggleSide ?? "left";
 
-  const classes = createMemo(() =>
-    RLDashboardNavbarTheme({
-      toggleSide: toggleSide(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLDashboardNavbarTheme.setup(props, {
+    as: "header",
+    omit: OMIT_KEYS,
+    variants: () => ({ toggleSide: toggleSide() }),
+  });
 
   const leftToggle = () =>
     showToggle() && toggleSide() === "left" ? (
@@ -100,8 +96,6 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
       </div>
     </>
   );
-
-  const Root = dynamic(() => props.as ?? "header", { static: isStatic(props, "as") });
 
   return (
     <Root class={classes().root} data-slot="root" {...rest}>

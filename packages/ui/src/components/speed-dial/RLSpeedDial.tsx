@@ -1,17 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLSpeedDialProps } from "./speed-dial.types";
 import { RLSpeedDialTheme } from "./speed-dial.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLSpeedDial: Component<RLSpeedDialProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() =>
-    RLSpeedDialTheme({
-      ui: props.ui,
-      class: props.class,
-      ...props,
-    }),
-  );
+  const { classes, rest } = RLSpeedDialTheme.setup(props);
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

@@ -4,57 +4,41 @@ import type {
   RLCheckboxGroupProps,
 } from "./checkbox-group.types";
 import { RLCheckboxGroupTheme } from "./checkbox-group.theme";
-import {
-  createMemo,
-  createSignal,
-  createUniqueId,
-  For,
-  omit,
-  Show,
-  type Component,
-  isStatic,
-} from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { RLCheckbox } from "../checkbox/RLCheckbox";
 import type { RLCheckboxVariant } from "../checkbox/checkbox.types";
 
-export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
-  const generatedId = createUniqueId();
-  const id = () => props.id || `rl-checkbox-group-${generatedId}`;
+const OMIT_KEYS = [
+  "id",
+  "legend",
+  "items",
+  "value",
+  "defaultValue",
+  "indicator",
+  "icon",
+  "loop",
+  "max",
+  "name",
+  "valueKey",
+  "labelKey",
+  "descriptionKey",
+  "onChange",
+  "onValueChange",
+  "legendSlot",
+  "labelSlot",
+  "descriptionSlot",
+] as const;
 
-  const rest = omit(
-    props,
-    "as",
-    "id",
-    "legend",
-    "items",
-    "value",
-    "defaultValue",
-    "size",
-    "variant",
-    "orientation",
-    "color",
-    "highlight",
-    "indicator",
-    "icon",
-    "disabled",
-    "loop",
-    "max",
-    "name",
-    "required",
-    "valueKey",
-    "labelKey",
-    "descriptionKey",
-    "ui",
-    "class",
-    "theme",
-    "onChange",
-    "onValueChange",
-    "legendSlot",
-    "labelSlot",
-    "descriptionSlot",
-    "children",
-  );
+export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
+  const {
+    Tag: Root,
+    classes,
+    rest,
+    id,
+  } = RLCheckboxGroupTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-checkbox-group",
+  });
 
   const valueKey = () => props.valueKey ?? "value";
   const labelKey = () => props.labelKey ?? "label";
@@ -63,10 +47,8 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   const size = () => props.size ?? "md";
   const color = () => props.color ?? "primary";
   const variant = () => props.variant ?? "list";
-  const orientation = () => props.orientation ?? "vertical";
   const highlight = () => Boolean(props.highlight);
   const disabled = () => Boolean(props.disabled);
-  const required = () => Boolean(props.required);
 
   const [internalValue, setInternalValue] = createSignal<any[]>(
     props.defaultValue ? [...props.defaultValue] : [],
@@ -129,20 +111,6 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     return props.items.map((item, index) => normalizeItem(item, index));
   });
 
-  const classes = createMemo(() =>
-    RLCheckboxGroupTheme({
-      size: size(),
-      color: color(),
-      variant: variant(),
-      orientation: orientation(),
-      required: required(),
-      highlight: highlight(),
-      disabled: disabled(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const toggleValue = (itemVal: any, checked: boolean, event: Event) => {
     const current = selectedValues();
     let next: any[];
@@ -165,8 +133,6 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
       props.onChange(event);
     }
   };
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   const renderLegend = () => {
     if (props.legendSlot !== undefined) return props.legendSlot;

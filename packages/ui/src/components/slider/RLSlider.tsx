@@ -1,24 +1,12 @@
 import type { RLSliderProps } from "./slider.types";
 import { RLSliderTheme } from "./slider.theme";
-import { createMemo, createSignal, omit, type Component } from "solid-js";
+import { createMemo, createSignal, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
+const OMIT_KEYS = ["value", "defaultValue", "min", "max", "step", "name", "onChange"] as const;
+
 export const RLSlider: Component<RLSliderProps> = (props) => {
-  const rest = omit(
-    props,
-    "value",
-    "defaultValue",
-    "min",
-    "max",
-    "step",
-    "name",
-    "color",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "onChange",
-  );
+  const { classes, rest } = RLSliderTheme.setup(props, { omit: OMIT_KEYS });
 
   const min = () => props.min ?? 0;
   const max = () => props.max ?? 100;
@@ -46,14 +34,6 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
       props.onChange?.(num);
     }
   };
-
-  const classes = createMemo(() =>
-    RLSliderTheme({
-      color: props.color,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div class={classes().root} data-slot="slider-root" data-theme={props.theme} {...rest}>

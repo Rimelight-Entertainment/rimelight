@@ -1,82 +1,67 @@
 import type { RLModalProps } from "./modal.types";
 import { RLModalTheme } from "./modal.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  createUniqueId,
-  onSettled,
-  Show,
-  omit,
-  type Component,
-} from "solid-js";
+import { createEffect, createSignal, onSettled, Show, type Component } from "solid-js";
 import { Portal, type JSX } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
 
-export const RLModal: Component<RLModalProps> = (props) => {
-  const uniqueId = createUniqueId();
-  const titleId = `rl-modal-title-${uniqueId}`;
-  const descId = `rl-modal-desc-${uniqueId}`;
+const OMIT_KEYS = [
+  "open",
+  "defaultOpen",
+  "title",
+  "description",
+  "portal",
+  "close",
+  "closeIcon",
+  "dismissible",
+  "lockScroll",
+  "unmountOnHide",
+  "triggerLabel",
+  "role",
+  "ariaLabel",
+  "ariaLabelledby",
+  "ariaDescribedby",
+  "trigger",
+  "triggerSlot",
+  "content",
+  "contentSlot",
+  "header",
+  "headerSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "actions",
+  "actionsSlot",
+  "closeSlot",
+  "body",
+  "bodySlot",
+  "footer",
+  "footerSlot",
+  "onOpenChange",
+  "onClose",
+  "onClosePrevent",
+  "onEnter",
+  "onAfterEnter",
+  "onLeave",
+  "onAfterLeave",
+] as const;
 
-  const rest = omit(
-    props,
-    "open",
-    "defaultOpen",
-    "title",
-    "description",
-    "size",
-    "overlay",
-    "scrollable",
-    "transition",
-    "fullscreen",
-    "portal",
-    "close",
-    "closeIcon",
-    "dismissible",
-    "modal",
-    "lockScroll",
-    "unmountOnHide",
-    "triggerLabel",
-    "role",
-    "ariaLabel",
-    "ariaLabelledby",
-    "ariaDescribedby",
-    "ui",
-    "class",
-    "children",
-    "trigger",
-    "triggerSlot",
-    "content",
-    "contentSlot",
-    "header",
-    "headerSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "actions",
-    "actionsSlot",
-    "closeSlot",
-    "body",
-    "bodySlot",
-    "footer",
-    "footerSlot",
-    "onOpenChange",
-    "onClose",
-    "onClosePrevent",
-    "onEnter",
-    "onAfterEnter",
-    "onLeave",
-    "onAfterLeave",
-  );
+export const RLModal: Component<RLModalProps> = (props) => {
+  const {
+    classes,
+    rest,
+    id: modalId,
+  } = RLModalTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-modal",
+  });
+
+  const titleId = () => `${modalId()}-title`;
+  const descId = () => `${modalId()}-desc`;
 
   const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
   const isOpen = () => (props.open !== undefined ? Boolean(props.open) : uncontrolledOpen());
 
   const isModal = () => props.modal !== false;
-  const isOverlay = () => props.overlay !== false;
   const isDismissible = () => props.dismissible !== false;
-  const isScrollable = () => Boolean(props.scrollable);
-  const isFullscreen = () => Boolean(props.fullscreen);
-  const isTransition = () => props.transition !== false;
   const unmountOnHide = () => props.unmountOnHide !== false;
   const usePortal = () => props.portal !== false;
 
@@ -148,19 +133,6 @@ export const RLModal: Component<RLModalProps> = (props) => {
     };
   });
 
-  const classes = createMemo(() =>
-    RLModalTheme({
-      size: props.size ?? "md",
-      transition: isTransition(),
-      fullscreen: isFullscreen(),
-      overlay: isOverlay(),
-      modal: isModal(),
-      scrollable: isScrollable(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const resolveSlot = (slot: unknown): JSX.Element =>
     typeof slot === "function" ? (slot as () => JSX.Element)() : (slot as JSX.Element);
 
@@ -194,8 +166,8 @@ export const RLModal: Component<RLModalProps> = (props) => {
         role={(props.role ?? "dialog") as any}
         aria-modal={isModal() ? "true" : undefined}
         aria-label={props.ariaLabel}
-        aria-labelledby={props.ariaLabelledby ?? (titleContent() ? titleId : undefined)}
-        aria-describedby={props.ariaDescribedby ?? (descriptionContent() ? descId : undefined)}
+        aria-labelledby={props.ariaLabelledby ?? (titleContent() ? titleId() : undefined)}
+        aria-describedby={props.ariaDescribedby ?? (descriptionContent() ? descId() : undefined)}
         data-state={isOpen() ? "open" : "closed"}
         data-slot="content"
         class={classes().content}
@@ -223,12 +195,12 @@ export const RLModal: Component<RLModalProps> = (props) => {
                     <div class={classes().header} data-slot="header">
                       <div class="flex flex-col gap-1 min-w-0 flex-1">
                         <Show when={titleContent()}>
-                          <h2 id={titleId} class={classes().title} data-slot="title">
+                          <h2 id={titleId()} class={classes().title} data-slot="title">
                             {titleContent()}
                           </h2>
                         </Show>
                         <Show when={descriptionContent()}>
-                          <p id={descId} class={classes().description} data-slot="description">
+                          <p id={descId()} class={classes().description} data-slot="description">
                             {descriptionContent()}
                           </p>
                         </Show>

@@ -1,7 +1,10 @@
-import { useLocation, useIsRouting } from "@solidjs/router";
-import { createMemo, createSignal, omit, onSettled, Show, type Component } from "solid-js";
-import { RLRouteAnnouncerTheme } from "./route-announcer.theme";
+import type { Component } from "solid-js";
 import type { RLRouteAnnouncerProps, RLRouteAnnouncerProgressSize } from "./route-announcer.types";
+import { RLRouteAnnouncerTheme } from "./route-announcer.theme";
+import { createSignal, onSettled, Show } from "solid-js";
+import { useLocation, useIsRouting } from "@solidjs/router";
+
+const OMIT_KEYS = ["prefix", "progress"] as const;
 
 export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
   let location: ReturnType<typeof useLocation> | undefined;
@@ -29,10 +32,7 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
     setAnnouncement(title);
   });
 
-  const rest = omit(props, "prefix", "progress", "color", "size", "class", "ui");
-
   const progressEnabled = () => props.progress !== false;
-
   const progressOptions = () =>
     typeof props.progress === "object" && props.progress !== null ? props.progress : undefined;
 
@@ -40,14 +40,10 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
   const resolvedSize = (): RLRouteAnnouncerProgressSize =>
     progressOptions()?.size ?? props.size ?? "sm";
 
-  const classes = createMemo(() =>
-    RLRouteAnnouncerTheme({
-      color: resolvedColor(),
-      size: resolvedSize(),
-      class: props.class,
-      ui: props.ui,
-    }),
-  );
+  const { classes, rest } = RLRouteAnnouncerTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ color: resolvedColor(), size: resolvedSize() }),
+  });
 
   return (
     <div class={classes().root} {...rest}>

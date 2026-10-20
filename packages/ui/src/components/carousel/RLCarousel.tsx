@@ -7,14 +7,46 @@ import {
   createMemo,
   createSignal,
   For,
-  isStatic,
   onSettled,
   Show,
-  omit,
   type Component,
 } from "solid-js";
-import { dynamic } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+
+const OMIT_KEYS = [
+  "items",
+  "slides",
+  "prev",
+  "prevIcon",
+  "next",
+  "nextIcon",
+  "arrows",
+  "dots",
+  "autoplay",
+  "autoScroll",
+  "autoHeight",
+  "classNames",
+  "fade",
+  "wheelGestures",
+  "align",
+  "containScroll",
+  "slidesToScroll",
+  "dragFree",
+  "dragThreshold",
+  "inViewThreshold",
+  "loop",
+  "skipSnaps",
+  "duration",
+  "startIndex",
+  "watchDrag",
+  "watchResize",
+  "watchSlides",
+  "watchFocus",
+  "breakpoints",
+  "onSelect",
+  "ariaLabel",
+  "ref",
+] as const;
 
 function parseBasisPercent(customClass?: string): number {
   if (!customClass) return 100;
@@ -32,50 +64,6 @@ function parseBasisPercent(customClass?: string): number {
 }
 
 export const RLCarousel: Component<RLCarouselProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "items",
-    "slides",
-    "prev",
-    "prevIcon",
-    "next",
-    "nextIcon",
-    "arrows",
-    "dots",
-    "controls",
-    "orientation",
-    "autoplay",
-    "autoScroll",
-    "autoHeight",
-    "classNames",
-    "fade",
-    "wheelGestures",
-    "align",
-    "containScroll",
-    "slidesToScroll",
-    "dragFree",
-    "dragThreshold",
-    "inViewThreshold",
-    "loop",
-    "skipSnaps",
-    "duration",
-    "startIndex",
-    "watchDrag",
-    "watchResize",
-    "watchSlides",
-    "watchFocus",
-    "active",
-    "breakpoints",
-    "ui",
-    "class",
-    "theme",
-    "onSelect",
-    "children",
-    "ariaLabel",
-    "ref",
-  );
-
   const [index, setIndex] = createSignal(props.startIndex ?? 0);
   const [isHovered, setIsHovered] = createSignal(false);
 
@@ -114,25 +102,24 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   let autoplayTimer: ReturnType<typeof setInterval> | undefined;
   let wheelThrottleTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const classes = createMemo(() =>
-    RLCarouselTheme({
+  const {
+    Tag: Root,
+    classes,
+    rest,
+  } = RLCarouselTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
       orientation: orientation(),
       controls: controlsPlacement(),
       active: false,
-      ui: props.ui,
-      class: props.class,
     }),
-  );
+  });
 
-  const dotActiveClasses = createMemo(() =>
-    RLCarouselTheme({
-      orientation: orientation(),
-      controls: controlsPlacement(),
-      active: true,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const dotActiveClasses = RLCarouselTheme.use(props, () => ({
+    orientation: orientation(),
+    controls: controlsPlacement(),
+    active: true,
+  }));
 
   const dots = createMemo(() => Array.from({ length: slideCount() }, (_, i) => i));
 
@@ -507,8 +494,6 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   const showArrows = () =>
     Boolean(props.arrows || props.prev !== undefined || props.next !== undefined);
   const showDots = () => Boolean(props.dots) && dots().length > 0;
-
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
 
   return (
     <Root

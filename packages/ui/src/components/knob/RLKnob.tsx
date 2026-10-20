@@ -1,17 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLKnobProps } from "./knob.types";
 import { RLKnobTheme } from "./knob.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLKnob: Component<RLKnobProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() =>
-    RLKnobTheme({
-      ui: props.ui,
-      class: props.class,
-      ...props,
-    }),
-  );
+  const { classes, rest } = RLKnobTheme.setup(props);
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

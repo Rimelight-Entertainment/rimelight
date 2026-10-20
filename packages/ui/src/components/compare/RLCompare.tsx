@@ -1,61 +1,42 @@
 import type { RLCompareProps, CompareOrientation } from "./compare.types";
 import { RLCompareTheme, LABEL_PLACEMENT_CLASSES } from "./compare.theme";
-import {
-  createMemo,
-  createSignal,
-  createEffect,
-  isStatic,
-  children,
-  omit,
-  type Component,
-} from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { createMemo, createSignal, createEffect, children, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLCompare: Component<RLCompareProps> = (props) => {
-  const rest = omit(
-    props,
-    "value",
-    "defaultValue",
-    "min",
-    "max",
-    "step",
-    "largeStep",
-    "orientation",
-    "before",
-    "after",
-    "beforeSrc",
-    "afterSrc",
-    "beforeAlt",
-    "afterAlt",
-    "beforeLabel",
-    "afterLabel",
-    "showLabels",
-    "beforeLabelPlacement",
-    "afterLabelPlacement",
-    "handle",
-    "handleIcon",
-    "showHandle",
-    "showDivider",
-    "hover",
-    "disabled",
-    "autoplay",
-    "autoplayDuration",
-    "variant",
-    "size",
-    "color",
-    "theme",
-    "onValueChange",
-    "onChange",
-    "ariaLabel",
-    "ariaLabelledby",
-    "as",
-    "ui",
-    "class",
-    "children",
-  );
+const OMIT_KEYS = [
+  "value",
+  "defaultValue",
+  "min",
+  "max",
+  "step",
+  "largeStep",
+  "before",
+  "after",
+  "beforeSrc",
+  "afterSrc",
+  "beforeAlt",
+  "afterAlt",
+  "beforeLabel",
+  "afterLabel",
+  "showLabels",
+  "beforeLabelPlacement",
+  "afterLabelPlacement",
+  "handle",
+  "handleIcon",
+  "showHandle",
+  "showDivider",
+  "hover",
+  "autoplay",
+  "autoplayDuration",
+  "onValueChange",
+  "onChange",
+  "ariaLabel",
+  "ariaLabelledby",
+] as const;
 
-  const Root = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
+export const RLCompare: Component<RLCompareProps> = (props) => {
+  const { Tag: Root, classes, rest } = RLCompareTheme.setup(props, { omit: OMIT_KEYS });
+
   const resolvedChildren = children(() => props.children);
 
   const min = () => props.min ?? 0;
@@ -199,18 +180,6 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
       animId = requestAnimationFrame(animate);
       return () => cancelAnimationFrame(animId);
     },
-  );
-
-  const classes = createMemo(() =>
-    RLCompareTheme({
-      orientation: orientation(),
-      size: props.size ?? "md",
-      variant: props.variant ?? "solid",
-      color: props.color ?? "auto",
-      disabled: isDisabled(),
-      ui: props.ui,
-      class: props.class,
-    }),
   );
 
   const beforeLabelPlacementClass = () => {

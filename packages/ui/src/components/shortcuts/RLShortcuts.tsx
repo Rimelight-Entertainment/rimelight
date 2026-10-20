@@ -5,11 +5,9 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  createUniqueId,
   For,
   onSettled,
   Show,
-  omit,
   type Component,
 } from "solid-js";
 import { Portal } from "@solidjs/web";
@@ -23,9 +21,18 @@ import {
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
 
+const OMIT_KEYS = ["categories", "open", "defaultOpen", "onOpenChange"] as const;
+
 export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
-  const modalId = `rl-shortcuts-${createUniqueId()}`;
-  const rest = omit(props, "categories", "open", "defaultOpen", "onOpenChange", "ui", "class");
+  const {
+    Tag,
+    classes,
+    rest,
+    id: modalId,
+  } = RLShortcutsTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-shortcuts",
+  });
 
   const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
   const isOpen = () => {
@@ -93,13 +100,6 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     };
   });
 
-  const classes = createMemo(() =>
-    RLShortcutsTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const sections = createMemo<CategorySection[]>(() => {
     const list = activeShortcutsStore;
     if (list.length === 0) return [];
@@ -145,24 +145,24 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   return (
     <Show when={isOpen()}>
       <Portal>
-        <div
+        <Tag
           class={classes().modal}
           data-slot="modal"
-          onClick={(e) => {
+          onClick={(e: MouseEvent & { currentTarget: Element; target: Element }) => {
             if (e.target === e.currentTarget) handleClose();
           }}
           {...rest}
         >
           <div
-            id={modalId}
+            id={modalId()}
             class={classes().dialog}
             data-slot="dialog"
             role="dialog"
             aria-modal="true"
-            aria-labelledby={`${modalId}-title`}
+            aria-labelledby={`${modalId()}-title`}
           >
             <div class={classes().header} data-slot="header">
-              <h3 id={`${modalId}-title`} class={classes().title} data-slot="title">
+              <h3 id={`${modalId()}-title`} class={classes().title} data-slot="title">
                 Keyboard Shortcuts
               </h3>
               <button
@@ -226,7 +226,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
               </span>
             </div>
           </div>
-        </div>
+        </Tag>
       </Portal>
     </Show>
   );

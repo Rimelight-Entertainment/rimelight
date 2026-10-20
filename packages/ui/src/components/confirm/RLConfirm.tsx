@@ -1,51 +1,40 @@
 import type { RLConfirmProps } from "./confirm.types";
 import { RLConfirmTheme } from "./confirm.theme";
-import { createMemo, createSignal, omit, type Component } from "solid-js";
+import { createSignal, type Component } from "solid-js";
 import { RLModal } from "../modal/RLModal";
 import { RLButton } from "../button/RLButton";
 
+const OMIT_KEYS = [
+  "title",
+  "description",
+  "actionLabel",
+  "cancelLabel",
+  "triggerLabel",
+  "open",
+  "defaultOpen",
+  "size",
+  "dismissible",
+  "portal",
+  "transition",
+  "lockScroll",
+  "unmountOnHide",
+  "trigger",
+  "triggerSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "footer",
+  "footerSlot",
+  "onOpenChange",
+  "onConfirm",
+  "onCancel",
+  "onClose",
+] as const;
+
 export const RLConfirm: Component<RLConfirmProps> = (props) => {
-  const rest = omit(
-    props,
-    "variant",
-    "title",
-    "description",
-    "actionLabel",
-    "cancelLabel",
-    "triggerLabel",
-    "open",
-    "defaultOpen",
-    "size",
-    "dismissible",
-    "portal",
-    "transition",
-    "lockScroll",
-    "unmountOnHide",
-    "ui",
-    "class",
-    "children",
-    "trigger",
-    "triggerSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "footer",
-    "footerSlot",
-    "onOpenChange",
-    "onConfirm",
-    "onCancel",
-    "onClose",
-  );
+  const { classes, rest } = RLConfirmTheme.setup(props, { omit: OMIT_KEYS });
 
   const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
   const isOpen = () => (props.open !== undefined ? Boolean(props.open) : uncontrolledOpen());
-
-  const resolvedTheme = createMemo(() =>
-    RLConfirmTheme({
-      variant: props.variant ?? "default",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const setOpenState = (next: boolean) => {
     if (props.open === undefined) {
@@ -90,13 +79,13 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
       titleSlot={props.titleSlot}
       descriptionSlot={props.descriptionSlot}
       ui={{
-        root: resolvedTheme().root,
-        trigger: resolvedTheme().trigger,
-        content: resolvedTheme().content,
-        header: resolvedTheme().header,
-        title: resolvedTheme().title,
-        description: resolvedTheme().description,
-        footer: resolvedTheme().footer,
+        root: classes().root,
+        trigger: classes().trigger,
+        content: classes().content,
+        header: classes().header,
+        title: classes().title,
+        description: classes().description,
+        footer: classes().footer,
         ...props.ui,
       }}
       class={props.class}
@@ -118,7 +107,7 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
         ) : (
           <div class="flex items-center justify-between w-full" data-slot="confirm-actions">
             <RLButton
-              class={resolvedTheme().cancelButton}
+              class={classes().cancelButton}
               data-slot="cancel"
               variant="outline"
               color={isDestructive() ? "error" : "neutral"}
@@ -128,7 +117,7 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
               {props.cancelLabel ?? "Cancel"}
             </RLButton>
             <RLButton
-              class={resolvedTheme().actionButton}
+              class={classes().actionButton}
               data-slot="action"
               color={isDestructive() ? "error" : "primary"}
               variant="solid"

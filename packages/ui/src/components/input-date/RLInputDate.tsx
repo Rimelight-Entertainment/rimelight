@@ -1,38 +1,31 @@
+import type { Component } from "solid-js";
 import type { RLInputDateProps } from "./input-date.types";
 import { RLInputDateTheme } from "./input-date.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 
-export const RLInputDate: Component<RLInputDateProps> = (props) => {
-  const rest = omit(
-    props,
-    "children",
-    "value",
-    "defaultValue",
-    "name",
-    "placeholder",
-    "disabled",
-    "readonly",
-    "required",
-    "min",
-    "max",
-    "step",
-    "size",
-    "ui",
-    "class",
-    "onInput",
-    "onChange",
-    "onBlur",
-    "onFocus",
-    "onKeyDown",
-  );
+const OMIT_KEYS = [
+  "children",
+  "value",
+  "defaultValue",
+  "name",
+  "placeholder",
+  "disabled",
+  "readonly",
+  "required",
+  "min",
+  "max",
+  "step",
+  "size",
+  "onInput",
+  "onChange",
+  "onBlur",
+  "onFocus",
+  "onKeyDown",
+] as const;
 
-  const classes = createMemo(() =>
-    RLInputDateTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLInputDate: Component<RLInputDateProps> = (props) => {
+  const { classes, rest } = RLInputDateTheme.setup(props, { omit: OMIT_KEYS });
 
   const inputClasses = createMemo(() =>
     RLInputTheme({

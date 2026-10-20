@@ -1089,20 +1089,9 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   }
 
   // ─── Theme Resolution ────────────────────────────────────────────────────────
-  const classes = createMemo(() =>
-    RLTableTheme({
-      sticky: props.sticky,
-      loading: props.loading,
-      loadingColor: props.loadingColor ?? "primary",
-      loadingAnimation: props.loadingAnimation ?? "carousel",
-      striped: props.striped,
-      bordered: props.bordered,
-      hoverable: props.hoverable,
-      ui: props.ui,
-      class: props.class,
-      externalScroll: false,
-    }),
-  );
+  const { Tag, classes } = RLTableTheme.setup(props, {
+    variants: () => ({ externalScroll: false, pinned: false }),
+  });
 
   const showToolbar = createMemo(
     () =>
@@ -1160,7 +1149,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   );
 
   return (
-    <div class={classes().root} data-slot="root">
+    <Tag class={classes().root} data-slot="root">
       <Show when={showToolbar()}>
         <div class={classes().toolbar} data-slot="toolbar">
           <Show when={props.searchable}>
@@ -1959,6 +1948,6 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
           </Show>
         </table>
       </div>
-    </div>
+    </Tag>
   );
 };

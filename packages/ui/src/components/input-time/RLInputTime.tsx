@@ -1,38 +1,31 @@
+import type { Component } from "solid-js";
 import type { RLInputTimeProps } from "./input-time.types";
 import { RLInputTimeTheme } from "./input-time.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 
-export const RLInputTime: Component<RLInputTimeProps> = (props) => {
-  const rest = omit(
-    props,
-    "children",
-    "value",
-    "defaultValue",
-    "name",
-    "placeholder",
-    "disabled",
-    "readonly",
-    "required",
-    "min",
-    "max",
-    "step",
-    "size",
-    "ui",
-    "class",
-    "onInput",
-    "onChange",
-    "onBlur",
-    "onFocus",
-    "onKeyDown",
-  );
+const OMIT_KEYS = [
+  "children",
+  "value",
+  "defaultValue",
+  "name",
+  "placeholder",
+  "disabled",
+  "readonly",
+  "required",
+  "min",
+  "max",
+  "step",
+  "size",
+  "onInput",
+  "onChange",
+  "onBlur",
+  "onFocus",
+  "onKeyDown",
+] as const;
 
-  const classes = createMemo(() =>
-    RLInputTimeTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLInputTime: Component<RLInputTimeProps> = (props) => {
+  const { classes, rest } = RLInputTimeTheme.setup(props, { omit: OMIT_KEYS });
 
   const inputClasses = createMemo(() =>
     RLInputTheme({

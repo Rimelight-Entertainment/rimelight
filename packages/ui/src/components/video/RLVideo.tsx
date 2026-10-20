@@ -1,6 +1,6 @@
 import type { RLVideoProps } from "./video.types";
 import { RLVideoTheme } from "./video.theme";
-import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
@@ -56,19 +56,12 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
   return null;
 }
 
+const OMIT_KEYS = ["src", "title", "icon", "thumbnail", "iconSlot", "transcriptSlot"] as const;
+
 export const RLVideo: Component<RLVideoProps> = (props) => {
-  const rest = omit(
-    props,
-    "src",
-    "title",
-    "icon",
-    "thumbnail",
-    "iconSlot",
-    "transcriptSlot",
-    "ui",
-    "class",
-    "children",
-  );
+  const { Tag, classes, rest } = RLVideoTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const [isPlaying, setIsPlaying] = createSignal(false);
 
@@ -84,18 +77,9 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
   const iconName = () => props.icon || "play";
   const isPlayable = () => Boolean(embedUrl());
 
-  const classes = createMemo(() =>
-    RLVideoTheme({
-      title: !!props.title,
-      icon: !!props.icon,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   return (
     <div>
-      <div class={classes().root} data-slot="root" {...rest}>
+      <Tag class={classes().root} data-slot="root" {...rest}>
         <Show
           when={isPlaying() && embedUrl()}
           fallback={
@@ -139,7 +123,7 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
             data-slot="iframe"
           />
         </Show>
-      </div>
+      </Tag>
 
       <Show when={props.transcriptSlot || props.children}>
         <div class={classes().transcript} data-slot="transcript">

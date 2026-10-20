@@ -1,51 +1,45 @@
+import type { Component } from "solid-js";
 import type { RLInputProps } from "./input.types";
 import { RLInputTheme } from "./input.theme";
-import { createMemo, omit, type Component, Show } from "solid-js";
+import { Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLInput: Component<RLInputProps> = (props) => {
-  const rest = omit(
-    props,
-    "type",
-    "value",
-    "placeholder",
-    "disabled",
-    "readonly",
-    "name",
-    "required",
-    "error",
-    "leadingIcon",
-    "trailingIcon",
-    "variant",
-    "size",
-    "color",
-    "theme",
-    "ui",
-    "class",
-    "onInput",
-    "onChange",
-    "onBlur",
-    "onFocus",
-    "onKeyDown",
-    "ref",
-    "leading",
-    "trailing",
-  );
+const OMIT_KEYS = [
+  "type",
+  "value",
+  "placeholder",
+  "disabled",
+  "readonly",
+  "name",
+  "required",
+  "leadingIcon",
+  "trailingIcon",
+  "color",
+  "theme",
+  "onInput",
+  "onChange",
+  "onBlur",
+  "onFocus",
+  "onKeyDown",
+  "ref",
+  "leading",
+  "trailing",
+] as const;
 
+export const RLInput: Component<RLInputProps> = (props) => {
   const hasLeading = () => !!(props.leadingIcon || props.leading);
   const hasTrailing = () => !!(props.trailingIcon || props.trailing);
 
-  const classes = createMemo(() =>
-    RLInputTheme({
+  const { classes, rest } = RLInputTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
       variant: props.variant ?? "default",
       size: props.size ?? "md",
       hasLeading: hasLeading(),
       hasTrailing: hasTrailing(),
       error: !!props.error,
-      ui: props.ui,
-      class: props.class,
     }),
-  );
+  });
 
   return (
     <div class={classes().root} data-slot="root" data-theme={props.theme}>

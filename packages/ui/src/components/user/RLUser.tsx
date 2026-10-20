@@ -1,19 +1,12 @@
+import type { Component } from "solid-js";
 import type { RLUserProps } from "./user.types";
 import { RLUserTheme } from "./user.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLUser: Component<RLUserProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() =>
-    RLUserTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLUserTheme.setup(props);
 
   return (
-    <div class={classes()["root"]} data-slot="root" {...rest}>
+    <div class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </div>
   );

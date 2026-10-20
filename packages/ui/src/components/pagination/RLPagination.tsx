@@ -1,29 +1,15 @@
 import type { RLPaginationProps } from "./pagination.types";
 import { RLPaginationTheme } from "./pagination.theme";
-import { createMemo, omit, For, type Component } from "solid-js";
+import { createMemo, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["currentPage", "page", "totalPages", "baseUrl", "onPageChange"] as const;
+
 export const RLPagination: Component<RLPaginationProps> = (props) => {
-  const rest = omit(
-    props,
-    "currentPage",
-    "page",
-    "totalPages",
-    "baseUrl",
-    "onPageChange",
-    "ui",
-    "class",
-  );
+  const { classes, rest } = RLPaginationTheme.setup(props, { omit: OMIT_KEYS });
 
   const currentPage = () => props.page ?? props.currentPage ?? 1;
   const totalPages = () => props.totalPages ?? 1;
-
-  const classes = createMemo(() =>
-    RLPaginationTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const pageNumbers = createMemo<(number | "ellipsis")[]>(() => {
     const total = totalPages();

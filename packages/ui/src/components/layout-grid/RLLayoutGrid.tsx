@@ -5,7 +5,6 @@ import {
   createSignal,
   createEffect,
   For,
-  omit,
   Show,
   onSettled,
   type Component,
@@ -13,6 +12,35 @@ import {
 import { defineShortcuts } from "../../shortcuts";
 
 const isDev = (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV === true;
+
+const OMIT_KEYS = [
+  "cols",
+  "smCols",
+  "mdCols",
+  "lgCols",
+  "xlCols",
+  "smBreakpoint",
+  "mdBreakpoint",
+  "lgBreakpoint",
+  "xlBreakpoint",
+  "gutter",
+  "margin",
+  "gridColor",
+  "gridOpacity",
+  "maxWidth",
+  "innerMaxWidth",
+  "innerGridColor",
+  "innerGridOpacity",
+  "showInnerBackground",
+  "showBackground",
+  "showFullWidth",
+  "fullWidthGridColor",
+  "fullWidthGridOpacity",
+  "showFullWidthBackground",
+  "zIndex",
+  "shortcut",
+  "devOnly",
+] as const;
 
 const normalizeArray = (val: number | number[] | undefined, defaultValue: number): number[] => {
   if (val === undefined)
@@ -36,39 +64,7 @@ const hexToRgba = (hex: string, alpha: number): string => {
 };
 
 export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
-  const rest = omit(
-    props,
-    "cols",
-    "smCols",
-    "mdCols",
-    "lgCols",
-    "xlCols",
-    "smBreakpoint",
-    "mdBreakpoint",
-    "lgBreakpoint",
-    "xlBreakpoint",
-    "gutter",
-    "margin",
-    "gridColor",
-    "gridOpacity",
-    "maxWidth",
-    "innerMaxWidth",
-    "innerGridColor",
-    "innerGridOpacity",
-    "showInnerBackground",
-    "showBackground",
-    "showFullWidth",
-    "fullWidthGridColor",
-    "fullWidthGridOpacity",
-    "showFullWidthBackground",
-    "zIndex",
-    "shortcut",
-    "devOnly",
-    "ui",
-    "class",
-  );
-
-  const classes = createMemo(() => RLLayoutGridTheme({ ui: props.ui, class: props.class }));
+  const { classes, rest } = RLLayoutGridTheme.setup(props, { omit: OMIT_KEYS });
 
   const gutterArray = createMemo(() => normalizeArray(props.gutter ?? [0.75, 1, 1.5, 2, 2], 1));
   const marginArray = createMemo(() => normalizeArray(props.margin ?? [0.75, 1, 1.5, 2, 2], 1));

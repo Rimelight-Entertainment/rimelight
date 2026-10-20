@@ -1,44 +1,40 @@
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, type Component } from "solid-js";
 import { getUIConfig } from "../../runtime";
 
+const OMIT_KEYS = [
+  "variant",
+  "mode",
+  "href",
+  "alt",
+  "src",
+  "icon",
+  "text",
+  "fallback",
+  "initials",
+  "size",
+  "color",
+  "chip",
+  "badge",
+  "badgeColor",
+  "badgePosition",
+  "loading",
+  "referrerpolicy",
+  "crossorigin",
+  "decoding",
+  "height",
+  "width",
+  "sizes",
+  "srcset",
+  "usemap",
+  "title",
+  "subtitle",
+  "label",
+] as const;
+
 export const RLLogo: Component<RLLogoProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "variant",
-    "mode",
-    "theme",
-    "href",
-    "alt",
-    "src",
-    "ui",
-    "class",
-    "children",
-    "icon",
-    "text",
-    "fallback",
-    "initials",
-    "size",
-    "color",
-    "chip",
-    "badge",
-    "badgeColor",
-    "badgePosition",
-    "loading",
-    "referrerpolicy",
-    "crossorigin",
-    "decoding",
-    "height",
-    "width",
-    "sizes",
-    "srcset",
-    "usemap",
-    "title",
-    "subtitle",
-    "label",
-  );
+  const { classes, rest } = RLLogoTheme.setup(props, { omit: OMIT_KEYS });
 
   const variant = () => props.variant || "logomark";
   const href = () => props.href ?? "/";
@@ -88,14 +84,6 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
     const { darkSrc, lightSrc } = logoInfo();
     return Boolean(darkSrc && lightSrc && darkSrc !== lightSrc && !props.mode);
   };
-
-  const classes = createMemo(() =>
-    RLLogoTheme({
-      variant: variant(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const renderContent = () => {
     const { logoSrc, darkSrc, lightSrc } = logoInfo();

@@ -3,7 +3,6 @@ import { RLInputMenuTheme } from "./input-menu.theme";
 import {
   createMemo,
   createSignal,
-  omit,
   For,
   Show,
   onSettled,
@@ -14,31 +13,20 @@ import { RLIcon } from "../icon/RLIcon";
 
 type InputMenuItem = { label: string; value: string; [key: string]: any };
 
-export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "value",
-    "defaultValue",
-    "placeholder",
-    "disabled",
-    "name",
-    "label",
-    "size",
-    "color",
-    "ui",
-    "class",
-    "onValueChange",
-  );
+const OMIT_KEYS = [
+  "items",
+  "value",
+  "defaultValue",
+  "placeholder",
+  "disabled",
+  "name",
+  "label",
+  "color",
+  "onValueChange",
+] as const;
 
-  const classes = createMemo(() =>
-    RLInputMenuTheme({
-      size: props.size ?? "md",
-      color: props.color,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
+  const { classes, rest } = RLInputMenuTheme.setup(props, { omit: OMIT_KEYS });
 
   const normalizedItems = createMemo<InputMenuItem[]>(() =>
     (props.items ?? []).map((item) =>

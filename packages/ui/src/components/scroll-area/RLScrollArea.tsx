@@ -1,17 +1,11 @@
 import type { RLScrollAreaProps } from "./scroll-area.types";
 import { RLScrollAreaTheme } from "./scroll-area.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  onSettled,
-  Show,
-  omit,
-  type Component,
-} from "solid-js";
+import { createEffect, createSignal, onSettled, Show, type Component } from "solid-js";
+
+const OMIT_KEYS = ["scrollHideDelay", "height"] as const;
 
 export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
-  const rest = omit(props, "orientation", "scrollHideDelay", "height", "ui", "class", "children");
+  const { classes, rest } = RLScrollAreaTheme.setup(props, { omit: OMIT_KEYS });
 
   const orientation = () => props.orientation ?? "vertical";
   const hideDelay = () => props.scrollHideDelay ?? 600;
@@ -126,14 +120,6 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
     () => {
       requestAnimationFrame(() => updateThumbs());
     },
-  );
-
-  const classes = createMemo(() =>
-    RLScrollAreaTheme({
-      orientation: orientation(),
-      ui: props.ui,
-      class: props.class,
-    }),
   );
 
   const heightClass = () =>

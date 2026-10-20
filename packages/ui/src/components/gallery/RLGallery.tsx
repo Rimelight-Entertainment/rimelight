@@ -1,11 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLGalleryProps } from "./gallery.types";
 import { RLGalleryTheme } from "./gallery.theme";
-import { createMemo, omit, type Component } from "solid-js";
 
 export const RLGallery: Component<RLGalleryProps> = (props) => {
-  const rest = omit(props, "ui", "class", "children");
-
-  const classes = createMemo(() => RLGalleryTheme({ ui: props.ui, class: props.class }));
+  const { classes, rest } = RLGalleryTheme.setup(props);
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

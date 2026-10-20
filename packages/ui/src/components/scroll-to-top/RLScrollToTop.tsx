@@ -1,21 +1,14 @@
+import type { Component } from "solid-js";
 import type { RLScrollToTopProps } from "./scroll-to-top.types";
 import { RLScrollToTopTheme } from "./scroll-to-top.theme";
-import { createMemo, createSignal, omit, onSettled, type Component } from "solid-js";
+import { createSignal, onSettled } from "solid-js";
 import { trackScroll, scrollToTop } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["progressWidth", "duration", "threshold", "showProgress", "theme"] as const;
+
 export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
-  const rest = omit(
-    props,
-    "color",
-    "progressWidth",
-    "duration",
-    "threshold",
-    "showProgress",
-    "theme",
-    "ui",
-    "class",
-  );
+  const { classes, rest } = RLScrollToTopTheme.setup(props, { omit: OMIT_KEYS });
 
   const [isVisible, setIsVisible] = createSignal(false);
   const [scrollPercentage, setScrollPercentage] = createSignal(0);
@@ -27,14 +20,6 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
     });
     return unsubscribe;
   });
-
-  const classes = createMemo(() =>
-    RLScrollToTopTheme({
-      color: props.color ?? "primary",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const color = () => props.color ?? "primary";
   const progressWidth = () => props.progressWidth ?? 6;

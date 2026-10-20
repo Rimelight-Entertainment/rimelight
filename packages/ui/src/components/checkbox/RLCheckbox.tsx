@@ -1,58 +1,32 @@
 import type { RLCheckboxProps } from "./checkbox.types";
 import { RLCheckboxTheme } from "./checkbox.theme";
-import {
-  createMemo,
-  createSignal,
-  createUniqueId,
-  omit,
-  Show,
-  type Component,
-  isStatic,
-} from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "id",
+  "name",
+  "label",
+  "description",
+  "icon",
+  "indeterminateIcon",
+  "indeterminate",
+  "value",
+  "defaultChecked",
+  "onCheckedChange",
+  "onChange",
+  "labelSlot",
+  "descriptionSlot",
+  "autofocus",
+  "form",
+  "formaction",
+  "formenctype",
+  "formmethod",
+  "formnovalidate",
+  "formtarget",
+] as const;
+
 export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
-  const generatedId = createUniqueId();
-  const id = () => props.id || `rl-checkbox-${generatedId}`;
-
-  const rest = omit(
-    props,
-    "as",
-    "id",
-    "checked",
-    "disabled",
-    "required",
-    "name",
-    "label",
-    "description",
-    "size",
-    "color",
-    "variant",
-    "indicator",
-    "highlight",
-    "icon",
-    "indeterminateIcon",
-    "indeterminate",
-    "theme",
-    "ui",
-    "class",
-    "value",
-    "defaultChecked",
-    "onCheckedChange",
-    "onChange",
-    "labelSlot",
-    "descriptionSlot",
-    "children",
-    "autofocus",
-    "form",
-    "formaction",
-    "formenctype",
-    "formmethod",
-    "formnovalidate",
-    "formtarget",
-  );
-
   // Uncontrolled state fallback
   const [internalChecked, setInternalChecked] = createSignal<boolean | "indeterminate">(
     props.defaultChecked ?? false,
@@ -87,8 +61,16 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
   const activeIcon = () =>
     isIndeterminate() ? props.indeterminateIcon || "minus" : props.icon || "check";
 
-  const classes = createMemo(() =>
-    RLCheckboxTheme({
+  const {
+    Tag: Root,
+    classes,
+    rest,
+    id,
+  } = RLCheckboxTheme.setup(props, {
+    as: "label",
+    omit: OMIT_KEYS,
+    idPrefix: "rl-checkbox",
+    variants: () => ({
       color: color(),
       variant: variant(),
       size: size(),
@@ -97,10 +79,8 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
       disabled: disabled(),
       required: required(),
       checked: isChecked() || isIndeterminate(),
-      ui: props.ui,
-      class: props.class,
     }),
-  );
+  });
 
   const handleChange = (e: Event & { currentTarget: HTMLInputElement }) => {
     if (disabled()) return;
@@ -114,8 +94,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
       props.onChange(e);
     }
   };
-
-  const Root = dynamic(() => props.as ?? "label", { static: isStatic(props, "as") });
 
   const hasLabel = () => Boolean(props.label || props.labelSlot || props.children);
   const hasDescription = () => Boolean(props.description || props.descriptionSlot);

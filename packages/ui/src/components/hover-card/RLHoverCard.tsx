@@ -1,19 +1,14 @@
+import type { Component } from "solid-js";
+import { createSignal } from "solid-js";
 import type { RLHoverCardProps } from "./hover-card.types";
 import { RLHoverCardTheme } from "./hover-card.theme";
-import { createMemo, createSignal, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = ["triggerLabel", "trigger"] as const;
 
 export const RLHoverCard: Component<RLHoverCardProps> = (props) => {
-  const rest = omit(props, "triggerLabel", "placement", "ui", "class", "children", "trigger");
+  const { classes, rest } = RLHoverCardTheme.setup(props, { omit: OMIT_KEYS });
 
   const [isOpen, setIsOpen] = createSignal(false);
-
-  const classes = createMemo(() =>
-    RLHoverCardTheme({
-      placement: props.placement ?? "bottom",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const contentClass = () =>
     classes()["content"].replace(

@@ -1,6 +1,8 @@
 import type { RLChartProps, ChartDataPoint } from "./chart.types";
 import { RLChartTheme } from "./chart.theme";
-import { createMemo, createUniqueId, For, Show, omit, type Component } from "solid-js";
+import { createMemo, For, Show, type Component } from "solid-js";
+
+const OMIT_KEYS = ["type", "data", "title", "height", "color"] as const;
 
 const palette = [
   "hsl(221 83% 53%)",
@@ -32,18 +34,13 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
 };
 
 export const RLChart: Component<RLChartProps> = (props) => {
-  const rest = omit(props, "type", "data", "title", "height", "color", "ui", "class", "children");
+  const { classes, rest, id } = RLChartTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-chart",
+  });
 
   const data = createMemo(() => props.data ?? []);
   const chartType = () => props.type ?? "bar";
-
-  const classes = createMemo(() =>
-    RLChartTheme({
-      color: props.color ?? "primary",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const max = createMemo(() => {
     const items = data();
@@ -97,19 +94,18 @@ export const RLChart: Component<RLChartProps> = (props) => {
 
   const gridLines = [0, 0.25, 0.5, 0.75, 1];
 
-  const id = `chart-${createUniqueId()}`;
   const height = () => props.height ?? 280;
 
   return (
     <>
       <style>{`
-  .${id} { min-height: ${height()}px; }
-  .${id} [data-slot="container"] { height: ${height() - 60}px; gap: 6px; align-items: flex-end; }
-  .${id} .rl-chart-line-wrap { height: ${height() - 60}px; }
-  .${id} .rl-chart-pie-wrap { height: ${height() - 60}px; }
+  .${id()} { min-height: ${height()}px; }
+  .${id()} [data-slot="container"] { height: ${height() - 60}px; gap: 6px; align-items: flex-end; }
+  .${id()} .rl-chart-line-wrap { height: ${height() - 60}px; }
+  .${id()} .rl-chart-pie-wrap { height: ${height() - 60}px; }
 `}</style>
 
-      <div class={`${classes().root}  ${id}`} data-slot="root" {...rest}>
+      <div class={`${classes().root}  ${id()}`} data-slot="root" {...rest}>
         <Show when={props.title}>
           {(t) => (
             <div class={classes().title} data-slot="title">

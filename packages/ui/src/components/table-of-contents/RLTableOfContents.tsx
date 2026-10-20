@@ -1,19 +1,15 @@
 import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-contents.types";
 import { RLTableOfContentsTheme } from "./table-of-contents.theme";
-import { createMemo, createSignal, For, onSettled, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, For, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["headings", "collapsible", "containerSelector", "tableOfContents"] as const;
+
 export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
-  const rest = omit(
-    props,
-    "headings",
-    "collapsible",
-    "containerSelector",
-    "tableOfContents",
-    "as",
-    "ui",
-    "class",
-  );
+  const { classes, rest } = RLTableOfContentsTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ interactive: false, overlay: false }),
+  });
 
   const [activeId, setActiveId] = createSignal("");
   const [open, setOpen] = createSignal(false);
@@ -41,13 +37,6 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
       { length: maxLevel() - minLevel() + 1 },
       (_, i) => `:scope > h${minLevel() + i}`,
     ).join(", "),
-  );
-
-  const classes = createMemo(() =>
-    RLTableOfContentsTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
   );
 
   onSettled(() => {

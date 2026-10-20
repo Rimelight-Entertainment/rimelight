@@ -1,6 +1,6 @@
 import type { RLToastProps } from "./toast.types";
 import { RLToastTheme } from "./toast.theme";
-import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import { createSignal, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const variantIcons: Record<string, string> = {
@@ -11,23 +11,27 @@ const variantIcons: Record<string, string> = {
   info: "info",
 };
 
+const OMIT_KEYS = [
+  "title",
+  "description",
+  "actionLabel",
+  "duration",
+  "dismissable",
+  "onDismiss",
+  "titleSlot",
+  "descriptionSlot",
+  "actionsSlot",
+] as const;
+
 export const RLToast: Component<RLToastProps> = (props) => {
-  const rest = omit(
-    props,
-    "title",
-    "description",
-    "variant",
-    "actionLabel",
-    "duration",
-    "dismissable",
-    "onDismiss",
-    "ui",
-    "class",
-    "children",
-    "titleSlot",
-    "descriptionSlot",
-    "actionsSlot",
-  );
+  const { Tag, classes, rest } = RLToastTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
+      variant: ["success", "error", "warning", "info"].includes(props.variant ?? "")
+        ? props.variant
+        : "default",
+    }),
+  });
 
   const [leaving, setLeaving] = createSignal(false);
   let rootRef: HTMLDivElement | undefined;
@@ -37,16 +41,6 @@ export const RLToast: Component<RLToastProps> = (props) => {
   let remaining = props.duration ?? 6000;
 
   const isError = () => props.variant === "error";
-
-  const classes = createMemo(() =>
-    RLToastTheme({
-      variant: ["success", "error", "warning", "info"].includes(props.variant ?? "")
-        ? (props.variant as "success" | "error" | "warning" | "info")
-        : "default",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const icon = () => variantIcons[props.variant ?? ""] ?? variantIcons["default"]!;
 
@@ -88,8 +82,8 @@ export const RLToast: Component<RLToastProps> = (props) => {
   });
 
   return (
-    <div
-      ref={(el) => (rootRef = el)}
+    <Tag
+      ref={(el: HTMLDivElement) => (rootRef = el)}
       class={`${classes().root}  ${leaving() ? "opacity-0 translate-y-2 pointer-events-none" : ""}`}
       data-slot="root"
       data-toast
@@ -108,7 +102,7 @@ export const RLToast: Component<RLToastProps> = (props) => {
       onFocusIn={() => {
         if ((props.duration ?? 6000) > 0) pauseTimer();
       }}
-      onFocusOut={(e) => {
+      onFocusOut={(e: FocusEvent) => {
         if ((props.duration ?? 6000) > 0 && !rootRef?.contains(e.relatedTarget as Node)) {
           startTimer();
         }
@@ -154,6 +148,6 @@ export const RLToast: Component<RLToastProps> = (props) => {
           <RLIcon name="x" class="size-3.5" aria-hidden="true" />
         </button>
       )}
-    </div>
+    </Tag>
   );
 };

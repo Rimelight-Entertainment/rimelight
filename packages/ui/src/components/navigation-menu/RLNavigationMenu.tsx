@@ -4,22 +4,13 @@ import type {
   NavigationMenuChildItem,
 } from "./navigation-menu.types";
 import { RLNavigationMenuTheme } from "./navigation-menu.theme";
-import { createMemo, createSignal, omit, For, Show, onSettled, type Component } from "solid-js";
+import { createMemo, createSignal, For, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["items", "color", "contentSlot", "itemSlot"] as const;
+
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "color",
-    "orientation",
-    "theme",
-    "ui",
-    "class",
-    "children",
-    "contentSlot",
-    "itemSlot",
-  );
+  const { classes, rest } = RLNavigationMenuTheme.setup(props, { omit: OMIT_KEYS });
 
   let navRef: HTMLElement | undefined;
   let viewportRef: HTMLDivElement | undefined;
@@ -28,15 +19,6 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
 
   const items = createMemo(() => props.items ?? []);
   const orientation = () => props.orientation ?? "horizontal";
-
-  const classes = createMemo(() =>
-    RLNavigationMenuTheme({
-      color: props.color ?? "primary",
-      orientation: orientation(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const [currentPath, setCurrentPath] = createSignal("");
 

@@ -1,17 +1,29 @@
 import type { RLAccordionProps, AccordionItem } from "./accordion.types";
 import { RLAccordionTheme } from "./accordion.theme";
-import {
-  createMemo,
-  createSignal,
-  omit,
-  untrack,
-  For,
-  Show,
-  type Component,
-  isStatic,
-} from "solid-js";
-import { dynamic, type JSX } from "@solidjs/web";
+import { createMemo, createSignal, untrack, For, Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+
+const OMIT_KEYS = [
+  "items",
+  "summary",
+  "multiple",
+  "type",
+  "collapsible",
+  "defaultValue",
+  "value",
+  "trailingIcon",
+  "unmountOnHide",
+  "valueKey",
+  "labelKey",
+  "leading",
+  "trailing",
+  "content",
+  "body",
+  "onChange",
+  "trailingIconSlot",
+  "name",
+] as const;
 
 /**
  * Dot-path getter for `valueKey` / `labelKey`.
@@ -34,32 +46,8 @@ const normalizeMultiple = (value: string | string[] | undefined): string[] =>
   value === undefined ? [] : Array.isArray(value) ? [...value] : [value];
 
 export const RLAccordion: Component<RLAccordionProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "items",
-    "summary",
-    "multiple",
-    "type",
-    "collapsible",
-    "defaultValue",
-    "value",
-    "trailingIcon",
-    "disabled",
-    "unmountOnHide",
-    "valueKey",
-    "labelKey",
-    "leading",
-    "trailing",
-    "content",
-    "body",
-    "onChange",
-    "trailingIconSlot",
-    "ui",
-    "class",
-    "children",
-    "name",
-  );
+  const { Tag: ItemsRoot, classes, rest } = RLAccordionTheme.setup(props, { omit: OMIT_KEYS });
+  const SummaryRoot = RLAccordionTheme.tag(props, "details");
 
   const isMultiple = () => props.multiple === true || props.type === "multiple";
   const collapsible = () => props.collapsible !== false;
@@ -115,14 +103,6 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
 
   const itemLabel = (item: AccordionItem): JSX.Element =>
     (getPath(item as Record<string, unknown>, labelKey()) ?? item.label) as JSX.Element;
-
-  const classes = createMemo(() =>
-    RLAccordionTheme({
-      disabled: props.disabled ? true : false,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const defaultTrailingIcon = () => props.trailingIcon ?? "chevron-down";
 
@@ -242,11 +222,6 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   const rootValue = () =>
     isMultiple() ? currentMultiple().join(" ") : (currentSingle() ?? undefined);
 
-  // Hoisted per instance (not per render): <Dynamic> is deprecated because it
-  // rebuilds a fresh factory at every call site. dynamic() defaults keep the
-  // hot path on plain tags with identical output.
-  const ItemsRoot = dynamic(() => props.as ?? "div", { static: isStatic(props, "as") });
-  const SummaryRoot = dynamic(() => props.as ?? "details", { static: isStatic(props, "as") });
   const hasItems = () => props.items !== undefined;
 
   return (

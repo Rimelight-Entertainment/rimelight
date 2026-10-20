@@ -1,5 +1,7 @@
+import type { Component } from "solid-js";
+import { createMemo } from "solid-js";
 import type { RLDateProps } from "./date.types";
-import { createMemo, omit, type Component } from "solid-js";
+import { RLDateTheme } from "./date.theme";
 
 const defaultOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -7,8 +9,13 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
   day: "numeric",
 };
 
+const OMIT_KEYS = ["date", "locale", "options"] as const;
+
 export const RLDate: Component<RLDateProps> = (props) => {
-  const rest = omit(props, "date", "locale", "options");
+  const { Tag, classes, rest } = RLDateTheme.setup(props, {
+    as: "time",
+    omit: OMIT_KEYS,
+  });
 
   const resolvedDate = createMemo(() =>
     props.date instanceof Date ? props.date : new Date(props.date),
@@ -22,8 +29,8 @@ export const RLDate: Component<RLDateProps> = (props) => {
   const datetime = createMemo(() => (valid() ? resolvedDate().toISOString() : ""));
 
   return (
-    <time datetime={datetime()} {...rest}>
+    <Tag datetime={datetime()} class={classes().root} {...rest}>
       {formatted()}
-    </time>
+    </Tag>
   );
 };

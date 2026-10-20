@@ -1,27 +1,26 @@
 import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
 import { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
-import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import { createSignal, onSettled, type Component } from "solid-js";
+
+const OMIT_KEYS = [
+  "collapsible",
+  "openMobile",
+  "headerSlot",
+  "footerSlot",
+  "onOpenMobileChange",
+  "onCollapseChange",
+] as const;
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) => {
-  const rest = omit(
-    props,
-    "side",
-    "collapsible",
-    "collapsed",
-    "openMobile",
-    "headerSlot",
-    "footerSlot",
-    "ui",
-    "class",
-    "children",
-    "onOpenMobileChange",
-    "onCollapseChange",
-  );
-
   const side = () => props.side ?? "left";
   const isCollapsible = () => props.collapsible ?? false;
   const [isCollapsed, setIsCollapsed] = createSignal(() => props.collapsed ?? false);
   const [isMobileOpen, setIsMobileOpen] = createSignal(() => props.openMobile ?? false);
+
+  const { classes, rest } = RLDashboardSidebarTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ collapsed: isCollapsible() && isCollapsed() }),
+  });
 
   const setCollapsedState = (collapsed: boolean) => {
     if (props.collapsed === undefined) {
@@ -73,15 +72,6 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
       document.removeEventListener("keydown", handleKey);
     };
   });
-
-  const classes = createMemo(() =>
-    RLDashboardSidebarTheme({
-      side: side(),
-      collapsed: isCollapsible() && isCollapsed(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const headerContent = () =>
     "headerSlot" in props ? (

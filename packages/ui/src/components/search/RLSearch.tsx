@@ -1,15 +1,6 @@
 import type { RLSearchProps, SearchResultItem } from "./search.types";
 import { RLSearchTheme } from "./search.theme";
-import {
-  createMemo,
-  createSignal,
-  createUniqueId,
-  For,
-  onSettled,
-  Show,
-  omit,
-  type Component,
-} from "solid-js";
+import { createSignal, For, onSettled, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLInput } from "../input/RLInput";
@@ -17,18 +8,18 @@ import { RLKbd } from "../kbd/RLKbd";
 import { RLButton } from "../button/RLButton";
 import { defineShortcuts } from "../../shortcuts";
 
+const OMIT_KEYS = ["endpoint", "placeholder", "messages", "triggerSlot"] as const;
+
 export const RLSearch: Component<RLSearchProps> = (props) => {
-  const modalId = `rl-search-${createUniqueId()}`;
-  const rest = omit(
-    props,
-    "endpoint",
-    "placeholder",
-    "messages",
-    "ui",
-    "class",
-    "children",
-    "triggerSlot",
-  );
+  const {
+    Tag,
+    classes,
+    rest,
+    id: modalId,
+  } = RLSearchTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-search",
+  });
 
   const endpoint = () => props.endpoint ?? "/api/search";
   const searchPlaceholder = () =>
@@ -136,15 +127,8 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     }, 200);
   };
 
-  const classes = createMemo(() =>
-    RLSearchTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   return (
-    <div class={`${classes().root} rl-search-wrapper`} data-slot="root" {...rest}>
+    <Tag class={`${classes().root} rl-search-wrapper`} data-slot="root" {...rest}>
       {props.triggerSlot ? (
         <div class="cursor-pointer" onClick={toggleModal}>
           {props.triggerSlot}
@@ -174,7 +158,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
             }}
           >
             <div
-              id={modalId}
+              id={modalId()}
               class={classes().dialog}
               data-slot="dialog"
               role="dialog"
@@ -256,6 +240,6 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
           </div>
         </Portal>
       </Show>
-    </div>
+    </Tag>
   );
 };

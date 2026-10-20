@@ -1,33 +1,23 @@
+import type { Component } from "solid-js";
+import { Show } from "solid-js";
 import type { RLFormFieldProps } from "./form-field.types";
 import { RLFormFieldTheme } from "./form-field.theme";
-import { createMemo, omit, type Component, Show } from "solid-js";
+
+const OMIT_KEYS = [
+  "id",
+  "label",
+  "description",
+  "error",
+  "required",
+  "hint",
+  "labelSlot",
+  "descriptionSlot",
+  "errorSlot",
+  "helpSlot",
+] as const;
 
 export const RLFormField: Component<RLFormFieldProps> = (props) => {
-  const rest = omit(
-    props,
-    "id",
-    "label",
-    "description",
-    "error",
-    "required",
-    "size",
-    "ui",
-    "class",
-    "children",
-    "hint",
-    "labelSlot",
-    "descriptionSlot",
-    "errorSlot",
-    "helpSlot",
-  );
-
-  const classes = createMemo(() =>
-    RLFormFieldTheme({
-      size: props.size ?? "md",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLFormFieldTheme.setup(props, { omit: OMIT_KEYS });
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

@@ -1,39 +1,30 @@
+import type { Component } from "solid-js";
 import type { RLTextareaProps } from "./textarea.types";
 import { RLTextareaTheme } from "./textarea.theme";
-import { createMemo, omit, type Component } from "solid-js";
+
+const OMIT_KEYS = [
+  "value",
+  "placeholder",
+  "disabled",
+  "readonly",
+  "name",
+  "required",
+  "rows",
+  "autoGrow",
+  "color",
+  "onInput",
+  "onChange",
+  "onBlur",
+  "onFocus",
+  "onKeyDown",
+  "ref",
+] as const;
 
 export const RLTextarea: Component<RLTextareaProps> = (props) => {
-  const rest = omit(
-    props,
-    "value",
-    "placeholder",
-    "disabled",
-    "readonly",
-    "name",
-    "required",
-    "rows",
-    "autoGrow",
-    "error",
-    "size",
-    "color",
-    "ui",
-    "class",
-    "onInput",
-    "onChange",
-    "onBlur",
-    "onFocus",
-    "onKeyDown",
-    "ref",
-  );
-
-  const classes = createMemo(() =>
-    RLTextareaTheme({
-      size: props.size ?? "md",
-      error: !!props.error,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { classes, rest } = RLTextareaTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ error: !!props.error }),
+  });
 
   return (
     <div class={classes().root} data-slot="root">

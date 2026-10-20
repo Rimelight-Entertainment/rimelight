@@ -1,25 +1,22 @@
 import type { RLDropdownMenuProps, DropdownMenuItem } from "./dropdown-menu.types";
 import { RLDropdownMenuTheme } from "./dropdown-menu.theme";
-import { createSignal, createMemo, omit, onSettled, For, Show, type Component } from "solid-js";
+import { createSignal, createMemo, onSettled, For, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "items",
+  "label",
+  "icon",
+  "color",
+  "arrow",
+  "content",
+  "disabled",
+  "trigger",
+] as const;
+
 export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "label",
-    "icon",
-    "size",
-    "color",
-    "arrow",
-    "content",
-    "disabled",
-    "ui",
-    "class",
-    "children",
-    "trigger",
-  );
+  const { classes, rest } = RLDropdownMenuTheme.setup(props, { omit: OMIT_KEYS });
 
   const [isOpen, setIsOpen] = createSignal(false);
   const [coords, setCoords] = createSignal<{
@@ -74,14 +71,6 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
       window.removeEventListener("resize", handleScroll);
     };
   });
-
-  const classes = createMemo(() =>
-    RLDropdownMenuTheme({
-      size: props.size ?? "md",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const itemGroups = createMemo<DropdownMenuItem[][]>(() => {
     if (!props.items) return [];

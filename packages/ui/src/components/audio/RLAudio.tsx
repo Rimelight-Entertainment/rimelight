@@ -1,19 +1,58 @@
 import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio.types";
 import { RLAudioTheme } from "./audio.theme";
-import {
-  createMemo,
-  createSignal,
-  createUniqueId,
-  For,
-  onSettled,
-  Show,
-  omit,
-  type Component,
-} from "solid-js";
+import { createMemo, createSignal, For, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { RLImage } from "../image/RLImage";
 import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio";
 import { RLPopover } from "../popover/RLPopover";
+
+const OMIT_KEYS = [
+  "src",
+  "title",
+  "description",
+  "artwork",
+  "format",
+  "fileSize",
+  "bitrate",
+  "playlist",
+  "currentTrackIndex",
+  "progressVariant",
+  "waveformPeaks",
+  "repeatMode",
+  "autoplay",
+  "loop",
+  "muted",
+  "volume",
+  "playbackRate",
+  "preload",
+  "tracks",
+  "icons",
+  "progressColor",
+  "showTime",
+  "showVolume",
+  "showVolumeNumber",
+  "showSpeed",
+  "showSkip",
+  "skipSeconds",
+  "showRepeat",
+  "showDownload",
+  "showExternalLink",
+  "externalLink",
+  "showPlaylist",
+  "artworkZoomable",
+  "transcript",
+  "headerSlot",
+  "timelineSlot",
+  "controlsSlot",
+  "artworkSlot",
+  "onPlay",
+  "onPause",
+  "onEnded",
+  "onTrackChange",
+  "onTimeUpdate",
+  "onVolumeChange",
+  "onRepeatModeChange",
+] as const;
 
 function formatTime(seconds: number): string {
   if (isNaN(seconds) || !isFinite(seconds) || seconds < 0) return "0:00";
@@ -53,64 +92,17 @@ function generateDefaultPeaks(count = 36): number[] {
 const SPEED_OPTIONS = [0.5, 1, 1.25, 1.5, 2, 3, 4];
 
 export const RLAudio: Component<RLAudioProps> = (props) => {
-  const rest = omit(
-    props,
-    "src",
-    "title",
-    "description",
-    "artwork",
-    "format",
-    "fileSize",
-    "bitrate",
-    "playlist",
-    "currentTrackIndex",
-    "orientation",
-    "progressVariant",
-    "waveformPeaks",
-    "repeatMode",
-    "autoplay",
-    "loop",
-    "muted",
-    "volume",
-    "playbackRate",
-    "preload",
-    "tracks",
-    "icons",
-    "color",
-    "progressColor",
-    "size",
-    "variant",
-    "showTime",
-    "showVolume",
-    "showVolumeNumber",
-    "showSpeed",
-    "showSkip",
-    "skipSeconds",
-    "showRepeat",
-    "showDownload",
-    "showExternalLink",
-    "externalLink",
-    "showPlaylist",
-    "artworkZoomable",
-    "ui",
-    "class",
-    "children",
-    "transcript",
-    "headerSlot",
-    "timelineSlot",
-    "controlsSlot",
-    "artworkSlot",
-    "onPlay",
-    "onPause",
-    "onEnded",
-    "onTrackChange",
-    "onTimeUpdate",
-    "onVolumeChange",
-    "onRepeatModeChange",
-  );
+  const {
+    classes,
+    rest,
+    id: audioId,
+  } = RLAudioTheme.setup(props, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-audio",
+  });
 
-  const titleId = createUniqueId();
-  const descId = createUniqueId();
+  const titleId = () => audioId();
+  const descId = () => `${audioId()}-description`;
 
   let audioRef: HTMLAudioElement | undefined;
 
@@ -167,17 +159,6 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
   const showPlaylist = () => props.showPlaylist ?? true;
   const artworkZoomable = () => props.artworkZoomable ?? true;
   const skipSecs = () => props.skipSeconds ?? 15;
-
-  const classes = createMemo(() =>
-    RLAudioTheme({
-      variant: props.variant ?? "outline",
-      orientation: orientation(),
-      color: props.color ?? "primary",
-      size: props.size ?? "md",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const progressColorClass = createMemo(() => {
     const pColor = props.progressColor ?? props.color ?? "primary";
@@ -546,8 +527,8 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
       data-slot="root"
       role="region"
       aria-label={trackTitle() ? `${trackTitle()} audio player` : "Audio player"}
-      aria-labelledby={trackTitle() ? titleId : undefined}
-      aria-describedby={trackDescription() ? descId : undefined}
+      aria-labelledby={trackTitle() ? titleId() : undefined}
+      aria-describedby={trackDescription() ? descId() : undefined}
       {...rest}
     >
       <audio
@@ -590,12 +571,12 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
               >
                 <div class={classes().details} data-slot="details">
                   <Show when={trackTitle()}>
-                    <span id={titleId} class={classes().title} data-slot="title">
+                    <span id={titleId()} class={classes().title} data-slot="title">
                       {trackTitle()}
                     </span>
                   </Show>
                   <Show when={trackDescription()}>
-                    <span id={descId} class={classes().description} data-slot="description">
+                    <span id={descId()} class={classes().description} data-slot="description">
                       {trackDescription()}
                     </span>
                   </Show>

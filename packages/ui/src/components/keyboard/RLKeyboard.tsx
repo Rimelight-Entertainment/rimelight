@@ -332,11 +332,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
     ...numpadRenderKeys(),
   ]);
 
-  const classes = createMemo(() =>
-    RLKeyboardTheme({
-      class: props.class,
-    }),
-  );
+  const { classes } = RLKeyboardTheme.setup(props);
 
   return (
     <div class={classes().root}>

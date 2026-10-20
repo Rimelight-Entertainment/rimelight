@@ -1,33 +1,21 @@
 import type { RLHeaderProps } from "./header.types";
 import { RLHeaderTheme } from "./header.theme";
-import { createEffect, createMemo, createUniqueId, omit, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { createEffect, type Component } from "solid-js";
 import { useHeaderStack } from "./useHeaderStack";
 
+const OMIT_KEYS = [
+  "layerType",
+  "contain",
+  "sticky",
+  "fixed",
+  "stackIndex",
+  "hideOnScroll",
+  "left",
+  "center",
+  "right",
+] as const;
+
 export const RLHeader: Component<RLHeaderProps> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "layerType",
-    "contain",
-    "sticky",
-    "fixed",
-    "stackIndex",
-    "hideOnScroll",
-    "id",
-    "ui",
-    "class",
-    "left",
-    "center",
-    "right",
-    "children",
-  );
-
-  const fallbackId = `rl-header-${createUniqueId()}`;
-  const layerId = () => (typeof props["id"] === "string" ? props["id"] : fallbackId);
-
-  const Tag = dynamic(() => props.as ?? "header", { static: isStatic(props, "as") });
-
   const contain = () => props.contain ?? true;
   const sticky = () => props.sticky ?? true;
   const fixed = () => props.fixed ?? false;
@@ -36,15 +24,17 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
   const layerType = () => props.layerType ?? "header";
   const isBanner = () => layerType() === "banner";
 
-  const classes = createMemo(() =>
-    RLHeaderTheme({
+  const { Tag, classes, rest, id } = RLHeaderTheme.setup(props, {
+    as: "header",
+    omit: OMIT_KEYS,
+    variants: () => ({
       contain: contain(),
       sticky: fixed() ? false : sticky(),
       fixed: fixed(),
-      ui: props.ui,
-      class: props.class,
     }),
-  );
+  });
+
+  const layerId = id;
 
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({

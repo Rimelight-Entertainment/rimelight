@@ -1,6 +1,6 @@
 import type { RLColorSliderProps } from "./color-slider.types";
 import { RLColorSliderTheme } from "./color-slider.theme";
-import { createMemo, createSignal, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, Show, type Component } from "solid-js";
 import {
   clamp,
   getChannelRange,
@@ -12,28 +12,24 @@ import {
   rgbToHsl,
 } from "../color-picker/color";
 
+const OMIT_KEYS = [
+  "channel",
+  "colorSpace",
+  "defaultValue",
+  "dir",
+  "disabled",
+  "inverted",
+  "value",
+  "name",
+  "orientation",
+  "required",
+  "step",
+  "onValueChange",
+  "onChangeEnd",
+] as const;
+
 export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
-  const rest = omit(
-    props,
-    "channel",
-    "colorSpace",
-    "defaultValue",
-    "dir",
-    "disabled",
-    "inverted",
-    "value",
-    "name",
-    "orientation",
-    "required",
-    "step",
-    "color",
-    "theme",
-    "ui",
-    "class",
-    "onValueChange",
-    "children",
-    "onChangeEnd",
-  );
+  const { classes, rest } = RLColorSliderTheme.setup(props, { omit: OMIT_KEYS });
 
   const channel = () => props.channel || "hue";
   const colorSpace = () => props.colorSpace ?? "hsl";
@@ -284,14 +280,6 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
       updateColor(newHex, true);
     }
   };
-
-  const classes = createMemo(() =>
-    RLColorSliderTheme({
-      color: props.color,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div

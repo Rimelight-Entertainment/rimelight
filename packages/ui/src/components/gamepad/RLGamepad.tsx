@@ -1,4 +1,5 @@
 import type { RLGamepadProps, HighlightGroup } from "./gamepad.types";
+import { RLGamepadTheme } from "./gamepad.theme";
 import { For, Show, type Component } from "solid-js";
 
 interface GamepadButton {
@@ -34,7 +35,11 @@ const mainButtons: GamepadButton[] = [
   { id: "Menu", label: "≡", x: 239, y: 105, w: 16, h: 10 },
 ];
 
+const OMIT_KEYS = ["highlightedButtons", "groups", "highlightColor", "backgroundColor"] as const;
+
 export const RLGamepad: Component<RLGamepadProps> = (props) => {
+  const { Tag, classes, rest } = RLGamepadTheme.setup(props, { omit: OMIT_KEYS });
+
   const highlighted = (): string[] => props.highlightedButtons ?? [];
   const groups = (): HighlightGroup[] => props.groups ?? [];
   const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)";
@@ -52,10 +57,13 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
     return { active: false, color: undefined };
   };
 
+  const buttonClass = (active: boolean) =>
+    active ? `${classes().button} ${classes().buttonActive}` : classes().button;
+
   return (
-    <div class="gamepad-wrapper">
-      <div class="gamepad-container">
-        <svg viewBox="-20 -20 440 380" class="gamepad-svg">
+    <Tag class={classes().root} data-slot="root" {...rest}>
+      <div class={classes().container} data-slot="container">
+        <svg viewBox="-20 -20 440 380" class={classes().svg} data-slot="svg">
           <defs>
             <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#2a2a40" stop-opacity="1" />
@@ -74,8 +82,9 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
               const h = btn.h || 0;
               const color = highlight.active ? highlight.color || highlightColor() : "#1e1e30";
               return (
-                <g class={`gp-btn shoulder ${highlight.active ? "active" : ""}`}>
+                <g class={buttonClass(highlight.active)}>
                   <rect
+                    class={classes().shape}
                     x={btn.x}
                     y={btn.y}
                     width={w}
@@ -87,11 +96,11 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
                   />
                   {btn.label ? (
                     <text
+                      class={classes().label}
                       x={btn.x + w / 2}
                       y={btn.y + h / 2}
                       text-anchor="middle"
                       dominant-baseline="central"
-                      class="btn-label"
                       fill={highlight.active ? "#fff" : "#555570"}
                     >
                       {btn.label}
@@ -123,8 +132,9 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
 
               if (btn.r) {
                 return (
-                  <g class={`gp-btn ${highlight.active ? "active" : ""}`}>
+                  <g class={buttonClass(highlight.active)}>
                     <circle
+                      class={classes().shape}
                       cx={btn.x}
                       cy={btn.y}
                       r={btn.r}
@@ -134,11 +144,11 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
                     />
                     {btn.label ? (
                       <text
+                        class={classes().label}
                         x={btn.x}
                         y={btn.y}
                         text-anchor="middle"
                         dominant-baseline="central"
-                        class="btn-label"
                         fill={highlight.active ? "#fff" : "#555570"}
                       >
                         {btn.label}
@@ -151,8 +161,9 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
               const w = btn.w || 0;
               const h = btn.h || 0;
               return (
-                <g class={`gp-btn ${highlight.active ? "active" : ""}`}>
+                <g class={buttonClass(highlight.active)}>
                   <rect
+                    class={classes().shape}
                     x={btn.x}
                     y={btn.y}
                     width={w}
@@ -164,11 +175,11 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
                   />
                   {btn.label ? (
                     <text
+                      class={classes().label}
                       x={btn.x + w / 2}
                       y={btn.y + h / 2}
                       text-anchor="middle"
                       dominant-baseline="central"
-                      class="btn-label"
                       fill={highlight.active ? "#fff" : "#555570"}
                     >
                       {btn.label}
@@ -182,11 +193,11 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
       </div>
 
       <Show when={groups().some((group) => group.label)}>
-        <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-10 w-full">
+        <div class={classes().legend} data-slot="legend">
           <For each={groups().filter((group) => group.label)}>
             {(group) => (
-              <div class="flex items-center gap-2 m-0 p-0 h-[10px] text-[10px] text-[#777790] uppercase tracking-[0.1em] font-bold leading-[10px]">
-                <svg width="8" height="8" class="flex-shrink-0 block">
+              <div class={classes().legendItem} data-slot="legend-item">
+                <svg width="8" height="8" class={classes().legendDot} data-slot="legend-dot">
                   <rect width="8" height="8" rx="2" fill={group.color} />
                 </svg>
                 <span class="inline-block h-[10px] leading-[10px] m-0 p-0">{group.label}</span>
@@ -195,54 +206,6 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
           </For>
         </div>
       </Show>
-
-      <style>{`
-        .gamepad-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 3rem;
-          border-radius: 1.5rem;
-          width: 100%;
-          max-width: 100%;
-          margin: 1.5rem 0;
-          box-sizing: border-box;
-          container-type: inline-size;
-          border: 1px solid #1a1a2e;
-        }
-        .gamepad-container {
-          width: 100%;
-          max-width: 27.5rem;
-        }
-        .gamepad-svg {
-          width: 100%;
-          height: auto;
-        }
-        .gp-btn rect,
-        .gp-btn circle {
-          fill: #1e1e30;
-          stroke: #33334d;
-          stroke-width: 1;
-          transition: all 0.2s ease;
-        }
-        .btn-label {
-          fill: #555570;
-          font-size: 0.625rem;
-          font-family: var(--font-sans, system-ui);
-          font-weight: 800;
-          pointer-events: none;
-          line-height: 1;
-        }
-        .gp-btn.active rect,
-        .gp-btn.active circle {
-          fill: var(--hl-color, #00c16a);
-          stroke: #ffffff33;
-          stroke-width: 1.5;
-        }
-        .gp-btn.active .btn-label {
-          fill: #fff;
-        }
-      `}</style>
-    </div>
+    </Tag>
   );
 };

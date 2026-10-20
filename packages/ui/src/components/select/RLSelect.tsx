@@ -1,50 +1,39 @@
 import type { RLSelectProps, SelectItem } from "./select.types";
 import { RLSelectTheme } from "./select.theme";
-import { createMemo, createSignal, omit, For, type Component } from "solid-js";
+import { createMemo, createSignal, For, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 import type { RLButtonProps } from "../button/button.types";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLSelect: Component<RLSelectProps> = (props) => {
-  const rest = omit(
-    props,
-    "id",
-    "name",
-    "value",
-    "defaultValue",
-    "placeholder",
-    "disabled",
-    "required",
-    "multiple",
-    "size",
-    "variant",
-    "buttonVariant",
-    "buttonColor",
-    "class",
-    "items",
-    "leadingIcon",
-    "leading",
-    "children",
-    "theme",
-    "ui",
-    "onChange",
-    "onBlur",
-  );
+const OMIT_KEYS = [
+  "id",
+  "name",
+  "value",
+  "defaultValue",
+  "placeholder",
+  "disabled",
+  "required",
+  "multiple",
+  "buttonVariant",
+  "buttonColor",
+  "items",
+  "leadingIcon",
+  "leading",
+  "onChange",
+  "onBlur",
+] as const;
 
+export const RLSelect: Component<RLSelectProps> = (props) => {
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "icon" ? props.variant : "default";
 
   const buttonVariant = () => props.buttonVariant ?? "ghost";
   const buttonColor = () => props.buttonColor ?? "neutral";
 
-  const classes = createMemo(() =>
-    RLSelectTheme({
-      size: props.size,
-      variant: resolvedVariant(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+  const { Tag, classes, rest } = RLSelectTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ variant: resolvedVariant() }),
+  });
 
   const normalizedItems = createMemo(() => {
     if (!props.items) return [];
@@ -122,7 +111,7 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="root" data-theme={props.theme}>
+    <Tag class={classes().root} data-slot="root" data-theme={props.theme}>
       {resolvedVariant() === "icon" ? (
         <RLButton data-slot="trigger" {...triggerProps()} />
       ) : props.leading ? (
@@ -184,6 +173,6 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
           <RLIcon name="chevron-down" size="sm" class="size-4" aria-hidden="true" />
         </span>
       ) : null}
-    </div>
+    </Tag>
   );
 };

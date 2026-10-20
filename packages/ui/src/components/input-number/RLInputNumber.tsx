@@ -1,40 +1,31 @@
 import type { RLInputNumberProps } from "./input-number.types";
 import { RLInputNumberTheme } from "./input-number.theme";
-import { createMemo, createSignal, omit, type Component } from "solid-js";
+import { createMemo, createSignal, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
-  const rest = omit(
-    props,
-    "children",
-    "value",
-    "defaultValue",
-    "min",
-    "max",
-    "step",
-    "name",
-    "placeholder",
-    "disabled",
-    "readonly",
-    "required",
-    "size",
-    "ui",
-    "class",
-    "onInput",
-    "onChange",
-    "onBlur",
-    "onFocus",
-    "onKeyDown",
-    "onValueChange",
-  );
+const OMIT_KEYS = [
+  "value",
+  "defaultValue",
+  "min",
+  "max",
+  "step",
+  "name",
+  "placeholder",
+  "disabled",
+  "readonly",
+  "required",
+  "size",
+  "onInput",
+  "onChange",
+  "onBlur",
+  "onFocus",
+  "onKeyDown",
+  "onValueChange",
+] as const;
 
-  const classes = createMemo(() =>
-    RLInputNumberTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
+  const { classes, rest } = RLInputNumberTheme.setup(props, { omit: OMIT_KEYS });
 
   const inputClasses = createMemo(() =>
     RLInputTheme({

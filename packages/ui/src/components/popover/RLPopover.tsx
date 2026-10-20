@@ -1,21 +1,21 @@
 import type { RLPopoverProps } from "./popover.types";
 import { RLPopoverTheme } from "./popover.theme";
-import { createMemo, createSignal, omit, Show, onSettled, type Component } from "solid-js";
+import { createSignal, Show, onSettled, type Component } from "solid-js";
+
+const OMIT_KEYS = [
+  "open",
+  "defaultOpen",
+  "triggerLabel",
+  "mode",
+  "trigger",
+  "onOpenChange",
+] as const;
 
 export const RLPopover: Component<RLPopoverProps> = (props) => {
-  const rest = omit(
-    props,
-    "open",
-    "defaultOpen",
-    "triggerLabel",
-    "placement",
-    "mode",
-    "ui",
-    "class",
-    "children",
-    "trigger",
-    "onOpenChange",
-  );
+  const { classes, rest } = RLPopoverTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({ size: props.size ?? "md", placement: props.placement ?? "bottom" }),
+  });
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
   const [isHovered, setIsHovered] = createSignal(false);
@@ -47,15 +47,6 @@ export const RLPopover: Component<RLPopoverProps> = (props) => {
     document.addEventListener("click", handleOutsideClick);
     return () => document.removeEventListener("click", handleOutsideClick);
   });
-
-  const classes = createMemo(() =>
-    RLPopoverTheme({
-      size: props.size ?? "md",
-      placement: props.placement ?? "bottom",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div

@@ -1,23 +1,21 @@
 import type { RLInputTagsProps, TagItem } from "./input-tags.types";
 import { RLInputTagsTheme } from "./input-tags.theme";
-import { createMemo, createSignal, For, Show, omit, type Component } from "solid-js";
+import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
+const OMIT_KEYS = [
+  "items",
+  "displayLimit",
+  "estimatedTagWidth",
+  "showInput",
+  "name",
+  "placeholder",
+  "onAddTag",
+  "onRemoveTag",
+] as const;
+
 export const RLInputTags: Component<RLInputTagsProps> = (props) => {
-  const rest = omit(
-    props,
-    "items",
-    "displayLimit",
-    "estimatedTagWidth",
-    "showInput",
-    "name",
-    "placeholder",
-    "ui",
-    "class",
-    "children",
-    "onAddTag",
-    "onRemoveTag",
-  );
+  const { classes, rest } = RLInputTagsTheme.setup(props, { omit: OMIT_KEYS });
 
   const [inputValue, setInputValue] = createSignal("");
   const limit = () => props.displayLimit ?? 4;
@@ -41,13 +39,6 @@ export const RLInputTags: Component<RLInputTagsProps> = (props) => {
       }
     }
   };
-
-  const classes = createMemo(() =>
-    RLInputTagsTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   return (
     <div class={classes().root} data-slot="root" {...rest}>

@@ -1,39 +1,28 @@
 import type { RLDrawerProps } from "./drawer.types";
 import { RLDrawerTheme } from "./drawer.theme";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  omit,
-  Show,
-  onSettled,
-  type Component,
-} from "solid-js";
+import { createEffect, createSignal, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "open",
+  "defaultOpen",
+  "title",
+  "description",
+  "triggerLabel",
+  "trigger",
+  "triggerSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "footer",
+  "footerSlot",
+  "onOpenChange",
+  "closeOnClickOutside",
+  "closeOnEscape",
+  "lockScroll",
+] as const;
+
 export const RLDrawer: Component<RLDrawerProps> = (props) => {
-  const rest = omit(
-    props,
-    "open",
-    "defaultOpen",
-    "direction",
-    "title",
-    "description",
-    "triggerLabel",
-    "ui",
-    "class",
-    "children",
-    "trigger",
-    "triggerSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "footer",
-    "footerSlot",
-    "onOpenChange",
-    "closeOnClickOutside",
-    "closeOnEscape",
-    "lockScroll",
-  );
+  const { classes, rest } = RLDrawerTheme.setup(props, { omit: OMIT_KEYS });
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
 
@@ -82,14 +71,6 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
       document.body.style.overflow = "";
     };
   });
-
-  const classes = createMemo(() =>
-    RLDrawerTheme({
-      direction: props.direction ?? "bottom",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const triggerContent = () => props.trigger ?? props.triggerSlot;
   const footerContent = () => props.footer ?? props.footerSlot;

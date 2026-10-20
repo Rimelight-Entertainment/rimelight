@@ -1,6 +1,6 @@
 import type { RLThemeSelectorProps } from "./theme-selector.types";
 import { RLThemeSelectorTheme } from "./theme-selector.theme";
-import { createMemo, createSignal, onSettled, omit, type Component } from "solid-js";
+import { createSignal, onSettled, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
 import {
@@ -16,8 +16,10 @@ const themeItems = [
   { label: "Dark", value: "dark", icon: "moon" },
 ];
 
+const OMIT_KEYS = ["mode", "size", "onChange"] as const;
+
 export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
-  const rest = omit(props, "mode", "size", "theme", "ui", "class", "children", "onChange");
+  const { classes, rest } = RLThemeSelectorTheme.setup(props, { omit: OMIT_KEYS });
 
   const [currentPreference, setCurrentPreference] = createSignal<ThemePreference>(
     getThemePreference() ?? "system",
@@ -67,13 +69,6 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
 
   const mode = () => props.mode || "select";
   const size = () => props.size || "md";
-
-  const classes = createMemo(() =>
-    RLThemeSelectorTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const activeIcon = () => {
     const pref = currentPreference();

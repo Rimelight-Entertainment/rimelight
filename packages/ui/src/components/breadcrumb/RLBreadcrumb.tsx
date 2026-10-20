@@ -1,10 +1,24 @@
 import type { RLBreadcrumbProps } from "./breadcrumb.types";
 import { RLBreadcrumbTheme } from "./breadcrumb.theme";
-import { createMemo, omit, For, type Component, isStatic } from "solid-js";
-import { dynamic } from "@solidjs/web";
+import { createMemo, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { resolveLinkAttrs } from "../link/helpers";
+
+const OMIT_KEYS = [
+  "items",
+  "separatorIcon",
+  "labelKey",
+  "maxVisible",
+  "estimatedItemWidth",
+  "separator",
+  "itemSlot",
+  "itemLeadingSlot",
+  "itemLabelSlot",
+  "itemTrailingSlot",
+  "separatorSlot",
+  "slots",
+] as const;
 
 interface VisibleItemEntry {
   item: any;
@@ -16,28 +30,14 @@ interface VisibleItemEntry {
 }
 
 export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
-  const rest = omit(
-    props,
-    "as",
-    "items",
-    "separatorIcon",
-    "color",
-    "labelKey",
-    "maxVisible",
-    "estimatedItemWidth",
-    "ui",
-    "class",
-    "children",
-    "separator",
-    "itemSlot",
-    "itemLeadingSlot",
-    "itemLabelSlot",
-    "itemTrailingSlot",
-    "separatorSlot",
-    "slots",
-  );
-
-  const RootTag = dynamic(() => props.as ?? "nav", { static: isStatic(props, "as") });
+  const {
+    Tag: RootTag,
+    classes,
+    rest,
+  } = RLBreadcrumbTheme.setup(props, {
+    as: "nav",
+    omit: OMIT_KEYS,
+  });
 
   const allItems = () => (Array.isArray(props.items) ? props.items : []);
   const count = () => allItems().length;
@@ -308,14 +308,6 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     );
   };
 
-  const rootClasses = createMemo(() =>
-    RLBreadcrumbTheme({
-      color: resolvedColor(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const overflowThemeClasses = createMemo(() =>
     RLBreadcrumbTheme({
       color: resolvedColor(),
@@ -328,8 +320,8 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
   );
 
   return (
-    <RootTag aria-label="Breadcrumb" class={rootClasses().root} data-slot="root" {...rest}>
-      <ol class={rootClasses().list} data-slot="list">
+    <RootTag aria-label="Breadcrumb" class={classes().root} data-slot="root" {...rest}>
+      <ol class={classes().list} data-slot="list">
         {props.items ? (
           <For each={visibleItemsWithMeta()}>
             {({ item, originalIndex, isLast, isOverflow, hiddenCount }) => {

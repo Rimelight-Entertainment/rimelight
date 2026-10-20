@@ -1,32 +1,30 @@
 import type { RLSlideoverProps } from "./slideover.types";
 import { RLSlideoverTheme } from "./slideover.theme";
-import { createMemo, createSignal, onSettled, Show, omit, type Component } from "solid-js";
+import { createSignal, onSettled, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLSlideover: Component<RLSlideoverProps> = (props) => {
-  const rest = omit(
-    props,
-    "side",
-    "open",
-    "defaultOpen",
-    "title",
-    "description",
-    "triggerLabel",
-    "unmountOnHide",
-    "ui",
-    "class",
-    "children",
-    "trigger",
-    "triggerSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "footer",
-    "footerSlot",
-    "onOpenChange",
-  );
+const OMIT_KEYS = [
+  "open",
+  "defaultOpen",
+  "title",
+  "description",
+  "triggerLabel",
+  "unmountOnHide",
+  "trigger",
+  "triggerSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "footer",
+  "footerSlot",
+  "onOpenChange",
+] as const;
 
-  const side = () => props.side ?? "left";
+export const RLSlideover: Component<RLSlideoverProps> = (props) => {
+  const { Tag, classes, rest } = RLSlideoverTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
+
   const unmountOnHide = () => props.unmountOnHide ?? true;
 
   const [isOpen, setIsOpen] = createSignal(() => props.open ?? props.defaultOpen ?? false);
@@ -52,14 +50,6 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
     };
   });
 
-  const classes = createMemo(() =>
-    RLSlideoverTheme({
-      side: side(),
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
-
   const triggerContent = () => props.trigger ?? props.triggerSlot;
   const footerContent = () => props.footer ?? props.footerSlot;
   const titleContent = () => props.titleSlot ?? props.title;
@@ -67,7 +57,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
   const getBodyChildren = () => props.children;
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
+    <Tag class={classes().root} data-slot="root" {...rest}>
       <Show
         when={props.triggerLabel}
         fallback={
@@ -136,6 +126,6 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
           </div>
         </Portal>
       </Show>
-    </div>
+    </Tag>
   );
 };

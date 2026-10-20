@@ -1,34 +1,25 @@
 import type { RLInputPinProps } from "./input-pin.types";
 import { RLInputPinTheme } from "./input-pin.theme";
-import { createMemo, createSignal, omit, For, type Component } from "solid-js";
+import { createMemo, createSignal, For, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 
-export const RLInputPin: Component<RLInputPinProps> = (props) => {
-  const rest = omit(
-    props,
-    "children",
-    "length",
-    "value",
-    "defaultValue",
-    "name",
-    "disabled",
-    "required",
-    "type",
-    "size",
-    "ui",
-    "class",
-    "onInput",
-    "onChange",
-    "onKeyDown",
-    "onComplete",
-  );
+const OMIT_KEYS = [
+  "length",
+  "value",
+  "defaultValue",
+  "name",
+  "disabled",
+  "required",
+  "type",
+  "size",
+  "onInput",
+  "onChange",
+  "onKeyDown",
+  "onComplete",
+] as const;
 
-  const classes = createMemo(() =>
-    RLInputPinTheme({
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLInputPin: Component<RLInputPinProps> = (props) => {
+  const { classes, rest } = RLInputPinTheme.setup(props, { omit: OMIT_KEYS });
 
   const cellsClasses = createMemo(() =>
     RLInputTheme({

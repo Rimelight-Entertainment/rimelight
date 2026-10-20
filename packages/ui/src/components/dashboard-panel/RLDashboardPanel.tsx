@@ -1,33 +1,27 @@
+import type { Component } from "solid-js";
 import type { RLDashboardPanelProps } from "./dashboard-panel.types";
 import { RLDashboardPanelTheme } from "./dashboard-panel.theme";
-import { createMemo, Show, omit, type Component } from "solid-js";
+import { Show } from "solid-js";
+
+const OMIT_KEYS = [
+  "resizable",
+  "defaultSize",
+  "minSize",
+  "maxSize",
+  "header",
+  "headerSlot",
+  "body",
+  "bodySlot",
+  "footer",
+  "footerSlot",
+  "resizeHandle",
+  "resizeHandleSlot",
+] as const;
 
 export const RLDashboardPanel: Component<RLDashboardPanelProps> = (props) => {
-  const rest = omit(
-    props,
-    "resizable",
-    "ui",
-    "class",
-    "children",
-    "header",
-    "headerSlot",
-    "body",
-    "bodySlot",
-    "footer",
-    "footerSlot",
-    "resizeHandle",
-    "resizeHandleSlot",
-  );
+  const { classes, rest } = RLDashboardPanelTheme.setup(props, { omit: OMIT_KEYS });
 
   const resizable = () => props.resizable ?? false;
-
-  const classes = createMemo(() =>
-    RLDashboardPanelTheme({
-      size: false,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const headerContent = () => props.header ?? props.headerSlot;
   const bodyContent = () =>

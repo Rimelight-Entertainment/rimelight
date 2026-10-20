@@ -98,11 +98,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
   const [activeIdx, setActiveIdx] = createSignal(0);
   const [copied, setCopied] = createSignal<string | null>(null);
 
-  const classes = createMemo(() =>
-    RLPackageManagersTheme({
-      class: props.class,
-    }),
-  );
+  const { classes } = RLPackageManagersTheme.setup(props);
 
   const copyCommand = async (mgr: string, cmd: string) => {
     try {

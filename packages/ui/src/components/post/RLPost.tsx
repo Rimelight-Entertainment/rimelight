@@ -1,39 +1,29 @@
 import type { RLPostProps } from "./post.types";
 import { RLPostTheme } from "./post.theme";
-import { createMemo, omit, type Component } from "solid-js";
+import { createMemo, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 
-export const RLPost: Component<RLPostProps> = (props) => {
-  const rest = omit(
-    props,
-    "title",
-    "description",
-    "date",
-    "image",
-    "href",
-    "badge",
-    "badgeColor",
-    "variant",
-    "orientation",
-    "ui",
-    "class",
-    "children",
-    "imageSlot",
-    "titleSlot",
-    "descriptionSlot",
-    "badgeSlot",
-    "dateSlot",
-    "footerSlot",
-  );
+const OMIT_KEYS = [
+  "title",
+  "description",
+  "date",
+  "image",
+  "href",
+  "badge",
+  "badgeColor",
+  "imageSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "badgeSlot",
+  "dateSlot",
+  "footerSlot",
+] as const;
 
-  const classes = createMemo(() =>
-    RLPostTheme({
-      variant: props.variant ?? "soft",
-      orientation: props.orientation ?? "vertical",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLPost: Component<RLPostProps> = (props) => {
+  const { Tag, classes, rest } = RLPostTheme.setup(props, {
+    as: () => (props.href ? "a" : "div"),
+    omit: OMIT_KEYS,
+  });
 
   const formattedDate = createMemo(() =>
     props.date
@@ -117,13 +107,9 @@ export const RLPost: Component<RLPostProps> = (props) => {
     </>
   );
 
-  return props.href ? (
-    <a href={props.href} class={classes()["root"]} data-slot="root" {...rest}>
+  return (
+    <Tag href={props.href} class={classes().root} data-slot="root" {...rest}>
       {body()}
-    </a>
-  ) : (
-    <div class={classes()["root"]} data-slot="root" {...rest}>
-      {body()}
-    </div>
+    </Tag>
   );
 };

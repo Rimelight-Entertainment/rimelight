@@ -1,43 +1,25 @@
 import type { RLInputRatingProps } from "./input-rating.types";
 import { RLInputRatingTheme } from "./input-rating.theme";
-import { createMemo, createSignal, omit, For, type Component } from "solid-js";
+import { createMemo, createSignal, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-export const RLInputRating: Component<RLInputRatingProps> = (props) => {
-  const rest = omit(
-    props,
-    "id",
-    "readonly",
-    "icon",
-    "emptyIcon",
-    "color",
-    "size",
-    "orientation",
-    "step",
-    "disabled",
-    "required",
-    "name",
-    "defaultValue",
-    "value",
-    "length",
-    "clearable",
-    "hoverable",
-    "ui",
-    "class",
-    "onValueChange",
-  );
+const OMIT_KEYS = [
+  "id",
+  "icon",
+  "emptyIcon",
+  "step",
+  "required",
+  "name",
+  "defaultValue",
+  "value",
+  "length",
+  "clearable",
+  "hoverable",
+  "onValueChange",
+] as const;
 
-  const classes = createMemo(() =>
-    RLInputRatingTheme({
-      color: props.color ?? "primary",
-      size: props.size ?? "md",
-      orientation: props.orientation ?? "horizontal",
-      readonly: !!props.readonly,
-      disabled: !!props.disabled,
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
+export const RLInputRating: Component<RLInputRatingProps> = (props) => {
+  const { classes, rest } = RLInputRatingTheme.setup(props, { omit: OMIT_KEYS });
 
   const step = () => props.step ?? 1;
   const length = () => props.length ?? 5;

@@ -1,11 +1,15 @@
 import type { RLSplitterProps, DragState } from "./splitter.types";
 import { RLSplitterTheme } from "./splitter.theme";
-import { children, createMemo, createSignal, For, omit, type Component } from "solid-js";
+import { children, createMemo, createSignal, For, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = ["defaultSizes", "panels"] as const;
+
 export const RLSplitter: Component<RLSplitterProps> = (props) => {
-  const rest = omit(props, "direction", "defaultSizes", "ui", "class", "children", "panels");
+  const { Tag, classes, rest } = RLSplitterTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const childContent = children(() => props.children);
 
@@ -24,14 +28,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     if (props.panels && props.panels.length > 0) return props.panels;
     return childContent.toArray();
   });
-
-  const classes = createMemo(() =>
-    RLSplitterTheme({
-      direction: props.direction ?? "horizontal",
-      ui: props.ui,
-      class: props.class,
-    }),
-  );
 
   const containerSize = () =>
     isHorizontal() ? (rootRef?.clientWidth ?? 0) : (rootRef?.clientHeight ?? 0);
@@ -96,8 +92,8 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
   const panelClass = (size: number) => (isHorizontal() ? `w-[${size}%]` : `h-[${size}%]`);
 
   return (
-    <div
-      ref={(el) => (rootRef = el)}
+    <Tag
+      ref={(el: HTMLDivElement) => (rootRef = el)}
       class={classes().root}
       data-slot="root"
       data-resizable
@@ -139,6 +135,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
           </>
         )}
       </For>
-    </div>
+    </Tag>
   );
 };
