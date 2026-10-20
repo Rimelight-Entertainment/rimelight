@@ -1,4 +1,4 @@
-import { bindings, defineConfig, exports, triggers } from "cf/config";
+import { bindings, defineConfig, triggers } from "cf/config";
 
 export default defineConfig({
   worker: {
@@ -21,9 +21,6 @@ export default defineConfig({
         schedule: "* * * * *",
       }),
     ],
-    exports: {
-      ChatRoom: exports.durableObject({ storage: "sqlite" }),
-    },
     env: {
       CONSTRUCTION_MODE: bindings.text("true"),
       EMAIL_DOMAIN: bindings.text("rimelight.com"),
@@ -45,10 +42,6 @@ export default defineConfig({
         dev: {
           remote: true,
         },
-      }),
-      ChatRoom: bindings.durableObject({
-        worker: "starter-dot-rimelight-dot-com",
-        exportName: "ChatRoom",
       }),
       MY_RATE_LIMITER: bindings.rateLimit({
         namespace: "1001",

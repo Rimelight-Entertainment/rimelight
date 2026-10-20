@@ -14,7 +14,6 @@
     "links_about_label": "About",
     "links_components_label": "Components",
     "links_tests_label": "Tests",
-    "left-links_chat_label": "Chat",
     "left-links_home_label": "Home",
     "left-links_features_label": "Features",
     "link-groups_center_foundations_label": "Foundation",
@@ -50,25 +49,6 @@
   "branding": {
     "title": "Branding",
     "description": "Rimelight Branding Guidelines"
-  },
-  "chat_page": {
-    "title": "Real-time Chat",
-    "description": "Experience global, edge-rendered real-time conversations using Cloudflare Durable Objects.",
-    "header": "Durable Chat Lobby",
-    "status_connected": "Live",
-    "status_disconnected": "Offline",
-    "status_connecting": "Connecting...",
-    "btn_change_nick": "Change Nickname",
-    "placeholder_msg": "Send a message to the channel...",
-    "btn_send": "Send",
-    "channels_title": "Channels",
-    "online_title": "Active Users",
-    "welcome_title": "Welcome to Rimelight Chat",
-    "welcome_desc": "Choose a nickname to join the real-time edge-powered lobby.",
-    "nickname_label": "Display Name",
-    "btn_join": "Join Chat",
-    "no_users": "No other users online",
-    "history_loaded": "Message history loaded"
   },
   "cookie_notice": {
     "title": "Cookie Notice",

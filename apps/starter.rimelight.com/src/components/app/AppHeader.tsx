@@ -112,10 +112,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       to: getLocaleUrl("/dashboard"),
     },
     {
-      label: t("app_header.left-links_chat_label"),
-      to: getLocaleUrl("/chat"),
-    },
-    {
       label: "Contact",
       to: getLocaleUrl("/contact"),
     },

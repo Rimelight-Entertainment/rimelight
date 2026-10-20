@@ -11,8 +11,6 @@ import { db } from "#db";
 
 const app = new Hono<{ Bindings: Env }>();
 
-export { ChatRoom, Document } from "./chat/durableObject";
-
 // Middlewares
 app.use(security());
 app.use(auth());
@@ -30,30 +28,7 @@ app.all("*", (c) => handleRequest(c.req.raw));
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    const url = new URL(request.url);
-    if (url.pathname.startsWith("/api/chat/")) {
-      const id = url.pathname.split("/").pop();
-      if (!id) {
-        return new Response("Missing room id", { status: 400 });
-      }
-
-      const upgradeHeader = request.headers.get("Upgrade");
-      if (upgradeHeader?.toLowerCase() !== "websocket") {
-        return new Response("Expected WebSocket upgrade", { status: 426 });
-      }
-
-      const chatRoomNamespace = env.ChatRoom;
-      if (!chatRoomNamespace) {
-        return new Response("ChatRoom Durable Object namespace not bound", { status: 500 });
-      }
-
-      const chatRoomId = chatRoomNamespace.idFromName(id);
-      const chatRoomStub = chatRoomNamespace.get(chatRoomId);
-
-      return chatRoomStub.fetch(request);
-    }
-
-    // Pass everything else through the Hono pipeline
+    // Pass everything through the Hono pipeline
     return app.fetch(request, env, ctx);
   },
 
