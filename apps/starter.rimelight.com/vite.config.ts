@@ -7,26 +7,7 @@ import { security } from "@rimelight/security/plugin";
 import { auth } from "@rimelight/auth/plugin";
 import { i18n } from "@rimelight/i18n/plugin";
 import { ui } from "@rimelight/ui/plugin";
-import type { UIConfig } from "@rimelight/ui/types";
 import { cms } from "@rimelight/cms/plugin";
-
-const uiConfig = {
-  colors: {
-    brand: [0.22, 330],
-  },
-  logos: {
-    logomark: {
-      color: "https://cdn.rimelight.com/logos/logomark_color.svg",
-      white: "https://cdn.rimelight.com/logos/logomark_white.svg",
-      black: "https://cdn.rimelight.com/logos/logomark_black.svg",
-    },
-    logotype: {
-      color: "https://cdn.rimelight.com/logos/logotype_color.svg",
-      white: "https://cdn.rimelight.com/logos/logotype_white.svg",
-      black: "https://cdn.rimelight.com/logos/logotype_black.svg",
-    },
-  },
-} satisfies UIConfig;
 
 export default defineConfig({
   plugins: [
@@ -35,6 +16,7 @@ export default defineConfig({
     solid({
       start: true,
       ssr: true,
+      serverFunctions: true,
     }),
 
     fileRoutes({ types: ".cloudflare/types/file-routes.d.ts" }),
@@ -62,24 +44,26 @@ export default defineConfig({
 
     security({
       domain: "starter.rimelight.com",
-      imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"],
-      ratelimit: {
-        routes: ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat", "/api/contact"],
-      },
-      turnstile: {
-        routes: ["/api/contact"],
-      },
     }),
 
-    auth({
-      roleGuards: {
-        "/admin": ["admin", "owner"],
-      },
-    }),
+    auth(),
 
     i18n(),
 
-    ui(uiConfig),
+    ui({
+      logos: {
+        logomark: {
+          color: "https://cdn.rimelight.com/logos/logomark_color.svg",
+          white: "https://cdn.rimelight.com/logos/logomark_white.svg",
+          black: "https://cdn.rimelight.com/logos/logomark_black.svg",
+        },
+        logotype: {
+          color: "https://cdn.rimelight.com/logos/logotype_color.svg",
+          white: "https://cdn.rimelight.com/logos/logotype_white.svg",
+          black: "https://cdn.rimelight.com/logos/logotype_black.svg",
+        },
+      },
+    }),
 
     cms(),
   ],

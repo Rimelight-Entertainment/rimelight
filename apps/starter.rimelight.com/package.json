@@ -31,6 +31,7 @@
   },
   "scripts": {
     "generate-types": "cf workers types",
+    "check": "cf workers types && vp check --fix",
     "dev": "vp dev",
     "prebuild": "pnpm -r --filter \"@rimelight/*\" run --if-present build",
     "build": "vp build",
@@ -38,8 +39,7 @@
     "deploy": "cf deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "cf d1 migrations apply starter-dot-rimelight-dot-com --dir ./drizzle --local",
-    "db:migrate:remote": "cf d1 migrations apply starter-dot-rimelight-dot-com --dir ./drizzle",
-    "check": "cf workers types && vp check --fix"
+    "db:migrate:remote": "cf d1 migrations apply starter-dot-rimelight-dot-com --dir ./drizzle"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "2.0.0-beta.v.1",
