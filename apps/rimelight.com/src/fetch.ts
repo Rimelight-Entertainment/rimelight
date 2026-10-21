@@ -24,6 +24,4 @@ app.use(i18n());
 // Fall through all unmatched requests to Solid's SSR page renderer
 app.all("*", (c) => handleRequest(c.req.raw));
 
-export default {
-  fetch: app.fetch,
-};
+export default app;

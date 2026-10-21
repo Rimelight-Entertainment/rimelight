@@ -17,9 +17,6 @@ export default defineConfig({
     triggers: [
       triggers.fetch({ pattern: "starter.rimelight.com/*", zone: "rimelight.com" }),
       triggers.fetch({ pattern: "www.starter.rimelight.com/*", zone: "rimelight.com" }),
-      triggers.scheduled({
-        schedule: "* * * * *",
-      }),
     ],
     env: {
       CONSTRUCTION_MODE: bindings.text("true"),
