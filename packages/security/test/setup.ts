@@ -18,7 +18,7 @@ vi.mock("../src/middleware", async (importOriginal) => {
     crossOriginEmbedderPolicy: "credentialless" as const,
     stripHeaders: ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"],
     manifest: {},
-    ratelimit: { bindingName: "MY_RATE_LIMITER", retryAfter: 60 },
+    ratelimit: { bindingName: "RATE_LIMIT", retryAfter: 60 },
     construction: {
       constructionPath: "/construction",
       cookieName: "rimelight-construction-guest",
@@ -101,7 +101,7 @@ beforeEach(async () => {
     crossOriginOpenerPolicy: "same-origin",
     crossOriginEmbedderPolicy: "credentialless",
     stripHeaders: ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"],
-    ratelimit: { bindingName: "MY_RATE_LIMITER", retryAfter: 60 },
+    ratelimit: { bindingName: "RATE_LIMIT", retryAfter: 60 },
     construction: {
       constructionPath: "/construction",
       cookieName: "rimelight-construction-guest",

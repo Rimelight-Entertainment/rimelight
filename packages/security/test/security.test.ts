@@ -438,7 +438,7 @@ describe("Security Middleware Headers", () => {
       Object.assign(activeConfig, {
         ratelimit: {
           routes: ["/auth/sign-in"],
-          bindingName: "MY_RATE_LIMITER",
+          bindingName: "RATE_LIMIT",
         },
       });
 
@@ -451,7 +451,7 @@ describe("Security Middleware Headers", () => {
           raw: new Request("https://rimelight.com/auth/sign-in"),
         },
         env: {
-          MY_RATE_LIMITER: { limit: limitMock },
+          RATE_LIMIT: { limit: limitMock },
         },
         json: (data: any, status: number) => new Response(JSON.stringify(data), { status }),
       };
@@ -482,7 +482,7 @@ describe("Security Middleware Headers", () => {
           raw: new Request("https://rimelight.com/auth/sign-in"),
         },
         env: {
-          MY_RATE_LIMITER: { limit: limitMock },
+          RATE_LIMIT: { limit: limitMock },
         },
         res: new Response("OK", { headers: { "content-type": "text/plain" } }),
       };

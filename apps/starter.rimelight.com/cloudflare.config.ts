@@ -19,18 +19,16 @@ export default defineConfig({
       triggers.fetch({ pattern: "www.starter.rimelight.com/*", zone: "rimelight.com" }),
     ],
     env: {
-      CONSTRUCTION_MODE: bindings.text("true"),
-      EMAIL_DOMAIN: bindings.text("rimelight.com"),
-      CONTACT_OWNER_EMAIL: bindings.text("owner@rimelight.com"),
-      CONSTRUCTION_PASSPHRASE: bindings.secret(),
-      DB: bindings.d1({
-        id: "a6610294-e214-4d35-b841-174469da54d2",
+      ASSETS: bindings.assets(),
+      IMAGES: bindings.images(),
+      BLOB: bindings.r2({
+        name: "starter-dot-rimelight-dot-com",
         dev: {
           remote: true,
         },
       }),
-      BLOB: bindings.r2({
-        name: "starter-dot-rimelight-dot-com",
+      DB: bindings.d1({
+        id: "a6610294-e214-4d35-b841-174469da54d2",
         dev: {
           remote: true,
         },
@@ -40,15 +38,17 @@ export default defineConfig({
           remote: true,
         },
       }),
-      MY_RATE_LIMITER: bindings.rateLimit({
+      RATE_LIMIT: bindings.rateLimit({
         namespace: "1001",
         simple: {
           limit: 100,
           period: 60,
         },
       }),
-      ASSETS: bindings.assets(),
-      IMAGES: bindings.images(),
+      CONSTRUCTION_MODE: bindings.text("true"),
+      EMAIL_DOMAIN: bindings.text("rimelight.com"),
+      CONTACT_OWNER_EMAIL: bindings.text("owner@rimelight.com"),
+      CONSTRUCTION_PASSPHRASE: bindings.secret(),
     },
   },
 });

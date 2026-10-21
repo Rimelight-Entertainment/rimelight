@@ -15,7 +15,7 @@ export const activeConfig: SecurityConfig = {
     config?.ratelimit === false
       ? false
       : {
-          bindingName: "MY_RATE_LIMITER",
+          bindingName: "RATE_LIMIT",
           retryAfter: 60,
           ...config?.ratelimit,
         },

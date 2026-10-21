@@ -19,7 +19,7 @@ describe("Rate Limit Middleware", () => {
         header: () => "1.2.3.4",
       },
       env: {
-        MY_RATE_LIMITER: {
+        RATE_LIMIT: {
           limit: limitMock,
         },
       },
@@ -50,7 +50,7 @@ describe("Rate Limit Middleware", () => {
         header: () => "1.2.3.4",
       },
       env: {
-        MY_RATE_LIMITER: {
+        RATE_LIMIT: {
           limit: limitMock,
         },
       },
@@ -76,7 +76,7 @@ describe("Rate Limit Middleware", () => {
         header: (name: string) => (name === "CF-Connecting-IP" ? "1.2.3.4" : undefined),
       },
       env: {
-        MY_RATE_LIMITER: {
+        RATE_LIMIT: {
           limit: limitMock,
         },
       },
@@ -108,7 +108,7 @@ describe("Rate Limit Middleware", () => {
         header: (name: string) => (name === "CF-Connecting-IP" ? "9.9.9.9" : undefined),
       },
       env: {
-        MY_RATE_LIMITER: {
+        RATE_LIMIT: {
           limit: limitMock,
         },
       },
