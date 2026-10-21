@@ -14,6 +14,7 @@ export default defineConfig({
     cloudflare(),
 
     solid({
+      exclude: ["src/fetch.ts"],
       start: true,
       ssr: true,
       serverFunctions: true,
@@ -53,14 +54,14 @@ export default defineConfig({
     ui({
       logos: {
         logomark: {
-          color: "https://cdn.rimelight.com/logos/logomark_color.svg",
-          white: "https://cdn.rimelight.com/logos/logomark_white.svg",
-          black: "https://cdn.rimelight.com/logos/logomark_black.svg",
+          color: "https://cdn.starter.rimelight.com/logos/logomark_color.svg",
+          white: "https://cdn.starter.rimelight.com/logos/logomark_white.svg",
+          black: "https://cdn.starter.rimelight.com/logos/logomark_black.svg",
         },
         logotype: {
-          color: "https://cdn.rimelight.com/logos/logotype_color.svg",
-          white: "https://cdn.rimelight.com/logos/logotype_white.svg",
-          black: "https://cdn.rimelight.com/logos/logotype_black.svg",
+          color: "https://cdn.starter.rimelight.com/logos/logotype_color.svg",
+          white: "https://cdn.starter.rimelight.com/logos/logotype_white.svg",
+          black: "https://cdn.starter.rimelight.com/logos/logotype_black.svg",
         },
       },
     }),
