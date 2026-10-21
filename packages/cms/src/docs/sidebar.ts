@@ -1,4 +1,5 @@
 import type { DocsConfig, SidebarItem, SidebarScope, RLBadgeProps } from "./config";
+import { defaultDocsConfig, buildDocsNavFromPages } from "./config";
 
 export interface ResolvedSidebarItem {
   label: string;
@@ -115,9 +116,9 @@ function hasPath(
 }
 
 export async function getDocsSidebar(
-  config: DocsConfig,
-  locale: string,
-  currentPath: string,
+  config?: DocsConfig | any[] | null | undefined,
+  locale = "en",
+  currentPath = "",
   activeVersion?: string,
   includeVersionInUrl?: boolean,
 ): Promise<{
@@ -125,11 +126,26 @@ export async function getDocsSidebar(
   scopes: ResolvedScope[];
   activeScope?: ResolvedScope | undefined;
 }> {
+  let resolvedConfig: DocsConfig;
+  if (!config) {
+    resolvedConfig = defaultDocsConfig;
+  } else if (Array.isArray(config)) {
+    if (config.length > 0 && ("slug" in config[0] || "content" in config[0])) {
+      resolvedConfig = buildDocsNavFromPages(config, { locale });
+    } else {
+      resolvedConfig = { sidebar: config };
+    }
+  } else {
+    resolvedConfig = config;
+  }
+
   const normPath = currentPath.replace(/\/$/, "").toLowerCase();
 
-  const sidebarScopes: SidebarScope[] = Array.isArray(config.sidebar)
-    ? config.sidebar.filter((item): item is SidebarScope => "id" in item || "scopes" in item)
-    : config.sidebar.scopes || [];
+  const sidebarScopes: SidebarScope[] = Array.isArray(resolvedConfig.sidebar)
+    ? resolvedConfig.sidebar.filter(
+        (item): item is SidebarScope => "id" in item || "scopes" in item,
+      )
+    : resolvedConfig.sidebar?.scopes || [];
 
   const scopes: ResolvedScope[] = sidebarScopes.map((scope) => {
     const id = scope.id || scope.label;

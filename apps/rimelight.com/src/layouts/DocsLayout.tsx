@@ -3,9 +3,9 @@ import type { JSX } from "@solidjs/web";
 import AppLayout from "./AppLayout";
 import { RLSidebar, RLTableOfContents, RLSurround, RLSelect, RLInput } from "@rimelight/ui";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
-import docsConfig from "#config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
 import { t, getCurrentLocale } from "@rimelight/i18n";
+import { api } from "#api/client";
 
 export interface DocsLayoutProps {
   title: string;
@@ -34,7 +34,17 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
       const path = currentPath();
       const v = props.activeVersion;
       const inc = props.includeVersionInUrl;
-      const { items, scopes, activeScope } = await getDocsSidebar(docsConfig, loc, path, v, inc);
+      let activeConfig: DocsConfig | undefined;
+      try {
+        const res = await (api as any).content["docs-config"].$get();
+        if (res.ok) {
+          const data = (await res.json()) as any;
+          if (data?.config && data.config.sidebar?.scopes?.length > 0) {
+            activeConfig = data.config;
+          }
+        }
+      } catch {}
+      const { items, scopes, activeScope } = await getDocsSidebar(activeConfig, loc, path, v, inc);
       const { prev: sidebarPrev, next: sidebarNext } = getSurroundItems(items, path);
       return {
         sidebarItems: items,
@@ -47,11 +57,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
     { loadingValue: null },
   );
 
-  const rawGlobalToc = (docsConfig as DocsConfig).tableOfContents;
-  const globalToc: TableOfContentsConfig =
-    rawGlobalToc && typeof rawGlobalToc === "object"
-      ? rawGlobalToc
-      : { minHeadingLevel: 2, maxHeadingLevel: 3 };
+  const globalToc: TableOfContentsConfig = { minHeadingLevel: 2, maxHeadingLevel: 3 };
   const resolvedToc = () =>
     props.tableOfContents !== undefined ? props.tableOfContents : globalToc;
   const tocConfig = (): TableOfContentsConfig | null =>

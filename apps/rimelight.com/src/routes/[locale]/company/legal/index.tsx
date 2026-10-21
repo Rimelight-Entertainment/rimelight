@@ -4,6 +4,7 @@ import { t, getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
+import { api } from "#api/client";
 
 export const LegalIndexPage: Component = () => {
   const activeLocale = () => getCurrentLocale();
@@ -12,7 +13,9 @@ export const LegalIndexPage: Component = () => {
     async () => {
       const loc = activeLocale();
       try {
-        const res = await fetch("/api/content/pages?type=legal");
+        const res = await (api as any).content.pages.$get({
+          query: { type: "legal" },
+        });
         if (!res.ok) return [];
         const data = (await res.json()) as any;
         const allPages = (data.pages || []) as any[];

@@ -1,9 +1,10 @@
 import { type Component, Show, createMemo } from "solid-js";
 import DocsLayout from "#layouts/DocsLayout";
-import { PageRenderer } from "#components/cms/PageRenderer";
+import { PageRenderer } from "@rimelight/cms/solid";
 import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
+import { api } from "#api/client";
 
 export const DocsIndexPage: Component = () => {
   const activeLocale = () => getCurrentLocale();
@@ -12,7 +13,9 @@ export const DocsIndexPage: Component = () => {
     async () => {
       const loc = activeLocale();
       try {
-        const res = await fetch("/api/content/pages?type=doc");
+        const res = await (api as any).content.pages.$get({
+          query: { type: "doc" },
+        });
         if (!res.ok) return { docPage: null, versions: [] };
         const data = (await res.json()) as any;
         const allDocPages = (data.pages || []) as any[];

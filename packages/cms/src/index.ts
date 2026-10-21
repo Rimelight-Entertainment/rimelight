@@ -75,3 +75,6 @@ export * from "./docs/index";
 
 // Storage Adapters (R2, etc.)
 export * from "./storage/index";
+
+// Content & Search Routers
+export * from "./server/index";

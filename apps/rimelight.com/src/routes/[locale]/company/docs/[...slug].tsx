@@ -5,9 +5,10 @@ import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rime
 import meta from "virtual:rimelight-ui-docs-meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
-import { BlockRenderer } from "#components/cms/PageRenderer";
+import { BlockRenderer } from "@rimelight/cms/solid";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
+import { api } from "#api/client";
 
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob(
@@ -114,7 +115,9 @@ export const DocPage: Component = () => {
     async () => {
       const slug = params.slug;
       try {
-        const res = await fetch("/api/content/pages?type=doc");
+        const res = await (api as any).content.pages.$get({
+          query: { type: "doc" },
+        });
         if (!res.ok) return null;
         const data = (await res.json()) as any;
         const allDocPages = (data.pages || []) as any[];

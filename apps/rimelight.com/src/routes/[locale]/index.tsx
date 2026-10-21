@@ -9,6 +9,7 @@ import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
+import { api } from "#api/client";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
@@ -17,7 +18,9 @@ export const HomePage: Component = () => {
     async () => {
       const loc = activeLocale();
       try {
-        const res = await fetch("/api/content/pages?type=blog");
+        const res = await (api as any).content.pages.$get({
+          query: { type: "blog" },
+        });
         if (!res.ok) return [];
         const data = (await res.json()) as any;
         const blogPages = (data.pages || []) as any[];

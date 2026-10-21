@@ -5,6 +5,7 @@ import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSecti
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
+import { api } from "#api/client";
 
 function getPageTitle(title: unknown, locale: string): string {
   if (typeof title === "object" && title !== null) {
@@ -21,7 +22,9 @@ export const BlogIndexPage: Component = () => {
   const blogPages = createMemo<any[]>(
     async () => {
       try {
-        const res = await fetch("/api/content/pages?type=blog");
+        const res = await (api as any).content.pages.$get({
+          query: { type: "blog" },
+        });
         if (!res.ok) return [];
         const data = (await res.json()) as any;
         return (data.pages || []) as any[];

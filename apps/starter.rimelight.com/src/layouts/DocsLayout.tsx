@@ -8,9 +8,9 @@ import { RLCopyMarkdown } from "@rimelight/ui/components/copy-markdown/RLCopyMar
 import { RLShare } from "@rimelight/ui/components/share/RLShare.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
-import type { TableOfContentsConfig } from "@rimelight/cms";
-import docsConfig from "#config/docs.config";
+import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
 import { getCurrentLocale } from "@rimelight/i18n";
+import { api } from "#api/client";
 
 export interface DocsLayoutProps {
   title: string;
@@ -49,9 +49,19 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
       void (async () => {
         const locale = getCurrentLocale();
         const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+        let activeConfig: DocsConfig | undefined;
+        try {
+          const res = await (api as any).content["docs-config"].$get();
+          if (res.ok) {
+            const data = (await res.json()) as any;
+            if (data?.config && data.config.sidebar?.scopes?.length > 0) {
+              activeConfig = data.config;
+            }
+          }
+        } catch {}
         try {
           const data = await getDocsSidebar(
-            docsConfig as any,
+            activeConfig,
             locale,
             currentPath,
             activeVersion,
@@ -68,7 +78,7 @@ export const DocsLayout: Component<DocsLayoutProps> = (props) => {
   const prev = () => props.prevOverride ?? surround().prev;
   const next = () => props.nextOverride ?? surround().next;
 
-  const globalToc = (docsConfig as any).tableOfContents ?? {
+  const globalToc: TableOfContentsConfig = {
     minHeadingLevel: 2,
     maxHeadingLevel: 3,
   };

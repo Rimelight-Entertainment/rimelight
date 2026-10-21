@@ -1,9 +1,10 @@
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "#layouts/AppLayout";
-import { PageRenderer } from "#components/cms/PageRenderer";
+import { PageRenderer } from "@rimelight/cms/solid";
 import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
 import { t, getCurrentLocale } from "@rimelight/i18n";
+import { api } from "#api/client";
 
 export const BlogPostPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
@@ -14,7 +15,10 @@ export const BlogPostPage: Component = () => {
       const slug = params.slug;
       if (!slug) return null;
       try {
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=blog`);
+        const res = await (api as any).content.pages[":slug"].$get({
+          param: { slug },
+          query: { type: "blog" },
+        });
         if (!res.ok) return null;
         return (await res.json()) as any;
       } catch {

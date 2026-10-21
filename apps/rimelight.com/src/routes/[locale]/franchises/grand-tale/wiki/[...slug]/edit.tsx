@@ -3,6 +3,7 @@ import { useParams } from "@solidjs/router";
 import DashboardLayout from "#layouts/DashboardLayout";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { api } from "#api/client";
 
 export const WikiEditPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
@@ -17,7 +18,9 @@ export const WikiEditPage: Component = () => {
       if (!slug) return null;
       try {
         const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(lookupSlug)}`);
+        const res = await (api as any).content.pages[":slug"].$get({
+          param: { slug: lookupSlug },
+        });
         if (!res.ok) return null;
         const page = (await res.json()) as any;
         const title =

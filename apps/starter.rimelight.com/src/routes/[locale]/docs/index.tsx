@@ -1,7 +1,7 @@
 import { type Component, Show, createMemo } from "solid-js";
 import DocsLayout from "#layouts/DocsLayout";
 import { extractHeadingsFromBlocks, blocksToMarkdown } from "@rimelight/cms";
-import { PageRenderer } from "#components/cms/PageRenderer";
+import { PageRenderer } from "@rimelight/cms/solid";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const DocsIndexPage: Component = () => {

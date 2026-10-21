@@ -1,7 +1,7 @@
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import AppLayout from "#layouts/AppLayout";
-import { PageRenderer } from "#components/cms/PageRenderer";
+import { PageRenderer } from "@rimelight/cms/solid";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 
 export const LegalSlugPage: Component = () => {

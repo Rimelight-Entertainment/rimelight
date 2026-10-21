@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { auth as defaultAuth } from "@rimelight/auth";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+import { createContentRouter } from "./content";
+import { createSearchRouter } from "./search";
 import {
   pages as defaultPages,
   pageDrafts as defaultPageDrafts,
@@ -46,15 +48,40 @@ export interface CmsRouterOptions {
     pageVersions?: any;
     pageVersionApprovals?: any;
     contentTypes?: any;
+    searchIndex?: any;
   };
+  includeContent?: boolean;
+  includeSearch?: boolean;
 }
 
-export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
-  const prefix = options.prefix ?? "/api/cms";
-  const cms = new Hono().basePath(prefix);
+export function createCmsRouter(options: CmsRouterOptions = {}) {
+  const router = new Hono();
+
+  router.onError((err, c) => {
+    console.error("[@rimelight/cms Router Error]:", err);
+    return c.json({ error: err.message || "Internal CMS Error" }, 500);
+  });
+
+  if (options.includeContent !== false) {
+    const content = createContentRouter({
+      db: options.db,
+      schema: options.schema ? { pages: options.schema.pages } : undefined,
+    });
+    router.route("/content", content);
+  }
+
+  if (options.includeSearch !== false) {
+    const search = createSearchRouter({
+      db: options.db,
+      schema: options.schema ? { searchIndex: options.schema.searchIndex } : undefined,
+    });
+    router.route("/search", search);
+  }
+
+  const cms = new Hono();
 
   cms.onError((err, c) => {
-    console.error("[@rimelight/cms Router Error]:", err);
+    console.error("[@rimelight/cms Core Router Error]:", err);
     return c.json({ error: err.message || "Internal CMS Error" }, 500);
   });
 
@@ -1117,7 +1144,13 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     return c.json(result);
   });
 
-  return cms;
+  router.route("/cms", cms);
+  if (options.prefix && options.prefix !== "/cms" && options.prefix !== "") {
+    router.route(options.prefix, cms);
+  }
+  router.route("/", cms);
+
+  return router;
 }
 
 export const cmsRouter: Hono = createCmsRouter();

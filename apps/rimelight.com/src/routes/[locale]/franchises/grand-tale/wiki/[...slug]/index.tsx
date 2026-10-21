@@ -1,8 +1,9 @@
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import WikiLayout from "#layouts/WikiLayout";
-import { PageRenderer } from "#components/cms/PageRenderer";
+import { PageRenderer } from "@rimelight/cms/solid";
 import { t, getCurrentLocale } from "@rimelight/i18n";
+import { api } from "#api/client";
 
 export const WikiSlugPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
@@ -14,7 +15,9 @@ export const WikiSlugPage: Component = () => {
       if (!slug) return null;
       try {
         const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(lookupSlug)}`);
+        const res = await (api as any).content.pages[":slug"].$get({
+          param: { slug: lookupSlug },
+        });
         if (!res.ok) return null;
         return (await res.json()) as any;
       } catch {
