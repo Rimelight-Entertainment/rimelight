@@ -3,7 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import { pages as defaultPages } from "../schema";
-import { renderPageAsMarkdown } from "../markdown/index";
+import { renderPageAsMarkdown } from "../docs/agent";
 import { buildDocsNavFromPages } from "../docs/config";
 
 export interface ContentRouterOptions {

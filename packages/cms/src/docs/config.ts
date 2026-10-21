@@ -11,25 +11,25 @@ export interface TableOfContentsConfig {
 }
 
 export interface DocsConfig {
-  basePath?: string;
+  basePath?: string | undefined;
   sidebar:
     | (SidebarItem | SidebarScope)[]
     | {
         scopes: SidebarScope[];
       };
-  editLink?: EditLinkConfig;
-  tableOfContents?: false | TableOfContentsConfig;
+  editLink?: EditLinkConfig | undefined;
+  tableOfContents?: false | TableOfContentsConfig | undefined;
 }
 
 export const defineDocsConfig = <const T extends DocsConfig>(config: T): T => config;
 export type { RLBadgeProps, SidebarItem, SidebarScope };
 
 export interface DocsNavOptions {
-  basePath?: string;
-  defaultScope?: string;
-  editBaseUrl?: string;
-  tableOfContents?: false | TableOfContentsConfig;
-  locale?: string;
+  basePath?: string | undefined;
+  defaultScope?: string | undefined;
+  editBaseUrl?: string | undefined;
+  tableOfContents?: false | TableOfContentsConfig | undefined;
+  locale?: string | undefined;
 }
 
 function titleCase(str: string): string {
@@ -59,10 +59,7 @@ export const defaultDocsConfig: DocsConfig = {
   },
 };
 
-export function buildDocsNavFromPages(
-  pages: any[],
-  options: DocsNavOptions = {},
-): DocsConfig {
+export function buildDocsNavFromPages(pages: any[], options: DocsNavOptions = {}): DocsConfig {
   const locale = options.locale || "en";
   const basePath = options.basePath || "/{locale}/docs";
 
@@ -149,8 +146,7 @@ export function buildDocsNavFromPages(
     if (segments.length > 2) {
       const subGroup = segments[1]!;
       let groupItem = scopeObj.items.find(
-        (i: any) =>
-          i.label?.toLowerCase() === subGroup.toLowerCase() || (i as any).id === subGroup,
+        (i: any) => i.label?.toLowerCase() === subGroup.toLowerCase() || (i as any).id === subGroup,
       );
       if (!groupItem) {
         groupItem = {

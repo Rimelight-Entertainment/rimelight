@@ -69,6 +69,11 @@ describe("CMS Content Router, Search Router & Dynamic Docs Config", () => {
     expect(scopes).toEqual([]);
   });
 
+  it("getDocsConfig derives navigation from passed pages or fallback", async () => {
+    const config = await getDocsConfig({ pages: [] });
+    expect(config.sidebar).toBeDefined();
+  });
+
   it("resolves sidebar items and scopes via getDocsSidebar with dynamically generated config", async () => {
     const mockPages = [
       {

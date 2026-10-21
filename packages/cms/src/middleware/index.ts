@@ -54,7 +54,7 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
   return async (c, next) => {
     const { pathname } = new URL(c.req.url);
     const matchesPrefix = supportedPrefixes.some(
-      (p) => pathname === p || pathname.startsWith(`${p}/`)
+      (p) => pathname === p || pathname.startsWith(`${p}/`),
     );
 
     if (matchesPrefix) {
@@ -69,7 +69,11 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
 
       // Normalize pathname for router if called directly under /api/...
       let reqToFetch = c.req.raw;
-      if (pathname.startsWith("/api/content") || pathname.startsWith("/api/search") || pathname.startsWith("/api/cms")) {
+      if (
+        pathname.startsWith("/api/content") ||
+        pathname.startsWith("/api/search") ||
+        pathname.startsWith("/api/cms")
+      ) {
         const url = new URL(c.req.url);
         url.pathname = pathname.replace(/^\/api/, "");
         reqToFetch = new Request(url.toString(), c.req.raw);

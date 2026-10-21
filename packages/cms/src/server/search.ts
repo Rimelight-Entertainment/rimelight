@@ -88,7 +88,7 @@ export function createSearchRouter(options: SearchRouterOptions = {}) {
             desc(searchIndex.updatedAt),
           )
           .limit(10);
-      } catch (dbErr: any) {
+      } catch {
         // Fallback for SQLite or environments without PostgreSQL tsvector / ts_headline
         results = await db
           .select({

@@ -39,33 +39,35 @@ import {
 export interface CmsRouterOptions {
   prefix?: string | undefined;
   db?: any;
-  auth?: { getSession: (req: Request) => Promise<any> };
-  schema?: {
-    pages?: any;
-    pageDrafts?: any;
-    pageDraftLocks?: any;
-    pageTemplates?: any;
-    pageVersions?: any;
-    pageVersionApprovals?: any;
-    contentTypes?: any;
-    searchIndex?: any;
-  };
-  includeContent?: boolean;
-  includeSearch?: boolean;
+  auth?: { getSession: (req: Request) => Promise<any> } | undefined;
+  schema?:
+    | {
+        pages?: any;
+        pageDrafts?: any;
+        pageDraftLocks?: any;
+        pageTemplates?: any;
+        pageVersions?: any;
+        pageVersionApprovals?: any;
+        contentTypes?: any;
+        searchIndex?: any;
+      }
+    | undefined;
+  includeContent?: boolean | undefined;
+  includeSearch?: boolean | undefined;
 }
 
 export function createCmsRouter(options: CmsRouterOptions = {}) {
   const router = new Hono();
 
-  router.onError((err, c) => {
+  router.onError((err: any, c: any) => {
     console.error("[@rimelight/cms Router Error]:", err);
-    return c.json({ error: err.message || "Internal CMS Error" }, 500);
+    return c.json({ error: err?.message || "Internal CMS Error" }, 500);
   });
 
   if (options.includeContent !== false) {
     const content = createContentRouter({
       db: options.db,
-      schema: options.schema ? { pages: options.schema.pages } : undefined,
+      ...(options.schema ? { schema: { pages: options.schema.pages } } : {}),
     });
     router.route("/content", content);
   }
@@ -73,16 +75,16 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
   if (options.includeSearch !== false) {
     const search = createSearchRouter({
       db: options.db,
-      schema: options.schema ? { searchIndex: options.schema.searchIndex } : undefined,
+      ...(options.schema ? { schema: { searchIndex: options.schema.searchIndex } } : {}),
     });
     router.route("/search", search);
   }
 
   const cms = new Hono();
 
-  cms.onError((err, c) => {
+  cms.onError((err: any, c: any) => {
     console.error("[@rimelight/cms Core Router Error]:", err);
-    return c.json({ error: err.message || "Internal CMS Error" }, 500);
+    return c.json({ error: err?.message || "Internal CMS Error" }, 500);
   });
 
   // Database resolution (from Worker env bindings, explicit option, virtual:rimelight-cms, or global)
@@ -260,7 +262,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     const session = await getSession(c);
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const rolePermissions = body.rolePermissions || {
       whoCanCreate: body.allowedRoles || [],
       whoCanEdit: [],
@@ -290,7 +292,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
 
     const updateData = { ...body, updatedAt: new Date() };
     if (body.rolePermissions?.whoCanCreate) {
@@ -400,7 +402,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     const session = await getSession(c);
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-    const body = await c.req.json();
+    const body: any = await c.req.json();
 
     const templateId =
       body.templateId && body.templateId !== "null" && String(body.templateId).trim() !== ""
@@ -478,7 +480,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
 
     const existingPage = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
     if (!existingPage[0]) return c.json({ error: "Page not found" }, 404);
@@ -534,7 +536,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
 
     const existingPage = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
     if (!existingPage[0]) return c.json({ error: "Page not found" }, 404);
@@ -706,7 +708,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
 
     const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
     if (!page[0]) return c.json({ error: "Page not found" }, 404);
@@ -914,7 +916,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     );
     if (!isOwnerOrAdmin) return c.json({ error: "Forbidden" }, 403);
 
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const updated = await updateSiteSettings(db, body);
     return c.json({ settings: updated });
   });
@@ -934,7 +936,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const taxonomy = c.req.param("taxonomy");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const term = await createTerm(db, { ...body, taxonomy });
     return c.json(term, 201);
   });
@@ -954,7 +956,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const updated = await updateTerm(db, id, body);
     return c.json(updated);
   });
@@ -984,7 +986,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
 
     const id = c.req.param("id");
     const taxonomy = c.req.param("taxonomy");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const termIds = Array.isArray(body.termIds) ? body.termIds : [];
 
     await assignEntryTerms(db, id, taxonomy, termIds);
@@ -1003,7 +1005,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     const session = await getSession(c);
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const byline = await createByline(db, body);
     return c.json(byline, 201);
   });
@@ -1022,7 +1024,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const updated = await updateByline(db, id, body);
     if (!updated) return c.json({ error: "Byline not found" }, 404);
     return c.json(updated);
@@ -1063,7 +1065,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     const session = await getSession(c);
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const inserted = await db
       .insert(contentTypes)
       .values({
@@ -1087,7 +1089,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     if (!session) return c.json({ error: "Unauthorized" }, 401);
 
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const updated = await db
       .update(contentTypes)
       .set({
@@ -1139,7 +1141,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
   // MCP JSON-RPC Endpoint
   cms.post("/mcp", async (c) => {
     const db = await getDb(c);
-    const body = await c.req.json();
+    const body: any = await c.req.json();
     const result = await handleCmsMcpRequest(body, db);
     return c.json(result);
   });

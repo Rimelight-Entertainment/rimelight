@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { type Env, Hono } from "hono";
 import { handleRequest } from "virtual:solid-ssr-handler";
 import { security } from "@rimelight/security/middleware";
 import { auth } from "@rimelight/auth/middleware";

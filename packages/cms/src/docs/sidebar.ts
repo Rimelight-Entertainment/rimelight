@@ -116,7 +116,7 @@ function hasPath(
 }
 
 export async function getDocsSidebar(
-  config?: DocsConfig | any[] | null | undefined,
+  config?: DocsConfig | any[] | null,
   locale = "en",
   currentPath = "",
   activeVersion?: string,
