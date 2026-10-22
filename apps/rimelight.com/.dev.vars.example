@@ -1,4 +1,8 @@
-﻿# Cloudflare
+# Construction Mode
+CONSTRUCTION_MODE=
+CONSTRUCTION_PASSPHRASE=
+
+# Cloudflare
 TURNSTILE_SITE_KEY=
 TURNSTILE_SECRET_KEY=
 
@@ -14,9 +18,6 @@ AUTH0_SECRET=generate_a_random_32_character_secret_key_here
 AUTH0_BASE_URL=http://localhost:4321
 AUTH0_ROLES_CLAIM=https://rimelight.com/roles
 AUTH0_USER_TYPE_CLAIM=https://rimelight.com/user_type
-
-# Construction Mode
-CONSTRUCTION_PASSPHRASE=
 
 # GitHub
 GITHUB_TOKEN=your_token_here

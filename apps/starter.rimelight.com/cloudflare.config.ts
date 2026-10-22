@@ -45,10 +45,10 @@ export default defineConfig({
           period: 60,
         },
       }),
-      CONSTRUCTION_MODE: bindings.text("true"),
+      CONSTRUCTION_MODE: bindings.secret(),
+      CONSTRUCTION_PASSPHRASE: bindings.secret(),
       EMAIL_DOMAIN: bindings.text("rimelight.com"),
       CONTACT_OWNER_EMAIL: bindings.text("owner@rimelight.com"),
-      CONSTRUCTION_PASSPHRASE: bindings.secret(),
     },
   },
 });
