@@ -41,7 +41,6 @@ export default defineConfig({
       }),
       CONSTRUCTION_MODE: bindings.secret(),
       CONSTRUCTION_PASSPHRASE: bindings.secret(),
-      EMAIL_DOMAIN: bindings.text("rimelight.com"),
       CONTACT_OWNER_EMAIL: bindings.text("owner@rimelight.com"),
       AUTH0_CLIENT_SECRET: bindings.secret(),
       AUTH0_SECRET: bindings.secret(),

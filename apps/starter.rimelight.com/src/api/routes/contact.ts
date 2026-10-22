@@ -4,7 +4,6 @@ import { z } from "zod";
 export interface ContactEnv {
   EMAIL: SendEmail;
   CONTACT_OWNER_EMAIL: string;
-  EMAIL_DOMAIN: string;
 }
 
 const schema = z.object({
@@ -21,7 +20,7 @@ export default new Hono<{ Bindings: ContactEnv }>().post("/", async (c) => {
   const { name, email, subject, message } = data;
   const sent = await c.env.EMAIL.send({
     to: c.env.CONTACT_OWNER_EMAIL,
-    from: `noreply@${c.env.EMAIL_DOMAIN}`,
+    from: `noreply@${c.env.CONTACT_OWNER_EMAIL.split("@")[1]}`,
     replyTo: { email, name },
     subject: `[Contact] ${subject || `Message from ${name}`}`.replace(/[\r\n]+/g, " "),
     text: `From: ${name} <${email}>\n\n${message}`,

@@ -1,6 +1,6 @@
 import { env as cfEnv } from "cloudflare:workers";
 
-const getDomain = () => cfEnv?.EMAIL_DOMAIN || "rimelight.com";
+const getDomain = () => cfEnv?.CONTACT_OWNER_EMAIL?.split("@")[1] || "rimelight.com";
 
 export interface EmailPayload {
   to: string;
