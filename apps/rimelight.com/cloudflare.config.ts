@@ -45,6 +45,9 @@ export default defineConfig({
       AUTH0_CLIENT_SECRET: bindings.secret(),
       AUTH0_SECRET: bindings.secret(),
       DATABASE_URL: bindings.secret(),
+      HYPERDRIVE: bindings.hyperdrive({
+        id: "5889fcb4d3034e909c0f060f18975597",
+      }),
       GITHUB_TOKEN: bindings.secret(),
     },
   },
