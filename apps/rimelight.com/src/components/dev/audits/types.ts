@@ -1,7 +1,7 @@
 import type { JSX } from "@solidjs/web";
-import auditColors from "virtual:audits/colors";
+import { getColorPalettes } from "@rimelight/ui";
 
-export const AUDIT_COLORS = auditColors;
+export const AUDIT_COLORS = getColorPalettes();
 
 export type AuditColor = string;
 

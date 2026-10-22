@@ -63,6 +63,8 @@ export { buildWebManifest } from "./manifest";
 export { buildApiCatalog } from "./catalog";
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
 
+export { config as activeConfig } from "virtual:rimelight-seo";
+
 export {
   defaultOgLayout,
   renderOgResponse,

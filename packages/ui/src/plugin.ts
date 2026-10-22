@@ -9,6 +9,7 @@ const RESOLVED_ID = `\0${ID}`;
 export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] => {
   const runtimeCfg: UIConfig = {
     ...(cfg.unstyled !== undefined ? { unstyled: cfg.unstyled } : {}),
+    ...(cfg.colors ? { colors: cfg.colors } : {}),
     ...(cfg.icons ? { icons: cfg.icons } : {}),
     ...(cfg.shortcuts ? { shortcuts: cfg.shortcuts } : {}),
     ...(cfg.logos ? { logos: cfg.logos } : {}),

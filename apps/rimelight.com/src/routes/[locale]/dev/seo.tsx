@@ -24,9 +24,9 @@ import {
   defaultOgLayout,
   sanitizeUrl,
   serializeJsonLd,
+  activeConfig as liveConfigRaw,
   type SeoEntry,
 } from "@rimelight/seo";
-import { config as liveConfigRaw } from "virtual:rimelight-seo";
 
 interface OgPreviewItem {
   label: string;
