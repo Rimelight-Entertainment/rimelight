@@ -98,8 +98,8 @@ describe("rimelight-i18n CLI", () => {
   it("handles --allow-empty flag", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-cli-empty-val-"));
     try {
-      const en = { nav: { home: "Home", emptyText: "" } };
-      const pt = { nav: { home: "Início", emptyText: "" } };
+      const en = { nav: { home: "Home", "empty-text": "" } };
+      const pt = { nav: { home: "Início", "empty-text": "" } };
       fs.writeFileSync(path.join(tmpDir, "en.json"), JSON.stringify(en));
       fs.writeFileSync(path.join(tmpDir, "pt.json"), JSON.stringify(pt));
 

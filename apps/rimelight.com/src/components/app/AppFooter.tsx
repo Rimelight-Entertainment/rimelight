@@ -15,39 +15,39 @@ import NewsletterSignup from "./NewsletterSignup";
 export const AppFooter: Component = () => {
   const columns = (): RLLinkGroupProps[] => [
     {
-      label: t("app_footer.links_resources_label"),
+      label: t("app.footer.links.resources.label"),
       links: [
         {
-          label: t("app_footer.links_resources_branding"),
+          label: t("app.footer.links.resources.branding"),
           href: getLocaleUrl("/branding"),
         },
       ],
     },
     {
-      label: t("app_footer.links_legal_label"),
+      label: t("app.footer.links.legal.label"),
       links: [
         {
-          label: t("app_footer.links_legal_terms-of-service"),
+          label: t("app.footer.links.legal.terms-of-service"),
           href: getLocaleUrl("/legal/terms-of-service"),
         },
         {
-          label: t("app_footer.links_legal_code-of-conduct"),
+          label: t("app.footer.links.legal.code-of-conduct"),
           href: getLocaleUrl("/legal/code-of-conduct"),
         },
         {
-          label: t("app_footer.links_legal_privacy-policy"),
+          label: t("app.footer.links.legal.privacy-policy"),
           href: getLocaleUrl("/legal/privacy-policy"),
         },
         {
-          label: t("app_footer.links_legal_cookie-policy"),
+          label: t("app.footer.links.legal.cookie-policy"),
           href: getLocaleUrl("/legal/cookie-policy"),
         },
         {
-          label: t("app_footer.links_legal_shipping-policy"),
+          label: t("app.footer.links.legal.shipping-policy"),
           href: getLocaleUrl("/legal/shipping-policy"),
         },
         {
-          label: t("app_footer.links_legal_other-documents"),
+          label: t("app.footer.links.legal.other-documents"),
           href: getLocaleUrl("/legal"),
         },
       ],

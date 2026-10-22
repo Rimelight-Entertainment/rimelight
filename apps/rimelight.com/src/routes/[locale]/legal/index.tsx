@@ -34,7 +34,7 @@ export const LegalIndexPage: Component = () => {
 
   return (
     <AppLayout
-      title={t("page_legal.meta_title") || "Legal"}
+      title={t("page.legal.meta.title") || "Legal"}
       description={
         t("page_legal.meta_description") || "Terms of Service, Privacy Policy, and Legal Agreements"
       }

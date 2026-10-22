@@ -10,12 +10,12 @@ export interface Page500Props {
 export const Page500: Component<Page500Props> = (props) => {
   return (
     <AppLayout
-      title={t("errors.serverError") || "Internal Server Error"}
+      title={t("errors.server-error") || "Internal Server Error"}
       description={t("errors.serverErrorDesc") || "An unexpected error occurred on the server."}
     >
       <AppError
         code={500}
-        title={t("errors.serverError") || "Internal Server Error"}
+        title={t("errors.server-error") || "Internal Server Error"}
         description={
           props.error instanceof Error
             ? props.error.message

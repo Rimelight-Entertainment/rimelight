@@ -67,7 +67,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
           href="#main-content"
           class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-neutral-50 focus:text-highlighted"
         >
-          {t("app_layout.skipToContent") || "Skip to content"}
+          {t("app.layout.skip-to-content") || "Skip to content"}
         </a>
 
         {!props.minimal && <AppHeader stackIndex={0} session={props.session} />}
@@ -90,7 +90,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
             class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300"
           >
             <RLToast
-              title={t("cookie_notice.title") || "Cookie Preferences"}
+              title={t("cookie.notice.title") || "Cookie Preferences"}
               dismissable={false}
               class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm"
               actions={
@@ -101,7 +101,7 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
                     size="sm"
                     onClick={() => setCookieAndDismiss("allowed")}
                   >
-                    {t("cookie_notice.allow_all") || "Accept"}
+                    {t("cookie.notice.allow.all") || "Accept"}
                   </RLButton>
                   <RLButton
                     variant="solid"
@@ -109,21 +109,21 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
                     size="sm"
                     onClick={() => setCookieAndDismiss("denied")}
                   >
-                    {t("cookie_notice.deny_all") || "Decline"}
+                    {t("cookie.notice.deny.all") || "Decline"}
                   </RLButton>
                 </div>
               }
             >
               <span>
-                {t("cookie_notice.description_prefix") ||
+                {t("cookie.notice.description.prefix") ||
                   "We use cookies to enhance your experience."}{" "}
                 <a
                   href={getLocaleUrl("/legal/cookie-policy")}
                   class="underline hover:text-primary transition-colors font-medium"
                 >
-                  {t("cookie_notice.cookie_policy_label") || "Cookie Policy"}
+                  {t("cookie.notice.cookie.policy.label") || "Cookie Policy"}
                 </a>{" "}
-                {t("cookie_notice.description_suffix") || ""}
+                {t("cookie.notice.description.suffix") || ""}
               </span>
             </RLToast>
           </div>

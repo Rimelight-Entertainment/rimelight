@@ -6,19 +6,18 @@ import { t } from "@rimelight/i18n";
 export const Error404Page: Component = () => {
   return (
     <AppLayout
-      title={t("page_error.error_not-found_title") || "Page Not Found"}
+      title={t("page.error.not-found.title") || "Page Not Found"}
       description={
-        t("page_error.error_not-found_description") ||
-        "The page you are looking for does not exist."
+        t("page.error.not-found.description") || "The page you are looking for does not exist."
       }
       is404={true}
       noindex={true}
     >
       <AppError
         code={404}
-        title={t("page_error.error_not-found_title") || "Page Not Found"}
+        title={t("page.error.not-found.title") || "Page Not Found"}
         description={
-          t("page_error.error_not-found_description") ||
+          t("page.error.not-found.description") ||
           "The page you are looking for does not exist or has been moved."
         }
         actions={[

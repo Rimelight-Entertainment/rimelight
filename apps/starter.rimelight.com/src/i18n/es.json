@@ -1,27 +1,55 @@
 {
-  "app_header": {
-    "links_tests_label": "Pruebas"
+  "app": {
+    "header": {
+      "links": {
+        "tests": {
+          "label": "Pruebas"
+        }
+      }
+    },
+    "footer": {
+      "links": {
+        "legal": {
+          "cookie-policy": "Política de Cookies"
+        }
+      }
+    }
   },
-  "cookie_notice": {
-    "title": "Aviso de cookies",
-    "description_prefix": "Este sitio en realidad no usa cookies, pero así es como se haría un aviso de cookies, de acuerdo con una ",
-    "cookie_policy_label": "Política de Cookies",
-    "description_suffix": ".",
-    "allow_all": "Permitir todas",
-    "deny_all": "Denegar todas"
-  },
-  "app_footer": {
-    "links_legal_cookie-policy": "Política de Cookies"
+  "cookie": {
+    "notice": {
+      "title": "Aviso de cookies",
+      "description": {
+        "prefix": "Este sitio en realidad no usa cookies, pero así es como se haría un aviso de cookies, de acuerdo con una ",
+        "suffix": "."
+      },
+      "cookie": {
+        "policy": {
+          "label": "Política de Cookies"
+        }
+      },
+      "allow": {
+        "all": "Permitir todas"
+      },
+      "deny": {
+        "all": "Denegar todas"
+      }
+    }
   },
   "cms": {
-    "nav_dashboard": "Panel",
-    "nav_templates": "Plantillas",
-    "nav_pages": "Páginas",
-    "nav_categories": "Categorías",
-    "nav_tags": "Etiquetas",
-    "nav_bylines": "Firmas",
-    "nav_versions": "Versiones",
-    "nav_settings": "Configuración",
-    "sidebar_app_name": "Admin CMS"
+    "nav": {
+      "dashboard": "Panel",
+      "templates": "Plantillas",
+      "pages": "Páginas",
+      "categories": "Categorías",
+      "tags": "Etiquetas",
+      "bylines": "Firmas",
+      "versions": "Versiones",
+      "settings": "Configuración"
+    },
+    "sidebar": {
+      "app": {
+        "name": "Admin CMS"
+      }
+    }
   }
 }

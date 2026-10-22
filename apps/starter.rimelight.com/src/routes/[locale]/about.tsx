@@ -5,11 +5,11 @@ import { t } from "@rimelight/i18n";
 
 export const AboutPage: Component = () => {
   return (
-    <AppLayout title={t("page_about.title")} description={t("page_about.description")}>
+    <AppLayout title={t("page.about.title")} description={t("page.about.description")}>
       <RLPageSection
         variant="hero"
-        title={t("page_about.hero_title")}
-        description={t("page_about.hero_description")}
+        title={t("page.about.hero.title")}
+        description={t("page.about.hero.description")}
         orientation="horizontal"
       >
         <RLImage
@@ -24,28 +24,28 @@ export const AboutPage: Component = () => {
       </RLPageSection>
 
       <RLPageSection
-        title={t("page_about.section_about_template_title")}
-        description={t("page_about.section_about_template_description")}
+        title={t("page.about.section.about.template.title")}
+        description={t("page.about.section.about.template.description")}
         orientation="vertical"
       />
 
       <RLPageSection
-        title={t("page_about.section_values_title")}
-        description={t("page_about.section_values_description")}
+        title={t("page.about.section.values.title")}
+        description={t("page.about.section.values.description")}
         orientation="vertical"
       >
         <RLGrid>
           <RLCard
-            title={t("page_about.value_dx_title")}
-            description={t("page_about.value_dx_description")}
+            title={t("page.about.value.dx.title")}
+            description={t("page.about.value.dx.description")}
           />
           <RLCard
-            title={t("page_about.value_design_title")}
-            description={t("page_about.value_design_description")}
+            title={t("page.about.value.design.title")}
+            description={t("page.about.value.design.description")}
           />
           <RLCard
-            title={t("page_about.value_performance_title")}
-            description={t("page_about.value_performance_description")}
+            title={t("page.about.value.performance.title")}
+            description={t("page.about.value.performance.description")}
           />
         </RLGrid>
       </RLPageSection>

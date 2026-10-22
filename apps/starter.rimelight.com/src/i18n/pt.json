@@ -1,226 +1,479 @@
 {
-  "app_footer": {
-    "links_resources_label": "Recursos",
-    "links_resources_branding": "Identidade Visual",
-    "links_legal_label": "Legal",
-    "links_legal_privacy-policy": "Política de Privacidade",
-    "links_legal_cookie-policy": "Política de Cookies",
-    "links_legal_other-documents": "Outros Documentos"
-  },
-  "app_header": {
-    "links_home_label": "Início",
-    "links_blog_label": "Blog",
-    "links_docs_label": "Documentação",
-    "links_about_label": "Sobre",
-    "links_components_label": "Componentes",
-    "links_tests_label": "Testes",
-    "left-links_home_label": "Início",
-    "left-links_features_label": "Recursos",
-    "link-groups_center_foundations_label": "Fundamentos",
-    "link-groups_center_foundations_description": "Design tokens, paletas de cores e tipografia fluida.",
-    "link-groups_center_foundations_links_tokens": "Design Tokens",
-    "link-groups_center_foundations_links_colors": "Paletas de Cores",
-    "link-groups_center_foundations_links_typography": "Tipografia Fluida",
-    "link-groups_center_components_label": "Componentes",
-    "link-groups_center_components_description": "Elementos de biblioteca para Solid.",
-    "link-groups_center_components_links_solid": "Componentes Solid",
-    "link-groups_center_components_links_integrations": "Integrações",
-    "link-groups_right_resources_label": "Recursos",
-    "link-groups_right_resources_links_docs": "Documentação",
-    "link-groups_right_resources_links_github": "Repositório GitHub",
-    "left-links_about_label": "Sobre",
-    "left-links_blog_label": "Blog",
-    "left-links_docs_label": "Documentação",
-    "left-links_dashboard_label": "Painel",
-    "user_status_placeholder": "Defina um status personalizado..."
-  },
-  "app_layout": {
-    "skipToContent": "Pular para o conteúdo principal"
+  "app": {
+    "footer": {
+      "links": {
+        "resources": {
+          "label": "Recursos",
+          "branding": "Identidade Visual"
+        },
+        "legal": {
+          "label": "Legal",
+          "privacy-policy": "Política de Privacidade",
+          "cookie-policy": "Política de Cookies",
+          "other-documents": "Outros Documentos"
+        }
+      }
+    },
+    "header": {
+      "links": {
+        "home": {
+          "label": "Início"
+        },
+        "blog": {
+          "label": "Blog"
+        },
+        "docs": {
+          "label": "Documentação"
+        },
+        "about": {
+          "label": "Sobre"
+        },
+        "components": {
+          "label": "Componentes"
+        },
+        "tests": {
+          "label": "Testes"
+        }
+      },
+      "left-links": {
+        "home": {
+          "label": "Início"
+        },
+        "features": {
+          "label": "Recursos"
+        },
+        "about": {
+          "label": "Sobre"
+        },
+        "blog": {
+          "label": "Blog"
+        },
+        "docs": {
+          "label": "Documentação"
+        },
+        "dashboard": {
+          "label": "Painel"
+        }
+      },
+      "link-groups": {
+        "center": {
+          "foundations": {
+            "label": "Fundamentos",
+            "description": "Design tokens, paletas de cores e tipografia fluida.",
+            "links": {
+              "tokens": "Design Tokens",
+              "colors": "Paletas de Cores",
+              "typography": "Tipografia Fluida"
+            }
+          },
+          "components": {
+            "label": "Componentes",
+            "description": "Elementos de biblioteca para Solid.",
+            "links": {
+              "solid": "Componentes Solid",
+              "integrations": "Integrações"
+            }
+          }
+        },
+        "right": {
+          "resources": {
+            "label": "Recursos",
+            "links": {
+              "docs": "Documentação",
+              "github": "Repositório GitHub"
+            }
+          }
+        }
+      },
+      "user": {
+        "status": {
+          "placeholder": "Defina um status personalizado..."
+        }
+      }
+    },
+    "layout": {
+      "skip-to-content": "Pular para o conteúdo principal"
+    }
   },
   "blog": {
     "title": "Blog",
     "description": "Artigos, diários de desenvolvimento e mais.",
-    "categories_development-log": "Diário de Desenvolvimento",
-    "categories_other": "Outros",
-    "lastUpdatedOn": "Última atualização em"
+    "categories": {
+      "development-log": "Diário de Desenvolvimento",
+      "other": "Outros"
+    },
+    "last-updated-on": "Última atualização em"
   },
   "branding": {
     "title": "Identidade Visual",
     "description": "Diretrizes de Marca da Rimelight"
   },
-  "cookie_notice": {
-    "title": "Aviso de cookies",
-    "description_prefix": "Este site na verdade não usa cookies, mas é assim que um aviso de cookies seria feito, de acordo com uma ",
-    "cookie_policy_label": "Política de Cookies",
-    "description_suffix": ".",
-    "allow_all": "Permitir todos",
-    "deny_all": "Recusar todos"
+  "cookie": {
+    "notice": {
+      "title": "Aviso de cookies",
+      "description": {
+        "prefix": "Este site na verdade não usa cookies, mas é assim que um aviso de cookies seria feito, de acordo com uma ",
+        "suffix": "."
+      },
+      "cookie": {
+        "policy": {
+          "label": "Política de Cookies"
+        }
+      },
+      "allow": {
+        "all": "Permitir todos"
+      },
+      "deny": {
+        "all": "Recusar todos"
+      }
+    }
   },
   "dashboard": {
-    "meta_title": "Painel",
-    "meta_description": "Visão Geral e Gerenciamento do Painel da Aplicação",
-    "nav_overview": "Visão Geral",
-    "nav_users": "Usuários",
-    "nav_orders": "Pedidos",
-    "nav_products": "Produtos",
-    "nav_analytics": "Métricas",
-    "nav_settings": "Configurações",
-    "navbar_title_overview": "Métricas do Painel",
-    "navbar_title_users": "Gerenciamento de Usuários",
-    "navbar_title_orders": "Histórico de Pedidos",
-    "navbar_title_products": "Catálogo de Produtos",
-    "navbar_title_analytics": "Métricas e Relatórios",
-    "navbar_title_settings": "Configurações da Aplicação",
-    "navbar_app_name": "Seu Aplicativo",
-    "toolbar_last_30_days": "Últimos 30 dias",
-    "toolbar_all_time": "Todo o período",
-    "toolbar_this_month": "Este Mês",
-    "toolbar_this_week": "Esta Semana",
-    "toolbar_export_report": "Exportar Relatório",
-    "toolbar_add_item": "Adicionar Novo Item",
-    "overview_stats_total_revenue": "Receita Total",
-    "overview_stats_active_users": "Usuários Ativos",
-    "overview_stats_conversion_rate": "Taxa de Conversão",
-    "overview_stats_avg_order": "Pedido Médio",
-    "overview_recent_orders_title": "Pedidos Recentes",
-    "overview_team_messages_title": "Mensagens da Equipe",
-    "overview_revenue_analytics_title": "Métricas de Receita",
-    "overview_recent_activity_title": "Registro de Atividades Recentes",
-    "users_management_title": "Gerenciamento de Usuários",
-    "users_add_user": "Adicionar Usuário",
-    "orders_history_title": "Histórico de Pedidos",
-    "products_catalog_title": "Catálogo de Produtos",
-    "products_add_product": "Adicionar Produto",
-    "analytics_revenue_metrics": "Métricas de Receita",
-    "analytics_performance_indicators": "Indicadores de Desempenho",
-    "analytics_user_analytics": "Métricas de Usuários",
-    "settings_app_settings": "Configurações da Aplicação",
-    "settings_general": "Configurações Gerais",
-    "settings_site_name": "Nome do Site",
-    "settings_site_description": "Descrição do Site",
-    "settings_time_zone": "Fuso Horário",
-    "settings_security": "Segurança",
-    "settings_password_policy": "Política de Senhas",
-    "settings_two_factor": "Autenticação em Dois Fatores",
-    "settings_sessions": "Sessões",
-    "settings_notifications": "Notificações",
-    "settings_email": "E-mail",
-    "settings_push": "Push",
-    "settings_sms": "SMS",
-    "settings_configure": "Configurar"
+    "meta": {
+      "title": "Painel",
+      "description": "Visão Geral e Gerenciamento do Painel da Aplicação"
+    },
+    "nav": {
+      "overview": "Visão Geral",
+      "users": "Usuários",
+      "orders": "Pedidos",
+      "products": "Produtos",
+      "analytics": "Métricas",
+      "settings": "Configurações"
+    },
+    "navbar": {
+      "title": {
+        "overview": "Métricas do Painel",
+        "users": "Gerenciamento de Usuários",
+        "orders": "Histórico de Pedidos",
+        "products": "Catálogo de Produtos",
+        "analytics": "Métricas e Relatórios",
+        "settings": "Configurações da Aplicação"
+      },
+      "app": {
+        "name": "Seu Aplicativo"
+      }
+    },
+    "toolbar": {
+      "last": {
+        "30": {
+          "days": "Últimos 30 dias"
+        }
+      },
+      "all": {
+        "time": "Todo o período"
+      },
+      "this": {
+        "month": "Este Mês",
+        "week": "Esta Semana"
+      },
+      "export": {
+        "report": "Exportar Relatório"
+      },
+      "add": {
+        "item": "Adicionar Novo Item"
+      }
+    },
+    "overview": {
+      "stats": {
+        "total": {
+          "revenue": "Receita Total"
+        },
+        "active": {
+          "users": "Usuários Ativos"
+        },
+        "conversion": {
+          "rate": "Taxa de Conversão"
+        },
+        "avg": {
+          "order": "Pedido Médio"
+        }
+      },
+      "recent": {
+        "orders": {
+          "title": "Pedidos Recentes"
+        },
+        "activity": {
+          "title": "Registro de Atividades Recentes"
+        }
+      },
+      "team": {
+        "messages": {
+          "title": "Mensagens da Equipe"
+        }
+      },
+      "revenue": {
+        "analytics": {
+          "title": "Métricas de Receita"
+        }
+      }
+    },
+    "users": {
+      "management": {
+        "title": "Gerenciamento de Usuários"
+      },
+      "add": {
+        "user": "Adicionar Usuário"
+      }
+    },
+    "orders": {
+      "history": {
+        "title": "Histórico de Pedidos"
+      }
+    },
+    "products": {
+      "catalog": {
+        "title": "Catálogo de Produtos"
+      },
+      "add": {
+        "product": "Adicionar Produto"
+      }
+    },
+    "analytics": {
+      "revenue": {
+        "metrics": "Métricas de Receita"
+      },
+      "performance": {
+        "indicators": "Indicadores de Desempenho"
+      },
+      "user": {
+        "analytics": "Métricas de Usuários"
+      }
+    },
+    "settings": {
+      "app": {
+        "settings": "Configurações da Aplicação"
+      },
+      "general": "Configurações Gerais",
+      "site": {
+        "name": "Nome do Site",
+        "description": "Descrição do Site"
+      },
+      "time": {
+        "zone": "Fuso Horário"
+      },
+      "security": "Segurança",
+      "password": {
+        "policy": "Política de Senhas"
+      },
+      "two": {
+        "factor": "Autenticação em Dois Fatores"
+      },
+      "sessions": "Sessões",
+      "notifications": "Notificações",
+      "email": "E-mail",
+      "push": "Push",
+      "sms": "SMS",
+      "configure": "Configurar"
+    }
   },
-  "email_common": {
-    "website": "Site",
-    "contact": "Contato",
-    "privacy": "Privacidade"
-  },
-  "email_password_reset": {
-    "subject": "Redefina sua senha",
-    "title": "Redefina sua senha",
-    "description": "Clique no link abaixo para redefinir sua senha:",
-    "button": "Redefinir Senha",
-    "ignore": "Se você não solicitou isso, pode ignorar este e-mail."
-  },
-  "email_signup_notification": {
-    "subject": "Boas-vindas",
-    "title": "Aviso de Segurança",
-    "description": "Alguém acabou de se cadastrar com o seu endereço de e-mail.",
-    "sign_in_prefix": "Se foi você, ",
-    "sign_in": "entre na sua conta",
-    "sign_in_suffix": " para começar.",
-    "ignore": "Caso contrário, pode ignorar este e-mail com segurança."
-  },
-  "email_verification": {
-    "subject": "Verifique seu e-mail",
-    "title": "Verifique seu e-mail",
-    "description": "Clique no link abaixo para verificar seu endereço de e-mail:",
-    "button": "Verificar E-mail",
-    "copy_link": "Ou copie este link:"
+  "email": {
+    "common": {
+      "website": "Site",
+      "contact": "Contato",
+      "privacy": "Privacidade"
+    },
+    "password": {
+      "reset": {
+        "subject": "Redefina sua senha",
+        "title": "Redefina sua senha",
+        "description": "Clique no link abaixo para redefinir sua senha:",
+        "button": "Redefinir Senha",
+        "ignore": "Se você não solicitou isso, pode ignorar este e-mail."
+      }
+    },
+    "signup": {
+      "notification": {
+        "subject": "Boas-vindas",
+        "title": "Aviso de Segurança",
+        "description": "Alguém acabou de se cadastrar com o seu endereço de e-mail.",
+        "sign": {
+          "in": {
+            "suffix": " para começar."
+          }
+        },
+        "ignore": "Caso contrário, pode ignorar este e-mail com segurança."
+      }
+    },
+    "verification": {
+      "subject": "Verifique seu e-mail",
+      "title": "Verifique seu e-mail",
+      "description": "Clique no link abaixo para verificar seu endereço de e-mail:",
+      "button": "Verificar E-mail",
+      "copy": {
+        "link": "Ou copie este link:"
+      }
+    }
   },
   "errors": {
-    "notFound": "Página Não Encontrada",
-    "notFoundDesc": "A página que você está procurando não existe.",
-    "goHome": "Ir para o Início",
-    "serverError": "Erro no Servidor",
-    "unknownError": "Erro desconhecido"
+    "not-found": "Página Não Encontrada",
+    "not-found-desc": "A página que você está procurando não existe.",
+    "go-home": "Ir para o Início",
+    "server-error": "Erro no Servidor",
+    "unknown-error": "Erro desconhecido"
   },
   "legal": {
     "title": "Legal",
     "heading": "Legal",
-    "lastUpdated": "Última atualização:",
-    "lastUpdatedOn": "Última atualização em"
+    "last-updated": "Última atualização:",
+    "last-updated-on": "Última atualização em"
   },
-  "page_about": {
-    "title": "Sobre a Rimelight",
-    "description": "Conheça a Rimelight Entertainment e nosso modelo inicial.",
-    "hero_title": "Rimelight Entertainment",
-    "hero_description": "Criamos experiências web modernas, elegantes e de alto desempenho projetadas para escalar e capacitar desenvolvedores.",
-    "section_values_title": "Nossos Princípios Fundamentais",
-    "section_values_description": "As ideias que orientam como construímos nossos modelos e estruturas de aplicação.",
-    "value_dx_title": "Experiência do Desenvolvedor",
-    "value_dx_description": "Acreditamos que as ferramentas devem ser rápidas, integradas e intuitivas, saindo do seu caminho para você criar.",
-    "value_design_title": "Excelência em Design",
-    "value_design_description": "Estética importa. Nossos componentes são elaborados com precisão, estilos ricos e detalhes interativos refinados.",
-    "value_performance_title": "Construído para Escalar",
-    "value_performance_description": "Desempenho não é algo secundário. Cada linha de código é otimizada para velocidades ultrarrápidas e ótimos Core Web Vitals.",
-    "section_about_template_title": "Sobre o Modelo",
-    "section_about_template_description": "Este é um modelo inicial unificado projetado para reunir todos os nossos componentes de interface principais, integração de autenticação, localização e configurações robustas de banco de dados em um único lugar. Em vez de manter dezenas de fragmentos, construímos uma base sólida — permitindo desativar facilmente o que você não precisa."
-  },
-  "page_construction": {
-    "meta_title": "Em Construção",
-    "meta_description": "Este site está atualmente em construção.",
-    "title": "ESTE SITE ESTÁ EM CONSTRUÇÃO",
-    "description": "Se tiver acesso, por favor insira a frase-passe.",
-    "description_no_auth": "Por favor, volte mais tarde.",
-    "form_passphrase_label": "Frase-passe",
-    "form_passphrase_placeholder": "Digite a frase-passe...",
-    "form_remember_me_label": "Lembrar-me",
-    "form_sign_in_button": "Entrar"
-  },
-  "page_contact": {
-    "title": "Fale Conosco",
-    "description": "Entre em contato com a equipe do site.",
-    "hero_title": "Entre em Contato",
-    "hero_description": "Tem dúvidas, feedback ou precisa de ajuda? Envie-nos uma mensagem diretamente.",
-    "contact_form_title": "Enviar uma Mensagem",
-    "contact_form_name_label": "Seu Nome *",
-    "contact_form_email_label": "Endereço de E-mail *",
-    "contact_form_subject_label": "Assunto (Opcional)",
-    "contact_form_message_label": "Mensagem *",
-    "contact_form_send_button": "Enviar Mensagem",
-    "contact_form_placeholder_name": "João da Silva",
-    "contact_form_placeholder_email": "joao@exemplo.com",
-    "contact_form_placeholder_subject": "Como podemos ajudar?",
-    "contact_form_placeholder_message": "Escreva sua mensagem aqui..."
-  },
-  "page_home": {
-    "meta_title": "Rimelight Starter Template",
-    "meta_description": "Um projeto inicial Solid baseado na forma como operamos na Rimelight Entertainment.",
-    "section_hero_title": "Rimelight Starter Template",
-    "section_hero_description": "Um projeto inicial Solid baseado na forma como operamos na Rimelight Entertainment.",
-    "section_hero_link_github_label": "Ver no GitHub",
-    "section_hero_link_use-template_label": "Usar Modelo",
-    "section_features_title": "Um modelo para todas as suas necessidades.",
-    "section_features_description": "Mantemos apenas um modelo único com todos os recursos. Remova o que não precisar em vez de navegar por várias opções. Inclui nossa biblioteca de componentes, biblioteca de internacionalização e outros utilitários.",
-    "section_features_link_browse-components_label": "Explorar Componentes",
-    "section_features_link_read-the-docs_label": "Ler a Documentação",
-    "section_posts_title": "Últimas Publicações",
-    "section_posts_description": "Leia as últimas atualizações do modelo inicial.",
-    "section_posts_view_all": "Ver Todas as Publicações",
-    "section_cta_title": "Deseja contribuir?",
-    "section_cta_description": "Explore nossos projetos de código aberto e entre em contato.",
-    "section_cta_view-on-github": "Ver no GitHub",
-    "section_cta_learn-how": "Saiba Como"
+  "page": {
+    "about": {
+      "title": "Sobre a Rimelight",
+      "description": "Conheça a Rimelight Entertainment e nosso modelo inicial.",
+      "hero": {
+        "title": "Rimelight Entertainment",
+        "description": "Criamos experiências web modernas, elegantes e de alto desempenho projetadas para escalar e capacitar desenvolvedores."
+      },
+      "section": {
+        "values": {
+          "title": "Nossos Princípios Fundamentais",
+          "description": "As ideias que orientam como construímos nossos modelos e estruturas de aplicação."
+        },
+        "about": {
+          "template": {
+            "title": "Sobre o Modelo",
+            "description": "Este é um modelo inicial unificado projetado para reunir todos os nossos componentes de interface principais, integração de autenticação, localização e configurações robustas de banco de dados em um único lugar. Em vez de manter dezenas de fragmentos, construímos uma base sólida — permitindo desativar facilmente o que você não precisa."
+          }
+        }
+      },
+      "value": {
+        "dx": {
+          "title": "Experiência do Desenvolvedor",
+          "description": "Acreditamos que as ferramentas devem ser rápidas, integradas e intuitivas, saindo do seu caminho para você criar."
+        },
+        "design": {
+          "title": "Excelência em Design",
+          "description": "Estética importa. Nossos componentes são elaborados com precisão, estilos ricos e detalhes interativos refinados."
+        },
+        "performance": {
+          "title": "Construído para Escalar",
+          "description": "Desempenho não é algo secundário. Cada linha de código é otimizada para velocidades ultrarrápidas e ótimos Core Web Vitals."
+        }
+      }
+    },
+    "construction": {
+      "meta": {
+        "title": "Em Construção",
+        "description": "Este site está atualmente em construção."
+      },
+      "title": "ESTE SITE ESTÁ EM CONSTRUÇÃO",
+      "description": {
+        "no": {
+          "auth": "Por favor, volte mais tarde."
+        }
+      },
+      "form": {
+        "passphrase": {
+          "label": "Frase-passe",
+          "placeholder": "Digite a frase-passe..."
+        },
+        "remember": {
+          "me": {
+            "label": "Lembrar-me"
+          }
+        },
+        "sign": {
+          "in": {
+            "button": "Entrar"
+          }
+        }
+      }
+    },
+    "contact": {
+      "title": "Fale Conosco",
+      "description": "Entre em contato com a equipe do site.",
+      "hero": {
+        "title": "Entre em Contato",
+        "description": "Tem dúvidas, feedback ou precisa de ajuda? Envie-nos uma mensagem diretamente."
+      },
+      "form": {
+        "title": "Enviar uma Mensagem",
+        "name": {
+          "label": "Seu Nome *"
+        },
+        "email": {
+          "label": "Endereço de E-mail *"
+        },
+        "subject": {
+          "label": "Assunto (Opcional)"
+        },
+        "message": {
+          "label": "Mensagem *"
+        },
+        "send": {
+          "button": "Enviar Mensagem"
+        },
+        "placeholder": {
+          "name": "João da Silva",
+          "email": "joao@exemplo.com",
+          "subject": "Como podemos ajudar?",
+          "message": "Escreva sua mensagem aqui..."
+        }
+      }
+    },
+    "home": {
+      "meta": {
+        "title": "Rimelight Starter Template",
+        "description": "Um projeto inicial Solid baseado na forma como operamos na Rimelight Entertainment."
+      },
+      "section": {
+        "hero": {
+          "title": "Rimelight Starter Template",
+          "description": "Um projeto inicial Solid baseado na forma como operamos na Rimelight Entertainment.",
+          "link": {
+            "github": {
+              "label": "Ver no GitHub"
+            },
+            "use-template": {
+              "label": "Usar Modelo"
+            }
+          }
+        },
+        "features": {
+          "title": "Um modelo para todas as suas necessidades.",
+          "description": "Mantemos apenas um modelo único com todos os recursos. Remova o que não precisar em vez de navegar por várias opções. Inclui nossa biblioteca de componentes, biblioteca de internacionalização e outros utilitários.",
+          "link": {
+            "browse-components": {
+              "label": "Explorar Componentes"
+            },
+            "read-the-docs": {
+              "label": "Ler a Documentação"
+            }
+          }
+        },
+        "posts": {
+          "title": "Últimas Publicações",
+          "description": "Leia as últimas atualizações do modelo inicial.",
+          "view": {
+            "all": "Ver Todas as Publicações"
+          }
+        },
+        "cta": {
+          "title": "Deseja contribuir?",
+          "description": "Explore nossos projetos de código aberto e entre em contato.",
+          "view-on-github": "Ver no GitHub",
+          "learn-how": "Saiba Como"
+        }
+      }
+    }
   },
   "cms": {
-    "nav_dashboard": "Painel",
-    "nav_templates": "Modelos",
-    "nav_pages": "Páginas",
-    "nav_categories": "Categorias",
-    "nav_tags": "Tags",
-    "nav_bylines": "Assinaturas",
-    "nav_versions": "Versões",
-    "nav_settings": "Configurações",
-    "sidebar_app_name": "Admin CMS"
+    "nav": {
+      "dashboard": "Painel",
+      "templates": "Modelos",
+      "pages": "Páginas",
+      "categories": "Categorias",
+      "tags": "Tags",
+      "bylines": "Assinaturas",
+      "versions": "Versões",
+      "settings": "Configurações"
+    },
+    "sidebar": {
+      "app": {
+        "name": "Admin CMS"
+      }
+    }
   }
 }

@@ -6,35 +6,35 @@ import { getLocaleUrl, t } from "@rimelight/i18n";
 const dashboardCards = [
   {
     href: "/dev/user-interface",
-    titleKey: "dev_index.card_user_interface_title",
-    descriptionKey: "dev_index.card_user_interface_description",
+    titleKey: "dev.index.card.user.interface.title",
+    descriptionKey: "dev.index.card.user.interface.description",
   },
   {
     href: "/dev/components",
-    titleKey: "dev_index.card_components_title",
-    descriptionKey: "dev_index.card_components_description",
+    titleKey: "dev.index.card.components.title",
+    descriptionKey: "dev.index.card.components.description",
   },
   {
     href: "/dev/localization",
-    titleKey: "dev_index.card_localization_title",
-    descriptionKey: "dev_index.card_localization_description",
+    titleKey: "dev.index.card.localization.title",
+    descriptionKey: "dev.index.card.localization.description",
   },
   {
     href: "/dev/security",
-    titleKey: "dev_index.card_security_title",
-    descriptionKey: "dev_index.card_security_description",
+    titleKey: "dev.index.card.security.title",
+    descriptionKey: "dev.index.card.security.description",
   },
   {
     href: "/dev/seo",
-    titleKey: "dev_index.card_seo_title",
-    descriptionKey: "dev_index.card_seo_description",
+    titleKey: "dev.index.card.seo.title",
+    descriptionKey: "dev.index.card.seo.description",
   },
 ];
 
 export default function DevIndexPage() {
   return (
-    <DevLayout title={t("dev_index.title")} description={t("dev_index.description")}>
-      <RLPageSection title={t("dev_index.title")} description={t("dev_index.description")}>
+    <DevLayout title={t("dev.index.title")} description={t("dev.index.description")}>
+      <RLPageSection title={t("dev.index.title")} description={t("dev.index.description")}>
         <RLGrid cols={3} gap="lg">
           <For each={dashboardCards}>
             {(card) => (

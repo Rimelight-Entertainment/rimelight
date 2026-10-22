@@ -48,11 +48,11 @@ export const ContactPage: Component = () => {
   };
 
   return (
-    <AppLayout title={t("page_contact.title")} description={t("page_contact.description")}>
+    <AppLayout title={t("page.contact.title")} description={t("page.contact.description")}>
       <RLPageSection
         variant="hero"
-        title={t("page_contact.hero_title")}
-        description={t("page_contact.hero_description")}
+        title={t("page.contact.hero.title")}
+        description={t("page.contact.hero.description")}
         orientation="horizontal"
       />
 
@@ -63,7 +63,7 @@ export const ContactPage: Component = () => {
             <div>
               <h2 class="text-2xl font-bold text-[var(--rl-text)] mb-6 flex items-center gap-2">
                 <span class="i-lucide-mail size-6 text-primary-500" />
-                {t("page_contact.contact_form_title")}
+                {t("page.contact.form.title")}
               </h2>
 
               <form
@@ -73,14 +73,14 @@ export const ContactPage: Component = () => {
               >
                 <div class="flex flex-col gap-1">
                   <label for="contact-name" class="text-sm font-medium text-[var(--rl-text-muted)]">
-                    {t("page_contact.contact_form_name_label")}
+                    {t("page.contact.form.name.label")}
                   </label>
                   <input
                     id="contact-name"
                     name="name"
                     type="text"
                     required
-                    placeholder={t("page_contact.contact_form_placeholder_name")}
+                    placeholder={t("page.contact.form.placeholder.name")}
                     class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
                   />
                 </div>
@@ -90,14 +90,14 @@ export const ContactPage: Component = () => {
                     for="contact-email"
                     class="text-sm font-medium text-[var(--rl-text-muted)]"
                   >
-                    {t("page_contact.contact_form_email_label")}
+                    {t("page.contact.form.email.label")}
                   </label>
                   <input
                     id="contact-email"
                     name="email"
                     type="email"
                     required
-                    placeholder={t("page_contact.contact_form_placeholder_email")}
+                    placeholder={t("page.contact.form.placeholder.email")}
                     class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
                   />
                 </div>
@@ -107,13 +107,13 @@ export const ContactPage: Component = () => {
                     for="contact-subject"
                     class="text-sm font-medium text-[var(--rl-text-muted)]"
                   >
-                    {t("page_contact.contact_form_subject_label")}
+                    {t("page.contact.form.subject.label")}
                   </label>
                   <input
                     id="contact-subject"
                     name="subject"
                     type="text"
-                    placeholder={t("page_contact.contact_form_placeholder_subject")}
+                    placeholder={t("page.contact.form.placeholder.subject")}
                     class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
                   />
                 </div>
@@ -123,14 +123,14 @@ export const ContactPage: Component = () => {
                     for="contact-message"
                     class="text-sm font-medium text-[var(--rl-text-muted)]"
                   >
-                    {t("page_contact.contact_form_message_label")}
+                    {t("page.contact.form.message.label")}
                   </label>
                   <textarea
                     id="contact-message"
                     name="message"
                     rows={5}
                     required
-                    placeholder={t("page_contact.contact_form_placeholder_message")}
+                    placeholder={t("page.contact.form.placeholder.message")}
                     class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition resize-y min-h-[120px]"
                   />
                 </div>
@@ -143,7 +143,7 @@ export const ContactPage: Component = () => {
                   variant="solid"
                   block={true}
                   leadingIcon="i-lucide-send"
-                  label={t("page_contact.contact_form_send_button")}
+                  label={t("page.contact.form.send.button")}
                   class="mt-2"
                 />
 

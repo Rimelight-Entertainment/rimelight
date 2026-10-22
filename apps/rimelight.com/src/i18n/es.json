@@ -1,131 +1,273 @@
 {
-  "page_contact": {
-    "title": "Contáctanos",
-    "description": "Ponte en contacto con Rimelight Entertainment.",
-    "hero_description": "¿Tienes alguna pregunta, propuesta o quieres colaborar? Envíanos un mensaje directamente.",
-    "hero_title": "Ponte en contacto",
-    "contact_form_email_label": "Correo electrónico *",
-    "contact_form_message_label": "Mensaje *",
-    "contact_form_name_label": "Tu nombre *",
-    "contact_form_placeholder_email": "juan@ejemplo.com",
-    "contact_form_placeholder_message": "Escribe tu mensaje aquí...",
-    "contact_form_placeholder_name": "Juan Pérez",
-    "contact_form_placeholder_subject": "¿Cómo podemos ayudarte?",
-    "contact_form_send_button": "Enviar mensaje",
-    "contact_form_subject_label": "Asunto (opcional)"
-  },
-  "page_auth_sign-up": {
-    "auth_newsletter_label": "Suscríbete a nuestro boletín. Puedes darte de baja en cualquier momento."
-  },
-  "page_home": {
-    "meta_title": "Rimelight Entertainment",
-    "section_hero_title": "Somos Rimelight Entertainment",
-    "section_hero_description": "Somos los creadores de Grand Tale.",
-    "section_hero_actions_join-us": "Únete a nosotros",
-    "section_hero_actions_learn-more": "Saber más",
-    "section_company_title": "Ampliando los límites de {interactive}",
-    "section_company_description": "Fundada en 2023, Rimelight Entertainment es independiente y está centrada en los jugadores. No solo creamos juegos; creamos mundos vivos que respetan tu tiempo y tu inteligencia.",
-    "section_company_stats_titles": "Títulos en desarrollo",
-    "section_company_stats_creators": "Creadores globales",
-    "section_projects_title": "Nuestros proyectos",
-    "section_projects_tags_franchise": "Franquicia",
-    "section_projects_tags_fantasy": "Fantasía",
-    "section_projects_tags_social": "Social",
-    "section_projects_content_grand-tale_description": "Un juego de simulación de vida social de alta fantasía que incluye subjuegos de múltiples géneros.",
-    "section_projects_actions_discover": "Descubrir",
-    "section_news_title": "Últimas noticias",
-    "section_news_description": "Lee nuestras últimas noticias, publicaciones y actualizaciones de proyectos.",
-    "section_news_actions_view-all": "Ver todas las noticias",
-    "section_cta_title": "¿Listo para jugar?",
-    "section_cta_description": "Únete a nosotros y contemos nuestra historia juntos.",
-    "section_cta_actions_create-account": "Crear cuenta",
-    "section_cta_actions_explore-careers": "Explorar empleos",
-    "meta_description": "Cuenta tu historia.",
-    "hero_title": "Componentes de Rimelight",
-    "hero_description": "Una biblioteca de componentes y utilidades utilizada en Rimelight Entertainment.",
-    "hero_links_01": "Ver componentes",
-    "hero_links_02": "Ver wiki",
-    "hero_links_03": "Ver marca",
-    "sections_hero_title": "Somos Rimelight Entertainment",
-    "sections_hero_description": "Somos los creadores de Grand Tale.",
-    "sections_hero_actions_joinUs": "Únete a nosotros",
-    "sections_hero_actions_learnMore": "Saber más",
-    "sections_company_title": "Ampliando los límites de {interactive}",
-    "sections_company_description": "Fundada en 2023, Rimelight Entertainment es independiente y está centrada en los jugadores. No solo creamos juegos; creamos mundos vivos que respetan tu tiempo y tu inteligencia.",
-    "sections_company_stats_titles_label": "Títulos en desarrollo",
-    "sections_company_stats_creators_label": "Creadores globales",
-    "sections_projects_title": "Nuestros proyectos",
-    "sections_projects_tags_franchise": "Franquicia",
-    "sections_projects_tags_fantasy": "Fantasía",
-    "sections_projects_tags_social": "Social",
-    "sections_projects_content_grandTale_description": "Un juego de simulación de vida social de alta fantasía que incluye subjuegos de múltiples géneros.",
-    "sections_projects_actions_discover": "Descubrir",
-    "sections_news_title": "Últimas noticias",
-    "sections_news_description": "Lee nuestras últimas noticias, publicaciones y actualizaciones de proyectos.",
-    "sections_news_actions_viewAll": "Ver todas las noticias",
-    "sections_cta_title": "¿Listo para jugar?",
-    "sections_cta_description": "Únete a nosotros y contemos nuestra historia juntos.",
-    "sections_cta_actions_createAccount": "Crear cuenta",
-    "sections_cta_actions_exploreCareers": "Explorar empleos"
-  },
-  "dev_layout": {
-    "brand": "Rimelight Developer Workspace"
-  },
-  "dev_localization": {
-    "title": "Localización",
-    "description": "Validando la reescritura de URL de i18n, los parámetros de ruta y la sincronización reactiva de RLLocaleSelector.",
-    "current_values": "Valores actuales",
-    "current_locale": "Idioma actual",
-    "window_pathname": "Ruta de la ventana",
-    "available_locales": "Idiomas disponibles",
-    "default_locale_title": "Idioma predeterminado",
-    "default_locale_description": "Devuelve el idioma de reserva usado cuando ninguno está activo o falta una traducción.",
-    "goto_locale": "Ir a /{locale}",
-    "locale_asset_title": "Recurso localizado",
-    "locale_asset_description": "Resuelve un recurso para el idioma activo, recurriendo al idioma predeterminado.",
-    "t_basic_title": "Clave básica",
-    "t_basic_description": "Resuelve una clave de traducción para el idioma activo.",
-    "t_interpolation_title": "Interpolación",
-    "t_interpolation_description": "Reemplaza los marcadores de posición en la cadena usando el objeto de parámetros.",
-    "t_count_title": "Plural + formato numérico",
-    "t_count_description": "Un recuento numérico selecciona la variante plural y se formatea por idioma.",
-    "t_count_branch_title": "Fallback de plural",
-    "t_count_branch_description": "Un plural sin variante coincidente recurre a la forma \"other\".",
-    "t_function_title": "Valor de función",
-    "t_function_description": "Un valor de traducción puede ser una función que recibe el objeto de parámetros.",
-    "t_locale_title": "Anulación explícita de idioma",
-    "t_locale_description": "El tercer argumento resuelve un idioma distinto al activo.",
-    "t_raw_title": "t.raw()",
-    "t_raw_description": "Devuelve el valor subyacente en lugar de convertirlo en cadena.",
-    "t_raw_locale_title": "Anulación de idioma de t.raw()",
-    "t_raw_locale_description": "El tercer argumento lee un valor sin procesar de otro idioma.",
-    "t_raw_fallback_title": "Fallback de t.raw()",
-    "t_raw_fallback_description": "Devuelve el fallback cuando la clave no existe.",
-    "t_array_title": "t.array()",
-    "t_array_description": "Devuelve un array tipado del diccionario.",
-    "t_array_fallback_title": "Fallback de t.array()",
-    "t_array_fallback_description": "Devuelve el array de reserva cuando la clave falta o no es un array.",
-    "t_plural_title": "t.plural()",
-    "t_plural_description": "Devuelve la categoría plural CLDR para un recuento.",
-    "t_localize_title": "t.localize()",
-    "t_localize_description": "Elige un valor de un diccionario de idiomas en línea.",
-    "t_missing_title": "Clave ausente",
-    "t_missing_description": "Las claves desconocidas devuelven la propia clave.",
-    "sample_hello": "¡Hola desde Rimelight!",
-    "sample_greeting": "¡Hola, {name}!",
-    "sample_items": {
-      "one": "{count} artículo en tu carrito",
-      "other": "{count} artículos en tu carrito"
+  "page": {
+    "contact": {
+      "title": "Contáctanos",
+      "description": "Ponte en contacto con Rimelight Entertainment.",
+      "hero": {
+        "description": "¿Tienes alguna pregunta, propuesta o quieres colaborar? Envíanos un mensaje directamente.",
+        "title": "Ponte en contacto"
+      },
+      "form": {
+        "email": {
+          "label": "Correo electrónico *"
+        },
+        "message": {
+          "label": "Mensaje *"
+        },
+        "name": {
+          "label": "Tu nombre *"
+        },
+        "placeholder": {
+          "email": "juan@ejemplo.com",
+          "message": "Escribe tu mensaje aquí...",
+          "name": "Juan Pérez",
+          "subject": "¿Cómo podemos ayudarte?"
+        },
+        "send": {
+          "button": "Enviar mensaje"
+        },
+        "subject": {
+          "label": "Asunto (opcional)"
+        }
+      }
     },
-    "sample_other_only": {
-      "other": "{count} resultados - recurrió a other"
+    "auth": {
+      "sign-up": {
+        "auth": {
+          "newsletter": {
+            "label": "Suscríbete a nuestro boletín. Puedes darte de baja en cualquier momento."
+          }
+        }
+      }
     },
-    "sample_computed": "Valor calculado no disponible",
-    "sample_tags": ["TypeScript", "SolidJS", "Vite+"],
-    "sample_object": {
-      "name": "Rimelight Entertainment",
-      "founded": 2023,
-      "featured": true
+    "home": {
+      "meta": {
+        "title": "Rimelight Entertainment",
+        "description": "Cuenta tu historia."
+      },
+      "section": {
+        "hero": {
+          "title": "Somos Rimelight Entertainment",
+          "description": "Somos los creadores de Grand Tale.",
+          "actions": {
+            "join-us": "Únete a nosotros",
+            "learn-more": "Saber más"
+          }
+        },
+        "company": {
+          "title": "Ampliando los límites de {interactive}",
+          "description": "Fundada en 2023, Rimelight Entertainment es independiente y está centrada en los jugadores. No solo creamos juegos; creamos mundos vivos que respetan tu tiempo y tu inteligencia.",
+          "stats": {
+            "titles": "Títulos en desarrollo",
+            "creators": "Creadores globales"
+          }
+        },
+        "projects": {
+          "title": "Nuestros proyectos",
+          "tags": {
+            "franchise": "Franquicia",
+            "fantasy": "Fantasía",
+            "social": "Social"
+          },
+          "content": {
+            "grand-tale": {
+              "description": "Un juego de simulación de vida social de alta fantasía que incluye subjuegos de múltiples géneros."
+            }
+          },
+          "actions": {
+            "discover": "Descubrir"
+          }
+        },
+        "news": {
+          "title": "Últimas noticias",
+          "description": "Lee nuestras últimas noticias, publicaciones y actualizaciones de proyectos.",
+          "actions": {
+            "view-all": "Ver todas las noticias"
+          }
+        },
+        "cta": {
+          "title": "¿Listo para jugar?",
+          "description": "Únete a nosotros y contemos nuestra historia juntos.",
+          "actions": {
+            "create-account": "Crear cuenta",
+            "explore-careers": "Explorar empleos"
+          }
+        }
+      },
+      "hero": {
+        "title": "Componentes de Rimelight",
+        "description": "Una biblioteca de componentes y utilidades utilizada en Rimelight Entertainment.",
+        "links": {
+          "01": "Ver componentes",
+          "02": "Ver wiki",
+          "03": "Ver marca"
+        }
+      },
+      "sections": {
+        "hero": {
+          "title": "Somos Rimelight Entertainment",
+          "description": "Somos los creadores de Grand Tale.",
+          "actions": {
+            "join-us": "Únete a nosotros",
+            "learn-more": "Saber más"
+          }
+        },
+        "company": {
+          "title": "Ampliando los límites de {interactive}",
+          "description": "Fundada en 2023, Rimelight Entertainment es independiente y está centrada en los jugadores. No solo creamos juegos; creamos mundos vivos que respetan tu tiempo y tu inteligencia.",
+          "stats": {
+            "titles": {
+              "label": "Títulos en desarrollo"
+            },
+            "creators": {
+              "label": "Creadores globales"
+            }
+          }
+        },
+        "projects": {
+          "title": "Nuestros proyectos",
+          "tags": {
+            "franchise": "Franquicia",
+            "fantasy": "Fantasía",
+            "social": "Social"
+          },
+          "content": {
+            "grand-tale": {
+              "description": "Un juego de simulación de vida social de alta fantasía que incluye subjuegos de múltiples géneros."
+            }
+          },
+          "actions": {
+            "discover": "Descubrir"
+          }
+        },
+        "news": {
+          "title": "Últimas noticias",
+          "description": "Lee nuestras últimas noticias, publicaciones y actualizaciones de proyectos.",
+          "actions": {
+            "view-all": "Ver todas las noticias"
+          }
+        },
+        "cta": {
+          "title": "¿Listo para jugar?",
+          "description": "Únete a nosotros y contemos nuestra historia juntos.",
+          "actions": {
+            "create-account": "Crear cuenta",
+            "explore-careers": "Explorar empleos"
+          }
+        }
+      }
+    }
+  },
+  "dev": {
+    "layout": {
+      "brand": "Rimelight Developer Workspace"
+    },
+    "localization": {
+      "title": "Localización",
+      "description": "Validando la reescritura de URL de i18n, los parámetros de ruta y la sincronización reactiva de RLLocaleSelector.",
+      "current": {
+        "values": "Valores actuales",
+        "locale": "Idioma actual"
+      },
+      "window": {
+        "pathname": "Ruta de la ventana"
+      },
+      "available": {
+        "locales": "Idiomas disponibles"
+      },
+      "default": {
+        "locale": {
+          "title": "Idioma predeterminado",
+          "description": "Devuelve el idioma de reserva usado cuando ninguno está activo o falta una traducción."
+        }
+      },
+      "goto": {
+        "locale": "Ir a /{locale}"
+      },
+      "locale": {
+        "asset": {
+          "title": "Recurso localizado",
+          "description": "Resuelve un recurso para el idioma activo, recurriendo al idioma predeterminado."
+        }
+      },
+      "t": {
+        "basic": {
+          "title": "Clave básica",
+          "description": "Resuelve una clave de traducción para el idioma activo."
+        },
+        "interpolation": {
+          "title": "Interpolación",
+          "description": "Reemplaza los marcadores de posición en la cadena usando el objeto de parámetros."
+        },
+        "count": {
+          "title": "Plural + formato numérico",
+          "description": "Un recuento numérico selecciona la variante plural y se formatea por idioma.",
+          "branch": {
+            "title": "Fallback de plural",
+            "description": "Un plural sin variante coincidente recurre a la forma \"other\"."
+          }
+        },
+        "function": {
+          "title": "Valor de función",
+          "description": "Un valor de traducción puede ser una función que recibe el objeto de parámetros."
+        },
+        "locale": {
+          "title": "Anulación explícita de idioma",
+          "description": "El tercer argumento resuelve un idioma distinto al activo."
+        },
+        "raw": {
+          "title": "t.raw()",
+          "description": "Devuelve el valor subyacente en lugar de convertirlo en cadena.",
+          "locale": {
+            "title": "Anulación de idioma de t.raw()",
+            "description": "El tercer argumento lee un valor sin procesar de otro idioma."
+          },
+          "fallback": {
+            "title": "Fallback de t.raw()",
+            "description": "Devuelve el fallback cuando la clave no existe."
+          }
+        },
+        "array": {
+          "title": "t.array()",
+          "description": "Devuelve un array tipado del diccionario.",
+          "fallback": {
+            "title": "Fallback de t.array()",
+            "description": "Devuelve el array de reserva cuando la clave falta o no es un array."
+          }
+        },
+        "plural": {
+          "title": "t.plural()",
+          "description": "Devuelve la categoría plural CLDR para un recuento."
+        },
+        "localize": {
+          "title": "t.localize()",
+          "description": "Elige un valor de un diccionario de idiomas en línea."
+        },
+        "missing": {
+          "title": "Clave ausente",
+          "description": "Las claves desconocidas devuelven la propia clave."
+        }
+      },
+      "sample": {
+        "hello": "¡Hola desde Rimelight!",
+        "greeting": "¡Hola, {name}!",
+        "items": {
+          "one": "{count} artículo en tu carrito",
+          "other": "{count} artículos en tu carrito"
+        },
+        "other": {
+          "only": {
+            "other": "{count} resultados - recurrió a other"
+          }
+        },
+        "computed": "Valor calculado no disponible",
+        "tags": ["TypeScript", "SolidJS", "Vite+"],
+        "object": {
+          "name": "Rimelight Entertainment",
+          "founded": 2023,
+          "featured": true
+        }
+      }
     }
   }
 }

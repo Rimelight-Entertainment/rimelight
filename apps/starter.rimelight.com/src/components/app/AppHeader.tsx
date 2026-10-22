@@ -25,50 +25,50 @@ export interface AppHeaderProps {
 
 export const AppHeader: Component<AppHeaderProps> = (props) => {
   const foundationLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_foundations_label"),
+    label: t("app.header.link-groups.center.foundations.label"),
     leadingIcon: "i-lucide-layout",
     links: [
       {
-        label: t("app_header.link-groups_center_foundations_links_tokens"),
+        label: t("app.header.link-groups.center.foundations.links.tokens"),
         href: getLocaleUrl("/docs/tokens"),
       },
       {
-        label: t("app_header.link-groups_center_foundations_links_colors"),
+        label: t("app.header.link-groups.center.foundations.links.colors"),
         href: getLocaleUrl("/docs/colors"),
       },
       {
-        label: t("app_header.link-groups_center_foundations_links_typography"),
+        label: t("app.header.link-groups.center.foundations.links.typography"),
         href: getLocaleUrl("/docs/typography"),
       },
     ],
   });
 
   const componentsLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_components_label"),
+    label: t("app.header.link-groups.center.components.label"),
     leadingIcon: "i-lucide-blocks",
     links: [
       {
-        label: t("app_header.link-groups_center_components_links_solid"),
+        label: t("app.header.link-groups.center.components.links.solid"),
         href: getLocaleUrl("/docs/solid"),
       },
       {
-        label: t("app_header.link-groups_center_components_links_integrations"),
+        label: t("app.header.link-groups.center.components.links.integrations"),
         href: getLocaleUrl("/docs/integrations"),
       },
     ],
   });
 
   const resourcesLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_right_resources_label"),
+    label: t("app.header.link-groups.right.resources.label"),
     leadingIcon: "i-lucide-library",
     links: [
       {
-        label: t("app_header.link-groups_right_resources_links_docs"),
+        label: t("app.header.link-groups.right.resources.links.docs"),
         href: "/docs",
         leadingIcon: "i-lucide-file-text size-4",
       },
       {
-        label: t("app_header.link-groups_right_resources_links_github"),
+        label: t("app.header.link-groups.right.resources.links.github"),
         href: "https://github.com/Rimelight-Entertainment/rimelight",
         leadingIcon: "i-logos-github-icon size-4",
       },
@@ -77,17 +77,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const leftLinks = (): NavigationMenuItem[] => [
     {
-      label: t("app_header.left-links_features_label"),
+      label: t("app.header.left-links.features.label"),
       to: getLocaleUrl("/features"),
       slot: "features" as const,
       children: [
         {
-          label: t("app_header.link-groups_center_foundations_label"),
-          description: t("app_header.link-groups_center_foundations_description"),
+          label: t("app.header.link-groups.center.foundations.label"),
+          description: t("app.header.link-groups.center.foundations.description"),
         },
         {
-          label: t("app_header.link-groups_center_components_label"),
-          description: t("app_header.link-groups_center_components_description"),
+          label: t("app.header.link-groups.center.components.label"),
+          description: t("app.header.link-groups.center.components.description"),
         },
         {
           label: t("app_header.link-groups_center_integrations_label"),
@@ -96,19 +96,19 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       ],
     },
     {
-      label: t("app_header.left-links_about_label"),
+      label: t("app.header.left-links.about.label"),
       to: getLocaleUrl("/about"),
     },
     {
-      label: t("app_header.left-links_blog_label"),
+      label: t("app.header.left-links.blog.label"),
       to: getLocaleUrl("/blog"),
     },
     {
-      label: t("app_header.left-links_docs_label"),
+      label: t("app.header.left-links.docs.label"),
       to: getLocaleUrl("/docs"),
     },
     {
-      label: t("app_header.left-links_dashboard_label"),
+      label: t("app.header.left-links.dashboard.label"),
       to: getLocaleUrl("/dashboard"),
     },
     {

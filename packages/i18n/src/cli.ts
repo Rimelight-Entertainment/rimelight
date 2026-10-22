@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import type { I18nLintConfig, KeyCasing } from "./types";
 
 type FlattenedTranslations = Record<string, string>;
 
@@ -20,15 +21,49 @@ interface TranslationAuditReport {
   staleKeys: Record<string, string[]>;
   emptyKeys: Record<string, string[]>;
   placeholderMismatches: Record<string, PlaceholderMismatch[]>;
+  styleIssues: Record<string, string[]>;
   stats: { completion: Record<string, string> };
 }
 
 interface VerifyTranslationsOptions {
   defaultLocale?: string;
   allowEmpty?: boolean;
+  lint?: I18nLintConfig;
 }
 
 const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
+/** Validates key part against chosen casing standard (defaults to kebab-case). */
+export function isValidKeySegment(segment: string, casing: KeyCasing = "kebab-case"): boolean {
+  if (casing === "any") return true;
+  if (/^\d+$/.test(segment)) return true; // array index
+  if (casing === "kebab-case") {
+    return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(segment);
+  }
+  if (casing === "snake_case") {
+    return /^[a-z0-9]+(_[a-z0-9]+)*$/.test(segment);
+  }
+  if (casing === "camelCase") {
+    return /^[a-z0-9]+([A-Z0-9][a-z0-9]*)*$/.test(segment);
+  }
+  return true;
+}
+
+/** Detects self-nested keys where a parent key wraps a single child of the identical name. */
+export function findSelfNestedKeys(obj: Record<string, any>, prefix = ""): string[] {
+  let issues: string[] = [];
+  if (obj == null || typeof obj !== "object") return issues;
+  for (const [key, value] of Object.entries(obj)) {
+    if (value != null && typeof value === "object" && !Array.isArray(value)) {
+      const childKeys = Object.keys(value);
+      if (childKeys.length === 1 && childKeys[0] === key) {
+        issues.push(prefix ? `${prefix}.${key}` : key);
+      }
+      issues = issues.concat(findSelfNestedKeys(value, prefix ? `${prefix}.${key}` : key));
+    }
+  }
+  return issues;
+}
 
 /** Flattens nested translation objects or arrays into dot-notated paths. */
 export function flatten(
@@ -86,13 +121,14 @@ export const findMissingKeys = (base: Record<string, any>, target: Record<string
 export const findStaleKeys = (base: Record<string, any>, target: Record<string, any>): string[] =>
   diffKeys(flatten(base), flatten(target)).stale;
 
-/** Audits translation files for missing, stale, empty, or mismatched placeholder keys. */
+/** Audits translation files for missing, stale, empty, or mismatched placeholder keys and style consistency. */
 export function verifyTranslations(
   translations: Record<string, Record<string, any>>,
   options: VerifyTranslationsOptions = {},
 ): TranslationAuditReport {
   const defaultLocale = options.defaultLocale || "en";
   const allowEmpty = options.allowEmpty ?? false;
+  const lint = options.lint;
   const locales = Object.keys(translations);
   const baseFlat = flatten(translations[defaultLocale] ?? {});
   const totalKeys = Object.keys(baseFlat).length;
@@ -101,14 +137,29 @@ export function verifyTranslations(
   const staleKeys: Record<string, string[]> = {};
   const emptyKeys: Record<string, string[]> = {};
   const placeholderMismatches: Record<string, PlaceholderMismatch[]> = {};
+  const styleIssues: Record<string, string[]> = {};
   const completion: Record<string, string> = {};
   let isValid = true;
 
+  const targetCasing: KeyCasing = lint?.casing ?? "kebab-case";
+  const disallowSelfNested = lint?.disallowSelfNested ?? true;
+  const disallowFlatUnderscores = lint?.disallowFlatUnderscores ?? true;
+
   for (const locale of locales) {
-    const targetFlat = flatten(translations[locale] ?? {});
+    const rawDict = translations[locale] ?? {};
+    const targetFlat = flatten(rawDict);
     const { missing, stale } = diffKeys(baseFlat, targetFlat);
     const empty: string[] = [];
     const mismatches: PlaceholderMismatch[] = [];
+    const localeStyleIssues: string[] = [];
+
+    // 1. Check self-nested keys (e.g. { "foo": { "foo": "val" } })
+    if (disallowSelfNested) {
+      const selfNested = findSelfNestedKeys(rawDict);
+      for (const sn of selfNested) {
+        localeStyleIssues.push(`Self-nested wrapper key '${sn}' should be unwrapped`);
+      }
+    }
 
     for (const [key, val] of Object.entries(targetFlat)) {
       if (!allowEmpty && String(val).trim() === "") empty.push(key);
@@ -123,8 +174,26 @@ export function verifyTranslations(
           });
         }
       }
+
+      // Check key segment casing & style
+      const parts = key.split(".");
+      for (const part of parts) {
+        if (disallowFlatUnderscores && part.includes("_")) {
+          localeStyleIssues.push(
+            `Key path '${key}' contains flat underscore delimiter in '${part}' (use dot-nesting and kebab-case)`,
+          );
+        } else if (!isValidKeySegment(part, targetCasing)) {
+          localeStyleIssues.push(
+            `Key segment '${part}' in '${key}' does not conform to '${targetCasing}'`,
+          );
+        }
+      }
     }
 
+    if (localeStyleIssues.length) {
+      styleIssues[locale] = localeStyleIssues;
+      isValid = false;
+    }
     if (empty.length) {
       emptyKeys[locale] = empty;
       isValid = false;
@@ -157,6 +226,7 @@ export function verifyTranslations(
     staleKeys,
     emptyKeys,
     placeholderMismatches,
+    styleIssues,
     stats: { completion },
   };
 }
@@ -172,9 +242,16 @@ export function formatAuditReport(report: TranslationAuditReport): string {
     const stale = report.staleKeys[locale];
     const empty = report.emptyKeys[locale];
     const mismatches = report.placeholderMismatches[locale];
-    if (!missing && !stale && !empty && !mismatches) continue;
+    const styles = report.styleIssues[locale];
+    if (!missing && !stale && !empty && !mismatches && !styles) continue;
 
     lines.push(`\n  [${locale}] (${report.stats.completion[locale]} complete):`);
+    if (styles?.length)
+      lines.push(
+        `    Style Violations (${styles.length}):`,
+        ...styles.slice(0, 15).map((s) => `      - ${s}`),
+        ...(styles.length > 15 ? [`      ... and ${styles.length - 15} more style issues`] : []),
+      );
     if (missing?.length)
       lines.push(`    Missing Keys (${missing.length}):`, ...missing.map((k) => `      - ${k}`));
     if (stale?.length)
@@ -247,6 +324,8 @@ Options:
   -t, --types          Generate declaration file during check
   -f, --fix            Auto-prune stale keys and generate missing key skeletons
   --allow-empty        Do not treat empty strings as missing/invalid translations
+  --casing <casing>    Enforce key casing: "kebab-case" (default), "camelCase", "snake_case", or "any"
+  --allow-flat         Allow flat underscores in key tokens instead of enforcing nested kebab-case
   -h, --help           Show this help message
 `;
 
@@ -260,6 +339,8 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
       types: { type: "boolean", short: "t", default: false },
       fix: { type: "boolean", short: "f", default: false },
       "allow-empty": { type: "boolean", default: false },
+      casing: { type: "string", default: "kebab-case" },
+      "allow-flat": { type: "boolean", default: false },
       help: { type: "boolean", short: "h", default: false },
     },
     allowPositionals: true,
@@ -329,9 +410,16 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     return 0;
   }
 
+  const lintOptions: I18nLintConfig = {
+    casing: (values.casing as KeyCasing) || "kebab-case",
+    disallowFlatUnderscores: !values["allow-flat"],
+    disallowSelfNested: true,
+  };
+
   let report = verifyTranslations(translations, {
     defaultLocale: baseLocale,
     allowEmpty: values["allow-empty"],
+    lint: lintOptions,
   });
 
   if (!report.isValid && values.fix) {
@@ -347,6 +435,7 @@ export async function runCli(argv: string[] = process.argv.slice(2)): Promise<nu
     report = verifyTranslations(fixed, {
       defaultLocale: baseLocale,
       allowEmpty: values["allow-empty"],
+      lint: lintOptions,
     });
     console.log(`✔ [i18n] Successfully updated translation files.`);
   }

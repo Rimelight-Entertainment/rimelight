@@ -5,15 +5,15 @@ import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const CompanyAboutPage: Component = () => {
   return (
-    <AppLayout title={t("page_about.title")} description={t("page_about.description")}>
+    <AppLayout title={t("page.about.title")} description={t("page.about.description")}>
       <div class="flex flex-col gap-16 md:gap-24 pb-24 bg-neutral-950 text-white">
         {/* Hero Section */}
         <section class="flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 gap-6 relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-primary-500/10 to-transparent pointer-events-none" />
           <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight max-w-4xl">
-            {t("page_about.title")}
+            {t("page.about.title")}
           </h1>
-          <p class="text-lg md:text-xl text-neutral-400 max-w-2xl">{t("page_about.description")}</p>
+          <p class="text-lg md:text-xl text-neutral-400 max-w-2xl">{t("page.about.description")}</p>
         </section>
 
         {/* Mission & Vision */}

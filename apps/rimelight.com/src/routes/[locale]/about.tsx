@@ -6,7 +6,7 @@ import { t } from "@rimelight/i18n";
 
 export const AboutPage: Component = () => {
   return (
-    <AppLayout title={t("page_about.title")} description={t("page_about.description")}>
+    <AppLayout title={t("page.about.title")} description={t("page.about.description")}>
       <article class="max-w-4xl mx-auto px-4 py-16">
         <div class="hero-image mb-8">
           <RLImage
@@ -21,10 +21,10 @@ export const AboutPage: Component = () => {
             <div class="date text-muted mb-2">
               <RLDate date={new Date("August 08 2023")} />
             </div>
-            <h1 class="text-4xl font-extrabold tracking-tight">{t("page_about.title")}</h1>
+            <h1 class="text-4xl font-extrabold tracking-tight">{t("page.about.title")}</h1>
             <hr class="my-4 border-neutral-800" />
           </div>
-          <p class="text-lg leading-relaxed text-neutral-300">{t("page_about.description")}</p>
+          <p class="text-lg leading-relaxed text-neutral-300">{t("page.about.description")}</p>
         </div>
       </article>
     </AppLayout>

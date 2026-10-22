@@ -27,83 +27,83 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   const currentUser = () => props.session?.user ?? props.session;
 
   const grandTaleLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_grand-tale_main_title"),
+    label: t("app.header.link-groups.center.grand-tale.main.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_grand-tale_main_news"),
+        label: t("app.header.link-groups.center.grand-tale.main.news"),
         href: getLocaleUrl("/franchises/grand-tale/news"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_main_about"),
+        label: t("app.header.link-groups.center.grand-tale.main.about"),
         href: getLocaleUrl("/franchises/grand-tale/about"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_main_wiki"),
+        label: t("app.header.link-groups.center.grand-tale.main.wiki"),
         href: getLocaleUrl("/franchises/grand-tale/wiki"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_main_guides"),
+        label: t("app.header.link-groups.center.grand-tale.main.guides"),
         href: getLocaleUrl("/franchises/grand-tale/guides"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_main_forums"),
+        label: t("app.header.link-groups.center.grand-tale.main.forums"),
         href: getLocaleUrl("/franchises/grand-tale/forums"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_main_leaderboards"),
+        label: t("app.header.link-groups.center.grand-tale.main.leaderboards"),
         href: getLocaleUrl("/franchises/grand-tale/leaderboards"),
       },
     ],
   });
 
   const grandTaleSeriesLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_grand-tale_series_title"),
+    label: t("app.header.link-groups.center.grand-tale.series.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_grand-tale_series_children-of-the-light"),
+        label: t("app.header.link-groups.center.grand-tale.series.children-of-the-light"),
         href: getLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_series_grand-academy"),
+        label: t("app.header.link-groups.center.grand-tale.series.grand-academy"),
         href: getLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy"),
       },
       {
-        label: t("app_header.link-groups_center_grand-tale_series_goldy-adventures"),
+        label: t("app.header.link-groups.center.grand-tale.series.goldy-adventures"),
         href: getLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures"),
       },
     ],
   });
 
   const grandTaleBooksLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_grand-tale_books_title"),
+    label: t("app.header.link-groups.center.grand-tale.books.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_grand-tale_books_the-first-tale"),
+        label: t("app.header.link-groups.center.grand-tale.books.the-first-tale"),
         href: getLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale"),
       },
     ],
   });
 
   const grandTaleComicsLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_grand-tale_comics_title"),
+    label: t("app.header.link-groups.center.grand-tale.comics.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_grand-tale_comics_ori-friends"),
+        label: t("app.header.link-groups.center.grand-tale.comics.ori-friends"),
         href: getLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends"),
       },
     ],
   });
 
   const grandTaleResourcesGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_right_grand-tale_resources_title"),
+    label: t("app.header.link-groups.right.grand-tale.resources.title"),
     links: [
       {
-        label: t("app_header.link-groups_right_grand-tale_resources_download"),
+        label: t("app.header.link-groups.right.grand-tale.resources.download"),
         href: getLocaleUrl("/franchises/grand-tale/download"),
         leadingIcon: "i-lucide-download",
       },
       {
-        label: t("app_header.link-groups_right_grand-tale_resources_support"),
+        label: t("app.header.link-groups.right.grand-tale.resources.support"),
         href: getLocaleUrl("/franchises/grand-tale/support"),
         leadingIcon: "i-lucide-headset",
       },
@@ -111,20 +111,20 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   });
 
   const grandTaleSocialsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_right_grand-tale_socials_title"),
+    label: t("app.header.link-groups.right.grand-tale.socials.title"),
     links: [
       {
-        label: t("app_header.link-groups_right_grand-tale_socials_discord"),
+        label: t("app.header.link-groups.right.grand-tale.socials.discord"),
         href: "https://discord.com/",
         leadingIcon: "i-ic-baseline-discord",
       },
       {
-        label: t("app_header.link-groups_right_grand-tale_socials_youtube"),
+        label: t("app.header.link-groups.right.grand-tale.socials.youtube"),
         href: "https://youtube.com/",
         leadingIcon: "i-mdi-youtube",
       },
       {
-        label: t("app_header.link-groups_right_grand-tale_socials_instagram"),
+        label: t("app.header.link-groups.right.grand-tale.socials.instagram"),
         href: "https://instagram.com/",
         leadingIcon: "i-mdi-instagram",
       },
@@ -132,44 +132,44 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   });
 
   const commForumsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_community_forums_title"),
+    label: t("app.header.link-groups.center.community.forums.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_community_forums_rimelight"),
+        label: t("app.header.link-groups.center.community.forums.rimelight"),
         href: getLocaleUrl("/forums/rimelight"),
       },
       {
-        label: t("app_header.link-groups_center_community_forums_grand-tale"),
+        label: t("app.header.link-groups.center.community.forums.grand-tale"),
         href: getLocaleUrl("/forums/grand-tale"),
       },
     ],
   });
 
   const commEventsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_community_events_title"),
+    label: t("app.header.link-groups.center.community.events.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_community_events_lightcon"),
+        label: t("app.header.link-groups.center.community.events.lightcon"),
         href: getLocaleUrl("/events/lightcon"),
       },
     ],
   });
 
   const commSocialsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_right_grand-tale_socials_title"),
+    label: t("app.header.link-groups.right.grand-tale.socials.title"),
     links: [
       {
-        label: t("app_header.link-groups_right_community_socials_instagram"),
+        label: t("app.header.link-groups.right.community.socials.instagram"),
         href: "https://www.instagram.com/",
         leadingIcon: "i-mdi-instagram",
       },
       {
-        label: t("app_header.link-groups_right_community_socials_discord"),
+        label: t("app.header.link-groups.right.community.socials.discord"),
         href: "https://discord.com/",
         leadingIcon: "i-ic-baseline-discord",
       },
       {
-        label: t("app_header.link-groups_right_community_socials_spotify"),
+        label: t("app.header.link-groups.right.community.socials.spotify"),
         href: "https://open.spotify.com",
         leadingIcon: "i-mdi-spotify",
       },
@@ -177,63 +177,63 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   });
 
   const compStudioGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_company_main_studio_title"),
+    label: t("app.header.link-groups.center.company.main.studio.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_company_main_studio_about-us"),
+        label: t("app.header.link-groups.center.company.main.studio.about-us"),
         href: getLocaleUrl("/company/about"),
       },
       {
-        label: t("app_header.link-groups_center_company_main_studio_partnerships"),
+        label: t("app.header.link-groups.center.company.main.studio.partnerships"),
         href: getLocaleUrl("/company/studio/partnerships"),
       },
     ],
   });
 
   const compCareersGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_company_main_careers_title"),
+    label: t("app.header.link-groups.center.company.main.careers.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_company_main_careers_life"),
+        label: t("app.header.link-groups.center.company.main.careers.life"),
         href: getLocaleUrl("/company/careers/culture"),
       },
       {
-        label: t("app_header.link-groups_center_company_main_careers_jobs"),
+        label: t("app.header.link-groups.center.company.main.careers.jobs"),
         href: getLocaleUrl("/company/careers"),
       },
     ],
   });
 
   const compNewsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_company_main_news_title"),
+    label: t("app.header.link-groups.center.company.main.news.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_company_main_news_blog"),
+        label: t("app.header.link-groups.center.company.main.news.blog"),
         href: getLocaleUrl("/company/blog"),
       },
     ],
   });
 
   const compResourcesGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.links_company_resources_title"),
+    label: t("app.header.links.company.resources.title"),
     links: [
       {
-        label: t("app_header.link-groups_right_company_resources_docs"),
+        label: t("app.header.link-groups.right.company.resources.docs"),
         href: getLocaleUrl("/company/docs"),
         leadingIcon: "i-lucide-file-text",
       },
       {
-        label: t("app_header.link-groups_right_company_resources_branding"),
+        label: t("app.header.link-groups.right.company.resources.branding"),
         href: getLocaleUrl("/company/branding"),
         leadingIcon: "i-lucide-image",
       },
       {
-        label: t("app_header.link-groups_right_company_resources_legal"),
+        label: t("app.header.link-groups.right.company.resources.legal"),
         href: getLocaleUrl("/company/legal"),
         leadingIcon: "i-lucide-scale",
       },
       {
-        label: t("app_header.link-groups_right_company_resources_contact"),
+        label: t("app.header.link-groups.right.company.resources.contact"),
         href: getLocaleUrl("/company/contact"),
         leadingIcon: "i-lucide-mail",
       },
@@ -241,15 +241,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   });
 
   const compSocialsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_right_company_socials_title"),
+    label: t("app.header.link-groups.right.company.socials.title"),
     links: [
       {
-        label: t("app_header.link-groups_right_company_socials_linkedin"),
+        label: t("app.header.link-groups.right.company.socials.linkedin"),
         href: "https://linkedin.com/",
         leadingIcon: "i-logos-linkedin-icon",
       },
       {
-        label: t("app_header.link-groups_right_company_socials_github"),
+        label: t("app.header.link-groups.right.company.socials.github"),
         href: "https://github.com/Rimelight-Entertainment",
         leadingIcon: "i-logos-github-icon",
       },
@@ -257,111 +257,111 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   });
 
   const storeDealsGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_store_main_deals_title"),
+    label: t("app.header.link-groups.center.store.main.deals.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_store_main_deals_new-releases"),
+        label: t("app.header.link-groups.center.store.main.deals.new-releases"),
         href: getLocaleUrl("/store/deals/new"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_deals_sales"),
+        label: t("app.header.link-groups.center.store.main.deals.sales"),
         href: getLocaleUrl("/store/deals/sales"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_deals_bundles"),
+        label: t("app.header.link-groups.center.store.main.deals.bundles"),
         href: getLocaleUrl("/store/deals/bundles"),
       },
     ],
   });
 
   const storeClothingGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_store_main_clothing_title"),
+    label: t("app.header.link-groups.center.store.main.clothing.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_store_main_clothing_headwear"),
+        label: t("app.header.link-groups.center.store.main.clothing.headwear"),
         href: getLocaleUrl("/store/clothing/headwear"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_clothing_tops"),
+        label: t("app.header.link-groups.center.store.main.clothing.tops"),
         href: getLocaleUrl("/store/clothing/tops"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_clothing_bottoms"),
+        label: t("app.header.link-groups.center.store.main.clothing.bottoms"),
         href: getLocaleUrl("/store/clothing/bottoms"),
       },
     ],
   });
 
   const storeAccessoriesGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_store_main_accessories_title"),
+    label: t("app.header.link-groups.center.store.main.accessories.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_store_main_accessories_jewelry"),
+        label: t("app.header.link-groups.center.store.main.accessories.jewelry"),
         href: getLocaleUrl("/store/accessories/jewelry"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_accessories_pins-patches"),
+        label: t("app.header.link-groups.center.store.main.accessories.pins-patches"),
         href: getLocaleUrl("/store/merch/pins"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_accessories_keychains"),
+        label: t("app.header.link-groups.center.store.main.accessories.keychains"),
         href: getLocaleUrl("/store/accessories/keychains"),
       },
     ],
   });
 
   const storeApparelGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_store_main_apparel_title"),
+    label: t("app.header.link-groups.center.store.main.apparel.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_store_main_apparel_bottles-mugs"),
+        label: t("app.header.link-groups.center.store.main.apparel.bottles-mugs"),
         href: getLocaleUrl("/store/apparel/bottles-mugs"),
       },
     ],
   });
 
   const storeCollectiblesGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_store_main_collectibles_title"),
+    label: t("app.header.link-groups.center.store.main.collectibles.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_store_main_collectibles_figurines-statues"),
+        label: t("app.header.link-groups.center.store.main.collectibles.figurines-statues"),
         href: getLocaleUrl("/store/collectibles/figurines"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_collectibles_plushies"),
+        label: t("app.header.link-groups.center.store.main.collectibles.plushies"),
         href: getLocaleUrl("/store/merch/plushies"),
       },
     ],
   });
 
   const storeArtGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_center_store_main_art_title"),
+    label: t("app.header.link-groups.center.store.main.art.title"),
     links: [
       {
-        label: t("app_header.link-groups_center_store_main_art_posters-prints"),
+        label: t("app.header.link-groups.center.store.main.art.posters-prints"),
         href: getLocaleUrl("/store/merch/posters"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_art_comics-books"),
+        label: t("app.header.link-groups.center.store.main.art.comics-books"),
         href: getLocaleUrl("/store/art/books"),
       },
       {
-        label: t("app_header.link-groups_center_store_main_art_physical-games"),
+        label: t("app.header.link-groups.center.store.main.art.physical-games"),
         href: getLocaleUrl("/store/art/games"),
       },
     ],
   });
 
   const storeAssistanceGroup = (): RLLinkGroupProps => ({
-    label: t("app_header.link-groups_right_store_assistance_title"),
+    label: t("app.header.link-groups.right.store.assistance.title"),
     links: [
       {
-        label: t("app_header.link-groups_right_store_assistance_orders"),
+        label: t("app.header.link-groups.right.store.assistance.orders"),
         href: getLocaleUrl("/store/orders"),
         leadingIcon: "i-lucide-shopping-bag",
       },
       {
-        label: t("app_header.link-groups_right_store_assistance_customer-support"),
+        label: t("app.header.link-groups.right.store.assistance.customer-support"),
         href: getLocaleUrl("/franchises/grand-tale/support"),
         leadingIcon: "i-lucide-help-circle",
       },
@@ -370,70 +370,70 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const leftLinks = (): NavigationMenuItem[] => [
     {
-      label: t("app_header.left-links_grand-tale_label"),
+      label: t("app.header.left-links.grand-tale.label"),
       to: getLocaleUrl("/franchises/grand-tale"),
       slot: "grand-tale" as const,
       children: [
         {
-          label: t("app_header.link-groups_center_grand-tale_main_title"),
+          label: t("app.header.link-groups.center.grand-tale.main.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_grand-tale_main_news"),
+              label: t("app.header.link-groups.center.grand-tale.main.news"),
               to: getLocaleUrl("/franchises/grand-tale/news"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_main_about"),
+              label: t("app.header.link-groups.center.grand-tale.main.about"),
               to: getLocaleUrl("/franchises/grand-tale/about"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_main_wiki"),
+              label: t("app.header.link-groups.center.grand-tale.main.wiki"),
               to: getLocaleUrl("/franchises/grand-tale/wiki"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_main_guides"),
+              label: t("app.header.link-groups.center.grand-tale.main.guides"),
               to: getLocaleUrl("/franchises/grand-tale/guides"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_main_forums"),
+              label: t("app.header.link-groups.center.grand-tale.main.forums"),
               to: getLocaleUrl("/franchises/grand-tale/forums"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_main_leaderboards"),
+              label: t("app.header.link-groups.center.grand-tale.main.leaderboards"),
               to: getLocaleUrl("/franchises/grand-tale/leaderboards"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_grand-tale_series_title"),
+          label: t("app.header.link-groups.center.grand-tale.series.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_grand-tale_series_children-of-the-light"),
+              label: t("app.header.link-groups.center.grand-tale.series.children-of-the-light"),
               to: getLocaleUrl("/franchises/grand-tale/wiki/series/children-of-the-light"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_series_grand-academy"),
+              label: t("app.header.link-groups.center.grand-tale.series.grand-academy"),
               to: getLocaleUrl("/franchises/grand-tale/wiki/series/grand-academy"),
             },
             {
-              label: t("app_header.link-groups_center_grand-tale_series_goldy-adventures"),
+              label: t("app.header.link-groups.center.grand-tale.series.goldy-adventures"),
               to: getLocaleUrl("/franchises/grand-tale/wiki/series/goldy-adventures"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_grand-tale_books_title"),
+          label: t("app.header.link-groups.center.grand-tale.books.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_grand-tale_books_the-first-tale"),
+              label: t("app.header.link-groups.center.grand-tale.books.the-first-tale"),
               to: getLocaleUrl("/franchises/grand-tale/wiki/books/the-first-tale"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_grand-tale_comics_title"),
+          label: t("app.header.link-groups.center.grand-tale.comics.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_grand-tale_comics_ori-friends"),
+              label: t("app.header.link-groups.center.grand-tale.comics.ori-friends"),
               to: getLocaleUrl("/franchises/grand-tale/wiki/comics/ori-and-friends"),
             },
           ],
@@ -441,27 +441,27 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       ],
     },
     {
-      label: t("app_header.left-links_community_label"),
+      label: t("app.header.left-links.community.label"),
       slot: "community" as const,
       children: [
         {
-          label: t("app_header.link-groups_center_community_forums_title"),
+          label: t("app.header.link-groups.center.community.forums.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_community_forums_rimelight"),
+              label: t("app.header.link-groups.center.community.forums.rimelight"),
               to: getLocaleUrl("/forums/rimelight"),
             },
             {
-              label: t("app_header.link-groups_center_community_forums_grand-tale"),
+              label: t("app.header.link-groups.center.community.forums.grand-tale"),
               to: getLocaleUrl("/forums/grand-tale"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_community_events_title"),
+          label: t("app.header.link-groups.center.community.events.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_community_events_lightcon"),
+              label: t("app.header.link-groups.center.community.events.lightcon"),
               to: getLocaleUrl("/events/lightcon"),
             },
           ],
@@ -469,50 +469,50 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       ],
     },
     {
-      label: t("app_header.left-links_company_label"),
+      label: t("app.header.left-links.company.label"),
       to: getLocaleUrl("/company"),
       slot: "company" as const,
       children: [
         {
-          label: t("app_header.link-groups_center_company_main_studio_title"),
+          label: t("app.header.link-groups.center.company.main.studio.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_company_main_studio_about-us"),
+              label: t("app.header.link-groups.center.company.main.studio.about-us"),
               to: getLocaleUrl("/company/about"),
             },
             {
-              label: t("app_header.link-groups_center_company_main_studio_partnerships"),
+              label: t("app.header.link-groups.center.company.main.studio.partnerships"),
               to: getLocaleUrl("/company/studio/partnerships"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_company_main_careers_title"),
+          label: t("app.header.link-groups.center.company.main.careers.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_company_main_careers_life"),
+              label: t("app.header.link-groups.center.company.main.careers.life"),
               to: getLocaleUrl("/company/careers/culture"),
             },
             {
-              label: t("app_header.link-groups_center_company_main_careers_jobs"),
+              label: t("app.header.link-groups.center.company.main.careers.jobs"),
               to: getLocaleUrl("/company/careers"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_company_main_news_title"),
+          label: t("app.header.link-groups.center.company.main.news.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_company_main_news_blog"),
+              label: t("app.header.link-groups.center.company.main.news.blog"),
               to: getLocaleUrl("/company/blog"),
             },
           ],
         },
         {
-          label: t("app_header.links_company_resources_title"),
+          label: t("app.header.links.company.resources.title"),
           children: [
             {
-              label: t("app_header.link-groups_right_company_resources_docs"),
+              label: t("app.header.link-groups.right.company.resources.docs"),
               to: getLocaleUrl("/company/docs"),
             },
           ],
@@ -520,100 +520,100 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       ],
     },
     {
-      label: t("app_header.left-links_store_label"),
+      label: t("app.header.left-links.store.label"),
       to: getLocaleUrl("/store"),
       slot: "store" as const,
       children: [
         {
-          label: t("app_header.link-groups_center_store_main_digital-goods_title"),
+          label: t("app.header.link-groups.center.store.main.digital-goods.title"),
           to: getLocaleUrl("/store/digital"),
         },
         {
-          label: t("app_header.link-groups_center_store_main_deals_title"),
+          label: t("app.header.link-groups.center.store.main.deals.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_store_main_deals_new-releases"),
+              label: t("app.header.link-groups.center.store.main.deals.new-releases"),
               to: getLocaleUrl("/store/deals/new"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_deals_sales"),
+              label: t("app.header.link-groups.center.store.main.deals.sales"),
               to: getLocaleUrl("/store/deals/sales"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_deals_bundles"),
+              label: t("app.header.link-groups.center.store.main.deals.bundles"),
               to: getLocaleUrl("/store/deals/bundles"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_store_main_clothing_title"),
+          label: t("app.header.link-groups.center.store.main.clothing.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_store_main_clothing_headwear"),
+              label: t("app.header.link-groups.center.store.main.clothing.headwear"),
               to: getLocaleUrl("/store/clothing/headwear"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_clothing_tops"),
+              label: t("app.header.link-groups.center.store.main.clothing.tops"),
               to: getLocaleUrl("/store/clothing/tops"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_clothing_bottoms"),
+              label: t("app.header.link-groups.center.store.main.clothing.bottoms"),
               to: getLocaleUrl("/store/clothing/bottoms"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_store_main_accessories_title"),
+          label: t("app.header.link-groups.center.store.main.accessories.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_store_main_accessories_jewelry"),
+              label: t("app.header.link-groups.center.store.main.accessories.jewelry"),
               to: getLocaleUrl("/store/accessories/jewelry"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_accessories_pins-patches"),
+              label: t("app.header.link-groups.center.store.main.accessories.pins-patches"),
               to: getLocaleUrl("/store/merch/pins"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_accessories_keychains"),
+              label: t("app.header.link-groups.center.store.main.accessories.keychains"),
               to: getLocaleUrl("/store/accessories/keychains"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_store_main_apparel_title"),
+          label: t("app.header.link-groups.center.store.main.apparel.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_store_main_apparel_bottles-mugs"),
+              label: t("app.header.link-groups.center.store.main.apparel.bottles-mugs"),
               to: getLocaleUrl("/store/apparel/bottles-mugs"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_store_main_collectibles_title"),
+          label: t("app.header.link-groups.center.store.main.collectibles.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_store_main_collectibles_figurines-statues"),
+              label: t("app.header.link-groups.center.store.main.collectibles.figurines-statues"),
               to: getLocaleUrl("/store/collectibles/figurines"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_collectibles_plushies"),
+              label: t("app.header.link-groups.center.store.main.collectibles.plushies"),
               to: getLocaleUrl("/store/merch/plushies"),
             },
           ],
         },
         {
-          label: t("app_header.link-groups_center_store_main_art_title"),
+          label: t("app.header.link-groups.center.store.main.art.title"),
           children: [
             {
-              label: t("app_header.link-groups_center_store_main_art_posters-prints"),
+              label: t("app.header.link-groups.center.store.main.art.posters-prints"),
               to: getLocaleUrl("/store/merch/posters"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_art_comics-books"),
+              label: t("app.header.link-groups.center.store.main.art.comics-books"),
               to: getLocaleUrl("/store/art/books"),
             },
             {
-              label: t("app_header.link-groups_center_store_main_art_physical-games"),
+              label: t("app.header.link-groups.center.store.main.art.physical-games"),
               to: getLocaleUrl("/store/art/games"),
             },
           ],
@@ -627,13 +627,13 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       color: "neutral",
       variant: "outline",
       href: "/api/auth/login?screen_hint=signup",
-      label: t("app_header.actions_sign-up"),
+      label: t("app.header.actions.sign-up"),
     },
     {
       variant: "solid",
       color: "primary",
       href: "/api/auth/login",
-      label: t("app_header.actions_sign-in"),
+      label: t("app.header.actions.sign-in"),
     },
   ];
 

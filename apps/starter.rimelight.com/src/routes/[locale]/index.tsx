@@ -39,12 +39,12 @@ export const HomePage: Component = () => {
     {
       variant: "outline",
       leadingIcon: "i-lucide-github",
-      label: t("page_home.section_hero_link_github_label"),
+      label: t("page.home.section.hero.link.github.label"),
       href: "https://github.com/Rimelight-Entertainment/rimelight/tree/main/packages/starter.rimelight.com",
     },
     {
       variant: "solid",
-      label: t("page_home.section_hero_link_use-template_label"),
+      label: t("page.home.section.hero.link.use-template.label"),
       trailingIcon: "i-lucide-arrow-right",
       href: getLocaleUrl("/docs/"),
     },
@@ -53,11 +53,11 @@ export const HomePage: Component = () => {
   const featureLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
-      label: t("page_home.section_features_link_browse-components_label"),
+      label: t("page.home.section.features.link.browse-components.label"),
       href: `https://rimelight.com/${getCurrentLocale()}/company/docs/packages/rimelight-ui/components/`,
     },
     {
-      label: t("page_home.section_features_link_read-the-docs_label"),
+      label: t("page.home.section.features.link.read-the-docs.label"),
       trailingIcon: "i-lucide-arrow-right",
       href: "/docs",
     },
@@ -67,22 +67,22 @@ export const HomePage: Component = () => {
     {
       variant: "outline",
       leadingIcon: "i-lucide-github",
-      label: t("page_home.section_cta_view-on-github"),
+      label: t("page.home.section.cta.view-on-github"),
       href: "https://github.com/Rimelight-Entertainment/rimelight",
     },
     {
-      label: t("page_home.section_cta_learn-how"),
+      label: t("page.home.section.cta.learn-how"),
       trailingIcon: "i-lucide-square-arrow-out-up-right",
       href: `https://rimelight.com/${getCurrentLocale()}/company/docs/overview/contributing/introduction`,
     },
   ];
 
   return (
-    <AppLayout title={t("page_home.meta_title")} description={t("page_home.meta_description")}>
+    <AppLayout title={t("page.home.meta.title")} description={t("page.home.meta.description")}>
       <RLPageSection
         variant="hero"
-        title={t("page_home.section_hero_title")}
-        description={t("page_home.section_hero_description")}
+        title={t("page.home.section.hero.title")}
+        description={t("page.home.section.hero.description")}
         links={heroLinks()}
       >
         <RLLogo class="pointer-events-none h-64 w-auto" variant="logomark" />
@@ -90,16 +90,16 @@ export const HomePage: Component = () => {
 
       <RLPageSection
         orientation="horizontal"
-        title={t("page_home.section_features_title")}
-        description={t("page_home.section_features_description")}
+        title={t("page.home.section.features.title")}
+        description={t("page.home.section.features.description")}
         links={featureLinks()}
       >
         <RLImage src="https://cdn.rimelight.com/images/placeholder.webp" alt="Placeholder Image" />
       </RLPageSection>
 
       <RLPageSection
-        title={t("page_home.section_posts_title")}
-        description={t("page_home.section_posts_description")}
+        title={t("page.home.section.posts.title")}
+        description={t("page.home.section.posts.description")}
       >
         <div class="flex flex-col gap-xl items-center">
           <RLGrid cols={3}>
@@ -127,7 +127,7 @@ export const HomePage: Component = () => {
 
           <Show when={(latestPosts() || []).length > 0}>
             <RLLink
-              label={t("page_home.section_posts_view_all")}
+              label={t("page.home.section.posts.view.all")}
               trailingIcon="i-lucide-arrow-right"
               href={getLocaleUrl("/blog")}
             />
@@ -138,8 +138,8 @@ export const HomePage: Component = () => {
       <RLPageSection
         variant="cta"
         ctaVariant="solid"
-        title={t("page_home.section_cta_title")}
-        description={t("page_home.section_cta_description")}
+        title={t("page.home.section.cta.title")}
+        description={t("page.home.section.cta.description")}
         links={ctaLinks()}
       />
     </AppLayout>

@@ -36,8 +36,8 @@ export const BlogIndexPage: Component = () => {
   );
 
   const categoryMessages = () => ({
-    "development-log": t("blog.categories_development-log"),
-    other: t("blog.categories_other"),
+    "development-log": t("blog.categories.development-log"),
+    other: t("blog.categories.other"),
   });
 
   const tabsItems = () => [

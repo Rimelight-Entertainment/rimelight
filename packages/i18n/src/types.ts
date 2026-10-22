@@ -1,8 +1,17 @@
+export type KeyCasing = "kebab-case" | "camelCase" | "snake_case" | "any";
+
+export interface I18nLintConfig {
+  casing?: KeyCasing;
+  disallowSelfNested?: boolean;
+  disallowFlatUnderscores?: boolean;
+}
+
 export interface I18nConfig {
   locales?: readonly string[];
   defaultLocale?: string;
   prefixDefaultLocale?: boolean;
   skipPaths?: readonly string[];
+  lint?: I18nLintConfig;
   translations?: Record<string, Record<string, unknown>>;
 }
 

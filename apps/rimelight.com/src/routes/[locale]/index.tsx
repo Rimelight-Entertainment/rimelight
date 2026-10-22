@@ -41,7 +41,7 @@ export const HomePage: Component = () => {
 
   const heroLinks = (): RLButtonProps[] => [
     {
-      label: t("page_home.section_hero_actions_join-us"),
+      label: t("page.home.section.hero.actions.join-us"),
       href: getLocaleUrl("/auth/sign-up"),
       color: "blurple",
       variant: "solid",
@@ -49,7 +49,7 @@ export const HomePage: Component = () => {
         "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
     },
     {
-      label: t("page_home.section_hero_actions_learn-more"),
+      label: t("page.home.section.hero.actions.learn-more"),
       href: getLocaleUrl("/company/about"),
       color: "neutral",
       variant: "outline",
@@ -61,7 +61,7 @@ export const HomePage: Component = () => {
 
   const ctaLinks = (): RLButtonProps[] => [
     {
-      label: t("page_home.section_cta_actions_create-account"),
+      label: t("page.home.section.cta.actions.create-account"),
       href: getLocaleUrl("/auth/sign-up"),
       color: "blurple",
       variant: "solid",
@@ -69,7 +69,7 @@ export const HomePage: Component = () => {
         "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
     },
     {
-      label: t("page_home.section_cta_actions_explore-careers"),
+      label: t("page.home.section.cta.actions.explore-careers"),
       href: getLocaleUrl("/company/careers"),
       color: "neutral",
       variant: "outline",
@@ -79,12 +79,12 @@ export const HomePage: Component = () => {
   ];
 
   return (
-    <AppLayout title={t("page_home.meta_title")} description={t("page_home.meta_description")}>
+    <AppLayout title={t("page.home.meta.title")} description={t("page.home.meta.description")}>
       <RLPageSection
         variant="hero"
         reverse={true}
-        title={t("page_home.section_hero_title")}
-        description={t("page_home.section_hero_description")}
+        title={t("page.home.section.hero.title")}
+        description={t("page.home.section.hero.description")}
         links={heroLinks()}
         ui={{
           title: "text-white",
@@ -113,8 +113,8 @@ export const HomePage: Component = () => {
 
       <RLPageSection
         orientation="horizontal"
-        title={t("page_home.section_company_title").replace("{interactive}", "interactive media")}
-        description={t("page_home.section_company_description")}
+        title={t("page.home.section.company.title").replace("{interactive}", "interactive media")}
+        description={t("page.home.section.company.description")}
         ui={{
           title: "text-white",
           description: "text-neutral-300",
@@ -136,13 +136,13 @@ export const HomePage: Component = () => {
             <div>
               <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">3+</div>
               <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-                {t("page_home.section_company_stats_titles")}
+                {t("page.home.section.company.stats.titles")}
               </div>
             </div>
             <div>
               <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">50+</div>
               <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-                {t("page_home.section_company_stats_creators")}
+                {t("page.home.section.company.stats.creators")}
               </div>
             </div>
           </div>
@@ -159,7 +159,7 @@ export const HomePage: Component = () => {
 
       <RLPageSection
         orientation="vertical"
-        title={t("page_home.section_projects_title")}
+        title={t("page.home.section.projects.title")}
         class="w-full relative z-10 py-24 bg-black border-t border-neutral-900"
         ui={{
           title:
@@ -199,13 +199,13 @@ export const HomePage: Component = () => {
                 <div class="absolute inset-0 p-lg flex flex-col gap-sm justify-end z-10">
                   <div class="flex gap-sm">
                     <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                      {t("page_home.section_projects_tags_franchise")}
+                      {t("page.home.section.projects.tags.franchise")}
                     </span>
                     <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                      {t("page_home.section_projects_tags_fantasy")}
+                      {t("page.home.section.projects.tags.fantasy")}
                     </span>
                     <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                      {t("page_home.section_projects_tags_social")}
+                      {t("page.home.section.projects.tags.social")}
                     </span>
                   </div>
 
@@ -214,11 +214,11 @@ export const HomePage: Component = () => {
                   </h3>
 
                   <p class="text-neutral-300 text-sm mt-1 leading-relaxed">
-                    {t("page_home.section_projects_content_grand-tale_description")}
+                    {t("page.home.section.projects.content.grand-tale.description")}
                   </p>
 
                   <div class="flex items-center text-primary-400 font-bold uppercase tracking-widest text-xs mt-4 group-hover:text-primary-300 transition-colors">
-                    <span>{t("page_home.section_projects_actions_discover")}</span>
+                    <span>{t("page.home.section.projects.actions.discover")}</span>
                     <svg
                       class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1.5 duration-300"
                       fill="none"
@@ -238,8 +238,8 @@ export const HomePage: Component = () => {
 
       <RLPageSection
         orientation="vertical"
-        title={t("page_home.section_news_title")}
-        description={t("page_home.section_news_description")}
+        title={t("page.home.section.news.title")}
+        description={t("page.home.section.news.description")}
         class="w-full relative z-10 py-24 bg-neutral-950 border-t border-neutral-900"
         ui={{
           title:
@@ -289,7 +289,7 @@ export const HomePage: Component = () => {
             <Show when={(latestPosts() || []).length > 0}>
               <div class="flex justify-center mt-14">
                 <RLButton
-                  label={t("page_home.section_news_actions_view-all")}
+                  label={t("page.home.section.news.actions.view-all")}
                   href={getLocaleUrl("/blog")}
                   color="primary"
                   variant="link"
@@ -305,8 +305,8 @@ export const HomePage: Component = () => {
       <RLPageSection
         variant="cta"
         ctaVariant="solid"
-        title={t("page_home.section_cta_title")}
-        description={t("page_home.section_cta_description")}
+        title={t("page.home.section.cta.title")}
+        description={t("page.home.section.cta.description")}
         links={ctaLinks()}
         class="w-full relative z-10 py-24 bg-black border-t border-neutral-900 rounded-none overflow-hidden"
         ui={{

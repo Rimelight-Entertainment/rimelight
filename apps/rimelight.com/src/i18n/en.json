@@ -1,133 +1,1165 @@
 {
-  "page_contact": {
-    "title": "Contact Us",
-    "description": "Get in touch with Rimelight Entertainment.",
-    "hero_title": "Get in Touch",
-    "hero_description": "Have a question, proposal, or want to collaborate? Send us a message directly.",
-    "contact_form_name_label": "Your Name *",
-    "contact_form_email_label": "Email Address *",
-    "contact_form_subject_label": "Subject (Optional)",
-    "contact_form_message_label": "Message *",
-    "contact_form_send_button": "Send Message",
-    "contact_form_placeholder_name": "Jane Doe",
-    "contact_form_placeholder_email": "jane@example.com",
-    "contact_form_placeholder_subject": "How can we help you?",
-    "contact_form_placeholder_message": "Write your message here..."
+  "page": {
+    "contact": {
+      "title": "Contact Us",
+      "description": "Get in touch with Rimelight Entertainment.",
+      "hero": {
+        "title": "Get in Touch",
+        "description": "Have a question, proposal, or want to collaborate? Send us a message directly."
+      },
+      "form": {
+        "name": {
+          "label": "Your Name *"
+        },
+        "email": {
+          "label": "Email Address *"
+        },
+        "subject": {
+          "label": "Subject (Optional)"
+        },
+        "message": {
+          "label": "Message *"
+        },
+        "send": {
+          "button": "Send Message"
+        },
+        "placeholder": {
+          "name": "Jane Doe",
+          "email": "jane@example.com",
+          "subject": "How can we help you?",
+          "message": "Write your message here..."
+        }
+      }
+    },
+    "error": {
+      "not-found": {
+        "title": "Error 404",
+        "description": "The page you are looking for does not exist."
+      },
+      "server": {
+        "title": "Server Error",
+        "description": "An error occurred while processing your request."
+      },
+      "unknown": {
+        "title": "Unknown error",
+        "description": "An unknown error occurred. Please try again later."
+      },
+      "go-home": "Go Home"
+    },
+    "home": {
+      "meta": {
+        "title": "Rimelight Entertainment",
+        "description": "Tell your story."
+      },
+      "section": {
+        "hero": {
+          "title": "We are Rimelight Entertainment",
+          "description": "We are creators of Grand Tale.",
+          "actions": {
+            "join-us": "Join Us",
+            "learn-more": "Learn More"
+          }
+        },
+        "company": {
+          "title": "Pushing the boundaries of {interactive}",
+          "description": "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
+          "stats": {
+            "titles": "Titles in Development",
+            "creators": "Global Creators"
+          }
+        },
+        "projects": {
+          "title": "Our Projects",
+          "tags": {
+            "franchise": "Franchise",
+            "fantasy": "Fantasy",
+            "social": "Social"
+          },
+          "content": {
+            "grand-tale": {
+              "description": "A high-fantasy social life-sim game which hosts sub-games of multiple genres."
+            }
+          },
+          "actions": {
+            "discover": "Discover"
+          }
+        },
+        "news": {
+          "title": "Latest News",
+          "description": "Read our latest news, posts, and project updates.",
+          "actions": {
+            "view-all": "View All News"
+          }
+        },
+        "cta": {
+          "title": "Ready to play?",
+          "description": "Join us and let's tell our story together.",
+          "actions": {
+            "create-account": "Create Account",
+            "explore-careers": "Explore Careers"
+          }
+        }
+      },
+      "hero": {
+        "title": "Rimelight Components",
+        "description": "A component and utility library used at Rimelight Entertainment.",
+        "links": {
+          "01": "View Components",
+          "02": "View Wiki",
+          "03": "View Branding"
+        }
+      },
+      "sections": {
+        "hero": {
+          "title": "We are Rimelight Entertainment",
+          "description": "We are creators of Grand Tale.",
+          "actions": {
+            "join-us": "Join Us",
+            "learn-more": "Learn More"
+          }
+        },
+        "company": {
+          "title": "Pushing the boundaries of {interactive}",
+          "description": "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
+          "stats": {
+            "titles": {
+              "label": "Titles in Development"
+            },
+            "creators": {
+              "label": "Global Creators"
+            }
+          }
+        },
+        "projects": {
+          "title": "Our Projects",
+          "tags": {
+            "franchise": "Franchise",
+            "fantasy": "Fantasy",
+            "social": "Social"
+          },
+          "content": {
+            "grand-tale": {
+              "description": "A high-fantasy social life-sim game which hosts sub-games of multiple genres."
+            }
+          },
+          "actions": {
+            "discover": "Discover"
+          }
+        },
+        "news": {
+          "title": "Latest News",
+          "description": "Read our latest news, posts, and project updates.",
+          "actions": {
+            "view-all": "View All News"
+          }
+        },
+        "cta": {
+          "title": "Ready to play?",
+          "description": "Join us and let's tell our story together.",
+          "actions": {
+            "create-account": "Create Account",
+            "explore-careers": "Explore Careers"
+          }
+        }
+      }
+    },
+    "company": {
+      "blog": {
+        "meta": {
+          "title": "Blog",
+          "description": "Read our latest news, posts, and project updates.",
+          "rss": "Rimelight Entertainment Blog RSS Feed"
+        },
+        "categories": {
+          "company-news": "Company News",
+          "development-log": "Development Log",
+          "other": "Other"
+        },
+        "last-updated": "Last updated on",
+        "actions": {
+          "create": {
+            "post": {
+              "success": {
+                "title": "",
+                "description": ""
+              },
+              "error": {
+                "title": "",
+                "description": ""
+              },
+              "label": "Create Post",
+              "modal": {
+                "title": "Create Post",
+                "description": "Create a new Blog Post.",
+                "fields": {
+                  "title": {
+                    "placeholder": "Enter a title for your post"
+                  },
+                  "slug": {
+                    "title": "Post Slug",
+                    "placeholder": "post-slug",
+                    "help": "The URL-friendly name of the post."
+                  },
+                  "actions": {
+                    "cancel": "Cancel",
+                    "submit": "Create Post"
+                  }
+                }
+              }
+            }
+          },
+          "rss": "RSS Feed"
+        },
+        "drafts": {
+          "title": "Drafts",
+          "description": "These posts have currently not been published.",
+          "error": {
+            "title": "Failed to load drafts",
+            "description": "Please check your connection and try again later."
+          },
+          "empty": {
+            "title": "No drafts yet.",
+            "description": "Create your first post to get started.",
+            "actions": {
+              "create": "Create Post"
+            }
+          }
+        },
+        "posts": {
+          "title": "Posts",
+          "description": "Our latest posts, including blog posts, press releases, and more.",
+          "error": {
+            "title": "Failed to load posts",
+            "description": "Please check your connection and try again later."
+          },
+          "empty": {
+            "title": "No posts yet",
+            "description": "Create your first post to get started.",
+            "actions": {
+              "create": "Create Post"
+            }
+          },
+          "load": {
+            "more": "Load More"
+          },
+          "end": {
+            "of": {
+              "list": "You've reached the end of the posts."
+            }
+          }
+        }
+      }
+    },
+    "legal": {
+      "meta": {
+        "title": "Legal"
+      }
+    },
+    "branding": {
+      "meta": {
+        "title": "Branding"
+      }
+    },
+    "auth": {
+      "sign-up": {
+        "meta": {
+          "title": "Sign up"
+        },
+        "title": "Sign up",
+        "description": "Create a new account",
+        "first-name": "First name",
+        "last-name": "Last name",
+        "email": "E-mail",
+        "password": "Password",
+        "button": "Sign up",
+        "sign-in": {
+          "title": "Sign in"
+        },
+        "auth": {
+          "email": {
+            "label": "E-mail",
+            "description": "",
+            "placeholder": "your@email.com",
+            "invalid": "Invalid email"
+          },
+          "username": {
+            "label": "Username",
+            "length": {
+              "error": "Username must be between 2 and 24 characters"
+            },
+            "no": {
+              "spaces": "Username cannot contain spaces"
+            },
+            "format": {
+              "error": "Username can only contain letters, numbers, dots and underscores"
+            },
+            "restricted": {
+              "error": "This username is not available"
+            }
+          },
+          "firstname": {
+            "label": "First name",
+            "length": {
+              "error": "First name must be between 2 and 24 characters"
+            }
+          },
+          "lastname": {
+            "label": "Last name",
+            "length": {
+              "error": "Last name must be between 2 and 24 characters"
+            }
+          },
+          "password": {
+            "label": "Password",
+            "description": "",
+            "length": {
+              "error": "Password must be between 8 and 24 characters"
+            },
+            "confirmation": {
+              "label": "Confirm password"
+            },
+            "req": {
+              "length": "At least 8 characters",
+              "number": "At least 1 number",
+              "lowercase": "At least 1 lowercase letter",
+              "uppercase": "At least 1 uppercase letter",
+              "special": "At least 1 special character"
+            }
+          },
+          "passwords": {
+            "mismatch": "Passwords do not match"
+          },
+          "stepper": {
+            "identity": "Identity",
+            "security": "Security",
+            "preferences": "Preferences"
+          },
+          "sign": {
+            "up": {
+              "button": "Sign up",
+              "failed": {
+                "title": "Sign up failed"
+              }
+            }
+          },
+          "account": {
+            "creation": {
+              "success": {
+                "title": "Account created successfully",
+                "description": "Your account has been created."
+              }
+            }
+          },
+          "connection": {
+            "error": {
+              "description": "Connection error"
+            }
+          },
+          "validation": {
+            "error": {
+              "title": "Validation failed"
+            }
+          },
+          "terms": {
+            "agreement": {
+              "signup": "I agree to the"
+            },
+            "required": "You must accept the terms of service"
+          },
+          "newsletter": {
+            "label": "Subscribe to our newsletter. You may unsubscribe at any time.",
+            "description": "Get the latest news and updates"
+          }
+        },
+        "navigation": {
+          "next": "Next",
+          "previous": "Previous"
+        }
+      },
+      "sign-in": {
+        "meta": {
+          "title": "Sign in"
+        },
+        "title": "Sign in",
+        "description": "Sign in to your account",
+        "new-user": "Your account has been created. Please check your email to confirm your account before signing in.",
+        "email": "E-mail",
+        "password": "Password",
+        "button": "Sign in",
+        "sign-up": {
+          "title": "Sign up"
+        },
+        "auth": {
+          "email": {
+            "label": "E-mail",
+            "description": "",
+            "placeholder": "your@email.com",
+            "invalid": "Invalid email"
+          },
+          "password": {
+            "label": "Password",
+            "description": "",
+            "min": {
+              "length": "Password must be at least 8 characters"
+            }
+          },
+          "remember": {
+            "me": "Remember me"
+          },
+          "sign": {
+            "in": {
+              "button": "Sign in",
+              "failed": {
+                "title": "Sign in failed"
+              },
+              "success": {
+                "title": "Signed in successfully"
+              }
+            }
+          },
+          "connection": {
+            "error": {
+              "description": "Connection error"
+            }
+          },
+          "terms": {
+            "agreement": "By signing in you agree to our",
+            "link": "Terms of Service"
+          },
+          "sign-in": {
+            "email": {
+              "help": "Recover email"
+            },
+            "password": {
+              "help": "Forgot password?"
+            }
+          }
+        }
+      }
+    },
+    "documents": {
+      "actions": {
+        "create": {
+          "document": {
+            "success": {
+              "title": "",
+              "description": ""
+            },
+            "error": {
+              "title": "",
+              "description": ""
+            },
+            "label": "Create Document",
+            "modal": {
+              "title": "Create Document",
+              "description": "Create a new Document.",
+              "fields": {
+                "title": {
+                  "placeholder": "Enter a title for your document"
+                },
+                "slug": {
+                  "title": "Document Slug",
+                  "placeholder": "document-slug",
+                  "help": "The URL-friendly name of the document."
+                }
+              },
+              "actions": {
+                "cancel": "Cancel",
+                "submit": "Create Document"
+              }
+            }
+          }
+        }
+      },
+      "meta": {
+        "title": "Documents",
+        "description": "View our formal documents, policies, and guidelines."
+      },
+      "drafts": {
+        "title": "Drafts",
+        "description": "These documents have currently not been published.",
+        "error": {
+          "title": "Failed to load drafts",
+          "description": "Please check your connection and try again later."
+        },
+        "empty": {
+          "title": "No drafts yet.",
+          "description": "Create your first document to get started.",
+          "actions": {
+            "create": "Create Document"
+          }
+        },
+        "load": {
+          "more": "Load More"
+        },
+        "end": {
+          "of": {
+            "list": "You've reached the end of the drafts."
+          }
+        }
+      },
+      "title": "Documents",
+      "description": "Our official documents and policies.",
+      "error": {
+        "title": "Failed to load documents",
+        "description": "Please check your connection and try again later."
+      },
+      "empty": {
+        "title": "No documents yet",
+        "description": "Create your first document to get started.",
+        "actions": {
+          "create": "Create Document"
+        }
+      },
+      "load": {
+        "more": "Load More"
+      },
+      "end": {
+        "of": {
+          "list": "You've reached the end of the documents."
+        }
+      }
+    },
+    "franchises": {
+      "grand": {
+        "tale": {
+          "home": {
+            "sections": {
+              "hero": {
+                "title": "May the story never end!",
+                "description": "Grand Tale is the next generation open-world RPG from Rimelight Entertainment. Explore a living world shaped by player agency and emergent storytelling.",
+                "actions": {
+                  "play-now": "Play Now",
+                  "watch-trailer": "Watch Trailer"
+                }
+              },
+              "overview": {
+                "title": "About Grand Tale",
+                "description": "Grand Tale is a high-fantasy media franchise built around it's flagship game, the titular 'Grand Tale'.",
+                "actions": {
+                  "learn-more": "Learn More"
+                }
+              }
+            }
+          },
+          "about": {
+            "meta": {
+              "title": "About Grand Tale"
+            },
+            "sections": {
+              "hero": {
+                "title": "About Grand Tale",
+                "description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
+                "actions": {
+                  "learn-more": "Learn More"
+                }
+              },
+              "story": {
+                "title": "The story so far...",
+                "description": ", where they find the Ohrn, a mysterious artifact with powers over life itself. the group set out to form the Grand Tale and live the greatest story ever told."
+              },
+              "features": {
+                "title": "Features",
+                "description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence."
+              },
+              "specifications": {
+                "title": "Specifications",
+                "description": "Grand Tale is available for download in the following platforms.",
+                "platforms": {
+                  "windows": {
+                    "label": "Windows",
+                    "specs": {
+                      "0": {
+                        "label": "OS",
+                        "value": "Windows 10/11 64-bit"
+                      },
+                      "1": {
+                        "label": "CPU",
+                        "value": "Intel Core i5-8400 / AMD Ryzen 5 2600"
+                      },
+                      "2": {
+                        "label": "GPU",
+                        "value": "NVIDIA GeForce GTX 1060 6GB / AMD Radeon RX 580"
+                      },
+                      "3": {
+                        "label": "RAM",
+                        "value": "16 GB"
+                      },
+                      "4": {
+                        "label": "Storage",
+                        "value": "50 GB (SSD Recommended)"
+                      }
+                    }
+                  },
+                  "android": {
+                    "label": "Android",
+                    "specs": {
+                      "0": {
+                        "label": "OS",
+                        "value": "Android 10.0 or higher"
+                      },
+                      "1": {
+                        "label": "CPU",
+                        "value": "Snapdragon 845 / Kirin 980 or better"
+                      },
+                      "2": {
+                        "label": "GPU",
+                        "value": "Adreno 630 / Mali-G76 MP10 or better"
+                      },
+                      "3": {
+                        "label": "RAM",
+                        "value": "8 GB"
+                      },
+                      "4": {
+                        "label": "Storage",
+                        "value": "15 GB"
+                      }
+                    }
+                  }
+                }
+              },
+              "faq": {
+                "title": "Frequently Asked Questions",
+                "description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
+                "groups": {
+                  "general": {
+                    "title": "General",
+                    "q1": {
+                      "question": "What is Grand Tale?",
+                      "answer": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence."
+                    },
+                    "q2": {
+                      "question": "When will Grand Tale be released?",
+                      "answer": "Grand Tale is currently in active development. Stay tuned to our news section for release date announcements."
+                    },
+                    "q3": {
+                      "question": "On which platforms will Grand Tale be available?",
+                      "answer": "We are targeting a multi-platform release including PC and major consoles."
+                    }
+                  },
+                  "gameplay": {
+                    "title": "Gameplay",
+                    "q1": {
+                      "question": "What can I do in Grand Tale?",
+                      "answer": "You can explore a vast open world, engage in various sub-games across different genres, build your own home, and socialize with players worldwide."
+                    },
+                    "q2": {
+                      "question": "Is there a multiplayer mode?",
+                      "answer": "Yes! Grand Tale is a social experience at its core, featuring persistent multiplayer environments and collaborative activities."
+                    },
+                    "q3": {
+                      "question": "Can I customize my character?",
+                      "answer": "Extensively. Our deep character creator allows you to define your look, while our progression system lets you define your playstyle."
+                    }
+                  },
+                  "technical": {
+                    "title": "Technical",
+                    "q1": {
+                      "question": "What are the system requirements?",
+                      "answer": "System requirements will be finalized closer to release. We aim to support a wide range of hardware."
+                    },
+                    "q2": {
+                      "question": "Does Grand Tale support controllers?",
+                      "answer": "Yes, Grand Tale will feature full controller support on all platforms."
+                    },
+                    "q3": {
+                      "question": "How do I report a bug?",
+                      "answer": "During our testing phases, you can report bugs through our official discord or the support section of our website."
+                    }
+                  }
+                },
+                "footer": "Have a question that isn't covered in this FAQ? Check out our {link}."
+              }
+            }
+          },
+          "wiki": {
+            "sidebar": {
+              "wiki": "Wiki",
+              "getting": {
+                "started": "Getting Started"
+              },
+              "contribution": {
+                "guide": "Contribution Guide"
+              },
+              "game": {
+                "title": "Game",
+                "tales": {
+                  "title": "Tales",
+                  "tale": {
+                    "mmo": {
+                      "title": "Tale MMO",
+                      "heroes": "Heroes"
+                    },
+                    "moba": "Tale MOBA",
+                    "ccg": {
+                      "title": "Tale CCG",
+                      "cards": "Cards"
+                    },
+                    "rts": "Tale RTS",
+                    "platform": "Tale Platformer",
+                    "chess": "Tale Chess",
+                    "td": "Tale TD"
+                  }
+                },
+                "items": "Items",
+                "quests": {
+                  "title": "Quests",
+                  "character": {
+                    "quest": "Character Quests"
+                  },
+                  "growth": {
+                    "quest": "Growth Quests"
+                  },
+                  "guide": {
+                    "quest": "Guide Quests"
+                  },
+                  "relationship": {
+                    "quest": "Relationship Quests"
+                  },
+                  "story": {
+                    "quest": "Story Quests"
+                  }
+                },
+                "skills": {
+                  "title": "Skills",
+                  "alchemy": "Alchemy",
+                  "archaeology": "Archaeology",
+                  "artistry": "Artistry",
+                  "crafting": "Crafting",
+                  "cultivation": "Cultivation",
+                  "foraging": "Foraging",
+                  "runology": "Runology",
+                  "seafaring": "Seafaring"
+                },
+                "settings": "Settings"
+              },
+              "series": {
+                "title": "Series",
+                "children": {
+                  "of": {
+                    "the": {
+                      "light": "Children of the Light"
+                    }
+                  }
+                },
+                "grand": {
+                  "academy": "Grand Academy"
+                },
+                "goldy": {
+                  "adventures": "Goldy Adventures"
+                }
+              },
+              "lore": {
+                "title": "Lore",
+                "timeline": "Timeline",
+                "characters": "Characters",
+                "locations": "Locations",
+                "species": "Species",
+                "objects": "Objects",
+                "groups": "Groups"
+              },
+              "mechanics": {
+                "systems": "Mechanics & Systems"
+              }
+            }
+          }
+        }
+      }
+    },
+    "forums": {
+      "rimelight": {
+        "meta": {
+          "title": "Rimelight Forums",
+          "description": "Join the Rimelight community discussions."
+        },
+        "welcome": "Welcome to the Rimelight Forums. Connect with fellow community members and discuss all things Rimelight."
+      },
+      "grand-tale": {
+        "meta": {
+          "title": "Grand Tale Forums",
+          "description": "Discuss Grand Tale with the community."
+        },
+        "welcome": "Welcome to the Grand Tale Forums. Share strategies, stories, and connect with other players."
+      }
+    },
+    "events": {
+      "lightcon": {
+        "meta": {
+          "title": "Lightcon",
+          "description": "Join us at Lightcon, our annual community event."
+        },
+        "welcome": "Welcome to Lightcon! Join us for our annual community celebration featuring announcements, panels, and exclusive reveals."
+      }
+    },
+    "store": {
+      "meta": {
+        "title": "Store",
+        "description": "Shop for digital goods and merchandise."
+      },
+      "header": {
+        "cart": "Cart"
+      }
+    },
+    "editor": {
+      "preview": "Preview",
+      "view": {
+        "page": "View Page"
+      },
+      "save": "Save",
+      "publish": {
+        "page": "Publish Page",
+        "confirmation": "Are you sure you want to publish this page? This will make it visible to the public."
+      },
+      "delete": {
+        "page": "Delete Page"
+      },
+      "unsaved": {
+        "changes": {
+          "title": "Unsaved Changes",
+          "description": "You have unsaved changes. Are you sure you want to leave?"
+        }
+      },
+      "leave": {
+        "anyway": "Leave Anyway"
+      },
+      "metadata": "Metadata",
+      "page": {
+        "id": "Page ID"
+      },
+      "created": {
+        "at": "Created At"
+      },
+      "posted": {
+        "at": "Posted At"
+      },
+      "updated": {
+        "at": "Updated At"
+      },
+      "add": {
+        "block": "Add Block",
+        "banner": ""
+      },
+      "search": {
+        "blocks": "Search blocks..."
+      },
+      "no": {
+        "blocks": {
+          "found": "No blocks found matching your search."
+        }
+      },
+      "unpublish": ""
+    },
+    "properties": {
+      "links": "Links",
+      "no": {
+        "links": "No links added yet."
+      },
+      "add": {
+        "link": "Add Link"
+      },
+      "edit": {
+        "link": "Edit Link",
+        "image": {
+          "title": ""
+        }
+      },
+      "update": {
+        "link": "Update Link"
+      },
+      "label": "Label",
+      "url": "URL (to)",
+      "icon": "Icon",
+      "color": "Color",
+      "variant": "Variant",
+      "page": {
+        "template": "Page Template"
+      },
+      "title": "Title",
+      "slug": "Slug",
+      "create": {
+        "and": {
+          "edit": "Create & Edit"
+        }
+      },
+      "images": "",
+      "image": {
+        "name": {
+          "placeholder": ""
+        }
+      }
+    },
+    "version": {
+      "failed": {
+        "to": {
+          "load": "Failed to load versions",
+          "approve": "Failed to approve version",
+          "revert": "Failed to revert version",
+          "reject": ""
+        }
+      },
+      "approved": {
+        "successfully": "Version approved successfully"
+      },
+      "reverted": {
+        "successfully": "Version reverted successfully"
+      },
+      "rejected": {
+        "successfully": ""
+      }
+    },
+    "construction": {
+      "meta": {
+        "title": "Under Construction",
+        "description": "This website is under construction."
+      },
+      "title": "THIS WEBSITE IS UNDER CONSTRUCTION",
+      "description": {
+        "no": {
+          "auth": "Please return at a later stage."
+        }
+      },
+      "form": {
+        "passphrase": {
+          "label": "Passphrase",
+          "placeholder": "Enter passphrase..."
+        },
+        "remember": {
+          "me": {
+            "label": "Remember me"
+          }
+        },
+        "sign": {
+          "in": {
+            "button": "Sign In"
+          }
+        }
+      }
+    }
   },
-  "app_header": {
-    "left-links_grand-tale_label": "Grand Tale",
-    "link-groups_center_grand-tale_main_title": "Game",
-    "link-groups_center_grand-tale_main_home": "Home",
-    "link-groups_center_grand-tale_main_news": "News",
-    "link-groups_center_grand-tale_main_about": "About",
-    "link-groups_center_grand-tale_main_wiki": "Wiki",
-    "link-groups_center_grand-tale_main_guides": "Guides",
-    "link-groups_center_grand-tale_main_forums": "Forums",
-    "link-groups_center_grand-tale_main_leaderboards": "Leaderboards",
-    "link-groups_center_grand-tale_series_title": "Series",
-    "link-groups_center_grand-tale_series_children-of-the-light": "Children of the Light",
-    "link-groups_center_grand-tale_series_grand-academy": "Grand Academy",
-    "link-groups_center_grand-tale_series_goldy-adventures": "Goldy Adventures",
-    "link-groups_center_grand-tale_books_title": "Books",
-    "link-groups_center_grand-tale_books_the-first-tale": "The First Tale",
-    "link-groups_center_grand-tale_comics_title": "Comics",
-    "link-groups_center_grand-tale_comics_ori-friends": "Ori & Friends",
-    "link-groups_right_grand-tale_resources_title": "Resources",
-    "link-groups_right_grand-tale_resources_download": "Download",
-    "link-groups_right_grand-tale_resources_support": "Support",
-    "link-groups_right_grand-tale_socials_title": "Socials",
-    "link-groups_right_grand-tale_socials_discord": "Discord",
-    "link-groups_right_grand-tale_socials_youtube": "YouTube",
-    "link-groups_right_grand-tale_socials_instagram": "Instagram",
-    "left-links_community_label": "Community",
-    "link-groups_center_community_main_title": "Community",
-    "link-groups_center_community_forums_title": "Forums",
-    "link-groups_center_community_forums_rimelight": "Rimelight Forums",
-    "link-groups_center_community_forums_grand-tale": "Grand Tale Forums",
-    "link-groups_center_community_events_title": "Events",
-    "link-groups_center_community_events_lightcon": "Lightcon",
-    "link-groups_right_community_resources_title": "Socials",
-    "link-groups_right_community_socials_instagram": "Instagram",
-    "link-groups_right_community_socials_discord": "Discord",
-    "link-groups_right_community_socials_spotify": "Spotify",
-    "left-links_company_label": "Company",
-    "link-groups_center_company_main_studio_title": "Studio",
-    "link-groups_center_company_main_studio_about-us": "About Us",
-    "link-groups_center_company_main_studio_partnerships": "Partnerships",
-    "link-groups_center_company_main_careers_title": "Careers",
-    "link-groups_center_company_main_careers_life": "Life at Rimelight",
-    "link-groups_center_company_main_careers_jobs": "Jobs & Internships",
-    "link-groups_center_company_main_news_title": "News & Media",
-    "link-groups_center_company_main_news_blog": "Blog",
-    "links_company_resources_title": "Resources",
-    "link-groups_right_company_resources_docs": "Documentation",
-    "link-groups_right_company_resources_branding": "Branding",
-    "link-groups_right_company_resources_legal": "Legal",
-    "link-groups_right_company_resources_contact": "Contact",
-    "link-groups_right_company_socials_title": "Socials",
-    "link-groups_right_company_socials_linkedin": "LinkedIn",
-    "link-groups_right_company_socials_github": "GitHub",
-    "left-links_store_label": "Store",
-    "link-groups_center_store_main_title": "Shop",
-    "link-groups_center_store_main_digital-goods_title": "Digital Goods",
-    "link-groups_center_store_main_digital-goods_sparks": "Sparks",
-    "link-groups_center_store_main_deals_title": "Deals",
-    "link-groups_center_store_main_deals_new-releases": "New Releases",
-    "link-groups_center_store_main_deals_sales": "Sales",
-    "link-groups_center_store_main_deals_bundles": "Bundles",
-    "link-groups_center_store_main_clothing_title": "Clothing",
-    "link-groups_center_store_main_clothing_headwear": "Headwear",
-    "link-groups_center_store_main_clothing_tops": "Tops",
-    "link-groups_center_store_main_clothing_bottoms": "Bottoms",
-    "link-groups_center_store_main_accessories_title": "Accessories",
-    "link-groups_center_store_main_accessories_jewelry": "Jewelry",
-    "link-groups_center_store_main_accessories_pins-patches": "Pins & Patches",
-    "link-groups_center_store_main_accessories_keychains": "Keychains",
-    "link-groups_center_store_main_apparel_title": "Apparel",
-    "link-groups_center_store_main_apparel_bottles-mugs": "Bottles & Mugs",
-    "link-groups_center_store_main_collectibles_title": "Collectibles",
-    "link-groups_center_store_main_collectibles_figurines-statues": "Figurines & Statues",
-    "link-groups_center_store_main_collectibles_plushies": "Plushies",
-    "link-groups_center_store_main_art_title": "Art",
-    "link-groups_center_store_main_art_posters-prints": "Posters & Prints",
-    "link-groups_center_store_main_art_comics-books": "Comics & Books",
-    "link-groups_center_store_main_art_physical-games": "Physical Games",
-    "link-groups_right_store_assistance_title": "Assistance",
-    "link-groups_right_store_assistance_orders": "Orders",
-    "link-groups_right_store_assistance_customer-support": "Customer Support",
-    "actions_sign-up": "Sign Up",
-    "actions_sign-in": "Sign In",
-    "user_status_placeholder": "Set a custom status..."
+  "app": {
+    "header": {
+      "left-links": {
+        "grand-tale": {
+          "label": "Grand Tale"
+        },
+        "community": {
+          "label": "Community"
+        },
+        "company": {
+          "label": "Company"
+        },
+        "store": {
+          "label": "Store"
+        }
+      },
+      "link-groups": {
+        "center": {
+          "grand-tale": {
+            "main": {
+              "title": "Game",
+              "home": "Home",
+              "news": "News",
+              "about": "About",
+              "wiki": "Wiki",
+              "guides": "Guides",
+              "forums": "Forums",
+              "leaderboards": "Leaderboards"
+            },
+            "series": {
+              "title": "Series",
+              "children-of-the-light": "Children of the Light",
+              "grand-academy": "Grand Academy",
+              "goldy-adventures": "Goldy Adventures"
+            },
+            "books": {
+              "title": "Books",
+              "the-first-tale": "The First Tale"
+            },
+            "comics": {
+              "title": "Comics",
+              "ori-friends": "Ori & Friends"
+            }
+          },
+          "community": {
+            "main": {
+              "title": "Community"
+            },
+            "forums": {
+              "title": "Forums",
+              "rimelight": "Rimelight Forums",
+              "grand-tale": "Grand Tale Forums"
+            },
+            "events": {
+              "title": "Events",
+              "lightcon": "Lightcon"
+            }
+          },
+          "company": {
+            "main": {
+              "studio": {
+                "title": "Studio",
+                "about-us": "About Us",
+                "partnerships": "Partnerships"
+              },
+              "careers": {
+                "title": "Careers",
+                "life": "Life at Rimelight",
+                "jobs": "Jobs & Internships"
+              },
+              "news": {
+                "title": "News & Media",
+                "blog": "Blog"
+              }
+            }
+          },
+          "store": {
+            "main": {
+              "title": "Shop",
+              "digital-goods": {
+                "title": "Digital Goods",
+                "sparks": "Sparks"
+              },
+              "deals": {
+                "title": "Deals",
+                "new-releases": "New Releases",
+                "sales": "Sales",
+                "bundles": "Bundles"
+              },
+              "clothing": {
+                "title": "Clothing",
+                "headwear": "Headwear",
+                "tops": "Tops",
+                "bottoms": "Bottoms"
+              },
+              "accessories": {
+                "title": "Accessories",
+                "jewelry": "Jewelry",
+                "pins-patches": "Pins & Patches",
+                "keychains": "Keychains"
+              },
+              "apparel": {
+                "title": "Apparel",
+                "bottles-mugs": "Bottles & Mugs"
+              },
+              "collectibles": {
+                "title": "Collectibles",
+                "figurines-statues": "Figurines & Statues",
+                "plushies": "Plushies"
+              },
+              "art": {
+                "title": "Art",
+                "posters-prints": "Posters & Prints",
+                "comics-books": "Comics & Books",
+                "physical-games": "Physical Games"
+              }
+            }
+          }
+        },
+        "right": {
+          "grand-tale": {
+            "resources": {
+              "title": "Resources",
+              "download": "Download",
+              "support": "Support"
+            },
+            "socials": {
+              "title": "Socials",
+              "discord": "Discord",
+              "youtube": "YouTube",
+              "instagram": "Instagram"
+            }
+          },
+          "community": {
+            "resources": {
+              "title": "Socials"
+            },
+            "socials": {
+              "instagram": "Instagram",
+              "discord": "Discord",
+              "spotify": "Spotify"
+            }
+          },
+          "company": {
+            "resources": {
+              "docs": "Documentation",
+              "branding": "Branding",
+              "legal": "Legal",
+              "contact": "Contact"
+            },
+            "socials": {
+              "title": "Socials",
+              "linkedin": "LinkedIn",
+              "github": "GitHub"
+            }
+          },
+          "store": {
+            "assistance": {
+              "title": "Assistance",
+              "orders": "Orders",
+              "customer-support": "Customer Support"
+            }
+          }
+        }
+      },
+      "links": {
+        "company": {
+          "resources": {
+            "title": "Resources"
+          }
+        }
+      },
+      "actions": {
+        "sign-up": "Sign Up",
+        "sign-in": "Sign In"
+      },
+      "user": {
+        "status": {
+          "placeholder": "Set a custom status..."
+        }
+      }
+    },
+    "footer": {
+      "links": {
+        "resources": {
+          "label": "Resources",
+          "branding": "Branding"
+        },
+        "legal": {
+          "label": "Legal",
+          "terms-of-service": "Terms of Service",
+          "code-of-conduct": "Code of Conduct",
+          "privacy-policy": "Privacy Policy",
+          "cookie-policy": "Cookie Policy",
+          "shipping-policy": "Shipping Policy",
+          "other-documents": "Other Documents"
+        }
+      }
+    }
   },
-  "app_footer": {
-    "links_resources_label": "Resources",
-    "links_resources_branding": "Branding",
-    "links_legal_label": "Legal",
-    "links_legal_terms-of-service": "Terms of Service",
-    "links_legal_code-of-conduct": "Code of Conduct",
-    "links_legal_privacy-policy": "Privacy Policy",
-    "links_legal_cookie-policy": "Cookie Policy",
-    "links_legal_shipping-policy": "Shipping Policy",
-    "links_legal_other-documents": "Other Documents"
-  },
-  "wiki_sidebar": {
-    "wiki": "Wiki",
-    "getting_started": "Getting Started",
-    "contribution_guide": "Contribution Guide",
-    "lore": "Lore",
-    "timeline": "Timeline",
-    "characters": "Characters",
-    "locations": "Locations",
-    "species": "Species",
-    "objects": "Objects",
-    "groups": "Groups",
-    "game": "Game Information",
-    "tales": "Tales",
-    "items": "Items",
-    "quests": "Quests",
-    "skills": "Skills",
-    "settings": "Settings",
-    "series": "Series"
+  "wiki": {
+    "sidebar": {
+      "wiki": "Wiki",
+      "getting": {
+        "started": "Getting Started"
+      },
+      "contribution": {
+        "guide": "Contribution Guide"
+      },
+      "lore": "Lore",
+      "timeline": "Timeline",
+      "characters": "Characters",
+      "locations": "Locations",
+      "species": "Species",
+      "objects": "Objects",
+      "groups": "Groups",
+      "game": "Game Information",
+      "tales": "Tales",
+      "items": "Items",
+      "quests": "Quests",
+      "skills": "Skills",
+      "settings": "Settings",
+      "series": "Series"
+    }
   },
   "newsletter": {
     "title": "Subscribe to our newsletter",
@@ -136,187 +1168,6 @@
     "submit": "Subscribe",
     "success": "Thank you for subscribing! Check your inbox for a confirmation email.",
     "error": "Failed to subscribe. Please try again later."
-  },
-  "page_error": {
-    "error_not-found_title": "Error 404",
-    "error_not-found_description": "The page you are looking for does not exist.",
-    "error_server_title": "Server Error",
-    "error_server_description": "An error occurred while processing your request.",
-    "error_unknown_title": "Unknown error",
-    "error_unknown_description": "An unknown error occurred. Please try again later.",
-    "go-home": "Go Home"
-  },
-  "page_home": {
-    "meta_title": "Rimelight Entertainment",
-    "section_hero_title": "We are Rimelight Entertainment",
-    "section_hero_description": "We are creators of Grand Tale.",
-    "section_hero_actions_join-us": "Join Us",
-    "section_hero_actions_learn-more": "Learn More",
-    "section_company_title": "Pushing the boundaries of {interactive}",
-    "section_company_description": "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
-    "section_company_stats_titles": "Titles in Development",
-    "section_company_stats_creators": "Global Creators",
-    "section_projects_title": "Our Projects",
-    "section_projects_tags_franchise": "Franchise",
-    "section_projects_tags_fantasy": "Fantasy",
-    "section_projects_tags_social": "Social",
-    "section_projects_content_grand-tale_description": "A high-fantasy social life-sim game which hosts sub-games of multiple genres.",
-    "section_projects_actions_discover": "Discover",
-    "section_news_title": "Latest News",
-    "section_news_description": "Read our latest news, posts, and project updates.",
-    "section_news_actions_view-all": "View All News",
-    "section_cta_title": "Ready to play?",
-    "section_cta_description": "Join us and let's tell our story together.",
-    "section_cta_actions_create-account": "Create Account",
-    "section_cta_actions_explore-careers": "Explore Careers",
-    "meta_description": "Tell your story.",
-    "hero_title": "Rimelight Components",
-    "hero_description": "A component and utility library used at Rimelight Entertainment.",
-    "hero_links_01": "View Components",
-    "hero_links_02": "View Wiki",
-    "hero_links_03": "View Branding",
-    "sections_hero_title": "We are Rimelight Entertainment",
-    "sections_hero_description": "We are creators of Grand Tale.",
-    "sections_hero_actions_joinUs": "Join Us",
-    "sections_hero_actions_learnMore": "Learn More",
-    "sections_company_title": "Pushing the boundaries of {interactive}",
-    "sections_company_description": "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
-    "sections_company_stats_titles_label": "Titles in Development",
-    "sections_company_stats_creators_label": "Global Creators",
-    "sections_projects_title": "Our Projects",
-    "sections_projects_tags_franchise": "Franchise",
-    "sections_projects_tags_fantasy": "Fantasy",
-    "sections_projects_tags_social": "Social",
-    "sections_projects_content_grandTale_description": "A high-fantasy social life-sim game which hosts sub-games of multiple genres.",
-    "sections_projects_actions_discover": "Discover",
-    "sections_news_title": "Latest News",
-    "sections_news_description": "Read our latest news, posts, and project updates.",
-    "sections_news_actions_viewAll": "View All News",
-    "sections_cta_title": "Ready to play?",
-    "sections_cta_description": "Join us and let's tell our story together.",
-    "sections_cta_actions_createAccount": "Create Account",
-    "sections_cta_actions_exploreCareers": "Explore Careers"
-  },
-  "page_company_blog": {
-    "meta_title": "Blog",
-    "categories_company-news": "Company News",
-    "categories_development-log": "Development Log",
-    "categories_other": "Other",
-    "last-updated": "Last updated on",
-    "actions_create_post_success_title": "",
-    "actions_create_post_success_description": "",
-    "actions_create_post_error_title": "",
-    "actions_create_post_error_description": "",
-    "actions_create_post_label": "Create Post",
-    "actions_create_post_modal_title": "Create Post",
-    "actions_create_post_modal_description": "Create a new Blog Post.",
-    "actions_create_post_modal_fields_title_title": "Post Title",
-    "actions_create_post_modal_fields_title_placeholder": "Enter a title for your post",
-    "actions_create_post_modal_fields_slug_title": "Post Slug",
-    "actions_create_post_modal_fields_slug_placeholder": "post-slug",
-    "actions_create_post_modal_fields_slug_help": "The URL-friendly name of the post.",
-    "actions_create_post_modal_fields_actions_cancel": "Cancel",
-    "actions_create_post_modal_fields_actions_submit": "Create Post",
-    "actions_rss": "RSS Feed",
-    "meta_description": "Read our latest news, posts, and project updates.",
-    "meta_RSS": "Rimelight Entertainment Blog RSS Feed",
-    "drafts_title": "Drafts",
-    "drafts_description": "These posts have currently not been published.",
-    "drafts_error_title": "Failed to load drafts",
-    "drafts_error_description": "Please check your connection and try again later.",
-    "drafts_empty_title": "No drafts yet.",
-    "drafts_empty_description": "Create your first post to get started.",
-    "drafts_empty_actions_create": "Create Post",
-    "posts_title": "Posts",
-    "posts_description": "Our latest posts, including blog posts, press releases, and more.",
-    "posts_error_title": "Failed to load posts",
-    "posts_error_description": "Please check your connection and try again later.",
-    "posts_empty_title": "No posts yet",
-    "posts_empty_description": "Create your first post to get started.",
-    "posts_empty_actions_create": "Create Post",
-    "posts_load_more": "Load More",
-    "posts_end_of_list": "You've reached the end of the posts."
-  },
-  "page_legal": {
-    "meta_title": "Legal"
-  },
-  "page_branding": {
-    "meta_title": "Branding"
-  },
-  "page_auth_sign-up": {
-    "meta_title": "Sign up",
-    "sign-up_title": "Sign up",
-    "sign-up_description": "Create a new account",
-    "sign-up_first-name": "First name",
-    "sign-up_last-name": "Last name",
-    "sign-up_email": "E-mail",
-    "sign-up_password": "Password",
-    "sign-up_button": "Sign up",
-    "sign-in_title": "Sign in",
-    "auth_email_label": "E-mail",
-    "auth_email_description": "",
-    "auth_email_placeholder": "your@email.com",
-    "auth_email_invalid": "Invalid email",
-    "auth_username_label": "Username",
-    "auth_username_length_error": "Username must be between 2 and 24 characters",
-    "auth_username_no_spaces": "Username cannot contain spaces",
-    "auth_username_format_error": "Username can only contain letters, numbers, dots and underscores",
-    "auth_username_restricted_error": "This username is not available",
-    "auth_firstname_label": "First name",
-    "auth_firstname_length_error": "First name must be between 2 and 24 characters",
-    "auth_lastname_label": "Last name",
-    "auth_lastname_length_error": "Last name must be between 2 and 24 characters",
-    "auth_password_label": "Password",
-    "auth_password_description": "",
-    "auth_password_length_error": "Password must be between 8 and 24 characters",
-    "auth_password_confirmation_label": "Confirm password",
-    "auth_passwords_mismatch": "Passwords do not match",
-    "auth_password_req_length": "At least 8 characters",
-    "auth_password_req_number": "At least 1 number",
-    "auth_password_req_lowercase": "At least 1 lowercase letter",
-    "auth_password_req_uppercase": "At least 1 uppercase letter",
-    "auth_password_req_special": "At least 1 special character",
-    "auth_stepper_identity": "Identity",
-    "auth_stepper_security": "Security",
-    "auth_stepper_preferences": "Preferences",
-    "auth_sign_up_button": "Sign up",
-    "auth_sign_up_failed_title": "Sign up failed",
-    "auth_account_creation_success_title": "Account created successfully",
-    "auth_account_creation_success_description": "Your account has been created.",
-    "auth_connection_error_description": "Connection error",
-    "auth_validation_error_title": "Validation failed",
-    "auth_terms_agreement_signup": "I agree to the",
-    "auth_terms_required": "You must accept the terms of service",
-    "auth_newsletter_label": "Subscribe to our newsletter. You may unsubscribe at any time.",
-    "auth_newsletter_description": "Get the latest news and updates",
-    "navigation_next": "Next",
-    "navigation_previous": "Previous"
-  },
-  "page_auth_sign-in": {
-    "meta_title": "Sign in",
-    "sign-in_title": "Sign in",
-    "sign-in_description": "Sign in to your account",
-    "sign-in_new-user": "Your account has been created. Please check your email to confirm your account before signing in.",
-    "sign-in_email": "E-mail",
-    "sign-in_password": "Password",
-    "sign-in_button": "Sign in",
-    "sign-up_title": "Sign up",
-    "auth_email_label": "E-mail",
-    "auth_email_description": "",
-    "auth_email_placeholder": "your@email.com",
-    "auth_email_invalid": "Invalid email",
-    "auth_password_label": "Password",
-    "auth_password_description": "",
-    "auth_password_min_length": "Password must be at least 8 characters",
-    "auth_remember_me": "Remember me",
-    "auth_sign_in_button": "Sign in",
-    "auth_sign_in_failed_title": "Sign in failed",
-    "auth_sign_in_success_title": "Signed in successfully",
-    "auth_connection_error_description": "Connection error",
-    "auth_terms_agreement": "By signing in you agree to our",
-    "auth_terms_link": "Terms of Service",
-    "auth_sign-in_email_help": "Recover email",
-    "auth_sign-in_password_help": "Forgot password?"
   },
   "error": {
     "retry": "Try Again",
@@ -332,588 +1183,522 @@
     "reject": "",
     "approve": "",
     "select": "",
-    "types_BlogPost": "Blog Post",
-    "types_Document": "Document",
-    "types_PatchNote": "Patch Note",
-    "types_Location": "Location",
-    "types_Species": "Species",
-    "types_Character": "Character",
-    "types_Skill": "Skill",
-    "types_Item": "Item",
-    "types_Object": "Object",
-    "types_Group": "Group",
-    "types_Card": "Card",
-    "types_Hero": "Hero",
-    "types_Series": "Series",
-    "types_Tale": "Tale",
-    "types_Episode": "Episode",
-    "types_Default": "Default"
+    "types": {
+      "blog-post": "Blog Post",
+      "document": "Document",
+      "patch-note": "Patch Note",
+      "location": "Location",
+      "species": "Species",
+      "character": "Character",
+      "skill": "Skill",
+      "item": "Item",
+      "object": "Object",
+      "group": "Group",
+      "card": "Card",
+      "hero": "Hero",
+      "series": "Series",
+      "tale": "Tale",
+      "episode": "Episode",
+      "default": "Default"
+    }
   },
-  "page_documents": {
-    "actions_create_document_success_title": "",
-    "actions_create_document_success_description": "",
-    "actions_create_document_error_title": "",
-    "actions_create_document_error_description": "",
-    "actions_create_document_label": "Create Document",
-    "actions_create_document_modal_title": "Create Document",
-    "actions_create_document_modal_description": "Create a new Document.",
-    "actions_create_document_modal_fields_title_title": "Document Title",
-    "actions_create_document_modal_fields_title_placeholder": "Enter a title for your document",
-    "actions_create_document_modal_fields_slug_title": "Document Slug",
-    "actions_create_document_modal_fields_slug_placeholder": "document-slug",
-    "actions_create_document_modal_fields_slug_help": "The URL-friendly name of the document.",
-    "actions_create_document_modal_actions_cancel": "Cancel",
-    "actions_create_document_modal_actions_submit": "Create Document",
-    "meta_title": "Documents",
-    "meta_description": "View our formal documents, policies, and guidelines.",
-    "drafts_title": "Drafts",
-    "drafts_description": "These documents have currently not been published.",
-    "drafts_error_title": "Failed to load drafts",
-    "drafts_error_description": "Please check your connection and try again later.",
-    "drafts_empty_title": "No drafts yet.",
-    "drafts_empty_description": "Create your first document to get started.",
-    "drafts_empty_actions_create": "Create Document",
-    "drafts_load_more": "Load More",
-    "drafts_end_of_list": "You've reached the end of the drafts.",
-    "documents_title": "Documents",
-    "documents_description": "Our official documents and policies.",
-    "documents_error_title": "Failed to load documents",
-    "documents_error_description": "Please check your connection and try again later.",
-    "documents_empty_title": "No documents yet",
-    "documents_empty_description": "Create your first document to get started.",
-    "documents_empty_actions_create": "Create Document",
-    "documents_load_more": "Load More",
-    "documents_end_of_list": "You've reached the end of the documents."
+  "auth": {
+    "sign-in": {
+      "email": {
+        "help": "Forgot your email?"
+      },
+      "password": {
+        "help": "Forgot your password?"
+      }
+    },
+    "email": {
+      "invalid": "Invalid email address.",
+      "label": "Email",
+      "description": "Enter your email address.",
+      "placeholder": "email{'@'}example.com"
+    },
+    "password": {
+      "min": {
+        "length": "Password must be at least 8 characters long."
+      },
+      "label": "Password",
+      "description": "Enter your password.",
+      "length": {
+        "error": "Password must be between 8 and 24 characters long."
+      },
+      "req": {
+        "length": "At least 8 characters",
+        "number": "At least 1 number",
+        "lowercase": "At least 1 lowercase letter",
+        "uppercase": "At least 1 uppercase letter",
+        "special": "At least 1 special character (e.g., !{'@'}#$%^&*)"
+      }
+    },
+    "sign": {
+      "in": {
+        "failed": {
+          "title": "Authentication Failed"
+        },
+        "success": {
+          "title": "Sign In successful.",
+          "description": "Welcome back {name}!"
+        },
+        "button": "Sign In"
+      },
+      "up": {
+        "failed": {
+          "title": "Failed to sign up."
+        },
+        "button": "Sign Up"
+      }
+    },
+    "connection": {
+      "error": {
+        "description": "A network error occurred. Please try again later."
+      }
+    },
+    "remember": {
+      "me": "Remember Me"
+    },
+    "username": {
+      "length": {
+        "error": "Username must be between 2 and 24 characters long."
+      },
+      "no": {
+        "spaces": "Username cannot contain spaces."
+      },
+      "format": {
+        "error": "Username can only contain letters, numbers, periods (.), and underscores (_)."
+      },
+      "restricted": {
+        "error": "This username is not allowed."
+      },
+      "label": "Username"
+    },
+    "firstname": {
+      "length": {
+        "error": "First name must be between 2 and 24 characters long."
+      },
+      "label": "First Name"
+    },
+    "lastname": {
+      "length": {
+        "error": "Last name must be between 2 and 24 characters long."
+      },
+      "label": "Last Name"
+    },
+    "passwords": {
+      "mismatch": "Passwords do not match."
+    },
+    "stepper": {
+      "identity": "Identity",
+      "security": "Security",
+      "preferences": "Preferences"
+    },
+    "validation": {
+      "error": {
+        "title": "Validation Error",
+        "description": "Please correct the errors before proceeding."
+      }
+    },
+    "account": {
+      "creation": {
+        "success": {
+          "title": "Account creation successful.",
+          "description": "Welcome!"
+        }
+      }
+    }
   },
-  "page_franchises_grand_tale": {
-    "home_sections_hero_title": "May the story never end!",
-    "home_sections_hero_description": "Grand Tale is the next generation open-world RPG from Rimelight Entertainment. Explore a living world shaped by player agency and emergent storytelling.",
-    "home_sections_hero_actions_playNow": "Play Now",
-    "home_sections_hero_actions_watchTrailer": "Watch Trailer",
-    "home_sections_overview_title": "About Grand Tale",
-    "home_sections_overview_description": "Grand Tale is a high-fantasy media franchise built around it's flagship game, the titular 'Grand Tale'.",
-    "home_sections_overview_actions_learnMore": "Learn More",
-    "about_meta_title": "About Grand Tale",
-    "about_sections_hero_title": "About Grand Tale",
-    "about_sections_hero_description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
-    "about_sections_hero_actions_learnMore": "Learn More",
-    "about_sections_story_title": "The story so far...",
-    "about_sections_story_description": ", where they find the Ohrn, a mysterious artifact with powers over life itself. the group set out to form the Grand Tale and live the greatest story ever told.",
-    "about_sections_features_title": "Features",
-    "about_sections_features_description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
-    "about_sections_specifications_title": "Specifications",
-    "about_sections_specifications_description": "Grand Tale is available for download in the following platforms.",
-    "about_sections_specifications_platforms_windows_label": "Windows",
-    "about_sections_specifications_platforms_windows_specs_0_label": "OS",
-    "about_sections_specifications_platforms_windows_specs_0_value": "Windows 10/11 64-bit",
-    "about_sections_specifications_platforms_windows_specs_1_label": "CPU",
-    "about_sections_specifications_platforms_windows_specs_1_value": "Intel Core i5-8400 / AMD Ryzen 5 2600",
-    "about_sections_specifications_platforms_windows_specs_2_label": "GPU",
-    "about_sections_specifications_platforms_windows_specs_2_value": "NVIDIA GeForce GTX 1060 6GB / AMD Radeon RX 580",
-    "about_sections_specifications_platforms_windows_specs_3_label": "RAM",
-    "about_sections_specifications_platforms_windows_specs_3_value": "16 GB",
-    "about_sections_specifications_platforms_windows_specs_4_label": "Storage",
-    "about_sections_specifications_platforms_windows_specs_4_value": "50 GB (SSD Recommended)",
-    "about_sections_specifications_platforms_android_label": "Android",
-    "about_sections_specifications_platforms_android_specs_0_label": "OS",
-    "about_sections_specifications_platforms_android_specs_0_value": "Android 10.0 or higher",
-    "about_sections_specifications_platforms_android_specs_1_label": "CPU",
-    "about_sections_specifications_platforms_android_specs_1_value": "Snapdragon 845 / Kirin 980 or better",
-    "about_sections_specifications_platforms_android_specs_2_label": "GPU",
-    "about_sections_specifications_platforms_android_specs_2_value": "Adreno 630 / Mali-G76 MP10 or better",
-    "about_sections_specifications_platforms_android_specs_3_label": "RAM",
-    "about_sections_specifications_platforms_android_specs_3_value": "8 GB",
-    "about_sections_specifications_platforms_android_specs_4_label": "Storage",
-    "about_sections_specifications_platforms_android_specs_4_value": "15 GB",
-    "about_sections_faq_title": "Frequently Asked Questions",
-    "about_sections_faq_description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
-    "about_sections_faq_groups_general_title": "General",
-    "about_sections_faq_groups_general_q1_question": "What is Grand Tale?",
-    "about_sections_faq_groups_general_q1_answer": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
-    "about_sections_faq_groups_general_q2_question": "When will Grand Tale be released?",
-    "about_sections_faq_groups_general_q2_answer": "Grand Tale is currently in active development. Stay tuned to our news section for release date announcements.",
-    "about_sections_faq_groups_general_q3_question": "On which platforms will Grand Tale be available?",
-    "about_sections_faq_groups_general_q3_answer": "We are targeting a multi-platform release including PC and major consoles.",
-    "about_sections_faq_groups_gameplay_title": "Gameplay",
-    "about_sections_faq_groups_gameplay_q1_question": "What can I do in Grand Tale?",
-    "about_sections_faq_groups_gameplay_q1_answer": "You can explore a vast open world, engage in various sub-games across different genres, build your own home, and socialize with players worldwide.",
-    "about_sections_faq_groups_gameplay_q2_question": "Is there a multiplayer mode?",
-    "about_sections_faq_groups_gameplay_q2_answer": "Yes! Grand Tale is a social experience at its core, featuring persistent multiplayer environments and collaborative activities.",
-    "about_sections_faq_groups_gameplay_q3_question": "Can I customize my character?",
-    "about_sections_faq_groups_gameplay_q3_answer": "Extensively. Our deep character creator allows you to define your look, while our progression system lets you define your playstyle.",
-    "about_sections_faq_groups_technical_title": "Technical",
-    "about_sections_faq_groups_technical_q1_question": "What are the system requirements?",
-    "about_sections_faq_groups_technical_q1_answer": "System requirements will be finalized closer to release. We aim to support a wide range of hardware.",
-    "about_sections_faq_groups_technical_q2_question": "Does Grand Tale support controllers?",
-    "about_sections_faq_groups_technical_q2_answer": "Yes, Grand Tale will feature full controller support on all platforms.",
-    "about_sections_faq_groups_technical_q3_question": "How do I report a bug?",
-    "about_sections_faq_groups_technical_q3_answer": "During our testing phases, you can report bugs through our official discord or the support section of our website.",
-    "about_sections_faq_footer": "Have a question that isn't covered in this FAQ? Check out our {link}.",
-    "wiki_sidebar_wiki": "Wiki",
-    "wiki_sidebar_getting_started": "Getting Started",
-    "wiki_sidebar_contribution_guide": "Contribution Guide",
-    "wiki_sidebar_game_title": "Game",
-    "wiki_sidebar_game_tales_title": "Tales",
-    "wiki_sidebar_game_tales_tale_mmo_title": "Tale MMO",
-    "wiki_sidebar_game_tales_tale_mmo_heroes": "Heroes",
-    "wiki_sidebar_game_tales_tale_moba": "Tale MOBA",
-    "wiki_sidebar_game_tales_tale_ccg_title": "Tale CCG",
-    "wiki_sidebar_game_tales_tale_ccg_cards": "Cards",
-    "wiki_sidebar_game_tales_tale_rts": "Tale RTS",
-    "wiki_sidebar_game_tales_tale_platform": "Tale Platformer",
-    "wiki_sidebar_game_tales_tale_chess": "Tale Chess",
-    "wiki_sidebar_game_tales_tale_td": "Tale TD",
-    "wiki_sidebar_game_items": "Items",
-    "wiki_sidebar_game_quests_title": "Quests",
-    "wiki_sidebar_game_quests_character_quest": "Character Quests",
-    "wiki_sidebar_game_quests_growth_quest": "Growth Quests",
-    "wiki_sidebar_game_quests_guide_quest": "Guide Quests",
-    "wiki_sidebar_game_quests_relationship_quest": "Relationship Quests",
-    "wiki_sidebar_game_quests_story_quest": "Story Quests",
-    "wiki_sidebar_game_skills_title": "Skills",
-    "wiki_sidebar_game_skills_alchemy": "Alchemy",
-    "wiki_sidebar_game_skills_archaeology": "Archaeology",
-    "wiki_sidebar_game_skills_artistry": "Artistry",
-    "wiki_sidebar_game_skills_crafting": "Crafting",
-    "wiki_sidebar_game_skills_cultivation": "Cultivation",
-    "wiki_sidebar_game_skills_foraging": "Foraging",
-    "wiki_sidebar_game_skills_runology": "Runology",
-    "wiki_sidebar_game_skills_seafaring": "Seafaring",
-    "wiki_sidebar_game_settings": "Settings",
-    "wiki_sidebar_series_title": "Series",
-    "wiki_sidebar_series_children_of_the_light": "Children of the Light",
-    "wiki_sidebar_series_grand_academy": "Grand Academy",
-    "wiki_sidebar_series_goldy_adventures": "Goldy Adventures",
-    "wiki_sidebar_lore_title": "Lore",
-    "wiki_sidebar_lore_timeline": "Timeline",
-    "wiki_sidebar_lore_characters": "Characters",
-    "wiki_sidebar_lore_locations": "Locations",
-    "wiki_sidebar_lore_species": "Species",
-    "wiki_sidebar_lore_objects": "Objects",
-    "wiki_sidebar_lore_groups": "Groups",
-    "wiki_sidebar_mechanics_systems": "Mechanics & Systems"
-  },
-  "page_forums": {
-    "rimelight_meta_title": "Rimelight Forums",
-    "rimelight_meta_description": "Join the Rimelight community discussions.",
-    "rimelight_welcome": "Welcome to the Rimelight Forums. Connect with fellow community members and discuss all things Rimelight.",
-    "grand-tale_meta_title": "Grand Tale Forums",
-    "grand-tale_meta_description": "Discuss Grand Tale with the community.",
-    "grand-tale_welcome": "Welcome to the Grand Tale Forums. Share strategies, stories, and connect with other players."
-  },
-  "page_events": {
-    "lightcon_meta_title": "Lightcon",
-    "lightcon_meta_description": "Join us at Lightcon, our annual community event.",
-    "lightcon_welcome": "Welcome to Lightcon! Join us for our annual community celebration featuring announcements, panels, and exclusive reveals."
-  },
-  "page_store": {
-    "meta_title": "Store",
-    "meta_description": "Shop for digital goods and merchandise.",
-    "header_cart": "Cart"
-  },
-  "auth_sign-in_email_help": {
-    "auth_sign-in_email_help": "Forgot your email?"
-  },
-  "auth_sign-in_password_help": {
-    "auth_sign-in_password_help": "Forgot your password?"
-  },
-  "auth_email_invalid": {
-    "auth_email_invalid": "Invalid email address."
-  },
-  "auth_password_min_length": {
-    "auth_password_min_length": "Password must be at least 8 characters long."
-  },
-  "auth_sign_in_failed_title": {
-    "auth_sign_in_failed_title": "Authentication Failed"
-  },
-  "auth_sign_in_success_title": {
-    "auth_sign_in_success_title": "Sign In successful."
-  },
-  "auth_sign_in_success_description": {
-    "auth_sign_in_success_description": "Welcome back {name}!"
-  },
-  "auth_connection_error_description": {
-    "auth_connection_error_description": "A network error occurred. Please try again later."
-  },
-  "auth_email_label": {
-    "auth_email_label": "Email"
-  },
-  "auth_email_description": {
-    "auth_email_description": "Enter your email address."
-  },
-  "auth_email_placeholder": {
-    "auth_email_placeholder": "email{'@'}example.com"
-  },
-  "auth_password_label": {
-    "auth_password_label": "Password"
-  },
-  "auth_password_description": {
-    "auth_password_description": "Enter your password."
-  },
-  "auth_remember_me": {
-    "auth_remember_me": "Remember Me"
-  },
-  "auth_sign_in_button": {
-    "auth_sign_in_button": "Sign In"
-  },
-  "auth_username_length_error": {
-    "auth_username_length_error": "Username must be between 2 and 24 characters long."
-  },
-  "auth_username_no_spaces": {
-    "auth_username_no_spaces": "Username cannot contain spaces."
-  },
-  "auth_username_format_error": {
-    "auth_username_format_error": "Username can only contain letters, numbers, periods (.), and underscores (_)."
-  },
-  "auth_username_restricted_error": {
-    "auth_username_restricted_error": "This username is not allowed."
-  },
-  "auth_firstname_length_error": {
-    "auth_firstname_length_error": "First name must be between 2 and 24 characters long."
-  },
-  "auth_lastname_length_error": {
-    "auth_lastname_length_error": "Last name must be between 2 and 24 characters long."
-  },
-  "auth_password_length_error": {
-    "auth_password_length_error": "Password must be between 8 and 24 characters long."
-  },
-  "auth_passwords_mismatch": {
-    "auth_passwords_mismatch": "Passwords do not match."
-  },
-  "auth_password_req_length": {
-    "auth_password_req_length": "At least 8 characters"
-  },
-  "auth_password_req_number": {
-    "auth_password_req_number": "At least 1 number"
-  },
-  "auth_password_req_lowercase": {
-    "auth_password_req_lowercase": "At least 1 lowercase letter"
-  },
-  "auth_password_req_uppercase": {
-    "auth_password_req_uppercase": "At least 1 uppercase letter"
-  },
-  "auth_password_req_special": {
-    "auth_password_req_special": "At least 1 special character (e.g., !{'@'}#$%^&*)"
-  },
-  "auth_stepper_identity": {
-    "auth_stepper_identity": "Identity"
-  },
-  "auth_stepper_security": {
-    "auth_stepper_security": "Security"
-  },
-  "auth_stepper_preferences": {
-    "auth_stepper_preferences": "Preferences"
-  },
-  "auth_validation_error_title": {
-    "auth_validation_error_title": "Validation Error"
-  },
-  "auth_validation_error_description": {
-    "auth_validation_error_description": "Please correct the errors before proceeding."
-  },
-  "auth_account_creation_success_title": {
-    "auth_account_creation_success_title": "Account creation successful."
-  },
-  "auth_account_creation_success_description": {
-    "auth_account_creation_success_description": "Welcome!"
-  },
-  "auth_sign_up_failed_title": {
-    "auth_sign_up_failed_title": "Failed to sign up."
-  },
-  "auth_username_label": {
-    "auth_username_label": "Username"
-  },
-  "auth_firstname_label": {
-    "auth_firstname_label": "First Name"
-  },
-  "auth_lastname_label": {
-    "auth_lastname_label": "Last Name"
-  },
-  "auth_sign_up_button": {
-    "auth_sign_up_button": "Sign Up"
-  },
-  "navigation_previous": {
-    "navigation_previous": "Previous"
-  },
-  "navigation_next": {
-    "navigation_next": "Next"
+  "navigation": {
+    "previous": "Previous",
+    "next": "Next"
   },
   "modals": {
-    "assetManager_header_title": "Asset Manager",
-    "assetManager_header_description": "View and manage stored assets.",
-    "assetManager_toolbar_items_count": "{count} Items",
-    "assetManager_toolbar_selected_count": "{count} Selected",
-    "assetManager_empty_title": "No items found",
-    "assetManager_empty_description": "This location is currently empty.",
-    "assetManager_upload_dropzone_label": "Drag & Drop Here",
-    "assetManager_upload_dropzone_description": "Max: 5 GB",
-    "assetManager_upload_select_button": "Upload Files",
-    "assetManager_upload_add_asset_button": "Upload Asset",
-    "assetManager_item_folder_label": "Folder",
-    "assetManager_item_last_modified": "Last Modified: {date}",
-    "assetManager_item_copy_url": "Copy URL",
-    "assetManager_item_copy_url_success": "URL copied to clipboard!",
-    "assetManager_item_copy_url_failed": "Failed to copy URL to clipboard.",
-    "assetManager_actions_new_subfolder": "New Folder",
-    "newFolder_title": "New Folder",
-    "newFolder_description": "Organize your assets by creating a virtual directory",
-    "newFolder_label": "Entering a name for the folder in {path}:",
-    "newFolder_placeholder": "e.g. documentation",
-    "newFolder_cancel_button": "Cancel",
-    "newFolder_create_button": "Create Folder",
-    "move_title": "Move or Rename Asset",
-    "move_name_label": "New Name (Basename)",
-    "move_folder_label": "Target Folder",
-    "move_current_location": "Current location: {path}",
-    "move_cancel_button": "Cancel",
-    "move_move_button": "Move Asset",
-    "upload_title": "Confirm Upload",
-    "upload_filename_label": "Filename",
-    "upload_folder_label": "Upload to Folder",
-    "upload_multiple_files_warning_title": "Multiple File Upload",
-    "upload_multiple_files_warning_description": "Renaming is disabled for multiple files. Ensure files are named correctly before uploading, or rename them individually later.",
-    "upload_files_selected": "{count} files selected",
-    "upload_cancel_button": "Cancel",
-    "upload_upload_button": "Start Upload"
+    "asset-manager": {
+      "header": {
+        "title": "Asset Manager",
+        "description": "View and manage stored assets."
+      },
+      "toolbar": {
+        "items": {
+          "count": "{count} Items"
+        },
+        "selected": {
+          "count": "{count} Selected"
+        }
+      },
+      "empty": {
+        "title": "No items found",
+        "description": "This location is currently empty."
+      },
+      "upload": {
+        "dropzone": {
+          "label": "Drag & Drop Here",
+          "description": "Max: 5 GB"
+        },
+        "select": {
+          "button": "Upload Files"
+        },
+        "add": {
+          "asset": {
+            "button": "Upload Asset"
+          }
+        }
+      },
+      "item": {
+        "folder": {
+          "label": "Folder"
+        },
+        "last": {
+          "modified": "Last Modified: {date}"
+        },
+        "copy": {
+          "url": {
+            "success": "URL copied to clipboard!",
+            "failed": "Failed to copy URL to clipboard."
+          }
+        }
+      },
+      "actions": {
+        "new": {
+          "subfolder": "New Folder"
+        }
+      }
+    },
+    "new-folder": {
+      "title": "New Folder",
+      "description": "Organize your assets by creating a virtual directory",
+      "label": "Entering a name for the folder in {path}:",
+      "placeholder": "e.g. documentation",
+      "cancel": {
+        "button": "Cancel"
+      },
+      "create": {
+        "button": "Create Folder"
+      }
+    },
+    "move": {
+      "title": "Move or Rename Asset",
+      "name": {
+        "label": "New Name (Basename)"
+      },
+      "folder": {
+        "label": "Target Folder"
+      },
+      "current": {
+        "location": "Current location: {path}"
+      },
+      "cancel": {
+        "button": "Cancel"
+      },
+      "button": "Move Asset"
+    },
+    "upload": {
+      "title": "Confirm Upload",
+      "filename": {
+        "label": "Filename"
+      },
+      "folder": {
+        "label": "Upload to Folder"
+      },
+      "multiple": {
+        "files": {
+          "warning": {
+            "title": "Multiple File Upload",
+            "description": "Renaming is disabled for multiple files. Ensure files are named correctly before uploading, or rename them individually later."
+          }
+        }
+      },
+      "files": {
+        "selected": "{count} files selected"
+      },
+      "cancel": {
+        "button": "Cancel"
+      },
+      "button": "Start Upload"
+    }
   },
   "swatch": {
-    "copy_hex": "Copy HEX",
-    "copy_rgb": "Copy RGB",
-    "copy_hsl": "Copy HSL",
-    "copy_oklch": "Copy OKLCH",
-    "copy_cmyk": "Copy CMYK",
-    "download_jpg": "Download JPG",
-    "download_png": "Download PNG",
-    "download_webp": "Download WEBP",
-    "download_svg": "Download SVG",
-    "color_copied": "Color copied to clipboard!",
-    "color_copy_failed": "Failed to copy color to clipboard.",
-    "copy_error_description": "An unexpected error occurred. Please try again."
+    "copy": {
+      "hex": "Copy HEX",
+      "rgb": "Copy RGB",
+      "hsl": "Copy HSL",
+      "oklch": "Copy OKLCH",
+      "cmyk": "Copy CMYK",
+      "error": {
+        "description": "An unexpected error occurred. Please try again."
+      }
+    },
+    "download": {
+      "jpg": "Download JPG",
+      "png": "Download PNG",
+      "webp": "Download WEBP",
+      "svg": "Download SVG"
+    },
+    "color": {
+      "copied": "Color copied to clipboard!",
+      "copy": {
+        "failed": "Failed to copy color to clipboard."
+      }
+    }
   },
-  "font_palette": {
-    "specimen": "Specimen",
-    "hierarchy": "Hierarchy",
-    "color": "Color",
-    "uppercase": "Uppercase",
-    "lowercase": "Lowercase",
-    "numbers": "Numbers",
-    "symbols": "Symbols",
-    "heading_1": "Heading 1",
-    "heading_2": "Heading 2",
-    "heading_3": "Heading 3",
-    "heading_4": "Heading 4",
-    "heading_5": "Heading 5",
-    "heading_6": "Heading 6"
-  },
-  "page_editor": {
-    "preview": "Preview",
-    "view_page": "View Page",
-    "save": "Save",
-    "publish": "Publish",
-    "publish_page": "Publish Page",
-    "publish_confirmation": "Are you sure you want to publish this page? This will make it visible to the public.",
-    "delete_page": "Delete Page",
-    "unsaved_changes_title": "Unsaved Changes",
-    "unsaved_changes_description": "You have unsaved changes. Are you sure you want to leave?",
-    "leave_anyway": "Leave Anyway",
-    "metadata": "Metadata",
-    "page_id": "Page ID",
-    "created_at": "Created At",
-    "posted_at": "Posted At",
-    "updated_at": "Updated At",
-    "add_block": "Add Block",
-    "search_blocks": "Search blocks...",
-    "no_blocks_found": "No blocks found matching your search.",
-    "unpublish_page": "",
-    "unpublish_confirmation": "",
-    "unpublish": "",
-    "add_banner": ""
-  },
-  "page_properties": {
-    "links": "Links",
-    "no_links": "No links added yet.",
-    "add_link": "Add Link",
-    "edit_link": "Edit Link",
-    "update_link": "Update Link",
-    "label": "Label",
-    "url": "URL (to)",
-    "icon": "Icon",
-    "color": "Color",
-    "variant": "Variant",
-    "page_template": "Page Template",
-    "title": "Title",
-    "slug": "Slug",
-    "create_and_edit": "Create & Edit",
-    "images": "",
-    "edit_image_title": "",
-    "image_name_title": "",
-    "image_name": "",
-    "image_name_placeholder": ""
+  "font": {
+    "palette": {
+      "specimen": "Specimen",
+      "hierarchy": "Hierarchy",
+      "color": "Color",
+      "uppercase": "Uppercase",
+      "lowercase": "Lowercase",
+      "numbers": "Numbers",
+      "symbols": "Symbols",
+      "heading": {
+        "1": "Heading 1",
+        "2": "Heading 2",
+        "3": "Heading 3",
+        "4": "Heading 4",
+        "5": "Heading 5",
+        "6": "Heading 6"
+      }
+    }
   },
   "todo": {
     "title": "To-do List",
-    "add_placeholder": "Add a to-do...",
-    "description_placeholder": "Add a description (optional)...",
-    "show_archive": "Show Archive",
-    "hide_archive": "Hide Archive",
-    "no_active": "No active to-dos."
+    "add": {
+      "placeholder": "Add a to-do..."
+    },
+    "description": {
+      "placeholder": "Add a description (optional)..."
+    },
+    "show": {
+      "archive": "Show Archive"
+    },
+    "hide": {
+      "archive": "Hide Archive"
+    },
+    "no": {
+      "active": "No active to-dos."
+    }
   },
-  "page_version": {
-    "failed_to_load": "Failed to load versions",
-    "approved_successfully": "Version approved successfully",
-    "failed_to_approve": "Failed to approve version",
-    "reverted_successfully": "Version reverted successfully",
-    "failed_to_revert": "Failed to revert version",
-    "rejected_successfully": "",
-    "failed_to_reject": ""
-  },
-  "label_image": {
-    "label_image": "Image"
+  "label": {
+    "image": "Image"
   },
   "editor": {
-    "template_placeholder": "",
-    "delete_page_title": "",
-    "delete_confirm_label": "",
-    "delete_button": ""
-  },
-  "toast_save-post_success_title": {
-    "toast_save-post_success_title": ""
-  },
-  "toast_save-post_error_title": {
-    "toast_save-post_error_title": ""
-  },
-  "toast_publish_success": {
-    "toast_publish_success": ""
-  },
-  "toast_publish_error": {
-    "toast_publish_error": ""
-  },
-  "toast_unpublish_success": {
-    "toast_unpublish_success": ""
-  },
-  "toast_unpublish_error": {
-    "toast_unpublish_error": ""
-  },
-  "toast_delete_success": {
-    "toast_delete_success": ""
-  },
-  "toast_delete_error": {
-    "toast_delete_error": ""
-  },
-  "email_common": {
-    "website": "Website",
-    "contact": "Contact",
-    "privacy": "Privacy"
-  },
-  "email_verification": {
-    "subject": "Verify your email address",
-    "title": "Verify your email",
-    "description": "Click the link below to verify your email address:",
-    "button": "Verify Email",
-    "copy_link": "Or copy this link:"
-  },
-  "email_password_reset": {
-    "subject": "Reset your password",
-    "title": "Reset your password",
-    "description": "Click the link below to reset your password:",
-    "button": "Reset Password",
-    "ignore": "If you didn't request this, you can ignore this email."
-  },
-  "email_signup_notification": {
-    "subject": "Sign-up attempt with your email",
-    "title": "Security Notice",
-    "description": "Someone tried to create an account using your email address.",
-    "sign_in_prefix": "If this was you, please",
-    "sign_in": "sign in",
-    "sign_in_suffix": "instead.",
-    "ignore": "If not, you can safely ignore this email."
-  },
-  "page_construction": {
-    "meta_title": "Under Construction",
-    "meta_description": "This website is under construction.",
-    "title": "THIS WEBSITE IS UNDER CONSTRUCTION",
-    "description": "If you have access, please enter the passphrase.",
-    "description_no_auth": "Please return at a later stage.",
-    "form_passphrase_label": "Passphrase",
-    "form_passphrase_placeholder": "Enter passphrase...",
-    "form_remember_me_label": "Remember me",
-    "form_sign_in_button": "Sign In"
-  },
-  "dev_components": {
-    "title": "Components",
-    "description": "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for Rimelight UI components."
-  },
-  "dev_index": {
-    "title": "Dashboard",
-    "description": "Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy.",
-    "card_user_interface_title": "User Interface",
-    "card_user_interface_description": "Interactive hybrid OKLCH palette scales, typography & fonts, icon library, intent contrast matrix, and component theming.",
-    "card_components_title": "Components",
-    "card_components_description": "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for 19+ Rimelight UI components.",
-    "card_localization_title": "Localization",
-    "card_localization_description": "Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n client/server sync.",
-    "card_security_title": "Security",
-    "card_security_description": "CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics.",
-    "card_seo_title": "SEO",
-    "card_seo_description": "Full @rimelight/seo audit — head generation, meta utilities, structured data (JSON-LD), OG images, sitemap, robots.txt, RSS, LLMs.txt, web manifest, security.txt, and API catalog."
-  },
-  "dev_layout": {
-    "brand": "Rimelight Developer Workspace"
-  },
-  "dev_localization": {
-    "title": "Localization",
-    "description": "Validating i18n URL rewriting, router params, and RLLocaleSelector reactive sync.",
-    "current_values": "Current Values",
-    "current_locale": "Current Locale",
-    "window_pathname": "Window Pathname",
-    "available_locales": "Available Locales",
-    "default_locale_title": "Default locale",
-    "default_locale_description": "Returns the fallback locale used when none is active or a translation is missing.",
-    "goto_locale": "Go to /{locale}",
-    "locale_asset_title": "Localized asset",
-    "locale_asset_description": "Resolves an asset for the active locale, falling back to the default locale.",
-    "t_basic_title": "Basic key",
-    "t_basic_description": "Resolves a translation key for the active locale.",
-    "t_interpolation_title": "Interpolation",
-    "t_interpolation_description": "Replaces placeholders in the string using the params object.",
-    "t_count_title": "Plural + number formatting",
-    "t_count_description": "A numeric count selects the plural branch and is locale-formatted.",
-    "t_count_branch_title": "Plural fallback",
-    "t_count_branch_description": "A plural with no matching branch falls back to the \"other\" form.",
-    "t_function_title": "Function value",
-    "t_function_description": "A translation value can be a function that receives the params object.",
-    "t_locale_title": "Explicit locale override",
-    "t_locale_description": "The third argument resolves a locale other than the active one.",
-    "t_raw_title": "t.raw()",
-    "t_raw_description": "Returns the underlying value instead of stringifying it.",
-    "t_raw_locale_title": "t.raw() locale override",
-    "t_raw_locale_description": "The third argument reads a raw value from another locale.",
-    "t_raw_fallback_title": "t.raw() fallback",
-    "t_raw_fallback_description": "Returns the fallback when the key does not exist.",
-    "t_array_title": "t.array()",
-    "t_array_description": "Returns a typed array from the dictionary.",
-    "t_array_fallback_title": "t.array() fallback",
-    "t_array_fallback_description": "Returns the fallback array when the key is missing or not an array.",
-    "t_plural_title": "t.plural()",
-    "t_plural_description": "Returns the CLDR plural category for a count.",
-    "t_localize_title": "t.localize()",
-    "t_localize_description": "Picks a value from an inline locale dictionary.",
-    "t_missing_title": "Missing key",
-    "t_missing_description": "Unknown keys resolve to the key itself.",
-    "sample_hello": "Hello from Rimelight!",
-    "sample_greeting": "Hello, {name}!",
-    "sample_items": {
-      "one": "{count} item in your cart",
-      "other": "{count} items in your cart"
+    "template": {
+      "placeholder": ""
     },
-    "sample_other_only": {
-      "other": "{count} results - fell back to other"
+    "delete": {
+      "page": {
+        "title": ""
+      },
+      "confirm": {
+        "label": ""
+      },
+      "button": ""
+    }
+  },
+  "toast": {
+    "save-post": {
+      "success": {
+        "title": ""
+      },
+      "error": {
+        "title": ""
+      }
     },
-    "sample_computed": "Computed value unavailable",
-    "sample_tags": ["TypeScript", "SolidJS", "Vite+"],
-    "sample_object": {
-      "name": "Rimelight Entertainment",
-      "founded": 2023,
-      "featured": true
+    "publish": {
+      "success": "",
+      "error": ""
+    },
+    "unpublish": {
+      "success": "",
+      "error": ""
+    },
+    "delete": {
+      "success": "",
+      "error": ""
+    }
+  },
+  "email": {
+    "common": {
+      "website": "Website",
+      "contact": "Contact",
+      "privacy": "Privacy"
+    },
+    "verification": {
+      "subject": "Verify your email address",
+      "title": "Verify your email",
+      "description": "Click the link below to verify your email address:",
+      "button": "Verify Email",
+      "copy": {
+        "link": "Or copy this link:"
+      }
+    },
+    "password": {
+      "reset": {
+        "subject": "Reset your password",
+        "title": "Reset your password",
+        "description": "Click the link below to reset your password:",
+        "button": "Reset Password",
+        "ignore": "If you didn't request this, you can ignore this email."
+      }
+    },
+    "signup": {
+      "notification": {
+        "subject": "Sign-up attempt with your email",
+        "title": "Security Notice",
+        "description": "Someone tried to create an account using your email address.",
+        "sign": {
+          "in": {
+            "suffix": "instead."
+          }
+        },
+        "ignore": "If not, you can safely ignore this email."
+      }
+    }
+  },
+  "dev": {
+    "components": {
+      "title": "Components",
+      "description": "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for Rimelight UI components."
+    },
+    "index": {
+      "title": "Dashboard",
+      "description": "Standardized, isolated test environment and feature auditing suite for Rimelight. Zero layout pollution to ensure uncompromised test accuracy.",
+      "card": {
+        "user": {
+          "interface": {
+            "title": "User Interface",
+            "description": "Interactive hybrid OKLCH palette scales, typography & fonts, icon library, intent contrast matrix, and component theming."
+          }
+        },
+        "components": {
+          "title": "Components",
+          "description": "Interactive sandboxes, edge-case test scenarios, WCAG checklists, and prop spec sheets for 19+ Rimelight UI components."
+        },
+        "localization": {
+          "title": "Localization",
+          "description": "Barebones locale switcher test, URL rewriting diagnostics, and verification of @rimelight/i18n client/server sync."
+        },
+        "security": {
+          "title": "Security",
+          "description": "CSP header generation, nonce & Trusted Types head injection, rate-limit config inspection, and Turnstile/construction runtime diagnostics."
+        },
+        "seo": {
+          "title": "SEO",
+          "description": "Full @rimelight/seo audit — head generation, meta utilities, structured data (JSON-LD), OG images, sitemap, robots.txt, RSS, LLMs.txt, web manifest, security.txt, and API catalog."
+        }
+      }
+    },
+    "layout": {
+      "brand": "Rimelight Developer Workspace"
+    },
+    "localization": {
+      "title": "Localization",
+      "description": "Validating i18n URL rewriting, router params, and RLLocaleSelector reactive sync.",
+      "current": {
+        "values": "Current Values",
+        "locale": "Current Locale"
+      },
+      "window": {
+        "pathname": "Window Pathname"
+      },
+      "available": {
+        "locales": "Available Locales"
+      },
+      "default": {
+        "locale": {
+          "title": "Default locale",
+          "description": "Returns the fallback locale used when none is active or a translation is missing."
+        }
+      },
+      "goto": {
+        "locale": "Go to /{locale}"
+      },
+      "locale": {
+        "asset": {
+          "title": "Localized asset",
+          "description": "Resolves an asset for the active locale, falling back to the default locale."
+        }
+      },
+      "t": {
+        "basic": {
+          "title": "Basic key",
+          "description": "Resolves a translation key for the active locale."
+        },
+        "interpolation": {
+          "title": "Interpolation",
+          "description": "Replaces placeholders in the string using the params object."
+        },
+        "count": {
+          "title": "Plural + number formatting",
+          "description": "A numeric count selects the plural branch and is locale-formatted.",
+          "branch": {
+            "title": "Plural fallback",
+            "description": "A plural with no matching branch falls back to the \"other\" form."
+          }
+        },
+        "function": {
+          "title": "Function value",
+          "description": "A translation value can be a function that receives the params object."
+        },
+        "locale": {
+          "title": "Explicit locale override",
+          "description": "The third argument resolves a locale other than the active one."
+        },
+        "raw": {
+          "title": "t.raw()",
+          "description": "Returns the underlying value instead of stringifying it.",
+          "locale": {
+            "title": "t.raw() locale override",
+            "description": "The third argument reads a raw value from another locale."
+          },
+          "fallback": {
+            "title": "t.raw() fallback",
+            "description": "Returns the fallback when the key does not exist."
+          }
+        },
+        "array": {
+          "title": "t.array()",
+          "description": "Returns a typed array from the dictionary.",
+          "fallback": {
+            "title": "t.array() fallback",
+            "description": "Returns the fallback array when the key is missing or not an array."
+          }
+        },
+        "plural": {
+          "title": "t.plural()",
+          "description": "Returns the CLDR plural category for a count."
+        },
+        "localize": {
+          "title": "t.localize()",
+          "description": "Picks a value from an inline locale dictionary."
+        },
+        "missing": {
+          "title": "Missing key",
+          "description": "Unknown keys resolve to the key itself."
+        }
+      },
+      "sample": {
+        "hello": "Hello from Rimelight!",
+        "greeting": "Hello, {name}!",
+        "items": {
+          "one": "{count} item in your cart",
+          "other": "{count} items in your cart"
+        },
+        "other": {
+          "only": {
+            "other": "{count} results - fell back to other"
+          }
+        },
+        "computed": "Computed value unavailable",
+        "tags": ["TypeScript", "SolidJS", "Vite+"],
+        "object": {
+          "name": "Rimelight Entertainment",
+          "founded": 2023,
+          "featured": true
+        }
+      }
     }
   }
 }

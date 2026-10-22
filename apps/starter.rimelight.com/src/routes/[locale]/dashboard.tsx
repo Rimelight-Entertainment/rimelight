@@ -15,43 +15,43 @@ import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { t } from "@rimelight/i18n";
 
 const navItems = [
-  { icon: "i-lucide-layout-dashboard", label: () => t("dashboard.nav_overview"), id: "overview" },
-  { icon: "i-lucide-users", label: () => t("dashboard.nav_users"), id: "users" },
-  { icon: "i-lucide-shopping-cart", label: () => t("dashboard.nav_orders"), id: "orders" },
-  { icon: "i-lucide-package", label: () => t("dashboard.nav_products"), id: "products" },
-  { icon: "i-lucide-bar-chart-3", label: () => t("dashboard.nav_analytics"), id: "analytics" },
+  { icon: "i-lucide-layout-dashboard", label: () => t("dashboard.nav.overview"), id: "overview" },
+  { icon: "i-lucide-users", label: () => t("dashboard.nav.users"), id: "users" },
+  { icon: "i-lucide-shopping-cart", label: () => t("dashboard.nav.orders"), id: "orders" },
+  { icon: "i-lucide-package", label: () => t("dashboard.nav.products"), id: "products" },
+  { icon: "i-lucide-bar-chart-3", label: () => t("dashboard.nav.analytics"), id: "analytics" },
 ];
 
 const settingsNavItem = {
   icon: "i-lucide-settings",
-  label: () => t("dashboard.nav_settings"),
+  label: () => t("dashboard.nav.settings"),
   id: "settings",
 };
 
 const overviewStats = [
   {
-    label: () => t("dashboard.overview_stats_total_revenue"),
+    label: () => t("dashboard.overview.stats.total.revenue"),
     value: "$45,231",
     change: "+20.1%",
     icon: "i-lucide-circle-dollar-sign",
     changeColor: "text-success",
   },
   {
-    label: () => t("dashboard.overview_stats_active_users"),
+    label: () => t("dashboard.overview.stats.active.users"),
     value: "+2,350",
     change: "+18%",
     icon: "i-lucide-users",
     changeColor: "text-success",
   },
   {
-    label: () => t("dashboard.overview_stats_conversion_rate"),
+    label: () => t("dashboard.overview.stats.conversion.rate"),
     value: "+12.3%",
     change: "+2.1%",
     icon: "i-lucide-trending-up",
     changeColor: "text-success",
   },
   {
-    label: () => t("dashboard.overview_stats_avg_order"),
+    label: () => t("dashboard.overview.stats.avg.order"),
     value: "$48.00",
     change: "+$5.00",
     icon: "i-lucide-shopping-bag",
@@ -241,7 +241,7 @@ export const DashboardPage: Component = () => {
   const [activeSection, setActiveSection] = createSignal("overview");
 
   const navTitles: Record<string, () => string> = {
-    overview: () => t("dashboard.navbar_title_overview"),
+    overview: () => t("dashboard.navbar.title.overview"),
     users: () => "User Management",
     orders: () => "Order History",
     products: () => "Product Catalog",
@@ -253,8 +253,8 @@ export const DashboardPage: Component = () => {
 
   return (
     <DashboardLayout
-      title={t("dashboard.meta_title")}
-      description={t("dashboard.meta_description")}
+      title={t("dashboard.meta.title")}
+      description={t("dashboard.meta.description")}
     >
       <RLDashboardGroup>
         <RLDashboardSidebar
@@ -267,7 +267,7 @@ export const DashboardPage: Component = () => {
                 class="size-6 text-primary shrink-0 group-data-[collapsed=true]:hidden"
               />
               <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200 group-data-[collapsed=true]:hidden">
-                {t("dashboard.navbar_app_name")}
+                {t("dashboard.navbar.app.name")}
               </span>
               <RLDashboardSidebarCollapse
                 side="left"
@@ -352,12 +352,12 @@ export const DashboardPage: Component = () => {
                     size="sm"
                     leadingIcon="i-lucide-calendar"
                   >
-                    {t("dashboard.toolbar_last_30_days")}
+                    {t("dashboard.toolbar.last.30.days")}
                   </RLButton>
                   <RLSelect defaultValue="all">
-                    <option value="all">{t("dashboard.toolbar_all_time")}</option>
-                    <option value="month">{t("dashboard.toolbar_this_month")}</option>
-                    <option value="week">{t("dashboard.toolbar_this_week")}</option>
+                    <option value="all">{t("dashboard.toolbar.all.time")}</option>
+                    <option value="month">{t("dashboard.toolbar.this.month")}</option>
+                    <option value="week">{t("dashboard.toolbar.this.week")}</option>
                   </RLSelect>
                 </>
               }
@@ -369,10 +369,10 @@ export const DashboardPage: Component = () => {
                     size="sm"
                     leadingIcon="i-lucide-download"
                   >
-                    {t("dashboard.toolbar_export_report")}
+                    {t("dashboard.toolbar.export.report")}
                   </RLButton>
                   <RLButton variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-plus">
-                    {t("dashboard.toolbar_add_item")}
+                    {t("dashboard.toolbar.add.item")}
                   </RLButton>
                 </>
               }
@@ -733,16 +733,16 @@ export const DashboardPage: Component = () => {
                     <div class="flex items-center gap-3 px-4 py-3 bg-muted/30 border-b border-default rounded-t-lg">
                       <RLIcon name="i-lucide-settings" class="size-5 text-muted" />
                       <h4 class="font-medium text-highlighted">
-                        {t("dashboard.settings_general")}
+                        {t("dashboard.settings.general")}
                       </h4>
                     </div>
                     <div class="p-4">
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <For
                           each={[
-                            t("dashboard.settings_site_name"),
-                            t("dashboard.settings_site_description"),
-                            t("dashboard.settings_time_zone"),
+                            t("dashboard.settings.site.name"),
+                            t("dashboard.settings.site.description"),
+                            t("dashboard.settings.time.zone"),
                           ]}
                         >
                           {(item) => (

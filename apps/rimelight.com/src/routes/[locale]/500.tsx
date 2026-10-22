@@ -10,20 +10,19 @@ interface Props {
 export const Error500Page: Component<Props> = (props) => {
   return (
     <AppLayout
-      title={t("page_error.error_server_title") || "Internal Server Error"}
+      title={t("page.error.server.title") || "Internal Server Error"}
       description={
-        t("page_error.error_server_description") || "An unexpected error occurred on the server."
+        t("page.error.server.description") || "An unexpected error occurred on the server."
       }
       noindex={true}
     >
       <AppError
         code={500}
-        title={t("page_error.error_server_title") || "Internal Server Error"}
+        title={t("page.error.server.title") || "Internal Server Error"}
         description={
           props.error instanceof Error
             ? props.error.message
-            : t("page_error.error_unknown_description") ||
-              "An unexpected error occurred on the server."
+            : t("page.error.unknown.description") || "An unexpected error occurred on the server."
         }
         actions={[
           {

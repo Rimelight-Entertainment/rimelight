@@ -14,7 +14,7 @@ export interface DevLayoutProps {
 export const DevLayout: Component<DevLayoutProps> = (props) => {
   return (
     <AppLayout
-      title={`${props.title ?? t("dev_layout.brand")} | Dev`}
+      title={`${props.title ?? t("dev.layout.brand")} | Dev`}
       description={props.description}
       noindex={true}
     >
@@ -29,9 +29,9 @@ export const DevLayout: Component<DevLayoutProps> = (props) => {
               variant="logomark"
               mode="color"
               class="h-8 w-auto"
-              alt={t("dev_layout.brand")}
+              alt={t("dev.layout.brand")}
             />
-            <span class="truncate font-bold text-highlighted">{t("dev_layout.brand")}</span>
+            <span class="truncate font-bold text-highlighted">{t("dev.layout.brand")}</span>
             <Show when={props.title}>
               <span class="text-toned">/</span>
               <span class="truncate text-toned">{props.title}</span>

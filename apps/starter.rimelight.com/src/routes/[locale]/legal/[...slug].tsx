@@ -47,7 +47,7 @@ export const LegalSlugPage: Component = () => {
                   </time>
                   <Show when={pageData()!.updatedAt}>
                     <div class="last-updated-on text-xs text-neutral-500 mt-1">
-                      {t("legal.lastUpdatedOn")}{" "}
+                      {t("legal.last-updated-on")}{" "}
                       <time>
                         {new Date(pageData()!.updatedAt!).toLocaleDateString(activeLocale())}
                       </time>
