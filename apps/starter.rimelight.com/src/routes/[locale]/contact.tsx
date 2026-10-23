@@ -3,7 +3,7 @@ import AppLayout from "#layouts/AppLayout";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import Turnstile from "#components/Turnstile";
+import Turnstile from "#components/app/Turnstile";
 import { t } from "@rimelight/i18n";
 import { api } from "#api/client";
 
