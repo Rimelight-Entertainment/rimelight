@@ -4,11 +4,12 @@ import { createSeoHead } from "@rimelight/seo/head";
 import { RLMain } from "@rimelight/ui";
 
 export interface BlankLayoutProps {
-  title?: string | undefined;
-  description?: string | undefined;
-  noindex?: boolean | undefined;
-  favicon?: string | undefined;
-  children?: JSX.Element | undefined;
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  id?: string;
+  class?: string;
+  children?: JSX.Element;
 }
 
 export const BlankLayout: Component<BlankLayoutProps> = (props) => {
@@ -21,11 +22,9 @@ export const BlankLayout: Component<BlankLayoutProps> = (props) => {
   );
 
   return (
-    <>
-      <RLMain id="main-content" class="min-h-screen">
-        {props.children}
-      </RLMain>
-    </>
+    <RLMain id={props.id ?? "main-content"} class={props.class ?? "min-h-screen"}>
+      {props.children}
+    </RLMain>
   );
 };
 

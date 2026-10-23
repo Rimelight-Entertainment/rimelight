@@ -1,12 +1,14 @@
-import { type Component } from "solid-js";
+import type { Component } from "solid-js";
 import { type JSX, useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
-import { RLMain } from "@rimelight/ui/components/main/RLMain.tsx";
+import { RLMain } from "@rimelight/ui";
 
 export interface BlankLayoutProps {
-  title?: string | undefined;
-  description?: string | undefined;
-  noindex?: boolean | undefined;
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  id?: string;
+  class?: string;
   children?: JSX.Element;
 }
 
@@ -18,10 +20,11 @@ export const BlankLayout: Component<BlankLayoutProps> = (props) => {
       noindex: props.noindex,
     }),
   );
+
   return (
-    <>
-      <RLMain>{props.children}</RLMain>
-    </>
+    <RLMain id={props.id} class={props.class}>
+      {props.children}
+    </RLMain>
   );
 };
 
