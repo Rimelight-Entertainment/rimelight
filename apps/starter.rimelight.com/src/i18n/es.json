@@ -1,5 +1,12 @@
 {
   "app": {
+    "banner": {
+      "content": "Nuevo: Rimelight v2 ya está disponible",
+      "actions": {
+        "learn-more": "Más información",
+        "whats-new": "Novedades"
+      }
+    },
     "header": {
       "links": {
         "tests": {

@@ -6,7 +6,7 @@ export const RLMain: Component<RLMainProps> = (props) => {
   const { Tag, classes, rest } = RLMainTheme.setup(props, { as: "main" });
 
   return (
-    <Tag class={classes().root} data-slot="root" {...rest}>
+    <Tag id={props["id"] ?? "main-content"} class={classes().root} data-slot="root" {...rest}>
       {props.children}
     </Tag>
   );

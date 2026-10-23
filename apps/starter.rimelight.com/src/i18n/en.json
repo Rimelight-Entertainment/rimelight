@@ -1,5 +1,12 @@
 {
   "app": {
+    "banner": {
+      "content": "New: Rimelight v2 is out",
+      "actions": {
+        "learn-more": "Learn more",
+        "whats-new": "What's new"
+      }
+    },
     "footer": {
       "links": {
         "resources": {
@@ -50,9 +57,6 @@
         },
         "docs": {
           "label": "Docs"
-        },
-        "dashboard": {
-          "label": "Dashboard"
         }
       },
       "link-groups": {
@@ -126,145 +130,6 @@
       "deny": {
         "all": "Deny all"
       }
-    }
-  },
-  "dashboard": {
-    "meta": {
-      "title": "Dashboard",
-      "description": "Application Dashboard Overview and Management"
-    },
-    "nav": {
-      "overview": "Overview",
-      "users": "Users",
-      "orders": "Orders",
-      "products": "Products",
-      "analytics": "Analytics",
-      "settings": "Settings"
-    },
-    "navbar": {
-      "title": {
-        "overview": "Dashboard Analytics",
-        "users": "User Management",
-        "orders": "Order History",
-        "products": "Product Catalog",
-        "analytics": "Analytics & Reports",
-        "settings": "Application Settings"
-      },
-      "app": {
-        "name": "Your App"
-      }
-    },
-    "toolbar": {
-      "last": {
-        "30": {
-          "days": "Last 30 days"
-        }
-      },
-      "all": {
-        "time": "All Time"
-      },
-      "this": {
-        "month": "This Month",
-        "week": "This Week"
-      },
-      "export": {
-        "report": "Export Report"
-      },
-      "add": {
-        "item": "Add New Item"
-      }
-    },
-    "overview": {
-      "stats": {
-        "total": {
-          "revenue": "Total Revenue"
-        },
-        "active": {
-          "users": "Active Users"
-        },
-        "conversion": {
-          "rate": "Conversion Rate"
-        },
-        "avg": {
-          "order": "Avg. Order"
-        }
-      },
-      "recent": {
-        "orders": {
-          "title": "Recent Orders"
-        },
-        "activity": {
-          "title": "Recent Activity Log"
-        }
-      },
-      "team": {
-        "messages": {
-          "title": "Team Messages"
-        }
-      },
-      "revenue": {
-        "analytics": {
-          "title": "Revenue Analytics"
-        }
-      }
-    },
-    "users": {
-      "management": {
-        "title": "Users Management"
-      },
-      "add": {
-        "user": "Add User"
-      }
-    },
-    "orders": {
-      "history": {
-        "title": "Order History"
-      }
-    },
-    "products": {
-      "catalog": {
-        "title": "Product Catalog"
-      },
-      "add": {
-        "product": "Add Product"
-      }
-    },
-    "analytics": {
-      "revenue": {
-        "metrics": "Revenue Metrics"
-      },
-      "performance": {
-        "indicators": "Performance Indicators"
-      },
-      "user": {
-        "analytics": "User Analytics"
-      }
-    },
-    "settings": {
-      "app": {
-        "settings": "Application Settings"
-      },
-      "general": "General Settings",
-      "site": {
-        "name": "Site Name",
-        "description": "Site Description"
-      },
-      "time": {
-        "zone": "Time Zone"
-      },
-      "security": "Security",
-      "password": {
-        "policy": "Password Policy"
-      },
-      "two": {
-        "factor": "Two-Factor Auth"
-      },
-      "sessions": "Sessions",
-      "notifications": "Notifications",
-      "email": "Email",
-      "push": "Push",
-      "sms": "SMS",
-      "configure": "Configure"
     }
   },
   "email": {

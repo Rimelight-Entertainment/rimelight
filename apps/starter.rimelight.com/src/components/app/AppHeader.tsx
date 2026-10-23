@@ -1,4 +1,4 @@
-import { type Component, For, Show } from "solid-js";
+import { type Component, For } from "solid-js";
 import {
   RLHeader,
   RLLogo,
@@ -8,18 +8,14 @@ import {
   RLSlideover,
   RLSearch,
   RLImage,
-  RLAvatar,
-  RLDropdownMenu,
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
 import { useShortcuts } from "@rimelight/ui/shortcuts";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
-import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.types.ts";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export interface AppHeaderProps {
-  session?: any;
   stackIndex?: number;
 }
 
@@ -108,34 +104,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       to: getLocaleUrl("/docs"),
     },
     {
-      label: t("app.header.left-links.dashboard.label"),
-      to: getLocaleUrl("/dashboard"),
-    },
-    {
       label: "Contact",
       to: getLocaleUrl("/contact"),
     },
   ];
 
   const actions = (): RLButtonProps[] => [];
-
-  const userDropdownItems = (): DropdownMenuItem[] =>
-    props.session
-      ? [
-          {
-            type: "label",
-            label:
-              props.session?.tag && props.session?.tag !== "0000"
-                ? `${props.session?.name} #${props.session?.tag}`
-                : `${props.session?.name || props.session?.email || "User"}`,
-          },
-          {
-            label: "Dashboard",
-            icon: "i-lucide-layout-dashboard",
-            to: getLocaleUrl("/dashboard"),
-          },
-        ]
-      : [];
 
   return (
     <RLHeader
@@ -262,93 +236,30 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             onClick={() => useShortcuts().open()}
           />
           <div class="hidden md:flex flex-row gap-md">
-            <Show
-              when={props.session}
-              fallback={
-                <For each={actions()}>{(buttonProps) => <RLButton {...buttonProps} />}</For>
-              }
-            >
-              <RLDropdownMenu
-                items={userDropdownItems()}
-                content={{ align: "end", side: "bottom" }}
-                class="text-white"
-                trigger={
-                  <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
-                    <div class="relative">
-                      <RLAvatar
-                        src={props.session?.avatar || props.session?.image}
-                        alt={props.session?.name}
-                        size="sm"
-                      />
-                      <span
-                        class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                          props.session?.availability === "busy"
-                            ? "bg-error-500"
-                            : props.session?.availability === "invisible"
-                              ? "bg-neutral-500"
-                              : "bg-success-500"
-                        }`}
-                      />
-                    </div>
-                    <span class="hidden md:inline text-sm font-medium">{props.session?.name}</span>
-                  </div>
-                }
-              />
-            </Show>
+            <For each={actions()}>{(buttonProps) => <RLButton {...buttonProps} />}</For>
           </div>
 
           <div class="block md:hidden">
-            <Show
-              when={props.session}
-              fallback={
-                <RLSlideover
-                  side="right"
-                  title="Actions"
-                  trigger={
-                    <RLButton
-                      color="neutral"
-                      variant="ghost"
-                      rounded={true}
-                      leadingIcon="i-lucide-ellipsis-vertical"
-                      class="!text-white"
-                      aria-label="Open Actions"
-                    />
-                  }
-                >
-                  <div class="flex flex-col gap-md">
-                    <For each={actions()}>
-                      {(buttonProps) => <RLButton {...buttonProps} block={true} />}
-                    </For>
-                  </div>
-                </RLSlideover>
+            <RLSlideover
+              side="right"
+              title="Actions"
+              trigger={
+                <RLButton
+                  color="neutral"
+                  variant="ghost"
+                  rounded={true}
+                  leadingIcon="i-lucide-ellipsis-vertical"
+                  class="!text-white"
+                  aria-label="Open Actions"
+                />
               }
             >
-              <RLDropdownMenu
-                items={userDropdownItems()}
-                content={{ align: "end", side: "bottom" }}
-                class="text-white"
-                trigger={
-                  <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
-                    <div class="relative">
-                      <RLAvatar
-                        src={props.session?.avatar || props.session?.image}
-                        alt={props.session?.name}
-                        size="sm"
-                      />
-                      <span
-                        class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                          props.session?.availability === "busy"
-                            ? "bg-error-500"
-                            : props.session?.availability === "invisible"
-                              ? "bg-neutral-500"
-                              : "bg-success-500"
-                        }`}
-                      />
-                    </div>
-                  </div>
-                }
-              />
-            </Show>
+              <div class="flex flex-col gap-md">
+                <For each={actions()}>
+                  {(buttonProps) => <RLButton {...buttonProps} block={true} />}
+                </For>
+              </div>
+            </RLSlideover>
           </div>
         </div>
       }

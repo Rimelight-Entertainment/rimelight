@@ -1,5 +1,12 @@
 {
   "app": {
+    "banner": {
+      "content": "Novo: O Rimelight v2 foi lançado",
+      "actions": {
+        "learn-more": "Saiba mais",
+        "whats-new": "Novidades"
+      }
+    },
     "footer": {
       "links": {
         "resources": {
@@ -50,9 +57,6 @@
         },
         "docs": {
           "label": "Documentação"
-        },
-        "dashboard": {
-          "label": "Painel"
         }
       },
       "link-groups": {
@@ -126,145 +130,6 @@
       "deny": {
         "all": "Recusar todos"
       }
-    }
-  },
-  "dashboard": {
-    "meta": {
-      "title": "Painel",
-      "description": "Visão Geral e Gerenciamento do Painel da Aplicação"
-    },
-    "nav": {
-      "overview": "Visão Geral",
-      "users": "Usuários",
-      "orders": "Pedidos",
-      "products": "Produtos",
-      "analytics": "Métricas",
-      "settings": "Configurações"
-    },
-    "navbar": {
-      "title": {
-        "overview": "Métricas do Painel",
-        "users": "Gerenciamento de Usuários",
-        "orders": "Histórico de Pedidos",
-        "products": "Catálogo de Produtos",
-        "analytics": "Métricas e Relatórios",
-        "settings": "Configurações da Aplicação"
-      },
-      "app": {
-        "name": "Seu Aplicativo"
-      }
-    },
-    "toolbar": {
-      "last": {
-        "30": {
-          "days": "Últimos 30 dias"
-        }
-      },
-      "all": {
-        "time": "Todo o período"
-      },
-      "this": {
-        "month": "Este Mês",
-        "week": "Esta Semana"
-      },
-      "export": {
-        "report": "Exportar Relatório"
-      },
-      "add": {
-        "item": "Adicionar Novo Item"
-      }
-    },
-    "overview": {
-      "stats": {
-        "total": {
-          "revenue": "Receita Total"
-        },
-        "active": {
-          "users": "Usuários Ativos"
-        },
-        "conversion": {
-          "rate": "Taxa de Conversão"
-        },
-        "avg": {
-          "order": "Pedido Médio"
-        }
-      },
-      "recent": {
-        "orders": {
-          "title": "Pedidos Recentes"
-        },
-        "activity": {
-          "title": "Registro de Atividades Recentes"
-        }
-      },
-      "team": {
-        "messages": {
-          "title": "Mensagens da Equipe"
-        }
-      },
-      "revenue": {
-        "analytics": {
-          "title": "Métricas de Receita"
-        }
-      }
-    },
-    "users": {
-      "management": {
-        "title": "Gerenciamento de Usuários"
-      },
-      "add": {
-        "user": "Adicionar Usuário"
-      }
-    },
-    "orders": {
-      "history": {
-        "title": "Histórico de Pedidos"
-      }
-    },
-    "products": {
-      "catalog": {
-        "title": "Catálogo de Produtos"
-      },
-      "add": {
-        "product": "Adicionar Produto"
-      }
-    },
-    "analytics": {
-      "revenue": {
-        "metrics": "Métricas de Receita"
-      },
-      "performance": {
-        "indicators": "Indicadores de Desempenho"
-      },
-      "user": {
-        "analytics": "Métricas de Usuários"
-      }
-    },
-    "settings": {
-      "app": {
-        "settings": "Configurações da Aplicação"
-      },
-      "general": "Configurações Gerais",
-      "site": {
-        "name": "Nome do Site",
-        "description": "Descrição do Site"
-      },
-      "time": {
-        "zone": "Fuso Horário"
-      },
-      "security": "Segurança",
-      "password": {
-        "policy": "Política de Senhas"
-      },
-      "two": {
-        "factor": "Autenticação em Dois Fatores"
-      },
-      "sessions": "Sessões",
-      "notifications": "Notificações",
-      "email": "E-mail",
-      "push": "Push",
-      "sms": "SMS",
-      "configure": "Configurar"
     }
   },
   "email": {

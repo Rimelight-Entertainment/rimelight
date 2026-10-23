@@ -8,11 +8,11 @@ import {
   RLMain,
   RLScrollToTop,
   RLShortcuts,
-  RLLayoutGrid,
   RLToaster,
+  RLRouteAnnouncer,
+  RLLayoutGrid,
   RLToast,
   RLButton,
-  RLRouteAnnouncer,
 } from "@rimelight/ui";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
@@ -20,7 +20,6 @@ export interface AppLayoutProps {
   title?: string | undefined;
   description?: string | undefined;
   children?: JSX.Element | undefined;
-  session?: any;
 }
 
 export const AppLayout: Component<AppLayoutProps> = (props) => {
@@ -45,13 +44,6 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
   return (
     <>
       <div class="isolate flex flex-col min-h-screen">
-        <a
-          href="#main-content"
-          class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-neutral-50 focus:text-highlighted"
-        >
-          {t("app.layout.skip-to-content")}
-        </a>
-
         <RLBanner
           id="v2-announcement"
           contain={false}
@@ -59,26 +51,32 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
           stackIndex={0}
           class="bg-primary text-neutral-50 font-medium"
           actions={[
-            { label: "Learn more", href: "/docs", variant: "solid" },
-            { label: "What's new", href: "/changelog", variant: "outline" },
+            {
+              label: t("app.banner.actions.learn-more") || "Learn more",
+              href: getLocaleUrl("/docs"),
+              variant: "solid",
+            },
+            {
+              label: t("app.banner.actions.whats-new") || "What's new",
+              href: getLocaleUrl("/changelog"),
+              variant: "outline",
+            },
           ]}
         >
-          New: Rimelight v2 is out
+          {t("app.banner.content") || "New: Rimelight v2 is out"}
         </RLBanner>
 
-        <AppHeader stackIndex={0} session={props.session} />
+        <AppHeader stackIndex={1} />
 
-        <RLMain id="main-content" class="flex-1">
-          {props.children}
-        </RLMain>
+        <RLMain>{props.children}</RLMain>
 
         <AppFooter />
 
-        <RLScrollToTop showProgress={true} />
+        <RLScrollToTop />
         <RLShortcuts />
-        <RLLayoutGrid />
         <RLToaster />
         <RLRouteAnnouncer />
+        <RLLayoutGrid />
 
         <Show when={!hasConsent()}>
           <div

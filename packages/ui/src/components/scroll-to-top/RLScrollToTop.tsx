@@ -1,8 +1,8 @@
 import type { Component } from "solid-js";
+import { createSignal, onSettled } from "solid-js";
 import type { RLScrollToTopProps } from "./scroll-to-top.types";
 import { RLScrollToTopTheme } from "./scroll-to-top.theme";
-import { createSignal, onSettled } from "solid-js";
-import { trackScroll, scrollToTop } from "./scroll";
+import { scrollToTop, trackScroll } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";
 
 const OMIT_KEYS = ["progressWidth", "duration", "threshold", "showProgress", "theme"] as const;
@@ -14,14 +14,14 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
   const [scrollPercentage, setScrollPercentage] = createSignal(0);
 
   onSettled(() => {
-    const unsubscribe = trackScroll({ threshold: props.threshold ?? 200 }, (state) => {
+    return trackScroll({ threshold: props.threshold ?? 200 }, (state) => {
       setIsVisible(state.isVisible);
       setScrollPercentage(state.scrollPercentage);
     });
-    return unsubscribe;
   });
 
   const color = () => props.color ?? "primary";
+  const showProgress = () => props.showProgress ?? true;
   const progressWidth = () => props.progressWidth ?? 6;
   const gaugeBorderWidth = () => progressWidth() * 0.5;
 
@@ -55,7 +55,7 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
       >
         <div class={`relative size-full ${classes().progressBase}`}>
           <div class="absolute inset-0 rounded-full border-solid" style={trackStyle()} />
-          {props.showProgress ? (
+          {showProgress() ? (
             <div
               class="absolute inset-0 rounded-full"
               data-gauge-progress

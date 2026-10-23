@@ -7,11 +7,11 @@ import {
   RLMain,
   RLScrollToTop,
   RLShortcuts,
-  RLLayoutGrid,
   RLToaster,
+  RLRouteAnnouncer,
+  RLLayoutGrid,
   RLToast,
   RLButton,
-  RLRouteAnnouncer,
 } from "@rimelight/ui";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
@@ -20,7 +20,6 @@ export interface AppLayoutProps {
   description?: string | undefined;
   noindex?: boolean | undefined;
   is404?: boolean | undefined;
-  minimal?: boolean | undefined;
   robots?: string | undefined;
   ogImageSrc?: string | undefined;
   ogImageAlt?: string | undefined;
@@ -63,27 +62,14 @@ export const AppLayout: Component<AppLayoutProps> = (props) => {
   return (
     <>
       <div class="isolate flex flex-col min-h-screen">
-        <a
-          href="#main-content"
-          class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-neutral-50 focus:text-highlighted"
-        >
-          {t("app.layout.skip-to-content") || "Skip to content"}
-        </a>
-
-        {!props.minimal && <AppHeader stackIndex={0} session={props.session} />}
-
-        <RLMain id="main-content" class="flex-1">
-          {props.children}
-        </RLMain>
-
+        <AppHeader stackIndex={0} session={props.session} />
+        <RLMain>{props.children}</RLMain>
         <AppFooter />
-
-        <RLScrollToTop showProgress={true} />
+        <RLScrollToTop />
         <RLShortcuts />
-        <RLLayoutGrid />
         <RLToaster />
         <RLRouteAnnouncer />
-
+        <RLLayoutGrid />
         <Show when={!hasConsent()}>
           <div
             id="cookie-notice-container"
