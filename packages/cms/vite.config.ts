@@ -13,6 +13,8 @@ export default defineConfig({
       "src/storage/index.ts",
       "src/middleware/index.ts",
       "src/server/index.ts",
+      "src/migrator/index.ts",
+      "src/migrator/cli.ts",
     ],
     deps: {
       neverBundle: [/^virtual:/],

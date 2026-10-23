@@ -6,4 +6,5 @@ export interface CmsConfig {
   db?: string | undefined;
   storage?: StorageConfig | undefined;
   auth?: AuthAdapter | string | undefined;
+  autoMigrate?: boolean | undefined;
 }

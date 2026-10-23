@@ -78,3 +78,6 @@ export * from "./storage/index";
 
 // Content & Search Routers
 export * from "./server/index";
+
+// Self-Migrator Runner
+export * from "./migrator/index";

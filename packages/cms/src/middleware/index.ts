@@ -6,6 +6,7 @@ import {
   type CmsRouterOptions,
   type CmsRouterType,
 } from "../server/router";
+import { migrateCms } from "../migrator";
 
 export interface CmsMiddlewareOptions extends CmsRouterOptions {
   /**
@@ -22,6 +23,11 @@ export interface CmsMiddlewareOptions extends CmsRouterOptions {
    * Optional custom CmsRouter instance.
    */
   router?: CmsRouterType | undefined;
+  /**
+   * Whether to automatically run pending CMS migrations on worker/server initialization.
+   * Defaults to true in development or when explicitly enabled.
+   */
+  autoMigrate?: boolean | undefined;
 }
 
 /**
@@ -50,6 +56,7 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
     "/search",
   ];
   let activeRouter: CmsRouterType | null = options.router ?? null;
+  let migrationRunPromise: Promise<any> | null = null;
 
   return async (c, next) => {
     const { pathname } = new URL(c.req.url);
@@ -58,8 +65,20 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
     );
 
     if (matchesPrefix) {
+      const db = options.db ?? virtualDb ?? (c.env as any)?.DB;
+
+      // Auto-migrate if enabled (or default in dev / first-request)
+      const shouldAutoMigrate = options.autoMigrate ?? (virtualConfig.autoMigrate || false);
+      if (shouldAutoMigrate && db && !migrationRunPromise) {
+        migrationRunPromise = migrateCms(db).catch((err) => {
+          console.error("[@rimelight/cms autoMigrate Error]:", err);
+        });
+      }
+      if (migrationRunPromise) {
+        await migrationRunPromise;
+      }
+
       if (!activeRouter) {
-        const db = options.db ?? virtualDb ?? (c.env as any)?.DB;
         activeRouter = createCmsRouter({
           ...options,
           prefix: primaryPrefix,

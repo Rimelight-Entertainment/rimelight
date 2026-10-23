@@ -16,12 +16,7 @@ const FILE_ROUTES_VIRTUAL_ID = "virtual:file-routes";
  */
 function buildCmsRouteEntries(basePath: string): string {
   const base = basePath.replace(/\/$/, "");
-  const paths = [
-    `${base}/:locale/cms/*`,
-    `${base}/:locale/cms`,
-    `${base}/cms/*`,
-    `${base}/cms`,
-  ];
+  const paths = [`${base}/:locale/cms/*`, `${base}/:locale/cms`, `${base}/cms/*`, `${base}/cms`];
 
   return paths
     .map(
