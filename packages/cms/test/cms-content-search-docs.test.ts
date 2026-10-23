@@ -248,25 +248,26 @@ describe("CMS Content Router, Search Router & Dynamic Docs Config", () => {
       }),
     };
 
+    const env = { DB: mockDb };
     const app = new Hono();
-    app.use(cms({ db: mockDb }));
+    app.use(cms());
 
     // Custom app API without any CMS routes mounted
     const api = new Hono().get("/hello", (c) => c.text("world"));
     app.route("/api", api);
 
     // Test /api/content endpoint via middleware
-    const resContent = await app.request("http://localhost/api/content/pages?type=doc");
+    const resContent = await app.request("http://localhost/api/content/pages?type=doc", {}, env);
     expect(resContent.status).toBe(200);
     const contentData = (await resContent.json()) as any;
     expect(contentData.pages.length).toBe(1);
 
     // Test /api/search endpoint via middleware
-    const resSearch = await app.request("http://localhost/api/search?q=");
+    const resSearch = await app.request("http://localhost/api/search?q=", {}, env);
     expect(resSearch.status).toBe(200);
 
     // Test custom app route still works
-    const resHello = await app.request("http://localhost/api/hello");
+    const resHello = await app.request("http://localhost/api/hello", {}, env);
     expect(resHello.status).toBe(200);
     expect(await resHello.text()).toBe("world");
   });

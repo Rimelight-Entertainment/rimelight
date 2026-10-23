@@ -1,44 +1,20 @@
 import type { MiddlewareHandler } from "hono";
 import * as virtualCms from "virtual:rimelight-cms";
-import {
-  createCmsRouter,
-  cmsRouter,
-  type CmsRouterOptions,
-  type CmsRouterType,
-} from "../server/router";
+import { createCmsRouter, cmsRouter, type CmsRouterType } from "../server/router";
 import { migrateCms } from "../migrator";
-
-export interface CmsMiddlewareOptions extends CmsRouterOptions {
-  /**
-   * Path prefix where the CMS API router is served.
-   * Defaults to "/api/cms".
-   */
-  prefix?: string | undefined;
-  /**
-   * Additional prefixes or path matchers to route to the CMS handler.
-   * Defaults to ["/api/content", "/api/search", "/content", "/search"].
-   */
-  prefixes?: string[] | undefined;
-  /**
-   * Optional custom CmsRouter instance.
-   */
-  router?: CmsRouterType | undefined;
-  /**
-   * Whether to automatically run pending CMS migrations on worker/server initialization.
-   * Defaults to true in development or when explicitly enabled.
-   */
-  autoMigrate?: boolean | undefined;
-}
 
 /**
  * Hono middleware that serves Rimelight CMS REST endpoints, content delivery,
  * search, and MCP endpoints.
  *
+ * Takes no options — all configuration lives in the Vite plugin
+ * (`cms({...})` from "@rimelight/cms/plugin") and is read via `virtual:rimelight-cms`.
+ *
  * @example
  *   import { cms } from "@rimelight/cms/middleware";
  *   app.use(cms());
  */
-export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
+export function cms(): MiddlewareHandler {
   let virtualConfig: any = {};
   let virtualDb: any = undefined;
   try {
@@ -47,15 +23,9 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
   } catch {
     // Ignore if virtual:rimelight-cms doesn't provide these exports
   }
-  const primaryPrefix = options.prefix ?? virtualConfig.routePrefix ?? "/api/cms";
-  const supportedPrefixes = options.prefixes ?? [
-    primaryPrefix,
-    "/api/content",
-    "/api/search",
-    "/content",
-    "/search",
-  ];
-  let activeRouter: CmsRouterType | null = options.router ?? null;
+  const primaryPrefix = virtualConfig.routePrefix ?? "/api/cms";
+  const supportedPrefixes = [primaryPrefix, "/api/content", "/api/search", "/content", "/search"];
+  let activeRouter: CmsRouterType | null = null;
   let migrationRunPromise: Promise<any> | null = null;
 
   return async (c, next) => {
@@ -65,11 +35,10 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
     );
 
     if (matchesPrefix) {
-      const db = options.db ?? virtualDb ?? (c.env as any)?.DB;
+      const db = virtualDb ?? (c.env as any)?.DB;
 
-      // Auto-migrate if enabled (or default in dev / first-request)
-      const shouldAutoMigrate = options.autoMigrate ?? (virtualConfig.autoMigrate || false);
-      if (shouldAutoMigrate && db && !migrationRunPromise) {
+      // Auto-migrate is configured via the Vite plugin: cms({ autoMigrate: true })
+      if (virtualConfig.autoMigrate === true && db && !migrationRunPromise) {
         migrationRunPromise = migrateCms(db).catch((err) => {
           console.error("[@rimelight/cms autoMigrate Error]:", err);
         });
@@ -79,11 +48,7 @@ export function cms(options: CmsMiddlewareOptions = {}): MiddlewareHandler {
       }
 
       if (!activeRouter) {
-        activeRouter = createCmsRouter({
-          ...options,
-          prefix: primaryPrefix,
-          db,
-        });
+        activeRouter = createCmsRouter({ prefix: primaryPrefix, db });
       }
 
       // Normalize pathname for router if called directly under /api/...

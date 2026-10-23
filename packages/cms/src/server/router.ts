@@ -118,7 +118,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
       return resolvedDb;
     }
     throw new Error(
-      "[@rimelight/cms] No database instance found. Please configure `DATABASE_URL` or `#db` export or pass `db` to `cms({ db })`.",
+      "[@rimelight/cms] No database instance found. Please configure `DATABASE_URL`, a `#db` export, or a `DB` binding.",
     );
   };
 
