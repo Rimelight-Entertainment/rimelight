@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -64,5 +64,5 @@
   "engines": {
     "node": ">=26.10.0"
   },
-  "packageManager": "pnpm@12.14.0"
+  "packageManager": "pnpm@12.15.0"
 }
