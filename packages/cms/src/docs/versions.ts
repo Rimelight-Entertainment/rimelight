@@ -119,9 +119,9 @@ const rank = (seg: string) => {
 interface Node {
   seg: string;
   path: string;
-  title?: string;
+  title?: string | undefined;
   /** The page for this folder is stored as `<path>/index`. */
-  indexSlug?: boolean;
+  indexSlug?: boolean | undefined;
   children: Map<string, Node>;
 }
 

@@ -826,7 +826,7 @@ const IconButton: Component<{
     type="button"
     title={props.label}
     aria-label={props.label}
-    aria-pressed={props.active === undefined ? undefined : props.active}
+    aria-pressed={props.active === undefined ? undefined : props.active ? "true" : "false"}
     disabled={props.disabled || props.loading}
     class={`rounded-md p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-35 ${props.active ? "bg-primary-500/10 text-primary-500" : "text-toned hover:bg-elevated hover:text-highlighted"} ${props.class ?? ""}`}
     onClick={() => props.onClick()}

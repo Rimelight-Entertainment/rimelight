@@ -132,10 +132,11 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
       c.req.param("collection"),
     );
     if (!entry) return asMarkdown ? c.text("Not Found", 404) : c.json({ entry: null }, 404);
-    const [pub] = await cms.mentions.resolveMentions(
+    const [pub] = (await cms.mentions.resolveMentions(
       await withTerms(cms, [publicEntry(entry, await readerRoles(c))]),
       c.req.query("locale") ?? "en",
-    );
+    )) as PublicEntry[];
+    if (!pub) return asMarkdown ? c.text("Not Found", 404) : c.json({ entry: null }, 404);
     if (asMarkdown) {
       const url = new URL(c.req.url);
       return new Response(

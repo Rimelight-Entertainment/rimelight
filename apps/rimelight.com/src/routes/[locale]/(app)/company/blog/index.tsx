@@ -38,7 +38,7 @@ export const BlogIndexPage: Component = () => {
   const chip = (slug: string, text: string, count?: number) => (
     <button
       type="button"
-      aria-pressed={active() === slug}
+      aria-pressed={active() === slug ? "true" : "false"}
       class={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
         active() === slug
           ? "border-primary-500 bg-primary-500/15 text-primary-300"

@@ -9,6 +9,7 @@ const OMIT_KEYS = [
   "date",
   "image",
   "href",
+  "to",
   "badge",
   "badgeColor",
   "imageSlot",
@@ -20,8 +21,9 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLPost: Component<RLPostProps> = (props) => {
+  const link = () => props.href || props.to;
   const { Tag, classes, rest } = RLPostTheme.setup(props, {
-    as: () => (props.href ? "a" : "div"),
+    as: () => (link() ? "a" : "div"),
     omit: OMIT_KEYS,
   });
 
@@ -108,7 +110,7 @@ export const RLPost: Component<RLPostProps> = (props) => {
   );
 
   return (
-    <Tag href={props.href} class={classes().root} data-slot="root" {...rest}>
+    <Tag href={link()} class={classes().root} data-slot="root" {...rest}>
       {body()}
     </Tag>
   );

@@ -403,7 +403,7 @@ const BlockView: Component<{
 
   return (
     <div
-      ref={el}
+      ref={(node) => (el = node)}
       data-block-id={props.block.id}
       tabindex={-1}
       class={`relative -ml-8 rounded-md py-0.5 pl-8 outline-none transition-opacity ${selected() ? "bg-primary-500/[0.04] ring-1 ring-primary-500/30" : ""} ${isDragging() ? "opacity-40" : ""}`}
@@ -439,7 +439,7 @@ const BlockView: Component<{
             type="button"
             aria-label={`${def()?.label ?? "Block"} actions`}
             aria-haspopup="menu"
-            aria-expanded={menu()}
+            aria-expanded={menu() ? "true" : "false"}
             title={
               locked()
                 ? "Templated block (locked) · click for actions"
@@ -622,7 +622,7 @@ const BlockMenu: Component<{
 
   return (
     <div
-      ref={ref}
+      ref={(node) => (ref = node)}
       role="menu"
       class="absolute left-0 top-7 z-40 w-56 overflow-hidden rounded-lg border border-default bg-default py-1 shadow-xl"
       onClick={(e) => e.stopPropagation()}
@@ -777,7 +777,7 @@ const BlockPicker: Component<{
           <div class="flex items-center gap-3 border-b border-default px-4 py-3">
             <span class="i-lucide-search size-4 shrink-0 text-muted" />
             <input
-              ref={input}
+              ref={(node) => (input = node)}
               class="min-w-0 flex-1 bg-transparent text-sm text-highlighted outline-none placeholder:text-muted"
               placeholder={`${title()} — search blocks…`}
               value={query()}
@@ -811,7 +811,7 @@ const BlockPicker: Component<{
             </kbd>
           </div>
 
-          <div ref={list} class="min-h-0 flex-1 overflow-y-auto p-2">
+          <div ref={(node) => (list = node)} class="min-h-0 flex-1 overflow-y-auto p-2">
             <For
               each={groups()}
               fallback={

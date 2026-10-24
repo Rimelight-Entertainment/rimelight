@@ -220,7 +220,10 @@ export const InlineText: Component<InlineTextProps> = (props) => {
   /** Ctrl+K / toolbar: link the selection, or edit the link under the caret. */
   const startLink = () => {
     const current = link()?.anchor;
-    if (current) return setLink({ anchor: current, editing: true });
+    if (current) {
+      setLink({ anchor: current, editing: true });
+      return;
+    }
     const a = wrapSelection("a") as HTMLAnchorElement | null;
     if (!a) return;
     setToolbar(null);
@@ -560,7 +563,7 @@ const LinkPopover: Component<{
         >
           <span class="i-lucide-link ml-1.5 size-3.5 shrink-0 text-muted" />
           <input
-            ref={input}
+            ref={(el) => (input = el)}
             class="w-60 bg-transparent px-1 py-1 text-xs text-highlighted outline-none placeholder:text-muted"
             placeholder="Paste or type a link…"
             value={url()}
@@ -578,9 +581,11 @@ const LinkPopover: Component<{
           <button
             type="button"
             title="Open in a new tab"
-            aria-pressed={newTab()}
+            aria-pressed={newTab() ? "true" : "false"}
             class={`flex size-6 items-center justify-center rounded ${newTab() ? "bg-primary-500/10 text-primary-500" : "text-muted hover:bg-elevated"}`}
-            onClick={() => setNewTab(!newTab())}
+            onClick={() => {
+              setNewTab(!newTab());
+            }}
           >
             <span class="i-lucide-external-link size-3.5" />
           </button>
@@ -651,7 +656,7 @@ const MentionPicker: Component<{
         <div class="flex items-center gap-2 border-b border-default px-3 py-2">
           <span class="text-sm font-semibold text-muted">@</span>
           <input
-            ref={input}
+            ref={(el) => (input = el)}
             class="min-w-0 flex-1 bg-transparent text-sm text-highlighted outline-none placeholder:text-muted"
             placeholder="Mention a page…"
             value={query()}

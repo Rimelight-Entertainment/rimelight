@@ -30,7 +30,7 @@ export const SplitPane: Component<{
 }> = (props) => {
   const [ratio, setRatio] = createSignal(readRatio());
   const [dragging, setDragging] = createSignal(false);
-  let container!: HTMLDivElement;
+  let container: HTMLDivElement | undefined;
 
   const setClamped = (r: number) => {
     const next = Math.min(MAX, Math.max(MIN, r));
@@ -43,6 +43,7 @@ export const SplitPane: Component<{
   };
 
   const onPointerMove = (e: PointerEvent) => {
+    if (!container) return;
     const rect = container.getBoundingClientRect();
     setClamped((e.clientX - rect.left) / rect.width);
   };
@@ -55,7 +56,7 @@ export const SplitPane: Component<{
 
   return (
     <div
-      ref={container}
+      ref={(el) => (container = el)}
       class={`flex min-h-0 flex-1 flex-col lg:flex-row ${dragging() ? "cursor-col-resize select-none" : ""}`}
     >
       <div
@@ -72,7 +73,7 @@ export const SplitPane: Component<{
           aria-valuemax={MAX * 100}
           aria-valuenow={Math.round(ratio() * 100)}
           aria-label="Resize preview"
-          tabIndex={0}
+          tabindex={0}
           title="Drag to resize · double-click to reset"
           class={`group relative hidden w-1.5 shrink-0 cursor-col-resize items-center justify-center border-x border-default bg-elevated transition-colors hover:bg-primary-500/20 focus-visible:bg-primary-500/30 focus-visible:outline-none lg:flex ${dragging() ? "bg-primary-500/30" : ""}`}
           onPointerDown={(e) => {
@@ -144,9 +145,11 @@ export const PagePreview: Component<{
                 type="button"
                 title={label}
                 aria-label={label}
-                aria-pressed={device() === key}
+                aria-pressed={device() === key ? "true" : "false"}
                 class={`rounded p-1 ${device() === key ? "bg-elevated text-highlighted" : "text-muted hover:text-highlighted"}`}
-                onClick={() => setDevice(key)}
+                onClick={() => {
+                  setDevice(key);
+                }}
               >
                 <span class={`${icon} block size-3.5`} />
               </button>
