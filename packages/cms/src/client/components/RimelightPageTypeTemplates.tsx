@@ -101,8 +101,8 @@ export const RimelightPageTypeTemplates: Component<RimelightPageTypeTemplatesPro
             fallback={<div class="p-8 text-center text-muted">Select a template</div>}
           >
             {(def) => {
-              const blocks = initialBlocks();
-              const propGroups = Object.entries(def().properties || {});
+              const blocks = () => initialBlocks();
+              const propGroups = () => Object.entries(def().properties || {});
 
               return (
                 <div class="space-y-6">
@@ -140,12 +140,12 @@ export const RimelightPageTypeTemplates: Component<RimelightPageTypeTemplatesPro
                         </p>
                       </div>
                       <RLBadge variant="subtle" color="neutral" class="text-xs">
-                        {blocks.length} {blocks.length === 1 ? "block" : "blocks"}
+                        {blocks().length} {blocks().length === 1 ? "block" : "blocks"}
                       </RLBadge>
                     </div>
 
                     <Show
-                      when={blocks.length > 0}
+                      when={blocks().length > 0}
                       fallback={
                         <div class="p-6 rounded-xl border border-dashed border-default text-center text-xs text-muted">
                           No mandatory blocks predefined for this page type. Editors can add any
@@ -154,7 +154,7 @@ export const RimelightPageTypeTemplates: Component<RimelightPageTypeTemplatesPro
                       }
                     >
                       <div class="space-y-2.5">
-                        <For each={blocks}>
+                        <For each={blocks()}>
                           {(b, idx) => (
                             <div class="p-3.5 rounded-xl border border-default bg-neutral-50/40 flex items-center justify-between">
                               <div class="flex items-center gap-3">
@@ -198,12 +198,12 @@ export const RimelightPageTypeTemplates: Component<RimelightPageTypeTemplatesPro
                         </p>
                       </div>
                       <RLBadge variant="subtle" color="neutral" class="text-xs">
-                        {propGroups.length} {propGroups.length === 1 ? "group" : "groups"}
+                        {propGroups().length} {propGroups().length === 1 ? "group" : "groups"}
                       </RLBadge>
                     </div>
 
                     <Show
-                      when={propGroups.length > 0}
+                      when={propGroups().length > 0}
                       fallback={
                         <div class="p-6 rounded-xl border border-dashed border-default text-center text-xs text-muted">
                           No custom structured properties defined. Uses standard document metadata.
@@ -211,7 +211,7 @@ export const RimelightPageTypeTemplates: Component<RimelightPageTypeTemplatesPro
                       }
                     >
                       <div class="space-y-4">
-                        <For each={propGroups}>
+                        <For each={propGroups()}>
                           {([groupKey, group]) => {
                             const fields = Object.entries(group.fields || {});
 
