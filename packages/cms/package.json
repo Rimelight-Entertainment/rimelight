@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "private": false,
   "description": "Rimelight Entertainment's Content Management System Package",
   "homepage": "https://rimelight.com/docs",
@@ -25,40 +25,40 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./schema": {
-      "types": "./src/schema/index.ts",
-      "import": "./src/schema/index.ts"
+      "types": "./dist/schema/index.d.mts",
+      "import": "./dist/schema/index.mjs"
     },
     "./schema/sqlite": {
-      "types": "./src/schema/sqlite.ts",
-      "import": "./src/schema/sqlite.ts"
+      "types": "./dist/schema/sqlite.d.mts",
+      "import": "./dist/schema/sqlite.mjs"
     },
     "./services": {
-      "types": "./src/services/index.ts",
-      "import": "./src/services/index.ts"
+      "types": "./dist/services/index.d.mts",
+      "import": "./dist/services/index.mjs"
     },
     "./server": {
-      "types": "./src/server/index.ts",
-      "import": "./src/server/index.ts"
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
     },
     "./middleware": {
-      "types": "./src/middleware/index.ts",
-      "import": "./src/middleware/index.ts"
+      "types": "./dist/middleware/index.d.mts",
+      "import": "./dist/middleware/index.mjs"
     },
     "./plugin": {
-      "types": "./src/plugin.ts",
-      "import": "./src/plugin.ts"
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
     },
     "./migrator": {
-      "types": "./src/migrator/index.ts",
-      "import": "./src/migrator/index.ts"
+      "types": "./dist/migrator/index.d.mts",
+      "import": "./dist/migrator/index.mjs"
     },
     "./storage": {
-      "types": "./src/storage/index.ts",
-      "import": "./src/storage/index.ts"
+      "types": "./dist/storage/index.d.mts",
+      "import": "./dist/storage/index.mjs"
     },
     "./mcp": {
       "types": "./src/mcp/index.ts",
