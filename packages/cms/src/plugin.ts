@@ -11,8 +11,8 @@ const FILE_ROUTES_VIRTUAL_ID = "virtual:file-routes";
 
 /**
  * Generates the CMS route entries to be injected into the pageRoutes export
- * that filesystem-routing emits. Each entry matches the shape of a page ref
- * in the virtual module (lazy dynamic import behind the `require` key).
+ * that filesystem-routing emits. Each entry matches the shape expected by @solidjs/router's fileRoutes():
+ * `$component` with `require` or `import`.
  */
 function buildCmsRouteEntries(basePath: string): string {
   const base = basePath.replace(/\/$/, "");
@@ -21,7 +21,7 @@ function buildCmsRouteEntries(basePath: string): string {
   return paths
     .map(
       (path) =>
-        `{ path: ${JSON.stringify(path)}, page: { require: () => import("@rimelight/cms/solid").then(m => ({ default: m.CmsDashboard })) } }`,
+        `{ path: ${JSON.stringify(path)}, id: ${JSON.stringify(path)}, page: true, $component: { import: () => import("@rimelight/cms/solid").then(m => ({ default: m.CmsDashboard })) } }`,
     )
     .join(",\n  ");
 }
