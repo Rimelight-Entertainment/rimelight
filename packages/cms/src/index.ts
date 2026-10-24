@@ -22,6 +22,7 @@ export type {
 // Core Services & Registries
 export * from "./core/registry";
 export * from "./core/validator";
+export * from "./core/collections/index";
 export * from "./services/index";
 
 // Universal Auth & Pluggable Adapters (RFC-0004 & RFC-0006)
