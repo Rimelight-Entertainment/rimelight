@@ -7,7 +7,7 @@ import {
   RimelightTaxonomyMasterDetail,
   RimelightTaxonomyManager,
   RimelightBylinesManager,
-  RimelightTemplateEditor,
+  RimelightPageTypeTemplates,
   RimelightEditorLayout,
 } from "../components/index";
 
@@ -454,10 +454,10 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
           </div>
         </Show>
 
-        {/* 8. TEMPLATES */}
+        {/* 8. PAGE TYPE TEMPLATES */}
         <Show when={activeTab() === "templates"}>
           <div class="max-w-7xl mx-auto">
-            <RimelightTemplateEditor />
+            <RimelightPageTypeTemplates />
           </div>
         </Show>
       </main>

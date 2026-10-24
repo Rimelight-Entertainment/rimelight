@@ -21,7 +21,7 @@ function buildCmsRouteEntries(basePath: string): string {
   return paths
     .map(
       (path) =>
-        `{ path: ${JSON.stringify(path)}, id: ${JSON.stringify(path)}, page: true, $component: { import: () => import("@rimelight/cms/solid").then(m => ({ default: m.CmsDashboard })) } }`,
+        `{ path: ${JSON.stringify(path)}, id: ${JSON.stringify(path)}, page: true, $component: { src: "@rimelight/cms/solid", import: () => import("@rimelight/cms/solid").then(m => ({ default: m.CmsDashboard })) } }`,
     )
     .join(",\n  ");
 }

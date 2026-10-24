@@ -408,36 +408,38 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
           />
 
           {/* More Actions Dropdown */}
-          <div ref={(el) => (toolbarMenuWrapEl = el)} class="relative inline-flex">
-            <RLButton
-              variant="ghost"
-              color="neutral"
-              size="xs"
-              square={true}
-              onClick={(e: MouseEvent) => {
-                e.stopPropagation();
-                setToolbarMenuOpen(!toolbarMenuOpen());
-              }}
-              aria-label="More actions"
-              title="More actions"
-              leading={<RLIcon name="ellipsisVertical" size="xs" />}
-            />
-            <Show when={toolbarMenuOpen()}>
-              <div class="absolute right-0 top-7 z-50 w-36 bg-elevated border border-default rounded-xl shadow-xl py-1 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setToolbarMenuOpen(false);
-                    setIsDeleteModalOpen(true);
-                  }}
-                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-error-50 text-error-500 hover:text-error-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
-                >
-                  <RLIcon name="trash" size="xs" class="text-error-500" />
-                  <span>Delete Block...</span>
-                </button>
-              </div>
-            </Show>
-          </div>
+          <Show when={!isLocked()}>
+            <div ref={(el) => (toolbarMenuWrapEl = el)} class="relative inline-flex">
+              <RLButton
+                variant="ghost"
+                color="neutral"
+                size="xs"
+                square={true}
+                onClick={(e: MouseEvent) => {
+                  e.stopPropagation();
+                  setToolbarMenuOpen(!toolbarMenuOpen());
+                }}
+                aria-label="More actions"
+                title="More actions"
+                leading={<RLIcon name="ellipsisVertical" size="xs" />}
+              />
+              <Show when={toolbarMenuOpen()}>
+                <div class="absolute right-0 top-7 z-50 w-36 bg-elevated border border-default rounded-xl shadow-xl py-1 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setToolbarMenuOpen(false);
+                      setIsDeleteModalOpen(true);
+                    }}
+                    class="flex items-center gap-2 w-full px-3 py-2 hover:bg-error-50 text-error-500 hover:text-error-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
+                  >
+                    <RLIcon name="trash" size="xs" class="text-error-500" />
+                    <span>Delete Block...</span>
+                  </button>
+                </div>
+              </Show>
+            </div>
+          </Show>
         </div>
 
         {/* Block Editor Body (No border, no bg) */}

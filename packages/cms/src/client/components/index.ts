@@ -17,6 +17,10 @@ export {
   type RimelightTemplateEditorProps,
 } from "./RimelightTemplateEditor";
 export {
+  RimelightPageTypeTemplates,
+  type RimelightPageTypeTemplatesProps,
+} from "./RimelightPageTypeTemplates";
+export {
   RimelightTaxonomyManager,
   type RimelightTaxonomyManagerProps,
   type TaxonomyTermRecord,
