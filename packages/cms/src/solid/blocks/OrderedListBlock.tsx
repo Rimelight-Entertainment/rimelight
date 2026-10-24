@@ -4,7 +4,7 @@ import { InlineNodes } from "./inlines";
 import type { BlockViewProps } from "./ParagraphBlock";
 
 export const OrderedListBlock: Component<BlockViewProps> = (props) => {
-  const items = () => (props.block.props?.["items"] as BaseBlock[]) ?? props.block.children ?? [];
+  const items = () => props.block.children ?? [];
 
   return (
     <ol

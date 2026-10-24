@@ -20,3 +20,12 @@ export interface TaxonomyQueryOptions {
   includeCounts?: boolean;
   locale?: string;
 }
+
+/** A taxonomy (vocabulary). Terms live in `taxonomy_terms` keyed by `taxonomy = slug`. */
+export interface TaxonomyDefinition {
+  slug: string;
+  label: Localized | string;
+  hierarchical?: boolean;
+  /** Collections this taxonomy applies to. Omit for all. */
+  collections?: string[];
+}

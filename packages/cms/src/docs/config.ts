@@ -1,4 +1,5 @@
 import type { SidebarItem, SidebarScope } from "@rimelight/ui/components/sidebar/sidebar.types.ts";
+import type { Cms } from "../services/index";
 import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.types.ts";
 
 export interface EditLinkConfig {
@@ -96,9 +97,7 @@ export function buildDocsNavFromPages(pages: any[], options: DocsNavOptions = {}
   >();
 
   for (const page of pages) {
-    const rawContent =
-      typeof page.content === "string" ? JSON.parse(page.content) : page.content || {};
-    const props = rawContent.properties || {};
+    const props = page.properties ?? {};
     const rawSlug = String(page.slug || "").replace(/^\/+|\/+$/g, "");
 
     const segments = rawSlug.split("/").filter(Boolean);
@@ -182,28 +181,26 @@ export function buildDocsNavFromPages(pages: any[], options: DocsNavOptions = {}
 
 export async function getDocsConfig(
   options: {
-    db?: any;
+    cms?: Cms;
     pages?: any[];
     fallbackConfig?: DocsConfig;
     navOptions?: DocsNavOptions;
+    collection?: string;
   } = {},
 ): Promise<DocsConfig> {
   if (options.pages && options.pages.length > 0) {
     return buildDocsNavFromPages(options.pages, options.navOptions);
   }
-  if (options.db) {
-    try {
-      const { pages } = await import("../schema");
-      const { eq, and, isNull, desc } = await import("drizzle-orm");
-      const docPages = await options.db
-        .select()
-        .from(pages)
-        .where(and(eq(pages.type, "doc"), isNull(pages.deletedAt)))
-        .orderBy(desc(pages.createdAt));
-      if (docPages && docPages.length > 0) {
-        return buildDocsNavFromPages(docPages, options.navOptions);
-      }
-    } catch {}
+  if (options.cms) {
+    const { entries } = await options.cms.entries.listEntries({
+      collection: options.collection ?? "doc",
+      status: "published",
+      orderBy: "slug",
+      limit: 500,
+      includeContent: true,
+    });
+    const pages = entries.map((e) => ({ ...e, properties: e.published?.properties ?? {} }));
+    if (pages.length > 0) return buildDocsNavFromPages(pages, options.navOptions);
   }
   return options.fallbackConfig || defaultDocsConfig;
 }

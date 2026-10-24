@@ -6,7 +6,6 @@ export {
   registerCmsMediaRoutes,
   type MediaRouteContext,
 } from "./media";
-
-export { createCmsRouter, cmsRouter, type CmsRouterOptions } from "./router";
-export { createContentRouter, contentRouter, type ContentRouterOptions } from "./content";
-export { createSearchRouter, searchRouter, type SearchRouterOptions } from "./search";
+export { createCmsRouter, createCmsApi, type CmsRouterOptions, type CmsRouterType } from "./router";
+export { createContentRouter, type ContentRouterOptions } from "./content";
+export { cmsForRequest, resolveActor, requireActor, toActor, type CmsServerOptions } from "./context";

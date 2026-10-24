@@ -10,6 +10,7 @@ export default defineConfig({
       "src/plugin.ts",
       "src/schema/index.ts",
       "src/schema/sqlite.ts",
+      "src/services/index.ts",
       "src/storage/index.ts",
       "src/middleware/index.ts",
       "src/server/index.ts",

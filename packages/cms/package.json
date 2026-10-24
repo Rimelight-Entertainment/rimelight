@@ -36,7 +36,26 @@
       "types": "./src/schema/sqlite.ts",
       "import": "./src/schema/sqlite.ts"
     },
-    "./schema/*": "./src/schema/*",
+    "./services": {
+      "types": "./src/services/index.ts",
+      "import": "./src/services/index.ts"
+    },
+    "./server": {
+      "types": "./src/server/index.ts",
+      "import": "./src/server/index.ts"
+    },
+    "./middleware": {
+      "types": "./src/middleware/index.ts",
+      "import": "./src/middleware/index.ts"
+    },
+    "./plugin": {
+      "types": "./src/plugin.ts",
+      "import": "./src/plugin.ts"
+    },
+    "./migrator": {
+      "types": "./src/migrator/index.ts",
+      "import": "./src/migrator/index.ts"
+    },
     "./storage": {
       "types": "./src/storage/index.ts",
       "import": "./src/storage/index.ts"
@@ -45,44 +64,36 @@
       "types": "./src/mcp/index.ts",
       "import": "./src/mcp/index.ts"
     },
-    "./core/*": "./src/core/*",
-    "./solid": "./src/solid/index.ts",
-    "./solid/*": "./src/solid/*",
-    "./plugin": {
-      "types": "./src/plugin.ts",
-      "import": "./src/plugin.ts"
+    "./cron": {
+      "types": "./src/cron/scheduled.ts",
+      "import": "./src/cron/scheduled.ts"
     },
-    "./middleware": {
-      "types": "./src/middleware/index.ts",
-      "import": "./src/middleware/index.ts"
-    },
-    "./migrator": {
-      "types": "./src/migrator/index.ts",
-      "import": "./src/migrator/index.ts"
-    },
-    "./client": {
-      "types": "./src/client/index.ts",
-      "import": "./src/client/index.ts"
-    },
-    "./client/types": {
-      "types": "./src/client.d.ts"
-    },
-    "./client/styles/*": "./src/client/styles/*",
-    "./client/components": "./src/client/components/index.ts",
-    "./client/components/*.tsx": "./src/client/components/*.tsx",
-    "./client/components/*.ts": "./src/client/components/*.ts",
-    "./client/components/*": "./src/client/components/*.tsx",
-    "./client/loader": "./src/client/loader.ts",
-    "./server": {
-      "types": "./src/server/index.ts",
-      "import": "./src/server/index.ts"
-    },
-    "./server/*": "./src/server/*",
     "./cron/scheduled": {
       "types": "./src/cron/scheduled.ts",
       "import": "./src/cron/scheduled.ts"
     },
-    "./cron/*": "./src/cron/*"
+    "./docs": {
+      "types": "./src/docs/index.ts",
+      "import": "./src/docs/index.ts"
+    },
+    "./solid": {
+      "types": "./src/solid/index.ts",
+      "import": "./src/solid/index.ts"
+    },
+    "./dashboard": {
+      "types": "./src/dashboard/index.ts",
+      "import": "./src/dashboard/index.ts"
+    },
+    "./virtual": {
+      "types": "./src/client.d.ts"
+    },
+    "./client/types": {
+      "types": "./src/client.d.ts"
+    },
+    "./dashboard/route": {
+      "types": "./src/dashboard/route.tsx",
+      "import": "./src/dashboard/route.tsx"
+    }
   },
   "publishConfig": {
     "access": "public"

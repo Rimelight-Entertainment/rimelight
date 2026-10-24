@@ -185,6 +185,47 @@ CREATE TABLE IF NOT EXISTS \`bylines\` (
 CREATE UNIQUE INDEX IF NOT EXISTS \`bylines_slug_idx\` ON \`bylines\` (\`slug\`);
 `,
   },
+
+  {
+    // Reconciles drift between the 0001 SQL and the Drizzle schema, and adds entry lifecycle.
+    // Each statement runs individually; "duplicate column" errors are tolerated by the runner,
+    // so this is safe on databases that were created with `drizzle-kit push`.
+    name: "0002_collections_and_lifecycle",
+    sql: `
+CREATE TABLE IF NOT EXISTS \`search_index\` (
+	\`id\` text PRIMARY KEY NOT NULL,
+	\`source_type\` text NOT NULL,
+	\`source_id\` text NOT NULL,
+	\`title\` text NOT NULL,
+	\`url\` text NOT NULL,
+	\`body_content\` text NOT NULL,
+	\`searchable_text\` text NOT NULL,
+	\`updated_at\` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS \`search_index_source_type_source_id_key\` ON \`search_index\` (\`source_type\`, \`source_id\`);
+--> statement-breakpoint
+ALTER TABLE \`pages\` ADD COLUMN \`status\` text DEFAULT 'published' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE \`pages\` ADD COLUMN \`scheduled_at\` integer;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` ADD COLUMN \`mode\` text DEFAULT 'document' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` ADD COLUMN \`field_schema\` text DEFAULT '{}' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` ADD COLUMN \`ecom_settings\` text;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` ADD COLUMN \`initial_blocks\` text DEFAULT '[]' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` ADD COLUMN \`features\` text DEFAULT '{}' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` ADD COLUMN \`workflow\` text DEFAULT '{}' NOT NULL;
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS \`pages_type_status_idx\` ON \`pages\` (\`type\`, \`status\`);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS \`pages_scheduled_idx\` ON \`pages\` (\`scheduled_at\`);
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -351,6 +392,98 @@ CREATE TABLE IF NOT EXISTS "content_search_index" (
 	"title_text" text NOT NULL,
 	"content_text" text NOT NULL
 );
+`,
+  },
+
+  {
+    // Additive + idempotent. Brings any existing database (created by 0001, drizzle push,
+    // or the app's drizzle-kit migrations) up to the current Drizzle schema without data loss.
+    name: "0002_collections_and_lifecycle",
+    sql: `
+CREATE TABLE IF NOT EXISTS "search_index" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"source_type" text NOT NULL,
+	"source_id" text NOT NULL,
+	"title" text NOT NULL,
+	"url" text NOT NULL,
+	"body_content" text NOT NULL,
+	"searchable_text" tsvector,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "search_index_source_type_source_id_key" UNIQUE("source_type","source_id")
+);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_search_index_text" ON "search_index" USING gin ("searchable_text");
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "status" text DEFAULT 'published' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "scheduled_at" timestamp with time zone;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "template_id" uuid;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "template_version" integer DEFAULT 1 NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "bylines" jsonb DEFAULT '[]'::jsonb;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "published_version_id" uuid;
+--> statement-breakpoint
+ALTER TABLE "page_versions" ADD COLUMN IF NOT EXISTS "version_number" integer DEFAULT 1 NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "page_versions" ADD COLUMN IF NOT EXISTS "bylines" jsonb DEFAULT '[]'::jsonb;
+--> statement-breakpoint
+ALTER TABLE "page_versions" ADD COLUMN IF NOT EXISTS "change_summary" text;
+--> statement-breakpoint
+DO $$ BEGIN
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='page_versions' AND column_name='approved_by') = 'uuid' THEN
+    ALTER TABLE "page_versions" ALTER COLUMN "approved_by" DROP DEFAULT;
+    ALTER TABLE "page_versions" ALTER COLUMN "approved_by" TYPE jsonb USING (CASE WHEN "approved_by" IS NULL THEN '[]'::jsonb ELSE jsonb_build_array("approved_by"::text) END);
+    ALTER TABLE "page_versions" ALTER COLUMN "approved_by" SET DEFAULT '[]'::jsonb;
+    UPDATE "page_versions" SET "approved_by" = '[]'::jsonb WHERE "approved_by" IS NULL;
+    ALTER TABLE "page_versions" ALTER COLUMN "approved_by" SET NOT NULL;
+  END IF;
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='page_versions' AND column_name='created_by') = 'uuid' THEN
+    ALTER TABLE "page_versions" ALTER COLUMN "created_by" TYPE text USING "created_by"::text;
+  END IF;
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='page_drafts' AND column_name='updated_by') = 'uuid' THEN
+    ALTER TABLE "page_drafts" ALTER COLUMN "updated_by" TYPE text USING "updated_by"::text;
+  END IF;
+END $$;
+--> statement-breakpoint
+ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "mode" text DEFAULT 'document' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "field_schema" jsonb DEFAULT '{}'::jsonb NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "ecom_settings" jsonb;
+--> statement-breakpoint
+ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "initial_blocks" jsonb DEFAULT '[]'::jsonb NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "features" jsonb DEFAULT '{}'::jsonb NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "workflow" jsonb DEFAULT '{}'::jsonb NOT NULL;
+--> statement-breakpoint
+DO $$ BEGIN
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='content_types' AND column_name='name') = 'text' THEN
+    ALTER TABLE "content_types" ALTER COLUMN "name" TYPE jsonb USING jsonb_build_object('en', "name");
+  END IF;
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='content_types' AND column_name='description') = 'text' THEN
+    ALTER TABLE "content_types" ALTER COLUMN "description" TYPE jsonb USING (CASE WHEN "description" IS NULL THEN NULL ELSE jsonb_build_object('en', "description") END);
+  END IF;
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='taxonomy_terms' AND column_name='label') = 'text' THEN
+    ALTER TABLE "taxonomy_terms" ALTER COLUMN "label" TYPE jsonb USING to_jsonb("label");
+  END IF;
+  IF (SELECT data_type FROM information_schema.columns WHERE table_name='taxonomy_terms' AND column_name='description') = 'text' THEN
+    ALTER TABLE "taxonomy_terms" ALTER COLUMN "description" TYPE jsonb USING to_jsonb("description");
+  END IF;
+END $$;
+--> statement-breakpoint
+UPDATE "content_types" SET "icon" = 'i-lucide-box' WHERE "icon" IS NULL;
+--> statement-breakpoint
+ALTER TABLE "content_search_index" ADD COLUMN IF NOT EXISTS "search_vector" tsvector;
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "search_vector_gin_idx" ON "content_search_index" USING gin ("search_vector");
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "pages_type_status_idx" ON "pages" ("type", "status");
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "pages_scheduled_idx" ON "pages" ("scheduled_at") WHERE "status" = 'scheduled';
 `,
   },
 ];

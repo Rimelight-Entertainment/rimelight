@@ -52,6 +52,8 @@ export const contentTypes = pgTable("content_types", {
 
   ecomSettings: jsonb("ecom_settings").$type<EcomSettings>(),
   initialBlocks: jsonb("initial_blocks").$type<BaseBlock[]>().default([]).notNull(),
+  features: jsonb("features").$type<Record<string, any>>().default({}).notNull(),
+  workflow: jsonb("workflow").$type<Record<string, any>>().default({}).notNull(),
   isSystem: boolean("is_system").default(false).notNull(),
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

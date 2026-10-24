@@ -8,7 +8,7 @@ export type Dialect = "pg" | "sqlite";
 export interface CmsDbInstance {
   db: any;
   dialect: Dialect;
-  tables: typeof pgTables | typeof sqliteTables;
+  tables: CmsTables;
 }
 
 export interface ResolveDbOptions {
@@ -44,6 +44,16 @@ export function isSQLiteOrD1(val: any): boolean {
     return true;
   }
   return false;
+}
+
+export function detectDialect(val: any): Dialect {
+  return isSQLiteOrD1(val) ? "sqlite" : "pg";
+}
+
+/** Tables for a dialect. Both modules export identical table names and column keys. */
+export type CmsTables = typeof pgTables;
+export function tablesFor(dialect: Dialect): CmsTables {
+  return (dialect === "sqlite" ? sqliteTables : pgTables) as unknown as CmsTables;
 }
 
 /**
@@ -144,7 +154,7 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
       const instance: CmsDbInstance = {
         db,
         dialect: "pg",
-        tables: pgTables,
+        tables: tablesFor("pg"),
       };
       if (cacheKey) dbCache.set(cacheKey, instance);
       return instance;
@@ -167,7 +177,7 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
     const instance: CmsDbInstance = {
       db,
       dialect: "sqlite",
-      tables: sqliteTables,
+      tables: tablesFor("sqlite"),
     };
     if (cacheKey) dbCache.set(cacheKey, instance);
     return instance;
@@ -177,7 +187,7 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
   const instance: CmsDbInstance = {
     db: rawDb,
     dialect,
-    tables: dialect === "sqlite" ? sqliteTables : pgTables,
+    tables: tablesFor(dialect),
   };
 
   if (cacheKey) dbCache.set(cacheKey, instance);

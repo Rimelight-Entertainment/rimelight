@@ -1,307 +1,160 @@
-import { taxonomyTerms, pageTaxonomyTerms } from "../schema/taxonomies";
-import { pages } from "../schema/pages";
-import type { TaxonomyTerm, TaxonomyQueryOptions } from "../core/types/taxonomies";
-import { eq, and, isNull, asc, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
+import type { TaxonomyDefinition, TaxonomyTerm } from "../core/types/taxonomies";
+import { resolveLabel } from "../core/collections/define";
+import { CmsError, json, notFound, slugify, type CmsActor, type CmsContext } from "./context";
 
-/**
- * Retrieves all terms for a given taxonomy. If hierarchical, returns a tree structure with
- * `children: TaxonomyTerm[]`.
- */
-export async function getTaxonomyTerms(
-  db: any,
-  taxonomy: string,
-  options: TaxonomyQueryOptions = {},
-): Promise<TaxonomyTerm[]> {
-  if (!db) return [];
-
-  const includeCounts = options.includeCounts ?? true;
-
-  const rawTerms = await db
-    .select()
-    .from(taxonomyTerms)
-    .where(eq(taxonomyTerms.taxonomy, taxonomy))
-    .orderBy(asc(taxonomyTerms.displayOrder), asc(taxonomyTerms.createdAt));
-
-  if (!rawTerms || rawTerms.length === 0) return [];
-
-  // Count active published posts per term if requested
-  const countsMap = new Map<string, number>();
-  if (includeCounts) {
-    try {
-      const counts = await db
-        .select({
-          termId: pageTaxonomyTerms.termId,
-          count: sql<number>`count(${pageTaxonomyTerms.pageId})::int`,
-        })
-        .from(pageTaxonomyTerms)
-        .innerJoin(pages, eq(pages.id, pageTaxonomyTerms.pageId))
-        .where(isNull(pages.deletedAt))
-        .groupBy(pageTaxonomyTerms.termId);
-
-      for (const row of counts) {
-        countsMap.set(row.termId, Number(row.count));
-      }
-    } catch {
-      // Fallback if joined counts query fails
-    }
-  }
-
-  const termsWithCounts: TaxonomyTerm[] = rawTerms.map((t: any) =>
-    normalizeTermRecord(t, countsMap.get(t.id) ?? 0),
-  );
-
-  // Determine if this taxonomy is hierarchical (any term has parentId)
-  const isHierarchical = termsWithCounts.some((t) => !!t.parentId);
-  if (!isHierarchical) {
-    return termsWithCounts;
-  }
-
-  // Build tree
-  const idMap = new Map<string, TaxonomyTerm>();
-  const rootTerms: TaxonomyTerm[] = [];
-
-  termsWithCounts.forEach((term) => {
-    idMap.set(term.id, term);
-  });
-
-  termsWithCounts.forEach((term) => {
-    if (term.parentId && idMap.has(term.parentId)) {
-      const parent = idMap.get(term.parentId)!;
-      parent.children = parent.children || [];
-      parent.children.push(term);
-    } else {
-      rootTerms.push(term);
-    }
-  });
-
-  return rootTerms;
+export function listTaxonomies(ctx: CmsContext): TaxonomyDefinition[] {
+  return ctx.taxonomies;
 }
 
-/**
- * Retrieves a single term by taxonomy and slug.
- */
-export async function getTerm(
-  db: any,
-  taxonomy: string,
-  slug: string,
-): Promise<TaxonomyTerm | null> {
-  if (!db) return null;
+function toTerm(row: any, count = 0): TaxonomyTerm {
+  const label = json<any>(row.label, row.label);
+  const description = json<any>(row.description, row.description);
+  return {
+    id: row.id,
+    taxonomy: row.taxonomy,
+    slug: row.slug,
+    label,
+    name: resolveLabel(label),
+    description: description ?? null,
+    parentId: row.parentId ?? null,
+    displayOrder: row.displayOrder ?? 0,
+    count,
+    postCount: count,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  };
+}
 
-  const results = await db
+export function buildTermTree(terms: TaxonomyTerm[]): TaxonomyTerm[] {
+  const byId = new Map(terms.map((t) => [t.id, { ...t, children: [] as TaxonomyTerm[] }]));
+  const roots: TaxonomyTerm[] = [];
+  for (const term of byId.values()) {
+    const parent = term.parentId ? byId.get(term.parentId) : undefined;
+    if (parent) parent.children!.push(term);
+    else roots.push(term);
+  }
+  return roots;
+}
+
+/** Flat list of terms with published-entry counts. Use `buildTermTree` for hierarchy. */
+export async function listTerms(ctx: CmsContext, taxonomy: string): Promise<TaxonomyTerm[]> {
+  const { taxonomyTerms: tt, pageTaxonomyTerms: ptt, pages: p } = ctx.t;
+  const [rows, counts] = await Promise.all([
+    ctx.db.select().from(tt).where(eq(tt.taxonomy, taxonomy)).orderBy(asc(tt.displayOrder), asc(tt.slug)),
+    ctx.db
+      .select({ termId: ptt.termId, n: sql<number>`count(*)` })
+      .from(ptt)
+      .innerJoin(p, eq(p.id, ptt.pageId))
+      .innerJoin(tt, eq(tt.id, ptt.termId))
+      .where(and(eq(tt.taxonomy, taxonomy), isNull(p.deletedAt), eq(p.status, "published")))
+      .groupBy(ptt.termId),
+  ]);
+  const countMap = new Map<string, number>(counts.map((c: any) => [c.termId, Number(c.n)]));
+  return rows.map((r: any) => toTerm(r, countMap.get(r.id) ?? 0));
+}
+
+export async function getTerm(ctx: CmsContext, taxonomy: string, idOrSlug: string) {
+  const tt = ctx.t.taxonomyTerms;
+  const rows = await ctx.db
     .select()
-    .from(taxonomyTerms)
-    .where(and(eq(taxonomyTerms.taxonomy, taxonomy), eq(taxonomyTerms.slug, slug)))
+    .from(tt)
+    .where(and(eq(tt.taxonomy, taxonomy), eq(tt.slug, idOrSlug)))
     .limit(1);
-
-  if (!results[0]) return null;
-
-  // Get post count
-  let count = 0;
-  try {
-    const countResult = await db
-      .select({ count: sql<number>`count(${pageTaxonomyTerms.pageId})::int` })
-      .from(pageTaxonomyTerms)
-      .innerJoin(pages, eq(pages.id, pageTaxonomyTerms.pageId))
-      .where(and(eq(pageTaxonomyTerms.termId, results[0].id), isNull(pages.deletedAt)));
-    count = Number(countResult[0]?.count ?? 0);
-  } catch {
-    count = 0;
-  }
-
-  return normalizeTermRecord(results[0], count);
+  const row =
+    rows[0] ??
+    (await ctx.db.select().from(tt).where(eq(tt.id, idOrSlug)).limit(1).catch(() => []))[0];
+  if (!row) throw notFound("Term");
+  return toTerm(row);
 }
 
-/**
- * Retrieves all terms assigned to a specific page entry.
- */
-export async function getEntryTerms(
-  db: any,
-  pageId: string,
-  taxonomy?: string,
-): Promise<TaxonomyTerm[]> {
-  if (!db || !pageId) return [];
+export interface TermInput {
+  slug?: string;
+  label: string | Record<string, string>;
+  description?: string | Record<string, string> | null;
+  parentId?: string | null;
+  displayOrder?: number;
+}
 
-  const conditions = [eq(pageTaxonomyTerms.pageId, pageId)];
-  if (taxonomy) {
-    conditions.push(eq(taxonomyTerms.taxonomy, taxonomy));
+export async function createTerm(ctx: CmsContext, _actor: CmsActor, taxonomy: string, input: TermInput) {
+  if (!ctx.taxonomies.some((t) => t.slug === taxonomy)) {
+    throw new CmsError(404, `Unknown taxonomy "${taxonomy}". Declare it in cms.config taxonomies.`);
   }
-
-  const results = await db
-    .select({
-      id: taxonomyTerms.id,
-      taxonomy: taxonomyTerms.taxonomy,
-      slug: taxonomyTerms.slug,
-      label: taxonomyTerms.label,
-      description: taxonomyTerms.description,
-      parentId: taxonomyTerms.parentId,
-      displayOrder: taxonomyTerms.displayOrder,
+  const slug = slugify(input.slug || resolveLabel(input.label)).replace(/\//g, "-");
+  if (!slug) throw new CmsError(422, "Term slug is required");
+  const [row] = await ctx.db
+    .insert(ctx.t.taxonomyTerms)
+    .values({
+      taxonomy,
+      slug,
+      label: input.label,
+      description: input.description ?? null,
+      parentId: input.parentId ?? null,
+      displayOrder: input.displayOrder ?? 0,
+      createdAt: new Date(),
     })
-    .from(pageTaxonomyTerms)
-    .innerJoin(taxonomyTerms, eq(taxonomyTerms.id, pageTaxonomyTerms.termId))
-    .where(and(...conditions))
-    .orderBy(asc(taxonomyTerms.displayOrder));
-
-  return results;
+    .returning();
+  return toTerm(row);
 }
 
-/**
- * Retrieves pages tagged with a given taxonomy term.
- */
-export async function getEntriesByTerm(
-  db: any,
-  taxonomy: string,
-  slug: string,
-  options: { limit?: number; offset?: number; type?: string } = {},
-) {
-  if (!db) return { entries: [], total: 0 };
-
-  const term = await getTerm(db, taxonomy, slug);
-  if (!term) return { entries: [], total: 0 };
-
-  const conditions: any[] = [eq(pageTaxonomyTerms.termId, term.id), isNull(pages.deletedAt)];
-
-  if (options.type) {
-    conditions.push(eq(pages.type, options.type));
-  }
-
-  let query = db
-    .select({ page: pages })
-    .from(pageTaxonomyTerms)
-    .innerJoin(pages, eq(pages.id, pageTaxonomyTerms.pageId))
-    .where(and(...conditions))
-    .orderBy(asc(pages.createdAt));
-
-  if (options.limit) query = query.limit(options.limit);
-  if (options.offset) query = query.offset(options.offset);
-
-  const rows = await query;
-  const entries = rows.map((r: any) => r.page);
-
-  return { entries, total: term.count ?? entries.length, term };
+export async function updateTerm(ctx: CmsContext, _actor: CmsActor, id: string, input: Partial<TermInput>) {
+  if (input.parentId && input.parentId === id) throw new CmsError(422, "A term cannot be its own parent");
+  const patch: Record<string, any> = { updatedAt: new Date() };
+  if (input.slug !== undefined) patch["slug"] = slugify(input.slug).replace(/\//g, "-");
+  if (input.label !== undefined) patch["label"] = input.label;
+  if (input.description !== undefined) patch["description"] = input.description;
+  if (input.parentId !== undefined) patch["parentId"] = input.parentId;
+  if (input.displayOrder !== undefined) patch["displayOrder"] = input.displayOrder;
+  const [row] = await ctx.db.update(ctx.t.taxonomyTerms).set(patch).where(eq(ctx.t.taxonomyTerms.id, id)).returning();
+  if (!row) throw notFound("Term");
+  return toTerm(row);
 }
 
-/**
- * Sets/syncs the assigned terms for a page within a specific taxonomy.
- */
-export async function assignEntryTerms(
-  db: any,
-  pageId: string,
+export async function deleteTerm(ctx: CmsContext, _actor: CmsActor, id: string) {
+  await ctx.db.delete(ctx.t.taxonomyTerms).where(eq(ctx.t.taxonomyTerms.id, id));
+  return { success: true };
+}
+
+export async function getEntryTerms(ctx: CmsContext, entryId: string, taxonomy?: string) {
+  const { taxonomyTerms: tt, pageTaxonomyTerms: ptt } = ctx.t;
+  const where = [eq(ptt.pageId, entryId)];
+  if (taxonomy) where.push(eq(tt.taxonomy, taxonomy));
+  const rows = await ctx.db
+    .select({ term: tt })
+    .from(ptt)
+    .innerJoin(tt, eq(tt.id, ptt.termId))
+    .where(and(...where))
+    .orderBy(asc(tt.displayOrder));
+  return rows.map((r: any) => toTerm(r.term));
+}
+
+/** Replaces the entry's terms within one taxonomy. */
+export async function setEntryTerms(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  entryId: string,
   taxonomy: string,
   termIds: string[],
 ) {
-  if (!db || !pageId) return;
-
-  // Find all current terms in this taxonomy assigned to the page
-  const currentAssigned = await getEntryTerms(db, pageId, taxonomy);
-  const currentTermIds = new Set(currentAssigned.map((t) => t.id));
-  const newTermIds = new Set(termIds);
-
-  // Remove unassigned
-  for (const term of currentAssigned) {
-    if (!newTermIds.has(term.id)) {
-      await db
-        .delete(pageTaxonomyTerms)
-        .where(and(eq(pageTaxonomyTerms.pageId, pageId), eq(pageTaxonomyTerms.termId, term.id)));
-    }
+  const { taxonomyTerms: tt, pageTaxonomyTerms: ptt } = ctx.t;
+  const current = await getEntryTerms(ctx, entryId, taxonomy);
+  const keep = new Set(termIds);
+  const remove = current.filter((t) => !keep.has(t.id)).map((t) => t.id);
+  if (remove.length) {
+    await ctx.db.delete(ptt).where(and(eq(ptt.pageId, entryId), inArray(ptt.termId, remove)));
   }
-
-  // Insert newly assigned
-  for (const termId of termIds) {
-    if (!currentTermIds.has(termId)) {
-      await db.insert(pageTaxonomyTerms).values({ pageId, termId }).onConflictDoNothing();
-    }
+  const have = new Set(current.map((t) => t.id));
+  const add = termIds.filter((id) => !have.has(id));
+  if (add.length) {
+    const valid = await ctx.db
+      .select({ id: tt.id })
+      .from(tt)
+      .where(and(eq(tt.taxonomy, taxonomy), inArray(tt.id, add)));
+    if (valid.length !== add.length) throw new CmsError(422, `Some terms are not in "${taxonomy}"`);
+    await ctx.db
+      .insert(ptt)
+      .values(add.map((termId) => ({ pageId: entryId, termId, assignedAt: new Date() })))
+      .onConflictDoNothing();
   }
-}
-
-function normalizeTermRecord(t: any, count = 0): TaxonomyTerm {
-  const rawLabel = t?.label ?? t?.name ?? "";
-  const nameStr =
-    typeof rawLabel === "object" && rawLabel !== null
-      ? rawLabel.en || Object.values(rawLabel)[0] || ""
-      : String(rawLabel);
-  const rawDesc = t?.description ?? "";
-  const descStr =
-    typeof rawDesc === "object" && rawDesc !== null
-      ? rawDesc.en || Object.values(rawDesc)[0] || ""
-      : rawDesc
-        ? String(rawDesc)
-        : undefined;
-  return {
-    id: t.id,
-    taxonomy: t.taxonomy,
-    slug: t.slug,
-    label: rawLabel,
-    name: nameStr,
-    description: descStr,
-    parentId: t.parentId,
-    displayOrder: t.displayOrder,
-    count,
-    postCount: count,
-    children: [],
-    createdAt: t.createdAt,
-    updatedAt: t.updatedAt,
-  };
-}
-
-/**
- * Creates a new taxonomy term.
- */
-export async function createTerm(
-  db: any,
-  data: {
-    taxonomy: string;
-    slug: string;
-    label?: any;
-    name?: string;
-    description?: any;
-    parentId?: string | null;
-    displayOrder?: number;
-  },
-) {
-  const insertData = {
-    taxonomy: data.taxonomy,
-    slug: data.slug,
-    label: data.label ?? data.name ?? data.slug,
-    description: data.description,
-    parentId: data.parentId,
-    displayOrder: data.displayOrder ?? 0,
-  };
-  const result = await db.insert(taxonomyTerms).values(insertData).returning();
-  return result[0] ? normalizeTermRecord(result[0], 0) : null;
-}
-
-/**
- * Updates an existing taxonomy term.
- */
-export async function updateTerm(
-  db: any,
-  id: string,
-  updates: Partial<{
-    slug: string;
-    label: any;
-    name: string;
-    description: any;
-    parentId: string | null;
-    displayOrder: number;
-  }>,
-) {
-  const updatePayload: any = { ...updates, updatedAt: new Date() };
-  if (updates.name && !updates.label) {
-    updatePayload.label = updates.name;
-    delete updatePayload.name;
-  }
-  const result = await db
-    .update(taxonomyTerms)
-    .set(updatePayload)
-    .where(eq(taxonomyTerms.id, id))
-    .returning();
-  return result[0] ? normalizeTermRecord(result[0], 0) : null;
-}
-
-/**
- * Deletes a taxonomy term.
- */
-export async function deleteTerm(db: any, id: string) {
-  await db.delete(taxonomyTerms).where(eq(taxonomyTerms.id, id));
-  return { success: true };
+  return getEntryTerms(ctx, entryId, taxonomy);
 }

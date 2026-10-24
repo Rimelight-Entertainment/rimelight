@@ -1,58 +1,65 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import type { Plugin } from "vite-plus";
-import type { CmsConfig } from "./types";
+import type { CmsPluginOptions } from "./types";
 
 const ID = "virtual:rimelight-cms";
 const RESOLVED_ID = `\0${ID}`;
+/** Emitted by `filesystem-routing/vite`; referenced by string so it isn't a dependency. */
+const FILE_ROUTES_ID = "virtual:file-routes";
 
-// The virtual module ID emitted by filesystem-routing/vite. We reference it
-// by its stable string value rather than importing from filesystem-routing
-// so that the CMS package doesn't need it as a dependency.
-const FILE_ROUTES_VIRTUAL_ID = "virtual:file-routes";
-
-/**
- * Generates the CMS route entries to be injected into the pageRoutes export
- * that filesystem-routing emits. Each entry matches the shape expected by @solidjs/router's fileRoutes():
- * `$component` with `require` or `import`.
- */
-function buildCmsRouteEntries(basePath: string): string {
-  const base = basePath.replace(/\/$/, "");
-  const paths = [`${base}/:locale/cms/*`, `${base}/:locale/cms`, `${base}/cms/*`, `${base}/cms`];
-
+function dashboardRoutes(base: string, moduleId: string): string {
+  const root = base.replace(/\/$/, "") || "/cms";
+  const paths = [`/:locale${root}/*rest`, `/:locale${root}`, `${root}/*rest`, root];
   return paths
     .map(
       (path) =>
-        `{ path: ${JSON.stringify(path)}, id: ${JSON.stringify(path)}, page: true, $component: { src: "@rimelight/cms/solid", import: () => import("@rimelight/cms/solid").then(m => ({ default: m.CmsDashboard })) } }`,
+        `{ path: ${JSON.stringify(path)}, id: ${JSON.stringify(`rimelight-cms:${path}`)}, page: true, $component: { src: ${JSON.stringify(moduleId)}, import: () => import(${JSON.stringify(moduleId)}).then((m) => ({ default: m.CmsDashboardRoute })) } }`,
     )
     .join(",\n  ");
 }
 
-export const cms = (options: CmsConfig = {}): Plugin => ({
-  name: "rimelight:cms",
-  resolveId(id) {
-    if (id === ID) return RESOLVED_ID;
-    return undefined;
-  },
-  async load(id) {
-    if (id !== RESOLVED_ID) return undefined;
-    return [
-      `export const db = undefined;`,
-      `export const config = ${JSON.stringify(options)};`,
-    ].join("\n");
-  },
-  transform(code, id) {
-    // Intercept the filesystem-routing virtual module and inject CMS routes
-    // into its pageRoutes export so consumers get CMS routes automatically.
-    if (id !== FILE_ROUTES_VIRTUAL_ID) return undefined;
+/**
+ * Vite plugin: exposes `cms.config.ts` + options as `virtual:rimelight-cms` and mounts the
+ * dashboard routes into filesystem-routing.
+ */
+export const cms = (options: CmsPluginOptions = {}): Plugin => {
+  let configPath: string | null = null;
+  const dashboardPath = options.dashboardPath ?? options.routePrefix ?? "/cms";
 
-    const basePath = options.routePrefix ?? "";
-    const entries = buildCmsRouteEntries(basePath);
+  return {
+    name: "rimelight:cms",
+    configResolved(config: any) {
+      const candidate = resolve(config.root, options.config ?? "cms.config.ts");
+      configPath = existsSync(candidate) ? candidate : null;
+      if (options.config && !configPath) {
+        throw new Error(`[@rimelight/cms] config file not found: ${candidate}`);
+      }
+    },
+    resolveId(id) {
+      return id === ID ? RESOLVED_ID : undefined;
+    },
+    load(id) {
+      if (id !== RESOLVED_ID) return undefined;
+      const { auth: _auth, ...serializable } = options;
+      const opts = JSON.stringify({ ...serializable, dashboardPath, apiPath: options.apiPath ?? "/api/cms" });
+      return configPath
+        ? `import config from ${JSON.stringify(configPath)};\nexport { config };\nexport const options = ${opts};`
+        : `export const config = {};\nexport const options = ${opts};`;
+    },
+    async transform(code, id) {
+      if (id !== FILE_ROUTES_ID && id !== `\0${FILE_ROUTES_ID}`) return undefined;
+      // Bare specifiers inside a virtual module don't resolve in the browser, so emit the
+      // resolved file path (the same form filesystem-routing uses for app routes).
+      const resolved = await this.resolve("@rimelight/cms/dashboard/route");
+      if (!resolved) throw new Error("[@rimelight/cms] cannot resolve @rimelight/cms/dashboard/route");
+      const moduleId = resolved.id.replace(/\\/g, "/");
+      return code.replace(
+        /export const pageRoutes = \[/,
+        `export const pageRoutes = [\n  ${dashboardRoutes(dashboardPath, moduleId)},`,
+      );
+    },
+  };
+};
 
-    // The virtual module ends with:
-    //   export const pageRoutes = [...];
-    // We prepend our CMS entries to that array.
-    return code.replace(
-      /export const pageRoutes = \[/,
-      `export const pageRoutes = [\n  ${entries},`,
-    );
-  },
-});
+export type { CmsPluginOptions };

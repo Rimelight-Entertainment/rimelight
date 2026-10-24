@@ -198,42 +198,27 @@ export async function handleMediaFile(request: Request, key: string, ctx: MediaR
 }
 
 /**
- * Mount CMS media routes on any Hono-compatible (or Express-style) router. The router only needs
- * `.get(path, handler)`, `.post(...)`, `.delete(...)` with Hono's `(c) => Response` signature —
- * handlers adapt automatically.
+ * Mount CMS media routes on a Hono router. The R2 bucket is resolved from `c.env[binding]`
+ * (Cloudflare) unless `ctx.getBucket` is provided.
  */
 export function registerCmsMediaRoutes(
   router: {
-    get: (path: string, handler: (c: any) => Promise<Response>) => void;
-    post: (path: string, handler: (c: any) => Promise<Response>) => void;
-    delete: (path: string, handler: (c: any) => Promise<Response>) => void;
+    get: (path: string, handler: (c: any) => Promise<Response>) => unknown;
+    post: (path: string, handler: (c: any) => Promise<Response>) => unknown;
+    delete: (path: string, handler: (c: any) => Promise<Response>) => unknown;
   },
   basePath: string,
   ctx: MediaRouteContext = {},
 ) {
-  const toHandler =
-    (fn: (request: Request, extra?: any) => Promise<Response>) => async (c: any) => {
-      const request: Request = c.req?.raw ?? c.request ?? c;
-      const params = {
-        key: c.req?.param?.("key") ?? c.params?.["key"],
-      };
-      return fn(request, params);
-    };
-
-  router.get(
-    `${basePath}`,
-    toHandler((req) => handleMediaList(req, ctx)),
-  );
-  router.post(
-    `${basePath}`,
-    toHandler((req) => handleMediaUpload(req, ctx)),
-  );
-  router.delete(
-    `${basePath}`,
-    toHandler((req) => handleMediaDelete(req, ctx)),
-  );
-  router.get(
-    `${basePath}/file/:key`,
-    toHandler((req, params) => handleMediaFile(req, params?.key, ctx)),
-  );
+  const withEnv = (c: any): MediaRouteContext => ({
+    ...ctx,
+    getBucket: ctx.getBucket ?? (async (name: string) => c.env?.[name] ?? null),
+  });
+  router.get(basePath, (c) => handleMediaList(c.req.raw, withEnv(c)));
+  router.post(basePath, (c) => handleMediaUpload(c.req.raw, withEnv(c)));
+  router.delete(basePath, (c) => handleMediaDelete(c.req.raw, withEnv(c)));
+  router.get(`${basePath}/file/*`, (c) => {
+    const key = decodeURIComponent(c.req.path.split(`${basePath}/file/`)[1] ?? "");
+    return handleMediaFile(c.req.raw, key, withEnv(c));
+  });
 }

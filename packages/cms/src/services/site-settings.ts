@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
-import { siteSettings, type InsertSiteSettings, type SiteSettings } from "../schema/site_settings";
+import type { InsertSiteSettings, SiteSettings } from "../schema/site_settings";
+import type { CmsContext } from "./context";
 
 export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   id: "default",
@@ -49,12 +50,11 @@ function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings
  * default record and returns it.
  */
 export async function getSiteSettings(
-  db: any,
+  ctx: CmsContext,
   fallbackDefaults?: Partial<InsertSiteSettings>,
 ): Promise<SiteSettings> {
-  if (!db) {
-    return fallbackSettings(fallbackDefaults);
-  }
+  const { db } = ctx;
+  const siteSettings = ctx.t.siteSettings;
 
   try {
     const records = await db
@@ -85,11 +85,15 @@ export async function getSiteSettings(
  * Updates dynamic site settings in the database.
  */
 export async function updateSiteSettings(
-  db: any,
+  ctx: CmsContext,
   updates: Partial<InsertSiteSettings>,
   id: string = "default",
 ): Promise<SiteSettings> {
-  const current = await getSiteSettings(db);
+  const { db } = ctx;
+  const siteSettings = ctx.t.siteSettings;
+  const current = await getSiteSettings(ctx);
+  const { createdAt: _c, id: _i, ...safe } = updates as any;
+  updates = safe;
 
   const updatedValues = {
     ...updates,

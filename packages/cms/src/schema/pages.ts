@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import type { BaseBlock } from "../core/types/blocks";
-import type { Localized, PageType } from "../core/types/pages";
+import type { EntryStatus, Localized, PageType } from "../core/types/pages";
 import type { BylineCredit } from "../core/types/bylines";
 import { pageVersions } from "./page_versions";
 import { pageTemplates } from "./page_templates";
@@ -28,6 +28,10 @@ export const pages = pgTable(
         properties: Record<string, any>;
       }>()
       .notNull(),
+    /** Lifecycle status. Existing rows default to "published" so legacy content stays live. */
+    status: text("status").$type<EntryStatus>().default("published").notNull(),
+    /** When set and status is "scheduled", the cron publishes the draft at this time. */
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
     publishedVersionId: uuid("published_version_id").references(() => pageVersions.id, {
       onDelete: "set null",
     }),

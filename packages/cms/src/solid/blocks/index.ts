@@ -13,11 +13,10 @@ import { CardBlock } from "./CardBlock";
 import { FileTreeBlock } from "./FileTreeBlock";
 import { UnorderedListBlock } from "./UnorderedListBlock";
 import { OrderedListBlock } from "./OrderedListBlock";
-import { ScriptBlock } from "./ScriptBlock";
-import { SceneBlock } from "./SceneBlock";
-import { DialogueBlock } from "./DialogueBlock";
 import { LivePreviewBlock } from "./LivePreviewBlock";
 import type { Component } from "solid-js";
+import { builtinBlocks } from "../../core/blocks/builtins";
+import { BlockRegistry, type BlockDefinition } from "../../core/blocks/registry";
 import type { BlockViewProps } from "./ParagraphBlock";
 
 export {
@@ -36,9 +35,6 @@ export {
   FileTreeBlock,
   UnorderedListBlock,
   OrderedListBlock,
-  ScriptBlock,
-  SceneBlock,
-  DialogueBlock,
   LivePreviewBlock,
 };
 export type { BlockViewProps };
@@ -60,8 +56,19 @@ export const defaultBlockComponents: Record<string, Component<BlockViewProps>> =
   FileTreeBlock,
   UnorderedListBlock,
   OrderedListBlock,
-  ScriptBlock,
-  SceneBlock,
-  DialogueBlock,
   LivePreviewBlock,
 };
+
+/** Built-in block definitions with their Solid renderers attached. */
+export const defaultBlocks: BlockDefinition<any>[] = builtinBlocks.map((def) => {
+  const render = defaultBlockComponents[def.type];
+  return render ? { ...def, render: render as any } : def;
+});
+
+/**
+ * A registry with the built-in blocks plus `extra` (custom blocks from `cms.config.ts`).
+ * Custom definitions override built-ins with the same `type`.
+ */
+export function createBlockRegistry(extra: BlockDefinition<any>[] = []): BlockRegistry {
+  return new BlockRegistry().register(...defaultBlocks, ...extra);
+}

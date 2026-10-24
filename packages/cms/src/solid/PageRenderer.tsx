@@ -1,31 +1,35 @@
-import { createMemo, For, type Component } from "solid-js";
+import { For, type Component } from "solid-js";
 import type { BaseBlock } from "../core/types/blocks";
+import type { BlockDefinition } from "../core/blocks/registry";
 import type { UserSessionContext } from "../auth/permissions";
 import { filterBlocksForReader } from "../auth/filter-blocks";
-import { BlockRenderer } from "./BlockRenderer";
+import { normalizeBlocks } from "../core/blocks/tree";
+import { BlockRenderer, BlockRegistryContext } from "./BlockRenderer";
+import { createBlockRegistry } from "./blocks/index";
 
 export interface PageRendererProps {
   blocks: BaseBlock[];
   session?: UserSessionContext | undefined;
   locale?: string | undefined;
   class?: string | undefined;
+  /** Custom blocks (e.g. `config.blocks` from cms.config.ts). */
+  blockDefinitions?: BlockDefinition<any>[] | undefined;
+  /** Renderer overrides by block type. */
   components?: Record<string, Component<any>> | undefined;
 }
 
 export const PageRenderer: Component<PageRendererProps> = (props) => {
-  const locale = () => props.locale ?? "en";
-  const className = () => props.class ?? "";
-  const overrides = () => props.components ?? {};
-
-  const sanitizedBlocks = createMemo(() =>
-    filterBlocksForReader(props.blocks ?? [], props.session),
-  );
-
+  const registry = createBlockRegistry(props.blockDefinitions ?? []);
+  const blocks = () => filterBlocksForReader(normalizeBlocks(props.blocks ?? []), props.session);
   return (
-    <article class={`rimelight-cms-page ${className()}`}>
-      <For each={sanitizedBlocks()}>
-        {(block) => <BlockRenderer block={block} locale={locale()} components={overrides()} />}
-      </For>
-    </article>
+    <BlockRegistryContext value={registry}>
+      <article class={`rimelight-cms-page ${props.class ?? ""}`}>
+        <For each={blocks()}>
+          {(block, i) => (
+            <BlockRenderer block={block} index={i()} locale={props.locale} components={props.components} />
+          )}
+        </For>
+      </article>
+    </BlockRegistryContext>
   );
 };

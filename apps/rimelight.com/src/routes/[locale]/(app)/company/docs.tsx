@@ -17,7 +17,6 @@ import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
 import { getCurrentLocale } from "@rimelight/i18n";
-import { api } from "#api/client";
 
 export interface DocsContextValue {
   setTitle: (title: string) => void;
@@ -76,7 +75,7 @@ export const DocsRouteLayout: Component<RouteSectionProps> = (props) => {
         const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
         let activeConfig: DocsConfig | undefined;
         try {
-          const res = await (api as any).content["docs-config"].$get();
+          const res = await fetch("/api/content/docs/nav?basePath=/{locale}/company/docs");
           if (res.ok) {
             const data = (await res.json()) as any;
             if (data?.config && data.config.sidebar?.scopes?.length > 0) {

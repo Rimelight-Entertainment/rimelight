@@ -3,7 +3,7 @@ import type { BlockViewProps } from "./ParagraphBlock";
 
 export const ImageBlock: Component<BlockViewProps> = (props) => {
   const src = () =>
-    (props.block.props?.["src"] as string) ?? (props.block.props?.["url"] as string) ?? "";
+    (props.block.props?.["src"] as string) ?? "";
   const alt = () => (props.block.props?.["alt"] as string) ?? "Image";
   const caption = () => (props.block.props?.["caption"] as string) ?? "";
 

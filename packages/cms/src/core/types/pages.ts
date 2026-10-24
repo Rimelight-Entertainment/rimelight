@@ -2,6 +2,8 @@ import type { BaseBlock } from "./blocks";
 
 export type Localized<T = string> = Record<string, T>;
 
+export type EntryStatus = "draft" | "scheduled" | "published" | "archived";
+
 export type PageType = "wiki" | "article" | "doc" | "announcement" | "landing" | (string & {});
 
 export interface RegisterPageTypes {
@@ -23,6 +25,8 @@ export interface PageMetadata {
   description?: Localized;
   tags?: Localized[];
   authorIds?: string[];
+  status?: EntryStatus;
+  scheduledAt?: Date | null;
   publishedVersionId?: string | null;
   postedAt?: Date | null;
   createdAt?: Date;

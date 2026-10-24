@@ -1,5 +1,5 @@
 import type { DocsConfig, SidebarItem, SidebarScope, RLBadgeProps } from "./config";
-import { defaultDocsConfig, buildDocsNavFromPages } from "./config";
+import { defaultDocsConfig } from "./config";
 
 export interface ResolvedSidebarItem {
   label: string;
@@ -130,11 +130,7 @@ export async function getDocsSidebar(
   if (!config) {
     resolvedConfig = defaultDocsConfig;
   } else if (Array.isArray(config)) {
-    if (config.length > 0 && ("slug" in config[0] || "content" in config[0])) {
-      resolvedConfig = buildDocsNavFromPages(config, { locale });
-    } else {
-      resolvedConfig = { sidebar: config };
-    }
+    resolvedConfig = { sidebar: config };
   } else {
     resolvedConfig = config;
   }

@@ -8,7 +8,7 @@ import {
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 import type { BaseBlock } from "../core/types/blocks";
-import type { Localized, PageType } from "../core/types/pages";
+import type { EntryStatus, Localized, PageType } from "../core/types/pages";
 import type { BylineCredit } from "../core/types/bylines";
 import type { PageVersionStatus } from "../core/types/versioning";
 import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
@@ -147,6 +147,8 @@ export const pages = sqliteTable(
         properties: Record<string, any>;
       }>()
       .notNull(),
+    status: text("status").$type<EntryStatus>().default("published").notNull(),
+    scheduledAt: integer("scheduled_at", { mode: "timestamp" }),
     publishedVersionId: text("published_version_id").references(() => pageVersions.id, {
       onDelete: "set null",
     }),
@@ -385,6 +387,14 @@ export const contentTypes = sqliteTable(
     initialBlocks: text("initial_blocks", { mode: "json" })
       .$type<BaseBlock[]>()
       .default(sql`'[]'`)
+      .notNull(),
+    features: text("features", { mode: "json" })
+      .$type<Record<string, any>>()
+      .default(sql`'{}'`)
+      .notNull(),
+    workflow: text("workflow", { mode: "json" })
+      .$type<Record<string, any>>()
+      .default(sql`'{}'`)
       .notNull(),
     isSystem: integer("is_system", { mode: "boolean" }).default(false).notNull(),
     createdAt: integer("created_at", { mode: "timestamp" })

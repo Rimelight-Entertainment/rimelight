@@ -1,74 +1,67 @@
-import { eq, and, isNull, or } from "drizzle-orm";
-import { bylines, type Byline, type NewByline } from "../schema/bylines";
+import { and, asc, eq, isNull, or } from "drizzle-orm";
+import { CmsError, notFound, slugify, type CmsActor, type CmsContext } from "./context";
 
 /**
- * Returns all active (non-deleted) bylines.
+ * Bylines are public author/contributor profiles, decoupled from user accounts (a byline may
+ * link to a `userId`, but guest authors and studios work too). Entries reference them in
+ * `pages.bylines` as `{ userId: <byline id>, role, customTitle?, displayOrder? }`.
  */
-export async function getBylines(db: any): Promise<Byline[]> {
-  if (!db) return [];
-  return db.select().from(bylines).where(isNull(bylines.deletedAt)).orderBy(bylines.name);
+
+export interface BylineInput {
+  name: string;
+  slug?: string;
+  bio?: string | null;
+  avatar?: string | null;
+  websiteUrl?: string | null;
+  userId?: string | null;
+  socials?: Record<string, string>;
+  metadata?: Record<string, any>;
 }
 
-/**
- * Retrieves a single byline by ID or slug.
- */
-export async function getByline(db: any, idOrSlug: string): Promise<Byline | null> {
-  if (!db || !idOrSlug) return null;
-  const rows = await db
+export async function listBylines(ctx: CmsContext) {
+  const b = ctx.t.bylines;
+  return ctx.db.select().from(b).where(isNull(b.deletedAt)).orderBy(asc(b.name));
+}
+
+export async function getByline(ctx: CmsContext, idOrSlug: string) {
+  const b = ctx.t.bylines;
+  const rows = await ctx.db
     .select()
-    .from(bylines)
-    .where(
-      and(
-        isNull(bylines.deletedAt),
-        or(eq(bylines.id, idOrSlug as any), eq(bylines.slug, idOrSlug)),
-      ),
-    )
-    .limit(1);
-
-  return rows[0] || null;
+    .from(b)
+    .where(and(isNull(b.deletedAt), or(eq(b.slug, idOrSlug), eq(b.id, idOrSlug))))
+    .limit(1)
+    .catch(() => ctx.db.select().from(b).where(and(isNull(b.deletedAt), eq(b.slug, idOrSlug))).limit(1));
+  if (!rows[0]) throw notFound("Byline");
+  return rows[0];
 }
 
-/**
- * Creates a new byline.
- */
-export async function createByline(db: any, data: NewByline): Promise<Byline> {
-  const [created] = await db
-    .insert(bylines)
-    .values({
-      ...data,
-      updatedAt: new Date(),
-    })
+export async function createByline(ctx: CmsContext, _actor: CmsActor, input: BylineInput) {
+  if (!input.name?.trim()) throw new CmsError(422, "Name is required");
+  const slug = slugify(input.slug || input.name).replace(/\//g, "-");
+  const now = new Date();
+  const [row] = await ctx.db
+    .insert(ctx.t.bylines)
+    .values({ ...input, slug, socials: input.socials ?? {}, metadata: input.metadata ?? {}, createdAt: now, updatedAt: now })
     .returning();
-  return created;
+  return row;
 }
 
-/**
- * Updates an existing byline.
- */
-export async function updateByline(
-  db: any,
-  id: string,
-  data: Partial<NewByline>,
-): Promise<Byline | null> {
-  const [updated] = await db
-    .update(bylines)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(and(eq(bylines.id, id as any), isNull(bylines.deletedAt)))
+export async function updateByline(ctx: CmsContext, _actor: CmsActor, id: string, input: Partial<BylineInput>) {
+  const patch: Record<string, any> = { ...input, updatedAt: new Date() };
+  if (input.slug !== undefined) patch["slug"] = slugify(input.slug).replace(/\//g, "-");
+  const [row] = await ctx.db
+    .update(ctx.t.bylines)
+    .set(patch)
+    .where(and(eq(ctx.t.bylines.id, id), isNull(ctx.t.bylines.deletedAt)))
     .returning();
-  return updated || null;
+  if (!row) throw notFound("Byline");
+  return row;
 }
 
-/**
- * Soft deletes a byline.
- */
-export async function deleteByline(db: any, id: string): Promise<boolean> {
-  const [deleted] = await db
-    .update(bylines)
+export async function deleteByline(ctx: CmsContext, _actor: CmsActor, id: string) {
+  await ctx.db
+    .update(ctx.t.bylines)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
-    .where(and(eq(bylines.id, id as any), isNull(bylines.deletedAt)))
-    .returning();
-  return !!deleted;
+    .where(eq(ctx.t.bylines.id, id));
+  return { success: true };
 }

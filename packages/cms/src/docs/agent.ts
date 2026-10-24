@@ -1,6 +1,5 @@
 import { blocksToMarkdown } from "../markdown";
-import { pages } from "../schema";
-import { eq, and, isNull, isNotNull } from "drizzle-orm";
+import type { Cms } from "../services/index";
 
 export interface AgentMarkdownOptions {
   siteUrl?: string;
@@ -21,64 +20,52 @@ function resolveLocalized(val: unknown, locale: string = "en"): string {
 /**
  * Renders a CMS page record into clean, agent-ready Markdown with YAML frontmatter.
  */
+export interface MarkdownSource {
+  slug: string;
+  collection: string;
+  title: Record<string, string>;
+  description?: Record<string, string> | null;
+  blocks: import("../core/types/blocks").BaseBlock[];
+  properties: Record<string, any>;
+}
+
 export function renderPageAsMarkdown(
-  page: any,
+  page: MarkdownSource,
   locale: string = "en",
   options: AgentMarkdownOptions = {},
 ): string {
   const { siteUrl = "https://rimelight.com", llmsUrl = "/llms.txt", sourceUrl } = options;
-
-  let contentObj = page.content;
-  if (typeof contentObj === "string") {
-    try {
-      contentObj = JSON.parse(contentObj);
-    } catch {
-      contentObj = { blocks: [], properties: {} };
-    }
-  } else if (!contentObj || typeof contentObj !== "object") {
-    contentObj = { blocks: [], properties: {} };
-  }
-
-  const blocks = Array.isArray(contentObj.blocks) ? contentObj.blocks : [];
-  const properties = contentObj.properties || {};
-
-  const title = resolveLocalized(page.title, locale) || properties.title || "Untitled";
-  const description = resolveLocalized(page.description, locale) || properties.description || "";
-  const version = properties.version || page.templateVersion;
-  const markdownBody = blocksToMarkdown(blocks);
-
-  const frontmatter = [
+  const title = resolveLocalized(page.title, locale) || "Untitled";
+  const description = resolveLocalized(page.description, locale);
+  const version = page.properties["version"];
+  const lines = [
     "---",
     `title: ${JSON.stringify(title)}`,
     ...(description ? [`description: ${JSON.stringify(description)}`] : []),
     ...(version ? [`version: ${JSON.stringify(version)}`] : []),
-    ...(page.type ? [`type: ${JSON.stringify(page.type)}`] : []),
+    `collection: ${JSON.stringify(page.collection)}`,
     "---",
     "",
     "> Documentation Index",
     `> Fetch the complete documentation index at: ${new URL(llmsUrl, siteUrl).href}`,
-    "> Use this file to discover all available pages and sections.",
     "",
     `# ${title}`,
     "",
-    markdownBody,
+    blocksToMarkdown(page.blocks),
     "",
   ];
-
-  if (sourceUrl) {
-    frontmatter.push(`Source: ${new URL(sourceUrl, siteUrl).href}`, "");
-  }
-
-  return frontmatter.join("\n");
+  if (sourceUrl) lines.push(`Source: ${new URL(sourceUrl, siteUrl).href}`, "");
+  return lines.join("\n");
 }
 
 /**
- * Collate all published pages of a given type into a single corpus markdown document.
+ * Collate all published entries of a collection into a single corpus markdown document
+ * (for `/llms-full.txt` style endpoints).
  */
 export async function renderCorpusMarkdown(
-  db: any,
+  cms: Cms,
   options: {
-    type?: string;
+    collection?: string;
     locale?: string;
     siteUrl?: string;
     title?: string;
@@ -86,40 +73,16 @@ export async function renderCorpusMarkdown(
   } = {},
 ): Promise<string> {
   const {
-    type = "doc",
+    collection = "doc",
     locale = "en",
     siteUrl = "https://rimelight.com",
-    title = "Rimelight Documentation Corpus",
+    title = "Documentation Corpus",
     description = "Complete single-corpus documentation for AI agents.",
   } = options;
-
-  if (!db) return `# ${title}\n\n${description}`;
-
-  const conditions = [isNull(pages.deletedAt), isNotNull(pages.publishedVersionId)];
-  if (type) {
-    conditions.push(eq(pages.type, type));
+  const parts = [`# ${title}`, "", description, "", `Generated for site: ${siteUrl}`, "", "---", ""];
+  const { entries } = await cms.entries.listEntries({ collection, status: "published", orderBy: "slug", limit: 500, includeContent: true });
+  for (const entry of entries) {
+    parts.push(renderPageAsMarkdown({ ...entry, blocks: entry.published?.blocks ?? [], properties: entry.published?.properties ?? {} }, locale, { siteUrl }), "", "---", "");
   }
-
-  const rows = await db
-    .select()
-    .from(pages)
-    .where(and(...conditions));
-
-  const parts = [
-    `# ${title}`,
-    "",
-    description,
-    "",
-    `Generated for site: ${siteUrl}`,
-    "",
-    "---",
-    "",
-  ];
-
-  for (const page of rows) {
-    const pageMd = renderPageAsMarkdown(page, locale, { siteUrl });
-    parts.push(pageMd, "", "---", "");
-  }
-
   return parts.join("\n");
 }

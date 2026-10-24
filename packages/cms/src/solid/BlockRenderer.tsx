@@ -1,73 +1,60 @@
-import { For, Show, type Component } from "solid-js";
+import { For, Show, createContext, useContext, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import type { BaseBlock } from "../core/types/blocks";
-import { defaultBlockComponents } from "./blocks/index";
-import { BlockRegistry } from "../core/registry";
+import type { BlockRegistry } from "../core/blocks/registry";
+import { getChildren } from "../core/blocks/tree";
+import { createBlockRegistry } from "./blocks/index";
+
+/** Provides the block registry (built-ins + custom blocks) to renderers below it. */
+export const BlockRegistryContext = createContext<BlockRegistry>(createBlockRegistry());
+export const useBlockRegistry = () => useContext(BlockRegistryContext);
 
 export interface BlockRendererProps {
   block: BaseBlock;
   locale?: string | undefined;
   sectionDepth?: number | undefined;
   index?: number | undefined;
+  /** Per-render overrides by block type (take precedence over the registry). */
   components?: Record<string, Component<any>> | undefined;
 }
 
 export const BlockRenderer: Component<BlockRendererProps> = (props) => {
-  const block = () => props.block;
-  const locale = () => props.locale ?? "en";
-  const sectionDepth = () => props.sectionDepth ?? 0;
-  const index = () => props.index ?? 0;
-  const overrides = () => props.components ?? {};
+  const registry = useBlockRegistry();
+  const depth = () => props.sectionDepth ?? 0;
+  const component = () =>
+    props.components?.[props.block.type] ?? registry.get(props.block.type)?.render;
+  const children = () => getChildren(props.block);
+  const childDepth = () => (props.block.type === "SectionBlock" ? depth() + 1 : depth());
 
-  const Resolved = () => {
-    const t = block().type;
-    return (
-      (overrides()[t] as Component<any> | undefined) ??
-      BlockRegistry.get(t)?.render ??
-      defaultBlockComponents[t]
-    );
-  };
-
-  const rawChildren = () => block().children ?? block().props?.["children"] ?? [];
-  const children = () => (Array.isArray(rawChildren()) ? rawChildren() : []) as BaseBlock[];
-  const nextDepth = () =>
-    block().type === "SectionBlock" ? Math.min(6, (sectionDepth() || 2) + 1) : sectionDepth();
-
-  const childNodes = (depth: number) => (
+  const renderedChildren = () => (
     <For each={children()}>
-      {(child, idx) => (
+      {(child, i) => (
         <BlockRenderer
           block={child}
-          locale={locale()}
-          sectionDepth={depth}
-          index={idx()}
-          components={overrides()}
+          locale={props.locale}
+          sectionDepth={childDepth()}
+          index={i()}
+          components={props.components}
         />
       )}
     </For>
   );
 
   return (
-    <Show when={block()?.type}>
-      <Show
-        when={Resolved()}
-        fallback={
-          <Show when={children().length > 0}>
-            <div>{childNodes(sectionDepth())}</div>
-          </Show>
-        }
+    <Show
+      when={component()}
+      fallback={<Show when={children().length > 0}>{renderedChildren()}</Show>}
+    >
+      <Dynamic
+        component={component()!}
+        block={props.block}
+        locale={props.locale ?? "en"}
+        sectionDepth={depth()}
+        index={props.index ?? 0}
+        components={props.components}
       >
-        <Dynamic
-          component={Resolved()!}
-          block={block()}
-          locale={locale()}
-          sectionDepth={sectionDepth()}
-          index={index()}
-          components={overrides()}
-        >
-          {childNodes(nextDepth())}
-        </Dynamic>
-      </Show>
+        {renderedChildren()}
+      </Dynamic>
     </Show>
   );
 };

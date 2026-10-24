@@ -1,57 +1,37 @@
-import { and, isNotNull, isNull, lt, lte } from "drizzle-orm";
-import { pageDraftLocks } from "../schema/page_draft_locks";
-import { pages } from "../schema/pages";
+import { lt } from "drizzle-orm";
+import { getCmsDb } from "../db/index";
+import { createCms } from "../services/index";
+import type { CmsConfig } from "../types";
 
 export interface CmsCronResult {
+  published: string[];
+  failed: { id: string; error: string }[];
   expiredLocksCleaned: number;
-  scheduledPagesActive: number;
   timestamp: string;
 }
 
 /**
- * Handles the periodic Cloudflare Worker cron trigger (e.g. "* * * * *").
+ * Cloudflare `scheduled` handler (or any interval job). Publishes due scheduled entries and
+ * clears expired edit locks. Run it every minute or so.
  *
- * - Cleans up expired page draft locks
- * - Checks for active scheduled pages
+ * @example
+ *   export default { fetch: app.fetch, scheduled: (e, env, ctx) => ctx.waitUntil(handleCmsCron({ db: env.DB })) };
  */
-export async function handleCmsCron(
-  _event: any,
-  _env: any,
-  _ctx: any,
-  db: any,
-): Promise<CmsCronResult> {
-  const result: CmsCronResult = {
-    expiredLocksCleaned: 0,
-    scheduledPagesActive: 0,
-    timestamp: new Date().toISOString(),
-  };
-
-  if (!db) return result;
-
-  try {
-    const now = new Date();
-
-    // 1. Purge expired draft edit locks
-    const deletedLocks = await db
-      .delete(pageDraftLocks)
-      .where(lt(pageDraftLocks.expiresAt, now))
-      .returning({ pageId: pageDraftLocks.pageId });
-
-    result.expiredLocksCleaned = deletedLocks.length;
-
-    // 2. Query active published pages in current window
-    const activeScheduled = await db
-      .select({ id: pages.id, slug: pages.slug })
-      .from(pages)
-      .where(
-        and(isNull(pages.deletedAt), isNotNull(pages.publishedVersionId), lte(pages.postedAt, now)),
-      )
-      .limit(10);
-
-    result.scheduledPagesActive = activeScheduled.length;
-  } catch (error) {
-    console.error("[CmsCron] Error executing scheduled tasks:", error);
-  }
-
-  return result;
+export async function handleCmsCron(input: { db: any; config?: CmsConfig; now?: Date }): Promise<CmsCronResult> {
+  const now = input.now ?? new Date();
+  const { db, dialect } = getCmsDb({ db: input.db });
+  const cms = createCms({
+    db,
+    dialect,
+    collections: input.config?.collections ?? [],
+    blocks: input.config?.blocks ?? [],
+    locales: input.config?.locales ?? ["en"],
+  });
+  const { published, failed } = await cms.entries.publishDueEntries(now);
+  const locks = cms.ctx.t.pageDraftLocks;
+  const cleaned = await cms.ctx.db
+    .delete(locks)
+    .where(lt(locks.expiresAt, now))
+    .returning({ pageId: locks.pageId });
+  return { published, failed, expiredLocksCleaned: cleaned.length, timestamp: now.toISOString() };
 }
