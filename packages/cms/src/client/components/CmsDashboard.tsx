@@ -135,18 +135,18 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
     {
       title: "Content",
       items: [
-        { id: "overview", label: "Overview", icon: "i-lucide-layout-dashboard" },
-        { id: "pages", label: "Pages", icon: "i-lucide-file-text" },
-        { id: "templates", label: "Page Templates", icon: "i-lucide-layout-template" },
+        { id: "overview", label: "Overview", icon: "layers" },
+        { id: "pages", label: "Pages", icon: "list" },
+        { id: "templates", label: "Page Templates", icon: "copy" },
       ],
     },
     {
       title: "Taxonomies & Meta",
       items: [
-        { id: "categories", label: "Categories", icon: "i-lucide-folder" },
-        { id: "tags", label: "Tags", icon: "i-lucide-tag" },
-        { id: "bylines", label: "Author Bylines", icon: "i-lucide-pen-tool" },
-        { id: "taxonomies", label: "Taxonomy Manager", icon: "i-lucide-folder-tree" },
+        { id: "categories", label: "Categories", icon: "list" },
+        { id: "tags", label: "Tags", icon: "star" },
+        { id: "bylines", label: "Author Bylines", icon: "user" },
+        { id: "taxonomies", label: "Taxonomy Manager", icon: "layers" },
       ],
     },
   ];
@@ -163,7 +163,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
   const sidebarHeader = () => (
     <div class="h-16 min-h-16 flex items-center gap-3 w-full shrink-0 px-2">
       <div class="size-8 rounded-lg bg-primary-500/10 text-primary-500 flex items-center justify-center shrink-0">
-        <RLIcon name="i-lucide-box" class="size-5" />
+        <RLIcon name="layers" size="sm" />
       </div>
       <div class="flex-1 truncate group-data-[collapsed=true]:hidden">
         <div class="font-bold text-sm text-highlighted leading-tight">Rimelight CMS</div>
@@ -203,7 +203,7 @@ export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
                         : "bg-transparent text-default hover:text-highlighted hover:bg-neutral-100/50"
                     }`}
                   >
-                    <RLIcon name={item.icon} class="size-4 shrink-0" />
+                    <RLIcon name={item.icon} size="sm" class="shrink-0" />
                     <span class="truncate flex-1 group-data-[collapsed=true]:hidden">
                       {item.label}
                     </span>
