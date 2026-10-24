@@ -12,13 +12,21 @@ interface ToolDef {
   name: string;
   description: string;
   inputSchema: JsonSchema;
-  run: (cms: Cms, actor: CmsActor, args: any) => Promise<unknown> | unknown;
+  run: (
+    cms: Cms,
+    actor: CmsActor,
+    args: any,
+  ) => Promise<unknown> | Record<string, any> | any[] | string | number | boolean | null;
 }
 
 const str = (description: string) => ({ type: "string", description });
 const num = (description: string) => ({ type: "number", description });
 const obj = (description: string) => ({ type: "object", description });
-const arr = (description: string, items: any = { type: "object" }) => ({ type: "array", description, items });
+const arr = (description: string, items: any = { type: "object" }) => ({
+  type: "array",
+  description,
+  items,
+});
 const schema = (properties: Record<string, any>, required: string[] = []): JsonSchema => ({
   type: "object",
   properties,
@@ -38,7 +46,8 @@ const tools: ToolDef[] = [
   },
   {
     name: "cms_list_block_types",
-    description: "List block types usable in entry content, with default props, fields and allowed children.",
+    description:
+      "List block types usable in entry content, with default props, fields and allowed children.",
     inputSchema: schema({}),
     run: (cms) =>
       cms.ctx.blocks.all().map(({ render: _r, editor: _e, initialChildren: _i, ...d }) => d),
@@ -92,9 +101,18 @@ const tools: ToolDef[] = [
   },
   {
     name: "cms_update_entry",
-    description: "Update entry metadata (title, slug, description, tags, bylines). Use cms_create_draft for content.",
+    description:
+      "Update entry metadata (title, slug, description, tags, bylines). Use cms_create_draft for content.",
     inputSchema: schema(
-      { id: str("Entry id"), slug: str(""), title: obj(""), description: obj(""), tags: arr(""), bylines: arr(""), collection: str("Move to another collection") },
+      {
+        id: str("Entry id"),
+        slug: str(""),
+        title: obj(""),
+        description: obj(""),
+        tags: arr(""),
+        bylines: arr(""),
+        collection: str("Move to another collection"),
+      },
       ["id"],
     ),
     run: async (cms, a, { id, blocks, properties, ...meta }) => {
@@ -105,25 +123,45 @@ const tools: ToolDef[] = [
   {
     name: "cms_save_draft",
     description: `Save the working copy (not visible to readers until published). ${BLOCKS_HINT}`,
-    inputSchema: schema({ entryId: str("Entry id"), blocks: arr("Full block tree"), properties: obj("Field values") }, ["entryId"]),
-    run: (cms, a, x) => cms.entries.saveDraft(a, x.entryId, { blocks: x.blocks, properties: x.properties }),
+    inputSchema: schema(
+      { entryId: str("Entry id"), blocks: arr("Full block tree"), properties: obj("Field values") },
+      ["entryId"],
+    ),
+    run: (cms, a, x) =>
+      cms.entries.saveDraft(a, x.entryId, { blocks: x.blocks, properties: x.properties }),
   },
   {
     name: "cms_request_review",
-    description: "Freeze the draft as a pending version for reviewers (required when the collection needs approvals).",
-    inputSchema: schema({ entryId: str("Entry id"), changeSummary: str("What changed") }, ["entryId"]),
+    description:
+      "Freeze the draft as a pending version for reviewers (required when the collection needs approvals).",
+    inputSchema: schema({ entryId: str("Entry id"), changeSummary: str("What changed") }, [
+      "entryId",
+    ]),
     run: (cms, a, x) => cms.entries.requestReview(a, x.entryId, x.changeSummary),
   },
   {
     name: "cms_publish_entry",
     description: "Publish the draft (or an approved version) and create an immutable version.",
-    inputSchema: schema({ entryId: str("Entry id"), versionId: str("Approved version to publish"), changeSummary: str("") }, ["entryId"]),
-    run: (cms, a, x) => cms.entries.publishEntry(a, x.entryId, { versionId: x.versionId, changeSummary: x.changeSummary }),
+    inputSchema: schema(
+      {
+        entryId: str("Entry id"),
+        versionId: str("Approved version to publish"),
+        changeSummary: str(""),
+      },
+      ["entryId"],
+    ),
+    run: (cms, a, x) =>
+      cms.entries.publishEntry(a, x.entryId, {
+        versionId: x.versionId,
+        changeSummary: x.changeSummary,
+      }),
   },
   {
     name: "cms_schedule_entry",
     description: "Schedule the draft to publish at an ISO date-time. Pass at=null to cancel.",
-    inputSchema: schema({ entryId: str("Entry id"), at: str("ISO 8601 date-time or null") }, ["entryId"]),
+    inputSchema: schema({ entryId: str("Entry id"), at: str("ISO 8601 date-time or null") }, [
+      "entryId",
+    ]),
     run: (cms, a, x) => cms.entries.scheduleEntry(a, x.entryId, x.at ?? null),
   },
   {
@@ -172,7 +210,10 @@ const tools: ToolDef[] = [
   {
     name: "cms_add_comment",
     description: "Comment on a version, optionally anchored to a block.",
-    inputSchema: schema({ versionId: str(""), content: str(""), blockId: str("") }, ["versionId", "content"]),
+    inputSchema: schema({ versionId: str(""), content: str(""), blockId: str("") }, [
+      "versionId",
+      "content",
+    ]),
     run: (cms, a, x) => cms.entries.addComment(a, x.versionId, x.content, x.blockId),
   },
   {
@@ -198,7 +239,16 @@ const tools: ToolDef[] = [
     name: "cms_create_template",
     description: `Create a template (admins). ${BLOCKS_HINT}`,
     inputSchema: schema(
-      { slug: str(""), title: obj(""), description: obj(""), collection: str("Collection slug"), rolePermissions: obj(""), approvalRules: obj(""), defaultProperties: obj(""), initialBlocks: arr("") },
+      {
+        slug: str(""),
+        title: obj(""),
+        description: obj(""),
+        collection: str("Collection slug"),
+        rolePermissions: obj(""),
+        approvalRules: obj(""),
+        defaultProperties: obj(""),
+        initialBlocks: arr(""),
+      },
       ["title", "collection"],
     ),
     run: (cms, a, x) => cms.templates.createTemplate(a, x),
@@ -206,7 +256,20 @@ const tools: ToolDef[] = [
   {
     name: "cms_update_template",
     description: "Update a template (admins).",
-    inputSchema: schema({ id: str(""), slug: str(""), title: obj(""), description: obj(""), collection: str(""), rolePermissions: obj(""), approvalRules: obj(""), defaultProperties: obj(""), initialBlocks: arr("") }, ["id"]),
+    inputSchema: schema(
+      {
+        id: str(""),
+        slug: str(""),
+        title: obj(""),
+        description: obj(""),
+        collection: str(""),
+        rolePermissions: obj(""),
+        approvalRules: obj(""),
+        defaultProperties: obj(""),
+        initialBlocks: arr(""),
+      },
+      ["id"],
+    ),
     run: (cms, a, { id, ...x }) => cms.templates.updateTemplate(a, id, x),
   },
   {
@@ -224,14 +287,40 @@ const tools: ToolDef[] = [
   },
   {
     name: "cms_create_collection",
-    description: "Create a collection (admins). fields: { key: { type, label, required?, options?, group? } }.",
-    inputSchema: schema({ slug: str(""), label: obj(""), description: obj(""), icon: str(""), kind: str("document | data | singleton"), fields: obj(""), groups: obj(""), features: obj(""), workflow: obj("") }, ["slug", "label"]),
+    description:
+      "Create a collection (admins). fields: { key: { type, label, required?, options?, group? } }.",
+    inputSchema: schema(
+      {
+        slug: str(""),
+        label: obj(""),
+        description: obj(""),
+        icon: str(""),
+        kind: str("document | data | singleton"),
+        fields: obj(""),
+        groups: obj(""),
+        features: obj(""),
+        workflow: obj(""),
+      },
+      ["slug", "label"],
+    ),
     run: (cms, a, x) => cms.collections.createCollection(a, x),
   },
   {
     name: "cms_update_collection",
     description: "Update or override a collection (admins).",
-    inputSchema: schema({ slug: str(""), label: obj(""), description: obj(""), icon: str(""), fields: obj(""), groups: obj(""), features: obj(""), workflow: obj("") }, ["slug"]),
+    inputSchema: schema(
+      {
+        slug: str(""),
+        label: obj(""),
+        description: obj(""),
+        icon: str(""),
+        fields: obj(""),
+        groups: obj(""),
+        features: obj(""),
+        workflow: obj(""),
+      },
+      ["slug"],
+    ),
     run: (cms, a, { slug, ...x }) => cms.collections.updateCollection(a, slug, x),
   },
   {
@@ -250,13 +339,33 @@ const tools: ToolDef[] = [
   {
     name: "cms_create_term",
     description: "Create a term.",
-    inputSchema: schema({ taxonomy: str(""), slug: str(""), label: obj(""), description: obj(""), parentId: str(""), displayOrder: num("") }, ["taxonomy", "label"]),
+    inputSchema: schema(
+      {
+        taxonomy: str(""),
+        slug: str(""),
+        label: obj(""),
+        description: obj(""),
+        parentId: str(""),
+        displayOrder: num(""),
+      },
+      ["taxonomy", "label"],
+    ),
     run: (cms, a, { taxonomy, ...x }) => cms.taxonomies.createTerm(a, taxonomy, x),
   },
   {
     name: "cms_update_term",
     description: "Update a term.",
-    inputSchema: schema({ id: str(""), slug: str(""), label: obj(""), description: obj(""), parentId: str(""), displayOrder: num("") }, ["id"]),
+    inputSchema: schema(
+      {
+        id: str(""),
+        slug: str(""),
+        label: obj(""),
+        description: obj(""),
+        parentId: str(""),
+        displayOrder: num(""),
+      },
+      ["id"],
+    ),
     run: (cms, a, { id, ...x }) => cms.taxonomies.updateTerm(a, id, x),
   },
   {
@@ -268,11 +377,24 @@ const tools: ToolDef[] = [
   {
     name: "cms_set_entry_terms",
     description: "Set an entry's terms within one taxonomy.",
-    inputSchema: schema({ entryId: str(""), taxonomy: str("Default 'category'"), termIds: arr("", { type: "string" }) }, ["entryId", "termIds"]),
-    run: (cms, a, x) => cms.taxonomies.setEntryTerms(a, x.entryId, x.taxonomy ?? "category", x.termIds),
+    inputSchema: schema(
+      {
+        entryId: str(""),
+        taxonomy: str("Default 'category'"),
+        termIds: arr("", { type: "string" }),
+      },
+      ["entryId", "termIds"],
+    ),
+    run: (cms, a, x) =>
+      cms.taxonomies.setEntryTerms(a, x.entryId, x.taxonomy ?? "category", x.termIds),
   },
   // ── Bylines ──────────────────────────────────────────────────────────────
-  { name: "cms_list_bylines", description: "List bylines.", inputSchema: schema({}), run: (cms) => cms.bylines.listBylines() },
+  {
+    name: "cms_list_bylines",
+    description: "List bylines.",
+    inputSchema: schema({}),
+    run: (cms) => cms.bylines.listBylines(),
+  },
   {
     name: "cms_get_byline",
     description: "Get a byline by id or slug.",
@@ -282,13 +404,38 @@ const tools: ToolDef[] = [
   {
     name: "cms_create_byline",
     description: "Create an author/contributor byline.",
-    inputSchema: schema({ name: str(""), slug: str(""), bio: str(""), avatar: str(""), websiteUrl: str(""), userId: str(""), socials: obj(""), metadata: obj("") }, ["name"]),
+    inputSchema: schema(
+      {
+        name: str(""),
+        slug: str(""),
+        bio: str(""),
+        avatar: str(""),
+        websiteUrl: str(""),
+        userId: str(""),
+        socials: obj(""),
+        metadata: obj(""),
+      },
+      ["name"],
+    ),
     run: (cms, a, x) => cms.bylines.createByline(a, x),
   },
   {
     name: "cms_update_byline",
     description: "Update a byline.",
-    inputSchema: schema({ id: str(""), name: str(""), slug: str(""), bio: str(""), avatar: str(""), websiteUrl: str(""), userId: str(""), socials: obj(""), metadata: obj("") }, ["id"]),
+    inputSchema: schema(
+      {
+        id: str(""),
+        name: str(""),
+        slug: str(""),
+        bio: str(""),
+        avatar: str(""),
+        websiteUrl: str(""),
+        userId: str(""),
+        socials: obj(""),
+        metadata: obj(""),
+      },
+      ["id"],
+    ),
     run: (cms, a, { id, ...x }) => cms.bylines.updateByline(a, id, x),
   },
   {
@@ -298,11 +445,25 @@ const tools: ToolDef[] = [
     run: (cms, a, x) => cms.bylines.deleteByline(a, x.id),
   },
   // ── Settings & search ────────────────────────────────────────────────────
-  { name: "cms_get_site_settings", description: "Get site settings.", inputSchema: schema({}), run: (cms) => cms.settings.getSiteSettings() },
+  {
+    name: "cms_get_site_settings",
+    description: "Get site settings.",
+    inputSchema: schema({}),
+    run: (cms) => cms.settings.getSiteSettings(),
+  },
   {
     name: "cms_update_site_settings",
     description: "Update site settings (admins).",
-    inputSchema: schema({ name: str(""), description: str(""), url: str(""), author: str(""), email: str(""), ogImage: str(""), branding: obj(""), seo: obj("") }),
+    inputSchema: schema({
+      name: str(""),
+      description: str(""),
+      url: str(""),
+      author: str(""),
+      email: str(""),
+      ogImage: str(""),
+      branding: obj(""),
+      seo: obj(""),
+    }),
     run: (cms, a, x) => {
       if (!a.permissions.includes("*") && !a.roles.some((r) => ["owner", "admin"].includes(r))) {
         throw new CmsError(403, "Only admins can change site settings");
@@ -313,8 +474,15 @@ const tools: ToolDef[] = [
   {
     name: "cms_search",
     description: "Full-text search over published entries.",
-    inputSchema: schema({ query: str(""), collection: str("Collection slug"), limit: num("Default 10") }, ["query"]),
-    run: (cms, _a, x) => cms.search.searchEntries(x.query, { ...(x.collection ? { collection: x.collection } : {}), limit: x.limit ?? 10 }),
+    inputSchema: schema(
+      { query: str(""), collection: str("Collection slug"), limit: num("Default 10") },
+      ["query"],
+    ),
+    run: (cms, _a, x) =>
+      cms.search.searchEntries(x.query, {
+        ...(x.collection ? { collection: x.collection } : {}),
+        limit: x.limit ?? 10,
+      }),
   },
 ];
 
@@ -342,7 +510,11 @@ export async function handleCmsMcpRequest(
 
   switch (body?.method) {
     case "initialize":
-      return reply({ protocolVersion: "2025-06-18", serverInfo: SERVER_INFO, capabilities: { tools: {} } });
+      return reply({
+        protocolVersion: "2025-06-18",
+        serverInfo: SERVER_INFO,
+        capabilities: { tools: {} },
+      });
     case "notifications/initialized":
     case "ping":
       return reply({});
@@ -357,10 +529,20 @@ export async function handleCmsMcpRequest(
       if (missing.length) return fail(-32602, `Missing required arguments: ${missing.join(", ")}`);
       try {
         const result = await tool.run(cms, actor, args);
-        return reply({ content: [{ type: "text", text: JSON.stringify(result ?? { success: true }, null, 2) }] });
+        return reply({
+          content: [{ type: "text", text: JSON.stringify(result ?? { success: true }, null, 2) }],
+        });
       } catch (err) {
         if (err instanceof CmsError) {
-          return reply({ isError: true, content: [{ type: "text", text: `${err.status}: ${err.message}${err.details ? `\n${JSON.stringify(err.details)}` : ""}` }] });
+          return reply({
+            isError: true,
+            content: [
+              {
+                type: "text",
+                text: `${err.status}: ${err.message}${err.details ? `\n${JSON.stringify(err.details)}` : ""}`,
+              },
+            ],
+          });
         }
         throw err;
       }

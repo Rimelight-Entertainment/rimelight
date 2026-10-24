@@ -29,7 +29,11 @@ export const builtinCollections: CollectionDefinition[] = [
     description: "Documentation organised by scope and slug path (e.g. overview/getting-started).",
     features: { hierarchical: true, routable: "/docs/{slug}" },
     fields: {
-      scope: { type: "text", label: "Scope", description: "Sidebar scope; defaults to the first slug segment." },
+      scope: {
+        type: "text",
+        label: "Scope",
+        description: "Sidebar scope; defaults to the first slug segment.",
+      },
       scopeLabel: { type: "text", label: "Scope label" },
       scopeIcon: { type: "text", label: "Scope icon" },
       icon: { type: "text", label: "Sidebar icon" },
@@ -44,7 +48,12 @@ export const builtinCollections: CollectionDefinition[] = [
     labelPlural: "Wiki",
     icon: "i-lucide-library",
     description: "Interlinked encyclopedia pages with infobox properties and nested sections.",
-    features: { hierarchical: true, bylines: true, taxonomies: ["category", "tag"], routable: "/wiki/{slug}" },
+    features: {
+      hierarchical: true,
+      bylines: true,
+      taxonomies: ["category", "tag"],
+      routable: "/wiki/{slug}",
+    },
     fields: {
       summary: { type: "textarea", label: "Summary" },
       image: { type: "media", label: "Infobox image" },

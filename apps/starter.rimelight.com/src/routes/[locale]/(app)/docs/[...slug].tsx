@@ -104,19 +104,32 @@ export const DocsSlugPage: Component = () => {
     }),
   );
 
-  createEffect(() => {
-    if (docs) {
-      docs.setTitle(docTitle());
-      docs.setDescription(docDescription());
-      docs.setHeadings(docHeadings());
-      docs.setTableOfContents(docTableOfContents());
-      docs.setPrevOverride(docPrev());
-      docs.setNextOverride(docNext());
-      docs.setRawMarkdown(docRawMarkdown());
-      docs.setActiveVersion(docData()?.activeVersion);
-      docs.setIncludeVersionInUrl(docData()?.includeVersionInUrl);
-    }
-  });
+  createEffect(
+    () => ({
+      title: docTitle(),
+      description: docDescription(),
+      headings: docHeadings(),
+      toc: docTableOfContents(),
+      prev: docPrev(),
+      next: docNext(),
+      raw: docRawMarkdown(),
+      activeVersion: docData()?.activeVersion,
+      includeVersionInUrl: docData()?.includeVersionInUrl,
+    }),
+    (data) => {
+      if (docs) {
+        docs.setTitle(data.title);
+        docs.setDescription(data.description);
+        docs.setHeadings(data.headings);
+        docs.setTableOfContents(data.toc);
+        docs.setPrevOverride(data.prev);
+        docs.setNextOverride(data.next);
+        docs.setRawMarkdown(data.raw);
+        docs.setActiveVersion(data.activeVersion);
+        docs.setIncludeVersionInUrl(data.includeVersionInUrl);
+      }
+    },
+  );
 
   return (
     <Show

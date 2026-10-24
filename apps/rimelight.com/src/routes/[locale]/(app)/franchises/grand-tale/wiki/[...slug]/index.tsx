@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { PageRenderer } from "@rimelight/cms/solid";
@@ -38,18 +36,16 @@ export const WikiSlugPage: Component = () => {
   };
 
   return (
-    
-      <Show
-        when={pageData()}
-        fallback={<div class="p-12 text-center text-neutral-400">Loading article...</div>}
-      >
-        <article class="prose dark:prose-invert max-w-4xl mx-auto py-8">
-          <h1 class="text-4xl font-extrabold uppercase text-white mb-4">{title()}</h1>
-          {description() && <p class="text-neutral-400 text-lg mb-8">{description()}</p>}
-          <PageRenderer blocks={blocks()} locale={activeLocale()} />
-        </article>
-      </Show>
-    
+    <Show
+      when={pageData()}
+      fallback={<div class="p-12 text-center text-neutral-400">Loading article...</div>}
+    >
+      <article class="prose dark:prose-invert max-w-4xl mx-auto py-8">
+        <h1 class="text-4xl font-extrabold uppercase text-white mb-4">{title()}</h1>
+        {description() && <p class="text-neutral-400 text-lg mb-8">{description()}</p>}
+        <PageRenderer blocks={blocks()} locale={activeLocale()} />
+      </article>
+    </Show>
   );
 };
 

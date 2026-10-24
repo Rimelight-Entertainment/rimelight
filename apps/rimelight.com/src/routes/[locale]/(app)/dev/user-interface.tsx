@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { For, Show, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { RLBadge, RLButton, RLIcon } from "@rimelight/ui";
@@ -358,65 +356,63 @@ export default function DevUserInterfacePage() {
   ];
 
   return (
-    
-      <div class="flex flex-col gap-2xl">
-        <header class="flex flex-col gap-xs">
-          <h1 class="text-3xl text-highlighted">User Interface</h1>
-          <p class="text-sm text-muted">
-            Verifying @rimelight/ui OKLCH hybrid palette scales, dynamic typography families, icon
-            library and collections, semantic intent utilities, and component theming.
-          </p>
-        </header>
+    <div class="flex flex-col gap-2xl">
+      <header class="flex flex-col gap-xs">
+        <h1 class="text-3xl text-highlighted">User Interface</h1>
+        <p class="text-sm text-muted">
+          Verifying @rimelight/ui OKLCH hybrid palette scales, dynamic typography families, icon
+          library and collections, semantic intent utilities, and component theming.
+        </p>
+      </header>
 
-        <For each={sections()}>
-          {(section) => (
-            <section class="bg-elevated/20">
-              <header class="bg-elevated/40 px-xl py-sm">
-                <h2 class="text-xs text-muted">
-                  {section.mono ? <code>{section.title}</code> : section.title}
-                </h2>
-              </header>
-              <hr class="border-default" />
-              <div class="flex flex-col">
-                <For each={section.rows}>
-                  {(row, index) => (
-                    <>
-                      <Show when={index() > 0}>
-                        <hr class="border-default" />
-                      </Show>
-                      <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
-                        <div class="flex min-w-0 flex-col gap-xs">
-                          <Show when={row.label}>
-                            {row.mono ? (
-                              <code class="text-sm text-highlighted">{row.label}</code>
-                            ) : (
-                              <span class="text-sm text-highlighted">{row.label}</span>
-                            )}
-                          </Show>
-                          <Show when={row.code}>
-                            <pre class="whitespace-pre-wrap break-words text-xs text-muted">
-                              {row.code}
-                            </pre>
-                          </Show>
-                          <Show when={row.description}>
-                            <p class="text-xs text-muted">{row.description}</p>
-                          </Show>
-                        </div>
-                        <div class="min-w-0 text-sm text-highlighted">
-                          <Show when={row.value}>
-                            <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
-                          </Show>
-                          {row.content}
-                        </div>
+      <For each={sections()}>
+        {(section) => (
+          <section class="bg-elevated/20">
+            <header class="bg-elevated/40 px-xl py-sm">
+              <h2 class="text-xs text-muted">
+                {section.mono ? <code>{section.title}</code> : section.title}
+              </h2>
+            </header>
+            <hr class="border-default" />
+            <div class="flex flex-col">
+              <For each={section.rows}>
+                {(row, index) => (
+                  <>
+                    <Show when={index() > 0}>
+                      <hr class="border-default" />
+                    </Show>
+                    <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+                      <div class="flex min-w-0 flex-col gap-xs">
+                        <Show when={row.label}>
+                          {row.mono ? (
+                            <code class="text-sm text-highlighted">{row.label}</code>
+                          ) : (
+                            <span class="text-sm text-highlighted">{row.label}</span>
+                          )}
+                        </Show>
+                        <Show when={row.code}>
+                          <pre class="whitespace-pre-wrap break-words text-xs text-muted">
+                            {row.code}
+                          </pre>
+                        </Show>
+                        <Show when={row.description}>
+                          <p class="text-xs text-muted">{row.description}</p>
+                        </Show>
                       </div>
-                    </>
-                  )}
-                </For>
-              </div>
-            </section>
-          )}
-        </For>
-      </div>
-    
+                      <div class="min-w-0 text-sm text-highlighted">
+                        <Show when={row.value}>
+                          <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
+                        </Show>
+                        {row.content}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </For>
+            </div>
+          </section>
+        )}
+      </For>
+    </div>
   );
 }

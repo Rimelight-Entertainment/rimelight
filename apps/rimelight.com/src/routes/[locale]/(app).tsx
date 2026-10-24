@@ -1,6 +1,6 @@
 import type { RouteSectionProps } from "@solidjs/router";
-import { type Component, createSignal, onSettled, Show } from "solid-js";
-import { type JSX, useHead } from "@solidjs/web";
+import { createSignal, onSettled, Show } from "solid-js";
+import { useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
 import AppHeader from "#components/app/AppHeader";
 import AppFooter from "#components/app/AppFooter";
@@ -16,8 +16,17 @@ import {
 } from "@rimelight/ui";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
+export interface AppRouteLayoutProps extends RouteSectionProps {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  robots?: string;
+  ogImageSrc?: string;
+  ogImageAlt?: string;
+  session?: any;
+}
 
-export default function AppRouteLayout(props: RouteSectionProps) {
+export default function AppRouteLayout(props: AppRouteLayoutProps) {
   const [hasConsent, setHasConsent] = createSignal(true);
 
   onSettled(() => {
@@ -106,5 +115,4 @@ export default function AppRouteLayout(props: RouteSectionProps) {
       </div>
     </>
   );
-};
-
+}

@@ -21,8 +21,13 @@ export function normalizeBlocks(input: unknown): BaseBlock[] {
     if (!raw || typeof raw !== "object" || typeof raw.type !== "string") return null;
     const id = typeof raw.id === "string" && raw.id && !seen.has(raw.id) ? raw.id : createBlockId();
     seen.add(id);
-    const block: BaseBlock = { ...raw, id, props: raw.props && typeof raw.props === "object" ? raw.props : {} };
-    if (Array.isArray(raw.children)) block.children = raw.children.map(visit).filter(Boolean) as BaseBlock[];
+    const block: BaseBlock = {
+      ...raw,
+      id,
+      props: raw.props && typeof raw.props === "object" ? raw.props : {},
+    };
+    if (Array.isArray(raw.children))
+      block.children = raw.children.map(visit).filter(Boolean) as BaseBlock[];
     else delete block.children;
     return block;
   };

@@ -1,10 +1,22 @@
 import { asc, eq } from "drizzle-orm";
 import type { BaseBlock } from "../core/types/blocks";
 import type { Localized } from "../core/types/pages";
-import type { PageTemplate, TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
+import type {
+  PageTemplate,
+  TemplateApprovalRules,
+  TemplateRolePermissions,
+} from "../core/types/templates";
 import { normalizeBlocks } from "../core/blocks/tree";
 import { filterTemplatesForUser } from "../auth/filter-templates";
-import { CmsError, isAdmin, json, notFound, slugify, type CmsActor, type CmsContext } from "./context";
+import {
+  CmsError,
+  isAdmin,
+  json,
+  notFound,
+  slugify,
+  type CmsActor,
+  type CmsContext,
+} from "./context";
 
 /**
  * Templates are reusable starting points *within* a collection: pre-built block layouts, default
@@ -26,7 +38,8 @@ export interface TemplateInput {
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const loc = (v: Localized | string | null | undefined) => (v == null ? null : typeof v === "string" ? { en: v } : v);
+const loc = (v: Localized | string | null | undefined) =>
+  v == null ? null : typeof v === "string" ? { en: v } : v;
 
 function toTemplate(row: any): PageTemplate {
   return {
@@ -84,7 +97,9 @@ function values(input: Partial<TemplateInput>) {
 
 export async function createTemplate(ctx: CmsContext, actor: CmsActor, input: TemplateInput) {
   assertAdmin(actor);
-  const slug = slugify(input.slug || (typeof input.title === "string" ? input.title : (input.title.en ?? ""))).replace(/\//g, "-");
+  const slug = slugify(
+    input.slug || (typeof input.title === "string" ? input.title : (input.title["en"] ?? "")),
+  ).replace(/\//g, "-");
   if (!slug) throw new CmsError(422, "Template slug is required");
   const [row] = await ctx.db
     .insert(ctx.t.pageTemplates)
@@ -94,7 +109,12 @@ export async function createTemplate(ctx: CmsContext, actor: CmsActor, input: Te
 }
 
 /** Every structural edit bumps `version` so entries can tell they were made from an older layout. */
-export async function updateTemplate(ctx: CmsContext, actor: CmsActor, idOrSlug: string, input: Partial<TemplateInput>) {
+export async function updateTemplate(
+  ctx: CmsContext,
+  actor: CmsActor,
+  idOrSlug: string,
+  input: Partial<TemplateInput>,
+) {
   assertAdmin(actor);
   const current = await getTemplate(ctx, idOrSlug);
   const patch = values(input);
@@ -130,7 +150,9 @@ export async function seedTemplates(ctx: CmsContext, templates: TemplateInput[])
       .where(eq(ctx.t.pageTemplates.slug, slug))
       .limit(1);
     if (exists[0]) continue;
-    await ctx.db.insert(ctx.t.pageTemplates).values({ slug, version: 1, createdAt: new Date(), ...values(tpl) });
+    await ctx.db
+      .insert(ctx.t.pageTemplates)
+      .values({ slug, version: 1, createdAt: new Date(), ...values(tpl) });
     created++;
   }
   return created;

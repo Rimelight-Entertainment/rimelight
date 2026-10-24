@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { untrack, type Component } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import ComponentAuditShell from "#components/dev/ComponentAuditShell.tsx";
@@ -13,16 +11,14 @@ export const DevComponentsPage: Component = () => {
   };
 
   return (
-    
-      <div class="flex flex-col gap-2xl">
-        <header class="flex flex-col gap-xs">
-          <h1 class="text-3xl text-highlighted">{t("dev.components.title")}</h1>
-          <p class="text-sm text-muted">{t("dev.components.description")}</p>
-        </header>
+    <div class="flex flex-col gap-2xl">
+      <header class="flex flex-col gap-xs">
+        <h1 class="text-3xl text-highlighted">{t("dev.components.title")}</h1>
+        <p class="text-sm text-muted">{t("dev.components.description")}</p>
+      </header>
 
-        <ComponentAuditShell initialComponentId={untrack(requestedComp)} />
-      </div>
-    
+      <ComponentAuditShell initialComponentId={untrack(requestedComp)} />
+    </div>
   );
 };
 

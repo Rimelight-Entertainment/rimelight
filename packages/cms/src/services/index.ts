@@ -17,12 +17,17 @@ export * from "./bylines";
 export * from "./search";
 export * from "./site-settings";
 
-type Bound<F> = F extends (ctx: CmsContext, ...args: infer A) => infer R ? (...args: A) => R : never;
-type BindAll<M> = { [K in keyof M as M[K] extends (ctx: CmsContext, ...a: any[]) => any ? K : never]: Bound<M[K]> };
+type Bound<F> = F extends (ctx: CmsContext, ...args: infer A) => infer R
+  ? (...args: A) => R
+  : never;
+type BindAll<M> = {
+  [K in keyof M as M[K] extends (ctx: CmsContext, ...a: any[]) => any ? K : never]: Bound<M[K]>;
+};
 
 function bind<M extends Record<string, any>>(ctx: CmsContext, mod: M): BindAll<M> {
   const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(mod)) if (typeof v === "function") out[k] = (...a: unknown[]) => v(ctx, ...a);
+  for (const [k, v] of Object.entries(mod))
+    if (typeof v === "function") out[k] = (...a: unknown[]) => v(ctx, ...a);
   return out as BindAll<M>;
 }
 

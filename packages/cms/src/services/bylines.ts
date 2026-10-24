@@ -30,7 +30,13 @@ export async function getByline(ctx: CmsContext, idOrSlug: string) {
     .from(b)
     .where(and(isNull(b.deletedAt), or(eq(b.slug, idOrSlug), eq(b.id, idOrSlug))))
     .limit(1)
-    .catch(() => ctx.db.select().from(b).where(and(isNull(b.deletedAt), eq(b.slug, idOrSlug))).limit(1));
+    .catch(() =>
+      ctx.db
+        .select()
+        .from(b)
+        .where(and(isNull(b.deletedAt), eq(b.slug, idOrSlug)))
+        .limit(1),
+    );
   if (!rows[0]) throw notFound("Byline");
   return rows[0];
 }
@@ -41,12 +47,24 @@ export async function createByline(ctx: CmsContext, _actor: CmsActor, input: Byl
   const now = new Date();
   const [row] = await ctx.db
     .insert(ctx.t.bylines)
-    .values({ ...input, slug, socials: input.socials ?? {}, metadata: input.metadata ?? {}, createdAt: now, updatedAt: now })
+    .values({
+      ...input,
+      slug,
+      socials: input.socials ?? {},
+      metadata: input.metadata ?? {},
+      createdAt: now,
+      updatedAt: now,
+    })
     .returning();
   return row;
 }
 
-export async function updateByline(ctx: CmsContext, _actor: CmsActor, id: string, input: Partial<BylineInput>) {
+export async function updateByline(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  id: string,
+  input: Partial<BylineInput>,
+) {
   const patch: Record<string, any> = { ...input, updatedAt: new Date() };
   if (input.slug !== undefined) patch["slug"] = slugify(input.slug).replace(/\//g, "-");
   const [row] = await ctx.db

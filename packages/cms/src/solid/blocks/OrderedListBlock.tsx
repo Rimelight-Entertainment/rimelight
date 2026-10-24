@@ -1,5 +1,4 @@
 import { For, type Component } from "solid-js";
-import type { BaseBlock } from "../../core/types/blocks";
 import { InlineNodes } from "./inlines";
 import type { BlockViewProps } from "./ParagraphBlock";
 

@@ -1,4 +1,12 @@
-import { For, Show, createEffect, createMemo, createSignal, onSettled, type Component } from "solid-js";
+import {
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  onSettled,
+  type Component,
+} from "solid-js";
 import { Dynamic, Portal } from "@solidjs/web";
 import type { BaseBlock } from "../core/types/blocks";
 import type { BlockDefinition } from "../core/blocks/registry";
@@ -94,7 +102,11 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
           type="button"
           class="mt-1 flex items-center gap-1.5 self-start rounded px-1.5 py-1 text-xs text-muted opacity-60 hover:bg-elevated hover:opacity-100"
           onClick={(e) =>
-            openSlash({ parentId: parent?.id ?? null, index: blocks.length, rect: e.currentTarget.getBoundingClientRect() })
+            openSlash({
+              parentId: parent?.id ?? null,
+              index: blocks.length,
+              rect: e.currentTarget.getBoundingClientRect(),
+            })
           }
         >
           <span class="i-lucide-plus size-3.5" />
@@ -108,13 +120,7 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
     <div class="cms-block-editor relative pl-10" onClick={() => setSlash(null)}>
       {canvas(ed.doc.blocks, null, 0)}
       <Show when={slash()}>
-        {(s) => (
-          <SlashMenu
-            state={s()}
-            editor={ed}
-            onClose={() => setSlash(null)}
-          />
-        )}
+        {(s) => <SlashMenu state={s()} editor={ed} onClose={() => setSlash(null)} />}
       </Show>
     </div>
   );
@@ -139,7 +145,8 @@ const BlockView: Component<{
   const locked = () => !!props.block.isTemplated;
   const [menu, setMenu] = createSignal(false);
   const childDepth = () => (props.block.type === "SectionBlock" ? props.depth + 1 : props.depth);
-  const dropHint = () => (props.drag?.over?.id === props.block.id ? props.drag.over.position : null);
+  const dropHint = () =>
+    props.drag?.over?.id === props.block.id ? props.drag.over.position : null;
   const parentId = () => props.parent?.id ?? null;
 
   const textProp = () => def()?.inlineText;
@@ -147,8 +154,6 @@ const BlockView: Component<{
   const customEditor = () => def()?.editor ?? builtinEditors[props.block.type];
   /** Container without its own canvas editor: children are edited in a nested canvas. */
   const isContainer = () => !!def()?.children && !customEditor();
-  /** Leaf block without inline text or a custom editor: shown as a live preview, edited in the inspector. */
-  const isPreview = () => !textProp() && !customEditor() && !isContainer();
   /** Short description of a container's settings shown next to its label (e.g. "warning"). */
   const summary = () => {
     const p = props.block.props ?? {};
@@ -163,7 +168,8 @@ const BlockView: Component<{
     const box = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const ratio = (e.clientY - box.top) / box.height;
     const acceptsChildren = !!def()?.children && getChildren(props.block).length === 0;
-    const position = acceptsChildren && ratio > 0.33 && ratio < 0.66 ? "inside" : ratio < 0.5 ? "before" : "after";
+    const position =
+      acceptsChildren && ratio > 0.33 && ratio < 0.66 ? "inside" : ratio < 0.5 ? "before" : "after";
     props.setDrag({ ...props.drag, over: { id: props.block.id, position } });
   };
   const onDrop = (e: DragEvent) => {
@@ -202,7 +208,9 @@ const BlockView: Component<{
           block={props.block}
           readOnly={ed.readOnly || props.block.templatedProps === true}
           sectionDepth={props.depth}
-          update={(patch: Record<string, any>) => ed.updateProps(props.block.id, patch, { coalesce: true })}
+          update={(patch: Record<string, any>) =>
+            ed.updateProps(props.block.id, patch, { coalesce: true })
+          }
           renderChildren={() => props.renderChildren(props.block, childDepth())}
         />
       );
@@ -216,11 +224,19 @@ const BlockView: Component<{
           mode={isPlain() ? "plain" : "rich"}
           readOnly={ed.readOnly || props.block.templatedProps === true}
           class={textClass(props.block.type, props.depth)}
-          placeholder={props.block.type === "ParagraphBlock" ? "Type '/' for blocks" : def()?.label}
+          {...((props.block.type === "ParagraphBlock" ? "Type '/' for blocks" : def()?.label)
+            ? {
+                placeholder:
+                  props.block.type === "ParagraphBlock" ? "Type '/' for blocks" : def()?.label,
+              }
+            : {})}
           onFocus={() => ed.select(props.block.id)}
           onChange={(v) => ed.updateProps(props.block.id, { [key]: v }, { coalesce: true })}
           onEnter={(after) => {
-            const next = ed.insertAfter(props.block.id, props.block.type === "ListItemBlock" ? "ListItemBlock" : "ParagraphBlock");
+            const next = ed.insertAfter(
+              props.block.id,
+              props.block.type === "ListItemBlock" ? "ListItemBlock" : "ParagraphBlock",
+            );
             if (next && (Array.isArray(after) ? after.length : after)) {
               const nextDef = ed.registry.get(ed.get(next)?.block.type ?? "");
               if (nextDef?.inlineText) ed.updateProps(next, { [nextDef.inlineText]: after });
@@ -229,7 +245,14 @@ const BlockView: Component<{
           onBackspaceAtStart={(empty) => {
             if (empty && !locked()) ed.remove(props.block.id);
           }}
-          onSlash={(rect) => props.openSlash({ parentId: parentId(), index: props.index, replaceId: props.block.id, rect })}
+          onSlash={(rect) =>
+            props.openSlash({
+              parentId: parentId(),
+              index: props.index,
+              replaceId: props.block.id,
+              rect,
+            })
+          }
           onShortcut={shortcut}
         />
       );
@@ -246,9 +269,9 @@ const BlockView: Component<{
   return (
     <div
       data-block-id={props.block.id}
-      tabIndex={-1}
+      tabindex={-1}
       class={`group/block relative rounded-md py-0.5 outline-none ${selected() ? "bg-primary-500/[0.04] ring-1 ring-primary-500/30" : ""}`}
-      onClick={(e) => {
+      onClick={(e: MouseEvent) => {
         e.stopPropagation();
         ed.select(props.block.id);
       }}
@@ -270,13 +293,17 @@ const BlockView: Component<{
             class="i-lucide-plus size-4 text-muted hover:text-highlighted"
             onClick={(e) => {
               e.stopPropagation();
-              props.openSlash({ parentId: parentId(), index: props.index + 1, rect: e.currentTarget.getBoundingClientRect() });
+              props.openSlash({
+                parentId: parentId(),
+                index: props.index + 1,
+                rect: e.currentTarget.getBoundingClientRect(),
+              });
             }}
           />
           <button
             type="button"
             title={locked() ? "Templated block (locked)" : "Drag to move · click for actions"}
-            draggable={!locked()}
+            draggable={!locked() ? "true" : "false"}
             class={`${locked() ? "i-lucide-lock" : "i-lucide-grip-vertical"} size-4 cursor-grab text-muted hover:text-highlighted`}
             onDragStart={(e) => {
               e.dataTransfer?.setData("text/plain", props.block.id);
@@ -292,7 +319,12 @@ const BlockView: Component<{
       </Show>
 
       <Show when={menu()}>
-        <BlockMenu block={props.block} editor={ed} onClose={() => setMenu(false)} parentType={props.parent?.type ?? null} />
+        <BlockMenu
+          block={props.block}
+          editor={ed}
+          onClose={() => setMenu(false)}
+          parentType={props.parent?.type ?? null}
+        />
       </Show>
 
       <Show when={(isContainer() && !textProp() && !isList(props.block.type)) || !def()}>
@@ -311,7 +343,9 @@ const BlockView: Component<{
       {body()}
 
       <Show when={isContainer()}>
-        <div class={containerClass(props.block.type, props.block.props)}>{props.renderChildren(props.block, childDepth())}</div>
+        <div class={containerClass(props.block.type, props.block.props)}>
+          {props.renderChildren(props.block, childDepth())}
+        </div>
       </Show>
     </div>
   );
@@ -319,7 +353,15 @@ const BlockView: Component<{
 
 function textClass(type: string, depth: number) {
   if (type === "SectionBlock") {
-    return ["text-2xl font-bold", "text-xl font-semibold", "text-lg font-semibold", "text-base font-semibold", "text-sm font-semibold"][Math.min(depth, 4)] + " text-highlighted mt-4";
+    return (
+      [
+        "text-2xl font-bold",
+        "text-xl font-semibold",
+        "text-lg font-semibold",
+        "text-base font-semibold",
+        "text-sm font-semibold",
+      ][Math.min(depth, 4)] + " text-highlighted mt-4"
+    );
   }
   if (type === "TabItemBlock" || type === "StepItemBlock") return "font-medium text-highlighted";
   return "text-[15px] leading-relaxed text-default min-h-[1.6em]";
@@ -356,7 +398,12 @@ function containerClass(type: string, props: Record<string, any> = {}) {
 
 // ─── Block actions menu ──────────────────────────────────────────────────────
 
-const BlockMenu: Component<{ block: BaseBlock; editor: BlockEditorState; parentType: string | null; onClose: () => void }> = (props) => {
+const BlockMenu: Component<{
+  block: BaseBlock;
+  editor: BlockEditorState;
+  parentType: string | null;
+  onClose: () => void;
+}> = (props) => {
   const ed = props.editor;
   const turnInto = () =>
     ed.registry
@@ -381,13 +428,22 @@ const BlockMenu: Component<{ block: BaseBlock; editor: BlockEditorState; parentT
       class="absolute -left-10 top-7 z-30 w-52 rounded-lg border border-default bg-default py-1 shadow-xl"
       onClick={(e) => e.stopPropagation()}
     >
-      <Show when={!props.block.isTemplated} fallback={<div class="px-3 py-2 text-xs text-muted">Locked by template</div>}>
+      <Show
+        when={!props.block.isTemplated}
+        fallback={<div class="px-3 py-2 text-xs text-muted">Locked by template</div>}
+      >
         {item("Move up", "i-lucide-arrow-up", () => ed.moveBy(props.block.id, -1))}
         {item("Move down", "i-lucide-arrow-down", () => ed.moveBy(props.block.id, 1))}
         {item("Duplicate", "i-lucide-copy", () => ed.duplicate(props.block.id))}
         <Show when={turnInto().length}>
-          <div class="mt-1 border-t border-default px-3 pb-1 pt-2 text-[10px] uppercase tracking-wide text-muted">Turn into</div>
-          <For each={turnInto()}>{(d) => item(d.label, d.icon ?? "i-lucide-square", () => ed.transform(props.block.id, d.type))}</For>
+          <div class="mt-1 border-t border-default px-3 pb-1 pt-2 text-[10px] uppercase tracking-wide text-muted">
+            Turn into
+          </div>
+          <For each={turnInto()}>
+            {(d) =>
+              item(d.label, d.icon ?? "i-lucide-square", () => ed.transform(props.block.id, d.type))
+            }
+          </For>
         </Show>
         <div class="my-1 border-t border-default" />
         {item("Delete", "i-lucide-trash-2", () => ed.remove(props.block.id), true)}
@@ -398,18 +454,24 @@ const BlockMenu: Component<{ block: BaseBlock; editor: BlockEditorState; parentT
 
 // ─── Slash menu ──────────────────────────────────────────────────────────────
 
-const SlashMenu: Component<{ state: SlashState; editor: BlockEditorState; onClose: () => void }> = (props) => {
+const SlashMenu: Component<{ state: SlashState; editor: BlockEditorState; onClose: () => void }> = (
+  props,
+) => {
   const ed = props.editor;
   const [query, setQuery] = createSignal("");
   const [active, setActive] = createSignal(0);
-  let input!: HTMLInputElement;
+  let input = undefined as unknown as HTMLInputElement;
 
-  const parentType = () => (props.state.parentId ? (ed.get(props.state.parentId)?.block.type ?? null) : null);
+  const parentType = () =>
+    props.state.parentId ? (ed.get(props.state.parentId)?.block.type ?? null) : null;
   const options = createMemo(() => {
     const q = query().toLowerCase();
     return ed.registry
       .allowedChildren(parentType(), props.state.parentId ? undefined : ed.allowedRootBlocks)
-      .filter((d) => !q || [d.label, d.type, ...(d.keywords ?? [])].some((s) => s.toLowerCase().includes(q)));
+      .filter(
+        (d) =>
+          !q || [d.label, d.type, ...(d.keywords ?? [])].some((s) => s.toLowerCase().includes(q)),
+      );
   });
 
   const choose = (d: BlockDefinition) => {
@@ -458,7 +520,10 @@ const SlashMenu: Component<{ state: SlashState; editor: BlockEditorState; onClos
           }}
         />
         <div class="overflow-y-auto py-1">
-          <For each={options()} fallback={<div class="px-3 py-2 text-xs text-muted">No blocks match.</div>}>
+          <For
+            each={options()}
+            fallback={<div class="px-3 py-2 text-xs text-muted">No blocks match.</div>}
+          >
             {(d, i) => (
               <button
                 type="button"

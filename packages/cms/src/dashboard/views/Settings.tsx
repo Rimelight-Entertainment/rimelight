@@ -12,8 +12,12 @@ export const Settings: Component = () => {
   const [busy, setBusy] = createSignal(false);
 
   const text = (key: string, label: string, hint?: string) => (
-    <Field label={label} hint={hint}>
-      <input class={inputClass} value={s()?.[key] ?? ""} onInput={(e) => set({ [key]: e.currentTarget.value })} />
+    <Field label={label} {...(hint ? { hint } : {})}>
+      <input
+        class={inputClass}
+        value={s()?.[key] ?? ""}
+        onInput={(e) => set({ [key]: e.currentTarget.value })}
+      />
     </Field>
   );
 
@@ -23,20 +27,27 @@ export const Settings: Component = () => {
         icon="i-lucide-settings"
         title="Settings"
         actions={
-          <Button variant="primary" loading={busy()} disabled={!draft()} onClick={async () => {
-            setBusy(true);
-            try {
-              const { createdAt: _c, updatedAt: _u, id: _i, ...body } = draft();
-              await api.settings.update(body);
-              setDraft(null);
-              void loaded.reload();
-              toast("Settings saved", "success");
-            } catch (err) {
-              toast((err as Error).message, "error");
-            } finally {
-              setBusy(false);
-            }
-          }}>Save</Button>
+          <Button
+            variant="primary"
+            loading={busy()}
+            disabled={!draft()}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                const { createdAt: _c, updatedAt: _u, id: _i, ...body } = draft();
+                await api.settings.update(body);
+                setDraft(null);
+                void loaded.reload();
+                toast("Settings saved", "success");
+              } catch (err) {
+                toast((err as Error).message, "error");
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Save
+          </Button>
         }
       />
       <Loading when={!s()}>
@@ -53,21 +64,37 @@ export const Settings: Component = () => {
           <section class="flex flex-col gap-3">
             <h2 class="text-sm font-semibold text-highlighted">SEO</h2>
             <Field label="Title template" hint="%s is replaced with the page title">
-              <input class={inputClass} value={s()?.seo?.titleTemplate ?? ""} onInput={(e) => set({ seo: { ...s().seo, titleTemplate: e.currentTarget.value } })} />
+              <input
+                class={inputClass}
+                value={s()?.seo?.titleTemplate ?? ""}
+                onInput={(e) => set({ seo: { ...s().seo, titleTemplate: e.currentTarget.value } })}
+              />
             </Field>
             <Field label="Max description length">
-              <input type="number" class={inputClass} value={s()?.seo?.maxDescriptionLength ?? 160} onInput={(e) => set({ seo: { ...s().seo, maxDescriptionLength: Number(e.currentTarget.value) } })} />
+              <input
+                type="number"
+                class={inputClass}
+                value={s()?.seo?.maxDescriptionLength ?? 160}
+                onInput={(e) =>
+                  set({ seo: { ...s().seo, maxDescriptionLength: Number(e.currentTarget.value) } })
+                }
+              />
             </Field>
             <h2 class="pt-4 text-sm font-semibold text-highlighted">Maintenance</h2>
             <Show when={true}>
-              <Button icon="i-lucide-refresh-cw" onClick={async () => {
-                try {
-                  const { indexed } = await api.reindex();
-                  toast(`Reindexed ${indexed} entries`, "success");
-                } catch (err) {
-                  toast((err as Error).message, "error");
-                }
-              }}>Rebuild search index</Button>
+              <Button
+                icon="i-lucide-refresh-cw"
+                onClick={async () => {
+                  try {
+                    const { indexed } = await api.reindex();
+                    toast(`Reindexed ${indexed} entries`, "success");
+                  } catch (err) {
+                    toast((err as Error).message, "error");
+                  }
+                }}
+              >
+                Rebuild search index
+              </Button>
             </Show>
           </section>
         </div>

@@ -19,7 +19,14 @@ const products = defineCollection({
   fields: {
     price: { type: "currency", label: "Price", required: true },
     stock: { type: "number", label: "Stock", min: 0 },
-    size: { type: "select", label: "Size", options: [{ value: "s", label: "S" }, { value: "m", label: "M" }] },
+    size: {
+      type: "select",
+      label: "Size",
+      options: [
+        { value: "s", label: "S" },
+        { value: "m", label: "M" },
+      ],
+    },
   },
 });
 
@@ -39,7 +46,9 @@ beforeEach(async () => {
   cms = createCms({ db: drizzle(binding), dialect: "sqlite", collections: [products, handbook] });
 });
 
-const text = (t: string) => [{ id: crypto.randomUUID(), type: "ParagraphBlock", props: { text: [{ type: "text", text: t }] } }];
+const text = (t: string) => [
+  { id: crypto.randomUUID(), type: "ParagraphBlock", props: { text: [{ type: "text", text: t }] } },
+];
 
 async function expectError(p: Promise<unknown>, status: number) {
   try {
@@ -54,7 +63,11 @@ async function expectError(p: Promise<unknown>, status: number) {
 
 describe("collections", () => {
   it("merges built-in, code and database collections", async () => {
-    await cms.collections.createCollection(admin, { slug: "recipe", label: "Recipe", fields: { serves: { type: "number", label: "Serves" } } });
+    await cms.collections.createCollection(admin, {
+      slug: "recipe",
+      label: "Recipe",
+      fields: { serves: { type: "number", label: "Serves" } },
+    });
     const slugs = (await cms.collections.listCollections()).map((c) => [c.slug, c.source]);
     expect(slugs).toContainEqual(["blog", "code"]);
     expect(slugs).toContainEqual(["product", "code"]);
@@ -68,12 +81,15 @@ describe("collections", () => {
     await cms.collections.deleteCollection(admin, "blog");
     expect((await cms.collections.getCollection("blog")).source).toBe("code");
   });
-
 });
 
 describe("entry lifecycle", () => {
   it("creates drafts that readers cannot see until published", async () => {
-    const entry = await cms.entries.createEntry(editor, { collection: "blog", title: "Hello World", blocks: text("draft") });
+    const entry = await cms.entries.createEntry(editor, {
+      collection: "blog",
+      title: "Hello World",
+      blocks: text("draft"),
+    });
     expect(entry.slug).toBe("hello-world");
     expect(entry.status).toBe("draft");
     expect((await cms.entries.listEntries({ status: "published" })).total).toBe(0);
@@ -93,20 +109,33 @@ describe("entry lifecycle", () => {
     const versions = await cms.entries.listVersions(entry.id);
     expect(versions).toHaveLength(1);
     const diff = await cms.entries.diffEntry(entry.id);
-    expect(diff.summary.addedCount + diff.summary.removedCount + diff.summary.modifiedCount).toBeGreaterThan(0);
+    expect(
+      diff.summary.addedCount + diff.summary.removedCount + diff.summary.modifiedCount,
+    ).toBeGreaterThan(0);
   });
 
   it("rejects duplicate slugs and nested slugs in flat collections", async () => {
     await cms.entries.createEntry(editor, { collection: "blog", title: "Same" });
     await expectError(cms.entries.createEntry(editor, { collection: "blog", title: "Same" }), 409);
-    await expectError(cms.entries.createEntry(editor, { collection: "blog", title: "x", slug: "a/b" }), 422);
-    const doc = await cms.entries.createEntry(editor, { collection: "doc", title: "Setup", slug: "guides/setup" });
+    await expectError(
+      cms.entries.createEntry(editor, { collection: "blog", title: "x", slug: "a/b" }),
+      422,
+    );
+    const doc = await cms.entries.createEntry(editor, {
+      collection: "doc",
+      title: "Setup",
+      slug: "guides/setup",
+    });
     expect(doc.slug).toBe("guides/setup");
   });
 
   it("validates typed properties (commerce)", async () => {
     await expectError(
-      cms.entries.createEntry(admin, { collection: "product", title: "Shirt", properties: { price: 10 } }),
+      cms.entries.createEntry(admin, {
+        collection: "product",
+        title: "Shirt",
+        properties: { price: 10 },
+      }),
       422,
     );
     const shirt = await cms.entries.createEntry(admin, {
@@ -114,13 +143,20 @@ describe("entry lifecycle", () => {
       title: "Shirt",
       properties: { price: { amount: 1999, currency: "USD" }, stock: 3, size: "m" },
     });
-    await expectError(cms.entries.saveDraft(admin, shirt.id, { properties: { ...shirt.draft.properties, size: "xl" } }), 422);
+    await expectError(
+      cms.entries.saveDraft(admin, shirt.id, {
+        properties: { ...shirt.draft.properties, size: "xl" },
+      }),
+      422,
+    );
   });
 
   it("enforces block nesting rules", async () => {
     const e = await cms.entries.createEntry(editor, { collection: "blog", title: "Nest" });
     await expectError(
-      cms.entries.saveDraft(editor, e.id, { blocks: [{ id: crypto.randomUUID(), type: "TabItemBlock", props: { label: "x" } }] }),
+      cms.entries.saveDraft(editor, e.id, {
+        blocks: [{ id: crypto.randomUUID(), type: "TabItemBlock", props: { label: "x" } }],
+      }),
       422,
     );
   });
@@ -148,7 +184,11 @@ describe("locks", () => {
 
 describe("review workflow", () => {
   it("requires an approval from someone other than the author", async () => {
-    const e = await cms.entries.createEntry(editor, { collection: "handbook", title: "Policy", blocks: text("rules") });
+    const e = await cms.entries.createEntry(editor, {
+      collection: "handbook",
+      title: "Policy",
+      blocks: text("rules"),
+    });
     await expectError(cms.entries.publishEntry(editor, e.id), 403);
 
     const version = await cms.entries.requestReview(editor, e.id, "please review");
@@ -165,7 +205,11 @@ describe("review workflow", () => {
   });
 
   it("supports rejection with a comment and rollback into the draft", async () => {
-    const e = await cms.entries.createEntry(admin, { collection: "blog", title: "Roll", blocks: text("one") });
+    const e = await cms.entries.createEntry(admin, {
+      collection: "blog",
+      title: "Roll",
+      blocks: text("one"),
+    });
     await cms.entries.publishEntry(admin, e.id);
     await cms.entries.saveDraft(admin, e.id, { blocks: text("two") });
     const [v1] = await cms.entries.listVersions(e.id);
@@ -181,7 +225,11 @@ describe("review workflow", () => {
 
 describe("scheduling", () => {
   it("publishes due entries from the cron handler", async () => {
-    const e = await cms.entries.createEntry(admin, { collection: "blog", title: "Later", blocks: text("soon") });
+    const e = await cms.entries.createEntry(admin, {
+      collection: "blog",
+      title: "Later",
+      blocks: text("soon"),
+    });
     const at = new Date(Date.now() + 60 * 60 * 1000);
     const scheduled = await cms.entries.scheduleEntry(admin, e.id, at);
     expect(scheduled.status).toBe("scheduled");
@@ -203,8 +251,10 @@ describe("taxonomies, bylines, search, templates", () => {
     await cms.taxonomies.setEntryTerms(admin, e.id, "category", [term.id]);
     const terms = await cms.taxonomies.listTerms("category");
     expect(terms[0]?.count).toBe(1);
-    const filtered = await cms.entries.listEntries({ taxonomy: { taxonomy: "category", term: "news" } });
-    expect(filtered.entries.map((x) => x.id)).toEqual([e.id]);
+    const filtered = await cms.entries.listEntries({
+      taxonomy: { taxonomy: "category", term: "news" },
+    });
+    expect(filtered.entries.map((x: any) => x.id)).toEqual([e.id]);
     await expectError(cms.taxonomies.createTerm(admin, "nope", { label: "x" }), 404);
   });
 
@@ -217,7 +267,11 @@ describe("taxonomies, bylines, search, templates", () => {
   });
 
   it("indexes published entries and finds them (SQLite fallback)", async () => {
-    const e = await cms.entries.createEntry(admin, { collection: "wiki", title: "Dragons", blocks: text("Fire-breathing lizards") });
+    const e = await cms.entries.createEntry(admin, {
+      collection: "wiki",
+      title: "Dragons",
+      blocks: text("Fire-breathing lizards"),
+    });
     await cms.entries.publishEntry(admin, e.id);
     const hits = await cms.search.searchEntries("lizards");
     expect(hits[0]?.sourceId).toBe(e.id);
@@ -231,10 +285,25 @@ describe("taxonomies, bylines, search, templates", () => {
       title: "Patch notes",
       collection: "blog",
       rolePermissions: { whoCanCreate: ["admin"] },
-      initialBlocks: [{ id: crypto.randomUUID(), type: "SectionBlock", props: { title: "Highlights" }, children: [], isTemplated: true }],
+      initialBlocks: [
+        {
+          id: crypto.randomUUID(),
+          type: "SectionBlock",
+          props: { title: "Highlights" },
+          children: [],
+          isTemplated: true,
+        },
+      ],
     });
-    await expectError(cms.entries.createEntry(editor, { collection: "blog", title: "1.0", templateId: tpl.id }), 403);
-    const e = await cms.entries.createEntry(admin, { collection: "blog", title: "1.0", templateId: tpl.id });
+    await expectError(
+      cms.entries.createEntry(editor, { collection: "blog", title: "1.0", templateId: tpl.id }),
+      403,
+    );
+    const e = await cms.entries.createEntry(admin, {
+      collection: "blog",
+      title: "1.0",
+      templateId: tpl.id,
+    });
     expect(e.draft.blocks[0]?.type).toBe("SectionBlock");
     expect(e.draft.blocks[0]?.id).not.toBe(tpl.initialBlocks[0]?.id);
 

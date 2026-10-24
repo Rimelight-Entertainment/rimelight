@@ -13,7 +13,7 @@ const isEmpty = (v: unknown) =>
   (Array.isArray(v) && v.length === 0) ||
   (typeof v === "object" && !Array.isArray(v) && Object.keys(v as object).length === 0);
 
-function checkScalar(key: string, field: FieldDefinition, value: unknown): string | null {
+function checkScalar(_key: string, field: FieldDefinition, value: unknown): string | null {
   switch (field.type) {
     case "number": {
       if (typeof value !== "number" || Number.isNaN(value)) return "must be a number";
@@ -25,12 +25,14 @@ function checkScalar(key: string, field: FieldDefinition, value: unknown): strin
       return typeof value === "boolean" ? null : "must be true or false";
     case "currency": {
       const v = value as { amount?: unknown; currency?: unknown };
-      if (typeof v !== "object" || typeof v?.amount !== "number") return "must be { amount, currency }";
+      if (typeof v !== "object" || typeof v?.amount !== "number")
+        return "must be { amount, currency }";
       if (v.amount < 0) return "must not be negative";
       return null;
     }
     case "select":
-      if (field.options && !field.options.some((o) => o.value === value)) return "is not a valid option";
+      if (field.options && !field.options.some((o) => o.value === value))
+        return "is not a valid option";
       return null;
     case "multiselect":
     case "tags":
@@ -61,7 +63,8 @@ function checkScalar(key: string, field: FieldDefinition, value: unknown): strin
     default: {
       if (typeof value !== "string") return "must be text";
       if (field.pattern && !new RegExp(field.pattern).test(value)) return "has an invalid format";
-      if (field.max !== undefined && value.length > field.max) return `must be at most ${field.max} characters`;
+      if (field.max !== undefined && value.length > field.max)
+        return `must be at most ${field.max} characters`;
       return null;
     }
   }

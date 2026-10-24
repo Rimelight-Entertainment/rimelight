@@ -3,7 +3,17 @@ import { resolveLabel } from "../../core/collections/define";
 import type { EntrySummary } from "../../services/entries";
 import { useDashboard } from "../context";
 import { inputClass } from "../fields/FieldInput";
-import { Button, Empty, Field, Loading, Modal, PageHeader, StatusBadge, relativeTime, useLoader } from "../ui";
+import {
+  Button,
+  Empty,
+  Field,
+  Loading,
+  Modal,
+  PageHeader,
+  StatusBadge,
+  relativeTime,
+  useLoader,
+} from "../ui";
 
 const STATUSES = ["all", "draft", "scheduled", "published"] as const;
 const PAGE = 50;
@@ -60,7 +70,9 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
   // Show a couple of the collection's own fields as columns (useful for product/data collections).
   const fieldColumns = createMemo(() =>
     Object.entries(collection()?.fields ?? {})
-      .filter(([, f]) => ["text", "number", "currency", "select", "boolean", "date"].includes(f.type))
+      .filter(([, f]) =>
+        ["text", "number", "currency", "select", "boolean", "date"].includes(f.type),
+      )
       .slice(0, collection()?.kind === "data" ? 4 : 0),
   );
 
@@ -69,7 +81,7 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
   return (
     <div>
       <PageHeader
-        icon={collection()?.icon}
+        {...(collection()?.icon ? { icon: collection()!.icon } : {})}
         title={resolveLabel(collection()?.labelPlural ?? collection()?.label) || props.collection}
         description={resolveLabel(collection()?.description)}
         actions={
@@ -119,10 +131,22 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
             when={list.data()?.entries.length}
             fallback={
               <Empty
-                icon={collection()?.icon}
+                {...(collection()?.icon ? { icon: collection()!.icon } : {})}
                 title={trash() ? "Trash is empty" : "Nothing here yet"}
-                description={trash() ? undefined : "Create the first entry to get started."}
-                action={trash() ? undefined : <Button variant="primary" icon="i-lucide-plus" onClick={() => setCreating(true)}>Create entry</Button>}
+                {...(!trash() ? { description: "Create the first entry to get started." } : {})}
+                {...(!trash()
+                  ? {
+                      action: (
+                        <Button
+                          variant="primary"
+                          icon="i-lucide-plus"
+                          onClick={() => setCreating(true)}
+                        >
+                          Create entry
+                        </Button>
+                      ),
+                    }
+                  : {})}
               />
             }
           >
@@ -131,10 +155,14 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
                 <thead class="bg-elevated/60 text-left text-[11px] uppercase tracking-wide text-muted">
                   <tr>
                     <th class="px-4 py-2 font-medium">Title</th>
-                    <For each={fieldColumns()}>{([, f]) => <th class="px-4 py-2 font-medium">{resolveLabel(f.label)}</th>}</For>
+                    <For each={fieldColumns()}>
+                      {([, f]) => <th class="px-4 py-2 font-medium">{resolveLabel(f.label)}</th>}
+                    </For>
                     <th class="px-4 py-2 font-medium">Status</th>
                     <th class="px-4 py-2 text-right font-medium">Updated</th>
-                    <Show when={trash()}><th /></Show>
+                    <Show when={trash()}>
+                      <th />
+                    </Show>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-default">
@@ -142,16 +170,28 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
                     {(e) => (
                       <tr class="hover:bg-elevated/50">
                         <td class="px-4 py-2">
-                          <a href={href(`/e/${e.id}`)} class="flex flex-col" style={{ "padding-left": `${depth(e) * 16}px` }}>
+                          <a
+                            href={href(`/e/${e.id}`)}
+                            class="flex flex-col"
+                            style={{ "padding-left": `${depth(e) * 16}px` }}
+                          >
                             <span class="font-medium text-highlighted">{e.excerptTitle}</span>
                             <span class="font-mono text-[11px] text-muted">/{e.slug}</span>
                           </a>
                         </td>
                         <For each={fieldColumns()}>
-                          {([key, f]) => <td class="px-4 py-2 text-toned">{formatValue((e as any).published?.properties?.[key], f.type)}</td>}
+                          {([key, f]) => (
+                            <td class="px-4 py-2 text-toned">
+                              {formatValue((e as any).published?.properties?.[key], f.type)}
+                            </td>
+                          )}
                         </For>
-                        <td class="px-4 py-2"><StatusBadge status={e.status} changed={e.hasUnpublishedChanges} /></td>
-                        <td class="px-4 py-2 text-right text-xs text-muted">{relativeTime(e.updatedAt ?? e.createdAt)}</td>
+                        <td class="px-4 py-2">
+                          <StatusBadge status={e.status} changed={e.hasUnpublishedChanges} />
+                        </td>
+                        <td class="px-4 py-2 text-right text-xs text-muted">
+                          {relativeTime(e.updatedAt ?? e.createdAt)}
+                        </td>
                         <Show when={trash()}>
                           <td class="px-4 py-2 text-right">
                             <Button
@@ -178,8 +218,18 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
               </table>
             </div>
             <div class="flex justify-end gap-2">
-              <Button disabled={offset() === 0} onClick={() => setOffset(Math.max(0, offset() - PAGE))}>Previous</Button>
-              <Button disabled={offset() + PAGE >= (list.data()?.total ?? 0)} onClick={() => setOffset(offset() + PAGE)}>Next</Button>
+              <Button
+                disabled={offset() === 0}
+                onClick={() => setOffset(Math.max(0, offset() - PAGE))}
+              >
+                Previous
+              </Button>
+              <Button
+                disabled={offset() + PAGE >= (list.data()?.total ?? 0)}
+                onClick={() => setOffset(offset() + PAGE)}
+              >
+                Next
+              </Button>
             </div>
           </Show>
         </Loading>
@@ -202,14 +252,23 @@ function formatValue(v: unknown, type: string): string {
   if (v == null || v === "") return "—";
   if (type === "currency" && typeof v === "object") {
     const c = v as { amount: number; currency: string };
-    return new Intl.NumberFormat(undefined, { style: "currency", currency: c.currency || "USD" }).format(c.amount / 100);
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: c.currency || "USD",
+    }).format(c.amount / 100);
   }
   if (type === "boolean") return v ? "Yes" : "No";
   if (typeof v === "object") return resolveLabel(v as any) || JSON.stringify(v);
-  return String(v);
+  if (typeof v === "number" || typeof v === "boolean" || typeof v === "bigint") return v.toString();
+  return typeof v === "string" ? v : JSON.stringify(v);
 }
 
-export const CreateEntryModal: Component<{ open: boolean; collection: string; onClose: () => void; onCreated: (id: string) => void }> = (props) => {
+export const CreateEntryModal: Component<{
+  open: boolean;
+  collection: string;
+  onClose: () => void;
+  onCreated: (id: string) => void;
+}> = (props) => {
   const { api, collection, toast } = useDashboard();
   const [title, setTitle] = createSignal("");
   const [slug, setSlug] = createSignal("");
@@ -242,25 +301,58 @@ export const CreateEntryModal: Component<{ open: boolean; collection: string; on
       onClose={props.onClose}
       footer={
         <>
-          <Button variant="ghost" onClick={props.onClose}>Cancel</Button>
-          <Button variant="primary" loading={busy()} disabled={!title().trim()} onClick={() => void submit()}>Create</Button>
+          <Button variant="ghost" onClick={props.onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            loading={busy()}
+            disabled={!title().trim()}
+            onClick={() => void submit()}
+          >
+            Create
+          </Button>
         </>
       }
     >
-      <form class="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+      <form
+        class="flex flex-col gap-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void submit();
+        }}
+      >
         <Field label="Title">
-          <input class={inputClass} value={title()} autofocus onInput={(e) => setTitle(e.currentTarget.value)} />
+          <input
+            class={inputClass}
+            value={title()}
+            autofocus
+            onInput={(e) => setTitle(e.currentTarget.value)}
+          />
         </Field>
         <Field
           label="Slug"
-          hint={collection(props.collection)?.features.hierarchical ? "Use slashes to nest, e.g. guides/getting-started" : "Leave empty to derive from the title"}
+          hint={
+            collection(props.collection)?.features.hierarchical
+              ? "Use slashes to nest, e.g. guides/getting-started"
+              : "Leave empty to derive from the title"
+          }
         >
-          <input class={`${inputClass} font-mono`} value={slug()} placeholder="auto" onInput={(e) => setSlug(e.currentTarget.value)} />
+          <input
+            class={`${inputClass} font-mono`}
+            value={slug()}
+            placeholder="auto"
+            onInput={(e) => setSlug(e.currentTarget.value)}
+          />
         </Field>
         <Show when={templates.data()?.templates.length}>
           <Field label="Start from">
             <div class="grid grid-cols-2 gap-2">
-              <TemplateOption selected={!templateId()} title="Blank" onClick={() => setTemplateId("")} />
+              <TemplateOption
+                selected={!templateId()}
+                title="Blank"
+                onClick={() => setTemplateId("")}
+              />
               <For each={templates.data()!.templates}>
                 {(t) => (
                   <TemplateOption
@@ -279,7 +371,12 @@ export const CreateEntryModal: Component<{ open: boolean; collection: string; on
   );
 };
 
-const TemplateOption: Component<{ selected: boolean; title: string; description?: string; onClick: () => void }> = (props) => (
+const TemplateOption: Component<{
+  selected: boolean;
+  title: string;
+  description?: string;
+  onClick: () => void;
+}> = (props) => (
   <button
     type="button"
     class={`rounded-lg border p-3 text-left ${props.selected ? "border-primary-500 bg-primary-500/5" : "border-default hover:bg-elevated"}`}

@@ -5,7 +5,6 @@ import { builtinCollections } from "../core/collections/builtins";
 import { resolveCollection, resolveLabel } from "../core/collections/define";
 import type { CollectionDefinition, ResolvedCollection } from "../core/collections/types";
 
-
 function fromRow(row: any): ResolvedCollection {
   const { groups = {}, fields = {} } = json<{ groups?: any; fields?: any }>(row.fieldSchema, {});
   const features = json<Record<string, any>>(row.features, {});
@@ -77,7 +76,11 @@ function assertAdmin(actor: CmsActor) {
   if (!isAdmin(actor)) throw new CmsError(403, "Only admins can change collection schemas");
 }
 
-export async function createCollection(ctx: CmsContext, actor: CmsActor, def: CollectionDefinition) {
+export async function createCollection(
+  ctx: CmsContext,
+  actor: CmsActor,
+  def: CollectionDefinition,
+) {
   assertAdmin(actor);
   const slug = slugify(def.slug || resolveLabel(def.label)).replace(/\//g, "-");
   if (!slug) throw new CmsError(422, "Collection slug is required");
@@ -133,4 +136,3 @@ export async function deleteCollection(ctx: CmsContext, actor: CmsActor, slug: s
   await ctx.db.delete(ctx.t.contentTypes).where(eq(ctx.t.contentTypes.slug, slug));
   return { success: true };
 }
-

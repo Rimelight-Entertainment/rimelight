@@ -17,7 +17,11 @@ export interface CmsCronResult {
  * @example
  *   export default { fetch: app.fetch, scheduled: (e, env, ctx) => ctx.waitUntil(handleCmsCron({ db: env.DB })) };
  */
-export async function handleCmsCron(input: { db: any; config?: CmsConfig; now?: Date }): Promise<CmsCronResult> {
+export async function handleCmsCron(input: {
+  db: any;
+  config?: CmsConfig;
+  now?: Date;
+}): Promise<CmsCronResult> {
   const now = input.now ?? new Date();
   const { db, dialect } = getCmsDb({ db: input.db });
   const cms = createCms({

@@ -1,7 +1,7 @@
 import { For, Show, createSignal, type Component } from "solid-js";
 import { useDashboard } from "../context";
 import { inputClass } from "../fields/FieldInput";
-import { Button, Empty, Loading, Modal, PageHeader, useLoader } from "../ui";
+import { Empty, Loading, Modal, PageHeader, useLoader } from "../ui";
 
 interface MediaFile {
   key: string;
@@ -46,8 +46,21 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
       }}
     >
       <div class="flex flex-wrap items-center gap-2">
-        <input class={`${inputClass} max-w-xs`} placeholder="Search files…" value={search()} onInput={(e) => setSearch(e.currentTarget.value)} onChange={() => void files.reload()} />
-        <select class={`${inputClass} w-36`} value={type()} onChange={(e) => { setType(e.currentTarget.value); void files.reload(); }}>
+        <input
+          class={`${inputClass} max-w-xs`}
+          placeholder="Search files…"
+          value={search()}
+          onInput={(e) => setSearch(e.currentTarget.value)}
+          onChange={() => void files.reload()}
+        />
+        <select
+          class={`${inputClass} w-36`}
+          value={type()}
+          onChange={(e) => {
+            setType(e.currentTarget.value);
+            void files.reload();
+          }}
+        >
           <option value="all">All types</option>
           <option value="images">Images</option>
           <option value="videos">Videos</option>
@@ -55,37 +68,95 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
           <option value="documents">Documents</option>
         </select>
         <label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-600">
-          <span class={`${uploading() ? "i-lucide-loader-circle animate-spin" : "i-lucide-upload"} size-4`} />
+          <span
+            class={`${uploading() ? "i-lucide-loader-circle animate-spin" : "i-lucide-upload"} size-4`}
+          />
           Upload
-          <input type="file" multiple class="hidden" onChange={(e) => void upload(e.currentTarget.files)} />
+          <input
+            type="file"
+            multiple
+            class="hidden"
+            onChange={(e) => void upload(e.currentTarget.files)}
+          />
         </label>
       </div>
-      <Show when={!files.error()} fallback={<Empty icon="i-lucide-hard-drive" title="Storage isn't available" description={files.error() ?? ""} />}>
+      <Show
+        when={!files.error()}
+        fallback={
+          <Empty
+            icon="i-lucide-hard-drive"
+            title="Storage isn't available"
+            description={files.error() ?? ""}
+          />
+        }
+      >
         <Loading when={files.loading() && !files.data()}>
-          <Show when={files.data()?.data.files.length} fallback={<Empty icon="i-lucide-image" title="No files" description="Drop files here or use Upload." />}>
+          <Show
+            when={files.data()?.data.files.length}
+            fallback={
+              <Empty
+                icon="i-lucide-image"
+                title="No files"
+                description="Drop files here or use Upload."
+              />
+            }
+          >
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               <For each={files.data()!.data.files as MediaFile[]}>
                 {(f) => (
                   <div class="group relative flex flex-col overflow-hidden rounded-lg border border-default">
-                    <button type="button" class="flex aspect-square items-center justify-center bg-elevated" onClick={() => props.onPick?.(f)} disabled={!props.onPick}>
-                      <Show when={f.mimeType.startsWith("image/")} fallback={<span class="i-lucide-file size-8 text-muted" />}>
-                        <img src={f.url} alt={f.name} loading="lazy" class="size-full object-cover" />
+                    <button
+                      type="button"
+                      class="flex aspect-square items-center justify-center bg-elevated"
+                      onClick={() => props.onPick?.(f)}
+                      disabled={!props.onPick}
+                    >
+                      <Show
+                        when={f.mimeType.startsWith("image/")}
+                        fallback={<span class="i-lucide-file size-8 text-muted" />}
+                      >
+                        <img
+                          src={f.url}
+                          alt={f.name}
+                          loading="lazy"
+                          class="size-full object-cover"
+                        />
                       </Show>
                     </button>
                     <div class="flex items-center gap-1 px-2 py-1.5 text-[11px]">
-                      <span class="min-w-0 flex-1 truncate text-highlighted" title={f.name}>{f.name}</span>
+                      <span class="min-w-0 flex-1 truncate text-highlighted" title={f.name}>
+                        {f.name}
+                      </span>
                       <span class="text-muted">{kb(f.size)}</span>
                     </div>
                     <Show when={!props.onPick}>
                       <div class="absolute right-1 top-1 hidden gap-1 group-hover:flex">
-                        <button type="button" title="Copy URL" class="rounded bg-black/60 p-1 text-white" onClick={() => { void navigator.clipboard.writeText(f.url); toast("URL copied"); }}>
+                        <button
+                          type="button"
+                          title="Copy URL"
+                          class="rounded bg-black/60 p-1 text-white"
+                          onClick={() => {
+                            void navigator.clipboard.writeText(f.url);
+                            toast("URL copied");
+                          }}
+                        >
                           <span class="i-lucide-link block size-3.5" />
                         </button>
-                        <button type="button" title="Delete" class="rounded bg-black/60 p-1 text-white" onClick={async () => {
-                          if (!confirm(`Delete ${f.name}? Entries using it will show a broken image.`)) return;
-                          await api.media.remove(f.key);
-                          void files.reload();
-                        }}>
+                        <button
+                          type="button"
+                          title="Delete"
+                          class="rounded bg-black/60 p-1 text-white"
+                          onClick={async () => {
+                            if (
+                              !confirm(
+                                `Delete ${f.name}? Entries using it will show a broken image.`,
+                              )
+                            )
+                              return;
+                            await api.media.remove(f.key);
+                            void files.reload();
+                          }}
+                        >
                           <span class="i-lucide-trash-2 block size-3.5" />
                         </button>
                       </div>
@@ -103,14 +174,25 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
 
 export const MediaLibrary: Component = () => (
   <div>
-    <PageHeader icon="i-lucide-image" title="Media" description="Images and files stored in your bucket. Drag files anywhere on this page to upload." />
-    <div class="p-6"><MediaGrid /></div>
+    <PageHeader
+      icon="i-lucide-image"
+      title="Media"
+      description="Images and files stored in your bucket. Drag files anywhere on this page to upload."
+    />
+    <div class="p-6">
+      <MediaGrid />
+    </div>
   </div>
 );
 
-export const MediaPicker: Component<{ open: boolean; onClose: () => void; onPick: (file: MediaFile) => void }> = (props) => (
+export const MediaPicker: Component<{
+  open: boolean;
+  onClose: () => void;
+  onPick: (file: MediaFile) => void;
+}> = (props) => (
   <Modal open={props.open} title="Choose media" onClose={props.onClose} wide>
-    <Show when={props.open}><MediaGrid onPick={props.onPick} /></Show>
+    <Show when={props.open}>
+      <MediaGrid onPick={props.onPick} />
+    </Show>
   </Modal>
 );
-

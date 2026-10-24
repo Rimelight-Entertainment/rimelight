@@ -199,7 +199,7 @@ export async function getDocsConfig(
       limit: 500,
       includeContent: true,
     });
-    const pages = entries.map((e) => ({ ...e, properties: e.published?.properties ?? {} }));
+    const pages = entries.map((e: any) => ({ ...e, properties: e.published?.properties ?? {} }));
     if (pages.length > 0) return buildDocsNavFromPages(pages, options.navOptions);
   }
   return options.fallbackConfig || defaultDocsConfig;

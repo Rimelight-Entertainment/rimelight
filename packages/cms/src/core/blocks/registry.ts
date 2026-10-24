@@ -101,6 +101,8 @@ export class BlockRegistry {
   }
 }
 
-export function defineBlock<P extends Record<string, any>>(def: BlockDefinition<P>): BlockDefinition<P> {
+export function defineBlock<P extends Record<string, any>>(
+  def: BlockDefinition<P>,
+): BlockDefinition<P> {
   return def;
 }

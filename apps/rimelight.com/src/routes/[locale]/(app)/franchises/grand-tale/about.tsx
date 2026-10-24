@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { type Component } from "solid-js";
 import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
 
@@ -27,22 +25,18 @@ const faqItems = [
 
 export const GrandTaleAboutPage: Component = () => {
   return (
-    
-      <div class="max-w-4xl mx-auto px-4 py-20">
-        <h1 class="text-5xl font-black text-white uppercase tracking-tight mb-6">
-          About Grand Tale
-        </h1>
-        <p class="text-xl text-neutral-300 leading-relaxed mb-12">
-          Grand Tale combines deep roleplaying mechanics with rich player-driven housing, crafting,
-          combat, and social interactions across seamless fantasy realms.
-        </p>
+    <div class="max-w-4xl mx-auto px-4 py-20">
+      <h1 class="text-5xl font-black text-white uppercase tracking-tight mb-6">About Grand Tale</h1>
+      <p class="text-xl text-neutral-300 leading-relaxed mb-12">
+        Grand Tale combines deep roleplaying mechanics with rich player-driven housing, crafting,
+        combat, and social interactions across seamless fantasy realms.
+      </p>
 
-        <h2 class="text-2xl font-bold text-white uppercase tracking-wider mb-6">
-          Frequently Asked Questions
-        </h2>
-        <RLAccordion items={faqItems} />
-      </div>
-    
+      <h2 class="text-2xl font-bold text-white uppercase tracking-wider mb-6">
+        Frequently Asked Questions
+      </h2>
+      <RLAccordion items={faqItems} />
+    </div>
   );
 };
 

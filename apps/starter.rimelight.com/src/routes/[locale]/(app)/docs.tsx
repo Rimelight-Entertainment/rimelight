@@ -5,7 +5,6 @@ import {
   createEffect,
   createContext,
   useContext,
-  type Accessor,
 } from "solid-js";
 import type { RouteSectionProps } from "@solidjs/router";
 import { RLSidebar } from "@rimelight/ui/components/sidebar/RLSidebar.tsx";
@@ -101,8 +100,7 @@ export const DocsRouteLayout: Component<RouteSectionProps> = (props) => {
     minHeadingLevel: 2,
     maxHeadingLevel: 3,
   };
-  const resolvedToc = () =>
-    tableOfContents() !== undefined ? tableOfContents() : globalToc;
+  const resolvedToc = () => (tableOfContents() !== undefined ? tableOfContents() : globalToc);
   const hasToc = () => resolvedToc() !== false && headings().length > 0;
 
   const contextValue: DocsContextValue = {
@@ -118,7 +116,7 @@ export const DocsRouteLayout: Component<RouteSectionProps> = (props) => {
   };
 
   return (
-    <DocsContext.Provider value={contextValue}>
+    <DocsContext value={contextValue}>
       <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 items-start relative min-h-[calc(100vh-200px)]">
         {/* Sidebar column */}
         <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
@@ -164,7 +162,7 @@ export const DocsRouteLayout: Component<RouteSectionProps> = (props) => {
           </div>
         </Show>
       </div>
-    </DocsContext.Provider>
+    </DocsContext>
   );
 };
 

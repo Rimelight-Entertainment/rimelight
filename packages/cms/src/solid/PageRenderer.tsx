@@ -26,7 +26,12 @@ export const PageRenderer: Component<PageRendererProps> = (props) => {
       <article class={`rimelight-cms-page ${props.class ?? ""}`}>
         <For each={blocks()}>
           {(block, i) => (
-            <BlockRenderer block={block} index={i()} locale={props.locale} components={props.components} />
+            <BlockRenderer
+              block={block}
+              index={i()}
+              locale={props.locale}
+              components={props.components}
+            />
           )}
         </For>
       </article>

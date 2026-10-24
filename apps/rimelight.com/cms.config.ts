@@ -34,12 +34,36 @@ export default defineCmsConfig({
       icon: "i-lucide-film",
       category: "screenplay",
       nestedOnly: true,
-      defaultProps: { location: "", timeOfDay: "MORNING", setting: "INTERIOR", transition: "CUT_TO", description: "" },
+      defaultProps: {
+        location: "",
+        timeOfDay: "MORNING",
+        setting: "INTERIOR",
+        transition: "CUT_TO",
+        description: "",
+      },
       fields: {
         location: { type: "text", label: "Location" },
-        setting: { type: "select", label: "Setting", options: ["INTERIOR", "EXTERIOR", "OTHER"].map((v) => ({ value: v, label: v })) },
-        timeOfDay: { type: "select", label: "Time of day", options: ["MORNING", "NOON", "AFTERNOON", "EVENING", "NIGHT", "OTHER"].map((v) => ({ value: v, label: v })) },
-        transition: { type: "select", label: "Transition", options: ["CUT_TO", "CUT_BACK_TO", "FADE_TO", "NONE"].map((v) => ({ value: v, label: v })) },
+        setting: {
+          type: "select",
+          label: "Setting",
+          options: ["INTERIOR", "EXTERIOR", "OTHER"].map((v) => ({ value: v, label: v })),
+        },
+        timeOfDay: {
+          type: "select",
+          label: "Time of day",
+          options: ["MORNING", "NOON", "AFTERNOON", "EVENING", "NIGHT", "OTHER"].map((v) => ({
+            value: v,
+            label: v,
+          })),
+        },
+        transition: {
+          type: "select",
+          label: "Transition",
+          options: ["CUT_TO", "CUT_BACK_TO", "FADE_TO", "NONE"].map((v) => ({
+            value: v,
+            label: v,
+          })),
+        },
         description: { type: "textarea", label: "Description" },
       },
       children: ["DialogueBlock", "ParagraphBlock", "CalloutBlock"],
@@ -52,7 +76,10 @@ export default defineCmsConfig({
       category: "screenplay",
       nestedOnly: true,
       defaultProps: { character: "", line: "" },
-      fields: { character: { type: "text", label: "Character" }, parenthetical: { type: "text", label: "Parenthetical" } },
+      fields: {
+        character: { type: "text", label: "Character" },
+        parenthetical: { type: "text", label: "Parenthetical" },
+      },
       inlineText: "line",
       render: DialogueBlock,
     }),

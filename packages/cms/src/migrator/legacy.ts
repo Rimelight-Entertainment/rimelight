@@ -1,4 +1,9 @@
-import type { CollectionDefinition, FieldDefinition, FieldGroup, FieldType } from "../core/collections/types";
+import type {
+  CollectionDefinition,
+  FieldDefinition,
+  FieldGroup,
+  FieldType,
+} from "../core/collections/types";
 
 /**
  * Converters from the two older schema formats into `CollectionDefinition`:
@@ -23,7 +28,8 @@ function convertField(raw: any, group: string): FieldDefinition {
   if (raw?.defaultValue !== undefined) field.defaultValue = raw.defaultValue;
   if (Array.isArray(raw?.options)) {
     field.options = raw.options.map((o: any) => {
-      if (o && typeof o === "object" && "value" in o) return { label: o.label ?? o.value, value: String(o.value) };
+      if (o && typeof o === "object" && "value" in o)
+        return { label: o.label ?? o.value, value: String(o.value) };
       const text = typeof o === "string" ? o : (o?.en ?? Object.values(o ?? {})[0] ?? "");
       return { label: o, value: String(text) };
     });
@@ -39,10 +45,16 @@ export function fieldsFromGroups(groups: Record<string, any> | null | undefined)
   groups: Record<string, FieldGroup>;
   fields: Record<string, FieldDefinition>;
 } {
-  const out = { groups: {} as Record<string, FieldGroup>, fields: {} as Record<string, FieldDefinition> };
+  const out = {
+    groups: {} as Record<string, FieldGroup>,
+    fields: {} as Record<string, FieldDefinition>,
+  };
   for (const [groupKey, group] of Object.entries(groups ?? {})) {
     if (!group || typeof group !== "object") continue;
-    out.groups[groupKey] = { label: group.label ?? groupKey, defaultOpen: group.defaultOpen ?? true };
+    out.groups[groupKey] = {
+      label: group.label ?? groupKey,
+      defaultOpen: group.defaultOpen ?? true,
+    };
     for (const [key, raw] of Object.entries(group.fields ?? {})) {
       out.fields[key] = convertField(raw, groupKey);
     }
@@ -124,17 +136,27 @@ const MARKS = new Set(["bold", "italic", "underline", "strikethrough", "code"]);
  * Current shape: `{ type: "text", text, marks? }`, `{ type: "link", url, children }`,
  * `{ type: "page_mention", pageId, pageSlug, displayTitle? }`.
  */
-export function normalizeInlineNode(raw: any): any | null {
-  if (!raw || typeof raw !== "object") return typeof raw === "string" && raw ? { type: "text", text: raw } : null;
+export function normalizeInlineNode(raw: any): any {
+  if (!raw || typeof raw !== "object")
+    return typeof raw === "string" && raw ? { type: "text", text: raw } : null;
   const p = raw.props && typeof raw.props === "object" ? raw.props : {};
-  const text = (v: unknown) => (typeof v === "string" ? v : v && typeof v === "object" ? String((v as any).en ?? Object.values(v)[0] ?? "") : "");
+  const text = (v: unknown) =>
+    typeof v === "string"
+      ? v
+      : v && typeof v === "object"
+        ? String((v as any).en ?? Object.values(v)[0] ?? "")
+        : "";
   const marksOf = (v: any) => {
-    const list = Array.isArray(v?.marks) ? v.marks : Object.keys(v ?? {}).filter((k) => MARKS.has(k) && v[k] === true);
+    const list = Array.isArray(v?.marks)
+      ? v.marks
+      : Object.keys(v ?? {}).filter((k) => MARKS.has(k) && v[k] === true);
     return list.filter((m: string) => MARKS.has(m));
   };
   if (raw.type === "link") {
     const url = raw.url ?? p.url ?? p.href ?? "";
-    const kids = (Array.isArray(raw.children) ? raw.children : Array.isArray(p.children) ? p.children : [])
+    const kids = (
+      Array.isArray(raw.children) ? raw.children : Array.isArray(p.children) ? p.children : []
+    )
       .map(normalizeInlineNode)
       .filter((n: any) => n?.type === "text");
     const fallback = text(raw.text ?? p.content ?? p.text ?? p.label ?? url);
@@ -142,17 +164,25 @@ export function normalizeInlineNode(raw: any): any | null {
       type: "link",
       url,
       children: kids.length ? kids : fallback ? [{ type: "text", text: fallback }] : [],
-      ...((raw.openInNewTab ?? p.openInNewTab ?? p.target === "_blank") ? { openInNewTab: true } : {}),
+      ...((raw.openInNewTab ?? p.openInNewTab ?? p.target === "_blank")
+        ? { openInNewTab: true }
+        : {}),
     };
   }
   if (raw.type === "page_mention" || raw.type === "mention") {
     const pageId = raw.pageId ?? p.pageId ?? p.id ?? "";
     const pageSlug = raw.pageSlug ?? p.pageSlug ?? p.slug ?? "";
     const displayTitle = raw.displayTitle ?? p.displayTitle ?? p.title;
-    return { type: "page_mention", pageId, pageSlug, ...(displayTitle ? { displayTitle: text(displayTitle) } : {}) };
+    return {
+      type: "page_mention",
+      pageId,
+      pageSlug,
+      ...(displayTitle ? { displayTitle: text(displayTitle) } : {}),
+    };
   }
   // text (and anything unknown: keep its words)
-  const value = typeof raw.text === "string" ? raw.text : text(p.content ?? p.text ?? raw.content ?? "");
+  const value =
+    typeof raw.text === "string" ? raw.text : text(p.content ?? p.text ?? raw.content ?? "");
   if (!value) return null;
   const marks = marksOf(raw.marks ? raw : p);
   return marks.length ? { type: "text", text: value, marks } : { type: "text", text: value };
@@ -163,7 +193,15 @@ export function normalizeInlineNodes(value: unknown): unknown[] {
 }
 
 const isInlineArray = (v: unknown) =>
-  Array.isArray(v) && v.length > 0 && v.every((n) => n && typeof n === "object" && typeof n.type === "string" && ("props" in n || "text" in n || "url" in n || "pageId" in n));
+  Array.isArray(v) &&
+  v.length > 0 &&
+  v.every(
+    (n) =>
+      n &&
+      typeof n === "object" &&
+      typeof n.type === "string" &&
+      ("props" in n || "text" in n || "url" in n || "pageId" in n),
+  );
 
 function toInline(value: unknown): unknown[] {
   if (Array.isArray(value)) return value.map(normalizeInlineNode).filter(Boolean);
@@ -208,10 +246,14 @@ export function normalizeLegacyBlocks(input: unknown): BaseBlock[] {
     if (textKey === "text") props["text"] = toInline(props["text"] ?? content);
     else if (textKey === "content") props["content"] = toInline(content);
     else if (content !== undefined) props["content"] = content;
-    for (const [k, v] of Object.entries(props)) if (isInlineArray(v)) props[k] = normalizeInlineNodes(v);
-    const id = typeof raw.id === "string" && raw.id && !seen.has(raw.id) ? raw.id : crypto.randomUUID();
+    for (const [k, v] of Object.entries(props))
+      if (isInlineArray(v)) props[k] = normalizeInlineNodes(v);
+    const id =
+      typeof raw.id === "string" && raw.id && !seen.has(raw.id) ? raw.id : crypto.randomUUID();
     seen.add(id);
-    const kids = (Array.isArray(raw.children) ? raw.children : Array.isArray(legacyKids) ? legacyKids : null)
+    const kids = (
+      Array.isArray(raw.children) ? raw.children : Array.isArray(legacyKids) ? legacyKids : null
+    )
       ?.map(visit)
       .filter(Boolean) as BaseBlock[] | undefined;
     const block: BaseBlock = { ...raw, id, type, props };
@@ -219,17 +261,25 @@ export function normalizeLegacyBlocks(input: unknown): BaseBlock[] {
     else delete block.children;
     return block;
   };
-  return (list as any[]).filter((b) => !(b?.id && nested.has(b.id))).map(visit).filter((b): b is BaseBlock => !!b);
+  return (list as any[])
+    .filter((b) => !(b?.id && nested.has(b.id)))
+    .map(visit)
+    .filter((b): b is BaseBlock => !!b);
 }
 
-export function normalizeLegacyContent(raw: unknown): { blocks: BaseBlock[]; properties: Record<string, unknown> } {
-  const c = (typeof raw === "string" ? JSON.parse(raw || "{}") : raw ?? {}) as any;
+export function normalizeLegacyContent(raw: unknown): {
+  blocks: BaseBlock[];
+  properties: Record<string, unknown>;
+} {
+  const c = (typeof raw === "string" ? JSON.parse(raw || "{}") : (raw ?? {})) as any;
   return { blocks: normalizeLegacyBlocks(c.blocks), properties: c.properties ?? {} };
 }
 
 /** Templates stored property *definitions* as defaults; keep only the default values. */
 export function flattenTemplateDefaults(defaults: unknown): Record<string, unknown> {
-  const d = (typeof defaults === "string" ? JSON.parse(defaults || "{}") : defaults ?? {}) as Record<string, any>;
+  const d = (
+    typeof defaults === "string" ? JSON.parse(defaults || "{}") : (defaults ?? {})
+  ) as Record<string, any>;
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(d)) {
     if (v && typeof v === "object" && "fields" in v) {
@@ -244,14 +294,21 @@ export function flattenTemplateDefaults(defaults: unknown): Record<string, unkno
 
 // ─── Entry properties (one-time, used only by migration 0005) ─────────────────
 
-const isPlainObject = (v: unknown): v is Record<string, any> => !!v && typeof v === "object" && !Array.isArray(v);
+const isPlainObject = (v: unknown): v is Record<string, any> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
 const LOCALE_KEY = /^[a-z]{2}(-[A-Z]{2})?$/;
 const isLocalized = (v: Record<string, any>) => {
   const keys = Object.keys(v);
-  return keys.length > 0 && keys.every((k) => LOCALE_KEY.test(k)) && Object.values(v).every((x) => typeof x === "string");
+  return (
+    keys.length > 0 &&
+    keys.every((k) => LOCALE_KEY.test(k)) &&
+    Object.values(v).every((x) => typeof x === "string")
+  );
 };
-const isReference = (v: Record<string, any>) => typeof v["slug"] === "string" && ("type" in v || "label" in v);
-const isOption = (v: Record<string, any>) => "value" in v && Object.keys(v).every((k) => k === "value" || k === "label");
+const isReference = (v: Record<string, any>) =>
+  typeof v["slug"] === "string" && ("type" in v || "label" in v);
+const isOption = (v: Record<string, any>) =>
+  "value" in v && Object.keys(v).every((k) => k === "value" || k === "label");
 
 /**
  * Old editor properties → current flat shape:
@@ -278,9 +335,18 @@ export function normalizeLegacyProperties(
   const groups: Record<string, any>[] = [];
   for (const [k, v] of Object.entries(raw)) {
     // A group is a plain object of further fields (not a value shape we recognise).
-    if (isPlainObject(v) && !isLocalized(v) && !isReference(v) && !isOption(v) && !("amount" in v) && !("src" in v)) groups.push(v);
+    if (
+      isPlainObject(v) &&
+      !isLocalized(v) &&
+      !isReference(v) &&
+      !isOption(v) &&
+      !("amount" in v) &&
+      !("src" in v)
+    )
+      groups.push(v);
     else flat[k] = value(v);
   }
-  for (const g of groups) for (const [k, v] of Object.entries(g)) if (!(k in flat)) flat[k] = value(v);
+  for (const g of groups)
+    for (const [k, v] of Object.entries(g)) if (!(k in flat)) flat[k] = value(v);
   return flat;
 }

@@ -26,12 +26,15 @@ export const FieldInput: Component<FieldInputProps> = (props) => {
 
   /** Translatable fields store `{ en, pt, ... }`; others store the value directly. */
   const value = () =>
-    props.field.translatable && props.value && typeof props.value === "object" && !Array.isArray(props.value)
+    props.field.translatable &&
+    props.value &&
+    typeof props.value === "object" &&
+    !Array.isArray(props.value)
       ? (props.value as Record<string, unknown>)[locale()]
       : props.value;
   const set = (v: unknown) =>
     props.field.translatable
-      ? props.onChange({ ...((props.value as object) ?? {}), [locale()]: v })
+      ? props.onChange({ ...(props.value as object), [locale()]: v })
       : props.onChange(v);
 
   return (
@@ -77,7 +80,12 @@ const Control: Component<{
   readOnly: boolean;
 }> = (props) => {
   const f = () => props.field;
-  const text = () => (props.value == null ? "" : String(props.value));
+  const text = () =>
+    props.value == null
+      ? ""
+      : typeof props.value === "string"
+        ? props.value
+        : JSON.stringify(props.value);
 
   switch (props.field.type) {
     case "textarea":
@@ -87,7 +95,7 @@ const Control: Component<{
           class={`${inputClass} min-h-20 resize-y`}
           value={text()}
           disabled={props.readOnly}
-          maxLength={f().max}
+          {...(f().max !== undefined ? { maxLength: f().max } : {})}
           onInput={(e) => props.onChange(e.currentTarget.value)}
         />
       );
@@ -100,7 +108,9 @@ const Control: Component<{
           min={f().min}
           max={f().max}
           disabled={props.readOnly}
-          onInput={(e) => props.onChange(e.currentTarget.value === "" ? null : Number(e.currentTarget.value))}
+          onInput={(e) =>
+            props.onChange(e.currentTarget.value === "" ? null : Number(e.currentTarget.value))
+          }
         />
       );
     case "boolean":
@@ -161,7 +171,9 @@ const Control: Component<{
                   class={`rounded-full border px-2.5 py-0.5 text-xs ${selected() ? "border-primary-500 bg-primary-500/10 text-primary-500" : "border-default text-toned"}`}
                   onClick={() => {
                     const cur = Array.isArray(props.value) ? (props.value as string[]) : [];
-                    props.onChange(selected() ? cur.filter((v) => v !== o.value) : [...cur, o.value]);
+                    props.onChange(
+                      selected() ? cur.filter((v) => v !== o.value) : [...cur, o.value],
+                    );
                   }}
                 >
                   {resolveLabel(o.label) || o.value}
@@ -172,14 +184,34 @@ const Control: Component<{
         </div>
       );
     case "tags":
-      return <TagsInput value={(props.value as string[]) ?? []} onChange={props.onChange} readOnly={props.readOnly} />;
+      return (
+        <TagsInput
+          value={(props.value as string[]) ?? []}
+          onChange={props.onChange}
+          readOnly={props.readOnly}
+        />
+      );
     case "currency":
-      return <CurrencyInput field={f()} value={props.value as any} onChange={props.onChange} readOnly={props.readOnly} />;
+      return (
+        <CurrencyInput
+          field={f()}
+          value={props.value as any}
+          onChange={props.onChange}
+          readOnly={props.readOnly}
+        />
+      );
     case "media":
       return <MediaInput value={props.value} onChange={props.onChange} readOnly={props.readOnly} />;
     case "reference":
     case "references":
-      return <ReferenceInput field={f()} value={props.value} onChange={props.onChange} readOnly={props.readOnly} />;
+      return (
+        <ReferenceInput
+          field={f()}
+          value={props.value}
+          onChange={props.onChange}
+          readOnly={props.readOnly}
+        />
+      );
     case "json":
       return <JsonInput value={props.value} onChange={props.onChange} readOnly={props.readOnly} />;
     default:
@@ -188,8 +220,8 @@ const Control: Component<{
           type={f().type === "email" ? "email" : f().type === "url" ? "url" : "text"}
           class={inputClass}
           value={text()}
-          pattern={f().pattern}
-          maxLength={f().max}
+          {...(f().pattern ? { pattern: f().pattern } : {})}
+          {...(f().max !== undefined ? { maxLength: f().max } : {})}
           disabled={props.readOnly}
           onInput={(e) => props.onChange(e.currentTarget.value)}
         />
@@ -197,7 +229,11 @@ const Control: Component<{
   }
 };
 
-const TagsInput: Component<{ value: string[]; onChange: (v: unknown) => void; readOnly: boolean }> = (props) => {
+const TagsInput: Component<{
+  value: string[];
+  onChange: (v: unknown) => void;
+  readOnly: boolean;
+}> = (props) => {
   const [draft, setDraft] = createSignal("");
   const add = () => {
     const tag = draft().trim();
@@ -211,7 +247,11 @@ const TagsInput: Component<{ value: string[]; onChange: (v: unknown) => void; re
           <span class="inline-flex items-center gap-1 rounded bg-elevated px-1.5 text-xs">
             {tag}
             <Show when={!props.readOnly}>
-              <button type="button" class="text-muted hover:text-error-500" onClick={() => props.onChange(props.value.filter((t) => t !== tag))}>
+              <button
+                type="button"
+                class="text-muted hover:text-error-500"
+                onClick={() => props.onChange(props.value.filter((t) => t !== tag))}
+              >
                 ×
               </button>
             </Show>
@@ -265,26 +305,51 @@ const CurrencyInput: Component<{
       />
       <input
         class={`${inputClass} w-20 uppercase`}
-        maxLength={3}
+        maxlength={3}
         value={currency()}
         disabled={props.readOnly}
-        onInput={(e) => props.onChange({ amount: props.value?.amount ?? 0, currency: e.currentTarget.value.toUpperCase() })}
+        onInput={(e) =>
+          props.onChange({
+            amount: props.value?.amount ?? 0,
+            currency: e.currentTarget.value.toUpperCase(),
+          })
+        }
       />
     </div>
   );
 };
 
-const MediaInput: Component<{ value: unknown; onChange: (v: unknown) => void; readOnly: boolean }> = (props) => {
+const MediaInput: Component<{
+  value: unknown;
+  onChange: (v: unknown) => void;
+  readOnly: boolean;
+}> = (props) => {
   const [open, setOpen] = createSignal(false);
-  const src = () => (typeof props.value === "string" ? props.value : ((props.value as any)?.src ?? ""));
+  const src = () =>
+    typeof props.value === "string" ? props.value : ((props.value as any)?.src ?? "");
   return (
     <div class="flex flex-col gap-2">
       <Show when={src()}>
-        <img src={src()} alt="" class="max-h-32 w-auto self-start rounded border border-default object-contain" />
+        <img
+          src={src()}
+          alt=""
+          class="max-h-32 w-auto self-start rounded border border-default object-contain"
+        />
       </Show>
       <div class="flex gap-2">
-        <input class={inputClass} value={src()} placeholder="https://… or pick from library" disabled={props.readOnly} onInput={(e) => props.onChange(e.currentTarget.value)} />
-        <button type="button" disabled={props.readOnly} class="shrink-0 rounded-md border border-default px-2.5 text-xs hover:bg-elevated" onClick={() => setOpen(true)}>
+        <input
+          class={inputClass}
+          value={src()}
+          placeholder="https://… or pick from library"
+          disabled={props.readOnly}
+          onInput={(e) => props.onChange(e.currentTarget.value)}
+        />
+        <button
+          type="button"
+          disabled={props.readOnly}
+          class="shrink-0 rounded-md border border-default px-2.5 text-xs hover:bg-elevated"
+          onClick={() => setOpen(true)}
+        >
           Browse
         </button>
       </div>
@@ -300,10 +365,16 @@ const MediaInput: Component<{ value: unknown; onChange: (v: unknown) => void; re
   );
 };
 
-const ReferenceInput: Component<{ field: FieldDefinition; value: unknown; onChange: (v: unknown) => void; readOnly: boolean }> = (props) => {
+const ReferenceInput: Component<{
+  field: FieldDefinition;
+  value: unknown;
+  onChange: (v: unknown) => void;
+  readOnly: boolean;
+}> = (props) => {
   const { api } = useDashboard();
   const many = () => props.field.type === "references";
-  const ids = () => (many() ? ((props.value as string[]) ?? []) : props.value ? [props.value as string] : []);
+  const ids = () =>
+    many() ? ((props.value as string[]) ?? []) : props.value ? [props.value as string] : [];
   const [query, setQuery] = createSignal("");
   const [results, setResults] = createSignal<any[]>([]);
   const [labels, setLabels] = createSignal<Record<string, string>>({});
@@ -316,17 +387,24 @@ const ReferenceInput: Component<{ field: FieldDefinition; value: unknown; onChan
       for (const id of missing) {
         void api.entries
           .get(id)
-          .then(({ entry }) => setLabels((l) => ({ ...l, [id]: resolveLabel(entry.title) || entry.slug })))
+          .then(({ entry }) =>
+            setLabels((l) => ({ ...l, [id]: resolveLabel(entry.title) || entry.slug })),
+          )
           .catch(() => setLabels((l) => ({ ...l, [id]: id })));
       }
     },
   );
 
-  const search = async (q: string) => {
+  const search = async (q: string): Promise<void> => {
     setQuery(q);
-    if (q.length < 2) return setResults([]);
+    if (q.length < 2) {
+      setResults([]);
+      return;
+    }
     const collections = props.field.collections?.length ? props.field.collections : [undefined];
-    const all = await Promise.all(collections.map((c) => api.entries.list({ q, collection: c, limit: 8 })));
+    const all = await Promise.all(
+      collections.map((c) => api.entries.list({ q, ...(c ? { collection: c } : {}), limit: 8 })),
+    );
     setResults(all.flatMap((r) => r.entries));
   };
   const pick = (entry: any) => {
@@ -345,7 +423,11 @@ const ReferenceInput: Component<{ field: FieldDefinition; value: unknown; onChan
               <span class="i-lucide-file-text size-3" />
               {labels()[id] ?? id.slice(0, 8)}
               <Show when={!props.readOnly}>
-                <button type="button" class="text-muted hover:text-error-500" onClick={() => props.onChange(many() ? ids().filter((i) => i !== id) : null)}>
+                <button
+                  type="button"
+                  class="text-muted hover:text-error-500"
+                  onClick={() => props.onChange(many() ? ids().filter((i) => i !== id) : null)}
+                >
                   ×
                 </button>
               </Show>
@@ -354,13 +436,22 @@ const ReferenceInput: Component<{ field: FieldDefinition; value: unknown; onChan
         </For>
       </div>
       <Show when={!props.readOnly && (many() || ids().length === 0)}>
-        <input class={inputClass} placeholder="Search entries…" value={query()} onInput={(e) => void search(e.currentTarget.value)} />
+        <input
+          class={inputClass}
+          placeholder="Search entries…"
+          value={query()}
+          onInput={(e) => void search(e.currentTarget.value)}
+        />
       </Show>
       <Show when={results().length}>
         <div class="absolute top-full z-20 mt-1 w-full rounded-md border border-default bg-default shadow-lg">
           <For each={results()}>
             {(r) => (
-              <button type="button" class="flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-elevated" onClick={() => pick(r)}>
+              <button
+                type="button"
+                class="flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-elevated"
+                onClick={() => pick(r)}
+              >
                 <span>{r.excerptTitle}</span>
                 <span class="text-xs text-muted">{r.collection}</span>
               </button>
@@ -372,7 +463,11 @@ const ReferenceInput: Component<{ field: FieldDefinition; value: unknown; onChan
   );
 };
 
-const JsonInput: Component<{ value: unknown; onChange: (v: unknown) => void; readOnly: boolean }> = (props) => {
+const JsonInput: Component<{
+  value: unknown;
+  onChange: (v: unknown) => void;
+  readOnly: boolean;
+}> = (props) => {
   const [error, setError] = createSignal<string | null>(null);
   return (
     <div class="flex flex-col gap-1">
@@ -432,10 +527,7 @@ export const FieldGroups: Component<{
     <div class="flex flex-col gap-4">
       <For each={grouped()}>
         {([group, fields]) => (
-          <Show
-            when={group}
-            fallback={fieldList(fields)}
-          >
+          <Show when={group} fallback={fieldList(fields)}>
             <details open={props.groups?.[group]?.defaultOpen !== false}>
               <summary class="mb-2 cursor-pointer select-none text-[11px] font-semibold uppercase tracking-wide text-muted">
                 {resolveLabel(props.groups?.[group]?.label as any) || group}

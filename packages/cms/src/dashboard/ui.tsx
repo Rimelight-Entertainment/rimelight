@@ -1,10 +1,14 @@
-import { Show, createSignal, onSettled, type Component, type JSX } from "solid-js";
-import { Portal } from "@solidjs/web";
-import type { EntryStatus } from "../core/types/pages";
+import { Show, createSignal, onSettled, type Component } from "solid-js";
+import { Portal, type JSX } from "@solidjs/web";
 
 /** Small, dependency-free primitives so every dashboard view looks and behaves the same. */
 
-export const PageHeader: Component<{ title: JSX.Element; description?: JSX.Element; actions?: JSX.Element; icon?: string }> = (props) => (
+export const PageHeader: Component<{
+  title: JSX.Element;
+  description?: JSX.Element;
+  actions?: JSX.Element;
+  icon?: string;
+}> = (props) => (
   <header class="flex flex-wrap items-start justify-between gap-3 border-b border-default px-6 py-4">
     <div class="flex min-w-0 items-start gap-3">
       <Show when={props.icon}>
@@ -45,7 +49,14 @@ export const Button: Component<{
     `inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 ${variants[props.variant ?? "secondary"]} ${props.class ?? ""}`;
   const inner = () => (
     <>
-      <Show when={props.loading} fallback={<Show when={props.icon}><span class={`${props.icon} size-4`} /></Show>}>
+      <Show
+        when={props.loading}
+        fallback={
+          <Show when={props.icon}>
+            <span class={`${props.icon} size-4`} />
+          </Show>
+        }
+      >
         <span class="i-lucide-loader-circle size-4 animate-spin" />
       </Show>
       {props.children}
@@ -55,7 +66,13 @@ export const Button: Component<{
     <Show
       when={props.href}
       fallback={
-        <button type={props.type ?? "button"} class={cls()} title={props.title} disabled={props.disabled || props.loading} onClick={(e) => props.onClick?.(e)}>
+        <button
+          type={props.type ?? "button"}
+          class={cls()}
+          title={props.title}
+          disabled={props.disabled || props.loading}
+          onClick={(e) => props.onClick?.(e)}
+        >
           {inner()}
         </button>
       }
@@ -67,10 +84,20 @@ export const Button: Component<{
   );
 };
 
-export const Modal: Component<{ open: boolean; title: string; onClose: () => void; children: JSX.Element; footer?: JSX.Element; wide?: boolean }> = (props) => (
+export const Modal: Component<{
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  children: JSX.Element;
+  footer?: JSX.Element;
+  wide?: boolean;
+}> = (props) => (
   <Show when={props.open}>
     <Portal>
-      <div class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-[10vh]" onClick={props.onClose}>
+      <div
+        class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-[10vh]"
+        onClick={props.onClose}
+      >
         <div
           role="dialog"
           aria-modal="true"
@@ -80,11 +107,18 @@ export const Modal: Component<{ open: boolean; title: string; onClose: () => voi
         >
           <div class="flex items-center justify-between border-b border-default px-5 py-3">
             <h2 class="font-semibold text-highlighted">{props.title}</h2>
-            <button type="button" aria-label="Close" class="i-lucide-x size-4 text-muted hover:text-highlighted" onClick={props.onClose} />
+            <button
+              type="button"
+              aria-label="Close"
+              class="i-lucide-x size-4 text-muted hover:text-highlighted"
+              onClick={props.onClose}
+            />
           </div>
           <div class="px-5 py-4">{props.children}</div>
           <Show when={props.footer}>
-            <div class="flex justify-end gap-2 border-t border-default px-5 py-3">{props.footer}</div>
+            <div class="flex justify-end gap-2 border-t border-default px-5 py-3">
+              {props.footer}
+            </div>
           </Show>
         </div>
       </div>
@@ -92,7 +126,12 @@ export const Modal: Component<{ open: boolean; title: string; onClose: () => voi
   </Show>
 );
 
-export const Empty: Component<{ icon?: string; title: string; description?: string; action?: JSX.Element }> = (props) => (
+export const Empty: Component<{
+  icon?: string;
+  title: string;
+  description?: string;
+  action?: JSX.Element;
+}> = (props) => (
   <div class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-default px-6 py-14 text-center">
     <span class={`${props.icon ?? "i-lucide-inbox"} size-8 text-muted`} />
     <p class="font-medium text-highlighted">{props.title}</p>
@@ -115,16 +154,22 @@ const statusStyle: Record<string, string> = {
   rejected: "bg-error-500/10 text-error-600",
 };
 
-export const StatusBadge: Component<{ status: EntryStatus | string; changed?: boolean }> = (props) => (
+export const StatusBadge: Component<{ status: string; changed?: boolean }> = (props) => (
   <span class="inline-flex items-center gap-1">
-    <span class={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${statusStyle[props.status] ?? statusStyle["draft"]}`}>{props.status}</span>
+    <span
+      class={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${statusStyle[props.status] ?? statusStyle["draft"]}`}
+    >
+      {props.status}
+    </span>
     <Show when={props.changed}>
       <span class="size-1.5 rounded-full bg-warning-500" title="Unpublished changes" />
     </Show>
   </span>
 );
 
-export const Field: Component<{ label: string; children: JSX.Element; hint?: string }> = (props) => (
+export const Field: Component<{ label: string; children: JSX.Element; hint?: string }> = (
+  props,
+) => (
   <label class="flex flex-col gap-1">
     <span class="text-xs font-medium text-toned">{props.label}</span>
     {props.children}
@@ -180,7 +225,14 @@ export function useLoader<T>(fn: () => Promise<T>, onError?: (err: Error) => voi
 }
 
 export const Loading: Component<{ when: boolean; children: JSX.Element }> = (props) => (
-  <Show when={!props.when} fallback={<div class="flex justify-center py-16"><span class="i-lucide-loader-circle size-6 animate-spin text-muted" /></div>}>
+  <Show
+    when={!props.when}
+    fallback={
+      <div class="flex justify-center py-16">
+        <span class="i-lucide-loader-circle size-6 animate-spin text-muted" />
+      </div>
+    }
+  >
     {props.children}
   </Show>
 );

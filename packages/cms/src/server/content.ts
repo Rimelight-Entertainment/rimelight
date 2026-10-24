@@ -37,7 +37,10 @@ function publicEntry(entry: Entry | EntrySummary, roles?: string[]): PublicEntry
     bylines: entry.bylines,
     publishedAt: entry.postedAt,
     updatedAt: entry.updatedAt,
-    blocks: filterBlocksForReader(published.blocks, roles ? { userId: "", roles, permissions: [] } : undefined),
+    blocks: filterBlocksForReader(
+      published.blocks,
+      roles ? { userId: "", roles, permissions: [] } : undefined,
+    ),
     properties: published.properties,
   };
 }
@@ -54,9 +57,13 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
   search.onError(handleCmsError as any);
 
   const cache = (c: Context, seconds = 60) =>
-    c.header("Cache-Control", `public, max-age=${seconds}, s-maxage=${seconds * 5}, stale-while-revalidate=86400`);
+    c.header(
+      "Cache-Control",
+      `public, max-age=${seconds}, s-maxage=${seconds * 5}, stale-while-revalidate=86400`,
+    );
 
-  const readerRoles = async (c: Context) => (await resolveActor(c, { ...options, devBypassAuth: false }))?.roles;
+  const readerRoles = async (c: Context) =>
+    (await resolveActor(c, { ...options, devBypassAuth: false }))?.roles;
 
   async function findPublished(cms: Cms, c: Context, slug: string, collection?: string) {
     const token = c.req.query("preview");
@@ -88,21 +95,33 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
     });
     const roles = await readerRoles(c);
     cache(c);
-    return c.json({ entries: entries.map((e) => publicEntry(e, roles)), total });
+    return c.json({ entries: entries.map((e: any) => publicEntry(e, roles)), total });
   });
 
   content.get("/collections/:collection/:slug{.+}", async (c) => {
     const cms = cmsForRequest(c, options);
     const raw = c.req.param("slug");
     const asMarkdown = raw.endsWith(".md");
-    const entry = await findPublished(cms, c, asMarkdown ? raw.slice(0, -3) : raw, c.req.param("collection"));
+    const entry = await findPublished(
+      cms,
+      c,
+      asMarkdown ? raw.slice(0, -3) : raw,
+      c.req.param("collection"),
+    );
     if (!entry) return asMarkdown ? c.text("Not Found", 404) : c.json({ entry: null }, 404);
     const pub = publicEntry(entry, await readerRoles(c));
     if (asMarkdown) {
       const url = new URL(c.req.url);
       return new Response(
-        renderPageAsMarkdown(pub, c.req.query("locale") ?? "en", { siteUrl: `${url.protocol}//${url.host}` }),
-        { headers: { "Content-Type": "text/markdown; charset=utf-8", "Cache-Control": "public, max-age=3600" } },
+        renderPageAsMarkdown(pub, c.req.query("locale") ?? "en", {
+          siteUrl: `${url.protocol}//${url.host}`,
+        }),
+        {
+          headers: {
+            "Content-Type": "text/markdown; charset=utf-8",
+            "Cache-Control": "public, max-age=3600",
+          },
+        },
       );
     }
     if (!c.req.query("preview")) cache(c);
@@ -123,8 +142,11 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
     cache(c, 300);
     return c.json({
       config: buildDocsNavFromPages(
-        entries.map((e) => ({ ...e, properties: e.published?.properties ?? {} })),
-        { ...(c.req.query("basePath") ? { basePath: c.req.query("basePath")! } : {}), locale: c.req.query("locale") ?? "en" },
+        entries.map((e: any) => ({ ...e, properties: e.published?.properties ?? {} })),
+        {
+          ...(c.req.query("basePath") ? { basePath: c.req.query("basePath")! } : {}),
+          locale: c.req.query("locale") ?? "en",
+        },
       ),
     });
   });

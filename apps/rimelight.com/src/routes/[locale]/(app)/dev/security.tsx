@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui";
@@ -166,74 +164,72 @@ export default function DevSecurityPage() {
   ];
 
   return (
-    
-      <div class="flex flex-col gap-2xl">
-        <header class="flex flex-col gap-xs">
-          <h1 class="text-3xl text-highlighted">Security</h1>
-          <p class="text-sm text-muted">
-            Verifying @rimelight/security config resolution, generated CSP headers, unified
-            middleware head/SRI injection, and Turnstile / construction runtime flags.
-          </p>
-        </header>
+    <div class="flex flex-col gap-2xl">
+      <header class="flex flex-col gap-xs">
+        <h1 class="text-3xl text-highlighted">Security</h1>
+        <p class="text-sm text-muted">
+          Verifying @rimelight/security config resolution, generated CSP headers, unified middleware
+          head/SRI injection, and Turnstile / construction runtime flags.
+        </p>
+      </header>
 
-        <For each={sections()}>
-          {(section) => (
-            <section class="bg-elevated/20">
-              <header class="bg-elevated/40 px-xl py-sm">
-                <h2 class="text-xs text-muted">
-                  {section.mono ? <code>{section.title}</code> : section.title}
-                </h2>
-              </header>
-              <hr class="border-default" />
-              <div class="flex flex-col">
-                <For each={section.rows}>
-                  {(row, index) => (
-                    <>
-                      <Show when={index() > 0}>
-                        <hr class="border-default" />
-                      </Show>
-                      <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
-                        <div class="flex min-w-0 flex-col gap-xs">
-                          <Show when={row.label}>
-                            {row.mono ? (
-                              <code class="text-sm text-highlighted">{row.label}</code>
-                            ) : (
-                              <span class="text-sm text-highlighted">{row.label}</span>
-                            )}
-                          </Show>
-                          <Show when={row.code}>
-                            <pre class="whitespace-pre-wrap break-words text-xs text-muted">
-                              {row.code}
-                            </pre>
-                          </Show>
-                          <Show when={row.description}>
-                            <p class="text-xs text-muted">{row.description}</p>
-                          </Show>
-                        </div>
-                        <div class="min-w-0 text-sm text-highlighted">
-                          <Show when={row.value}>
-                            <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
-                          </Show>
-                          {row.content}
-                        </div>
+      <For each={sections()}>
+        {(section) => (
+          <section class="bg-elevated/20">
+            <header class="bg-elevated/40 px-xl py-sm">
+              <h2 class="text-xs text-muted">
+                {section.mono ? <code>{section.title}</code> : section.title}
+              </h2>
+            </header>
+            <hr class="border-default" />
+            <div class="flex flex-col">
+              <For each={section.rows}>
+                {(row, index) => (
+                  <>
+                    <Show when={index() > 0}>
+                      <hr class="border-default" />
+                    </Show>
+                    <div class="grid grid-cols-1 items-start gap-xl px-xl py-md lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+                      <div class="flex min-w-0 flex-col gap-xs">
+                        <Show when={row.label}>
+                          {row.mono ? (
+                            <code class="text-sm text-highlighted">{row.label}</code>
+                          ) : (
+                            <span class="text-sm text-highlighted">{row.label}</span>
+                          )}
+                        </Show>
+                        <Show when={row.code}>
+                          <pre class="whitespace-pre-wrap break-words text-xs text-muted">
+                            {row.code}
+                          </pre>
+                        </Show>
+                        <Show when={row.description}>
+                          <p class="text-xs text-muted">{row.description}</p>
+                        </Show>
                       </div>
-                    </>
-                  )}
-                </For>
+                      <div class="min-w-0 text-sm text-highlighted">
+                        <Show when={row.value}>
+                          <pre class="whitespace-pre-wrap break-words">{row.value}</pre>
+                        </Show>
+                        {row.content}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </For>
+            </div>
+            <Show when={section.output}>
+              <hr class="border-default" />
+              <div class="px-xl py-md">
+                <h3 class="mb-xs text-xs text-muted">Rendered output</h3>
+                <pre class="max-h-[30rem] overflow-auto whitespace-pre-wrap break-words rounded-md bg-elevated/40 px-sm py-xs font-mono text-xs text-muted">
+                  {section.output}
+                </pre>
               </div>
-              <Show when={section.output}>
-                <hr class="border-default" />
-                <div class="px-xl py-md">
-                  <h3 class="mb-xs text-xs text-muted">Rendered output</h3>
-                  <pre class="max-h-[30rem] overflow-auto whitespace-pre-wrap break-words rounded-md bg-elevated/40 px-sm py-xs font-mono text-xs text-muted">
-                    {section.output}
-                  </pre>
-                </div>
-              </Show>
-            </section>
-          )}
-        </For>
-      </div>
-    
+            </Show>
+          </section>
+        )}
+      </For>
+    </div>
   );
 }

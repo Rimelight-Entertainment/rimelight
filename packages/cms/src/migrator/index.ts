@@ -113,7 +113,8 @@ const TRACKING_TABLE = {
  * tracked in `_rimelight_cms_migrations` and every statement is additive.
  */
 export async function migrateCms(db: any): Promise<MigrationResult> {
-  if (!db) throw new Error("[@rimelight/cms migrator] No database instance provided to migrateCms().");
+  if (!db)
+    throw new Error("[@rimelight/cms migrator] No database instance provided to migrateCms().");
 
   const executor = createExecutor(db);
   const migrations: Migration[] =

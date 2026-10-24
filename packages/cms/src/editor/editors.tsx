@@ -6,11 +6,11 @@ import type { BlockEditorProps } from "../core/blocks/registry";
  * else about these blocks (caption, language, …) is edited in the inspector via `fields`.
  */
 
-const cell =
-  "w-full min-w-24 bg-transparent px-2 py-1 text-sm outline-none focus:bg-primary-500/5";
+const cell = "w-full min-w-24 bg-transparent px-2 py-1 text-sm outline-none focus:bg-primary-500/5";
 
 const TableEditor: Component<BlockEditorProps> = (props) => {
-  const columns = () => (props.block.props["columns"] ?? []) as { key: string; header: string; align?: string }[];
+  const columns = () =>
+    (props.block.props["columns"] ?? []) as { key: string; header: string; align?: string }[];
   const rows = () => (props.block.props["rows"] ?? []) as Record<string, string>[];
 
   const setHeader = (i: number, header: string) =>
@@ -24,9 +24,13 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
   const removeColumn = (key: string) =>
     props.update({
       columns: columns().filter((c) => c.key !== key),
-      rows: rows().map(({ [key]: _, ...rest }) => rest),
+      rows: rows().map((row) => {
+        const { [key]: _removed, ...rest } = row;
+        return rest;
+      }),
     });
-  const addRow = () => props.update({ rows: [...rows(), Object.fromEntries(columns().map((c) => [c.key, ""]))] });
+  const addRow = () =>
+    props.update({ rows: [...rows(), Object.fromEntries(columns().map((c) => [c.key, ""]))] });
   const removeRow = (i: number) => props.update({ rows: rows().filter((_, j) => j !== i) });
 
   return (
@@ -38,9 +42,19 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
               {(col, i) => (
                 <th class="group/col border-b border-r border-default p-0 text-left font-semibold">
                   <div class="flex items-center">
-                    <input class={`${cell} font-semibold`} value={col.header} disabled={props.readOnly} onInput={(e) => setHeader(i(), e.currentTarget.value)} />
+                    <input
+                      class={`${cell} font-semibold`}
+                      value={col.header}
+                      disabled={props.readOnly}
+                      onInput={(e) => setHeader(i(), e.currentTarget.value)}
+                    />
                     <Show when={!props.readOnly && columns().length > 1}>
-                      <button type="button" title="Remove column" class="i-lucide-x mr-1 size-3 opacity-0 group-hover/col:opacity-60" onClick={() => removeColumn(col.key)} />
+                      <button
+                        type="button"
+                        title="Remove column"
+                        class="i-lucide-x mr-1 size-3 opacity-0 group-hover/col:opacity-60"
+                        onClick={() => removeColumn(col.key)}
+                      />
                     </Show>
                   </div>
                 </th>
@@ -48,7 +62,12 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
             </For>
             <Show when={!props.readOnly}>
               <th class="w-8 border-b border-default">
-                <button type="button" title="Add column" class="i-lucide-plus size-3.5 text-muted" onClick={addColumn} />
+                <button
+                  type="button"
+                  title="Add column"
+                  class="i-lucide-plus size-3.5 text-muted"
+                  onClick={addColumn}
+                />
               </th>
             </Show>
           </tr>
@@ -60,13 +79,23 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
                 <For each={columns()}>
                   {(col) => (
                     <td class="border-b border-r border-default p-0">
-                      <input class={cell} value={row[col.key] ?? ""} disabled={props.readOnly} onInput={(e) => setCell(r(), col.key, e.currentTarget.value)} />
+                      <input
+                        class={cell}
+                        value={row[col.key] ?? ""}
+                        disabled={props.readOnly}
+                        onInput={(e) => setCell(r(), col.key, e.currentTarget.value)}
+                      />
                     </td>
                   )}
                 </For>
                 <Show when={!props.readOnly}>
                   <td class="w-8 border-b border-default text-center">
-                    <button type="button" title="Remove row" class="i-lucide-trash-2 size-3 opacity-0 group-hover/row:opacity-60" onClick={() => removeRow(r())} />
+                    <button
+                      type="button"
+                      title="Remove row"
+                      class="i-lucide-trash-2 size-3 opacity-0 group-hover/row:opacity-60"
+                      onClick={() => removeRow(r())}
+                    />
                   </td>
                 </Show>
               </tr>
@@ -75,7 +104,11 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
         </tbody>
       </table>
       <Show when={!props.readOnly}>
-        <button type="button" class="flex w-full items-center gap-1 px-2 py-1 text-xs text-muted hover:bg-elevated" onClick={addRow}>
+        <button
+          type="button"
+          class="flex w-full items-center gap-1 px-2 py-1 text-xs text-muted hover:bg-elevated"
+          onClick={addRow}
+        >
           <span class="i-lucide-plus size-3" /> Row
         </button>
       </Show>
@@ -135,7 +168,11 @@ const ImageEditor: Component<BlockEditorProps> = (props) => {
           </div>
         }
       >
-        <img src={src()} alt={props.block.props["alt"] ?? ""} class="max-h-96 rounded-md object-contain" />
+        <img
+          src={src()}
+          alt={props.block.props["alt"] ?? ""}
+          class="max-h-96 rounded-md object-contain"
+        />
       </Show>
       <input
         class="bg-transparent text-center text-xs text-muted outline-none"

@@ -3,8 +3,7 @@ import type { BaseBlock } from "../../core/types/blocks";
 import type { BlockViewProps } from "./ParagraphBlock";
 
 export const TabsBlock: Component<BlockViewProps> = (props) => {
-  const children = () =>
-    (props.block.children ?? []) as BaseBlock[];
+  const children = () => (props.block.children ?? []) as BaseBlock[];
   const defaultValue = () =>
     (props.block.props?.["defaultValue"] as string) ??
     (children()[0]?.props?.["value"] as string) ??

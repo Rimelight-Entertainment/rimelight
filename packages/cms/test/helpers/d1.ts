@@ -17,7 +17,10 @@ export function createMockD1() {
     },
     async run() {
       const info = db.prepare(query).run(...bindings);
-      return { success: true, meta: { changes: Number(info.changes), last_row_id: Number(info.lastInsertRowid) } };
+      return {
+        success: true,
+        meta: { changes: Number(info.changes), last_row_id: Number(info.lastInsertRowid) },
+      };
     },
     async first(col?: string) {
       const row = db.prepare(query).get(...bindings) as any;

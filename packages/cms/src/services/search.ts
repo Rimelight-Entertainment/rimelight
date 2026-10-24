@@ -70,7 +70,10 @@ export async function searchEntries(
   const scope = collection ? eq(s.sourceType, collection) : undefined;
 
   if (ctx.dialect === "pg") {
-    const terms = query.replace(/[!|&():*'\\]/g, " ").split(/\s+/).filter(Boolean);
+    const terms = query
+      .replace(/[!|&():*'\\]/g, " ")
+      .split(/\s+/)
+      .filter(Boolean);
     const tsq = sql`to_tsquery('simple', ${terms.map((t) => `${t}:*`).join(" & ")})`;
     const rank = sql<number>`ts_rank(${s.searchableText}, ${tsq})`;
     return ctx.db
@@ -90,7 +93,13 @@ export async function searchEntries(
 
   const pattern = `%${query.toLowerCase()}%`;
   const rows = await ctx.db
-    .select({ title: s.title, url: s.url, sourceType: s.sourceType, sourceId: s.sourceId, body: s.bodyContent })
+    .select({
+      title: s.title,
+      url: s.url,
+      sourceType: s.sourceType,
+      sourceId: s.sourceId,
+      body: s.bodyContent,
+    })
     .from(s)
     .where(and(or(like(s.searchableText, pattern), like(s.title, pattern)), scope))
     .orderBy(desc(s.updatedAt))

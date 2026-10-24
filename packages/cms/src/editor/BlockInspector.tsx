@@ -27,7 +27,9 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-2">
             <span class={`${def()?.icon ?? "i-lucide-square"} size-4 text-muted`} />
-            <span class="text-sm font-semibold text-highlighted">{def()?.label ?? sel().block.type}</span>
+            <span class="text-sm font-semibold text-highlighted">
+              {def()?.label ?? sel().block.type}
+            </span>
           </div>
           <Show when={def()?.description}>
             <p class="text-xs text-muted">{def()!.description}</p>
@@ -46,7 +48,9 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
 
           <Show when={user() && isAdmin(user()!)}>
             <details class="border-t border-default pt-3">
-              <summary class="cursor-pointer text-[11px] font-semibold uppercase tracking-wide text-muted">Access & locks</summary>
+              <summary class="cursor-pointer text-[11px] font-semibold uppercase tracking-wide text-muted">
+                Access & locks
+              </summary>
               <div class="mt-3 flex flex-col gap-3 text-xs">
                 <label class="flex flex-col gap-1">
                   <span class="text-toned">Visible to roles (empty = everyone)</span>
@@ -55,8 +59,14 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
                     value={(sel().block.allowedRoles ?? []).join(", ")}
                     placeholder="e.g. employee, admin"
                     onChange={(e) => {
-                      const roles = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean);
-                      props.editor.setBlockMeta(sel().block.id, { allowedRoles: roles.length ? roles : undefined });
+                      const roles = e.currentTarget.value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                      props.editor.setBlockMeta(
+                        sel().block.id,
+                        roles.length ? { allowedRoles: roles } : {},
+                      );
                     }}
                   />
                 </label>
@@ -64,7 +74,12 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
                   <input
                     type="checkbox"
                     checked={!!sel().block.isTemplated}
-                    onChange={(e) => props.editor.setBlockMeta(sel().block.id, { isTemplated: e.currentTarget.checked || undefined })}
+                    onChange={(e) =>
+                      props.editor.setBlockMeta(
+                        sel().block.id,
+                        e.currentTarget.checked ? { isTemplated: true } : {},
+                      )
+                    }
                   />
                   <span class="text-toned">Structural lock (can't be moved or deleted)</span>
                 </label>
@@ -72,21 +87,36 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
                   <input
                     type="checkbox"
                     checked={sel().block.templatedProps === true}
-                    onChange={(e) => props.editor.setBlockMeta(sel().block.id, { templatedProps: e.currentTarget.checked || undefined })}
+                    onChange={(e) =>
+                      props.editor.setBlockMeta(
+                        sel().block.id,
+                        e.currentTarget.checked ? { templatedProps: true } : {},
+                      )
+                    }
                   />
                   <span class="text-toned">Content lock (props can't be edited)</span>
                 </label>
-                <span class="text-muted">Locks apply to entries created from this content as a template.</span>
+                <span class="text-muted">
+                  Locks apply to entries created from this content as a template.
+                </span>
               </div>
             </details>
           </Show>
           <div class="flex gap-2 border-t border-default pt-3">
-            <For each={[
-              ["Duplicate", "i-lucide-copy", () => props.editor.duplicate(sel().block.id)],
-              ["Delete", "i-lucide-trash-2", () => props.editor.remove(sel().block.id)],
-            ] as const}>
+            <For
+              each={
+                [
+                  ["Duplicate", "i-lucide-copy", () => props.editor.duplicate(sel().block.id)],
+                  ["Delete", "i-lucide-trash-2", () => props.editor.remove(sel().block.id)],
+                ] as const
+              }
+            >
               {([label, icon, fn]) => (
-                <button type="button" class="flex items-center gap-1 rounded border border-default px-2 py-1 text-xs hover:bg-elevated" onClick={fn}>
+                <button
+                  type="button"
+                  class="flex items-center gap-1 rounded border border-default px-2 py-1 text-xs hover:bg-elevated"
+                  onClick={fn}
+                >
                   <span class={`${icon} size-3`} /> {label}
                 </button>
               )}

@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { type Component, createSignal, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
@@ -69,58 +67,56 @@ export const WikiEditPage: Component = () => {
   };
 
   return (
-    
-      <div class="flex flex-col h-screen overflow-hidden bg-neutral-950 text-white select-none">
-        <header class="h-12 w-full border-b border-neutral-800 flex items-center justify-between px-4 shrink-0 z-30">
-          <div class="flex items-center gap-2.5">
-            <RLButton
-              href={getLocaleUrl("/franchises/grand-tale/wiki")}
-              variant="ghost"
-              color="neutral"
-              size="xs"
-              leadingIcon="i-lucide-arrow-left"
-              class="!px-2"
-            >
-              Wiki
-            </RLButton>
-            <span class="w-px h-4 bg-neutral-700" />
-            <span class="font-semibold text-sm truncate max-w-xs">
-              {titleVal() || "Untitled Page"}
-            </span>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <RLButton
-              variant="solid"
-              color="primary"
-              size="xs"
-              leadingIcon="i-lucide-save"
-              disabled={saving()}
-              onClick={handleSave}
-            >
-              {saving() ? "Saving..." : "Save"}
-            </RLButton>
-          </div>
-        </header>
-
-        <div class="p-8 max-w-5xl mx-auto w-full flex-1 overflow-y-auto">
-          <input
-            type="text"
-            value={titleVal()}
-            onInput={(e: any) => setTitleVal(e.currentTarget.value)}
-            placeholder="Page Title"
-            class="w-full text-3xl font-bold bg-transparent border-b border-neutral-800 py-2 mb-4 focus:outline-none focus:border-indigo-500"
-          />
-          <textarea
-            value={descVal()}
-            onInput={(e: any) => setDescVal(e.currentTarget.value)}
-            placeholder="Add a description..."
-            rows={3}
-            class="w-full text-lg text-neutral-400 bg-transparent border border-neutral-800 rounded-lg p-3 focus:outline-none focus:border-indigo-500"
-          />
+    <div class="flex flex-col h-screen overflow-hidden bg-neutral-950 text-white select-none">
+      <header class="h-12 w-full border-b border-neutral-800 flex items-center justify-between px-4 shrink-0 z-30">
+        <div class="flex items-center gap-2.5">
+          <RLButton
+            href={getLocaleUrl("/franchises/grand-tale/wiki")}
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            leadingIcon="i-lucide-arrow-left"
+            class="!px-2"
+          >
+            Wiki
+          </RLButton>
+          <span class="w-px h-4 bg-neutral-700" />
+          <span class="font-semibold text-sm truncate max-w-xs">
+            {titleVal() || "Untitled Page"}
+          </span>
         </div>
+
+        <div class="flex items-center gap-2">
+          <RLButton
+            variant="solid"
+            color="primary"
+            size="xs"
+            leadingIcon="i-lucide-save"
+            disabled={saving()}
+            onClick={handleSave}
+          >
+            {saving() ? "Saving..." : "Save"}
+          </RLButton>
+        </div>
+      </header>
+
+      <div class="p-8 max-w-5xl mx-auto w-full flex-1 overflow-y-auto">
+        <input
+          type="text"
+          value={titleVal()}
+          onInput={(e: any) => setTitleVal(e.currentTarget.value)}
+          placeholder="Page Title"
+          class="w-full text-3xl font-bold bg-transparent border-b border-neutral-800 py-2 mb-4 focus:outline-none focus:border-indigo-500"
+        />
+        <textarea
+          value={descVal()}
+          onInput={(e: any) => setDescVal(e.currentTarget.value)}
+          placeholder="Add a description..."
+          rows={3}
+          class="w-full text-lg text-neutral-400 bg-transparent border border-neutral-800 rounded-lg p-3 focus:outline-none focus:border-indigo-500"
+        />
       </div>
-    
+    </div>
   );
 };
 

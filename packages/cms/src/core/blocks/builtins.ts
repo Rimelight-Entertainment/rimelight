@@ -181,7 +181,10 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     category: "structure",
     nestedOnly: true,
     defaultProps: { title: "" },
-    fields: { title: { type: "text", label: "Title" }, description: { type: "textarea", label: "Description" } },
+    fields: {
+      title: { type: "text", label: "Title" },
+      description: { type: "textarea", label: "Description" },
+    },
     inlineText: "title",
     children: "*",
   }),

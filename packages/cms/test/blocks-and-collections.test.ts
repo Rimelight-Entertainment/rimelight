@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
-import { cloneBlock, findBlock, insertBlock, moveBlock, normalizeBlocks, removeBlock } from "../src/core/blocks/tree";
+import {
+  cloneBlock,
+  findBlock,
+  insertBlock,
+  moveBlock,
+  normalizeBlocks,
+  removeBlock,
+} from "../src/core/blocks/tree";
 import { BlockRegistry } from "../src/core/blocks/registry";
 import { builtinBlocks } from "../src/core/blocks/builtins";
 import { resolveCollection } from "../src/core/collections/define";
@@ -9,11 +16,21 @@ import { inlineToHtml, toInlineNodes } from "../src/editor/inline";
 import type { BaseBlock } from "../src/core/types/blocks";
 
 const p = (id: string): BaseBlock => ({ id, type: "ParagraphBlock", props: {} });
-const s = (id: string, children: BaseBlock[] = []): BaseBlock => ({ id, type: "SectionBlock", props: { title: id }, children });
+const s = (id: string, children: BaseBlock[] = []): BaseBlock => ({
+  id,
+  type: "SectionBlock",
+  props: { title: id },
+  children,
+});
 
 describe("block tree", () => {
   it("sanitizes untrusted input: drops junk, fixes missing/duplicate ids", () => {
-    const tree = normalizeBlocks([s("s", [p("a")]), { id: "a", type: "ParagraphBlock" }, null, { foo: 1 }]);
+    const tree = normalizeBlocks([
+      s("s", [p("a")]),
+      { id: "a", type: "ParagraphBlock" },
+      null,
+      { foo: 1 },
+    ]);
     expect(tree).toHaveLength(2);
     expect(tree[1]!.id).not.toBe("a");
     expect(tree[1]!.props).toEqual({});
@@ -47,7 +64,9 @@ describe("block registry", () => {
   it("enforces allowed children", () => {
     expect(registry.allowedChildren("TabsBlock").map((d) => d.type)).toEqual(["TabItemBlock"]);
     expect(registry.allowedChildren(null).some((d) => d.type === "TabItemBlock")).toBe(false);
-    expect(registry.allowedChildren("SectionBlock").some((d) => d.type === "ParagraphBlock")).toBe(true);
+    expect(registry.allowedChildren("SectionBlock").some((d) => d.type === "ParagraphBlock")).toBe(
+      true,
+    );
   });
   it("creates blocks with defaults and initial children", () => {
     const tabs = registry.create("TabsBlock");
@@ -68,9 +87,19 @@ describe("collections", () => {
   it("validates field values", () => {
     expect(validateProperties(c, {})).toHaveLength(1);
     expect(validateProperties(c, {}, { partial: true })).toHaveLength(0);
-    expect(validateProperties(c, { price: { amount: 100, currency: "USD" }, size: "s", name: { en: "ok" } })).toHaveLength(0);
-    expect(validateProperties(c, { price: { amount: 100 }, size: "xl" }).map((e) => e.field)).toEqual(["size"]);
-    expect(validateProperties(c, { price: { amount: 1 }, name: { en: "too long" } }).map((e) => e.field)).toEqual(["name"]);
+    expect(
+      validateProperties(c, {
+        price: { amount: 100, currency: "USD" },
+        size: "s",
+        name: { en: "ok" },
+      }),
+    ).toHaveLength(0);
+    expect(
+      validateProperties(c, { price: { amount: 100 }, size: "xl" }).map((e) => e.field),
+    ).toEqual(["size"]);
+    expect(
+      validateProperties(c, { price: { amount: 1 }, name: { en: "too long" } }).map((e) => e.field),
+    ).toEqual(["name"]);
   });
   it("migration converters handle legacy field schemas and block trees", () => {
     const blocks = normalizeLegacyBlocks([
@@ -79,8 +108,14 @@ describe("collections", () => {
     ]);
     expect(blocks[0]).toMatchObject({ type: "SectionBlock", props: { title: "Intro" } });
     expect(blocks[1]!.props["text"]).toEqual([{ type: "text", text: "body" }]);
-    expect(parseFieldSchema({ fields: { a: { type: "text", label: "A" } }, groups: {} }).fields["a"]?.type).toBe("text");
-    expect(parseFieldSchema({ g: { label: "G", fields: { a: { type: "page-array", label: "A" } } } }).fields["a"]?.type).toBe("references");
+    expect(
+      parseFieldSchema({ fields: { a: { type: "text", label: "A" } }, groups: {} }).fields["a"]
+        ?.type,
+    ).toBe("text");
+    expect(
+      parseFieldSchema({ g: { label: "G", fields: { a: { type: "page-array", label: "A" } } } })
+        .fields["a"]?.type,
+    ).toBe("references");
   });
 });
 
@@ -90,6 +125,8 @@ describe("inline text", () => {
     expect(toInlineNodes([{ type: "text", text: "a" }])).toHaveLength(1);
   });
   it("renders marks and escapes html", () => {
-    expect(inlineToHtml([{ type: "text", text: "<b>", marks: ["bold"] }])).toBe("<strong>&lt;b&gt;</strong>");
+    expect(inlineToHtml([{ type: "text", text: "<b>", marks: ["bold"] }])).toBe(
+      "<strong>&lt;b&gt;</strong>",
+    );
   });
 });

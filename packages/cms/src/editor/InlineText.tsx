@@ -14,20 +14,20 @@ export interface InlineTextProps {
   value: unknown;
   /** "rich" stores InlineNode[]; "plain" stores a string (headings, labels). */
   mode: "rich" | "plain";
-  placeholder?: string;
-  class?: string;
-  readOnly?: boolean;
+  placeholder?: string | undefined;
+  class?: string | undefined;
+  readOnly?: boolean | undefined;
   onChange: (value: InlineNode[] | string) => void;
   /** Enter without Shift. Receives the content after the caret (already removed from this block). */
-  onEnter?: (after: InlineNode[] | string) => void;
+  onEnter?: ((after: InlineNode[] | string) => void) | undefined;
   /** Backspace at the very start. `empty` tells whether the block has no text. */
-  onBackspaceAtStart?: (empty: boolean) => void;
+  onBackspaceAtStart?: ((empty: boolean) => void) | undefined;
   /** "/" typed in an empty block. */
-  onSlash?: (anchor: DOMRect) => void;
+  onSlash?: ((anchor: DOMRect) => void) | undefined;
   /** Markdown-style shortcut typed at the start ("# ", "- ", "1. ", "> ", "```"). */
-  onShortcut?: (shortcut: string) => boolean;
-  onFocus?: () => void;
-  ref?: (el: HTMLElement) => void;
+  onShortcut?: ((shortcut: string) => boolean) | undefined;
+  onFocus?: (() => void) | undefined;
+  ref?: ((el: HTMLElement) => void) | undefined;
 }
 
 const serialize = (el: HTMLElement, mode: "rich" | "plain") =>
@@ -86,7 +86,7 @@ function wrapSelection(tag: string) {
 const SHORTCUTS = ["# ", "## ", "### ", "- ", "* ", "1. ", "> ", "```", "---"];
 
 export const InlineText: Component<InlineTextProps> = (props) => {
-  let el!: HTMLDivElement;
+  let el = undefined as unknown as HTMLDivElement;
   let lastEmitted = "";
 
   const emit = () => {
@@ -98,14 +98,19 @@ export const InlineText: Component<InlineTextProps> = (props) => {
 
   onSettled(() => {
     el.innerHTML = render(props.value, props.mode);
-    lastEmitted = JSON.stringify(props.mode === "plain" ? serialize(el, "plain") : htmlToInline(el));
+    lastEmitted = JSON.stringify(
+      props.mode === "plain" ? serialize(el, "plain") : htmlToInline(el),
+    );
     el.dataset["empty"] = String(!el.textContent);
     props.ref?.(el);
   });
 
   // External changes (undo/redo, rollback) re-render; our own echoes are ignored.
   createEffect(
-    () => JSON.stringify(props.mode === "plain" ? toPlainText(props.value) : toInlineNodes(props.value)),
+    () =>
+      JSON.stringify(
+        props.mode === "plain" ? toPlainText(props.value) : toInlineNodes(props.value),
+      ),
     (incoming) => {
       if (!el || incoming === lastEmitted) return;
       el.innerHTML = render(props.value, props.mode);
@@ -178,7 +183,9 @@ export const InlineText: Component<InlineTextProps> = (props) => {
     if (!sel || sel.rangeCount === 0) return;
     const range = sel.getRangeAt(0);
     range.deleteContents();
-    const node = document.createTextNode(props.mode === "plain" ? text.replace(/\s*\n\s*/g, " ") : text);
+    const node = document.createTextNode(
+      props.mode === "plain" ? text.replace(/\s*\n\s*/g, " ") : text,
+    );
     range.insertNode(node);
     range.setStartAfter(node);
     range.collapse(true);
@@ -210,9 +217,13 @@ function focusSibling(el: HTMLElement, dir: -1 | 1, e: KeyboardEvent) {
   const caret = sel.getRangeAt(0).getBoundingClientRect();
   const box = el.getBoundingClientRect();
   const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 20;
-  const onEdge = caret.height === 0 || (dir < 0 ? caret.top - box.top < lineHeight : box.bottom - caret.bottom < lineHeight);
+  const onEdge =
+    caret.height === 0 ||
+    (dir < 0 ? caret.top - box.top < lineHeight : box.bottom - caret.bottom < lineHeight);
   if (!onEdge) return;
-  const all = Array.from(document.querySelectorAll<HTMLElement>("[data-inline-text][contenteditable=true]"));
+  const all = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-inline-text][contenteditable=true]"),
+  );
   const next = all[all.indexOf(el) + dir];
   if (next) {
     e.preventDefault();

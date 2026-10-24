@@ -1,15 +1,19 @@
-import { useDocs } from "#routes/[locale]/(app)/company/docs.tsx";
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
-import { type Component, Show, createMemo } from "solid-js";
+import { type Component, Show, createMemo, createEffect } from "solid-js";
 import { PageRenderer } from "@rimelight/cms/solid";
-import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms";
+import {
+  getDocsVersions,
+  parseDocsSlug,
+  extractHeadingsFromBlocks,
+  blocksToMarkdown,
+} from "@rimelight/cms";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 import { api } from "#api/client";
+import { useDocs } from "./../docs.tsx";
 
 export const DocsIndexPage: Component = () => {
   const activeLocale = () => getCurrentLocale();
+  const docs = useDocs();
 
   const docsData = createMemo<any>(
     async () => {
@@ -62,7 +66,6 @@ export const DocsIndexPage: Component = () => {
   );
 
   const docPage = () => docsData()?.docPage;
-  const versions = () => docsData()?.versions || [];
   const activeVersion = () => docsData()?.activeVersion;
   const includeVersionInUrl = () => docsData()?.includeVersionInUrl || false;
 
@@ -83,17 +86,42 @@ export const DocsIndexPage: Component = () => {
     content().properties?.tableOfContents as TableOfContentsConfig | false | undefined;
   const docPrev = () => content().properties?.prev;
   const docNext = () => content().properties?.next;
-  const docEditUrl = () => content().properties?.editUrl;
+  const docRawMarkdown = () => blocksToMarkdown(dbBlocks());
+
+  createEffect(
+    () => ({
+      title: docTitle(),
+      description: docDescription(),
+      headings: docHeadings(),
+      toc: docTableOfContents(),
+      prev: docPrev(),
+      next: docNext(),
+      raw: docRawMarkdown(),
+      activeVersion: activeVersion(),
+      includeVersionInUrl: includeVersionInUrl(),
+    }),
+    (data) => {
+      if (docs) {
+        docs.setTitle(data.title);
+        docs.setDescription(data.description);
+        docs.setHeadings(data.headings);
+        docs.setTableOfContents(data.toc);
+        docs.setPrevOverride(data.prev);
+        docs.setNextOverride(data.next);
+        docs.setRawMarkdown(data.raw);
+        docs.setActiveVersion(data.activeVersion);
+        docs.setIncludeVersionInUrl(data.includeVersionInUrl);
+      }
+    },
+  );
 
   return (
-    
-      <Show
-        when={docPage()}
-        fallback={<div class="p-12 text-center text-neutral-400">Loading documentation...</div>}
-      >
-        <PageRenderer blocks={dbBlocks()} locale={activeLocale()} />
-      </Show>
-    
+    <Show
+      when={docPage()}
+      fallback={<div class="p-12 text-center text-neutral-400">Loading documentation...</div>}
+    >
+      <PageRenderer blocks={dbBlocks()} locale={activeLocale()} />
+    </Show>
   );
 };
 

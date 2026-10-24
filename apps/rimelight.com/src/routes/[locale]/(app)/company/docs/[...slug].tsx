@@ -1,9 +1,11 @@
-import { useDocs } from "#routes/[locale]/(app)/company/docs.tsx";
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
-import { type Component, Show, For, createMemo } from "solid-js";
+import { type Component, Show, For, createMemo, createEffect } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms";
+import {
+  getDocsVersions,
+  parseDocsSlug,
+  extractHeadingsFromBlocks,
+  blocksToMarkdown,
+} from "@rimelight/cms";
 import meta from "virtual:rimelight-ui-docs-meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
@@ -11,6 +13,7 @@ import { BlockRenderer } from "@rimelight/cms/solid";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.types.ts";
 import { api } from "#api/client";
+import { useDocs } from "./../docs.tsx";
 
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob(
@@ -112,6 +115,7 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
 export const DocPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
   const activeLocale = () => getCurrentLocale();
+  const docs = useDocs();
 
   const docsData = createMemo<any>(
     async () => {
@@ -161,7 +165,6 @@ export const DocPage: Component = () => {
   );
 
   const docPage = () => docsData()?.dbPage;
-  const versions = () => docsData()?.versions || [];
   const activeVersion = () => docsData()?.activeVersion;
   const includeVersionInUrl = () => docsData()?.includeVersionInUrl || false;
 
@@ -198,7 +201,34 @@ export const DocPage: Component = () => {
     content().properties?.tableOfContents as TableOfContentsConfig | false | undefined;
   const docPrev = () => content().properties?.prev;
   const docNext = () => content().properties?.next;
-  const docEditUrl = () => content().properties?.editUrl;
+  const docRawMarkdown = () => blocksToMarkdown(dbBlocks());
+
+  createEffect(
+    () => ({
+      title: docTitle(),
+      description: docDescription(),
+      headings: docHeadings(),
+      toc: docTableOfContents(),
+      prev: docPrev(),
+      next: docNext(),
+      raw: docRawMarkdown(),
+      activeVersion: activeVersion(),
+      includeVersionInUrl: includeVersionInUrl(),
+    }),
+    (data) => {
+      if (docs) {
+        docs.setTitle(data.title);
+        docs.setDescription(data.description);
+        docs.setHeadings(data.headings);
+        docs.setTableOfContents(data.toc);
+        docs.setPrevOverride(data.prev);
+        docs.setNextOverride(data.next);
+        docs.setRawMarkdown(data.raw);
+        docs.setActiveVersion(data.activeVersion);
+        docs.setIncludeVersionInUrl(data.includeVersionInUrl);
+      }
+    },
+  );
 
   const getShowcaseProps = (block: any) => {
     if (
@@ -242,36 +272,34 @@ export const DocPage: Component = () => {
   };
 
   return (
-    
-      <Show
-        when={docPage()}
-        fallback={<div class="p-12 text-center text-neutral-400">Loading documentation...</div>}
-      >
-        <For each={dbBlocks()}>
-          {(block: any) => {
-            if (block.type === "ComponentShowcaseBlock") {
-              const preview = getPreviewComponent(block);
-              const showcaseProps = getShowcaseProps(block);
-              const Comp = preview.Component;
+    <Show
+      when={docPage()}
+      fallback={<div class="p-12 text-center text-neutral-400">Loading documentation...</div>}
+    >
+      <For each={dbBlocks()}>
+        {(block: any) => {
+          if (block.type === "ComponentShowcaseBlock") {
+            const preview = getPreviewComponent(block);
+            const showcaseProps = getShowcaseProps(block);
+            const Comp = preview.Component;
 
-              return (
-                <ComponentShowcase
-                  componentName={block.props.componentName}
-                  propsConfig={block.props.propsConfig}
-                  defaultProps={block.props.defaultProps}
-                  togglingPattern={block.props.togglingPattern}
-                  playground={block.props.playgroundUrl}
-                  {...showcaseProps}
-                >
-                  {Comp ? <Comp {...preview.props} /> : <div innerHTML={preview.raw} />}
-                </ComponentShowcase>
-              );
-            }
-            return <BlockRenderer block={block} locale={activeLocale()} />;
-          }}
-        </For>
-      </Show>
-    
+            return (
+              <ComponentShowcase
+                componentName={block.props.componentName}
+                propsConfig={block.props.propsConfig}
+                defaultProps={block.props.defaultProps}
+                togglingPattern={block.props.togglingPattern}
+                playground={block.props.playgroundUrl}
+                {...showcaseProps}
+              >
+                {Comp ? <Comp {...preview.props} /> : <div innerHTML={preview.raw} />}
+              </ComponentShowcase>
+            );
+          }
+          return <BlockRenderer block={block} locale={activeLocale()} />;
+        }}
+      </For>
+    </Show>
   );
 };
 

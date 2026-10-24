@@ -3,7 +3,11 @@ import type { BaseBlock } from "../core/types/blocks";
 import type { BylineCredit } from "../core/types/bylines";
 import type { EntryStatus, Localized } from "../core/types/pages";
 import type { ResolvedCollection } from "../core/collections/types";
-import { defaultProperties, instantiateInitialBlocks, resolveLabel } from "../core/collections/define";
+import {
+  defaultProperties,
+  instantiateInitialBlocks,
+  resolveLabel,
+} from "../core/collections/define";
 import { validateProperties } from "../core/collections/validate";
 import { cloneBlock, normalizeBlocks } from "../core/blocks/tree";
 import { validateServerBlockPayload } from "../auth/editor-guards";
@@ -72,7 +76,8 @@ function content(raw: unknown): EntryContent {
   return { blocks: normalizeBlocks(c?.blocks), properties: c?.properties ?? {} };
 }
 
-const date = (v: unknown): Date | null => (v == null ? null : v instanceof Date ? v : new Date(v as any));
+const date = (v: unknown): Date | null =>
+  v == null ? null : v instanceof Date ? v : new Date(v as any);
 
 function toSummary(row: any): EntrySummary {
   const title = json<Localized>(row.title, { en: "" });
@@ -101,7 +106,7 @@ function toSummary(row: any): EntrySummary {
   };
 }
 
-function toEntry(row: any, draftRow: any | null): Entry {
+function toEntry(row: any, draftRow: any): Entry {
   const published = content(row.content);
   const draft = draftRow ? content(draftRow.content) : published;
   const { excerptTitle: _, ...summary } = toSummary(row);
@@ -177,7 +182,10 @@ export async function listEntries(ctx: CmsContext, opts: ListEntriesOptions = {}
       .orderBy(...order)
       .limit(limit)
       .offset(opts.offset ?? 0),
-    ctx.db.select({ n: sql<number>`count(*)` }).from(p).where(filter),
+    ctx.db
+      .select({ n: sql<number>`count(*)` })
+      .from(p)
+      .where(filter),
   ]);
 
   // Flag entries with pending draft changes in one query.
@@ -210,7 +218,11 @@ async function findRow(ctx: CmsContext, idOrSlug: string, collection?: string) {
   }
   const where = [eq(p.slug, idOrSlug), isNull(p.deletedAt)];
   if (collection) where.push(eq(p.type, collection));
-  const bySlug = await ctx.db.select().from(p).where(and(...where)).limit(1);
+  const bySlug = await ctx.db
+    .select()
+    .from(p)
+    .where(and(...where))
+    .limit(1);
   return bySlug[0] ?? null;
 }
 
@@ -223,7 +235,11 @@ async function draftRow(ctx: CmsContext, id: string) {
   return rows[0] ?? null;
 }
 
-export async function getEntry(ctx: CmsContext, idOrSlug: string, collection?: string): Promise<Entry> {
+export async function getEntry(
+  ctx: CmsContext,
+  idOrSlug: string,
+  collection?: string,
+): Promise<Entry> {
   const row = await findRow(ctx, idOrSlug, collection);
   if (!row) throw notFound("Entry");
   return toEntry(row, await draftRow(ctx, row.id));
@@ -243,14 +259,20 @@ export interface CreateEntryInput {
   bylines?: BylineCredit[];
 }
 
-const localized = (v: Localized | string | null | undefined, fallback?: Localized): Localized | null =>
-  v == null ? (fallback ?? null) : typeof v === "string" ? { en: v } : v;
+const localized = (
+  v: Localized | string | null | undefined,
+  fallback?: Localized,
+): Localized | null => (v == null ? (fallback ?? null) : typeof v === "string" ? { en: v } : v);
 
 async function assertSlugFree(ctx: CmsContext, slug: string, exceptId?: string) {
   const p = ctx.t.pages;
   const where = [eq(p.slug, slug), isNull(p.deletedAt)];
   if (exceptId) where.push(ne(p.id, exceptId));
-  const clash = await ctx.db.select({ id: p.id }).from(p).where(and(...where)).limit(1);
+  const clash = await ctx.db
+    .select({ id: p.id })
+    .from(p)
+    .where(and(...where))
+    .limit(1);
   if (clash[0]) throw new CmsError(409, `Slug "${slug}" is already in use`);
 }
 
@@ -265,7 +287,8 @@ export async function createEntry(ctx: CmsContext, actor: CmsActor, input: Creat
   const collection = await getCollection(ctx, input.collection);
   if (collection.kind === "singleton") {
     const existing = await listEntries(ctx, { collection: collection.slug, limit: 1 });
-    if (existing.total > 0) throw new CmsError(409, `"${collection.slug}" is a singleton and already has an entry`);
+    if (existing.total > 0)
+      throw new CmsError(409, `"${collection.slug}" is a singleton and already has an entry`);
   }
 
   const title = localized(input.title, { en: "Untitled" })!;
@@ -279,7 +302,13 @@ export async function createEntry(ctx: CmsContext, actor: CmsActor, input: Creat
 
   if (input.templateId) {
     const template = await getTemplate(ctx, input.templateId);
-    requireRole(actor, template.rolePermissions?.whoCanCreate?.length ? template.rolePermissions.whoCanCreate : template.allowedRoles, "create from this template");
+    requireRole(
+      actor,
+      template.rolePermissions?.whoCanCreate?.length
+        ? template.rolePermissions.whoCanCreate
+        : template.allowedRoles,
+      "create from this template",
+    );
     templateVersion = template.version;
     blocks ??= template.initialBlocks.map(cloneBlock);
     properties = { ...template.defaultProperties, ...properties };
@@ -426,7 +455,11 @@ export interface LockState {
   expiresAt?: Date;
 }
 
-export async function getLock(ctx: CmsContext, actor: CmsActor, entryId: string): Promise<LockState> {
+export async function getLock(
+  ctx: CmsContext,
+  actor: CmsActor,
+  entryId: string,
+): Promise<LockState> {
   const rows = await ctx.db
     .select()
     .from(ctx.t.pageDraftLocks)
@@ -465,13 +498,24 @@ export async function acquireLock(
     .insert(ctx.t.pageDraftLocks)
     .values(values)
     .onConflictDoUpdate({ target: ctx.t.pageDraftLocks.pageId, set: values });
-  return { locked: true, ownedByActor: true, userId: actor.userId, userName: values.lockedByUserName, expiresAt };
+  return {
+    locked: true,
+    ownedByActor: true,
+    userId: actor.userId,
+    userName: values.lockedByUserName,
+    expiresAt,
+  };
 }
 
 export async function releaseLock(ctx: CmsContext, actor: CmsActor, entryId: string) {
   await ctx.db
     .delete(ctx.t.pageDraftLocks)
-    .where(and(eq(ctx.t.pageDraftLocks.pageId, entryId), eq(ctx.t.pageDraftLocks.lockedByUserId, actor.userId)));
+    .where(
+      and(
+        eq(ctx.t.pageDraftLocks.pageId, entryId),
+        eq(ctx.t.pageDraftLocks.lockedByUserId, actor.userId),
+      ),
+    );
   return { success: true };
 }
 
@@ -484,7 +528,12 @@ export interface SaveDraftInput {
  * Saves the working copy. Enforces the edit lock, templated-block guards, block nesting rules and
  * property types. Readers are unaffected until publish.
  */
-export async function saveDraft(ctx: CmsContext, actor: CmsActor, id: string, input: SaveDraftInput) {
+export async function saveDraft(
+  ctx: CmsContext,
+  actor: CmsActor,
+  id: string,
+  input: SaveDraftInput,
+) {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
 
@@ -531,9 +580,16 @@ export async function discardDraft(ctx: CmsContext, actor: CmsActor, id: string)
 }
 
 /** Returns an error message if a block is placed somewhere its parent doesn't allow. */
-function validateNesting(ctx: CmsContext, collection: ResolvedCollection, blocks: BaseBlock[]): string | null {
+function validateNesting(
+  ctx: CmsContext,
+  collection: ResolvedCollection,
+  blocks: BaseBlock[],
+): string | null {
   const check = (list: BaseBlock[], parentType: string | null): string | null => {
-    const allowed = ctx.blocks.allowedChildren(parentType, parentType ? undefined : collection.allowedBlocks);
+    const allowed = ctx.blocks.allowedChildren(
+      parentType,
+      parentType ? undefined : collection.allowedBlocks,
+    );
     for (const b of list) {
       // Unknown block types (e.g. removed custom blocks) are preserved, not rejected.
       if (ctx.blocks.has(b.type) && !allowed.some((d) => d.type === b.type)) {
@@ -553,7 +609,9 @@ function validateNesting(ctx: CmsContext, collection: ResolvedCollection, blocks
 
 async function workflowFor(ctx: CmsContext, entry: Entry) {
   const collection = await getCollection(ctx, entry.collection);
-  const template = entry.templateId ? await getTemplate(ctx, entry.templateId).catch(() => null) : null;
+  const template = entry.templateId
+    ? await getTemplate(ctx, entry.templateId).catch(() => null)
+    : null;
   const rules = template?.approvalRules ?? {};
   return {
     minApprovals: Math.max(rules.minApprovals ?? 0, collection.workflow.minApprovals),
@@ -607,7 +665,12 @@ async function snapshotVersion(
 }
 
 /** Freezes the current draft as a pending version for reviewers. */
-export async function requestReview(ctx: CmsContext, actor: CmsActor, id: string, changeSummary?: string) {
+export async function requestReview(
+  ctx: CmsContext,
+  actor: CmsActor,
+  id: string,
+  changeSummary?: string,
+) {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   return snapshotVersion(ctx, actor, entry, entry.draft, "pending", changeSummary);
@@ -641,21 +704,35 @@ export async function approveVersion(ctx: CmsContext, actor: CmsActor, versionId
   }
   const approvals = await ctx.db.select().from(a).where(eq(a.versionId, versionId));
   const approvers = approvals.map((x: any) => x.userId as string);
-  const effective = wf.allowSelfApproval ? approvers : approvers.filter((u: string) => u !== version.createdBy);
+  const effective = wf.allowSelfApproval
+    ? approvers
+    : approvers.filter((u: string) => u !== version.createdBy);
   const status = effective.length >= wf.minApprovals ? "approved" : "pending";
   await ctx.db
     .update(ctx.t.pageVersions)
     .set({ approvedBy: approvers, approvedAt: new Date(), status })
     .where(eq(ctx.t.pageVersions.id, versionId));
-  return { ...(await getVersion(ctx, versionId)), approvals: effective.length, required: wf.minApprovals };
+  return {
+    ...(await getVersion(ctx, versionId)),
+    approvals: effective.length,
+    required: wf.minApprovals,
+  };
 }
 
-export async function rejectVersion(ctx: CmsContext, actor: CmsActor, versionId: string, reason?: string) {
+export async function rejectVersion(
+  ctx: CmsContext,
+  actor: CmsActor,
+  versionId: string,
+  reason?: string,
+) {
   const version = await getVersion(ctx, versionId);
   const entry = await getEntry(ctx, version.pageId);
   const wf = await workflowFor(ctx, entry);
   requireRole(actor, wf.reviewerRoles, "review this entry");
-  await ctx.db.update(ctx.t.pageVersions).set({ status: "rejected" }).where(eq(ctx.t.pageVersions.id, versionId));
+  await ctx.db
+    .update(ctx.t.pageVersions)
+    .set({ status: "rejected" })
+    .where(eq(ctx.t.pageVersions.id, versionId));
   if (reason) await addComment(ctx, actor, versionId, reason);
   return getVersion(ctx, versionId);
 }
@@ -670,7 +747,12 @@ export interface PublishInput {
  * Publishes the draft (or an approved version). When the collection/template requires approvals,
  * non-admins can only publish a version that has collected them.
  */
-export async function publishEntry(ctx: CmsContext, actor: CmsActor, id: string, input: PublishInput = {}) {
+export async function publishEntry(
+  ctx: CmsContext,
+  actor: CmsActor,
+  id: string,
+  input: PublishInput = {},
+) {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   const wf = await workflowFor(ctx, entry);
@@ -681,7 +763,10 @@ export async function publishEntry(ctx: CmsContext, actor: CmsActor, id: string,
     version = await getVersion(ctx, input.versionId);
     if (version.pageId !== entry.id) throw new CmsError(400, "Version belongs to another entry");
     if (needsApproval && version.status !== "approved") {
-      throw new CmsError(403, `This version needs ${wf.minApprovals} approval(s) before publishing`);
+      throw new CmsError(
+        403,
+        `This version needs ${wf.minApprovals} approval(s) before publishing`,
+      );
     }
     await ctx.db
       .update(ctx.t.pageVersions)
@@ -689,9 +774,19 @@ export async function publishEntry(ctx: CmsContext, actor: CmsActor, id: string,
       .where(eq(ctx.t.pageVersions.id, version.id));
   } else {
     if (needsApproval) {
-      throw new CmsError(403, `Publishing requires ${wf.minApprovals} approval(s). Request a review first.`);
+      throw new CmsError(
+        403,
+        `Publishing requires ${wf.minApprovals} approval(s). Request a review first.`,
+      );
     }
-    version = await snapshotVersion(ctx, actor, entry, entry.draft, "published", input.changeSummary);
+    version = await snapshotVersion(
+      ctx,
+      actor,
+      entry,
+      entry.draft,
+      "published",
+      input.changeSummary,
+    );
     await ctx.db.insert(ctx.t.pageVersionApprovals).values({
       versionId: version.id,
       userId: actor.userId,
@@ -741,11 +836,17 @@ export async function unpublishEntry(ctx: CmsContext, actor: CmsActor, id: strin
   return getEntry(ctx, entry.id);
 }
 
-export async function scheduleEntry(ctx: CmsContext, actor: CmsActor, id: string, at: Date | string | null) {
+export async function scheduleEntry(
+  ctx: CmsContext,
+  actor: CmsActor,
+  id: string,
+  at: Date | string | null,
+) {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   const collection = await getCollection(ctx, entry.collection);
-  if (!collection.features.scheduled) throw new CmsError(400, `"${collection.slug}" does not support scheduling`);
+  if (!collection.features.scheduled)
+    throw new CmsError(400, `"${collection.slug}" does not support scheduling`);
   if (at === null) {
     await ctx.db
       .update(ctx.t.pages)
@@ -764,7 +865,11 @@ export async function scheduleEntry(ctx: CmsContext, actor: CmsActor, id: string
   // Already-published entries stay live; the scheduled draft replaces them at `when`.
   await ctx.db
     .update(ctx.t.pages)
-    .set({ status: entry.status === "published" ? "published" : "scheduled", scheduledAt: when, updatedAt: new Date() })
+    .set({
+      status: entry.status === "published" ? "published" : "scheduled",
+      scheduledAt: when,
+      updatedAt: new Date(),
+    })
     .where(eq(ctx.t.pages.id, entry.id));
   return getEntry(ctx, entry.id);
 }
@@ -812,11 +917,19 @@ export async function listVersions(ctx: CmsContext, entryId?: string, limit = 50
   const rows = await (entryId ? query.where(eq(v.pageId, entryId)) : query)
     .orderBy(desc(v.createdAt))
     .limit(limit);
-  return rows.map((r: any) => ({ ...r, title: json(r.title, {}), approvedBy: json(r.approvedBy, []) }));
+  return rows.map((r: any) => ({
+    ...r,
+    title: json(r.title, {}),
+    approvedBy: json(r.approvedBy, []),
+  }));
 }
 
 export async function getVersion(ctx: CmsContext, versionId: string) {
-  const rows = await ctx.db.select().from(ctx.t.pageVersions).where(eq(ctx.t.pageVersions.id, versionId)).limit(1);
+  const rows = await ctx.db
+    .select()
+    .from(ctx.t.pageVersions)
+    .where(eq(ctx.t.pageVersions.id, versionId))
+    .limit(1);
   if (!rows[0]) throw notFound("Version");
   const r = rows[0];
   return {
@@ -832,12 +945,28 @@ export async function getVersion(ctx: CmsContext, versionId: string) {
 export async function reviewQueue(ctx: CmsContext) {
   const v = ctx.t.pageVersions;
   const rows = await ctx.db
-    .select({ id: v.id, pageId: v.pageId, versionNumber: v.versionNumber, status: v.status, title: v.title, slug: v.slug, type: v.type, createdBy: v.createdBy, approvedBy: v.approvedBy, changeSummary: v.changeSummary, createdAt: v.createdAt })
+    .select({
+      id: v.id,
+      pageId: v.pageId,
+      versionNumber: v.versionNumber,
+      status: v.status,
+      title: v.title,
+      slug: v.slug,
+      type: v.type,
+      createdBy: v.createdBy,
+      approvedBy: v.approvedBy,
+      changeSummary: v.changeSummary,
+      createdAt: v.createdAt,
+    })
     .from(v)
     .where(inArray(v.status, ["pending", "approved"]))
     .orderBy(desc(v.createdAt))
     .limit(100);
-  return rows.map((r: any) => ({ ...r, title: json(r.title, {}), approvedBy: json(r.approvedBy, []) }));
+  return rows.map((r: any) => ({
+    ...r,
+    title: json(r.title, {}),
+    approvedBy: json(r.approvedBy, []),
+  }));
 }
 
 /** Restores a version's content into the draft (does not publish). */
@@ -857,7 +986,9 @@ export async function diffEntry(
   const load = async (ref: string | number | undefined, fallback: EntryContent) => {
     if (ref === undefined || ref === "") return { ...entry, content: fallback };
     const n = Number(ref);
-    const where = Number.isInteger(n) ? and(eq(v.pageId, entry.id), eq(v.versionNumber, n)) : eq(v.id, String(ref));
+    const where = Number.isInteger(n)
+      ? and(eq(v.pageId, entry.id), eq(v.versionNumber, n))
+      : eq(v.id, String(ref));
     const rows = await ctx.db.select().from(v).where(where).limit(1);
     if (!rows[0]) throw notFound(`Version ${ref}`);
     return { ...rows[0], title: json(rows[0].title, {}), content: content(rows[0].content) };
@@ -869,7 +1000,13 @@ export async function diffEntry(
 
 // ─── Comments ────────────────────────────────────────────────────────────────
 
-export async function addComment(ctx: CmsContext, actor: CmsActor, versionId: string, body: string, blockId?: string) {
+export async function addComment(
+  ctx: CmsContext,
+  actor: CmsActor,
+  versionId: string,
+  body: string,
+  blockId?: string,
+) {
   await getVersion(ctx, versionId);
   if (!body.trim()) throw new CmsError(422, "Comment is empty");
   const [row] = await ctx.db
@@ -898,4 +1035,3 @@ export async function createPreviewToken(ctx: CmsContext, entryId: string, ttlSe
   await getEntry(ctx, entryId);
   return generatePreviewToken(entryId, ctx.previewSecret, ttlSeconds);
 }
-

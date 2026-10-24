@@ -54,7 +54,9 @@ export function createBlockEditor(options: CreateEditorOptions) {
   const [status, setStatus] = createSignal<SaveStatus>("saved");
   const [error, setError] = createSignal<string | null>(null);
   const [selectedId, setSelectedId] = createSignal<string | null>(null);
-  const [focusRequest, setFocusRequest] = createSignal<{ id: string; at: "start" | "end" } | null>(null);
+  const [focusRequest, setFocusRequest] = createSignal<{ id: string; at: "start" | "end" } | null>(
+    null,
+  );
 
   // Plain (non-reactive) mirror of the document: the source of truth for computing next states.
   // Reading back from the store right after writing is unreliable because writes are batched.
@@ -73,7 +75,11 @@ export function createBlockEditor(options: CreateEditorOptions) {
   const record = (coalesceKey?: string) => {
     const now = Date.now();
     const top = undoStack[undoStack.length - 1]!;
-    const snapshot = { content: structuredClone(current), at: now, ...(coalesceKey ? { coalesceKey } : {}) };
+    const snapshot = {
+      content: structuredClone(current),
+      at: now,
+      ...(coalesceKey ? { coalesceKey } : {}),
+    };
     if (coalesceKey && top.coalesceKey === coalesceKey && now - top.at < COALESCE_MS) {
       undoStack[undoStack.length - 1] = snapshot;
     } else {
@@ -130,7 +136,9 @@ export function createBlockEditor(options: CreateEditorOptions) {
   /** Where a new block can go relative to `id`: same parent, next index. */
   const siblingSlot = (id: string) => {
     const found = findBlock(current.blocks, id);
-    return found ? { parentId: found.parent?.id ?? null, index: found.index + 1 } : { parentId: null, index: current.blocks.length };
+    return found
+      ? { parentId: found.parent?.id ?? null, index: found.index + 1 }
+      : { parentId: null, index: current.blocks.length };
   };
 
   const canPlace = (type: string, parentId: string | null) => {
@@ -169,8 +177,13 @@ export function createBlockEditor(options: CreateEditorOptions) {
     insertAfter(id: string, type = "ParagraphBlock", props?: Record<string, any>) {
       const slot = siblingSlot(id);
       // Fall back to a type the parent accepts (e.g. Enter in a list item adds a list item).
-      const parentType = slot.parentId ? findBlock(current.blocks, slot.parentId)?.block.type : null;
-      const fallback = options.registry.allowedChildren(parentType ?? null, slot.parentId ? undefined : options.allowedRootBlocks)[0]?.type;
+      const parentType = slot.parentId
+        ? findBlock(current.blocks, slot.parentId)?.block.type
+        : null;
+      const fallback = options.registry.allowedChildren(
+        parentType ?? null,
+        slot.parentId ? undefined : options.allowedRootBlocks,
+      )[0]?.type;
       const chosen = canPlace(type, slot.parentId) ? type : fallback;
       return chosen ? api.insert(chosen, slot.parentId, slot.index, props) : null;
     },
@@ -230,14 +243,30 @@ export function createBlockEditor(options: CreateEditorOptions) {
       const fresh = options.registry.create(type);
       if (from?.inlineText && to.inlineText) {
         const text = found.block.props[from.inlineText];
-        fresh.props[to.inlineText] = to.richText ? (Array.isArray(text) ? text : toInlineNodes(plain(text))) : plain(text);
+        fresh.props[to.inlineText] = to.richText
+          ? Array.isArray(text)
+            ? text
+            : toInlineNodes(plain(text))
+          : plain(text);
       }
-      commitBlocks(updateBlock(current.blocks, id, () => ({ ...fresh, id, children: getChildren(found.block).length ? getChildren(found.block) : fresh.children })));
+      commitBlocks(
+        updateBlock(current.blocks, id, () => {
+          const ch = getChildren(found.block).length ? getChildren(found.block) : fresh.children;
+          return {
+            ...fresh,
+            id,
+            ...(ch !== undefined ? { children: ch } : {}),
+          };
+        }),
+      );
       setFocusRequest({ id, at: "end" });
     },
 
     /** Admin-only block metadata (access roles, template locks). */
-    setBlockMeta(id: string, meta: Pick<BaseBlock, "allowedRoles" | "isTemplated" | "templatedProps">) {
+    setBlockMeta(
+      id: string,
+      meta: Pick<BaseBlock, "allowedRoles" | "isTemplated" | "templatedProps">,
+    ) {
       commitBlocks(
         updateBlock(current.blocks, id, (b) => {
           const next: BaseBlock = { ...b };
@@ -251,7 +280,10 @@ export function createBlockEditor(options: CreateEditorOptions) {
     },
 
     setProperty(key: string, value: unknown) {
-      commit({ ...current, properties: { ...current.properties, [key]: value } }, `property:${key}`);
+      commit(
+        { ...current, properties: { ...current.properties, [key]: value } },
+        `property:${key}`,
+      );
     },
 
     undo() {
@@ -298,7 +330,8 @@ export type BlockEditorState = ReturnType<typeof createBlockEditor>;
 
 function isPropLocked(block: BaseBlock, keys: string[]) {
   if (block.templatedProps === true) return true;
-  if (Array.isArray(block.templatedProps)) return keys.some((k) => (block.templatedProps as string[]).includes(k));
+  if (Array.isArray(block.templatedProps))
+    return keys.some((k) => (block.templatedProps as string[]).includes(k));
   return false;
 }
 

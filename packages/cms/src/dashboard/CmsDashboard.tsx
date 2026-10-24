@@ -1,4 +1,5 @@
-import { For, Show, createMemo, createSignal, onSettled, type Component, type JSX } from "solid-js";
+import { For, Show, createMemo, createSignal, onSettled, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import { useLocation, useNavigate } from "@solidjs/router";
 import type { BlockDefinition } from "../core/blocks/registry";
 import type { ResolvedCollection } from "../core/collections/types";
@@ -88,7 +89,10 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
     toast: (message, kind = "info") => {
       const id = ++toastId;
       setToasts((t) => [...t, { id, kind, message }]);
-      setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), kind === "error" ? 7000 : 3500);
+      setTimeout(
+        () => setToasts((t) => t.filter((x) => x.id !== id)),
+        kind === "error" ? 7000 : 3500,
+      );
     },
   };
 
@@ -98,7 +102,9 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
         setUser((await api.me()).user);
         await reloadCollections();
       } catch (err: any) {
-        setAuthError(err?.status === 401 ? "Sign in to use the CMS." : (err?.message ?? "Failed to load"));
+        setAuthError(
+          err?.status === 401 ? "Sign in to use the CMS." : (err?.message ?? "Failed to load"),
+        );
       }
     })();
   });
@@ -117,15 +123,15 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
       case "media":
         return <MediaLibrary />;
       case "taxonomies":
-        return <Taxonomies taxonomy={second} />;
+        return <Taxonomies {...(second ? { taxonomy: second } : {})} />;
       case "bylines":
         return <Bylines />;
       case "templates":
-        return <Templates id={second} />;
+        return <Templates {...(second ? { id: second } : {})} />;
       case "reviews":
         return <Reviews />;
       case "schemas":
-        return <Schemas slug={second} />;
+        return <Schemas {...(second ? { slug: second } : {})} />;
       case "settings":
         return <Settings />;
       default:
@@ -154,11 +160,21 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
               <Sidebar active={path().rest} />
             </aside>
             <Show when={navOpen()}>
-              <button type="button" aria-label="Close menu" class="fixed inset-0 z-30 bg-black/40 lg:hidden" onClick={() => setNavOpen(false)} />
+              <button
+                type="button"
+                aria-label="Close menu"
+                class="fixed inset-0 z-30 bg-black/40 lg:hidden"
+                onClick={() => setNavOpen(false)}
+              />
             </Show>
             <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
               <div class="flex h-12 shrink-0 items-center gap-2 border-b border-default px-3 lg:hidden">
-                <button type="button" aria-label="Open menu" class="i-lucide-menu size-5" onClick={() => setNavOpen(true)} />
+                <button
+                  type="button"
+                  aria-label="Open menu"
+                  class="i-lucide-menu size-5"
+                  onClick={() => setNavOpen(true)}
+                />
                 <span class="text-sm font-semibold">Rimelight CMS</span>
               </div>
               <div class="min-h-0 flex-1 overflow-y-auto">
@@ -167,7 +183,8 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
                   fallback={
                     <div class="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted">
                       <span class="i-lucide-loader-circle size-6 animate-spin" />
-                      Connecting to the CMS API… (the first load after an update runs database migrations)
+                      Connecting to the CMS API… (the first load after an update runs database
+                      migrations)
                     </div>
                   }
                 >
@@ -202,13 +219,16 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
 
 const Sidebar: Component<{ active: string }> = (props) => {
   const { collections, href, user } = useDashboard();
-  const isActive = (p: string) => (p === "/" ? props.active === "/" : props.active === p || props.active.startsWith(`${p}/`));
+  const isActive = (p: string) =>
+    p === "/" ? props.active === "/" : props.active === p || props.active.startsWith(`${p}/`);
 
   const item = (p: string, label: string, icon: string) => (
     <a
       href={href(p)}
       class={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
-        isActive(p) ? "bg-primary-500/10 font-medium text-primary-500" : "text-toned hover:bg-elevated hover:text-highlighted"
+        isActive(p)
+          ? "bg-primary-500/10 font-medium text-primary-500"
+          : "text-toned hover:bg-elevated hover:text-highlighted"
       }`}
     >
       <span class={`${icon} size-4 shrink-0`} />
@@ -216,7 +236,9 @@ const Sidebar: Component<{ active: string }> = (props) => {
     </a>
   );
   const heading = (label: string) => (
-    <div class="px-2.5 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</div>
+    <div class="px-2.5 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted">
+      {label}
+    </div>
   );
 
   return (
@@ -228,7 +250,9 @@ const Sidebar: Component<{ active: string }> = (props) => {
       {item("/", "Overview", "i-lucide-layout-dashboard")}
       {heading("Content")}
       <For each={collections()}>
-        {(c) => item(`/c/${c.slug}`, resolveLabel(c.labelPlural ?? c.label), c.icon ?? "i-lucide-box")}
+        {(c) =>
+          item(`/c/${c.slug}`, resolveLabel(c.labelPlural ?? c.label), c.icon ?? "i-lucide-box")
+        }
       </For>
       {heading("Library")}
       {item("/media", "Media", "i-lucide-image")}
@@ -252,7 +276,10 @@ const NotFound: Component = () => {
   const { href } = useDashboard();
   return (
     <div class="p-10 text-center text-sm text-muted">
-      Nothing here. <a class="text-primary-500" href={href("/")}>Back to overview</a>
+      Nothing here.{" "}
+      <a class="text-primary-500" href={href("/")}>
+        Back to overview
+      </a>
     </div>
   );
 };

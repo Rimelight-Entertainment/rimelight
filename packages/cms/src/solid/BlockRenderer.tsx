@@ -51,7 +51,7 @@ export const BlockRenderer: Component<BlockRendererProps> = (props) => {
         locale={props.locale ?? "en"}
         sectionDepth={depth()}
         index={props.index ?? 0}
-        components={props.components}
+        {...(props.components ? { components: props.components } : {})}
       >
         {renderedChildren()}
       </Dynamic>

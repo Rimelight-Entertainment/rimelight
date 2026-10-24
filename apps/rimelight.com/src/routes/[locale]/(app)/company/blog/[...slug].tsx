@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { PageRenderer } from "@rimelight/cms/solid";
@@ -49,26 +47,24 @@ export const BlogPostPage: Component = () => {
   };
 
   return (
-    
-      <Show
-        when={pageData()}
-        fallback={<div class="p-16 text-center text-neutral-400">Loading post...</div>}
-      >
-        <article class="max-w-4xl mx-auto px-4 py-16">
-          <header class="mb-12">
-            <div class="text-sm text-primary-400 mb-2">
-              <RLDate date={pageData()?.postedAt || pageData()?.createdAt || new Date()} />
-            </div>
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
-              {title()}
-            </h1>
-            <p class="text-xl text-neutral-400 leading-relaxed">{description()}</p>
-          </header>
+    <Show
+      when={pageData()}
+      fallback={<div class="p-16 text-center text-neutral-400">Loading post...</div>}
+    >
+      <article class="max-w-4xl mx-auto px-4 py-16">
+        <header class="mb-12">
+          <div class="text-sm text-primary-400 mb-2">
+            <RLDate date={pageData()?.postedAt || pageData()?.createdAt || new Date()} />
+          </div>
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
+            {title()}
+          </h1>
+          <p class="text-xl text-neutral-400 leading-relaxed">{description()}</p>
+        </header>
 
-          <PageRenderer blocks={docBlocks()} locale={activeLocale()} />
-        </article>
-      </Show>
-    
+        <PageRenderer blocks={docBlocks()} locale={activeLocale()} />
+      </article>
+    </Show>
   );
 };
 

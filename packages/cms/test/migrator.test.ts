@@ -39,14 +39,31 @@ describe("migrator", () => {
   it("migrates legacy rows: published status, canonical type and block shapes", async () => {
     const { binding, raw } = createMockD1();
     const [m1] = SQLITE_CMS_MIGRATIONS;
-    for (const stmt of m1!.sql.split("--> statement-breakpoint").map((s) => s.trim()).filter(Boolean)) raw.exec(stmt);
-    raw.exec(`CREATE TABLE _rimelight_cms_migrations (id text PRIMARY KEY, name text NOT NULL, applied_at integer NOT NULL)`);
+    for (const stmt of m1!.sql
+      .split("--> statement-breakpoint")
+      .map((s) => s.trim())
+      .filter(Boolean))
+      raw.exec(stmt);
+    raw.exec(
+      `CREATE TABLE _rimelight_cms_migrations (id text PRIMARY KEY, name text NOT NULL, applied_at integer NOT NULL)`,
+    );
     raw.exec(`INSERT INTO _rimelight_cms_migrations VALUES ('x', '0001_initial_cms_tables', 0)`);
     const legacy = JSON.stringify({
-      blocks: [{ id: "s", type: "SectionBlock", props: { title: "S", children: [{ id: "p", type: "ParagraphBlock", props: { text: { en: "hi" } } }] } }],
+      blocks: [
+        {
+          id: "s",
+          type: "SectionBlock",
+          props: {
+            title: "S",
+            children: [{ id: "p", type: "ParagraphBlock", props: { text: { en: "hi" } } }],
+          },
+        },
+      ],
       properties: {},
     });
-    raw.exec(`INSERT INTO pages (id, slug, type, title, content, created_at) VALUES ('p1', 'legacy', 'BlogPost', '{"en":"Legacy"}', '${legacy}', 0)`);
+    raw.exec(
+      `INSERT INTO pages (id, slug, type, title, content, created_at) VALUES ('p1', 'legacy', 'BlogPost', '{"en":"Legacy"}', '${legacy}', 0)`,
+    );
     await migrateCms(binding);
     const row = raw.prepare("SELECT status, type, content FROM pages WHERE id = 'p1'").get() as any;
     expect(row.status).toBe("published");

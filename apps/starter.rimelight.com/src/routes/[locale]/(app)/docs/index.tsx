@@ -45,14 +45,22 @@ export const DocsIndexPage: Component = () => {
     }),
   );
 
-  createEffect(() => {
-    if (docs) {
-      docs.setTitle(title());
-      docs.setDescription(description());
-      docs.setHeadings(headings());
-      docs.setRawMarkdown(rawMarkdown());
-    }
-  });
+  createEffect(
+    () => ({
+      title: title(),
+      description: description(),
+      headings: headings(),
+      rawMarkdown: rawMarkdown(),
+    }),
+    (data) => {
+      if (docs) {
+        docs.setTitle(data.title);
+        docs.setDescription(data.description);
+        docs.setHeadings(data.headings);
+        docs.setRawMarkdown(data.rawMarkdown);
+      }
+    },
+  );
 
   return (
     <Show

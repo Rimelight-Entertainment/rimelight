@@ -41,7 +41,11 @@ export function buildTermTree(terms: TaxonomyTerm[]): TaxonomyTerm[] {
 export async function listTerms(ctx: CmsContext, taxonomy: string): Promise<TaxonomyTerm[]> {
   const { taxonomyTerms: tt, pageTaxonomyTerms: ptt, pages: p } = ctx.t;
   const [rows, counts] = await Promise.all([
-    ctx.db.select().from(tt).where(eq(tt.taxonomy, taxonomy)).orderBy(asc(tt.displayOrder), asc(tt.slug)),
+    ctx.db
+      .select()
+      .from(tt)
+      .where(eq(tt.taxonomy, taxonomy))
+      .orderBy(asc(tt.displayOrder), asc(tt.slug)),
     ctx.db
       .select({ termId: ptt.termId, n: sql<number>`count(*)` })
       .from(ptt)
@@ -63,7 +67,14 @@ export async function getTerm(ctx: CmsContext, taxonomy: string, idOrSlug: strin
     .limit(1);
   const row =
     rows[0] ??
-    (await ctx.db.select().from(tt).where(eq(tt.id, idOrSlug)).limit(1).catch(() => []))[0];
+    (
+      await ctx.db
+        .select()
+        .from(tt)
+        .where(eq(tt.id, idOrSlug))
+        .limit(1)
+        .catch(() => [])
+    )[0];
   if (!row) throw notFound("Term");
   return toTerm(row);
 }
@@ -76,7 +87,12 @@ export interface TermInput {
   displayOrder?: number;
 }
 
-export async function createTerm(ctx: CmsContext, _actor: CmsActor, taxonomy: string, input: TermInput) {
+export async function createTerm(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  taxonomy: string,
+  input: TermInput,
+) {
   if (!ctx.taxonomies.some((t) => t.slug === taxonomy)) {
     throw new CmsError(404, `Unknown taxonomy "${taxonomy}". Declare it in cms.config taxonomies.`);
   }
@@ -97,15 +113,25 @@ export async function createTerm(ctx: CmsContext, _actor: CmsActor, taxonomy: st
   return toTerm(row);
 }
 
-export async function updateTerm(ctx: CmsContext, _actor: CmsActor, id: string, input: Partial<TermInput>) {
-  if (input.parentId && input.parentId === id) throw new CmsError(422, "A term cannot be its own parent");
+export async function updateTerm(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  id: string,
+  input: Partial<TermInput>,
+) {
+  if (input.parentId && input.parentId === id)
+    throw new CmsError(422, "A term cannot be its own parent");
   const patch: Record<string, any> = { updatedAt: new Date() };
   if (input.slug !== undefined) patch["slug"] = slugify(input.slug).replace(/\//g, "-");
   if (input.label !== undefined) patch["label"] = input.label;
   if (input.description !== undefined) patch["description"] = input.description;
   if (input.parentId !== undefined) patch["parentId"] = input.parentId;
   if (input.displayOrder !== undefined) patch["displayOrder"] = input.displayOrder;
-  const [row] = await ctx.db.update(ctx.t.taxonomyTerms).set(patch).where(eq(ctx.t.taxonomyTerms.id, id)).returning();
+  const [row] = await ctx.db
+    .update(ctx.t.taxonomyTerms)
+    .set(patch)
+    .where(eq(ctx.t.taxonomyTerms.id, id))
+    .returning();
   if (!row) throw notFound("Term");
   return toTerm(row);
 }
@@ -139,11 +165,11 @@ export async function setEntryTerms(
   const { taxonomyTerms: tt, pageTaxonomyTerms: ptt } = ctx.t;
   const current = await getEntryTerms(ctx, entryId, taxonomy);
   const keep = new Set(termIds);
-  const remove = current.filter((t) => !keep.has(t.id)).map((t) => t.id);
+  const remove = current.filter((t: any) => !keep.has(t.id)).map((t: any) => t.id);
   if (remove.length) {
     await ctx.db.delete(ptt).where(and(eq(ptt.pageId, entryId), inArray(ptt.termId, remove)));
   }
-  const have = new Set(current.map((t) => t.id));
+  const have = new Set(current.map((t: any) => t.id));
   const add = termIds.filter((id) => !have.has(id));
   if (add.length) {
     const valid = await ctx.db

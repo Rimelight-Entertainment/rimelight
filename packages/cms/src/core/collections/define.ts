@@ -1,11 +1,6 @@
 import type { BaseBlock } from "../types/blocks";
 import { createBlockId } from "../blocks/tree";
-import type {
-  CollectionDefinition,
-  FieldDefinition,
-  Label,
-  ResolvedCollection,
-} from "./types";
+import type { CollectionDefinition, FieldDefinition, Label, ResolvedCollection } from "./types";
 
 export function defineCollection<const T extends CollectionDefinition>(def: T): T {
   return def;
@@ -47,7 +42,9 @@ export function resolveCollection(
     workflow: {
       minApprovals: w.minApprovals ?? 0,
       allowSelfApproval: w.allowSelfApproval ?? true,
-      ...(w.requiredRolesForApproval ? { requiredRolesForApproval: w.requiredRolesForApproval } : {}),
+      ...(w.requiredRolesForApproval
+        ? { requiredRolesForApproval: w.requiredRolesForApproval }
+        : {}),
     },
   };
   return resolved;

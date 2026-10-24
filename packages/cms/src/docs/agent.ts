@@ -79,10 +79,38 @@ export async function renderCorpusMarkdown(
     title = "Documentation Corpus",
     description = "Complete single-corpus documentation for AI agents.",
   } = options;
-  const parts = [`# ${title}`, "", description, "", `Generated for site: ${siteUrl}`, "", "---", ""];
-  const { entries } = await cms.entries.listEntries({ collection, status: "published", orderBy: "slug", limit: 500, includeContent: true });
+  const parts = [
+    `# ${title}`,
+    "",
+    description,
+    "",
+    `Generated for site: ${siteUrl}`,
+    "",
+    "---",
+    "",
+  ];
+  const { entries } = await cms.entries.listEntries({
+    collection,
+    status: "published",
+    orderBy: "slug",
+    limit: 500,
+    includeContent: true,
+  });
   for (const entry of entries) {
-    parts.push(renderPageAsMarkdown({ ...entry, blocks: entry.published?.blocks ?? [], properties: entry.published?.properties ?? {} }, locale, { siteUrl }), "", "---", "");
+    parts.push(
+      renderPageAsMarkdown(
+        {
+          ...entry,
+          blocks: entry.published?.blocks ?? [],
+          properties: entry.published?.properties ?? {},
+        },
+        locale,
+        { siteUrl },
+      ),
+      "",
+      "---",
+      "",
+    );
   }
   return parts.join("\n");
 }

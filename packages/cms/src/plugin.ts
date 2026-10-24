@@ -42,7 +42,11 @@ export const cms = (options: CmsPluginOptions = {}): Plugin => {
     load(id) {
       if (id !== RESOLVED_ID) return undefined;
       const { auth: _auth, ...serializable } = options;
-      const opts = JSON.stringify({ ...serializable, dashboardPath, apiPath: options.apiPath ?? "/api/cms" });
+      const opts = JSON.stringify({
+        ...serializable,
+        dashboardPath,
+        apiPath: options.apiPath ?? "/api/cms",
+      });
       return configPath
         ? `import config from ${JSON.stringify(configPath)};\nexport { config };\nexport const options = ${opts};`
         : `export const config = {};\nexport const options = ${opts};`;
@@ -52,7 +56,8 @@ export const cms = (options: CmsPluginOptions = {}): Plugin => {
       // Bare specifiers inside a virtual module don't resolve in the browser, so emit the
       // resolved file path (the same form filesystem-routing uses for app routes).
       const resolved = await this.resolve("@rimelight/cms/dashboard/route");
-      if (!resolved) throw new Error("[@rimelight/cms] cannot resolve @rimelight/cms/dashboard/route");
+      if (!resolved)
+        throw new Error("[@rimelight/cms] cannot resolve @rimelight/cms/dashboard/route");
       const moduleId = resolved.id.replace(/\\/g, "/");
       return code.replace(
         /export const pageRoutes = \[/,

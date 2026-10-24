@@ -45,7 +45,11 @@ export function toPlainText(value: unknown): string {
 export function inlineToPlainText(nodes: InlineNode[]): string {
   return nodes
     .map((n) =>
-      n.type === "text" ? (n.text ?? "") : n.type === "link" ? inlineToPlainText(n.children ?? []) : (n.displayTitle ?? n.pageSlug ?? ""),
+      n.type === "text"
+        ? (n.text ?? "")
+        : n.type === "link"
+          ? inlineToPlainText(n.children ?? [])
+          : (n.displayTitle ?? n.pageSlug ?? ""),
     )
     .join("");
 }
@@ -55,7 +59,8 @@ export function inlineToHtml(nodes: InlineNode[]): string {
     .map((n) => {
       if (n.type === "text") {
         let html = escape(n.text ?? "").replace(/\n/g, "<br>");
-        for (const [mark, tag] of MARK_TAGS) if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
+        for (const [mark, tag] of MARK_TAGS)
+          if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
         return html;
       }
       if (n.type === "link") {
