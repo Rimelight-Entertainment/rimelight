@@ -117,8 +117,56 @@ export const canonicalType = (type: string) => {
 /** Text props that used to be stored as a string or `{ en: "..." }` and are now InlineNode[]. */
 const RICH_TEXT: Record<string, string> = { ParagraphBlock: "text", ListItemBlock: "content" };
 
+const MARKS = new Set(["bold", "italic", "underline", "strikethrough", "code"]);
+
+/**
+ * Old editor inline nodes looked like blocks: `{ id, type: "text", props: { content, marks? } }`.
+ * Current shape: `{ type: "text", text, marks? }`, `{ type: "link", url, children }`,
+ * `{ type: "page_mention", pageId, pageSlug, displayTitle? }`.
+ */
+export function normalizeInlineNode(raw: any): any | null {
+  if (!raw || typeof raw !== "object") return typeof raw === "string" && raw ? { type: "text", text: raw } : null;
+  const p = raw.props && typeof raw.props === "object" ? raw.props : {};
+  const text = (v: unknown) => (typeof v === "string" ? v : v && typeof v === "object" ? String((v as any).en ?? Object.values(v)[0] ?? "") : "");
+  const marksOf = (v: any) => {
+    const list = Array.isArray(v?.marks) ? v.marks : Object.keys(v ?? {}).filter((k) => MARKS.has(k) && v[k] === true);
+    return list.filter((m: string) => MARKS.has(m));
+  };
+  if (raw.type === "link") {
+    const url = raw.url ?? p.url ?? p.href ?? "";
+    const kids = (Array.isArray(raw.children) ? raw.children : Array.isArray(p.children) ? p.children : [])
+      .map(normalizeInlineNode)
+      .filter((n: any) => n?.type === "text");
+    const fallback = text(raw.text ?? p.content ?? p.text ?? p.label ?? url);
+    return {
+      type: "link",
+      url,
+      children: kids.length ? kids : fallback ? [{ type: "text", text: fallback }] : [],
+      ...((raw.openInNewTab ?? p.openInNewTab ?? p.target === "_blank") ? { openInNewTab: true } : {}),
+    };
+  }
+  if (raw.type === "page_mention" || raw.type === "mention") {
+    const pageId = raw.pageId ?? p.pageId ?? p.id ?? "";
+    const pageSlug = raw.pageSlug ?? p.pageSlug ?? p.slug ?? "";
+    const displayTitle = raw.displayTitle ?? p.displayTitle ?? p.title;
+    return { type: "page_mention", pageId, pageSlug, ...(displayTitle ? { displayTitle: text(displayTitle) } : {}) };
+  }
+  // text (and anything unknown: keep its words)
+  const value = typeof raw.text === "string" ? raw.text : text(p.content ?? p.text ?? raw.content ?? "");
+  if (!value) return null;
+  const marks = marksOf(raw.marks ? raw : p);
+  return marks.length ? { type: "text", text: value, marks } : { type: "text", text: value };
+}
+
+export function normalizeInlineNodes(value: unknown): unknown[] {
+  return Array.isArray(value) ? value.map(normalizeInlineNode).filter(Boolean) : toInline(value);
+}
+
+const isInlineArray = (v: unknown) =>
+  Array.isArray(v) && v.length > 0 && v.every((n) => n && typeof n === "object" && typeof n.type === "string" && ("props" in n || "text" in n || "url" in n || "pageId" in n));
+
 function toInline(value: unknown): unknown[] {
-  if (Array.isArray(value)) return value;
+  if (Array.isArray(value)) return value.map(normalizeInlineNode).filter(Boolean);
   if (typeof value === "string") return value ? [{ type: "text", text: value }] : [];
   if (value && typeof value === "object") {
     const rec = value as Record<string, unknown>;
@@ -160,6 +208,7 @@ export function normalizeLegacyBlocks(input: unknown): BaseBlock[] {
     if (textKey === "text") props["text"] = toInline(props["text"] ?? content);
     else if (textKey === "content") props["content"] = toInline(content);
     else if (content !== undefined) props["content"] = content;
+    for (const [k, v] of Object.entries(props)) if (isInlineArray(v)) props[k] = normalizeInlineNodes(v);
     const id = typeof raw.id === "string" && raw.id && !seen.has(raw.id) ? raw.id : crypto.randomUUID();
     seen.add(id);
     const kids = (Array.isArray(raw.children) ? raw.children : Array.isArray(legacyKids) ? legacyKids : null)
@@ -191,4 +240,47 @@ export function flattenTemplateDefaults(defaults: unknown): Record<string, unkno
     } else out[k] = v;
   }
   return out;
+}
+
+// ─── Entry properties (one-time, used only by migration 0005) ─────────────────
+
+const isPlainObject = (v: unknown): v is Record<string, any> => !!v && typeof v === "object" && !Array.isArray(v);
+const LOCALE_KEY = /^[a-z]{2}(-[A-Z]{2})?$/;
+const isLocalized = (v: Record<string, any>) => {
+  const keys = Object.keys(v);
+  return keys.length > 0 && keys.every((k) => LOCALE_KEY.test(k)) && Object.values(v).every((x) => typeof x === "string");
+};
+const isReference = (v: Record<string, any>) => typeof v["slug"] === "string" && ("type" in v || "label" in v);
+const isOption = (v: Record<string, any>) => "value" in v && Object.keys(v).every((k) => k === "value" || k === "label");
+
+/**
+ * Old editor properties → current flat shape:
+ * - grouped `{ identity: { name: ... } }` → `{ name: ... }`
+ * - `{ en: "x" }` (fields that weren't translatable) → `"x"`
+ * - select options `{ label, value }` → `value`
+ * - references `{ slug, type, label }` → entry id (looked up by slug; the slug is kept if unknown)
+ */
+export function normalizeLegacyProperties(
+  input: unknown,
+  idBySlug: Map<string, string>,
+): Record<string, unknown> {
+  const value = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(value).filter((x) => x !== "" && x != null);
+    if (!isPlainObject(v)) return v;
+    if (isLocalized(v)) return v["en"] ?? Object.values(v).find((x) => x) ?? "";
+    if (isReference(v)) return idBySlug.get(v["slug"].replace(/^\/+/, "")) ?? v["slug"];
+    if (isOption(v)) return value(v["value"]);
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, value(x)]));
+  };
+  const raw = typeof input === "string" ? JSON.parse(input || "{}") : input;
+  if (!isPlainObject(raw)) return {};
+  const flat: Record<string, unknown> = {};
+  const groups: Record<string, any>[] = [];
+  for (const [k, v] of Object.entries(raw)) {
+    // A group is a plain object of further fields (not a value shape we recognise).
+    if (isPlainObject(v) && !isLocalized(v) && !isReference(v) && !isOption(v) && !("amount" in v) && !("src" in v)) groups.push(v);
+    else flat[k] = value(v);
+  }
+  for (const g of groups) for (const [k, v] of Object.entries(g)) if (!(k in flat)) flat[k] = value(v);
+  return flat;
 }

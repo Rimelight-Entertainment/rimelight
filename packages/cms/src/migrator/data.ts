@@ -5,6 +5,7 @@ import {
   flattenTemplateDefaults,
   normalizeLegacyContent,
   normalizeLegacyBlocks,
+  normalizeLegacyProperties,
   parseFieldSchema,
 } from "./legacy";
 
@@ -69,6 +70,70 @@ export const DATA_MIGRATIONS: DataMigration[] = [
         await Promise.all(updates.slice(i, i + 16).map((run) => run()));
       }
       console.info(`[@rimelight/cms] 0003_content_v2 rewrote ${updates.length} rows`);
+    },
+  },
+  {
+    // Content saved by the old editor after 0003 ran (or that 0003 missed) still had block-shaped
+    // inline nodes (`{ type: "text", props: { content } }`). Re-run the normalizer everywhere.
+    name: "0004_inline_nodes",
+    async run(raw) {
+      const { db, tables: t } = getCmsDb({ db: raw });
+      const parse = (v: unknown) => (typeof v === "string" ? JSON.parse(v) : v);
+      const same = (a: unknown, b: unknown) => JSON.stringify(parse(a)) === JSON.stringify(b);
+      const updates: (() => Promise<unknown>)[] = [];
+      for (const row of await db.select().from(t.pages)) {
+        const content = normalizeLegacyContent(row.content);
+        if (!same(row.content, content)) updates.push(() => db.update(t.pages).set({ content }).where(eq(t.pages.id, row.id)));
+      }
+      for (const row of await db.select().from(t.pageDrafts)) {
+        const content = normalizeLegacyContent(row.content);
+        if (!same(row.content, content)) updates.push(() => db.update(t.pageDrafts).set({ content }).where(eq(t.pageDrafts.pageId, row.pageId)));
+      }
+      for (const row of await db.select().from(t.pageVersions)) {
+        const content = normalizeLegacyContent(row.content);
+        if (!same(row.content, content)) updates.push(() => db.update(t.pageVersions).set({ content }).where(eq(t.pageVersions.id, row.id)));
+      }
+      for (const row of await db.select().from(t.pageTemplates)) {
+        const initialBlocks = normalizeLegacyBlocks(row.initialBlocks);
+        if (!same(row.initialBlocks, initialBlocks)) updates.push(() => db.update(t.pageTemplates).set({ initialBlocks }).where(eq(t.pageTemplates.id, row.id)));
+      }
+      for (let i = 0; i < updates.length; i += 16) {
+        await Promise.all(updates.slice(i, i + 16).map((run) => run()));
+      }
+      console.info(`[@rimelight/cms] 0004_inline_nodes rewrote ${updates.length} rows`);
+    },
+  },
+  {
+    // Properties saved by the old editor were grouped and wrapped (`{ identity: { name: { en } } }`,
+    // references as `{ slug, type, label }`). Flatten them to the field keys and plain values.
+    name: "0005_flat_properties",
+    async run(raw) {
+      const { db, tables: t } = getCmsDb({ db: raw });
+      const parse = (v: unknown) => (typeof v === "string" ? JSON.parse(v) : v);
+      const pages = await db.select().from(t.pages);
+      const idBySlug = new Map<string, string>(pages.map((p: any) => [String(p.slug).replace(/^\/+/, ""), p.id]));
+      const fix = (content: unknown) => {
+        const c = parse(content) ?? {};
+        return { ...c, properties: normalizeLegacyProperties(c.properties, idBySlug) };
+      };
+      const same = (a: unknown, b: unknown) => JSON.stringify(parse(a)) === JSON.stringify(b);
+      const updates: (() => Promise<unknown>)[] = [];
+      for (const row of pages) {
+        const content = fix(row.content);
+        if (!same(row.content, content)) updates.push(() => db.update(t.pages).set({ content }).where(eq(t.pages.id, row.id)));
+      }
+      for (const row of await db.select().from(t.pageDrafts)) {
+        const content = fix(row.content);
+        if (!same(row.content, content)) updates.push(() => db.update(t.pageDrafts).set({ content }).where(eq(t.pageDrafts.pageId, row.pageId)));
+      }
+      for (const row of await db.select().from(t.pageVersions)) {
+        const content = fix(row.content);
+        if (!same(row.content, content)) updates.push(() => db.update(t.pageVersions).set({ content }).where(eq(t.pageVersions.id, row.id)));
+      }
+      for (let i = 0; i < updates.length; i += 16) {
+        await Promise.all(updates.slice(i, i + 16).map((run) => run()));
+      }
+      console.info(`[@rimelight/cms] 0005_flat_properties rewrote ${updates.length} rows`);
     },
   },
 ];

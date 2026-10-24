@@ -74,13 +74,17 @@ const EditorWorkspace: Component<{
   const [tab, setTab] = createSignal<"entry" | "block" | "history">("entry");
   const [busy, setBusy] = createSignal<string | null>(null);
   const [scheduling, setScheduling] = createSignal(false);
+  /** The settings/block/history panel is always shown on wide screens and toggled below that. */
+  const [panelOpen, setPanelOpen] = createSignal(false);
 
   const editor: BlockEditorState = createBlockEditor({
     initial: { blocks: props.entry.draft.blocks, properties: props.entry.draft.properties },
     registry: useDashboard().registry,
     ...(collection()?.allowedBlocks ? { allowedRootBlocks: collection()!.allowedBlocks! } : {}),
     readOnly: readOnly(),
-    onSelect: (id) => id && setTab("block"),
+    onSelect: (id) => {
+      if (id) setTab("block");
+    },
     save: async (content) => {
       const { entry } = await api.entries.saveDraft(props.entry.id, content);
       props.onEntry(entry);
@@ -147,6 +151,7 @@ const EditorWorkspace: Component<{
         <span class={`ml-2 text-xs ${editor.status() === "error" ? "text-error-500" : "text-muted"}`}>{statusLabel()}</span>
 
         <div class="ml-auto flex items-center gap-1.5">
+          <Button variant="ghost" icon="i-lucide-panel-right" title="Settings panel" class="xl:hidden" onClick={() => setPanelOpen(!panelOpen())} />
           <Button variant="ghost" icon="i-lucide-undo-2" title="Undo (Ctrl+Z)" disabled={readOnly()} onClick={() => editor.undo()} />
           <Button variant="ghost" icon="i-lucide-redo-2" title="Redo (Ctrl+Shift+Z)" disabled={readOnly()} onClick={() => editor.redo()} />
           <Button
@@ -219,12 +224,12 @@ const EditorWorkspace: Component<{
       <div class="flex min-h-0 flex-1">
         {/* Canvas */}
         <div class="min-w-0 flex-1 overflow-y-auto">
-          <div class="mx-auto max-w-3xl px-6 py-10">
+          <div class="mx-auto max-w-6xl px-6 py-10">
             <TitleInput entry={props.entry} readOnly={readOnly()} onSave={(title) => void saveMeta({ title })} />
             <Show
               when={collection()?.features.blocks !== false}
               fallback={
-                <div class="mt-6">
+                <div class="mt-6 max-w-3xl">
                   <FieldGroups
                     fields={collection()?.fields ?? {}}
                     groups={collection()?.groups}
@@ -235,15 +240,21 @@ const EditorWorkspace: Component<{
                 </div>
               }
             >
-              <div class="mt-6">
-                <BlockEditor editor={editor} />
+              {/* Wikipedia-style: article on the left, infobox with the entry's properties on the right. */}
+              <div class="mt-6 flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
+                <div class="min-w-0 flex-1">
+                  <BlockEditor editor={editor} />
+                </div>
+                <Show when={Object.keys(collection()?.fields ?? {}).length}>
+                  <Infobox entry={props.entry} editor={editor} readOnly={readOnly()} />
+                </Show>
               </div>
             </Show>
           </div>
         </div>
 
         {/* Sidebar */}
-        <aside class="hidden w-80 shrink-0 flex-col border-l border-default xl:flex">
+        <aside class={`${panelOpen() ? "flex" : "hidden"} w-80 shrink-0 flex-col border-l border-default xl:flex`}>
           <div class="flex border-b border-default">
             <For each={[["entry", "Entry"], ["block", "Block"], ["history", "History"]] as const}>
               {([key, label]) => (
@@ -281,6 +292,35 @@ const EditorWorkspace: Component<{
         }}
       />
     </div>
+  );
+};
+
+/** The entry's properties as an infobox beside the article, like a wiki page. */
+const Infobox: Component<{ entry: Entry; editor: BlockEditorState; readOnly: boolean }> = (props) => {
+  const { collection: getCollection } = useDashboard();
+  const collection = () => getCollection(props.entry.collection);
+  const image = () => {
+    const v = props.editor.doc.properties["image"];
+    return typeof v === "string" ? v : (v as any)?.src ?? (v as any)?.url ?? "";
+  };
+  return (
+    <aside class="w-full shrink-0 overflow-hidden rounded-lg border border-default bg-elevated/40 lg:sticky lg:top-4 lg:w-80">
+      <div class="border-b border-default bg-elevated px-4 py-2.5 text-center text-sm font-semibold text-highlighted">
+        {resolveLabel(props.entry.title) || props.entry.slug}
+      </div>
+      <Show when={image()}>
+        <img src={image()} alt="" class="max-h-80 w-full border-b border-default object-cover" />
+      </Show>
+      <div class="p-4">
+        <FieldGroups
+          fields={collection()!.fields}
+          groups={collection()!.groups}
+          values={props.editor.doc.properties}
+          readOnly={props.readOnly}
+          onChange={(k, v) => props.editor.setProperty(k, v)}
+        />
+      </div>
+    </aside>
   );
 };
 
@@ -330,19 +370,6 @@ const EntrySettings: Component<{
           onChange={(e) => void props.saveMeta({ description: { ...(props.entry.description ?? {}), [locale]: e.currentTarget.value } })}
         />
       </Field>
-
-      <Show when={collection()?.features.blocks !== false && Object.keys(collection()?.fields ?? {}).length}>
-        <section class="flex flex-col gap-3 border-t border-default pt-4">
-          <h3 class="text-[11px] font-semibold uppercase tracking-wide text-muted">Properties</h3>
-          <FieldGroups
-            fields={collection()!.fields}
-            groups={collection()!.groups}
-            values={props.editor.doc.properties}
-            readOnly={props.readOnly}
-            onChange={(k, v) => props.editor.setProperty(k, v)}
-          />
-        </section>
-      </Show>
 
       <For each={collection()?.features.taxonomies ?? []}>
         {(taxonomy) => <TermPicker entryId={props.entry.id} taxonomy={taxonomy} readOnly={props.readOnly} />}

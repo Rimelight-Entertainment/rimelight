@@ -1,4 +1,4 @@
-import { For, Show, createSignal, type Component } from "solid-js";
+import { For, Show, createEffect, createSignal, type Component } from "solid-js";
 import type { FieldDefinition } from "../../core/collections/types";
 import { resolveLabel } from "../../core/collections/define";
 import { useDashboard } from "../context";
@@ -307,6 +307,20 @@ const ReferenceInput: Component<{ field: FieldDefinition; value: unknown; onChan
   const [query, setQuery] = createSignal("");
   const [results, setResults] = createSignal<any[]>([]);
   const [labels, setLabels] = createSignal<Record<string, string>>({});
+
+  // Resolve titles for stored ids we don't have a label for yet.
+  createEffect(
+    () => ids().join(","),
+    () => {
+      const missing = ids().filter((id) => !(id in labels()));
+      for (const id of missing) {
+        void api.entries
+          .get(id)
+          .then(({ entry }) => setLabels((l) => ({ ...l, [id]: resolveLabel(entry.title) || entry.slug })))
+          .catch(() => setLabels((l) => ({ ...l, [id]: id })));
+      }
+    },
+  );
 
   const search = async (q: string) => {
     setQuery(q);

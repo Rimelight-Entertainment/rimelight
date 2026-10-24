@@ -45,7 +45,7 @@ export function toPlainText(value: unknown): string {
 export function inlineToPlainText(nodes: InlineNode[]): string {
   return nodes
     .map((n) =>
-      n.type === "text" ? n.text : n.type === "link" ? inlineToPlainText(n.children) : (n.displayTitle ?? n.pageSlug),
+      n.type === "text" ? (n.text ?? "") : n.type === "link" ? inlineToPlainText(n.children ?? []) : (n.displayTitle ?? n.pageSlug ?? ""),
     )
     .join("");
 }
@@ -54,15 +54,16 @@ export function inlineToHtml(nodes: InlineNode[]): string {
   return nodes
     .map((n) => {
       if (n.type === "text") {
-        let html = escape(n.text).replace(/\n/g, "<br>");
+        let html = escape(n.text ?? "").replace(/\n/g, "<br>");
         for (const [mark, tag] of MARK_TAGS) if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
         return html;
       }
       if (n.type === "link") {
         const target = n.openInNewTab ? ' target="_blank"' : "";
-        return `<a href="${escape(n.url)}"${target}>${inlineToHtml(n.children)}</a>`;
+        return `<a href="${escape(n.url ?? "")}"${target}>${inlineToHtml(n.children ?? [])}</a>`;
       }
-      return `<span data-mention="${escape(n.pageId)}" data-slug="${escape(n.pageSlug)}" contenteditable="false">@${escape(n.displayTitle ?? n.pageSlug)}</span>`;
+      if (n.type !== "page_mention") return "";
+      return `<span data-mention="${escape(n.pageId ?? "")}" data-slug="${escape(n.pageSlug ?? "")}" contenteditable="false">@${escape(n.displayTitle ?? n.pageSlug ?? "")}</span>`;
     })
     .join("");
 }

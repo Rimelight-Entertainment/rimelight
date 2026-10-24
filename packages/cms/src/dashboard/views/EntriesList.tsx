@@ -11,30 +11,50 @@ const PAGE = 50;
 export const EntriesList: Component<{ collection: string; create?: boolean }> = (props) => {
   const { api, collection: getCollection, href, navigate, toast } = useDashboard();
   const collection = () => getCollection(props.collection);
-  const [status, setStatus] = createSignal<(typeof STATUSES)[number]>("all");
-  const [q, setQ] = createSignal("");
-  const [trash, setTrash] = createSignal(false);
-  const [offset, setOffset] = createSignal(0);
   const [creating, setCreating] = createSignal(!!props.create);
+
+  /**
+   * List query. Kept in a plain object as well as a signal: reload() must see the new values
+   * immediately, and signal writes are only visible after the current batch flushes.
+   */
+  type Query = { status: (typeof STATUSES)[number]; q: string; trash: boolean; offset: number };
+  let current: Query = { status: "all", q: "", trash: false, offset: 0 };
+  const [query, setQuery] = createSignal<Query>(current);
+  const status = () => query().status;
+  const q = () => query().q;
+  const trash = () => query().trash;
+  const offset = () => query().offset;
 
   const hierarchical = () => !!collection()?.features.hierarchical;
   const list = useLoader(() =>
     api.entries.list({
       collection: props.collection,
-      ...(status() !== "all" ? { status: status() } : {}),
-      ...(q() ? { q: q() } : {}),
-      ...(trash() ? { deleted: true, status: "archived" } : {}),
+      ...(current.status !== "all" ? { status: current.status } : {}),
+      ...(current.q ? { q: current.q } : {}),
+      ...(current.trash ? { deleted: true, status: "archived" } : {}),
       orderBy: hierarchical() ? "slug" : "updated",
       content: collection()?.kind === "data",
       limit: PAGE,
-      offset: offset(),
+      offset: current.offset,
     }),
   );
 
+  const update = (patch: Partial<Query>) => {
+    current = { ...current, ...patch };
+    setQuery(current);
+    void list.reload();
+  };
+  const setStatus = (s: Query["status"]) => update({ status: s, offset: 0 });
+  const setTrash = (t: boolean) => update({ trash: t, offset: 0 });
+  const setOffset = (o: number) => update({ offset: o });
+
   let searchTimer: ReturnType<typeof setTimeout>;
+  // Switching collections reuses this component: reset the query.
   createEffect(
-    () => [status(), trash(), offset(), props.collection] as const,
-    () => void list.reload(),
+    () => props.collection,
+    (_, prev) => {
+      if (prev !== undefined) update({ status: "all", q: "", trash: false, offset: 0 });
+    },
   );
 
   // Show a couple of the collection's own fields as columns (useful for product/data collections).
@@ -54,7 +74,7 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
         description={resolveLabel(collection()?.description)}
         actions={
           <>
-            <Button variant="ghost" icon="i-lucide-trash" onClick={() => { setTrash(!trash()); setOffset(0); }}>
+            <Button variant="ghost" icon="i-lucide-trash" onClick={() => setTrash(!trash())}>
               {trash() ? "Back" : "Trash"}
             </Button>
             <Button variant="primary" icon="i-lucide-plus" onClick={() => setCreating(true)}>
@@ -72,7 +92,7 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
                   <button
                     type="button"
                     class={`rounded px-2.5 py-1 text-xs capitalize ${status() === s ? "bg-elevated font-medium text-highlighted" : "text-muted"}`}
-                    onClick={() => { setStatus(s); setOffset(0); }}
+                    onClick={() => setStatus(s)}
                   >
                     {s}
                   </button>
@@ -85,9 +105,10 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
             placeholder="Search title or slug…"
             value={q()}
             onInput={(e) => {
-              setQ(e.currentTarget.value);
+              const value = e.currentTarget.value;
+              current = { ...current, q: value };
               clearTimeout(searchTimer);
-              searchTimer = setTimeout(() => { setOffset(0); void list.reload(); }, 250);
+              searchTimer = setTimeout(() => update({ q: value, offset: 0 }), 250);
             }}
           />
           <span class="ml-auto text-xs text-muted">{list.data()?.total ?? 0} entries</span>

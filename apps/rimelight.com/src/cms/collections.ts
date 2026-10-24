@@ -85,7 +85,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "biology",
         "defaultValue": "",
         "collections": [
-          "Location"
+          "location"
         ]
       }
     },
@@ -187,7 +187,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "characteristics",
         "defaultValue": "",
         "collections": [
-          "Species"
+          "species"
         ]
       },
       "sex": {
@@ -252,7 +252,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "inventory",
         "defaultValue": [],
         "collections": [
-          "Object"
+          "object"
         ]
       },
       "pets": {
@@ -261,7 +261,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "inventory",
         "defaultValue": [],
         "collections": [
-          "Character"
+          "character"
         ]
       },
       "mounts": {
@@ -270,7 +270,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "inventory",
         "defaultValue": [],
         "collections": [
-          "Character"
+          "character"
         ]
       },
       "currentAffiliations": {
@@ -279,7 +279,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "affiliations",
         "defaultValue": [],
         "collections": [
-          "Group"
+          "group"
         ]
       },
       "formerAffiliations": {
@@ -288,7 +288,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "affiliations",
         "defaultValue": [],
         "collections": [
-          "Group"
+          "group"
         ]
       },
       "favouriteFood": {
@@ -297,7 +297,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "other",
         "defaultValue": "",
         "collections": [
-          "Object"
+          "object"
         ]
       }
     },
@@ -507,7 +507,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "details",
         "defaultValue": "",
         "collections": [
-          "Character"
+          "character"
         ]
       },
       "headquarters": {
@@ -516,7 +516,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         "group": "details",
         "defaultValue": "",
         "collections": [
-          "Location"
+          "location"
         ]
       }
     },
