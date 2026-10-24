@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { type Component } from "solid-js";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx";
@@ -30,7 +28,7 @@ export const GrandTaleIndexPage: Component = () => {
   ];
 
   return (
-    
+    <>
       <RLPageSection
         variant="hero"
         title={t("page_grand-tale_home.hero_title")}
@@ -118,7 +116,7 @@ export const GrandTaleIndexPage: Component = () => {
           </div>
         </div>
       </section>
-    
+    </>
   );
 };
 

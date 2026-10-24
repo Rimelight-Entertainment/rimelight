@@ -1,5 +1,3 @@
-import { createSeoHead } from "@rimelight/seo/head";
-import { useHead } from "@solidjs/web";
 import { type Component, For, Show, createMemo } from "solid-js";
 import { getLocaleUrl, t, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
@@ -80,7 +78,7 @@ export const HomePage: Component = () => {
   ];
 
   return (
-    
+    <>
       <RLPageSection
         variant="hero"
         reverse={true}
@@ -328,7 +326,7 @@ export const HomePage: Component = () => {
           </div>
         }
       />
-    
+    </>
   );
 };
 
