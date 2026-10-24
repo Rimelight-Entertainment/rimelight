@@ -48,7 +48,11 @@ export function cms(): MiddlewareHandler {
       }
 
       if (!activeRouter) {
-        activeRouter = createCmsRouter({ prefix: primaryPrefix, db });
+        activeRouter = createCmsRouter({
+          prefix: primaryPrefix,
+          db,
+          dev: virtualConfig.dev,
+        });
       }
 
       // Normalize pathname for router if called directly under /api/...

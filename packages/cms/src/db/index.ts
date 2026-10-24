@@ -1,6 +1,5 @@
 import { drizzle as drizzleD1 } from "drizzle-orm/d1";
 import { drizzle as drizzleNeonHttp } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
 import * as pgTables from "../schema/index";
 import * as sqliteTables from "../schema/sqlite";
 
@@ -48,6 +47,43 @@ export function isSQLiteOrD1(val: any): boolean {
 }
 
 /**
+ * Custom fetch-based Neon SQL query client that runs cleanly inside Cloudflare Workers / Miniflare
+ * without triggering workerd driver internal errors.
+ */
+function createWorkerNeonSql(connectionString: string) {
+  const cleanUrl = connectionString
+    .trim()
+    .replace(/([?&])channel_binding=[^&]*(&|$)/g, "$1")
+    .replace(/[?&]$/, "");
+  const host = new URL(cleanUrl).host;
+  const endpoint = `https://${host}/sql`;
+
+  const queryFn: any = async (query: string, params: any[] = []) => {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Neon-Connection-String": cleanUrl,
+        "Neon-Raw-Text-Output": "true",
+        "Neon-Array-Mode": "true",
+      },
+      body: JSON.stringify({ query, params }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Neon HTTP error (${res.status}): ${errText}`);
+    }
+
+    const data: any = await res.json();
+    return data;
+  };
+
+  queryFn.query = queryFn;
+  return queryFn;
+}
+
+/**
  * Resolves a unified database client and dialect-matching schema tables.
  *
  * Checks in order:
@@ -73,19 +109,37 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
   }
 
   if (!rawDb) {
-    const envUrl =
-      env?.HYPERDRIVE?.connectionString ||
-      env?.HYPERDRIVE_URL ||
-      env?.DATABASE_URL ||
-      (typeof process !== "undefined"
-        ? process.env?.["HYPERDRIVE_URL"] || process.env?.["DATABASE_URL"]
-        : undefined) ||
-      (typeof import.meta !== "undefined"
-        ? (import.meta as any).env?.["HYPERDRIVE_URL"] || (import.meta as any).env?.["DATABASE_URL"]
-        : undefined);
+    const isDev =
+      (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
+      (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV)) ||
+      Boolean(env?.DATABASE_URL && env?.HYPERDRIVE?.host?.includes(".hyperdrive.local"));
+
+    // In local dev, Cloudflare Hyperdrive proxy binds to a mock local IP that the Neon serverless HTTP driver
+    // cannot reach over HTTP. Prefer direct DATABASE_URL in dev mode or whenever Hyperdrive is pointing to a local mock.
+    const envUrl = isDev
+      ? env?.DATABASE_URL ||
+        env?.HYPERDRIVE?.connectionString ||
+        env?.HYPERDRIVE_URL ||
+        (typeof process !== "undefined"
+          ? process.env?.["DATABASE_URL"] || process.env?.["HYPERDRIVE_URL"]
+          : undefined) ||
+        (typeof import.meta !== "undefined"
+          ? (import.meta as any).env?.["DATABASE_URL"] ||
+            (import.meta as any).env?.["HYPERDRIVE_URL"]
+          : undefined)
+      : env?.HYPERDRIVE?.connectionString ||
+        env?.HYPERDRIVE_URL ||
+        env?.DATABASE_URL ||
+        (typeof process !== "undefined"
+          ? process.env?.["HYPERDRIVE_URL"] || process.env?.["DATABASE_URL"]
+          : undefined) ||
+        (typeof import.meta !== "undefined"
+          ? (import.meta as any).env?.["HYPERDRIVE_URL"] ||
+            (import.meta as any).env?.["DATABASE_URL"]
+          : undefined);
 
     if (typeof envUrl === "string" && envUrl.trim().length > 0) {
-      const client = neon(envUrl.trim());
+      const client = createWorkerNeonSql(envUrl);
       const db = drizzleNeonHttp({ client } as any);
       const instance: CmsDbInstance = {
         db,

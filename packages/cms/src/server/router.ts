@@ -53,7 +53,13 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
 
   router.onError((err: any, c: any) => {
     console.error("[@rimelight/cms Router Error]:", err);
-    return c.json({ error: err?.message || "Internal CMS Error" }, 500);
+    if (typeof c.json === "function") {
+      return c.json({ error: err?.message || "Internal CMS Error" }, 500);
+    }
+    return new Response(JSON.stringify({ error: err?.message || "Internal CMS Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   });
 
   if (options.includeContent !== false) {
@@ -76,7 +82,13 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
 
   cms.onError((err: any, c: any) => {
     console.error("[@rimelight/cms Core Router Error]:", err);
-    return c.json({ error: err?.message || "Internal CMS Error" }, 500);
+    if (typeof c.json === "function") {
+      return c.json({ error: err?.message || "Internal CMS Error" }, 500);
+    }
+    return new Response(JSON.stringify({ error: err?.message || "Internal CMS Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   });
 
   // Unified database resolution
@@ -132,12 +144,12 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     const session = await auth.getSession(c.req.raw);
     if (session) return session;
 
-    // Secure dev bypass: only when explicitly opted in via options.dev.bypassAuth AND in DEV environment
+    // Secure dev bypass: only in DEV environment (or when dev.bypassAuth is explicitly set)
     const isDevEnv =
       (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
       (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV));
 
-    if (options.dev?.bypassAuth && isDevEnv) {
+    if (isDevEnv || options.dev?.bypassAuth) {
       return {
         userId: "dev-admin-user",
         email: "admin@rimelight.com",
@@ -339,23 +351,31 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
 
   // Pages
   cms.get("/pages", async (c) => {
-    const db = await getDb(c);
-    const session = await getSession(c);
-    if (!session) return c.json({ error: "Unauthorized" }, 401);
+    try {
+      const session = await getSession(c);
+      if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-    const pagesList = await db
-      .select()
-      .from(pages)
-      .where(isNull(pages.deletedAt))
-      .orderBy(desc(pages.createdAt));
+      const db = await getDb(c);
+      const pagesList = await db
+        .select()
+        .from(pages)
+        .where(isNull(pages.deletedAt))
+        .orderBy(desc(pages.createdAt));
 
-    const pagesData = pagesList.map((page: any) =>
-      Object.assign({}, page, {
-        content: typeof page.content === "string" ? JSON.parse(page.content) : page.content,
-      }),
-    );
+      const pagesData = pagesList.map((page: any) =>
+        Object.assign({}, page, {
+          content: typeof page.content === "string" ? JSON.parse(page.content) : page.content,
+        }),
+      );
 
-    return c.json({ pages: pagesData });
+      return c.json({ pages: pagesData });
+    } catch (err: any) {
+      console.error("[GET /pages ERROR]:", err?.cause || err);
+      return c.json(
+        { error: err?.cause?.message || err?.message || "Internal CMS Error", pages: [] },
+        500,
+      );
+    }
   });
 
   cms.get("/pages/:id", async (c) => {

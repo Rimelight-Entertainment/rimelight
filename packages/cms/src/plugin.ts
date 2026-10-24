@@ -34,13 +34,8 @@ export const cms = (options: CmsConfig = {}): Plugin => ({
   },
   async load(id) {
     if (id !== RESOLVED_ID) return undefined;
-    let hasDb = false;
-    try {
-      const resolved = await this.resolve("#db", `${process.cwd()}/src/fetch.ts`);
-      if (resolved) hasDb = true;
-    } catch {}
     return [
-      hasDb ? `export { db } from "#db";` : `export const db = undefined;`,
+      `export const db = undefined;`,
       `export const config = ${JSON.stringify(options)};`,
     ].join("\n");
   },
