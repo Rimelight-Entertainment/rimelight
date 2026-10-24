@@ -61,20 +61,20 @@
       "import": "./dist/storage/index.mjs"
     },
     "./mcp": {
-      "types": "./src/mcp/index.ts",
-      "import": "./src/mcp/index.ts"
+      "types": "./dist/mcp/index.d.mts",
+      "import": "./dist/mcp/index.mjs"
     },
     "./cron": {
-      "types": "./src/cron/scheduled.ts",
-      "import": "./src/cron/scheduled.ts"
+      "types": "./dist/cron/scheduled.d.mts",
+      "import": "./dist/cron/scheduled.mjs"
     },
     "./cron/scheduled": {
-      "types": "./src/cron/scheduled.ts",
-      "import": "./src/cron/scheduled.ts"
+      "types": "./dist/cron/scheduled.d.mts",
+      "import": "./dist/cron/scheduled.mjs"
     },
     "./docs": {
-      "types": "./src/docs/index.ts",
-      "import": "./src/docs/index.ts"
+      "types": "./dist/docs/index.d.mts",
+      "import": "./dist/docs/index.mjs"
     },
     "./solid": {
       "types": "./src/solid/index.ts",

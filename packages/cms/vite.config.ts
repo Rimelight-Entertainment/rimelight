@@ -16,6 +16,9 @@ export default defineConfig({
       "src/server/index.ts",
       "src/migrator/index.ts",
       "src/migrator/cli.ts",
+      "src/cron/scheduled.ts",
+      "src/mcp/index.ts",
+      "src/docs/index.ts",
     ],
     deps: {
       neverBundle: [/^virtual:/],
