@@ -1,0 +1,75 @@
+import { createSeoHead } from "@rimelight/seo/head";
+import { useHead } from "@solidjs/web";
+import { type Component, Show, createMemo } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { PageRenderer } from "@rimelight/cms/solid";
+import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
+import { t, getCurrentLocale } from "@rimelight/i18n";
+import { api } from "#api/client";
+
+export const BlogPostPage: Component = () => {
+  const params = useParams<{ locale: string; slug?: string }>();
+  const activeLocale = () => getCurrentLocale();
+
+  const pageData = createMemo<any>(
+    async () => {
+      const slug = params.slug;
+      if (!slug) return null;
+      try {
+        const res = await (api as any).content.pages[":slug"].$get({
+          param: { slug },
+          query: { type: "blog" },
+        });
+        if (!res.ok) return null;
+        return (await res.json()) as any;
+      } catch {
+        return null;
+      }
+    },
+    { loadingValue: null },
+  );
+
+  const docBlocks = () => {
+    const p = pageData();
+    if (!p) return [];
+    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
+    return content.blocks || [];
+  };
+
+  const title = () => {
+    const p = pageData();
+    return p ? t.localize(p.title) || "Blog Post" : "Blog Post";
+  };
+
+  const description = () => {
+    const p = pageData();
+    if (!p) return "";
+    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
+    return t.localize(p.description) || content.properties?.description || "";
+  };
+
+  return (
+    
+      <Show
+        when={pageData()}
+        fallback={<div class="p-16 text-center text-neutral-400">Loading post...</div>}
+      >
+        <article class="max-w-4xl mx-auto px-4 py-16">
+          <header class="mb-12">
+            <div class="text-sm text-primary-400 mb-2">
+              <RLDate date={pageData()?.postedAt || pageData()?.createdAt || new Date()} />
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
+              {title()}
+            </h1>
+            <p class="text-xl text-neutral-400 leading-relaxed">{description()}</p>
+          </header>
+
+          <PageRenderer blocks={docBlocks()} locale={activeLocale()} />
+        </article>
+      </Show>
+    
+  );
+};
+
+export default BlogPostPage;
