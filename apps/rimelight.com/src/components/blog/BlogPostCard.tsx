@@ -35,4 +35,3 @@ export const BlogPostCard: Component<{ post: PublicEntry }> = (props) => {
     </div>
   );
 };
-

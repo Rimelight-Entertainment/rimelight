@@ -165,80 +165,80 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
   return (
     <DashboardContext value={ctx}>
       <RichEditingContext value={richEditing}>
-      <RichTextProvider collections={collections()}>
-      <BlockRegistryContext value={registry}>
-        <Show
-          when={!authError()}
-          fallback={
-            <div class="flex h-full items-center justify-center p-8 text-center">
-              <div class="flex max-w-sm flex-col gap-3">
-                <span class="i-lucide-lock mx-auto size-8 text-muted" />
-                <p class="text-sm text-toned">{authError()}</p>
-              </div>
-            </div>
-          }
-        >
-          <div class="flex h-full">
-            <aside
-              class={`fixed inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-default bg-default transition-transform lg:static lg:translate-x-0 ${navOpen() ? "translate-x-0" : "-translate-x-full"}`}
+        <RichTextProvider collections={collections()}>
+          <BlockRegistryContext value={registry}>
+            <Show
+              when={!authError()}
+              fallback={
+                <div class="flex h-full items-center justify-center p-8 text-center">
+                  <div class="flex max-w-sm flex-col gap-3">
+                    <span class="i-lucide-lock mx-auto size-8 text-muted" />
+                    <p class="text-sm text-toned">{authError()}</p>
+                  </div>
+                </div>
+              }
             >
-              <Sidebar active={path().rest} />
-            </aside>
-            <Show when={navOpen()}>
-              <button
-                type="button"
-                aria-label="Close menu"
-                class="fixed inset-0 z-30 bg-black/40 lg:hidden"
-                onClick={() => setNavOpen(false)}
-              />
-            </Show>
-            <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <div class="flex h-12 shrink-0 items-center gap-2 border-b border-default px-3 lg:hidden">
-                <button
-                  type="button"
-                  aria-label="Open menu"
-                  class="i-lucide-menu size-5"
-                  onClick={() => setNavOpen(true)}
-                />
-                <span class="text-sm font-semibold">Rimelight CMS</span>
-              </div>
-              <div class="min-h-0 flex-1 overflow-y-auto">
-                <Show
-                  when={user()}
-                  fallback={
-                    <div class="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted">
-                      <span class="i-lucide-loader-circle size-6 animate-spin" />
-                      Connecting to the CMS API… (the first load after an update runs database
-                      migrations)
-                    </div>
-                  }
+              <div class="flex h-full">
+                <aside
+                  class={`fixed inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-default bg-default transition-transform lg:static lg:translate-x-0 ${navOpen() ? "translate-x-0" : "-translate-x-full"}`}
                 >
-                  {view()}
+                  <Sidebar active={path().rest} />
+                </aside>
+                <Show when={navOpen()}>
+                  <button
+                    type="button"
+                    aria-label="Close menu"
+                    class="fixed inset-0 z-30 bg-black/40 lg:hidden"
+                    onClick={() => setNavOpen(false)}
+                  />
                 </Show>
+                <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
+                  <div class="flex h-12 shrink-0 items-center gap-2 border-b border-default px-3 lg:hidden">
+                    <button
+                      type="button"
+                      aria-label="Open menu"
+                      class="i-lucide-menu size-5"
+                      onClick={() => setNavOpen(true)}
+                    />
+                    <span class="text-sm font-semibold">Rimelight CMS</span>
+                  </div>
+                  <div class="min-h-0 flex-1 overflow-y-auto">
+                    <Show
+                      when={user()}
+                      fallback={
+                        <div class="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted">
+                          <span class="i-lucide-loader-circle size-6 animate-spin" />
+                          Connecting to the CMS API… (the first load after an update runs database
+                          migrations)
+                        </div>
+                      }
+                    >
+                      {view()}
+                    </Show>
+                  </div>
+                </main>
               </div>
-            </main>
-          </div>
-        </Show>
-        <div class="pointer-events-none fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-          <For each={toasts()}>
-            {(t) => (
-              <div
-                role="status"
-                class={`pointer-events-auto rounded-lg border px-4 py-2.5 text-sm shadow-lg ${
-                  t.kind === "error"
-                    ? "border-error-500/40 bg-error-500/10 text-error-600"
-                    : t.kind === "success"
-                      ? "border-success-500/40 bg-success-500/10 text-success-600"
-                      : "border-default bg-elevated text-highlighted"
-                }`}
-              >
-                {t.message}
-              </div>
-            )}
-          </For>
-        </div>
-      </BlockRegistryContext>
-      </RichTextProvider>
+            </Show>
+            <div class="pointer-events-none fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+              <For each={toasts()}>
+                {(t) => (
+                  <div
+                    role="status"
+                    class={`pointer-events-auto rounded-lg border px-4 py-2.5 text-sm shadow-lg ${
+                      t.kind === "error"
+                        ? "border-error-500/40 bg-error-500/10 text-error-600"
+                        : t.kind === "success"
+                          ? "border-success-500/40 bg-success-500/10 text-success-600"
+                          : "border-default bg-elevated text-highlighted"
+                    }`}
+                  >
+                    {t.message}
+                  </div>
+                )}
+              </For>
+            </div>
+          </BlockRegistryContext>
+        </RichTextProvider>
       </RichEditingContext>
     </DashboardContext>
   );

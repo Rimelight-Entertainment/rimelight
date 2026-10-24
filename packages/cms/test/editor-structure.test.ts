@@ -24,8 +24,18 @@ describe("duplicate", () => {
       id: "root",
       type: "TabsBlock",
       isTemplated: true,
-      props: { media: { id: "media-1" }, nested: [{ id: "inner", type: "ParagraphBlock", props: {} }] },
-      children: [{ id: "tab", type: "TabItemBlock", props: {}, children: [{ id: "p", type: "ParagraphBlock", props: {} }] }],
+      props: {
+        media: { id: "media-1" },
+        nested: [{ id: "inner", type: "ParagraphBlock", props: {} }],
+      },
+      children: [
+        {
+          id: "tab",
+          type: "TabItemBlock",
+          props: {},
+          children: [{ id: "p", type: "ParagraphBlock", props: {} }],
+        },
+      ],
     };
     const copy = cloneBlock(original);
     const ids = [...flattenBlocks([copy]).map((b) => b.id), copy.props["nested"][0].id];
@@ -49,7 +59,10 @@ describe("allowed parents", () => {
 });
 
 describe("rich text", () => {
-  const nodes = [{ type: "text" as const, text: "Hi " }, { type: "mention" as const, entryId: "1", collection: "weapon", slug: "sword", title: "Sword" }];
+  const nodes = [
+    { type: "text" as const, text: "Hi " },
+    { type: "mention" as const, entryId: "1", collection: "weapon", slug: "sword", title: "Sword" },
+  ];
   it("reads and writes localized values without losing other locales", () => {
     const value = { en: nodes, pt: [{ type: "text" as const, text: "Olá" }] };
     expect(richTextToPlain(value, "en")).toBe("Hi Sword");
@@ -82,7 +95,16 @@ describe("0007 rich text migration", () => {
               {
                 id: "p",
                 type: "ParagraphBlock",
-                props: { text: [{ type: "page_mention", pageId: "e1", pageSlug: "old", displayTitle: "Excalibur" }] },
+                props: {
+                  text: [
+                    {
+                      type: "page_mention",
+                      pageId: "e1",
+                      pageSlug: "old",
+                      displayTitle: "Excalibur",
+                    },
+                  ],
+                },
               },
             ],
           },
@@ -98,7 +120,13 @@ describe("0007 rich text migration", () => {
       pt: [{ type: "text", text: "História" }],
     });
     expect(section.children![0]!.props["text"]).toEqual([
-      { type: "mention", entryId: "e1", collection: "weapon", slug: "excalibur", title: "Excalibur" },
+      {
+        type: "mention",
+        entryId: "e1",
+        collection: "weapon",
+        slug: "excalibur",
+        title: "Excalibur",
+      },
     ]);
   });
 });

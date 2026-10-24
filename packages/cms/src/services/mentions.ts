@@ -47,7 +47,14 @@ export async function resolveMentions<T extends { blocks: BaseBlock[]; propertie
   const p = ctx.t.pages;
   const [rows, collections] = await Promise.all([
     ctx.db
-      .select({ id: p.id, type: p.type, slug: p.slug, title: p.title, status: p.status, deletedAt: p.deletedAt })
+      .select({
+        id: p.id,
+        type: p.type,
+        slug: p.slug,
+        title: p.title,
+        status: p.status,
+        deletedAt: p.deletedAt,
+      })
       .from(p)
       .where(inArray(p.id, ids)),
     listCollections(ctx),
@@ -61,7 +68,11 @@ export async function resolveMentions<T extends { blocks: BaseBlock[]; propertie
     const def = bySlug.get(collection);
     const live = row && !row.deletedAt && row.status === "published";
     const slug = row ? String(row.slug).replace(/^\/+/, "") : m.slug;
-    const rawTitle = row ? (typeof row.title === "string" ? JSON.parse(row.title) : row.title) : null;
+    const rawTitle = row
+      ? typeof row.title === "string"
+        ? JSON.parse(row.title)
+        : row.title
+      : null;
     const title = (rawTitle && resolveLabel(rawTitle, locale)) || m.title;
     const { href: _h, color: _c, ...stored } = m;
     return {

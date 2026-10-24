@@ -85,7 +85,7 @@ function upgradeAnyInline(value: unknown, lookup: EntryLookup): unknown {
 export function upgradeRichTextBlocks(blocks: unknown, lookup: EntryLookup): BaseBlock[] {
   if (!Array.isArray(blocks)) return [];
   return blocks.map((block: any) => {
-    const props: Record<string, unknown> = { ...(block.props ?? {}) };
+    const props: Record<string, unknown> = { ...block.props };
     if (block.type === "SectionBlock") delete props["level"];
     const rich = new Set(RICH_TEXT_PROPS[block.type] ?? []);
     for (const [k, v] of Object.entries(props))

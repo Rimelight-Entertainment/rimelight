@@ -706,7 +706,9 @@ const MentionPicker: Component<{
                     background: `color-mix(in srgb, ${rich.mentionColor(r.collection)} 15%, transparent)`,
                   }}
                 >
-                  <span class={`${rich.mentionIcon(r.collection) ?? "i-lucide-file-text"} size-3.5`} />
+                  <span
+                    class={`${rich.mentionIcon(r.collection) ?? "i-lucide-file-text"} size-3.5`}
+                  />
                 </span>
                 <span class="flex min-w-0 flex-col">
                   <span class="truncate text-sm text-highlighted">{r.title || r.slug}</span>

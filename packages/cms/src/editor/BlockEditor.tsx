@@ -201,7 +201,8 @@ const EmptyDropzone: Component<{
         e.preventDefault();
         e.stopPropagation();
         if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
-        if (!active()) props.setDrag({ id: props.drag!.id, over: { id: props.parent.id, position: "inside" } });
+        if (!active())
+          props.setDrag({ id: props.drag!.id, over: { id: props.parent.id, position: "inside" } });
       }}
       onDrop={(e) => {
         if (!accepts()) return;
@@ -337,7 +338,11 @@ const BlockView: Component<{
       return (
         <InlineText
           blockId={props.block.id}
-          value={isPlain() ? props.block.props[key] : resolveRichText(props.block.props[key], props.locale)}
+          value={
+            isPlain()
+              ? props.block.props[key]
+              : resolveRichText(props.block.props[key], props.locale)
+          }
           mode={isPlain() ? "plain" : "rich"}
           readOnly={ed.readOnly || props.block.templatedProps === true}
           class={textClass(props.block.type, props.depth)}
@@ -435,7 +440,11 @@ const BlockView: Component<{
             aria-label={`${def()?.label ?? "Block"} actions`}
             aria-haspopup="menu"
             aria-expanded={menu()}
-            title={locked() ? "Templated block (locked) · click for actions" : "Drag to move · click for actions"}
+            title={
+              locked()
+                ? "Templated block (locked) · click for actions"
+                : "Drag to move · click for actions"
+            }
             draggable={!locked() ? "true" : "false"}
             class={`flex size-6 items-center justify-center rounded text-muted hover:bg-elevated hover:text-highlighted ${locked() ? "cursor-pointer" : "cursor-grab active:cursor-grabbing"} ${menu() ? "bg-elevated text-highlighted" : ""}`}
             onDragStart={(e) => {
@@ -547,7 +556,6 @@ function containerClass(type: string, props: Record<string, any> = {}) {
       return "rounded-md border border-default bg-elevated/30 p-2";
   }
 }
-
 
 // ─── Block actions menu (opened from the handle) ─────────────────────────────
 
@@ -699,17 +707,19 @@ const BlockPicker: Component<{
 
   const matches = createMemo(() => {
     const q = query().trim().toLowerCase();
-    return ed.registry
-      .allowedChildren(parentType(), props.target.parentId ? undefined : ed.allowedRootBlocks)
-      // Also enforces nesting limits (e.g. no seventh-level section).
-      .filter((d) => ed.canPlace(d.type, props.target.parentId))
-      .filter(
-        (d) =>
-          !q ||
-          [d.label, d.type, d.description ?? "", d.category ?? "", ...(d.keywords ?? [])].some(
-            (s) => s.toLowerCase().includes(q),
-          ),
-      );
+    return (
+      ed.registry
+        .allowedChildren(parentType(), props.target.parentId ? undefined : ed.allowedRootBlocks)
+        // Also enforces nesting limits (e.g. no seventh-level section).
+        .filter((d) => ed.canPlace(d.type, props.target.parentId))
+        .filter(
+          (d) =>
+            !q ||
+            [d.label, d.type, d.description ?? "", d.category ?? "", ...(d.keywords ?? [])].some(
+              (s) => s.toLowerCase().includes(q),
+            ),
+        )
+    );
   });
 
   /** Matches grouped by category (known categories first), plus a flat order for arrow keys. */
@@ -796,7 +806,9 @@ const BlockPicker: Component<{
                 }
               }}
             />
-            <kbd class="rounded border border-default px-1.5 py-0.5 text-[10px] text-muted">Esc</kbd>
+            <kbd class="rounded border border-default px-1.5 py-0.5 text-[10px] text-muted">
+              Esc
+            </kbd>
           </div>
 
           <div ref={list} class="min-h-0 flex-1 overflow-y-auto p-2">

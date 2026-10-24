@@ -403,7 +403,9 @@ const SchemaForm: Component<{
                 class={`${inputClass} font-mono text-xs`}
                 placeholder={collectionColor(def().slug)}
                 value={def().color ?? ""}
-                onInput={(e) => patch({ color: e.currentTarget.value || collectionColor(def().slug) })}
+                onInput={(e) =>
+                  patch({ color: e.currentTarget.value || collectionColor(def().slug) })
+                }
               />
               <span
                 class="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium"

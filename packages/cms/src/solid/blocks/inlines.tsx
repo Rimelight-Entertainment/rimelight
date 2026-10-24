@@ -81,7 +81,11 @@ const LinkView: Component<{ node: LinkInlineNode }> = (props) => {
       <For each={props.node.children ?? []}>{(c) => withMarks(c.text, c.marks)}</For>
       {external() && (
         // Same icon and size RLLink uses for external links.
-        <RLIcon name="external-link" size="sm" class="ml-0.5 inline-block align-[-0.1em] opacity-70" />
+        <RLIcon
+          name="external-link"
+          size="sm"
+          class="ml-0.5 inline-block align-[-0.1em] opacity-70"
+        />
       )}
     </a>
   );

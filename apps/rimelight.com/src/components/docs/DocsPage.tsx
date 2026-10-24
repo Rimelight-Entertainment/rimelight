@@ -79,48 +79,48 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
 
   /** Version switcher + section tabs (desktop: above the columns; mobile: in the menu). */
   const versionBar = () => (
-      <div class="mb-8 flex flex-wrap items-center gap-3 border-b border-default pb-4">
-        <Show when={nav().versions.length > 0}>
-          <label class="flex items-center gap-2 text-sm text-muted">
-            <span class="sr-only">Docs version</span>
-            <select
-              class="rounded-md border border-default bg-default px-2.5 py-1.5 text-sm font-medium text-highlighted"
-              value={nav().version}
-              onChange={(e) =>
-                navigate(
-                  switchDocsVersion(index(), {
-                    basePath: basePath(),
-                    path: nav().path,
-                    target: e.currentTarget.value,
-                  }),
-                )
-              }
+    <div class="mb-8 flex flex-wrap items-center gap-3 border-b border-default pb-4">
+      <Show when={nav().versions.length > 0}>
+        <label class="flex items-center gap-2 text-sm text-muted">
+          <span class="sr-only">Docs version</span>
+          <select
+            class="rounded-md border border-default bg-default px-2.5 py-1.5 text-sm font-medium text-highlighted"
+            value={nav().version}
+            onChange={(e) =>
+              navigate(
+                switchDocsVersion(index(), {
+                  basePath: basePath(),
+                  path: nav().path,
+                  target: e.currentTarget.value,
+                }),
+              )
+            }
+          >
+            <For each={nav().versions}>
+              {(v, i) => (
+                <option value={v}>
+                  {v}
+                  {i() === 0 ? " (latest)" : ""}
+                </option>
+              )}
+            </For>
+          </select>
+        </label>
+      </Show>
+      <nav aria-label="Docs sections" class="flex flex-wrap gap-1">
+        <For each={nav().scopes}>
+          {(s) => (
+            <a
+              href={s.href}
+              aria-current={s.active ? "page" : undefined}
+              class={`rounded-md px-3 py-1.5 text-sm transition-colors ${s.active ? "bg-primary-500/10 font-medium text-primary-400" : "text-muted hover:bg-elevated hover:text-highlighted"}`}
             >
-              <For each={nav().versions}>
-                {(v, i) => (
-                  <option value={v}>
-                    {v}
-                    {i() === 0 ? " (latest)" : ""}
-                  </option>
-                )}
-              </For>
-            </select>
-          </label>
-        </Show>
-        <nav aria-label="Docs sections" class="flex flex-wrap gap-1">
-          <For each={nav().scopes}>
-            {(s) => (
-              <a
-                href={s.href}
-                aria-current={s.active ? "page" : undefined}
-                class={`rounded-md px-3 py-1.5 text-sm transition-colors ${s.active ? "bg-primary-500/10 font-medium text-primary-400" : "text-muted hover:bg-elevated hover:text-highlighted"}`}
-              >
-                {s.label}
-              </a>
-            )}
-          </For>
-        </nav>
-      </div>
+              {s.label}
+            </a>
+          )}
+        </For>
+      </nav>
+    </div>
   );
 
   return (
@@ -144,7 +144,11 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 onClick={(e) => (e.target as Element).closest("a[href]") && setMenuOpen(false)}
               >
                 {versionBar()}
-                <RLSidebar items={nav().items as any} collapsible="none" class="w-full shadow-none border-0" />
+                <RLSidebar
+                  items={nav().items as any}
+                  collapsible="none"
+                  class="w-full shadow-none border-0"
+                />
               </div>
             </RLSlideover>
           </div>
@@ -199,11 +203,18 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
             fallback={
               <Show
                 when={entry() === null}
-                fallback={<div class="p-12 text-center text-neutral-400">Loading documentation…</div>}
+                fallback={
+                  <div class="p-12 text-center text-neutral-400">Loading documentation…</div>
+                }
               >
                 <div class="p-12 text-center">
-                  <p class="text-lg text-highlighted">This page doesn't exist in {nav().version}.</p>
-                  <a class="mt-2 inline-block text-primary-400" href={`${basePath()}/${nav().version}`}>
+                  <p class="text-lg text-highlighted">
+                    This page doesn't exist in {nav().version}.
+                  </p>
+                  <a
+                    class="mt-2 inline-block text-primary-400"
+                    href={`${basePath()}/${nav().version}`}
+                  >
                     Go to the {nav().version} docs
                   </a>
                 </div>

@@ -20,6 +20,10 @@ export {
   type DocsScope,
   type DocsEntryRef,
 } from "../docs/versions";
-export { extractHeadingsFromBlocks, slugifyHeading, type TableOfContentsHeading } from "../docs/toc";
+export {
+  extractHeadingsFromBlocks,
+  slugifyHeading,
+  type TableOfContentsHeading,
+} from "../docs/toc";
 export { blocksToMarkdown, inlinesToMarkdown } from "../markdown/serializer";
 export { richTextToPlain, resolveRichText } from "../core/richtext";

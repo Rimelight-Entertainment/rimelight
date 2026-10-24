@@ -19,7 +19,8 @@ const componentModules: Record<string, any> = import.meta.glob(
 const componentRegistry: Record<string, any> = {};
 for (const [p, mod] of Object.entries(componentModules)) {
   const fileName = p.split("/").pop()?.replace(".tsx", "");
-  if (fileName && (mod.default || mod[fileName])) componentRegistry[fileName] = mod.default || mod[fileName];
+  if (fileName && (mod.default || mod[fileName]))
+    componentRegistry[fileName] = mod.default || mod[fileName];
 }
 
 const themeModules: Record<string, any> = import.meta.glob(
@@ -76,7 +77,13 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
       else if (m[3] !== undefined) {
         const val = m[3].trim();
         props[key] =
-          val === "true" ? true : val === "false" ? false : /^\d+$/.test(val) ? Number(val) : val.replace(/^["']|["']$/g, "");
+          val === "true"
+            ? true
+            : val === "false"
+              ? false
+              : /^\d+$/.test(val)
+                ? Number(val)
+                : val.replace(/^["']|["']$/g, "");
       } else props[key] = true;
     }
     // Older docs use framework-prefixed names (RLAButton / RLVButton); the component is RLButton.
@@ -130,7 +137,9 @@ const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (prop
       showcase = {
         combinationClasses,
         initialThemeClasses,
-        themeSlots: Object.keys(initialThemeClasses).filter((k) => k !== "class" && k !== "className"),
+        themeSlots: Object.keys(initialThemeClasses).filter(
+          (k) => k !== "class" && k !== "className",
+        ),
       };
     } catch {}
   }
@@ -143,7 +152,11 @@ const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (prop
       playground={block.props.playgroundUrl}
       {...showcase}
     >
-      {Comp ? <Comp {...(parsed?.props ?? {})} /> : <div innerHTML={block.props.previewHtml || ""} />}
+      {Comp ? (
+        <Comp {...(parsed?.props ?? {})} />
+      ) : (
+        <div innerHTML={block.props.previewHtml || ""} />
+      )}
     </ComponentShowcase>
   );
 };

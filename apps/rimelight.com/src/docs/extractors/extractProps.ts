@@ -33,10 +33,17 @@ export function extractPropsMeta(
     const m = /^(?:readonly\s+)?(["']?[\w$-]+["']?)(\?)?\s*:\s*([\s\S]+)$/.exec(member.code);
     if (!m) continue; // index signatures, methods…
     const name = m[1]!.replace(/["']/g, "");
-    const type = m[3]!.replace(/\s+/g, " ").replace(/^\|\s*/, "").trim();
+    const type = m[3]!
+      .replace(/\s+/g, " ")
+      .replace(/^\|\s*/, "")
+      .trim();
     const { description, defaultValue } = parseDoc(member.doc);
     if (name === "children" || name.endsWith("Slot")) {
-      slots.push({ name: name === "children" ? "default" : name.replace(/Slot$/, ""), bindings: {}, description });
+      slots.push({
+        name: name === "children" ? "default" : name.replace(/Slot$/, ""),
+        bindings: {},
+        description,
+      });
       continue;
     }
     props.push({
@@ -113,7 +120,10 @@ function topLevelMembers(body: string): { code: string; doc: string }[] {
       // continue it (multi-line unions start lines with `|`).
       const nextLine = body.slice(i + 1).trimStart();
       const continues = /^[|&]/.test(nextLine);
-      if (ch === ";" || (!continues && /:\s*\S/.test(code) && !/[|&,(<{\[:]\s*$/.test(code.trim()))) {
+      if (
+        ch === ";" ||
+        (!continues && /:\s*\S/.test(code) && !/[|&,(<{[:]\s*$/.test(code.trim()))
+      ) {
         flush();
         continue;
       }

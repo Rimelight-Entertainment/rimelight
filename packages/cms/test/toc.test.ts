@@ -22,9 +22,7 @@ describe("cms-docs-toc", () => {
             id: "3",
             type: "CalloutBlock",
             props: {},
-            children: [
-              { id: "4", type: "SectionBlock", props: { title: t("Inside a callout") } },
-            ],
+            children: [{ id: "4", type: "SectionBlock", props: { title: t("Inside a callout") } }],
           },
         ],
       },

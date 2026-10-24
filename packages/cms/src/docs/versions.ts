@@ -77,13 +77,26 @@ export function parseDocsPath(
   versions: string[],
 ): { version: string; path: string } {
   const parts = (urlPath ?? "").split("/").filter(Boolean);
-  if (parts[0] && versions.includes(parts[0])) return { version: parts[0], path: parts.slice(1).join("/") };
+  if (parts[0] && versions.includes(parts[0]))
+    return { version: parts[0], path: parts.slice(1).join("/") };
   return { version: versions[0] ?? "", path: parts.join("/") };
 }
 
 /** "rimelight-ui" → "Rimelight UI", "api" → "API", "getting-started" → "Getting started". */
 export function humanizeSegment(segment: string): string {
-  const ACRONYMS = new Set(["api", "ai", "ui", "cms", "i18n", "seo", "mcp", "cli", "faq", "sdk", "cpp"]);
+  const ACRONYMS = new Set([
+    "api",
+    "ai",
+    "ui",
+    "cms",
+    "i18n",
+    "seo",
+    "mcp",
+    "cli",
+    "faq",
+    "sdk",
+    "cpp",
+  ]);
   const words = segment.split(/[-_]/).filter(Boolean);
   return words
     .map((w, i) =>
@@ -212,7 +225,8 @@ export function buildDocsNav(
   const items = scopeNode ? toItems(scopeNode) : [];
 
   const i = pages.findIndex((p) => p.path === path);
-  const pick = (p: (typeof pages)[number] | undefined) => (p ? { label: p.label, href: p.href } : null);
+  const pick = (p: (typeof pages)[number] | undefined) =>
+    p ? { label: p.label, href: p.href } : null;
 
   const findNode = (p: string) => {
     let n: Node | undefined = root;
@@ -255,4 +269,3 @@ export function switchDocsVersion(
   if (inSection[0]) return `${base}/${inSection[0]}`;
   return `${base}/${opts.target}`;
 }
-

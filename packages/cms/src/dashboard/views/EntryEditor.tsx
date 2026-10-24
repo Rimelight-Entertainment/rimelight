@@ -977,10 +977,7 @@ const VersionsBrowser: Component<{
                       </span>
                     </Show>
                   </span>
-                  <Show
-                    when={loadingId() === v.id}
-                    fallback={<StatusBadge status={v.status} />}
-                  >
+                  <Show when={loadingId() === v.id} fallback={<StatusBadge status={v.status} />}>
                     <span class="i-lucide-loader-circle size-3.5 animate-spin text-muted" />
                   </Show>
                 </div>

@@ -49,7 +49,8 @@ export interface InlineHtmlOptions {
 
 function textHtml(n: TextInlineNode) {
   let html = escape(n.text ?? "").replace(/\n/g, "<br>");
-  for (const [mark, tag] of MARK_TAGS) if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
+  for (const [mark, tag] of MARK_TAGS)
+    if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
   return html;
 }
 

@@ -125,7 +125,9 @@ export const PagePreview: Component<{
       <div class="sticky top-0 z-10 flex items-center gap-2 border-b border-default bg-default/90 px-3 py-1.5 backdrop-blur">
         <span class="text-[11px] font-semibold uppercase tracking-wide text-muted">Preview</span>
         <Show when={props.badge}>
-          <span class="rounded bg-elevated px-1.5 py-0.5 text-[10px] text-toned">{props.badge}</span>
+          <span class="rounded bg-elevated px-1.5 py-0.5 text-[10px] text-toned">
+            {props.badge}
+          </span>
         </Show>
         <div class="ml-auto flex items-center gap-0.5 rounded-md border border-default p-0.5">
           <For

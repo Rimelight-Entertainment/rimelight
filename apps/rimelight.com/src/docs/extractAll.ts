@@ -21,7 +21,9 @@ function getComponentNameFromFilename(filename: string): string {
  * pass it explicitly from build tooling (the default resolves relative to this file, which is
  * wrong once Vite bundles the config into a temp folder).
  */
-export async function extractAllMeta(root: string = uiRoot): Promise<Record<string, ComponentMeta>> {
+export async function extractAllMeta(
+  root: string = uiRoot,
+): Promise<Record<string, ComponentMeta>> {
   const componentsDir = path.join(root, "src", "components");
 
   const solidComponents = new Map<string, { folder: string; filename: string }>();

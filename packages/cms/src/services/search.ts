@@ -11,7 +11,6 @@ import type { Entry } from "./entries";
  * Postgres uses a tsvector; SQLite falls back to LIKE matching on the same table.
  */
 
-
 export async function indexEntry(ctx: CmsContext, entry: Entry) {
   const collection = await getCollection(ctx, entry.collection).catch(() => null);
   if (collection && !collection.features.search) return;

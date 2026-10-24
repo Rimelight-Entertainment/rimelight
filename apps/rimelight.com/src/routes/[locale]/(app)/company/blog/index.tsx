@@ -57,8 +57,7 @@ export const BlogIndexPage: Component = () => {
     <RLPageSection
       title={t("page.company.blog.meta.title") || "Rimelight Blog"}
       description={
-        t("page.company.blog.meta.description") ||
-        "News, engineering deep-dives, and announcements"
+        t("page.company.blog.meta.description") || "News, engineering deep-dives, and announcements"
       }
       class="py-16"
     >

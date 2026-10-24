@@ -30,7 +30,8 @@ export function extractTextFromBlocks(
       }
       case "SectionBlock": {
         if (props["title"]) chunks.push(extractTextFromProperty(props["title"], locale));
-        if (props["description"]) chunks.push(extractTextFromProperty(props["description"], locale));
+        if (props["description"])
+          chunks.push(extractTextFromProperty(props["description"], locale));
         if (Array.isArray(props["children"])) {
           const childText = extractTextFromBlocks(props["children"], locale);
           if (childText) chunks.push(childText);
@@ -39,7 +40,8 @@ export function extractTextFromBlocks(
       }
       case "CardBlock": {
         if (props["title"]) chunks.push(extractTextFromProperty(props["title"], locale));
-        if (props["description"]) chunks.push(extractTextFromProperty(props["description"], locale));
+        if (props["description"])
+          chunks.push(extractTextFromProperty(props["description"], locale));
         break;
       }
       case "DialogueBlock": {
@@ -50,7 +52,8 @@ export function extractTextFromBlocks(
       }
       case "StepItemBlock": {
         if (props["title"]) chunks.push(extractTextFromProperty(props["title"], locale));
-        if (props["description"]) chunks.push(extractTextFromProperty(props["description"], locale));
+        if (props["description"])
+          chunks.push(extractTextFromProperty(props["description"], locale));
         break;
       }
       default:

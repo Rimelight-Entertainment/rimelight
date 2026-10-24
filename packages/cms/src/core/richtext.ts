@@ -37,7 +37,11 @@ export function toRichText(value: unknown): RichText {
 /** The nodes for `locale` (falling back to `fallback`, then the first locale present). */
 export function resolveRichText(value: unknown, locale = "en", fallback = "en"): RichText {
   if (isLocalizedRichText(value)) {
-    const nodes = value[locale]?.length ? value[locale] : value[fallback]?.length ? value[fallback] : Object.values(value)[0];
+    const nodes = value[locale]?.length
+      ? value[locale]
+      : value[fallback]?.length
+        ? value[fallback]
+        : Object.values(value)[0];
     return toRichText(nodes);
   }
   if (value && typeof value === "object" && !Array.isArray(value)) {

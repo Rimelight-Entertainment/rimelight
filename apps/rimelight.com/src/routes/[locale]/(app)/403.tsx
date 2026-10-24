@@ -8,8 +8,7 @@ export const Error403Page: Component = () => {
       code={403}
       title={t("page.error.forbidden.title") || "Access Forbidden"}
       description={
-        t("page.error.forbidden.description") ||
-        "You do not have permission to view this page."
+        t("page.error.forbidden.description") || "You do not have permission to view this page."
       }
       actions={[
         {
