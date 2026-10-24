@@ -55,19 +55,14 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
       >
         {t("app.banner.content") || "New: Rimelight v2 is out"}
       </RLBanner>
-
       <AppHeader stackIndex={1} />
-
       <RLMain>{props.children}</RLMain>
-
       <AppFooter />
-
       <RLScrollToTop />
       <RLShortcuts />
       <RLToaster />
       <RLRouteAnnouncer />
       <RLLayoutGrid />
-
       <Show when={!hasConsent()}>
         <div
           id="cookie-notice-container"
