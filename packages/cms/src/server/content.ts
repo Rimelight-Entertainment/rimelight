@@ -1,8 +1,6 @@
 import { Hono } from "hono";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
 import { and, desc, eq, inArray, isNull } from "drizzle-orm";
-import { pages as defaultPages } from "../schema";
+import { getCmsDb } from "../db/index";
 import { renderPageAsMarkdown } from "../docs/agent";
 import { buildDocsNavFromPages } from "../docs/config";
 
@@ -27,45 +25,19 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
     content.basePath(options.prefix);
   }
 
-  let resolvedDb: any = null;
-  const getDb = async (c?: any) => {
-    if (resolvedDb) return resolvedDb;
-    if (options.db) {
-      resolvedDb = options.db;
-      return resolvedDb;
-    }
-    if (c?.env?.DB) {
-      resolvedDb = c.env.DB;
-      return resolvedDb;
-    }
-    const envUrl =
-      c?.env?.HYPERDRIVE?.connectionString ||
-      c?.env?.HYPERDRIVE_URL ||
-      c?.env?.DATABASE_URL ||
-      (typeof process !== "undefined"
-        ? process.env?.["HYPERDRIVE_URL"] || process.env?.["DATABASE_URL"]
-        : undefined) ||
-      (typeof import.meta !== "undefined"
-        ? (import.meta as any).env?.["HYPERDRIVE_URL"] || (import.meta as any).env?.["DATABASE_URL"]
-        : undefined);
-    if (typeof envUrl === "string" && envUrl.trim().length > 0) {
-      resolvedDb = drizzle({ client: neon(envUrl.trim()) });
-      return resolvedDb;
-    }
-    if (typeof (globalThis as any).__rimelight_db !== "undefined") {
-      resolvedDb = (globalThis as any).__rimelight_db;
-      return resolvedDb;
-    }
-    throw new Error("[@rimelight/cms Content Router] No database instance found.");
+  const resolvePagesAndDb = (c?: any) => {
+    const res = getCmsDb({ db: options.db }, c);
+    return {
+      db: res.db,
+      pages: options.schema?.pages || res.tables.pages,
+    };
   };
-
-  const pages = options.schema?.pages || defaultPages;
 
   // Public list of published pages, optionally filtered by type (?type=blog|doc|legal)
   content.get("/pages", async (c) => {
     const type = c.req.query("type") || "";
     try {
-      const db = await getDb(c);
+      const { db, pages } = resolvePagesAndDb(c);
       const list = await db
         .select()
         .from(pages)
@@ -83,7 +55,7 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
     const slug = c.req.param("slug");
     const type = c.req.query("type") || "";
     try {
-      const db = await getDb(c);
+      const { db, pages } = resolvePagesAndDb(c);
       const results = await db
         .select()
         .from(pages)
@@ -104,7 +76,7 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
   // Public doc slugs + versions for version resolution
   content.get("/doc-versions", async (c) => {
     try {
-      const db = await getDb(c);
+      const { db, pages } = resolvePagesAndDb(c);
       const allDocPages = await db
         .select({ slug: pages.slug, content: pages.content })
         .from(pages)
@@ -131,7 +103,7 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
     const slugs = (c.req.query("slugs") || "").split(",").filter(Boolean);
     if (slugs.length === 0) return c.json({ pages: [] });
     try {
-      const db = await getDb(c);
+      const { db, pages } = resolvePagesAndDb(c);
       const results = await db
         .select()
         .from(pages)
@@ -146,7 +118,7 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
   // Dynamic docs config derived from database docs
   content.get("/docs-config", async (c) => {
     try {
-      const db = await getDb(c);
+      const { db, pages } = resolvePagesAndDb(c);
       const allDocPages = await db
         .select()
         .from(pages)
@@ -172,7 +144,7 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
     ];
 
     try {
-      const db = await getDb(c);
+      const { db, pages } = resolvePagesAndDb(c);
       const results = await db
         .select()
         .from(pages)

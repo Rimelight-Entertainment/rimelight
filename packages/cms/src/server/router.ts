@@ -1,18 +1,9 @@
 import { Hono } from "hono";
 import { auth as defaultAuth } from "@rimelight/auth";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { getCmsDb } from "../db/index";
+import * as defaultPgTables from "../schema/index";
 import { createContentRouter } from "./content";
 import { createSearchRouter } from "./search";
-import {
-  pages as defaultPages,
-  pageDrafts as defaultPageDrafts,
-  pageDraftLocks as defaultPageDraftLocks,
-  pageTemplates as defaultPageTemplates,
-  pageVersions as defaultPageVersions,
-  pageVersionApprovals as defaultPageVersionApprovals,
-  contentTypes as defaultContentTypes,
-} from "../schema";
 import { eq, and, desc, isNull } from "drizzle-orm";
 import {
   validateServerBlockPayload,
@@ -40,6 +31,7 @@ export interface CmsRouterOptions {
   prefix?: string | undefined;
   db?: any;
   auth?: { getSession: (req: Request) => Promise<any> } | undefined;
+  dev?: { bypassAuth?: boolean | undefined } | undefined;
   schema?:
     | {
         pages?: any;
@@ -87,40 +79,51 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     return c.json({ error: err?.message || "Internal CMS Error" }, 500);
   });
 
-  // Database resolution (from Worker env bindings, explicit option, virtual:rimelight-cms, or global)
-  let resolvedDb: any = null;
-  const getDb = async (c?: any) => {
-    if (resolvedDb) return resolvedDb;
-    if (c?.env?.DB) {
-      resolvedDb = c.env.DB;
-      return resolvedDb;
-    }
-    const envUrl =
-      c?.env?.HYPERDRIVE?.connectionString ||
-      c?.env?.HYPERDRIVE_URL ||
-      c?.env?.DATABASE_URL ||
-      (typeof process !== "undefined"
-        ? process.env?.["HYPERDRIVE_URL"] || process.env?.["DATABASE_URL"]
-        : undefined) ||
-      (typeof import.meta !== "undefined"
-        ? (import.meta as any).env?.["HYPERDRIVE_URL"] || (import.meta as any).env?.["DATABASE_URL"]
-        : undefined);
-    if (typeof envUrl === "string" && envUrl.trim().length > 0) {
-      resolvedDb = drizzle({ client: neon(envUrl.trim()) });
-      return resolvedDb;
-    }
-    if (options.db) {
-      resolvedDb = options.db;
-      return resolvedDb;
-    }
-    if (typeof (globalThis as any).__rimelight_db !== "undefined") {
-      resolvedDb = (globalThis as any).__rimelight_db;
-      return resolvedDb;
-    }
-    throw new Error(
-      "[@rimelight/cms] No database instance found. Please configure `DATABASE_URL`, a `#db` export, or a `DB` binding.",
-    );
+  // Unified database resolution
+  const resolveCms = (c?: any) => {
+    const res = getCmsDb({ db: options.db }, c);
+    const schema = options.schema || {};
+    return {
+      db: res.db,
+      dialect: res.dialect,
+      pages: schema.pages || res.tables.pages,
+      pageDrafts: schema.pageDrafts || res.tables.pageDrafts,
+      pageDraftLocks: schema.pageDraftLocks || res.tables.pageDraftLocks,
+      pageTemplates: schema.pageTemplates || res.tables.pageTemplates,
+      pageVersions: schema.pageVersions || res.tables.pageVersions,
+      pageVersionApprovals: schema.pageVersionApprovals || res.tables.pageVersionApprovals,
+      contentTypes: schema.contentTypes || res.tables.contentTypes,
+    };
   };
+
+  const getDb = async (c?: any) => {
+    return resolveCms(c).db;
+  };
+
+  // Scope-level table references that resolve dynamically or fall back to default PG tables
+  let defaultTables: any = null;
+  try {
+    defaultTables = resolveCms();
+  } catch {
+    // If no db configured at instantiation time (e.g. singleton export), use default PG tables
+  }
+  const pages = options.schema?.pages || defaultTables?.pages || defaultPgTables.pages;
+  const pageDrafts =
+    options.schema?.pageDrafts || defaultTables?.pageDrafts || defaultPgTables.pageDrafts;
+  const pageDraftLocks =
+    options.schema?.pageDraftLocks ||
+    defaultTables?.pageDraftLocks ||
+    defaultPgTables.pageDraftLocks;
+  const pageTemplates =
+    options.schema?.pageTemplates || defaultTables?.pageTemplates || defaultPgTables.pageTemplates;
+  const pageVersions =
+    options.schema?.pageVersions || defaultTables?.pageVersions || defaultPgTables.pageVersions;
+  const pageVersionApprovals =
+    options.schema?.pageVersionApprovals ||
+    defaultTables?.pageVersionApprovals ||
+    defaultPgTables.pageVersionApprovals;
+  const contentTypes =
+    options.schema?.contentTypes || defaultTables?.contentTypes || defaultPgTables.contentTypes;
 
   const auth = options.auth || defaultAuth;
   const getSession = async (c: any) => {
@@ -129,19 +132,12 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     const session = await auth.getSession(c.req.raw);
     if (session) return session;
 
-    let isLocalHost = false;
-    try {
-      const host = new URL(c.req.url).hostname;
-      isLocalHost =
-        host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]";
-    } catch {}
-
-    const isDev =
-      isLocalHost ||
+    // Secure dev bypass: only when explicitly opted in via options.dev.bypassAuth AND in DEV environment
+    const isDevEnv =
       (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
       (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV));
 
-    if (isDev) {
+    if (options.dev?.bypassAuth && isDevEnv) {
       return {
         userId: "dev-admin-user",
         email: "admin@rimelight.com",
@@ -153,13 +149,6 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
     }
     return null;
   };
-  const pages = options.schema?.pages || defaultPages;
-  const pageDrafts = options.schema?.pageDrafts || defaultPageDrafts;
-  const pageDraftLocks = options.schema?.pageDraftLocks || defaultPageDraftLocks;
-  const pageTemplates = options.schema?.pageTemplates || defaultPageTemplates;
-  const pageVersions = options.schema?.pageVersions || defaultPageVersions;
-  const pageVersionApprovals = options.schema?.pageVersionApprovals || defaultPageVersionApprovals;
-  const contentTypes = options.schema?.contentTypes || defaultContentTypes;
 
   async function checkApprovalRequirements(
     db: any,

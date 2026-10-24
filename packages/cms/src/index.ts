@@ -33,8 +33,9 @@ export type { AuthAdapter, UserSessionContext, UserType } from "@rimelight/auth"
 // Search
 export * from "./search/query";
 
-// Database Schemas & Migration
+// Database Schemas, Resolvers & Migration
 export * from "./schema/index";
+export * from "./db/index";
 
 // Toast API
 export * from "./client/toast";
