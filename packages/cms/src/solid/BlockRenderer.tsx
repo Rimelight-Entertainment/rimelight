@@ -2,6 +2,7 @@ import { For, Show, type Component } from "solid-js";
 import { Dynamic } from "@solidjs/web";
 import type { BaseBlock } from "../core/types/blocks";
 import { defaultBlockComponents } from "./blocks/index";
+import { BlockRegistry } from "../core/registry";
 
 export interface BlockRendererProps {
   block: BaseBlock;
@@ -18,9 +19,14 @@ export const BlockRenderer: Component<BlockRendererProps> = (props) => {
   const index = () => props.index ?? 0;
   const overrides = () => props.components ?? {};
 
-  const Resolved = () =>
-    (overrides()[block().type] as Component<any> | undefined) ??
-    defaultBlockComponents[block().type];
+  const Resolved = () => {
+    const t = block().type;
+    return (
+      (overrides()[t] as Component<any> | undefined) ??
+      BlockRegistry.get(t)?.render ??
+      defaultBlockComponents[t]
+    );
+  };
 
   const rawChildren = () => block().children ?? block().props?.["children"] ?? [];
   const children = () => (Array.isArray(rawChildren()) ? rawChildren() : []) as BaseBlock[];
