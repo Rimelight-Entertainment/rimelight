@@ -6,9 +6,9 @@ export const Error403Page: Component = () => {
   return (
     <AppError
       code={403}
-      title={t("page_error.error_forbidden_title") || "Access Forbidden"}
+      title={t("page.error.forbidden.title") || "Access Forbidden"}
       description={
-        t("page_error.error_forbidden_description") ||
+        t("page.error.forbidden.description") ||
         "You do not have permission to view this page."
       }
       actions={[

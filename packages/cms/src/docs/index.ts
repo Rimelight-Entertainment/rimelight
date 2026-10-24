@@ -3,3 +3,4 @@ export * from "./sidebar";
 export * from "./routing";
 export * from "./toc";
 export * from "./agent";
+export * from "./versions";

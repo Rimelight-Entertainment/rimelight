@@ -175,6 +175,7 @@
     "not-found-desc": "The page you are looking for does not exist.",
     "go-home": "Go Home",
     "server-error": "Server Error",
+    "server-error-desc": "An unexpected error occurred on the server.",
     "unknown-error": "Unknown error"
   },
   "legal": {

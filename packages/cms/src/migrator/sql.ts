@@ -226,6 +226,11 @@ CREATE INDEX IF NOT EXISTS \`pages_type_status_idx\` ON \`pages\` (\`type\`, \`s
 CREATE INDEX IF NOT EXISTS \`pages_scheduled_idx\` ON \`pages\` (\`scheduled_at\`);
 `,
   },
+  {
+    name: "0006_collection_color",
+    sql: `ALTER TABLE \`content_types\` ADD COLUMN \`color\` text;
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -484,6 +489,11 @@ CREATE INDEX IF NOT EXISTS "search_vector_gin_idx" ON "content_search_index" USI
 CREATE INDEX IF NOT EXISTS "pages_type_status_idx" ON "pages" ("type", "status");
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "pages_scheduled_idx" ON "pages" ("scheduled_at") WHERE "status" = 'scheduled';
+`,
+  },
+  {
+    name: "0006_collection_color",
+    sql: `ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "color" text;
 `,
   },
 ];

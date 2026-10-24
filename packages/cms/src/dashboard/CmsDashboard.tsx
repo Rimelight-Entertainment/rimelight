@@ -7,6 +7,9 @@ import { resolveLabel } from "../core/collections/define";
 import type { CmsActor } from "../services/context";
 import { createBlockRegistry } from "../solid/blocks/index";
 import { BlockRegistryContext } from "../solid/BlockRenderer";
+import { RichTextProvider } from "../solid/blocks/inlines";
+import { RichEditingContext, type RichEditing } from "../editor/rich-context";
+import { collectionColor } from "../core/collections/color";
 import { createApi } from "./api";
 import { DashboardContext, useDashboard, type DashboardContextValue, type Toast } from "./context";
 import { Overview } from "./views/Overview";
@@ -96,6 +99,22 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
     },
   };
 
+  /** Rich text editing: "@" mention search and per-collection colours / icons. */
+  const richEditing: RichEditing = {
+    searchMentions: async (q) => {
+      const { entries } = await api.entries.list({ q: q || undefined, limit: 8 } as any);
+      return entries.map((e) => ({
+        entryId: e.id,
+        collection: e.collection,
+        slug: e.slug,
+        title: resolveLabel(e.title) || e.slug,
+      }));
+    },
+    mentionColor: (slug) => ctx.collection(slug)?.color ?? collectionColor(slug),
+    mentionIcon: (slug) => ctx.collection(slug)?.icon,
+    collectionLabel: (slug) => resolveLabel(ctx.collection(slug)?.label) || slug,
+  };
+
   onSettled(() => {
     void (async () => {
       try {
@@ -117,7 +136,11 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
       case undefined:
         return <Overview />;
       case "c":
-        return <EntriesList collection={second!} create={third === "new"} />;
+        return second ? (
+          <EntriesList collection={second} create={third === "new"} />
+        ) : (
+          <EntriesList />
+        );
       case "e":
         return <EntryEditor id={second!} />;
       case "media":
@@ -141,6 +164,8 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
 
   return (
     <DashboardContext value={ctx}>
+      <RichEditingContext value={richEditing}>
+      <RichTextProvider collections={collections()}>
       <BlockRegistryContext value={registry}>
         <Show
           when={!authError()}
@@ -213,12 +238,14 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
           </For>
         </div>
       </BlockRegistryContext>
+      </RichTextProvider>
+      </RichEditingContext>
     </DashboardContext>
   );
 };
 
 const Sidebar: Component<{ active: string }> = (props) => {
-  const { collections, href, user } = useDashboard();
+  const { href, user } = useDashboard();
   const isActive = (p: string) =>
     p === "/" ? props.active === "/" : props.active === p || props.active.startsWith(`${p}/`);
 
@@ -248,13 +275,9 @@ const Sidebar: Component<{ active: string }> = (props) => {
         <span class="font-semibold text-highlighted">Rimelight CMS</span>
       </div>
       {item("/", "Overview", "i-lucide-layout-dashboard")}
-      {heading("Content")}
-      <For each={collections()}>
-        {(c) =>
-          item(`/c/${c.slug}`, resolveLabel(c.labelPlural ?? c.label), c.icon ?? "i-lucide-box")
-        }
-      </For>
       {heading("Library")}
+      {/* One entry point for all content; collections are filters inside it. */}
+      {item("/c", "Content", "i-lucide-files")}
       {item("/media", "Media", "i-lucide-image")}
       {item("/taxonomies", "Taxonomies", "i-lucide-tags")}
       {item("/bylines", "Bylines", "i-lucide-users")}

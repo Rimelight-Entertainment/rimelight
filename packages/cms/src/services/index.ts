@@ -7,6 +7,7 @@ import * as taxonomies from "./taxonomies";
 import * as bylines from "./bylines";
 import * as search from "./search";
 import * as settings from "./site-settings";
+import * as mentions from "./mentions";
 
 export * from "./context";
 export * from "./collections";
@@ -16,6 +17,7 @@ export * from "./taxonomies";
 export * from "./bylines";
 export * from "./search";
 export * from "./site-settings";
+export * from "./mentions";
 
 type Bound<F> = F extends (ctx: CmsContext, ...args: infer A) => infer R
   ? (...args: A) => R
@@ -78,6 +80,7 @@ export function createCms(input: CmsContextInput | CmsContext) {
     taxonomies: bind(ctx, taxonomies),
     bylines: bind(ctx, bylines),
     search: bind(ctx, search),
+    mentions: bind(ctx, mentions),
     settings: bind(ctx, settings),
     stats: () => stats(ctx),
   };

@@ -28,14 +28,17 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     icon: "i-lucide-heading",
     category: "structure",
     keywords: ["heading", "h2", "h3", "title"],
-    defaultProps: { title: "" },
+    defaultProps: { title: [] },
     fields: {
-      title: { type: "text", label: "Heading" },
-      description: { type: "textarea", label: "Subtitle" },
+      title: { type: "richtext", label: "Heading" },
+      description: { type: "richtext", label: "Subtitle" },
       mainArticleSlug: { type: "text", label: "Main article slug" },
     },
     inlineText: "title",
+    richText: true,
     children: "*",
+    // h2 … h6: a section inside five others would need an h7.
+    maxNesting: 5,
   }),
   defineBlock({
     type: "CalloutBlock",
@@ -89,6 +92,7 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     icon: "i-lucide-dot",
     category: "text",
     nestedOnly: true,
+    parents: ["UnorderedListBlock", "OrderedListBlock"],
     defaultProps: { content: [] },
     inlineText: "content",
     richText: true,
@@ -157,6 +161,7 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     icon: "i-lucide-panel-top",
     category: "structure",
     nestedOnly: true,
+    parents: ["TabsBlock"],
     defaultProps: { label: "Tab" },
     fields: { label: { type: "text", label: "Label" }, icon: { type: "text", label: "Icon" } },
     inlineText: "label",
@@ -171,7 +176,12 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     defaultProps: {},
     children: ["StepItemBlock"],
     initialChildren: () => [
-      { id: createBlockId(), type: "StepItemBlock", props: { title: "Step 1" }, children: [] },
+      {
+        id: createBlockId(),
+        type: "StepItemBlock",
+        props: { title: [{ type: "text", text: "Step 1" }] },
+        children: [],
+      },
     ],
   }),
   defineBlock({
@@ -180,12 +190,14 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     icon: "i-lucide-circle-check",
     category: "structure",
     nestedOnly: true,
-    defaultProps: { title: "" },
+    parents: ["StepsBlock"],
+    defaultProps: { title: [] },
     fields: {
-      title: { type: "text", label: "Title" },
+      title: { type: "richtext", label: "Title" },
       description: { type: "textarea", label: "Description" },
     },
     inlineText: "title",
+    richText: true,
     children: "*",
   }),
   defineBlock({
@@ -210,6 +222,7 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     icon: "i-lucide-square",
     category: "structure",
     nestedOnly: true,
+    parents: ["CardsBlock"],
     defaultProps: { title: "" },
     fields: {
       title: { type: "text", label: "Title" },

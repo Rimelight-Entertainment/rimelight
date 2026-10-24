@@ -38,6 +38,18 @@ function extractThemeFromFile(filePath: string): any {
       continue;
     }
 
+    // Skip comments: an apostrophe in `// Nuxt's tokens` is not a string delimiter.
+    if (char === "/" && content[i + 1] === "/") {
+      const nl = content.indexOf("\n", i);
+      i = nl === -1 ? content.length : nl;
+      continue;
+    }
+    if (char === "/" && content[i + 1] === "*") {
+      const close = content.indexOf("*/", i + 2);
+      i = close === -1 ? content.length : close + 1;
+      continue;
+    }
+
     if (char === '"' || char === "'" || char === "`") {
       inString = true;
       stringChar = char;

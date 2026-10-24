@@ -1,8 +1,7 @@
 import type { Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type { BaseBlock } from "../../core/types/blocks";
-import type { InlineNode } from "../../core/types/inline";
-import { InlineNodes } from "./inlines";
+import { RichText } from "./inlines";
 
 export interface BlockViewProps {
   block: BaseBlock;
@@ -18,6 +17,6 @@ export const ParagraphBlock: Component<BlockViewProps> = (props) => (
     class="cms-paragraph text-base leading-relaxed text-neutral-800 my-4 whitespace-pre-wrap break-words"
     data-block-id={props.block.id}
   >
-    <InlineNodes nodes={(props.block.props?.["text"] as InlineNode[]) ?? []} />
+    <RichText value={props.block.props?.["text"]} locale={props.locale} />
   </p>
 );

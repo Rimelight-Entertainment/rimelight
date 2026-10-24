@@ -130,15 +130,15 @@ export default function DevLocalizationPage() {
         },
         {
           label: t("dev.localization.t.count.title"),
-          code: `t("dev_localization.sample_items", { count: 1 })\nt("dev_localization.sample_items", { count: 1234 })`,
+          code: `t("dev.localization.sample.items", { count: 1 })\nt("dev.localization.sample.items", { count: 1234 })`,
           description: t("dev.localization.t.count.description"),
-          value: `${t("dev_localization.sample_items", { count: 1 })}\n${t("dev_localization.sample_items", { count: 1234 })}`,
+          value: `${t("dev.localization.sample.items", { count: 1 })}\n${t("dev.localization.sample.items", { count: 1234 })}`,
         },
         {
           label: t("dev.localization.t.count.branch.title"),
-          code: `t("dev_localization.sample_other_only", { count: 1 })`,
+          code: `t("dev.localization.sample.other.only", { count: 1 })`,
           description: t("dev.localization.t.count.branch.description"),
-          value: t("dev_localization.sample_other_only", { count: 1 }),
+          value: t("dev.localization.sample.other.only", { count: 1 }),
         },
         {
           label: t("dev.localization.t.function.title"),
@@ -161,9 +161,9 @@ export default function DevLocalizationPage() {
         },
         {
           label: t("dev.localization.t.raw.title"),
-          code: `t.raw("dev_localization.sample_object")`,
+          code: `t.raw("dev.localization.sample.object")`,
           description: t("dev.localization.t.raw.description"),
-          value: JSON.stringify(t.raw("dev_localization.sample_object") ?? null),
+          value: JSON.stringify(t.raw("dev.localization.sample.object") ?? null),
         },
         {
           label: t("dev.localization.t.raw.locale.title"),

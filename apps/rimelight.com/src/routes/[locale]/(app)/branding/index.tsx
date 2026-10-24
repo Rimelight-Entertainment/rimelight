@@ -7,7 +7,7 @@ export const BrandingPage: Component = () => {
       <h1 class="text-4xl font-extrabold text-white tracking-tight">
         {t("page.branding.meta.title")}
       </h1>
-      <p class="text-neutral-400 mt-4 text-lg">{t("branding.description")}</p>
+      <p class="text-neutral-400 mt-4 text-lg">{t("page.branding.meta.description")}</p>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { For, type Component } from "solid-js";
-import { InlineNodes } from "./inlines";
+import { RichText } from "./inlines";
 import type { BlockViewProps } from "./ParagraphBlock";
 
 export const UnorderedListBlock: Component<BlockViewProps> = (props) => {
@@ -13,7 +13,7 @@ export const UnorderedListBlock: Component<BlockViewProps> = (props) => {
       <For each={items()}>
         {(item) => (
           <li>
-            <InlineNodes nodes={(item.props?.["content"] as any) ?? []} />
+            <RichText value={item.props?.["content"]} locale={props.locale} />
           </li>
         )}
       </For>

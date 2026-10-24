@@ -648,17 +648,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 : `${currentUser()?.name || currentUser()?.email || "User"}`,
           },
           {
-            label: t("app_header.user_dropdown_dashboard"),
+            label: t("app.header.user.dropdown.dashboard"),
             icon: "i-lucide-layout-dashboard",
             to: getLocaleUrl("/dashboard"),
           },
           {
-            label: t("app_header.user_dropdown_profile"),
+            label: t("app.header.user.dropdown.profile"),
             icon: "i-lucide-user",
             to: getLocaleUrl("/dashboard/profile"),
           },
           {
-            label: t("app_header.user_dropdown_settings"),
+            label: t("app.header.user.dropdown.settings"),
             icon: "i-lucide-cog",
             to: getLocaleUrl("/dashboard/settings"),
           },
@@ -666,7 +666,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             type: "separator",
           },
           {
-            label: t("app_header.user_dropdown_sign-out"),
+            label: t("app.header.user.dropdown.sign-out"),
             icon: "i-lucide-log-out",
             to: "/api/auth/logout",
             color: "error",

@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "./types.ts";
 import { extractAllThemesMeta } from "./extractors/extractTheme";
+import { extractPropsMeta } from "./extractors/extractProps";
 
 const pathDirname = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(pathDirname, "..", "..", "..", "..", "packages", "ui");
@@ -15,8 +16,13 @@ function getComponentNameFromFilename(filename: string): string {
   return filename.replace(/^RL/, "").replace(/\.tsx$/, "");
 }
 
-export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
-  const componentsDir = path.join(uiRoot, "src", "components");
+/**
+ * Extracts metadata for every RL component in packages/ui. `root` is the UI package directory;
+ * pass it explicitly from build tooling (the default resolves relative to this file, which is
+ * wrong once Vite bundles the config into a temp folder).
+ */
+export async function extractAllMeta(root: string = uiRoot): Promise<Record<string, ComponentMeta>> {
+  const componentsDir = path.join(root, "src", "components");
 
   const solidComponents = new Map<string, { folder: string; filename: string }>();
 
@@ -46,9 +52,10 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
     sortedNames.map(async (name) => {
       const solid = solidComponents.get(name);
 
-      let props: PropMeta[] = [];
-      let slots: SlotMeta[] = [];
-      let emits: EmitMeta[] = [];
+      const { props, slots }: { props: PropMeta[]; slots: SlotMeta[] } = solid
+        ? extractPropsMeta(name, componentsDir)
+        : { props: [], slots: [] };
+      const emits: EmitMeta[] = [];
       const frameworks: "solid"[] = ["solid"];
 
       const theme = themesMap[name] || null;

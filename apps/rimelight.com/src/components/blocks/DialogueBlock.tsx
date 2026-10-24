@@ -1,5 +1,6 @@
 import type { Component } from "solid-js";
 import type { BaseBlock } from "@rimelight/cms";
+import { RichText } from "@rimelight/cms/solid";
 
 export interface DialogueBlockProps {
   block: BaseBlock;
@@ -18,7 +19,9 @@ export const DialogueBlock: Component<DialogueBlockProps> = (props) => {
       {parenthetical() && (
         <div class="text-xs italic text-center text-neutral-600 mt-0.5">({parenthetical()})</div>
       )}
-      <div class="text-sm text-center text-neutral-700 mt-1">{line()}</div>
+      <div class="text-sm text-center text-neutral-700 mt-1">
+        <RichText value={line()} locale={props.locale} />
+      </div>
     </div>
   );
 };

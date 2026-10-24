@@ -7,7 +7,7 @@ import type { RLButtonProps } from "@rimelight/ui/components/button/button.types
 export const GrandTaleIndexPage: Component = () => {
   const heroLinks = (): RLButtonProps[] => [
     {
-      label: t("page_grand-tale_home.hero_btn") || "Play Grand Tale",
+      label: t("page.franchises.grand.tale.home.hero.button") || "Play Grand Tale",
       href: getLocaleUrl("/franchises/grand-tale/download"),
       color: "primary",
       variant: "solid",
@@ -18,7 +18,7 @@ export const GrandTaleIndexPage: Component = () => {
 
   const overviewLinks = (): RLButtonProps[] => [
     {
-      label: t("page_grand-tale_home.overview_btn") || "Learn More",
+      label: t("page.franchises.grand.tale.home.overview.button") || "Learn More",
       href: getLocaleUrl("/franchises/grand-tale/about"),
       color: "primary",
       variant: "solid",
@@ -31,8 +31,8 @@ export const GrandTaleIndexPage: Component = () => {
     <>
       <RLPageSection
         variant="hero"
-        title={t("page_grand-tale_home.hero_title")}
-        description={t("page_grand-tale_home.hero_description")}
+        title={t("page.franchises.grand.tale.home.sections.hero.title")}
+        description={t("page.franchises.grand.tale.home.sections.hero.description")}
         links={heroLinks()}
         ui={{
           title: "text-white text-5xl lg:text-7xl font-black uppercase tracking-tight",
@@ -53,8 +53,8 @@ export const GrandTaleIndexPage: Component = () => {
 
       <RLPageSection
         orientation="horizontal"
-        title={t("page_grand-tale_home.overview_title")}
-        description={t("page_grand-tale_home.overview_description")}
+        title={t("page.franchises.grand.tale.home.sections.overview.title")}
+        description={t("page.franchises.grand.tale.home.sections.overview.description")}
         links={overviewLinks()}
         ui={{
           title: "text-white text-4xl font-extrabold uppercase",
@@ -91,26 +91,26 @@ export const GrandTaleIndexPage: Component = () => {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
               <h3 class="text-xl font-bold text-white uppercase mb-4">
-                {t("page_grand-tale_home.feature1_title")}
+                {t("page.franchises.grand.tale.home.features.tactical-combat.title")}
               </h3>
               <p class="text-neutral-400 text-sm leading-relaxed">
-                {t("page_grand-tale_home.feature1_desc")}
+                {t("page.franchises.grand.tale.home.features.tactical-combat.description")}
               </p>
             </div>
             <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
               <h3 class="text-xl font-bold text-white uppercase mb-4">
-                {t("page_grand-tale_home.feature2_title")}
+                {t("page.franchises.grand.tale.home.features.living-world.title")}
               </h3>
               <p class="text-neutral-400 text-sm leading-relaxed">
-                {t("page_grand-tale_home.feature2_desc")}
+                {t("page.franchises.grand.tale.home.features.living-world.description")}
               </p>
             </div>
             <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
               <h3 class="text-xl font-bold text-white uppercase mb-4">
-                {t("page_grand-tale_home.feature3_title")}
+                {t("page.franchises.grand.tale.home.features.deep-economy.title")}
               </h3>
               <p class="text-neutral-400 text-sm leading-relaxed">
-                {t("page_grand-tale_home.feature3_desc")}
+                {t("page.franchises.grand.tale.home.features.deep-economy.description")}
               </p>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import type { Component, ParentProps } from "solid-js";
-import type { BaseBlock } from "@rimelight/cms";
+import { isRichTextEmpty, type BaseBlock } from "@rimelight/cms";
+import { RichText } from "@rimelight/cms/solid";
 
 export interface SceneBlockProps extends ParentProps {
   block: BaseBlock;
@@ -66,7 +67,11 @@ export const SceneBlock: Component<SceneBlockProps> = (props) => {
           <span class="ml-auto text-[10px] italic text-neutral-600">{transitionLabel()}</span>
         )}
       </div>
-      {description() && <p class="text-sm text-neutral-700 mb-2">{description()}</p>}
+      {!isRichTextEmpty(description()) && (
+        <p class="text-sm text-neutral-700 mb-2">
+          <RichText value={description()} locale={props.locale} />
+        </p>
+      )}
       {hasChildren() && <div class="mt-3">{props.children}</div>}
     </div>
   );

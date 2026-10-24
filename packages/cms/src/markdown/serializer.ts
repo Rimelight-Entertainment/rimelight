@@ -1,36 +1,32 @@
-import type { BaseBlock, HeadingLevel } from "../core/types/blocks";
-import type { InlineNode, TextInlineNode, LinkInlineNode } from "../core/types/inline";
+import type { BaseBlock } from "../core/types/blocks";
+import { resolveRichText } from "../core/richtext";
+import { entryUrl } from "../core/collections/color";
 
-export function inlinesToMarkdown(
-  inlines: InlineNode[] | { en?: string } | string | undefined,
-): string {
-  if (!inlines) return "";
-  if (typeof inlines === "string") return inlines;
-  if (!Array.isArray(inlines)) {
-    return (inlines as any).en || "";
-  }
-
-  return inlines
+/** Rich text (nodes or a per-locale map) → markdown. Mentions become links to the entry. */
+export function inlinesToMarkdown(value: unknown, locale = "en"): string {
+  return resolveRichText(value, locale)
     .map((node) => {
-      if (node.type === "text") {
-        let text = (node as TextInlineNode).text || "";
-        const marks = (node as TextInlineNode).marks || [];
-        if (marks.includes("code")) text = `\`${text}\``;
-        if (marks.includes("bold")) text = `**${text}**`;
-        if (marks.includes("italic")) text = `*${text}*`;
-        if (marks.includes("strikethrough")) text = `~~${text}~~`;
-        return text;
+      switch (node.type) {
+        case "text": {
+          let text = node.text || "";
+          const marks = node.marks || [];
+          if (marks.includes("code")) text = `\`${text}\``;
+          if (marks.includes("bold")) text = `**${text}**`;
+          if (marks.includes("italic")) text = `*${text}*`;
+          if (marks.includes("strikethrough")) text = `~~${text}~~`;
+          return text;
+        }
+        case "link": {
+          const linkText = (node.children || []).map((c) => c.text).join("") || node.url;
+          return `[${linkText}](${node.url})`;
+        }
+        case "mention":
+          return `[${node.title || node.slug}](${entryUrl(true, node)})`;
+        case "emoji":
+          return node.emoji;
+        default:
+          return "";
       }
-      if (node.type === "link") {
-        const link = node as LinkInlineNode;
-        const linkText = (link.children || []).map((c) => c.text).join("") || link.url;
-        return `[${linkText}](${link.url})`;
-      }
-      if (node.type === "page_mention") {
-        const title = (node as any).displayTitle || (node as any).pageSlug || "Page";
-        return `[${title}](/${(node as any).pageSlug || ""})`;
-      }
-      return "";
     })
     .join("");
 }
@@ -50,15 +46,13 @@ export function blocksToMarkdown(
 
     switch (block.type) {
       case "SectionBlock": {
-        const level = (block.props?.["level"] as HeadingLevel) || (baseLevel as HeadingLevel);
+        // Heading level comes from nesting only (top-level section = h2).
+        const level = baseLevel;
         const hashes = "#".repeat(Math.min(6, Math.max(1, level)));
-        const title = block.props?.["title"] || "";
-        if (title) {
-          lines.push(`${hashes} ${title}`);
-        }
-        if (block.props?.["description"]) {
-          lines.push(`_${block.props["description"]}_`);
-        }
+        const title = inlinesToMarkdown(block.props?.["title"]);
+        if (title) lines.push(`${hashes} ${title}`);
+        const description = inlinesToMarkdown(block.props?.["description"]);
+        if (description) lines.push(`_${description}_`);
         if (children.length > 0) {
           lines.push(blocksToMarkdown(children, { sectionLevel: Math.min(6, level + 1) }));
         }
@@ -143,7 +137,7 @@ export function blocksToMarkdown(
       case "StepsBlock": {
         let stepIndex = 1;
         for (const step of children) {
-          const title = step.props?.title || `Step ${stepIndex}`;
+          const title = inlinesToMarkdown(step.props?.title) || `Step ${stepIndex}`;
           const desc = step.props?.description ? ` - ${step.props.description}` : "";
           const stepChildren = step.children || step.props?.children || [];
           lines.push(`${stepIndex}. **${title}**${desc}`);
@@ -156,7 +150,7 @@ export function blocksToMarkdown(
       }
 
       case "StepItemBlock": {
-        const title = block.props?.["title"] || "Step";
+        const title = inlinesToMarkdown(block.props?.["title"]) || "Step";
         const desc = block.props?.["description"] ? ` - ${block.props["description"]}` : "";
         lines.push(`- **${title}**${desc}`);
         if (children.length > 0) {

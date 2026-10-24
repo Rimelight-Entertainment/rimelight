@@ -1,5 +1,6 @@
 import { For, Show, createSignal, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
+import { collectionColor } from "../../core/collections/color";
 import type { FieldDefinition, FieldType, ResolvedCollection } from "../../core/collections/types";
 import { useDashboard } from "../context";
 import { inputClass } from "../fields/FieldInput";
@@ -63,7 +64,10 @@ export const Schemas: Component<{ slug?: string }> = (props) => {
                 href={href(`/schemas/${c.slug}`)}
                 class="flex items-start gap-3 rounded-xl border border-default p-4 hover:bg-elevated"
               >
-                <span class={`${c.icon ?? "i-lucide-box"} mt-0.5 size-5 text-primary-500`} />
+                <span
+                  class={`${c.icon ?? "i-lucide-box"} mt-0.5 size-5`}
+                  style={{ color: c.color }}
+                />
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-highlighted">{resolveLabel(c.label)}</span>
@@ -383,6 +387,34 @@ const SchemaForm: Component<{
               value={def().icon ?? ""}
               onInput={(e) => patch({ icon: e.currentTarget.value })}
             />
+          </Field>
+          <Field
+            label="Colour"
+            hint="Mentions of this collection's entries use this colour, so each type is recognizable."
+          >
+            <div class="flex items-center gap-2">
+              <input
+                type="color"
+                class="h-8 w-10 cursor-pointer rounded border border-default bg-transparent"
+                value={collectionColor(def().slug, def().color)}
+                onInput={(e) => patch({ color: e.currentTarget.value })}
+              />
+              <input
+                class={`${inputClass} font-mono text-xs`}
+                placeholder={collectionColor(def().slug)}
+                value={def().color ?? ""}
+                onInput={(e) => patch({ color: e.currentTarget.value || collectionColor(def().slug) })}
+              />
+              <span
+                class="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium"
+                style={{
+                  color: collectionColor(def().slug, def().color),
+                  background: `color-mix(in srgb, ${collectionColor(def().slug, def().color)} 15%, transparent)`,
+                }}
+              >
+                @{resolveLabel(def().label) || "Entry"}
+              </span>
+            </div>
           </Field>
           <Field label="Description">
             <textarea

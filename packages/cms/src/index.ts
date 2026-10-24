@@ -1,6 +1,7 @@
 // ─── Content model ───────────────────────────────────────────────────────────
 export * from "./core/types/blocks";
 export * from "./core/types/inline";
+export * from "./core/richtext";
 export * from "./core/types/pages";
 export * from "./core/types/templates";
 export * from "./core/types/versioning";

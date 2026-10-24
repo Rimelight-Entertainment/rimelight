@@ -43,6 +43,8 @@ export const contentTypes = pgTable("content_types", {
   name: jsonb("name").$type<Localized>().notNull(),
   description: jsonb("description").$type<Localized>(),
   icon: text("icon").default("i-lucide-box").notNull(),
+  /** Entity colour (mention chips etc.). Null = derived from the slug. */
+  color: text("color"),
   mode: text("mode").$type<CollectionMode>().default("document").notNull(),
 
   fieldSchema: jsonb("field_schema")

@@ -1,32 +1,9 @@
 import type { BaseBlock } from "./types/blocks";
-import type { InlineNode } from "./types/inline";
+import { richTextToPlain } from "./richtext";
 
-function extractTextFromInlineNodes(nodes: InlineNode[] | undefined | null): string {
-  if (!nodes || !Array.isArray(nodes)) return "";
-  return nodes
-    .map((node) => {
-      if (node.type === "text") return node.text || "";
-      if (node.type === "page_mention") return node.displayTitle || node.pageSlug || "";
-      if (node.type === "link") return extractTextFromInlineNodes(node.children);
-      return "";
-    })
-    .join("");
-}
-
+/** Plain text of a prop: rich text nodes, localized maps, or plain strings. */
 function extractTextFromProperty(prop: unknown, locale: string = "en"): string {
-  if (!prop) return "";
-  if (typeof prop === "string") return prop;
-  if (typeof prop === "object" && prop !== null) {
-    if (Array.isArray(prop)) {
-      return extractTextFromInlineNodes(prop as InlineNode[]);
-    }
-    const record = prop as Record<string, unknown>;
-    if (typeof record[locale] === "string") return record[locale] as string;
-    if (typeof record["en"] === "string") return record["en"] as string;
-    const firstVal = Object.values(record)[0];
-    if (typeof firstVal === "string") return firstVal;
-  }
-  return "";
+  return richTextToPlain(prop, locale);
 }
 
 /**
@@ -52,8 +29,8 @@ export function extractTextFromBlocks(
         break;
       }
       case "SectionBlock": {
-        if (props["title"]) chunks.push(String(props["title"]));
-        if (props["description"]) chunks.push(String(props["description"]));
+        if (props["title"]) chunks.push(extractTextFromProperty(props["title"], locale));
+        if (props["description"]) chunks.push(extractTextFromProperty(props["description"], locale));
         if (Array.isArray(props["children"])) {
           const childText = extractTextFromBlocks(props["children"], locale);
           if (childText) chunks.push(childText);
@@ -61,21 +38,19 @@ export function extractTextFromBlocks(
         break;
       }
       case "CardBlock": {
-        if (props["title"]) chunks.push(String(props["title"]));
-        if (props["description"]) chunks.push(String(props["description"]));
+        if (props["title"]) chunks.push(extractTextFromProperty(props["title"], locale));
+        if (props["description"]) chunks.push(extractTextFromProperty(props["description"], locale));
         break;
       }
       case "DialogueBlock": {
-        if (props["character"] && props["line"]) {
-          chunks.push(`${props["character"]}: ${props["line"]}`);
-        } else if (props["line"]) {
-          chunks.push(String(props["line"]));
-        }
+        const line = extractTextFromProperty(props["line"], locale);
+        if (props["character"] && line) chunks.push(`${props["character"]}: ${line}`);
+        else if (line) chunks.push(line);
         break;
       }
       case "StepItemBlock": {
-        if (props["title"]) chunks.push(String(props["title"]));
-        if (props["description"]) chunks.push(String(props["description"]));
+        if (props["title"]) chunks.push(extractTextFromProperty(props["title"], locale));
+        if (props["description"]) chunks.push(extractTextFromProperty(props["description"], locale));
         break;
       }
       default:

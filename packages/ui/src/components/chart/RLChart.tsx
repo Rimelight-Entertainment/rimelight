@@ -196,9 +196,9 @@ export const RLChart: Component<RLChartProps> = (props) => {
                     stroke="white"
                     stroke-width={1.5}
                   >
-                    <title>
-                      {p.d.label}: {p.d.value}
-                    </title>
+                    {/* textContent, not children: dynamic children inside an SVG <title> break SSR
+                        (the fragment is parsed as an HTML <title>, which can't hold hydration markers). */}
+                    <title textContent={`${p.d.label}: ${p.d.value}`} />
                   </circle>
                 )}
               </For>
@@ -233,9 +233,9 @@ export const RLChart: Component<RLChartProps> = (props) => {
                       fill={getColor(item, i)}
                       class="transition-opacity hover:opacity-85 cursor-pointer"
                     >
-                      <title>
-                        {item.label}: {item.value}
-                      </title>
+                      {/* textContent, not children: dynamic children inside an SVG <title> break SSR
+                          (the fragment is parsed as an HTML <title>, which can't hold hydration markers). */}
+                      <title textContent={`${item.label}: ${item.value}`} />
                     </path>
                   );
                 }}

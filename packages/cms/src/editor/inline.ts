@@ -1,19 +1,23 @@
-import type { InlineNode, TextInlineNode } from "../core/types/inline";
+import type { InlineMark, InlineNode, TextInlineNode } from "../core/types/inline";
+import { compactRichText, inlineToPlainText, toRichText } from "../core/richtext";
 
 /**
  * Conversions between the stored inline AST (`InlineNode[]`) and contenteditable HTML.
  * Pure functions (the DOM parser takes an element), shared by the editor and tests.
+ *
+ * Atomic nodes (mentions, emoji, icons) render as `contenteditable="false"` spans carrying
+ * their data in `data-*` attributes, so the caret treats them as single characters and the
+ * parser can read them back losslessly.
  */
 
-type Mark = NonNullable<TextInlineNode["marks"]>[number];
-const MARK_TAGS: [Mark, string][] = [
+const MARK_TAGS: [InlineMark, string][] = [
   ["code", "code"],
   ["strikethrough", "s"],
   ["underline", "u"],
   ["italic", "em"],
   ["bold", "strong"],
 ];
-const TAG_MARKS: Record<string, Mark> = {
+const TAG_MARKS: Record<string, InlineMark> = {
   STRONG: "bold",
   B: "bold",
   EM: "italic",
@@ -28,47 +32,60 @@ const TAG_MARKS: Record<string, Mark> = {
 const escape = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** Rich text props are `InlineNode[]`; a plain string (e.g. a block that changed type) becomes one text node. */
-export function toInlineNodes(value: unknown): InlineNode[] {
-  if (Array.isArray(value)) return value as InlineNode[];
-  if (typeof value === "string") return value ? [{ type: "text", text: value }] : [];
-  return [];
-}
+/** Rich text props are `InlineNode[]`; a plain string becomes one text node. */
+export const toInlineNodes = toRichText;
 
 /** The text of a plain-text prop (string, or rich nodes flattened). */
 export function toPlainText(value: unknown): string {
   if (typeof value === "string") return value;
   if (typeof value === "number") return String(value);
-  return inlineToPlainText(toInlineNodes(value));
+  return inlineToPlainText(toRichText(value));
 }
 
-export function inlineToPlainText(nodes: InlineNode[]): string {
-  return nodes
-    .map((n) =>
-      n.type === "text"
-        ? (n.text ?? "")
-        : n.type === "link"
-          ? inlineToPlainText(n.children ?? [])
-          : (n.displayTitle ?? n.pageSlug ?? ""),
-    )
-    .join("");
+export interface InlineHtmlOptions {
+  /** Text colour for a mention, by collection slug. */
+  mentionColor?: (collection: string) => string;
 }
 
-export function inlineToHtml(nodes: InlineNode[]): string {
+function textHtml(n: TextInlineNode) {
+  let html = escape(n.text ?? "").replace(/\n/g, "<br>");
+  for (const [mark, tag] of MARK_TAGS) if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
+  return html;
+}
+
+/** One mention, as it appears in the editor: the title in its collection's colour. */
+export function mentionHtml(
+  n: { entryId: string; collection: string; slug: string; title?: string | undefined },
+  opts: InlineHtmlOptions = {},
+): string {
+  const color = escape(opts.mentionColor?.(n.collection) ?? "currentColor");
+  return (
+    `<span class="cms-mention" contenteditable="false" style="color:${color};font-weight:500;cursor:default"` +
+    ` data-mention="${escape(n.entryId)}" data-collection="${escape(n.collection)}"` +
+    ` data-slug="${escape(n.slug)}" data-title="${escape(n.title ?? "")}">` +
+    `${escape(n.title || n.slug)}</span>`
+  );
+}
+
+export function inlineToHtml(nodes: InlineNode[], opts: InlineHtmlOptions = {}): string {
   return nodes
     .map((n) => {
-      if (n.type === "text") {
-        let html = escape(n.text ?? "").replace(/\n/g, "<br>");
-        for (const [mark, tag] of MARK_TAGS)
-          if (n.marks?.includes(mark)) html = `<${tag}>${html}</${tag}>`;
-        return html;
+      switch (n.type) {
+        case "text":
+          return textHtml(n);
+        case "link": {
+          const target = n.openInNewTab ? ' data-new-tab="true"' : "";
+          return `<a href="${escape(n.url ?? "")}"${target}>${(n.children ?? []).map(textHtml).join("")}</a>`;
+        }
+        case "mention":
+          return mentionHtml(n, opts);
+        case "emoji":
+          return `<span class="cms-emoji" contenteditable="false" data-emoji="${escape(n.emoji)}" data-shortcode="${escape(n.shortcode ?? "")}">${escape(n.emoji)}</span>`;
+        case "icon":
+          return `<span class="cms-inline-icon ${escape(n.name)}" contenteditable="false" data-icon="${escape(n.name)}" data-label="${escape(n.label ?? "")}"></span>`;
+        default:
+          return "";
       }
-      if (n.type === "link") {
-        const target = n.openInNewTab ? ' target="_blank"' : "";
-        return `<a href="${escape(n.url ?? "")}"${target}>${inlineToHtml(n.children ?? [])}</a>`;
-      }
-      if (n.type !== "page_mention") return "";
-      return `<span data-mention="${escape(n.pageId ?? "")}" data-slug="${escape(n.pageSlug ?? "")}" contenteditable="false">@${escape(n.displayTitle ?? n.pageSlug ?? "")}</span>`;
     })
     .join("");
 }
@@ -76,38 +93,53 @@ export function inlineToHtml(nodes: InlineNode[]): string {
 /** Parses a contenteditable element back into inline nodes, merging adjacent equal-mark runs. */
 export function htmlToInline(root: Node): InlineNode[] {
   const out: InlineNode[] = [];
-  const pushText = (text: string, marks: Mark[]) => {
+  const pushText = (text: string, marks: InlineMark[]) => {
     if (!text) return;
-    const last = out[out.length - 1];
     const sorted = [...new Set(marks)].sort();
-    if (last?.type === "text" && JSON.stringify(last.marks ?? []) === JSON.stringify(sorted)) {
-      last.text += text;
-      return;
-    }
     out.push(sorted.length ? { type: "text", text, marks: sorted } : { type: "text", text });
   };
 
-  const walk = (node: Node, marks: Mark[]) => {
+  const walk = (node: Node, marks: InlineMark[]) => {
     if (node.nodeType === 3) return pushText(node.textContent ?? "", marks);
     if (node.nodeType !== 1) return;
     const el = node as HTMLElement;
+    const d = el.dataset ?? {};
     if (el.tagName === "BR") return pushText("\n", marks);
-    if (el.dataset?.["mention"]) {
+    if (d["mention"]) {
       out.push({
-        type: "page_mention",
-        pageId: el.dataset["mention"],
-        pageSlug: el.dataset["slug"] ?? "",
-        displayTitle: (el.textContent ?? "").replace(/^@/, ""),
+        type: "mention",
+        entryId: d["mention"],
+        collection: d["collection"] ?? "page",
+        slug: d["slug"] ?? "",
+        ...(d["title"] ? { title: d["title"] } : {}),
       });
       return;
     }
+    if (d["emoji"]) {
+      out.push({
+        type: "emoji",
+        emoji: d["emoji"],
+        ...(d["shortcode"] ? { shortcode: d["shortcode"] } : {}),
+      });
+      return;
+    }
+    if (d["icon"]) {
+      out.push({ type: "icon", name: d["icon"], ...(d["label"] ? { label: d["label"] } : {}) });
+      return;
+    }
     if (el.tagName === "A") {
-      const children = htmlToInline(el).filter((c): c is TextInlineNode => c.type === "text");
+      const children = compactRichText(
+        htmlToInlineWith(el, marks).filter((c): c is TextInlineNode => c.type === "text"),
+      ) as TextInlineNode[];
+      const url = el.getAttribute("href") ?? "";
+      if (!url) return children.forEach((c) => out.push(c));
       out.push({
         type: "link",
-        url: el.getAttribute("href") ?? "",
+        url,
         children,
-        ...(el.getAttribute("target") === "_blank" ? { openInNewTab: true } : {}),
+        ...(d["newTab"] === "true" || el.getAttribute("target") === "_blank"
+          ? { openInNewTab: true }
+          : {}),
       });
       return;
     }
@@ -119,11 +151,24 @@ export function htmlToInline(root: Node): InlineNode[] {
   };
 
   root.childNodes.forEach((c) => walk(c, []));
+  const result = compactRichText(out);
   // Trailing newline from a final <br> is a browser artifact.
-  const last = out[out.length - 1];
+  const last = result[result.length - 1];
   if (last?.type === "text" && last.text.endsWith("\n")) {
-    last.text = last.text.slice(0, -1);
-    if (!last.text) out.pop();
+    const text = last.text.slice(0, -1);
+    if (text) result[result.length - 1] = { ...last, text };
+    else result.pop();
   }
-  return out;
+  return result;
+}
+
+/** Parses the children of `el` with inherited marks (used for link contents). */
+function htmlToInlineWith(el: HTMLElement, marks: InlineMark[]): InlineNode[] {
+  const nodes = htmlToInline(el);
+  if (!marks.length) return nodes;
+  return nodes.map((n) =>
+    n.type === "text"
+      ? { ...n, marks: [...new Set([...(n.marks ?? []), ...marks])].sort() as InlineMark[] }
+      : n,
+  );
 }

@@ -1,6 +1,7 @@
 import type { BaseBlock } from "../types/blocks";
 import { createBlockId } from "../blocks/tree";
 import type { CollectionDefinition, FieldDefinition, Label, ResolvedCollection } from "./types";
+import { collectionColor } from "./color";
 
 export function defineCollection<const T extends CollectionDefinition>(def: T): T {
   return def;
@@ -25,6 +26,7 @@ export function resolveCollection(
   const resolved: ResolvedCollection = {
     ...def,
     kind: def.kind ?? "document",
+    color: collectionColor(def.slug, def.color),
     source,
     groups: def.groups ?? {},
     fields: def.fields ?? {},

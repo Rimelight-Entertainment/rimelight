@@ -23,8 +23,8 @@ export const LegalIndexPage: Component = () => {
 
   return (
     <RLPageSection
-      title={t("page_legal.title") || "Legal Documents"}
-      description={t("page_legal.description") || "Our policies and agreements"}
+      title={t("page.legal.meta.title") || "Legal Documents"}
+      description={t("page.legal.meta.description") || "Our policies and agreements"}
       class="py-16"
     >
       <div class="max-w-5xl mx-auto w-full px-4 mt-8">

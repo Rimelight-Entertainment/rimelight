@@ -1,70 +1,80 @@
 import { type Component, For, Show, createMemo } from "solid-js";
-import { t, getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { useSearchParams } from "@solidjs/router";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
-import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
-import { api } from "#api/client";
+import { content, type PublicEntry, type PublicTerm } from "@rimelight/cms/solid";
+import { BlogPostCard } from "#components/blog/BlogPostCard";
 
+/**
+ * Published blog posts, newest first, filterable by category. Categories are CMS taxonomy
+ * terms (managed in the dashboard under Taxonomies → category, or via MCP) — nothing is
+ * hardcoded here. The active filter lives in the URL (`?category=engineering`) so it's linkable.
+ */
 export const BlogIndexPage: Component = () => {
-  const activeLocale = () => getCurrentLocale();
+  const [search, setSearch] = useSearchParams<{ category?: string }>();
+  const active = () => search.category || "";
+  const locale = () => getCurrentLocale();
+  const label = (l: PublicTerm["label"]) => (typeof l === "string" ? l : t.localize(l));
 
-  const blogPosts = createMemo<any[]>(
-    async () => {
-      const loc = activeLocale();
-      try {
-        const res = await (api as any).content.pages.$get({
-          query: { type: "blog" },
-        });
-        if (!res.ok) return [];
-        const data = (await res.json()) as any;
-        const allPages = (data.pages || []) as any[];
-
-        return allPages.filter((post: any) => {
-          const content =
-            typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-          return (content.properties?.locale || "en") === loc;
-        });
-      } catch {
-        return [];
-      }
-    },
+  /** Only categories that have published posts. */
+  const categories = createMemo<PublicTerm[]>(
+    async () => (await content.terms("category")).filter((c) => c.count > 0),
     { loadingValue: [] },
+  );
+
+  const posts = createMemo<PublicEntry[]>(
+    async () =>
+      (
+        await content.entries("blog", {
+          limit: 50,
+          locale: locale(),
+          ...(active() ? { taxonomy: "category", term: active() } : {}),
+        })
+      ).entries,
+    { loadingValue: [] },
+  );
+
+  const chip = (slug: string, text: string, count?: number) => (
+    <button
+      type="button"
+      aria-pressed={active() === slug}
+      class={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+        active() === slug
+          ? "border-primary-500 bg-primary-500/15 text-primary-300"
+          : "border-neutral-800 text-neutral-400 hover:border-neutral-600 hover:text-neutral-200"
+      }`}
+      onClick={() => setSearch({ category: slug || undefined })}
+    >
+      {text}
+      <Show when={count !== undefined}>
+        <span class="ml-1.5 text-xs opacity-60">{count}</span>
+      </Show>
+    </button>
   );
 
   return (
     <RLPageSection
-      title={t("page_blog.section_hero_title") || "Rimelight Blog"}
+      title={t("page.company.blog.meta.title") || "Rimelight Blog"}
       description={
-        t("page_blog.section_hero_description") || "News, engineering deep-dives, and announcements"
+        t("page.company.blog.meta.description") ||
+        "News, engineering deep-dives, and announcements"
       }
       class="py-16"
     >
       <div class="max-w-7xl mx-auto w-full px-4 mt-8">
+        <Show when={categories().length > 0}>
+          <nav aria-label="Categories" class="mb-10 flex flex-wrap justify-center gap-2">
+            {chip("", "All")}
+            <For each={categories()}>{(c) => chip(c.slug, label(c.label), c.count)}</For>
+          </nav>
+        </Show>
+
         <RLGrid cols={3}>
-          <For each={blogPosts() || []}>
-            {(post) => {
-              const content =
-                typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-              const title = t.localize(post.title);
-              const description =
-                t.localize(post.description) || content.properties?.description || "";
-              const heroImage = content.properties?.heroImage;
-              const postDate = post.postedAt || post.createdAt;
-              return (
-                <RLPost
-                  title={title}
-                  description={description}
-                  date={postDate}
-                  image={heroImage}
-                  to={getLocaleUrl(`/company/blog/${post.slug}/`)}
-                  variant="ghost"
-                />
-              );
-            }}
-          </For>
+          <For each={posts() || []}>{(post) => <BlogPostCard post={post} />}</For>
         </RLGrid>
 
-        <Show when={!blogPosts() || blogPosts()!.length === 0}>
+        <Show when={!posts() || posts()!.length === 0}>
           <p class="text-center text-neutral-500 py-12">No blog posts available yet.</p>
         </Show>
       </div>

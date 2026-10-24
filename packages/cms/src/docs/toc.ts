@@ -1,3 +1,6 @@
+import type { BaseBlock } from "../core/types/blocks";
+import { richTextToPlain } from "../core/richtext";
+
 export interface TableOfContentsHeading {
   depth: number;
   slug: string;
@@ -17,31 +20,34 @@ export function slugifyHeading(text: string): string {
     .replace(/-+$/, "");
 }
 
+/**
+ * Headings from section blocks. The level comes from nesting (top-level section = h2), the
+ * same rule the renderer uses, so the TOC always matches the page. Sections inside other
+ * containers (callouts, tabs…) are found too; only sections add a level.
+ */
 export function extractHeadingsFromBlocks(
-  blocks: any[] = [],
+  blocks: BaseBlock[] = [],
   currentDepth = 2,
+  locale = "en",
 ): TableOfContentsHeading[] {
   if (!Array.isArray(blocks)) return [];
   const headings: TableOfContentsHeading[] = [];
-
   for (const block of blocks) {
     if (!block) continue;
-    if (block.type === "SectionBlock") {
-      const title = block.props?.title || "";
-      const level = Number(block.props?.level) || currentDepth;
-      if (title) {
-        headings.push({
-          depth: level,
-          slug: slugifyHeading(title),
-          text: title,
-        });
-      }
-      const children = block.children || block.props?.children || [];
-      if (Array.isArray(children) && children.length > 0) {
-        headings.push(...extractHeadingsFromBlocks(children, Math.min(6, level + 1)));
-      }
+    const isSection = block.type === "SectionBlock";
+    if (isSection) {
+      const text = richTextToPlain(block.props?.["title"], locale);
+      if (text) headings.push({ depth: currentDepth, slug: slugifyHeading(text), text });
+    }
+    if (block.children?.length) {
+      headings.push(
+        ...extractHeadingsFromBlocks(
+          block.children,
+          isSection ? Math.min(6, currentDepth + 1) : currentDepth,
+          locale,
+        ),
+      );
     }
   }
-
   return headings;
 }

@@ -23,6 +23,8 @@ export interface PublicEntry {
   updatedAt: Date | null;
   blocks: Entry["published"]["blocks"];
   properties: Entry["published"]["properties"];
+  /** Taxonomy terms (categories, tags…) assigned to the entry. */
+  terms: { taxonomy: string; slug: string; label: Record<string, string> | string }[];
 }
 
 function publicEntry(entry: Entry | EntrySummary, roles?: string[]): PublicEntry {
@@ -42,7 +44,21 @@ function publicEntry(entry: Entry | EntrySummary, roles?: string[]): PublicEntry
       roles ? { userId: "", roles, permissions: [] } : undefined,
     ),
     properties: published.properties,
+    terms: [],
   };
+}
+
+/** Attaches each entry's taxonomy terms (one query for the whole list). */
+async function withTerms(cms: Cms, entries: PublicEntry[]): Promise<PublicEntry[]> {
+  const byEntry = await cms.taxonomies.getTermsForEntries(entries.map((e) => e.id));
+  return entries.map((e) => ({
+    ...e,
+    terms: (byEntry.get(e.id) ?? []).map((t) => ({
+      taxonomy: t.taxonomy,
+      slug: t.slug,
+      label: t.label as any,
+    })),
+  }));
 }
 
 /**
@@ -94,8 +110,15 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
         : {}),
     });
     const roles = await readerRoles(c);
+    const resolved = await cms.mentions.resolveMentions(
+      await withTerms(
+        cms,
+        entries.map((e: any) => publicEntry(e, roles)),
+      ),
+      c.req.query("locale") ?? "en",
+    );
     cache(c);
-    return c.json({ entries: entries.map((e: any) => publicEntry(e, roles)), total });
+    return c.json({ entries: resolved, total });
   });
 
   content.get("/collections/:collection/:slug{.+}", async (c) => {
@@ -109,7 +132,10 @@ export function createContentRouter(options: ContentRouterOptions = {}) {
       c.req.param("collection"),
     );
     if (!entry) return asMarkdown ? c.text("Not Found", 404) : c.json({ entry: null }, 404);
-    const pub = publicEntry(entry, await readerRoles(c));
+    const [pub] = await cms.mentions.resolveMentions(
+      await withTerms(cms, [publicEntry(entry, await readerRoles(c))]),
+      c.req.query("locale") ?? "en",
+    );
     if (asMarkdown) {
       const url = new URL(c.req.url);
       return new Response(

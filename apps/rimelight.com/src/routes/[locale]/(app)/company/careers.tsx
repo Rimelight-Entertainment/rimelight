@@ -9,10 +9,10 @@ export const CareersPage: Component = () => {
       <section class="flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 gap-6 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-primary-500/10 to-transparent pointer-events-none" />
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight max-w-4xl">
-          {t("careers.title") || "Build Worlds With Us"}
+          {t("page.company.careers.title") || "Build Worlds With Us"}
         </h1>
         <p class="text-lg md:text-xl text-neutral-400 max-w-2xl">
-          {t("careers.description") ||
+          {t("page.company.careers.description") ||
             "Explore opportunities at Rimelight Entertainment and help shape the future of gaming."}
         </p>
       </section>

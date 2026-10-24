@@ -1,11 +1,14 @@
 import { For, Show, createSignal, onCleanup, onSettled, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import { resolveLabel } from "../../core/collections/define";
 import type { BylineCredit, BylineRole } from "../../core/types/bylines";
 import type { Entry, LockState } from "../../services/entries";
 import { isAdmin } from "../../auth/roles";
 import { createBlockEditor, type BlockEditorState } from "../../editor/store";
-import { BlockEditor } from "../../editor/BlockEditor";
+import { ADD_BLOCK_SHORTCUT, BlockEditor } from "../../editor/BlockEditor";
+import { defineShortcuts, formatShortcutKeys } from "@rimelight/ui/shortcuts";
 import { BlockInspector } from "../../editor/BlockInspector";
+import { PagePreview, SplitPane } from "../../editor/SplitPreview";
 import { useDashboard } from "../context";
 import { FieldGroups, inputClass } from "../fields/FieldInput";
 import {
@@ -84,10 +87,12 @@ const EditorWorkspace: Component<{
   onEntry: (e: Entry) => void;
   onTakeOver: () => Promise<void>;
 }> = (props) => {
-  const { api, collection: getCollection, href, navigate, toast, user } = useDashboard();
+  const { api, collection: getCollection, href, navigate, toast, user, locales } = useDashboard();
   const collection = () => getCollection(props.entry.collection);
   const readOnly = () => !!props.lock?.locked && !props.lock.ownedByActor;
-  const [tab, setTab] = createSignal<"entry" | "block" | "history">("entry");
+  const [tab, setTab] = createSignal<"entry" | "block">("entry");
+  const [previewOpen, setPreviewOpen] = createSignal(readPreviewPref());
+  const [historyOpen, setHistoryOpen] = createSignal(false);
   const [busy, setBusy] = createSignal<string | null>(null);
   const [scheduling, setScheduling] = createSignal(false);
   /** The settings/block/history panel is always shown on wide screens and toggled below that. */
@@ -151,18 +156,44 @@ const EditorWorkspace: Component<{
     }
   };
 
-  const statusLabel = () =>
-    ({
-      saved: "Saved",
-      dirty: "Unsaved changes",
-      saving: "Saving…",
-      error: `Save failed: ${editor.error()}`,
-    })[editor.status()];
+  const liveUrl = () =>
+    props.entry.status === "published" ? entryPath(collection(), props.entry, true) : null;
+
+  const openDraftPreview = () =>
+    run("preview", async () => {
+      const { token } = await api.entries.previewToken(props.entry.id);
+      // Site routes forward `?preview=` to the content API, which then serves the draft.
+      const path = entryPath(collection(), props.entry, false)!;
+      window.open(`${path}?preview=${encodeURIComponent(token)}`, "_blank", "noopener");
+    });
+
+  const togglePreview = () => {
+    const next = !previewOpen();
+    setPreviewOpen(next);
+    try {
+      localStorage.setItem(PREVIEW_PREF_KEY, next ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  };
+
+  onSettled(() =>
+    defineShortcuts({
+      meta_alt_p: {
+        handler: () => togglePreview(),
+        usingInput: true,
+        label: "Toggle preview",
+        description: "Show the page side by side with the editor",
+        category: "editor",
+        order: 40,
+      },
+    }),
+  );
 
   return (
     <div class="flex h-full flex-col">
-      {/* Top bar */}
-      <div class="flex flex-wrap items-center gap-2 border-b border-default px-4 py-2">
+      {/* Toolbar */}
+      <div class="flex flex-wrap items-center gap-2 border-b border-default px-3 py-1.5">
         <a
           href={href(`/c/${props.entry.collection}`)}
           class="flex items-center gap-1 text-xs text-muted hover:text-highlighted"
@@ -178,55 +209,88 @@ const EditorWorkspace: Component<{
         <Show when={props.entry.scheduledAt}>
           <span class="text-xs text-info-600">→ {formatDate(props.entry.scheduledAt, true)}</span>
         </Show>
-        <span
-          class={`ml-2 text-xs ${editor.status() === "error" ? "text-error-500" : "text-muted"}`}
-        >
-          {statusLabel()}
-        </span>
+        <SaveIndicator editor={editor} readOnly={readOnly()} />
 
-        <div class="ml-auto flex items-center gap-1.5">
-          <Button
-            variant="ghost"
-            icon="i-lucide-panel-right"
-            title="Settings panel"
-            class="xl:hidden"
-            onClick={() => setPanelOpen(!panelOpen())}
-          />
-          <Button
-            variant="ghost"
-            icon="i-lucide-undo-2"
-            title="Undo (Ctrl+Z)"
-            disabled={readOnly()}
-            onClick={() => editor.undo()}
-          />
-          <Button
-            variant="ghost"
-            icon="i-lucide-redo-2"
-            title="Redo (Ctrl+Shift+Z)"
-            disabled={readOnly()}
-            onClick={() => editor.redo()}
-          />
-          <Button
-            variant="ghost"
-            icon="i-lucide-eye"
-            onClick={() =>
-              void run("preview", async () => {
-                const { token } = await api.entries.previewToken(props.entry.id);
-                // Site routes forward `?preview=` to the content API, which then serves the draft.
-                const pattern = collection()?.features.routable;
-                const path =
-                  typeof pattern === "string"
-                    ? pattern
-                        .replace("{slug}", props.entry.slug)
-                        .replace("{collection}", props.entry.collection)
-                    : `/api/content/collections/${props.entry.collection}/${props.entry.slug}`;
-                const url = `${path}?preview=${encodeURIComponent(token)}`;
-                window.open(url, "_blank", "noopener");
-              })
-            }
-          >
-            Preview
-          </Button>
+        <div class="ml-auto flex flex-wrap items-center gap-1">
+          <Show when={collection()?.features.blocks !== false && !readOnly()}>
+            <ToolbarGroup>
+              <button
+                type="button"
+                title={`Add block (${formatShortcutKeys(ADD_BLOCK_SHORTCUT).join("+")})`}
+                class="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-toned hover:bg-elevated hover:text-highlighted"
+                onClick={() => editor.openInserter()}
+              >
+                <span class="i-lucide-plus size-4" />
+                Add block
+              </button>
+            </ToolbarGroup>
+          </Show>
+          <ToolbarGroup>
+            <IconButton
+              icon="i-lucide-undo-2"
+              label="Undo (Ctrl+Z)"
+              disabled={!editor.canUndo()}
+              onClick={() => editor.undo()}
+            />
+            <IconButton
+              icon="i-lucide-redo-2"
+              label="Redo (Ctrl+Shift+Z)"
+              disabled={!editor.canRedo()}
+              onClick={() => editor.redo()}
+            />
+          </ToolbarGroup>
+
+          <ToolbarGroup>
+            <IconButton
+              icon="i-lucide-history"
+              label="Versions & history"
+              onClick={() => setHistoryOpen(true)}
+            />
+            <Show when={collection()?.features.blocks !== false}>
+              <IconButton
+                icon="i-lucide-columns-2"
+                label={`${previewOpen() ? "Hide" : "Show"} side-by-side preview (Ctrl+Alt+P)`}
+                active={previewOpen()}
+                onClick={() => togglePreview()}
+              />
+            </Show>
+            <IconButton
+              icon="i-lucide-external-link"
+              label="Open draft preview in a new tab"
+              loading={busy() === "preview"}
+              onClick={() => void openDraftPreview()}
+            />
+            <Show when={liveUrl()}>
+              <a
+                href={liveUrl()!}
+                target="_blank"
+                rel="noopener"
+                title="View live page"
+                class="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-success-600 hover:bg-elevated"
+              >
+                <span class="size-1.5 rounded-full bg-success-500" />
+                Live
+                <span class="i-lucide-arrow-up-right size-3" />
+              </a>
+              <IconButton
+                icon="i-lucide-link"
+                label="Copy live link"
+                onClick={() => {
+                  void navigator.clipboard
+                    ?.writeText(new URL(liveUrl()!, location.origin).href)
+                    .then(() => toast("Link copied", "success"));
+                }}
+              />
+            </Show>
+            <IconButton
+              icon="i-lucide-panel-right"
+              label="Settings panel"
+              class="xl:hidden"
+              active={panelOpen()}
+              onClick={() => setPanelOpen(!panelOpen())}
+            />
+          </ToolbarGroup>
+
           <Show when={props.entry.status === "published"}>
             <Button
               variant="ghost"
@@ -319,40 +383,52 @@ const EditorWorkspace: Component<{
       </Show>
 
       <div class="flex min-h-0 flex-1">
-        {/* Canvas */}
-        <div class="min-w-0 flex-1 overflow-y-auto">
-          <div class="mx-auto max-w-6xl px-6 py-10">
-            <TitleInput
-              entry={props.entry}
-              readOnly={readOnly()}
-              onSave={(title) => void saveMeta({ title })}
+        {/* Canvas (+ optional side-by-side preview) */}
+        <SplitPane
+          open={previewOpen() && collection()?.features.blocks !== false}
+          right={
+            <PagePreview
+              title={resolveLabel(props.entry.title) || props.entry.slug}
+              blocks={editor.doc.blocks}
+              locale={locales[0] ?? "en"}
+              badge="Draft"
+              onClose={() => togglePreview()}
             />
-            <Show
-              when={collection()?.features.blocks !== false}
-              fallback={
-                <div class="mt-6 max-w-3xl">
-                  <FieldGroups
-                    fields={collection()?.fields ?? {}}
-                    {...(collection()?.groups ? { groups: collection()!.groups } : {})}
-                    values={editor.doc.properties}
-                    readOnly={readOnly()}
-                    onChange={(k, v) => editor.setProperty(k, v)}
-                  />
+          }
+          left={
+            <div class="mx-auto max-w-6xl px-6 py-10">
+              <TitleInput
+                entry={props.entry}
+                readOnly={readOnly()}
+                onSave={(title) => void saveMeta({ title })}
+              />
+              <Show
+                when={collection()?.features.blocks !== false}
+                fallback={
+                  <div class="mt-6 max-w-3xl">
+                    <FieldGroups
+                      fields={collection()?.fields ?? {}}
+                      {...(collection()?.groups ? { groups: collection()!.groups } : {})}
+                      values={editor.doc.properties}
+                      readOnly={readOnly()}
+                      onChange={(k, v) => editor.setProperty(k, v)}
+                    />
+                  </div>
+                }
+              >
+                {/* Wikipedia-style: article on the left, infobox with the entry's properties on the right. */}
+                <div class="mt-6 flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
+                  <div class="min-w-0 flex-1">
+                    <BlockEditor editor={editor} locale={locales[0] ?? "en"} />
+                  </div>
+                  <Show when={Object.keys(collection()?.fields ?? {}).length}>
+                    <Infobox entry={props.entry} editor={editor} readOnly={readOnly()} />
+                  </Show>
                 </div>
-              }
-            >
-              {/* Wikipedia-style: article on the left, infobox with the entry's properties on the right. */}
-              <div class="mt-6 flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
-                <div class="min-w-0 flex-1">
-                  <BlockEditor editor={editor} />
-                </div>
-                <Show when={Object.keys(collection()?.fields ?? {}).length}>
-                  <Infobox entry={props.entry} editor={editor} readOnly={readOnly()} />
-                </Show>
-              </div>
-            </Show>
-          </div>
-        </div>
+              </Show>
+            </div>
+          }
+        />
 
         {/* Sidebar */}
         <aside
@@ -364,7 +440,6 @@ const EditorWorkspace: Component<{
                 [
                   ["entry", "Entry"],
                   ["block", "Block"],
-                  ["history", "History"],
                 ] as const
               }
             >
@@ -392,18 +467,21 @@ const EditorWorkspace: Component<{
             <Show when={tab() === "block"}>
               <BlockInspector editor={editor} />
             </Show>
-            <Show when={tab() === "history"}>
-              <History
-                entry={props.entry}
-                onRestored={(e) => {
-                  props.onEntry(e);
-                  editor.reset({ blocks: e.draft.blocks, properties: e.draft.properties });
-                }}
-              />
-            </Show>
           </div>
         </aside>
       </div>
+
+      <VersionsModal
+        open={historyOpen()}
+        entry={props.entry}
+        readOnly={readOnly()}
+        onClose={() => setHistoryOpen(false)}
+        onRestored={(e) => {
+          props.onEntry(e);
+          editor.reset({ blocks: e.draft.blocks, properties: e.draft.properties });
+          setHistoryOpen(false);
+        }}
+      />
 
       <ScheduleModal
         open={scheduling()}
@@ -703,97 +781,295 @@ const BylinePicker: Component<{
   );
 };
 
-// ─── History tab ─────────────────────────────────────────────────────────────
+// ─── Toolbar pieces ──────────────────────────────────────────────────────────
 
-const History: Component<{ entry: Entry; onRestored: (e: Entry) => void }> = (props) => {
-  const { api, toast } = useDashboard();
-  const versions = useLoader(() => api.entries.versions(props.entry.id));
-  const [diff, setDiff] = createSignal<any>(null);
+const PREVIEW_PREF_KEY = "rimelight-cms:preview-open";
+const readPreviewPref = () => {
+  try {
+    return localStorage.getItem(PREVIEW_PREF_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Public path of an entry, from the collection's `features.routable` pattern. Falls back to the
+ * content API for draft previews; returns null for the live link when the collection has no route.
+ */
+function entryPath(
+  collection: { features: { routable?: unknown } } | undefined,
+  entry: Entry,
+  live: boolean,
+): string | null {
+  const pattern = collection?.features.routable;
+  if (typeof pattern === "string")
+    return pattern.replace("{slug}", entry.slug).replace("{collection}", entry.collection);
+  return live ? null : `/api/content/collections/${entry.collection}/${entry.slug}`;
+}
+
+const ToolbarGroup: Component<{ children: JSX.Element }> = (props) => (
+  <div class="flex items-center gap-0.5 border-r border-default pr-1 last:border-r-0">
+    {props.children}
+  </div>
+);
+
+const IconButton: Component<{
+  icon: string;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  active?: boolean;
+  loading?: boolean;
+  class?: string;
+}> = (props) => (
+  <button
+    type="button"
+    title={props.label}
+    aria-label={props.label}
+    aria-pressed={props.active === undefined ? undefined : props.active}
+    disabled={props.disabled || props.loading}
+    class={`rounded-md p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-35 ${props.active ? "bg-primary-500/10 text-primary-500" : "text-toned hover:bg-elevated hover:text-highlighted"} ${props.class ?? ""}`}
+    onClick={() => props.onClick()}
+  >
+    <span
+      class={`${props.loading ? "i-lucide-loader-circle animate-spin" : props.icon} block size-4`}
+    />
+  </button>
+);
+
+/** Autosave state. Click to save now (or retry after a failure). */
+const SaveIndicator: Component<{ editor: BlockEditorState; readOnly: boolean }> = (props) => {
+  // Re-render the relative time every 30s.
+  const [now, setNow] = createSignal(Date.now());
+  const timer = setInterval(() => setNow(Date.now()), 30_000);
+  onCleanup(() => clearInterval(timer));
+
+  const view = () => {
+    if (props.readOnly) return { icon: "i-lucide-lock", text: "Read-only", cls: "text-muted" };
+    switch (props.editor.status()) {
+      case "saving":
+        return { icon: "i-lucide-loader-circle animate-spin", text: "Saving…", cls: "text-muted" };
+      case "dirty":
+        return { icon: "i-lucide-circle-dot", text: "Unsaved changes", cls: "text-warning-600" };
+      case "error":
+        return { icon: "i-lucide-cloud-alert", text: "Save failed — retry", cls: "text-error-500" };
+      default: {
+        now();
+        const at = props.editor.lastSavedAt();
+        return {
+          icon: "i-lucide-cloud-check",
+          text: at ? `Saved ${relativeTime(at)}` : "All changes saved",
+          cls: "text-muted",
+        };
+      }
+    }
+  };
 
   return (
-    <div class="flex flex-col gap-2">
-      <Button
-        icon="i-lucide-git-compare"
-        onClick={async () => setDiff((await api.entries.diff(props.entry.id)).diff)}
-      >
-        Compare draft with live
-      </Button>
-      <For
-        each={versions.data()?.versions ?? []}
-        fallback={<p class="text-xs text-muted">No versions yet. Publishing creates one.</p>}
-      >
-        {(v) => (
-          <div class="flex flex-col gap-1 rounded-lg border border-default p-2.5 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="font-medium text-highlighted">v{v.versionNumber}</span>
-              <StatusBadge status={v.status} />
-            </div>
-            <Show when={v.changeSummary}>
-              <p class="text-toned">{v.changeSummary}</p>
-            </Show>
-            <div class="text-muted">
-              {formatDate(v.createdAt, true)} · {v.createdBy}
-            </div>
-            <div class="mt-1 flex gap-1">
-              <Button
-                variant="ghost"
-                onClick={async () =>
-                  setDiff((await api.entries.diff(props.entry.id, String(v.versionNumber))).diff)
-                }
-              >
-                Diff
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={async () => {
-                  if (!confirm(`Restore v${v.versionNumber} into the draft?`)) return;
-                  try {
-                    const { entry } = await api.versions.rollback(v.id);
-                    props.onRestored(entry);
-                    toast(`Restored v${v.versionNumber} to draft`, "success");
-                  } catch (err) {
-                    toast((err as Error).message, "error");
-                  }
-                }}
-              >
-                Restore
-              </Button>
-            </div>
-          </div>
-        )}
-      </For>
-      <Modal open={!!diff()} title="Changes" onClose={() => setDiff(null)} wide>
-        <Show when={diff()}>
-          <div class="flex flex-col gap-2 text-xs">
-            <div class="text-muted">
-              +{diff().summary.addedCount} added · −{diff().summary.removedCount} removed · ~
-              {diff().summary.modifiedCount} modified
-            </div>
-            <For each={diff().metaChanges}>
-              {(m: any) => (
-                <div>
-                  <b>{m.field}</b>: {JSON.stringify(m.oldValue)} → {JSON.stringify(m.newValue)}
-                </div>
-              )}
-            </For>
-            <For each={diff().blocks.filter((b: any) => b.status !== "unchanged")}>
-              {(b: any) => (
-                <div
-                  class={`rounded border-l-2 px-2 py-1 ${b.status === "added" ? "border-success-500" : b.status === "removed" ? "border-error-500" : "border-warning-500"}`}
-                >
-                  <b class="capitalize">{b.status}</b> {b.type}
-                  <For each={b.fieldChanges ?? []}>
-                    {(f: any) => <div class="text-muted">{f.field} changed</div>}
-                  </For>
-                </div>
-              )}
-            </For>
+    <button
+      type="button"
+      class={`ml-1 flex items-center gap-1 rounded px-1.5 py-0.5 text-xs hover:bg-elevated ${view().cls}`}
+      title={
+        props.editor.status() === "error"
+          ? (props.editor.error() ?? "Save failed")
+          : "Changes autosave as a draft · Ctrl+S to save now"
+      }
+      disabled={props.readOnly}
+      onClick={() => void props.editor.flush()}
+    >
+      <span class={`${view().icon} size-3.5`} />
+      {view().text}
+    </button>
+  );
+};
+
+// ─── Versions & history ──────────────────────────────────────────────────────
+
+/** Browse published/pending versions, preview each one rendered, diff it, and restore it. */
+const VersionsModal: Component<{
+  open: boolean;
+  entry: Entry;
+  readOnly: boolean;
+  onClose: () => void;
+  onRestored: (e: Entry) => void;
+}> = (props) => (
+  <Modal open={props.open} title="Versions & history" onClose={props.onClose} wide>
+    <VersionsBrowser {...props} />
+  </Modal>
+);
+
+const VersionsBrowser: Component<{
+  entry: Entry;
+  readOnly: boolean;
+  onRestored: (e: Entry) => void;
+}> = (props) => {
+  const { api, toast, locales } = useDashboard();
+  const versions = useLoader(() => api.entries.versions(props.entry.id));
+  const [selected, setSelected] = createSignal<any>(null);
+  const [loadingId, setLoadingId] = createSignal<string | null>(null);
+  const [diff, setDiff] = createSignal<any>(null);
+
+  const open = async (v: any) => {
+    setDiff(null);
+    setLoadingId(v.id);
+    try {
+      setSelected((await api.versions.get(v.id)).version);
+    } catch (err) {
+      toast((err as Error).message, "error");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const showDiff = async (versionNumber?: number) => {
+    try {
+      setSelected(null);
+      setDiff(
+        (await api.entries.diff(props.entry.id, versionNumber ? String(versionNumber) : undefined))
+          .diff,
+      );
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
+
+  const restore = async (v: any) => {
+    if (!confirm(`Restore v${v.versionNumber} into the draft? Your current draft is replaced.`))
+      return;
+    try {
+      const { entry } = await api.versions.rollback(v.id);
+      props.onRestored(entry);
+      toast(`Restored v${v.versionNumber} to draft`, "success");
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
+
+  return (
+    <div class="-mx-5 -my-4 flex h-[70vh] min-h-0">
+      <div class="flex w-64 shrink-0 flex-col gap-1.5 overflow-y-auto border-r border-default p-3">
+        <Button icon="i-lucide-git-compare" onClick={() => void showDiff()}>
+          Compare draft with live
+        </Button>
+        <Show when={props.entry.draftUpdatedAt}>
+          <div class="rounded-lg border border-dashed border-default p-2.5 text-xs">
+            <div class="font-medium text-highlighted">Current draft</div>
+            <div class="text-muted">Saved {relativeTime(props.entry.draftUpdatedAt)}</div>
           </div>
         </Show>
-      </Modal>
+        <Loading when={versions.loading()}>
+          <For
+            each={versions.data()?.versions ?? []}
+            fallback={<p class="text-xs text-muted">No versions yet. Publishing creates one.</p>}
+          >
+            {(v) => (
+              <button
+                type="button"
+                class={`flex flex-col gap-1 rounded-lg border p-2.5 text-left text-xs transition-colors ${selected()?.id === v.id ? "border-primary-500 bg-primary-500/5" : "border-default hover:bg-elevated"}`}
+                onClick={() => void open(v)}
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-medium text-highlighted">
+                    v{v.versionNumber}
+                    <Show when={v.id === props.entry.publishedVersionId}>
+                      <span class="ml-1.5 text-[10px] font-semibold uppercase text-success-600">
+                        live
+                      </span>
+                    </Show>
+                  </span>
+                  <Show
+                    when={loadingId() === v.id}
+                    fallback={<StatusBadge status={v.status} />}
+                  >
+                    <span class="i-lucide-loader-circle size-3.5 animate-spin text-muted" />
+                  </Show>
+                </div>
+                <Show when={v.changeSummary}>
+                  <p class="line-clamp-2 text-toned">{v.changeSummary}</p>
+                </Show>
+                <div class="text-muted" title={formatDate(v.createdAt, true)}>
+                  {relativeTime(v.createdAt)} · {v.createdBy}
+                </div>
+              </button>
+            )}
+          </For>
+        </Loading>
+      </div>
+
+      <div class="min-w-0 flex-1 overflow-y-auto">
+        <Show
+          when={selected() || diff()}
+          fallback={
+            <div class="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted">
+              <span class="i-lucide-history size-8 opacity-40" />
+              Select a version to preview it.
+            </div>
+          }
+        >
+          <Show when={selected()}>
+            {(v) => (
+              <PagePreview
+                title={resolveLabel(v().title) || props.entry.slug}
+                blocks={v().content?.blocks ?? []}
+                locale={locales[0] ?? "en"}
+                badge={`v${v().versionNumber} · ${formatDate(v().createdAt, true)}`}
+                actions={
+                  <>
+                    <Button variant="ghost" onClick={() => void showDiff(v().versionNumber)}>
+                      Diff vs draft
+                    </Button>
+                    <Button
+                      variant="primary"
+                      icon="i-lucide-rotate-ccw"
+                      disabled={props.readOnly}
+                      onClick={() => void restore(v())}
+                    >
+                      Restore
+                    </Button>
+                  </>
+                }
+              />
+            )}
+          </Show>
+          <Show when={diff()}>
+            <DiffView diff={diff()} />
+          </Show>
+        </Show>
+      </div>
     </div>
   );
 };
+
+const DiffView: Component<{ diff: any }> = (props) => (
+  <div class="flex flex-col gap-2 p-4 text-xs">
+    <div class="text-muted">
+      +{props.diff.summary.addedCount} added · −{props.diff.summary.removedCount} removed · ~
+      {props.diff.summary.modifiedCount} modified
+    </div>
+    <For each={props.diff.metaChanges}>
+      {(m: any) => (
+        <div>
+          <b>{m.field}</b>: {JSON.stringify(m.oldValue)} → {JSON.stringify(m.newValue)}
+        </div>
+      )}
+    </For>
+    <For
+      each={props.diff.blocks.filter((b: any) => b.status !== "unchanged")}
+      fallback={<p class="text-muted">No block changes.</p>}
+    >
+      {(b: any) => (
+        <div
+          class={`rounded border-l-2 px-2 py-1 ${b.status === "added" ? "border-success-500" : b.status === "removed" ? "border-error-500" : "border-warning-500"}`}
+        >
+          <b class="capitalize">{b.status}</b> {b.type}
+          <For each={b.fieldChanges ?? []}>
+            {(f: any) => <div class="text-muted">{f.field} changed</div>}
+          </For>
+        </div>
+      )}
+    </For>
+  </div>
+);
 
 const ScheduleModal: Component<{
   open: boolean;

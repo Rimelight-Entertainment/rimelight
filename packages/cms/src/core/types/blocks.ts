@@ -1,4 +1,4 @@
-import type { InlineNode } from "./inline";
+import type { RichTextValue } from "./inline";
 
 export type BlockType =
   | "SectionBlock"
@@ -41,13 +41,13 @@ export interface SceneBlockProps {
   timeOfDay: TimeOfDay;
   setting: Setting;
   transition: Transition;
-  description: string;
+  description: RichTextValue;
 }
 
 export interface DialogueBlockProps {
   character: string;
   parenthetical?: string;
-  line: string;
+  line: RichTextValue;
 }
 
 export interface BaseBlock {
@@ -83,6 +83,8 @@ export type HeadingLevel = 2 | 3 | 4 | 5 | 6;
 export const MIN_SECTION_HEADING_LEVEL: HeadingLevel = 2;
 export const MAX_SECTION_HEADING_LEVEL: HeadingLevel = 6;
 export const MAX_SECTION_DEPTH = 4; // Depth 0 -> H2, Depth 4 -> H6
+/** Sections can nest this many levels (h2 … h6). Mirrors `maxNesting` on SectionBlock. */
+export const MAX_SECTION_NESTING = MAX_SECTION_DEPTH + 1;
 
 export function calculateHeadingLevel(sectionDepth: number): HeadingLevel {
   const depth = Math.max(0, Math.floor(sectionDepth || 0));
@@ -99,18 +101,16 @@ export type CalloutVariant =
   | "source";
 
 export interface SectionBlockProps {
-  title: string;
-  description?: string;
-  level?: HeadingLevel;
+  /** Rich text. The heading level (h2–h6) comes from nesting, never from a prop. */
+  title: RichTextValue;
+  description?: RichTextValue;
   mainArticleSlug?: string;
   children: BaseBlock[];
 }
 
 export interface ParagraphBlockProps {
-  /**
-   * Stored as an InlineNode array (structured AST). Fallback: { en: string } or plain string.
-   */
-  text: InlineNode[] | { en: string } | string;
+  /** Rich text: `InlineNode[]`, or a per-locale map of them. */
+  text: RichTextValue;
 }
 
 export interface CalloutBlockProps {
@@ -166,7 +166,7 @@ export interface TabsBlockProps {
 }
 
 export interface StepItemBlockProps {
-  title: string;
+  title: RichTextValue;
   description?: string;
   children: BaseBlock[];
 }

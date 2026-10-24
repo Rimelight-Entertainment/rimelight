@@ -86,8 +86,8 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           description: t("app.header.link-groups.center.components.description"),
         },
         {
-          label: t("app_header.link-groups_center_integrations_label"),
-          description: t("app_header.link-groups_center_integrations_description"),
+          label: t("app.header.link-groups.center.components.links.integrations"),
+          description: t("app.header.link-groups.center.components.description"),
         },
       ],
     },

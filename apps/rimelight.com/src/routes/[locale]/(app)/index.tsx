@@ -5,36 +5,17 @@ import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLVideo } from "@rimelight/ui/components/video/RLVideo.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
-import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
-import { api } from "#api/client";
+import { content, type PublicEntry } from "@rimelight/cms/solid";
+import { BlogPostCard } from "#components/blog/BlogPostCard";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
 
-  const latestPosts = createMemo<any[]>(
-    async () => {
-      const loc = activeLocale();
-      try {
-        const res = await (api as any).content.pages.$get({
-          query: { type: "blog" },
-        });
-        if (!res.ok) return [];
-        const data = (await res.json()) as any;
-        const blogPages = (data.pages || []) as any[];
-
-        return blogPages
-          .filter((post: any) => {
-            const content =
-              typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-            return (content.properties?.locale || "en") === loc;
-          })
-          .slice(0, 3);
-      } catch {
-        return [];
-      }
-    },
+  /** The 3 most recent published blog posts, from the CMS delivery API. */
+  const latestPosts = createMemo<PublicEntry[]>(
+    async () => (await content.entries("blog", { limit: 3, locale: activeLocale() })).entries,
     { loadingValue: [] },
   );
 
@@ -260,36 +241,14 @@ export const HomePage: Component = () => {
         body={
           <div class="w-full mt-12 max-w-7xl mx-auto px-4">
             <RLGrid>
-              <For each={latestPosts() || []}>
-                {(post) => {
-                  const content =
-                    typeof post.content === "string"
-                      ? JSON.parse(post.content)
-                      : post.content || {};
-                  const title = t.localize(post.title);
-                  const description =
-                    t.localize(post.description) || content.properties?.description || "";
-                  const heroImage = content.properties?.heroImage;
-                  const postDate = post.postedAt || post.createdAt;
-                  return (
-                    <RLPost
-                      title={title}
-                      description={description}
-                      date={postDate}
-                      image={heroImage}
-                      to={getLocaleUrl(`/company/blog/${post.slug}/`)}
-                      variant="ghost"
-                    />
-                  );
-                }}
-              </For>
+              <For each={latestPosts() || []}>{(post) => <BlogPostCard post={post} />}</For>
             </RLGrid>
 
             <Show when={(latestPosts() || []).length > 0}>
               <div class="flex justify-center mt-14">
                 <RLButton
                   label={t("page.home.section.news.actions.view-all")}
-                  href={getLocaleUrl("/blog")}
+                  href={getLocaleUrl("/company/blog")}
                   color="primary"
                   variant="link"
                   trailingIcon="i-lucide-arrow-right"

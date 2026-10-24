@@ -25,6 +25,13 @@ export interface EditorContent {
   properties: Record<string, any>;
 }
 
+/** Where the block picker inserts. `replaceId` turns that (empty) block into the chosen type. */
+export interface InsertTarget {
+  parentId: string | null;
+  index: number;
+  replaceId?: string;
+}
+
 export interface CreateEditorOptions {
   initial: EditorContent;
   registry: BlockRegistry;
@@ -53,7 +60,12 @@ export function createBlockEditor(options: CreateEditorOptions) {
   const [doc, setDoc] = createStore<EditorContent>(structuredClone(options.initial));
   const [status, setStatus] = createSignal<SaveStatus>("saved");
   const [error, setError] = createSignal<string | null>(null);
+  const [lastSavedAt, setLastSavedAt] = createSignal<Date | null>(null);
+  /** Bumped whenever the undo/redo stacks change, so canUndo/canRedo are reactive. */
+  const [historyTick, setHistoryTick] = createSignal(0);
+  const bumpHistory = () => setHistoryTick((n) => n + 1);
   const [selectedId, setSelectedId] = createSignal<string | null>(null);
+  const [inserter, setInserter] = createSignal<InsertTarget | null>(null);
   const [focusRequest, setFocusRequest] = createSignal<{ id: string; at: "start" | "end" } | null>(
     null,
   );
@@ -87,6 +99,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
       if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
     }
     redoStack = [];
+    bumpHistory();
   };
 
   const runSave = async () => {
@@ -101,6 +114,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
       .save(snapshot)
       .then(() => {
         setError(null);
+        setLastSavedAt(new Date());
         setStatus(pendingAfterSave ? "dirty" : "saved");
       })
       .catch((err: unknown) => {
@@ -141,17 +155,55 @@ export function createBlockEditor(options: CreateEditorOptions) {
       : { parentId: null, index: current.blocks.length };
   };
 
-  const canPlace = (type: string, parentId: string | null) => {
+  /** How many `type` blocks enclose `parentId` (inclusive). */
+  const ancestorsOfType = (type: string, parentId: string | null) => {
+    let n = 0;
+    let found = parentId ? findBlock(current.blocks, parentId) : null;
+    while (found) {
+      if (found.block.type === type) n++;
+      found = found.parent ? findBlock(current.blocks, found.parent.id) : null;
+    }
+    return n;
+  };
+
+  /** Deepest self-nesting of `type` in `block` (counting `block` itself if it is one). */
+  const ownNesting = (block: BaseBlock, type: string): number => {
+    const inner = Math.max(0, ...getChildren(block).map((c) => ownNesting(c, type)));
+    return block.type === type ? inner + 1 : inner;
+  };
+
+  /**
+   * Whether a block of `type` (or the subtree `block`, when moving) may go inside `parentId`:
+   * parent and child rules agree, and no `maxNesting` limit is exceeded anywhere in the subtree.
+   */
+  const canPlace = (type: string, parentId: string | null, block?: BaseBlock) => {
     const parentType = parentId ? (findBlock(current.blocks, parentId)?.block.type ?? null) : null;
-    return options.registry
-      .allowedChildren(parentType, parentId ? undefined : options.allowedRootBlocks)
-      .some((d) => d.type === type);
+    const rootAllowed = parentId ? undefined : options.allowedRootBlocks;
+    if (!options.registry.accepts(parentType, type, rootAllowed)) return false;
+    const subtree = block ?? options.registry.create(type);
+    for (const def of options.registry.all()) {
+      if (!def.maxNesting) continue;
+      const inside = ownNesting(subtree, def.type);
+      if (inside && ancestorsOfType(def.type, parentId) + inside > def.maxNesting) return false;
+    }
+    return true;
+  };
+
+  /** True if block `id` is `ancestorId` itself or nested anywhere inside it. */
+  const isWithin = (id: string, ancestorId: string) => {
+    let found = findBlock(current.blocks, id);
+    while (found) {
+      if (found.block.id === ancestorId) return true;
+      found = found.parent ? findBlock(current.blocks, found.parent.id) : null;
+    }
+    return false;
   };
 
   const api = {
     doc,
     status,
     error,
+    lastSavedAt,
     selectedId,
     select: (id: string | null) => {
       setSelectedId(id);
@@ -163,6 +215,29 @@ export function createBlockEditor(options: CreateEditorOptions) {
     allowedRootBlocks: options.allowedRootBlocks,
 
     get: (id: string) => findBlock(current.blocks, id),
+    canPlace,
+
+    /** Whether block `id` may be dropped into `parentId` (type allowed, not into itself). */
+    canMoveTo(id: string, parentId: string | null) {
+      const found = findBlock(current.blocks, id);
+      if (!found || found.block.isTemplated) return false;
+      if (parentId && isWithin(parentId, id)) return false;
+      return canPlace(found.block.type, parentId, found.block);
+    },
+
+    /** The shared block picker. No target → after the selected block, else at the end. */
+    inserter,
+    openInserter(target?: InsertTarget) {
+      if (options.readOnly) return;
+      const sel = selectedId();
+      setInserter(
+        target ??
+          (sel && findBlock(current.blocks, sel)
+            ? siblingSlot(sel)
+            : { parentId: null, index: current.blocks.length }),
+      );
+    },
+    closeInserter: () => setInserter(null),
 
     /** Insert a new block; returns its id (or null if not allowed there). */
     insert(type: string, parentId: string | null, index: number, props?: Record<string, any>) {
@@ -214,14 +289,13 @@ export function createBlockEditor(options: CreateEditorOptions) {
       const found = findBlock(current.blocks, id);
       if (!found) return;
       const copy = cloneBlock(found.block);
-      delete copy.isTemplated;
       commitBlocks(insertBlock(current.blocks, copy, found.parent?.id ?? null, found.index + 1));
       setSelectedId(copy.id);
     },
 
     move(id: string, parentId: string | null, index: number) {
       const found = findBlock(current.blocks, id);
-      if (!found || found.block.isTemplated || !canPlace(found.block.type, parentId)) return;
+      if (!found || !api.canMoveTo(id, parentId)) return;
       commitBlocks(moveBlock(current.blocks, id, parentId, index));
     },
 
@@ -290,6 +364,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
       if (undoStack.length <= 1) return;
       redoStack.push(undoStack.pop()!);
       write(structuredClone(undoStack[undoStack.length - 1]!.content));
+      bumpHistory();
       scheduleSave();
     },
     redo() {
@@ -297,10 +372,11 @@ export function createBlockEditor(options: CreateEditorOptions) {
       if (!next) return;
       undoStack.push(next);
       write(structuredClone(next.content));
+      bumpHistory();
       scheduleSave();
     },
-    canUndo: () => undoStack.length > 1,
-    canRedo: () => redoStack.length > 0,
+    canUndo: () => (historyTick(), !options.readOnly && undoStack.length > 1),
+    canRedo: () => (historyTick(), !options.readOnly && redoStack.length > 0),
 
     /** Save immediately (Ctrl+S, before publish, before leaving). */
     async flush() {
@@ -315,6 +391,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
       write(current);
       undoStack.splice(0, undoStack.length, { content: structuredClone(current), at: 0 });
       redoStack = [];
+      bumpHistory();
       setStatus("saved");
     },
 

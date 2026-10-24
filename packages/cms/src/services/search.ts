@@ -1,6 +1,7 @@
 import { and, desc, eq, like, or, sql } from "drizzle-orm";
 import { extractTextFromBlocks } from "../core/excerpt";
 import { resolveLabel } from "../core/collections/define";
+import { entryUrl } from "../core/collections/color";
 import { getCollection } from "./collections";
 import type { CmsContext } from "./context";
 import type { Entry } from "./entries";
@@ -10,10 +11,6 @@ import type { Entry } from "./entries";
  * Postgres uses a tsvector; SQLite falls back to LIKE matching on the same table.
  */
 
-export function entryUrl(pattern: string | boolean, entry: { slug: string; collection: string }) {
-  if (typeof pattern !== "string") return `/${entry.collection}/${entry.slug}`;
-  return pattern.replace("{slug}", entry.slug).replace("{collection}", entry.collection);
-}
 
 export async function indexEntry(ctx: CmsContext, entry: Entry) {
   const collection = await getCollection(ctx, entry.collection).catch(() => null);

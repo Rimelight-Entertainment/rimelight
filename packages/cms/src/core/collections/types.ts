@@ -102,6 +102,11 @@ export interface CollectionDefinition {
   labelPlural?: Label;
   description?: Label;
   icon?: string;
+  /**
+   * The collection's colour (any CSS colour). Mentions of its entries use it, so every entry
+   * type is recognizable at a glance. Defaults to a stable colour derived from the slug.
+   */
+  color?: string;
   kind?: CollectionKind;
   features?: CollectionFeatures;
   workflow?: CollectionWorkflow;
@@ -116,6 +121,8 @@ export interface CollectionDefinition {
 /** A collection after defaults are applied. This is what services and the dashboard consume. */
 export interface ResolvedCollection extends CollectionDefinition {
   kind: CollectionKind;
+  /** Always set: the explicit colour or the derived one. */
+  color: string;
   features: Required<Omit<CollectionFeatures, "ecommerce" | "routable">> & {
     routable: boolean | string;
     ecommerce: EcommerceSettings | false;

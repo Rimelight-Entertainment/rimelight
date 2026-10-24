@@ -175,6 +175,7 @@
     "not-found-desc": "A página que você está procurando não existe.",
     "go-home": "Ir para o Início",
     "server-error": "Erro no Servidor",
+    "server-error-desc": "Ocorreu um erro inesperado no servidor.",
     "unknown-error": "Erro desconhecido"
   },
   "legal": {

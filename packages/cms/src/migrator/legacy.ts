@@ -134,7 +134,8 @@ const MARKS = new Set(["bold", "italic", "underline", "strikethrough", "code"]);
 /**
  * Old editor inline nodes looked like blocks: `{ id, type: "text", props: { content, marks? } }`.
  * Current shape: `{ type: "text", text, marks? }`, `{ type: "link", url, children }`,
- * `{ type: "page_mention", pageId, pageSlug, displayTitle? }`.
+ * `{ type: "mention", entryId, collection, slug, title? }` (the collection is filled in from the
+ * pages table by the 0007 data migration).
  */
 export function normalizeInlineNode(raw: any): any {
   if (!raw || typeof raw !== "object")
@@ -170,14 +171,15 @@ export function normalizeInlineNode(raw: any): any {
     };
   }
   if (raw.type === "page_mention" || raw.type === "mention") {
-    const pageId = raw.pageId ?? p.pageId ?? p.id ?? "";
-    const pageSlug = raw.pageSlug ?? p.pageSlug ?? p.slug ?? "";
-    const displayTitle = raw.displayTitle ?? p.displayTitle ?? p.title;
+    const entryId = raw.entryId ?? raw.pageId ?? p.pageId ?? p.id ?? "";
+    const slug = raw.slug ?? raw.pageSlug ?? p.pageSlug ?? p.slug ?? "";
+    const title = raw.title ?? raw.displayTitle ?? p.displayTitle ?? p.title;
     return {
-      type: "page_mention",
-      pageId,
-      pageSlug,
-      ...(displayTitle ? { displayTitle: text(displayTitle) } : {}),
+      type: "mention",
+      entryId,
+      collection: raw.collection ?? p.collection ?? "page",
+      slug,
+      ...(title ? { title: text(title) } : {}),
     };
   }
   // text (and anything unknown: keep its words)
@@ -200,7 +202,7 @@ const isInlineArray = (v: unknown) =>
       n &&
       typeof n === "object" &&
       typeof n.type === "string" &&
-      ("props" in n || "text" in n || "url" in n || "pageId" in n),
+      ("props" in n || "text" in n || "url" in n || "pageId" in n || "entryId" in n),
   );
 
 function toInline(value: unknown): unknown[] {

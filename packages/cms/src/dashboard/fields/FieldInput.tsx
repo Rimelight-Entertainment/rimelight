@@ -3,6 +3,8 @@ import type { FieldDefinition } from "../../core/collections/types";
 import { resolveLabel } from "../../core/collections/define";
 import { useDashboard } from "../context";
 import { MediaPicker } from "../views/Media";
+import { InlineText } from "../../editor/InlineText";
+import { toRichText } from "../../core/richtext";
 
 /**
  * One input for any field type. Used by the entry properties panel, the block inspector and the
@@ -32,10 +34,14 @@ export const FieldInput: Component<FieldInputProps> = (props) => {
     !Array.isArray(props.value)
       ? (props.value as Record<string, unknown>)[locale()]
       : props.value;
-  const set = (v: unknown) =>
-    props.field.translatable
-      ? props.onChange({ ...(props.value as object), [locale()]: v })
-      : props.onChange(v);
+  const set = (v: unknown) => {
+    if (!props.field.translatable) return props.onChange(v);
+    const map =
+      props.value && typeof props.value === "object" && !Array.isArray(props.value)
+        ? (props.value as Record<string, unknown>)
+        : {};
+    props.onChange({ ...map, [locale()]: v });
+  };
 
   return (
     <label class="flex flex-col gap-1">
@@ -65,7 +71,13 @@ export const FieldInput: Component<FieldInputProps> = (props) => {
           </span>
         </Show>
       </span>
-      <Control field={props.field} value={value()} onChange={set} readOnly={!!props.readOnly} />
+      <Control
+        name={props.name}
+        field={props.field}
+        value={value()}
+        onChange={set}
+        readOnly={!!props.readOnly}
+      />
       <Show when={props.field.description}>
         <span class="text-[11px] text-muted">{resolveLabel(props.field.description)}</span>
       </Show>
@@ -74,6 +86,7 @@ export const FieldInput: Component<FieldInputProps> = (props) => {
 };
 
 const Control: Component<{
+  name: string;
   field: FieldDefinition;
   value: unknown;
   onChange: (v: unknown) => void;
@@ -88,8 +101,28 @@ const Control: Component<{
         : JSON.stringify(props.value);
 
   switch (props.field.type) {
-    case "textarea":
     case "richtext":
+      // Rich text: marks, links, @mentions. Stores InlineNode[] (per locale when translatable).
+      return (
+        <div
+          class={`${inputClass} min-h-20 cursor-text py-2 leading-relaxed`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget)
+              (e.currentTarget.firstElementChild as HTMLElement | null)?.focus();
+          }}
+        >
+          <InlineText
+            blockId={`field:${props.name}`}
+            value={toRichText(props.value)}
+            mode="rich"
+            readOnly={props.readOnly}
+            placeholder={resolveLabel(f().label)}
+            class="min-h-[1.5em]"
+            onChange={(v) => props.onChange(v)}
+          />
+        </div>
+      );
+    case "textarea":
       return (
         <textarea
           class={`${inputClass} min-h-20 resize-y`}

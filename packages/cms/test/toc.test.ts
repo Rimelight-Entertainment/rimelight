@@ -9,51 +9,33 @@ describe("cms-docs-toc", () => {
     expect(slugifyHeading("Section 1.2: Advanced Features")).toBe("section-12-advanced-features");
   });
 
-  it("extracts nested section headings with correct depths and slugs", () => {
+  it("derives heading depth from nesting (rich titles, no stored level)", () => {
+    const t = (text: string) => [{ type: "text", text }];
     const blocks: any[] = [
       {
+        id: "1",
         type: "SectionBlock",
-        props: {
-          title: "Introduction",
-          level: 2,
-          children: [
-            {
-              type: "SectionBlock",
-              props: {
-                title: "Core Concepts",
-                level: 3,
-                children: [],
-              },
-            },
-          ],
-        },
+        props: { title: t("Introduction") },
+        children: [
+          { id: "2", type: "SectionBlock", props: { title: t("Core Concepts") }, children: [] },
+          {
+            id: "3",
+            type: "CalloutBlock",
+            props: {},
+            children: [
+              { id: "4", type: "SectionBlock", props: { title: t("Inside a callout") } },
+            ],
+          },
+        ],
       },
-      {
-        type: "SectionBlock",
-        props: {
-          title: "Configuration",
-          level: 2,
-          children: [],
-        },
-      },
+      { id: "5", type: "SectionBlock", props: { title: { en: t("Configuration") } } },
     ];
 
-    const headings = extractHeadingsFromBlocks(blocks);
-    expect(headings).toHaveLength(3);
-    expect(headings[0]).toEqual({
-      depth: 2,
-      slug: "introduction",
-      text: "Introduction",
-    });
-    expect(headings[1]).toEqual({
-      depth: 3,
-      slug: "core-concepts",
-      text: "Core Concepts",
-    });
-    expect(headings[2]).toEqual({
-      depth: 2,
-      slug: "configuration",
-      text: "Configuration",
-    });
+    expect(extractHeadingsFromBlocks(blocks)).toEqual([
+      { depth: 2, slug: "introduction", text: "Introduction" },
+      { depth: 3, slug: "core-concepts", text: "Core Concepts" },
+      { depth: 3, slug: "inside-a-callout", text: "Inside a callout" },
+      { depth: 2, slug: "configuration", text: "Configuration" },
+    ]);
   });
 });

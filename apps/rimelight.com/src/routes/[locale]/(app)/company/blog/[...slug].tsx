@@ -1,60 +1,46 @@
 import { type Component, Show, createMemo } from "solid-js";
-import { useParams } from "@solidjs/router";
-import { PageRenderer } from "@rimelight/cms/solid";
+import { useParams, useSearchParams } from "@solidjs/router";
+import { PageRenderer, content, type PublicEntry } from "@rimelight/cms/solid";
 import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
 import { t, getCurrentLocale } from "@rimelight/i18n";
-import { api } from "#api/client";
 
+/**
+ * A blog post, read from the CMS delivery API (`/api/content/collections/blog/:slug`). Mentions
+ * arrive already resolved (colour + link), so PageRenderer needs no extra setup. `?preview=`
+ * (from the dashboard's "Open draft preview") shows the draft instead of the published version.
+ */
 export const BlogPostPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
+  const [search] = useSearchParams<{ preview?: string }>();
   const activeLocale = () => getCurrentLocale();
 
-  const pageData = createMemo<any>(
+  const post = createMemo<PublicEntry | null>(
     async () => {
-      const slug = params.slug;
+      const slug = params.slug?.replace(/\/+$/, "");
       if (!slug) return null;
-      try {
-        const res = await (api as any).content.pages[":slug"].$get({
-          param: { slug },
-          query: { type: "blog" },
-        });
-        if (!res.ok) return null;
-        return (await res.json()) as any;
-      } catch {
-        return null;
-      }
+      return content.entry("blog", slug, search.preview);
     },
     { loadingValue: null },
   );
 
-  const docBlocks = () => {
-    const p = pageData();
-    if (!p) return [];
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return content.blocks || [];
-  };
-
   const title = () => {
-    const p = pageData();
+    const p = post();
     return p ? t.localize(p.title) || "Blog Post" : "Blog Post";
   };
-
   const description = () => {
-    const p = pageData();
-    if (!p) return "";
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return t.localize(p.description) || content.properties?.description || "";
+    const p = post();
+    return p ? t.localize(p.description ?? {}) || p.properties?.["excerpt"] || "" : "";
   };
 
   return (
     <Show
-      when={pageData()}
+      when={post()}
       fallback={<div class="p-16 text-center text-neutral-400">Loading post...</div>}
     >
       <article class="max-w-4xl mx-auto px-4 py-16">
         <header class="mb-12">
           <div class="text-sm text-primary-400 mb-2">
-            <RLDate date={pageData()?.postedAt || pageData()?.createdAt || new Date()} />
+            <RLDate date={post()?.publishedAt || post()?.updatedAt || new Date()} />
           </div>
           <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
             {title()}
@@ -62,7 +48,7 @@ export const BlogPostPage: Component = () => {
           <p class="text-xl text-neutral-400 leading-relaxed">{description()}</p>
         </header>
 
-        <PageRenderer blocks={docBlocks()} locale={activeLocale()} />
+        <PageRenderer blocks={post()?.blocks ?? []} locale={activeLocale()} />
       </article>
     </Show>
   );

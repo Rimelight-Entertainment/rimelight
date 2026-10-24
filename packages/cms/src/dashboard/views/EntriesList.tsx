@@ -16,33 +16,59 @@ import {
 } from "../ui";
 
 const STATUSES = ["all", "draft", "scheduled", "published"] as const;
+const SORTS = [
+  ["updated", "Last updated"],
+  ["created", "Newest"],
+  ["title", "Title A–Z"],
+  ["type", "Type"],
+] as const;
 const PAGE = 50;
 
-export const EntriesList: Component<{ collection: string; create?: boolean }> = (props) => {
-  const { api, collection: getCollection, href, navigate, toast } = useDashboard();
-  const collection = () => getCollection(props.collection);
+/**
+ * All content in one place. With no `collection` it lists every entry and the collections act
+ * as filters (with counts); with one, it's that collection's list (its own columns, ordering
+ * and "New …" button). Collections stay deep-linkable at /c/<slug>.
+ */
+export const EntriesList: Component<{ collection?: string; create?: boolean }> = (props) => {
+  const { api, collection: getCollection, collections, href, navigate, toast } = useDashboard();
+  const collection = () => (props.collection ? getCollection(props.collection) : undefined);
+  const stats = useLoader(() => api.stats());
+  const count = (slug?: string) => {
+    const by = stats.data()?.byCollection ?? {};
+    const sum = (o: Record<string, number> | undefined) =>
+      Object.values(o ?? {}).reduce((a, b) => a + b, 0);
+    return slug ? sum(by[slug]) : Object.values(by).reduce((a, o) => a + sum(o), 0);
+  };
   const [creating, setCreating] = createSignal(!!props.create);
 
   /**
    * List query. Kept in a plain object as well as a signal: reload() must see the new values
    * immediately, and signal writes are only visible after the current batch flushes.
    */
-  type Query = { status: (typeof STATUSES)[number]; q: string; trash: boolean; offset: number };
-  let current: Query = { status: "all", q: "", trash: false, offset: 0 };
+  type Sort = (typeof SORTS)[number][0];
+  type Query = {
+    status: (typeof STATUSES)[number];
+    q: string;
+    trash: boolean;
+    offset: number;
+    sort: Sort | null;
+  };
+  let current: Query = { status: "all", q: "", trash: false, offset: 0, sort: null };
   const [query, setQuery] = createSignal<Query>(current);
   const status = () => query().status;
   const q = () => query().q;
   const trash = () => query().trash;
   const offset = () => query().offset;
+  const defaultSort = (): Sort | "slug" => (hierarchical() ? "slug" : "updated");
 
   const hierarchical = () => !!collection()?.features.hierarchical;
   const list = useLoader(() =>
     api.entries.list({
-      collection: props.collection,
+      ...(props.collection ? { collection: props.collection } : {}),
       ...(current.status !== "all" ? { status: current.status } : {}),
       ...(current.q ? { q: current.q } : {}),
       ...(current.trash ? { deleted: true, status: "archived" } : {}),
-      orderBy: hierarchical() ? "slug" : "updated",
+      orderBy: current.sort ?? defaultSort(),
       content: collection()?.kind === "data",
       limit: PAGE,
       offset: current.offset,
@@ -63,7 +89,8 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
   createEffect(
     () => props.collection,
     (_, prev) => {
-      if (prev !== undefined) update({ status: "all", q: "", trash: false, offset: 0 });
+      if (prev !== undefined)
+        update({ status: "all", q: "", trash: false, offset: 0, sort: current.sort });
     },
   );
 
@@ -81,21 +108,59 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
   return (
     <div>
       <PageHeader
-        {...(collection()?.icon ? { icon: collection()!.icon } : {})}
-        title={resolveLabel(collection()?.labelPlural ?? collection()?.label) || props.collection}
-        description={resolveLabel(collection()?.description)}
+        icon={collection()?.icon ?? "i-lucide-files"}
+        title={
+          props.collection
+            ? resolveLabel(collection()?.labelPlural ?? collection()?.label) || props.collection
+            : "Content"
+        }
+        description={
+          props.collection
+            ? resolveLabel(collection()?.description)
+            : "Every entry, across all collections."
+        }
         actions={
           <>
             <Button variant="ghost" icon="i-lucide-trash" onClick={() => setTrash(!trash())}>
               {trash() ? "Back" : "Trash"}
             </Button>
             <Button variant="primary" icon="i-lucide-plus" onClick={() => setCreating(true)}>
-              New {resolveLabel(collection()?.label) || "entry"}
+              New {props.collection ? resolveLabel(collection()?.label) || "entry" : "entry"}
             </Button>
           </>
         }
       />
       <div class="flex flex-col gap-4 p-6">
+        {/* Collection filter: one chip per type, coloured like its mentions. */}
+        <div class="-mx-1 flex flex-wrap gap-1.5">
+          <a
+            href={href("/c")}
+            class={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${!props.collection ? "border-primary-500 bg-primary-500/10 font-medium text-primary-500" : "border-default text-toned hover:bg-elevated"}`}
+          >
+            All
+            <span class="text-[10px] text-muted">{count()}</span>
+          </a>
+          <For each={collections()}>
+            {(c) => (
+              <a
+                href={href(`/c/${c.slug}`)}
+                class={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${props.collection === c.slug ? "font-medium text-highlighted" : "border-default text-toned hover:bg-elevated"}`}
+                style={
+                  props.collection === c.slug
+                    ? {
+                        "border-color": c.color,
+                        background: `color-mix(in srgb, ${c.color} 12%, transparent)`,
+                      }
+                    : {}
+                }
+              >
+                <span class={`${c.icon ?? "i-lucide-box"} size-3.5`} style={{ color: c.color }} />
+                {resolveLabel(c.labelPlural ?? c.label)}
+                <span class="text-[10px] text-muted">{count(c.slug)}</span>
+              </a>
+            )}
+          </For>
+        </div>
         <div class="flex flex-wrap items-center gap-3">
           <Show when={!trash()}>
             <div class="flex rounded-md border border-default p-0.5">
@@ -123,6 +188,19 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
               searchTimer = setTimeout(() => update({ q: value, offset: 0 }), 250);
             }}
           />
+          <select
+            class={`${inputClass} w-auto`}
+            aria-label="Sort"
+            value={query().sort ?? defaultSort()}
+            onChange={(e) => update({ sort: e.currentTarget.value as Sort, offset: 0 })}
+          >
+            <Show when={hierarchical()}>
+              <option value="slug">Tree order</option>
+            </Show>
+            <For each={SORTS.filter(([k]) => k !== "type" || !props.collection)}>
+              {([value, label]) => <option value={value}>{label}</option>}
+            </For>
+          </select>
           <span class="ml-auto text-xs text-muted">{list.data()?.total ?? 0} entries</span>
         </div>
 
@@ -155,6 +233,9 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
                 <thead class="bg-elevated/60 text-left text-[11px] uppercase tracking-wide text-muted">
                   <tr>
                     <th class="px-4 py-2 font-medium">Title</th>
+                    <Show when={!props.collection}>
+                      <th class="px-4 py-2 font-medium">Type</th>
+                    </Show>
                     <For each={fieldColumns()}>
                       {([, f]) => <th class="px-4 py-2 font-medium">{resolveLabel(f.label)}</th>}
                     </For>
@@ -179,6 +260,11 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
                             <span class="font-mono text-[11px] text-muted">/{e.slug}</span>
                           </a>
                         </td>
+                        <Show when={!props.collection}>
+                          <td class="px-4 py-2">
+                            <TypeLabel slug={e.collection} />
+                          </td>
+                        </Show>
                         <For each={fieldColumns()}>
                           {([key, f]) => (
                             <td class="px-4 py-2 text-toned">
@@ -237,7 +323,7 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
 
       <CreateEntryModal
         open={creating()}
-        collection={props.collection}
+        {...(props.collection ? { collection: props.collection } : {})}
         onClose={() => {
           setCreating(false);
           if (props.create) navigate(`/c/${props.collection}`);
@@ -245,6 +331,17 @@ export const EntriesList: Component<{ collection: string; create?: boolean }> = 
         onCreated={(id) => navigate(`/e/${id}`)}
       />
     </div>
+  );
+};
+
+const TypeLabel: Component<{ slug: string }> = (props) => {
+  const { collection } = useDashboard();
+  const c = () => collection(props.slug);
+  return (
+    <span class="inline-flex items-center gap-1.5 text-xs" style={{ color: c()?.color }}>
+      <span class={`${c()?.icon ?? "i-lucide-box"} size-3.5`} />
+      {resolveLabel(c()?.label) || props.slug}
+    </span>
   );
 };
 
@@ -265,23 +362,32 @@ function formatValue(v: unknown, type: string): string {
 
 export const CreateEntryModal: Component<{
   open: boolean;
-  collection: string;
+  /** Omit to let the user pick the collection. */
+  collection?: string;
   onClose: () => void;
   onCreated: (id: string) => void;
 }> = (props) => {
-  const { api, collection, toast } = useDashboard();
+  const { api, collection, collections, toast } = useDashboard();
+  const [picked, setPicked] = createSignal("");
+  const target = () => props.collection ?? (picked() || collections()[0]?.slug || "");
   const [title, setTitle] = createSignal("");
   const [slug, setSlug] = createSignal("");
   const [templateId, setTemplateId] = createSignal("");
   const [busy, setBusy] = createSignal(false);
-  const templates = useLoader(() => api.templates.list(props.collection));
+  const templates = useLoader(() => api.templates.list(target()));
+  createEffect(
+    () => target(),
+    (_, prev) => {
+      if (prev !== undefined) void templates.reload();
+    },
+  );
 
   const submit = async () => {
     if (!title().trim()) return;
     setBusy(true);
     try {
       const { entry } = await api.entries.create({
-        collection: props.collection,
+        collection: target(),
         title: title(),
         ...(slug() ? { slug: slug() } : {}),
         ...(templateId() ? { templateId: templateId() } : {}),
@@ -297,7 +403,7 @@ export const CreateEntryModal: Component<{
   return (
     <Modal
       open={props.open}
-      title={`New ${resolveLabel(collection(props.collection)?.label) || "entry"}`}
+      title={`New ${resolveLabel(collection(target())?.label) || "entry"}`}
       onClose={props.onClose}
       footer={
         <>
@@ -322,6 +428,22 @@ export const CreateEntryModal: Component<{
           void submit();
         }}
       >
+        <Show when={!props.collection}>
+          <Field label="Type">
+            <select
+              class={inputClass}
+              value={target()}
+              onChange={(e) => {
+                setPicked(e.currentTarget.value);
+                setTemplateId("");
+              }}
+            >
+              <For each={collections()}>
+                {(c) => <option value={c.slug}>{resolveLabel(c.label)}</option>}
+              </For>
+            </select>
+          </Field>
+        </Show>
         <Field label="Title">
           <input
             class={inputClass}
@@ -333,7 +455,7 @@ export const CreateEntryModal: Component<{
         <Field
           label="Slug"
           hint={
-            collection(props.collection)?.features.hierarchical
+            collection(target())?.features.hierarchical
               ? "Use slashes to nest, e.g. guides/getting-started"
               : "Leave empty to derive from the title"
           }

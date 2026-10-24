@@ -1,3 +1,4 @@
+import { inlineToPlainText, isInlineNode } from "../richtext";
 import type { FieldDefinition, ResolvedCollection } from "./types";
 import { resolveLabel } from "./define";
 
@@ -55,8 +56,15 @@ function checkScalar(_key: string, field: FieldDefinition, value: unknown): stri
       }
     case "email":
       return /^[^@\s]+@[^@\s]+$/.test(String(value)) ? null : "must be an email address";
+    case "richtext": {
+      if (!Array.isArray(value) || !value.every(isInlineNode))
+        return "must be rich text (inline nodes)";
+      const length = inlineToPlainText(value).length;
+      if (field.max !== undefined && length > field.max)
+        return `must be at most ${field.max} characters`;
+      return null;
+    }
     case "json":
-    case "richtext":
     case "media":
     case "reference":
       return null;

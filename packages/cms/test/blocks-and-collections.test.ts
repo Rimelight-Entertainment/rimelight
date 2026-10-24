@@ -120,8 +120,8 @@ describe("collections", () => {
 });
 
 describe("inline text", () => {
-  it("only accepts inline node arrays", () => {
-    expect(toInlineNodes("hi")).toEqual([]);
+  it("normalizes strings and node arrays", () => {
+    expect(toInlineNodes("hi")).toEqual([{ type: "text", text: "hi" }]);
     expect(toInlineNodes([{ type: "text", text: "a" }])).toHaveLength(1);
   });
   it("renders marks and escapes html", () => {

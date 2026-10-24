@@ -1,8 +1,10 @@
 import { Show, type Component } from "solid-js";
 import type { BlockViewProps } from "./ParagraphBlock";
+import { RichText } from "./inlines";
+import { isRichTextEmpty } from "../../core/richtext";
 
 export const StepItemBlock: Component<BlockViewProps> = (props) => {
-  const title = () => (props.block.props?.["title"] as string) ?? "";
+  const title = () => props.block.props?.["title"];
   const description = () => (props.block.props?.["description"] as string) ?? "";
   const index = () => props.index ?? 0;
 
@@ -12,8 +14,10 @@ export const StepItemBlock: Component<BlockViewProps> = (props) => {
         {index() + 1}
       </div>
       <div class="space-y-2">
-        <Show when={title()}>
-          <h3 class="text-base font-semibold text-neutral-900 mt-0">{title()}</h3>
+        <Show when={!isRichTextEmpty(title(), props.locale)}>
+          <h3 class="text-base font-semibold text-neutral-900 mt-0">
+            <RichText value={title()} locale={props.locale} />
+          </h3>
         </Show>
         <Show when={description()}>
           <p class="text-sm text-neutral-600 mt-1">{description()}</p>

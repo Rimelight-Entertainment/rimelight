@@ -12,7 +12,7 @@ export const Page500: Component<Page500Props> = (props) => {
   useHead(() =>
     createSeoHead({
       title: t("errors.server-error") || "Internal Server Error",
-      description: t("errors.serverErrorDesc") || "An unexpected error occurred on the server.",
+      description: t("errors.server-error-desc") || "An unexpected error occurred on the server.",
       noindex: true,
     }),
   );
@@ -24,7 +24,7 @@ export const Page500: Component<Page500Props> = (props) => {
       description={
         props.error instanceof Error
           ? props.error.message
-          : t("errors.serverErrorDesc") || "An unexpected error occurred on the server."
+          : t("errors.server-error-desc") || "An unexpected error occurred on the server."
       }
       actions={[
         {

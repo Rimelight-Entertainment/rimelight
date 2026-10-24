@@ -44,8 +44,19 @@ export interface BlockDefinition<P extends Record<string, any> = Record<string, 
   children?: string[] | "*";
   /** Blocks created alongside a new instance (e.g. a Tabs block starts with one TabItem). */
   initialChildren?: () => BaseBlock[];
-  /** Hidden from the root slash menu (only insertable inside its parent, e.g. TabItem). */
+  /**
+   * Block types this block may live inside. When set, the block can only be created in, or
+   * dragged into, one of these parents — never at the root and never in a `"*"` container.
+   * E.g. a `SceneBlock` with `parents: ["ScriptBlock"]` only exists inside scripts.
+   */
+  parents?: string[];
+  /** Hidden from the root picker (only insertable inside its parent, e.g. TabItem). */
   nestedOnly?: boolean;
+  /**
+   * Maximum depth of this block nested inside itself (counting the outermost one as 1).
+   * `SectionBlock` uses 5 so headings run h2–h6; deeper sections can't be created or dropped.
+   */
+  maxNesting?: number;
   /** The text prop edited inline in the canvas (contenteditable). */
   inlineText?: keyof P & string;
   /**
@@ -74,17 +85,28 @@ export class BlockRegistry {
   all(): BlockDefinition[] {
     return [...this.#defs.values()];
   }
-  /** Block types insertable inside `parentType` (or at the root when null). */
+  /**
+   * Block types insertable inside `parentType` (or at the root when null). Both sides must
+   * agree: the parent lists the child (or accepts `"*"`), and the child's `parents` (if any)
+   * include the parent.
+   */
   allowedChildren(parentType: string | null, rootAllowed?: string[]): BlockDefinition[] {
     if (!parentType) {
       return this.all().filter(
-        (d) => !d.nestedOnly && (!rootAllowed || rootAllowed.includes(d.type)),
+        (d) => !d.nestedOnly && !d.parents && (!rootAllowed || rootAllowed.includes(d.type)),
       );
     }
     const allowed = this.get(parentType)?.children;
     if (!allowed) return [];
     if (allowed === "*") return this.allowedChildren(null, rootAllowed);
-    return allowed.map((t) => this.get(t)).filter((d): d is BlockDefinition => !!d);
+    return allowed
+      .map((t) => this.get(t))
+      .filter((d): d is BlockDefinition => !!d && (!d.parents || d.parents.includes(parentType)));
+  }
+
+  /** Whether `type` may be a child of `parentType` (null = root). */
+  accepts(parentType: string | null, type: string, rootAllowed?: string[]): boolean {
+    return this.allowedChildren(parentType, rootAllowed).some((d) => d.type === type);
   }
   create(type: string, props?: Record<string, any>): BaseBlock {
     const def = this.get(type);

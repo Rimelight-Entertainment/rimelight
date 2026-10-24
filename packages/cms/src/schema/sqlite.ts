@@ -378,6 +378,7 @@ export const contentTypes = sqliteTable(
     name: text("name", { mode: "json" }).$type<Localized>().notNull(),
     description: text("description", { mode: "json" }).$type<Localized>(),
     icon: text("icon").default("i-lucide-box").notNull(),
+    color: text("color"),
     mode: text("mode").$type<"document" | "data" | "singleton">().default("document").notNull(),
     fieldSchema: text("field_schema", { mode: "json" })
       .$type<Record<string, any>>()

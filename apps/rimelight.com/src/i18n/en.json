@@ -1,5 +1,9 @@
 {
   "page": {
+    "about": {
+      "title": "About Rimelight",
+      "description": "Learn about our mission, vision, and team."
+    },
     "contact": {
       "title": "Contact Us",
       "description": "Get in touch with Rimelight Entertainment.",
@@ -35,6 +39,10 @@
       "not-found": {
         "title": "Error 404",
         "description": "The page you are looking for does not exist."
+      },
+      "forbidden": {
+        "title": "Access Forbidden",
+        "description": "You do not have permission to view this resource."
       },
       "server": {
         "title": "Server Error",
@@ -164,6 +172,10 @@
       }
     },
     "company": {
+      "careers": {
+        "title": "Careers",
+        "description": "Explore opportunities at Rimelight Entertainment and help shape the future of gaming."
+      },
       "blog": {
         "meta": {
           "title": "Blog",
@@ -252,12 +264,14 @@
     },
     "legal": {
       "meta": {
-        "title": "Legal"
+        "title": "Legal",
+        "description": "Rimelight Entertainment legal policies and agreements."
       }
     },
     "branding": {
       "meta": {
-        "title": "Branding"
+        "title": "Branding",
+        "description": "Rimelight Entertainment brand guidelines and assets."
       }
     },
     "auth": {
@@ -524,6 +538,30 @@
       "grand": {
         "tale": {
           "home": {
+            "meta": {
+              "title": "Grand Tale",
+              "description": "Social fantasy life-sim RPG"
+            },
+            "hero": {
+              "button": "Play Grand Tale"
+            },
+            "overview": {
+              "button": "Learn More"
+            },
+            "features": {
+              "tactical-combat": {
+                "title": "Tactical Combat",
+                "description": "Master diverse class pathways and synergistic abilities in tactical combat."
+              },
+              "living-world": {
+                "title": "Living World",
+                "description": "Watch the world respond to community events, faction choices, and server achievements."
+              },
+              "deep-economy": {
+                "title": "Deep Economy",
+                "description": "Engage in free trade, crafting systems, and player-driven resource markets."
+              }
+            },
             "sections": {
               "hero": {
                 "title": "May the story never end!",
@@ -1115,6 +1153,12 @@
       "user": {
         "status": {
           "placeholder": "Set a custom status..."
+        },
+        "dropdown": {
+          "dashboard": "Dashboard",
+          "profile": "Profile",
+          "settings": "Settings",
+          "sign-out": "Sign Out"
         }
       }
     },
@@ -1133,6 +1177,26 @@
           "shipping-policy": "Shipping Policy",
           "other-documents": "Other Documents"
         }
+      }
+    }
+  },
+  "cookie": {
+    "notice": {
+      "title": "Cookie Preferences",
+      "description": {
+        "prefix": "We use cookies to enhance your experience.",
+        "suffix": "."
+      },
+      "cookie": {
+        "policy": {
+          "label": "Cookie Policy"
+        }
+      },
+      "allow": {
+        "all": "Accept"
+      },
+      "deny": {
+        "all": "Decline"
       }
     }
   },

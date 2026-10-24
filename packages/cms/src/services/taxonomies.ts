@@ -154,6 +154,28 @@ export async function getEntryTerms(ctx: CmsContext, entryId: string, taxonomy?:
   return rows.map((r: any) => toTerm(r.term));
 }
 
+/** Terms for many entries in one query, grouped by entry id (for list/delivery responses). */
+export async function getTermsForEntries(
+  ctx: CmsContext,
+  entryIds: string[],
+): Promise<Map<string, TaxonomyTerm[]>> {
+  const out = new Map<string, TaxonomyTerm[]>();
+  if (!entryIds.length) return out;
+  const { taxonomyTerms: tt, pageTaxonomyTerms: ptt } = ctx.t;
+  const rows = await ctx.db
+    .select({ pageId: ptt.pageId, term: tt })
+    .from(ptt)
+    .innerJoin(tt, eq(tt.id, ptt.termId))
+    .where(inArray(ptt.pageId, entryIds))
+    .orderBy(asc(tt.displayOrder));
+  for (const r of rows) {
+    const list = out.get(String(r.pageId)) ?? [];
+    list.push(toTerm(r.term));
+    out.set(String(r.pageId), list);
+  }
+  return out;
+}
+
 /** Replaces the entry's terms within one taxonomy. */
 export async function setEntryTerms(
   ctx: CmsContext,

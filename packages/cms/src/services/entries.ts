@@ -131,7 +131,7 @@ export interface ListEntriesOptions {
   slugPrefix?: string;
   taxonomy?: { taxonomy: string; term: string };
   includeDeleted?: boolean;
-  orderBy?: "updated" | "created" | "posted" | "title" | "slug";
+  orderBy?: "updated" | "created" | "posted" | "title" | "slug" | "type";
   /** Attach the published `{ blocks, properties }` to each summary (avoids N+1 lookups). */
   includeContent?: boolean;
   limit?: number;
@@ -167,9 +167,11 @@ export async function listEntries(ctx: CmsContext, opts: ListEntriesOptions = {}
   const order = {
     updated: [desc(sql`coalesce(${p.updatedAt}, ${p.createdAt})`)],
     created: [desc(p.createdAt)],
-    posted: [desc(p.postedAt), desc(p.createdAt)],
+    // Never-published entries (no postedAt) go last, not first (Postgres sorts NULLs first on DESC).
+    posted: [sql`${p.postedAt} desc nulls last`, desc(p.createdAt)],
     title: [asc(sql`cast(${p.title} as text)`)],
     slug: [asc(p.slug)],
+    type: [asc(p.type), desc(sql`coalesce(${p.updatedAt}, ${p.createdAt})`)],
   }[opts.orderBy ?? "updated"];
 
   const filter = where.length ? and(...where) : undefined;
@@ -585,7 +587,11 @@ function validateNesting(
   collection: ResolvedCollection,
   blocks: BaseBlock[],
 ): string | null {
-  const check = (list: BaseBlock[], parentType: string | null): string | null => {
+  const check = (
+    list: BaseBlock[],
+    parentType: string | null,
+    depthOf: Record<string, number>,
+  ): string | null => {
     const allowed = ctx.blocks.allowedChildren(
       parentType,
       parentType ? undefined : collection.allowedBlocks,
@@ -595,14 +601,17 @@ function validateNesting(
       if (ctx.blocks.has(b.type) && !allowed.some((d) => d.type === b.type)) {
         return `${b.type} is not allowed ${parentType ? `inside ${parentType}` : "at the top level"}`;
       }
+      const depth = (depthOf[b.type] ?? 0) + 1;
+      const max = ctx.blocks.get(b.type)?.maxNesting;
+      if (max && depth > max) return `${b.type} can't be nested more than ${max} levels deep`;
       if (b.children?.length) {
-        const nested = check(b.children, b.type);
+        const nested = check(b.children, b.type, { ...depthOf, [b.type]: depth });
         if (nested) return nested;
       }
     }
     return null;
   };
-  return check(blocks, null);
+  return check(blocks, null, {});
 }
 
 // ─── Workflow: review, approve, publish ──────────────────────────────────────

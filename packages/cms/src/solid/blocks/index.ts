@@ -38,7 +38,18 @@ export {
   LivePreviewBlock,
 };
 export type { BlockViewProps };
-export { InlineNodes, InlineNodeView, resolveInlineText } from "./inlines";
+export {
+  InlineNodes,
+  InlineNodeView,
+  MentionView,
+  RichText,
+  RichTextContext,
+  RichTextProvider,
+  useRichText,
+  useMentionInfo,
+  type RichTextConfig,
+  type RichTextCollection,
+} from "./inlines";
 
 export const defaultBlockComponents: Record<string, Component<BlockViewProps>> = {
   ParagraphBlock,

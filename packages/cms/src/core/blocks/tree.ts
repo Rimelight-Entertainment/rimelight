@@ -1,4 +1,5 @@
 import type { BaseBlock } from "../types/blocks";
+import { stripResolvedMentions } from "../richtext";
 
 /** Pure, immutable operations on block trees. Nested blocks always live in `block.children`. */
 
@@ -24,7 +25,8 @@ export function normalizeBlocks(input: unknown): BaseBlock[] {
     const block: BaseBlock = {
       ...raw,
       id,
-      props: raw.props && typeof raw.props === "object" ? raw.props : {},
+      // Mentions may arrive with delivery-only fields (colour, href) — never store those.
+      props: raw.props && typeof raw.props === "object" ? stripResolvedMentions(raw.props) : {},
     };
     if (Array.isArray(raw.children))
       block.children = raw.children.map(visit).filter(Boolean) as BaseBlock[];
@@ -118,9 +120,34 @@ export function moveBlock(
   return insertBlock(without, found.block, parentId, adjusted);
 }
 
-/** Deep copy of a block with fresh ids (for duplicate / paste). */
+const isBlockLike = (v: unknown): v is BaseBlock =>
+  !!v &&
+  typeof v === "object" &&
+  typeof (v as any).id === "string" &&
+  typeof (v as any).type === "string" &&
+  typeof (v as any).props === "object";
+
+/**
+ * Deep copy of a block for duplicate / paste: the content and structure are copied, every block
+ * in the copy (itself, its children, and block trees stored inside props) gets a fresh id, and
+ * template locks are dropped (a copy is never a template anchor). Ids that point at *other*
+ * records — media, referenced entries, mentions — are left alone.
+ */
 export function cloneBlock(block: BaseBlock): BaseBlock {
   const copy = structuredClone(block);
-  for (const { block: b } of walkBlocks([copy])) b.id = createBlockId();
+  const visitProps = (value: unknown): void => {
+    if (Array.isArray(value)) return value.forEach(visitProps);
+    if (!value || typeof value !== "object") return;
+    if (isBlockLike(value)) return reId(value);
+    Object.values(value).forEach(visitProps);
+  };
+  const reId = (b: BaseBlock) => {
+    b.id = createBlockId();
+    delete b.isTemplated;
+    delete b.templatedProps;
+    visitProps(b.props);
+    getChildren(b).forEach(reId);
+  };
+  reId(copy);
   return copy;
 }

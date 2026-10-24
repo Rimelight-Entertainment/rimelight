@@ -27,7 +27,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -55,7 +55,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -84,7 +84,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -281,7 +281,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "24756bce-a003-4532-8e26-a4c9188ddf10",
         type: "SectionBlock",
         props: {
-          title: "Appearance",
+          title: [{ type: "text", text: "Appearance" }],
         },
         isTemplated: true,
         children: [],
@@ -290,7 +290,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "4d777afe-f669-4d0d-95a5-ac5d94e15a2d",
         type: "SectionBlock",
         props: {
-          title: "Abilities",
+          title: [{ type: "text", text: "Abilities" }],
         },
         isTemplated: true,
         children: [],
@@ -299,7 +299,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "0f6c9795-7e21-4dc7-a117-b07e9a2e8131",
         type: "SectionBlock",
         props: {
-          title: "History",
+          title: [{ type: "text", text: "History" }],
         },
         isTemplated: true,
         children: [],
@@ -308,7 +308,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -361,7 +361,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -428,7 +428,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -451,7 +451,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -482,7 +482,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -494,7 +494,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -579,7 +579,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "b18366d3-8c8b-4525-a712-92a9aa1c281b",
         type: "SectionBlock",
         props: {
-          title: "Playstyle",
+          title: [{ type: "text", text: "Playstyle" }],
         },
         isTemplated: true,
         children: [],
@@ -588,7 +588,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "ee6267ab-4bf3-495e-bea2-69eb7e36c083",
         type: "SectionBlock",
         props: {
-          title: "Background Lore",
+          title: [{ type: "text", text: "Background Lore" }],
         },
         isTemplated: true,
         children: [],
@@ -597,7 +597,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -652,7 +652,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "ea14bd90-0e37-47c8-8633-064dd973945f",
         type: "SectionBlock",
         props: {
-          title: "Overview",
+          title: [{ type: "text", text: "Overview" }],
         },
         isTemplated: true,
         children: [],
@@ -661,7 +661,7 @@ export const franchiseCollections: CollectionDefinition[] = [
         id: "610cc506-20bf-4985-be11-a41c25bb40c7",
         type: "SectionBlock",
         props: {
-          title: "Seasons",
+          title: [{ type: "text", text: "Seasons" }],
         },
         isTemplated: true,
         children: [],
@@ -670,7 +670,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -681,7 +681,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
   {
@@ -692,7 +692,7 @@ export const franchiseCollections: CollectionDefinition[] = [
     features: {
       bylines: true,
       taxonomies: ["category", "tag"],
-      routable: "/franchises/grand-tale/wiki/{slug}",
+      routable: "/{slug}",
     },
   },
 ].map((c) => defineCollection(c as CollectionDefinition));
