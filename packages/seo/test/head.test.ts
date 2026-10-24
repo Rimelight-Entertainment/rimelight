@@ -168,4 +168,21 @@ describe("createSeoHead", () => {
       ],
     ).toBe("Acme Corp");
   });
+
+  it("supports matching og routes rules to custom layouts", () => {
+    const head = createSeoHead({
+      title: "My Blog Post",
+      url: "https://example.com/company/blog/my-post",
+      config: {
+        og: {
+          routes: {
+            "*/blog/*": "blog",
+          },
+        },
+      },
+    });
+
+    const ogImageTag = head.find((t) => t.tag === "meta" && t.props?.["property"] === "og:image");
+    expect(ogImageTag?.props?.["content"]).toContain("/open-graph/blog?title=My+Blog+Post");
+  });
 });

@@ -119,10 +119,33 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
     ? buildSafeDescription(finalDescription, Math.min(config.maxDescriptionLength, 300))
     : buildSafeDescription(finalDescription, 300);
 
+  // Resolve matching layout from routes pattern if defined (e.g. "*/blog/*" or "/blog")
+  let matchedLayout: string | undefined;
+  if (config.og && typeof config.og === "object" && config.og.routes) {
+    const pathname = (() => {
+      try {
+        return new URL(currentUrl).pathname;
+      } catch {
+        return currentUrl;
+      }
+    })();
+
+    for (const [pattern, compOrLayout] of Object.entries(config.og.routes)) {
+      const regexStr =
+        "^" + pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$";
+      if (new RegExp(regexStr).test(pathname) || pathname.includes(pattern.replace(/\*/g, ""))) {
+        const match = compOrLayout.match(/\/([^/]+?)(?:OgCard|Og)?\.(?:tsx|ts)$/);
+        matchedLayout = match?.[1] ? match[1].toLowerCase() : compOrLayout;
+        break;
+      }
+    }
+  }
+
   const defaultDynamicOg = buildDefaultOgImageUrl({
     title,
     description: finalDescription,
     siteName,
+    layout: matchedLayout,
   });
   const ogImageFallback = config.ogImage || defaultDynamicOg;
 

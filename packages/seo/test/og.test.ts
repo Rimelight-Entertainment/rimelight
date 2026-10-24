@@ -59,4 +59,25 @@ describe("@rimelight/seo defaultOgLayout", () => {
     expect(text).toContain("Hello World");
     expect(text).toContain("Blog");
   });
+
+  it("handleOgRequest should support custom layout functions and components", async () => {
+    const customLayout = (props: any) =>
+      `<svg xmlns="http://www.w3.org/2000/svg"><text class="custom-blog">${props.title} - ${props.category}</text></svg>`;
+
+    const req = new Request(
+      "https://example.com/open-graph/blog?title=SolidJS+Release&badge=Announcement",
+    );
+    const res = handleOgRequest(req, {
+      layouts: {
+        blog: customLayout,
+      },
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toContain("image/svg+xml");
+    const text = await res.text();
+    expect(text).toContain("custom-blog");
+    expect(text).toContain("SolidJS Release");
+    expect(text).toContain("Announcement");
+  });
 });

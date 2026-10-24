@@ -91,13 +91,15 @@ export function buildDefaultOgImageUrl(opts: {
   title?: string | undefined;
   description?: string | undefined;
   siteName?: string | undefined;
+  layout?: string | undefined;
 }): string {
   const params = new URLSearchParams();
   const title = opts.title || opts.siteName;
   if (title) params.set("title", title);
   if (opts.description) params.set("description", opts.description);
   const qs = params.toString();
-  return qs ? `/open-graph/card.svg?${qs}` : "/open-graph/card.svg";
+  const endpoint = opts.layout ? `/open-graph/${opts.layout}` : "/open-graph/card.svg";
+  return qs ? `${endpoint}?${qs}` : endpoint;
 }
 
 /**

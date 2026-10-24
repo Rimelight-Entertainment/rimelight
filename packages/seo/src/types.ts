@@ -620,6 +620,15 @@ export interface OgRouteOptions {
    * @default "dark"
    */
   defaultBackground?: "dark" | "gradient" | (string & {});
+  /**
+   * Subpath route matching rules mapping pathname patterns (e.g. "*\/blog\/*" or "/blog") to layout keys.
+   */
+  routes?: Record<string, string>;
+  /**
+   * Map of subpath layout components or render functions.
+   * Key is the subpath name (e.g. "blog" -> /open-graph/blog).
+   */
+  layouts?: Record<string, ((props: any) => any) | object>;
 }
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms";

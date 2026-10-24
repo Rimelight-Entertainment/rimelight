@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import { renderToString } from "@solidjs/web";
 import type { OgRouteOptions } from "./types";
 
 export interface OgLayoutOptions {
@@ -183,17 +184,39 @@ export function handleOgRequest(request: Request, options: OgHandlerOptions = {}
     const title = rawTitle.slice(0, 200);
     const description = rawDescription ? rawDescription.slice(0, 300) : undefined;
 
-    const layoutOptions: OgLayoutOptions = {
-      title,
-      brand,
-      background,
-      preview,
-      ...(description !== undefined && { description }),
-      ...(badge !== undefined && { badge }),
-      ...(date !== undefined && { date }),
-    };
+    // Check if path requested a registered custom layout (e.g. /open-graph/blog or /open-graph/docs)
+    const subpathMatch = url.pathname.match(/^\/open-graph\/([^./]+)(?:\.svg)?$/);
+    const layoutKey = subpathMatch && subpathMatch[1] ? subpathMatch[1].toLowerCase() : undefined;
+    const customLayout = layoutKey && options.layouts ? options.layouts[layoutKey] : undefined;
 
-    const svg = defaultOgLayout(layoutOptions);
+    let svg: string;
+    if (typeof customLayout === "function") {
+      const allParams = Object.fromEntries(params.entries());
+      const rendered = (customLayout as any)({
+        title,
+        description,
+        badge,
+        category: badge,
+        date,
+        brand,
+        background,
+        ...allParams,
+      });
+
+      svg = typeof rendered === "string" ? rendered : renderToString(() => rendered);
+    } else {
+      const layoutOptions: OgLayoutOptions = {
+        title,
+        brand,
+        background,
+        preview,
+        ...(description !== undefined && { description }),
+        ...(badge !== undefined && { badge }),
+        ...(date !== undefined && { date }),
+      };
+
+      svg = defaultOgLayout(layoutOptions);
+    }
 
     return new Response(svg, {
       status: 200,

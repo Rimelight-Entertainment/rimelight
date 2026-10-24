@@ -40,6 +40,12 @@ export default defineConfig({
         pt: "pt-BR",
         es: "es-ES",
       },
+      og: {
+        routes: {
+          "*/blog/*": "./src/components/og/BlogOgCard.tsx",
+          "*/docs/*": "./src/components/og/DocsOgCard.tsx",
+        },
+      },
       privatePathPrefixes: [
         "/dashboard",
         "/admin",

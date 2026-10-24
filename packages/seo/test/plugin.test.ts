@@ -30,6 +30,8 @@ describe("seo Vite Plugin", () => {
   it("directly serializes options into virtual module", async () => {
     const plugin = seo({});
     const configCode = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-    expect(configCode).toBe("export const config = {};");
+    expect(configCode).toBe(
+      'export const config = { ...{}, ogComponents: import.meta.glob("/src/components/og/*.tsx", { eager: true }) };',
+    );
   });
 });

@@ -218,9 +218,25 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
 
     if (rawUrl.startsWith("/open-graph/") && config.og !== false) {
       const ogOpts = typeof config.og === "object" ? config.og : {};
+      const ogComponents = (virtualConfig as any)?.ogComponents || {};
+      const layouts: Record<string, any> = { ...ogOpts.layouts };
+
+      if (ogOpts.routes) {
+        for (const compPath of Object.values(ogOpts.routes)) {
+          const mod = ogComponents[compPath];
+          const component = mod?.default || (mod && Object.values(mod)[0]);
+          if (component) {
+            const match = compPath.match(/\/([^/]+?)(?:OgCard|Og)?\.(?:tsx|ts)$/);
+            const layoutKey = match?.[1] ? match[1].toLowerCase() : compPath;
+            layouts[layoutKey] = component;
+          }
+        }
+      }
+
       return handleOgRequest(c.req.raw, {
         brand: ogOpts.brand || siteName,
         ...ogOpts,
+        layouts,
       });
     }
 
