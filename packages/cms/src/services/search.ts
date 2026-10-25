@@ -11,7 +11,7 @@ import type { Entry } from "./entries";
  * Postgres uses a tsvector; SQLite falls back to LIKE matching on the same table.
  */
 
-export async function indexEntry(ctx: CmsContext, entry: Entry) {
+export async function indexEntry(ctx: CmsContext, entry: Entry): Promise<void> {
   const collection = await getCollection(ctx, entry.collection).catch(() => null);
   if (collection && !collection.features.search) return;
   const s = ctx.t.searchIndex;
@@ -42,7 +42,7 @@ export async function indexEntry(ctx: CmsContext, entry: Entry) {
     .onConflictDoUpdate({ target: [s.sourceType, s.sourceId], set: values });
 }
 
-export async function removeEntryFromIndex(ctx: CmsContext, entryId: string) {
+export async function removeEntryFromIndex(ctx: CmsContext, entryId: string): Promise<void> {
   await ctx.db.delete(ctx.t.searchIndex).where(eq(ctx.t.searchIndex.sourceId, entryId));
 }
 
@@ -108,7 +108,7 @@ export async function searchEntries(
 }
 
 /** Rebuilds the index from every published entry (admin maintenance / after enabling search). */
-export async function reindexAll(ctx: CmsContext) {
+export async function reindexAll(ctx: CmsContext): Promise<{ indexed: number }> {
   const { listEntries, getEntry } = await import("./entries");
   let offset = 0;
   let count = 0;

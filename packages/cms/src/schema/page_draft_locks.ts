@@ -1,7 +1,7 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, type PgTableWithColumns } from "drizzle-orm/pg-core";
 import { pages } from "./pages";
 
-export const pageDraftLocks = pgTable("page_draft_locks", {
+export const pageDraftLocks: PgTableWithColumns<any> = pgTable("page_draft_locks", {
   pageId: uuid("page_id")
     .notNull()
     .primaryKey()

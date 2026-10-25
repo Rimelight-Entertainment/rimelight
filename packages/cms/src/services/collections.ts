@@ -82,7 +82,7 @@ export async function createCollection(
   ctx: CmsContext,
   actor: CmsActor,
   def: CollectionDefinition,
-) {
+): Promise<ResolvedCollection> {
   assertAdmin(actor);
   const slug = slugify(def.slug || resolveLabel(def.label)).replace(/\//g, "-");
   if (!slug) throw new CmsError(422, "Collection slug is required");
@@ -108,7 +108,7 @@ export async function updateCollection(
   actor: CmsActor,
   slug: string,
   patch: Partial<CollectionDefinition>,
-) {
+): Promise<ResolvedCollection> {
   assertAdmin(actor);
   const current = await getCollection(ctx, slug);
   const next: CollectionDefinition = { ...current, ...patch, slug };
@@ -125,7 +125,11 @@ export async function updateCollection(
   return fromRow(row);
 }
 
-export async function deleteCollection(ctx: CmsContext, actor: CmsActor, slug: string) {
+export async function deleteCollection(
+  ctx: CmsContext,
+  actor: CmsActor,
+  slug: string,
+): Promise<{ success: true }> {
   assertAdmin(actor);
   const rows = await ctx.db
     .select()

@@ -18,12 +18,27 @@ export interface BylineInput {
   metadata?: Record<string, any>;
 }
 
-export async function listBylines(ctx: CmsContext) {
+export interface BylineRow {
+  id: string;
+  name: string;
+  slug: string;
+  bio: string | null;
+  avatar: string | null;
+  websiteUrl: string | null;
+  userId: string | null;
+  socials: Record<string, string>;
+  metadata: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
+export async function listBylines(ctx: CmsContext): Promise<BylineRow[]> {
   const b = ctx.t.bylines;
   return ctx.db.select().from(b).where(isNull(b.deletedAt)).orderBy(asc(b.name));
 }
 
-export async function getByline(ctx: CmsContext, idOrSlug: string) {
+export async function getByline(ctx: CmsContext, idOrSlug: string): Promise<BylineRow> {
   const b = ctx.t.bylines;
   const rows = await ctx.db
     .select()
@@ -41,7 +56,11 @@ export async function getByline(ctx: CmsContext, idOrSlug: string) {
   return rows[0];
 }
 
-export async function createByline(ctx: CmsContext, _actor: CmsActor, input: BylineInput) {
+export async function createByline(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  input: BylineInput,
+): Promise<BylineRow> {
   if (!input.name?.trim()) throw new CmsError(422, "Name is required");
   const slug = slugify(input.slug || input.name).replace(/\//g, "-");
   const now = new Date();
@@ -64,7 +83,7 @@ export async function updateByline(
   _actor: CmsActor,
   id: string,
   input: Partial<BylineInput>,
-) {
+): Promise<BylineRow> {
   const patch: Record<string, any> = { ...input, updatedAt: new Date() };
   if (input.slug !== undefined) patch["slug"] = slugify(input.slug).replace(/\//g, "-");
   const [row] = await ctx.db
@@ -76,7 +95,11 @@ export async function updateByline(
   return row;
 }
 
-export async function deleteByline(ctx: CmsContext, _actor: CmsActor, id: string) {
+export async function deleteByline(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  id: string,
+): Promise<{ success: true }> {
   await ctx.db
     .update(ctx.t.bylines)
     .set({ deletedAt: new Date(), updatedAt: new Date() })

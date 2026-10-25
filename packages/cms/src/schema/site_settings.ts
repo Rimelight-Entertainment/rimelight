@@ -1,4 +1,4 @@
-import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { jsonb, pgTable, text, timestamp, type PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export interface SiteSettingsBranding {
   logo: {
@@ -20,7 +20,7 @@ export interface SiteSettingsSeo {
   authorHandle?: string;
 }
 
-export const siteSettings = pgTable("site_settings", {
+export const siteSettings: PgTableWithColumns<any> = pgTable("site_settings", {
   id: text("id").primaryKey().default("default"),
   name: text("name").notNull(),
   description: text("description").notNull(),
@@ -37,5 +37,26 @@ export const siteSettings = pgTable("site_settings", {
     .notNull(),
 });
 
-export type SiteSettings = typeof siteSettings.$inferSelect;
-export type InsertSiteSettings = typeof siteSettings.$inferInsert;
+export interface SiteSettings {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  ogImage: string;
+  author: string;
+  email: string;
+  branding: SiteSettingsBranding;
+  seo: SiteSettingsSeo;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type InsertSiteSettings = Partial<SiteSettings> & {
+  name: string;
+  description: string;
+  url: string;
+  ogImage: string;
+  author: string;
+  branding: SiteSettingsBranding;
+  seo: SiteSettingsSeo;
+};

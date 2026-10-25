@@ -1,4 +1,11 @@
-import { createSignal, createStore } from "solid-js";
+import {
+  createSignal,
+  createStore,
+  type Accessor,
+  type Setter,
+  type Store,
+  type StoreSetter,
+} from "solid-js";
 import { getRequestEvent } from "@solidjs/web";
 
 export type Handler = (e: KeyboardEvent) => void;
@@ -86,7 +93,7 @@ const MODS: Record<string, string> = {
   option: "alt",
 };
 
-export const normalizeModifier = (m: string) => MODS[m.toLowerCase()] || m.toLowerCase();
+export const normalizeModifier = (m: string): string => MODS[m.toLowerCase()] || m.toLowerCase();
 
 export const formatShortcutKeys = (k: string): string[] =>
   k.split(/[_-]/).map((p) => {
@@ -94,16 +101,25 @@ export const formatShortcutKeys = (k: string): string[] =>
     return getKeySymbol(norm) ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "");
   });
 
-export const [activeShortcutsStore, setActiveShortcutsStore] = createStore<RegisteredShortcut[]>(
-  [],
-);
+const _activeShortcutsStore = createStore<RegisteredShortcut[]>([]);
+export const activeShortcutsStore: Store<RegisteredShortcut[]> = _activeShortcutsStore[0];
+export const setActiveShortcutsStore: StoreSetter<RegisteredShortcut[]> = _activeShortcutsStore[1];
 
-const [shortcutsModalOpen, setShortcutsModalOpen] = createSignal(false);
+const _shortcutsModalSignal = createSignal(false);
+const shortcutsModalOpen: Accessor<boolean> = _shortcutsModalSignal[0];
+const setShortcutsModalOpen: Setter<boolean> = _shortcutsModalSignal[1];
+
+export interface UseShortcutsReturn {
+  isOpen: Accessor<boolean>;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+}
 
 /**
  * Hook to access and control the shortcuts help dialog.
  */
-export function useShortcuts() {
+export function useShortcuts(): UseShortcutsReturn {
   return {
     isOpen: shortcutsModalOpen,
     open: () => setShortcutsModalOpen(true),

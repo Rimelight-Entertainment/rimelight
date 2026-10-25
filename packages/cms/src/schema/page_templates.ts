@@ -1,9 +1,17 @@
-import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  type PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 import type { BaseBlock } from "../core/types/blocks";
 import type { Localized, PageType } from "../core/types/pages";
 import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
 
-export const pageTemplates = pgTable("page_templates", {
+export const pageTemplates: PgTableWithColumns<any> = pgTable("page_templates", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   slug: text("slug").notNull().unique(),
   title: jsonb("title").$type<Localized>().notNull(),

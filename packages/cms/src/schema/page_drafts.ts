@@ -1,8 +1,15 @@
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  type PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 import { pages } from "./pages";
 import type { BaseBlock } from "../core/types/blocks";
 
-export const pageDrafts = pgTable("page_drafts", {
+export const pageDrafts: PgTableWithColumns<any> = pgTable("page_drafts", {
   pageId: uuid("page_id")
     .notNull()
     .primaryKey()

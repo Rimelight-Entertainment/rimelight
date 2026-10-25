@@ -1,4 +1,13 @@
-import { type Component, For, Show, createMemo, createSignal } from "solid-js";
+import {
+  type Component,
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  onSettled,
+} from "solid-js";
+import { Portal } from "@solidjs/web";
 import { useNavigate } from "@solidjs/router";
 import {
   buildDocsNav,
@@ -14,7 +23,6 @@ import { RLSurround } from "@rimelight/ui/components/surround/RLSurround.tsx";
 import { RLCopyMarkdown } from "@rimelight/ui/components/copy-markdown/RLCopyMarkdown.tsx";
 import { RLShare } from "@rimelight/ui/components/share/RLShare.tsx";
 import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
-import { RLSlideover } from "@rimelight/ui/components/slideover/RLSlideover.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { t, getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
 import { DocBlocks, withDocsMeta } from "./DocBlocks";
@@ -74,8 +82,37 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
   const headings = () => extractHeadingsFromBlocks(blocks(), 2, locale());
   const markdown = () => (entry() ? blocksToMarkdown(blocks()) : "");
 
-  const [menuOpen, setMenuOpen] = createSignal(false);
-  const [tocOpen, setTocOpen] = createSignal(false);
+  /** Which mobile panel is open under the docs sub-header. */
+  const [panel, setPanel] = createSignal<"nav" | "toc" | null>(null);
+  /** Viewport y of the sub-header's bottom edge — where the panels hang from. */
+  const [panelTop, setPanelTop] = createSignal(0);
+  const measure = () => {
+    const el = document.querySelector<HTMLElement>("[data-docs-subheader]");
+    if (el) setPanelTop(Math.max(0, el.getBoundingClientRect().bottom));
+  };
+  const toggle = (which: "nav" | "toc") => {
+    measure();
+    setPanel((p) => (p === which ? null : which));
+  };
+  onSettled(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setPanel(null);
+    const onMove = () => panel() && measure();
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", onMove, { passive: true });
+    window.addEventListener("resize", onMove);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", onMove);
+      window.removeEventListener("resize", onMove);
+    };
+  });
+  // Navigating to another page closes any open panel.
+  createEffect(
+    () => props.path,
+    () => {
+      setPanel(null);
+    },
+  );
 
   /** Version switcher + section tabs (desktop: above the columns; mobile: in the menu). */
   const versionBar = () => (
@@ -125,62 +162,82 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
 
   return (
     <div class="container mx-auto px-4 py-8">
-      {/* Mobile: a second sticky header with the menu (sidebar) and "On this page" (TOC). */}
+      {/* Mobile: a second sticky header. Left opens the sidebar, right opens "On this page";
+          each panel slides down from the bottom of this header. */}
       <RLHeader
         stackIndex={1}
+        data-docs-subheader=""
         class="xl:hidden -mx-4 mb-6 border-b border-default bg-default/95 backdrop-blur"
         left={
           <div class="lg:hidden">
-            <RLSlideover
-              side="left"
-              title="Documentation"
-              open={menuOpen()}
-              onOpenChange={setMenuOpen}
-              trigger={<RLButton variant="ghost" size="sm" leadingIcon="menu" label="Menu" />}
-            >
-              {/* Picking a page closes the menu. */}
-              <div
-                class="docs-mobile-nav flex flex-col gap-4"
-                onClick={(e) => (e.target as Element).closest("a[href]") && setMenuOpen(false)}
-              >
-                {versionBar()}
-                <RLSidebar
-                  items={nav().items as any}
-                  collapsible="none"
-                  class="w-full shadow-none border-0"
-                />
-              </div>
-            </RLSlideover>
+            <RLButton
+              variant="ghost"
+              size="sm"
+              leadingIcon="menu"
+              label="Menu"
+              trailingIcon={panel() === "nav" ? "chevron-up" : "chevron-down"}
+              aria-expanded={panel() === "nav"}
+              aria-controls="docs-panel-nav"
+              onClick={() => toggle("nav")}
+            />
           </div>
         }
         right={
           <Show when={headings().length > 0}>
-            <RLSlideover
-              side="right"
-              title="On this page"
-              open={tocOpen()}
-              onOpenChange={setTocOpen}
-              trigger={
-                <RLButton
-                  variant="ghost"
-                  size="sm"
-                  trailingIcon="list"
-                  label="On this page"
-                  class="whitespace-nowrap"
-                />
-              }
-            >
-              {/* Picking a heading closes the panel. */}
-              <div onClick={(e) => (e.target as Element).closest("a[href]") && setTocOpen(false)}>
-                <RLTableOfContents
-                  headings={headings()}
-                  tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 } as any}
-                />
-              </div>
-            </RLSlideover>
+            <RLButton
+              variant="ghost"
+              size="sm"
+              label="On this page"
+              trailingIcon={panel() === "toc" ? "chevron-up" : "chevron-down"}
+              class="whitespace-nowrap"
+              aria-expanded={panel() === "toc"}
+              aria-controls="docs-panel-toc"
+              onClick={() => toggle("toc")}
+            />
           </Show>
         }
       />
+
+      <Portal>
+        {/* Dim the page behind an open panel; clicking it closes the panel. */}
+        <div
+          class={`fixed inset-x-0 bottom-0 z-30 bg-black/40 transition-opacity duration-200 xl:hidden ${panel() ? "opacity-100" : "pointer-events-none opacity-0"}`}
+          style={{ top: `${panelTop()}px` }}
+          onClick={() => setPanel(null)}
+        />
+        <For each={["nav", "toc"] as const}>
+          {(which) => (
+            <div
+              id={`docs-panel-${which}`}
+              role="region"
+              aria-label={which === "nav" ? "Documentation navigation" : "On this page"}
+              class={`docs-mobile-nav fixed inset-x-0 z-40 max-h-[70vh] origin-top overflow-y-auto border-b border-default bg-default px-4 py-4 shadow-xl transition-[transform,opacity] duration-200 ease-out xl:hidden ${panel() === which ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"}`}
+              style={{ top: `${panelTop()}px` }}
+              // Picking a page or heading closes the panel.
+              onClick={(e) => (e.target as Element).closest("a[href]") && setPanel(null)}
+            >
+              <Show
+                when={which === "nav"}
+                fallback={
+                  <RLTableOfContents
+                    headings={headings()}
+                    tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 } as any}
+                  />
+                }
+              >
+                <div class="flex flex-col gap-4">
+                  {versionBar()}
+                  <RLSidebar
+                    items={nav().items as any}
+                    collapsible="none"
+                    class="w-full border-0 shadow-none"
+                  />
+                </div>
+              </Show>
+            </div>
+          )}
+        </For>
+      </Portal>
 
       {/* Version + sections (in the mobile menu below lg) */}
       <div class="hidden lg:block">{versionBar()}</div>

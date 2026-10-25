@@ -1,4 +1,12 @@
-﻿import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+﻿import {
+  boolean,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  type PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 import type { Localized } from "../core/types/pages";
 import type { BaseBlock } from "../core/types/blocks";
 
@@ -37,7 +45,7 @@ export interface EcomSettings {
   stripeSync?: boolean;
 }
 
-export const contentTypes = pgTable("content_types", {
+export const contentTypes: PgTableWithColumns<any> = pgTable("content_types", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   slug: text("slug").notNull().unique(),
   name: jsonb("name").$type<Localized>().notNull(),

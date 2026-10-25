@@ -40,7 +40,13 @@ export function getDocsVersions(entries: (DocEntry | string)[], locale?: string)
   });
 }
 
-export function parseDocsSlug(slug: string | undefined, versions: string[]) {
+export interface ParsedDocsSlug {
+  activeVersion: string | undefined;
+  contentPath: string;
+  includeVersionInUrl: boolean;
+}
+
+export function parseDocsSlug(slug: string | undefined, versions: string[]): ParsedDocsSlug {
   if (versions.length === 0) {
     return {
       activeVersion: "",

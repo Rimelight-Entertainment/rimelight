@@ -34,9 +34,9 @@ export const relations = defineRelations(schema, (r) => ({
   },
 
   pageVersions: {
-    page: r.one.pages({
-      from: r.pageVersions.pageId,
-      to: r.pages.id,
+    page: (r.one.pages as any)({
+      from: (r.pageVersions as any).pageId,
+      to: (r.pages as any).id,
     }),
   },
 

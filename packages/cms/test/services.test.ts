@@ -213,7 +213,8 @@ describe("review workflow", () => {
     await cms.entries.publishEntry(admin, e.id);
     await cms.entries.saveDraft(admin, e.id, { blocks: text("two") });
     const [v1] = await cms.entries.listVersions(e.id);
-    const rolled = await cms.entries.rollbackToVersion(admin, v1.id);
+    expect(v1).toBeDefined();
+    const rolled = await cms.entries.rollbackToVersion(admin, v1!.id);
     expect(JSON.stringify(rolled.draft.blocks)).toContain("one");
 
     const pending = await cms.entries.requestReview(admin, e.id);

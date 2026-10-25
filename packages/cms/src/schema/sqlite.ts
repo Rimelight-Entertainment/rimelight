@@ -6,6 +6,7 @@ import {
   uniqueIndex,
   index,
   type AnySQLiteColumn,
+  type SQLiteTableWithColumns,
 } from "drizzle-orm/sqlite-core";
 import type { BaseBlock } from "../core/types/blocks";
 import type { EntryStatus, Localized, PageType } from "../core/types/pages";
@@ -34,7 +35,7 @@ export interface SiteSettingsSeo {
 }
 
 // 1. Page Templates
-export const pageTemplates = sqliteTable("page_templates", {
+export const pageTemplates: SQLiteTableWithColumns<any> = sqliteTable("page_templates", {
   id: text("id")
     .$defaultFn(() => crypto.randomUUID())
     .notNull()
@@ -71,7 +72,7 @@ export const pageTemplates = sqliteTable("page_templates", {
 });
 
 // 2. Page Versions
-export const pageVersions = sqliteTable(
+export const pageVersions: SQLiteTableWithColumns<any> = sqliteTable(
   "page_versions",
   {
     id: text("id")
@@ -118,7 +119,7 @@ export const pageVersions = sqliteTable(
 );
 
 // 3. Pages
-export const pages = sqliteTable(
+export const pages: SQLiteTableWithColumns<any> = sqliteTable(
   "pages",
   {
     id: text("id")
@@ -167,7 +168,7 @@ export const pages = sqliteTable(
 );
 
 // 4. Page Drafts
-export const pageDrafts = sqliteTable("page_drafts", {
+export const pageDrafts: SQLiteTableWithColumns<any> = sqliteTable("page_drafts", {
   pageId: text("page_id")
     .notNull()
     .primaryKey()
@@ -185,7 +186,7 @@ export const pageDrafts = sqliteTable("page_drafts", {
 });
 
 // 5. Page Draft Locks
-export const pageDraftLocks = sqliteTable("page_draft_locks", {
+export const pageDraftLocks: SQLiteTableWithColumns<any> = sqliteTable("page_draft_locks", {
   pageId: text("page_id")
     .notNull()
     .primaryKey()
@@ -199,41 +200,47 @@ export const pageDraftLocks = sqliteTable("page_draft_locks", {
 });
 
 // 6. Page Version Approvals
-export const pageVersionApprovals = sqliteTable("page_version_approvals", {
-  id: text("id")
-    .$defaultFn(() => crypto.randomUUID())
-    .notNull()
-    .primaryKey(),
-  versionId: text("version_id")
-    .notNull()
-    .references(() => pageVersions.id, { onDelete: "cascade" }),
-  userId: text("user_id").notNull(),
-  userRole: text("user_role").notNull(),
-  approvedAt: integer("approved_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
-    .notNull(),
-});
+export const pageVersionApprovals: SQLiteTableWithColumns<any> = sqliteTable(
+  "page_version_approvals",
+  {
+    id: text("id")
+      .$defaultFn(() => crypto.randomUUID())
+      .notNull()
+      .primaryKey(),
+    versionId: text("version_id")
+      .notNull()
+      .references(() => pageVersions.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull(),
+    userRole: text("user_role").notNull(),
+    approvedAt: integer("approved_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+);
 
 // 7. Page Version Comments
-export const pageVersionComments = sqliteTable("page_version_comments", {
-  id: text("id")
-    .$defaultFn(() => crypto.randomUUID())
-    .notNull()
-    .primaryKey(),
-  versionId: text("version_id")
-    .notNull()
-    .references(() => pageVersions.id, { onDelete: "cascade" }),
-  userId: text("user_id").notNull(),
-  userRole: text("user_role").notNull(),
-  content: text("content").notNull(),
-  blockId: text("block_id"),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
-    .notNull(),
-});
+export const pageVersionComments: SQLiteTableWithColumns<any> = sqliteTable(
+  "page_version_comments",
+  {
+    id: text("id")
+      .$defaultFn(() => crypto.randomUUID())
+      .notNull()
+      .primaryKey(),
+    versionId: text("version_id")
+      .notNull()
+      .references(() => pageVersions.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull(),
+    userRole: text("user_role").notNull(),
+    content: text("content").notNull(),
+    blockId: text("block_id"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+);
 
 // 8. Search
-export const contentSearchIndex = sqliteTable(
+export const contentSearchIndex: SQLiteTableWithColumns<any> = sqliteTable(
   "content_search_index",
   {
     id: text("id")
@@ -250,7 +257,7 @@ export const contentSearchIndex = sqliteTable(
   (table) => [index("content_search_index_page_id_idx").on(table.pageId)],
 );
 
-export const searchIndex = sqliteTable(
+export const searchIndex: SQLiteTableWithColumns<any> = sqliteTable(
   "search_index",
   {
     id: text("id")
@@ -273,7 +280,7 @@ export type SearchIndex = typeof searchIndex.$inferSelect;
 export type NewSearchIndex = typeof searchIndex.$inferInsert;
 
 // 9. Site Settings
-export const siteSettings = sqliteTable("site_settings", {
+export const siteSettings: SQLiteTableWithColumns<any> = sqliteTable("site_settings", {
   id: text("id").primaryKey().default("default"),
   name: text("name").notNull(),
   description: text("description").notNull(),
@@ -293,7 +300,7 @@ export const siteSettings = sqliteTable("site_settings", {
 });
 
 // 10. Taxonomies
-export const taxonomyTerms = sqliteTable(
+export const taxonomyTerms: SQLiteTableWithColumns<any> = sqliteTable(
   "taxonomy_terms",
   {
     id: text("id")
@@ -316,7 +323,7 @@ export const taxonomyTerms = sqliteTable(
   (table) => [uniqueIndex("taxonomy_terms_tax_slug_idx").on(table.taxonomy, table.slug)],
 );
 
-export const pageTaxonomyTerms = sqliteTable(
+export const pageTaxonomyTerms: SQLiteTableWithColumns<any> = sqliteTable(
   "page_taxonomy_terms",
   {
     pageId: text("page_id")
@@ -333,7 +340,7 @@ export const pageTaxonomyTerms = sqliteTable(
 );
 
 // 11. Bylines
-export const bylines = sqliteTable(
+export const bylines: SQLiteTableWithColumns<any> = sqliteTable(
   "bylines",
   {
     id: text("id")
@@ -368,7 +375,7 @@ export type SiteSettings = typeof siteSettings.$inferSelect;
 export type InsertSiteSettings = typeof siteSettings.$inferInsert;
 
 // 12. Dynamic Content Types
-export const contentTypes = sqliteTable(
+export const contentTypes: SQLiteTableWithColumns<any> = sqliteTable(
   "content_types",
   {
     id: text("id")

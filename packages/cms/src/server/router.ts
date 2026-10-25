@@ -20,7 +20,7 @@ type Handler = (args: {
  * Admin REST API. Every route is authenticated and delegates to the service layer, so the
  * router contains no data logic — validation, permissions and workflow rules live in services.
  */
-export function createCmsRouter(options: CmsRouterOptions = {}) {
+export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
   const app = new Hono();
 
   app.onError(handleCmsError as any);
@@ -417,7 +417,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}) {
  * Full CMS HTTP surface: admin API under `/cms`, public delivery under `/content` and `/search`.
  * Mounted by the `cms()` middleware; usable directly with `app.route("/api", createCmsApi())`.
  */
-export function createCmsApi(options: CmsRouterOptions = {}) {
+export function createCmsApi(options: CmsRouterOptions = {}): Hono {
   const app = new Hono();
   app.route("/cms", createCmsRouter(options));
   const content = createContentRouter(options);

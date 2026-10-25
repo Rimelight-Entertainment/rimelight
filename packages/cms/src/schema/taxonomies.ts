@@ -7,11 +7,12 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  type PgTableWithColumns,
 } from "drizzle-orm/pg-core";
 import { pages } from "./pages";
 import type { Localized } from "../core/types/pages";
 
-export const taxonomyTerms = pgTable(
+export const taxonomyTerms: PgTableWithColumns<any> = pgTable(
   "taxonomy_terms",
   {
     id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -34,7 +35,7 @@ export const taxonomyTerms = pgTable(
   ],
 );
 
-export const pageTaxonomyTerms = pgTable(
+export const pageTaxonomyTerms: PgTableWithColumns<any> = pgTable(
   "page_taxonomy_terms",
   {
     pageId: uuid("page_id")

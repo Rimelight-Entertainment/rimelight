@@ -12,6 +12,7 @@ import { validateProperties } from "../core/collections/validate";
 import { cloneBlock, normalizeBlocks } from "../core/blocks/tree";
 import { validateServerBlockPayload } from "../auth/editor-guards";
 import { diffPageSnapshots, type PageVersionDiff } from "../core/diff";
+import type { PageVersion } from "../core/types/versioning";
 import { generatePreviewToken } from "../core/preview";
 import {
   CmsError,
@@ -67,6 +68,8 @@ export type EntrySummary = Omit<Entry, "published" | "draft"> & {
   excerptTitle: string;
   published?: EntryContent;
 };
+
+export type PageVersionRow = PageVersion & { approvals?: number; required?: number };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const LOCK_TTL_MS = 5 * 60 * 1000;
@@ -138,7 +141,15 @@ export interface ListEntriesOptions {
   offset?: number;
 }
 
-export async function listEntries(ctx: CmsContext, opts: ListEntriesOptions = {}) {
+export interface ListEntriesResult {
+  entries: EntrySummary[];
+  total: number;
+}
+
+export async function listEntries(
+  ctx: CmsContext,
+  opts: ListEntriesOptions = {},
+): Promise<ListEntriesResult> {
   const p = ctx.t.pages;
   const where: SQL[] = [];
   if (!opts.includeDeleted) where.push(isNull(p.deletedAt));
@@ -285,7 +296,11 @@ function checkSlug(collection: ResolvedCollection, slug: string) {
   }
 }
 
-export async function createEntry(ctx: CmsContext, actor: CmsActor, input: CreateEntryInput) {
+export async function createEntry(
+  ctx: CmsContext,
+  actor: CmsActor,
+  input: CreateEntryInput,
+): Promise<Entry> {
   const collection = await getCollection(ctx, input.collection);
   if (collection.kind === "singleton") {
     const existing = await listEntries(ctx, { collection: collection.slug, limit: 1 });
@@ -369,7 +384,7 @@ export async function updateEntryMeta(
   actor: CmsActor,
   id: string,
   input: UpdateEntryMetaInput,
-) {
+): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   const patch: Record<string, any> = { updatedAt: new Date() };
@@ -394,7 +409,11 @@ export async function updateEntryMeta(
   return updated;
 }
 
-export async function deleteEntry(ctx: CmsContext, actor: CmsActor, id: string) {
+export async function deleteEntry(
+  ctx: CmsContext,
+  actor: CmsActor,
+  id: string,
+): Promise<{ success: true }> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   await ctx.db
@@ -405,7 +424,7 @@ export async function deleteEntry(ctx: CmsContext, actor: CmsActor, id: string) 
   return { success: true };
 }
 
-export async function restoreEntry(ctx: CmsContext, actor: CmsActor, id: string) {
+export async function restoreEntry(ctx: CmsContext, actor: CmsActor, id: string): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   await assertSlugFree(ctx, entry.slug, entry.id);
@@ -416,7 +435,7 @@ export async function restoreEntry(ctx: CmsContext, actor: CmsActor, id: string)
   return getEntry(ctx, entry.id);
 }
 
-export async function duplicateEntry(ctx: CmsContext, actor: CmsActor, id: string) {
+export async function duplicateEntry(ctx: CmsContext, actor: CmsActor, id: string): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   let slug = `${entry.slug}-copy`;
   for (let i = 2; ; i++) {
@@ -483,7 +502,7 @@ export async function acquireLock(
   ctx: CmsContext,
   actor: CmsActor,
   entryId: string,
-  { force = false } = {},
+  { force = false }: { force?: boolean } = {},
 ): Promise<LockState> {
   const current = await getLock(ctx, actor, entryId);
   if (current.locked && !current.ownedByActor && !(force && isAdmin(actor))) return current;
@@ -509,7 +528,11 @@ export async function acquireLock(
   };
 }
 
-export async function releaseLock(ctx: CmsContext, actor: CmsActor, entryId: string) {
+export async function releaseLock(
+  ctx: CmsContext,
+  actor: CmsActor,
+  entryId: string,
+): Promise<{ success: true }> {
   await ctx.db
     .delete(ctx.t.pageDraftLocks)
     .where(
@@ -535,7 +558,7 @@ export async function saveDraft(
   actor: CmsActor,
   id: string,
   input: SaveDraftInput,
-) {
+): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
 
@@ -571,7 +594,7 @@ export async function saveDraft(
   return getEntry(ctx, entry.id);
 }
 
-export async function discardDraft(ctx: CmsContext, actor: CmsActor, id: string) {
+export async function discardDraft(ctx: CmsContext, actor: CmsActor, id: string): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   if (entry.status === "draft" && !entry.publishedVersionId) {
@@ -679,13 +702,17 @@ export async function requestReview(
   actor: CmsActor,
   id: string,
   changeSummary?: string,
-) {
+): Promise<PageVersionRow> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   return snapshotVersion(ctx, actor, entry, entry.draft, "pending", changeSummary);
 }
 
-export async function approveVersion(ctx: CmsContext, actor: CmsActor, versionId: string) {
+export async function approveVersion(
+  ctx: CmsContext,
+  actor: CmsActor,
+  versionId: string,
+): Promise<PageVersionRow> {
   const version = await getVersion(ctx, versionId);
   if (version.status !== "pending" && version.status !== "approved") {
     throw new CmsError(400, `Version is ${version.status}`);
@@ -733,7 +760,7 @@ export async function rejectVersion(
   actor: CmsActor,
   versionId: string,
   reason?: string,
-) {
+): Promise<PageVersionRow> {
   const version = await getVersion(ctx, versionId);
   const entry = await getEntry(ctx, version.pageId);
   const wf = await workflowFor(ctx, entry);
@@ -761,7 +788,7 @@ export async function publishEntry(
   actor: CmsActor,
   id: string,
   input: PublishInput = {},
-) {
+): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   const wf = await workflowFor(ctx, entry);
@@ -825,7 +852,7 @@ export async function publishEntry(
   return published;
 }
 
-export async function unpublishEntry(ctx: CmsContext, actor: CmsActor, id: string) {
+export async function unpublishEntry(ctx: CmsContext, actor: CmsActor, id: string): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   // Keep the live content as the draft so nothing is lost.
@@ -850,7 +877,7 @@ export async function scheduleEntry(
   actor: CmsActor,
   id: string,
   at: Date | string | null,
-) {
+): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
   const collection = await getCollection(ctx, entry.collection);
@@ -884,7 +911,10 @@ export async function scheduleEntry(
 }
 
 /** Publishes every entry whose `scheduled_at` has passed. Called by the cron handler. */
-export async function publishDueEntries(ctx: CmsContext, now = new Date()) {
+export async function publishDueEntries(
+  ctx: CmsContext,
+  now: Date = new Date(),
+): Promise<{ published: string[]; failed: { id: string; error: string }[] }> {
   const p = ctx.t.pages;
   const due = await ctx.db
     .select({ id: p.id })
@@ -906,7 +936,11 @@ export async function publishDueEntries(ctx: CmsContext, now = new Date()) {
 
 // ─── Versions ────────────────────────────────────────────────────────────────
 
-export async function listVersions(ctx: CmsContext, entryId?: string, limit = 50) {
+export async function listVersions(
+  ctx: CmsContext,
+  entryId?: string,
+  limit = 50,
+): Promise<PageVersionRow[]> {
   const v = ctx.t.pageVersions;
   const query = ctx.db
     .select({
@@ -933,7 +967,7 @@ export async function listVersions(ctx: CmsContext, entryId?: string, limit = 50
   }));
 }
 
-export async function getVersion(ctx: CmsContext, versionId: string) {
+export async function getVersion(ctx: CmsContext, versionId: string): Promise<PageVersionRow> {
   const rows = await ctx.db
     .select()
     .from(ctx.t.pageVersions)
@@ -951,7 +985,7 @@ export async function getVersion(ctx: CmsContext, versionId: string) {
 }
 
 /** Pending/approved versions awaiting action, newest first (the review queue). */
-export async function reviewQueue(ctx: CmsContext) {
+export async function reviewQueue(ctx: CmsContext): Promise<PageVersionRow[]> {
   const v = ctx.t.pageVersions;
   const rows = await ctx.db
     .select({
@@ -979,7 +1013,11 @@ export async function reviewQueue(ctx: CmsContext) {
 }
 
 /** Restores a version's content into the draft (does not publish). */
-export async function rollbackToVersion(ctx: CmsContext, actor: CmsActor, versionId: string) {
+export async function rollbackToVersion(
+  ctx: CmsContext,
+  actor: CmsActor,
+  versionId: string,
+): Promise<Entry> {
   const version = await getVersion(ctx, versionId);
   return saveDraft(ctx, actor, version.pageId, version.content);
 }
@@ -1015,7 +1053,7 @@ export async function addComment(
   versionId: string,
   body: string,
   blockId?: string,
-) {
+): Promise<any> {
   await getVersion(ctx, versionId);
   if (!body.trim()) throw new CmsError(422, "Comment is empty");
   const [row] = await ctx.db
@@ -1032,14 +1070,18 @@ export async function addComment(
   return row;
 }
 
-export async function listComments(ctx: CmsContext, versionId: string) {
+export async function listComments(ctx: CmsContext, versionId: string): Promise<any[]> {
   const c = ctx.t.pageVersionComments;
   return ctx.db.select().from(c).where(eq(c.versionId, versionId)).orderBy(asc(c.createdAt));
 }
 
 // ─── Preview ─────────────────────────────────────────────────────────────────
 
-export async function createPreviewToken(ctx: CmsContext, entryId: string, ttlSeconds = 7 * 86400) {
+export async function createPreviewToken(
+  ctx: CmsContext,
+  entryId: string,
+  ttlSeconds: number = 7 * 86400,
+): Promise<{ token: string; expiresAt: number }> {
   if (!ctx.previewSecret) throw new CmsError(500, "CMS_PREVIEW_SECRET is not configured");
   await getEntry(ctx, entryId);
   return generatePreviewToken(entryId, ctx.previewSecret, ttlSeconds);

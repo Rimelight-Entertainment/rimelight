@@ -18,6 +18,7 @@ export default defineConfig({
       "src/icons.ts",
       "src/fonts.ts",
     ],
+    dts: { generator: "oxc" },
     deps: {
       neverBundle: [/^virtual:/],
     },

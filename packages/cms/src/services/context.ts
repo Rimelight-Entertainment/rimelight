@@ -81,7 +81,7 @@ export class CmsError extends Error {
   }
 }
 
-export const notFound = (what: string) => new CmsError(404, `${what} not found`);
+export const notFound = (what: string): CmsError => new CmsError(404, `${what} not found`);
 
 /** JSON columns come back as strings from some drivers (raw D1, neon raw text mode). */
 export function json<T>(value: unknown, fallback: T): T {
@@ -98,7 +98,7 @@ export function json<T>(value: unknown, fallback: T): T {
 
 export { isAdmin, hasAnyRole };
 
-export function requireRole(actor: CmsActor, roles: string[] | undefined, action: string) {
+export function requireRole(actor: CmsActor, roles: string[] | undefined, action: string): void {
   if (!hasAnyRole(actor, roles)) throw new CmsError(403, `Not allowed to ${action}`);
 }
 

@@ -1,4 +1,13 @@
-import { customType, index, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import {
+  customType,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+  type PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 import { pages } from "./pages";
 
 const tsvector = customType<{ data: string }>({
@@ -7,7 +16,7 @@ const tsvector = customType<{ data: string }>({
   },
 });
 
-export const contentSearchIndex = pgTable(
+export const contentSearchIndex: PgTableWithColumns<any> = pgTable(
   "content_search_index",
   {
     id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -22,7 +31,7 @@ export const contentSearchIndex = pgTable(
   (table) => [index("search_vector_gin_idx").using("gin", table.searchVector)],
 );
 
-export const searchIndex = pgTable(
+export const searchIndex: PgTableWithColumns<any> = pgTable(
   "search_index",
   {
     id: uuid("id").defaultRandom().notNull().primaryKey(),

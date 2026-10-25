@@ -1,10 +1,19 @@
-import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import {
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  type PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 import type { BaseBlock } from "../core/types/blocks";
 import type { Localized, PageType } from "../core/types/pages";
 import type { PageVersionStatus } from "../core/types/versioning";
 import type { BylineCredit } from "../core/types/bylines";
 
-export const pageVersions = pgTable(
+export const pageVersions: PgTableWithColumns<any> = pgTable(
   "page_versions",
   {
     id: uuid("id").defaultRandom().notNull().primaryKey(),

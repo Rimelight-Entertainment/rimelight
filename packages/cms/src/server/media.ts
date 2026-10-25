@@ -38,7 +38,10 @@ async function requireSession(
  * Framework-agnostic media library handlers. Mount these in any router (Hono, Solid Start, Vite dev
  * middleware).
  */
-export async function handleMediaList(request: Request, ctx: MediaRouteContext = {}) {
+export async function handleMediaList(
+  request: Request,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
   const auth = await requireSession(request, ctx);
   if (auth.error) return auth.error;
 
@@ -107,7 +110,10 @@ export async function handleMediaList(request: Request, ctx: MediaRouteContext =
   }
 }
 
-export async function handleMediaUpload(request: Request, ctx: MediaRouteContext = {}) {
+export async function handleMediaUpload(
+  request: Request,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
   const auth = await requireSession(request, ctx);
   if (auth.error) return auth.error;
 
@@ -146,7 +152,10 @@ export async function handleMediaUpload(request: Request, ctx: MediaRouteContext
   }
 }
 
-export async function handleMediaDelete(request: Request, ctx: MediaRouteContext = {}) {
+export async function handleMediaDelete(
+  request: Request,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
   const auth = await requireSession(request, ctx);
   if (auth.error) return auth.error;
 
@@ -177,7 +186,11 @@ export async function handleMediaDelete(request: Request, ctx: MediaRouteContext
   }
 }
 
-export async function handleMediaFile(request: Request, key: string, ctx: MediaRouteContext = {}) {
+export async function handleMediaFile(
+  request: Request,
+  key: string,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
   try {
     const bindingName = ctx.storage?.binding ?? "BLOB";
     const bucket = await resolveBucket(request, ctx, bindingName);
@@ -209,7 +222,7 @@ export function registerCmsMediaRoutes(
   },
   basePath: string,
   ctx: MediaRouteContext = {},
-) {
+): void {
   const withEnv = (c: any): MediaRouteContext => ({
     ...ctx,
     getBucket: ctx.getBucket ?? (async (name: string) => c.env?.[name] ?? null),

@@ -20,6 +20,7 @@ export default defineConfig({
       "src/mcp/index.ts",
       "src/docs/index.ts",
     ],
+    dts: { generator: "oxc" },
     deps: {
       neverBundle: [/^virtual:/],
     },

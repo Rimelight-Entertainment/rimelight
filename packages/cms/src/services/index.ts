@@ -33,7 +33,14 @@ function bind<M extends Record<string, any>>(ctx: CmsContext, mod: M): BindAll<M
   return out as BindAll<M>;
 }
 
-async function stats(ctx: CmsContext) {
+export interface CmsStats {
+  totalEntries: number;
+  byCollection: Record<string, Record<string, number>>;
+  pendingReviews: number;
+  scheduled: number;
+}
+
+async function stats(ctx: CmsContext): Promise<CmsStats> {
   const p = ctx.t.pages;
   const rows = await ctx.db
     .select({ collection: p.type, status: p.status, n: sql<number>`count(*)` })

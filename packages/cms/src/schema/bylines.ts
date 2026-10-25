@@ -1,6 +1,14 @@
-import { pgTable, uuid, text, jsonb, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  jsonb,
+  timestamp,
+  uniqueIndex,
+  type PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 
-export const bylines = pgTable(
+export const bylines: PgTableWithColumns<any> = pgTable(
   "bylines",
   {
     id: uuid("id").primaryKey().defaultRandom(),

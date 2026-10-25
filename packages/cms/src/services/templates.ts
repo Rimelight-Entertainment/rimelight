@@ -99,7 +99,11 @@ function values(input: Partial<TemplateInput>) {
   return v;
 }
 
-export async function createTemplate(ctx: CmsContext, actor: CmsActor, input: TemplateInput) {
+export async function createTemplate(
+  ctx: CmsContext,
+  actor: CmsActor,
+  input: TemplateInput,
+): Promise<PageTemplate> {
   assertAdmin(actor);
   const slug = slugify(
     input.slug || (typeof input.title === "string" ? input.title : (input.title["en"] ?? "")),
@@ -118,7 +122,7 @@ export async function updateTemplate(
   actor: CmsActor,
   idOrSlug: string,
   input: Partial<TemplateInput>,
-) {
+): Promise<PageTemplate> {
   assertAdmin(actor);
   const current = await getTemplate(ctx, idOrSlug);
   const patch = values(input);
@@ -134,7 +138,11 @@ export async function updateTemplate(
   return toTemplate(row);
 }
 
-export async function deleteTemplate(ctx: CmsContext, actor: CmsActor, idOrSlug: string) {
+export async function deleteTemplate(
+  ctx: CmsContext,
+  actor: CmsActor,
+  idOrSlug: string,
+): Promise<{ success: true }> {
   assertAdmin(actor);
   const current = await getTemplate(ctx, idOrSlug);
   // pages.template_id is ON DELETE SET NULL, so entries keep their content.
@@ -143,7 +151,7 @@ export async function deleteTemplate(ctx: CmsContext, actor: CmsActor, idOrSlug:
 }
 
 /** Seeds templates declared in code (cms.config `templates`) that don't exist yet. */
-export async function seedTemplates(ctx: CmsContext, templates: TemplateInput[]) {
+export async function seedTemplates(ctx: CmsContext, templates: TemplateInput[]): Promise<number> {
   let created = 0;
   for (const tpl of templates) {
     const slug = slugify(tpl.slug ?? "");

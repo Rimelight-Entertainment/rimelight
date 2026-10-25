@@ -238,7 +238,15 @@ export async function getDocsSidebar(
   return { items: resolvedItems, scopes, activeScope };
 }
 
-export function getSurroundItems(sidebar: ResolvedSidebarItem[], currentPath: string) {
+export interface SurroundItems {
+  prev: { label: string; href: string } | null | undefined;
+  next: { label: string; href: string } | null | undefined;
+}
+
+export function getSurroundItems(
+  sidebar: ResolvedSidebarItem[],
+  currentPath: string,
+): SurroundItems {
   const flatItems: { label: string; href: string }[] = [];
 
   function flatten(items: ResolvedSidebarItem[]) {

@@ -4,7 +4,7 @@ export interface RoleSubject {
   permissions: string[];
 }
 
-export const isAdmin = (actor: RoleSubject) =>
+export const isAdmin = (actor: RoleSubject): boolean =>
   actor.permissions.includes("*") ||
   actor.roles.some((r) => ["owner", "admin"].includes(r.toLowerCase()));
 

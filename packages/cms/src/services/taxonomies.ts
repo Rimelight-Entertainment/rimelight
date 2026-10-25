@@ -58,7 +58,11 @@ export async function listTerms(ctx: CmsContext, taxonomy: string): Promise<Taxo
   return rows.map((r: any) => toTerm(r, countMap.get(r.id) ?? 0));
 }
 
-export async function getTerm(ctx: CmsContext, taxonomy: string, idOrSlug: string) {
+export async function getTerm(
+  ctx: CmsContext,
+  taxonomy: string,
+  idOrSlug: string,
+): Promise<TaxonomyTerm> {
   const tt = ctx.t.taxonomyTerms;
   const rows = await ctx.db
     .select()
@@ -92,7 +96,7 @@ export async function createTerm(
   _actor: CmsActor,
   taxonomy: string,
   input: TermInput,
-) {
+): Promise<TaxonomyTerm> {
   if (!ctx.taxonomies.some((t) => t.slug === taxonomy)) {
     throw new CmsError(404, `Unknown taxonomy "${taxonomy}". Declare it in cms.config taxonomies.`);
   }
@@ -118,7 +122,7 @@ export async function updateTerm(
   _actor: CmsActor,
   id: string,
   input: Partial<TermInput>,
-) {
+): Promise<TaxonomyTerm> {
   if (input.parentId && input.parentId === id)
     throw new CmsError(422, "A term cannot be its own parent");
   const patch: Record<string, any> = { updatedAt: new Date() };
@@ -136,12 +140,20 @@ export async function updateTerm(
   return toTerm(row);
 }
 
-export async function deleteTerm(ctx: CmsContext, _actor: CmsActor, id: string) {
+export async function deleteTerm(
+  ctx: CmsContext,
+  _actor: CmsActor,
+  id: string,
+): Promise<{ success: true }> {
   await ctx.db.delete(ctx.t.taxonomyTerms).where(eq(ctx.t.taxonomyTerms.id, id));
   return { success: true };
 }
 
-export async function getEntryTerms(ctx: CmsContext, entryId: string, taxonomy?: string) {
+export async function getEntryTerms(
+  ctx: CmsContext,
+  entryId: string,
+  taxonomy?: string,
+): Promise<TaxonomyTerm[]> {
   const { taxonomyTerms: tt, pageTaxonomyTerms: ptt } = ctx.t;
   const where = [eq(ptt.pageId, entryId)];
   if (taxonomy) where.push(eq(tt.taxonomy, taxonomy));
@@ -183,7 +195,7 @@ export async function setEntryTerms(
   entryId: string,
   taxonomy: string,
   termIds: string[],
-) {
+): Promise<TaxonomyTerm[]> {
   const { taxonomyTerms: tt, pageTaxonomyTerms: ptt } = ctx.t;
   const current = await getEntryTerms(ctx, entryId, taxonomy);
   const keep = new Set(termIds);

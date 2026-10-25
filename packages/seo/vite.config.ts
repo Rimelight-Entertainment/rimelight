@@ -20,6 +20,7 @@ export default defineConfig({
       "src/catalog.ts",
       "src/og.ts",
     ],
+    dts: { generator: "oxc" },
     deps: {
       neverBundle: [/^virtual:/],
     },

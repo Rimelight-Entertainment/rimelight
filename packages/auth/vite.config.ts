@@ -19,6 +19,7 @@ export default defineConfig({
       "src/runtime.ts",
       "src/plugin.ts",
     ],
+    dts: { generator: "oxc" },
     deps: {
       neverBundle: [/^virtual:/],
     },

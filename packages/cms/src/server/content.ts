@@ -61,11 +61,16 @@ async function withTerms(cms: Cms, entries: PublicEntry[]): Promise<PublicEntry[
   }));
 }
 
+export interface ContentRouter {
+  content: Hono;
+  search: Hono;
+}
+
 /**
  * Public, read-only delivery API. Only `published` entries are visible, except when a valid
  * `?preview=<token>` is supplied, which returns the draft of that one entry.
  */
-export function createContentRouter(options: ContentRouterOptions = {}) {
+export function createContentRouter(options: ContentRouterOptions = {}): ContentRouter {
   const content = new Hono();
   const search = new Hono();
 

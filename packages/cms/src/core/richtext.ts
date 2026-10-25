@@ -60,7 +60,7 @@ export function updateRichText(
   previous: unknown,
   locale: string,
   nodes: RichText,
-  { translatable = false } = {},
+  { translatable = false }: { translatable?: boolean } = {},
 ): RichTextValue {
   if (isLocalizedRichText(previous)) return { ...previous, [locale]: nodes };
   return translatable ? { [locale]: nodes } : nodes;
@@ -90,7 +90,7 @@ export function richTextToPlain(value: unknown, locale = "en"): string {
   return inlineToPlainText(resolveRichText(value, locale));
 }
 
-export const isRichTextEmpty = (value: unknown, locale = "en") =>
+export const isRichTextEmpty = (value: unknown, locale = "en"): boolean =>
   richTextToPlain(value, locale).trim() === "" &&
   !resolveRichText(value, locale).some((n) => n.type === "icon");
 
