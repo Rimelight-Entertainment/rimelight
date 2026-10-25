@@ -1,7 +1,7 @@
 import { type Component } from "solid-js";
 import { useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
-import AppError from "#components/app/AppError";
+import { RLError } from "@rimelight/ui";
 import { t } from "@rimelight/i18n";
 
 export const Page404: Component = () => {
@@ -13,25 +13,7 @@ export const Page404: Component = () => {
     }),
   );
 
-  return (
-    <AppError
-      code={404}
-      title={t("errors.not-found") || "Page Not Found"}
-      description={
-        t("errors.not-found-desc") ||
-        "The page you are looking for does not exist or has been moved."
-      }
-      actions={[
-        {
-          label: "Go to Home Page",
-          href: "/",
-          variant: "solid",
-          color: "primary",
-          icon: "home",
-        },
-      ]}
-    />
-  );
+  return <RLError status={404} />;
 };
 
 export default Page404;

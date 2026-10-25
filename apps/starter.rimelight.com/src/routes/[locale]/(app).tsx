@@ -12,6 +12,7 @@ import {
   RLLayoutGrid,
   RLToast,
   RLButton,
+  RLErrorBoundary,
 } from "@rimelight/ui";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
@@ -58,7 +59,9 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
         {t("app.banner.content") || "New: Rimelight v2 is out"}
       </RLBanner>
       <AppHeader stackIndex={1} />
-      <RLMain>{props.children}</RLMain>
+      <RLMain>
+        <RLErrorBoundary resetKey={props.location.pathname}>{props.children}</RLErrorBoundary>
+      </RLMain>
       <AppFooter />
       <RLScrollToTop />
       <RLShortcuts />

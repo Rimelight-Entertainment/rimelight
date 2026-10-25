@@ -175,6 +175,12 @@ describe("relative locale urls", () => {
     expect(getLocaleUrl("#anchor")).toBe("#anchor");
     expect(getLocaleUrl("mailto:hi@example.com")).toBe("mailto:hi@example.com");
   });
+
+  it("leaves skipped and file paths unchanged", () => {
+    expect(getLocaleUrl("/api/download")).toBe("/api/download");
+    expect(getLocaleUrl("/api")).toBe("/api");
+    expect(getLocaleUrl("/files/report.pdf?v=2")).toBe("/files/report.pdf?v=2");
+  });
 });
 
 describe("translation runtime", () => {

@@ -5,6 +5,18 @@ vi.mock("virtual:rimelight-ui", () => ({
   config: {},
 }));
 
+vi.mock("virtual:rimelight-i18n", () => ({
+  config: {
+    locales: ["en", "pt"],
+    defaultLocale: "en",
+    // No prefix for the default locale, so existing href assertions stay unchanged.
+    prefixDefaultLocale: false,
+    translations: {
+      "en.json": { rimelight: { ui: { error: { titles: { 418: "I'm a Teapot" } } } } },
+    },
+  },
+}));
+
 const window = new Window();
 
 globalThis.window = window as any;

@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { MiddlewareHandler } from "hono";
-import { activeConfig } from "./runtime";
+import { activeConfig, isSkippedPath } from "./runtime";
 
 const storage = new AsyncLocalStorage<string>();
 activeConfig.getLocale = () => storage.getStore();
@@ -41,8 +41,7 @@ export const i18n = (): MiddlewareHandler => async (c, next) => {
 
   const target =
     /^(GET|HEAD)$/i.test(c.req.method) &&
-    !activeConfig.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`)) &&
-    !/\.[a-z0-9]{1,8}$/i.test(pathname) &&
+    !isSkippedPath(pathname) &&
     (activeConfig.prefixDefaultLocale
       ? !prefix && `/${locale}${pathname}`
       : prefix === activeConfig.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));

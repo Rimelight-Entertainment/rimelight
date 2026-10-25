@@ -368,6 +368,9 @@ importers:
       '@rimelight/auth':
         specifier: workspace:*
         version: link:../auth
+      '@rimelight/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../ui
@@ -459,6 +462,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@rimelight/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@unocss/vite':
         specifier: 66.11.0
         version: 66.11.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(cac@7.1.0)(srvx@1.0.6)

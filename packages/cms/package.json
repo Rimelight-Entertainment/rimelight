@@ -107,6 +107,7 @@
   "dependencies": {
     "@neondatabase/serverless": "1.2.0",
     "@rimelight/auth": "workspace:*",
+    "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
     "@solidjs/web": "2.0.0-rc.15",
     "drizzle-orm": "1.0.0-rc.4",

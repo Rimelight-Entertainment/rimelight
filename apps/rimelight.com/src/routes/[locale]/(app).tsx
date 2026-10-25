@@ -13,6 +13,7 @@ import {
   RLLayoutGrid,
   RLToast,
   RLButton,
+  RLErrorBoundary,
 } from "@rimelight/ui";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
@@ -61,7 +62,9 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
     <>
       <div class="isolate flex flex-col min-h-screen">
         <AppHeader stackIndex={0} session={props.session} />
-        <RLMain>{props.children}</RLMain>
+        <RLMain>
+          <RLErrorBoundary resetKey={props.location.pathname}>{props.children}</RLErrorBoundary>
+        </RLMain>
         <AppFooter />
         <RLScrollToTop />
         <RLShortcuts />

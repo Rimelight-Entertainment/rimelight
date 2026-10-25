@@ -64,11 +64,24 @@ export const setCurrentLocale = (locale: string): void => {
   currentLocale = locale;
 };
 
-/** Generates a localized relative URL path. */
-export const getLocaleUrl = (path: string, locale: string = getCurrentLocale()): string =>
-  /^(?:[a-z]+:|\/\/|#)/i.test(path)
-    ? path
-    : `${activeConfig.prefixDefaultLocale || locale !== activeConfig.defaultLocale ? `/${locale}` : ""}/${path.replace(new RegExp(`^/(?:${activeConfig.locales.join("|")})(?=[/?#]|$)`, "i"), "").replace(/^\/+/, "")}`;
+/** Whether a pathname is left out of locale handling (API, internals, files). Shared with the middleware. */
+export const isSkippedPath = (pathname: string): boolean =>
+  /\.[a-z0-9]{1,8}$/i.test(pathname) ||
+  activeConfig.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`));
+
+/** Generates a localized relative URL path. External, hash, skipped and file paths are returned unchanged. */
+export const getLocaleUrl = (path: string, locale: string = getCurrentLocale()): string => {
+  const { locales, defaultLocale, prefixDefaultLocale } = activeConfig;
+
+  if (/^(?:[a-z]+:|\/\/|#)/i.test(path) || isSkippedPath(path.split(/[?#]/)[0]!)) return path;
+
+  const rest = path
+    .replace(new RegExp(`^/(?:${locales.join("|")})(?=[/?#]|$)`, "i"), "") // drop an existing locale prefix
+    .replace(/^\/+/, "");
+  const prefix = prefixDefaultLocale || locale !== defaultLocale ? `/${locale}` : "";
+
+  return `${prefix}/${rest}`;
+};
 
 /** Resolves an asset for the current or fallback locale. */
 export const getLocaleAsset = <T>(

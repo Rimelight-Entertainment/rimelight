@@ -9,6 +9,7 @@ import {
   toClickHandlers,
 } from "./button.helpers";
 import { resolveLinkAttrs } from "../link/helpers";
+import { uiT } from "../../locale";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 
@@ -33,6 +34,7 @@ const OMIT_KEYS = [
   "onKeyDown",
   "type",
   "external",
+  "localize",
   "externalIcon",
   "noExternalIcon",
   "target",
@@ -87,6 +89,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
       resolveLinkAttrs({
         href: href(),
         external: props.external,
+        localize: props.localize,
         target: props.target,
         rel: props.noRel ? "" : (props.rel ?? undefined),
         active: props.active,
@@ -312,7 +315,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
   const externalHint = () => (
     <Show when={showExternalHint()}>
       <span class={classes()["externalHint"]} data-slot="external-hint">
-        (opens in a new tab)
+        {uiT("link.opensInNewTab")}
       </span>
     </Show>
   );

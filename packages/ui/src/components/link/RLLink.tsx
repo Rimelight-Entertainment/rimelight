@@ -3,6 +3,7 @@ import { RLLinkTheme } from "./link.theme";
 import { createMemo, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "label",
@@ -10,6 +11,7 @@ const OMIT_KEYS = [
   "trailingIcon",
   "href",
   "external",
+  "localize",
   "externalIcon",
   "noExternalIcon",
   "target",
@@ -81,7 +83,7 @@ export const RLLink: Component<RLLinkProps> = (props) => {
 
       {attrs().isExternal && attrs().target === "_blank" && !ariaLabelValue() && (
         <span class={classes()["externalHint"]} data-slot="external-hint">
-          (opens in a new tab)
+          {uiT("link.opensInNewTab")}
         </span>
       )}
     </a>

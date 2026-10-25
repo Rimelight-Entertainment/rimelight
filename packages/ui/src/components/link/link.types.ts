@@ -19,6 +19,14 @@ export interface RLLinkProps {
    */
   href?: string | undefined;
   /**
+   * Localize an internal `href` (one starting with `/`) for the current locale.
+   * Pass a locale code to link to that locale instead, or `false` to leave the href as-is.
+   * External, relative, API and file paths are never changed.
+   *
+   * @default true
+   */
+  localize?: boolean | string | undefined;
+  /**
    * Forces the link to be treated as an external link.
    *
    * @default false

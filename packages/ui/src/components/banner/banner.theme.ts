@@ -18,7 +18,8 @@ export const RLBannerTheme = defineTheme("banner", {
     root: "relative z-10 w-full transition-colors text-white bg-[var(--rl-bg)]",
     link: "absolute inset-0 focus:outline-none",
     content: "w-full",
-    container: "grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 h-12 px-4 sm:px-6 lg:px-8",
+    container:
+      "grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 h-12 px-4 sm:px-6 lg:px-8",
     left: "flex min-w-0 items-center justify-start max-lg:invisible",
     center: "flex min-w-0 items-center justify-center gap-1.5",
     right: "flex min-w-0 items-center justify-end gap-1.5",
