@@ -6,33 +6,16 @@ import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSecti
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
-import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
+import { content, type PublicEntry } from "@rimelight/cms/solid";
+import { BlogPostCard } from "#components/blog/BlogPostCard";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
 
-  const latestPosts = createMemo<any[]>(
-    async () => {
-      const loc = activeLocale();
-      try {
-        const res = await fetch("/api/content/pages?type=blog");
-        if (!res.ok) return [];
-        const data = (await res.json()) as any;
-        const blogPages = (data.pages || []) as any[];
-
-        return blogPages
-          .filter((post) => {
-            const content =
-              typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-            return (content.properties?.locale || "en") === loc;
-          })
-          .slice(0, 3);
-      } catch {
-        return [];
-      }
-    },
+  const latestPosts = createMemo<PublicEntry[]>(
+    async () => (await content.entries("blog", { limit: 3, locale: activeLocale() })).entries,
     { loadingValue: [] },
   );
 
@@ -111,26 +94,7 @@ export const HomePage: Component = () => {
       >
         <div class="flex flex-col gap-xl items-center">
           <RLGrid cols={3}>
-            <For each={latestPosts() || []}>
-              {(post) => {
-                const content =
-                  typeof post.content === "string" ? JSON.parse(post.content) : post.content || {};
-                const title = t.localize(post.title);
-                const description = content.properties?.description || "";
-                const heroImage = content.properties?.heroImage;
-                const postDate = post.postedAt || post.createdAt;
-                return (
-                  <RLPost
-                    variant="ghost"
-                    image={heroImage}
-                    title={title}
-                    description={description}
-                    date={postDate}
-                    to={getLocaleUrl(`/blog/${post.slug}/`)}
-                  />
-                );
-              }}
-            </For>
+            <For each={latestPosts() || []}>{(post) => <BlogPostCard post={post} />}</For>
           </RLGrid>
 
           <Show when={(latestPosts() || []).length > 0}>

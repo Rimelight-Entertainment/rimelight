@@ -64,7 +64,7 @@ function withMarks(text: string, marks: InlineMark[] = []): JSX.Element {
   if (marks.includes("underline")) node = <u>{node}</u>;
   if (marks.includes("strikethrough")) node = <s>{node}</s>;
   if (marks.includes("code"))
-    node = <code class="rounded bg-elevated px-1.5 py-0.5 font-mono text-[0.875em]">{node}</code>;
+    node = <code class="not-prose rounded bg-elevated px-1.5 py-0.5 font-mono text-[0.875em]">{node}</code>;
   return node;
 }
 
@@ -81,11 +81,7 @@ const LinkView: Component<{ node: LinkInlineNode }> = (props) => {
       <For each={props.node.children ?? []}>{(c) => withMarks(c.text, c.marks)}</For>
       {external() && (
         // Same icon and size RLLink uses for external links.
-        <RLIcon
-          name="external-link"
-          size="sm"
-          class="ml-0.5 inline-block align-[-0.1em] opacity-70"
-        />
+        <RLIcon name="external-link" size="sm" class="ml-0.5 inline-block align-[-0.1em] opacity-70" />
       )}
     </a>
   );
