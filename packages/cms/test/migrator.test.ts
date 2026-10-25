@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { PG_CMS_MIGRATIONS, SQLITE_CMS_MIGRATIONS } from "../src/migrator/sql";
 import { migrateCms } from "../src/migrator/index";
+import { DATA_MIGRATIONS } from "../src/migrator/data";
 import { createMockD1 } from "./helpers/d1";
 
 describe("migrator", () => {
@@ -9,6 +10,7 @@ describe("migrator", () => {
     expect(SQLITE_CMS_MIGRATIONS.map((m) => m.name)).toEqual([
       "0001_initial_cms_tables",
       "0002_collections_and_lifecycle",
+      "0006_collection_color",
     ]);
   });
 
@@ -16,7 +18,10 @@ describe("migrator", () => {
     const { binding, raw } = createMockD1();
     const first = await migrateCms(binding);
     expect(first.dialect).toBe("sqlite");
-    expect(first.applied).toEqual([...SQLITE_CMS_MIGRATIONS.map((m) => m.name), "0003_content_v2"]);
+    expect(first.applied).toEqual([
+      ...SQLITE_CMS_MIGRATIONS.map((m) => m.name),
+      ...DATA_MIGRATIONS.map((m) => m.name),
+    ]);
 
     const cols = (raw.prepare("PRAGMA table_info(pages)").all() as any[]).map((c) => c.name);
     expect(cols).toContain("status");
@@ -24,7 +29,7 @@ describe("migrator", () => {
 
     const second = await migrateCms(binding);
     expect(second.applied).toEqual([]);
-    expect(second.skipped.length).toBe(SQLITE_CMS_MIGRATIONS.length + 1);
+    expect(second.skipped.length).toBe(SQLITE_CMS_MIGRATIONS.length + DATA_MIGRATIONS.length);
   });
 
   it("tolerates columns that already exist (databases created by drizzle push)", async () => {

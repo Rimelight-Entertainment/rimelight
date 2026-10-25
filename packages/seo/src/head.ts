@@ -12,6 +12,7 @@ import {
 import { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
 import { sanitizeUrl, serializeJsonLd } from "./sanitize";
 import type { HeadTag } from "@solidjs/web";
+import { getDefaultLocale, getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
 
 export type { HeadTag } from "@solidjs/web";
 
@@ -35,6 +36,24 @@ const DEFAULT_SEO_CONFIG: SeoConfig = {
   maxDescriptionLength: 160,
 };
 
+/** hreflang alternates for a page URL, derived from @rimelight/i18n. Empty for single-locale sites. */
+function defaultAlternates(pageUrl: string | undefined): Array<{ hreflang: string; href: string }> {
+  const locales = getLocales();
+  if (!pageUrl || locales.length < 2) return [];
+  let parsed: URL;
+  try {
+    parsed = new URL(pageUrl);
+  } catch {
+    return [];
+  }
+  const path = parsed.pathname + parsed.search;
+  const href = (locale: string) => parsed.origin + getLocaleUrl(path, locale);
+  return [
+    ...locales.map((l) => ({ hreflang: getLocaleInfo(l).tag, href: href(l) })),
+    { hreflang: "x-default", href: href(getDefaultLocale()) },
+  ];
+}
+
 /**
  * Internal tag generator from resolved HeadProps.
  */
@@ -44,13 +63,13 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
     description,
     ogImage,
     ogType = "website",
-    ogLocale = "en_US",
+    ogLocale = getLocaleInfo().tag.replace("-", "_"),
     noindex = false,
     is404 = false,
     robots,
     canonical,
     url,
-    languageAlternates = [],
+    languageAlternates,
     config: propsConfig,
     favicon: customFavicon,
     appleTouchIcon: customAppleTouchIcon,
@@ -290,8 +309,8 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
     });
   }
 
-  // i18n Alternates
-  for (const alt of languageAlternates) {
+  // i18n Alternates (default: every configured locale of the current page, plus x-default)
+  for (const alt of languageAlternates ?? defaultAlternates(url || canonical)) {
     if (alt?.href && alt?.hreflang) {
       tags.push({
         tag: "link",

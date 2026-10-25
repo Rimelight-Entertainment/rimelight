@@ -8,6 +8,7 @@ import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import { createMemo, createSignal, For, Show, onSettled, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { localizeHref } from "../link/helpers";
 
 const OMIT_KEYS = [
   "items",
@@ -22,10 +23,10 @@ const OMIT_KEYS = [
 const LOCALE_PREFIX = /^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/;
 const normalizePath = (p: string) => p.replace(LOCALE_PREFIX, "").replace(/\/+$/, "") || "/";
 
-/** Items accept either `href` or `to` (RLLink convention). */
+/** Items accept either `href` or `to` (RLLink convention). Internal hrefs are localized. */
 const resolveHref = (item: NavigationMenuItem | NavigationMenuChildItem): string | undefined => {
   const h = item["href"] ?? item["to"];
-  return typeof h === "string" ? h : undefined;
+  return typeof h === "string" ? localizeHref(h, item["localize"]) : undefined;
 };
 
 const hasChildren = (item: NavigationMenuItem) => !!item.children && item.children.length > 0;
@@ -232,7 +233,8 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     data-state={isOpen() ? "open" : "closed"}
                     onClick={(e) => {
                       e.stopPropagation();
-                      isOpen() ? closeAll() : openItem(i());
+                      if (isOpen()) closeAll();
+                      else openItem(i());
                     }}
                   >
                     <Icon name={item.icon ?? item["leadingIcon"]} class="size-4" />

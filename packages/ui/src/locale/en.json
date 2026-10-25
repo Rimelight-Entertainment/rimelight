@@ -23,5 +23,6 @@
   "error.descriptions.500": "An unexpected error occurred on our end. Please try again.",
   "error.descriptions.503": "We're temporarily unavailable. Please try again shortly.",
   "error.descriptions.client": "Something was wrong with that request.",
-  "error.descriptions.server": "An unexpected error occurred on our end. Please try again."
+  "error.descriptions.server": "An unexpected error occurred on our end. Please try again.",
+  "localeSelector.label": "Select language"
 }

@@ -8,7 +8,7 @@ export const StoreSidebar: Component = () => {
   ];
 
   const supportLinks = [
-    { label: "Shipping Policy", to: "/legal/shipping-policy" },
+    { label: "Shipping Policy", to: "/company/legal/shipping-policy" },
     { label: "Contact Support", to: "/franchises/grand-tale/support" },
   ];
 

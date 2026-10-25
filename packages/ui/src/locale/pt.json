@@ -23,5 +23,6 @@
   "error.descriptions.500": "Ocorreu um erro inesperado do nosso lado. Tente novamente.",
   "error.descriptions.503": "Estamos temporariamente indisponíveis. Tente novamente em breve.",
   "error.descriptions.client": "Havia algo errado com essa requisição.",
-  "error.descriptions.server": "Ocorreu um erro inesperado do nosso lado. Tente novamente."
+  "error.descriptions.server": "Ocorreu um erro inesperado do nosso lado. Tente novamente.",
+  "localeSelector.label": "Selecionar idioma"
 }

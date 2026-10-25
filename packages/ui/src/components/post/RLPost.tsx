@@ -2,6 +2,8 @@ import type { RLPostProps } from "./post.types";
 import { RLPostTheme } from "./post.theme";
 import { createMemo, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
+import { localizeHref } from "../link/helpers";
+import { getLocaleInfo } from "@rimelight/i18n";
 
 const OMIT_KEYS = [
   "title",
@@ -10,6 +12,7 @@ const OMIT_KEYS = [
   "image",
   "href",
   "to",
+  "localize",
   "badge",
   "badgeColor",
   "imageSlot",
@@ -21,7 +24,7 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLPost: Component<RLPostProps> = (props) => {
-  const link = () => props.href || props.to;
+  const link = () => localizeHref(props.href || props.to, props.localize);
   const { Tag, classes, rest } = RLPostTheme.setup(props, {
     as: () => (link() ? "a" : "div"),
     omit: OMIT_KEYS,
@@ -30,7 +33,7 @@ export const RLPost: Component<RLPostProps> = (props) => {
   const formattedDate = createMemo(() =>
     props.date
       ? props.date instanceof Date
-        ? props.date.toLocaleDateString("en-US", {
+        ? props.date.toLocaleDateString(getLocaleInfo().tag, {
             year: "numeric",
             month: "short",
             day: "numeric",

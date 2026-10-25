@@ -28,27 +28,27 @@ export const AppFooter: Component = () => {
       links: [
         {
           label: t("app.footer.links.legal.terms-of-service"),
-          href: getLocaleUrl("/legal/terms-of-service"),
+          href: getLocaleUrl("/company/legal/terms-of-service"),
         },
         {
           label: t("app.footer.links.legal.code-of-conduct"),
-          href: getLocaleUrl("/legal/code-of-conduct"),
+          href: getLocaleUrl("/company/legal/code-of-conduct"),
         },
         {
           label: t("app.footer.links.legal.privacy-policy"),
-          href: getLocaleUrl("/legal/privacy-policy"),
+          href: getLocaleUrl("/company/legal/privacy-policy"),
         },
         {
           label: t("app.footer.links.legal.cookie-policy"),
-          href: getLocaleUrl("/legal/cookie-policy"),
+          href: getLocaleUrl("/company/legal/cookie-policy"),
         },
         {
           label: t("app.footer.links.legal.shipping-policy"),
-          href: getLocaleUrl("/legal/shipping-policy"),
+          href: getLocaleUrl("/company/legal/shipping-policy"),
         },
         {
           label: t("app.footer.links.legal.other-documents"),
-          href: getLocaleUrl("/legal"),
+          href: getLocaleUrl("/company/legal"),
         },
       ],
     },

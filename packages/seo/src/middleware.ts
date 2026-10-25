@@ -5,7 +5,6 @@ import { buildRobotsTxt } from "./robots";
 import { buildSitemapXml, buildSitemapIndexXml, buildSitemapUrls } from "./sitemap";
 import { buildRssXml } from "./rss";
 import { buildLlmsTxt, buildLlmsFullTxt } from "./llms";
-import { buildSecurityTxt } from "./security";
 import { buildApiCatalog } from "./catalog";
 import { buildWebManifest } from "./manifest";
 import { handleOgRequest } from "./og";
@@ -62,24 +61,13 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
       let urls: any[] = sitemapOpts.urls || [];
       if (urls.length === 0) {
         const entries = config.entries ? await config.entries() : [];
-        const locCfg =
-          sitemapOpts.locales ||
-          (typeof config.locales === "object" && "site" in config.locales
-            ? config.locales
-            : {
+        urls =
+          entries.length > 0
+            ? buildSitemapUrls(entries, {
                 site: origin,
-                locales:
-                  typeof config.locales === "object" && !("site" in config.locales)
-                    ? config.locales
-                    : { en: "en" },
-                defaultLocale: "en",
-                prefixDefaultLocale: false,
-              });
-        if (entries.length > 0 && locCfg) {
-          urls = buildSitemapUrls(entries, locCfg as any);
-        } else {
-          urls = [{ loc: `${origin}/` }];
-        }
+                ...(sitemapOpts.trailingSlash && { trailingSlash: sitemapOpts.trailingSlash }),
+              })
+            : [{ loc: `${origin}/` }];
       }
       const sitemapXml = buildSitemapXml(urls);
       return c.text(sitemapXml, 200, {
@@ -139,25 +127,6 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
         pages: llmsFullOpts.pages || [],
       });
       return c.text(llmsFullTxt, 200, {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "public, max-age=3600",
-      });
-    }
-
-    if (
-      (rawUrl === "/.well-known/security.txt" || rawUrl === "/security.txt") &&
-      config.security !== false
-    ) {
-      const secOpts = typeof config.security === "object" ? config.security : {};
-      const contact = secOpts.contact || (config.email ? `mailto:${config.email}` : undefined);
-      if (!contact && !secOpts.canonical && !secOpts.expires) {
-        return next();
-      }
-      const securityTxt = buildSecurityTxt({
-        contact: contact || "",
-        ...secOpts,
-      });
-      return c.text(securityTxt, 200, {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "public, max-age=3600",
       });
@@ -264,5 +233,6 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
       ].filter(Boolean);
       if (links.length) c.header("Link", links.join(", "));
     }
+    return;
   };
 }

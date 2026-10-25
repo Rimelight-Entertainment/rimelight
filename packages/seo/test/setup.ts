@@ -16,3 +16,11 @@ const testConfig = {
 vi.mock("virtual:rimelight-seo", () => ({
   config: testConfig,
 }));
+
+vi.mock("virtual:rimelight-i18n", () => ({
+  config: {
+    locales: ["en", "pt"],
+    defaultLocale: "en",
+    prefixDefaultLocale: false,
+  },
+}));

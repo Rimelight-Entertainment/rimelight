@@ -20,6 +20,7 @@ describe("index exports", () => {
         "setCurrentLocale",
         "getLocaleUrl",
         "getLocaleAsset",
+        "getLocaleInfo",
         "t",
       ].sort(),
     );

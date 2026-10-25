@@ -35,11 +35,6 @@ export default defineConfig({
         colors: { themeColor: "#ffffff", backgroundColor: "#ffffff" },
       },
       titleTemplate: "%s | Rimelight Starter",
-      locales: {
-        en: "en-US",
-        pt: "pt-BR",
-        es: "es-ES",
-      },
       og: {
         routes: {
           "*/blog/*": "./src/components/og/BlogOgCard.tsx",

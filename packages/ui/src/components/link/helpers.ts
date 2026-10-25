@@ -3,6 +3,27 @@ import { getLocaleUrl } from "@rimelight/i18n";
 
 const EXTERNAL_URL_RE = /^(?:https?:)?\/\//;
 
+/**
+ * Localizes an internal href (one starting with `/`) with i18n's `getLocaleUrl`.
+ * External, relative and opted-out (`localize === false`) hrefs are returned as-is;
+ * a locale code targets that locale.
+ */
+export function localizeHref(
+  href: string | undefined,
+  localize?: boolean | string,
+  external = false,
+): string | undefined {
+  if (
+    !href ||
+    external ||
+    localize === false ||
+    !href.startsWith("/") ||
+    EXTERNAL_URL_RE.test(href)
+  )
+    return href;
+  return getLocaleUrl(href, typeof localize === "string" ? localize : undefined);
+}
+
 export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
   const isExternal = !!(props.external || (props.href && EXTERNAL_URL_RE.test(props.href)));
 
@@ -23,12 +44,7 @@ export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
   const ariaCurrent =
     rawAriaCurrent === true ? "true" : rawAriaCurrent === false ? "false" : rawAriaCurrent;
 
-  const href =
-    props.disabled || !props.href
-      ? undefined
-      : isExternal || props.localize === false || !props.href.startsWith("/")
-        ? props.href
-        : getLocaleUrl(props.href, typeof props.localize === "string" ? props.localize : undefined);
+  const href = props.disabled ? undefined : localizeHref(props.href, props.localize, isExternal);
   const ariaDisabled: "true" | undefined = props.disabled ? "true" : undefined;
 
   return {

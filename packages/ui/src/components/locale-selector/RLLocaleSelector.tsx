@@ -2,7 +2,8 @@ import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types"
 import { RLLocaleSelectorTheme } from "./locale-selector.theme";
 import { createMemo, createSignal, onSettled, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
-import { getCurrentLocale, getLocales } from "@rimelight/i18n";
+import { getCurrentLocale, getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "locales",
@@ -17,18 +18,6 @@ const OMIT_KEYS = [
   "onChange",
 ] as const;
 
-const getLocaleDisplayName = (localeCode: string): string => {
-  try {
-    const formatter = new Intl.DisplayNames([localeCode], { type: "language" });
-    const nativeName = formatter.of(localeCode);
-    return nativeName
-      ? nativeName.charAt(0).toUpperCase() + nativeName.slice(1)
-      : localeCode.toUpperCase();
-  } catch {
-    return localeCode.toUpperCase();
-  }
-};
-
 export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
   const { classes, rest } = RLLocaleSelectorTheme.setup(props, { omit: OMIT_KEYS });
 
@@ -37,28 +26,14 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
   const processedLocales = createMemo<LocaleItem[]>(() =>
     (props.locales ?? getLocales()).map((item) =>
       typeof item === "string"
-        ? { code: item, label: getLocaleDisplayName(item) }
-        : { ...item, label: item.label || getLocaleDisplayName(item.code) },
+        ? { code: item, label: getLocaleInfo(item).label }
+        : { ...item, label: item.label || getLocaleInfo(item.code).label },
     ),
   );
 
-  const resolveTargetUrl = (item: LocaleItem, pathname: string, search: string): string => {
-    if (item.href !== undefined && item.href !== null) {
-      return item.href + (item.href.includes("?") ? "" : search);
-    }
-    const knownCodes = new Set(processedLocales().map((l) => l.code));
-    const segments = pathname.split("/").filter(Boolean);
-    const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!);
-
-    if (firstIsLocale) {
-      segments[0] = item.code;
-      return `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
-    }
-    if (segments.length > 0) {
-      return `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`;
-    }
-    return `/${item.code}/${search}`;
-  };
+  /** An item's own `href`, otherwise the current page in that locale. */
+  const resolveTargetUrl = (item: LocaleItem, pathname: string, search: string): string =>
+    item.href ?? getLocaleUrl(pathname + search, item.code);
 
   const [currentSearch, setCurrentSearch] = createSignal("");
   const [currentPathname, setCurrentPathname] = createSignal("/");
@@ -109,7 +84,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
           onChange={handleChange}
           size={(props.size as any) || "md"}
           variant={isIconMode() ? "icon" : "default"}
-          aria-label="Select language"
+          aria-label={uiT("localeSelector.label")}
           class={classes().select}
           leadingIcon={props.leadingIcon || "i-lucide-globe"}
           leading={props.leading}

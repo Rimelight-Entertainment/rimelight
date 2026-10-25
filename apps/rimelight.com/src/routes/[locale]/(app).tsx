@@ -106,7 +106,7 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
                 {t("cookie.notice.description.prefix") ||
                   "We use cookies to enhance your experience."}{" "}
                 <a
-                  href={getLocaleUrl("/legal/cookie-policy")}
+                  href={getLocaleUrl("/company/legal/cookie-policy")}
                   class="underline hover:text-primary transition-colors font-medium"
                 >
                   {t("cookie.notice.cookie.policy.label") || "Cookie Policy"}

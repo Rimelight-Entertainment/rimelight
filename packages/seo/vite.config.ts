@@ -15,7 +15,6 @@ export default defineConfig({
       "src/sitemap.ts",
       "src/robots.ts",
       "src/rss.ts",
-      "src/security.ts",
       "src/manifest.ts",
       "src/catalog.ts",
       "src/og.ts",

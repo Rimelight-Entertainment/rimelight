@@ -6,8 +6,7 @@ export interface LocaleItem {
   /**
    * The URL to navigate to when this locale is selected.
    *
-   * Supply this to make the component fully routing-agnostic: it will use `href` directly. When
-   * omitted, the component falls back to updating the first URL segment to match the locale code.
+   * When omitted, the current page in this locale (via i18n's `getLocaleUrl`).
    */
   href?: string;
 }
@@ -16,18 +15,16 @@ export interface RLLocaleSelectorProps {
   /**
    * Array of available locales to display in the selector.
    *
-   * Accepts plain locale code strings (`"en"`, `"pt"`) or full `LocaleItem` objects. Supply an
-   * `href` on each `LocaleItem` to navigate directly to a pre-resolved URL — when every item has
-   * an `href` the component performs no URL manipulation at all.
+   * Accepts plain locale code strings (`"en"`, `"pt"`) or full `LocaleItem` objects. Labels
+   * default to each language's own name.
    *
-   * When omitted the selector renders an empty list, so pass it explicitly.
+   * When omitted, every locale configured in @rimelight/i18n.
    */
   locales?: string[] | LocaleItem[];
   /**
    * The currently active locale code. Used to pre-select the right option in the dropdown.
    *
-   * When omitted the selector falls back to `"en"`. Pass the active locale explicitly so the
-   * correct option is pre-selected.
+   * When omitted, the current locale from @rimelight/i18n.
    */
   currentLocale?: string;
   /**

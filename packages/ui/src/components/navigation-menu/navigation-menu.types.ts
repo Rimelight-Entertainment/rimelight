@@ -48,6 +48,11 @@ export interface NavigationMenuChildItem {
   leadingIcon?: string | undefined;
   href?: string | undefined;
   to?: string | undefined;
+  /**
+   * Localize this item's internal link (default true). A locale code targets that locale;
+   * `false` keeps the href as-is.
+   */
+  localize?: boolean | string | undefined;
   active?: boolean | undefined;
   children?: NavigationMenuChildItem[] | undefined;
   class?: any;

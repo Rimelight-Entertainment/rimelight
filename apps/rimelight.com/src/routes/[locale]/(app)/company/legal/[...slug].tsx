@@ -1,50 +1,26 @@
 import { type Component, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { PageRenderer } from "@rimelight/cms/solid";
+import { PageRenderer, content } from "@rimelight/cms/solid";
 import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
 import { t, getCurrentLocale } from "@rimelight/i18n";
-import { api } from "#api/client";
 
 export const LegalDocumentPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
   const activeLocale = () => getCurrentLocale();
 
-  const pageData = createMemo<any>(
+  const pageData = createMemo(
     async () => {
-      const slug = params.slug;
-      if (!slug) return null;
-      try {
-        const res = await (api as any).content.pages[":slug"].$get({
-          param: { slug },
-          query: { type: "legal" },
-        });
-        if (!res.ok) return null;
-        return (await res.json()) as any;
-      } catch {
-        return null;
-      }
+      const preview =
+        typeof window !== "undefined"
+          ? (new URL(location.href).searchParams.get("preview") ?? undefined)
+          : undefined;
+      return params.slug ? content.entry("legal", params.slug, preview) : null;
     },
     { loadingValue: null },
   );
 
-  const docBlocks = () => {
-    const p = pageData();
-    if (!p) return [];
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return content.blocks || [];
-  };
-
-  const title = () => {
-    const p = pageData();
-    return p ? t.localize(p.title) || "Legal Document" : "Legal Document";
-  };
-
-  const description = () => {
-    const p = pageData();
-    if (!p) return "";
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return t.localize(p.description) || content.properties?.description || "";
-  };
+  const title = () => t.localize(pageData()?.title) || "Legal Document";
+  const description = () => t.localize(pageData()?.description ?? undefined) || "";
 
   return (
     <Show
@@ -54,7 +30,7 @@ export const LegalDocumentPage: Component = () => {
       <article class="max-w-4xl mx-auto px-4 py-16">
         <header class="mb-12">
           <div class="text-sm text-primary-400 mb-2">
-            <RLDate date={pageData()?.postedAt || pageData()?.createdAt || new Date()} />
+            <RLDate date={pageData()?.publishedAt ?? new Date()} />
           </div>
           <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
             {title()}
@@ -62,7 +38,7 @@ export const LegalDocumentPage: Component = () => {
           <p class="text-xl text-neutral-400 leading-relaxed">{description()}</p>
         </header>
 
-        <PageRenderer blocks={docBlocks()} locale={activeLocale()} />
+        <PageRenderer blocks={pageData()?.blocks ?? []} locale={activeLocale()} />
       </article>
     </Show>
   );

@@ -62,4 +62,48 @@ export interface SecurityConfig {
         isAuthorized?: (c: Context) => boolean | Promise<boolean>;
       };
   devOnly?: boolean;
+  /**
+   * RFC 9116 security.txt, served at `/.well-known/security.txt` and `/security.txt`.
+   * Not served unless configured.
+   */
+  securityTxt?: false | SecurityTxtOptions;
+}
+
+export interface SecurityTxtOptions {
+  /**
+   * Contact URI or list of contact URIs (e.g. "mailto:security@example.com") - REQUIRED by RFC 9116
+   */
+  contact: string | string[];
+  /**
+   * Expiration date/time (ISO 8601 string or Date) - REQUIRED by RFC 9116
+   */
+  expires?: Date | string;
+  /**
+   * URI to PGP/GPG public key
+   */
+  encryption?: string | string[];
+  /**
+   * URI to security acknowledgments / hall of fame
+   */
+  acknowledgments?: string | string[];
+  /**
+   * Comma-separated list of preferred languages (e.g. "en, pt")
+   */
+  preferredLanguages?: string;
+  /**
+   * Canonical URI of the security.txt file
+   */
+  canonical?: string;
+  /**
+   * URI to security policy
+   */
+  policy?: string;
+  /**
+   * URI to security hiring page
+   */
+  hiring?: string;
+  /**
+   * URI to Common Security Advisory Framework (CSAF) provider
+   */
+  csaf?: string;
 }

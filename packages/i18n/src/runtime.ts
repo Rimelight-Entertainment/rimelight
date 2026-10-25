@@ -1,5 +1,5 @@
 import { config } from "virtual:rimelight-i18n";
-import type { TFunction } from "./types";
+import type { LocaleInfo, LocaleOptions, TFunction } from "./types";
 
 const translations: Record<string, Record<string, unknown>> = Object.fromEntries(
   Object.entries(config?.translations ?? {}).map(([p, d]) => [
@@ -7,6 +7,16 @@ const translations: Record<string, Record<string, unknown>> = Object.fromEntries
     d,
   ]),
 );
+
+const configuredLocales = config?.locales;
+const localeOptions: Record<string, LocaleOptions> =
+  configuredLocales && !Array.isArray(configuredLocales)
+    ? Object.fromEntries(
+        Object.entries(configuredLocales as Record<string, string | LocaleOptions>).map(
+          ([k, v]) => [k, typeof v === "string" ? { tag: v } : v],
+        ),
+      )
+    : {};
 
 export interface ActiveI18nConfig {
   locales: string[];
@@ -18,13 +28,16 @@ export interface ActiveI18nConfig {
 }
 
 export const activeConfig: ActiveI18nConfig = {
-  locales: [
-    ...(config?.locales ??
-      (Object.keys(translations).length ? Object.keys(translations).sort() : ["en"])),
-  ],
+  locales: configuredLocales
+    ? Array.isArray(configuredLocales)
+      ? [...(configuredLocales as readonly string[])]
+      : Object.keys(configuredLocales)
+    : Object.keys(translations).length
+      ? Object.keys(translations).sort()
+      : ["en"],
   defaultLocale: config?.defaultLocale ?? "en",
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
-  skipPaths: [...(config?.skipPaths ?? ["/api", "/_"])],
+  skipPaths: [...(config?.skipPaths ?? ["/api", "/_", "/.well-known", "/cdn-cgi"])],
   translations,
   getLocale: undefined,
 };
@@ -48,6 +61,41 @@ const resolveBrowserLocale = (): string | undefined => {
 
 /** Returns the supported locale codes. */
 export const getLocales = (): string[] => [...activeConfig.locales];
+
+const RTL_LANGUAGES = new Set(["ar", "he", "fa", "ur", "ps", "sd", "ug", "yi", "dv", "ckb"]);
+const localeInfoCache = new Map<string, LocaleInfo>();
+
+/**
+ * Tag, display name and direction for a locale (default: the current one).
+ * Derived with `Intl` unless overridden in the i18n config.
+ */
+export const getLocaleInfo = (code: string = getCurrentLocale()): LocaleInfo => {
+  const cached = localeInfoCache.get(code);
+  if (cached) return cached;
+
+  const options = localeOptions[code] ?? {};
+  let tag = options.tag;
+  let label = options.label;
+  try {
+    if (!tag) {
+      const locale = new Intl.Locale(code);
+      const region = locale.region ?? locale.maximize().region;
+      tag = region ? `${locale.language}-${region}` : code;
+    }
+    if (!label) {
+      const name = new Intl.DisplayNames([code], { type: "language" }).of(code);
+      label = name ? name.charAt(0).toLocaleUpperCase(code) + name.slice(1) : code;
+    }
+  } catch {
+    tag ??= code;
+    label ??= code;
+  }
+  const dir = options.dir ?? (RTL_LANGUAGES.has(code.split("-")[0]!.toLowerCase()) ? "rtl" : "ltr");
+
+  const info: LocaleInfo = { code, tag: tag!, label: label!, dir };
+  localeInfoCache.set(code, info);
+  return info;
+};
 
 /** Returns the default locale code. */
 export const getDefaultLocale = (): string => activeConfig.defaultLocale;

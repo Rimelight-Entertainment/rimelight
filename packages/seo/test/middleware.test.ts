@@ -77,19 +77,6 @@ describe("seo Hono Middleware", () => {
     expect(textFull).toContain("Markdown content here");
   });
 
-  it("intercepts security.txt endpoints", async () => {
-    const app = new Hono();
-    app.use(seo({ email: "sec@example.com" }));
-
-    const res = await app.request("/.well-known/security.txt");
-    expect(res.status).toBe(200);
-    const text = await res.text();
-    expect(text).toContain("Contact: mailto:sec@example.com");
-
-    const legacyRes = await app.request("/security.txt");
-    expect(legacyRes.status).toBe(200);
-  });
-
   it("intercepts /favicon.svg", async () => {
     const app = new Hono();
     app.use(seo({ name: "Acme" }));

@@ -2,6 +2,7 @@ import type { Context, MiddlewareHandler } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
+import { buildSecurityTxt } from "./security-txt";
 
 export const security = (): MiddlewareHandler => async (c, next) => {
   const isDev =
@@ -19,6 +20,17 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   }
   if (!isDev && c.req.header("x-forwarded-proto") === "http") {
     return c.redirect(c.req.url.replace(/^http:/, "https:"), 301);
+  }
+
+  // security.txt (RFC 9116)
+  if (
+    (path === "/.well-known/security.txt" || path === "/security.txt") &&
+    activeConfig.securityTxt
+  ) {
+    return c.text(buildSecurityTxt(activeConfig.securityTxt), 200, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    });
   }
 
   const matches = (routes?: (string | RegExp)[] | ((c: Context) => boolean)) =>

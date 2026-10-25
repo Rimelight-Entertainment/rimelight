@@ -130,10 +130,14 @@ const isBlockLike = (v: unknown): v is BaseBlock =>
 /**
  * Deep copy of a block for duplicate / paste: the content and structure are copied, every block
  * in the copy (itself, its children, and block trees stored inside props) gets a fresh id, and
- * template locks are dropped (a copy is never a template anchor). Ids that point at *other*
- * records — media, referenced entries, mentions — are left alone.
+ * template locks are dropped (a copy is never a template anchor) unless `keepTemplateLocks` is set,
+ * as when an entry is created from a template. Ids that point at *other* records — media,
+ * referenced entries, mentions — are left alone.
  */
-export function cloneBlock(block: BaseBlock): BaseBlock {
+export function cloneBlock(
+  block: BaseBlock,
+  { keepTemplateLocks = false }: { keepTemplateLocks?: boolean } = {},
+): BaseBlock {
   const copy = structuredClone(block);
   const visitProps = (value: unknown): void => {
     if (Array.isArray(value)) return value.forEach(visitProps);
@@ -143,8 +147,10 @@ export function cloneBlock(block: BaseBlock): BaseBlock {
   };
   const reId = (b: BaseBlock) => {
     b.id = createBlockId();
-    delete b.isTemplated;
-    delete b.templatedProps;
+    if (!keepTemplateLocks) {
+      delete b.isTemplated;
+      delete b.templatedProps;
+    }
     visitProps(b.props);
     getChildren(b).forEach(reId);
   };

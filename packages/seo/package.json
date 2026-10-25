@@ -60,10 +60,6 @@
       "types": "./dist/rss.d.mts",
       "import": "./dist/rss.mjs"
     },
-    "./security": {
-      "types": "./dist/security.d.mts",
-      "import": "./dist/security.mjs"
-    },
     "./manifest": {
       "types": "./dist/manifest.d.mts",
       "import": "./dist/manifest.mjs"
@@ -86,7 +82,9 @@
     "build": "vp pack",
     "prepack": "vp pack"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@rimelight/i18n": "workspace:*"
+  },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@solidjs/web": "2.0.0-rc.15",

@@ -1,70 +1,48 @@
-import type { LocaleConfig, SeoEntry, SitemapUrl } from "./types";
+import { getDefaultLocale, getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
+import type { SeoEntry, SitemapUrl } from "./types";
+
+export interface SitemapBuildOptions {
+  /** Absolute origin, e.g. "https://rimelight.com" */
+  site: string;
+  trailingSlash?: "always" | "never";
+}
 
 /**
- * Build fully-resolved sitemap URLs from entries and locale config
+ * Build fully-resolved sitemap URLs from entries. Locales, prefixes and hreflang tags come from
+ * @rimelight/i18n, so sitemap URLs always match the URLs the site serves.
  */
-export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): SitemapUrl[] {
+export function buildSitemapUrls(entries: SeoEntry[], options: SitemapBuildOptions): SitemapUrl[] {
+  const site = options.site.replace(/\/$/, "");
+  const defaultLocale = getDefaultLocale();
   const urls: SitemapUrl[] = [];
-  const { site, locales, defaultLocale, prefixDefaultLocale, trailingSlash } = config;
 
   for (const entry of entries) {
-    const entryLocales =
-      entry.locales && entry.locales.length > 0 ? entry.locales : Object.keys(locales);
+    let path = entry.path;
+    if (options.trailingSlash === "always" && !path.endsWith("/")) path += "/";
+    else if (options.trailingSlash === "never" && path.length > 1) path = path.replace(/\/$/, "");
 
-    const entryUrls: SitemapUrl[] = [];
+    const locales = entry.locales?.length ? entry.locales : getLocales();
+    const localized = locales.map((locale) => ({ locale, loc: site + getLocaleUrl(path, locale) }));
 
-    for (const locale of entryLocales) {
-      const isDefault = locale === defaultLocale;
-      const localePrefix = !isDefault || prefixDefaultLocale ? `/${locale}` : "";
+    const alternates =
+      localized.length > 1
+        ? [
+            ...localized.map((l) => ({ hreflang: getLocaleInfo(l.locale).tag, href: l.loc })),
+            ...localized
+              .filter((l) => l.locale === defaultLocale)
+              .map((l) => ({ hreflang: "x-default", href: l.loc })),
+          ]
+        : undefined;
 
-      let path = entry.path;
-      if (trailingSlash === "always" && !path.endsWith("/")) {
-        path += "/";
-      } else if (trailingSlash === "never" && path.endsWith("/")) {
-        path = path.replace(/\/$/, "");
-      }
-
-      const loc = `${site}${localePrefix}${path}`;
-
-      const item: SitemapUrl = { loc };
-      if (entry.lastmod) {
-        item.lastmod = entry.lastmod.toISOString();
-      }
-      if (entry.changefreq) {
-        item.changefreq = entry.changefreq;
-      }
-      if (entry.priority !== undefined) {
-        item.priority = entry.priority;
-      }
-      entryUrls.push(item);
+    for (const { loc } of localized) {
+      urls.push({
+        loc,
+        ...(entry.lastmod && { lastmod: entry.lastmod.toISOString() }),
+        ...(entry.changefreq && { changefreq: entry.changefreq }),
+        ...(entry.priority !== undefined && { priority: entry.priority }),
+        ...(alternates && { alternates }),
+      });
     }
-
-    // Add alternates if multiple locales
-    if (entryUrls.length > 1) {
-      const defaultUrl = entryUrls.find(
-        (u) => u.loc === `${site}${prefixDefaultLocale ? `/${defaultLocale}` : ""}${entry.path}`,
-      );
-
-      for (const url of entryUrls) {
-        url.alternates = entryUrls
-          .filter((u) => u.loc !== url.loc)
-          .map((u) => ({
-            hreflang: extractHreflang(u.loc, locales, defaultLocale),
-            href: u.loc,
-          }));
-
-        // Add x-default pointing to default locale
-        // x-default should be on the default URL itself, pointing to itself
-        if (defaultUrl && url.loc === defaultUrl.loc) {
-          url.alternates.push({
-            hreflang: "x-default",
-            href: defaultUrl.loc,
-          });
-        }
-      }
-    }
-
-    urls.push(...entryUrls);
   }
 
   return urls;
@@ -134,23 +112,6 @@ export function chunkSitemapUrls(urls: SitemapUrl[], limit: number = 45000): Sit
     chunks.push(urls.slice(i, i + limit));
   }
   return chunks;
-}
-
-/**
- * Extract hreflang from a URL based on locale config
- */
-function extractHreflang(
-  url: string,
-  locales: Record<string, string>,
-  defaultLocale: string,
-): string {
-  for (const [segment, hreflang] of Object.entries(locales)) {
-    if (url.includes(`/${segment}/`) || url.endsWith(`/${segment}`)) {
-      return hreflang;
-    }
-  }
-  // Default to the first locale's hreflang if no match
-  return locales[defaultLocale] || "en";
 }
 
 /**

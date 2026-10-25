@@ -1,4 +1,5 @@
 import { For, type Component } from "solid-js";
+import { config } from "virtual:rimelight-cms";
 import type { BaseBlock } from "../core/types/blocks";
 import type { BlockDefinition } from "../core/blocks/registry";
 import type { UserSessionContext } from "../auth/permissions";
@@ -12,14 +13,19 @@ export interface PageRendererProps {
   session?: UserSessionContext | undefined;
   locale?: string | undefined;
   class?: string | undefined;
-  /** Custom blocks (e.g. `config.blocks` from cms.config.ts). */
+  /** Extra blocks on top of the built-ins and `cms.config.ts` blocks (registered automatically). */
   blockDefinitions?: BlockDefinition<any>[] | undefined;
   /** Renderer overrides by block type. */
   components?: Record<string, Component<any>> | undefined;
 }
 
 export const PageRenderer: Component<PageRendererProps> = (props) => {
-  const registry = createBlockRegistry(props.blockDefinitions ?? []);
+  // Read config at render time: cms.config.ts imports @rimelight/cms/solid, so it may not be
+  // initialised yet when this module is first evaluated.
+  const registry = createBlockRegistry([
+    ...(config.blocks ?? []),
+    ...(props.blockDefinitions ?? []),
+  ]);
   const blocks = () => filterBlocksForReader(normalizeBlocks(props.blocks ?? []), props.session);
   return (
     <BlockRegistryContext value={registry}>

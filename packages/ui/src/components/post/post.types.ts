@@ -26,6 +26,13 @@ export interface RLPostProps {
    */
   to?: string | undefined;
   /**
+   * Localize an internal link for the current locale. Pass a locale code to target that
+   * locale, or `false` to keep the href as-is.
+   *
+   * @default true
+   */
+  localize?: boolean | string | undefined;
+  /**
    * The variant of the post.
    */
   variant?: "soft" | "ghost" | undefined;

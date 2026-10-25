@@ -5,89 +5,60 @@ import {
   buildSitemapIndexXml,
   chunkSitemapUrls,
 } from "../src/sitemap";
-import type { LocaleConfig, SeoEntry } from "../src/types";
+import type { SeoEntry } from "../src/types";
 
+// Locales come from the mocked i18n config: en (default, unprefixed) and pt.
 describe("buildSitemapUrls", () => {
-  const config: LocaleConfig = {
-    site: "https://example.com",
-    locales: { en: "en-US", pt: "pt-BR" },
-    defaultLocale: "en",
-  };
+  const options = { site: "https://example.com" };
 
-  it("builds URLs for a single entry in multiple locales", () => {
-    const entries: SeoEntry[] = [{ path: "/about" }];
-    const urls = buildSitemapUrls(entries, config);
+  it("builds URLs for a single entry in every locale", () => {
+    const urls = buildSitemapUrls([{ path: "/about" }], options);
 
-    expect(urls).toHaveLength(2);
-    expect(urls[0]!.loc).toBe("https://example.com/about");
-    expect(urls[1]!.loc).toBe("https://example.com/pt/about");
+    expect(urls.map((u) => u.loc)).toEqual([
+      "https://example.com/about",
+      "https://example.com/pt/about",
+    ]);
   });
 
-  it("includes alternates for multi-locale entries", () => {
-    const entries: SeoEntry[] = [{ path: "/about" }];
-    const urls = buildSitemapUrls(entries, config);
+  it("lists every locale plus x-default as alternates on each URL", () => {
+    const urls = buildSitemapUrls([{ path: "/about" }], options);
+    const expected = [
+      { hreflang: "en-US", href: "https://example.com/about" },
+      { hreflang: "pt-BR", href: "https://example.com/pt/about" },
+      { hreflang: "x-default", href: "https://example.com/about" },
+    ];
 
-    // Default locale URL should have x-default alternate
-    const defaultUrl = urls.find((u) => u.loc === "https://example.com/about");
-    expect(defaultUrl?.alternates).toHaveLength(2);
-    expect(defaultUrl?.alternates?.[0]!.hreflang).toBe("pt-BR");
-    expect(defaultUrl?.alternates?.[0]!.href).toBe("https://example.com/pt/about");
-    expect(defaultUrl?.alternates?.[1]!.hreflang).toBe("x-default");
-    expect(defaultUrl?.alternates?.[1]!.href).toBe("https://example.com/about");
-
-    // Non-default locale URL should have only the other locale as alternate
-    const ptUrl = urls.find((u) => u.loc === "https://example.com/pt/about");
-    expect(ptUrl?.alternates).toHaveLength(1);
-    expect(ptUrl?.alternates?.[0]!.hreflang).toBe("en-US");
-    expect(ptUrl?.alternates?.[0]!.href).toBe("https://example.com/about");
+    expect(urls[0]!.alternates).toEqual(expected);
+    expect(urls[1]!.alternates).toEqual(expected);
   });
 
-  it("handles prefixDefaultLocale option", () => {
-    const configWithPrefix: LocaleConfig = {
-      ...config,
-      prefixDefaultLocale: true,
-    };
-    const entries: SeoEntry[] = [{ path: "/about" }];
-    const urls = buildSitemapUrls(entries, configWithPrefix);
+  it("handles the trailingSlash option", () => {
+    const urls = buildSitemapUrls([{ path: "/about" }], { ...options, trailingSlash: "always" });
 
-    expect(urls[0]!.loc).toBe("https://example.com/en/about");
-    expect(urls[1]!.loc).toBe("https://example.com/pt/about");
+    expect(urls.map((u) => u.loc)).toEqual([
+      "https://example.com/about/",
+      "https://example.com/pt/about/",
+    ]);
   });
 
-  it("handles trailingSlash option", () => {
-    const configWithSlash: LocaleConfig = {
-      ...config,
-      trailingSlash: "always",
-    };
-    const entries: SeoEntry[] = [{ path: "/about" }];
-    const urls = buildSitemapUrls(entries, configWithSlash);
-
-    expect(urls[0]!.loc).toBe("https://example.com/about/");
-    expect(urls[1]!.loc).toBe("https://example.com/pt/about/");
-  });
-
-  it("includes lastmod when provided", () => {
+  it("includes lastmod, changefreq and priority when provided", () => {
     const date = new Date("2024-01-01");
-    const entries: SeoEntry[] = [{ path: "/about", lastmod: date }];
-    const urls = buildSitemapUrls(entries, config);
+    const entries: SeoEntry[] = [
+      { path: "/about", lastmod: date, changefreq: "weekly", priority: 0.8 },
+    ];
+    const [url] = buildSitemapUrls(entries, options);
 
-    expect(urls[0]!.lastmod).toBe(date.toISOString());
+    expect(url!.lastmod).toBe(date.toISOString());
+    expect(url!.changefreq).toBe("weekly");
+    expect(url!.priority).toBe(0.8);
   });
 
-  it("includes changefreq and priority when provided", () => {
-    const entries: SeoEntry[] = [{ path: "/about", changefreq: "weekly", priority: 0.8 }];
-    const urls = buildSitemapUrls(entries, config);
-
-    expect(urls[0]!.changefreq).toBe("weekly");
-    expect(urls[0]!.priority).toBe(0.8);
-  });
-
-  it("restricts to specified locales", () => {
-    const entries: SeoEntry[] = [{ path: "/about", locales: ["en"] }];
-    const urls = buildSitemapUrls(entries, config);
+  it("restricts to specified locales without alternates", () => {
+    const urls = buildSitemapUrls([{ path: "/about", locales: ["en"] }], options);
 
     expect(urls).toHaveLength(1);
     expect(urls[0]!.loc).toBe("https://example.com/about");
+    expect(urls[0]!.alternates).toBeUndefined();
   });
 });
 

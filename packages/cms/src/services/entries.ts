@@ -327,7 +327,7 @@ export async function createEntry(
       "create from this template",
     );
     templateVersion = template.version;
-    blocks ??= template.initialBlocks.map(cloneBlock);
+    blocks ??= template.initialBlocks.map((b) => cloneBlock(b, { keepTemplateLocks: true }));
     properties = { ...template.defaultProperties, ...properties };
   }
   blocks ??= instantiateInitialBlocks(collection);

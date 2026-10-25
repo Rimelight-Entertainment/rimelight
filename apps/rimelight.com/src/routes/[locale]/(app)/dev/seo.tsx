@@ -15,7 +15,6 @@ import {
   buildRobotsMetaContent,
   buildRssXml,
   buildSafeDescription,
-  buildSecurityTxt,
   buildSitemapUrls,
   buildSitemapXml,
   buildWebManifest,
@@ -374,13 +373,6 @@ export default function DevSeoPage() {
       { name: "Developer", url: `${activeOrigin()}/dev` },
       { name: "SEO", url: `${activeOrigin()}/dev/seo` },
     ]);
-
-  const liveSecurityTxt = () =>
-    buildSecurityTxt({
-      contact: `mailto:${liveConfig().email || "security@rimelight.com"}`,
-      preferredLanguages: Object.keys(liveLocales()).join(", "),
-      policy: `${activeOrigin()}/.well-known/security.txt`,
-    });
 
   const liveApiCatalog = () =>
     buildApiCatalog({
@@ -812,42 +804,6 @@ export default function DevSeoPage() {
           description:
             "Emits Schema.org BreadcrumbList structured data for search result sitelinks.",
           value: JSON.stringify(liveBreadcrumbSchema(), null, 2),
-        },
-      ],
-    },
-    {
-      title: "buildSecurityTxt()",
-      mono: true,
-      output: liveSecurityTxt(),
-      rows: [
-        {
-          label: "security.txt",
-          code: `buildSecurityTxt({ contact: siteConfig.email, preferredLanguages, policy })`,
-          description:
-            "RFC 9116 compliant security contact document with automated expiration date.",
-          value: `Contact: mailto:${liveConfig().email || "security@rimelight.com"}\nLanguages: ${Object.keys(liveLocales()).join(", ")}`,
-        },
-        {
-          label: "Live endpoints",
-          description: "RFC 9116 security policy endpoints.",
-          content: (
-            <div class="flex gap-sm flex-wrap">
-              <RLButton
-                variant="soft"
-                color="neutral"
-                href="/.well-known/security.txt"
-                label="/.well-known/security.txt"
-                rel="external"
-              />
-              <RLButton
-                variant="soft"
-                color="neutral"
-                href="/security.txt"
-                label="/security.txt (legacy)"
-                rel="external"
-              />
-            </div>
-          ),
         },
       ],
     },

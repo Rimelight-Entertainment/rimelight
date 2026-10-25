@@ -1,6 +1,5 @@
 export type {
   ChangeFreq,
-  LocaleConfig,
   RobotsOptions,
   RobotsRouteOptions,
   SeoEntry,
@@ -24,8 +23,6 @@ export type {
   LlmsFullRouteOptions,
   ArticleSchemaOptions,
   BreadcrumbItem,
-  SecurityTxtOptions,
-  SecurityRouteOptions,
   WebManifestIcon,
   WebManifestShortcut,
   WebManifest,
@@ -43,6 +40,7 @@ export type {
 export { serializeJsonLd, sanitizeUrl } from "./sanitize";
 
 export { buildSitemapUrls, buildSitemapXml, buildSitemapIndexXml } from "./sitemap";
+export type { SitemapBuildOptions } from "./sitemap";
 
 export { buildRobotsTxt } from "./robots";
 
@@ -58,7 +56,6 @@ export {
 } from "./meta";
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms";
-export { buildSecurityTxt } from "./security";
 export { buildWebManifest } from "./manifest";
 export { buildApiCatalog } from "./catalog";
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema";

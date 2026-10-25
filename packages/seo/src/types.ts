@@ -23,26 +23,6 @@ export interface SeoEntry {
 }
 
 /**
- * Locale configuration for SEO builders
- */
-export interface LocaleConfig {
-  /**
-   * Absolute origin, e.g. "https://rimelight.com"
-   */
-  site: string;
-  /**
-   * Map of locale segment -> hreflang, e.g. { en: "en-US", pt: "pt-BR" }
-   */
-  locales: Record<string, string>;
-  defaultLocale: string;
-  /**
-   * Emit the default locale without a prefix. Default: false.
-   */
-  prefixDefaultLocale?: boolean;
-  trailingSlash?: "always" | "never";
-}
-
-/**
  * Fully resolved sitemap URL with alternates
  */
 export interface SitemapUrl {
@@ -187,7 +167,7 @@ export interface HeadProps {
    */
   ogType?: string | undefined;
   /**
-   * Open Graph locale (defaults to "en_US")
+   * Open Graph locale (default: the current locale's tag from @rimelight/i18n, e.g. "pt_BR")
    */
   ogLocale?: string | undefined;
   /**
@@ -215,7 +195,8 @@ export interface HeadProps {
    */
   nonce?: string | undefined;
   /**
-   * Language alternates for i18n
+   * Language alternates (default: every locale configured in @rimelight/i18n for `url`/`canonical`,
+   * plus x-default). Pass `[]` to emit none.
    */
   languageAlternates?: Array<{ hreflang: string; href: string }> | undefined;
   /**
@@ -322,58 +303,8 @@ export interface SitemapOptions {
   path?: string;
   urls?: SitemapUrl[];
   entries?: () => Promise<SeoEntry[]> | SeoEntry[];
-  locales?: LocaleConfig;
+  trailingSlash?: "always" | "never";
   [key: string]: unknown;
-}
-
-export interface SecurityTxtOptions {
-  /**
-   * Contact URI or list of contact URIs (e.g. "mailto:security@example.com") - REQUIRED by RFC 9116
-   */
-  contact: string | string[];
-  /**
-   * Expiration date/time (ISO 8601 string or Date) - REQUIRED by RFC 9116
-   */
-  expires?: Date | string;
-  /**
-   * URI to PGP/GPG public key
-   */
-  encryption?: string | string[];
-  /**
-   * URI to security acknowledgments / hall of fame
-   */
-  acknowledgments?: string | string[];
-  /**
-   * Comma-separated list of preferred languages (e.g. "en, pt")
-   */
-  preferredLanguages?: string;
-  /**
-   * Canonical URI of the security.txt file
-   */
-  canonical?: string;
-  /**
-   * URI to security policy
-   */
-  policy?: string;
-  /**
-   * URI to security hiring page
-   */
-  hiring?: string;
-  /**
-   * URI to Common Security Advisory Framework (CSAF) provider
-   */
-  csaf?: string;
-}
-
-export interface SecurityRouteOptions extends Partial<SecurityTxtOptions> {
-  /**
-   * Route pattern (default: "/.well-known/security.txt")
-   */
-  path?: string;
-  /**
-   * Whether to also inject legacy fallback route at "/security.txt" (default: true)
-   */
-  legacyRoute?: boolean;
 }
 
 export interface WebManifestIcon {
@@ -541,10 +472,6 @@ export interface SeoConfig {
   openGraph?: OpenGraphMeta;
   twitter?: TwitterMeta;
   /**
-   * Locale mappings for hreflang / sitemaps
-   */
-  locales?: LocaleConfig | Record<string, string>;
-  /**
    * Path prefixes to exclude from sitemap and indexing
    */
   privatePathPrefixes?: string[];
@@ -572,11 +499,6 @@ export interface SeoConfig {
    * LLMs-full.txt configuration or false to disable automatic /llms-full.txt (default: true)
    */
   llmsFull?: boolean | LlmsFullRouteOptions;
-  /**
-   * Security.txt configuration or false to disable automatic /.well-known/security.txt (default:
-   * true)
-   */
-  security?: boolean | SecurityRouteOptions;
   /**
    * RFC 9652 API Catalog configuration or false to disable automatic /.well-known/api-catalog
    * (default: true)
