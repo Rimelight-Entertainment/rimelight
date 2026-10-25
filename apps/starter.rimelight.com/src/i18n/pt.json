@@ -325,6 +325,13 @@
           "learn-how": "Saiba Como"
         }
       }
+    },
+    "legal": {
+      "meta": {
+        "title": "Documentos legais",
+        "description": "Políticas e acordos."
+      },
+      "empty": "Ainda não há documentos legais."
     }
   },
   "cms": {

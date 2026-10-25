@@ -41,8 +41,12 @@ describe("@rimelight/security CSP header generator", () => {
     });
 
     expect(csp).toContain("img-src 'self' data: https://api.example.com https://ws.example.com");
-    expect(csp).toContain("connect-src 'self' https://api.example.com https://ws.example.com");
-    expect(csp).toContain("frame-src 'self' https://api.example.com https://ws.example.com");
+    expect(csp).toContain(
+      "connect-src 'self' https://challenges.cloudflare.com https://api.example.com https://ws.example.com",
+    );
+    expect(csp).toContain(
+      "frame-src 'self' https://challenges.cloudflare.com https://api.example.com https://ws.example.com",
+    );
   });
 
   it("should not let allowedDomains widen script-src or style-src", () => {

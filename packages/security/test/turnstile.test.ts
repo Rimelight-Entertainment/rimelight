@@ -59,7 +59,14 @@ describe("Turnstile Module", () => {
   });
 
   describe("CSP integration", () => {
-    it("includes Cloudflare challenges domain in script-src, connect-src and frame-src when turnstile is true", () => {
+    it("includes Cloudflare challenges domain by default or when turnstile is true", () => {
+      const cspDefault = buildCspHeader();
+      expect(cspDefault).toContain(
+        "script-src 'self' 'inline-speculation-rules' https://challenges.cloudflare.com",
+      );
+      expect(cspDefault).toContain("frame-src 'self' https://challenges.cloudflare.com");
+      expect(cspDefault).toContain("connect-src 'self' https://challenges.cloudflare.com");
+
       const csp = buildCspHeader({ turnstile: true });
       expect(csp).toContain(
         "script-src 'self' 'inline-speculation-rules' https://challenges.cloudflare.com",
@@ -68,10 +75,7 @@ describe("Turnstile Module", () => {
       expect(csp).toContain("connect-src 'self' https://challenges.cloudflare.com");
     });
 
-    it("omits Cloudflare challenges domain by default or when turnstile is false", () => {
-      const cspDefault = buildCspHeader();
-      expect(cspDefault).not.toContain("https://challenges.cloudflare.com");
-
+    it("omits Cloudflare challenges domain when turnstile is false", () => {
       const cspFalse = buildCspHeader({ turnstile: false });
       expect(cspFalse).not.toContain("https://challenges.cloudflare.com");
     });

@@ -5,6 +5,7 @@ export const activeConfig: SecurityConfig = {
   strictDynamic: true,
   enforceTls: true,
   devOnly: true,
+  turnstile: true,
   crossOriginResourcePolicy: "same-origin",
   crossOriginOpenerPolicy: "same-origin",
   crossOriginEmbedderPolicy: "credentialless",
@@ -37,7 +38,7 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
     .replace(/^https?:\/\//, "")
     .split(/[/?#]/)[0];
   const allowed = options.allowedDomains || [];
-  const turnstile = Boolean(options.turnstile);
+  const turnstile = options.turnstile !== false;
 
   const imgSources = Array.from(
     new Set([

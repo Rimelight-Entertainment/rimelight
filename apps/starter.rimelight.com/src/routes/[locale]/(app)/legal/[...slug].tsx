@@ -1,75 +1,54 @@
 import { type Component, Show, createMemo } from "solid-js";
-import { useParams } from "@solidjs/router";
+import { useParams, useSearchParams } from "@solidjs/router";
 import { useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
-import { PageRenderer } from "@rimelight/cms/solid";
+import { PageRenderer, content, type PublicEntry } from "@rimelight/cms/solid";
+import { RLDate } from "@rimelight/ui/components/date/RLDate.tsx";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 
-export const LegalSlugPage: Component = () => {
-  const params = useParams<{ locale: string; slug: string }>();
+/**
+ * A legal document from the CMS `legal` collection. `?preview=` (from the dashboard's
+ * "Open draft preview") shows the draft instead of the published version.
+ */
+export const LegalDocumentPage: Component = () => {
+  const params = useParams<{ locale: string; slug?: string }>();
+  const [search] = useSearchParams<{ preview?: string }>();
   const activeLocale = () => getCurrentLocale();
 
-  const pageData = createMemo<any>(
+  const pageData = createMemo<PublicEntry | null>(
     async () => {
-      const slug = params["slug"];
+      const slug = params.slug?.replace(/\/+$/, "");
       if (!slug) return null;
-      try {
-        const res = await fetch(`/api/content/pages/${encodeURIComponent(slug)}?type=legal`);
-        if (!res.ok) return null;
-        const data = (await res.json()) as any;
-        return data.page || null;
-      } catch {
-        return null;
-      }
+      return content.entry("legal", slug, search.preview);
     },
     { loadingValue: null },
   );
 
-  const title = () => (pageData() ? t.localize(pageData()!.title) : "Legal");
-  const description = () => (pageData() ? t.localize(pageData()!.description) : "");
-  const content = () => {
-    const p = pageData();
-    if (!p) return {};
-    return typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-  };
+  const title = () => t.localize(pageData()?.title) || "Legal Document";
+  const description = () => t.localize(pageData()?.description ?? undefined) || "";
 
-  useHead(() =>
-    createSeoHead({
-      title: title(),
-      description: description(),
-    }),
-  );
+  useHead(() => createSeoHead({ title: title(), description: description() }));
 
   return (
-    <div class="container mx-auto px-4 py-16 max-w-3xl">
-      <Show when={pageData()} fallback={<div class="p-8 text-center text-muted">Loading...</div>}>
-        <article>
-          <div class="prose max-w-none">
-            <div class="title mb-8">
-              <div class="date text-neutral-400 mb-2 text-sm">
-                <time>
-                  {new Date(pageData()!.postedAt || pageData()!.createdAt).toLocaleDateString(
-                    activeLocale(),
-                  )}
-                </time>
-                <Show when={pageData()!.updatedAt}>
-                  <div class="last-updated-on text-xs text-neutral-500 mt-1">
-                    {t("legal.last-updated-on")}{" "}
-                    <time>
-                      {new Date(pageData()!.updatedAt!).toLocaleDateString(activeLocale())}
-                    </time>
-                  </div>
-                </Show>
-              </div>
-              <h1 class="text-4xl font-extrabold text-highlighted mb-4">{title()}</h1>
-              <hr class="border-default" />
-            </div>
-            <PageRenderer blocks={content().blocks || []} locale={activeLocale()} />
+    <Show
+      when={pageData()}
+      fallback={<div class="p-16 text-center text-neutral-400">Loading document...</div>}
+    >
+      <article class="max-w-4xl mx-auto px-4 py-16">
+        <header class="mb-12">
+          <div class="text-sm text-primary-400 mb-2">
+            <RLDate date={pageData()?.publishedAt ?? new Date()} />
           </div>
-        </article>
-      </Show>
-    </div>
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
+            {title()}
+          </h1>
+          <p class="text-xl text-neutral-400 leading-relaxed">{description()}</p>
+        </header>
+
+        <PageRenderer blocks={pageData()?.blocks ?? []} locale={activeLocale()} />
+      </article>
+    </Show>
   );
 };
 
-export default LegalSlugPage;
+export default LegalDocumentPage;

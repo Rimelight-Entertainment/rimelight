@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "private": false,
   "description": "Rimelight Entertainment's Content Management System Package",
   "homepage": "https://rimelight.com/docs",
@@ -77,12 +77,12 @@
       "import": "./dist/docs/index.mjs"
     },
     "./solid": {
-      "types": "./src/solid/index.ts",
-      "import": "./src/solid/index.ts"
+      "types": "./src/solid/index.tsx",
+      "import": "./src/solid/index.tsx"
     },
     "./dashboard": {
-      "types": "./src/dashboard/index.ts",
-      "import": "./src/dashboard/index.ts"
+      "types": "./src/dashboard/index.tsx",
+      "import": "./src/dashboard/index.tsx"
     },
     "./virtual": {
       "types": "./src/client.d.ts"

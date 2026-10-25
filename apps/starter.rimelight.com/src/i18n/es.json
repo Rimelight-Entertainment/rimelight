@@ -58,5 +58,14 @@
         "name": "Admin CMS"
       }
     }
+  },
+  "page": {
+    "legal": {
+      "meta": {
+        "title": "Documentos legales",
+        "description": "Políticas y acuerdos."
+      },
+      "empty": "Aún no hay documentos legales."
+    }
   }
 }
