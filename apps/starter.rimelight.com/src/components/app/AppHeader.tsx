@@ -20,36 +20,46 @@ export interface AppHeaderProps {
 }
 
 export const AppHeader: Component<AppHeaderProps> = (props) => {
-  const foundationLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app.header.link-groups.center.foundations.label"),
-    leadingIcon: "i-lucide-layout",
+  const doc = (path: string) => getLocaleUrl(`/docs/v1/guide/${path}`);
+
+  const startLinkGroup = (): RLLinkGroupProps => ({
+    label: t("app.header.link-groups.center.start.label"),
+    leadingIcon: "i-lucide-rocket",
     links: [
       {
-        label: t("app.header.link-groups.center.foundations.links.tokens"),
-        href: getLocaleUrl("/docs/tokens"),
+        label: t("app.header.link-groups.center.start.links.introduction"),
+        href: doc("getting-started/introduction"),
       },
       {
-        label: t("app.header.link-groups.center.foundations.links.colors"),
-        href: getLocaleUrl("/docs/colors"),
+        label: t("app.header.link-groups.center.start.links.structure"),
+        href: doc("getting-started/project-structure"),
       },
       {
-        label: t("app.header.link-groups.center.foundations.links.typography"),
-        href: getLocaleUrl("/docs/typography"),
+        label: t("app.header.link-groups.center.start.links.deploy"),
+        href: doc("deploy/cloudflare"),
       },
     ],
   });
 
-  const componentsLinkGroup = (): RLLinkGroupProps => ({
-    label: t("app.header.link-groups.center.components.label"),
-    leadingIcon: "i-lucide-blocks",
+  const customizeLinkGroup = (): RLLinkGroupProps => ({
+    label: t("app.header.link-groups.center.customize.label"),
+    leadingIcon: "i-lucide-palette",
     links: [
       {
-        label: t("app.header.link-groups.center.components.links.solid"),
-        href: getLocaleUrl("/docs/solid"),
+        label: t("app.header.link-groups.center.customize.links.branding"),
+        href: doc("customize/branding-and-seo"),
       },
       {
-        label: t("app.header.link-groups.center.components.links.integrations"),
-        href: getLocaleUrl("/docs/integrations"),
+        label: t("app.header.link-groups.center.customize.links.pages"),
+        href: doc("customize/pages"),
+      },
+      {
+        label: t("app.header.link-groups.center.customize.links.content"),
+        href: doc("customize/content"),
+      },
+      {
+        label: t("app.header.link-groups.center.customize.links.translations"),
+        href: doc("customize/translations"),
       },
     ],
   });
@@ -60,7 +70,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     links: [
       {
         label: t("app.header.link-groups.right.resources.links.docs"),
-        href: "/docs",
+        href: getLocaleUrl("/docs"),
         leadingIcon: "i-lucide-file-text size-4",
       },
       {
@@ -74,20 +84,18 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
   const leftLinks = (): NavigationMenuItem[] => [
     {
       label: t("app.header.left-links.features.label"),
-      to: getLocaleUrl("/features"),
+      to: doc("getting-started/introduction"),
       slot: "features" as const,
       children: [
         {
-          label: t("app.header.link-groups.center.foundations.label"),
-          description: t("app.header.link-groups.center.foundations.description"),
+          label: t("app.header.link-groups.center.start.label"),
+          description: t("app.header.link-groups.center.start.description"),
+          to: doc("getting-started/introduction"),
         },
         {
-          label: t("app.header.link-groups.center.components.label"),
-          description: t("app.header.link-groups.center.components.description"),
-        },
-        {
-          label: t("app.header.link-groups.center.components.links.integrations"),
-          description: t("app.header.link-groups.center.components.description"),
+          label: t("app.header.link-groups.center.customize.label"),
+          description: t("app.header.link-groups.center.customize.description"),
+          to: doc("customize/branding-and-seo"),
         },
       ],
     },
@@ -136,12 +144,9 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
                       <div class="flex flex-col gap-sm flex-2">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                          <RLLinkGroup {...startLinkGroup()} ui={{ title: "!text-primary-500" }} />
                           <RLLinkGroup
-                            {...foundationLinkGroup()}
-                            ui={{ title: "!text-primary-500" }}
-                          />
-                          <RLLinkGroup
-                            {...componentsLinkGroup()}
+                            {...customizeLinkGroup()}
                             ui={{ title: "!text-primary-500" }}
                           />
                         </div>
@@ -193,11 +198,11 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                         <div class="flex flex-col gap-sm flex-2">
                           <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
                             <RLLinkGroup
-                              {...foundationLinkGroup()}
+                              {...startLinkGroup()}
                               ui={{ title: "!text-primary-500" }}
                             />
                             <RLLinkGroup
-                              {...componentsLinkGroup()}
+                              {...customizeLinkGroup()}
                               ui={{ title: "!text-primary-500" }}
                             />
                           </div>

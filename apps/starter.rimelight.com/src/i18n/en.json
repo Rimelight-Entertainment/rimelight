@@ -61,21 +61,23 @@
       },
       "link-groups": {
         "center": {
-          "foundations": {
-            "label": "Foundation",
-            "description": "Design tokens, color palettes, fluid typography.",
+          "start": {
+            "label": "Getting started",
+            "description": "Run the starter and find your way around.",
             "links": {
-              "tokens": "Design Tokens",
-              "colors": "Color Palettes",
-              "typography": "Fluid Typography"
+              "introduction": "Introduction",
+              "structure": "Project structure",
+              "deploy": "Deploy to Cloudflare"
             }
           },
-          "components": {
-            "label": "Components",
-            "description": "Solid library elements.",
+          "customize": {
+            "label": "Customize",
+            "description": "Make the starter your own.",
             "links": {
-              "solid": "Solid Components",
-              "integrations": "Integrations"
+              "branding": "Branding and SEO",
+              "pages": "Pages and navigation",
+              "content": "Content and the CMS",
+              "translations": "Translations"
             }
           }
         },

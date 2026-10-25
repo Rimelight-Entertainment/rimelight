@@ -61,21 +61,23 @@
       },
       "link-groups": {
         "center": {
-          "foundations": {
-            "label": "Fundamentos",
-            "description": "Design tokens, paletas de cores e tipografia fluida.",
+          "start": {
+            "label": "Primeiros passos",
+            "description": "Rode o starter e conheça a estrutura.",
             "links": {
-              "tokens": "Design Tokens",
-              "colors": "Paletas de Cores",
-              "typography": "Tipografia Fluida"
+              "introduction": "Introdução",
+              "structure": "Estrutura do projeto",
+              "deploy": "Deploy na Cloudflare"
             }
           },
-          "components": {
-            "label": "Componentes",
-            "description": "Elementos de biblioteca para Solid.",
+          "customize": {
+            "label": "Personalizar",
+            "description": "Deixe o starter com a sua cara.",
             "links": {
-              "solid": "Componentes Solid",
-              "integrations": "Integrações"
+              "branding": "Marca e SEO",
+              "pages": "Páginas e navegação",
+              "content": "Conteúdo e CMS",
+              "translations": "Traduções"
             }
           }
         },
