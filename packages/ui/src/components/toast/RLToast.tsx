@@ -55,6 +55,8 @@ export const RLToast: Component<RLToastProps> = (props) => {
 
   const startTimer = () => {
     const duration = props.duration ?? 6000;
+    // Non-dismissable toasts (e.g. consent prompts) must never time out.
+    if (props.dismissable === false) return;
     if (duration > 0 && remaining > 0 && timerId === null) {
       startTime = Date.now();
       timerId = setTimeout(dismiss, remaining);

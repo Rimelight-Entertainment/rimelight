@@ -120,7 +120,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       left={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
-            <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
+            <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
             <RLNavigationMenu
               items={leftLinks()}
               variant="link"
@@ -221,7 +221,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       center={
         <div class="flex items-center gap-md">
           <div class="block md:hidden">
-            <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
+            <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
           </div>
         </div>
       }

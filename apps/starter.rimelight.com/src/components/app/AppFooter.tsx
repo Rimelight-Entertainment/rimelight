@@ -66,7 +66,7 @@ export const AppFooter: Component = () => {
         <div class="flex flex-col gap-xl justify-between items-center lg:items-start">
           <div class="text-center lg:text-left text-white">Newsletter Signup</div>
           <div class="flex flex-col gap-xs items-center lg:items-start">
-            <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
+            <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
             <p class="text-sm text-center lg:text-left text-white">Rimelight Starter</p>
             <span class="text-sm text-center lg:text-left text-white">
               © {new Date().getFullYear()} Rimelight Entertainment

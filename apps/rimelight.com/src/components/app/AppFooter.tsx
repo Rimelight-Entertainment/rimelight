@@ -92,7 +92,7 @@ export const AppFooter: Component = () => {
         <div class="flex flex-col gap-xl justify-between items-center lg:items-start flex-1">
           <NewsletterSignup />
           <div class="flex flex-col items-center gap-xs lg:items-start mt-auto">
-            <RLLogo variant="logotype" class="h-6 w-auto" mode="color" />
+            <RLLogo href={getLocaleUrl("/")} variant="logotype" class="h-6 w-auto" mode="color" />
             <p class="text-sm text-white">Accessing me.</p>
             <span class="text-sm text-white">© {new Date().getFullYear()} idantity.me</span>
           </div>

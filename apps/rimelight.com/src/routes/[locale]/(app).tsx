@@ -76,8 +76,9 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
             <RLToast
               title={t("cookie.notice.title") || "Cookie Preferences"}
               dismissable={false}
+              duration={0}
               class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm"
-              actions={
+              actionsSlot={
                 <div class="flex items-center gap-2">
                   <RLButton
                     variant="solid"
