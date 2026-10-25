@@ -4,7 +4,7 @@ import { resolveLabel } from "../core/collections/define";
 import { entryUrl } from "../core/collections/color";
 import { getCollection } from "./collections";
 import type { CmsContext } from "./context";
-import type { Entry } from "./entries";
+import { getEntry, listEntries, type Entry } from "./entries";
 
 /**
  * Full-text search over published entries, stored in `search_index` (one row per entry).
@@ -109,7 +109,6 @@ export async function searchEntries(
 
 /** Rebuilds the index from every published entry (admin maintenance / after enabling search). */
 export async function reindexAll(ctx: CmsContext): Promise<{ indexed: number }> {
-  const { listEntries, getEntry } = await import("./entries");
   let offset = 0;
   let count = 0;
   for (;;) {

@@ -59,10 +59,13 @@ export const cms = (options: CmsPluginOptions = {}): Plugin => {
       if (!resolved)
         throw new Error("[@rimelight/cms] cannot resolve @rimelight/cms/dashboard/route");
       const moduleId = resolved.id.replace(/\\/g, "/");
-      return code.replace(
-        /export const pageRoutes = \[/,
-        `export const pageRoutes = [\n  ${dashboardRoutes(dashboardPath, moduleId)},`,
-      );
+      return {
+        code: code.replace(
+          /export const pageRoutes = \[/,
+          `export const pageRoutes = [\n  ${dashboardRoutes(dashboardPath, moduleId)},`,
+        ),
+        map: { mappings: "" },
+      };
     },
   };
 };

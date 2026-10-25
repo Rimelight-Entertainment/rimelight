@@ -94,8 +94,26 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
     measure();
     setPanel((p) => (p === which ? null : which));
   };
+  /**
+   * The sub-header joins the site's header stack (which pads the page for every registered
+   * header), so it's only mounted below xl — hiding it with CSS would still reserve its height.
+   */
+  const [narrow, setNarrow] = createSignal(false);
   onSettled(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setPanel(null);
+    const mq = window.matchMedia("(max-width: 1279.98px)");
+    const sync = () => {
+      setNarrow(mq.matches);
+      if (!mq.matches) setPanel(null);
+    };
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  });
+
+  onSettled(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPanel(null);
+    };
     const onMove = () => panel() && measure();
     window.addEventListener("keydown", onKey);
     window.addEventListener("scroll", onMove, { passive: true });
@@ -161,42 +179,45 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
   );
 
   return (
-    <div class="container mx-auto px-4 py-8">
+    <>
       {/* Mobile: a second sticky header. Left opens the sidebar, right opens "On this page";
           each panel slides down from the bottom of this header. */}
-      <RLHeader
-        stackIndex={1}
-        data-docs-subheader=""
-        class="xl:hidden -mx-4 mb-6 border-b border-default bg-default/95 backdrop-blur"
-        left={
-          <div class="lg:hidden">
-            <RLButton
-              variant="ghost"
-              size="sm"
-              leadingIcon="menu"
-              label="Menu"
-              trailingIcon={panel() === "nav" ? "chevron-up" : "chevron-down"}
-              aria-expanded={panel() === "nav"}
-              aria-controls="docs-panel-nav"
-              onClick={() => toggle("nav")}
-            />
-          </div>
-        }
-        right={
-          <Show when={headings().length > 0}>
-            <RLButton
-              variant="ghost"
-              size="sm"
-              label="On this page"
-              trailingIcon={panel() === "toc" ? "chevron-up" : "chevron-down"}
-              class="whitespace-nowrap"
-              aria-expanded={panel() === "toc"}
-              aria-controls="docs-panel-toc"
-              onClick={() => toggle("toc")}
-            />
-          </Show>
-        }
-      />
+      <Show when={narrow()}>
+        <RLHeader
+          stackIndex={1}
+          fixed
+          data-docs-subheader=""
+          class="w-full border-b border-default bg-default/95 backdrop-blur"
+          left={
+            <div class="lg:hidden">
+              <RLButton
+                variant="ghost"
+                size="sm"
+                leadingIcon="menu"
+                label="Menu"
+                trailingIcon={panel() === "nav" ? "chevron-up" : "chevron-down"}
+                aria-expanded={panel() === "nav"}
+                aria-controls="docs-panel-nav"
+                onClick={() => toggle("nav")}
+              />
+            </div>
+          }
+          right={
+            <Show when={headings().length > 0}>
+              <RLButton
+                variant="ghost"
+                size="sm"
+                label="On this page"
+                trailingIcon={panel() === "toc" ? "chevron-up" : "chevron-down"}
+                class="whitespace-nowrap"
+                aria-expanded={panel() === "toc"}
+                aria-controls="docs-panel-toc"
+                onClick={() => toggle("toc")}
+              />
+            </Show>
+          }
+        />
+      </Show>
 
       <Portal>
         {/* Dim the page behind an open panel; clicking it closes the panel. */}
@@ -239,76 +260,78 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
         </For>
       </Portal>
 
-      {/* Version + sections (in the mobile menu below lg) */}
-      <div class="hidden lg:block">{versionBar()}</div>
+      <div class="container mx-auto px-4 py-8">
+        {/* Version + sections (in the mobile menu below lg) */}
+        <div class="hidden lg:block">{versionBar()}</div>
 
-      <div class="relative flex min-h-[calc(100vh-200px)] flex-col items-start gap-8 lg:flex-row">
-        {/* Sections are tabs above, so the sidebar's own (empty) header area is hidden. */}
-        <style>{`.docs-sidebar-wrapper [data-slot="header"],.docs-mobile-nav [data-sidebar] > [data-slot="header"]{display:none}`}</style>
-        <div class="docs-sidebar-wrapper sticky top-[calc(var(--rl-header-height,64px)+2rem)] hidden max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] w-[280px] shrink-0 overflow-y-auto lg:block [&_[data-slot=header]]:hidden">
-          <RLSidebar
-            items={nav().items as any}
-            collapsible="none"
-            class="docs-nav-sidebar w-full shadow-none"
-            ui={{ header: "hidden" } as any}
-          />
-        </div>
-
-        <main class="docs-content w-full min-w-0 flex-1 py-2">
-          <Show
-            when={entry()}
-            fallback={
-              <Show
-                when={entry() === null}
-                fallback={
-                  <div class="p-12 text-center text-neutral-400">Loading documentation…</div>
-                }
-              >
-                <div class="p-12 text-center">
-                  <p class="text-lg text-highlighted">
-                    This page doesn't exist in {nav().version}.
-                  </p>
-                  <a
-                    class="mt-2 inline-block text-primary-400"
-                    href={`${basePath()}/${nav().version}`}
-                  >
-                    Go to the {nav().version} docs
-                  </a>
-                </div>
-              </Show>
-            }
-          >
-            <div class="mb-6 border-b border-default pb-4">
-              <h1 class="text-3xl font-extrabold tracking-tight text-highlighted">{title()}</h1>
-              <Show when={description()}>
-                <p class="mt-2 text-base text-muted">{description()}</p>
-              </Show>
-              <div class="my-4 flex items-center justify-end gap-2">
-                <Show when={markdown()}>
-                  <RLCopyMarkdown raw={markdown()} />
-                </Show>
-                <RLShare />
-              </div>
-            </div>
-
-            <article class="markdown-content prose prose-base max-w-none">
-              <DocBlocks blocks={blocks()} locale={locale()} />
-            </article>
-
-            <RLSurround prev={nav().prev} next={nav().next} />
-          </Show>
-        </main>
-
-        <Show when={headings().length > 0}>
-          <div class="sticky top-[calc(var(--rl-header-height,64px)+2rem)] hidden max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] w-[240px] shrink-0 overflow-y-auto pl-4 xl:block">
-            <RLTableOfContents
-              headings={headings()}
-              tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 } as any}
+        <div class="relative flex min-h-[calc(100vh-200px)] flex-col items-start gap-8 lg:flex-row">
+          {/* Sections are tabs above, so the sidebar's own (empty) header area is hidden. */}
+          <style>{`.docs-sidebar-wrapper [data-slot="header"],.docs-mobile-nav [data-sidebar] > [data-slot="header"]{display:none}`}</style>
+          <div class="docs-sidebar-wrapper sticky top-[calc(var(--rl-header-height,64px)+2rem)] hidden max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] w-[280px] shrink-0 overflow-y-auto lg:block [&_[data-slot=header]]:hidden">
+            <RLSidebar
+              items={nav().items as any}
+              collapsible="none"
+              class="docs-nav-sidebar w-full shadow-none"
+              ui={{ header: "hidden" } as any}
             />
           </div>
-        </Show>
+
+          <main class="docs-content w-full min-w-0 flex-1 py-2">
+            <Show
+              when={entry()}
+              fallback={
+                <Show
+                  when={entry() === null}
+                  fallback={
+                    <div class="p-12 text-center text-neutral-400">Loading documentation…</div>
+                  }
+                >
+                  <div class="p-12 text-center">
+                    <p class="text-lg text-highlighted">
+                      This page doesn't exist in {nav().version}.
+                    </p>
+                    <a
+                      class="mt-2 inline-block text-primary-400"
+                      href={`${basePath()}/${nav().version}`}
+                    >
+                      Go to the {nav().version} docs
+                    </a>
+                  </div>
+                </Show>
+              }
+            >
+              <div class="mb-6 border-b border-default pb-4">
+                <h1 class="text-3xl font-extrabold tracking-tight text-highlighted">{title()}</h1>
+                <Show when={description()}>
+                  <p class="mt-2 text-base text-muted">{description()}</p>
+                </Show>
+                <div class="my-4 flex items-center justify-end gap-2">
+                  <Show when={markdown()}>
+                    <RLCopyMarkdown raw={markdown()} />
+                  </Show>
+                  <RLShare />
+                </div>
+              </div>
+
+              <article class="markdown-content prose prose-base max-w-none">
+                <DocBlocks blocks={blocks()} locale={locale()} />
+              </article>
+
+              <RLSurround prev={nav().prev} next={nav().next} />
+            </Show>
+          </main>
+
+          <Show when={headings().length > 0}>
+            <div class="sticky top-[calc(var(--rl-header-height,64px)+2rem)] hidden max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] w-[240px] shrink-0 overflow-y-auto pl-4 xl:block">
+              <RLTableOfContents
+                headings={headings()}
+                tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 } as any}
+              />
+            </div>
+          </Show>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
