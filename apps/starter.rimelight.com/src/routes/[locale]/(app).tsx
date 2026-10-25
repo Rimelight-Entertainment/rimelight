@@ -38,6 +38,8 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
         id="v2-announcement"
         contain={false}
         close={true}
+        fixed={true}
+        hideOnScroll={true}
         stackIndex={0}
         class="bg-primary text-neutral-50 font-medium"
         actions={[

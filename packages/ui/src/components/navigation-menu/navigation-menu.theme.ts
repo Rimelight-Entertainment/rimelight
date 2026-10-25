@@ -10,6 +10,9 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     "content",
     "viewport",
     "viewportWrapper",
+    "panel",
+    "group",
+    "groupTitle",
     "childList",
     "childLink",
     "childIcon",
@@ -17,20 +20,25 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     "childDescription",
   ],
   base: {
-    root: "relative z-10 flex w-full",
-    list: "group flex flex-1 list-none",
+    root: "relative z-10 flex",
+    list: "flex flex-1 list-none",
     item: "relative",
-    link: "text-highlighted inline-flex items-center px-4 py-2 text-sm font-medium transition-colors hover:text-highlighted focus:text-highlighted focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-    trigger:
-      "group inline-flex h-10 items-center rounded-md bg-default px-4 py-2 text-sm font-medium transition-colors hover:bg-accented hover:text-highlighted focus:bg-accented focus:text-highlighted focus:outline-none disabled:pointer-events-none disabled:opacity-50 gap-1",
-    content:
-      "absolute left-0 top-full z-50 mt-1.5 w-56 rounded-md border bg-elevated p-1 text-highlighted shadow-md origin-top-left",
-    viewportWrapper: "absolute left-0 top-full flex justify-center w-full",
+    // Shared by plain links AND dropdown triggers, so one `ui.link` override styles both.
+    link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors hover:text-primary focus-visible:text-primary focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 aria-[current]:text-primary data-[state=open]:text-primary",
+    // Trigger-only extras on top of `link`.
+    trigger: "cursor-pointer select-none bg-transparent",
+    content: "w-full ps-4",
+    // Full-bleed mega-menu anchored to the bottom of the header stack.
+    viewportWrapper: "fixed inset-x-0 top-[var(--rl-header-height,4rem)] z-40 overflow-hidden",
     viewport:
-      "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md bg-default text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90",
-    childList: "py-1",
+      "w-full border-b border-default bg-default text-highlighted shadow-xl data-[state=open]:animate-in data-[state=open]:slide-in-from-top-4 data-[state=open]:fade-in-0 duration-200",
+    panel:
+      "mx-auto flex w-full max-w-90rem flex-col gap-4 p-4 sm:flex-row sm:gap-10 sm:px-xl sm:py-lg",
+    group: "flex min-w-40 flex-col gap-1",
+    groupTitle: "px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-primary",
+    childList: "flex flex-col gap-0.5",
     childLink:
-      "flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors",
+      "flex items-start gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accented hover:text-highlighted",
     childIcon: "mt-0.5 size-4 shrink-0 text-muted",
     childLabel: "font-medium leading-none",
     childDescription: "mt-1 text-xs text-muted line-clamp-2",
@@ -38,16 +46,16 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
   variants: {
     orientation: {
       horizontal: {
-        root: "max-w-max flex-1 items-center justify-center",
-        list: "items-center justify-center space-x-1",
-        link: "justify-center w-max",
-        trigger: "w-max",
+        root: "items-center",
+        list: "items-center gap-1",
+        link: "w-max",
       },
       vertical: {
-        root: "flex-col w-full items-stretch justify-start",
-        list: "flex-col flex-1 items-stretch justify-start space-y-2 w-full",
-        link: "justify-start w-full px-4 py-2 text-lg",
-        trigger: "justify-start w-full h-10 px-4 py-2 text-lg",
+        root: "w-full flex-col items-stretch",
+        list: "w-full flex-col items-stretch gap-1",
+        link: "w-full justify-start text-lg",
+        trigger: "justify-between",
+        panel: "flex-col gap-3 p-0 sm:flex-col sm:gap-3 sm:p-0",
       },
     },
   },

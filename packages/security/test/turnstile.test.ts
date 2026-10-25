@@ -59,8 +59,11 @@ describe("Turnstile Module", () => {
   });
 
   describe("CSP integration", () => {
-    it("includes Cloudflare challenges domain in connect-src and frame-src when turnstile is true", () => {
+    it("includes Cloudflare challenges domain in script-src, connect-src and frame-src when turnstile is true", () => {
       const csp = buildCspHeader({ turnstile: true });
+      expect(csp).toContain(
+        "script-src 'self' 'inline-speculation-rules' https://challenges.cloudflare.com",
+      );
       expect(csp).toContain("frame-src 'self' https://challenges.cloudflare.com");
       expect(csp).toContain("connect-src 'self' https://challenges.cloudflare.com");
     });

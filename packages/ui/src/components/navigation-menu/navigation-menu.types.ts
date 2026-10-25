@@ -12,8 +12,15 @@ export interface NavigationMenuItem extends Omit<RLLinkProps, "type" | "raw" | "
   popover?: boolean | Record<string, any> | undefined;
   trailingIcon?: string | undefined;
   type?: "label" | "trigger" | "link" | undefined;
+  /**
+   * Key into the menu's `slots` prop. When set and a matching renderer exists, that
+   * renderer replaces the default child list as this item's (mega-menu) panel.
+   */
   slot?: string | undefined;
   value?: string | undefined;
+  /**
+   * Child links. A child that has its own `children` renders as a titled group.
+   */
   children?: NavigationMenuChildItem[] | undefined;
   defaultOpen?: boolean | undefined;
   open?: boolean | undefined;
@@ -30,10 +37,27 @@ export interface NavigationMenuItem extends Omit<RLLinkProps, "type" | "raw" | "
   [key: string]: any;
 }
 
-export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, "type" | "ui"> {
+/**
+ * Declared explicitly: `Omit<>` over a type with an index signature collapses every
+ * known key into the index signature, which breaks `noPropertyAccessFromIndexSignature`.
+ */
+export interface NavigationMenuChildItem {
+  label?: string | undefined;
   description?: string | undefined;
+  icon?: string | undefined;
+  leadingIcon?: string | undefined;
+  href?: string | undefined;
+  to?: string | undefined;
+  active?: boolean | undefined;
+  children?: NavigationMenuChildItem[] | undefined;
+  class?: any;
   [key: string]: any;
 }
+
+export type NavigationMenuContentRenderer = (props: {
+  item: NavigationMenuItem;
+  index: number;
+}) => JSX.Element;
 
 export type NavigationMenuSlotRenderer = (item?: NavigationMenuItem, index?: number) => JSX.Element;
 
@@ -48,11 +72,15 @@ export interface RLNavigationMenuProps {
    */
   color?: ThemeColor;
   /**
+   * Visual variant (reserved; styling is driven by `ui`).
+   */
+  variant?: string;
+  /**
    * Orientation of the menu.
    */
   orientation?: "horizontal" | "vertical";
   /**
-   * Slot-specific CSS class overrides.
+   * Slot-specific CSS class overrides. `ui.link` styles both plain links and triggers.
    */
   ui?: any;
   /**
@@ -61,9 +89,14 @@ export interface RLNavigationMenuProps {
   class?: any;
   children?: JSX.Element;
   /**
-   * Custom mega-menu or child content renderer for an active item.
+   * Named mega-menu panels, matched by each item's `slot` key.
+   * Horizontal orientation only; vertical menus always render the item's children.
    */
-  contentSlot?: (props: { item: NavigationMenuItem; index: number }) => JSX.Element;
+  slots?: Record<string, NavigationMenuContentRenderer>;
+  /**
+   * Fallback panel renderer for items with no matching entry in `slots`.
+   */
+  contentSlot?: NavigationMenuContentRenderer;
   /**
    * Custom item renderer.
    */

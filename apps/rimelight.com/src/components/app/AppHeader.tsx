@@ -826,10 +826,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 ),
               }}
               ui={{
-                viewportWrapper:
-                  "top-[var(--rl-header-height,64px)] flex justify-center fixed left-0 right-0 z-[150] mt-0 bg-transparent",
-                viewport:
-                  "w-full rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden",
                 link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
               }}
             />

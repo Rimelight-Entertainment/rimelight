@@ -71,6 +71,7 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
       ...(nonce ? [`'nonce-${nonce}'`] : []),
       ...(useStrictDynamic ? ["'strict-dynamic'", "https:"] : []),
       "'inline-speculation-rules'",
+      ...(turnstile ? ["https://challenges.cloudflare.com"] : []),
       ...(options.scriptResources || []),
     ]),
   );

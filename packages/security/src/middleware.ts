@@ -238,6 +238,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
               "upgrade-insecure-requests": false,
               "script-src": devList(activeConfig.directives?.["script-src"], [
                 "'inline-speculation-rules'",
+                ...(activeConfig.turnstile ? ["https://challenges.cloudflare.com"] : []),
                 ...(activeConfig.scriptResources || []),
               ]),
               "script-src-attr": "'unsafe-inline'",

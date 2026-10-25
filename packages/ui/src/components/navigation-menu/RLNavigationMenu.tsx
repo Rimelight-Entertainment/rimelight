@@ -2,103 +2,178 @@ import type {
   RLNavigationMenuProps,
   NavigationMenuItem,
   NavigationMenuChildItem,
+  NavigationMenuContentRenderer,
 } from "./navigation-menu.types";
 import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import { createMemo, createSignal, For, Show, onSettled, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 
-const OMIT_KEYS = ["items", "color", "contentSlot", "itemSlot"] as const;
+const OMIT_KEYS = [
+  "items",
+  "color",
+  "variant",
+  "orientation",
+  "slots",
+  "contentSlot",
+  "itemSlot",
+] as const;
+
+const LOCALE_PREFIX = /^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/;
+const normalizePath = (p: string) => p.replace(LOCALE_PREFIX, "").replace(/\/+$/, "") || "/";
+
+/** Items accept either `href` or `to` (RLLink convention). */
+const resolveHref = (item: NavigationMenuItem | NavigationMenuChildItem): string | undefined => {
+  const h = item["href"] ?? item["to"];
+  return typeof h === "string" ? h : undefined;
+};
+
+const hasChildren = (item: NavigationMenuItem) => !!item.children && item.children.length > 0;
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   const { classes, rest } = RLNavigationMenuTheme.setup(props, { omit: OMIT_KEYS });
 
   let navRef: HTMLElement | undefined;
-  let viewportRef: HTMLDivElement | undefined;
 
   const [openIndex, setOpenIndex] = createSignal<number | null>(null);
+  const [currentPath, setCurrentPath] = createSignal("");
 
   const items = createMemo(() => props.items ?? []);
   const orientation = () => props.orientation ?? "horizontal";
+  const isHorizontal = () => orientation() === "horizontal";
 
-  const [currentPath, setCurrentPath] = createSignal("");
-
-  onSettled(() => {
-    if (typeof window === "undefined") return;
-    const path =
-      window.location.pathname
-        .replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "")
-        .replace(/\/+$/, "") || "/";
-    setCurrentPath(path);
-  });
-
-  const getContentForIndex = (item: NavigationMenuItem, index: number) => {
-    if (props.contentSlot) {
-      return props.contentSlot({ item, index });
-    }
-    return null;
+  /**
+   * Custom panel renderer for an item. `slots[item.slot]` wins, `contentSlot` is the
+   * generic fallback. Returns the *function* (never calls it) so checking for a panel
+   * doesn't instantiate the panel's JSX.
+   */
+  const rendererFor = (item: NavigationMenuItem): NavigationMenuContentRenderer | undefined => {
+    if (item.slot && props.slots?.[item.slot]) return props.slots[item.slot];
+    return props.contentSlot;
   };
+
+  const hasPanel = (item: NavigationMenuItem) => hasChildren(item) || !!rendererFor(item);
 
   const isItemActive = (item: NavigationMenuItem) => {
     if (item["active"] !== undefined) return !!item["active"];
-    const rawPath = (item["href"] ?? "#") as string;
-    const normalizedPath =
-      rawPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, "").replace(/\/+$/, "") || "/";
+    const href = resolveHref(item);
+    if (!href) return false;
+    const target = normalizePath(href);
     const path = currentPath();
-    if (normalizedPath !== "" && normalizedPath !== "/") return path.startsWith(normalizedPath);
-    return path === "/";
+    if (target === "/") return path === "/";
+    return path === target || path.startsWith(`${target}/`);
   };
 
   let closeTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const openItem = (index: number) => {
+  const cancelClose = () => {
     if (closeTimer) clearTimeout(closeTimer);
+    closeTimer = undefined;
+  };
+  const openItem = (index: number) => {
+    cancelClose();
     setOpenIndex(index);
   };
-
   const closeAll = () => {
-    if (closeTimer) clearTimeout(closeTimer);
+    cancelClose();
     setOpenIndex(null);
   };
-
   const scheduleClose = () => {
-    if (closeTimer) clearTimeout(closeTimer);
-    closeTimer = setTimeout(() => {
-      setOpenIndex(null);
-    }, 150);
+    cancelClose();
+    closeTimer = setTimeout(() => setOpenIndex(null), 150);
   };
 
   onSettled(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (
-        openIndex() !== null &&
-        navRef &&
-        !navRef.contains(e.target as Node) &&
-        (!viewportRef || !viewportRef.contains(e.target as Node))
-      ) {
-        closeAll();
-      }
-    };
-    document.addEventListener("click", handleOutsideClick);
+    if (typeof window === "undefined") return;
+    setCurrentPath(normalizePath(window.location.pathname));
 
+    const onClick = (e: MouseEvent) => {
+      if (openIndex() !== null && navRef && !navRef.contains(e.target as Node)) closeAll();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && openIndex() !== null) closeAll();
+    };
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("click", handleOutsideClick);
-      if (closeTimer) clearTimeout(closeTimer);
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKey);
+      cancelClose();
     };
   });
 
-  const itemHref = (item: NavigationMenuItem) =>
-    typeof item["href"] === "string" ? item["href"] : "#";
+  const Icon = (p: { name?: string | undefined; class?: string }) => (
+    <Show when={p.name}>
+      {(name) => <span class={`${name()} ${p.class ?? ""}`} aria-hidden="true" />}
+    </Show>
+  );
 
-  const childHref = (child: NavigationMenuChildItem) =>
-    typeof child["href"] === "string" ? child["href"] : "#";
+  const ChildLink = (p: { child: NavigationMenuChildItem }) => (
+    <a href={resolveHref(p.child) ?? "#"} class={classes().childLink} onClick={() => closeAll()}>
+      <Icon name={p.child.icon ?? p.child["leadingIcon"]} class={classes().childIcon} />
+      <div>
+        <div class={classes().childLabel}>{p.child.label}</div>
+        <Show when={p.child.description}>
+          {(desc) => <p class={classes().childDescription}>{desc()}</p>}
+        </Show>
+      </div>
+    </a>
+  );
 
-  const activeItem = createMemo(() => (openIndex() !== null ? items()[openIndex()!] : null));
-  const activeItemHasContent = createMemo(() => {
-    const item = activeItem();
-    if (!item) return false;
-    const idx = openIndex()!;
-    return !!((item.children && item.children.length > 0) || getContentForIndex(item, idx));
-  });
+  /**
+   * Default panel for items without a custom renderer. Children that themselves have
+   * children render as titled groups (columns); leaf children render as plain links.
+   */
+  const DefaultPanel = (p: { item: NavigationMenuItem }) => {
+    const groups = () => (p.item.children ?? []).filter((c) => c.children?.length);
+    const leaves = () => (p.item.children ?? []).filter((c) => !c.children?.length);
+    return (
+      <div class={classes().panel} data-slot="panel">
+        <Show when={leaves().length > 0}>
+          <ul role="list" class={classes().childList}>
+            <For each={leaves()}>
+              {(child) => (
+                <li>
+                  <ChildLink child={child} />
+                </li>
+              )}
+            </For>
+          </ul>
+        </Show>
+        <For each={groups()}>
+          {(group) => (
+            <div class={classes().group} data-slot="group">
+              <Show
+                when={resolveHref(group)}
+                fallback={<div class={classes().groupTitle}>{group.label}</div>}
+              >
+                {(href) => (
+                  <a href={href()} class={classes().groupTitle}>
+                    {group.label}
+                  </a>
+                )}
+              </Show>
+              <ul role="list" class={classes().childList}>
+                <For each={group.children}>
+                  {(child) => (
+                    <li>
+                      <ChildLink child={child} />
+                    </li>
+                  )}
+                </For>
+              </ul>
+            </div>
+          )}
+        </For>
+      </div>
+    );
+  };
+
+  /** Plain function (not a component) — called from a JSX expression, so every
+   *  read it does is tracked by the compiled expression's computation. */
+  const renderPanel = (item: NavigationMenuItem, index: number): JSX.Element => {
+    const render = rendererFor(item);
+    return render ? render({ item, index }) : <DefaultPanel item={item} />;
+  };
 
   return (
     <nav
@@ -108,15 +183,16 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
       data-theme={props.theme}
       data-nav-menu
       data-orientation={orientation()}
+      onMouseLeave={() => {
+        if (isHorizontal()) scheduleClose();
+      }}
       {...rest}
     >
       <ul class={classes().list} data-slot="list" role="list">
         <For each={items()}>
           {(item, i) => {
-            const hasChildren = () =>
-              !!((item.children && item.children.length > 0) || getContentForIndex(item, i()));
-            const isActive = () => isItemActive(item);
             const isOpen = () => openIndex() === i();
+            const isActive = () => isItemActive(item);
 
             return (
               <li
@@ -125,60 +201,54 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                 data-nav-item
                 data-index={i()}
                 onMouseEnter={() => {
-                  if (orientation() === "horizontal" && hasChildren()) openItem(i());
-                }}
-                onMouseLeave={() => {
-                  if (orientation() === "horizontal" && hasChildren()) scheduleClose();
+                  if (!isHorizontal()) return;
+                  if (hasPanel(item)) openItem(i());
+                  else scheduleClose();
                 }}
               >
                 <Show
-                  when={hasChildren()}
+                  when={hasPanel(item)}
                   fallback={
                     <a
-                      href={itemHref(item)}
+                      href={resolveHref(item) ?? "#"}
                       class={classes().link}
                       data-slot="link"
                       aria-current={isActive() ? "page" : undefined}
                     >
-                      <Show when={item.icon}>
-                        {(icon) => <span class={`${icon()} mr-1.5 size-4`} aria-hidden="true" />}
-                      </Show>
+                      <Icon name={item.icon ?? item["leadingIcon"]} class="size-4" />
                       {item.label}
                     </a>
                   }
                 >
+                  {/* Trigger shares the `link` slot so `ui.link` styles both. */}
                   <button
                     type="button"
-                    class={classes().trigger}
+                    class={`${classes().link} ${classes().trigger}`}
                     data-slot="trigger"
                     data-nav-trigger
                     aria-expanded={isOpen() ? "true" : "false"}
                     aria-haspopup="true"
+                    aria-current={isActive() ? "page" : undefined}
                     data-state={isOpen() ? "open" : "closed"}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (isOpen()) {
-                        closeAll();
-                      } else {
-                        openItem(i());
-                      }
+                      isOpen() ? closeAll() : openItem(i());
                     }}
                   >
-                    <Show when={item.icon}>
-                      {(icon) => <span class={`${icon()} mr-1.5 size-4`} aria-hidden="true" />}
-                    </Show>
+                    <Icon name={item.icon ?? item["leadingIcon"]} class="size-4" />
                     {item.label}
                     <RLIcon
                       name="chevron-down"
-                      class={`ml-1 size-3.5 transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
+                      class={`size-3.5 transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
                       aria-hidden="true"
                       data-chevron
                     />
                   </button>
                 </Show>
 
-                {/* Vertical Mode: Accordion Content */}
-                <Show when={orientation() === "vertical" && hasChildren()}>
+                {/* Vertical: inline accordion. Always the item's own links — mega-menu
+                    panels are desktop layouts and don't fit a sidebar. */}
+                <Show when={!isHorizontal() && hasChildren(item)}>
                   <div
                     class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
                     data-slot="content"
@@ -186,79 +256,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     data-item-index={i()}
                     role="region"
                   >
-                    <Show
-                      when={getContentForIndex(item, i())}
-                      fallback={
-                        <ul role="list" class={classes().childList}>
-                          <For each={item.children}>
-                            {(child) => (
-                              <li>
-                                <a href={childHref(child)} class={classes().childLink}>
-                                  <Show when={child["icon"]}>
-                                    {(icon) => (
-                                      <span
-                                        class={`${icon()} ${classes().childIcon}`}
-                                        aria-hidden="true"
-                                      />
-                                    )}
-                                  </Show>
-                                  <div>
-                                    <div class={classes().childLabel}>{child["label"]}</div>
-                                    <Show when={child["description"]}>
-                                      {(desc) => <p class={classes().childDescription}>{desc()}</p>}
-                                    </Show>
-                                  </div>
-                                </a>
-                              </li>
-                            )}
-                          </For>
-                        </ul>
-                      }
-                    >
-                      {getContentForIndex(item, i())}
-                    </Show>
-                  </div>
-                </Show>
-
-                {/* Horizontal Mode: Standard Popover Dropdown when item does NOT have custom content */}
-                <Show
-                  when={
-                    orientation() === "horizontal" &&
-                    hasChildren() &&
-                    !getContentForIndex(item, i())
-                  }
-                >
-                  <div
-                    class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
-                    data-slot="content"
-                    data-nav-content
-                    data-item-index={i()}
-                    role="region"
-                  >
-                    <ul role="list" class={classes().childList}>
-                      <For each={item.children}>
-                        {(child) => (
-                          <li>
-                            <a href={childHref(child)} class={classes().childLink}>
-                              <Show when={child["icon"]}>
-                                {(icon) => (
-                                  <span
-                                    class={`${icon()} ${classes().childIcon}`}
-                                    aria-hidden="true"
-                                  />
-                                )}
-                              </Show>
-                              <div>
-                                <div class={classes().childLabel}>{child["label"]}</div>
-                                <Show when={child["description"]}>
-                                  {(desc) => <p class={classes().childDescription}>{desc()}</p>}
-                                </Show>
-                              </div>
-                            </a>
-                          </li>
-                        )}
-                      </For>
-                    </ul>
+                    <DefaultPanel item={item} />
                   </div>
                 </Show>
               </li>
@@ -267,76 +265,37 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
         </For>
       </ul>
 
-      {/* Horizontal Viewport Wrapper for Mega Menus */}
-      <div
-        class={`${classes().viewportWrapper} ${openIndex() !== null && activeItemHasContent() && orientation() === "horizontal" ? "" : "hidden"}`}
-        data-slot="viewport-wrapper"
-        data-nav-viewport-wrapper
-        data-state={openIndex() !== null ? "open" : "closed"}
-        onMouseEnter={() => {
-          if (closeTimer) clearTimeout(closeTimer);
-        }}
-        onMouseLeave={() => {
-          scheduleClose();
-        }}
-      >
+      {/* Horizontal: single shared viewport — the ONLY place panels render. */}
+      <Show when={isHorizontal()}>
         <div
-          ref={(el) => (viewportRef = el)}
-          class={classes().viewport}
-          data-slot="viewport"
-          data-nav-viewport
+          class={`${classes().viewportWrapper} ${openIndex() !== null ? "" : "hidden"}`}
+          data-slot="viewport-wrapper"
+          data-nav-viewport-wrapper
           data-state={openIndex() !== null ? "open" : "closed"}
+          onMouseEnter={cancelClose}
         >
-          <For each={items()}>
-            {(item, i) => {
-              const isOpen = () => openIndex() === i();
-              const slotContent = () => getContentForIndex(item, i());
-
-              return (
-                <div
-                  class={isOpen() ? "w-full" : "hidden"}
-                  data-nav-viewport-content
-                  data-index={i()}
-                >
-                  <Show
-                    when={slotContent()}
-                    fallback={
-                      <Show when={item.children && item.children.length > 0}>
-                        <ul role="list" class={classes().childList}>
-                          <For each={item.children}>
-                            {(child) => (
-                              <li>
-                                <a href={childHref(child)} class={classes().childLink}>
-                                  <Show when={child["icon"]}>
-                                    {(icon) => (
-                                      <span
-                                        class={`${icon()} ${classes().childIcon}`}
-                                        aria-hidden="true"
-                                      />
-                                    )}
-                                  </Show>
-                                  <div>
-                                    <div class={classes().childLabel}>{child["label"]}</div>
-                                    <Show when={child["description"]}>
-                                      {(desc) => <p class={classes().childDescription}>{desc()}</p>}
-                                    </Show>
-                                  </div>
-                                </a>
-                              </li>
-                            )}
-                          </For>
-                        </ul>
-                      </Show>
-                    }
+          <div
+            class={classes().viewport}
+            data-slot="viewport"
+            data-nav-viewport
+            data-state={openIndex() !== null ? "open" : "closed"}
+          >
+            <For each={items()}>
+              {(item, i) => (
+                <Show when={hasPanel(item)}>
+                  <div
+                    class={openIndex() === i() ? "w-full" : "hidden"}
+                    data-nav-viewport-content
+                    data-index={i()}
                   >
-                    {slotContent()}
-                  </Show>
-                </div>
-              );
-            }}
-          </For>
+                    {renderPanel(item, i())}
+                  </div>
+                </Show>
+              )}
+            </For>
+          </div>
         </div>
-      </div>
+      </Show>
     </nav>
   );
 };

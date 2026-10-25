@@ -51,6 +51,8 @@ export default defineConfig({
 
     security({
       domain: "starter.rimelight.com",
+      allowedDomains: ["https://cdn.rimelight.com"],
+      turnstile: true,
     }),
 
     auth(),
@@ -60,14 +62,14 @@ export default defineConfig({
     ui({
       logos: {
         logomark: {
-          color: "https://cdn.starter.rimelight.com/logos/logomark_color.svg",
-          white: "https://cdn.starter.rimelight.com/logos/logomark_white.svg",
-          black: "https://cdn.starter.rimelight.com/logos/logomark_black.svg",
+          color: "https://cdn.rimelight.com/logos/logomark_color.svg",
+          white: "https://cdn.rimelight.com/logos/logomark_white.svg",
+          black: "https://cdn.rimelight.com/logos/logomark_black.svg",
         },
         logotype: {
-          color: "https://cdn.starter.rimelight.com/logos/logotype_color.svg",
-          white: "https://cdn.starter.rimelight.com/logos/logotype_white.svg",
-          black: "https://cdn.starter.rimelight.com/logos/logotype_black.svg",
+          color: "https://cdn.rimelight.com/logos/logotype_color.svg",
+          white: "https://cdn.rimelight.com/logos/logotype_white.svg",
+          black: "https://cdn.rimelight.com/logos/logotype_black.svg",
         },
       },
     }),
