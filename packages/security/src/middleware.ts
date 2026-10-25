@@ -130,7 +130,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
       }
 
       if (!isGate) {
-        return /\.[a-z0-9]{1,8}$/i.test(path)
+        return /\.[a-z0-9]{1,16}$/i.test(path)
           ? c.notFound()
           : renderFallback
             ? c.html(

@@ -114,7 +114,7 @@ export const setCurrentLocale = (locale: string): void => {
 
 /** Whether a pathname is left out of locale handling (API, internals, files). Shared with the middleware. */
 export const isSkippedPath = (pathname: string): boolean =>
-  /\.[a-z0-9]{1,8}$/i.test(pathname) ||
+  /\.[a-z0-9]{1,16}$/i.test(pathname) ||
   activeConfig.skipPaths.some((p) => `${pathname}/`.startsWith(`${p}/`));
 
 /** Generates a localized relative URL path. External, hash, skipped and file paths are returned unchanged. */
