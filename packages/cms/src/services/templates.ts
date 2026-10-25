@@ -54,7 +54,11 @@ function toTemplate(row: any): PageTemplate {
   };
 }
 
-export async function listTemplates(ctx: CmsContext, actor?: CmsActor, collection?: string) {
+export async function listTemplates(
+  ctx: CmsContext,
+  actor?: CmsActor,
+  collection?: string,
+): Promise<PageTemplate[]> {
   const t = ctx.t.pageTemplates;
   const q = ctx.db.select().from(t);
   const rows = await (collection ? q.where(eq(t.pageType, collection)) : q).orderBy(asc(t.slug));

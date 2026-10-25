@@ -68,7 +68,7 @@ describe("collections", () => {
       label: "Recipe",
       fields: { serves: { type: "number", label: "Serves" } },
     });
-    const slugs = (await cms.collections.listCollections()).map((c) => [c.slug, c.source]);
+    const slugs = (await cms.collections.listCollections()).map((c: any) => [c.slug, c.source]);
     expect(slugs).toContainEqual(["blog", "code"]);
     expect(slugs).toContainEqual(["product", "code"]);
     expect(slugs).toContainEqual(["recipe", "database"]);

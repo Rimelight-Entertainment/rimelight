@@ -58,4 +58,4 @@ export const createRestrictedUsernameSet = (
   return new Set(flattened.map((name) => normalizeUsername(name)));
 };
 
-export const RESTRICTED_SET = createRestrictedUsernameSet();
+export const RESTRICTED_SET: Set<string> = createRestrictedUsernameSet();

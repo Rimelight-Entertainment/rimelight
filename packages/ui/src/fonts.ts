@@ -58,7 +58,7 @@ export const DEFAULT_UI_FONTS = {
       },
     ],
   },
-};
+} as const;
 
 const fontUrlRegex = /[-\w@:%+.~#?&/=]+\.(?:woff2?|eot|ttf|otf|svg)/gi;
 const urlProtocolRegex = /^[\s\w\0+.-]{2,}:[/\\]{1,2}/;
@@ -112,7 +112,7 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
   }
 
   return {
-    async getCSS(fonts: any, providers: any, getCSSDefault: any) {
+    async getCSS(fonts: any, providers: any, getCSSDefault: any): Promise<string> {
       const hash = getHash(JSON.stringify(fonts));
       const cachePath = join(cacheDir, `${hash}.css`);
       if (fs.existsSync(cachePath)) return fsp.readFile(cachePath, "utf-8");
@@ -121,7 +121,7 @@ export function createLocalFontProcessor(options?: LocalFontProcessorOptions) {
       await fsp.writeFile(cachePath, css, "utf-8");
       return css;
     },
-    async transformCSS(css: string) {
+    async transformCSS(css: string): Promise<string> {
       const matches = css.match(fontUrlRegex) || [];
       const replacements = new Map<string, string>();
       await Promise.all(
@@ -163,7 +163,7 @@ export interface WebFontsOptions {
 /**
  * Creates the default web fonts preset with local font processing always enabled.
  */
-export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
+export function resolveWebFontsPreset(options?: WebFontsOptions | boolean): any {
   if (options === false) return null;
 
   const userOpts: WebFontsOptions = typeof options === "object" && options !== null ? options : {};
@@ -178,7 +178,7 @@ export function resolveWebFontsPreset(options?: WebFontsOptions | boolean) {
   return presetWebFonts({
     ...restPresetOpts,
     provider: (provider || DEFAULT_UI_FONTS.provider) as any,
-    fonts: mergedFonts,
+    fonts: mergedFonts as any,
     processors: Array.isArray(resolvedProcessors) ? resolvedProcessors : [resolvedProcessors],
   });
 }

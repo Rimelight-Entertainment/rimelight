@@ -70,10 +70,23 @@ async function stats(ctx: CmsContext) {
  *   const cms = createCms({ db, dialect: "pg", collections });
  *   const posts = await cms.entries.listEntries({ collection: "blog", status: "published" });
  */
-export function createCms(input: CmsContextInput | CmsContext) {
+export interface Cms {
+  ctx: CmsContext;
+  collections: BindAll<typeof collections>;
+  entries: BindAll<typeof entries>;
+  templates: BindAll<typeof templates>;
+  taxonomies: BindAll<typeof taxonomies>;
+  bylines: BindAll<typeof bylines>;
+  search: BindAll<typeof search>;
+  mentions: BindAll<typeof mentions>;
+  settings: BindAll<typeof settings>;
+  stats: () => ReturnType<typeof stats>;
+}
+
+export function createCms(input: CmsContextInput | CmsContext): Cms {
   const ctx = "t" in input ? input : createCmsContext(input);
   return {
-    ctx,
+    ctx: ctx,
     collections: bind(ctx, collections),
     entries: bind(ctx, entries),
     templates: bind(ctx, templates),
@@ -85,6 +98,4 @@ export function createCms(input: CmsContextInput | CmsContext) {
     stats: () => stats(ctx),
   };
 }
-
-export type Cms = ReturnType<typeof createCms>;
 export type { CmsActor };

@@ -8,7 +8,16 @@ const translations: Record<string, Record<string, unknown>> = Object.fromEntries
   ]),
 );
 
-export const activeConfig = {
+export interface ActiveI18nConfig {
+  locales: string[];
+  defaultLocale: string;
+  prefixDefaultLocale: boolean;
+  skipPaths: string[];
+  translations: Record<string, Record<string, unknown>>;
+  getLocale?: (() => string | undefined) | undefined;
+}
+
+export const activeConfig: ActiveI18nConfig = {
   locales: [
     ...(config?.locales ??
       (Object.keys(translations).length ? Object.keys(translations).sort() : ["en"])),
@@ -17,7 +26,7 @@ export const activeConfig = {
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
   skipPaths: [...(config?.skipPaths ?? ["/api", "/_"])],
   translations,
-  getLocale: undefined as (() => string | undefined) | undefined,
+  getLocale: undefined,
 };
 
 let currentLocale: string | undefined;
@@ -56,14 +65,16 @@ export const setCurrentLocale = (locale: string): void => {
 };
 
 /** Generates a localized relative URL path. */
-export const getLocaleUrl = (path: string, locale = getCurrentLocale()): string =>
+export const getLocaleUrl = (path: string, locale: string = getCurrentLocale()): string =>
   /^(?:[a-z]+:|\/\/|#)/i.test(path)
     ? path
     : `${activeConfig.prefixDefaultLocale || locale !== activeConfig.defaultLocale ? `/${locale}` : ""}/${path.replace(new RegExp(`^/(?:${activeConfig.locales.join("|")})(?=[/?#]|$)`, "i"), "").replace(/^\/+/, "")}`;
 
 /** Resolves an asset for the current or fallback locale. */
-export const getLocaleAsset = <T>(assets: Record<string, T>, locale = getCurrentLocale()): T =>
-  (assets[locale] ?? assets[activeConfig.defaultLocale]) as T;
+export const getLocaleAsset = <T>(
+  assets: Record<string, T>,
+  locale: string = getCurrentLocale(),
+): T => (assets[locale] ?? assets[activeConfig.defaultLocale]) as T;
 
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, unknown>, locale = getCurrentLocale()): string => {

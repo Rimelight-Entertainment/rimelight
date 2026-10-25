@@ -53,7 +53,7 @@ async function withTerms(cms: Cms, entries: PublicEntry[]): Promise<PublicEntry[
   const byEntry = await cms.taxonomies.getTermsForEntries(entries.map((e) => e.id));
   return entries.map((e) => ({
     ...e,
-    terms: (byEntry.get(e.id) ?? []).map((t) => ({
+    terms: (byEntry.get(e.id) ?? []).map((t: any) => ({
       taxonomy: t.taxonomy,
       slug: t.slug,
       label: t.label as any,

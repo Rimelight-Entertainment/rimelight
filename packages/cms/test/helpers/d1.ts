@@ -4,7 +4,7 @@ import { DatabaseSync } from "node:sqlite";
  * In-memory SQLite exposed through the Cloudflare D1 binding interface, so tests exercise the
  * exact code path production uses on Workers (D1 binding → drizzle-orm/d1).
  */
-export function createMockD1() {
+export function createMockD1(): { raw: DatabaseSync; binding: any } {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
 

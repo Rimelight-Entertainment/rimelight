@@ -94,4 +94,4 @@ export function createAuthClient<TUser = UserSessionContext>(
   };
 }
 
-export const authClient = createAuthClient();
+export const authClient: AuthClient = createAuthClient();

@@ -486,8 +486,10 @@ const tools: ToolDef[] = [
   },
 ];
 
+export type PublicMcpTool = Omit<ToolDef, "run">;
+
 /** Public tool metadata (what `tools/list` returns). */
-export const CMS_MCP_TOOLS = tools.map(({ run: _run, ...t }) => t);
+export const CMS_MCP_TOOLS: PublicMcpTool[] = tools.map(({ run: _run, ...t }) => t);
 
 const SERVER_INFO = { name: "rimelight-cms", version: "1.0.0" };
 
