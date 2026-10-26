@@ -254,6 +254,9 @@ importers:
       filesystem-routing:
         specifier: 0.4.1
         version: 0.4.1(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.0.2)
+      happy-dom:
+        specifier: 21.0.4
+        version: 21.0.4
       typescript:
         specifier: 7.0.2
         version: 7.0.2

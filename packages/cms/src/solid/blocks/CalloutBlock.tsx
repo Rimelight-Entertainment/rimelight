@@ -42,7 +42,11 @@ export const CalloutBlock: Component<BlockViewProps> = (props) => {
       <div class="flex-1 min-w-0 text-sm">
         {props.children}
         {to() ? (
-          <a href={to()} target={target()}>
+          <a
+            href={to()}
+            target={target()}
+            rel={target() === "_blank" ? "noopener noreferrer" : undefined}
+          >
             {to()}
           </a>
         ) : null}

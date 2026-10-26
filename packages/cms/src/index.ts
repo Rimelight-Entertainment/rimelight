@@ -13,6 +13,7 @@ export * from "./core/taxonomies/presets";
 export * from "./core/blocks/registry";
 export * from "./core/blocks/builtins";
 export * from "./core/blocks/tree";
+export * from "./core/blocks/embed";
 export { defineCmsConfig, type CmsConfig, type CmsPluginOptions } from "./types";
 
 // ─── Services (the CMS API) ──────────────────────────────────────────────────

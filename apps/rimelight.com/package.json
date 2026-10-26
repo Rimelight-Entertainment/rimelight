@@ -39,6 +39,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
+    "test": "vp test",
     "check": "cf workers types && vp check --fix"
   },
   "dependencies": {
@@ -65,6 +66,7 @@
     "cf": "1.0.0-beta.21",
     "drizzle-kit": "1.0.0-rc.4",
     "filesystem-routing": "0.4.1",
+    "happy-dom": "21.0.4",
     "typescript": "7.0.2",
     "unocss": "66.11.0",
     "vite-plus": "1.4.0"

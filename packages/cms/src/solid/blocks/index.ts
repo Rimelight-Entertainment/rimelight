@@ -14,6 +14,11 @@ import { FileTreeBlock } from "./FileTreeBlock";
 import { UnorderedListBlock } from "./UnorderedListBlock";
 import { OrderedListBlock } from "./OrderedListBlock";
 import { LivePreviewBlock } from "./LivePreviewBlock";
+import { DividerBlock } from "./DividerBlock";
+import { QuoteBlock } from "./QuoteBlock";
+import { TodoBlock } from "./TodoBlock";
+import { ToggleBlock } from "./ToggleBlock";
+import { EmbedBlock } from "./EmbedBlock";
 import type { Component } from "solid-js";
 import { builtinBlocks } from "../../core/blocks/builtins";
 import { BlockRegistry, type BlockDefinition } from "../../core/blocks/registry";
@@ -36,6 +41,11 @@ export {
   UnorderedListBlock,
   OrderedListBlock,
   LivePreviewBlock,
+  DividerBlock,
+  QuoteBlock,
+  TodoBlock,
+  ToggleBlock,
+  EmbedBlock,
 };
 export type { BlockViewProps };
 export {
@@ -68,6 +78,11 @@ export const defaultBlockComponents: Record<string, Component<BlockViewProps>> =
   UnorderedListBlock,
   OrderedListBlock,
   LivePreviewBlock,
+  DividerBlock,
+  QuoteBlock,
+  TodoBlock,
+  ToggleBlock,
+  EmbedBlock,
 };
 
 /** Built-in block definitions with their Solid renderers attached. */

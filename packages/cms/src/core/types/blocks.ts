@@ -20,6 +20,11 @@ export type BlockType =
   | "ComponentShowcaseBlock"
   | "ApiDocumentationBlock"
   | "LivePreviewBlock"
+  | "DividerBlock"
+  | "QuoteBlock"
+  | "TodoBlock"
+  | "ToggleBlock"
+  | "EmbedBlock"
   | (string & {});
 
 export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER";
