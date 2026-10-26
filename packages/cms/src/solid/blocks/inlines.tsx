@@ -1,4 +1,4 @@
-import { For, Match, Show, Switch, createContext, useContext, type Component } from "solid-js";
+import { For, Show, createContext, useContext, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import type {
   InlineMark,
@@ -125,37 +125,41 @@ export const MentionView: Component<{ node: MentionInlineNode }> = (props) => {
   );
 };
 
+/**
+ * One inline node. The node is read inside JSX (a tracking scope) by a plain switch, rather than
+ * `Switch`/`Match` conditions, which Solid flags when they read store values.
+ */
 export const InlineNodeView: Component<{ node: InlineNode }> = (props) => (
-  <Switch>
-    <Match when={props.node.type === "text" && props.node}>
-      {/* A JSX expression is a tracking scope; reading the store inside the Match callback is not. */}
-      {withMarks((props.node as any).text ?? "", (props.node as any).marks)}
-    </Match>
-    <Match when={props.node.type === "link" && (props.node as LinkInlineNode)}>
-      {(n) => <LinkView node={n()} />}
-    </Match>
-    <Match when={props.node.type === "mention" && (props.node as MentionInlineNode)}>
-      {(n) => <MentionView node={n()} />}
-    </Match>
-    <Match when={props.node.type === "emoji" && props.node}>
-      {(n) => (
-        <span role="img" aria-label={(n() as any).shortcode ?? undefined} class="cms-emoji">
-          {(n() as any).emoji}
-        </span>
-      )}
-    </Match>
-    <Match when={props.node.type === "icon" && props.node}>
-      {(n) => (
-        <span
-          class={`${(n() as any).name} cms-inline-icon inline-block size-[1.1em] align-[-0.175em]`}
-          role={(n() as any).label ? "img" : undefined}
-          aria-label={(n() as any).label}
-          aria-hidden={(n() as any).label ? undefined : "true"}
-        />
-      )}
-    </Match>
-  </Switch>
+  <>{renderInlineNode(props.node)}</>
 );
+
+function renderInlineNode(node: InlineNode): JSX.Element {
+  switch (node.type) {
+    case "text":
+      return withMarks(node.text ?? "", node.marks);
+    case "link":
+      return <LinkView node={node} />;
+    case "mention":
+      return <MentionView node={node} />;
+    case "emoji":
+      return (
+        <span role="img" aria-label={node.shortcode ?? undefined} class="cms-emoji">
+          {node.emoji}
+        </span>
+      );
+    case "icon":
+      return (
+        <span
+          class={`${node.name} cms-inline-icon inline-block size-[1.1em] align-[-0.175em]`}
+          role={node.label ? "img" : undefined}
+          aria-label={node.label}
+          aria-hidden={node.label ? undefined : "true"}
+        />
+      );
+    default:
+      return null;
+  }
+}
 
 export const InlineNodes: Component<{ nodes: InlineNode[] | undefined }> = (props) => (
   <For each={props.nodes ?? []}>{(node) => <InlineNodeView node={node} />}</For>

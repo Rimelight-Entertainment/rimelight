@@ -1,4 +1,4 @@
-import { For, Show, createSignal, type Component } from "solid-js";
+import { For, Show, createSignal, untrack, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
 import type { PageTemplate } from "../../core/types/templates";
 import { createBlockEditor } from "../../editor/store";
@@ -136,10 +136,10 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
   const col = () => collection(meta().pageType);
 
   const editor = createBlockEditor({
-    initial: {
+    initial: untrack(() => ({
       blocks: props.template.initialBlocks,
       properties: props.template.defaultProperties ?? {},
-    },
+    })),
     registry,
     onSelect: (id) => id && setTab("block"),
     save: async (content) => {

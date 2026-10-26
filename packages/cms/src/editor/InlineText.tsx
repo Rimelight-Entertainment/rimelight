@@ -1,4 +1,12 @@
-import { For, Show, createEffect, createSignal, onSettled, type Component } from "solid-js";
+import {
+  For,
+  Show,
+  createEffect,
+  createSignal,
+  onSettled,
+  untrack,
+  type Component,
+} from "solid-js";
 import { Portal } from "@solidjs/web";
 import type { InlineNode } from "../core/types/inline";
 import { htmlToInline, inlineToHtml, mentionHtml, toInlineNodes, toPlainText } from "./inline";
@@ -59,11 +67,25 @@ function extractAfterCaret(el: HTMLElement): HTMLElement {
   return holder;
 }
 
-export function placeCaret(el: HTMLElement, at: "start" | "end") {
+export function placeCaret(el: HTMLElement, at: "start" | "end" | number) {
   el.focus();
   const range = document.createRange();
-  range.selectNodeContents(el);
-  range.collapse(at === "start");
+  if (typeof at === "number") {
+    // Walk the text nodes to the character offset (atomic mentions count by their visible text).
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let left = at;
+    let node = walker.nextNode();
+    while (node && left > (node.textContent?.length ?? 0)) {
+      left -= node.textContent?.length ?? 0;
+      node = walker.nextNode();
+    }
+    if (node) range.setStart(node, left);
+    else range.selectNodeContents(el);
+    range.collapse(true);
+  } else {
+    range.selectNodeContents(el);
+    range.collapse(at === "start");
+  }
   const sel = window.getSelection();
   sel?.removeAllRanges();
   sel?.addRange(range);
@@ -148,8 +170,8 @@ export const InlineText: Component<InlineTextProps> = (props) => {
     el.dataset["empty"] = String(!el.textContent);
   };
 
-  // Read the prop in the component body: reading it inside onSettled creates a memo in an owner-backed scope.
-  const initialHtml = render(props.value);
+  // Mount-time snapshot. `untrack` marks the read as intentional: the effect below owns updates.
+  const initialHtml = untrack(() => render(props.value));
   onSettled(() => {
     el.innerHTML = initialHtml;
     lastEmitted = JSON.stringify(serialize(el));
@@ -158,18 +180,17 @@ export const InlineText: Component<InlineTextProps> = (props) => {
   });
 
   // External changes (undo/redo, rollback) re-render; our own echoes are ignored.
-  // The effect body gets the value from the compute step: reading props inside it is not tracked.
+  // Everything that reads the (store-backed) value happens in the compute step, which is tracked.
+  // The apply step only writes DOM: reading store proxies there triggers STRICT_READ_UNTRACKED.
   createEffect(
     () => {
       const value = props.value;
-      const key = JSON.stringify(
-        props.mode === "plain" ? toPlainText(value) : toInlineNodes(value),
-      );
-      return { key, value };
+      const nodes = props.mode === "plain" ? toPlainText(value) : toInlineNodes(value);
+      return { key: JSON.stringify(nodes), html: render(value) };
     },
-    ({ key, value }) => {
+    ({ key, html }) => {
       if (!el || key === lastEmitted) return;
-      el.innerHTML = render(value);
+      el.innerHTML = html;
       lastEmitted = key;
       el.dataset["empty"] = String(!el.textContent);
     },

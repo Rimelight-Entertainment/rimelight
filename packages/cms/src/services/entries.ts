@@ -31,9 +31,23 @@ import { indexEntry, removeEntryFromIndex } from "./search";
 
 // ─── Shapes ──────────────────────────────────────────────────────────────────
 
+/**
+ * Entry-level fields that are edited in the draft and applied to the live row on publish.
+ * Only present in a working copy (`draft`) that has metadata changes.
+ */
+export interface DraftMeta {
+  title?: Localized;
+  description?: Localized | null;
+  slug?: string;
+  tags?: Localized[];
+  bylines?: BylineCredit[];
+  collection?: string;
+}
+
 export interface EntryContent {
   blocks: BaseBlock[];
   properties: Record<string, any>;
+  meta?: DraftMeta;
 }
 
 /** An entry as the admin API and dashboard see it. */
@@ -76,7 +90,30 @@ const LOCK_TTL_MS = 5 * 60 * 1000;
 
 function content(raw: unknown): EntryContent {
   const c = json<any>(raw, {});
-  return { blocks: normalizeBlocks(c?.blocks), properties: c?.properties ?? {} };
+  const out: EntryContent = { blocks: normalizeBlocks(c?.blocks), properties: c?.properties ?? {} };
+  if (c?.meta && typeof c.meta === "object") out.meta = c.meta as DraftMeta;
+  return out;
+}
+
+/** The live (published) values of the metadata fields, read from the entry row. */
+function liveMeta(row: any): Required<Omit<DraftMeta, "collection">> & { collection: string } {
+  return {
+    title: json<Localized>(row.title, { en: "" }),
+    description: json(row.description, null),
+    slug: row.slug,
+    tags: json(row.tags, []),
+    bylines: json(row.bylines, []),
+    collection: row.type,
+  };
+}
+
+/** Whether the draft's metadata differs from the live row for any field it changes. */
+function metaChanged(row: any, meta: DraftMeta | undefined): boolean {
+  if (!meta) return false;
+  const live = liveMeta(row) as Record<string, unknown>;
+  return (Object.keys(meta) as (keyof DraftMeta)[]).some(
+    (k) => meta[k] !== undefined && JSON.stringify(meta[k]) !== JSON.stringify(live[k]),
+  );
 }
 
 const date = (v: unknown): Date | null =>
@@ -117,7 +154,11 @@ function toEntry(row: any, draftRow: any): Entry {
     ...summary,
     published,
     draft,
-    hasUnpublishedChanges: !!draftRow && JSON.stringify(draft) !== JSON.stringify(published),
+    hasUnpublishedChanges:
+      !!draftRow &&
+      (JSON.stringify({ blocks: draft.blocks, properties: draft.properties }) !==
+        JSON.stringify(published) ||
+        metaChanged(row, draft.meta)),
     draftUpdatedAt: draftRow ? date(draftRow.updatedAt) : null,
     draftUpdatedBy: draftRow?.updatedBy ?? null,
   };
@@ -378,7 +419,23 @@ export interface UpdateEntryMetaInput {
   collection?: string;
 }
 
-/** Metadata changes apply immediately (they are not part of the draft/publish cycle). */
+/** The metadata fields that live on the entry row, applied from a `DraftMeta` patch. */
+async function writeMetaToRow(ctx: CmsContext, id: string, meta: DraftMeta, now: Date) {
+  const patch: Record<string, any> = { updatedAt: now };
+  if (meta.collection !== undefined) patch["type"] = meta.collection;
+  if (meta.slug !== undefined) patch["slug"] = meta.slug;
+  if (meta.title !== undefined) patch["title"] = meta.title;
+  if (meta.description !== undefined) patch["description"] = meta.description;
+  if (meta.tags !== undefined) patch["tags"] = meta.tags;
+  if (meta.bylines !== undefined) patch["bylines"] = meta.bylines;
+  await ctx.db.update(ctx.t.pages).set(patch).where(eq(ctx.t.pages.id, id));
+}
+
+/**
+ * Metadata edits (title, description, slug, tags, bylines, collection). For a published entry they
+ * go into the working copy and reach readers only on publish, like every other change. An entry
+ * that has never been published has nothing live to protect, so its fields are written directly.
+ */
 export async function updateEntryMeta(
   ctx: CmsContext,
   actor: CmsActor,
@@ -387,23 +444,47 @@ export async function updateEntryMeta(
 ): Promise<Entry> {
   const entry = await getEntry(ctx, id);
   await assertCanEdit(ctx, actor, entry);
-  const patch: Record<string, any> = { updatedAt: new Date() };
+  const lock = await getLock(ctx, actor, entry.id);
+  if (lock.locked && !lock.ownedByActor) {
+    throw new CmsError(409, `${lock.userName ?? "Another user"} is editing this entry`);
+  }
+
+  const patch: DraftMeta = {};
   if (input.collection !== undefined && input.collection !== entry.collection) {
     await getCollection(ctx, input.collection);
-    patch["type"] = input.collection;
+    patch.collection = input.collection;
   }
   if (input.slug !== undefined) {
     const collection = await getCollection(ctx, input.collection ?? entry.collection);
     const slug = slugify(input.slug);
     checkSlug(collection, slug);
     await assertSlugFree(ctx, slug, entry.id);
-    patch["slug"] = slug;
+    patch.slug = slug;
   }
-  if (input.title !== undefined) patch["title"] = localized(input.title);
-  if (input.description !== undefined) patch["description"] = localized(input.description);
-  if (input.tags !== undefined) patch["tags"] = input.tags;
-  if (input.bylines !== undefined) patch["bylines"] = input.bylines;
-  await ctx.db.update(ctx.t.pages).set(patch).where(eq(ctx.t.pages.id, entry.id));
+  if (input.title !== undefined) patch.title = localized(input.title) ?? { en: "" };
+  if (input.description !== undefined) patch.description = localized(input.description);
+  if (input.tags !== undefined) patch.tags = input.tags;
+  if (input.bylines !== undefined) patch.bylines = input.bylines;
+
+  const now = new Date();
+  if (entry.publishedVersionId) {
+    const next: EntryContent = {
+      blocks: entry.draft.blocks,
+      properties: entry.draft.properties,
+      meta: { ...entry.draft.meta, ...patch },
+    };
+    await ctx.db
+      .insert(ctx.t.pageDrafts)
+      .values({ pageId: entry.id, content: next, updatedBy: actor.userId, updatedAt: now })
+      .onConflictDoUpdate({
+        target: ctx.t.pageDrafts.pageId,
+        set: { content: next, updatedBy: actor.userId, updatedAt: now },
+      });
+    await ctx.db.update(ctx.t.pages).set({ updatedAt: now }).where(eq(ctx.t.pages.id, entry.id));
+    if (lock.ownedByActor) await acquireLock(ctx, actor, entry.id);
+  } else {
+    await writeMetaToRow(ctx, entry.id, patch, now);
+  }
   const updated = await getEntry(ctx, entry.id);
   if (updated.status === "published") await indexEntry(ctx, updated);
   return updated;
@@ -547,6 +628,13 @@ export async function releaseLock(
 export interface SaveDraftInput {
   blocks?: BaseBlock[];
   properties?: Record<string, any>;
+  /**
+   * The `draftUpdatedAt` the editor loaded. If the draft has changed since (another tab, another
+   * session), the save is refused instead of silently overwriting that work.
+   */
+  baseUpdatedAt?: string | null;
+  /** Metadata for the working copy (e.g. restored by a rollback). Defaults to the current draft's. */
+  meta?: DraftMeta;
 }
 
 /**
@@ -566,10 +654,24 @@ export async function saveDraft(
   if (lock.locked && !lock.ownedByActor) {
     throw new CmsError(409, `${lock.userName ?? "Another user"} is editing this entry`);
   }
+  // Same user in two tabs passes the lock check, so compare the revision the editor loaded.
+  // `null` is a real revision too ("I loaded no draft"): after a discard the draft row is gone.
+  if (input.baseUpdatedAt !== undefined) {
+    const current = entry.draftUpdatedAt ? new Date(entry.draftUpdatedAt).getTime() : null;
+    const base = input.baseUpdatedAt ? new Date(input.baseUpdatedAt).getTime() : null;
+    if (base !== current) {
+      throw new CmsError(
+        409,
+        "This draft was changed in another tab or session. Reload to get the latest version before saving.",
+      );
+    }
+  }
 
+  const meta = input.meta ?? entry.draft.meta;
   const next: EntryContent = {
     blocks: input.blocks ? normalizeBlocks(input.blocks) : entry.draft.blocks,
     properties: input.properties ?? entry.draft.properties,
+    ...(meta ? { meta } : {}),
   };
 
   const guard = validateServerBlockPayload(entry.draft.blocks, next.blocks, actor);
@@ -831,8 +933,17 @@ export async function publishEntry(
     });
   }
 
-  const body = content(version.content);
+  // Metadata in the version goes to the entry row; the stored content is blocks and properties.
+  const { meta, ...body } = content(version.content);
   const now = new Date();
+  if (meta) {
+    if (meta.slug !== undefined && meta.slug !== entry.slug) {
+      checkSlug(await getCollection(ctx, meta.collection ?? entry.collection), meta.slug);
+      await assertSlugFree(ctx, meta.slug, entry.id);
+    }
+    if (meta.collection !== undefined) await getCollection(ctx, meta.collection);
+    await writeMetaToRow(ctx, entry.id, meta, now);
+  }
   await ctx.db
     .update(ctx.t.pages)
     .set({

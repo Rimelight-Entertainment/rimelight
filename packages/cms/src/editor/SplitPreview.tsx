@@ -57,7 +57,7 @@ export const SplitPane: Component<{
   return (
     <div
       ref={(el) => (container = el)}
-      class={`flex min-h-0 flex-1 flex-col lg:flex-row ${dragging() ? "cursor-col-resize select-none" : ""}`}
+      class={`flex min-h-0 flex-1 flex-col 2xl:flex-row ${dragging() ? "cursor-col-resize select-none" : ""}`}
     >
       <div
         class="min-h-0 min-w-0 flex-1 overflow-y-auto"
@@ -75,7 +75,7 @@ export const SplitPane: Component<{
           aria-label="Resize preview"
           tabindex={0}
           title="Drag to resize · double-click to reset"
-          class={`group relative hidden w-1.5 shrink-0 cursor-col-resize items-center justify-center border-x border-default bg-elevated transition-colors hover:bg-primary-500/20 focus-visible:bg-primary-500/30 focus-visible:outline-none lg:flex ${dragging() ? "bg-primary-500/30" : ""}`}
+          class={`group relative hidden w-1.5 shrink-0 cursor-col-resize items-center justify-center border-x border-default bg-elevated transition-colors hover:bg-primary-500/20 focus-visible:bg-primary-500/30 focus-visible:outline-none 2xl:flex ${dragging() ? "bg-primary-500/30" : ""}`}
           onPointerDown={(e) => {
             e.preventDefault();
             setDragging(true);
@@ -92,7 +92,7 @@ export const SplitPane: Component<{
         </div>
         {/* While dragging, the pointer may cross the preview; keep events on the window. */}
         <div
-          class={`min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-default lg:border-t-0 ${dragging() ? "pointer-events-none" : ""}`}
+          class={`min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-default 2xl:border-t-0 ${dragging() ? "pointer-events-none" : ""}`}
         >
           {props.right}
         </div>

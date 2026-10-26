@@ -358,7 +358,9 @@ const BlockView: Component<{
               {
                 [key]: isPlain()
                   ? v
-                  : updateRichText(props.block.props[key], props.locale, v as any),
+                  : updateRichText(props.block.props[key], props.locale, v as any, {
+                      defaultLocale: ed.defaultLocale,
+                    }),
               },
               { coalesce: true },
             )
@@ -374,7 +376,10 @@ const BlockView: Component<{
             }
           }}
           onBackspaceAtStart={(empty) => {
-            if (empty && !locked()) ed.remove(props.block.id);
+            if (locked()) return;
+            // Empty block: delete it. Otherwise join its text onto the block above (Notion-style).
+            if (empty) ed.remove(props.block.id);
+            else ed.joinWithPrevious(props.block.id);
           }}
           onSlash={() =>
             ed.openInserter({
@@ -754,10 +759,15 @@ const BlockPicker: Component<{
     );
 
   onSettled(() => {
+    // Return focus to whatever opened the picker (Add block, a slash, a handle) when it closes.
+    const opener = document.activeElement as HTMLElement | null;
     input.focus();
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => (document.body.style.overflow = prev);
+    return () => {
+      document.body.style.overflow = prev;
+      if (opener?.isConnected) opener.focus();
+    };
   });
 
   return (

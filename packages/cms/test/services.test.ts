@@ -246,6 +246,53 @@ describe("entry lifecycle", () => {
   });
 });
 
+describe("metadata goes through the draft", () => {
+  it("keeps live title, slug and description until publish, and discard reverts them", async () => {
+    const e = await cms.entries.createEntry(editor, {
+      collection: "blog",
+      title: "Live title",
+      blocks: text("body"),
+    });
+    await cms.entries.publishEntry(editor, e.id, { changeSummary: "first" });
+
+    const edited = await cms.entries.updateEntryMeta(editor, e.id, {
+      title: "Draft title",
+      description: "Draft description",
+    });
+    // Readers still see the published values; the working copy carries the change.
+    const live = await cms.entries.getEntry(e.id);
+    expect(live.title["en"]).toBe("Live title");
+    expect(live.description).toBeNull();
+    expect(edited.draft.meta?.title?.["en"]).toBe("Draft title");
+    expect(edited.hasUnpublishedChanges).toBe(true);
+    const list = await cms.entries.listEntries({ status: "published" });
+    expect(JSON.stringify(list.entries.find((x) => x.id === e.id)?.title)).toContain("Live title");
+
+    // Saving blocks keeps the pending metadata.
+    await cms.entries.saveDraft(editor, e.id, { blocks: text("body 2") });
+    expect((await cms.entries.getEntry(e.id)).draft.meta?.title?.["en"]).toBe("Draft title");
+
+    await cms.entries.publishEntry(editor, e.id, { changeSummary: "second" });
+    const published = await cms.entries.getEntry(e.id);
+    expect(published.title["en"]).toBe("Draft title");
+    expect(published.description?.["en"]).toBe("Draft description");
+    expect(published.draft.meta).toBeUndefined();
+    expect(published.hasUnpublishedChanges).toBe(false);
+
+    // A metadata edit that is then discarded never reaches readers.
+    await cms.entries.updateEntryMeta(editor, e.id, { title: "Abandoned" });
+    await cms.entries.discardDraft(editor, e.id);
+    expect((await cms.entries.getEntry(e.id)).title["en"]).toBe("Draft title");
+  });
+
+  it("writes straight through for an entry that has never been published", async () => {
+    const e = await cms.entries.createEntry(editor, { collection: "blog", title: "Unpublished" });
+    const updated = await cms.entries.updateEntryMeta(editor, e.id, { title: "Renamed" });
+    expect(updated.title["en"]).toBe("Renamed");
+    expect(updated.draft.meta).toBeUndefined();
+  });
+});
+
 describe("locks", () => {
   it("blocks other users' saves while a lock is held; admins can take over", async () => {
     const e = await cms.entries.createEntry(editor, { collection: "blog", title: "Locked" });
@@ -254,6 +301,26 @@ describe("locks", () => {
     expect(other.ownedByActor).toBe(false);
     await expectError(cms.entries.saveDraft(reviewer, e.id, { blocks: text("x") }), 409);
     expect((await cms.entries.acquireLock(admin, e.id, { force: true })).ownedByActor).toBe(true);
+  });
+
+  it("refuses a save from a stale revision, even by the same user in another tab", async () => {
+    const e = await cms.entries.createEntry(editor, { collection: "blog", title: "Two tabs" });
+    const loadedA = await cms.entries.saveDraft(editor, e.id, { blocks: text("a1") });
+    // Tab B loaded the draft after tab A's first save...
+    const tabB = loadedA.draftUpdatedAt;
+    // ...then tab A saves again, moving the draft on.
+    // The sqlite schema stores timestamps to the second, so wait past the boundary.
+    await new Promise((r) => setTimeout(r, 1100));
+    await cms.entries.saveDraft(editor, e.id, {
+      blocks: text("a2"),
+      baseUpdatedAt: loadedA.draftUpdatedAt as any,
+    });
+    // Tab B's save is based on the old revision: refused, nothing overwritten.
+    await expectError(
+      cms.entries.saveDraft(editor, e.id, { blocks: text("b"), baseUpdatedAt: tabB as any }),
+      409,
+    );
+    expect(JSON.stringify((await cms.entries.getEntry(e.id)).draft.blocks)).toContain("a2");
   });
 });
 

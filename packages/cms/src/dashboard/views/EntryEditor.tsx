@@ -1,4 +1,12 @@
-import { For, Show, createSignal, onCleanup, onSettled, type Component } from "solid-js";
+import {
+  For,
+  Show,
+  createEffect,
+  createSignal,
+  onSettled,
+  untrack,
+  type Component,
+} from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { resolveLabel } from "../../core/collections/define";
 import type { BylineCredit, BylineRole } from "../../core/types/bylines";
@@ -89,8 +97,32 @@ const EditorWorkspace: Component<{
 }> = (props) => {
   const { api, collection: getCollection, href, navigate, toast, user, locales } = useDashboard();
   const collection = () => getCollection(props.entry.collection);
-  const readOnly = () => !!props.lock?.locked && !props.lock.ownedByActor;
+  // The lock is per user, so the same user in a second tab passes it. Tabs coordinate here instead:
+  // a tab opened while another one is editing starts read-only.
+  const [inOtherTab, setInOtherTab] = createSignal(false);
+  let takeOverHere: () => void = () => {};
+  const lockReadOnly = () => !!props.lock?.locked && !props.lock.ownedByActor;
+  const readOnly = () => lockReadOnly() || inOtherTab();
+  onSettled(() => {
+    if (typeof BroadcastChannel === "undefined") return;
+    const tabId = crypto.randomUUID();
+    const channel = new BroadcastChannel(`rimelight-cms:editor:${props.entry.id}`);
+    channel.onmessage = (e: MessageEvent) => {
+      const m = e.data;
+      if (!m || m.tabId === tabId) return;
+      if (m.type === "hello") channel.postMessage({ type: "here", tabId });
+      if (m.type === "here" || m.type === "takeover") setInOtherTab(true);
+    };
+    takeOverHere = () => {
+      setInOtherTab(false);
+      channel.postMessage({ type: "takeover", tabId });
+    };
+    channel.postMessage({ type: "hello", tabId });
+    return () => channel.close();
+  });
   const [tab, setTab] = createSignal<"entry" | "block">("entry");
+  /** Language being edited. Titles, descriptions and rich text all follow it. */
+  const [locale, setLocale] = createSignal(locales[0] ?? "en");
   const [previewOpen, setPreviewOpen] = createSignal(readPreviewPref());
   const [historyOpen, setHistoryOpen] = createSignal(false);
   const [busy, setBusy] = createSignal<string | null>(null);
@@ -98,16 +130,27 @@ const EditorWorkspace: Component<{
   /** The settings/block/history panel is always shown on wide screens and toggled below that. */
   const [panelOpen, setPanelOpen] = createSignal(false);
 
+  // Collection rules are fixed for the life of this editor (a collection change remounts it).
+  const rootBlocks = untrack(() => collection()?.allowedBlocks ?? undefined);
   const editor: BlockEditorState = createBlockEditor({
-    initial: { blocks: props.entry.draft.blocks, properties: props.entry.draft.properties },
+    initial: untrack(() => ({
+      blocks: props.entry.draft.blocks,
+      properties: props.entry.draft.properties,
+    })),
     registry: useDashboard().registry,
-    ...(collection()?.allowedBlocks ? { allowedRootBlocks: collection()!.allowedBlocks! } : {}),
-    readOnly: readOnly(),
+    ...(rootBlocks ? { allowedRootBlocks: rootBlocks } : {}),
+    readOnly,
+    defaultLocale: locales[0] ?? "en",
     onSelect: (id) => {
       if (id) setTab("block");
     },
     save: async (content) => {
-      const { entry } = await api.entries.saveDraft(props.entry.id, content);
+      // Send the revision we loaded: a newer draft (another tab) makes the server refuse the save.
+      const base = props.entry.draftUpdatedAt;
+      const { entry } = await api.entries.saveDraft(props.entry.id, {
+        ...content,
+        baseUpdatedAt: base ? String(base) : null,
+      });
       props.onEntry(entry);
     },
   });
@@ -122,7 +165,6 @@ const EditorWorkspace: Component<{
       void editor.flush();
     };
   });
-  onCleanup(() => void editor.flush());
 
   const run = async (label: string, fn: () => Promise<unknown>, done?: string) => {
     setBusy(label);
@@ -370,7 +412,18 @@ const EditorWorkspace: Component<{
         </div>
       </div>
 
-      <Show when={readOnly()}>
+      <Show when={inOtherTab() && !lockReadOnly()}>
+        <div class="flex items-center gap-3 border-b border-warning-500/30 bg-warning-500/10 px-4 py-2 text-sm text-warning-700">
+          <span class="i-lucide-layers size-4" />
+          This entry is open in another tab. It's read-only here so the two tabs don't overwrite
+          each other.
+          <Button variant="secondary" class="ml-auto" onClick={() => takeOverHere()}>
+            Edit here instead
+          </Button>
+        </div>
+      </Show>
+
+      <Show when={lockReadOnly()}>
         <div class="flex items-center gap-3 border-b border-warning-500/30 bg-warning-500/10 px-4 py-2 text-sm text-warning-700">
           <span class="i-lucide-lock size-4" />
           {props.lock?.userName ?? "Someone"} is editing this entry. You're viewing it read-only.
@@ -390,15 +443,32 @@ const EditorWorkspace: Component<{
             <PagePreview
               title={resolveLabel(props.entry.title) || props.entry.slug}
               blocks={editor.doc.blocks}
-              locale={locales[0] ?? "en"}
+              locale={locale()}
               badge="Draft"
               onClose={() => togglePreview()}
             />
           }
           left={
             <div class="mx-auto max-w-6xl px-6 py-10">
+              <Show when={locales.length > 1}>
+                <label class="mb-2 flex w-fit items-center gap-2 text-xs text-muted">
+                  Language
+                  <select
+                    class="rounded border border-default bg-default px-2 py-1 text-xs font-medium uppercase text-highlighted"
+                    value={locale()}
+                    onChange={(e) => {
+                      setLocale(e.currentTarget.value);
+                    }}
+                  >
+                    <For each={locales}>
+                      {(code) => <option value={code}>{code.toUpperCase()}</option>}
+                    </For>
+                  </select>
+                </label>
+              </Show>
               <TitleInput
                 entry={props.entry}
+                locale={locale()}
                 readOnly={readOnly()}
                 onSave={(title) => void saveMeta({ title })}
               />
@@ -419,7 +489,7 @@ const EditorWorkspace: Component<{
                 {/* Wikipedia-style: article on the left, infobox with the entry's properties on the right. */}
                 <div class="mt-6 flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
                   <div class="min-w-0 flex-1">
-                    <BlockEditor editor={editor} locale={locales[0] ?? "en"} />
+                    <BlockEditor editor={editor} locale={locale()} />
                   </div>
                   <Show when={Object.keys(collection()?.fields ?? {}).length}>
                     <Infobox entry={props.entry} editor={editor} readOnly={readOnly()} />
@@ -461,6 +531,7 @@ const EditorWorkspace: Component<{
                 editor={editor}
                 readOnly={readOnly()}
                 saveMeta={saveMeta}
+                locale={locale()}
                 onDeleted={() => navigate(`/c/${props.entry.collection}`)}
               />
             </Show>
@@ -533,18 +604,19 @@ const Infobox: Component<{ entry: Entry; editor: BlockEditorState; readOnly: boo
 
 const TitleInput: Component<{
   entry: Entry;
+  locale: string;
   readOnly: boolean;
   onSave: (t: Record<string, string>) => void;
 }> = (props) => {
-  const { locales } = useDashboard();
-  const locale = locales[0] ?? "en";
   return (
     <input
       class="w-full bg-transparent text-4xl font-bold text-highlighted outline-none placeholder:text-muted/50"
       placeholder="Untitled"
-      value={props.entry.title[locale] ?? resolveLabel(props.entry.title)}
+      value={props.entry.title[props.locale] ?? resolveLabel(props.entry.title)}
       disabled={props.readOnly}
-      onChange={(e) => props.onSave({ ...props.entry.title, [locale]: e.currentTarget.value })}
+      onChange={(e) =>
+        props.onSave({ ...props.entry.title, [props.locale]: e.currentTarget.value })
+      }
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           e.preventDefault();
@@ -563,10 +635,10 @@ const EntrySettings: Component<{
   readOnly: boolean;
   saveMeta: (patch: Record<string, unknown>) => Promise<void>;
   onDeleted: () => void;
+  locale: string;
 }> = (props) => {
-  const { api, collection: getCollection, collections, toast, navigate, locales } = useDashboard();
+  const { api, collection: getCollection, collections, toast, navigate } = useDashboard();
   const collection = () => getCollection(props.entry.collection);
-  const locale = locales[0] ?? "en";
 
   return (
     <div class="flex flex-col gap-5">
@@ -581,11 +653,11 @@ const EntrySettings: Component<{
       <Field label="Description">
         <textarea
           class={`${inputClass} min-h-16`}
-          value={props.entry.description?.[locale] ?? ""}
+          value={props.entry.description?.[props.locale] ?? ""}
           disabled={props.readOnly}
           onChange={(e) =>
             void props.saveMeta({
-              description: { ...props.entry.description, [locale]: e.currentTarget.value },
+              description: { ...props.entry.description, [props.locale]: e.currentTarget.value },
             })
           }
         />
@@ -841,8 +913,10 @@ const IconButton: Component<{
 const SaveIndicator: Component<{ editor: BlockEditorState; readOnly: boolean }> = (props) => {
   // Re-render the relative time every 30s.
   const [now, setNow] = createSignal(Date.now());
-  const timer = setInterval(() => setNow(Date.now()), 30_000);
-  onCleanup(() => clearInterval(timer));
+  onSettled(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  });
 
   const view = () => {
     if (props.readOnly) return { icon: "i-lucide-lock", text: "Read-only", cls: "text-muted" };
@@ -852,7 +926,12 @@ const SaveIndicator: Component<{ editor: BlockEditorState; readOnly: boolean }> 
       case "dirty":
         return { icon: "i-lucide-circle-dot", text: "Unsaved changes", cls: "text-warning-600" };
       case "error":
-        return { icon: "i-lucide-cloud-alert", text: "Save failed — retry", cls: "text-error-500" };
+        // Show the reason (e.g. "changed in another tab"), not just a retry prompt.
+        return {
+          icon: "i-lucide-cloud-alert",
+          text: `Save failed — ${props.editor.error() ?? "retry"}`,
+          cls: "text-error-500",
+        };
       default: {
         now();
         const at = props.editor.lastSavedAt();
@@ -868,7 +947,7 @@ const SaveIndicator: Component<{ editor: BlockEditorState; readOnly: boolean }> 
   return (
     <button
       type="button"
-      class={`ml-1 flex items-center gap-1 rounded px-1.5 py-0.5 text-xs hover:bg-elevated ${view().cls}`}
+      class={`ml-1 flex max-w-md items-center gap-1 truncate rounded px-1.5 py-0.5 text-xs hover:bg-elevated ${view().cls}`}
       title={
         props.editor.status() === "error"
           ? (props.editor.error() ?? "Save failed")
@@ -1074,8 +1153,21 @@ const ScheduleModal: Component<{
   onClose: () => void;
   onSubmit: (at: string | null) => void;
 }> = (props) => {
-  const [value, setValue] = createSignal(
-    props.current ? new Date(props.current).toISOString().slice(0, 16) : "",
+  // datetime-local is wall-clock time: format in local time, the same way the submit parses it.
+  const toInput = (d: Date | null) => {
+    if (!d) return "";
+    const x = new Date(d);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`;
+  };
+  const [value, setValue] = createSignal(untrack(() => toInput(props.current)));
+  // Re-seed from the current schedule each time the modal opens, so a stale value never survives a
+  // save or a clear. Only the open flag and the schedule are tracked; the apply step just writes.
+  createEffect(
+    () => (props.open ? toInput(props.current) : null),
+    (seeded) => {
+      if (seeded !== null) setValue(seeded);
+    },
   );
   return (
     <Modal

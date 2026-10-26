@@ -10,7 +10,8 @@ import {
   removeBlock,
   updateBlock,
 } from "../core/blocks/tree";
-import { toInlineNodes } from "./inline";
+import { toInlineNodes, toPlainText } from "./inline";
+import { compactRichText } from "../core/richtext";
 
 /**
  * Editor state for one entry. All tree changes go through pure functions in `core/blocks/tree`,
@@ -41,7 +42,10 @@ export interface CreateEditorOptions {
   save: (content: EditorContent) => Promise<void>;
   /** Debounce before autosave, in ms. */
   autosaveDelay?: number;
-  readOnly?: boolean;
+  /** The collection's default locale: edits in other locales keep this one's text intact. */
+  defaultLocale?: string;
+  /** Pass a getter when read-only can change (e.g. after a lock takeover); it is read reactively. */
+  readOnly?: boolean | (() => boolean);
   /** Called when the user selects a block (e.g. to show the inspector). */
   onSelect?: (id: string | null) => void;
 }
@@ -57,6 +61,8 @@ const COALESCE_MS = 800;
 const HISTORY_LIMIT = 200;
 
 export function createBlockEditor(options: CreateEditorOptions) {
+  const isReadOnly = () =>
+    typeof options.readOnly === "function" ? options.readOnly() : !!options.readOnly;
   const [doc, setDoc] = createStore<EditorContent>(structuredClone(options.initial));
   const [status, setStatus] = createSignal<SaveStatus>("saved");
   const [error, setError] = createSignal<string | null>(null);
@@ -66,9 +72,11 @@ export function createBlockEditor(options: CreateEditorOptions) {
   const bumpHistory = () => setHistoryTick((n) => n + 1);
   const [selectedId, setSelectedId] = createSignal<string | null>(null);
   const [inserter, setInserter] = createSignal<InsertTarget | null>(null);
-  const [focusRequest, setFocusRequest] = createSignal<{ id: string; at: "start" | "end" } | null>(
-    null,
-  );
+  /** `at` is the caret: the start or end of the block's text, or a character offset into it. */
+  const [focusRequest, setFocusRequest] = createSignal<{
+    id: string;
+    at: "start" | "end" | number;
+  } | null>(null);
 
   // Plain (non-reactive) mirror of the document: the source of truth for computing next states.
   // Reading back from the store right after writing is unreliable because writes are batched.
@@ -103,7 +111,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
   };
 
   const runSave = async () => {
-    if (options.readOnly) return;
+    if (isReadOnly()) return;
     if (saving) {
       pendingAfterSave = true;
       return;
@@ -138,7 +146,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
   };
 
   const commit = (next: EditorContent, coalesceKey?: string) => {
-    if (options.readOnly) return;
+    if (isReadOnly()) return;
     write(next);
     record(coalesceKey);
     scheduleSave();
@@ -210,9 +218,13 @@ export function createBlockEditor(options: CreateEditorOptions) {
       options.onSelect?.(id);
     },
     focusRequest,
-    readOnly: !!options.readOnly,
+    /** Reactive: reading it inside JSX or a memo tracks the lock state. */
+    get readOnly() {
+      return isReadOnly();
+    },
     registry: options.registry,
     allowedRootBlocks: options.allowedRootBlocks,
+    defaultLocale: options.defaultLocale ?? "en",
 
     get: (id: string) => findBlock(current.blocks, id),
     canPlace,
@@ -228,7 +240,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
     /** The shared block picker. No target → after the selected block, else at the end. */
     inserter,
     openInserter(target?: InsertTarget) {
-      if (options.readOnly) return;
+      if (isReadOnly()) return;
       const sel = selectedId();
       setInserter(
         target ??
@@ -241,7 +253,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
 
     /** Insert a new block; returns its id (or null if not allowed there). */
     insert(type: string, parentId: string | null, index: number, props?: Record<string, any>) {
-      if (!canPlace(type, parentId)) return null;
+      if (isReadOnly() || !canPlace(type, parentId)) return null;
       const block = options.registry.create(type, props);
       commitBlocks(insertBlock(current.blocks, block, parentId, index));
       setSelectedId(block.id);
@@ -266,15 +278,17 @@ export function createBlockEditor(options: CreateEditorOptions) {
     updateProps(id: string, patch: Record<string, any>, { coalesce = false } = {}) {
       const found = findBlock(current.blocks, id);
       if (!found || isPropLocked(found.block, Object.keys(patch))) return;
+      // Detach from the store: values built from reads may be proxies, which structuredClone rejects.
+      const clean = JSON.parse(JSON.stringify(patch));
       commitBlocks(
-        updateBlock(current.blocks, id, (b) => ({ ...b, props: { ...b.props, ...patch } })),
+        updateBlock(current.blocks, id, (b) => ({ ...b, props: { ...b.props, ...clean } })),
         coalesce ? `props:${id}` : undefined,
       );
     },
 
     remove(id: string) {
       const found = findBlock(current.blocks, id);
-      if (!found || found.block.isTemplated) return;
+      if (isReadOnly() || !found || found.block.isTemplated) return;
       // Move focus to the previous sibling (or parent) like a text editor would.
       const siblings = found.parent ? getChildren(found.parent) : current.blocks;
       const prev = siblings[found.index - 1] ?? found.parent;
@@ -285,12 +299,44 @@ export function createBlockEditor(options: CreateEditorOptions) {
       }
     },
 
+    /**
+     * Backspace at the start of a text block: appends its text to the previous sibling (when that
+     * sibling has the same text prop) and removes it. The caret lands at the join point.
+     */
+    joinWithPrevious(id: string) {
+      if (isReadOnly()) return;
+      const found = findBlock(current.blocks, id);
+      if (!found || found.block.isTemplated) return;
+      const key = options.registry.get(found.block.type)?.inlineText;
+      const siblings = found.parent ? getChildren(found.parent) : current.blocks;
+      const prev = siblings[found.index - 1];
+      if (!key || !prev || prev.isTemplated) return;
+      if (options.registry.get(prev.type)?.inlineText !== key) return;
+
+      const prevValue = prev.props[key];
+      const rich = Array.isArray(prevValue) || options.registry.get(prev.type)?.richText;
+      const joined = [...toInlineNodes(prevValue), ...toInlineNodes(found.block.props[key])];
+      const offset = toPlainText(prevValue).length;
+      const merged = rich ? compactRichText(joined) : toPlainText(joined);
+
+      let next = updateBlock(current.blocks, prev.id, (b) => ({
+        ...b,
+        props: { ...b.props, [key]: merged },
+      }));
+      next = removeBlock(next, id);
+      commitBlocks(next);
+      setSelectedId(prev.id);
+      setFocusRequest({ id: prev.id, at: offset });
+    },
+
     duplicate(id: string) {
       const found = findBlock(current.blocks, id);
-      if (!found) return;
+      if (isReadOnly() || !found) return;
       const copy = cloneBlock(found.block);
       commitBlocks(insertBlock(current.blocks, copy, found.parent?.id ?? null, found.index + 1));
+      // Selection and keyboard focus move together, so typing lands in the block being inspected.
       setSelectedId(copy.id);
+      setFocusRequest({ id: copy.id, at: "start" });
     },
 
     move(id: string, parentId: string | null, index: number) {
@@ -310,7 +356,7 @@ export function createBlockEditor(options: CreateEditorOptions) {
     /** Turn a block into another type, keeping the text where both types have inline text. */
     transform(id: string, type: string) {
       const found = findBlock(current.blocks, id);
-      if (!found || found.block.isTemplated) return;
+      if (isReadOnly() || !found || found.block.isTemplated) return;
       const from = options.registry.get(found.block.type);
       const to = options.registry.get(type);
       if (!to || !canPlace(type, found.parent?.id ?? null)) return;
@@ -375,8 +421,8 @@ export function createBlockEditor(options: CreateEditorOptions) {
       bumpHistory();
       scheduleSave();
     },
-    canUndo: () => (historyTick(), !options.readOnly && undoStack.length > 1),
-    canRedo: () => (historyTick(), !options.readOnly && redoStack.length > 0),
+    canUndo: () => (historyTick(), !isReadOnly() && undoStack.length > 1),
+    canRedo: () => (historyTick(), !isReadOnly() && redoStack.length > 0),
 
     /** Save immediately (Ctrl+S, before publish, before leaving). */
     async flush() {

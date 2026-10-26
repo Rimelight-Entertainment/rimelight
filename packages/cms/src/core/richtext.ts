@@ -60,11 +60,22 @@ export function updateRichText(
   previous: unknown,
   locale: string,
   nodes: RichText,
-  { translatable = false }: { translatable?: boolean } = {},
+  {
+    translatable = false,
+    defaultLocale = "en",
+  }: { translatable?: boolean; defaultLocale?: string } = {},
 ): RichTextValue {
   if (isLocalizedRichText(previous)) return { ...previous, [locale]: nodes };
-  return translatable ? { [locale]: nodes } : nodes;
+  if (locale === defaultLocale) return translatable ? { [locale]: nodes } : nodes;
+  // A translation of plain text: the existing text stays under the default locale, so editing
+  // `pt` never overwrites `en`.
+  // Copy: `previous` may be a store proxy, which structuredClone (used by the editor) rejects.
+  return { [defaultLocale]: toRichText(plainCopy(previous)), [locale]: nodes };
 }
+
+/** A detached JSON copy: strips store proxies so the value can be cloned and stored. */
+const plainCopy = <T>(value: T): T =>
+  value === undefined ? value : JSON.parse(JSON.stringify(value));
 
 export function inlineToPlainText(nodes: readonly InlineNode[]): string {
   return nodes
