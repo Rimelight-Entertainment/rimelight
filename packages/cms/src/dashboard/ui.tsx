@@ -1,5 +1,10 @@
 import { Show, createSignal, onSettled, type Component } from "solid-js";
-import { Portal, type JSX } from "@solidjs/web";
+import type { JSX } from "@solidjs/web";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
+import { RLEmpty } from "@rimelight/ui/components/empty/RLEmpty.tsx";
+import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 
 /** Small, dependency-free primitives so every dashboard view looks and behaves the same. */
 
@@ -26,11 +31,14 @@ export const PageHeader: Component<{
 );
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
-const variants: Record<ButtonVariant, string> = {
-  primary: "bg-primary-500 text-white hover:bg-primary-600 border-transparent",
-  secondary: "border-default bg-default text-highlighted hover:bg-elevated",
-  ghost: "border-transparent text-toned hover:bg-elevated hover:text-highlighted",
-  danger: "border-transparent bg-error-500 text-white hover:bg-error-600",
+const buttonStyle: Record<
+  ButtonVariant,
+  { variant: "solid" | "outline" | "ghost"; color: "primary" | "neutral" | "error" }
+> = {
+  primary: { variant: "solid", color: "primary" },
+  secondary: { variant: "outline", color: "neutral" },
+  ghost: { variant: "ghost", color: "neutral" },
+  danger: { variant: "solid", color: "error" },
 };
 
 export const Button: Component<{
@@ -45,42 +53,23 @@ export const Button: Component<{
   class?: string;
   children?: JSX.Element;
 }> = (props) => {
-  const cls = () =>
-    `inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 ${variants[props.variant ?? "secondary"]} ${props.class ?? ""}`;
-  const inner = () => (
-    <>
-      <Show
-        when={props.loading}
-        fallback={
-          <Show when={props.icon}>
-            <span class={`${props.icon} size-4`} />
-          </Show>
-        }
-      >
-        <span class="i-lucide-loader-circle size-4 animate-spin" />
-      </Show>
-      {props.children}
-    </>
-  );
+  const style = () => buttonStyle[props.variant ?? "secondary"];
   return (
-    <Show
-      when={props.href}
-      fallback={
-        <button
-          type={props.type ?? "button"}
-          class={cls()}
-          title={props.title}
-          disabled={props.disabled || props.loading}
-          onClick={(e) => props.onClick?.(e)}
-        >
-          {inner()}
-        </button>
-      }
+    <RLButton
+      size="sm"
+      variant={style().variant}
+      color={style().color}
+      leadingIcon={props.icon}
+      loading={props.loading}
+      disabled={props.disabled}
+      href={props.href}
+      type={props.type ?? "button"}
+      title={props.title}
+      class={props.class}
+      onClick={(e: MouseEvent) => props.onClick?.(e)}
     >
-      <a href={props.href} class={cls()} title={props.title}>
-        {inner()}
-      </a>
-    </Show>
+      {props.children}
+    </RLButton>
   );
 };
 
@@ -92,38 +81,17 @@ export const Modal: Component<{
   footer?: JSX.Element;
   wide?: boolean;
 }> = (props) => (
-  <Show when={props.open}>
-    <Portal>
-      <div
-        class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-[10vh]"
-        onClick={props.onClose}
-      >
-        <div
-          role="dialog"
-          aria-modal="true"
-          class={`w-full ${props.wide ? "max-w-4xl" : "max-w-lg"} rounded-xl border border-default bg-default shadow-2xl`}
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.key === "Escape" && props.onClose()}
-        >
-          <div class="flex items-center justify-between border-b border-default px-5 py-3">
-            <h2 class="font-semibold text-highlighted">{props.title}</h2>
-            <button
-              type="button"
-              aria-label="Close"
-              class="i-lucide-x size-4 text-muted hover:text-highlighted"
-              onClick={props.onClose}
-            />
-          </div>
-          <div class="px-5 py-4">{props.children}</div>
-          <Show when={props.footer}>
-            <div class="flex justify-end gap-2 border-t border-default px-5 py-3">
-              {props.footer}
-            </div>
-          </Show>
-        </div>
-      </div>
-    </Portal>
-  </Show>
+  <RLModal
+    open={props.open}
+    title={props.title}
+    onOpenChange={(next: boolean) => {
+      if (!next) props.onClose();
+    }}
+    footer={props.footer}
+    ui={{ content: props.wide ? "max-w-4xl" : "max-w-lg" }}
+  >
+    {props.children}
+  </RLModal>
 );
 
 export const Empty: Component<{
@@ -132,35 +100,33 @@ export const Empty: Component<{
   description?: string;
   action?: JSX.Element;
 }> = (props) => (
-  <div class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-default px-6 py-14 text-center">
-    <span class={`${props.icon ?? "i-lucide-inbox"} size-8 text-muted`} />
-    <p class="font-medium text-highlighted">{props.title}</p>
-    <Show when={props.description}>
-      <p class="max-w-sm text-sm text-muted">{props.description}</p>
-    </Show>
-    <Show when={props.action}>
-      <div class="mt-2">{props.action}</div>
-    </Show>
-  </div>
+  <RLEmpty
+    icon={props.icon ?? "i-lucide-inbox"}
+    title={props.title}
+    {...(props.description ? { description: props.description } : {})}
+    actionsSlot={props.action}
+  />
 );
 
-const statusStyle: Record<string, string> = {
-  published: "bg-success-500/10 text-success-600",
-  draft: "bg-neutral-500/10 text-toned",
-  scheduled: "bg-info-500/10 text-info-600",
-  archived: "bg-error-500/10 text-error-600",
-  pending: "bg-warning-500/10 text-warning-600",
-  approved: "bg-success-500/10 text-success-600",
-  rejected: "bg-error-500/10 text-error-600",
+const statusColor: Record<string, "success" | "neutral" | "info" | "error" | "warning"> = {
+  published: "success",
+  draft: "neutral",
+  scheduled: "info",
+  archived: "error",
+  pending: "warning",
+  approved: "success",
+  rejected: "error",
 };
 
 export const StatusBadge: Component<{ status: string; changed?: boolean }> = (props) => (
   <span class="inline-flex items-center gap-1">
-    <span
-      class={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${statusStyle[props.status] ?? statusStyle["draft"]}`}
-    >
-      {props.status}
-    </span>
+    <RLBadge
+      size="sm"
+      variant="subtle"
+      color={statusColor[props.status] ?? "neutral"}
+      label={props.status}
+      class="capitalize"
+    />
     <Show when={props.changed}>
       <span class="size-1.5 rounded-full bg-warning-500" title="Unpublished changes" />
     </Show>
@@ -170,13 +136,9 @@ export const StatusBadge: Component<{ status: string; changed?: boolean }> = (pr
 export const Field: Component<{ label: string; children: JSX.Element; hint?: string }> = (
   props,
 ) => (
-  <label class="flex flex-col gap-1">
-    <span class="text-xs font-medium text-toned">{props.label}</span>
+  <RLFormField label={props.label} {...(props.hint ? { description: props.hint } : {})}>
     {props.children}
-    <Show when={props.hint}>
-      <span class="text-[11px] text-muted">{props.hint}</span>
-    </Show>
-  </label>
+  </RLFormField>
 );
 
 export function formatDate(value: Date | string | null | undefined, withTime = false): string {

@@ -5,6 +5,12 @@ import { useDashboard } from "../context";
 import { MediaPicker } from "../views/Media";
 import { InlineText } from "../../editor/InlineText";
 import { toRichText } from "../../core/richtext";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLCollapsible } from "@rimelight/ui/components/collapsible/RLCollapsible.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 
 /**
  * One input for any field type. Used by the entry properties panel, the block inspector and the
@@ -19,6 +25,7 @@ export interface FieldInputProps {
   locale?: string;
 }
 
+/** Only for composite boxes that wrap several native pieces (the tag chips). */
 export const inputClass =
   "w-full rounded-md border border-default bg-default px-2.5 py-1.5 text-sm text-highlighted outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/40 disabled:opacity-60";
 
@@ -56,16 +63,16 @@ export const FieldInput: Component<FieldInputProps> = (props) => {
           <span class="flex gap-1">
             <For each={locales}>
               {(l) => (
-                <button
-                  type="button"
-                  class={`rounded px-1.5 text-[10px] uppercase ${locale() === l ? "bg-primary-500/15 text-primary-500" : "text-muted"}`}
-                  onClick={(e) => {
+                <RLButton
+                  size="xs"
+                  variant={locale() === l ? "soft" : "ghost"}
+                  color={locale() === l ? "primary" : "neutral"}
+                  label={l.toUpperCase()}
+                  onClick={(e: MouseEvent) => {
                     e.preventDefault();
                     setLocale(l);
                   }}
-                >
-                  {l}
-                </button>
+                />
               )}
             </For>
           </span>
@@ -124,8 +131,7 @@ const Control: Component<{
       );
     case "textarea":
       return (
-        <textarea
-          class={`${inputClass} min-h-20 resize-y`}
+        <RLTextarea
           value={text()}
           disabled={props.readOnly}
           {...(f().max !== undefined ? { maxLength: f().max } : {})}
@@ -134,9 +140,8 @@ const Control: Component<{
       );
     case "number":
       return (
-        <input
+        <RLInput
           type="number"
-          class={inputClass}
           value={text()}
           min={f().min}
           max={f().max}
@@ -148,26 +153,25 @@ const Control: Component<{
       );
     case "boolean":
       return (
-        <input
-          type="checkbox"
-          class="size-4 accent-primary-500"
+        <RLCheckbox
+          as="div"
           checked={!!props.value}
           disabled={props.readOnly}
-          onChange={(e) => props.onChange(e.currentTarget.checked)}
+          onCheckedChange={(checked) => props.onChange(checked)}
         />
       );
     case "date":
     case "datetime":
       return (
-        <input
+        <RLInput
           type={f().type === "date" ? "date" : "datetime-local"}
-          class={inputClass}
           value={text().slice(0, f().type === "date" ? 10 : 16)}
           disabled={props.readOnly}
           onInput={(e) => props.onChange(e.currentTarget.value || null)}
         />
       );
     case "color":
+      // Native swatch: the design system has no colour-input primitive.
       return (
         <input
           type="color"
@@ -179,17 +183,18 @@ const Control: Component<{
       );
     case "select":
       return (
-        <select
-          class={inputClass}
+        <RLSelect
           value={text()}
           disabled={props.readOnly}
+          items={[
+            { label: "—", value: "" },
+            ...(f().options ?? []).map((o) => ({
+              label: resolveLabel(o.label) || o.value,
+              value: o.value,
+            })),
+          ]}
           onChange={(e) => props.onChange(e.currentTarget.value || null)}
-        >
-          <option value="">—</option>
-          <For each={f().options ?? []}>
-            {(o) => <option value={o.value}>{resolveLabel(o.label) || o.value}</option>}
-          </For>
-        </select>
+        />
       );
     case "multiselect":
       return (
@@ -198,19 +203,19 @@ const Control: Component<{
             {(o) => {
               const selected = () => Array.isArray(props.value) && props.value.includes(o.value);
               return (
-                <button
-                  type="button"
+                <RLButton
+                  size="xs"
+                  variant={selected() ? "soft" : "outline"}
+                  color={selected() ? "primary" : "neutral"}
                   disabled={props.readOnly}
-                  class={`rounded-full border px-2.5 py-0.5 text-xs ${selected() ? "border-primary-500 bg-primary-500/10 text-primary-500" : "border-default text-toned"}`}
+                  label={resolveLabel(o.label) || o.value}
                   onClick={() => {
                     const cur = Array.isArray(props.value) ? (props.value as string[]) : [];
                     props.onChange(
                       selected() ? cur.filter((v) => v !== o.value) : [...cur, o.value],
                     );
                   }}
-                >
-                  {resolveLabel(o.label) || o.value}
-                </button>
+                />
               );
             }}
           </For>
@@ -249,9 +254,8 @@ const Control: Component<{
       return <JsonInput value={props.value} onChange={props.onChange} readOnly={props.readOnly} />;
     default:
       return (
-        <input
+        <RLInput
           type={f().type === "email" ? "email" : f().type === "url" ? "url" : "text"}
-          class={inputClass}
           value={text()}
           {...(f().pattern ? { pattern: f().pattern } : {})}
           {...(f().max !== undefined ? { maxLength: f().max } : {})}
@@ -280,13 +284,14 @@ const TagsInput: Component<{
           <span class="inline-flex items-center gap-1 rounded bg-elevated px-1.5 text-xs">
             {tag}
             <Show when={!props.readOnly}>
-              <button
-                type="button"
-                class="text-muted hover:text-error-500"
+              <RLButton
+                size="xs"
+                variant="ghost"
+                color="neutral"
+                icon="i-lucide-x"
+                aria-label={`Remove ${tag}`}
                 onClick={() => props.onChange(props.value.filter((t) => t !== tag))}
-              >
-                ×
-              </button>
+              />
             </Show>
           </span>
         )}
@@ -320,11 +325,10 @@ const CurrencyInput: Component<{
   const currency = () => props.value?.currency ?? props.field.currency ?? "USD";
   return (
     <div class="flex gap-2">
-      <input
+      <RLInput
         type="number"
         step="0.01"
         min="0"
-        class={inputClass}
         disabled={props.readOnly}
         // Stored in minor units (cents) to avoid float rounding.
         value={props.value?.amount == null ? "" : (props.value.amount / 100).toFixed(2)}
@@ -336,8 +340,8 @@ const CurrencyInput: Component<{
           )
         }
       />
-      <input
-        class={`${inputClass} w-20 uppercase`}
+      <RLInput
+        class="w-20 uppercase"
         maxlength={3}
         value={currency()}
         disabled={props.readOnly}
@@ -370,21 +374,19 @@ const MediaInput: Component<{
         />
       </Show>
       <div class="flex gap-2">
-        <input
-          class={inputClass}
+        <RLInput
           value={src()}
           placeholder="https://… or pick from library"
           disabled={props.readOnly}
           onInput={(e) => props.onChange(e.currentTarget.value)}
         />
-        <button
-          type="button"
+        <RLButton
+          variant="outline"
+          color="neutral"
+          label="Browse"
           disabled={props.readOnly}
-          class="shrink-0 rounded-md border border-default px-2.5 text-xs hover:bg-elevated"
           onClick={() => setOpen(true)}
-        >
-          Browse
-        </button>
+        />
       </div>
       <MediaPicker
         open={open()}
@@ -456,21 +458,21 @@ const ReferenceInput: Component<{
               <span class="i-lucide-file-text size-3" />
               {labels()[id] ?? id.slice(0, 8)}
               <Show when={!props.readOnly}>
-                <button
-                  type="button"
-                  class="text-muted hover:text-error-500"
+                <RLButton
+                  size="xs"
+                  variant="ghost"
+                  color="neutral"
+                  icon="i-lucide-x"
+                  aria-label="Remove reference"
                   onClick={() => props.onChange(many() ? ids().filter((i) => i !== id) : null)}
-                >
-                  ×
-                </button>
+                />
               </Show>
             </span>
           )}
         </For>
       </div>
       <Show when={!props.readOnly && (many() || ids().length === 0)}>
-        <input
-          class={inputClass}
+        <RLInput
           placeholder="Search entries…"
           value={query()}
           onInput={(e) => void search(e.currentTarget.value)}
@@ -480,14 +482,14 @@ const ReferenceInput: Component<{
         <div class="absolute top-full z-20 mt-1 w-full rounded-md border border-default bg-default shadow-lg">
           <For each={results()}>
             {(r) => (
-              <button
-                type="button"
-                class="flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-elevated"
+              <RLButton
+                variant="ghost"
+                color="neutral"
+                class="w-full justify-between"
+                label={r.excerptTitle}
+                trailing={<span class="text-xs text-muted">{r.collection}</span>}
                 onClick={() => pick(r)}
-              >
-                <span>{r.excerptTitle}</span>
-                <span class="text-xs text-muted">{r.collection}</span>
-              </button>
+              />
             )}
           </For>
         </div>
@@ -504,8 +506,8 @@ const JsonInput: Component<{
   const [error, setError] = createSignal<string | null>(null);
   return (
     <div class="flex flex-col gap-1">
-      <textarea
-        class={`${inputClass} min-h-28 font-mono text-xs`}
+      <RLTextarea
+        class="font-mono text-xs"
         disabled={props.readOnly}
         value={props.value === undefined ? "" : JSON.stringify(props.value, null, 2)}
         onChange={(e) => {
@@ -561,12 +563,16 @@ export const FieldGroups: Component<{
       <For each={grouped()}>
         {([group, fields]) => (
           <Show when={group} fallback={fieldList(fields)}>
-            <details open={props.groups?.[group]?.defaultOpen !== false}>
-              <summary class="mb-2 cursor-pointer select-none text-[11px] font-semibold uppercase tracking-wide text-muted">
-                {resolveLabel(props.groups?.[group]?.label as any) || group}
-              </summary>
+            <RLCollapsible
+              defaultOpen={props.groups?.[group]?.defaultOpen !== false}
+              trigger={
+                <span class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
+                  {resolveLabel(props.groups?.[group]?.label as any) || group}
+                </span>
+              }
+            >
               {fieldList(fields)}
-            </details>
+            </RLCollapsible>
           </Show>
         )}
       </For>

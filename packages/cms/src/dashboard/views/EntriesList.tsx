@@ -1,8 +1,19 @@
-import { For, Show, createEffect, createMemo, createSignal, type Component } from "solid-js";
+import {
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  untrack,
+  type Component,
+} from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
 import type { EntrySummary } from "../../services/entries";
 import { useDashboard } from "../context";
-import { inputClass } from "../fields/FieldInput";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTable, type TableColumn } from "@rimelight/ui/components/table/RLTable.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import {
   Button,
   Empty,
@@ -90,7 +101,9 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
     () => props.collection,
     (_, prev) => {
       if (prev !== undefined)
-        update({ status: "all", q: "", trash: false, offset: 0, sort: current.sort });
+        untrack(() =>
+          update({ status: "all", q: "", trash: false, offset: 0, sort: current.sort }),
+        );
     },
   );
 
@@ -104,6 +117,80 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
   );
 
   const depth = (e: EntrySummary) => (hierarchical() ? e.slug.split("/").length - 1 : 0);
+
+  const tableColumns = (): TableColumn<EntrySummary>[] => [
+    {
+      id: "title",
+      header: "Title",
+      cell: ({ row }) => (
+        <a
+          href={href(`/e/${row.original.id}`)}
+          class="flex flex-col"
+          style={{ "padding-left": `${depth(row.original) * 16}px` }}
+        >
+          <span class="font-medium text-highlighted">{row.original.excerptTitle}</span>
+          <span class="font-mono text-[11px] text-muted">/{row.original.slug}</span>
+        </a>
+      ),
+    },
+    ...(!props.collection
+      ? [
+          {
+            id: "type",
+            header: "Type",
+            cell: ({ row }: { row: { original: EntrySummary } }) => (
+              <TypeLabel slug={row.original.collection} />
+            ),
+          },
+        ]
+      : []),
+    ...fieldColumns().map(([key, f]) => ({
+      id: `field:${key}`,
+      header: resolveLabel(f.label),
+      meta: { class: { td: "text-toned" } },
+      cell: ({ row }: { row: { original: EntrySummary } }) =>
+        formatValue((row.original as any).published?.properties?.[key], f.type),
+    })),
+    {
+      id: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <StatusBadge status={row.original.status} changed={row.original.hasUnpublishedChanges} />
+      ),
+    },
+    {
+      id: "updated",
+      header: "Updated",
+      meta: { class: { th: "text-right", td: "text-right text-xs text-muted" } },
+      cell: ({ row }) => relativeTime(row.original.updatedAt ?? row.original.createdAt),
+    },
+    ...(trash()
+      ? [
+          {
+            id: "restore",
+            header: "",
+            meta: { class: { td: "text-right" } },
+            cell: ({ row }: { row: { original: EntrySummary } }) => (
+              <Button
+                variant="ghost"
+                icon="i-lucide-undo-2"
+                onClick={async () => {
+                  try {
+                    await api.entries.restore(row.original.id);
+                    toast("Restored", "success");
+                    void list.reload();
+                  } catch (err) {
+                    toast((err as Error).message, "error");
+                  }
+                }}
+              >
+                Restore
+              </Button>
+            ),
+          },
+        ]
+      : []),
+  ];
 
   return (
     <div>
@@ -163,22 +250,17 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
         </div>
         <div class="flex flex-wrap items-center gap-3">
           <Show when={!trash()}>
-            <div class="flex rounded-md border border-default p-0.5">
-              <For each={STATUSES}>
-                {(s) => (
-                  <button
-                    type="button"
-                    class={`rounded px-2.5 py-1 text-xs capitalize ${status() === s ? "bg-elevated font-medium text-highlighted" : "text-muted"}`}
-                    onClick={() => setStatus(s)}
-                  >
-                    {s}
-                  </button>
-                )}
-              </For>
-            </div>
+            <RLTabs
+              items={STATUSES.map((s) => ({ label: s[0]!.toUpperCase() + s.slice(1), value: s }))}
+              value={status()}
+              onChange={(value: string) => setStatus(value as (typeof STATUSES)[number])}
+              content={false}
+              size="sm"
+              variant="pill"
+            />
           </Show>
-          <input
-            class={`${inputClass} max-w-xs`}
+          <RLInput
+            class="max-w-xs"
             placeholder="Search title or slug…"
             value={q()}
             onInput={(e) => {
@@ -188,19 +270,18 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
               searchTimer = setTimeout(() => update({ q: value, offset: 0 }), 250);
             }}
           />
-          <select
-            class={`${inputClass} w-auto`}
+          <RLSelect
             aria-label="Sort"
             value={query().sort ?? defaultSort()}
+            items={[
+              ...(hierarchical() ? [{ label: "Tree order", value: "slug" }] : []),
+              ...SORTS.filter(([k]) => k !== "type" || !props.collection).map(([value, label]) => ({
+                label,
+                value,
+              })),
+            ]}
             onChange={(e) => update({ sort: e.currentTarget.value as Sort, offset: 0 })}
-          >
-            <Show when={hierarchical()}>
-              <option value="slug">Tree order</option>
-            </Show>
-            <For each={SORTS.filter(([k]) => k !== "type" || !props.collection)}>
-              {([value, label]) => <option value={value}>{label}</option>}
-            </For>
-          </select>
+          />
           <span class="ml-auto text-xs text-muted">{list.data()?.total ?? 0} entries</span>
         </div>
 
@@ -228,81 +309,7 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
               />
             }
           >
-            <div class="overflow-x-auto rounded-xl border border-default">
-              <table class="w-full text-sm">
-                <thead class="bg-elevated/60 text-left text-[11px] uppercase tracking-wide text-muted">
-                  <tr>
-                    <th class="px-4 py-2 font-medium">Title</th>
-                    <Show when={!props.collection}>
-                      <th class="px-4 py-2 font-medium">Type</th>
-                    </Show>
-                    <For each={fieldColumns()}>
-                      {([, f]) => <th class="px-4 py-2 font-medium">{resolveLabel(f.label)}</th>}
-                    </For>
-                    <th class="px-4 py-2 font-medium">Status</th>
-                    <th class="px-4 py-2 text-right font-medium">Updated</th>
-                    <Show when={trash()}>
-                      <th />
-                    </Show>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-default">
-                  <For each={list.data()!.entries}>
-                    {(e) => (
-                      <tr class="hover:bg-elevated/50">
-                        <td class="px-4 py-2">
-                          <a
-                            href={href(`/e/${e.id}`)}
-                            class="flex flex-col"
-                            style={{ "padding-left": `${depth(e) * 16}px` }}
-                          >
-                            <span class="font-medium text-highlighted">{e.excerptTitle}</span>
-                            <span class="font-mono text-[11px] text-muted">/{e.slug}</span>
-                          </a>
-                        </td>
-                        <Show when={!props.collection}>
-                          <td class="px-4 py-2">
-                            <TypeLabel slug={e.collection} />
-                          </td>
-                        </Show>
-                        <For each={fieldColumns()}>
-                          {([key, f]) => (
-                            <td class="px-4 py-2 text-toned">
-                              {formatValue((e as any).published?.properties?.[key], f.type)}
-                            </td>
-                          )}
-                        </For>
-                        <td class="px-4 py-2">
-                          <StatusBadge status={e.status} changed={e.hasUnpublishedChanges} />
-                        </td>
-                        <td class="px-4 py-2 text-right text-xs text-muted">
-                          {relativeTime(e.updatedAt ?? e.createdAt)}
-                        </td>
-                        <Show when={trash()}>
-                          <td class="px-4 py-2 text-right">
-                            <Button
-                              variant="ghost"
-                              icon="i-lucide-undo-2"
-                              onClick={async () => {
-                                try {
-                                  await api.entries.restore(e.id);
-                                  toast("Restored", "success");
-                                  void list.reload();
-                                } catch (err) {
-                                  toast((err as Error).message, "error");
-                                }
-                              }}
-                            >
-                              Restore
-                            </Button>
-                          </td>
-                        </Show>
-                      </tr>
-                    )}
-                  </For>
-                </tbody>
-              </table>
-            </div>
+            <RLTable data={list.data()!.entries} columns={tableColumns()} />
             <div class="flex justify-end gap-2">
               <Button
                 disabled={offset() === 0}
@@ -378,7 +385,8 @@ export const CreateEntryModal: Component<{
   createEffect(
     () => target(),
     (_, prev) => {
-      if (prev !== undefined) void templates.reload();
+      // One-time read of the new target; the loader itself is not meant to track it here.
+      if (prev !== undefined) untrack(() => void templates.reload());
     },
   );
 
@@ -430,27 +438,18 @@ export const CreateEntryModal: Component<{
       >
         <Show when={!props.collection}>
           <Field label="Type">
-            <select
-              class={inputClass}
+            <RLSelect
               value={target()}
+              items={collections().map((c) => ({ label: resolveLabel(c.label), value: c.slug }))}
               onChange={(e) => {
                 setPicked(e.currentTarget.value);
                 setTemplateId("");
               }}
-            >
-              <For each={collections()}>
-                {(c) => <option value={c.slug}>{resolveLabel(c.label)}</option>}
-              </For>
-            </select>
+            />
           </Field>
         </Show>
         <Field label="Title">
-          <input
-            class={inputClass}
-            value={title()}
-            autofocus
-            onInput={(e) => setTitle(e.currentTarget.value)}
-          />
+          <RLInput value={title()} autofocus onInput={(e) => setTitle(e.currentTarget.value)} />
         </Field>
         <Field
           label="Slug"
@@ -460,8 +459,8 @@ export const CreateEntryModal: Component<{
               : "Leave empty to derive from the title"
           }
         >
-          <input
-            class={`${inputClass} font-mono`}
+          <RLInput
+            class="font-mono"
             value={slug()}
             placeholder="auto"
             onInput={(e) => setSlug(e.currentTarget.value)}

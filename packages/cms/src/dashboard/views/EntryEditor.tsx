@@ -22,7 +22,12 @@ import { useDashboard } from "../context";
 import { RichTextProvider, useRichText } from "../../solid/blocks/inlines";
 import { RichEditingContext, useRichEditing } from "../../editor/rich-context";
 import { collectMentionIds } from "../../core/richtext";
-import { FieldGroups, inputClass } from "../fields/FieldInput";
+import { FieldGroups } from "../fields/FieldInput";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import {
   Button,
   Field,
@@ -282,15 +287,15 @@ const EditorWorkspace: Component<{
         <div class="ml-auto flex flex-wrap items-center gap-1">
           <Show when={collection()?.features.blocks !== false && !readOnly()}>
             <ToolbarGroup>
-              <button
-                type="button"
+              <RLButton
+                size="sm"
+                variant="ghost"
+                color="neutral"
                 title={`Add block (${formatShortcutKeys(ADD_BLOCK_SHORTCUT).join("+")})`}
-                class="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-toned hover:bg-elevated hover:text-highlighted"
+                leadingIcon="i-lucide-plus"
+                label="Add block"
                 onClick={() => editor.openInserter()}
-              >
-                <span class="i-lucide-plus size-4" />
-                Add block
-              </button>
+              />
             </ToolbarGroup>
           </Show>
           <ToolbarGroup>
@@ -481,17 +486,14 @@ const EditorWorkspace: Component<{
               <Show when={locales.length > 1}>
                 <label class="mb-2 flex w-fit items-center gap-2 text-xs text-muted">
                   Language
-                  <select
-                    class="rounded border border-default bg-default px-2 py-1 text-xs font-medium uppercase text-highlighted"
+                  <RLSelect
+                    size="sm"
                     value={locale()}
+                    items={locales.map((code) => ({ label: code.toUpperCase(), value: code }))}
                     onChange={(e) => {
                       setLocale(e.currentTarget.value);
                     }}
-                  >
-                    <For each={locales}>
-                      {(code) => <option value={code}>{code.toUpperCase()}</option>}
-                    </For>
-                  </select>
+                  />
                 </label>
               </Show>
               <TitleInput
@@ -534,25 +536,17 @@ const EditorWorkspace: Component<{
         <aside
           class={`${panelOpen() ? "flex" : "hidden"} w-80 shrink-0 flex-col border-l border-default xl:flex`}
         >
-          <div class="flex border-b border-default">
-            <For
-              each={
-                [
-                  ["entry", "Entry"],
-                  ["block", "Block"],
-                ] as const
-              }
-            >
-              {([key, label]) => (
-                <button
-                  type="button"
-                  class={`flex-1 py-2 text-xs font-medium ${tab() === key ? "border-b-2 border-primary-500 text-highlighted" : "text-muted"}`}
-                  onClick={() => setTab(key)}
-                >
-                  {label}
-                </button>
-              )}
-            </For>
+          <div class="border-b border-default px-4">
+            <RLTabs
+              items={[
+                { label: "Entry", value: "entry" },
+                { label: "Block", value: "block" },
+              ]}
+              value={tab()}
+              onChange={(value: string) => setTab(value as "entry" | "block")}
+              content={false}
+              size="sm"
+            />
           </div>
           <div class="min-h-0 flex-1 overflow-y-auto p-4">
             <Show when={tab() === "entry"}>
@@ -641,8 +635,9 @@ const TitleInput: Component<{
   onSave: (t: Record<string, string>) => void;
 }> = (props) => {
   return (
-    <input
-      class="w-full bg-transparent text-4xl font-bold text-highlighted outline-none placeholder:text-muted/50"
+    <RLInput
+      variant="ghost"
+      class="text-4xl font-bold"
       placeholder="Untitled"
       value={props.entry.title[props.locale] ?? resolveLabel(props.entry.title)}
       disabled={props.readOnly}
@@ -675,16 +670,15 @@ const EntrySettings: Component<{
   return (
     <div class="flex flex-col gap-5">
       <Field label="Slug">
-        <input
-          class={`${inputClass} font-mono text-xs`}
+        <RLInput
+          class="font-mono text-xs"
           value={props.entry.slug}
           disabled={props.readOnly}
           onChange={(e) => void props.saveMeta({ slug: e.currentTarget.value })}
         />
       </Field>
       <Field label="Description">
-        <textarea
-          class={`${inputClass} min-h-16`}
+        <RLTextarea
           value={props.entry.description?.[props.locale] ?? ""}
           disabled={props.readOnly}
           onChange={(e) =>
@@ -718,19 +712,15 @@ const EntrySettings: Component<{
           <div>Draft saved {relativeTime(props.entry.draftUpdatedAt)}</div>
         </Show>
         <Field label="Collection">
-          <select
-            class={inputClass}
+          <RLSelect
             value={props.entry.collection}
             disabled={props.readOnly}
+            items={collections().map((c) => ({ label: resolveLabel(c.label), value: c.slug }))}
             onChange={(e) =>
               confirm("Move this entry to another collection?") &&
               void props.saveMeta({ collection: e.currentTarget.value })
             }
-          >
-            <For each={collections()}>
-              {(c) => <option value={c.slug}>{resolveLabel(c.label)}</option>}
-            </For>
-          </select>
+          />
         </Field>
       </section>
 
@@ -795,14 +785,14 @@ const TermPicker: Component<{ entryId: string; taxonomy: string; readOnly: boole
           fallback={<span class="text-xs text-muted">No terms yet.</span>}
         >
           {(t) => (
-            <button
-              type="button"
+            <RLButton
+              size="xs"
+              variant={ids().has(t.id) ? "soft" : "outline"}
+              color={ids().has(t.id) ? "primary" : "neutral"}
               disabled={props.readOnly}
-              class={`rounded-full border px-2.5 py-0.5 text-xs ${ids().has(t.id) ? "border-primary-500 bg-primary-500/10 text-primary-500" : "border-default text-toned hover:bg-elevated"}`}
+              label={t.name}
               onClick={() => void toggle(t.id)}
-            >
-              {t.name}
-            </button>
+            />
           )}
         </For>
       </div>
@@ -837,10 +827,11 @@ const BylinePicker: Component<{
         {(credit, i) => (
           <div class="flex items-center gap-2 text-xs">
             <span class="flex-1 truncate text-highlighted">{name(credit.userId)}</span>
-            <select
-              class="rounded border border-default bg-default px-1 py-0.5"
+            <RLSelect
+              size="xs"
               value={credit.role}
               disabled={props.readOnly}
+              items={ROLES.map((r) => ({ label: r.replace("_", " "), value: r }))}
               onChange={(e) =>
                 props.onChange(
                   props.value.map((c, j) =>
@@ -848,12 +839,13 @@ const BylinePicker: Component<{
                   ),
                 )
               }
-            >
-              <For each={ROLES}>{(r) => <option value={r}>{r.replace("_", " ")}</option>}</For>
-            </select>
-            <button
-              type="button"
-              class="i-lucide-x size-3 text-muted"
+            />
+            <RLButton
+              size="xs"
+              variant="ghost"
+              color="neutral"
+              icon="i-lucide-x"
+              aria-label="Remove byline"
               disabled={props.readOnly}
               onClick={() => props.onChange(props.value.filter((_, j) => j !== i()))}
             />
@@ -861,9 +853,12 @@ const BylinePicker: Component<{
         )}
       </For>
       <Show when={!props.readOnly && available().length}>
-        <select
-          class={inputClass}
+        <RLSelect
           value=""
+          items={[
+            { label: "Add byline…", value: "" },
+            ...available().map((b) => ({ label: b.name, value: b.id })),
+          ]}
           onChange={(e) => {
             if (e.currentTarget.value)
               props.onChange([
@@ -876,10 +871,7 @@ const BylinePicker: Component<{
               ]);
             e.currentTarget.value = "";
           }}
-        >
-          <option value="">Add byline…</option>
-          <For each={available()}>{(b) => <option value={b.id}>{b.name}</option>}</For>
-        </select>
+        />
       </Show>
     </section>
   );
@@ -926,19 +918,18 @@ const IconButton: Component<{
   loading?: boolean;
   class?: string;
 }> = (props) => (
-  <button
-    type="button"
+  <RLButton
+    variant={props.active ? "soft" : "ghost"}
+    color={props.active ? "primary" : "neutral"}
     title={props.label}
     aria-label={props.label}
     aria-pressed={props.active === undefined ? undefined : props.active ? "true" : "false"}
-    disabled={props.disabled || props.loading}
-    class={`rounded-md p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-35 ${props.active ? "bg-primary-500/10 text-primary-500" : "text-toned hover:bg-elevated hover:text-highlighted"} ${props.class ?? ""}`}
+    disabled={props.disabled}
+    loading={props.loading}
+    icon={props.loading ? undefined : props.icon}
+    class={props.class}
     onClick={() => props.onClick()}
-  >
-    <span
-      class={`${props.loading ? "i-lucide-loader-circle animate-spin" : props.icon} block size-4`}
-    />
-  </button>
+  />
 );
 
 /** Autosave state. Click to save now (or retry after a failure). */
@@ -977,20 +968,21 @@ const SaveIndicator: Component<{ editor: BlockEditorState; readOnly: boolean }> 
   };
 
   return (
-    <button
-      type="button"
-      class={`ml-1 flex max-w-md items-center gap-1 truncate rounded px-1.5 py-0.5 text-xs hover:bg-elevated ${view().cls}`}
+    <RLButton
+      size="xs"
+      variant="ghost"
+      color="neutral"
+      class={`ml-1 max-w-md ${view().cls}`}
       title={
         props.editor.status() === "error"
           ? (props.editor.error() ?? "Save failed")
           : "Changes autosave as a draft · Ctrl+S to save now"
       }
       disabled={props.readOnly}
+      leadingIcon={view().icon}
+      label={view().text}
       onClick={() => void props.editor.flush()}
-    >
-      <span class={`${view().icon} size-3.5`} />
-      {view().text}
-    </button>
+    />
   );
 };
 
@@ -1227,9 +1219,8 @@ const ScheduleModal: Component<{
         label="Publish at (your local time)"
         hint="The current draft is published automatically at this time."
       >
-        <input
+        <RLInput
           type="datetime-local"
-          class={inputClass}
           value={value()}
           onInput={(e) => setValue(e.currentTarget.value)}
         />

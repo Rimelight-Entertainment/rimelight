@@ -1,6 +1,8 @@
 import { For, Show, createSignal, type Component } from "solid-js";
 import { useDashboard } from "../context";
-import { FieldInput, inputClass } from "../fields/FieldInput";
+import { FieldInput } from "../fields/FieldInput";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
 
 export const Bylines: Component = () => {
@@ -112,15 +114,14 @@ export const Bylines: Component = () => {
         <Show when={editing()}>
           <div class="flex flex-col gap-3">
             <Field label="Name">
-              <input
-                class={inputClass}
+              <RLInput
                 value={editing()!.name}
                 onInput={(e) => set({ name: e.currentTarget.value })}
               />
             </Field>
             <Field label="Slug">
-              <input
-                class={`${inputClass} font-mono`}
+              <RLInput
+                class="font-mono"
                 placeholder="auto"
                 value={editing()!.slug ?? ""}
                 onInput={(e) => set({ slug: e.currentTarget.value })}
@@ -133,22 +134,19 @@ export const Bylines: Component = () => {
               onChange={(v) => set({ avatar: v })}
             />
             <Field label="Bio">
-              <textarea
-                class={inputClass}
+              <RLTextarea
                 value={editing()!.bio ?? ""}
                 onInput={(e) => set({ bio: e.currentTarget.value })}
               />
             </Field>
             <Field label="Website">
-              <input
-                class={inputClass}
+              <RLInput
                 value={editing()!.websiteUrl ?? ""}
                 onInput={(e) => set({ websiteUrl: e.currentTarget.value })}
               />
             </Field>
             <Field label="Linked user id" hint="Optional: ties this byline to a sign-in account.">
-              <input
-                class={inputClass}
+              <RLInput
                 value={editing()!.userId ?? ""}
                 onInput={(e) => set({ userId: e.currentTarget.value || null })}
               />
@@ -156,8 +154,7 @@ export const Bylines: Component = () => {
             <For each={["twitter", "github", "bluesky", "youtube"]}>
               {(net) => (
                 <Field label={net}>
-                  <input
-                    class={inputClass}
+                  <RLInput
                     value={editing()!.socials?.[net] ?? ""}
                     onInput={(e) =>
                       set({ socials: { ...editing()!.socials, [net]: e.currentTarget.value } })

@@ -1,6 +1,6 @@
 import { Show, createSignal, type Component } from "solid-js";
 import { useDashboard } from "../context";
-import { inputClass } from "../fields/FieldInput";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { Button, Field, Loading, PageHeader, useLoader } from "../ui";
 
 export const Settings: Component = () => {
@@ -13,11 +13,7 @@ export const Settings: Component = () => {
 
   const text = (key: string, label: string, hint?: string) => (
     <Field label={label} {...(hint ? { hint } : {})}>
-      <input
-        class={inputClass}
-        value={s()?.[key] ?? ""}
-        onInput={(e) => set({ [key]: e.currentTarget.value })}
-      />
+      <RLInput value={s()?.[key] ?? ""} onInput={(e) => set({ [key]: e.currentTarget.value })} />
     </Field>
   );
 
@@ -64,16 +60,14 @@ export const Settings: Component = () => {
           <section class="flex flex-col gap-3">
             <h2 class="text-sm font-semibold text-highlighted">SEO</h2>
             <Field label="Title template" hint="%s is replaced with the page title">
-              <input
-                class={inputClass}
+              <RLInput
                 value={s()?.seo?.titleTemplate ?? ""}
                 onInput={(e) => set({ seo: { ...s().seo, titleTemplate: e.currentTarget.value } })}
               />
             </Field>
             <Field label="Max description length">
-              <input
+              <RLInput
                 type="number"
-                class={inputClass}
                 value={s()?.seo?.maxDescriptionLength ?? 160}
                 onInput={(e) =>
                   set({ seo: { ...s().seo, maxDescriptionLength: Number(e.currentTarget.value) } })

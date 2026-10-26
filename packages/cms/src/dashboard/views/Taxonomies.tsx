@@ -2,7 +2,12 @@ import { For, Show, createSignal, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
 import type { TaxonomyTerm } from "../../core/types/taxonomies";
 import { useDashboard } from "../context";
-import { inputClass } from "../fields/FieldInput";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
 
 export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
@@ -61,12 +66,13 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
         <nav class="flex w-44 shrink-0 flex-col gap-0.5">
           <For each={taxonomies.data()?.taxonomies ?? []}>
             {(t) => (
-              <a
+              <RLButton
                 href={href(`/taxonomies/${t.slug}`)}
-                class={`rounded-md px-2.5 py-1.5 text-sm ${active() === t.slug ? "bg-elevated font-medium text-highlighted" : "text-toned hover:bg-elevated"}`}
-              >
-                {resolveLabel(t.label)}
-              </a>
+                variant={active() === t.slug ? "soft" : "ghost"}
+                color="neutral"
+                class="justify-start"
+                label={resolveLabel(t.label)}
+              />
             )}
           </For>
           <Show when={available().length > 0}>
@@ -75,14 +81,15 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
             </div>
             <For each={available()}>
               {(p) => (
-                <button
-                  type="button"
+                <RLButton
+                  variant="ghost"
+                  color="neutral"
+                  class="justify-start"
                   title={p.summary}
                   onClick={() => void fromPreset(p.id)}
-                  class="rounded-md px-2.5 py-1.5 text-left text-sm text-muted hover:bg-elevated hover:text-highlighted"
                 >
                   + {resolveLabel(p.definition.label)}
-                </button>
+                </RLButton>
               )}
             </For>
           </Show>
@@ -123,27 +130,23 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
       >
         <div class="flex flex-col gap-3">
           <Field label="Name">
-            <input
-              class={inputClass}
+            <RLInput
               value={draft().label}
               onInput={(e) => setDraft({ ...draft(), label: e.currentTarget.value })}
             />
           </Field>
           <Field label="Slug" hint="Leave blank to generate from the name.">
-            <input
-              class={`${inputClass} font-mono`}
+            <RLInput
+              class="font-mono"
               value={draft().slug}
               onInput={(e) => setDraft({ ...draft(), slug: e.currentTarget.value })}
             />
           </Field>
-          <label class="flex items-center gap-2 text-sm text-toned">
-            <input
-              type="checkbox"
-              checked={draft().hierarchical}
-              onChange={(e) => setDraft({ ...draft(), hierarchical: e.currentTarget.checked })}
-            />
-            Allow nested terms (parent and child)
-          </label>
+          <RLCheckbox
+            label="Allow nested terms (parent and child)"
+            checked={draft().hierarchical}
+            onCheckedChange={(checked) => setDraft({ ...draft(), hierarchical: checked })}
+          />
         </div>
       </Modal>
     </div>
@@ -224,14 +227,20 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () 
                   <span class="flex-1 text-highlighted">{term.name}</span>
                   <span class="font-mono text-xs text-muted">{term.slug}</span>
                   <span class="w-10 text-right text-xs text-muted">{term.count}</span>
-                  <button
-                    type="button"
-                    class="i-lucide-pencil size-3.5 text-muted hover:text-highlighted"
+                  <RLButton
+                    variant="ghost"
+                    color="neutral"
+                    size="xs"
+                    icon="i-lucide-pencil"
+                    aria-label="Edit term"
                     onClick={() => setEditing({ ...term })}
                   />
-                  <button
-                    type="button"
-                    class="i-lucide-trash-2 size-3.5 text-muted hover:text-error-500"
+                  <RLButton
+                    variant="ghost"
+                    color="error"
+                    size="xs"
+                    icon="i-lucide-trash-2"
+                    aria-label="Delete term"
                     onClick={async () => {
                       if (!confirm(`Delete "${term.name}"? Child terms are deleted too.`)) return;
                       await api.taxonomies.deleteTerm(props.taxonomy, term.id);
@@ -257,41 +266,39 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () 
         <Show when={editing()}>
           <div class="flex flex-col gap-3">
             <Field label="Name">
-              <input
-                class={inputClass}
+              <RLInput
                 value={editing()!.name ?? ""}
                 onInput={(e) => setEditing({ ...editing()!, name: e.currentTarget.value })}
               />
             </Field>
             <Field label="Slug">
-              <input
-                class={`${inputClass} font-mono`}
+              <RLInput
+                class="font-mono"
                 placeholder="auto"
                 value={editing()!.slug ?? ""}
                 onInput={(e) => setEditing({ ...editing()!, slug: e.currentTarget.value })}
               />
             </Field>
             <Field label="Description">
-              <textarea
-                class={inputClass}
+              <RLTextarea
                 value={String(resolveLabel(editing()!.description as any) ?? "")}
                 onInput={(e) => setEditing({ ...editing()!, description: e.currentTarget.value })}
               />
             </Field>
             <Show when={props.hierarchical}>
               <Field label="Parent">
-                <select
-                  class={inputClass}
+                <RLSelect
                   value={editing()!.parentId ?? ""}
+                  items={[
+                    { label: "None", value: "" },
+                    ...(terms.data()?.terms ?? [])
+                      .filter((t) => t.id !== editing()!.id)
+                      .map((t) => ({ label: t.name ?? t.slug, value: t.id })),
+                  ]}
                   onChange={(e) =>
                     setEditing({ ...editing()!, parentId: e.currentTarget.value || null })
                   }
-                >
-                  <option value="">None</option>
-                  <For each={(terms.data()?.terms ?? []).filter((t) => t.id !== editing()!.id)}>
-                    {(t) => <option value={t.id}>{t.name}</option>}
-                  </For>
-                </select>
+                />
               </Field>
             </Show>
           </div>

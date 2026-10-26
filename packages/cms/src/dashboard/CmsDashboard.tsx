@@ -11,6 +11,7 @@ import { RichTextProvider } from "../solid/blocks/inlines";
 import { RichEditingContext, type RichEditing } from "../editor/rich-context";
 import { collectionColor } from "../core/collections/color";
 import { createApi } from "./api";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { DashboardContext, useDashboard, type DashboardContextValue, type Toast } from "./context";
 import { Overview } from "./views/Overview";
 import { EntriesList } from "./views/EntriesList";
@@ -194,10 +195,11 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
                 </Show>
                 <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
                   <div class="flex h-12 shrink-0 items-center gap-2 border-b border-default px-3 lg:hidden">
-                    <button
-                      type="button"
+                    <RLButton
+                      variant="ghost"
+                      color="neutral"
+                      icon="i-lucide-menu"
                       aria-label="Open menu"
-                      class="i-lucide-menu size-5"
                       onClick={() => setNavOpen(true)}
                     />
                     <span class="text-sm font-semibold">Rimelight CMS</span>
@@ -250,17 +252,14 @@ const Sidebar: Component<{ active: string }> = (props) => {
     p === "/" ? props.active === "/" : props.active === p || props.active.startsWith(`${p}/`);
 
   const item = (p: string, label: string, icon: string) => (
-    <a
+    <RLButton
       href={href(p)}
-      class={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
-        isActive(p)
-          ? "bg-primary-500/10 font-medium text-primary-500"
-          : "text-toned hover:bg-elevated hover:text-highlighted"
-      }`}
-    >
-      <span class={`${icon} size-4 shrink-0`} />
-      <span class="truncate">{label}</span>
-    </a>
+      variant={isActive(p) ? "soft" : "ghost"}
+      color={isActive(p) ? "primary" : "neutral"}
+      class="justify-start"
+      leadingIcon={icon}
+      label={label}
+    />
   );
   const heading = (label: string) => (
     <div class="px-2.5 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted">

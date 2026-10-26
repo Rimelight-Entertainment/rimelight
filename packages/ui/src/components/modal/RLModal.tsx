@@ -64,6 +64,8 @@ export const RLModal: Component<RLModalProps> = (props) => {
   const isDismissible = () => props.dismissible !== false;
   const unmountOnHide = () => props.unmountOnHide !== false;
   const usePortal = () => props.portal !== false;
+  // Resolved once, outside a reactive getter: Portal reads `mount` during the effect phase.
+  const portalMount = typeof props.portal === "object" ? (props.portal as any) : undefined;
 
   let contentRef: HTMLDivElement | undefined;
 
@@ -291,9 +293,7 @@ export const RLModal: Component<RLModalProps> = (props) => {
 
       <Show when={isOpen() || !unmountOnHide()}>
         <Show when={usePortal()} fallback={renderModalDialog()}>
-          <Portal mount={typeof props.portal === "object" ? (props.portal as any) : undefined}>
-            {renderModalDialog()}
-          </Portal>
+          <Portal mount={portalMount}>{renderModalDialog()}</Portal>
         </Show>
       </Show>
     </div>

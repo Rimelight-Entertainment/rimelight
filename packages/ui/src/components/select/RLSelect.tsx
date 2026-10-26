@@ -76,17 +76,15 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
     return val !== undefined ? String(val) : undefined;
   });
 
-  const optionsWithSelection = createMemo(() => {
+  // Computed per row so <For> keeps the same item objects when only the selection changes.
+  const isOptionSelected = (optionValue: string) => {
     const val = currentValue();
-    return normalizedItems().map((item) => {
-      const isSelected = Array.isArray(val)
-        ? val.map(String).includes(String(item.value))
-        : val !== undefined
-          ? String(val) === String(item.value)
-          : undefined;
-      return { item, isSelected };
-    });
-  });
+    return Array.isArray(val)
+      ? val.map(String).includes(optionValue)
+      : val !== undefined
+        ? String(val) === optionValue
+        : undefined;
+  };
 
   const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
     setInternalValue(e.currentTarget.value);
@@ -152,12 +150,12 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
         {props.children ? (
           props.children
         ) : (
-          <For each={optionsWithSelection()}>
-            {({ item, isSelected }) => (
+          <For each={normalizedItems()}>
+            {(item) => (
               <option
                 value={item.value}
                 disabled={item.disabled}
-                selected={isSelected}
+                selected={isOptionSelected(String(item.value))}
                 class="bg-default text-highlighted"
               >
                 {item.label}

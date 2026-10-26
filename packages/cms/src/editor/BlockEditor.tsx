@@ -19,6 +19,8 @@ import { resolveRichText, updateRichText } from "../core/richtext";
 import { BlockRenderer } from "../solid/BlockRenderer";
 import { InlineText, placeCaret } from "./InlineText";
 import { builtinEditors } from "./editors";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import type { BlockEditorState, InsertTarget } from "./store";
 
 /**
@@ -175,14 +177,14 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
         {canvas(ed.doc.blocks, null, 0)}
         <Show when={!ed.readOnly}>
           <div class="mt-6 flex justify-center">
-            <button
-              type="button"
-              class="flex items-center gap-1.5 rounded-full border border-dashed border-default px-4 py-1.5 text-sm text-muted transition-colors hover:border-primary-500 hover:bg-primary-500/5 hover:text-primary-500"
+            <RLButton
+              size="sm"
+              variant="outline"
+              color="neutral"
+              leadingIcon="i-lucide-plus"
+              label="Add block"
               onClick={() => ed.openInserter({ parentId: null, index: ed.doc.blocks.length })}
-            >
-              <span class="i-lucide-plus size-4" />
-              Add block
-            </button>
+            />
           </div>
         </Show>
       </Show>
@@ -197,28 +199,28 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
             {ed.selectedIds().length} blocks selected
           </span>
           <Show when={!ed.readOnly}>
-            <button
-              type="button"
-              class="rounded px-2 py-1 text-muted hover:bg-muted hover:text-highlighted"
+            <RLButton
+              size="xs"
+              variant="ghost"
+              color="neutral"
+              label="Duplicate"
               onClick={() => ed.duplicateSelected()}
-            >
-              Duplicate
-            </button>
-            <button
-              type="button"
-              class="rounded px-2 py-1 text-muted hover:bg-muted hover:text-error-500"
+            />
+            <RLButton
+              size="xs"
+              variant="ghost"
+              color="error"
+              label="Delete"
               onClick={() => ed.removeSelected()}
-            >
-              Delete
-            </button>
+            />
           </Show>
-          <button
-            type="button"
-            class="rounded px-2 py-1 text-muted hover:bg-muted hover:text-highlighted"
+          <RLButton
+            size="xs"
+            variant="ghost"
+            color="neutral"
+            label="Clear"
             onClick={() => ed.clearSelection()}
-          >
-            Clear
-          </button>
+          />
         </div>
       </Show>
 
@@ -660,23 +662,21 @@ const BlockMenu: Component<{
     fn: () => void,
     opts: { disabled?: boolean; danger?: boolean; hint?: string } = {},
   ) => (
-    <button
-      type="button"
+    <RLButton
+      variant="ghost"
+      color={opts.danger ? "error" : "neutral"}
+      class="w-full justify-start"
       role="menuitem"
       disabled={opts.disabled}
-      class={`flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-[13px] transition-colors hover:bg-elevated disabled:pointer-events-none disabled:opacity-40 ${opts.danger ? "text-error-500 hover:bg-error-500/10" : "text-highlighted"}`}
-      onClick={(e) => {
+      leadingIcon={icon}
+      label={label}
+      trailing={opts.hint ? <span class="text-[11px] text-muted">{opts.hint}</span> : undefined}
+      onClick={(e: MouseEvent) => {
         e.stopPropagation();
         fn();
         props.onClose();
       }}
-    >
-      <span class={`${icon} size-4 shrink-0 ${opts.danger ? "" : "text-muted"}`} />
-      <span class="flex-1">{label}</span>
-      <Show when={opts.hint}>
-        <span class="text-[11px] text-muted">{opts.hint}</span>
-      </Show>
-    </button>
+    />
   );
   const divider = () => <div class="my-1 border-t border-default" />;
 
@@ -841,9 +841,11 @@ const BlockPicker: Component<{
         >
           <div class="flex items-center gap-3 border-b border-default px-4 py-3">
             <span class="i-lucide-search size-4 shrink-0 text-muted" />
-            <input
-              ref={(node) => (input = node)}
-              class="min-w-0 flex-1 bg-transparent text-sm text-highlighted outline-none placeholder:text-muted"
+            <RLInput
+              ref={(node: HTMLInputElement) => (input = node)}
+              variant="ghost"
+              size="sm"
+              class="min-w-0 flex-1"
               placeholder={`${title()} — search blocks…`}
               value={query()}
               onInput={(e) => {

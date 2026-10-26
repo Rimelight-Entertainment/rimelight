@@ -4,7 +4,11 @@ import { collectionColor } from "../../core/collections/color";
 import { collectionPresets } from "../../core/collections/presets";
 import type { FieldDefinition, FieldType, ResolvedCollection } from "../../core/collections/types";
 import { useDashboard } from "../context";
-import { inputClass } from "../fields/FieldInput";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { Button, Field, Loading, PageHeader, useLoader } from "../ui";
 
 const FIELD_TYPES: FieldType[] = [
@@ -268,63 +272,67 @@ const SchemaForm: Component<{
           <For each={fields()}>
             {(f, i) => (
               <div class="grid grid-cols-12 items-start gap-2 rounded-lg border border-default p-3">
-                <input
-                  class={`${inputClass} col-span-3 font-mono text-xs`}
+                <RLInput
+                  class="col-span-3 font-mono text-xs"
                   placeholder="key"
                   value={f.key}
                   onInput={(e) => updateField(i(), { key: e.currentTarget.value })}
                 />
-                <input
-                  class={`${inputClass} col-span-4`}
+                <RLInput
+                  class="col-span-4"
                   placeholder="Label"
                   value={resolveLabel(f.label)}
                   onInput={(e) => updateField(i(), { label: e.currentTarget.value })}
                 />
-                <select
-                  class={`${inputClass} col-span-3`}
+                <RLSelect
+                  class="col-span-3"
                   value={f.type}
+                  items={FIELD_TYPES.map((t) => ({ label: t, value: t }))}
                   onChange={(e) => updateField(i(), { type: e.currentTarget.value as FieldType })}
-                >
-                  <For each={FIELD_TYPES}>{(t) => <option value={t}>{t}</option>}</For>
-                </select>
+                />
                 <div class="col-span-2 flex justify-end gap-1">
-                  <button
-                    type="button"
-                    class="i-lucide-arrow-up size-4 text-muted"
+                  <RLButton
+                    variant="ghost"
+                    color="neutral"
+                    size="xs"
+                    icon="i-lucide-arrow-up"
+                    aria-label="Move field up"
                     onClick={() => moveField(i(), -1)}
                   />
-                  <button
-                    type="button"
-                    class="i-lucide-arrow-down size-4 text-muted"
+                  <RLButton
+                    variant="ghost"
+                    color="neutral"
+                    size="xs"
+                    icon="i-lucide-arrow-down"
+                    aria-label="Move field down"
                     onClick={() => moveField(i(), 1)}
                   />
-                  <button
-                    type="button"
-                    class="i-lucide-trash-2 size-4 text-muted hover:text-error-500"
+                  <RLButton
+                    variant="ghost"
+                    color="error"
+                    size="xs"
+                    icon="i-lucide-trash-2"
+                    aria-label="Remove field"
                     onClick={() => setFields(fields().filter((_, j) => j !== i()))}
                   />
                 </div>
                 <div class="col-span-12 flex flex-wrap items-center gap-4 text-xs text-toned">
-                  <label class="flex items-center gap-1">
-                    <input
-                      type="checkbox"
-                      checked={!!f.required}
-                      onChange={(e) => updateField(i(), { required: e.currentTarget.checked })}
-                    />{" "}
-                    Required
-                  </label>
-                  <label class="flex items-center gap-1">
-                    <input
-                      type="checkbox"
-                      checked={!!f.translatable}
-                      onChange={(e) => updateField(i(), { translatable: e.currentTarget.checked })}
-                    />{" "}
-                    Translatable
-                  </label>
+                  <RLCheckbox
+                    size="sm"
+                    label="Required"
+                    checked={!!f.required}
+                    onCheckedChange={(checked) => updateField(i(), { required: checked })}
+                  />
+                  <RLCheckbox
+                    size="sm"
+                    label="Translatable"
+                    checked={!!f.translatable}
+                    onCheckedChange={(checked) => updateField(i(), { translatable: checked })}
+                  />
                   <label class="flex items-center gap-1">
                     Group{" "}
-                    <input
-                      class="w-28 rounded border border-default bg-default px-1.5 py-0.5"
+                    <RLInput
+                      class="w-28"
                       value={f.group ?? ""}
                       onInput={(e) => {
                         const val = e.currentTarget.value;
@@ -335,8 +343,8 @@ const SchemaForm: Component<{
                   <Show when={f.type === "select" || f.type === "multiselect"}>
                     <label class="flex flex-1 items-center gap-1">
                       Options
-                      <input
-                        class="flex-1 rounded border border-default bg-default px-1.5 py-0.5"
+                      <RLInput
+                        class="flex-1"
                         placeholder="comma,separated"
                         value={(f.options ?? []).map((o) => o.value).join(",")}
                         onChange={(e) =>
@@ -354,8 +362,8 @@ const SchemaForm: Component<{
                   <Show when={f.type === "reference" || f.type === "references"}>
                     <label class="flex flex-1 items-center gap-1">
                       Collections
-                      <input
-                        class="flex-1 rounded border border-default bg-default px-1.5 py-0.5"
+                      <RLInput
+                        class="flex-1"
                         placeholder="blog,wiki"
                         value={(f.collections ?? []).join(",")}
                         onChange={(e) =>
@@ -372,8 +380,8 @@ const SchemaForm: Component<{
                   <Show when={f.type === "currency"}>
                     <label class="flex items-center gap-1">
                       Currency{" "}
-                      <input
-                        class="w-16 rounded border border-default bg-default px-1.5 py-0.5 uppercase"
+                      <RLInput
+                        class="w-16 uppercase"
                         value={f.currency ?? "USD"}
                         onInput={(e) =>
                           updateField(i(), { currency: e.currentTarget.value.toUpperCase() })
@@ -400,15 +408,13 @@ const SchemaForm: Component<{
 
         <aside class="flex flex-col gap-4">
           <Field label="Name">
-            <input
-              class={inputClass}
+            <RLInput
               value={resolveLabel(def().label)}
               onInput={(e) => patch({ label: e.currentTarget.value })}
             />
           </Field>
           <Field label="Plural name">
-            <input
-              class={inputClass}
+            <RLInput
               value={resolveLabel(def().labelPlural)}
               onInput={(e) => patch({ labelPlural: e.currentTarget.value })}
             />
@@ -417,16 +423,15 @@ const SchemaForm: Component<{
             label="Slug"
             hint="Stored on every entry; changing it later orphans existing entries."
           >
-            <input
-              class={`${inputClass} font-mono`}
+            <RLInput
+              class="font-mono"
               value={def().slug}
               disabled={!props.isNew}
               onInput={(e) => patch({ slug: e.currentTarget.value })}
             />
           </Field>
           <Field label="Icon" hint="Any iconify class, e.g. i-lucide-shopping-bag">
-            <input
-              class={inputClass}
+            <RLInput
               value={def().icon ?? ""}
               onInput={(e) => patch({ icon: e.currentTarget.value })}
             />
@@ -442,8 +447,8 @@ const SchemaForm: Component<{
                 value={collectionColor(def().slug, def().color)}
                 onInput={(e) => patch({ color: e.currentTarget.value })}
               />
-              <input
-                class={`${inputClass} font-mono text-xs`}
+              <RLInput
+                class="font-mono text-xs"
                 placeholder={collectionColor(def().slug)}
                 value={def().color ?? ""}
                 onInput={(e) =>
@@ -462,29 +467,28 @@ const SchemaForm: Component<{
             </div>
           </Field>
           <Field label="Description">
-            <textarea
-              class={inputClass}
+            <RLTextarea
               value={resolveLabel(def().description)}
               onInput={(e) => patch({ description: e.currentTarget.value })}
             />
           </Field>
           <Field label="Kind">
-            <select
-              class={inputClass}
+            <RLSelect
               value={def().kind}
+              items={[
+                { label: "Document — many entries with content", value: "document" },
+                { label: "Data — many entries, fields only", value: "data" },
+                { label: "Singleton — exactly one entry", value: "singleton" },
+              ]}
               onChange={(e) => patch({ kind: e.currentTarget.value as any })}
-            >
-              <option value="document">Document — many entries with content</option>
-              <option value="data">Data — many entries, fields only</option>
-              <option value="singleton">Singleton — exactly one entry</option>
-            </select>
+            />
           </Field>
           <Field
             label="Public URL pattern"
             hint="e.g. /blog/{slug}. Leave empty for non-routable data."
           >
-            <input
-              class={`${inputClass} font-mono`}
+            <RLInput
+              class="font-mono"
               value={
                 typeof def().features.routable === "string"
                   ? (def().features.routable as string)
@@ -497,39 +501,25 @@ const SchemaForm: Component<{
             <span class="text-xs font-medium text-toned">Features</span>
             <For each={FEATURES}>
               {([key, label, hint]) => (
-                <label class="flex items-start gap-2 text-xs" title={hint}>
-                  <input
-                    type="checkbox"
-                    class="mt-0.5"
-                    checked={!!def().features[key]}
-                    onChange={(e) => setFeature(key, e.currentTarget.checked)}
-                  />
-                  <span>
-                    <span class="text-highlighted">{label}</span>
-                    <br />
-                    <span class="text-muted">{hint}</span>
-                  </span>
-                </label>
+                <RLCheckbox
+                  size="sm"
+                  title={hint}
+                  checked={!!def().features[key]}
+                  onCheckedChange={(checked) => setFeature(key, checked)}
+                  label={label}
+                  description={hint}
+                />
               )}
             </For>
-            <label class="flex items-start gap-2 text-xs">
-              <input
-                type="checkbox"
-                class="mt-0.5"
-                checked={!!def().features.ecommerce}
-                onChange={(e) =>
-                  setFeature(
-                    "ecommerce",
-                    e.currentTarget.checked ? { currency: "USD", trackInventory: true } : false,
-                  )
-                }
-              />
-              <span>
-                <span class="text-highlighted">Commerce</span>
-                <br />
-                <span class="text-muted">Products: price, inventory and variants fields.</span>
-              </span>
-            </label>
+            <RLCheckbox
+              size="sm"
+              label="Commerce"
+              description="Products: price, inventory and variants fields."
+              checked={!!def().features.ecommerce}
+              onCheckedChange={(checked) =>
+                setFeature("ecommerce", checked ? { currency: "USD", trackInventory: true } : false)
+              }
+            />
             <Show when={def().features.ecommerce && !fields().some((f) => f.type === "currency")}>
               <Button
                 icon="i-lucide-wand-sparkles"
@@ -545,8 +535,7 @@ const SchemaForm: Component<{
             </Show>
           </div>
           <Field label="Taxonomies" hint="Comma-separated, e.g. category, tag">
-            <input
-              class={inputClass}
+            <RLInput
               value={(def().features.taxonomies ?? []).join(", ")}
               onChange={(e) =>
                 setFeature(
@@ -560,10 +549,9 @@ const SchemaForm: Component<{
             />
           </Field>
           <Field label="Approvals required to publish">
-            <input
+            <RLInput
               type="number"
               min="0"
-              class={inputClass}
               value={def().workflow.minApprovals}
               onInput={(e) =>
                 patch({
@@ -572,18 +560,16 @@ const SchemaForm: Component<{
               }
             />
           </Field>
-          <label class="flex items-center gap-2 text-xs text-toned">
-            <input
-              type="checkbox"
-              checked={def().workflow.allowSelfApproval}
-              onChange={(e) =>
-                patch({
-                  workflow: { ...def().workflow, allowSelfApproval: e.currentTarget.checked },
-                })
-              }
-            />
-            Authors may approve their own changes
-          </label>
+          <RLCheckbox
+            size="sm"
+            label="Authors may approve their own changes"
+            checked={def().workflow.allowSelfApproval}
+            onCheckedChange={(checked) =>
+              patch({
+                workflow: { ...def().workflow, allowSelfApproval: checked },
+              })
+            }
+          />
         </aside>
       </div>
     </div>
