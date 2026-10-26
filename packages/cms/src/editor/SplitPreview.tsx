@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import type { BaseBlock } from "../core/types/blocks";
 import { normalizeBlocks } from "../core/blocks/tree";
 import { BlockRenderer } from "../solid/BlockRenderer";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 
 /**
  * Editor on the left, a live view-mode render of the page on the right, separated by a
@@ -141,28 +142,30 @@ export const PagePreview: Component<{
             }
           >
             {([key, icon, label]) => (
-              <button
-                type="button"
+              <RLButton
+                size="xs"
+                variant={device() === key ? "soft" : "ghost"}
+                color={device() === key ? "primary" : "neutral"}
+                icon={icon}
                 title={label}
                 aria-label={label}
                 aria-pressed={device() === key ? "true" : "false"}
-                class={`rounded p-1 ${device() === key ? "bg-elevated text-highlighted" : "text-muted hover:text-highlighted"}`}
                 onClick={() => {
                   setDevice(key);
                 }}
-              >
-                <span class={`${icon} block size-3.5`} />
-              </button>
+              />
             )}
           </For>
         </div>
         {props.actions}
         <Show when={props.onClose}>
-          <button
-            type="button"
+          <RLButton
+            size="xs"
+            variant="ghost"
+            color="neutral"
+            icon="i-lucide-x"
             title="Close preview"
             aria-label="Close preview"
-            class="i-lucide-x size-4 text-muted hover:text-highlighted"
             onClick={() => props.onClose?.()}
           />
         </Show>

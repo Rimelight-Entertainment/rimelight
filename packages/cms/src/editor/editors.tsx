@@ -1,12 +1,12 @@
 import { For, Show, type Component } from "solid-js";
 import type { BlockEditorProps } from "../core/blocks/registry";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 
 /**
  * Canvas editors for built-in blocks whose content isn't a single line of text. Everything
  * else about these blocks (caption, language, …) is edited in the inspector via `fields`.
  */
-
-const cell = "w-full min-w-24 bg-transparent px-2 py-1 text-sm outline-none focus:bg-primary-500/5";
 
 const TableEditor: Component<BlockEditorProps> = (props) => {
   const columns = () =>
@@ -42,17 +42,22 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
               {(col, i) => (
                 <th class="group/col border-b border-r border-default p-0 text-left font-semibold">
                   <div class="flex items-center">
-                    <input
-                      class={`${cell} font-semibold`}
+                    <RLInput
+                      variant="ghost"
+                      size="sm"
+                      class="min-w-24 font-semibold"
                       value={col.header}
                       disabled={props.readOnly}
                       onInput={(e) => setHeader(i(), e.currentTarget.value)}
                     />
                     <Show when={!props.readOnly && columns().length > 1}>
-                      <button
-                        type="button"
+                      <RLButton
+                        size="xs"
+                        variant="ghost"
+                        color="neutral"
+                        icon="i-lucide-x"
                         title="Remove column"
-                        class="i-lucide-x mr-1 size-3 opacity-0 group-hover/col:opacity-60"
+                        aria-label="Remove column"
                         onClick={() => removeColumn(col.key)}
                       />
                     </Show>
@@ -62,10 +67,13 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
             </For>
             <Show when={!props.readOnly}>
               <th class="w-8 border-b border-default">
-                <button
-                  type="button"
+                <RLButton
+                  size="xs"
+                  variant="ghost"
+                  color="neutral"
+                  icon="i-lucide-plus"
                   title="Add column"
-                  class="i-lucide-plus size-3.5 text-muted"
+                  aria-label="Add column"
                   onClick={addColumn}
                 />
               </th>
@@ -79,8 +87,10 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
                 <For each={columns()}>
                   {(col) => (
                     <td class="border-b border-r border-default p-0">
-                      <input
-                        class={cell}
+                      <RLInput
+                        variant="ghost"
+                        size="sm"
+                        class="min-w-24"
                         value={row[col.key] ?? ""}
                         disabled={props.readOnly}
                         onInput={(e) => setCell(r(), col.key, e.currentTarget.value)}
@@ -90,10 +100,13 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
                 </For>
                 <Show when={!props.readOnly}>
                   <td class="w-8 border-b border-default text-center">
-                    <button
-                      type="button"
+                    <RLButton
+                      size="xs"
+                      variant="ghost"
+                      color="error"
+                      icon="i-lucide-trash-2"
                       title="Remove row"
-                      class="i-lucide-trash-2 size-3 opacity-0 group-hover/row:opacity-60"
+                      aria-label="Remove row"
                       onClick={() => removeRow(r())}
                     />
                   </td>
@@ -104,13 +117,15 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
         </tbody>
       </table>
       <Show when={!props.readOnly}>
-        <button
-          type="button"
-          class="flex w-full items-center gap-1 px-2 py-1 text-xs text-muted hover:bg-elevated"
+        <RLButton
+          size="xs"
+          variant="ghost"
+          color="neutral"
+          block
+          leadingIcon="i-lucide-plus"
+          label="Row"
           onClick={addRow}
-        >
-          <span class="i-lucide-plus size-3" /> Row
-        </button>
+        />
       </Show>
     </div>
   );
@@ -119,15 +134,18 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
 const CodeEditor: Component<BlockEditorProps> = (props) => (
   <div class="overflow-hidden rounded-md border border-default bg-neutral-950">
     <div class="flex items-center justify-between border-b border-white/10 px-3 py-1 text-[11px] text-neutral-400">
-      <input
-        class="bg-transparent outline-none"
+      <RLInput
+        variant="ghost"
+        size="sm"
         value={props.block.props["filename"] ?? ""}
         placeholder="filename"
         disabled={props.readOnly}
         onInput={(e) => props.update({ filename: e.currentTarget.value })}
       />
-      <input
-        class="w-24 bg-transparent text-right outline-none"
+      <RLInput
+        variant="ghost"
+        size="sm"
+        class="w-24 text-right"
         value={props.block.props["language"] ?? ""}
         placeholder="language"
         disabled={props.readOnly}
@@ -174,8 +192,10 @@ const ImageEditor: Component<BlockEditorProps> = (props) => {
           class="max-h-96 rounded-md object-contain"
         />
       </Show>
-      <input
-        class="bg-transparent text-center text-xs text-muted outline-none"
+      <RLInput
+        variant="ghost"
+        size="sm"
+        class="text-center text-xs"
         placeholder="Caption"
         value={props.block.props["caption"] ?? ""}
         disabled={props.readOnly}

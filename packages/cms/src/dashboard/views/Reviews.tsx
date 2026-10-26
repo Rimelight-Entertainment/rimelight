@@ -1,5 +1,6 @@
 import { For, Show, createSignal, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { useDashboard } from "../context";
 import {
   Button,
@@ -155,8 +156,8 @@ export const Reviews: Component = () => {
         onClose={() => setComments(null)}
         footer={
           <div class="flex w-full gap-2">
-            <input
-              class="flex-1 rounded-md border border-default bg-default px-2 py-1 text-sm"
+            <RLInput
+              class="flex-1"
               value={draft()}
               onInput={(e) => setDraft(e.currentTarget.value)}
               placeholder="Write a comment…"

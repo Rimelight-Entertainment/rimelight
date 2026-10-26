@@ -1,5 +1,10 @@
 import { For, Show, type Component } from "solid-js";
-import { FieldGroups, inputClass } from "../dashboard/fields/FieldInput";
+import { FieldGroups } from "../dashboard/fields/FieldInput";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLCollapsible } from "@rimelight/ui/components/collapsible/RLCollapsible.tsx";
+import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { useDashboard } from "../dashboard/context";
 import { isAdmin } from "../auth/roles";
 import type { BlockEditorState } from "./store";
@@ -47,15 +52,17 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
           </Show>
 
           <Show when={user() && isAdmin(user()!)}>
-            <details class="border-t border-default pt-3">
-              <summary class="cursor-pointer text-[11px] font-semibold uppercase tracking-wide text-muted">
-                Access & locks
-              </summary>
+            <RLCollapsible
+              class="border-t border-default pt-3"
+              trigger={
+                <span class="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                  Access & locks
+                </span>
+              }
+            >
               <div class="mt-3 flex flex-col gap-3 text-xs">
-                <label class="flex flex-col gap-1">
-                  <span class="text-toned">Visible to roles (empty = everyone)</span>
-                  <input
-                    class={inputClass}
+                <RLFormField label="Visible to roles (empty = everyone)">
+                  <RLInput
                     value={(sel().block.allowedRoles ?? []).join(", ")}
                     placeholder="e.g. employee, admin"
                     onChange={(e) => {
@@ -69,38 +76,31 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
                       );
                     }}
                   />
-                </label>
-                <label class="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={!!sel().block.isTemplated}
-                    onChange={(e) =>
-                      props.editor.setBlockMeta(
-                        sel().block.id,
-                        e.currentTarget.checked ? { isTemplated: true } : {},
-                      )
-                    }
-                  />
-                  <span class="text-toned">Structural lock (can't be moved or deleted)</span>
-                </label>
-                <label class="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={sel().block.templatedProps === true}
-                    onChange={(e) =>
-                      props.editor.setBlockMeta(
-                        sel().block.id,
-                        e.currentTarget.checked ? { templatedProps: true } : {},
-                      )
-                    }
-                  />
-                  <span class="text-toned">Content lock (props can't be edited)</span>
-                </label>
+                </RLFormField>
+                <RLCheckbox
+                  size="sm"
+                  label="Structural lock (can't be moved or deleted)"
+                  checked={!!sel().block.isTemplated}
+                  onCheckedChange={(checked) =>
+                    props.editor.setBlockMeta(sel().block.id, checked ? { isTemplated: true } : {})
+                  }
+                />
+                <RLCheckbox
+                  size="sm"
+                  label="Content lock (props can't be edited)"
+                  checked={sel().block.templatedProps === true}
+                  onCheckedChange={(checked) =>
+                    props.editor.setBlockMeta(
+                      sel().block.id,
+                      checked ? { templatedProps: true } : {},
+                    )
+                  }
+                />
                 <span class="text-muted">
                   Locks apply to entries created from this content as a template.
                 </span>
               </div>
-            </details>
+            </RLCollapsible>
           </Show>
           <div class="flex gap-2 border-t border-default pt-3">
             <For
@@ -112,13 +112,14 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
               }
             >
               {([label, icon, fn]) => (
-                <button
-                  type="button"
-                  class="flex items-center gap-1 rounded border border-default px-2 py-1 text-xs hover:bg-elevated"
+                <RLButton
+                  size="xs"
+                  variant="outline"
+                  color="neutral"
+                  leadingIcon={icon}
+                  label={label}
                   onClick={fn}
-                >
-                  <span class={`${icon} size-3`} /> {label}
-                </button>
+                />
               )}
             </For>
           </div>

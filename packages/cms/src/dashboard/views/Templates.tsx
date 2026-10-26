@@ -5,7 +5,12 @@ import { createBlockEditor } from "../../editor/store";
 import { BlockEditor } from "../../editor/BlockEditor";
 import { BlockInspector } from "../../editor/BlockInspector";
 import { useDashboard } from "../context";
-import { FieldGroups, inputClass } from "../fields/FieldInput";
+import { FieldGroups } from "../fields/FieldInput";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
 
 /** Templates: reusable starting layouts + defaults + permissions within a collection. */
@@ -84,23 +89,17 @@ export const Templates: Component<{ id?: string }> = (props) => {
         >
           <div class="flex flex-col gap-3">
             <Field label="Title">
-              <input
-                class={inputClass}
-                value={title()}
-                onInput={(e) => setTitle(e.currentTarget.value)}
-              />
+              <RLInput value={title()} onInput={(e) => setTitle(e.currentTarget.value)} />
             </Field>
             <Field label="Collection">
-              <select
-                class={inputClass}
+              <RLSelect
                 value={collection()}
+                items={[
+                  { label: "Choose…", value: "" },
+                  ...collections().map((c) => ({ label: resolveLabel(c.label), value: c.slug })),
+                ]}
                 onChange={(e) => setCollection(e.currentTarget.value)}
-              >
-                <option value="">Choose…</option>
-                <For each={collections()}>
-                  {(c) => <option value={c.slug}>{resolveLabel(c.label)}</option>}
-                </For>
-              </select>
+              />
             </Field>
           </div>
         </Modal>
@@ -218,21 +217,16 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
           </div>
         </div>
         <aside class="w-80 shrink-0 overflow-y-auto border-l border-default">
-          <div class="flex border-b border-default">
-            <button
-              type="button"
-              class={`flex-1 py-2 text-xs ${tab() === "settings" ? "border-b-2 border-primary-500 font-medium" : "text-muted"}`}
-              onClick={() => setTab("settings")}
-            >
-              Template
-            </button>
-            <button
-              type="button"
-              class={`flex-1 py-2 text-xs ${tab() === "block" ? "border-b-2 border-primary-500 font-medium" : "text-muted"}`}
-              onClick={() => setTab("block")}
-            >
-              Block
-            </button>
+          <div class="border-b border-default px-4">
+            <RLTabs
+              items={[
+                { label: "Template", value: "settings" },
+                { label: "Block", value: "block" },
+              ]}
+              value={tab()}
+              onChange={(value: string) => setTab(value as "settings" | "block")}
+              content={false}
+            />
           </div>
           <div class="p-4">
             <Show when={tab() === "block"}>
@@ -241,8 +235,7 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
             <Show when={tab() === "settings"}>
               <div class="flex flex-col gap-3">
                 <Field label="Title">
-                  <input
-                    class={inputClass}
+                  <RLInput
                     value={resolveLabel(meta().title)}
                     onInput={(e) =>
                       setMeta({ ...meta(), title: { ...meta().title, en: e.currentTarget.value } })
@@ -250,8 +243,7 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
                   />
                 </Field>
                 <Field label="Description">
-                  <textarea
-                    class={inputClass}
+                  <RLTextarea
                     value={resolveLabel(meta().description)}
                     onInput={(e) =>
                       setMeta({ ...meta(), description: { en: e.currentTarget.value } })
@@ -264,8 +256,7 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
                 <For each={roleKeys}>
                   {([key, label]) => (
                     <Field label={label} hint="Empty = everyone">
-                      <input
-                        class={inputClass}
+                      <RLInput
                         value={csv(meta().rolePermissions?.[key])}
                         onChange={(e) =>
                           setMeta({
@@ -284,10 +275,9 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
                   Approval
                 </h3>
                 <Field label="Approvals required to publish">
-                  <input
+                  <RLInput
                     type="number"
                     min="0"
-                    class={inputClass}
                     value={meta().approvalRules?.minApprovals ?? 0}
                     onInput={(e) =>
                       setMeta({
@@ -300,22 +290,19 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
                     }
                   />
                 </Field>
-                <label class="flex items-center gap-2 text-xs text-toned">
-                  <input
-                    type="checkbox"
-                    checked={meta().approvalRules?.allowSelfApproval !== false}
-                    onChange={(e) =>
-                      setMeta({
-                        ...meta(),
-                        approvalRules: {
-                          ...meta().approvalRules,
-                          allowSelfApproval: e.currentTarget.checked,
-                        },
-                      })
-                    }
-                  />
-                  Authors may approve their own changes
-                </label>
+                <RLCheckbox
+                  label="Authors may approve their own changes"
+                  checked={meta().approvalRules?.allowSelfApproval !== false}
+                  onCheckedChange={(checked) =>
+                    setMeta({
+                      ...meta(),
+                      approvalRules: {
+                        ...meta().approvalRules,
+                        allowSelfApproval: checked,
+                      },
+                    })
+                  }
+                />
                 <Button variant="primary" onClick={() => void saveMeta()}>
                   Save settings
                 </Button>

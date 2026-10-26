@@ -1,6 +1,8 @@
 import { For, Show, createSignal, type Component } from "solid-js";
 import { useDashboard } from "../context";
-import { inputClass } from "../fields/FieldInput";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { Empty, Loading, Modal, PageHeader, useLoader } from "../ui";
 
 interface MediaFile {
@@ -21,6 +23,7 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
   const [type, setType] = createSignal("all");
   const [uploading, setUploading] = createSignal(false);
   const files = useLoader(() => api.media.list({ search: search(), type: type() }));
+  let fileInput: HTMLInputElement | undefined;
 
   const upload = async (list: FileList | null) => {
     if (!list?.length) return;
@@ -46,39 +49,44 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
       }}
     >
       <div class="flex flex-wrap items-center gap-2">
-        <input
-          class={`${inputClass} max-w-xs`}
+        <RLInput
+          class="max-w-xs"
           placeholder="Search files…"
           value={search()}
           onInput={(e) => setSearch(e.currentTarget.value)}
           onChange={() => void files.reload()}
         />
-        <select
-          class={`${inputClass} w-36`}
+        <RLSelect
+          class="w-36"
           value={type()}
+          items={[
+            { label: "All types", value: "all" },
+            { label: "Images", value: "images" },
+            { label: "Videos", value: "videos" },
+            { label: "Audio", value: "audio" },
+            { label: "Documents", value: "documents" },
+          ]}
           onChange={(e) => {
             setType(e.currentTarget.value);
             void files.reload();
           }}
+        />
+        <RLButton
+          class="ml-auto"
+          color="primary"
+          leadingIcon={uploading() ? "i-lucide-loader-circle" : "i-lucide-upload"}
+          loading={uploading()}
+          onClick={() => fileInput?.click()}
         >
-          <option value="all">All types</option>
-          <option value="images">Images</option>
-          <option value="videos">Videos</option>
-          <option value="audio">Audio</option>
-          <option value="documents">Documents</option>
-        </select>
-        <label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-600">
-          <span
-            class={`${uploading() ? "i-lucide-loader-circle animate-spin" : "i-lucide-upload"} size-4`}
-          />
           Upload
-          <input
-            type="file"
-            multiple
-            class="hidden"
-            onChange={(e) => void upload(e.currentTarget.files)}
-          />
-        </label>
+        </RLButton>
+        <input
+          ref={(el) => (fileInput = el)}
+          type="file"
+          multiple
+          class="hidden"
+          onChange={(e) => void upload(e.currentTarget.files)}
+        />
       </div>
       <Show
         when={!files.error()}
@@ -131,21 +139,25 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
                     </div>
                     <Show when={!props.onPick}>
                       <div class="absolute right-1 top-1 hidden gap-1 group-hover:flex">
-                        <button
-                          type="button"
+                        <RLButton
                           title="Copy URL"
-                          class="rounded bg-black/60 p-1 text-white"
+                          aria-label="Copy URL"
+                          icon="i-lucide-link"
+                          size="xs"
+                          color="neutral"
+                          variant="solid"
                           onClick={() => {
                             void navigator.clipboard.writeText(f.url);
                             toast("URL copied");
                           }}
-                        >
-                          <span class="i-lucide-link block size-3.5" />
-                        </button>
-                        <button
-                          type="button"
+                        />
+                        <RLButton
                           title="Delete"
-                          class="rounded bg-black/60 p-1 text-white"
+                          aria-label="Delete"
+                          icon="i-lucide-trash-2"
+                          size="xs"
+                          color="error"
+                          variant="solid"
                           onClick={async () => {
                             if (
                               !confirm(
@@ -156,9 +168,7 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
                             await api.media.remove(f.key);
                             void files.reload();
                           }}
-                        >
-                          <span class="i-lucide-trash-2 block size-3.5" />
-                        </button>
+                        />
                       </div>
                     </Show>
                   </div>

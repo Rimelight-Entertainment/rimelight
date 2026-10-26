@@ -10,6 +10,8 @@ import {
 import { Portal } from "@solidjs/web";
 import type { InlineNode } from "../core/types/inline";
 import { htmlToInline, inlineToHtml, mentionHtml, toInlineNodes, toPlainText } from "./inline";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { useRichEditing, type MentionCandidate } from "./rich-context";
 
 /**
@@ -481,19 +483,19 @@ const FormatToolbar: Component<{
   onPointer: (active: boolean) => void;
 }> = (props) => {
   const btn = (icon: string, label: string, fn: () => void) => (
-    <button
-      type="button"
+    <RLButton
+      size="xs"
+      variant="ghost"
+      color="neutral"
+      icon={icon}
       title={label}
       aria-label={label}
-      class="flex size-7 items-center justify-center rounded text-toned hover:bg-elevated hover:text-highlighted"
-      onMouseDown={(e) => {
+      onMouseDown={(e: MouseEvent) => {
         // Keep the text selection.
         e.preventDefault();
         fn();
       }}
-    >
-      <span class={`${icon} size-4`} />
-    </button>
+    />
   );
   return (
     <Portal>
@@ -567,30 +569,32 @@ const LinkPopover: Component<{
               </a>
               <Show when={!props.readOnly}>
                 <span class="mx-0.5 h-4 w-px bg-default" />
-                <button
-                  type="button"
-                  class="rounded px-2 py-1 text-toned hover:bg-elevated"
+                <RLButton
+                  size="xs"
+                  variant="ghost"
+                  color="neutral"
+                  label="Edit"
                   onClick={props.onEdit}
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
+                />
+                <RLButton
+                  size="xs"
+                  variant="ghost"
+                  color="error"
+                  icon="i-lucide-unlink"
                   title="Remove link"
                   aria-label="Remove link"
-                  class="flex size-6 items-center justify-center rounded text-muted hover:bg-elevated hover:text-error-500"
                   onClick={props.onRemove}
-                >
-                  <span class="i-lucide-unlink size-3.5" />
-                </button>
+                />
               </Show>
             </>
           }
         >
           <span class="i-lucide-link ml-1.5 size-3.5 shrink-0 text-muted" />
-          <input
-            ref={(el) => (input = el)}
-            class="w-60 bg-transparent px-1 py-1 text-xs text-highlighted outline-none placeholder:text-muted"
+          <RLInput
+            ref={(el: HTMLInputElement) => (input = el)}
+            variant="ghost"
+            size="sm"
+            class="w-60"
             placeholder="Paste or type a link…"
             value={url()}
             onInput={(e) => setUrl(e.currentTarget.value)}
@@ -604,24 +608,23 @@ const LinkPopover: Component<{
               }
             }}
           />
-          <button
-            type="button"
+          <RLButton
+            size="xs"
+            variant={newTab() ? "soft" : "ghost"}
+            color={newTab() ? "primary" : "neutral"}
+            icon="i-lucide-external-link"
             title="Open in a new tab"
             aria-pressed={newTab() ? "true" : "false"}
-            class={`flex size-6 items-center justify-center rounded ${newTab() ? "bg-primary-500/10 text-primary-500" : "text-muted hover:bg-elevated"}`}
             onClick={() => {
               setNewTab(!newTab());
             }}
-          >
-            <span class="i-lucide-external-link size-3.5" />
-          </button>
-          <button
-            type="button"
-            class="rounded bg-primary-500 px-2 py-1 font-medium text-white hover:bg-primary-600"
+          />
+          <RLButton
+            size="xs"
+            color="primary"
+            label="Save"
             onClick={() => props.onApply(url(), newTab())}
-          >
-            Save
-          </button>
+          />
         </Show>
       </div>
     </Portal>
@@ -681,9 +684,11 @@ const MentionPicker: Component<{
       >
         <div class="flex items-center gap-2 border-b border-default px-3 py-2">
           <span class="text-sm font-semibold text-muted">@</span>
-          <input
-            ref={(el) => (input = el)}
-            class="min-w-0 flex-1 bg-transparent text-sm text-highlighted outline-none placeholder:text-muted"
+          <RLInput
+            ref={(el: HTMLInputElement) => (input = el)}
+            variant="ghost"
+            size="sm"
+            class="min-w-0 flex-1"
             placeholder="Mention a page…"
             value={query()}
             onInput={(e) => {

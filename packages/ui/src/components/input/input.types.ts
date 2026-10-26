@@ -5,7 +5,16 @@ export interface RLInputProps {
   /**
    * Type of input element.
    */
-  type?: "text" | "password" | "email" | "number" | "date" | "search" | "tel" | "url";
+  type?:
+    | "text"
+    | "password"
+    | "email"
+    | "number"
+    | "date"
+    | "datetime-local"
+    | "search"
+    | "tel"
+    | "url";
   /**
    * The input value.
    */
