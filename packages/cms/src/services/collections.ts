@@ -1,9 +1,13 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import type { CmsActor, CmsContext } from "./context";
 import { CmsError, isAdmin, json, notFound, slugify } from "./context";
-import { builtinCollections } from "../core/collections/builtins";
+import {
+  collectionPresets,
+  getCollectionPreset,
+  type CollectionPreset,
+} from "../core/collections/presets";
 import { resolveCollection, resolveLabel } from "../core/collections/define";
-import type { CollectionDefinition, ResolvedCollection } from "../core/collections/types";
+import type { CollectionDefinition, Label, ResolvedCollection } from "../core/collections/types";
 
 function fromRow(row: any): ResolvedCollection {
   const { groups = {}, fields = {} } = json<{ groups?: any; fields?: any }>(row.fieldSchema, {});
@@ -21,7 +25,7 @@ function fromRow(row: any): ResolvedCollection {
     workflow: json(row.workflow, {}),
     initialBlocks: json(row.initialBlocks, []),
   };
-  return { ...resolveCollection(def, "database"), id: row.id };
+  return { ...resolveCollection(def), id: row.id };
 }
 
 function toRow(def: CollectionDefinition) {
@@ -46,19 +50,10 @@ function toRow(def: CollectionDefinition) {
   };
 }
 
-/**
- * Collections come from built-ins, `cms.config.ts`, and `content_types` rows (dashboard-created
- * or overrides). Later sources override earlier ones by slug.
- */
+/** Every collection in the database. Collections are created in the CMS, never in code. */
 export async function listCollections(ctx: CmsContext): Promise<ResolvedCollection[]> {
-  const bySlug = new Map<string, ResolvedCollection>();
-  for (const def of builtinCollections) bySlug.set(def.slug, resolveCollection(def, "code"));
-  for (const def of ctx.collections) bySlug.set(def.slug, resolveCollection(def, "code"));
-
   const rows = await ctx.db.select().from(ctx.t.contentTypes).orderBy(asc(ctx.t.contentTypes.slug));
-  for (const row of rows) bySlug.set(row.slug, fromRow(row));
-
-  return [...bySlug.values()];
+  return rows.map(fromRow);
 }
 
 export async function getCollection(ctx: CmsContext, slug: string): Promise<ResolvedCollection> {
@@ -67,11 +62,13 @@ export async function getCollection(ctx: CmsContext, slug: string): Promise<Reso
     .from(ctx.t.contentTypes)
     .where(eq(ctx.t.contentTypes.slug, slug))
     .limit(1);
-  if (rows[0]) return fromRow(rows[0]);
-  const code =
-    ctx.collections.find((c) => c.slug === slug) ?? builtinCollections.find((c) => c.slug === slug);
-  if (code) return resolveCollection(code, "code");
-  throw notFound(`Collection "${slug}"`);
+  if (!rows[0]) throw notFound(`Collection "${slug}"`);
+  return fromRow(rows[0]);
+}
+
+/** Presets available to scaffold a collection from. Plain data, safe to send to the dashboard. */
+export function listCollectionPresets(): CollectionPreset[] {
+  return collectionPresets;
 }
 
 function assertAdmin(actor: CmsActor) {
@@ -100,9 +97,26 @@ export async function createCollection(
 }
 
 /**
- * Updates (or, for a code collection, overrides) a collection. Overriding a code
- * collection stores a DB copy that then takes precedence; deleting it restores the code version.
+ * Creates a collection from a preset. `slug` and `label` default to the preset's and can be
+ * overridden, e.g. to create a second "blog"-shaped collection under another slug.
  */
+export async function createCollectionFromPreset(
+  ctx: CmsContext,
+  actor: CmsActor,
+  presetId: string,
+  overrides: { slug?: string; label?: Label } = {},
+): Promise<ResolvedCollection> {
+  assertAdmin(actor);
+  if (!presetId) throw new CmsError(422, "A preset id is required");
+  const preset = getCollectionPreset(presetId);
+  if (!preset) throw notFound(`Collection preset "${presetId}"`);
+  return createCollection(ctx, actor, {
+    ...preset.definition,
+    ...(overrides.slug ? { slug: overrides.slug } : {}),
+    ...(overrides.label ? { label: overrides.label } : {}),
+  });
+}
+
 export async function updateCollection(
   ctx: CmsContext,
   actor: CmsActor,
@@ -112,19 +126,18 @@ export async function updateCollection(
   assertAdmin(actor);
   const current = await getCollection(ctx, slug);
   const next: CollectionDefinition = { ...current, ...patch, slug };
-  const values = { ...toRow(next), updatedAt: new Date() };
-  if (current.source === "database") {
-    const [row] = await ctx.db
-      .update(ctx.t.contentTypes)
-      .set(values)
-      .where(eq(ctx.t.contentTypes.slug, slug))
-      .returning();
-    return fromRow(row);
-  }
-  const [row] = await ctx.db.insert(ctx.t.contentTypes).values(values).returning();
+  const [row] = await ctx.db
+    .update(ctx.t.contentTypes)
+    .set({ ...toRow(next), updatedAt: new Date() })
+    .where(eq(ctx.t.contentTypes.slug, slug))
+    .returning();
   return fromRow(row);
 }
 
+/**
+ * Deletes a collection row. Refused while entries still use it: a collection with no definition
+ * makes its entries unloadable, so move or delete the entries first.
+ */
 export async function deleteCollection(
   ctx: CmsContext,
   actor: CmsActor,
@@ -136,9 +149,13 @@ export async function deleteCollection(
     .from(ctx.t.contentTypes)
     .where(eq(ctx.t.contentTypes.slug, slug))
     .limit(1);
-  if (!rows[0]) throw new CmsError(400, `"${slug}" is defined in code and cannot be deleted here`);
-  if (rows[0].isSystem) throw new CmsError(403, `"${slug}" is a system collection`);
-  // Entries are kept: the collection falls back to its code definition (if any).
+  if (!rows[0]) throw notFound(`Collection "${slug}"`);
+  const [{ n } = { n: 0 }] = await ctx.db
+    .select({ n: sql<number>`count(*)` })
+    .from(ctx.t.pages)
+    .where(eq(ctx.t.pages.type, slug));
+  if (Number(n) > 0)
+    throw new CmsError(409, `"${slug}" still has ${Number(n)} entries; move or delete them first`);
   await ctx.db.delete(ctx.t.contentTypes).where(eq(ctx.t.contentTypes.slug, slug));
   return { success: true };
 }

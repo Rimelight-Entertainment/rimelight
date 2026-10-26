@@ -27,7 +27,6 @@ export async function handleCmsCron(input: {
   const cms = createCms({
     db,
     dialect,
-    collections: input.config?.collections ?? [],
     blocks: input.config?.blocks ?? [],
     locales: input.config?.locales ?? ["en"],
   });

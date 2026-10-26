@@ -1,5 +1,4 @@
 ﻿import {
-  boolean,
   jsonb,
   pgTable,
   text,
@@ -9,42 +8,9 @@
 } from "drizzle-orm/pg-core";
 import type { Localized } from "../core/types/pages";
 import type { BaseBlock } from "../core/types/blocks";
+import type { CollectionKind, FieldDefinition, FieldGroup } from "../core/collections/types";
 
-export type CollectionMode = "document" | "data" | "singleton";
-
-export interface DynamicFieldDefinition {
-  type:
-    | "text"
-    | "number"
-    | "boolean"
-    | "enum"
-    | "media"
-    | "relation"
-    | "currency"
-    | "array"
-    | "json";
-  label: Localized;
-  description?: Localized;
-  required?: boolean;
-  defaultValue?: any;
-  options?: { label: Localized; value: string }[];
-  allowedCollections?: string[];
-  validation?: {
-    min?: number;
-    max?: number;
-    pattern?: string;
-  };
-}
-
-export interface EcomSettings {
-  enabled: boolean;
-  currencyDefault: string;
-  trackInventory: boolean;
-  hasVariants: boolean;
-  allowDigitalDownloads: boolean;
-  stripeSync?: boolean;
-}
-
+/** One row per collection. Collections are created in the CMS, so this is the only source. */
 export const contentTypes: PgTableWithColumns<any> = pgTable("content_types", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   slug: text("slug").notNull().unique(),
@@ -53,18 +19,16 @@ export const contentTypes: PgTableWithColumns<any> = pgTable("content_types", {
   icon: text("icon").default("i-lucide-box").notNull(),
   /** Entity colour (mention chips etc.). Null = derived from the slug. */
   color: text("color"),
-  mode: text("mode").$type<CollectionMode>().default("document").notNull(),
+  mode: text("mode").$type<CollectionKind>().default("document").notNull(),
 
   fieldSchema: jsonb("field_schema")
-    .$type<Record<string, { label: Localized; fields: Record<string, DynamicFieldDefinition> }>>()
-    .default({})
+    .$type<{ groups: Record<string, FieldGroup>; fields: Record<string, FieldDefinition> }>()
+    .default({ groups: {}, fields: {} })
     .notNull(),
 
-  ecomSettings: jsonb("ecom_settings").$type<EcomSettings>(),
   initialBlocks: jsonb("initial_blocks").$type<BaseBlock[]>().default([]).notNull(),
   features: jsonb("features").$type<Record<string, any>>().default({}).notNull(),
   workflow: jsonb("workflow").$type<Record<string, any>>().default({}).notNull(),
-  isSystem: boolean("is_system").default(false).notNull(),
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),

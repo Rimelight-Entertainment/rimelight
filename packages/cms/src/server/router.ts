@@ -67,6 +67,23 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     ),
   );
   app.get(
+    "/collection-presets",
+    route(({ cms }) => ({ presets: cms.collections.listCollectionPresets() })),
+  );
+  app.post(
+    "/collections/from-preset",
+    route(
+      async ({ cms, actor, body }) => ({
+        collection: await cms.collections.createCollectionFromPreset(
+          actor,
+          body?.preset,
+          body?.overrides ?? {},
+        ),
+      }),
+      201,
+    ),
+  );
+  app.get(
     "/collections/:slug",
     route(async ({ cms, c }) => ({
       collection: await cms.collections.getCollection(p(c, "slug")),
@@ -308,7 +325,47 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
   // ── Taxonomies ─────────────────────────────────────────────────────────────
   app.get(
     "/taxonomies",
-    route(({ cms }) => ({ taxonomies: cms.taxonomies.listTaxonomies() })),
+    route(async ({ cms }) => ({ taxonomies: await cms.taxonomies.listTaxonomies() })),
+  );
+  app.get(
+    "/taxonomy-presets",
+    route(({ cms }) => ({ presets: cms.taxonomies.listTaxonomyPresets() })),
+  );
+  app.post(
+    "/taxonomies",
+    route(
+      async ({ cms, actor, body }) => ({
+        taxonomy: await cms.taxonomies.createTaxonomy(actor, body),
+      }),
+      201,
+    ),
+  );
+  app.post(
+    "/taxonomies/from-preset",
+    route(
+      async ({ cms, actor, body }) => ({
+        taxonomy: await cms.taxonomies.createTaxonomyFromPreset(
+          actor,
+          body?.preset,
+          body?.overrides ?? {},
+        ),
+      }),
+      201,
+    ),
+  );
+  app.get(
+    "/taxonomies/:taxonomy",
+    route(async ({ cms, c }) => ({ taxonomy: await cms.taxonomies.getTaxonomy(p(c, "taxonomy")) })),
+  );
+  app.put(
+    "/taxonomies/:taxonomy",
+    route(async ({ cms, actor, c, body }) => ({
+      taxonomy: await cms.taxonomies.updateTaxonomy(actor, p(c, "taxonomy"), body),
+    })),
+  );
+  app.delete(
+    "/taxonomies/:taxonomy",
+    route(({ cms, actor, c }) => cms.taxonomies.deleteTaxonomy(actor, p(c, "taxonomy"))),
   );
   app.get(
     "/taxonomies/:taxonomy/terms",

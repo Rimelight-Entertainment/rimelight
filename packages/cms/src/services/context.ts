@@ -2,9 +2,7 @@ import type { Dialect, CmsTables } from "../db/index";
 import { tablesFor } from "../db/index";
 import { BlockRegistry } from "../core/blocks/registry";
 import { builtinBlocks } from "../core/blocks/builtins";
-import type { CollectionDefinition } from "../core/collections/types";
 import type { BlockDefinition } from "../core/blocks/registry";
-import type { TaxonomyDefinition } from "../core/types/taxonomies";
 import { hasAnyRole, isAdmin } from "../auth/roles";
 
 /** The authenticated user performing an operation. */
@@ -28,8 +26,6 @@ export interface CmsContext {
   dialect: Dialect;
   t: CmsTables;
   blocks: BlockRegistry;
-  collections: CollectionDefinition[];
-  taxonomies: TaxonomyDefinition[];
   locales: string[];
   previewSecret?: string;
 }
@@ -38,32 +34,17 @@ export interface CmsContextInput {
   db: any;
   dialect: Dialect;
   blocks?: BlockDefinition<any>[];
-  collections?: CollectionDefinition[];
-  taxonomies?: TaxonomyDefinition[];
   locales?: string[];
   previewSecret?: string;
 }
 
-export const DEFAULT_TAXONOMIES: TaxonomyDefinition[] = [
-  { slug: "category", label: "Categories", hierarchical: true },
-  { slug: "tag", label: "Tags", hierarchical: false },
-];
-
 export function createCmsContext(input: CmsContextInput): CmsContext {
   const registry = new BlockRegistry().register(...builtinBlocks, ...(input.blocks ?? []));
-  const taxonomies = [...DEFAULT_TAXONOMIES];
-  for (const t of input.taxonomies ?? []) {
-    const i = taxonomies.findIndex((x) => x.slug === t.slug);
-    if (i >= 0) taxonomies[i] = t;
-    else taxonomies.push(t);
-  }
   return {
     db: input.db,
     dialect: input.dialect,
     t: tablesFor(input.dialect),
     blocks: registry,
-    collections: input.collections ?? [],
-    taxonomies,
     locales: input.locales ?? ["en"],
     ...(input.previewSecret ? { previewSecret: input.previewSecret } : {}),
   };

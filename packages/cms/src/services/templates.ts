@@ -149,23 +149,3 @@ export async function deleteTemplate(
   await ctx.db.delete(ctx.t.pageTemplates).where(eq(ctx.t.pageTemplates.id, current.id));
   return { success: true };
 }
-
-/** Seeds templates declared in code (cms.config `templates`) that don't exist yet. */
-export async function seedTemplates(ctx: CmsContext, templates: TemplateInput[]): Promise<number> {
-  let created = 0;
-  for (const tpl of templates) {
-    const slug = slugify(tpl.slug ?? "");
-    if (!slug) continue;
-    const exists = await ctx.db
-      .select({ id: ctx.t.pageTemplates.id })
-      .from(ctx.t.pageTemplates)
-      .where(eq(ctx.t.pageTemplates.slug, slug))
-      .limit(1);
-    if (exists[0]) continue;
-    await ctx.db
-      .insert(ctx.t.pageTemplates)
-      .values({ slug, version: 1, createdAt: new Date(), ...values(tpl) });
-    created++;
-  }
-  return created;
-}

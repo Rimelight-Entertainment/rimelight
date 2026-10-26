@@ -1,7 +1,9 @@
 import type { Entry, EntrySummary } from "../services/entries";
 import type { ResolvedCollection } from "../core/collections/types";
 import type { PageTemplate } from "../core/types/templates";
-import type { TaxonomyDefinition, TaxonomyTerm } from "../core/types/taxonomies";
+import type { TaxonomyTerm } from "../core/types/taxonomies";
+import type { Taxonomy } from "../services/taxonomies";
+import type { TaxonomyPreset } from "../core/taxonomies/presets";
 import type { CmsActor } from "../services/context";
 import type { LockState } from "../services/entries";
 
@@ -63,6 +65,8 @@ export function createApi(base = "/api/cms") {
         call<{ collection: ResolvedCollection }>("GET", `/collections/${slug}`),
       create: (def: unknown) =>
         call<{ collection: ResolvedCollection }>("POST", "/collections", def),
+      createFromPreset: (preset: string) =>
+        call<{ collection: ResolvedCollection }>("POST", "/collections/from-preset", { preset }),
       update: (slug: string, def: unknown) =>
         call<{ collection: ResolvedCollection }>("PUT", `/collections/${slug}`, def),
       remove: (slug: string) => call("DELETE", `/collections/${slug}`),
@@ -135,7 +139,14 @@ export function createApi(base = "/api/cms") {
     },
 
     taxonomies: {
-      list: () => call<{ taxonomies: TaxonomyDefinition[] }>("GET", "/taxonomies"),
+      list: () => call<{ taxonomies: Taxonomy[] }>("GET", "/taxonomies"),
+      presets: () => call<{ presets: TaxonomyPreset[] }>("GET", "/taxonomy-presets"),
+      create: (def: unknown) => call<{ taxonomy: Taxonomy }>("POST", "/taxonomies", def),
+      createFromPreset: (preset: string) =>
+        call<{ taxonomy: Taxonomy }>("POST", "/taxonomies/from-preset", { preset }),
+      update: (slug: string, def: unknown) =>
+        call<{ taxonomy: Taxonomy }>("PUT", `/taxonomies/${slug}`, def),
+      remove: (slug: string) => call("DELETE", `/taxonomies/${slug}`),
       terms: (taxonomy: string) =>
         call<{ terms: TaxonomyTerm[] }>("GET", `/taxonomies/${taxonomy}/terms`),
       createTerm: (taxonomy: string, input: unknown) =>

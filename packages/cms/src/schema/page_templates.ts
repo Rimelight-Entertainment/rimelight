@@ -8,7 +8,7 @@ import {
   type PgTableWithColumns,
 } from "drizzle-orm/pg-core";
 import type { BaseBlock } from "../core/types/blocks";
-import type { Localized, PageType } from "../core/types/pages";
+import type { Localized } from "../core/types/pages";
 import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
 
 export const pageTemplates: PgTableWithColumns<any> = pgTable("page_templates", {
@@ -16,7 +16,7 @@ export const pageTemplates: PgTableWithColumns<any> = pgTable("page_templates", 
   slug: text("slug").notNull().unique(),
   title: jsonb("title").$type<Localized>().notNull(),
   description: jsonb("description").$type<Localized>(),
-  pageType: text("page_type").$type<PageType>().notNull(),
+  pageType: text("page_type").$type<string>().notNull(),
   version: integer("version").default(1).notNull(),
   allowedRoles: jsonb("allowed_roles").$type<string[]>().default([]).notNull(),
   rolePermissions: jsonb("role_permissions")

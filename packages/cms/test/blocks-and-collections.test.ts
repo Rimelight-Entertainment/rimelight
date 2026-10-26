@@ -11,7 +11,6 @@ import { BlockRegistry } from "../src/core/blocks/registry";
 import { builtinBlocks } from "../src/core/blocks/builtins";
 import { resolveCollection } from "../src/core/collections/define";
 import { validateProperties } from "../src/core/collections/validate";
-import { normalizeLegacyBlocks, parseFieldSchema } from "../src/migrator/legacy";
 import { inlineToHtml, toInlineNodes } from "../src/editor/inline";
 import type { BaseBlock } from "../src/core/types/blocks";
 
@@ -100,22 +99,6 @@ describe("collections", () => {
     expect(
       validateProperties(c, { price: { amount: 1 }, name: { en: "too long" } }).map((e) => e.field),
     ).toEqual(["name"]);
-  });
-  it("migration converters handle legacy field schemas and block trees", () => {
-    const blocks = normalizeLegacyBlocks([
-      { id: "h", type: "HeadingBlock", props: { level: 2, text: "Intro" } },
-      { id: "x", type: "ParagraphBlock", props: { content: "body" } },
-    ]);
-    expect(blocks[0]).toMatchObject({ type: "SectionBlock", props: { title: "Intro" } });
-    expect(blocks[1]!.props["text"]).toEqual([{ type: "text", text: "body" }]);
-    expect(
-      parseFieldSchema({ fields: { a: { type: "text", label: "A" } }, groups: {} }).fields["a"]
-        ?.type,
-    ).toBe("text");
-    expect(
-      parseFieldSchema({ g: { label: "G", fields: { a: { type: "page-array", label: "A" } } } })
-        .fields["a"]?.type,
-    ).toBe("references");
   });
 });
 

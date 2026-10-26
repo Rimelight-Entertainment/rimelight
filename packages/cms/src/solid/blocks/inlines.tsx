@@ -82,7 +82,7 @@ const LinkView: Component<{ node: LinkInlineNode }> = (props) => {
       rel={external() ? "noopener noreferrer" : undefined}
       class="cms-link text-primary-500 underline decoration-primary-500/40 underline-offset-2 transition-colors hover:decoration-primary-500"
     >
-      <For each={props.node.children ?? []}>{(c) => withMarks(c.text, c.marks)}</For>
+      <For each={props.node.children ?? []}>{(c) => <>{withMarks(c.text, c.marks)}</>}</For>
       {external() && (
         // Same icon and size RLLink uses for external links.
         <RLIcon
@@ -128,7 +128,8 @@ export const MentionView: Component<{ node: MentionInlineNode }> = (props) => {
 export const InlineNodeView: Component<{ node: InlineNode }> = (props) => (
   <Switch>
     <Match when={props.node.type === "text" && props.node}>
-      {(n) => withMarks((n() as any).text ?? "", (n() as any).marks)}
+      {/* A JSX expression is a tracking scope; reading the store inside the Match callback is not. */}
+      {withMarks((props.node as any).text ?? "", (props.node as any).marks)}
     </Match>
     <Match when={props.node.type === "link" && (props.node as LinkInlineNode)}>
       {(n) => <LinkView node={n()} />}

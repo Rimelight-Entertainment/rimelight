@@ -1,6 +1,7 @@
 import { For, Show, createSignal, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
 import { collectionColor } from "../../core/collections/color";
+import { collectionPresets } from "../../core/collections/presets";
 import type { FieldDefinition, FieldType, ResolvedCollection } from "../../core/collections/types";
 import { useDashboard } from "../context";
 import { inputClass } from "../fields/FieldInput";
@@ -43,20 +44,61 @@ const FEATURES: [keyof ResolvedCollection["features"], string, string][] = [
 
 /** Collections list + schema builder (fields, features, workflow). */
 export const Schemas: Component<{ slug?: string }> = (props) => {
-  const { collections, href } = useDashboard();
+  const { api, collections, href, navigate, reloadCollections, toast } = useDashboard();
+  const available = () =>
+    collectionPresets.filter((p) => !collections().some((c) => c.slug === p.definition.slug));
+  const startFromPreset = async (id: string) => {
+    try {
+      const { collection } = await api.collections.createFromPreset(id);
+      await reloadCollections();
+      toast("Collection created", "success");
+      navigate(`/schemas/${collection.slug}`);
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
   return (
     <Show when={!props.slug} fallback={<SchemaEditor slug={props.slug!} />}>
       <div>
         <PageHeader
           icon="i-lucide-database"
           title="Collections"
-          description="Content models. Built-in and cms.config.ts collections can be overridden here; new ones are stored in the database."
+          description="Content models, stored in the database. Start from a preset or create one from scratch."
           actions={
             <Button variant="primary" icon="i-lucide-plus" href={href("/schemas/new")}>
               New collection
             </Button>
           }
         />
+        <Show when={available().length > 0}>
+          <div class="px-6 pt-6">
+            <h3 class="text-sm font-medium text-highlighted">Start from a preset</h3>
+            <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+              <For each={available()}>
+                {(p) => (
+                  <button
+                    type="button"
+                    onClick={() => startFromPreset(p.id)}
+                    class="flex items-start gap-3 rounded-xl border border-dashed border-default p-4 text-left hover:bg-elevated"
+                  >
+                    <span class={`${p.definition.icon ?? "i-lucide-box"} mt-0.5 size-5`} />
+                    <div class="min-w-0 flex-1">
+                      <div class="font-medium text-highlighted">
+                        {resolveLabel(p.definition.label)}
+                      </div>
+                      <div class="mt-1 text-xs text-muted">{p.summary}</div>
+                    </div>
+                  </button>
+                )}
+              </For>
+            </div>
+          </div>
+        </Show>
+        <Show when={collections().length === 0}>
+          <p class="px-6 pt-6 text-sm text-muted">
+            No collections yet. Pick a preset above or create one from scratch.
+          </p>
+        </Show>
         <div class="grid grid-cols-1 gap-3 p-6 md:grid-cols-2">
           <For each={collections()}>
             {(c) => (
@@ -72,9 +114,6 @@ export const Schemas: Component<{ slug?: string }> = (props) => {
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-highlighted">{resolveLabel(c.label)}</span>
                     <span class="font-mono text-[11px] text-muted">{c.slug}</span>
-                    <span class="ml-auto rounded bg-elevated px-1.5 py-0.5 text-[10px] uppercase text-muted">
-                      {c.source}
-                    </span>
                   </div>
                   <div class="mt-1 text-xs text-muted">
                     {Object.keys(c.fields).length} fields · {c.kind}
@@ -115,28 +154,32 @@ const SchemaEditor: Component<{ slug: string }> = (props) => {
           workflow: { minApprovals: 0, allowSelfApproval: true },
           fields: {},
           groups: {},
-          source: "database",
         } as unknown as ResolvedCollection)
       : (await api.collections.get(props.slug)).collection,
   );
   return (
     <Loading when={!loaded.data()}>
-      <SchemaForm
-        initial={loaded.data()!}
-        isNew={isNew}
-        onSaved={async (slug) => {
-          await reloadCollections();
-          toast("Collection saved", "success");
-          if (isNew) navigate(`/schemas/${slug}`);
-        }}
-        onDeleted={async () => {
-          await reloadCollections();
-          navigate("/schemas");
-        }}
-        back={href("/schemas")}
-        api={api}
-        toast={toast}
-      />
+      {/* keyed: the form takes its initial value from a tracked render, not a read in its body */}
+      <Show when={loaded.data()} keyed>
+        {(initial) => (
+          <SchemaForm
+            initial={initial}
+            isNew={isNew}
+            onSaved={async (slug) => {
+              await reloadCollections();
+              toast("Collection saved", "success");
+              if (isNew) navigate(`/schemas/${slug}`);
+            }}
+            onDeleted={async () => {
+              await reloadCollections();
+              navigate("/schemas");
+            }}
+            back={href("/schemas")}
+            api={api}
+            toast={toast}
+          />
+        )}
+      </Show>
     </Loading>
   );
 };
@@ -173,7 +216,7 @@ const SchemaForm: Component<{
       return props.toast("Field keys must be identifiers (letters, numbers, _)", "error");
     if (new Set(keys).size !== keys.length)
       return props.toast("Field keys must be unique", "error");
-    const { source: _s, id: _id, ...rest } = def() as any;
+    const { id: _id, ...rest } = def() as any;
     const body = { ...rest, fields: Object.fromEntries(fields().map(({ key, ...f }) => [key, f])) };
     setBusy(true);
     try {
@@ -200,12 +243,12 @@ const SchemaForm: Component<{
         }
         actions={
           <>
-            <Show when={!props.isNew && def().source === "database"}>
+            <Show when={!props.isNew}>
               <Button
                 variant="ghost"
                 class="text-error-500"
                 onClick={async () => {
-                  if (!confirm("Delete this collection definition? Entries are kept.")) return;
+                  if (!confirm("Delete this collection? It must have no entries.")) return;
                   await props.api.collections.remove(def().slug);
                   await props.onDeleted();
                 }}
@@ -214,7 +257,7 @@ const SchemaForm: Component<{
               </Button>
             </Show>
             <Button variant="primary" loading={busy()} onClick={() => void save()}>
-              {def().source === "database" || props.isNew ? "Save" : "Save override"}
+              Save
             </Button>
           </>
         }

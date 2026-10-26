@@ -9,7 +9,7 @@ import {
   type PgTableWithColumns,
 } from "drizzle-orm/pg-core";
 import type { BaseBlock } from "../core/types/blocks";
-import type { Localized, PageType } from "../core/types/pages";
+import type { Localized } from "../core/types/pages";
 import type { PageVersionStatus } from "../core/types/versioning";
 import type { BylineCredit } from "../core/types/bylines";
 
@@ -21,7 +21,7 @@ export const pageVersions: PgTableWithColumns<any> = pgTable(
     versionNumber: integer("version_number").notNull(),
     status: text("status").$type<PageVersionStatus>().default("pending").notNull(),
     slug: text("slug").notNull(),
-    type: text("type").$type<PageType>().notNull(),
+    type: text("type").$type<string>().notNull(),
     title: jsonb("title").$type<Localized>().notNull(),
     description: jsonb("description").$type<Localized>(),
     tags: jsonb("tags").$type<Localized[]>().default([]).notNull(),

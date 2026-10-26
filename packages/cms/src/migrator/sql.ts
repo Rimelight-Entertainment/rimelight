@@ -1,3 +1,9 @@
+/**
+ * Schema migrations, applied in order and recorded by name in `_rimelight_cms_migrations`. Names
+ * are permanent: a database has them recorded, so never rename or reorder an applied migration.
+ * The gaps (0003–0005, 0007) were data migrations that rewrote stored JSON; they were retired
+ * once every database had run them, so their numbers are not reused.
+ */
 export const SQLITE_CMS_MIGRATIONS = [
   {
     name: "0001_initial_cms_tables",
@@ -229,6 +235,28 @@ CREATE INDEX IF NOT EXISTS \`pages_scheduled_idx\` ON \`pages\` (\`scheduled_at\
   {
     name: "0006_collection_color",
     sql: `ALTER TABLE \`content_types\` ADD COLUMN \`color\` text;
+`,
+  },
+  {
+    name: "0008_taxonomies_and_retired_columns",
+    sql: `CREATE TABLE IF NOT EXISTS \`taxonomies\` (
+\t\`slug\` text PRIMARY KEY NOT NULL,
+\t\`label\` text NOT NULL,
+\t\`description\` text,
+\t\`hierarchical\` integer DEFAULT 0 NOT NULL,
+\t\`collections\` text DEFAULT '[]' NOT NULL,
+\t\`created_at\` integer NOT NULL,
+\t\`updated_at\` integer
+);
+--> statement-breakpoint
+ALTER TABLE \`content_types\` DROP COLUMN \`is_system\`;
+--> statement-breakpoint
+ALTER TABLE \`content_types\` DROP COLUMN \`ecom_settings\`;
+`,
+  },
+  {
+    name: "0009_drop_legacy_schema_column",
+    sql: `ALTER TABLE \`content_types\` DROP COLUMN \`schema\`;
 `,
   },
 ];
@@ -494,6 +522,28 @@ CREATE INDEX IF NOT EXISTS "pages_scheduled_idx" ON "pages" ("scheduled_at") WHE
   {
     name: "0006_collection_color",
     sql: `ALTER TABLE "content_types" ADD COLUMN IF NOT EXISTS "color" text;
+`,
+  },
+  {
+    name: "0008_taxonomies_and_retired_columns",
+    sql: `CREATE TABLE IF NOT EXISTS "taxonomies" (
+	"slug" text PRIMARY KEY NOT NULL,
+	"label" jsonb NOT NULL,
+	"description" jsonb,
+	"hierarchical" boolean DEFAULT false NOT NULL,
+	"collections" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone
+);
+--> statement-breakpoint
+ALTER TABLE "content_types" DROP COLUMN IF EXISTS "is_system";
+--> statement-breakpoint
+ALTER TABLE "content_types" DROP COLUMN IF EXISTS "ecom_settings";
+`,
+  },
+  {
+    name: "0009_drop_legacy_schema_column",
+    sql: `ALTER TABLE "content_types" DROP COLUMN IF EXISTS "schema";
 `,
   },
 ];

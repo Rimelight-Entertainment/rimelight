@@ -52,7 +52,8 @@ vi.mock("../src/middleware", async (importOriginal) => {
         const pathStr = typeof req["path"] === "string" ? req["path"] : "/";
         req["url"] ??= raw?.url ?? `http://localhost${pathStr}`;
         const origHeader = req["header"] as ((n: string) => string | undefined) | undefined;
-        req["header"] = (n: string) => origHeader?.(n) ?? raw?.headers?.get?.(n) ?? undefined;
+        req["header"] = (n: string) =>
+          origHeader?.call(c.req, n) ?? raw?.headers?.get?.(n) ?? undefined;
         req["query"] ??= (k: string) =>
           new URL(req["url"] as string, "http://localhost").searchParams.get(k) ?? undefined;
 

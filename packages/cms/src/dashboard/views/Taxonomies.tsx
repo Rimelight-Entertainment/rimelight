@@ -6,16 +6,56 @@ import { inputClass } from "../fields/FieldInput";
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
 
 export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
-  const { api, href } = useDashboard();
+  const { api, href, navigate, toast } = useDashboard();
   const taxonomies = useLoader(() => api.taxonomies.list());
+  const presets = useLoader(() => api.taxonomies.presets());
+  const [creating, setCreating] = createSignal(false);
+  const [draft, setDraft] = createSignal({ label: "", slug: "", hierarchical: false });
   const active = () => props.taxonomy ?? taxonomies.data()?.taxonomies[0]?.slug;
+  const available = () =>
+    (presets.data()?.presets ?? []).filter(
+      (p) => !taxonomies.data()?.taxonomies.some((t) => t.slug === p.definition.slug),
+    );
+
+  const created = async (slug: string) => {
+    await taxonomies.reload();
+    navigate(`/taxonomies/${slug}`);
+  };
+  const fromPreset = async (id: string) => {
+    try {
+      const { taxonomy } = await api.taxonomies.createFromPreset(id);
+      toast("Taxonomy created", "success");
+      await created(taxonomy.slug);
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
+  const create = async () => {
+    try {
+      const { taxonomy } = await api.taxonomies.create({
+        label: draft().label,
+        ...(draft().slug ? { slug: draft().slug } : {}),
+        hierarchical: draft().hierarchical,
+      });
+      setCreating(false);
+      toast("Taxonomy created", "success");
+      await created(taxonomy.slug);
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
 
   return (
     <div>
       <PageHeader
         icon="i-lucide-tags"
         title="Taxonomies"
-        description="Categories, tags and custom vocabularies. Add new taxonomies in cms.config.ts."
+        description="Vocabularies for organising entries, such as categories or tags. Start from a preset or create your own."
+        actions={
+          <Button variant="primary" icon="i-lucide-plus" onClick={() => setCreating(true)}>
+            New taxonomy
+          </Button>
+        }
       />
       <div class="flex gap-6 p-6">
         <nav class="flex w-44 shrink-0 flex-col gap-0.5">
@@ -29,25 +69,90 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
               </a>
             )}
           </For>
+          <Show when={available().length > 0}>
+            <div class="mt-4 text-[11px] font-semibold uppercase tracking-wide text-muted">
+              Presets
+            </div>
+            <For each={available()}>
+              {(p) => (
+                <button
+                  type="button"
+                  title={p.summary}
+                  onClick={() => void fromPreset(p.id)}
+                  class="rounded-md px-2.5 py-1.5 text-left text-sm text-muted hover:bg-elevated hover:text-highlighted"
+                >
+                  + {resolveLabel(p.definition.label)}
+                </button>
+              )}
+            </For>
+          </Show>
         </nav>
         <div class="min-w-0 flex-1">
-          <Show when={active()} keyed>
+          <Show
+            when={active()}
+            fallback={
+              <Empty
+                icon="i-lucide-tags"
+                title="No taxonomies yet"
+                description="Add one from a preset on the left, or create your own."
+              />
+            }
+            keyed
+          >
             {(slug) => (
               <Terms
                 taxonomy={slug}
                 hierarchical={
                   !!taxonomies.data()?.taxonomies.find((t) => t.slug === slug)?.hierarchical
                 }
+                onDeleted={() => void taxonomies.reload().then(() => navigate("/taxonomies"))}
               />
             )}
           </Show>
         </div>
       </div>
+      <Modal
+        open={creating()}
+        title="New taxonomy"
+        onClose={() => setCreating(false)}
+        footer={
+          <Button variant="primary" onClick={() => void create()}>
+            Create
+          </Button>
+        }
+      >
+        <div class="flex flex-col gap-3">
+          <Field label="Name">
+            <input
+              class={inputClass}
+              value={draft().label}
+              onInput={(e) => setDraft({ ...draft(), label: e.currentTarget.value })}
+            />
+          </Field>
+          <Field label="Slug" hint="Leave blank to generate from the name.">
+            <input
+              class={`${inputClass} font-mono`}
+              value={draft().slug}
+              onInput={(e) => setDraft({ ...draft(), slug: e.currentTarget.value })}
+            />
+          </Field>
+          <label class="flex items-center gap-2 text-sm text-toned">
+            <input
+              type="checkbox"
+              checked={draft().hierarchical}
+              onChange={(e) => setDraft({ ...draft(), hierarchical: e.currentTarget.checked })}
+            />
+            Allow nested terms (parent and child)
+          </label>
+        </div>
+      </Modal>
     </div>
   );
 };
 
-const Terms: Component<{ taxonomy: string; hierarchical: boolean }> = (props) => {
+const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () => void }> = (
+  props,
+) => {
   const { api, toast } = useDashboard();
   const terms = useLoader(() => api.taxonomies.terms(props.taxonomy));
   const [editing, setEditing] = createSignal<Partial<TaxonomyTerm> | null>(null);
@@ -87,7 +192,22 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean }> = (props) =>
 
   return (
     <div class="flex flex-col gap-3">
-      <div class="flex justify-end">
+      <div class="flex justify-end gap-2">
+        <Button
+          variant="ghost"
+          class="text-error-500"
+          onClick={async () => {
+            if (!confirm("Delete this taxonomy? It must have no terms.")) return;
+            try {
+              await api.taxonomies.remove(props.taxonomy);
+              props.onDeleted();
+            } catch (err) {
+              toast((err as Error).message, "error");
+            }
+          }}
+        >
+          Delete taxonomy
+        </Button>
         <Button variant="primary" icon="i-lucide-plus" onClick={() => setEditing({ name: "" })}>
           New term
         </Button>

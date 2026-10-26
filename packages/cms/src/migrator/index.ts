@@ -1,7 +1,8 @@
 import { sql } from "drizzle-orm";
 import { PG_CMS_MIGRATIONS, SQLITE_CMS_MIGRATIONS } from "./sql";
-import { DATA_MIGRATIONS } from "./data";
 import { detectDialect, isD1Binding } from "../db/index";
+
+export * from "./preflight";
 
 export interface MigrationResult {
   applied: string[];
@@ -141,17 +142,6 @@ export async function migrateCms(db: any): Promise<MigrationResult> {
         );
       }
     }
-    await executor.record(migration.name);
-    applied.push(migration.name);
-  }
-
-  // Data migrations rewrite stored JSON into current shapes (run after the schema exists).
-  for (const migration of DATA_MIGRATIONS) {
-    if (done.has(migration.name)) {
-      skipped.push(migration.name);
-      continue;
-    }
-    await migration.run(db);
     await executor.record(migration.name);
     applied.push(migration.name);
   }

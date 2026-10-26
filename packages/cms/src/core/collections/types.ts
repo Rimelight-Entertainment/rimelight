@@ -131,8 +131,6 @@ export interface ResolvedCollection extends CollectionDefinition {
     Pick<CollectionWorkflow, "requiredRolesForApproval">;
   groups: Record<string, FieldGroup>;
   fields: Record<string, FieldDefinition>;
-  /** Where the definition came from. Database collections are editable in the dashboard. */
-  source: "code" | "database";
-  /** Row id when `source === "database"`. */
+  /** Row id in the `content_types` table. */
   id?: string;
 }

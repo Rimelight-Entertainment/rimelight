@@ -25,6 +25,7 @@ export interface TaxonomyQueryOptions {
 export interface TaxonomyDefinition {
   slug: string;
   label: Localized | string;
+  description?: Localized | string | null;
   hierarchical?: boolean;
   /** Collections this taxonomy applies to. Omit for all. */
   collections?: string[];

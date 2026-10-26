@@ -1,4 +1,5 @@
 import {
+  boolean,
   foreignKey,
   integer,
   jsonb,
@@ -11,6 +12,18 @@ import {
 } from "drizzle-orm/pg-core";
 import { pages } from "./pages";
 import type { Localized } from "../core/types/pages";
+
+/** A vocabulary. Its terms live in `taxonomy_terms`, keyed by this slug. */
+export const taxonomies: PgTableWithColumns<any> = pgTable("taxonomies", {
+  slug: text("slug").notNull().primaryKey(),
+  label: jsonb("label").$type<Localized>().notNull(),
+  description: jsonb("description").$type<Localized>(),
+  hierarchical: boolean("hierarchical").default(false).notNull(),
+  /** Collections this taxonomy applies to. Empty = any. */
+  collections: jsonb("collections").$type<string[]>().default([]).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+});
 
 export const taxonomyTerms: PgTableWithColumns<any> = pgTable(
   "taxonomy_terms",

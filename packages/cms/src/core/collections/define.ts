@@ -17,17 +17,13 @@ export function resolveLabel(label: Label | undefined | null, locale = "en"): st
   return label[locale] ?? label["en"] ?? Object.values(label)[0] ?? "";
 }
 
-export function resolveCollection(
-  def: CollectionDefinition,
-  source: ResolvedCollection["source"] = "code",
-): ResolvedCollection {
+export function resolveCollection(def: CollectionDefinition): ResolvedCollection {
   const f = def.features ?? {};
   const w = def.workflow ?? {};
   const resolved: ResolvedCollection = {
     ...def,
     kind: def.kind ?? "document",
     color: collectionColor(def.slug, def.color),
-    source,
     groups: def.groups ?? {},
     fields: def.fields ?? {},
     features: {
