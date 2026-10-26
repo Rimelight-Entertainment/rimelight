@@ -2,6 +2,7 @@ import {
   For,
   Show,
   createEffect,
+  createMemo,
   createSignal,
   onSettled,
   untrack,
@@ -18,6 +19,9 @@ import { defineShortcuts, formatShortcutKeys } from "@rimelight/ui/shortcuts";
 import { BlockInspector } from "../../editor/BlockInspector";
 import { PagePreview, SplitPane } from "../../editor/SplitPreview";
 import { useDashboard } from "../context";
+import { RichTextProvider, useRichText } from "../../solid/blocks/inlines";
+import { RichEditingContext, useRichEditing } from "../../editor/rich-context";
+import { collectMentionIds } from "../../core/richtext";
 import { FieldGroups, inputClass } from "../fields/FieldInput";
 import {
   Button,
@@ -232,6 +236,28 @@ const EditorWorkspace: Component<{
     }),
   );
 
+  // Mentioned entries, titled in the editor's locale. Refetched only when the set of mentions or
+  // the locale changes, not on every keystroke.
+  const mentionKey = createMemo(() =>
+    collectMentionIds([editor.doc.blocks, editor.doc.properties]).sort().join(","),
+  );
+  const mentionTitles = createMemo<Record<string, string>>(
+    async () => {
+      const ids = mentionKey() ? mentionKey().split(",") : [];
+      if (!ids.length) return {};
+      try {
+        return (await api.mentions.titles(ids, locale())).titles;
+      } catch {
+        return {};
+      }
+    },
+    { loadingValue: {} },
+  );
+  const rich = useRichText();
+  const richEditing = useRichEditing();
+  /** Mention titles for every rich text field in this editor (canvas and inspector). */
+  const richEditingValue = { ...richEditing, mentionTitles: () => mentionTitles() };
+
   return (
     <div class="flex h-full flex-col">
       {/* Toolbar */}
@@ -440,13 +466,15 @@ const EditorWorkspace: Component<{
         <SplitPane
           open={previewOpen() && collection()?.features.blocks !== false}
           right={
-            <PagePreview
-              title={resolveLabel(props.entry.title) || props.entry.slug}
-              blocks={editor.doc.blocks}
-              locale={locale()}
-              badge="Draft"
-              onClose={() => togglePreview()}
-            />
+            <RichTextProvider collections={rich.collections} mentionTitles={mentionTitles()}>
+              <PagePreview
+                title={resolveLabel(props.entry.title) || props.entry.slug}
+                blocks={editor.doc.blocks}
+                locale={locale()}
+                badge="Draft"
+                onClose={() => togglePreview()}
+              />
+            </RichTextProvider>
           }
           left={
             <div class="mx-auto max-w-6xl px-6 py-10">
@@ -489,7 +517,9 @@ const EditorWorkspace: Component<{
                 {/* Wikipedia-style: article on the left, infobox with the entry's properties on the right. */}
                 <div class="mt-6 flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
                   <div class="min-w-0 flex-1">
-                    <BlockEditor editor={editor} locale={locale()} />
+                    <RichEditingContext value={richEditingValue}>
+                      <BlockEditor editor={editor} locale={locale()} />
+                    </RichEditingContext>
                   </div>
                   <Show when={Object.keys(collection()?.fields ?? {}).length}>
                     <Infobox entry={props.entry} editor={editor} readOnly={readOnly()} />
@@ -536,7 +566,9 @@ const EditorWorkspace: Component<{
               />
             </Show>
             <Show when={tab() === "block"}>
-              <BlockInspector editor={editor} />
+              <RichEditingContext value={richEditingValue}>
+                <BlockInspector editor={editor} />
+              </RichEditingContext>
             </Show>
           </div>
         </aside>

@@ -18,6 +18,8 @@ export interface RichEditing {
   mentionColor: (collection: string) => string;
   mentionIcon: (collection: string) => string | undefined;
   collectionLabel: (collection: string) => string;
+  /** Current titles of mentioned entries by id, in the editor locale. Read reactively. */
+  mentionTitles?: () => Record<string, string>;
 }
 
 export const RichEditingContext = createContext<RichEditing>({

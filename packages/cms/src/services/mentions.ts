@@ -91,3 +91,26 @@ export async function resolveMentions<T extends { blocks: BaseBlock[]; propertie
     properties: rewrite(item.properties, fill),
   }));
 }
+
+/**
+ * Titles of the given entries in `locale`, for the dashboard editor (same fallback as delivery:
+ * requested locale, then `en`, then the first one present). Unknown ids are left out.
+ */
+export async function mentionTitles(
+  ctx: CmsContext,
+  ids: string[],
+  locale = "en",
+): Promise<Record<string, string>> {
+  if (!ids.length) return {};
+  const rows = await ctx.db
+    .select({ id: ctx.t.pages.id, title: ctx.t.pages.title })
+    .from(ctx.t.pages)
+    .where(inArray(ctx.t.pages.id, ids));
+  const titles: Record<string, string> = {};
+  for (const row of rows as { id: unknown; title: unknown }[]) {
+    const raw = typeof row.title === "string" ? JSON.parse(row.title) : row.title;
+    const title = resolveLabel(raw as any, locale);
+    if (title) titles[String(row.id)] = title;
+  }
+  return titles;
+}

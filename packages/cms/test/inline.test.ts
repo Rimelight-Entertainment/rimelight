@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import { describe, expect, it } from "vite-plus/test";
 import {
   htmlToInline,
@@ -8,6 +7,7 @@ import {
   toPlainText,
 } from "../src/editor/inline";
 import {
+  collectMentionIds,
   collectMentions,
   compactRichText,
   resolveRichText,
@@ -183,5 +183,25 @@ describe("plain and rich values", () => {
     expect(updateRichText([], "en", [...nodes], { translatable: true })).toEqual({
       en: [{ type: "text", text: "x" }],
     });
+  });
+});
+
+describe("mention ids", () => {
+  const mention = {
+    type: "mention",
+    entryId: "e-1",
+    collection: "character",
+    slug: "aleph",
+    title: "Aleph",
+  };
+  it("collects each distinct mentioned entry id from nested blocks and localized values", () => {
+    const value = {
+      blocks: [
+        { id: "b1", props: { text: [mention] } },
+        { id: "b2", props: { line: { en: [mention, { ...mention, entryId: "e-2" }] } } },
+      ],
+    };
+    expect(collectMentionIds(value).sort()).toEqual(["e-1", "e-2"]);
+    expect(collectMentionIds([{ type: "text", text: "plain" }])).toEqual([]);
   });
 });

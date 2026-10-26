@@ -1,5 +1,17 @@
-import { defineBlock, defineCmsConfig } from "@rimelight/cms";
-import { ScriptBlock, SceneBlock, DialogueBlock } from "#components/blocks";
+import { builtinBlocks, defineBlock, defineCmsConfig } from "@rimelight/cms";
+import {
+  ApiDocumentationBlock,
+  DialogueBlock,
+  LivePreviewBlock,
+  ScriptBlock,
+  SceneBlock,
+} from "#components/blocks";
+
+const builtin = (type: string) => {
+  const def = builtinBlocks.find((b) => b.type === type);
+  if (!def) throw new Error(`Unknown built-in block: ${type}`);
+  return def;
+};
 
 /**
  * Rimelight-specific CMS setup: screenplay blocks are a site concern, so they live here as an
@@ -75,14 +87,39 @@ export default defineCmsConfig({
       icon: "i-lucide-message-square-quote",
       category: "screenplay",
       parents: ["SceneBlock"],
-      defaultProps: { character: "", line: [] },
+      // Rich text so a speaker can be a mention of their Character page, or plain text when the
+      // character has no page.
+      defaultProps: { character: [], parenthetical: "", line: [] },
       fields: {
-        character: { type: "text", label: "Character" },
+        character: { type: "richtext", label: "Character" },
         parenthetical: { type: "text", label: "Parenthetical" },
       },
       inlineText: "line",
       richText: true,
       render: DialogueBlock,
     }),
+    // Docs blocks: the site's renderers, registered so they can be inserted in the dashboard.
+    defineBlock({
+      type: "ApiDocumentationBlock",
+      label: "API documentation",
+      description: "A component's props, slots, emits and theme, generated from its source.",
+      icon: "i-lucide-book-open",
+      category: "embed",
+      defaultProps: {
+        componentName: "",
+        sections: { props: true, slots: true, emits: true, theme: true, changelog: false },
+        hide: [],
+        show: [],
+      },
+      fields: {
+        componentName: { type: "text", label: "Component", required: true },
+        sections: { type: "json", label: "Sections" },
+        hide: { type: "tags", label: "Hide props" },
+        show: { type: "tags", label: "Only show props" },
+      },
+      render: ApiDocumentationBlock,
+    }),
+    // The built-in definition (fields, defaults) with the site's renderer instead of the generic one.
+    defineBlock({ ...builtin("LivePreviewBlock"), render: LivePreviewBlock }),
   ],
 });

@@ -12,7 +12,8 @@ import { uiDocsMeta } from "./src/docs/vite-plugin";
 
 export default defineConfig({
   plugins: [
-    cloudflare(),
+    // Tests run in Node: the Cloudflare worker runtime would only leave servers hanging.
+    ...(process.env["VITEST"] ? [] : [cloudflare()]),
 
     solid({
       exclude: ["src/fetch.ts"],
@@ -82,4 +83,9 @@ export default defineConfig({
     // Temporary: UI component metadata for the docs pages (see src/docs/vite-plugin.ts).
     uiDocsMeta(),
   ],
+
+  test: {
+    environment: "happy-dom",
+    include: ["test/**/*.test.{ts,tsx}"],
+  },
 });

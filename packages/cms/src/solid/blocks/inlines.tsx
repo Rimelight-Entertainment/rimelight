@@ -23,6 +23,11 @@ export interface RichTextConfig {
   collections?: RichTextCollection[] | undefined;
   /** Override where a mention links to. Defaults to the collection's `routable` pattern. */
   mentionHref?: ((node: MentionInlineNode) => string | undefined) | undefined;
+  /**
+   * Current titles of mentioned entries, keyed by entry id, in the editor locale. Mentions show
+   * these; the title stored on the node is only a fallback.
+   */
+  mentionTitles?: Record<string, string> | undefined;
 }
 
 export const RichTextContext = createContext<RichTextConfig>({});
@@ -102,7 +107,8 @@ const LinkView: Component<{ node: LinkInlineNode }> = (props) => {
 export const MentionView: Component<{ node: MentionInlineNode }> = (props) => {
   const info = useMentionInfo();
   const m = () => info(props.node);
-  const label = () => props.node.title || props.node.slug;
+  const label = () =>
+    useRichText().mentionTitles?.[props.node.entryId] || props.node.title || props.node.slug;
   return (
     <Show
       when={m().href}

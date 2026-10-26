@@ -5,9 +5,6 @@ export type BlockType =
   | "ParagraphBlock"
   | "CalloutBlock"
   | "ImageBlock"
-  | "ScriptBlock"
-  | "SceneBlock"
-  | "DialogueBlock"
   | "CodeBlock"
   | "TableBlock"
   | "TabsBlock"
@@ -17,43 +14,12 @@ export type BlockType =
   | "CardsBlock"
   | "CardBlock"
   | "FileTreeBlock"
-  | "ComponentShowcaseBlock"
   | "ApiDocumentationBlock"
   | "LivePreviewBlock"
   | "DividerBlock"
   | "QuoteBlock"
-  | "TodoBlock"
-  | "ToggleBlock"
   | "EmbedBlock"
   | (string & {});
-
-export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER";
-export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER";
-export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE";
-
-export interface ScriptBlockProps {
-  title: string;
-  synopsis: string;
-  characters: string[];
-  aPlot: string;
-  bPlot: string;
-  cPlot: string;
-  stinger: string;
-}
-
-export interface SceneBlockProps {
-  location: string;
-  timeOfDay: TimeOfDay;
-  setting: Setting;
-  transition: Transition;
-  description: RichTextValue;
-}
-
-export interface DialogueBlockProps {
-  character: string;
-  parenthetical?: string;
-  line: RichTextValue;
-}
 
 export interface BaseBlock {
   /**
@@ -204,19 +170,6 @@ export interface FileTreeBlockProps {
   tree: FileTreeNode[];
 }
 
-export interface ComponentShowcaseBlockProps {
-  componentName: string;
-  componentPath: string;
-  framework: "solid";
-  defaultProps: Record<string, any>;
-  propsConfig: Record<string, string[]>;
-  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
-  codeExamples: {
-    solid?: string;
-  };
-  playgroundUrl: string | undefined;
-}
-
 export interface ApiDocumentationBlockProps {
   componentName: string;
   sections: {
@@ -237,211 +190,3 @@ export interface LivePreviewBlockProps {
   width?: string;
   editable?: boolean;
 }
-
-export interface TypedScriptBlockProps extends ScriptBlockProps {
-  children: BaseBlock[];
-}
-
-export interface TypedSceneBlockProps extends SceneBlockProps {
-  children: BaseBlock[];
-}
-
-// ─── Typed block discriminated union ─────────────────────────────────────────
-
-export interface SectionBlock extends BaseBlock {
-  type: "SectionBlock";
-  props: SectionBlockProps;
-}
-
-export interface ParagraphBlock extends BaseBlock {
-  type: "ParagraphBlock";
-  props: ParagraphBlockProps;
-}
-
-export interface CalloutBlock extends BaseBlock {
-  type: "CalloutBlock";
-  props: CalloutBlockProps;
-}
-
-export interface ImageBlock extends BaseBlock {
-  type: "ImageBlock";
-  props: ImageBlockProps;
-}
-
-export interface ScriptBlock extends BaseBlock {
-  type: "ScriptBlock";
-  props: TypedScriptBlockProps;
-}
-
-export interface SceneBlock extends BaseBlock {
-  type: "SceneBlock";
-  props: TypedSceneBlockProps;
-}
-
-export interface DialogueBlock extends BaseBlock {
-  type: "DialogueBlock";
-  props: DialogueBlockProps;
-}
-
-export interface CodeBlock extends BaseBlock {
-  type: "CodeBlock";
-  props: CodeBlockProps;
-}
-
-export interface TableBlock extends BaseBlock {
-  type: "TableBlock";
-  props: TableBlockProps;
-}
-
-export interface TabsBlock extends BaseBlock {
-  type: "TabsBlock";
-  props: TabsBlockProps;
-}
-
-export interface TabItemBlock extends BaseBlock {
-  type: "TabItemBlock";
-  props: TabItemBlockProps;
-}
-
-export interface StepsBlock extends BaseBlock {
-  type: "StepsBlock";
-  props: StepsBlockProps;
-}
-
-export interface StepItemBlock extends BaseBlock {
-  type: "StepItemBlock";
-  props: StepItemBlockProps;
-}
-
-export interface CardsBlock extends BaseBlock {
-  type: "CardsBlock";
-  props: CardsBlockProps;
-}
-
-export interface CardBlock extends BaseBlock {
-  type: "CardBlock";
-  props: CardBlockProps;
-}
-
-export interface FileTreeBlock extends BaseBlock {
-  type: "FileTreeBlock";
-  props: FileTreeBlockProps;
-}
-
-export interface ComponentShowcaseBlock extends BaseBlock {
-  type: "ComponentShowcaseBlock";
-  props: ComponentShowcaseBlockProps;
-}
-
-export interface ApiDocumentationBlock extends BaseBlock {
-  type: "ApiDocumentationBlock";
-  props: ApiDocumentationBlockProps;
-}
-
-export interface LivePreviewBlock extends BaseBlock {
-  type: "LivePreviewBlock";
-  props: LivePreviewBlockProps;
-}
-
-export type TypedBlock =
-  | SectionBlock
-  | ParagraphBlock
-  | CalloutBlock
-  | ImageBlock
-  | ScriptBlock
-  | SceneBlock
-  | DialogueBlock
-  | CodeBlock
-  | TableBlock
-  | TabsBlock
-  | TabItemBlock
-  | StepsBlock
-  | StepItemBlock
-  | CardsBlock
-  | CardBlock
-  | FileTreeBlock
-  | ComponentShowcaseBlock
-  | ApiDocumentationBlock
-  | LivePreviewBlock;
-
-export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
-  Root: [
-    "SectionBlock",
-    "ParagraphBlock",
-    "CalloutBlock",
-    "ImageBlock",
-    "CodeBlock",
-    "ScriptBlock",
-    "SceneBlock",
-    "DialogueBlock",
-    "TableBlock",
-    "TabsBlock",
-    "StepsBlock",
-    "CardsBlock",
-    "FileTreeBlock",
-    "ComponentShowcaseBlock",
-    "ApiDocumentationBlock",
-    "LivePreviewBlock",
-  ],
-  SectionBlock: [
-    "SectionBlock",
-    "ParagraphBlock",
-    "CalloutBlock",
-    "ImageBlock",
-    "CodeBlock",
-    "ScriptBlock",
-    "TableBlock",
-    "TabsBlock",
-    "StepsBlock",
-    "CardsBlock",
-    "FileTreeBlock",
-    "ComponentShowcaseBlock",
-    "ApiDocumentationBlock",
-    "LivePreviewBlock",
-  ],
-  CalloutBlock: [
-    "ParagraphBlock",
-    "CalloutBlock",
-    "ImageBlock",
-    "CodeBlock",
-    "TableBlock",
-    "TabsBlock",
-    "StepsBlock",
-    "CardsBlock",
-    "FileTreeBlock",
-    "ComponentShowcaseBlock",
-    "ApiDocumentationBlock",
-    "LivePreviewBlock",
-  ],
-  TabsBlock: ["TabItemBlock"],
-  TabItemBlock: [
-    "ParagraphBlock",
-    "CalloutBlock",
-    "ImageBlock",
-    "CodeBlock",
-    "TableBlock",
-    "StepsBlock",
-    "CardsBlock",
-    "FileTreeBlock",
-    "ComponentShowcaseBlock",
-    "ApiDocumentationBlock",
-    "LivePreviewBlock",
-  ],
-  StepsBlock: ["StepItemBlock"],
-  StepItemBlock: [
-    "ParagraphBlock",
-    "CalloutBlock",
-    "ImageBlock",
-    "CodeBlock",
-    "TableBlock",
-    "TabsBlock",
-    "CardsBlock",
-    "FileTreeBlock",
-    "ComponentShowcaseBlock",
-    "ApiDocumentationBlock",
-    "LivePreviewBlock",
-  ],
-  CardsBlock: ["CardBlock"],
-  ScriptBlock: ["SceneBlock"],
-  SceneBlock: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"],
-};

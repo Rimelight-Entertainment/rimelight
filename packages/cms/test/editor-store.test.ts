@@ -369,3 +369,82 @@ async function withEditorAsync<T>(
     dispose();
   }
 }
+
+describe("createBlockEditor: multi-select", () => {
+  const section = (id: string, children: BaseBlock[] = []): BaseBlock => ({
+    id,
+    type: "SectionBlock",
+    props: { title: [] },
+    children,
+  });
+  const tree = () => [
+    paragraph("a", "A"),
+    section("s", [paragraph("s1", "S1"), paragraph("s2", "S2")]),
+    paragraph("b", "B"),
+  ];
+
+  it("toggles blocks in and out of the selection, anchored on the last one clicked", () => {
+    withEditor({ initial: { blocks: tree(), properties: {} } }, (ed) => {
+      ed.select("a");
+      ed.toggleSelect("b");
+      expect(ed.selectedIds()).toEqual(["a", "b"]);
+      ed.toggleSelect("a");
+      expect(ed.selectedIds()).toEqual(["b"]);
+      expect(ed.selectedId()).toBe("a");
+    });
+  });
+
+  it("shift-click selects the range in document order, across nesting", () => {
+    withEditor({ initial: { blocks: tree(), properties: {} } }, (ed) => {
+      ed.select("a");
+      ed.extendSelect("s2");
+      expect(ed.selectedIds()).toEqual(["a", "s", "s1", "s2"]);
+    });
+  });
+
+  it("a plain select drops the multi-selection", () => {
+    withEditor({ initial: { blocks: tree(), properties: {} } }, (ed) => {
+      ed.select("a");
+      ed.toggleSelect("b");
+      ed.select("s1");
+      expect(ed.selectedIds()).toEqual(["s1"]);
+    });
+  });
+
+  it("removes the selection in one edit, without double-removing nested blocks", () => {
+    withEditor({ initial: { blocks: tree(), properties: {} } }, (ed) => {
+      ed.select("s");
+      ed.toggleSelect("s1");
+      ed.toggleSelect("b");
+      ed.removeSelected();
+      expect(ed.snapshot().blocks.map((b: BaseBlock) => b.id)).toEqual(["a"]);
+      expect(ed.selectedIds()).toEqual([]);
+      ed.undo();
+      expect(ed.snapshot().blocks.map((b: BaseBlock) => b.id)).toEqual(["a", "s", "b"]);
+    });
+  });
+
+  it("skips templated blocks when removing", () => {
+    const locked = { ...paragraph("b", "B"), isTemplated: true };
+    withEditor({ initial: { blocks: [paragraph("a"), locked], properties: {} } }, (ed) => {
+      ed.select("a");
+      ed.toggleSelect("b");
+      ed.removeSelected();
+      expect(ed.snapshot().blocks.map((b: BaseBlock) => b.id)).toEqual(["b"]);
+    });
+  });
+
+  it("duplicates each top-level selected block after itself and selects the copies", () => {
+    withEditor({ initial: { blocks: tree(), properties: {} } }, (ed) => {
+      ed.select("a");
+      ed.toggleSelect("b");
+      ed.duplicateSelected();
+      const ids = ed.snapshot().blocks.map((b: BaseBlock) => b.id);
+      expect(ids).toHaveLength(5);
+      expect(ids[0]).toBe("a");
+      expect(ids[4]).not.toBe("b");
+      expect(ed.selectedIds()).toHaveLength(2);
+      expect(ed.selectedIds()).not.toContain("a");
+    });
+  });
+});

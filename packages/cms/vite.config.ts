@@ -1,8 +1,34 @@
 import { defineConfig } from "vite-plus";
+import solid from "@solidjs/vite-plugin";
+import { ui } from "@rimelight/ui/plugin";
+
+const setupFiles = ["./test/setup.ts"];
 
 export default defineConfig({
   test: {
-    setupFiles: ["./test/setup.ts"],
+    setupFiles,
+    // Two projects: logic tests run on Solid's server build (its reactive writes are not batched,
+    // which the editor tests rely on); renderer tests get the browser build, JSX transform and the
+    // UI plugin that supplies `virtual:rimelight-ui`.
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "logic",
+          include: ["test/**/*.test.ts"],
+          environment: "happy-dom",
+        },
+      },
+      {
+        plugins: [solid(), ui({})],
+        test: {
+          name: "render",
+          include: ["test/**/*.test.tsx"],
+          environment: "happy-dom",
+          environmentOptions: { happyDOM: { settings: { disableIframePageLoading: true } } },
+        },
+      },
+    ],
   },
   pack: {
     entry: [

@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import { afterEach, describe, expect, it } from "vite-plus/test";
 import { render } from "@solidjs/web";
 import { BlockRegistry, builtinBlocks, type BaseBlock } from "@rimelight/cms";
@@ -86,7 +85,7 @@ describe("screenplay defaults", () => {
 
   it("creates dialogue as a leaf with rich text", () => {
     const line = registry.create("DialogueBlock");
-    expect(line.props).toEqual({ character: "", line: [] });
+    expect(line.props).toEqual({ character: [], parenthetical: "", line: [] });
     expect(line.children).toBeUndefined();
     expect(registry.get("DialogueBlock")?.richText).toBe(true);
   });
@@ -184,19 +183,44 @@ describe("screenplay rendering", () => {
     expect(text).not.toContain("NONE");
   });
 
-  it("renders the speaker, parenthetical and line", () => {
+  it("links a speaker that is a mention to their character page", () => {
     const block: BaseBlock = {
       id: "d",
       type: "DialogueBlock",
       props: {
-        character: "ADA",
+        character: [
+          { type: "mention", entryId: "c1", collection: "character", slug: "ada", title: "Ada" },
+        ],
         parenthetical: "whispering",
         line: [{ type: "text", text: "Don't move." }],
       },
     };
-    const text = mount(() => <DialogueBlock block={block} />).textContent ?? "";
-    expect(text).toContain("ADA");
-    expect(text).toContain("(whispering)");
-    expect(text).toContain("Don't move.");
+    const el = mount(() => <DialogueBlock block={block} locale="en" />);
+    const speaker = el.querySelector('a[data-collection="character"]');
+    expect(speaker?.textContent).toBe("Ada");
+    expect(speaker?.getAttribute("href")).toBe("/character/ada");
+    expect(el.textContent).toContain("(whispering)");
+    expect(el.textContent).toContain("Don't move.");
+  });
+
+  it("shows a speaker without a page as plain text, not a link", () => {
+    const block: BaseBlock = {
+      id: "d",
+      type: "DialogueBlock",
+      props: { character: [{ type: "text", text: "Dockhand" }], line: [] },
+    };
+    const el = mount(() => <DialogueBlock block={block} locale="en" />);
+    expect(el.textContent).toContain("Dockhand");
+    expect(el.querySelector("a")).toBeNull();
+  });
+
+  it("still reads speakers stored as a plain string from before mentions", () => {
+    const block: BaseBlock = {
+      id: "d",
+      type: "DialogueBlock",
+      props: { character: "Old Name", line: [] },
+    };
+    const el = mount(() => <DialogueBlock block={block} locale="en" />);
+    expect(el.textContent).toContain("Old Name");
   });
 });

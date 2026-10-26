@@ -459,6 +459,15 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     },
   });
 
+  // Mention titles in the editor's locale (same resolution as delivery).
+  app.get(
+    "/mentions",
+    route(async ({ cms, c }) => {
+      const ids = (q(c, "ids") ?? "").split(",").filter(Boolean).slice(0, 200);
+      return { titles: await cms.mentions.mentionTitles(ids, q(c, "locale") ?? "en") };
+    }),
+  );
+
   // ── MCP (JSON-RPC over HTTP) ───────────────────────────────────────────────
   app.post("/mcp", async (c) => {
     const actor = await requireActor(c, options);

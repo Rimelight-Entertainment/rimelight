@@ -454,3 +454,28 @@ describe("taxonomies, bylines, search, templates", () => {
     await expectError(cms.entries.saveDraft(admin, e.id, { blocks: [] }), 403);
   });
 });
+
+describe("mention titles", () => {
+  it("returns each mentioned entry's title in the requested locale, falling back to en", async () => {
+    const entry = await cms.entries.createEntry(editor, {
+      collection: "blog",
+      title: { en: "Hello", pt: "Olá" },
+      blocks: text("x"),
+    });
+    const other = await cms.entries.createEntry(editor, {
+      collection: "blog",
+      title: { en: "Only English" },
+      blocks: text("y"),
+    });
+    expect(await cms.mentions.mentionTitles([entry.id], "pt")).toEqual({ [entry.id]: "Olá" });
+    expect(await cms.mentions.mentionTitles([entry.id], "es")).toEqual({ [entry.id]: "Hello" });
+    expect(await cms.mentions.mentionTitles([other.id], "pt")).toEqual({
+      [other.id]: "Only English",
+    });
+  });
+
+  it("leaves out unknown ids and returns nothing for an empty list", async () => {
+    expect(await cms.mentions.mentionTitles(["missing-id"], "en")).toEqual({});
+    expect(await cms.mentions.mentionTitles([], "en")).toEqual({});
+  });
+});

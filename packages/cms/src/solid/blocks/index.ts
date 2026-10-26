@@ -16,8 +16,6 @@ import { OrderedListBlock } from "./OrderedListBlock";
 import { LivePreviewBlock } from "./LivePreviewBlock";
 import { DividerBlock } from "./DividerBlock";
 import { QuoteBlock } from "./QuoteBlock";
-import { TodoBlock } from "./TodoBlock";
-import { ToggleBlock } from "./ToggleBlock";
 import { EmbedBlock } from "./EmbedBlock";
 import type { Component } from "solid-js";
 import { builtinBlocks } from "../../core/blocks/builtins";
@@ -43,8 +41,6 @@ export {
   LivePreviewBlock,
   DividerBlock,
   QuoteBlock,
-  TodoBlock,
-  ToggleBlock,
   EmbedBlock,
 };
 export type { BlockViewProps };
@@ -80,8 +76,6 @@ export const defaultBlockComponents: Record<string, Component<BlockViewProps>> =
   LivePreviewBlock,
   DividerBlock,
   QuoteBlock,
-  TodoBlock,
-  ToggleBlock,
   EmbedBlock,
 };
 

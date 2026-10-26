@@ -45,6 +45,8 @@ export function toPlainText(value: unknown): string {
 export interface InlineHtmlOptions {
   /** Text colour for a mention, by collection slug. */
   mentionColor?: (collection: string) => string;
+  /** The entry's current title in the editor locale; the stored title is the fallback. */
+  mentionTitle?: (entryId: string) => string | undefined;
 }
 
 function textHtml(n: TextInlineNode) {
@@ -60,11 +62,12 @@ export function mentionHtml(
   opts: InlineHtmlOptions = {},
 ): string {
   const color = escape(opts.mentionColor?.(n.collection) ?? "currentColor");
+  const title = opts.mentionTitle?.(n.entryId) || n.title || "";
   return (
     `<span class="cms-mention" contenteditable="false" style="color:${color};font-weight:500;cursor:default"` +
     ` data-mention="${escape(n.entryId)}" data-collection="${escape(n.collection)}"` +
-    ` data-slug="${escape(n.slug)}" data-title="${escape(n.title ?? "")}">` +
-    `${escape(n.title || n.slug)}</span>`
+    ` data-slug="${escape(n.slug)}" data-title="${escape(title)}">` +
+    `${escape(title || n.slug)}</span>`
   );
 }
 

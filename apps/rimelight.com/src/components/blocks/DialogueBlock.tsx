@@ -15,7 +15,9 @@ export const DialogueBlock: Component<DialogueBlockProps> = (props) => {
 
   return (
     <div class="my-3 mx-8 max-w-md">
-      <div class="text-sm font-bold text-center text-amber-800">{character()}</div>
+      <div class="text-sm font-bold text-center text-amber-800">
+        <RichText value={character()} locale={props.locale} />
+      </div>
       {parenthetical() && (
         <div class="text-xs italic text-center text-neutral-600 mt-0.5">({parenthetical()})</div>
       )}

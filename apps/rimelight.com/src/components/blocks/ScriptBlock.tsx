@@ -10,10 +10,7 @@ export const ScriptBlock: Component<ScriptBlockProps> = (props) => {
   const p = () => (props.block.props || {}) as any;
   const characters = () => p().characters || [];
   const hasPlot = () => p().aPlot || p().bPlot || p().cPlot;
-  const hasChildren = () =>
-    (props.block.children && props.block.children.length > 0) ||
-    (props.block.props?.["children"] && props.block.props["children"].length > 0) ||
-    Boolean(props.children);
+  const hasChildren = () => Boolean(props.children);
 
   return (
     <div class="my-6 p-4 border-l-4 border-amber-400 bg-amber-50/20 rounded-r-lg">

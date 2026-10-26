@@ -143,3 +143,18 @@ export function collectMentions(value: unknown): { entryId: string; collection: 
     .filter((n): n is Extract<InlineNode, { type: "mention" }> => n.type === "mention")
     .map(({ entryId, collection }) => ({ entryId, collection }));
 }
+
+/** Every distinct entry id mentioned anywhere in `value` (blocks, props, nested rich text). */
+export function collectMentionIds(value: unknown): string[] {
+  const ids = new Set<string>();
+  const walk = (v: unknown) => {
+    if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") {
+      const rec = v as Record<string, unknown>;
+      if (rec["type"] === "mention" && typeof rec["entryId"] === "string") ids.add(rec["entryId"]);
+      else Object.values(rec).forEach(walk);
+    }
+  };
+  walk(value);
+  return [...ids];
+}

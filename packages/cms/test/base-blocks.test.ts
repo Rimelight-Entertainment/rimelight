@@ -55,24 +55,10 @@ describe("new base blocks", () => {
     expect(registry.create("DividerBlock").children).toBeUndefined();
   });
 
-  it("quote and to-do are rich text with their own props", () => {
+  it("quote is rich text with an attribution prop", () => {
     expect(registry.create("QuoteBlock").props).toEqual({ text: [], attribution: "" });
-    expect(registry.create("TodoBlock").props).toEqual({ text: [], checked: false });
-    expect(registry.get("TodoBlock")?.richText).toBe(true);
-  });
-
-  it("toggle holds any root-level block and starts with one paragraph", () => {
-    const toggle = registry.create("ToggleBlock");
-    expect(toggle.children?.map((c) => c.type)).toEqual(["ParagraphBlock"]);
-    expect(registry.accepts("ToggleBlock", "ParagraphBlock")).toBe(true);
-    expect(registry.accepts("ToggleBlock", "SceneBlock")).toBe(false);
-    expect(registry.accepts("ToggleBlock", "TabItemBlock")).toBe(false);
-  });
-
-  it("toggle can sit in sections and tabs, which both accept any block", () => {
-    expect(registry.accepts("SectionBlock", "ToggleBlock")).toBe(true);
-    expect(registry.accepts("TabItemBlock", "ToggleBlock")).toBe(true);
-    expect(registry.accepts("CalloutBlock", "ToggleBlock")).toBe(false);
+    expect(registry.get("QuoteBlock")?.richText).toBe(true);
+    expect(registry.accepts("SectionBlock", "QuoteBlock")).toBe(true);
   });
 
   it("video is a leaf with a url and caption", () => {

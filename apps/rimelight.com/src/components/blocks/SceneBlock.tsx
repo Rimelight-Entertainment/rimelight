@@ -52,10 +52,7 @@ export const SceneBlock: Component<SceneBlockProps> = (props) => {
     return parts;
   };
 
-  const hasChildren = () =>
-    (props.block.children && props.block.children.length > 0) ||
-    (props.block.props?.["children"] && props.block.props["children"].length > 0) ||
-    Boolean(props.children);
+  const hasChildren = () => Boolean(props.children);
 
   return (
     <div class="my-4 p-3 border-l-4 border-sky-400 bg-sky-50/20 rounded-r-lg">

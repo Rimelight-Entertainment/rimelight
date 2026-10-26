@@ -4,6 +4,7 @@ import type { BlockRegistry } from "../core/blocks/registry";
 import {
   cloneBlock,
   findBlock,
+  flattenBlocks,
   getChildren,
   insertBlock,
   moveBlock,
@@ -71,6 +72,8 @@ export function createBlockEditor(options: CreateEditorOptions) {
   const [historyTick, setHistoryTick] = createSignal(0);
   const bumpHistory = () => setHistoryTick((n) => n + 1);
   const [selectedId, setSelectedId] = createSignal<string | null>(null);
+  /** Multi-selection (Ctrl/Cmd and Shift click). Empty when a single block is selected. */
+  const [selection, setSelection] = createSignal<string[]>([]);
   const [inserter, setInserter] = createSignal<InsertTarget | null>(null);
   /** `at` is the caret: the start or end of the block's text, or a character offset into it. */
   const [focusRequest, setFocusRequest] = createSignal<{
@@ -215,7 +218,83 @@ export function createBlockEditor(options: CreateEditorOptions) {
     selectedId,
     select: (id: string | null) => {
       setSelectedId(id);
+      setSelection([]);
       options.onSelect?.(id);
+    },
+    /** Every selected block (single or multi). */
+    selectedIds: (): string[] =>
+      selection().length ? selection() : selectedId() ? [selectedId()!] : [],
+
+    /** Ctrl/Cmd-click: add or remove one block from the selection. */
+    toggleSelect(id: string) {
+      const base = api.selectedIds();
+      setSelection(base.includes(id) ? base.filter((x) => x !== id) : [...base, id]);
+      setSelectedId(id);
+    },
+
+    /** Shift-click: select every block in document order between the anchor and `id`. */
+    extendSelect(id: string) {
+      const order = flattenBlocks(current.blocks).map((b) => b.id);
+      const anchor = selectedId();
+      const a = anchor ? order.indexOf(anchor) : -1;
+      const b = order.indexOf(id);
+      if (a < 0 || b < 0) return api.toggleSelect(id);
+      setSelection(order.slice(Math.min(a, b), Math.max(a, b) + 1));
+    },
+
+    clearSelection() {
+      setSelection([]);
+    },
+
+    /**
+     * The selected blocks that aren't inside another selected block. Acting on these covers their
+     * children too, so a selected section and a paragraph inside it act as one.
+     */
+    topLevelSelected(): string[] {
+      const ids = new Set(api.selectedIds());
+      return flattenBlocks(current.blocks)
+        .filter((b) => ids.has(b.id))
+        .filter((b) => {
+          let found = findBlock(current.blocks, b.id);
+          while (found?.parent) {
+            if (ids.has(found.parent.id)) return false;
+            found = findBlock(current.blocks, found.parent.id);
+          }
+          return true;
+        })
+        .map((b) => b.id);
+    },
+
+    /** Deletes every selected block that isn't templated, in one undo step. */
+    removeSelected() {
+      if (isReadOnly()) return;
+      let next = current.blocks;
+      for (const id of api.topLevelSelected()) {
+        const found = findBlock(next, id);
+        if (found && !found.block.isTemplated) next = removeBlock(next, id);
+      }
+      if (next === current.blocks) return;
+      commitBlocks(next);
+      setSelection([]);
+      setSelectedId(null);
+    },
+
+    /** Duplicates each top-level selected block next to itself, and selects the copies. */
+    duplicateSelected() {
+      if (isReadOnly()) return;
+      let next = current.blocks;
+      const copies: string[] = [];
+      for (const id of api.topLevelSelected()) {
+        const found = findBlock(next, id);
+        if (!found) continue;
+        const copy = cloneBlock(found.block);
+        next = insertBlock(next, copy, found.parent?.id ?? null, found.index + 1);
+        copies.push(copy.id);
+      }
+      if (!copies.length) return;
+      commitBlocks(next);
+      setSelection(copies);
+      setSelectedId(copies[copies.length - 1]!);
     },
     focusRequest,
     /** Reactive: reading it inside JSX or a memo tracks the lock state. */

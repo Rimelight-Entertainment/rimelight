@@ -139,7 +139,10 @@ const MARK_COMMANDS: Record<string, string> = {
 
 export const InlineText: Component<InlineTextProps> = (props) => {
   const rich = useRichEditing();
-  const htmlOpts = { mentionColor: rich.mentionColor };
+  const htmlOpts = () => ({
+    mentionColor: rich.mentionColor,
+    mentionTitle: (id: string) => rich.mentionTitles?.()[id],
+  });
   let el = undefined as unknown as HTMLDivElement;
   let lastEmitted = "";
 
@@ -161,7 +164,7 @@ export const InlineText: Component<InlineTextProps> = (props) => {
   const render = (value: unknown) =>
     props.mode === "plain"
       ? inlineToHtml([{ type: "text", text: toPlainText(value) }])
-      : inlineToHtml(toInlineNodes(value), htmlOpts);
+      : inlineToHtml(toInlineNodes(value), htmlOpts());
 
   const emit = () => {
     const value = serialize(el);
@@ -172,6 +175,9 @@ export const InlineText: Component<InlineTextProps> = (props) => {
 
   // Mount-time snapshot. `untrack` marks the read as intentional: the effect below owns updates.
   const initialHtml = untrack(() => render(props.value));
+  // Mention titles are part of the rendered HTML, so a locale switch re-renders the chips.
+  const titleKey = () => JSON.stringify(rich.mentionTitles?.() ?? {});
+  let lastTitles = untrack(titleKey);
   onSettled(() => {
     el.innerHTML = initialHtml;
     lastEmitted = JSON.stringify(serialize(el));
@@ -186,12 +192,13 @@ export const InlineText: Component<InlineTextProps> = (props) => {
     () => {
       const value = props.value;
       const nodes = props.mode === "plain" ? toPlainText(value) : toInlineNodes(value);
-      return { key: JSON.stringify(nodes), html: render(value) };
+      return { key: JSON.stringify(nodes), html: render(value), titles: titleKey() };
     },
-    ({ key, html }) => {
-      if (!el || key === lastEmitted) return;
+    ({ key, html, titles }) => {
+      if (!el || (key === lastEmitted && titles === lastTitles)) return;
       el.innerHTML = html;
       lastEmitted = key;
+      lastTitles = titles;
       el.dataset["empty"] = String(!el.textContent);
     },
   );
@@ -292,7 +299,7 @@ export const InlineText: Component<InlineTextProps> = (props) => {
     sel?.addRange(state.range);
     if (choice) {
       const holder = document.createElement("span");
-      holder.innerHTML = mentionHtml(choice, htmlOpts);
+      holder.innerHTML = mentionHtml(choice, htmlOpts());
       const chip = holder.firstChild!;
       const space = document.createTextNode(" ");
       state.range.insertNode(space);

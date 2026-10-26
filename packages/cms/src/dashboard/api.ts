@@ -59,6 +59,15 @@ export function createApi(base = "/api/cms") {
         scheduled: number;
       }>("GET", "/stats"),
 
+    mentions: {
+      /** Titles of mentioned entries in `locale`, keyed by entry id. */
+      titles: (ids: string[], locale: string) =>
+        call<{ titles: Record<string, string> }>(
+          "GET",
+          `/mentions${qs({ ids: ids.join(","), locale })}`,
+        ),
+    },
+
     collections: {
       list: () => call<{ collections: ResolvedCollection[] }>("GET", "/collections"),
       get: (slug: string) =>

@@ -4,6 +4,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  onCleanup,
   onSettled,
   type Component,
 } from "solid-js";
@@ -62,6 +63,21 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
       });
     },
   );
+
+  // With several blocks selected, Delete removes them and Escape clears the selection. Typing in
+  // a text field or a block's text is left alone.
+  const onMultiKey = (e: KeyboardEvent) => {
+    if (ed.selectedIds().length < 2 || ed.readOnly) return;
+    if ((e.target as HTMLElement).closest('input, textarea, [contenteditable="true"]')) return;
+    if (e.key === "Delete" || e.key === "Backspace") {
+      e.preventDefault();
+      ed.removeSelected();
+    } else if (e.key === "Escape") {
+      ed.clearSelection();
+    }
+  };
+  document.addEventListener("keydown", onMultiKey);
+  onCleanup(() => document.removeEventListener("keydown", onMultiKey));
 
   onSettled(() =>
     defineShortcuts({
@@ -171,6 +187,41 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
         </Show>
       </Show>
 
+      <Show when={ed.selectedIds().length > 1}>
+        <div
+          role="toolbar"
+          aria-label="Selected blocks"
+          class="sticky bottom-4 z-20 mx-auto mt-4 flex w-fit items-center gap-1 rounded-full border border-default bg-elevated px-3 py-1.5 text-sm shadow-lg"
+        >
+          <span class="px-1 font-medium text-highlighted">
+            {ed.selectedIds().length} blocks selected
+          </span>
+          <Show when={!ed.readOnly}>
+            <button
+              type="button"
+              class="rounded px-2 py-1 text-muted hover:bg-muted hover:text-highlighted"
+              onClick={() => ed.duplicateSelected()}
+            >
+              Duplicate
+            </button>
+            <button
+              type="button"
+              class="rounded px-2 py-1 text-muted hover:bg-muted hover:text-error-500"
+              onClick={() => ed.removeSelected()}
+            >
+              Delete
+            </button>
+          </Show>
+          <button
+            type="button"
+            class="rounded px-2 py-1 text-muted hover:bg-muted hover:text-highlighted"
+            onClick={() => ed.clearSelection()}
+          >
+            Clear
+          </button>
+        </div>
+      </Show>
+
       <Show when={ed.inserter()}>
         {(target) => (
           <BlockPicker target={target()} editor={ed} onClose={() => ed.closeInserter()} />
@@ -255,7 +306,7 @@ const BlockView: Component<{
   const ed = props.editor;
   let el!: HTMLDivElement;
   const def = () => ed.registry.get(props.block.type);
-  const selected = () => ed.selectedId() === props.block.id;
+  const selected = () => ed.selectedIds().includes(props.block.id);
   const locked = () => !!props.block.isTemplated;
   const [menu, setMenu] = createSignal(false);
   const childDepth = () => (props.block.type === "SectionBlock" ? props.depth + 1 : props.depth);
@@ -413,7 +464,12 @@ const BlockView: Component<{
       class={`relative -ml-8 rounded-md py-0.5 pl-8 outline-none transition-opacity ${selected() ? "bg-primary-500/[0.04] ring-1 ring-primary-500/30" : ""} ${isDragging() ? "opacity-40" : ""}`}
       onClick={(e: MouseEvent) => {
         e.stopPropagation();
-        ed.select(props.block.id);
+        // Modifier clicks on text keep their normal meaning (extend the text selection).
+        const inText = (e.target as HTMLElement).closest('[contenteditable="true"]');
+        if (inText) return ed.select(props.block.id);
+        if (e.shiftKey) ed.extendSelect(props.block.id);
+        else if (e.metaKey || e.ctrlKey) ed.toggleSelect(props.block.id);
+        else ed.select(props.block.id);
       }}
       onMouseOver={(e: MouseEvent) => {
         e.stopPropagation();
