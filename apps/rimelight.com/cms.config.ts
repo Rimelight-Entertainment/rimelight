@@ -1,14 +1,13 @@
 import { defineBlock, defineCmsConfig } from "@rimelight/cms";
 import { ScriptBlock, SceneBlock, DialogueBlock } from "#components/blocks";
-import { franchiseCollections } from "#cms/collections";
 
 /**
- * Rimelight-specific CMS setup: screenplay blocks and franchise page types are site concerns,
- * so they live here as examples of custom blocks/collections rather than in @rimelight/cms.
+ * Rimelight-specific CMS setup: screenplay blocks are a site concern, so they live here as an
+ * example of custom blocks rather than in @rimelight/cms. Collections (including the franchise
+ * types) are created in the CMS dashboard and stored in the database.
  */
 export default defineCmsConfig({
   locales: ["en", "pt", "es"],
-  collections: franchiseCollections,
   blocks: [
     defineBlock({
       type: "ScriptBlock",

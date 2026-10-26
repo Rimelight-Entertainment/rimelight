@@ -18,6 +18,9 @@ beforeEach(async () => {
       return role ? { userId: `${role}-user`, name: role, roles: [role], permissions: [] } : null;
     },
   });
+  // Nothing is built in: scaffold the collections these tests write to from presets.
+  for (const preset of ["blog", "page", "doc"])
+    await call("POST", "/cms/collections/from-preset", { preset });
 });
 
 const call = (method: string, path: string, body?: unknown, role: string | null = "admin") =>
@@ -31,6 +34,13 @@ const call = (method: string, path: string, body?: unknown, role: string | null 
   });
 
 describe("admin API", () => {
+  it("lists presets, and only admins can scaffold from them", async () => {
+    const presets = (await (await call("GET", "/cms/collection-presets")).json()) as any;
+    expect(presets.presets.map((p: any) => p.id)).toContain("blog");
+    const denied = await call("POST", "/cms/collections/from-preset", { preset: "wiki" }, "editor");
+    expect(denied.status).toBe(403);
+  });
+
   it("requires authentication", async () => {
     expect((await call("GET", "/cms/entries", undefined, null)).status).toBe(401);
     expect((await call("POST", "/cms/mcp", { method: "tools/list" }, null)).status).toBe(401);

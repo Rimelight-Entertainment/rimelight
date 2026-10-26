@@ -4,7 +4,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   onSettled,
   type Component,
 } from "solid-js";
@@ -588,10 +587,10 @@ const BlockMenu: Component<{
     const esc = (e: KeyboardEvent) => e.key === "Escape" && props.onClose();
     document.addEventListener("pointerdown", away, true);
     document.addEventListener("keydown", esc);
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("pointerdown", away, true);
       document.removeEventListener("keydown", esc);
-    });
+    };
   });
 
   const item = (
@@ -758,7 +757,7 @@ const BlockPicker: Component<{
     input.focus();
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    onCleanup(() => (document.body.style.overflow = prev));
+    return () => (document.body.style.overflow = prev);
   });
 
   return (

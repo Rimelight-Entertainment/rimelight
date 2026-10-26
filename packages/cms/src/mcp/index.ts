@@ -306,6 +306,25 @@ const tools: ToolDef[] = [
     run: (cms, a, x) => cms.collections.createCollection(a, x),
   },
   {
+    name: "cms_list_collection_presets",
+    description:
+      "List presets that scaffold a collection (e.g. blog, doc, wiki, page, legal). Nothing is created until cms_create_collection_from_preset is called.",
+    inputSchema: schema({}, []),
+    run: (cms) => cms.collections.listCollectionPresets(),
+  },
+  {
+    name: "cms_create_collection_from_preset",
+    description: "Create a collection from a preset (admins). Optional slug/label override.",
+    inputSchema: schema({ preset: str("Preset id, e.g. blog"), slug: str(""), label: obj("") }, [
+      "preset",
+    ]),
+    run: (cms, a, x) =>
+      cms.collections.createCollectionFromPreset(a, x.preset, {
+        ...(x.slug ? { slug: x.slug } : {}),
+        ...(x.label ? { label: x.label } : {}),
+      }),
+  },
+  {
     name: "cms_update_collection",
     description: "Update or override a collection (admins).",
     inputSchema: schema(
@@ -330,6 +349,46 @@ const tools: ToolDef[] = [
     run: (cms, a, x) => cms.collections.deleteCollection(a, x.slug),
   },
   // ── Taxonomies ───────────────────────────────────────────────────────────
+  {
+    name: "cms_list_taxonomies",
+    description: "List taxonomies (vocabularies).",
+    inputSchema: schema({}, []),
+    run: (cms) => cms.taxonomies.listTaxonomies(),
+  },
+  {
+    name: "cms_list_taxonomy_presets",
+    description:
+      "List presets that scaffold a taxonomy (category, tag). Nothing is created until cms_create_taxonomy_from_preset is called.",
+    inputSchema: schema({}, []),
+    run: (cms) => cms.taxonomies.listTaxonomyPresets(),
+  },
+  {
+    name: "cms_create_taxonomy",
+    description: "Create a taxonomy (admins). Terms are added separately with cms_create_term.",
+    inputSchema: schema(
+      {
+        slug: str(""),
+        label: obj(""),
+        hierarchical: { type: "boolean", description: "Allow parent/child terms" },
+        collections: arr("Collection slugs this applies to (empty = any)", { type: "string" }),
+      },
+      ["label"],
+    ),
+    run: (cms, a, x) => cms.taxonomies.createTaxonomy(a, x),
+  },
+  {
+    name: "cms_create_taxonomy_from_preset",
+    description: "Create a taxonomy from a preset (admins). Optional slug/label override.",
+    inputSchema: schema(
+      { preset: str("Preset id, e.g. category"), slug: str(""), label: obj("") },
+      ["preset"],
+    ),
+    run: (cms, a, x) =>
+      cms.taxonomies.createTaxonomyFromPreset(a, x.preset, {
+        ...(x.slug ? { slug: x.slug } : {}),
+        ...(x.label ? { label: x.label } : {}),
+      }),
+  },
   {
     name: "cms_list_terms",
     description: "List terms of a taxonomy with published entry counts.",

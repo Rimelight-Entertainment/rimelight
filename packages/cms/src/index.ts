@@ -9,6 +9,7 @@ export * from "./core/types/media";
 export * from "./core/types/bylines";
 export * from "./core/types/taxonomies";
 export * from "./core/collections/index";
+export * from "./core/taxonomies/presets";
 export * from "./core/blocks/registry";
 export * from "./core/blocks/builtins";
 export * from "./core/blocks/tree";

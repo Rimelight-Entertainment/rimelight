@@ -121,7 +121,10 @@ const TemplateEditor: Component<{ id: string }> = (props) => {
   const tpl = useLoader(() => api.templates.get(props.id));
   return (
     <Loading when={!tpl.data()}>
-      <TemplateWorkspace template={tpl.data()!.template} />
+      {/* keyed: the workspace takes its template from a tracked render, not a read in its body */}
+      <Show when={tpl.data()} keyed>
+        {(data) => <TemplateWorkspace template={data.template} />}
+      </Show>
     </Loading>
   );
 };

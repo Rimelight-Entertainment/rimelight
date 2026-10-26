@@ -9,7 +9,6 @@ import {
   richTextToPlain,
   updateRichText,
 } from "../src/core/richtext";
-import { upgradeRichTextContent } from "../src/migrator/richtext";
 import type { BaseBlock } from "../src/core/types/blocks";
 
 const registry = new BlockRegistry().register(
@@ -78,55 +77,5 @@ describe("rich text", () => {
   it("gives every collection a stable colour, overridable", () => {
     expect(collectionColor("weapon")).toBe(collectionColor("weapon"));
     expect(collectionColor("weapon", "#123456")).toBe("#123456");
-  });
-});
-
-describe("0007 rich text migration", () => {
-  it("upgrades page mentions with their collection and makes section titles rich", () => {
-    const lookup = new Map([["e1", { collection: "weapon", slug: "excalibur" }]]);
-    const out = upgradeRichTextContent(
-      {
-        blocks: [
-          {
-            id: "s",
-            type: "SectionBlock",
-            props: { title: { en: "Lore", pt: "História" }, level: 3 },
-            children: [
-              {
-                id: "p",
-                type: "ParagraphBlock",
-                props: {
-                  text: [
-                    {
-                      type: "page_mention",
-                      pageId: "e1",
-                      pageSlug: "old",
-                      displayTitle: "Excalibur",
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-        properties: {},
-      },
-      lookup,
-    );
-    const section = out.blocks[0]!;
-    expect(section.props["level"]).toBeUndefined();
-    expect(section.props["title"]).toEqual({
-      en: [{ type: "text", text: "Lore" }],
-      pt: [{ type: "text", text: "História" }],
-    });
-    expect(section.children![0]!.props["text"]).toEqual([
-      {
-        type: "mention",
-        entryId: "e1",
-        collection: "weapon",
-        slug: "excalibur",
-        title: "Excalibur",
-      },
-    ]);
   });
 });

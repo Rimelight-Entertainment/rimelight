@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { drizzle } from "drizzle-orm/d1";
-import { migrateCms } from "../src/migrator/index";
+import { collectionPreflight, migrateCms } from "../src/migrator/index";
 import { createCms, type Cms } from "../src/services/index";
 import { CmsError, type CmsActor } from "../src/services/context";
 import { defineCollection } from "../src/core/collections/define";
+import type { CollectionDefinition } from "../src/core/collections/types";
 import { handleCmsCron } from "../src/cron/scheduled";
 import { createMockD1 } from "./helpers/d1";
 
@@ -43,8 +44,47 @@ let binding: any;
 beforeEach(async () => {
   ({ binding } = createMockD1());
   await migrateCms(binding);
-  cms = createCms({ db: drizzle(binding), dialect: "sqlite", collections: [products, handbook] });
+  cms = createCms({ db: drizzle(binding), dialect: "sqlite" });
+  for (const def of [products, handbook]) await cms.collections.createCollection(admin, def);
+  // Nothing is built in: the entry tests below rely on these four being scaffolded from presets.
+  for (const id of ["blog", "doc", "page", "wiki"])
+    await cms.collections.createCollectionFromPreset(admin, id);
+  for (const id of ["category", "tag"]) await cms.taxonomies.createTaxonomyFromPreset(admin, id);
 });
+
+describe("taxonomies", () => {
+  it("starts empty and scaffolds from presets", async () => {
+    const bare = await freshCms([]);
+    expect(await bare.cms.taxonomies.listTaxonomies()).toEqual([]);
+    const category = await bare.cms.taxonomies.createTaxonomyFromPreset(admin, "category");
+    expect(category).toMatchObject({ slug: "category", hierarchical: true });
+    expect(category.label).toEqual({ en: "Categories" });
+    await expectError(bare.cms.taxonomies.createTaxonomyFromPreset(admin, "category"), 409);
+    await expectError(bare.cms.taxonomies.createTaxonomyFromPreset(editor, "tag"), 403);
+    await expectError(bare.cms.taxonomies.createTerm(admin, "tag", { label: "News" }), 404);
+  });
+
+  it("creates custom vocabularies and refuses to delete one that still has terms", async () => {
+    await cms.taxonomies.createTaxonomy(admin, { slug: "genre", label: "Genre" });
+    await cms.taxonomies.updateTaxonomy(admin, "genre", { hierarchical: true });
+    expect((await cms.taxonomies.getTaxonomy("genre")).hierarchical).toBe(true);
+    await cms.taxonomies.deleteTaxonomy(admin, "genre");
+    await expectError(cms.taxonomies.getTaxonomy("genre"), 404);
+
+    await cms.taxonomies.createTerm(admin, "tag", { label: "News" });
+    await expectError(cms.taxonomies.deleteTaxonomy(admin, "tag"), 409);
+  });
+});
+
+async function freshCms(
+  definitions: CollectionDefinition[] = [products, handbook],
+): Promise<{ cms: Cms; binding: any }> {
+  const fresh = createMockD1();
+  await migrateCms(fresh.binding);
+  const instance = createCms({ db: drizzle(fresh.binding), dialect: "sqlite" });
+  for (const def of definitions) await instance.collections.createCollection(admin, def);
+  return { cms: instance, binding: fresh.binding };
+}
 
 const text = (t: string) => [
   { id: crypto.randomUUID(), type: "ParagraphBlock", props: { text: [{ type: "text", text: t }] } },
@@ -62,24 +102,59 @@ async function expectError(p: Promise<unknown>, status: number) {
 }
 
 describe("collections", () => {
-  it("merges built-in, code and database collections", async () => {
-    await cms.collections.createCollection(admin, {
+  it("starts empty: nothing is built in, and only database rows are listed", async () => {
+    const bare = await freshCms([]);
+    expect(await bare.cms.collections.listCollections()).toEqual([]);
+    await expectError(bare.cms.collections.getCollection("blog"), 404);
+
+    const fresh = await freshCms();
+    await fresh.cms.collections.createCollection(admin, {
       slug: "recipe",
       label: "Recipe",
       fields: { serves: { type: "number", label: "Serves" } },
     });
-    const slugs = (await cms.collections.listCollections()).map((c: any) => [c.slug, c.source]);
-    expect(slugs).toContainEqual(["blog", "code"]);
-    expect(slugs).toContainEqual(["product", "code"]);
-    expect(slugs).toContainEqual(["recipe", "database"]);
+    const slugs = (await fresh.cms.collections.listCollections()).map((c) => c.slug);
+    expect(slugs).toEqual(["handbook", "product", "recipe"]);
   });
 
-  it("only lets admins edit schemas, and DB overrides win over code", async () => {
+  it("scaffolds collections from presets, with overrides and clear errors", async () => {
+    const fresh = await freshCms([]);
+    const blog = await fresh.cms.collections.createCollectionFromPreset(admin, "blog");
+    expect(blog).toMatchObject({ slug: "blog", label: { en: "Post" } });
+    expect(blog.features.bylines).toBe(true);
+    const news = await fresh.cms.collections.createCollectionFromPreset(admin, "blog", {
+      slug: "news",
+    });
+    expect(news.slug).toBe("news");
+    await expectError(fresh.cms.collections.createCollectionFromPreset(admin, "nope"), 404);
+    await expectError(fresh.cms.collections.createCollectionFromPreset(admin, ""), 422);
+    await expectError(fresh.cms.collections.createCollectionFromPreset(editor, "page"), 403);
+    await expectError(fresh.cms.collections.createCollectionFromPreset(admin, "blog"), 409);
+  });
+
+  it("only lets admins edit schemas, and refuses to delete a collection that still has entries", async () => {
     await expectError(cms.collections.createCollection(editor, { slug: "x", label: "X" }), 403);
-    await cms.collections.updateCollection(admin, "blog", { label: "Articles" });
-    expect((await cms.collections.getCollection("blog")).label).toEqual({ en: "Articles" });
-    await cms.collections.deleteCollection(admin, "blog");
-    expect((await cms.collections.getCollection("blog")).source).toBe("code");
+    await cms.collections.updateCollection(admin, "product", { label: "Goods" });
+    expect((await cms.collections.getCollection("product")).label).toEqual({ en: "Goods" });
+    await cms.collections.deleteCollection(admin, "product");
+    await expectError(cms.collections.getCollection("product"), 404);
+
+    await cms.entries.createEntry(admin, { collection: "blog", title: "Keep me" });
+    await expectError(cms.collections.deleteCollection(admin, "blog"), 409);
+    expect((await cms.collections.getCollection("blog")).slug).toBe("blog");
+  });
+
+  it("preflight flags entries whose type has no definition and suggests presets", async () => {
+    const fresh = await freshCms([]);
+    await fresh.cms.collections.createCollectionFromPreset(admin, "blog");
+    await fresh.cms.entries.createEntry(admin, { collection: "blog", title: "Old" });
+    await fresh.binding.prepare("UPDATE pages SET type = 'landing'").run();
+    const report = await collectionPreflight(drizzle(fresh.binding));
+    expect(report.inDatabase).toEqual([]);
+    expect(report.missing).toEqual([{ slug: "landing", entries: 1 }]);
+    await fresh.binding.prepare("UPDATE pages SET type = 'page'").run();
+    const withPreset = await collectionPreflight(drizzle(fresh.binding));
+    expect(withPreset.missing).toEqual([{ slug: "page", entries: 1, preset: "page" }]);
   });
 });
 

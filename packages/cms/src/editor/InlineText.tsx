@@ -1,12 +1,4 @@
-import {
-  For,
-  Show,
-  createEffect,
-  createSignal,
-  onCleanup,
-  onSettled,
-  type Component,
-} from "solid-js";
+import { For, Show, createEffect, createSignal, onSettled, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import type { InlineNode } from "../core/types/inline";
 import { htmlToInline, inlineToHtml, mentionHtml, toInlineNodes, toPlainText } from "./inline";
@@ -156,23 +148,29 @@ export const InlineText: Component<InlineTextProps> = (props) => {
     el.dataset["empty"] = String(!el.textContent);
   };
 
+  // Read the prop in the component body: reading it inside onSettled creates a memo in an owner-backed scope.
+  const initialHtml = render(props.value);
   onSettled(() => {
-    el.innerHTML = render(props.value);
+    el.innerHTML = initialHtml;
     lastEmitted = JSON.stringify(serialize(el));
     el.dataset["empty"] = String(!el.textContent);
     props.ref?.(el);
   });
 
   // External changes (undo/redo, rollback) re-render; our own echoes are ignored.
+  // The effect body gets the value from the compute step: reading props inside it is not tracked.
   createEffect(
-    () =>
-      JSON.stringify(
-        props.mode === "plain" ? toPlainText(props.value) : toInlineNodes(props.value),
-      ),
-    (incoming) => {
-      if (!el || incoming === lastEmitted) return;
-      el.innerHTML = render(props.value);
-      lastEmitted = incoming;
+    () => {
+      const value = props.value;
+      const key = JSON.stringify(
+        props.mode === "plain" ? toPlainText(value) : toInlineNodes(value),
+      );
+      return { key, value };
+    },
+    ({ key, value }) => {
+      if (!el || key === lastEmitted) return;
+      el.innerHTML = render(value);
+      lastEmitted = key;
       el.dataset["empty"] = String(!el.textContent);
     },
   );
@@ -202,7 +200,7 @@ export const InlineText: Component<InlineTextProps> = (props) => {
       else if (!link()?.editing) setLink(null);
     };
     document.addEventListener("selectionchange", onSelection);
-    onCleanup(() => document.removeEventListener("selectionchange", onSelection));
+    return () => document.removeEventListener("selectionchange", onSelection);
   });
 
   const toggleMark = (mark: string) => {
@@ -640,10 +638,10 @@ const MentionPicker: Component<{
       if (!(e.target as Element)?.closest?.("[data-mention-picker]")) props.onDone(null, query());
     };
     document.addEventListener("pointerdown", away, true);
-    onCleanup(() => {
+    return () => {
       clearTimeout(timer);
       document.removeEventListener("pointerdown", away, true);
-    });
+    };
   });
 
   return (

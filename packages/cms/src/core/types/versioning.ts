@@ -1,5 +1,5 @@
 import type { BaseBlock } from "./blocks";
-import type { Localized, PageType } from "./pages";
+import type { Localized } from "./pages";
 
 export type PageVersionStatus = "pending" | "approved" | "rejected" | "published";
 
@@ -9,7 +9,7 @@ export interface PageVersion {
   versionNumber: number;
   status: PageVersionStatus;
   slug: string;
-  type: PageType;
+  type: string;
   title: Localized;
   description?: Localized;
   tags?: Localized[];

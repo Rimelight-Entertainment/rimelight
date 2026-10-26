@@ -1,10 +1,156 @@
 import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import type { TaxonomyDefinition, TaxonomyTerm } from "../core/types/taxonomies";
+import {
+  getTaxonomyPreset,
+  taxonomyPresets,
+  type TaxonomyPreset,
+} from "../core/taxonomies/presets";
 import { resolveLabel } from "../core/collections/define";
-import { CmsError, json, notFound, slugify, type CmsActor, type CmsContext } from "./context";
+import {
+  CmsError,
+  isAdmin,
+  json,
+  notFound,
+  slugify,
+  type CmsActor,
+  type CmsContext,
+} from "./context";
 
-export function listTaxonomies(ctx: CmsContext): TaxonomyDefinition[] {
-  return ctx.taxonomies;
+const loc = (v: string | Record<string, string>) => (typeof v === "string" ? { en: v } : v);
+
+/** Taxonomies are created in the CMS (or from a preset) and stored in the `taxonomies` table. */
+export interface Taxonomy extends TaxonomyDefinition {
+  label: TaxonomyDefinition["label"];
+  hierarchical: boolean;
+  collections: string[];
+}
+
+/**
+ * Boolean columns come back as Postgres text ("t"/"f") when the worker driver runs in raw-text mode,
+ * and as 1/0 from SQLite, so `!!value` is wrong for them: "f" is truthy.
+ */
+export function isTrueColumn(value: unknown): boolean {
+  return value === true || value === 1 || value === "t" || value === "true" || value === "1";
+}
+
+function toTaxonomy(row: any): Taxonomy {
+  return {
+    slug: row.slug,
+    label: json<any>(row.label, row.label),
+    description: json<any>(row.description, null) ?? undefined,
+    hierarchical: isTrueColumn(row.hierarchical),
+    collections: json<string[]>(row.collections, []),
+  };
+}
+
+function assertAdmin(actor: CmsActor) {
+  if (!isAdmin(actor)) throw new CmsError(403, "Only admins can change taxonomies");
+}
+
+export async function listTaxonomies(ctx: CmsContext): Promise<Taxonomy[]> {
+  const rows = await ctx.db.select().from(ctx.t.taxonomies).orderBy(asc(ctx.t.taxonomies.slug));
+  return rows.map(toTaxonomy);
+}
+
+export async function getTaxonomy(ctx: CmsContext, slug: string): Promise<Taxonomy> {
+  const rows = await ctx.db
+    .select()
+    .from(ctx.t.taxonomies)
+    .where(eq(ctx.t.taxonomies.slug, slug))
+    .limit(1);
+  if (!rows[0]) throw notFound(`Taxonomy "${slug}"`);
+  return toTaxonomy(rows[0]);
+}
+
+/** Presets available to scaffold a taxonomy from. Plain data, safe to send to the dashboard. */
+export function listTaxonomyPresets(): TaxonomyPreset[] {
+  return taxonomyPresets;
+}
+
+export async function createTaxonomy(
+  ctx: CmsContext,
+  actor: CmsActor,
+  def: TaxonomyDefinition,
+): Promise<Taxonomy> {
+  assertAdmin(actor);
+  const slug = slugify(def.slug || resolveLabel(def.label)).replace(/\//g, "-");
+  if (!slug) throw new CmsError(422, "Taxonomy slug is required");
+  const existing = await ctx.db
+    .select({ slug: ctx.t.taxonomies.slug })
+    .from(ctx.t.taxonomies)
+    .where(eq(ctx.t.taxonomies.slug, slug))
+    .limit(1);
+  if (existing[0]) throw new CmsError(409, `Taxonomy "${slug}" already exists`);
+  const [row] = await ctx.db
+    .insert(ctx.t.taxonomies)
+    .values({
+      slug,
+      label: typeof def.label === "string" ? { en: def.label } : def.label,
+      description: def.description == null ? null : loc(def.description),
+      hierarchical: !!def.hierarchical,
+      collections: def.collections ?? [],
+      createdAt: new Date(),
+    })
+    .returning();
+  return toTaxonomy(row);
+}
+
+/** Scaffolds a taxonomy from a preset. `slug` and `label` can be overridden. */
+export async function createTaxonomyFromPreset(
+  ctx: CmsContext,
+  actor: CmsActor,
+  presetId: string,
+  overrides: { slug?: string; label?: TaxonomyDefinition["label"] } = {},
+): Promise<Taxonomy> {
+  assertAdmin(actor);
+  if (!presetId) throw new CmsError(422, "A preset id is required");
+  const preset = getTaxonomyPreset(presetId);
+  if (!preset) throw notFound(`Taxonomy preset "${presetId}"`);
+  return createTaxonomy(ctx, actor, {
+    ...preset.definition,
+    ...(overrides.slug ? { slug: overrides.slug } : {}),
+    ...(overrides.label ? { label: overrides.label } : {}),
+  });
+}
+
+export async function updateTaxonomy(
+  ctx: CmsContext,
+  actor: CmsActor,
+  slug: string,
+  patch: Partial<TaxonomyDefinition>,
+): Promise<Taxonomy> {
+  assertAdmin(actor);
+  await getTaxonomy(ctx, slug);
+  const set: Record<string, unknown> = { updatedAt: new Date() };
+  if (patch.label !== undefined) set["label"] = loc(patch.label);
+  if (patch.description !== undefined)
+    set["description"] = patch.description == null ? null : loc(patch.description);
+  if (patch.hierarchical !== undefined) set["hierarchical"] = !!patch.hierarchical;
+  if (patch.collections !== undefined) set["collections"] = patch.collections;
+  const [row] = await ctx.db
+    .update(ctx.t.taxonomies)
+    .set(set)
+    .where(eq(ctx.t.taxonomies.slug, slug))
+    .returning();
+  return toTaxonomy(row);
+}
+
+/** Refused while terms exist: their entries would lose the vocabulary they belong to. */
+export async function deleteTaxonomy(
+  ctx: CmsContext,
+  actor: CmsActor,
+  slug: string,
+): Promise<{ success: true }> {
+  assertAdmin(actor);
+  await getTaxonomy(ctx, slug);
+  const [{ n } = { n: 0 }] = await ctx.db
+    .select({ n: sql<number>`count(*)` })
+    .from(ctx.t.taxonomyTerms)
+    .where(eq(ctx.t.taxonomyTerms.taxonomy, slug));
+  if (Number(n) > 0)
+    throw new CmsError(409, `"${slug}" still has ${Number(n)} terms; delete them first`);
+  await ctx.db.delete(ctx.t.taxonomies).where(eq(ctx.t.taxonomies.slug, slug));
+  return { success: true };
 }
 
 function toTerm(row: any, count = 0): TaxonomyTerm {
@@ -97,9 +243,12 @@ export async function createTerm(
   taxonomy: string,
   input: TermInput,
 ): Promise<TaxonomyTerm> {
-  if (!ctx.taxonomies.some((t) => t.slug === taxonomy)) {
-    throw new CmsError(404, `Unknown taxonomy "${taxonomy}". Declare it in cms.config taxonomies.`);
-  }
+  const exists = await ctx.db
+    .select({ slug: ctx.t.taxonomies.slug })
+    .from(ctx.t.taxonomies)
+    .where(eq(ctx.t.taxonomies.slug, taxonomy))
+    .limit(1);
+  if (!exists[0]) throw new CmsError(404, `Unknown taxonomy "${taxonomy}". Create it first.`);
   const slug = slugify(input.slug || resolveLabel(input.label)).replace(/\//g, "-");
   if (!slug) throw new CmsError(422, "Term slug is required");
   const [row] = await ctx.db

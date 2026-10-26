@@ -3,8 +3,6 @@ import { config, options } from "virtual:rimelight-cms";
 import { createCmsApi } from "../server/router";
 import { migrateCms } from "../migrator/index";
 import { getCmsDb } from "../db/index";
-import { createCms } from "../services/index";
-import { createCmsContext } from "../services/context";
 
 /**
  * Hono middleware serving the CMS API (`/api/cms/*`), public content (`/api/content/*`) and
@@ -25,12 +23,9 @@ export function cms(): MiddlewareHandler {
   let ready: Promise<void> | null = null;
 
   const bootstrap = async (c: any) => {
-    const { db, dialect } = getCmsDb({}, c);
-    if (options.autoMigrate) await migrateCms(c.env?.DB ?? db);
-    if (config.templates?.length) {
-      const ctx = createCmsContext({ db, dialect, collections: config.collections ?? [] });
-      await createCms(ctx).templates.seedTemplates(config.templates);
-    }
+    if (!options.autoMigrate) return;
+    const { db } = getCmsDb({}, c);
+    await migrateCms(c.env?.DB ?? db);
   };
 
   return async (c, next) => {

@@ -47,9 +47,7 @@ export function cmsForRequest(c: any, options: CmsServerOptions): Cms {
     createCmsContext({
       db,
       dialect,
-      collections: config.collections ?? [],
       blocks: config.blocks ?? [],
-      taxonomies: config.taxonomies ?? [],
       locales: config.locales ?? ["en"],
       previewSecret: options.previewSecret ?? c.env?.CMS_PREVIEW_SECRET,
     }),

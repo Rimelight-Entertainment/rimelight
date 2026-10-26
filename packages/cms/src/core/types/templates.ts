@@ -1,5 +1,5 @@
 import type { BaseBlock } from "./blocks";
-import type { Localized, PageType } from "./pages";
+import type { Localized } from "./pages";
 
 export interface TemplateApprovalRules {
   minApprovals?: number;
@@ -19,7 +19,7 @@ export interface PageTemplate {
   slug: string;
   title: Localized;
   description?: Localized;
-  pageType: PageType;
+  pageType: string;
   version: number;
   allowedRoles: string[];
   rolePermissions?: TemplateRolePermissions;

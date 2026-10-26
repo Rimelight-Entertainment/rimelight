@@ -10,7 +10,7 @@ import {
   type PgTableWithColumns,
 } from "drizzle-orm/pg-core";
 import type { BaseBlock } from "../core/types/blocks";
-import type { EntryStatus, Localized, PageType } from "../core/types/pages";
+import type { EntryStatus, Localized } from "../core/types/pages";
 import type { BylineCredit } from "../core/types/bylines";
 import { pageVersions } from "./page_versions";
 import { pageTemplates } from "./page_templates";
@@ -20,7 +20,7 @@ export const pages: PgTableWithColumns<any> = pgTable(
   {
     id: uuid("id").defaultRandom().notNull().primaryKey(),
     slug: text("slug").notNull(),
-    type: text("type").$type<PageType>().notNull(),
+    type: text("type").$type<string>().notNull(),
     templateId: uuid("template_id").references(() => pageTemplates.id, { onDelete: "set null" }),
     templateVersion: integer("template_version").default(1).notNull(),
     title: jsonb("title").$type<Localized>().notNull(),

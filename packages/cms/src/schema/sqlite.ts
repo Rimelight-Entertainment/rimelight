@@ -9,7 +9,7 @@ import {
   type SQLiteTableWithColumns,
 } from "drizzle-orm/sqlite-core";
 import type { BaseBlock } from "../core/types/blocks";
-import type { EntryStatus, Localized, PageType } from "../core/types/pages";
+import type { EntryStatus, Localized } from "../core/types/pages";
 import type { BylineCredit } from "../core/types/bylines";
 import type { PageVersionStatus } from "../core/types/versioning";
 import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
@@ -43,7 +43,7 @@ export const pageTemplates: SQLiteTableWithColumns<any> = sqliteTable("page_temp
   slug: text("slug").notNull().unique(),
   title: text("title", { mode: "json" }).$type<Localized>().notNull(),
   description: text("description", { mode: "json" }).$type<Localized>(),
-  pageType: text("page_type").$type<PageType>().notNull(),
+  pageType: text("page_type").$type<string>().notNull(),
   version: integer("version").default(1).notNull(),
   allowedRoles: text("allowed_roles", { mode: "json" })
     .$type<string[]>()
@@ -83,7 +83,7 @@ export const pageVersions: SQLiteTableWithColumns<any> = sqliteTable(
     versionNumber: integer("version_number").notNull(),
     status: text("status").$type<PageVersionStatus>().default("pending").notNull(),
     slug: text("slug").notNull(),
-    type: text("type").$type<PageType>().notNull(),
+    type: text("type").$type<string>().notNull(),
     title: text("title", { mode: "json" }).$type<Localized>().notNull(),
     description: text("description", { mode: "json" }).$type<Localized>(),
     tags: text("tags", { mode: "json" })
@@ -127,7 +127,7 @@ export const pages: SQLiteTableWithColumns<any> = sqliteTable(
       .notNull()
       .primaryKey(),
     slug: text("slug").notNull(),
-    type: text("type").$type<PageType>().notNull(),
+    type: text("type").$type<string>().notNull(),
     templateId: text("template_id").references(() => pageTemplates.id, { onDelete: "set null" }),
     templateVersion: integer("template_version").default(1).notNull(),
     title: text("title", { mode: "json" }).$type<Localized>().notNull(),
@@ -300,6 +300,22 @@ export const siteSettings: SQLiteTableWithColumns<any> = sqliteTable("site_setti
 });
 
 // 10. Taxonomies
+/** A vocabulary. Its terms live in `taxonomy_terms`, keyed by this slug. */
+export const taxonomies: SQLiteTableWithColumns<any> = sqliteTable("taxonomies", {
+  slug: text("slug").primaryKey().notNull(),
+  label: text("label", { mode: "json" }).$type<Localized>().notNull(),
+  description: text("description", { mode: "json" }).$type<Localized>(),
+  hierarchical: integer("hierarchical", { mode: "boolean" }).default(false).notNull(),
+  collections: text("collections", { mode: "json" })
+    .$type<string[]>()
+    .default(sql`'[]'`)
+    .notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+});
+
 export const taxonomyTerms: SQLiteTableWithColumns<any> = sqliteTable(
   "taxonomy_terms",
   {
@@ -391,7 +407,6 @@ export const contentTypes: SQLiteTableWithColumns<any> = sqliteTable(
       .$type<Record<string, any>>()
       .default(sql`'{}'`)
       .notNull(),
-    ecomSettings: text("ecom_settings", { mode: "json" }).$type<Record<string, any>>(),
     initialBlocks: text("initial_blocks", { mode: "json" })
       .$type<BaseBlock[]>()
       .default(sql`'[]'`)
@@ -404,7 +419,6 @@ export const contentTypes: SQLiteTableWithColumns<any> = sqliteTable(
       .$type<Record<string, any>>()
       .default(sql`'{}'`)
       .notNull(),
-    isSystem: integer("is_system", { mode: "boolean" }).default(false).notNull(),
     createdAt: integer("created_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
       .notNull(),

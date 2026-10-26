@@ -25,7 +25,7 @@ function dashboardRoutes(base: string, moduleId: string): string {
  */
 export const cms = (options: CmsPluginOptions = {}): Plugin => {
   let configPath: string | null = null;
-  const dashboardPath = options.dashboardPath ?? options.routePrefix ?? "/cms";
+  const dashboardPath = options.dashboardPath ?? "/cms";
 
   return {
     name: "rimelight:cms",
