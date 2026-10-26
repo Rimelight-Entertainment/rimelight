@@ -443,11 +443,7 @@ export function getAuth0ConfigFromEnv(
 ): Auth0AdapterOptions {
   return {
     domain: overrides.domain || getEnv("AUTH0_DOMAIN", "rimelight.eu.auth0.com"),
-    audience:
-      overrides.audience ||
-      (getEnv("AUTH0_USE_CUSTOM_AUDIENCE") === "true"
-        ? getEnv("AUTH0_AUDIENCE") || undefined
-        : undefined),
+    audience: overrides.audience || getEnv("AUTH0_AUDIENCE") || undefined,
     clientId: overrides.clientId || getEnv("AUTH0_CLIENT_ID", ""),
     clientSecret: overrides.clientSecret || getEnv("AUTH0_CLIENT_SECRET", ""),
     rolesClaim: overrides.rolesClaim || getEnv("AUTH0_ROLES_CLAIM", "https://rimelight.com/roles"),

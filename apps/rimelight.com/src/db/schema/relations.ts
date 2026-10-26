@@ -67,4 +67,10 @@ export const relations = defineRelations(schema, (r) => ({
       to: r.list.id,
     }),
   },
+  titleSettings: {
+    user: r.one.users({
+      from: r.titleSettings.userId,
+      to: r.users.id,
+    }),
+  },
 }));

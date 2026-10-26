@@ -1,5 +1,6 @@
 import { drizzle as drizzleD1 } from "drizzle-orm/d1";
-import { drizzle as drizzleNeonHttp } from "drizzle-orm/neon-http";
+import postgres from "postgres";
+import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js";
 import * as pgTables from "../schema/index";
 import * as sqliteTables from "../schema/sqlite";
 
@@ -57,42 +58,6 @@ export function tablesFor(dialect: Dialect): CmsTables {
 }
 
 /**
- * Custom fetch-based Neon SQL query client that runs cleanly inside Cloudflare Workers / Miniflare
- * without triggering workerd driver internal errors.
- */
-function createWorkerNeonSql(connectionString: string) {
-  const cleanUrl = connectionString
-    .trim()
-    .replace(/([?&])channel_binding=[^&]*(&|$)/g, "$1")
-    .replace(/[?&]$/, "");
-  const host = new URL(cleanUrl).host;
-  const endpoint = `https://${host}/sql`;
-
-  const queryFn: any = async (query: string, params: any[] = []) => {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Neon-Connection-String": cleanUrl,
-        "Neon-Raw-Text-Output": "true",
-        "Neon-Array-Mode": "true",
-      },
-      body: JSON.stringify({ query, params }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Neon HTTP error (${res.status}): ${errText}`);
-    }
-
-    const data: any = await res.json();
-    return data;
-  };
-
-  queryFn.query = queryFn;
-  return queryFn;
-}
-
 /**
  * Resolves a unified database client and dialect-matching schema tables.
  *
@@ -124,7 +89,7 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
       (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV)) ||
       Boolean(env?.DATABASE_URL && env?.HYPERDRIVE?.host?.includes(".hyperdrive.local"));
 
-    // In local dev, Cloudflare Hyperdrive proxy binds to a mock local IP that the Neon serverless HTTP driver
+    // In local dev, Cloudflare Hyperdrive proxy binds to a mock local IP that the postgres-js driver
     // cannot reach over HTTP. Prefer direct DATABASE_URL in dev mode or whenever Hyperdrive is pointing to a local mock.
     const envUrl = isDev
       ? env?.DATABASE_URL ||
@@ -149,8 +114,9 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
           : undefined);
 
     if (typeof envUrl === "string" && envUrl.trim().length > 0) {
-      const client = createWorkerNeonSql(envUrl);
-      const db = drizzleNeonHttp({ client } as any);
+      // Per request: postgres-js holds socket state. Hyperdrive pools the connections.
+      const client = postgres(envUrl.trim(), { prepare: false, max: 5 });
+      const db = drizzlePostgres({ client } as any);
       const instance: CmsDbInstance = {
         db,
         dialect: "pg",

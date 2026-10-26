@@ -112,6 +112,7 @@
     "@solidjs/web": "2.0.0-rc.15",
     "drizzle-orm": "1.0.0-rc.4",
     "hono": "5.0.0-rc.1",
+    "postgres": "3.4.9",
     "solid-js": "2.0.0-rc.15",
     "sortablejs": "1.15.7",
     "zod": "4.6.7"

@@ -13,6 +13,7 @@ import {
   decodeJwt,
 } from "@rimelight/auth/auth0";
 import { syncAuth0UserToDb } from "#auth/sync-user";
+import { allowRequest } from "../rate-limit";
 
 const auth0Config = getAuth0ConfigFromEnv();
 const api = new Hono();
@@ -62,6 +63,15 @@ api.get("/login", (c) => {
  * returns the JWT Bearer token and user context directly in JSON.
  */
 const handleHeadlessLogin = async (c: any) => {
+  const ip = c.req.header("CF-Connecting-IP") || "unknown";
+  if (!(await allowRequest(c.env?.RATE_LIMIT_LOGIN, `login:${ip}`))) {
+    return c.json(
+      { error: "Too Many Requests", message: "Too many login attempts. Try again in a minute." },
+      429,
+      { "Retry-After": "60" },
+    );
+  }
+
   try {
     const body = (await c.req.json().catch(() => ({}))) as {
       username?: string;

@@ -4,3 +4,4 @@ export * from "./auth/index.ts";
 export * from "@rimelight/cms/schema";
 export * from "./projects/index.ts";
 export * from "./component-metadata.ts";
+export * from "./title-settings.ts";

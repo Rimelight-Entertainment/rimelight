@@ -1,0 +1,44 @@
+import { createMiddleware } from "hono/factory";
+import { verifyAuth0Jwt } from "@rimelight/auth/auth0";
+import { getDb } from "#db";
+import type { AppUser } from "#db/schema/users";
+import { ProvisionConflictError, provisionUser } from "./provision";
+
+export type ClientVariables = { jwtPayload: Record<string, any>; user: AppUser };
+
+export const requireClientToken = createMiddleware<{ Bindings: Env; Variables: ClientVariables }>(
+  async (c, next) => {
+    const header = c.req.header("Authorization") ?? "";
+    const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+    if (!token) return c.json({ error: "Unauthorized", message: "Missing bearer token." }, 401);
+
+    // Read these bindings directly. getAuth0ConfigFromEnv() is not used here.
+    const payload = await verifyAuth0Jwt(token, {
+      domain: c.env.AUTH0_DOMAIN,
+      audience: c.env.AUTH0_AUDIENCE,
+    });
+    if (!payload?.["sub"]) return c.json({ error: "Unauthorized", message: "Invalid token." }, 401);
+
+    if (payload["https://rimelight.com/user_type"] !== "user") {
+      return c.json({ error: "Forbidden", message: "Player account required." }, 403);
+    }
+
+    const email = payload["https://rimelight.com/email"];
+    if (typeof email !== "string" || !email) {
+      return c.json({ error: "Unauthorized", message: "Token has no email claim." }, 401);
+    }
+
+    try {
+      c.set("user", await provisionUser(getDb(), { sub: payload["sub"], email }));
+    } catch (err) {
+      if (err instanceof ProvisionConflictError) {
+        console.error("[client] provisioning conflict for sub", payload["sub"]);
+        return c.json({ error: "Conflict", message: err.message }, 409);
+      }
+      throw err;
+    }
+
+    c.set("jwtPayload", payload);
+    return await next();
+  },
+);

@@ -1,11 +1,12 @@
 import { Hono } from "hono";
-import { db } from "#db";
+import { getDb } from "#db";
 import { componentMetadata } from "#db/schema";
 import { eq, desc } from "drizzle-orm";
 
 const docs = new Hono();
 
 docs.get("/metadata/:componentName", async (c) => {
+  const db = getDb();
   try {
     const componentName = c.req.param("componentName");
     const result = await db
@@ -24,6 +25,7 @@ docs.get("/metadata/:componentName", async (c) => {
 });
 
 docs.post("/metadata/extract", async (c) => {
+  const db = getDb();
   try {
     const body = await c.req.json<{ componentPath?: string }>();
     const componentPath = body.componentPath;
@@ -83,6 +85,7 @@ docs.post("/metadata/extract", async (c) => {
 });
 
 docs.put("/metadata/:componentName", async (c) => {
+  const db = getDb();
   try {
     const componentName = c.req.param("componentName");
     const body = await c.req.json<Record<string, any>>();
@@ -115,6 +118,7 @@ docs.put("/metadata/:componentName", async (c) => {
 });
 
 docs.delete("/metadata/:componentName", async (c) => {
+  const db = getDb();
   try {
     const componentName = c.req.param("componentName");
     await db.delete(componentMetadata).where(eq(componentMetadata.componentName, componentName));
@@ -156,6 +160,7 @@ docs.post("/render", async (c) => {
 });
 
 docs.post("/validate-props", async (c) => {
+  const db = getDb();
   try {
     const body = await c.req.json<{ componentName?: string; props?: Record<string, any> }>();
     const componentName = body.componentName;
@@ -194,6 +199,7 @@ docs.post("/validate-props", async (c) => {
 });
 
 docs.get("/content/:pageId", async (c) => {
+  const db = getDb();
   try {
     const pageId = c.req.param("pageId");
     const [page] = await db
@@ -209,6 +215,7 @@ docs.get("/content/:pageId", async (c) => {
 });
 
 docs.put("/content/:pageId", async (c) => {
+  const db = getDb();
   try {
     const pageId = c.req.param("pageId");
     const body = await c.req.json<Record<string, any>>();
@@ -224,6 +231,7 @@ docs.put("/content/:pageId", async (c) => {
 });
 
 docs.post("/content", async (c) => {
+  const db = getDb();
   try {
     const body = await c.req.json<typeof componentMetadata.$inferInsert>();
     const result = await db.insert(componentMetadata).values(body).returning();
