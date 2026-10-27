@@ -10,7 +10,7 @@ import {
   type KeyIndex,
   type ModuleGraph,
 } from "./route-analysis";
-import { chunkId, DEFAULT_DIR, DEFAULT_TYPES } from "./shared";
+import { chunkId, DEFAULT_DIR, DEFAULT_TYPES, parseChunkId } from "./shared";
 import type { I18nConfig } from "./types";
 import { collectKeys, readLocaleFiles, syncTypedKeys } from "./typegen";
 
@@ -192,7 +192,7 @@ export const i18n = ({
       `namespaces: ${loaderMap(own, false)}`,
       `fallbacks: ${loaderMap(fallback, true)}`,
       `patterns: ${patternsCode()}`,
-      `loaded: new Set()`,
+      `loaded: new Map()`,
     ];
     return `export const config = {\n  ${fields.join(",\n  ")},\n};`;
   };
@@ -203,12 +203,13 @@ export const i18n = ({
    * `locale` lacks; an own chunk takes the locale's own keys.
    */
   const namespaceCode = (bucket: string, locale: string, fallback: boolean): string => {
-    const source = fallback ? (locales[baseLocale] ?? {}) : (locales[locale] ?? {});
-    const have = new Set(localeKeys[locale] ?? []);
-    const sourceKeys = localeKeys[fallback ? baseLocale : locale] ?? [];
+    // A fallback chunk reads the base locale and skips keys the locale already has.
+    const sourceLocale = fallback ? baseLocale : locale;
+    const source = locales[sourceLocale] ?? {};
+    const skip = fallback ? new Set(localeKeys[locale] ?? []) : new Set<string>();
     const out: Record<string, unknown> = {};
-    for (const key of sourceKeys) {
-      if (bucketOf(key) !== bucket || (fallback && have.has(key))) continue;
+    for (const key of localeKeys[sourceLocale] ?? []) {
+      if (bucketOf(key) !== bucket || skip.has(key)) continue;
       const parts = key.split(".");
       const last = parts.pop()!;
       let from = source;
@@ -275,12 +276,8 @@ export const i18n = ({
         return configCode();
       }
       if (id.startsWith(`\0${NAMESPACE_ID}`)) {
-        const [bucket, locale, kind] = id.slice(NAMESPACE_ID.length + 1).split("/") as [
-          string,
-          string,
-          string | undefined,
-        ];
-        return namespaceCode(bucket, locale, kind === "fallback");
+        const { bucket, locale, fallback } = parseChunkId(id.slice(NAMESPACE_ID.length + 1));
+        return namespaceCode(bucket, locale, fallback);
       }
       return undefined;
     },

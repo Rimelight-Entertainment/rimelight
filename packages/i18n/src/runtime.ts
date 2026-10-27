@@ -15,7 +15,8 @@ interface VirtualI18nConfig {
   /** Each bucket's default-locale values that a locale lacks. Only present where there are some. */
   fallbacks?: Record<string, Record<string, NamespaceLoader>>;
   patterns?: Array<[string, RegExp]>;
-  loaded?: Set<string>;
+  /** Chunks in memory, by chunk id: the locale they merge into and their values. */
+  loaded?: Map<string, LoadedChunk>;
   /** Set on the server config during `vite dev`, which has no build manifest. */
   devServer?: boolean;
 }
@@ -103,15 +104,13 @@ const merge = (
 const warnedMissing = new Set<string>();
 
 /**
- * Whether any chunk of a locale is in memory. Reads the `loaded` set on the shared config, not a
- * module-level set, because some bundles carry their own copy of this module.
+ * Whether any chunk of a locale is in memory. Reads the `loaded` map on the shared config, not a
+ * module-level one, because some bundles carry their own copy of this module.
  */
-const localeLoaded = (locale: string): boolean => {
-  for (const id of (config as VirtualI18nConfig | undefined)?.loaded ?? []) {
-    if (id.endsWith(`/${locale}`) || id.endsWith(`/${locale}/fallback`)) return true;
-  }
-  return false;
-};
+const localeLoaded = (locale: string): boolean =>
+  [...((config as VirtualI18nConfig | undefined)?.loaded?.values() ?? [])].some(
+    (chunk) => chunk.locale === locale,
+  );
 
 /** One fetchable chunk: its id, the locale its keys merge into, and how to load it. */
 interface Chunk {
@@ -120,18 +119,21 @@ interface Chunk {
   load: NamespaceLoader;
 }
 
+interface LoadedChunk {
+  locale: string;
+  data: Record<string, unknown>;
+}
+
 /**
  * Loads translations per URL. A URL needs, per route bucket, its locale's own keys and, when the
  * locale lacks some, the default-locale values for exactly those keys. Nothing else.
  */
 const createLoader = (cfg: VirtualI18nConfig) => {
-  const loaded = (cfg.loaded ??= new Set<string>());
+  const loaded = (cfg.loaded ??= new Map<string, LoadedChunk>());
   const dicts = (cfg.translations ??= {});
   const defaultLocale = cfg.defaultLocale ?? "en";
   /** Each chunk's fetch, in flight or done. */
   const fetches = new Map<string, Promise<void>>();
-  /** Each loaded chunk's translations, by chunk id, so a URL's payload can be taken from them. */
-  const values = new Map<string, Record<string, unknown>>();
 
   /** The locale a URL renders in: the one in its first segment, otherwise the default. */
   const localeOf = (pathname: string): string =>
@@ -169,8 +171,7 @@ const createLoader = (cfg: VirtualI18nConfig) => {
   /** Merges a chunk's translations into its locale, and records them so payloads can carry them. */
   const absorb = (id: string, locale: string, data: Record<string, unknown>): void => {
     merge((dicts[locale] ??= {}), data);
-    values.set(id, data);
-    loaded.add(id);
+    loaded.set(id, { locale, data });
   };
 
   /** Each chunk is fetched once. A failed fetch is forgotten, so the next attempt retries it. */
@@ -199,7 +200,9 @@ const createLoader = (cfg: VirtualI18nConfig) => {
     /** The translations a URL renders with, as plain data. The server hands this to the client. */
     payloadOf: (pathname: string): TranslationPayload => ({
       locale: localeOf(pathname),
-      chunks: Object.fromEntries(chunksOf(pathname).map(({ id }) => [id, values.get(id) ?? {}])),
+      chunks: Object.fromEntries(
+        chunksOf(pathname).map(({ id }) => [id, loaded.get(id)?.data ?? {}]),
+      ),
     }),
     /** Takes in a payload: its translations are merged, and its chunks count as loaded. Fetches nothing. */
     applyPayload: (payload: TranslationPayload): void => {
@@ -347,49 +350,53 @@ const rulesFor = (locale: string): Intl.PluralRules => {
   return rules;
 };
 
+/** A key in one locale's dictionary: the flat key first, then the dotted path. `undefined` when absent. */
+const lookup = (locale: string, key: string): unknown => {
+  // hasOwn, not `in`: plain objects inherit `constructor`, `toString`, etc.
+  if (!Object.hasOwn(activeConfig.translations, locale)) return undefined;
+  const dict = activeConfig.translations[locale]!;
+  if (Object.hasOwn(dict, key)) return dict[key];
+  return key
+    .split(".")
+    .reduce<unknown>(
+      (d, part) =>
+        d && typeof d === "object" && Object.hasOwn(d, part)
+          ? (d as Record<string, unknown>)[part]
+          : undefined,
+      dict,
+    );
+};
+
+/** Fills `{name}` placeholders. A placeholder without a param is left as written. */
+const fillPlaceholders = (text: string, params: Record<string, unknown>, locale: string): string =>
+  text.replace(PLACEHOLDER, (match, name: string) => {
+    const val = Object.hasOwn(params, name) ? params[name] : undefined;
+    if (val == null) return match;
+    return name === "count" && typeof val === "number"
+      ? val.toLocaleString(locale)
+      : String(val as string | number | boolean);
+  });
+
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, unknown>, locale = getCurrentLocale()): string => {
     let value: unknown = t.raw(key, undefined, locale);
 
-    if (typeof params?.["count"] === "number") {
-      const cat = t.plural(params["count"], locale);
-      const obj = value && typeof value === "object" ? (value as Record<string, unknown>) : null;
-      value = obj?.[cat] ?? obj?.["other"] ?? value;
+    // A numeric `count` picks the plural form, falling back to `other`.
+    if (typeof params?.["count"] === "number" && value && typeof value === "object") {
+      const forms = value as Record<string, unknown>;
+      value = forms[t.plural(params["count"], locale)] ?? forms["other"] ?? value;
     }
 
     const resolved = value ?? key;
     if (typeof resolved === "function") return String(resolved(params));
-    if (typeof resolved === "string" && params) {
-      return resolved.replace(PLACEHOLDER, (match, paramKey: string) => {
-        const val = Object.hasOwn(params, paramKey) ? params[paramKey] : undefined;
-        if (val == null) return match;
-        return paramKey === "count" && typeof val === "number"
-          ? val.toLocaleString(locale)
-          : String(val as string | number | boolean);
-      });
-    }
+    if (typeof resolved === "string" && params) return fillPlaceholders(resolved, params, locale);
     return typeof resolved === "object" && resolved
       ? JSON.stringify(resolved)
       : String(resolved as string | number | boolean);
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
-      // hasOwn, not `in`: plain objects inherit `constructor`, `toString`, etc.
-      const get = (loc: string) => {
-        if (!Object.hasOwn(activeConfig.translations, loc)) return undefined;
-        const dict = activeConfig.translations[loc]!;
-        if (Object.hasOwn(dict, key)) return dict[key];
-        return key
-          .split(".")
-          .reduce<unknown>(
-            (d, part) =>
-              d && typeof d === "object" && Object.hasOwn(d, part)
-                ? (d as Record<string, unknown>)[part]
-                : undefined,
-            dict,
-          );
-      };
-      const val = get(locale) ?? get(activeConfig.defaultLocale);
+      const val = lookup(locale, key) ?? lookup(activeConfig.defaultLocale, key);
       if (val === undefined && activeConfig.devServer && !localeLoaded(locale)) {
         const id = `${locale} ${key}`;
         if (!warnedMissing.has(id)) {

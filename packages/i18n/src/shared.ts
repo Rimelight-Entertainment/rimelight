@@ -19,6 +19,12 @@ export const DEFAULT_TYPES = "node_modules/.rimelight/types/i18n.d.ts";
 export const chunkId = (bucket: string, locale: string, fallback: boolean): string =>
   fallback ? `${bucket}/${locale}/fallback` : `${bucket}/${locale}`;
 
+/** The parts of a chunk id built by `chunkId`. */
+export const parseChunkId = (id: string): { bucket: string; locale: string; fallback: boolean } => {
+  const [bucket, locale, kind] = id.split("/") as [string, string, string | undefined];
+  return { bucket, locale, fallback: kind === "fallback" };
+};
+
 /** Matches `{name}` and `{ name }`. The runtime substitutes with it; everything else reads names from it. */
 export const PLACEHOLDER = /\{\s*(\w+)\s*}/g;
 
