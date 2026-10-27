@@ -32,7 +32,8 @@ import { i18n } from "@rimelight/i18n/middleware";
 app.use(i18n());
 ```
 
-Calling `i18n()` is what makes `getCurrentLocale()` return the request's locale on the server.
+Calling `i18n()` is what makes `getCurrentLocale()` return the request's locale on the server. Before each
+page renders, the middleware loads that URL's translations. The page sends them to the browser with its HTML.
 
 ## Usage
 
@@ -87,7 +88,9 @@ Only literal keys are typed. A key built at runtime, such as `t(\`page.${id}\`)`
 
 ## Game clients and other external consumers
 
-The middleware serves each dictionary as JSON at `/locales/<locale>.json`, with a one-hour cache.
+The middleware serves each dictionary as JSON at `/locales/<locale>.json`, with a one-hour cache. Each file is
+the whole locale: its own keys, plus the default locale's value for every key it lacks. So a `pt.json` has
+every key the default locale has, and some of them are in English.
 
 ## CLI
 
@@ -113,9 +116,9 @@ rimelight-i18n types --config vite.config.ts   # same, using the i18n plugin set
 
 `check` exits non-zero when anything is wrong, so it works in CI.
 
-## Client route loading (Solid)
+## Page translations (Solid)
 
-Each page loads only the translations it uses. Client navigation needs one wrapper around the router's children, inside a `Loading` boundary. It holds the page until the next URL's translations have loaded:
+Each page loads only the translations it uses, split by route. Wrap the router's children in `RLI18n`, inside a `Loading` boundary:
 
 ```tsx
 import { RLI18n } from "@rimelight/i18n/solid";
@@ -125,6 +128,22 @@ import { RLI18n } from "@rimelight/i18n/solid";
 </Loading>;
 ```
 
-The gate is async like any other Solid data: a navigation keeps the previous page on screen until the next one is ready, and a failed load reaches the nearest error boundary. Pages already loaded render at once.
+How it works:
 
-`solid-js` is a peer dependency. The server and the first load need no wrapper: the config already holds what they need.
+- **First load.** The server renders the page with its translations. `RLI18n` hands them to Solid as async
+  data, so Solid serializes them into the HTML. The browser adopts them during hydration and fetches nothing
+  for translations. There is no top-level `await` in the client code, and no `modulepreload` tags.
+- **Client navigation.** The next URL's translations load before its page renders. The previous page stays
+  on screen until then. A stale navigation is dropped, and a failed load reaches the nearest error boundary.
+  Translations already loaded render at once.
+- **What a locale loads.** For each route bucket, the URL's own locale loads its keys. If that locale lacks
+  some of the default locale's keys, it also loads just those default-locale values. A locale with every key
+  loads nothing extra. The default locale's dictionary is not fetched for other locales.
+
+Requirements and limits:
+
+- `solid-js` is a peer dependency, and `RLI18n` must render inside the server render, under `Loading`.
+- `t()` reads the loaded dictionary, so call it inside components or after `RLI18n` has rendered. A `t()`
+  call at module scope, evaluated at import time, reads before the page's translations arrive.
+- `t(key, params, locale)` for a locale other than the URL's own works only after `loadLocale(locale)`.
+  Reading the default locale from a non-default URL works only when the default locale's chunks are loaded.

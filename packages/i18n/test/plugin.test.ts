@@ -291,6 +291,24 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       expect(runtime.activeConfig.translations["en"]).toEqual({});
     });
 
+    it("takes a server payload in without fetching, and renders the same translations", async () => {
+      // The server loads the URL and serializes its payload; the client applies it on hydration.
+      const server = await client(serve);
+      await server.loadPathname("/pt/");
+      const payload = JSON.parse(JSON.stringify(server.payloadOf("/pt/")));
+
+      const requested: string[] = [];
+      const runtime = await client(async (id) => (requested.push(id), serve(id)));
+      expect(runtime.isPathnameLoaded("/pt/")).toBe(false);
+      runtime.applyPayload(payload);
+      expect(runtime.isPathnameLoaded("/pt/")).toBe(true);
+      expect(requested).toEqual([]);
+      expect(runtime.activeConfig.translations["pt"]).toEqual({
+        page: { home: ptFull.page.home },
+        common: ptFull.common,
+      });
+    });
+
     it("falls back to 404 route buckets when no route pattern matches", async () => {
       const requested: string[] = [];
       const runtime = await client(async (id) => (requested.push(id), serve(id)));

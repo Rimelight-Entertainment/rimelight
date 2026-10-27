@@ -1,5 +1,5 @@
 import { createMemo, Show } from "solid-js";
-import { isPathnameLoaded, loadPathname } from "./runtime";
+import { applyPayload, isPathnameLoaded, loadPathname, payloadOf } from "./runtime";
 
 export interface RLI18nProps {
   /** The current URL, e.g. `router.location.pathname`. */
@@ -8,28 +8,29 @@ export interface RLI18nProps {
   children?: unknown;
 }
 
+/** No `window` on the server. There the memo always answers with a promise, which Solid serializes for the client to adopt. */
+const onServer = typeof window === "undefined";
+
 /**
- * Holds the page until the namespaces for its URL are loaded. Use it around the router's children,
- * inside a `Loading` boundary.
- *
- * A URL whose namespaces are already in (the first URL, any page visited before, every page on the
- * server) renders at once. Otherwise the page is async: a navigation keeps the previous page on screen
- * until the new one is ready, a stale navigation is dropped, and a failed load reaches the nearest
- * error boundary.
+ * Holds the page until the translations for its URL are in. The server renders with them and sends
+ * them to the client in the HTML, so hydration adopts them and nothing is fetched. A navigation that
+ * needs chunks keeps the previous page on screen until they load, drops a stale navigation, and sends
+ * a failed load to the nearest error boundary.
  */
 export const RLI18n = (props: RLI18nProps): ReturnType<typeof Show> => {
-  let generation = 1;
-  const ready = createMemo(() => {
+  const payload = createMemo(() => {
     const pathname = props.pathname;
-    return isPathnameLoaded(pathname)
-      ? generation
-      : loadPathname(pathname).then(() => ++generation);
+    if (!onServer && isPathnameLoaded(pathname)) return payloadOf(pathname);
+    return loadPathname(pathname).then(() => payloadOf(pathname));
   });
   return Show({
     keyed: true,
     get when() {
-      return ready();
+      return payload();
     },
-    children: (_ready) => props.children as never,
+    children: (value) => {
+      applyPayload(value);
+      return props.children as never;
+    },
   });
 };

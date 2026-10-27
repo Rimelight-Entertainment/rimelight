@@ -173,6 +173,9 @@ const createLoader = (cfg: VirtualI18nConfig) => {
     return [...bucketsOf(pathname)].flatMap((bucket) => chunksOfBucket(bucket, locale));
   };
 
+  /** Each loaded chunk's translations, by chunk id, so a URL's payload can be taken from them. */
+  const values = new Map<string, Record<string, unknown>>();
+
   /** Each chunk is fetched once. A failed fetch is forgotten, so the next attempt retries it. */
   const loadChunk = ({ id, locale, load }: Chunk): Promise<void> => {
     if (loaded.has(id)) return Promise.resolve();
@@ -181,6 +184,7 @@ const createLoader = (cfg: VirtualI18nConfig) => {
       pending = load().then(
         (mod) => {
           merge((dicts[locale] ??= {}), mod.default);
+          values.set(id, mod.default);
           loaded.add(id);
         },
         (error) => {
@@ -199,7 +203,20 @@ const createLoader = (cfg: VirtualI18nConfig) => {
     loadPathname: async (pathname: string): Promise<void> => {
       await Promise.all(chunksOf(pathname).map(loadChunk));
     },
-    chunkIdsOf: (pathname: string): string[] => chunksOf(pathname).map(({ id }) => id),
+    /** The translations a URL renders with, as plain data. The server hands this to the client. */
+    payloadOf: (pathname: string): TranslationPayload => {
+      const chunks: Record<string, Record<string, unknown>> = {};
+      for (const { id } of chunksOf(pathname)) chunks[id] = values.get(id) ?? {};
+      return { locale: localeOf(pathname), chunks };
+    },
+    /** Takes in a payload: its translations are merged, and its chunks count as loaded. Fetches nothing. */
+    applyPayload: (payload: TranslationPayload): void => {
+      for (const [id, data] of Object.entries(payload.chunks)) {
+        merge((dicts[payload.locale] ??= {}), data);
+        values.set(id, data);
+        loaded.add(id);
+      }
+    },
     /** Every chunk of one locale, for whole-dictionary consumers such as `/locales/:locale.json`. */
     loadLocale: async (locale: string): Promise<void> => {
       const buckets = new Set([
@@ -219,8 +236,17 @@ export const isPathnameLoaded: (pathname: string) => boolean = defaultLoader.isP
 /** Loads the namespaces a URL needs, for the locale in its path (or the default). */
 export const loadPathname: (pathname: string) => Promise<void> = defaultLoader.loadPathname;
 
-/** The `bucket/locale` ids of the chunks a URL loads. The middleware preloads them. */
-export const chunkIdsOf: (pathname: string) => string[] = defaultLoader.chunkIdsOf;
+/** A URL's translations as plain data: its locale, and each chunk's values by chunk id. */
+export interface TranslationPayload {
+  locale: string;
+  chunks: Record<string, Record<string, unknown>>;
+}
+
+/** The payload for a URL, once `loadPathname` has loaded it. */
+export const payloadOf: (pathname: string) => TranslationPayload = defaultLoader.payloadOf;
+
+/** Takes in a payload, so the client renders the server's translations without fetching them. */
+export const applyPayload: (payload: TranslationPayload) => void = defaultLoader.applyPayload;
 
 /** Loads every namespace of one locale. Server only: the middleware calls it for `/locales/:locale.json`. */
 export const loadLocale: (locale: string) => Promise<void> = defaultLoader.loadLocale;
@@ -404,7 +430,3 @@ export const t: TFunction = Object.assign(
     },
   },
 );
-
-// Client boot. The page's translations must be in before any module reads one, so the first render
-// matches the server's HTML. The server has no boot: the middleware loads each request's URL.
-if (typeof window !== "undefined") await loadPathname(window.location.pathname);
