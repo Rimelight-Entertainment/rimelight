@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { seo } from "../src/middleware";
 
 describe("seo Hono Middleware", () => {
-  it("intercepts /robots.txt", async () => {
+  it("intercepts /robots.txt with inlined default private disallows", async () => {
     const app = new Hono();
     app.use(seo({ url: "https://example.com" }));
 
@@ -12,7 +12,34 @@ describe("seo Hono Middleware", () => {
     expect(res.headers.get("Content-Type")).toContain("text/plain");
     const text = await res.text();
     expect(text).toContain("User-agent: *");
+    expect(text).toContain("Disallow: /admin");
+    expect(text).toContain("Disallow: /api");
+    expect(text).toContain("Disallow: /dashboard");
     expect(text).toContain("Sitemap: https://example.com/sitemap.xml");
+  });
+
+  it("intercepts /sitemap.xml and excludes default private paths from entries", async () => {
+    const app = new Hono();
+    app.use(
+      seo({
+        url: "https://example.com",
+        entries: () => [
+          { path: "/about" },
+          { path: "/admin" },
+          { path: "/admin/users" },
+          { path: "/api/users" },
+        ],
+      }),
+    );
+
+    const sitemapRes = await app.request("/sitemap.xml");
+    expect(sitemapRes.status).toBe(200);
+    expect(sitemapRes.headers.get("Content-Type")).toContain("application/xml");
+    const sitemapText = await sitemapRes.text();
+    expect(sitemapText).toContain("<loc>https://example.com/about</loc>");
+    expect(sitemapText).not.toContain("<loc>https://example.com/admin</loc>");
+    expect(sitemapText).not.toContain("https://example.com/admin/users");
+    expect(sitemapText).not.toContain("https://example.com/api/users");
   });
 
   it("intercepts /sitemap.xml and /sitemap-index.xml", async () => {

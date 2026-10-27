@@ -41,7 +41,6 @@ export default defineConfig({
           "*/docs/*": "./src/components/og/DocsOgCard.tsx",
         },
       },
-      privatePathPrefixes: ["/api", "/cdn-cgi"],
     }),
 
     security({

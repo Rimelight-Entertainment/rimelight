@@ -60,7 +60,26 @@ export { buildWebManifest } from "./manifest";
 export { buildApiCatalog } from "./catalog";
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema";
 
-export { config as activeConfig } from "virtual:rimelight-seo";
+import { config as virtualConfig } from "virtual:rimelight-seo";
+import type { SeoConfig } from "./types";
+
+const DEFAULT_PRIVATE_PATH_PREFIXES = [
+  "/dashboard",
+  "/admin",
+  "/cms",
+  "/internal",
+  "/api",
+  "/dev",
+  "/og",
+  "/open-graph",
+  "/auth",
+  "/cdn-cgi",
+];
+
+export const activeConfig: SeoConfig = {
+  privatePathPrefixes: DEFAULT_PRIVATE_PATH_PREFIXES,
+  ...virtualConfig,
+};
 
 export {
   defaultOgLayout,

@@ -11,6 +11,19 @@ import { handleOgRequest } from "./og";
 
 export type SeoMiddlewareOptions = SeoConfig;
 
+const DEFAULT_PRIVATE_PATH_PREFIXES = [
+  "/dashboard",
+  "/admin",
+  "/cms",
+  "/internal",
+  "/api",
+  "/dev",
+  "/og",
+  "/open-graph",
+  "/auth",
+  "/cdn-cgi",
+];
+
 /**
  * Standard Hono middleware for SEO endpoints (/robots.txt, /sitemap.xml, /site.webmanifest, etc.)
  * Reads configuration from virtual:rimelight-seo with optional runtime overrides.
@@ -43,12 +56,15 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
     const origin = config.url ? config.url.replace(/\/$/, "") : new URL(c.req.url).origin;
     const siteName = config.name || "";
     const siteDescription = config.description || "";
+    const privatePrefixes = config.privatePathPrefixes ?? DEFAULT_PRIVATE_PATH_PREFIXES;
 
     if (rawUrl === "/robots.txt" && config.robots !== false) {
       const robotsOpts = typeof config.robots === "object" ? config.robots : {};
+      const disallow = robotsOpts.disallow !== undefined ? robotsOpts.disallow : privatePrefixes;
       const robotsTxt = buildRobotsTxt({
         sitemapUrl: `${origin}/sitemap.xml`,
         ...robotsOpts,
+        disallow,
       });
       return c.text(robotsTxt, 200, {
         "Content-Type": "text/plain; charset=utf-8",
@@ -66,8 +82,12 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
             ? buildSitemapUrls(entries, {
                 site: origin,
                 ...(sitemapOpts.trailingSlash && { trailingSlash: sitemapOpts.trailingSlash }),
+                privatePathPrefixes: privatePrefixes,
               })
-            : [{ loc: `${origin}/` }];
+            : [];
+        if (urls.length === 0) {
+          urls = [{ loc: `${origin}/` }];
+        }
       }
       const sitemapXml = buildSitemapXml(urls);
       return c.text(sitemapXml, 200, {
@@ -202,37 +222,44 @@ export function seo(options: SeoMiddlewareOptions = {}): MiddlewareHandler {
         }
       }
 
-      return handleOgRequest(c.req.raw, {
-        brand: ogOpts.brand || siteName,
-        ...ogOpts,
+      const res = handleOgRequest(c.req.raw, {
+        brand: siteName,
         layouts,
+        ...ogOpts,
       });
+      if (res) return res;
     }
 
-    if (rawUrl === "/favicon.svg" && config.assets !== false) {
-      const bg = config.branding?.colors?.backgroundColor || "#0a0a0a";
-      const fg = config.branding?.colors?.themeColor || "#ffffff";
-      const initial = (siteName[0] || "A").toUpperCase();
+    if (rawUrl === "/favicon.ico" && config.branding?.favicon) {
+      const icoUrl =
+        typeof config.branding.favicon === "object" ? config.branding.favicon.ico : undefined;
+      if (icoUrl) {
+        return c.redirect(icoUrl, 301);
+      }
+    }
+
+    if (rawUrl === "/favicon.svg" && config.branding) {
       const svg =
-        typeof config.branding?.favicon === "string" && config.branding.favicon.startsWith("<svg")
+        typeof config.branding.favicon === "string" && config.branding.favicon.startsWith("<svg")
           ? config.branding.favicon
-          : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><rect width="512" height="512" rx="128" fill="${bg}" /><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" font-family="system-ui, -apple-system, sans-serif" font-size="280" font-weight="700" fill="${fg}">${initial}</text></svg>`;
-      return c.text(svg, 200, {
-        "Content-Type": "image/svg+xml; charset=utf-8",
+          : undefined;
+      if (svg) {
+        return c.text(svg, 200, {
+          "Content-Type": "image/svg+xml",
+          "Cache-Control": "public, max-age=86400",
+        });
+      }
+
+      const mark = siteName.charAt(0).toUpperCase() || "R";
+      const bg = config.branding.colors?.backgroundColor || "#0a0a0a";
+      const fg = config.branding.colors?.themeColor || "#ffffff";
+      const defaultSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="${bg}"/><text x="16" y="22" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="${fg}" text-anchor="middle">${mark}</text></svg>`;
+      return c.text(defaultSvg, 200, {
+        "Content-Type": "image/svg+xml",
         "Cache-Control": "public, max-age=86400",
       });
     }
 
-    await next();
-    if ((c.res?.headers.get("content-type") || "").includes("text/html")) {
-      const links = [
-        config.sitemap !== false && `<${origin}/sitemap-index.xml>; rel="sitemap"`,
-        config.llms && `<${origin}/llms.txt>; rel="llms"`,
-        config.apiCatalog && `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
-        config.rss && `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`,
-      ].filter(Boolean);
-      if (links.length) c.header("Link", links.join(", "));
-    }
-    return;
+    return next();
   };
 }

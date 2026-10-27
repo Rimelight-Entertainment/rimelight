@@ -5,6 +5,7 @@ export interface SitemapBuildOptions {
   /** Absolute origin, e.g. "https://rimelight.com" */
   site: string;
   trailingSlash?: "always" | "never";
+  privatePathPrefixes?: string[];
 }
 
 /**
@@ -15,8 +16,18 @@ export function buildSitemapUrls(entries: SeoEntry[], options: SitemapBuildOptio
   const site = options.site.replace(/\/$/, "");
   const defaultLocale = getDefaultLocale();
   const urls: SitemapUrl[] = [];
+  const privatePrefixes = options.privatePathPrefixes;
 
   for (const entry of entries) {
+    if (privatePrefixes && privatePrefixes.length > 0) {
+      const normPath = entry.path.startsWith("/") ? entry.path : `/${entry.path}`;
+      const isPrivate = privatePrefixes.some((prefix) => {
+        const norm = (prefix.startsWith("/") ? prefix : `/${prefix}`).replace(/\/+$/, "");
+        return normPath === norm || normPath.startsWith(`${norm}/`);
+      });
+      if (isPrivate) continue;
+    }
+
     let path = entry.path;
     if (options.trailingSlash === "always" && !path.endsWith("/")) path += "/";
     else if (options.trailingSlash === "never" && path.length > 1) path = path.replace(/\/$/, "");
@@ -90,11 +101,7 @@ ${urlElements}
  */
 export function buildSitemapIndexXml(sitemapUrls: string[]): string {
   const sitemapElements = sitemapUrls
-    .map(
-      (url) => `  <sitemap>
-    <loc>${escapeXml(url)}</loc>
-  </sitemap>`,
-    )
+    .map((url) => `  <sitemap>\n    <loc>${escapeXml(url)}</loc>\n  </sitemap>`)
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>

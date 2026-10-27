@@ -43,16 +43,6 @@ export default defineConfig({
           "*/docs/*": "./src/components/og/DocsOgCard.tsx",
         },
       },
-      privatePathPrefixes: [
-        "/dashboard",
-        "/admin",
-        "/internal",
-        "/api",
-        "/dev",
-        "/og",
-        "/open-graph",
-        "/auth",
-      ],
     }),
 
     security({
