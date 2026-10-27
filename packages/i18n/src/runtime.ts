@@ -2,6 +2,18 @@ import { config } from "virtual:rimelight-i18n";
 import { PLACEHOLDER } from "./placeholders";
 import type { LocaleInfo, LocaleOptions, TFunction } from "./types";
 
+type NamespaceLoader = () => Promise<{ default: Record<string, unknown> }>;
+
+export interface VirtualI18nConfig {
+  defaultLocale?: string;
+  translations?: Record<string, Record<string, unknown>>;
+  routeBuckets?: Record<string, string[]>;
+  globalBuckets?: string[];
+  namespaces?: Record<string, Record<string, NamespaceLoader>>;
+  patterns?: Array<[string, RegExp]>;
+  loaded?: Set<string>;
+}
+
 const translations: Record<string, Record<string, unknown>> = config?.translations ?? {};
 
 const configuredLocales = config?.locales;
@@ -64,6 +76,116 @@ const localeIndex = (): LocaleIndex => {
 /** The configured locale whose code equals `value`, ignoring case. `undefined` when none does. */
 export const matchLocale = (value: string | undefined): string | undefined =>
   value ? localeIndex().byLowerCase.get(value.toLowerCase()) : undefined;
+
+const merge = (
+  target: Record<string, unknown>,
+  source: Record<string, unknown>,
+): Record<string, unknown> => {
+  for (const [key, value] of Object.entries(source)) {
+    if (key === "__proto__") continue;
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      merge((target[key] ??= {}) as Record<string, unknown>, value as Record<string, unknown>);
+    } else {
+      target[key] = value;
+    }
+  }
+  return target;
+};
+
+/** Creates a pathname loader for a virtual config object. */
+export const createPathnameLoader = (
+  cfg: VirtualI18nConfig,
+): {
+  isPathnameLoaded: (pathname: string) => boolean;
+  loadPathname: (pathname: string) => Promise<void>;
+  loadLocale: (locale: string) => Promise<void>;
+} => {
+  const loaded = (cfg.loaded ??= new Set<string>());
+  const loading = new Map<string, Promise<void>>();
+  const dicts = (cfg.translations ??= {});
+
+  /**
+   * The chunks a URL needs: the global namespaces and those of every route matching it (or the 404
+   * route when none matches), in every locale. `t()` takes any locale (`setCurrentLocale`, or an
+   * explicit argument), so the URL's locale alone isn't enough.
+   */
+  const chunksOf = (pathname: string): Array<[string, string]> => {
+    const namespaces = cfg.namespaces;
+    if (!namespaces) return [];
+    const routeBuckets = cfg.routeBuckets ?? {};
+    const patterns = cfg.patterns ?? [];
+    const buckets = new Set(cfg.globalBuckets ?? []);
+    let matched = false;
+    for (const [key, re] of patterns) {
+      if (re.test(pathname)) {
+        matched = true;
+        for (const bucket of routeBuckets[key] ?? []) buckets.add(bucket);
+      }
+    }
+    if (!matched) {
+      for (const [key] of patterns) {
+        if (key === "404" || key.endsWith("/404")) {
+          for (const bucket of routeBuckets[key] ?? []) buckets.add(bucket);
+        }
+      }
+    }
+    const chunks: Array<[string, string]> = [];
+    for (const loc of Object.keys(dicts)) {
+      for (const bucket of buckets) {
+        if (namespaces[bucket]?.[loc]) chunks.push([bucket, loc]);
+      }
+    }
+    return chunks;
+  };
+
+  /** Each chunk is fetched once. A failed fetch is forgotten, so the next attempt retries it. */
+  const loadChunk = ([bucket, locale]: [string, string]): Promise<void> => {
+    const id = `${bucket}/${locale}`;
+    if (loaded.has(id)) return Promise.resolve();
+    let pending = loading.get(id);
+    if (!pending) {
+      const loader = cfg.namespaces?.[bucket]?.[locale];
+      if (!loader) return Promise.resolve();
+      pending = loader().then(
+        (mod) => {
+          merge((dicts[locale] ??= {}), mod.default);
+          loaded.add(id);
+        },
+        (error) => {
+          loading.delete(id);
+          throw error;
+        },
+      );
+      loading.set(id, pending);
+    }
+    return pending;
+  };
+
+  return {
+    isPathnameLoaded: (pathname) =>
+      chunksOf(pathname).every(([bucket, locale]) => loaded.has(`${bucket}/${locale}`)),
+    loadPathname: async (pathname) => {
+      await Promise.all(chunksOf(pathname).map(loadChunk));
+    },
+    /** Every namespace of one locale, for whole-dictionary consumers such as `/locales/:locale.json`. */
+    loadLocale: async (locale) => {
+      await Promise.all(
+        Object.keys(cfg.namespaces ?? {}).map((bucket) => loadChunk([bucket, locale])),
+      );
+    },
+  };
+};
+
+const defaultLoader = createPathnameLoader((config ?? {}) as VirtualI18nConfig);
+
+/** Whether everything `loadPathname` would load for a URL is already in. Always `true` on the server. */
+export const isPathnameLoaded: (pathname: string) => boolean = defaultLoader.isPathnameLoaded;
+
+/** Loads the namespaces a URL needs, for the locale in its path (or the default). */
+export const loadPathname: (pathname: string) => Promise<void> = defaultLoader.loadPathname;
+
+/** Loads every namespace of one locale. Server only: the middleware calls it for `/locales/:locale.json`. */
+export const loadLocale: (locale: string) => Promise<void> = defaultLoader.loadLocale;
 
 let resolveRequestLocale: (() => string | undefined) | undefined;
 

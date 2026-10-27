@@ -112,3 +112,19 @@ rimelight-i18n types --config vite.config.ts   # same, using the i18n plugin set
 | `--allow-empty`       | Don't treat empty strings as errors                                                         |
 
 `check` exits non-zero when anything is wrong, so it works in CI.
+
+## Client route loading (Solid)
+
+Each page loads only the translations it uses. Client navigation needs one wrapper around the router's children, inside a `Loading` boundary. It holds the page until the next URL's translations have loaded:
+
+```tsx
+import { RLI18n } from "@rimelight/i18n/solid";
+
+<Loading fallback={<main>Loading.</main>}>
+  <RLI18n pathname={props.location.pathname}>{props.children}</RLI18n>
+</Loading>;
+```
+
+The gate is async like any other Solid data: a navigation keeps the previous page on screen until the next one is ready, and a failed load reaches the nearest error boundary. Pages already loaded render at once.
+
+`solid-js` is a peer dependency. The server and the first load need no wrapper: the config already holds what they need.

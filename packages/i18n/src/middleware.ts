@@ -1,6 +1,13 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { MiddlewareHandler } from "hono";
-import { activeConfig, isSkippedPath, matchLocale, registerLocaleResolver } from "./runtime";
+import {
+  activeConfig,
+  isSkippedPath,
+  loadLocale,
+  loadPathname,
+  matchLocale,
+  registerLocaleResolver,
+} from "./runtime";
 
 /** The first configured locale that an `Accept-Language` header asks for, matching the full tag before the base. */
 const fromAcceptLanguage = (header = ""): string | undefined => {
@@ -27,9 +34,9 @@ export const i18n = (): MiddlewareHandler => {
     // Serve static JSON translations over HTTP for external consumers (e.g. game clients)
     if (pathname.startsWith("/locales/") && pathname.endsWith(".json")) {
       const locale = pathname.slice(9, -5);
-      const translations = Object.hasOwn(activeConfig.translations, locale)
-        ? activeConfig.translations[locale]
-        : undefined;
+      const known = Object.hasOwn(activeConfig.translations, locale);
+      if (known) await loadLocale(locale);
+      const translations = known ? activeConfig.translations[locale] : undefined;
       return translations
         ? c.json(translations, 200, {
             "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
@@ -48,6 +55,12 @@ export const i18n = (): MiddlewareHandler => {
         ? !prefix && `/${locale}${pathname}`
         : prefix === activeConfig.defaultLocale && (pathname.slice(prefix.length + 1) || "/"));
 
-    return target ? c.redirect(`${target}${search}`, 302) : storage.run(locale, next);
+    if (target) return c.redirect(`${target}${search}`, 302);
+
+    // Render with this URL's namespaces loaded, so the page's first translations are already in place.
+    return storage.run(locale, async () => {
+      if (!isSkippedPath(pathname)) await loadPathname(pathname);
+      await next();
+    });
   };
 };

@@ -442,6 +442,9 @@ importers:
       hono:
         specifier: 5.0.0-rc.1
         version: 5.0.0-rc.1
+      solid-js:
+        specifier: 2.0.0-rc.18
+        version: 2.0.0-rc.18
 
   packages/security:
     dependencies:
