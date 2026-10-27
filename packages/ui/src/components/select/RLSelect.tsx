@@ -1,8 +1,6 @@
 import type { RLSelectProps, SelectItem } from "./select.types";
 import { RLSelectTheme } from "./select.theme";
 import { createMemo, createSignal, For, type Component } from "solid-js";
-import { RLButton } from "../button/RLButton";
-import type { RLButtonProps } from "../button/button.types";
 import { RLIcon } from "../icon/RLIcon";
 
 const OMIT_KEYS = [
@@ -26,9 +24,6 @@ const OMIT_KEYS = [
 export const RLSelect: Component<RLSelectProps> = (props) => {
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "icon" ? props.variant : "default";
-
-  const buttonVariant = () => props.buttonVariant ?? "ghost";
-  const buttonColor = () => props.buttonColor ?? "neutral";
 
   const { Tag, classes, rest } = RLSelectTheme.setup(props, {
     omit: OMIT_KEYS,
@@ -63,14 +58,6 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
     props.value !== undefined ? props.value : internalValue(),
   );
 
-  const currentLabel = createMemo(() => {
-    const val = currentValue();
-    if (props.placeholder && (val === undefined || val === "")) return props.placeholder;
-    if (Array.isArray(val)) return props.placeholder ?? "";
-    const item = normalizedItems().find((i) => String(i.value) === String(val));
-    return item?.label ?? "";
-  });
-
   const currentValueStr = createMemo(() => {
     const val = currentValue();
     return val !== undefined ? String(val) : undefined;
@@ -91,43 +78,8 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
     props.onChange?.(e);
   };
 
-  const triggerProps = () => {
-    const p: RLButtonProps = {
-      variant: buttonVariant(),
-      color: buttonColor(),
-      square: true,
-      "aria-hidden": "true",
-      tabIndex: -1,
-      "data-slot": "trigger",
-      type: "button",
-    };
-    if (props.size) p.size = props.size;
-    if (props.disabled !== undefined) p.disabled = props.disabled;
-    if (props.leadingIcon) p.leadingIcon = props.leadingIcon;
-    if (props.leading) p.leading = props.leading;
-    return p;
-  };
-
   return (
     <Tag class={classes().root} data-slot="root" data-theme={props.theme}>
-      {resolvedVariant() === "icon" ? (
-        <RLButton data-slot="trigger" {...triggerProps()} />
-      ) : props.leading ? (
-        <span class={classes().leading} data-slot="leading">
-          {props.leading}
-        </span>
-      ) : props.leadingIcon ? (
-        <span class={classes().leading} data-slot="leading">
-          <RLIcon name={props.leadingIcon} size="sm" class="size-4" />
-        </span>
-      ) : null}
-
-      {resolvedVariant() !== "icon" ? (
-        <span class={classes().label} data-slot="label" aria-hidden="true">
-          {currentLabel()}
-        </span>
-      ) : null}
-
       <select
         id={props.id}
         name={props.name}
@@ -139,8 +91,23 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
         onBlur={props.onBlur}
         class={classes().select}
         data-slot="select"
+        data-variant={resolvedVariant()}
         {...rest}
       >
+        {/* The select button. <selectedcontent> mirrors the chosen option, so the closed control shows its label. */}
+        <button type="button" class={classes().trigger} data-slot="trigger">
+          {props.leading ? (
+            <span class={classes().leading} data-slot="leading">
+              {props.leading}
+            </span>
+          ) : props.leadingIcon ? (
+            <span class={classes().leading} data-slot="leading">
+              <RLIcon name={props.leadingIcon} size="sm" class="size-4" />
+            </span>
+          ) : null}
+          <selectedcontent class={classes().label} />
+        </button>
+
         {props.placeholder && !props.multiple ? (
           <option value="" disabled selected={!currentValue()} class="bg-default text-highlighted">
             {props.placeholder}
@@ -164,13 +131,6 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
           </For>
         )}
       </select>
-
-      {/* Custom Chevron arrow */}
-      {resolvedVariant() !== "icon" ? (
-        <span class={classes().icon} data-slot="icon">
-          <RLIcon name="chevron-down" size="sm" class="size-4" aria-hidden="true" />
-        </span>
-      ) : null}
     </Tag>
   );
 };

@@ -152,6 +152,72 @@ body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }
   }
 }
 
+/* Customizable select: the picker and its options are styled here, since UnoCSS can't target ::picker(select). */
+select.rl-select {
+  appearance: base-select;
+  color: var(--rl-neutral-950);
+}
+select.rl-select::picker(select) {
+  appearance: base-select;
+  border: 1px solid var(--rl-neutral-200);
+  border-radius: 0.5rem;
+  background: var(--rl-neutral-50);
+  color: var(--rl-neutral-950);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.12);
+  padding: 0.25rem;
+  opacity: 0;
+  transition: all 0.15s allow-discrete;
+}
+select.rl-select:open::picker(select) {
+  opacity: 1;
+}
+@starting-style {
+  select.rl-select:open::picker(select) {
+    opacity: 0;
+  }
+}
+select.rl-select > button {
+  font: inherit;
+  color: inherit;
+  text-align: start;
+}
+select.rl-select selectedcontent {
+  display: block;
+  min-width: 0;
+}
+select.rl-select[data-variant="icon"] selectedcontent {
+  display: none;
+}
+select.rl-select::picker-icon {
+  color: var(--rl-neutral-500);
+  transition: rotate 0.15s;
+}
+select.rl-select:open::picker-icon {
+  rotate: 180deg;
+}
+select.rl-select option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  background: transparent;
+}
+select.rl-select option:hover,
+select.rl-select option:focus {
+  background: var(--rl-neutral-200);
+  outline: none;
+}
+select.rl-select option:checked {
+  font-weight: 600;
+}
+select.rl-select option::checkmark {
+  order: 1;
+  margin-left: auto;
+  color: var(--rl-primary-500);
+}
+
 /* Global focus-visible ring for consistent keyboard focus */
 :focus-visible {
   outline: 2px solid var(--rl-primary-500);
