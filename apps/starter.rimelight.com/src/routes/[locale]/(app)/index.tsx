@@ -1,6 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import { t, getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
@@ -62,7 +62,7 @@ export const HomePage: Component = () => {
   ];
 
   useHead(() =>
-    createSeoHead({
+    createPageHead({
       title: t("page.home.meta.title"),
       description: t("page.home.meta.description"),
     }),

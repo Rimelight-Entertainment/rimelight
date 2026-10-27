@@ -1,12 +1,12 @@
 import { type Component } from "solid-js";
 import { useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import { RLPageSection, RLGrid, RLCard, RLImage } from "@rimelight/ui";
 import { t } from "@rimelight/i18n";
 
 export const AboutPage: Component = () => {
   useHead(() =>
-    createSeoHead({
+    createPageHead({
       title: t("page.about.title"),
       description: t("page.about.description"),
     }),

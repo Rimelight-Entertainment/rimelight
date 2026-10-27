@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { createSeoHead, defineSeoConfig } from "../src/head";
+import { createPageHead, defineSeoConfig } from "../src/head";
 import { deepMerge } from "../src/meta";
 import { serializeJsonLd, sanitizeUrl } from "../src/sanitize";
 
@@ -41,9 +41,9 @@ describe("sanitize helpers", () => {
   });
 });
 
-describe("createSeoHead", () => {
+describe("createPageHead", () => {
   it("generates a valid head tag list", () => {
-    const tags = createSeoHead({
+    const tags = createPageHead({
       title: "Pricing Plans",
       description: "Transparent pricing for all teams.",
       canonical: "https://rimelight.com/pricing",
@@ -65,7 +65,7 @@ describe("createSeoHead", () => {
   });
 
   it("exposes raw text values for the head registry to escape", () => {
-    const tags = createSeoHead({
+    const tags = createPageHead({
       title: 'Malicious <script>alert("xss")</script>',
       description: 'Quote " & <tag>',
       canonical: "https://rimelight.com/test",
@@ -79,7 +79,7 @@ describe("createSeoHead", () => {
   });
 
   it("neutralizes malicious URLs in canonical and alternates", () => {
-    const tags = createSeoHead({
+    const tags = createPageHead({
       title: "Security Test",
       canonical: "javascript:alert(1)",
       languageAlternates: [{ hreflang: "es", href: "javascript:alert(2)" }],
@@ -95,7 +95,7 @@ describe("createSeoHead", () => {
   });
 
   it("threads CSP nonce to JSON-LD script tags", () => {
-    const tags = createSeoHead({
+    const tags = createPageHead({
       title: "Nonce Test",
       nonce: "secret-nonce-12345",
       breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }],
@@ -117,7 +117,7 @@ describe("createSeoHead", () => {
       canonical: "https://rimelight.com/base",
     };
 
-    const tags = createSeoHead(
+    const tags = createPageHead(
       deepMerge(base, {
         title: "Child Page",
         description: "Child description",
@@ -135,7 +135,7 @@ describe("createSeoHead", () => {
   });
 
   it("accumulates JSON-LD script tags for website and breadcrumbs", () => {
-    const tags = createSeoHead({
+    const tags = createPageHead({
       title: "Base Page",
       breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }],
     });
@@ -170,7 +170,7 @@ describe("createSeoHead", () => {
   });
 
   it("supports matching og routes rules to custom layouts", () => {
-    const head = createSeoHead({
+    const head = createPageHead({
       title: "My Blog Post",
       url: "https://example.com/company/blog/my-post",
       config: {

@@ -73,7 +73,6 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
     config: propsConfig,
     favicon: customFavicon,
     appleTouchIcon: customAppleTouchIcon,
-    charset = "utf-8",
     viewport = "width=device-width, initial-scale=1",
     rssFeed,
     articleSchema,
@@ -270,12 +269,6 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
   const tags: HeadTag[] = [];
 
   // Basic Metadata
-  // charset is shell-only: browsers ignore it once parsing starts and useHead warns
-  // ("shell-only and ignored on the client") when it is re-registered during hydration.
-  // Emit it only while rendering the HTML shell (server); the client copy omits it.
-  if (charset && typeof document === "undefined") {
-    tags.push({ tag: "meta", props: { charset } });
-  }
   if (viewport) {
     tags.push({ tag: "meta", props: { name: "viewport", content: viewport } });
   }
@@ -534,16 +527,28 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
  * Builds the strongly-typed head tag list for a page's <head>. Feed the result directly to
  * `useHead()` from @solidjs/web.
  */
-export function createSeoHead(props: HeadProps = {}, boundConfig?: SeoConfig): HeadTag[] {
+export function createPageHead(props: HeadProps = {}, boundConfig?: SeoConfig): HeadTag[] {
   return generateTags(props, boundConfig);
 }
 
 /**
- * Factory that returns a pre-configured createSeoHead bound to a custom SeoConfig. Ideal for
+ * Factory that returns a pre-configured createPageHead bound to a custom SeoConfig. Ideal for
  * multi-tenant apps, edge workers, and contexts outside Vite virtual modules.
  */
 export function defineSeoConfig(config: SeoConfig) {
-  return function configuredCreateSeoHead(props: HeadProps = {}): HeadTag[] {
-    return createSeoHead(props, config);
+  return function configuredCreatePageHead(props: HeadProps = {}): HeadTag[] {
+    return createPageHead(props, config);
   };
+}
+
+/**
+ * Head tags for the HTML shell (`Document`). Adds the tags browsers must read early and that
+ * the runtime ignores once the shell has flushed: `charset` is shell-only, so pages and layouts
+ * (`createPageHead`) never emit it.
+ */
+export function createDocumentHead(props: HeadProps = {}, boundConfig?: SeoConfig): HeadTag[] {
+  // Server only: on the client the browser already parsed charset, and useHead warns when it is re-registered.
+  const shell: HeadTag[] =
+    typeof document === "undefined" ? [{ tag: "meta", props: { charset: "utf-8" } }] : [];
+  return [...shell, ...createPageHead(props, boundConfig)];
 }

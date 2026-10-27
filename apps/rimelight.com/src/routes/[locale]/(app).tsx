@@ -1,7 +1,7 @@
 import type { RouteSectionProps } from "@solidjs/router";
 import { createSignal, onSettled, Show } from "solid-js";
 import { useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import AppHeader from "#components/app/AppHeader";
 import AppFooter from "#components/app/AppFooter";
 import {
@@ -47,7 +47,7 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
   };
 
   useHead(() =>
-    createSeoHead({
+    createPageHead({
       title: props.title,
       description: props.description,
       noindex: props.noindex,

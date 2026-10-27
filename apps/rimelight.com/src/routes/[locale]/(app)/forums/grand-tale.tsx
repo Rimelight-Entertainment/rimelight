@@ -1,11 +1,11 @@
 import { type Component } from "solid-js";
 import { useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import GrandTaleHeader from "#components/franchises/grand-tale/GrandTaleHeader";
 
 export const GrandTaleForumsPage: Component = () => {
   useHead(() =>
-    createSeoHead({
+    createPageHead({
       title: "Grand Tale Forums",
       description: "Official community forums for Grand Tale",
     }),

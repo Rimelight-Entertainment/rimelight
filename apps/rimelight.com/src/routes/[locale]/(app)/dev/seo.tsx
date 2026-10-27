@@ -2,7 +2,8 @@ import { For, Show, createMemo, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
 import { RLButton, RLCarousel } from "@rimelight/ui";
-import { createSeoHead, type HeadTag } from "@rimelight/seo/head";
+import { getLocaleInfo, getLocales } from "@rimelight/i18n";
+import { createPageHead, type HeadTag } from "@rimelight/seo/head";
 import {
   buildApiCatalog,
   buildArticleSchema,
@@ -244,17 +245,13 @@ export default function DevSeoPage() {
 
   const liveConfig = () => liveConfigRaw;
   const liveLocales = (): Record<string, string> =>
-    typeof liveConfigRaw.locales === "object" && liveConfigRaw.locales !== null
-      ? "locales" in liveConfigRaw.locales && typeof liveConfigRaw.locales.locales === "object"
-        ? (liveConfigRaw.locales.locales as Record<string, string>)
-        : (liveConfigRaw.locales as Record<string, string>)
-      : { en: "en-US" };
+    Object.fromEntries(getLocales().map((locale) => [locale, getLocaleInfo(locale).tag]));
   const livePrivatePrefixes = () => liveConfigRaw.privatePathPrefixes || [];
 
   const defaultLocaleKey = () => Object.keys(liveLocales())[0] || "en";
 
   const liveHead = () =>
-    createSeoHead({
+    createPageHead({
       title: "SEO Audit",
       description: liveConfig().description,
       ogType: "website",
@@ -263,10 +260,10 @@ export default function DevSeoPage() {
       config: liveConfig(),
     });
 
-  const liveLocaleConfig = () => ({
+  // Locales and hreflang come from @rimelight/i18n; the builder takes only site and URL rules.
+  const liveSitemapOptions = () => ({
     site: activeOrigin(),
-    locales: liveLocales(),
-    defaultLocale: defaultLocaleKey(),
+    privatePathPrefixes: livePrivatePrefixes(),
   });
 
   const discoveredEntries = (): SeoEntry[] => [
@@ -276,7 +273,7 @@ export default function DevSeoPage() {
     { path: "/docs", priority: 0.7 },
   ];
 
-  const liveSitemapUrls = () => buildSitemapUrls(discoveredEntries(), liveLocaleConfig());
+  const liveSitemapUrls = () => buildSitemapUrls(discoveredEntries(), liveSitemapOptions());
   const liveSitemapXml = () => buildSitemapXml(liveSitemapUrls());
 
   const liveRobotsTxt = () =>
@@ -470,13 +467,13 @@ export default function DevSeoPage() {
       ],
     },
     {
-      title: "createSeoHead()",
+      title: "createPageHead()",
       mono: true,
       output: summarizeHeadTags(liveHead()),
       rows: [
         {
           label: "Resolved head tags",
-          code: `createSeoHead({ title: "SEO Audit", description, ogType: "website", url, noindex: false, config: siteConfig })`,
+          code: `createPageHead({ title: "SEO Audit", description, ogType: "website", url, noindex: false, config: siteConfig })`,
           description:
             "Builds strongly-typed head tags — title, canonical, OG, Twitter, JSON-LD, icons, and web manifest link.",
           value: summarizeHeadTags(liveHead()),

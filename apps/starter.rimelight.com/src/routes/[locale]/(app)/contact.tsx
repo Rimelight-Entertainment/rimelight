@@ -1,6 +1,6 @@
 import { type Component, createSignal } from "solid-js";
 import { useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
@@ -49,7 +49,7 @@ export const ContactPage: Component = () => {
   };
 
   useHead(() =>
-    createSeoHead({
+    createPageHead({
       title: t("page.contact.title"),
       description: t("page.contact.description"),
     }),

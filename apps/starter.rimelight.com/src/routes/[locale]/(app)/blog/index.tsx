@@ -1,7 +1,7 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
 import { useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import { t, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
@@ -38,7 +38,7 @@ export const BlogIndexPage: Component = () => {
   );
 
   useHead(() =>
-    createSeoHead({
+    createPageHead({
       title: t("blog.title"),
       description: t("blog.description"),
     }),

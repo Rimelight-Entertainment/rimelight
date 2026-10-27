@@ -212,10 +212,6 @@ export interface HeadProps {
    */
   config?: SeoConfig | undefined;
   /**
-   * Meta charset
-   */
-  charset?: string | undefined;
-  /**
    * Meta viewport
    */
   viewport?: string | undefined;

@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import { For, Show } from "solid-js";
+import { For, Show, createMemo } from "solid-js";
 import type { RLPageSectionProps } from "./page-section.types";
 import { RLPageSectionTheme } from "./page-section.theme";
 import { RLIcon } from "../icon/RLIcon";
@@ -39,6 +39,18 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
   const resolvedTitle = () => props.title ?? props.titleSlot;
   const resolvedDescription = () => props.description ?? props.descriptionSlot;
 
+  // JSX slot props are getters: each read builds a new subtree and consumes hydration ids.
+  // Memoize once so every read shares one subtree and ids match the server render.
+  const background = createMemo(() => props.background);
+  const top = createMemo(() => props.top);
+  const header = createMemo(() => props.header);
+  const leading = createMemo(() => props.leading);
+  const body = createMemo(() => props.body);
+  const footer = createMemo(() => props.footer);
+  const linksSlot = createMemo(() => props.linksSlot);
+  const content = createMemo(() => props.content);
+  const bottom = createMemo(() => props.bottom);
+
   const {
     Tag: Root,
     classes,
@@ -54,28 +66,22 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       headline: Boolean(resolvedHeadline()),
       title: Boolean(resolvedTitle()),
       description: Boolean(resolvedDescription()),
-      body: Boolean(props.body),
+      body: Boolean(body()),
     }),
   });
 
   const showHeader = () =>
     Boolean(
-      props.header ||
+      header() ||
       props.icon ||
-      props.leading ||
+      leading() ||
       resolvedHeadline() ||
       resolvedTitle() ||
       resolvedDescription(),
     );
 
   const showWrapper = () =>
-    Boolean(
-      showHeader() ||
-      props.body ||
-      props.footer ||
-      props.linksSlot ||
-      (props.links?.length ?? 0) > 0,
-    );
+    Boolean(showHeader() || body() || footer() || linksSlot() || (props.links?.length ?? 0) > 0);
 
   return (
     <Root
@@ -92,30 +98,30 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       }
       {...rest}
     >
-      <Show when={props.background}>
+      <Show when={background()}>
         <div class={classes().background} data-slot="background">
-          {props.background}
+          {background()}
         </div>
       </Show>
 
-      {props.top}
+      {top()}
 
       <div class={classes().container}>
         <Show when={showWrapper()}>
           <div class={classes().wrapper}>
-            <Show when={props.header}>{props.header}</Show>
+            <Show when={header()}>{header()}</Show>
 
-            <Show when={!props.header && showHeader()}>
+            <Show when={!header() && showHeader()}>
               <div class={classes().header}>
-                <Show when={props.icon || props.leading}>
+                <Show when={props.icon || leading()}>
                   <div class={classes().leading}>
                     <Show
-                      when={props.leading}
+                      when={leading()}
                       fallback={
                         <RLIcon name={props.icon!} size="md" ui={{ root: classes().leadingIcon }} />
                       }
                     >
-                      {props.leading}
+                      {leading()}
                     </Show>
                   </div>
                 </Show>
@@ -139,19 +145,19 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
               </div>
             </Show>
 
-            <Show when={props.body}>
-              <div class={classes().body}>{props.body}</div>
+            <Show when={body()}>
+              <div class={classes().body}>{body()}</div>
             </Show>
 
-            <Show when={props.footer}>
-              <div class={classes().footer}>{props.footer}</div>
+            <Show when={footer()}>
+              <div class={classes().footer}>{footer()}</div>
             </Show>
 
-            <Show when={!props.footer && (props.linksSlot || (props.links?.length ?? 0) > 0)}>
+            <Show when={!footer() && (linksSlot() || (props.links?.length ?? 0) > 0)}>
               <div class={classes().footer}>
                 <div class={classes().links}>
                   <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
-                  {props.linksSlot}
+                  {linksSlot()}
                 </div>
               </div>
             </Show>
@@ -160,12 +166,12 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
 
         {props.children}
 
-        <Show when={props.content}>
-          <div class="col-span-full w-full">{props.content}</div>
+        <Show when={content()}>
+          <div class="col-span-full w-full">{content()}</div>
         </Show>
       </div>
 
-      {props.bottom}
+      {bottom()}
     </Root>
   );
 };

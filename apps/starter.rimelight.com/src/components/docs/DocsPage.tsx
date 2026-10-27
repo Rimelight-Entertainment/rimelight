@@ -8,7 +8,7 @@ import {
   onSettled,
 } from "solid-js";
 import { Portal, useHead } from "@solidjs/web";
-import { createSeoHead } from "@rimelight/seo/head";
+import { createPageHead } from "@rimelight/seo/head";
 import { useNavigate } from "@solidjs/router";
 import {
   BlockRenderer,
@@ -83,7 +83,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
   const headings = () => extractHeadingsFromBlocks(blocks(), 2, locale());
   const markdown = () => (entry() ? blocksToMarkdown(blocks()) : "");
 
-  useHead(() => createSeoHead({ title: title() || "Docs", description: description() }));
+  useHead(() => createPageHead({ title: title() || "Docs", description: description() }));
 
   /** Which mobile panel is open under the docs sub-header. */
   const [panel, setPanel] = createSignal<"nav" | "toc" | null>(null);
