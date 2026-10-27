@@ -50,6 +50,8 @@ export interface SecurityConfig {
         retryAfter?: number;
         fallback?: "pass" | "block";
         onRateLimited?: (c: Context, retryAfter: number) => Response | Promise<Response>;
+        /** Extra per-route limits. Only string fields, so they survive the build-time JSON config. */
+        rules?: RateLimitRule[];
       };
   construction?:
     | false
@@ -67,6 +69,17 @@ export interface SecurityConfig {
    * Not served unless configured.
    */
   securityTxt?: false | SecurityTxtOptions;
+}
+
+export interface RateLimitRule {
+  /** Namespaces the limiter key, so rules sharing a binding never collide. */
+  name: string;
+  /** Path prefixes, e.g. "/api/auth/login". */
+  routes: string[];
+  /** HTTP methods to match. Matches every method when omitted. */
+  methods?: string[];
+  bindingName: string;
+  retryAfter?: number;
 }
 
 export interface SecurityTxtOptions {

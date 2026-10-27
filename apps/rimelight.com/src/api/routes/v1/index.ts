@@ -3,7 +3,6 @@ import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "#db";
 import { titleSettings } from "#db/schema/title-settings";
 import { isTitleSlug } from "../../titles";
-import { allowRequest } from "../../rate-limit";
 import { requireClientToken, type ClientVariables } from "./middleware";
 import {
   byteLength,
@@ -55,11 +54,6 @@ v1.get("/titles/:title/settings", async (c) => {
 
 v1.put("/titles/:title/settings", async (c) => {
   const title = c.req.param("title");
-  if (!(await allowRequest(c.env?.RATE_LIMIT, `settings:${c.var.user.id}`))) {
-    return c.json({ error: "Too Many Requests", message: "Too many settings writes." }, 429, {
-      "Retry-After": "60",
-    });
-  }
   const raw = await c.req.text();
   if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
     return c.json({ error: "Payload Too Large", message: "Body exceeds 16 KB." }, 413);

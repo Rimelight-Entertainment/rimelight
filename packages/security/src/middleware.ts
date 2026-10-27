@@ -3,6 +3,34 @@ import { getCookie, setCookie } from "hono/cookie";
 import { buildCspHeader, activeConfig, verifyTurnstile } from "./runtime";
 import { getConstructionFallbackHtml } from "./fallback";
 import { buildSecurityTxt } from "./security-txt";
+import type { RateLimitRule } from "./types";
+
+const ruleMatches = (rule: RateLimitRule, c: Context) =>
+  rule.routes.some((prefix) => c.req.path.startsWith(prefix)) &&
+  (!rule.methods || rule.methods.includes(c.req.method.toUpperCase()));
+
+/**
+ * Checks one rule. Returns a 429 response when the limit is exceeded, otherwise `undefined`. A
+ * missing binding or a failed check lets the request through, matching the default fail-open.
+ */
+async function enforceRule(
+  c: Context,
+  rule: RateLimitRule,
+  identity: string,
+): Promise<Response | undefined> {
+  const limiter = c.env?.[rule.bindingName];
+  if (typeof limiter?.limit !== "function") return undefined;
+  try {
+    if ((await limiter.limit({ key: `${rule.name}:${identity}` })).success) return undefined;
+  } catch {
+    return undefined;
+  }
+  return c.json(
+    { error: "Too Many Requests", message: "Rate limit exceeded. Please try again later." },
+    429,
+    { "Retry-After": String(rule.retryAfter ?? 60) },
+  );
+}
 
 export const security = (): MiddlewareHandler => async (c, next) => {
   const isDev =
@@ -77,6 +105,13 @@ export const security = (): MiddlewareHandler => async (c, next) => {
         if (failBlock) return c.json({ error: "Rate limit check failed" }, 500);
       }
     }
+  }
+
+  // 2b. Per-route rules, keyed by IP
+  for (const rule of activeConfig.ratelimit ? (activeConfig.ratelimit.rules ?? []) : []) {
+    if (!ruleMatches(rule, c)) continue;
+    const blocked = await enforceRule(c, rule, c.req.header("CF-Connecting-IP") || "unknown");
+    if (blocked) return blocked;
   }
 
   // 3. Turnstile verification

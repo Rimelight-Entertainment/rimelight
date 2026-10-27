@@ -47,6 +47,17 @@ export default defineConfig({
 
     security({
       domain: "rimelight.com",
+      ratelimit: {
+        rules: [
+          {
+            name: "login",
+            routes: ["/api/auth/login", "/api/auth/token"],
+            methods: ["POST"],
+            bindingName: "RATE_LIMIT_LOGIN",
+            retryAfter: 60,
+          },
+        ],
+      },
     }),
 
     auth(),
