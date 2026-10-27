@@ -3,16 +3,16 @@ import { bindings, defineConfig, triggers } from "cf/config";
 export default defineConfig({
   worker: {
     name: "rimelight-dot-com",
-    compatibilityDate: "2026-08-27",
+    compatibilityDate: "2026-10-01",
     entrypoint: "./src/fetch.ts",
-    cache: {
-      enabled: true,
-    },
     observability: {
       enabled: true,
       traces: {
         enabled: true,
       },
+    },
+    cache: {
+      enabled: true,
     },
     triggers: [
       triggers.fetch({ pattern: "rimelight.com/*", zone: "rimelight.com" }),

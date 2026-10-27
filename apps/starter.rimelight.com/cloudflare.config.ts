@@ -3,16 +3,16 @@ import { bindings, defineConfig, triggers } from "cf/config";
 export default defineConfig({
   worker: {
     name: "starter-dot-rimelight-dot-com",
-    compatibilityDate: "2026-08-27",
+    compatibilityDate: "2026-10-01",
     entrypoint: "./src/fetch.ts",
-    cache: {
-      enabled: true,
-    },
     observability: {
       enabled: true,
       traces: {
         enabled: true,
       },
+    },
+    cache: {
+      enabled: true,
     },
     triggers: [
       triggers.fetch({ pattern: "starter.rimelight.com/*", zone: "rimelight.com" }),
@@ -23,21 +23,11 @@ export default defineConfig({
       IMAGES: bindings.images(),
       BLOB: bindings.r2({
         name: "starter-dot-rimelight-dot-com",
-        dev: {
-          remote: true,
-        },
       }),
       DB: bindings.d1({
         id: "a6610294-e214-4d35-b841-174469da54d2",
-        dev: {
-          remote: true,
-        },
       }),
-      EMAIL: bindings.sendEmail({
-        dev: {
-          remote: true,
-        },
-      }),
+      EMAIL: bindings.sendEmail(),
       RATE_LIMIT: bindings.rateLimit({
         namespace: "1001",
         simple: {
