@@ -1,10 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vite-plus/test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import type { Plugin } from "vite-plus";
 import { i18n } from "../src/plugin";
-import { createPathnameLoader, type VirtualI18nConfig } from "../src/runtime";
 
 const VIRTUAL_ID = "virtual:rimelight-i18n";
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
@@ -58,6 +57,25 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       expect(code).toContain(
         '"page.home": { "en": () => import("virtual:rimelight-i18n-ns/page.home/en")',
       );
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("emits a fallback loader only for the keys a locale lacks", async () => {
+    const root = project({
+      en: { page: { home: { title: "Home", subtitle: "Sub" } }, error: { retry: "Retry" } },
+      pt: { page: { home: { title: "Início" } }, error: { retry: "Tentar" } },
+    });
+    try {
+      const plugin: Plugin = i18n();
+      await started(plugin, root);
+      const code = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
+      expect(code).toContain(
+        '"page.home": { "pt": () => import("virtual:rimelight-i18n-ns/page.home/pt/fallback")',
+      );
+      // pt has every error key, so it has no error fallback.
+      expect(code).not.toContain("error/pt/fallback");
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
@@ -170,10 +188,11 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
   });
 
   describe("client loader", () => {
+    // pt lacks two of en's keys, so its URLs need a fallback chunk for each bucket those keys sit in.
     const locales = {
       en: {
-        page: { home: { title: "Home" } },
-        common: { save: "Save" },
+        page: { home: { title: "Home", subtitle: "Subtitle" } },
+        common: { save: "Save", cancel: "Cancel" },
         error: { retry: "Retry" },
       },
       pt: {
@@ -187,88 +206,98 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       "src/routes/[locale]/index.tsx": 't("page.home.title");\n',
       "src/routes/[locale]/404.tsx": 't("error.retry");\n',
     };
+    const ptFull = {
+      page: { home: { title: "Início", subtitle: "Subtitle" } },
+      common: { save: "Salvar", cancel: "Cancel" },
+      error: { retry: "Tentar novamente" },
+    };
 
-    /**
-     * Runs the generated client config with `fetch` standing in for the namespace imports, and no
-     * `window`, so the boot load is skipped and each test drives `loadPathname` itself.
-     */
-    const client = async (fetch: (id: string) => Promise<unknown>) => {
-      const root = project(locales, routes);
-      const plugin: Plugin = i18n();
+    let root = "";
+    let plugin: Plugin;
+
+    beforeEach(async () => {
+      root = project(locales, routes);
+      plugin = i18n();
       await started(plugin, root);
-      const code = await callHook<string>(plugin.load, RESOLVED_VIRTUAL_ID);
-      fs.rmSync(root, { recursive: true, force: true });
-      const body = `${code
-        .replace(/import\(("[^"]+")\)/g, "fetch($1)")
-        .replace(/export const /g, "const ")}\nreturn config;`;
-      const AsyncFunction = (async () => {}).constructor as new (
-        ...args: string[]
-      ) => (...a: unknown[]) => Promise<VirtualI18nConfig>;
-      const config = await new AsyncFunction("fetch", "window", body)(fetch, undefined);
-      return { config, ...createPathnameLoader(config) };
-    };
-    const chunk = (id: string) => {
-      const [bucket, locale] = id.slice(`${VIRTUAL_ID}-ns/`.length).split("/") as [string, string];
-      const dict = locales[locale as "en"];
-      const top = bucket.split(".")[0] as "page";
-      return { default: bucket === "page.home" ? { page: dict.page } : { [top]: dict[top] } };
-    };
-
-    it("loads only the URL's locale and the default; other locales wait for loadLocale", async () => {
-      const requested: string[] = [];
-      const { config, loadPathname, loadLocale } = await client(
-        async (id) => (requested.push(id), chunk(id)),
-      );
-      await loadPathname("/en/");
-      expect(config.translations?.["pt"]).toEqual({});
-      expect(requested.some((id) => id.endsWith("/pt"))).toBe(false);
-
-      // Every namespace of the locale, not only this route's.
-      await loadLocale("pt");
-      expect(config.translations?.["pt"]).toMatchObject({
-        page: locales.pt.page,
-        common: locales.pt.common,
-      });
     });
 
-    it("requests every chunk of a URL at once, in its locale and the default one", async () => {
+    afterEach(() => {
+      fs.rmSync(root, { recursive: true, force: true });
+      vi.doUnmock("virtual:rimelight-i18n");
+      vi.resetModules();
+    });
+
+    /** A chunk as the browser would fetch it: the plugin's own output for that id, evaluated. */
+    const serve = async (id: string): Promise<{ default: Record<string, unknown> }> => {
+      const code = await callHook<string>(plugin.load, `\0${VIRTUAL_ID}-ns/${id}`);
+      return { default: JSON.parse(code.replace(/^export default /, "").replace(/;$/, "")) };
+    };
+
+    /**
+     * Imports the real runtime against the generated client config. Chunk imports go to `fetchChunk`,
+     * and no `window` exists, so the boot load is skipped and each test drives `loadPathname` itself.
+     */
+    const client = async (fetchChunk: (id: string) => Promise<unknown> = serve) => {
+      const code = await callHook<string>(plugin.load, RESOLVED_VIRTUAL_ID);
+      const body = code
+        .replace(/import\("virtual:rimelight-i18n-ns\/([^"]+)"\)/g, 'fetchChunk("$1")')
+        .replace("export const config = ", "const config = ");
+      // The generated config is code, not data: evaluate it as the browser would run it.
+      // oxlint-disable-next-line typescript/no-implied-eval
+      const config = new Function("fetchChunk", `${body}\nreturn config;`)(fetchChunk);
+      vi.doMock("virtual:rimelight-i18n", () => ({ config }));
+      vi.resetModules();
+      return await import("../src/runtime");
+    };
+
+    it("loads only the URL's own chunks; other locales wait for loadLocale", async () => {
+      const requested: string[] = [];
+      const runtime = await client(async (id) => (requested.push(id), serve(id)));
+      await runtime.loadPathname("/en/");
+      expect(requested.toSorted()).toEqual(["common/en", "page.home/en"]);
+      expect(runtime.activeConfig.translations["pt"]).toEqual({});
+
+      // Every namespace of the locale, with its fallbacks: the full dictionary.
+      await runtime.loadLocale("pt");
+      expect(runtime.activeConfig.translations["pt"]).toEqual(ptFull);
+    });
+
+    it("requests the URL's chunks at once, in its locale only: no waterfall, no default-locale fetch", async () => {
       const requested: string[] = [];
       const pending: Array<() => void> = [];
-      const { config, loadPathname, isPathnameLoaded } = await client(
+      const runtime = await client(
         (id) =>
           new Promise((resolve) => {
             requested.push(id);
-            pending.push(() => resolve(chunk(id)));
+            pending.push(() => resolve(serve(id)));
           }),
       );
-      expect(isPathnameLoaded("/pt/")).toBe(false);
-      const done = loadPathname("/pt/");
-      // All four were requested before any arrived: no waterfall.
-      expect(
-        requested.map((id) => id.split("-ns/")[1]!).toSorted((a, b) => a.localeCompare(b)),
-      ).toEqual(["common/en", "common/pt", "page.home/en", "page.home/pt"]);
+      expect(runtime.isPathnameLoaded("/pt/")).toBe(false);
+      const done = runtime.loadPathname("/pt/");
+      // All four were requested before any arrived.
+      expect(requested.toSorted()).toEqual([
+        "common/pt",
+        "common/pt/fallback",
+        "page.home/pt",
+        "page.home/pt/fallback",
+      ]);
       for (const release of pending) release();
       await done;
-      expect(isPathnameLoaded("/pt/")).toBe(true);
-      expect(config.translations?.["pt"]).toEqual({
-        page: locales.pt.page,
-        common: locales.pt.common,
+      expect(runtime.isPathnameLoaded("/pt/")).toBe(true);
+      expect(runtime.activeConfig.translations["pt"]).toEqual({
+        page: { home: ptFull.page.home },
+        common: ptFull.common,
       });
-      expect(config.translations?.["en"]).toEqual({
-        page: locales.en.page,
-        common: locales.en.common,
-      });
+      expect(runtime.activeConfig.translations["en"]).toEqual({});
     });
 
     it("falls back to 404 route buckets when no route pattern matches", async () => {
       const requested: string[] = [];
-      const { config, loadPathname, isPathnameLoaded } = await client(
-        async (id) => (requested.push(id), chunk(id)),
-      );
-      expect(isPathnameLoaded("/en/unknown/page")).toBe(false);
-      await loadPathname("/en/unknown/page");
-      expect(isPathnameLoaded("/en/unknown/page")).toBe(true);
-      expect(config.translations?.["en"]).toEqual({
+      const runtime = await client(async (id) => (requested.push(id), serve(id)));
+      expect(runtime.isPathnameLoaded("/en/unknown/page")).toBe(false);
+      await runtime.loadPathname("/en/unknown/page");
+      expect(runtime.isPathnameLoaded("/en/unknown/page")).toBe(true);
+      expect(runtime.activeConfig.translations["en"]).toEqual({
         common: locales.en.common,
         error: locales.en.error,
       });
@@ -276,32 +305,32 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
 
     it("fetches a chunk only once across URLs", async () => {
       const requested: string[] = [];
-      const { loadPathname } = await client(async (id) => (requested.push(id), chunk(id)));
-      await loadPathname("/en/");
-      await loadPathname("/en");
+      const runtime = await client(async (id) => (requested.push(id), serve(id)));
+      await runtime.loadPathname("/en/");
+      await runtime.loadPathname("/en");
       expect(requested).toHaveLength(2);
     });
 
     it("matches the locale segment without case", async () => {
-      const { config, loadPathname } = await client(async (id) => chunk(id));
-      await loadPathname("/PT/");
-      expect(config.translations?.["pt"]).toEqual({
-        page: locales.pt.page,
-        common: locales.pt.common,
+      const runtime = await client(serve);
+      await runtime.loadPathname("/PT/");
+      expect(runtime.activeConfig.translations["pt"]).toEqual({
+        page: { home: ptFull.page.home },
+        common: ptFull.common,
       });
     });
 
     it("rejects when a chunk fails, and retries it on the next load", async () => {
       let fail = true;
-      const { loadPathname, isPathnameLoaded } = await client(async (id) => {
-        if (fail && id.endsWith("common/en")) throw new Error("offline");
-        return chunk(id);
+      const runtime = await client(async (id) => {
+        if (fail && id === "common/en") throw new Error("offline");
+        return serve(id);
       });
-      await expect(loadPathname("/en/")).rejects.toThrow("offline");
-      expect(isPathnameLoaded("/en/")).toBe(false);
+      await expect(runtime.loadPathname("/en/")).rejects.toThrow("offline");
+      expect(runtime.isPathnameLoaded("/en/")).toBe(false);
       fail = false;
-      await loadPathname("/en/");
-      expect(isPathnameLoaded("/en/")).toBe(true);
+      await runtime.loadPathname("/en/");
+      expect(runtime.isPathnameLoaded("/en/")).toBe(true);
     });
   });
 

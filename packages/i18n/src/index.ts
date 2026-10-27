@@ -9,6 +9,7 @@ export {
   loadLocale,
   t,
 } from "./runtime";
+export type { LocaleInfo } from "./types";
 
 /**
  * Every `t()` key and the params it takes. Empty here; the generated `keys.d.ts` augments it.

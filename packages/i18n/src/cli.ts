@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { DEFAULT_DIR, DEFAULT_TYPES } from "./constants";
+import { DEFAULT_DIR, DEFAULT_TYPES } from "./shared";
 import type { I18nLintConfig, KeyCasing } from "./types";
-import { syncTypedKeys } from "./typegen";
+import { readLocaleFiles, syncTypedKeys } from "./typegen";
 import { fixTranslations, formatAuditReport, verifyTranslations } from "./lint";
 
 // ── CLI ──────────────────────────────────────────────────────────────────────
@@ -100,22 +100,16 @@ export const runCli = async (argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const translations: Record<string, Record<string, any>> = {};
-  const jsonFiles = fs.readdirSync(localesDir).filter((f) => f.endsWith(".json"));
-  if (jsonFiles.length === 0) {
-    console.error(`✖ [i18n] No .json translation files found in ${localesDir}`);
+  let translations: Record<string, Record<string, any>>;
+  try {
+    translations = readLocaleFiles(localesDir);
+  } catch (error) {
+    console.error(`✖ [i18n] ${(error as Error).message}`);
     return 1;
   }
-
-  for (const file of jsonFiles) {
-    try {
-      translations[path.basename(file, ".json")] = JSON.parse(
-        fs.readFileSync(path.join(localesDir, file), "utf-8"),
-      );
-    } catch (error) {
-      console.error(`✖ [i18n] Failed to parse ${file}: ${(error as any)?.message || error}`);
-      return 1;
-    }
+  if (Object.keys(translations).length === 0) {
+    console.error(`✖ [i18n] No .json translation files found in ${localesDir}`);
+    return 1;
   }
 
   const baseLocale = values.base || "en";

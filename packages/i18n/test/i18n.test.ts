@@ -1,13 +1,7 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
-import {
-  flatten,
-  unflatten,
-  verifyTranslations,
-  formatAuditReport,
-  fixTranslations,
-} from "../src/lint";
+import { verifyTranslations, formatAuditReport, fixTranslations } from "../src/lint";
 import { setCurrentLocale, getLocaleUrl, getLocaleAsset, t } from "../src/index";
-import { placeholderNames } from "../src/placeholders";
+import { placeholderNames } from "../src/shared";
 import { activeConfig } from "../src/runtime";
 
 describe("translation dictionary utils", () => {
@@ -16,34 +10,18 @@ describe("translation dictionary utils", () => {
     nav: { home: "Home" },
   };
 
-  it("flattens nested translations into dotted keys", () => {
-    expect(flatten(source)).toEqual({
-      "hero.title": "Hello",
-      "hero.subtitle": "Welcome",
-      "nav.home": "Home",
-    });
+  it("fills a locale's missing keys from the base, keeping the nested shape", () => {
+    expect(fixTranslations({ en: source, fr: { hero: { title: "Bonjour" } } }, "en")["fr"]).toEqual(
+      {
+        hero: { title: "Bonjour", subtitle: "Welcome" },
+        nav: { home: "Home" },
+      },
+    );
   });
 
-  it("flattens arrays through numeric indices and round-trips", () => {
-    const source = { tags: ["a", "b"], list: [{ name: "x", role: "dev" }] };
-    expect(flatten(source)).toEqual({
-      "tags.0": "a",
-      "tags.1": "b",
-      "list.0.name": "x",
-      "list.0.role": "dev",
-    });
-    expect(unflatten(flatten(source))).toEqual(source);
-  });
-
-  it("unflattens dotted keys back into components", () => {
-    expect(unflatten({ "hero.title": "Hello", "nav.home": "Home" })).toEqual({
-      hero: { title: "Hello" },
-      nav: { home: "Home" },
-    });
-  });
-
-  it("round-trips flatten and unflatten", () => {
-    expect(unflatten(flatten(source))).toEqual(source);
+  it("keeps arrays as arrays when filling from the base", () => {
+    const withArrays = { tags: ["a", "b"], list: [{ name: "x", role: "dev" }] };
+    expect(fixTranslations({ en: withArrays, fr: {} }, "en")["fr"]).toEqual(withArrays);
   });
 
   it("finds missing keys between dictionaries", () => {

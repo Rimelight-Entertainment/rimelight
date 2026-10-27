@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { analyzeRoutes, bucketOf, routeKey, routePattern } from "../src/route-analysis";
-import { indexKeys } from "../src/slices";
+import { analyzeRoutes, bucketOf, indexKeys, routeKey, routePattern } from "../src/route-analysis";
 
 const index = indexKeys({
   page: { home: { title: "Home" }, about: { title: "About" } },

@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { UNSAFE_KEYS } from "./constants";
-import { placeholderNames } from "./placeholders";
+import { placeholderNames, UNSAFE_KEYS } from "./shared";
 
 const PLURAL_CATEGORIES = new Set(["zero", "one", "two", "few", "many", "other"]);
 const PARAM_TYPE = "string | number";
@@ -61,7 +60,7 @@ const renderParams = (params: Map<string, string>): string =>
  * Module augmentation that types `t()` from the registry. It must stay a module (`export {}`),
  * or `declare module` would replace the package instead of augmenting it.
  */
-export const renderKeyDeclarations = (entries: KeyEntry[]): string => {
+const renderKeyDeclarations = (entries: KeyEntry[]): string => {
   const sorted = [...entries].sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
   const members = sorted.map((e) => `    ${prop(e.key)}: ${renderParams(e.params)};\n`);
   return [
@@ -118,3 +117,19 @@ export const syncTypedKeys = ({
 
 const readJson = (file: string): unknown =>
   fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf-8")) : undefined;
+
+/** Every `<locale>.json` in a directory, keyed by locale. Empty when the directory is missing. Throws, naming the file, when one fails to parse. */
+export const readLocaleFiles = (dir: string): Record<string, Record<string, any>> => {
+  const out: Record<string, Record<string, any>> = {};
+  if (!fs.existsSync(dir)) return out;
+  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+    try {
+      out[path.basename(file, ".json")] = JSON.parse(
+        fs.readFileSync(path.join(dir, file), "utf-8"),
+      );
+    } catch (error) {
+      throw new Error(`Failed to parse ${file}: ${(error as Error).message}`);
+    }
+  }
+  return out;
+};

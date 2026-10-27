@@ -53,6 +53,8 @@ const readChunkUrls = (assets: AssetsBinding, origin: string): Promise<Map<strin
  */
 const preloadChunks = async (c: Context, pathname: string): Promise<void> => {
   const res = c.res;
+  // Only Workers has the rewriter. Elsewhere the page still renders, without the preload hints.
+  if (typeof HTMLRewriter === "undefined") return;
   if (!res.headers.get("content-type")?.includes("text/html")) return;
 
   const assets = (c.env as { ASSETS?: AssetsBinding } | undefined)?.ASSETS;

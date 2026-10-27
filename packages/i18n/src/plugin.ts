@@ -1,17 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin, ViteDevServer } from "vite-plus";
-import { DEFAULT_DIR, DEFAULT_TYPES } from "./constants";
 import {
   analyzeRoutes,
   bucketOf,
+  indexKeys,
   routeKey,
   routePattern,
+  type KeyIndex,
   type ModuleGraph,
 } from "./route-analysis";
-import { indexKeys, type KeyIndex } from "./slices";
+import { DEFAULT_DIR, DEFAULT_TYPES } from "./shared";
 import type { I18nConfig } from "./types";
-import { collectKeys, syncTypedKeys } from "./typegen";
+import { collectKeys, readLocaleFiles, syncTypedKeys } from "./typegen";
 
 const ID = "virtual:rimelight-i18n";
 const RESOLVED_ID = `\0${ID}`;
@@ -33,10 +34,10 @@ interface State {
   globalBuckets: string[];
 }
 
-const slash = (p: string): string => p.replace(/\\/g, "/");
+/** Bucket -> the locales that have a chunk for it. */
+type ChunkMap = Map<string, Set<string>>;
 
-const readJson = (file: string): Record<string, unknown> =>
-  JSON.parse(fs.readFileSync(file, "utf-8"));
+const slash = (p: string): string => p.replace(/\\/g, "/");
 
 const walk = (dir: string): string[] =>
   fs.existsSync(dir)
@@ -63,20 +64,9 @@ export const i18n = ({
   const srcDir = () => slash(path.resolve(root, "src"));
   const routesDir = () => `${srcDir()}/routes`;
 
-  const readLocales = (): Record<string, Record<string, unknown>> =>
-    translations ??
-    Object.fromEntries(
-      fs.existsSync(localesDir())
-        ? fs
-            .readdirSync(localesDir())
-            .filter((f) => f.endsWith(".json"))
-            .map((f) => [path.basename(f, ".json"), readJson(path.join(localesDir(), f))])
-        : [],
-    );
-
   /** Locale dictionaries, key index and typed keys. Cheap, so it runs at every build start. */
   const refresh = () => {
-    const locales = readLocales();
+    const locales = translations ?? readLocaleFiles(localesDir());
     const index = indexKeys(locales[baseLocale] ?? {});
     state = {
       locales,
@@ -144,91 +134,79 @@ export const i18n = ({
     };
   };
 
-  const buckets = (): string[] => [...new Set([...(state?.index.keys ?? [])].map(bucketOf))].sort();
+  const buckets = (): Set<string> => new Set([...(state?.index.keys ?? [])].map(bucketOf));
 
-  /**
-   * Both sides start with empty dictionaries and one loader per namespace and locale. The client also
-   * loads its URL's chunks before the app runs; the server's middleware does the same per request.
-   */
-  const configCode = (ssr: boolean): string => {
-    const settings = `...${JSON.stringify(config)}`;
-    const localeNames = Object.keys(state?.locales ?? {});
-    const namespaces = buckets()
-      .map((bucket) => {
-        const loaders = localeNames
-          .map(
-            (l) =>
-              `${JSON.stringify(l)}: () => import(${JSON.stringify(`${NAMESPACE_ID}${bucket}/${l}`)})`,
-          )
-          .join(", ");
-        return `${JSON.stringify(bucket)}: { ${loaders} }`;
-      })
-      .join(", ");
-    const patterns = Object.keys(state?.routeBuckets ?? {}).map(
-      (key) => `[${JSON.stringify(key)}, new RegExp(${JSON.stringify(routePattern(key))})]`,
-    );
-    const exported = [
-      `export const config = { ${settings}, devServer: ${dev}, translations: ${JSON.stringify(Object.fromEntries(localeNames.map((l) => [l, {}])))}, routeBuckets: ${JSON.stringify(state?.routeBuckets ?? {})}, globalBuckets: ${JSON.stringify(state?.globalBuckets ?? [])}, namespaces: { ${namespaces} }, patterns: [${patterns.join(", ")}], loaded: new Set() };`,
-      "const merge = (target, source) => {",
-      "  for (const [key, value] of Object.entries(source)) {",
-      '    if (key === "__proto__") continue;',
-      '    if (value && typeof value === "object" && !Array.isArray(value)) merge((target[key] ??= {}), value);',
-      "    else target[key] = value;",
-      "  }",
-      "  return target;",
-      "};",
-      "// Initial load: fetch the namespaces of the URL being rendered before any module reads a translation.",
-      'if (typeof window !== "undefined") {',
-      "  const pathname = window.location.pathname;",
-      '  const fallback = config.defaultLocale ?? "en";',
-      '  const first = (pathname.split("/")[1] ?? "").toLowerCase();',
-      "  const locale = Object.keys(config.translations).find((l) => l.toLowerCase() === first) ?? fallback;",
-      "  const buckets = new Set(config.globalBuckets);",
-      "  let matched = false;",
-      "  for (const [key, re] of config.patterns) {",
-      "    if (re.test(pathname)) {",
-      "      matched = true;",
-      "      for (const b of config.routeBuckets[key] ?? []) buckets.add(b);",
-      "    }",
-      "  }",
-      "  if (!matched) {",
-      "    for (const [key] of config.patterns) {",
-      '      if (key === "404" || key.endsWith("/404")) {',
-      "        for (const b of config.routeBuckets[key] ?? []) buckets.add(b);",
-      "      }",
-      "    }",
-      "  }",
-      "  const jobs = [];",
-      "  for (const loc of new Set([locale, fallback])) {",
-      "    for (const b of buckets) {",
-      "      const load = config.namespaces[b]?.[loc];",
-      "      if (load) {",
-      "        jobs.push(load().then((m) => {",
-      "          merge((config.translations[loc] ??= {}), m.default);",
-      "          config.loaded.add(`${b}/${loc}`);",
-      "        }));",
-      "      }",
-      "    }",
-      "  }",
-      "  await Promise.all(jobs);",
-      "}",
-    ];
-    // The server has the same config without the client bootstrap: its pages load through the middleware.
-    return (ssr ? exported.slice(0, 1) : exported).join("\n");
+  const add = (map: ChunkMap, bucket: string, locale: string) => {
+    (map.get(bucket) ?? map.set(bucket, new Set()).get(bucket)!).add(locale);
   };
 
   /**
-   * One namespace in one locale, still nested: `page.home` becomes `{ page: { home: {...} } }`. Only the
-   * keys in this namespace are included, so the `page` chunk doesn't also carry every `page.<x>` chunk.
+   * Which chunks exist. A locale's own chunk per bucket, when it has keys there. A fallback chunk per
+   * bucket, when it lacks some of the base locale's keys there: those values only, nothing it translates.
+   * A chunk that would be empty is not emitted, so the client never requests it.
    */
-  const namespaceCode = (bucket: string, locale: string): string => {
-    const dict = state?.locales[locale] ?? {};
+  const chunkPlan = (): { own: ChunkMap; fallback: ChunkMap } => {
+    const known = buckets();
+    const locales = state?.locales ?? {};
+    const baseKeys = collectKeys(locales[baseLocale] ?? {}).map((e) => e.key);
+    const own: ChunkMap = new Map();
+    const fallback: ChunkMap = new Map();
+    for (const locale of Object.keys(locales)) {
+      const keys = collectKeys(locales[locale]!).map((e) => e.key);
+      const have = new Set(keys);
+      for (const key of keys) if (known.has(bucketOf(key))) add(own, bucketOf(key), locale);
+      if (locale === baseLocale) continue;
+      for (const key of baseKeys) {
+        if (!have.has(key) && known.has(bucketOf(key))) add(fallback, bucketOf(key), locale);
+      }
+    }
+    return { own, fallback };
+  };
+
+  /** `namespaces` or `fallbacks`: each bucket's loaders, keyed by locale. */
+  const loaderMap = (map: ChunkMap, suffix: string): string =>
+    `{ ${[...map]
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(
+        ([bucket, locales]) =>
+          `${JSON.stringify(bucket)}: { ${[...locales]
+            .map(
+              (l) =>
+                `${JSON.stringify(l)}: () => import(${JSON.stringify(`${NAMESPACE_ID}${bucket}/${l}${suffix}`)})`,
+            )
+            .join(", ")} }`,
+      )
+      .join(", ")} }`;
+
+  /**
+   * Both sides get the same config: empty dictionaries, the route map, and a loader per chunk. The
+   * client boots from it in the runtime, and the server loads each request's URL in the middleware.
+   */
+  const configCode = (): string => {
+    const { own, fallback } = chunkPlan();
+    const localeNames = Object.keys(state?.locales ?? {});
+    const patterns = Object.keys(state?.routeBuckets ?? {}).map(
+      (key) => `[${JSON.stringify(key)}, new RegExp(${JSON.stringify(routePattern(key))})]`,
+    );
+    return `export const config = { ...${JSON.stringify(config)}, devServer: ${dev}, translations: ${JSON.stringify(Object.fromEntries(localeNames.map((l) => [l, {}])))}, routeBuckets: ${JSON.stringify(state?.routeBuckets ?? {})}, globalBuckets: ${JSON.stringify(state?.globalBuckets ?? [])}, namespaces: ${loaderMap(own, "")}, fallbacks: ${loaderMap(fallback, "/fallback")}, patterns: [${patterns.join(", ")}], loaded: new Set() };`;
+  };
+
+  /**
+   * One chunk, still nested: `page.home` becomes `{ page: { home: {...} } }`, so the `page` chunk doesn't
+   * also carry every `page.<x>` chunk. A fallback chunk takes the base locale's values for the keys
+   * `locale` lacks; an own chunk takes the locale's own keys.
+   */
+  const namespaceCode = (bucket: string, locale: string, fallback: boolean): string => {
+    const locales = state?.locales ?? {};
+    const dict = locales[locale] ?? {};
+    const source = fallback ? (locales[baseLocale] ?? {}) : dict;
+    const have = new Set(collectKeys(dict).map((e) => e.key));
     const out: Record<string, unknown> = {};
-    for (const { key } of collectKeys(dict)) {
-      if (bucketOf(key) !== bucket) continue;
+    for (const { key } of collectKeys(source)) {
+      if (bucketOf(key) !== bucket || (fallback && have.has(key))) continue;
       const parts = key.split(".");
       const last = parts.pop()!;
-      let from = dict;
+      let from = source;
       let to = out;
       for (const part of parts) {
         from = from[part] as Record<string, unknown>;
@@ -286,14 +264,18 @@ export const i18n = ({
       if (id.startsWith(NAMESPACE_ID)) return `\0${id}`;
       return undefined;
     },
-    load: async function (id, options) {
+    load: async function (id) {
       if (id === RESOLVED_ID) {
         await ensureRoutes(this);
-        return configCode(Boolean(options?.ssr));
+        return configCode();
       }
       if (id.startsWith(`\0${NAMESPACE_ID}`)) {
-        const [bucket, locale] = id.slice(NAMESPACE_ID.length + 1).split("/") as [string, string];
-        return namespaceCode(bucket, locale);
+        const [bucket, locale, kind] = id.slice(NAMESPACE_ID.length + 1).split("/") as [
+          string,
+          string,
+          string | undefined,
+        ];
+        return namespaceCode(bucket, locale, kind === "fallback");
       }
       return undefined;
     },

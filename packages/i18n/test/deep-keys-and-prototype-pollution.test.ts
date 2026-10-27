@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { flatten, unflatten, verifyTranslations } from "../src/lint";
-import { placeholderNames } from "../src/placeholders";
+import { fixTranslations, verifyTranslations } from "../src/lint";
+import { placeholderNames } from "../src/shared";
 import { setCurrentLocale, t } from "../src/index";
 import { activeConfig } from "../src/runtime";
 
@@ -22,24 +22,11 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
     },
   };
 
-  it("flattens and extracts component translation keys", () => {
-    const flattened = flatten(translations.en);
-    expect(flattened["nav.home"]).toBe("Home");
-    expect(flattened["nav.nested"]).toBe("Nested Value");
-    expect(flattened["messages.welcome"]).toBe("Welcome, {user}!");
-  });
-
-  it("unflattens dotted component keys accurately", () => {
-    const flat = {
-      "nav.home": "Home",
-      "nav.about": "About",
-      "footer.contact": "Contact Us",
-    };
-
-    const unflattened = unflatten(flat) as Record<string, Record<string, string>>;
-    expect(unflattened["nav"]?.["home"]).toBe("Home");
-    expect(unflattened["nav"]?.["about"]).toBe("About");
-    expect(unflattened["footer"]?.["contact"]).toBe("Contact Us");
+  it("fills a locale's missing deep keys from the base, keeping the nested shape", () => {
+    expect(fixTranslations(translations, "en")["fr"]).toEqual({
+      nav: { home: "Accueil", nested: "Nested Value" },
+      messages: { welcome: "Welcome, {user}!" },
+    });
   });
 
   it("extracts and diffs translation keys across languages", () => {

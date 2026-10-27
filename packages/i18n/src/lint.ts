@@ -1,6 +1,5 @@
 import type { I18nLintConfig, KeyCasing } from "./types";
-import { UNSAFE_KEYS } from "./constants";
-import { placeholderNames } from "./placeholders";
+import { placeholderNames, UNSAFE_KEYS } from "./shared";
 
 type FlattenedTranslations = Record<string, string>;
 
@@ -62,7 +61,7 @@ const findSelfNestedKeys = (obj: Record<string, any>, prefix = ""): string[] => 
 };
 
 /** Flattens nested translation objects or arrays into dot-notated paths. */
-export const flatten = (
+const flatten = (
   obj: Record<string, any>,
   prefix = "",
   result: FlattenedTranslations = {},
@@ -78,7 +77,7 @@ export const flatten = (
 };
 
 /** Unflattens dot-notated translation map back into a nested object structure. */
-export const unflatten = (flat: FlattenedTranslations): Record<string, any> => {
+const unflatten = (flat: FlattenedTranslations): Record<string, any> => {
   const result: Record<string, any> = {};
   for (const [key, value] of Object.entries(flat)) {
     const parts = key.split(".");
@@ -147,7 +146,7 @@ export const verifyTranslations = (
 
     for (const [key, val] of Object.entries(targetFlat)) {
       if (!allowEmpty && String(val).trim() === "") empty.push(key);
-      if (key in baseFlat) {
+      if (Object.hasOwn(baseFlat, key)) {
         const baseHolders = placeholderNames(baseFlat[key] ?? "").sort();
         const targetHolders = placeholderNames(val).sort();
         if (JSON.stringify(baseHolders) !== JSON.stringify(targetHolders)) {

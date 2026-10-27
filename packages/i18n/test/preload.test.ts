@@ -110,14 +110,11 @@ describe("namespace preload", () => {
   it("adds modulepreload for every chunk of the page, from the build manifest", async () => {
     const request = await render(assets(manifest));
     const html = await (await request("/pt/")).text();
-    for (const href of [
-      "/assets/common-en.js",
-      "/assets/common-pt.js",
-      "/assets/home-en.js",
-      "/assets/home-pt.js",
-    ]) {
+    for (const href of ["/assets/common-pt.js", "/assets/home-pt.js"]) {
       expect(html).toContain(`<link rel="modulepreload" href="${href}" crossorigin>`);
     }
+    // A pt page needs no English chunk when pt has its keys.
+    expect(html).not.toContain("-en.js");
     // Inserted into the head, before its closing tag, and nothing else.
     expect(html).toContain("crossorigin></head>");
     expect(html).not.toContain("App.js");
@@ -145,6 +142,18 @@ describe("namespace preload", () => {
       contentType: "application/json",
     });
     expect(await (await request("/pt/")).text()).toBe('{"ok":true}');
+  });
+
+  it("renders the page without preloads where HTMLRewriter does not exist", async () => {
+    const globals = globalThis as { HTMLRewriter?: unknown };
+    const rewriter = globals.HTMLRewriter;
+    delete globals.HTMLRewriter;
+    try {
+      const request = await render(assets(manifest));
+      expect(await (await request("/pt/")).text()).toBe(HTML);
+    } finally {
+      globals.HTMLRewriter = rewriter;
+    }
   });
 
   it("returns the page unchanged when no chunk resolves", async () => {
