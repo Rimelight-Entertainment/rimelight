@@ -93,7 +93,7 @@ export const HomePage: Component = () => {
 
       <RLPageSection
         orientation="horizontal"
-        title={t("page.home.section.company.title").replace("{interactive}", "interactive media")}
+        title={t("page.home.section.company.title", { interactive: "interactive media" })}
         description={t("page.home.section.company.description")}
         ui={{
           title: "text-white",

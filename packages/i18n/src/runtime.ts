@@ -1,12 +1,8 @@
 import { config } from "virtual:rimelight-i18n";
+import { PLACEHOLDER } from "./placeholders";
 import type { LocaleInfo, LocaleOptions, TFunction } from "./types";
 
-const translations: Record<string, Record<string, unknown>> = Object.fromEntries(
-  Object.entries(config?.translations ?? {}).map(([p, d]) => [
-    p.replace(/^.*[\\/]|\.json$/g, ""),
-    d,
-  ]),
-);
+const translations: Record<string, Record<string, unknown>> = config?.translations ?? {};
 
 const configuredLocales = config?.locales;
 const localeOptions: Record<string, LocaleOptions> =
@@ -18,13 +14,12 @@ const localeOptions: Record<string, LocaleOptions> =
       )
     : {};
 
-export interface ActiveI18nConfig {
+interface ActiveI18nConfig {
   locales: string[];
   defaultLocale: string;
   prefixDefaultLocale: boolean;
   skipPaths: string[];
   translations: Record<string, Record<string, unknown>>;
-  getLocale?: (() => string | undefined) | undefined;
 }
 
 export const activeConfig: ActiveI18nConfig = {
@@ -39,24 +34,58 @@ export const activeConfig: ActiveI18nConfig = {
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
   skipPaths: [...(config?.skipPaths ?? ["/api", "/_", "/.well-known", "/cdn-cgi"])],
   translations,
-  getLocale: undefined,
+};
+
+interface LocaleIndex {
+  /** The `activeConfig.locales` array this index was built from. Rebuilt when it is replaced. */
+  source: readonly string[];
+  byLowerCase: Map<string, string>;
+  /** Matches a leading locale segment, e.g. `/pt-BR/` in `/pt-BR/about`. */
+  prefix: RegExp;
+}
+
+let index: LocaleIndex | undefined;
+
+const localeIndex = (): LocaleIndex => {
+  if (index?.source !== activeConfig.locales) {
+    const locales = activeConfig.locales;
+    index = {
+      source: locales,
+      byLowerCase: new Map(locales.map((l) => [l.toLowerCase(), l])),
+      prefix: new RegExp(
+        `^/(?:${locales.map((l) => l.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?=[/?#]|$)`,
+        "i",
+      ),
+    };
+  }
+  return index;
+};
+
+/** The configured locale whose code equals `value`, ignoring case. `undefined` when none does. */
+export const matchLocale = (value: string | undefined): string | undefined =>
+  value ? localeIndex().byLowerCase.get(value.toLowerCase()) : undefined;
+
+let resolveRequestLocale: (() => string | undefined) | undefined;
+
+/**
+ * Lets server code resolve the locale per request (e.g. from AsyncLocalStorage). The middleware
+ * registers itself when `i18n()` is called; without it, `getCurrentLocale()` skips this step.
+ */
+export const registerLocaleResolver = (resolve: () => string | undefined): void => {
+  resolveRequestLocale = resolve;
 };
 
 let currentLocale: string | undefined;
 
 const resolveBrowserLocale = (): string | undefined => {
-  if (typeof window !== "undefined" && window.location?.pathname) {
-    const seg = window.location.pathname.split("/")[1];
-    if (seg) {
-      const match = activeConfig.locales.find((l) => l.toLowerCase() === seg.toLowerCase());
-      if (match) return match;
-    }
-  }
-  if (typeof document !== "undefined" && document.documentElement?.lang) {
-    const lang = document.documentElement.lang;
-    return activeConfig.locales.find((l) => l.toLowerCase() === lang.toLowerCase()) ?? lang;
-  }
-  return undefined;
+  const fromPath =
+    typeof window !== "undefined"
+      ? matchLocale(window.location?.pathname?.split("/")[1])
+      : undefined;
+  if (fromPath) return fromPath;
+
+  const lang = typeof document !== "undefined" ? document.documentElement?.lang : undefined;
+  return lang ? (matchLocale(lang) ?? lang) : undefined;
 };
 
 /** Returns the supported locale codes. */
@@ -102,10 +131,7 @@ export const getDefaultLocale = (): string => activeConfig.defaultLocale;
 
 /** Returns the active locale code. */
 export const getCurrentLocale = (): string =>
-  activeConfig.getLocale?.() ??
-  currentLocale ??
-  resolveBrowserLocale() ??
-  activeConfig.defaultLocale;
+  resolveRequestLocale?.() ?? currentLocale ?? resolveBrowserLocale() ?? activeConfig.defaultLocale;
 
 /** Sets the active locale code. */
 export const setCurrentLocale = (locale: string): void => {
@@ -119,13 +145,11 @@ export const isSkippedPath = (pathname: string): boolean =>
 
 /** Generates a localized relative URL path. External, hash, skipped and file paths are returned unchanged. */
 export const getLocaleUrl = (path: string, locale: string = getCurrentLocale()): string => {
-  const { locales, defaultLocale, prefixDefaultLocale } = activeConfig;
+  const { defaultLocale, prefixDefaultLocale } = activeConfig;
 
   if (/^(?:[a-z]+:|\/\/|#)/i.test(path) || isSkippedPath(path.split(/[?#]/)[0]!)) return path;
 
-  const rest = path
-    .replace(new RegExp(`^/(?:${locales.join("|")})(?=[/?#]|$)`, "i"), "") // drop an existing locale prefix
-    .replace(/^\/+/, "");
+  const rest = path.replace(localeIndex().prefix, "").replace(/^\/+/, ""); // drop an existing locale prefix
   const prefix = prefixDefaultLocale || locale !== defaultLocale ? `/${locale}` : "";
 
   return `${prefix}/${rest}`;
@@ -136,6 +160,17 @@ export const getLocaleAsset = <T>(
   assets: Record<string, T>,
   locale: string = getCurrentLocale(),
 ): T => (assets[locale] ?? assets[activeConfig.defaultLocale]) as T;
+
+const pluralRules = new Map<string, Intl.PluralRules>();
+
+const rulesFor = (locale: string): Intl.PluralRules => {
+  let rules = pluralRules.get(locale);
+  if (!rules) {
+    rules = new Intl.PluralRules(locale);
+    pluralRules.set(locale, rules);
+  }
+  return rules;
+};
 
 export const t: TFunction = Object.assign(
   (key: string, params?: Record<string, unknown>, locale = getCurrentLocale()): string => {
@@ -154,8 +189,8 @@ export const t: TFunction = Object.assign(
     const resolved = value ?? key;
     if (typeof resolved === "function") return String(resolved(params));
     if (typeof resolved === "string" && params) {
-      return resolved.replace(/\{\s*(\w+)\s*}/g, (match, paramKey) => {
-        const val = params[paramKey];
+      return resolved.replace(PLACEHOLDER, (match, paramKey: string) => {
+        const val = Object.hasOwn(params, paramKey) ? params[paramKey] : undefined;
         if (val == null) return match;
         return paramKey === "count" && typeof val === "number"
           ? val.toLocaleString(locale)
@@ -168,16 +203,18 @@ export const t: TFunction = Object.assign(
   },
   {
     raw: <T = unknown>(key: string, fallback?: T, locale = getCurrentLocale()): T => {
+      // hasOwn, not `in`: plain objects inherit `constructor`, `toString`, etc.
       const get = (loc: string) => {
-        const dict = activeConfig.translations[loc];
-        if (!dict) return undefined;
-        if (key in dict) return dict[key];
-        if (!key.includes(".")) return undefined;
+        if (!Object.hasOwn(activeConfig.translations, loc)) return undefined;
+        const dict = activeConfig.translations[loc]!;
+        if (Object.hasOwn(dict, key)) return dict[key];
         return key
           .split(".")
           .reduce<unknown>(
             (d, part) =>
-              d && typeof d === "object" ? (d as Record<string, unknown>)[part] : undefined,
+              d && typeof d === "object" && Object.hasOwn(d, part)
+                ? (d as Record<string, unknown>)[part]
+                : undefined,
             dict,
           );
       };
@@ -189,7 +226,7 @@ export const t: TFunction = Object.assign(
       return Array.isArray(value) ? (value as T[]) : fallback;
     },
     plural: (count: number, locale = getCurrentLocale()): Intl.LDMLPluralRule =>
-      new Intl.PluralRules(locale).select(count),
+      rulesFor(locale).select(count),
     localize: (value: unknown, locale = getCurrentLocale()): string => {
       if (value && typeof value === "object") {
         const dict = value as Record<string, unknown>;

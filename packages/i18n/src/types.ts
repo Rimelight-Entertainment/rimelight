@@ -1,3 +1,5 @@
+import type { TranslationRegistry } from "./index";
+
 export type KeyCasing = "kebab-case" | "camelCase" | "snake_case" | "any";
 
 export interface I18nLintConfig {
@@ -31,14 +33,28 @@ export interface I18nConfig {
   defaultLocale?: string;
   prefixDefaultLocale?: boolean;
   skipPaths?: readonly string[];
-  lint?: I18nLintConfig;
   translations?: Record<string, Record<string, unknown>>;
 }
 
-export interface TFunction<K extends string = string> {
-  (key: K, params?: Record<string, unknown>, locale?: string): string;
-  raw<T = unknown>(key: K, fallback?: T, locale?: string): T;
-  array<T = string>(key: K, fallback?: T[], locale?: string): T[];
+/** Keys `t()` accepts: the registry's, or any string while the registry is empty (before generation). */
+export type TranslationKey<R = TranslationRegistry> = [keyof R] extends [never]
+  ? string
+  : Extract<keyof R, string>;
+
+/** Arguments after the key. Params are required exactly when the key has placeholders or plurals. */
+export type TranslationArgs<K extends string, R = TranslationRegistry> = string extends K
+  ? [params?: Record<string, unknown> | undefined, locale?: string | undefined]
+  : K extends keyof R
+    ? [R[K]] extends [never]
+      ? [params?: undefined, locale?: string | undefined]
+      : [params: R[K], locale?: string | undefined]
+    : [params?: Record<string, unknown> | undefined, locale?: string | undefined];
+
+export interface TFunction<R = TranslationRegistry> {
+  <K extends TranslationKey<R>>(key: K, ...args: TranslationArgs<K, R>): string;
+  /** Untyped lookup for dynamic keys and non-string values (objects, namespaces). */
+  raw<T = unknown>(key: string, fallback?: T, locale?: string): T;
+  array<T = string>(key: string, fallback?: T[], locale?: string): T[];
   plural(count: number, locale?: string): Intl.LDMLPluralRule;
   localize(value: unknown, locale?: string): string;
 }

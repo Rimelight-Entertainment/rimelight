@@ -16,20 +16,16 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "bin": {
-    "rimelight-i18n": "./dist/cli.mjs"
+    "rimelight-i18n": "./dist/bin.mjs"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
-    },
-    "./client": {
-      "types": "./src/client.d.ts"
     },
     "./plugin": {
       "types": "./dist/plugin.d.mts",
@@ -38,10 +34,6 @@
     "./middleware": {
       "types": "./dist/middleware.d.mts",
       "import": "./dist/middleware.mjs"
-    },
-    "./cli": {
-      "types": "./dist/cli.d.mts",
-      "import": "./dist/cli.mjs"
     }
   },
   "publishConfig": {

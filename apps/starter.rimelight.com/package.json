@@ -31,7 +31,7 @@
   },
   "scripts": {
     "generate-types": "cf workers types",
-    "check": "cf workers types && vp check --fix",
+    "check": "cf workers types && rimelight-i18n types --config vite.config.ts && vp check --fix",
     "dev": "vp dev",
     "prebuild": "pnpm -r --filter \"@rimelight/*\" run --if-present build",
     "build": "vp build",

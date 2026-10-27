@@ -206,9 +206,9 @@ export default function DevLocalizationPage() {
         },
         {
           label: t("dev.localization.t.missing.title"),
-          code: `t("dev_localization.does_not_exist")`,
+          code: `t.raw("dev_localization.does_not_exist")`,
           description: t("dev.localization.t.missing.description"),
-          value: t("dev_localization.does_not_exist"),
+          value: t.raw("dev_localization.does_not_exist"),
         },
       ],
     },

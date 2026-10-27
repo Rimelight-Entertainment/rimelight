@@ -40,7 +40,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "test": "vp test",
-    "check": "cf workers types && vp check --fix"
+    "check": "cf workers types && rimelight-i18n types --config vite.config.ts && vp check --fix"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "2.0.0-beta.v.1",

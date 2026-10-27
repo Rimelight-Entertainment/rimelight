@@ -94,11 +94,6 @@ describe("PROOF: SSR Concurrency and Race Condition Isolation", () => {
     });
   });
 
-  it("PROOF that t() is strictly bound to TFunction keys", () => {
-    const typedT: import("../src/types").TFunction<"title"> = t as any;
-    expect(typedT("title")).toBeDefined();
-  });
-
   it("auto-resolves active locale on the client from window.location.pathname and document.documentElement.lang", () => {
     Object.assign(activeConfig, {
       locales: ["en", "es", "pt"],

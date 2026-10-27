@@ -2,15 +2,12 @@ import { beforeEach, describe, expect, it } from "vite-plus/test";
 import {
   flatten,
   unflatten,
-  extractKeys,
-  extractPlaceholders,
-  findMissingKeys,
-  findStaleKeys,
   verifyTranslations,
   formatAuditReport,
   fixTranslations,
-} from "../src/cli";
+} from "../src/lint";
 import { setCurrentLocale, getLocaleUrl, getLocaleAsset, t } from "../src/index";
+import { placeholderNames } from "../src/placeholders";
 import { activeConfig } from "../src/runtime";
 
 describe("translation dictionary utils", () => {
@@ -49,27 +46,27 @@ describe("translation dictionary utils", () => {
     expect(unflatten(flatten(source))).toEqual(source);
   });
 
-  it("extracts component keys", () => {
-    expect(extractKeys(source).sort()).toEqual(["hero.subtitle", "hero.title", "nav.home"]);
-  });
-
   it("finds missing keys between dictionaries", () => {
-    const missing = findMissingKeys(source, { hero: { title: "Hello" } });
+    const missing = verifyTranslations({ en: source, fr: { hero: { title: "Hello" } } })
+      .missingKeys["fr"];
     expect(missing).toEqual(["hero.subtitle", "nav.home"]);
   });
 
   it("finds stale keys between dictionaries", () => {
-    const stale = findStaleKeys(source, {
-      hero: { title: "Hello", old_cta: "Legacy" },
-      legacy_nav: { item: "Old" },
-    });
+    const stale = verifyTranslations({
+      en: source,
+      fr: {
+        hero: { title: "Hello", old_cta: "Legacy" },
+        legacy_nav: { item: "Old" },
+      },
+    }).staleKeys["fr"];
     expect(stale).toEqual(["hero.old_cta", "legacy_nav.item"]);
   });
 
   it("handles non-string values when extracting placeholders", () => {
-    expect(extractPlaceholders("Hello {name}")).toEqual(["name"]);
-    expect(extractPlaceholders(2023)).toEqual([]);
-    expect(extractPlaceholders(true)).toEqual([]);
+    expect(placeholderNames("Hello {name}")).toEqual(["name"]);
+    expect(placeholderNames(2023)).toEqual([]);
+    expect(placeholderNames(true)).toEqual([]);
   });
 
   it("verifies dictionaries containing numeric and boolean values without crashing", () => {

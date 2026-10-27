@@ -8,4 +8,9 @@ export {
   getLocaleInfo,
   t,
 } from "./runtime";
-export type { LocaleInfo, LocaleOptions } from "./types";
+
+/**
+ * Every `t()` key and the params it takes. Empty here; the generated `keys.d.ts` augments it.
+ * It must be declared in this file: augmentation cannot merge into re-exported interfaces.
+ */
+export interface TranslationRegistry {}

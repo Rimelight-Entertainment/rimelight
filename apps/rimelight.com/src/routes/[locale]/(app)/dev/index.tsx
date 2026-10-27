@@ -28,7 +28,7 @@ const dashboardCards = [
     titleKey: "dev.index.card.seo.title",
     descriptionKey: "dev.index.card.seo.description",
   },
-];
+] as const;
 
 export default function DevIndexPage() {
   return (

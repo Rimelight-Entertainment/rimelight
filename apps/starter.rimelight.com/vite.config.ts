@@ -51,7 +51,7 @@ export default defineConfig({
 
     auth(),
 
-    i18n(),
+    i18n({ types: ".cloudflare/types/i18n.d.ts" }),
 
     ui({
       logos: {
