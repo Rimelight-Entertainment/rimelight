@@ -27,6 +27,7 @@ export const activeConfig: SecurityConfig = {
           constructionPath: "/construction",
           cookieName: "rimelight-construction-guest",
           cookieMaxAge: 604800,
+          renderFallback: true,
           ...config?.construction,
         },
 };

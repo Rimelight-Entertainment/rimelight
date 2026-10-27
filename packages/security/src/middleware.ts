@@ -94,7 +94,10 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
   // 4. Construction mode
   const cg = activeConfig.construction;
-  if (cg && String(c.env?.CONSTRUCTION_MODE) === "true") {
+  const constructionMode =
+    c.env?.CONSTRUCTION_MODE ??
+    (typeof process !== "undefined" ? process.env?.["CONSTRUCTION_MODE"] : undefined);
+  if (cg && String(constructionMode) === "true") {
     const { constructionPath, cookieName, cookieMaxAge, whitelist, isAuthorized, renderFallback } =
       cg;
     const cookieOpts = (remember = true) => ({
@@ -102,7 +105,10 @@ export const security = (): MiddlewareHandler => async (c, next) => {
       secure: true,
       ...(remember && cookieMaxAge ? { maxAge: cookieMaxAge } : {}),
     });
-    const secret = c.env?.CONSTRUCTION_PASSPHRASE;
+    const secret = (c.env?.CONSTRUCTION_PASSPHRASE ??
+      (typeof process !== "undefined" ? process.env?.["CONSTRUCTION_PASSPHRASE"] : undefined)) as
+      | string
+      | undefined;
 
     if (secret && c.req.query("preview") === secret) {
       setCookie(c, cookieName!, secret, cookieOpts());
@@ -111,7 +117,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
     const authed =
       (secret && getCookie(c, cookieName!) === secret) ||
-      /^\/(_image|assets|@|favicon\.ico|favicon\.svg|apple-touch-icon.*|site\.webmanifest|manifest\.json|robots\.txt|sitemap.*\.xml|open-graph)/.test(
+      /^\/(_image|assets|@|src\/|favicon\.ico|favicon\.svg|apple-touch-icon.*|site\.webmanifest|manifest\.json|robots\.txt|sitemap.*\.xml|open-graph)/.test(
         path,
       ) ||
       matches(whitelist) ||
@@ -129,17 +135,19 @@ export const security = (): MiddlewareHandler => async (c, next) => {
         return c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`);
       }
 
+      if (renderFallback) {
+        return c.html(
+          getConstructionFallbackHtml({ redirect: path, error: c.req.query("error") }),
+          503,
+        );
+      }
+
       if (!isGate) {
         return /\.[a-z0-9]{1,16}$/i.test(path)
           ? c.notFound()
-          : renderFallback
-            ? c.html(
-                getConstructionFallbackHtml({ redirect: path, error: c.req.query("error") }),
-                503,
-              )
-            : c.redirect(
-                `${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`,
-              );
+          : c.redirect(
+              `${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`,
+            );
       }
     }
   }
