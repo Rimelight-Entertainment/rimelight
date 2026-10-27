@@ -6,8 +6,6 @@ import type { I18nLintConfig, KeyCasing } from "./types";
 import { readLocaleFiles, syncTypedKeys } from "./typegen";
 import { fixTranslations, formatAuditReport, verifyTranslations } from "./lint";
 
-// ── CLI ──────────────────────────────────────────────────────────────────────
-
 const HELP_TEXT = `
 Usage:
   rimelight-i18n [action] [options]

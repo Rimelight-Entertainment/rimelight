@@ -21,6 +21,7 @@ const stripComments = (source: string): string =>
 
 /** Quoted string literals made of key characters. A literal is a key only if it exactly names one. */
 const LITERAL = /(["'`])([A-Za-z0-9_\-.]+)\1/g;
+
 /**
  * Namespace reads: the first argument of `t(…)`, `t.raw(…)` or `t.array(…)` when it is a plain or
  * template string. Only these count as namespaces; common words such as "page" appear everywhere.
