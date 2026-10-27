@@ -214,16 +214,24 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       return { default: bucket === "page.home" ? { page: dict.page } : { [top]: dict[top] } };
     };
 
-    it("loads a route's namespaces in every locale, so an explicit or set locale renders too", async () => {
-      const { config, loadPathname } = await client(async (id) => chunk(id));
+    it("loads only the URL's locale and the default; other locales wait for loadLocale", async () => {
+      const requested: string[] = [];
+      const { config, loadPathname, loadLocale } = await client(
+        async (id) => (requested.push(id), chunk(id)),
+      );
       await loadPathname("/en/");
-      expect(config.translations?.["pt"]).toEqual({
+      expect(config.translations?.["pt"]).toEqual({});
+      expect(requested.some((id) => id.endsWith("/pt"))).toBe(false);
+
+      // Every namespace of the locale, not only this route's.
+      await loadLocale("pt");
+      expect(config.translations?.["pt"]).toMatchObject({
         page: locales.pt.page,
         common: locales.pt.common,
       });
     });
 
-    it("requests every chunk of a URL at once, in every locale", async () => {
+    it("requests every chunk of a URL at once, in its locale and the default one", async () => {
       const requested: string[] = [];
       const pending: Array<() => void> = [];
       const { config, loadPathname, isPathnameLoaded } = await client(
@@ -271,7 +279,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       const { loadPathname } = await client(async (id) => (requested.push(id), chunk(id)));
       await loadPathname("/en/");
       await loadPathname("/en");
-      expect(requested).toHaveLength(4);
+      expect(requested).toHaveLength(2);
     });
 
     it("matches the locale segment without case", async () => {

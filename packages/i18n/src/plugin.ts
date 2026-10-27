@@ -55,6 +55,7 @@ export const i18n = ({
 }: I18nPluginOptions = {}): Plugin => {
   const baseLocale = config.defaultLocale ?? "en";
   let root = process.cwd();
+  let dev = false;
   let server: ViteDevServer | undefined;
   let state: State | undefined;
 
@@ -167,7 +168,7 @@ export const i18n = ({
       (key) => `[${JSON.stringify(key)}, new RegExp(${JSON.stringify(routePattern(key))})]`,
     );
     const exported = [
-      `export const config = { ${settings}, translations: ${JSON.stringify(Object.fromEntries(localeNames.map((l) => [l, {}])))}, routeBuckets: ${JSON.stringify(state?.routeBuckets ?? {})}, globalBuckets: ${JSON.stringify(state?.globalBuckets ?? [])}, namespaces: { ${namespaces} }, patterns: [${patterns.join(", ")}], loaded: new Set() };`,
+      `export const config = { ${settings}, devServer: ${dev}, translations: ${JSON.stringify(Object.fromEntries(localeNames.map((l) => [l, {}])))}, routeBuckets: ${JSON.stringify(state?.routeBuckets ?? {})}, globalBuckets: ${JSON.stringify(state?.globalBuckets ?? [])}, namespaces: { ${namespaces} }, patterns: [${patterns.join(", ")}], loaded: new Set() };`,
       "const merge = (target, source) => {",
       "  for (const [key, value] of Object.entries(source)) {",
       '    if (key === "__proto__") continue;',
@@ -179,6 +180,9 @@ export const i18n = ({
       "// Initial load: fetch the namespaces of the URL being rendered before any module reads a translation.",
       'if (typeof window !== "undefined") {',
       "  const pathname = window.location.pathname;",
+      '  const fallback = config.defaultLocale ?? "en";',
+      '  const first = (pathname.split("/")[1] ?? "").toLowerCase();',
+      "  const locale = Object.keys(config.translations).find((l) => l.toLowerCase() === first) ?? fallback;",
       "  const buckets = new Set(config.globalBuckets);",
       "  let matched = false;",
       "  for (const [key, re] of config.patterns) {",
@@ -195,7 +199,7 @@ export const i18n = ({
       "    }",
       "  }",
       "  const jobs = [];",
-      "  for (const loc of Object.keys(config.translations)) {",
+      "  for (const loc of new Set([locale, fallback])) {",
       "    for (const b of buckets) {",
       "      const load = config.namespaces[b]?.[loc];",
       "      if (load) {",
@@ -249,6 +253,7 @@ export const i18n = ({
     name: "rimelight:i18n",
     configResolved: (resolved) => {
       root = resolved.root;
+      dev = resolved.command === "serve";
     },
     configureServer: (devServer) => {
       server = devServer;

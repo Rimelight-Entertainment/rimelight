@@ -21,6 +21,7 @@ describe("index exports", () => {
         "getLocaleUrl",
         "getLocaleAsset",
         "getLocaleInfo",
+        "loadLocale",
         "t",
       ].sort(),
     );

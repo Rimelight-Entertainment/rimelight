@@ -12,6 +12,8 @@ export interface VirtualI18nConfig {
   namespaces?: Record<string, Record<string, NamespaceLoader>>;
   patterns?: Array<[string, RegExp]>;
   loaded?: Set<string>;
+  /** Set on the server config during `vite dev`, which has no build manifest. */
+  devServer?: boolean;
 }
 
 const translations: Record<string, Record<string, unknown>> = config?.translations ?? {};
@@ -32,6 +34,7 @@ interface ActiveI18nConfig {
   prefixDefaultLocale: boolean;
   skipPaths: string[];
   translations: Record<string, Record<string, unknown>>;
+  devServer: boolean;
 }
 
 export const activeConfig: ActiveI18nConfig = {
@@ -46,6 +49,7 @@ export const activeConfig: ActiveI18nConfig = {
   prefixDefaultLocale: config?.prefixDefaultLocale ?? true,
   skipPaths: [...(config?.skipPaths ?? ["/api", "/_", "/.well-known", "/cdn-cgi"])],
   translations,
+  devServer: (config as VirtualI18nConfig | undefined)?.devServer ?? false,
 };
 
 interface LocaleIndex {
@@ -92,6 +96,19 @@ const merge = (
   return target;
 };
 
+const warnedMissing = new Set<string>();
+
+/**
+ * Whether any namespace of a locale is in memory. Reads the `loaded` set on the shared config, not a
+ * module-level set, because some bundles carry their own copy of this module.
+ */
+const localeLoaded = (locale: string): boolean => {
+  for (const id of (config as VirtualI18nConfig | undefined)?.loaded ?? []) {
+    if (id.endsWith(`/${locale}`)) return true;
+  }
+  return false;
+};
+
 /** Creates a pathname loader for a virtual config object. */
 export const createPathnameLoader = (
   cfg: VirtualI18nConfig,
@@ -99,15 +116,24 @@ export const createPathnameLoader = (
   isPathnameLoaded: (pathname: string) => boolean;
   loadPathname: (pathname: string) => Promise<void>;
   loadLocale: (locale: string) => Promise<void>;
+  chunkIdsOf: (pathname: string) => string[];
 } => {
   const loaded = (cfg.loaded ??= new Set<string>());
   const loading = new Map<string, Promise<void>>();
   const dicts = (cfg.translations ??= {});
 
+  /** The locales a URL loads: its own, and the default one that `t()` falls back to. */
+  const localesOf = (pathname: string): string[] => {
+    const fallback = cfg.defaultLocale ?? "en";
+    const first = (pathname.split("/")[1] ?? "").toLowerCase();
+    const own = Object.keys(dicts).find((l) => l.toLowerCase() === first) ?? fallback;
+    return own === fallback ? [fallback] : [own, fallback];
+  };
+
   /**
    * The chunks a URL needs: the global namespaces and those of every route matching it (or the 404
-   * route when none matches), in every locale. `t()` takes any locale (`setCurrentLocale`, or an
-   * explicit argument), so the URL's locale alone isn't enough.
+   * route when none matches), in the URL's locale and the default one. Any other locale is loaded
+   * with `loadLocale` before code reads it.
    */
   const chunksOf = (pathname: string): Array<[string, string]> => {
     const namespaces = cfg.namespaces;
@@ -130,7 +156,7 @@ export const createPathnameLoader = (
       }
     }
     const chunks: Array<[string, string]> = [];
-    for (const loc of Object.keys(dicts)) {
+    for (const loc of localesOf(pathname)) {
       for (const bucket of buckets) {
         if (namespaces[bucket]?.[loc]) chunks.push([bucket, loc]);
       }
@@ -167,6 +193,7 @@ export const createPathnameLoader = (
     loadPathname: async (pathname) => {
       await Promise.all(chunksOf(pathname).map(loadChunk));
     },
+    chunkIdsOf: (pathname) => chunksOf(pathname).map(([bucket, locale]) => `${bucket}/${locale}`),
     /** Every namespace of one locale, for whole-dictionary consumers such as `/locales/:locale.json`. */
     loadLocale: async (locale) => {
       await Promise.all(
@@ -183,6 +210,9 @@ export const isPathnameLoaded: (pathname: string) => boolean = defaultLoader.isP
 
 /** Loads the namespaces a URL needs, for the locale in its path (or the default). */
 export const loadPathname: (pathname: string) => Promise<void> = defaultLoader.loadPathname;
+
+/** The `bucket/locale` ids of the chunks a URL loads. The middleware preloads them. */
+export const chunkIdsOf: (pathname: string) => string[] = defaultLoader.chunkIdsOf;
 
 /** Loads every namespace of one locale. Server only: the middleware calls it for `/locales/:locale.json`. */
 export const loadLocale: (locale: string) => Promise<void> = defaultLoader.loadLocale;
@@ -341,6 +371,15 @@ export const t: TFunction = Object.assign(
           );
       };
       const val = get(locale) ?? get(activeConfig.defaultLocale);
+      if (val === undefined && activeConfig.devServer && !localeLoaded(locale)) {
+        const id = `${locale} ${key}`;
+        if (!warnedMissing.has(id)) {
+          warnedMissing.add(id);
+          console.warn(
+            `[i18n] "${key}" is read in "${locale}", which isn't loaded. Await loadLocale("${locale}") first.`,
+          );
+        }
+      }
       return (val !== undefined ? val : fallback) as T;
     },
     array: <T = string>(key: string, fallback: T[] = [], locale = getCurrentLocale()): T[] => {

@@ -6,6 +6,7 @@ export {
   getLocaleUrl,
   getLocaleAsset,
   getLocaleInfo,
+  loadLocale,
   t,
 } from "./runtime";
 

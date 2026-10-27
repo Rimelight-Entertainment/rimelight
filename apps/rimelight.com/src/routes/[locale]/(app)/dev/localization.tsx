@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js";
+import { For, Loading, Show, createMemo } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
 import {
@@ -7,6 +7,7 @@ import {
   getLocaleAsset,
   getLocaleUrl,
   getLocales,
+  loadLocale,
   t,
 } from "@rimelight/i18n";
 import { RLButton, RLLocaleSelector } from "@rimelight/ui";
@@ -17,8 +18,18 @@ const withComputedTranslation = (
 ) => fn(params);
 
 export default function DevLocalizationPage() {
+  return (
+    <Loading fallback={<main>Loading.</main>}>
+      <Localization />
+    </Loading>
+  );
+}
+
+function Localization() {
   const location = useLocation();
   const EXPLICIT_LOCALE = "pt";
+  // t() is synchronous and this page reads `pt` by name, so wait for it before rendering.
+  createMemo(() => loadLocale(EXPLICIT_LOCALE))();
   const LOCALE_ASSETS = { en: "🇬🇧 English", pt: "🇧🇷 Português" };
 
   const sections = (): {
