@@ -53,7 +53,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       const plugin: Plugin = i18n();
       await started(plugin, root);
       const code = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-      expect(code).toContain('translations: {"en":{},"pt":{}}');
+      expect(code).toContain('"translations":{"en":{},"pt":{}}');
       expect(code).toContain(
         '"page.home": { "en": () => import("virtual:rimelight-i18n-ns/page.home/en")',
       );
@@ -87,7 +87,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       const plugin: Plugin = i18n();
       await started(plugin, root);
       const code = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID, { ssr: true })) as string;
-      expect(code).toContain('translations: {"en":{},"pt":{}}');
+      expect(code).toContain('"translations":{"en":{},"pt":{}}');
       expect(code).toContain("namespaces:");
       expect(code).not.toContain("const merge");
     } finally {
@@ -121,9 +121,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
       });
       await started(plugin, root);
       const code = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID)) as string;
-      expect(code).toContain(
-        'export const config = { ...{"defaultLocale":"en","prefixDefaultLocale":false}',
-      );
+      expect(code).toContain('...{"defaultLocale":"en","prefixDefaultLocale":false,');
       expect(code).toContain('"hi": { "en": () => import("virtual:rimelight-i18n-ns/hi/en")');
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
@@ -134,7 +132,7 @@ describe("@rimelight/i18n Vite virtual module plugin", () => {
     const plugin: Plugin = i18n({ locales: ["en"], translations: { en: { hello: "Hello" } } });
     await started(plugin, project({}));
     const code = (await callHook(plugin.load, RESOLVED_VIRTUAL_ID, { ssr: true })) as string;
-    expect(code).toContain('translations: {"en":{}}');
+    expect(code).toContain('"translations":{"en":{}}');
     expect(code).toContain('"hello": { "en": () => import(');
   });
 

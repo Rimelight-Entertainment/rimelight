@@ -12,6 +12,13 @@ export const DEFAULT_DIR = "src/i18n";
  */
 export const DEFAULT_TYPES = "node_modules/.rimelight/types/i18n.d.ts";
 
+/**
+ * Id of one translation chunk: a bucket in a locale, or that locale's fallback values for the bucket.
+ * The plugin and the runtime both build ids here, so they can't drift apart.
+ */
+export const chunkId = (bucket: string, locale: string, fallback: boolean): string =>
+  fallback ? `${bucket}/${locale}/fallback` : `${bucket}/${locale}`;
+
 /** Matches `{name}` and `{ name }`. The runtime substitutes with it; everything else reads names from it. */
 export const PLACEHOLDER = /\{\s*(\w+)\s*}/g;
 

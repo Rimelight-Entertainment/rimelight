@@ -1,5 +1,5 @@
 import { config } from "virtual:rimelight-i18n";
-import { PLACEHOLDER } from "./shared";
+import { chunkId, PLACEHOLDER } from "./shared";
 import type { LocaleInfo, LocaleOptions, TFunction } from "./types";
 
 type NamespaceLoader = () => Promise<{ default: Record<string, unknown> }>;
@@ -126,45 +126,38 @@ interface Chunk {
  */
 const createLoader = (cfg: VirtualI18nConfig) => {
   const loaded = (cfg.loaded ??= new Set<string>());
-  const loading = new Map<string, Promise<void>>();
   const dicts = (cfg.translations ??= {});
   const defaultLocale = cfg.defaultLocale ?? "en";
+  /** Each chunk's fetch, in flight or done. */
+  const fetches = new Map<string, Promise<void>>();
+  /** Each loaded chunk's translations, by chunk id, so a URL's payload can be taken from them. */
+  const values = new Map<string, Record<string, unknown>>();
 
   /** The locale a URL renders in: the one in its first segment, otherwise the default. */
-  const localeOf = (pathname: string): string => {
-    const first = (pathname.split("/")[1] ?? "").toLowerCase();
-    return Object.keys(dicts).find((l) => l.toLowerCase() === first) ?? defaultLocale;
-  };
+  const localeOf = (pathname: string): string =>
+    matchLocale(pathname.split("/")[1]) ?? defaultLocale;
 
   /** The buckets a URL needs: the global ones, and those of every route matching it (or the 404 route). */
   const bucketsOf = (pathname: string): Set<string> => {
     const routeBuckets = cfg.routeBuckets ?? {};
     const patterns = cfg.patterns ?? [];
-    const buckets = new Set(cfg.globalBuckets ?? []);
-    let matched = false;
-    for (const [key, re] of patterns) {
-      if (re.test(pathname)) {
-        matched = true;
-        for (const bucket of routeBuckets[key] ?? []) buckets.add(bucket);
-      }
-    }
-    if (!matched) {
-      for (const [key] of patterns) {
-        if (key === "404" || key.endsWith("/404")) {
-          for (const bucket of routeBuckets[key] ?? []) buckets.add(bucket);
-        }
-      }
-    }
-    return buckets;
+    const matched = patterns.filter(([, re]) => re.test(pathname)).map(([key]) => key);
+    const keys = matched.length
+      ? matched
+      : patterns.map(([key]) => key).filter((key) => key === "404" || key.endsWith("/404"));
+    return new Set([
+      ...(cfg.globalBuckets ?? []),
+      ...keys.flatMap((key) => routeBuckets[key] ?? []),
+    ]);
   };
 
   /** The chunks of one bucket in one locale. A locale that has every key of the bucket has no fallback chunk. */
   const chunksOfBucket = (bucket: string, locale: string): Chunk[] => {
     const chunks: Chunk[] = [];
     const own = cfg.namespaces?.[bucket]?.[locale];
-    if (own) chunks.push({ id: `${bucket}/${locale}`, locale, load: own });
+    if (own) chunks.push({ id: chunkId(bucket, locale, false), locale, load: own });
     const missing = cfg.fallbacks?.[bucket]?.[locale];
-    if (missing) chunks.push({ id: `${bucket}/${locale}/fallback`, locale, load: missing });
+    if (missing) chunks.push({ id: chunkId(bucket, locale, true), locale, load: missing });
     return chunks;
   };
 
@@ -173,28 +166,28 @@ const createLoader = (cfg: VirtualI18nConfig) => {
     return [...bucketsOf(pathname)].flatMap((bucket) => chunksOfBucket(bucket, locale));
   };
 
-  /** Each loaded chunk's translations, by chunk id, so a URL's payload can be taken from them. */
-  const values = new Map<string, Record<string, unknown>>();
+  /** Merges a chunk's translations into its locale, and records them so payloads can carry them. */
+  const absorb = (id: string, locale: string, data: Record<string, unknown>): void => {
+    merge((dicts[locale] ??= {}), data);
+    values.set(id, data);
+    loaded.add(id);
+  };
 
   /** Each chunk is fetched once. A failed fetch is forgotten, so the next attempt retries it. */
   const loadChunk = ({ id, locale, load }: Chunk): Promise<void> => {
     if (loaded.has(id)) return Promise.resolve();
-    let pending = loading.get(id);
-    if (!pending) {
-      pending = load().then(
-        (mod) => {
-          merge((dicts[locale] ??= {}), mod.default);
-          values.set(id, mod.default);
-          loaded.add(id);
-        },
+    let fetch = fetches.get(id);
+    if (!fetch) {
+      fetch = load().then(
+        (mod) => absorb(id, locale, mod.default),
         (error) => {
-          loading.delete(id);
+          fetches.delete(id);
           throw error;
         },
       );
-      loading.set(id, pending);
+      fetches.set(id, fetch);
     }
-    return pending;
+    return fetch;
   };
 
   return {
@@ -204,18 +197,13 @@ const createLoader = (cfg: VirtualI18nConfig) => {
       await Promise.all(chunksOf(pathname).map(loadChunk));
     },
     /** The translations a URL renders with, as plain data. The server hands this to the client. */
-    payloadOf: (pathname: string): TranslationPayload => {
-      const chunks: Record<string, Record<string, unknown>> = {};
-      for (const { id } of chunksOf(pathname)) chunks[id] = values.get(id) ?? {};
-      return { locale: localeOf(pathname), chunks };
-    },
+    payloadOf: (pathname: string): TranslationPayload => ({
+      locale: localeOf(pathname),
+      chunks: Object.fromEntries(chunksOf(pathname).map(({ id }) => [id, values.get(id) ?? {}])),
+    }),
     /** Takes in a payload: its translations are merged, and its chunks count as loaded. Fetches nothing. */
     applyPayload: (payload: TranslationPayload): void => {
-      for (const [id, data] of Object.entries(payload.chunks)) {
-        merge((dicts[payload.locale] ??= {}), data);
-        values.set(id, data);
-        loaded.add(id);
-      }
+      for (const [id, data] of Object.entries(payload.chunks)) absorb(id, payload.locale, data);
     },
     /** Every chunk of one locale, for whole-dictionary consumers such as `/locales/:locale.json`. */
     loadLocale: async (locale: string): Promise<void> => {

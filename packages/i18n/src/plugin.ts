@@ -10,7 +10,7 @@ import {
   type KeyIndex,
   type ModuleGraph,
 } from "./route-analysis";
-import { DEFAULT_DIR, DEFAULT_TYPES } from "./shared";
+import { chunkId, DEFAULT_DIR, DEFAULT_TYPES } from "./shared";
 import type { I18nConfig } from "./types";
 import { collectKeys, readLocaleFiles, syncTypedKeys } from "./typegen";
 
@@ -25,17 +25,16 @@ interface I18nPluginOptions extends I18nConfig {
   types?: string | false;
 }
 
-interface State {
-  locales: Record<string, Record<string, unknown>>;
-  index: KeyIndex;
-  /** Namespaces each route needs, keyed by route key (path under `src/routes`). */
-  routeBuckets: Record<string, string[]>;
-  /** Namespaces used by the app shell and document, loaded for every route. */
-  globalBuckets: string[];
-}
-
 /** Bucket -> the locales that have a chunk for it. */
 type ChunkMap = Map<string, Set<string>>;
+
+type ResolveContext = {
+  resolve: (
+    s: string,
+    i: string,
+    o: { skipSelf: boolean },
+  ) => Promise<{ id: string; external?: boolean | "absolute" | "relative" } | null>;
+};
 
 const slash = (p: string): string => p.replace(/\\/g, "/");
 
@@ -48,6 +47,10 @@ const walk = (dir: string): string[] =>
       })
     : [];
 
+const add = (map: ChunkMap, bucket: string, locale: string) => {
+  (map.get(bucket) ?? map.set(bucket, new Set()).get(bucket)!).add(locale);
+};
+
 export const i18n = ({
   dir = DEFAULT_DIR,
   translations,
@@ -58,7 +61,14 @@ export const i18n = ({
   let root = process.cwd();
   let dev = false;
   let server: ViteDevServer | undefined;
-  let state: State | undefined;
+  /** Locale dictionaries, and each locale's flat key list. */
+  let locales: Record<string, Record<string, unknown>> = {};
+  let localeKeys: Record<string, string[]> = {};
+  let index: KeyIndex = indexKeys({});
+  /** Namespaces each route needs, keyed by route key (path under `src/routes`). */
+  let routeBuckets: Record<string, string[]> = {};
+  /** Namespaces used by the app shell and document, loaded for every route. */
+  let globalBuckets: string[] = [];
 
   const localesDir = () => path.resolve(root, dir);
   const srcDir = () => slash(path.resolve(root, "src"));
@@ -66,25 +76,17 @@ export const i18n = ({
 
   /** Locale dictionaries, key index and typed keys. Cheap, so it runs at every build start. */
   const refresh = () => {
-    const locales = translations ?? readLocaleFiles(localesDir());
-    const index = indexKeys(locales[baseLocale] ?? {});
-    state = {
-      locales,
-      index,
-      routeBuckets: state?.routeBuckets ?? {},
-      globalBuckets: state?.globalBuckets ?? [],
-    };
+    locales = translations ?? readLocaleFiles(localesDir());
+    localeKeys = Object.fromEntries(
+      Object.entries(locales).map(([locale, dict]) => [
+        locale,
+        collectKeys(dict).map((e) => e.key),
+      ]),
+    );
+    index = indexKeys(locales[baseLocale] ?? {});
     if (types !== false) {
       syncTypedKeys({ root, dir, baseLocale, translations, out: types ?? DEFAULT_TYPES });
     }
-  };
-
-  type ResolveContext = {
-    resolve: (
-      s: string,
-      i: string,
-      o: { skipSelf: boolean },
-    ) => Promise<{ id: string; external?: boolean | "absolute" | "relative" } | null>;
   };
 
   /** Scanned modules, kept across analyses. A changed file drops only its own entry. */
@@ -103,7 +105,6 @@ export const i18n = ({
     }));
 
   const analyzeAll = async (ctx: Partial<ResolveContext>) => {
-    const index = state?.index ?? indexKeys({});
     const routeFiles = new Map(
       walk(routesDir()).map((file) => [routeKey(routesDir(), file), file] as const),
     );
@@ -126,18 +127,8 @@ export const i18n = ({
       },
       graph,
     );
-    state = {
-      locales: state?.locales ?? {},
-      index,
-      routeBuckets: analysis.routes,
-      globalBuckets: analysis.globals,
-    };
-  };
-
-  const buckets = (): Set<string> => new Set([...(state?.index.keys ?? [])].map(bucketOf));
-
-  const add = (map: ChunkMap, bucket: string, locale: string) => {
-    (map.get(bucket) ?? map.set(bucket, new Set()).get(bucket)!).add(locale);
+    routeBuckets = analysis.routes;
+    globalBuckets = analysis.globals;
   };
 
   /**
@@ -146,13 +137,11 @@ export const i18n = ({
    * A chunk that would be empty is not emitted, so the client never requests it.
    */
   const chunkPlan = (): { own: ChunkMap; fallback: ChunkMap } => {
-    const known = buckets();
-    const locales = state?.locales ?? {};
-    const baseKeys = collectKeys(locales[baseLocale] ?? {}).map((e) => e.key);
+    const known = new Set([...index.keys].map(bucketOf));
+    const baseKeys = localeKeys[baseLocale] ?? [];
     const own: ChunkMap = new Map();
     const fallback: ChunkMap = new Map();
-    for (const locale of Object.keys(locales)) {
-      const keys = collectKeys(locales[locale]!).map((e) => e.key);
+    for (const [locale, keys] of Object.entries(localeKeys)) {
       const have = new Set(keys);
       for (const key of keys) if (known.has(bucketOf(key))) add(own, bucketOf(key), locale);
       if (locale === baseLocale) continue;
@@ -163,8 +152,8 @@ export const i18n = ({
     return { own, fallback };
   };
 
-  /** `namespaces` or `fallbacks`: each bucket's loaders, keyed by locale. */
-  const loaderMap = (map: ChunkMap, suffix: string): string =>
+  /** A `namespaces` or `fallbacks` object: each bucket's loaders, keyed by locale. */
+  const loaderMap = (map: ChunkMap, fallback: boolean): string =>
     `{ ${[...map]
       .sort(([a], [b]) => (a < b ? -1 : 1))
       .map(
@@ -172,11 +161,17 @@ export const i18n = ({
           `${JSON.stringify(bucket)}: { ${[...locales]
             .map(
               (l) =>
-                `${JSON.stringify(l)}: () => import(${JSON.stringify(`${NAMESPACE_ID}${bucket}/${l}${suffix}`)})`,
+                `${JSON.stringify(l)}: () => import(${JSON.stringify(`${NAMESPACE_ID}${chunkId(bucket, l, fallback)}`)})`,
             )
             .join(", ")} }`,
       )
       .join(", ")} }`;
+
+  /** Each route's pattern, matched against a URL on the client and the server. */
+  const patternsCode = (): string =>
+    `[${Object.keys(routeBuckets)
+      .map((key) => `[${JSON.stringify(key)}, new RegExp(${JSON.stringify(routePattern(key))})]`)
+      .join(", ")}]`;
 
   /**
    * Both sides get the same config: empty dictionaries, the route map, and a loader per chunk. The
@@ -184,11 +179,22 @@ export const i18n = ({
    */
   const configCode = (): string => {
     const { own, fallback } = chunkPlan();
-    const localeNames = Object.keys(state?.locales ?? {});
-    const patterns = Object.keys(state?.routeBuckets ?? {}).map(
-      (key) => `[${JSON.stringify(key)}, new RegExp(${JSON.stringify(routePattern(key))})]`,
-    );
-    return `export const config = { ...${JSON.stringify(config)}, devServer: ${dev}, translations: ${JSON.stringify(Object.fromEntries(localeNames.map((l) => [l, {}])))}, routeBuckets: ${JSON.stringify(state?.routeBuckets ?? {})}, globalBuckets: ${JSON.stringify(state?.globalBuckets ?? [])}, namespaces: ${loaderMap(own, "")}, fallbacks: ${loaderMap(fallback, "/fallback")}, patterns: [${patterns.join(", ")}], loaded: new Set() };`;
+    const emptyDicts = Object.fromEntries(Object.keys(locales).map((l) => [l, {}]));
+    const serializable = {
+      ...config,
+      devServer: dev,
+      translations: emptyDicts,
+      routeBuckets,
+      globalBuckets,
+    };
+    const fields = [
+      `...${JSON.stringify(serializable)}`,
+      `namespaces: ${loaderMap(own, false)}`,
+      `fallbacks: ${loaderMap(fallback, true)}`,
+      `patterns: ${patternsCode()}`,
+      `loaded: new Set()`,
+    ];
+    return `export const config = {\n  ${fields.join(",\n  ")},\n};`;
   };
 
   /**
@@ -197,12 +203,11 @@ export const i18n = ({
    * `locale` lacks; an own chunk takes the locale's own keys.
    */
   const namespaceCode = (bucket: string, locale: string, fallback: boolean): string => {
-    const locales = state?.locales ?? {};
-    const dict = locales[locale] ?? {};
-    const source = fallback ? (locales[baseLocale] ?? {}) : dict;
-    const have = new Set(collectKeys(dict).map((e) => e.key));
+    const source = fallback ? (locales[baseLocale] ?? {}) : (locales[locale] ?? {});
+    const have = new Set(localeKeys[locale] ?? []);
+    const sourceKeys = localeKeys[fallback ? baseLocale : locale] ?? [];
     const out: Record<string, unknown> = {};
-    for (const { key } of collectKeys(source)) {
+    for (const key of sourceKeys) {
       if (bucketOf(key) !== bucket || (fallback && have.has(key))) continue;
       const parts = key.split(".");
       const last = parts.pop()!;
