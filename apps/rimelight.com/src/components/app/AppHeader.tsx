@@ -688,7 +688,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                     <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
                       <RLImage
                         class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                        src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
+                        src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.webp"
                         alt=""
                       />
                       <div class="flex flex-col gap-sm flex-2">
@@ -731,7 +731,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                     <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
                       <RLImage
                         class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                        src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
+                        src="https://cdn.rimelight.com/images/placeholder_header_community.webp"
                         alt=""
                       />
                       <div class="flex flex-col gap-sm flex-2">
@@ -751,7 +751,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                     <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
                       <RLImage
                         class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                        src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
+                        src="https://cdn.rimelight.com/images/placeholder_header_company.webp"
                         alt=""
                       />
                       <div class="flex flex-col gap-sm flex-2">
@@ -776,7 +776,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                     <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
                       <RLImage
                         class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                        src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
+                        src="https://cdn.rimelight.com/images/placeholder_header_store.webp"
                         alt=""
                       />
                       <div class="flex flex-col gap-sm flex-2">
