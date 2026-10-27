@@ -7,7 +7,7 @@ export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   name: "Rimelight",
   description: "Built with Rimelight CMS",
   url: "https://rimelight.com",
-  ogImage: "https://cdn.rimelight.com/Images/og-placeholder.webp",
+  ogImage: "https://cdn.rimelight.com/images/og-placeholder.webp",
   author: "Rimelight",
   email: "",
   branding: {
@@ -24,7 +24,7 @@ export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   },
   seo: {
     titleTemplate: "%s | Rimelight",
-    ogImageFallback: "https://cdn.rimelight.com/Images/og-placeholder.webp",
+    ogImageFallback: "https://cdn.rimelight.com/images/og-placeholder.webp",
     maxDescriptionLength: 160,
   },
 };

@@ -24,7 +24,7 @@ export const GrandTaleHeader: Component = () => {
         <div class="flex flex-row items-center gap-6">
           <a href={getLocaleUrl("/franchises/grand-tale")}>
             <img
-              src="https://cdn.rimelight.com/Franchises/Grand%20Tale/Logos/Grand%20Tale%20-%20Logomark.png"
+              src="https://cdn.rimelight.com/franchises/Grand%20Tale/Logos/Grand%20Tale%20-%20Logomark.webp"
               alt="Grand Tale Logo"
               class="size-10"
             />

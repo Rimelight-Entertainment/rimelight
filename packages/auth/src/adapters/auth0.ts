@@ -492,7 +492,7 @@ export function createAuth0FromEnv(
           userId: "dev-admin-user",
           email: "admin@rimelight.com",
           name: "Admin (Dev)",
-          avatar: "https://cdn.rimelight.com/Images/default_avatar.png",
+          avatar: "https://cdn.rimelight.com/images/default_avatar.webp",
           roles: ["admin", "owner", "editor"],
           permissions: ["*"],
           userType: "employee",

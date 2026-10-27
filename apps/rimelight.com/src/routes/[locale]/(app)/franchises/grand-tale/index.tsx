@@ -42,7 +42,7 @@ export const GrandTaleIndexPage: Component = () => {
           <div class="w-full h-full">
             <video autoplay loop muted playsinline class="h-full w-full object-cover opacity-60">
               <source
-                src="https://cdn.rimelight.com/Videos/grandTale_home_hero_bg.mp4"
+                src="https://cdn.rimelight.com/videos/grandTale_home_hero_bg.mp4"
                 type="video/mp4"
               />
             </video>

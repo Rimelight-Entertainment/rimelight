@@ -15,7 +15,7 @@ export function mockAuth(options: MockAuthOptions | Partial<UserSessionContext> 
     userId: "mock-user-id",
     email: "dev@rimelight.com",
     name: "Mock Dev User",
-    avatar: "https://cdn.rimelight.com/Images/default_avatar.png",
+    avatar: "https://cdn.rimelight.com/images/default_avatar.webp",
     roles: ["admin", "editor"],
     permissions: ["*"],
     userType: "employee",

@@ -16,7 +16,6 @@ export const HomePage: Component = () => {
   /** The 3 most recent published blog posts, from the CMS delivery API. */
   const latestPosts = createMemo<PublicEntry[]>(
     async () => (await content.entries("blog", { limit: 3, locale: activeLocale() })).entries,
-    { loadingValue: [] },
   );
 
   const heroLinks = (): RLButtonProps[] => [
@@ -73,7 +72,7 @@ export const HomePage: Component = () => {
         background={
           <div class="w-full h-full">
             <RLImage
-              src="https://cdn.rimelight.com/images/placeholder_home_hero_background.png"
+              src="https://cdn.rimelight.com/images/placeholder_home_hero_background.webp"
               alt="Hero Background"
               class="h-full w-full object-cover"
               loading="eager"
@@ -102,7 +101,7 @@ export const HomePage: Component = () => {
         background={
           <div class="w-full h-full">
             <RLImage
-              src="https://cdn.rimelight.com/images/placeholder_home_company_background.jpg"
+              src="https://cdn.rimelight.com/images/placeholder_home_company_background.webp"
               alt="Company Background"
               class="h-full w-full object-cover opacity-10"
               width={9000}
@@ -149,7 +148,7 @@ export const HomePage: Component = () => {
         background={
           <div class="w-full h-full">
             <RLImage
-              src="https://cdn.rimelight.com/images/placeholder_home_projects_background.jpg"
+              src="https://cdn.rimelight.com/images/placeholder_home_projects_background.webp"
               alt="Projects Background"
               class="h-full w-full object-cover opacity-15"
               width={5000}
@@ -168,7 +167,7 @@ export const HomePage: Component = () => {
                 <div class="absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
                   <RLImage
                     alt="Grand Tale"
-                    src="https://cdn.rimelight.com/images/placeholder_home_projects_grand-tale.png"
+                    src="https://cdn.rimelight.com/images/placeholder_home_projects_grand-tale.webp"
                     class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 will-change-transform opacity-75"
                     width={900}
                     height={1512}
@@ -229,7 +228,7 @@ export const HomePage: Component = () => {
         background={
           <div class="w-full h-full">
             <RLImage
-              src="https://cdn.rimelight.com/images/placeholder_home_news_background.jpg"
+              src="https://cdn.rimelight.com/images/placeholder_home_news_background.webp"
               alt="News Background"
               class="h-full w-full object-cover opacity-15"
               width={1320}
@@ -275,7 +274,7 @@ export const HomePage: Component = () => {
         background={
           <div class="w-full h-full">
             <RLImage
-              src="https://cdn.rimelight.com/images/placeholder_home_cta_background.jpg"
+              src="https://cdn.rimelight.com/images/placeholder_home_cta_background.webp"
               alt="CTA Background"
               class="h-full w-full object-cover opacity-20"
               width={3000}
