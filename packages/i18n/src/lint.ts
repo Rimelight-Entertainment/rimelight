@@ -28,37 +28,26 @@ interface VerifyTranslationsOptions {
   lint?: I18nLintConfig;
 }
 
-/** Validates key part against chosen casing standard (defaults to kebab-case). */
-const isValidKeySegment = (segment: string, casing: KeyCasing = "kebab-case"): boolean => {
-  if (casing === "any") return true;
-  if (/^\d+$/.test(segment)) return true; // array index
-  if (casing === "kebab-case") {
-    return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(segment);
-  }
-  if (casing === "snake_case") {
-    return /^[a-z0-9]+(_[a-z0-9]+)*$/.test(segment);
-  }
-  if (casing === "camelCase") {
-    return /^[a-z0-9]+([A-Z0-9][a-z0-9]*)*$/.test(segment);
-  }
-  return true;
+/** The segment shapes each casing accepts. `any` and array indexes are accepted everywhere. */
+const CASING_PATTERNS: Partial<Record<KeyCasing, RegExp>> = {
+  "kebab-case": /^[a-z0-9]+(-[a-z0-9]+)*$/,
+  snake_case: /^[a-z0-9]+(_[a-z0-9]+)*$/,
+  camelCase: /^[a-z0-9]+([A-Z0-9][a-z0-9]*)*$/,
 };
 
+/** Validates key part against chosen casing standard (defaults to kebab-case). */
+const isValidKeySegment = (segment: string, casing: KeyCasing = "kebab-case"): boolean =>
+  /^\d+$/.test(segment) || (CASING_PATTERNS[casing]?.test(segment) ?? true);
+
 /** Detects self-nested keys where a parent key wraps a single child of the identical name. */
-const findSelfNestedKeys = (obj: Record<string, any>, prefix = ""): string[] => {
-  let issues: string[] = [];
-  if (obj == null || typeof obj !== "object") return issues;
-  for (const [key, value] of Object.entries(obj)) {
-    if (value != null && typeof value === "object" && !Array.isArray(value)) {
-      const childKeys = Object.keys(value);
-      if (childKeys.length === 1 && childKeys[0] === key) {
-        issues.push(prefix ? `${prefix}.${key}` : key);
-      }
-      issues = issues.concat(findSelfNestedKeys(value, prefix ? `${prefix}.${key}` : key));
-    }
-  }
-  return issues;
-};
+const findSelfNestedKeys = (obj: Record<string, any>, prefix = ""): string[] =>
+  Object.entries(obj).flatMap(([key, value]) => {
+    if (value == null || typeof value !== "object" || Array.isArray(value)) return [];
+    const path = prefix ? `${prefix}.${key}` : key;
+    const childKeys = Object.keys(value);
+    const self = childKeys.length === 1 && childKeys[0] === key ? [path] : [];
+    return [...self, ...findSelfNestedKeys(value, path)];
+  });
 
 /** Flattens nested translation objects or arrays into dot-notated paths. */
 const flatten = (
@@ -104,6 +93,20 @@ const diffKeys = (baseFlat: FlattenedTranslations, targetFlat: FlattenedTranslat
   stale: Object.keys(targetFlat).filter((k) => !Object.hasOwn(baseFlat, k)),
 });
 
+/** One message per key segment that breaks the flat-underscore rule or the casing rule. */
+const segmentIssues = (key: string, casing: KeyCasing, disallowFlatUnderscores: boolean) =>
+  key.split(".").flatMap((part) => {
+    if (disallowFlatUnderscores && part.includes("_")) {
+      return [
+        `Key path '${key}' contains flat underscore delimiter in '${part}' (use dot-nesting and kebab-case)`,
+      ];
+    }
+    if (!isValidKeySegment(part, casing)) {
+      return [`Key segment '${part}' in '${key}' does not conform to '${casing}'`];
+    }
+    return [];
+  });
+
 /** Audits translation files for missing, stale, empty, or mismatched placeholder keys and style consistency. */
 export const verifyTranslations = (
   translations: Record<string, Record<string, any>>,
@@ -111,7 +114,9 @@ export const verifyTranslations = (
 ): TranslationAuditReport => {
   const defaultLocale = options.defaultLocale || "en";
   const allowEmpty = options.allowEmpty ?? false;
-  const lint = options.lint;
+  const casing: KeyCasing = options.lint?.casing ?? "kebab-case";
+  const disallowSelfNested = options.lint?.disallowSelfNested ?? true;
+  const disallowFlatUnderscores = options.lint?.disallowFlatUnderscores ?? true;
   const locales = Object.keys(translations);
   const baseFlat = flatten(translations[defaultLocale] ?? {});
   const totalKeys = Object.keys(baseFlat).length;
@@ -122,83 +127,45 @@ export const verifyTranslations = (
   const placeholderMismatches: Record<string, PlaceholderMismatch[]> = {};
   const styleIssues: Record<string, string[]> = {};
   const completion: Record<string, string> = {};
-  let isValid = true;
-
-  const targetCasing: KeyCasing = lint?.casing ?? "kebab-case";
-  const disallowSelfNested = lint?.disallowSelfNested ?? true;
-  const disallowFlatUnderscores = lint?.disallowFlatUnderscores ?? true;
 
   for (const locale of locales) {
     const rawDict = translations[locale] ?? {};
     const targetFlat = flatten(rawDict);
     const { missing, stale } = diffKeys(baseFlat, targetFlat);
-    const empty: string[] = [];
-    const mismatches: PlaceholderMismatch[] = [];
-    const localeStyleIssues: string[] = [];
+    const keys = Object.keys(targetFlat);
+    const empty = allowEmpty ? [] : keys.filter((k) => String(targetFlat[k]).trim() === "");
+    const mismatches = keys.flatMap((key) => {
+      if (!Object.hasOwn(baseFlat, key)) return [];
+      const basePlaceholders = placeholderNames(baseFlat[key] ?? "").sort();
+      const targetPlaceholders = placeholderNames(targetFlat[key]).sort();
+      return JSON.stringify(basePlaceholders) === JSON.stringify(targetPlaceholders)
+        ? []
+        : [{ key, basePlaceholders, targetPlaceholders }];
+    });
+    const style = [
+      ...(disallowSelfNested
+        ? findSelfNestedKeys(rawDict).map(
+            (sn) => `Self-nested wrapper key '${sn}' should be unwrapped`,
+          )
+        : []),
+      ...keys.flatMap((key) => segmentIssues(key, casing, disallowFlatUnderscores)),
+    ];
 
-    // 1. Check self-nested keys (e.g. { "foo": { "foo": "val" } })
-    if (disallowSelfNested) {
-      const selfNested = findSelfNestedKeys(rawDict);
-      for (const sn of selfNested) {
-        localeStyleIssues.push(`Self-nested wrapper key '${sn}' should be unwrapped`);
-      }
-    }
-
-    for (const [key, val] of Object.entries(targetFlat)) {
-      if (!allowEmpty && String(val).trim() === "") empty.push(key);
-      if (Object.hasOwn(baseFlat, key)) {
-        const baseHolders = placeholderNames(baseFlat[key] ?? "").sort();
-        const targetHolders = placeholderNames(val).sort();
-        if (JSON.stringify(baseHolders) !== JSON.stringify(targetHolders)) {
-          mismatches.push({
-            key,
-            basePlaceholders: baseHolders,
-            targetPlaceholders: targetHolders,
-          });
-        }
-      }
-
-      // Check key segment casing & style
-      const parts = key.split(".");
-      for (const part of parts) {
-        if (disallowFlatUnderscores && part.includes("_")) {
-          localeStyleIssues.push(
-            `Key path '${key}' contains flat underscore delimiter in '${part}' (use dot-nesting and kebab-case)`,
-          );
-        } else if (!isValidKeySegment(part, targetCasing)) {
-          localeStyleIssues.push(
-            `Key segment '${part}' in '${key}' does not conform to '${targetCasing}'`,
-          );
-        }
-      }
-    }
-
-    if (localeStyleIssues.length) {
-      styleIssues[locale] = localeStyleIssues;
-      isValid = false;
-    }
-    if (empty.length) {
-      emptyKeys[locale] = empty;
-      isValid = false;
-    }
-    if (mismatches.length) {
-      placeholderMismatches[locale] = mismatches;
-      isValid = false;
-    }
+    if (style.length) styleIssues[locale] = style;
+    if (empty.length) emptyKeys[locale] = empty;
+    if (mismatches.length) placeholderMismatches[locale] = mismatches;
     if (locale !== defaultLocale) {
-      if (missing.length) {
-        missingKeys[locale] = missing;
-        isValid = false;
-      }
-      if (stale.length) {
-        staleKeys[locale] = stale;
-        isValid = false;
-      }
+      if (missing.length) missingKeys[locale] = missing;
+      if (stale.length) staleKeys[locale] = stale;
     }
 
     completion[locale] =
       `${totalKeys > 0 ? Math.round(((totalKeys - missing.length) / totalKeys) * 100) : 100}%`;
   }
+
+  const isValid = [missingKeys, staleKeys, emptyKeys, placeholderMismatches, styleIssues].every(
+    (issues) => Object.keys(issues).length === 0,
+  );
 
   return {
     isValid,
@@ -214,6 +181,10 @@ export const verifyTranslations = (
   };
 };
 
+/** A titled bullet list, or nothing when there are no items. */
+const section = (title: string, items: string[]): string[] =>
+  items.length ? [`    ${title}:`, ...items.map((item) => `      - ${item}`)] : [];
+
 /** Formats a TranslationAuditReport into a human-readable diagnostic message. */
 export const formatAuditReport = (report: TranslationAuditReport): string => {
   if (report.isValid) {
@@ -221,37 +192,28 @@ export const formatAuditReport = (report: TranslationAuditReport): string => {
   }
   const lines = ["✖ [i18n] Translation verification failed:"];
   for (const locale of report.locales) {
-    const missing = report.missingKeys[locale];
-    const stale = report.staleKeys[locale];
-    const empty = report.emptyKeys[locale];
-    const mismatches = report.placeholderMismatches[locale];
-    const styles = report.styleIssues[locale];
-    if (!missing && !stale && !empty && !mismatches && !styles) continue;
+    const styles = report.styleIssues[locale] ?? [];
+    const missing = report.missingKeys[locale] ?? [];
+    const stale = report.staleKeys[locale] ?? [];
+    const empty = report.emptyKeys[locale] ?? [];
+    const mismatches = report.placeholderMismatches[locale] ?? [];
 
-    lines.push(`\n  [${locale}] (${report.stats.completion[locale]} complete):`);
-    if (styles?.length)
-      lines.push(
-        `    Style Violations (${styles.length}):`,
-        ...styles.slice(0, 15).map((s) => `      - ${s}`),
-        ...(styles.length > 15 ? [`      ... and ${styles.length - 15} more style issues`] : []),
-      );
-    if (missing?.length)
-      lines.push(`    Missing Keys (${missing.length}):`, ...missing.map((k) => `      - ${k}`));
-    if (stale?.length)
-      lines.push(
-        `    Stale Keys (${stale.length}, not in '${report.defaultLocale}'):`,
-        ...stale.map((k) => `      - ${k}`),
-      );
-    if (empty?.length)
-      lines.push(`    Empty Keys (${empty.length}):`, ...empty.map((k) => `      - ${k}`));
-    if (mismatches?.length) {
-      lines.push(
-        `    Placeholder Mismatches (${mismatches.length}):`,
-        ...mismatches.map(
+    const body = [
+      ...section(`Style Violations (${styles.length})`, styles.slice(0, 15)),
+      ...(styles.length > 15 ? [`      ... and ${styles.length - 15} more style issues`] : []),
+      ...section(`Missing Keys (${missing.length})`, missing),
+      ...section(`Stale Keys (${stale.length}, not in '${report.defaultLocale}')`, stale),
+      ...section(`Empty Keys (${empty.length})`, empty),
+      ...section(
+        `Placeholder Mismatches (${mismatches.length})`,
+        mismatches.map(
           (m) =>
-            `      - ${m.key}: expected {${m.basePlaceholders.join(", ")}}, found {${m.targetPlaceholders.join(", ")}}`,
+            `${m.key}: expected {${m.basePlaceholders.join(", ")}}, found {${m.targetPlaceholders.join(", ")}}`,
         ),
-      );
+      ),
+    ];
+    if (body.length) {
+      lines.push(`\n  [${locale}] (${report.stats.completion[locale]} complete):`, ...body);
     }
   }
   return lines.join("\n");

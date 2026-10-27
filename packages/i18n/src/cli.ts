@@ -110,7 +110,7 @@ export const runCli = async (argv: string[] = process.argv.slice(2)): Promise<nu
     return 1;
   }
 
-  const baseLocale = values.base || "en";
+  const baseLocale = values.base;
   if (!translations[baseLocale]) {
     console.error(
       `✖ [i18n] Base locale '${baseLocale}' not found in ${localesDir} (found: ${Object.keys(translations).join(", ")})`,
@@ -136,17 +136,19 @@ export const runCli = async (argv: string[] = process.argv.slice(2)): Promise<nu
     return 0;
   }
 
-  const lintOptions: I18nLintConfig = {
-    casing: (values.casing as KeyCasing) || "kebab-case",
+  const lint: I18nLintConfig = {
+    casing: values.casing as KeyCasing,
     disallowFlatUnderscores: !values["allow-flat"],
     disallowSelfNested: true,
   };
+  const audit = (dicts: Record<string, Record<string, any>>) =>
+    verifyTranslations(dicts, {
+      defaultLocale: baseLocale,
+      allowEmpty: values["allow-empty"],
+      lint,
+    });
 
-  let report = verifyTranslations(translations, {
-    defaultLocale: baseLocale,
-    allowEmpty: values["allow-empty"],
-    lint: lintOptions,
-  });
+  let report = audit(translations);
 
   if (!report.isValid && values.fix) {
     console.log(`ℹ [i18n] Fixing translation files in ${localesDir}...`);
@@ -158,11 +160,7 @@ export const runCli = async (argv: string[] = process.argv.slice(2)): Promise<nu
         "utf-8",
       );
     }
-    report = verifyTranslations(fixed, {
-      defaultLocale: baseLocale,
-      allowEmpty: values["allow-empty"],
-      lint: lintOptions,
-    });
+    report = audit(fixed);
     console.log(`✔ [i18n] Successfully updated translation files.`);
   }
 
