@@ -1,4 +1,6 @@
 import { type Component, For, Show, createMemo } from "solid-js";
+import type { RouteSectionProps } from "@solidjs/router";
+import { defineFileRoute } from "@solidjs/router/fs";
 import { useHead } from "@solidjs/web";
 import { createSeoHead } from "@rimelight/seo/head";
 import { t, getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
@@ -11,13 +13,15 @@ import type { RLButtonProps } from "@rimelight/ui/components/button/button.types
 import { content, type PublicEntry } from "@rimelight/cms/solid";
 import { BlogPostCard } from "#components/blog/BlogPostCard";
 
-export const HomePage: Component = () => {
-  const activeLocale = () => getCurrentLocale();
+export const route = defineFileRoute("/", {
+  preload: () =>
+    content.entries("blog", { limit: 3, locale: getCurrentLocale() }).then((r) => r.entries),
+});
 
-  const latestPosts = createMemo<PublicEntry[]>(
-    async () => (await content.entries("blog", { limit: 3, locale: activeLocale() })).entries,
-    { loadingValue: [] },
-  );
+export const HomePage: Component<RouteSectionProps<Promise<PublicEntry[]>>> = (props) => {
+  const latestPosts = createMemo<PublicEntry[]>(async () => (await props.data) ?? [], {
+    loadingValue: [],
+  });
 
   const heroLinks = (): RLButtonProps[] => [
     {
@@ -94,10 +98,10 @@ export const HomePage: Component = () => {
       >
         <div class="flex flex-col gap-xl items-center">
           <RLGrid cols={3}>
-            <For each={latestPosts() || []}>{(post) => <BlogPostCard post={post} />}</For>
+            <For each={latestPosts()}>{(post) => <BlogPostCard post={post} />}</For>
           </RLGrid>
 
-          <Show when={(latestPosts() || []).length > 0}>
+          <Show when={latestPosts().length > 0}>
             <RLLink
               label={t("page.home.section.posts.view.all")}
               trailingIcon="i-lucide-arrow-right"

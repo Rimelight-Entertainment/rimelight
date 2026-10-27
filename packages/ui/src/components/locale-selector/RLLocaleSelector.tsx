@@ -1,6 +1,6 @@
 import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types";
 import { RLLocaleSelectorTheme } from "./locale-selector.theme";
-import { createMemo, createSignal, onSettled, type Component } from "solid-js";
+import { createMemo, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 import { getCurrentLocale, getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
 import { uiT } from "../../locale";
@@ -35,20 +35,12 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
   const resolveTargetUrl = (item: LocaleItem, pathname: string, search: string): string =>
     item.href ?? getLocaleUrl(pathname + search, item.code);
 
-  const [currentSearch, setCurrentSearch] = createSignal("");
-  const [currentPathname, setCurrentPathname] = createSignal("/");
-
-  onSettled(() => {
-    if (typeof window === "undefined") return;
-    setCurrentSearch(window.location.search);
-    setCurrentPathname(window.location.pathname);
-  });
-
+  // Only label/value feed the select, so `items` must not depend on the window location.
+  // Otherwise it rebuilds after hydration and <For> recreates every option.
   const items = createMemo(() =>
     processedLocales().map((item) => ({
       label: item.label,
       value: item.code,
-      href: resolveTargetUrl(item, currentPathname(), currentSearch()),
     })),
   );
 
@@ -58,9 +50,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
     const selectedCode = e.currentTarget.value;
     const found = processedLocales().find((i) => i.code === selectedCode);
     if (found) {
-      const pathname = typeof window !== "undefined" ? window.location.pathname : currentPathname();
-      const search = typeof window !== "undefined" ? window.location.search : currentSearch();
-      const href = resolveTargetUrl(found, pathname, search);
+      const href = resolveTargetUrl(found, window.location.pathname, window.location.search);
       props.onSelect?.({ label: found.label, code: found.code, href });
       if (href && typeof window !== "undefined") {
         window.location.href = href;
