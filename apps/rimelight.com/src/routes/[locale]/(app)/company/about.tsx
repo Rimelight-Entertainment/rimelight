@@ -45,12 +45,6 @@ export const CompanyAboutPage: Component = () => {
             color="primary"
             variant="solid"
           />
-          <RLButton
-            label="Get in Touch"
-            href={getLocaleUrl("/company/contact")}
-            color="neutral"
-            variant="outline"
-          />
         </div>
       </section>
     </div>

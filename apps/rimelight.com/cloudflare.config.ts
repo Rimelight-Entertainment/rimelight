@@ -27,11 +27,6 @@ export default defineConfig({
           remote: true,
         },
       }),
-      EMAIL: bindings.sendEmail({
-        dev: {
-          remote: true,
-        },
-      }),
       RATE_LIMIT: bindings.rateLimit({
         namespace: "1001",
         simple: {
@@ -48,7 +43,6 @@ export default defineConfig({
       }),
       CONSTRUCTION_MODE: bindings.secret(),
       CONSTRUCTION_PASSPHRASE: bindings.secret(),
-      CONTACT_OWNER_EMAIL: bindings.text("owner@rimelight.com"),
       AUTH0_AUDIENCE: bindings.secret(),
       AUTH0_CLIENT_ID: bindings.secret(),
       AUTH0_CLIENT_SECRET: bindings.secret(),

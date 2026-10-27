@@ -232,11 +232,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         href: getLocaleUrl("/company/legal"),
         leadingIcon: "i-lucide-scale",
       },
-      {
-        label: t("app.header.link-groups.right.company.resources.contact"),
-        href: getLocaleUrl("/company/contact"),
-        leadingIcon: "i-lucide-mail",
-      },
     ],
   });
 
