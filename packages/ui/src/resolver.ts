@@ -407,17 +407,26 @@ export function defineTheme<
     return res;
   };
 
-  const omitWithList = (props: any, extra?: readonly PropertyKey[]) => {
-    if (!extra?.length) {
-      return omit(props, ...(defaultOmitKeys as any));
+  const omitWithList = <T extends Record<string, any>, K extends keyof T = never>(
+    props: T,
+    extra?: readonly K[],
+  ): Omit<T, "as" | "ui" | "class" | "children" | "theme" | K> => {
+    // Solid's `omit` spread overload can't infer the key union from a runtime array,
+    // so the result is cast once here instead of at every call site
+    let keys: readonly PropertyKey[] = defaultOmitKeys;
+    if (extra?.length) {
+      if (extra === cachedExtraRef && cachedMergedOmitKeys) {
+        keys = cachedMergedOmitKeys;
+      } else {
+        keys = [...defaultOmitKeys, ...extra];
+        cachedExtraRef = extra;
+        cachedMergedOmitKeys = keys as PropertyKey[];
+      }
     }
-    if (extra === cachedExtraRef && cachedMergedOmitKeys) {
-      return omit(props, ...(cachedMergedOmitKeys as any));
-    }
-    const merged = [...defaultOmitKeys, ...extra];
-    cachedExtraRef = extra;
-    cachedMergedOmitKeys = merged;
-    return omit(props, ...(merged as any));
+    return omit(props, ...(keys as (keyof T)[])) as unknown as Omit<
+      T,
+      "as" | "ui" | "class" | "children" | "theme" | K
+    >;
   };
 
   resolve.use = (props: any, overrides?: () => Record<string, any>) =>
@@ -426,7 +435,7 @@ export function defineTheme<
   resolve.omit = <T extends Record<string, any>, K extends keyof T = never>(
     props: T,
     ...extraKeys: K[]
-  ) => omitWithList(props, extraKeys) as any;
+  ) => omitWithList(props, extraKeys);
 
   resolve.tag = (
     props: { as?: ValidComponent; [key: string]: unknown },
@@ -451,16 +460,13 @@ export function defineTheme<
     props: T,
     options?: ThemeSetupOptions<T, K>,
   ): ThemeSetupResult<S, T, K> => {
-    let idAccessor: Accessor<string> | undefined;
+    const id = resolve.id(props, options?.idPrefix);
     return {
       Tag: resolve.tag(props, options?.as),
       classes: resolve.use(props, options?.variants),
-      rest: omitWithList(props, options?.omit) as any,
+      rest: omitWithList(props, options?.omit),
       get id() {
-        if (!idAccessor) {
-          idAccessor = resolve.id(props as any, options?.idPrefix);
-        }
-        return idAccessor;
+        return id;
       },
     };
   };
