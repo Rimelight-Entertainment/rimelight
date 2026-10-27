@@ -36,8 +36,9 @@
       "import": "./dist/middleware.mjs"
     },
     "./solid": {
-      "types": "./dist/solid.d.mts",
-      "import": "./dist/solid.mjs"
+      "types": "./src/solid.tsx",
+      "solid": "./src/solid.tsx",
+      "import": "./src/solid.tsx"
     }
   },
   "publishConfig": {
@@ -51,10 +52,13 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
+    "@solidjs/vite-plugin": "3.0.0-next.51",
+    "@solidjs/web": "2.0.0-rc.18",
     "hono": "5.0.0-rc.1",
     "solid-js": "2.0.0-rc.18"
   },
   "peerDependencies": {
+    "@solidjs/web": ">=2.0.0-rc.18",
     "hono": "^5.0.0-rc.1",
     "solid-js": ">=2.0.0-rc.18",
     "vite-plus": "^1.0.0"

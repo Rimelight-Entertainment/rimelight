@@ -2,6 +2,7 @@ import { describe, it, expect } from "vite-plus/test";
 import { RLRouteAnnouncer } from "../src/components/route-announcer/RLRouteAnnouncer";
 import { RLRouteAnnouncerTheme } from "../src/components/route-announcer/route-announcer.theme";
 import { renderSolid } from "./utils/normalize";
+import { mountComponent } from "./utils/browser-render";
 
 describe("RLRouteAnnouncer Component Suite (Unified)", () => {
   it("renders an accessible live region with polite ARIA attributes and sr-only styling", () => {
@@ -41,6 +42,6 @@ describe("RLRouteAnnouncer Component Suite (Unified)", () => {
   });
 
   it("mounts safely in non-routing environment without visual progress DOM artifact", () => {
-    expect(() => RLRouteAnnouncer({})).not.toThrow();
+    expect(() => mountComponent(() => <RLRouteAnnouncer />)).not.toThrow();
   });
 });

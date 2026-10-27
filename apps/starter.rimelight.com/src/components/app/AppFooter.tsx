@@ -9,7 +9,7 @@ import {
   type RLButtonProps,
   type RLLinkGroupProps,
 } from "@rimelight/ui";
-import { t, getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const AppFooter: Component = () => {
   const footerGroups = (): RLLinkGroupProps[] => [
@@ -52,11 +52,6 @@ export const AppFooter: Component = () => {
     },
   ];
 
-  const targetLanguages = () => [
-    { code: "en", label: "English" },
-    { code: "pt", label: "Português" },
-  ];
-
   return (
     <RLFooter
       contain={false}
@@ -83,11 +78,7 @@ export const AppFooter: Component = () => {
         <div class="flex flex-col gap-xl justify-between items-center lg:items-end flex-1">
           <div class="flex flex-col gap-sm items-center lg:items-end">
             <RLThemeSelector class="min-w-44" />
-            <RLLocaleSelector
-              locales={targetLanguages()}
-              currentLocale={getCurrentLocale()}
-              class="min-w-44"
-            />
+            <RLLocaleSelector class="min-w-44" />
           </div>
 
           <div class="flex flex-row flex-wrap gap-sm justify-center lg:justify-end items-center lg:items-end">

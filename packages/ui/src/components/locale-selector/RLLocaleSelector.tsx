@@ -2,7 +2,8 @@ import type { RLLocaleSelectorProps, LocaleItem } from "./locale-selector.types"
 import { RLLocaleSelectorTheme } from "./locale-selector.theme";
 import { createMemo, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
-import { getCurrentLocale, getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
+import { getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
+import { useLocale } from "@rimelight/i18n/solid";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
@@ -21,7 +22,8 @@ const OMIT_KEYS = [
 export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
   const { classes, rest } = RLLocaleSelectorTheme.setup(props, { omit: OMIT_KEYS });
 
-  const currentCode = (): string => props.currentLocale ?? getCurrentLocale();
+  const locale = useLocale();
+  const currentCode = (): string => props.currentLocale ?? locale();
 
   const processedLocales = createMemo<LocaleItem[]>(() =>
     (props.locales ?? getLocales()).map((item) =>

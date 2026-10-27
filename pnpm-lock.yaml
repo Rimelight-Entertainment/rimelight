@@ -439,6 +439,12 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
+      '@solidjs/vite-plugin':
+        specifier: 3.0.0-next.51
+        version: 3.0.0-next.51(@solidjs/web@2.0.0-rc.18(solid-js@2.0.0-rc.18))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.18)(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@solidjs/web':
+        specifier: 2.0.0-rc.18
+        version: 2.0.0-rc.18(solid-js@2.0.0-rc.18)
       hono:
         specifier: 5.0.0-rc.1
         version: 5.0.0-rc.1

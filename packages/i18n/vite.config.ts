@@ -5,7 +5,7 @@ export default defineConfig({
     setupFiles: ["./test/setup.ts"],
   },
   pack: {
-    entry: ["src/index.ts", "src/plugin.ts", "src/middleware.ts", "src/bin.ts", "src/solid.ts"],
+    entry: ["src/index.ts", "src/plugin.ts", "src/middleware.ts", "src/bin.ts"],
     dts: { generator: "oxc" },
     deps: {
       neverBundle: [/^virtual:/],

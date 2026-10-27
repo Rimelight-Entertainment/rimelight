@@ -12,7 +12,7 @@ vi.mock("virtual:rimelight-i18n", () => ({
     // No prefix for the default locale, so existing href assertions stay unchanged.
     prefixDefaultLocale: false,
     translations: {
-      "en.json": { rimelight: { ui: { error: { titles: { 418: "I'm a Teapot" } } } } },
+      en: { rimelight: { ui: { error: { titles: { 418: "I'm a Teapot" } } } } },
     },
   },
 }));
