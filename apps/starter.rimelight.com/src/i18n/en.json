@@ -22,30 +22,7 @@
       }
     },
     "header": {
-      "links": {
-        "home": {
-          "label": "Home"
-        },
-        "blog": {
-          "label": "Blog"
-        },
-        "docs": {
-          "label": "Docs"
-        },
-        "about": {
-          "label": "About"
-        },
-        "components": {
-          "label": "Components"
-        },
-        "tests": {
-          "label": "Tests"
-        }
-      },
       "left-links": {
-        "home": {
-          "label": "Home"
-        },
         "features": {
           "label": "Features"
         },
@@ -90,25 +67,12 @@
             }
           }
         }
-      },
-      "user": {
-        "status": {
-          "placeholder": "Set a custom status..."
-        }
       }
-    },
-    "layout": {
-      "skip-to-content": "Skip to main content"
     }
   },
   "blog": {
     "title": "Blog",
-    "description": "Articles, development logs, and more.",
-    "categories": {
-      "development-log": "Development Log",
-      "other": "Other"
-    },
-    "last-updated-on": "Last updated on"
+    "description": "Articles, development logs, and more."
   },
   "branding": {
     "title": "Branding",
@@ -134,57 +98,9 @@
       }
     }
   },
-  "email": {
-    "common": {
-      "website": "Website",
-      "contact": "Contact",
-      "privacy": "Privacy"
-    },
-    "password": {
-      "reset": {
-        "subject": "Reset your password",
-        "title": "Reset your password",
-        "description": "Click the link below to reset your password:",
-        "button": "Reset Password",
-        "ignore": "If you didn't request this, you can ignore this email."
-      }
-    },
-    "signup": {
-      "notification": {
-        "subject": "Welcome aboard",
-        "title": "Security Notice",
-        "description": "Someone just signed up with your email address.",
-        "sign": {
-          "in": {
-            "suffix": " to get started."
-          }
-        },
-        "ignore": "If not, you can safely ignore this email."
-      }
-    },
-    "verification": {
-      "subject": "Verify your email",
-      "title": "Verify your email",
-      "description": "Click the link below to verify your email address:",
-      "button": "Verify Email",
-      "copy": {
-        "link": "Or copy this link:"
-      }
-    }
-  },
   "errors": {
     "not-found": "Page Not Found",
-    "not-found-desc": "The page you are looking for does not exist.",
-    "go-home": "Go Home",
-    "server-error": "Server Error",
-    "server-error-desc": "An unexpected error occurred on the server.",
-    "unknown-error": "Unknown error"
-  },
-  "legal": {
-    "title": "Legal",
-    "heading": "Legal",
-    "last-updated": "Last updated:",
-    "last-updated-on": "Last updated on"
+    "not-found-desc": "The page you are looking for does not exist."
   },
   "page": {
     "about": {
@@ -218,34 +134,6 @@
         "performance": {
           "title": "Built to Scale",
           "description": "Performance isn't an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals."
-        }
-      }
-    },
-    "construction": {
-      "meta": {
-        "title": "Under Construction",
-        "description": "This website is under construction."
-      },
-      "title": "THIS WEBSITE IS UNDER CONSTRUCTION",
-      "description": {
-        "no": {
-          "auth": "Please return at a later stage."
-        }
-      },
-      "form": {
-        "passphrase": {
-          "label": "Passphrase",
-          "placeholder": "Enter passphrase..."
-        },
-        "remember": {
-          "me": {
-            "label": "Remember me"
-          }
-        },
-        "sign": {
-          "in": {
-            "button": "Sign In"
-          }
         }
       }
     },
@@ -332,23 +220,6 @@
         "description": "Policies and agreements."
       },
       "empty": "No legal documents yet."
-    }
-  },
-  "cms": {
-    "nav": {
-      "dashboard": "Dashboard",
-      "templates": "Templates",
-      "pages": "Pages",
-      "categories": "Categories",
-      "tags": "Tags",
-      "bylines": "Bylines",
-      "versions": "Versions",
-      "settings": "Settings"
-    },
-    "sidebar": {
-      "app": {
-        "name": "CMS Admin"
-      }
     }
   }
 }

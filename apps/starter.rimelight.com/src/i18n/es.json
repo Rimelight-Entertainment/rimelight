@@ -7,20 +7,76 @@
         "whats-new": "Novedades"
       }
     },
-    "header": {
+    "footer": {
       "links": {
-        "tests": {
-          "label": "Pruebas"
+        "resources": {
+          "label": "Recursos",
+          "branding": "Identidad de marca"
+        },
+        "legal": {
+          "label": "Legal",
+          "privacy-policy": "Política de privacidad",
+          "cookie-policy": "Política de Cookies",
+          "other-documents": "Otros documentos"
         }
       }
     },
-    "footer": {
-      "links": {
-        "legal": {
-          "cookie-policy": "Política de Cookies"
+    "header": {
+      "left-links": {
+        "features": {
+          "label": "Características"
+        },
+        "about": {
+          "label": "Sobre nosotros"
+        },
+        "blog": {
+          "label": "Blog"
+        },
+        "docs": {
+          "label": "Documentación"
+        }
+      },
+      "link-groups": {
+        "center": {
+          "start": {
+            "label": "Primeros pasos",
+            "description": "Ejecuta la plantilla y descubre cómo moverte por ella.",
+            "links": {
+              "introduction": "Introducción",
+              "structure": "Estructura del proyecto",
+              "deploy": "Desplegar en Cloudflare"
+            }
+          },
+          "customize": {
+            "label": "Personalizar",
+            "description": "Haz que la plantilla sea tuya.",
+            "links": {
+              "branding": "Identidad de marca y SEO",
+              "pages": "Páginas y navegación",
+              "content": "Contenido y CMS",
+              "translations": "Traducciones"
+            }
+          }
+        },
+        "right": {
+          "resources": {
+            "label": "Recursos",
+            "links": {
+              "docs": "Documentación",
+              "github": "Repositorio en GitHub"
+            }
+          }
         }
       }
     }
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Artículos, registros de desarrollo y mucho más."
+  },
+  "branding": {
+    "title": "Identidad de marca",
+    "description": "Guías de identidad de marca de Rimelight"
   },
   "cookie": {
     "notice": {
@@ -42,24 +98,122 @@
       }
     }
   },
-  "cms": {
-    "nav": {
-      "dashboard": "Panel",
-      "templates": "Plantillas",
-      "pages": "Páginas",
-      "categories": "Categorías",
-      "tags": "Etiquetas",
-      "bylines": "Firmas",
-      "versions": "Versiones",
-      "settings": "Configuración"
-    },
-    "sidebar": {
-      "app": {
-        "name": "Admin CMS"
-      }
-    }
+  "errors": {
+    "not-found": "Página no encontrada",
+    "not-found-desc": "La página que buscas no existe."
   },
   "page": {
+    "about": {
+      "title": "Sobre Rimelight",
+      "description": "Conoce Rimelight Entertainment y nuestra plantilla de inicio.",
+      "hero": {
+        "title": "Rimelight Entertainment",
+        "description": "Creamos experiencias web bonitas, modernas y de alto rendimiento, pensadas para escalar y dar poder a los desarrolladores."
+      },
+      "section": {
+        "values": {
+          "title": "Nuestros principios fundamentales",
+          "description": "Las ideas que guían cómo construimos nuestras plantillas y marcos de aplicación."
+        },
+        "about": {
+          "template": {
+            "title": "Sobre la plantilla",
+            "description": "Esta es una plantilla de inicio unificada, diseñada para reunir todos nuestros elementos de interfaz, la integración de autenticación, la localización y configuraciones de base de datos sólidas en un solo lugar. En lugar de mantener decenas de fragmentos, creamos una base potente que te permite desactivar fácilmente lo que no necesitas."
+          }
+        }
+      },
+      "value": {
+        "dx": {
+          "title": "Experiencia de desarrollo",
+          "description": "Creemos que las herramientas deben ser rápidas, fluidas e intuitivas, y apartarse de tu camino para que puedas crear."
+        },
+        "design": {
+          "title": "Excelencia en el diseño",
+          "description": "La estética importa. Nuestros componentes están elaborados con precisión, un estilo rico y detalles interactivos de primera calidad."
+        },
+        "performance": {
+          "title": "Hecho para escalar",
+          "description": "El rendimiento no es un añadido posterior. Cada línea de código está optimizada para velocidades ultrarrápidas y para las métricas web esenciales."
+        }
+      }
+    },
+    "contact": {
+      "title": "Contacta con nosotros",
+      "description": "Ponte en contacto con el equipo del sitio web.",
+      "hero": {
+        "title": "Ponte en contacto",
+        "description": "¿Tienes preguntas, comentarios o necesitas ayuda? Envíanos un mensaje directamente."
+      },
+      "form": {
+        "title": "Enviar un mensaje",
+        "name": {
+          "label": "Tu nombre *"
+        },
+        "email": {
+          "label": "Correo electrónico *"
+        },
+        "subject": {
+          "label": "Asunto (opcional)"
+        },
+        "message": {
+          "label": "Mensaje *"
+        },
+        "send": {
+          "button": "Enviar mensaje"
+        },
+        "placeholder": {
+          "name": "Juan Pérez",
+          "email": "juan@ejemplo.com",
+          "subject": "¿En qué podemos ayudarte?",
+          "message": "Escribe tu mensaje aquí..."
+        }
+      }
+    },
+    "home": {
+      "meta": {
+        "title": "Plantilla de inicio de Rimelight",
+        "description": "Un proyecto de inicio con Solid basado en cómo trabajamos dentro de Rimelight Entertainment."
+      },
+      "section": {
+        "hero": {
+          "title": "Plantilla de inicio de Rimelight",
+          "description": "Un proyecto de inicio con Solid basado en cómo trabajamos dentro de Rimelight Entertainment.",
+          "link": {
+            "github": {
+              "label": "Ver en GitHub"
+            },
+            "use-template": {
+              "label": "Usar plantilla"
+            }
+          }
+        },
+        "features": {
+          "title": "Una plantilla para todas tus necesidades.",
+          "description": "Mantenemos una sola plantilla con todas las funciones. Elimina lo que no necesites en lugar de revisar una multitud de opciones. Incluye nuestra biblioteca de componentes, nuestra biblioteca de internacionalización y otras utilidades.",
+          "link": {
+            "browse-components": {
+              "label": "Explorar componentes"
+            },
+            "read-the-docs": {
+              "label": "Leer la documentación"
+            }
+          }
+        },
+        "posts": {
+          "title": "Últimas publicaciones",
+          "description": "Lee las últimas novedades sobre la plantilla de inicio.",
+          "view": {
+            "all": "Ver todas las publicaciones"
+          }
+        },
+        "cta": {
+          "title": "¿Quieres contribuir?",
+          "description": "Explora nuestros proyectos de código abierto y ponte en contacto con nosotros.",
+          "view-on-github": "Ver en GitHub",
+          "learn-how": "Aprende cómo"
+        }
+      }
+    },
     "legal": {
       "meta": {
         "title": "Documentos legales",

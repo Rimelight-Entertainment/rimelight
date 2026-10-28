@@ -1,78 +1,10 @@
 {
   "page": {
-    "contact": {
-      "title": "Entre em contato",
-      "description": "Entre em contato com a Rimelight Entertainment.",
-      "hero": {
-        "description": "Tem uma pergunta, proposta ou quer colaborar? Envie-nos uma mensagem diretamente.",
-        "title": "Entre em contato"
-      },
-      "form": {
-        "email": {
-          "label": "Endereço de e-mail *"
-        },
-        "message": {
-          "label": "Mensagem *"
-        },
-        "name": {
-          "label": "Seu nome *"
-        },
-        "placeholder": {
-          "email": "joao@exemplo.com",
-          "message": "Escreva sua mensagem aqui...",
-          "name": "João Silva",
-          "subject": "Como podemos ajudar?"
-        },
-        "send": {
-          "button": "Enviar mensagem"
-        },
-        "subject": {
-          "label": "Assunto (opcional)"
-        }
-      }
-    },
-    "auth": {
-      "sign-up": {
-        "auth": {
-          "newsletter": {
-            "label": "Inscreva-se em nossa newsletter. Você pode cancelar a inscrição a qualquer momento."
-          }
-        }
-      }
-    },
-    "construction": {
-      "meta": {
-        "title": "Em Construção",
-        "description": "Este site está atualmente em construção."
-      },
-      "title": "ESTE SITE ESTÁ EM CONSTRUÇÃO",
-      "description": {
-        "no": {
-          "auth": "Por favor, volte mais tarde."
-        }
-      },
-      "form": {
-        "passphrase": {
-          "label": "Frase-passe",
-          "placeholder": "Digite a frase-passe..."
-        },
-        "remember": {
-          "me": {
-            "label": "Lembrar-me"
-          }
-        },
-        "sign": {
-          "in": {
-            "button": "Entrar"
-          }
-        }
-      }
+    "about": {
+      "title": "Sobre a Rimelight",
+      "description": "Conheça nossa missão, nossa visão e nossa equipe."
     },
     "home": {
-      "meta": {
-        "title": "Rimelight Entertainment",
-        "description": "Conte sua história."
-      },
       "section": {
         "hero": {
           "title": "Somos a Rimelight Entertainment",
@@ -121,72 +53,350 @@
             "explore-careers": "Explorar carreiras"
           }
         }
+      }
+    },
+    "company": {
+      "careers": {
+        "title": "Carreiras",
+        "description": "Explore oportunidades na Rimelight Entertainment e ajude a moldar o futuro dos games."
       },
-      "hero": {
-        "title": "Componentes da Rimelight",
-        "description": "Uma biblioteca de componentes e utilitários usada na Rimelight Entertainment.",
-        "links": {
-          "01": "Ver componentes",
-          "02": "Ver wiki",
-          "03": "Ver marca"
+      "blog": {
+        "meta": {
+          "title": "Blog",
+          "description": "Leia nossas últimas notícias, publicações e atualizações de projetos."
         }
-      },
-      "sections": {
-        "hero": {
-          "title": "Somos a Rimelight Entertainment",
-          "description": "Somos os criadores de Grand Tale.",
-          "actions": {
-            "join-us": "Junte-se a nós",
-            "learn-more": "Saiba mais"
+      }
+    },
+    "legal": {
+      "meta": {
+        "title": "Jurídico",
+        "description": "Políticas e acordos jurídicos da Rimelight Entertainment."
+      }
+    },
+    "branding": {
+      "meta": {
+        "title": "Identidade visual",
+        "description": "Diretrizes de marca e recursos da Rimelight Entertainment."
+      }
+    },
+    "franchises": {
+      "grand": {
+        "tale": {
+          "home": {
+            "hero": {
+              "button": "Jogar Grand Tale"
+            },
+            "overview": {
+              "button": "Saiba mais"
+            },
+            "features": {
+              "tactical-combat": {
+                "title": "Combate tático",
+                "description": "Domine diversos caminhos de classe e habilidades sinérgicas em combates táticos."
+              },
+              "living-world": {
+                "title": "Mundo vivo",
+                "description": "Veja o mundo reagir a eventos da comunidade, escolhas de facções e conquistas do servidor."
+              },
+              "deep-economy": {
+                "title": "Economia profunda",
+                "description": "Participe de comércio livre, sistemas de criação e mercados de recursos movidos pelos jogadores."
+              }
+            },
+            "sections": {
+              "hero": {
+                "title": "Que a história nunca acabe!",
+                "description": "Grand Tale é o próximo RPG de mundo aberto da Rimelight Entertainment. Explore um mundo vivo moldado pela liberdade dos jogadores e por narrativas que surgem naturalmente."
+              },
+              "overview": {
+                "title": "Sobre o Grand Tale",
+                "description": "Grand Tale é uma franquia de mídia de alta fantasia construída em torno de seu jogo principal, o homônimo 'Grand Tale'."
+              }
+            }
           }
+        }
+      }
+    },
+    "store": {
+      "meta": {
+        "title": "Loja",
+        "description": "Compre produtos digitais e mercadorias."
+      }
+    }
+  },
+  "app": {
+    "header": {
+      "left-links": {
+        "grand-tale": {
+          "label": "Grand Tale"
+        },
+        "community": {
+          "label": "Comunidade"
         },
         "company": {
-          "title": "Ampliando os limites de {interactive}",
-          "description": "Fundada em 2023, a Rimelight Entertainment é independente e focada nos jogadores. Não apenas criamos jogos; criamos mundos vivos que respeitam seu tempo e sua inteligência.",
-          "stats": {
-            "titles": {
-              "label": "Títulos em desenvolvimento"
+          "label": "Empresa"
+        },
+        "store": {
+          "label": "Loja"
+        }
+      },
+      "link-groups": {
+        "center": {
+          "grand-tale": {
+            "main": {
+              "title": "Jogo",
+              "news": "Notícias",
+              "about": "Sobre",
+              "wiki": "Wiki",
+              "guides": "Guias",
+              "forums": "Fóruns",
+              "leaderboards": "Rankings"
             },
-            "creators": {
-              "label": "Criadores globais"
+            "series": {
+              "title": "Séries",
+              "children-of-the-light": "Filhos da Luz",
+              "grand-academy": "Grande Academia",
+              "goldy-adventures": "Aventuras de Goldy"
+            },
+            "books": {
+              "title": "Livros",
+              "the-first-tale": "O Primeiro Conto"
+            },
+            "comics": {
+              "title": "Quadrinhos",
+              "ori-friends": "Ori e amigos"
+            }
+          },
+          "community": {
+            "forums": {
+              "title": "Fóruns",
+              "rimelight": "Fóruns da Rimelight",
+              "grand-tale": "Fóruns do Grand Tale"
+            },
+            "events": {
+              "title": "Eventos",
+              "lightcon": "Lightcon"
+            }
+          },
+          "company": {
+            "main": {
+              "studio": {
+                "title": "Estúdio",
+                "about-us": "Sobre nós",
+                "partnerships": "Parcerias"
+              },
+              "careers": {
+                "title": "Carreiras",
+                "life": "A vida na Rimelight",
+                "jobs": "Vagas e estágios"
+              },
+              "news": {
+                "title": "Notícias e mídia",
+                "blog": "Blog"
+              }
+            }
+          },
+          "store": {
+            "main": {
+              "digital-goods": {
+                "title": "Produtos digitais"
+              },
+              "deals": {
+                "title": "Ofertas",
+                "new-releases": "Lançamentos",
+                "sales": "Promoções",
+                "bundles": "Pacotes"
+              },
+              "clothing": {
+                "title": "Roupas",
+                "headwear": "Bonés e chapéus",
+                "tops": "Camisetas e moletons",
+                "bottoms": "Calças e shorts"
+              },
+              "accessories": {
+                "title": "Acessórios",
+                "jewelry": "Joias",
+                "pins-patches": "Pins e patches",
+                "keychains": "Chaveiros"
+              },
+              "apparel": {
+                "title": "Vestuário",
+                "bottles-mugs": "Garrafas e canecas"
+              },
+              "collectibles": {
+                "title": "Colecionáveis",
+                "figurines-statues": "Figuras e estátuas",
+                "plushies": "Pelúcias"
+              },
+              "art": {
+                "title": "Arte",
+                "posters-prints": "Pôsteres e gravuras",
+                "comics-books": "Quadrinhos e livros",
+                "physical-games": "Jogos físicos"
+              }
             }
           }
         },
-        "projects": {
-          "title": "Nossos projetos",
-          "tags": {
-            "franchise": "Franquia",
-            "fantasy": "Fantasia",
-            "social": "Social"
-          },
-          "content": {
-            "grand-tale": {
-              "description": "Um jogo de simulação de vida social de alta fantasia que inclui subjogos de vários gêneros."
+        "right": {
+          "grand-tale": {
+            "resources": {
+              "title": "Recursos",
+              "download": "Download",
+              "support": "Suporte"
+            },
+            "socials": {
+              "title": "Redes sociais",
+              "discord": "Discord",
+              "youtube": "YouTube",
+              "instagram": "Instagram"
             }
           },
-          "actions": {
-            "discover": "Descobrir"
+          "community": {
+            "socials": {
+              "instagram": "Instagram",
+              "discord": "Discord",
+              "spotify": "Spotify"
+            }
+          },
+          "company": {
+            "resources": {
+              "docs": "Documentação",
+              "branding": "Identidade visual",
+              "legal": "Jurídico"
+            },
+            "socials": {
+              "title": "Redes sociais",
+              "linkedin": "LinkedIn",
+              "github": "GitHub"
+            }
+          },
+          "store": {
+            "assistance": {
+              "title": "Atendimento",
+              "orders": "Pedidos",
+              "customer-support": "Suporte ao cliente"
+            }
           }
+        }
+      },
+      "links": {
+        "company": {
+          "resources": {
+            "title": "Recursos"
+          }
+        }
+      },
+      "actions": {
+        "sign-up": "Criar conta",
+        "sign-in": "Entrar"
+      },
+      "user": {
+        "dropdown": {
+          "dashboard": "Painel",
+          "profile": "Perfil",
+          "settings": "Configurações",
+          "sign-out": "Sair"
+        }
+      }
+    },
+    "footer": {
+      "links": {
+        "resources": {
+          "label": "Recursos",
+          "branding": "Identidade visual"
         },
-        "news": {
-          "title": "Últimas notícias",
-          "description": "Leia nossas últimas notícias, publicações e atualizações de projetos.",
-          "actions": {
-            "view-all": "Ver todas as notícias"
-          }
-        },
-        "cta": {
-          "title": "Pronto para jogar?",
-          "description": "Junte-se a nós e vamos contar nossa história juntos.",
-          "actions": {
-            "create-account": "Criar conta",
-            "explore-careers": "Explorar carreiras"
-          }
+        "legal": {
+          "label": "Jurídico",
+          "terms-of-service": "Termos de Serviço",
+          "code-of-conduct": "Código de conduta",
+          "privacy-policy": "Política de privacidade",
+          "cookie-policy": "Política de cookies",
+          "shipping-policy": "Política de envio",
+          "other-documents": "Outros documentos"
         }
       }
     }
   },
+  "cookie": {
+    "notice": {
+      "title": "Preferências de cookies",
+      "description": {
+        "prefix": "Usamos cookies para melhorar sua experiência.",
+        "suffix": "."
+      },
+      "cookie": {
+        "policy": {
+          "label": "Política de cookies"
+        }
+      },
+      "allow": {
+        "all": "Aceitar"
+      },
+      "deny": {
+        "all": "Recusar"
+      }
+    }
+  },
+  "wiki": {
+    "sidebar": {
+      "wiki": "Wiki",
+      "getting": {
+        "started": "Primeiros passos"
+      },
+      "contribution": {
+        "guide": "Guia de contribuição"
+      },
+      "lore": "Lore",
+      "timeline": "Linha do tempo",
+      "characters": "Personagens",
+      "locations": "Locais",
+      "species": "Espécies",
+      "objects": "Objetos",
+      "groups": "Grupos",
+      "game": "Informações do jogo",
+      "tales": "Tales",
+      "items": "Itens",
+      "quests": "Missões",
+      "skills": "Habilidades",
+      "settings": "Configurações"
+    }
+  },
+  "error": {
+    "retry": "Tentar novamente"
+  },
   "dev": {
+    "components": {
+      "title": "Componentes",
+      "description": "Ambientes interativos de teste, cenários de casos extremos, listas de verificação WCAG e fichas de propriedades dos componentes de interface da Rimelight."
+    },
+    "index": {
+      "title": "Painel",
+      "description": "Ambiente de teste isolado e padronizado, com suíte de auditoria de recursos da Rimelight. Sem poluição de layout, para garantir a precisão dos testes.",
+      "card": {
+        "user": {
+          "interface": {
+            "title": "Interface do usuário",
+            "description": "Escalas de paleta OKLCH híbridas interativas, tipografia e fontes, biblioteca de ícones, matriz de contraste por intenção e temas de componentes."
+          }
+        },
+        "components": {
+          "title": "Componentes",
+          "description": "Ambientes interativos de teste, cenários de casos extremos, listas de verificação WCAG e fichas de propriedades de mais de 19 componentes de interface da Rimelight."
+        },
+        "localization": {
+          "title": "Localização",
+          "description": "Teste básico do seletor de idioma, diagnósticos de reescrita de URL e verificação da sincronização cliente/servidor do @rimelight/i18n."
+        },
+        "security": {
+          "title": "Segurança",
+          "description": "Geração de cabeçalhos CSP, injeção de nonce e Trusted Types no head, inspeção da configuração de limite de requisições e diagnósticos de Turnstile e de construção em tempo de execução."
+        },
+        "seo": {
+          "title": "SEO",
+          "description": "Auditoria completa do @rimelight/seo: geração de head, utilitários de meta, dados estruturados (JSON-LD), imagens OG, sitemap, robots.txt, RSS, LLMs.txt, manifesto web, security.txt e catálogo de API."
+        }
+      }
+    },
     "layout": {
       "brand": "Rimelight Developer Workspace"
     },

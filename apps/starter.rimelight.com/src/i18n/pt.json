@@ -22,30 +22,7 @@
       }
     },
     "header": {
-      "links": {
-        "home": {
-          "label": "Início"
-        },
-        "blog": {
-          "label": "Blog"
-        },
-        "docs": {
-          "label": "Documentação"
-        },
-        "about": {
-          "label": "Sobre"
-        },
-        "components": {
-          "label": "Componentes"
-        },
-        "tests": {
-          "label": "Testes"
-        }
-      },
       "left-links": {
-        "home": {
-          "label": "Início"
-        },
         "features": {
           "label": "Recursos"
         },
@@ -90,25 +67,12 @@
             }
           }
         }
-      },
-      "user": {
-        "status": {
-          "placeholder": "Defina um status personalizado..."
-        }
       }
-    },
-    "layout": {
-      "skip-to-content": "Pular para o conteúdo principal"
     }
   },
   "blog": {
     "title": "Blog",
-    "description": "Artigos, diários de desenvolvimento e mais.",
-    "categories": {
-      "development-log": "Diário de Desenvolvimento",
-      "other": "Outros"
-    },
-    "last-updated-on": "Última atualização em"
+    "description": "Artigos, diários de desenvolvimento e mais."
   },
   "branding": {
     "title": "Identidade Visual",
@@ -134,57 +98,9 @@
       }
     }
   },
-  "email": {
-    "common": {
-      "website": "Site",
-      "contact": "Contato",
-      "privacy": "Privacidade"
-    },
-    "password": {
-      "reset": {
-        "subject": "Redefina sua senha",
-        "title": "Redefina sua senha",
-        "description": "Clique no link abaixo para redefinir sua senha:",
-        "button": "Redefinir Senha",
-        "ignore": "Se você não solicitou isso, pode ignorar este e-mail."
-      }
-    },
-    "signup": {
-      "notification": {
-        "subject": "Boas-vindas",
-        "title": "Aviso de Segurança",
-        "description": "Alguém acabou de se cadastrar com o seu endereço de e-mail.",
-        "sign": {
-          "in": {
-            "suffix": " para começar."
-          }
-        },
-        "ignore": "Caso contrário, pode ignorar este e-mail com segurança."
-      }
-    },
-    "verification": {
-      "subject": "Verifique seu e-mail",
-      "title": "Verifique seu e-mail",
-      "description": "Clique no link abaixo para verificar seu endereço de e-mail:",
-      "button": "Verificar E-mail",
-      "copy": {
-        "link": "Ou copie este link:"
-      }
-    }
-  },
   "errors": {
     "not-found": "Página Não Encontrada",
-    "not-found-desc": "A página que você está procurando não existe.",
-    "go-home": "Ir para o Início",
-    "server-error": "Erro no Servidor",
-    "server-error-desc": "Ocorreu um erro inesperado no servidor.",
-    "unknown-error": "Erro desconhecido"
-  },
-  "legal": {
-    "title": "Legal",
-    "heading": "Legal",
-    "last-updated": "Última atualização:",
-    "last-updated-on": "Última atualização em"
+    "not-found-desc": "A página que você está procurando não existe."
   },
   "page": {
     "about": {
@@ -218,34 +134,6 @@
         "performance": {
           "title": "Construído para Escalar",
           "description": "Desempenho não é algo secundário. Cada linha de código é otimizada para velocidades ultrarrápidas e ótimos Core Web Vitals."
-        }
-      }
-    },
-    "construction": {
-      "meta": {
-        "title": "Em Construção",
-        "description": "Este site está atualmente em construção."
-      },
-      "title": "ESTE SITE ESTÁ EM CONSTRUÇÃO",
-      "description": {
-        "no": {
-          "auth": "Por favor, volte mais tarde."
-        }
-      },
-      "form": {
-        "passphrase": {
-          "label": "Frase-passe",
-          "placeholder": "Digite a frase-passe..."
-        },
-        "remember": {
-          "me": {
-            "label": "Lembrar-me"
-          }
-        },
-        "sign": {
-          "in": {
-            "button": "Entrar"
-          }
         }
       }
     },
@@ -332,23 +220,6 @@
         "description": "Políticas e acordos."
       },
       "empty": "Ainda não há documentos legais."
-    }
-  },
-  "cms": {
-    "nav": {
-      "dashboard": "Painel",
-      "templates": "Modelos",
-      "pages": "Páginas",
-      "categories": "Categorias",
-      "tags": "Tags",
-      "bylines": "Assinaturas",
-      "versions": "Versões",
-      "settings": "Configurações"
-    },
-    "sidebar": {
-      "app": {
-        "name": "Admin CMS"
-      }
     }
   }
 }
