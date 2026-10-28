@@ -2,13 +2,14 @@ import { createSignal, For, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLMain } from "@rimelight/ui/components/main/RLMain.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const TAGS = ["main", "div", "section", "article"] as const;
 const HEIGHT_CAP = "max-h-64 overflow-y-auto";
 
 const MainContent = (): JSX.Element => (
   <div class="flex flex-col items-center justify-center gap-2 p-xl text-center">
-    <h1 class="text-xl font-bold text-highlighted">Main content area</h1>
+    <h1 class="text-xl font-bold text-highlighted">{t("app.text.main-content-area")}</h1>
     <p class="text-sm text-muted max-w-md">
       The main element fills the available viewport height below the header via the
       --rl-header-height CSS variable.
@@ -54,7 +55,7 @@ export const MainSandbox = (): JSX.Element => {
               onChange={(e) => setHasContent(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Children</span>
+            <span class="text-muted">{t("app.text.children")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -69,12 +70,12 @@ export const MainSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Class:</span>
+          <span class="text-muted">{t("app.text.class")}</span>
           <input
             type="text"
             value={customClass()}
             onInput={(e) => setCustomClass(e.currentTarget.value)}
-            placeholder="e.g. bg-elevated/10 rounded-xl border border-default"
+            placeholder={t("app.text.e-g-bg-elevated-10-rounded-xl-border-border-defa")}
             class="px-2 py-1 rounded bg-elevated border border-default text-highlighted text-xs w-96"
           />
         </div>
@@ -113,7 +114,9 @@ export const mainAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "default-main",
-      title: "Default <main> Element",
+      get title() {
+        return t("app.text.default-main-element");
+      },
       description:
         'Renders a bare <main> with data-slot="root" and the viewport-height min-h class computed from --rl-header-height. Intentionally uncapped to verify the true fill behavior.',
       render: () => (
@@ -124,22 +127,29 @@ export const mainAudit: ComponentAuditDefinition = {
     },
     {
       id: "default-slot-children",
-      title: "Default Slot (children)",
+      get title() {
+        return t("app.text.default-slot-children");
+      },
       description:
         "The single default slot accepts arbitrary children — elements, text, and nested components render inside the root.",
       render: () => (
         <RLMain class="border border-default">
-          <nav aria-label="Slot breadcrumb" class="p-md border-b border-default text-xs text-muted">
+          <nav
+            aria-label={"Slot breadcrumb"}
+            class="p-md border-b border-default text-xs text-muted"
+          >
             Slot content: nav element
           </nav>
-          <h2 class="p-md text-lg font-semibold text-highlighted">Slot content: heading</h2>
-          <p class="px-md pb-md text-sm text-muted">Slot content: paragraph with text.</p>
+          <h2 class="p-md text-lg font-semibold text-highlighted">{"Slot content: heading"}</h2>
+          <p class="px-md pb-md text-sm text-muted">{"Slot content: paragraph with text."}</p>
         </RLMain>
       ),
     },
     {
       id: "polymorphic-as",
-      title: "Polymorphic Element (as prop)",
+      get title() {
+        return t("app.text.polymorphic-element-as-prop");
+      },
       description:
         "Renders as div, section, or article while preserving theme classes. Height capped via the ui override for readability.",
       render: () => (
@@ -156,7 +166,9 @@ export const mainAudit: ComponentAuditDefinition = {
     },
     {
       id: "class-and-ui-overrides",
-      title: "Custom Class & ui Slot Overrides",
+      get title() {
+        return t("app.text.custom-class-ui-slot-overrides");
+      },
       description:
         "class merges onto the resolved theme classes; ui.root overrides or extends the root slot (string and functional forms).",
       render: () => (
@@ -165,28 +177,30 @@ export const mainAudit: ComponentAuditDefinition = {
             <span class="block p-md text-xs text-muted">custom class merged with theme base</span>
           </RLMain>
           <RLMain ui={{ root: "border-2 border-secondary rounded-xl bg-secondary/5" }}>
-            <span class="block p-md text-xs text-muted">ui.root string override</span>
+            <span class="block p-md text-xs text-muted">{"ui.root string override"}</span>
           </RLMain>
           <RLMain
             ui={{
               root: (base: string) => `${base} border-2 border-success rounded-xl bg-success/5`,
             }}
           >
-            <span class="block p-md text-xs text-muted">ui.root functional override</span>
+            <span class="block p-md text-xs text-muted">{"ui.root functional override"}</span>
           </RLMain>
         </>
       ),
     },
     {
       id: "attribute-forwarding",
-      title: "Attribute & Accessibility Forwarding",
+      get title() {
+        return t("app.text.attribute-accessibility-forwarding");
+      },
       description:
         "Forwards id, role, aria-label, and data attributes to the root element; internal props (as, ui, class) never leak to the DOM.",
       render: () => (
         <RLMain
           id="audit-main"
           role="region"
-          aria-label="Application main content"
+          aria-label={"Application main content"}
           data-testid="main-forwarding"
           class="border border-default"
         >
@@ -198,8 +212,12 @@ export const mainAudit: ComponentAuditDefinition = {
     },
     {
       id: "empty-main",
-      title: "Empty Main",
-      description: "Renders a self-contained empty <main> with no children.",
+      get title() {
+        return t("app.text.empty-main");
+      },
+      get description() {
+        return t("app.text.renders-a-self-contained-empty-main-with-no-chil");
+      },
       render: () => <RLMain class="border border-dashed border-default" />,
     },
   ],

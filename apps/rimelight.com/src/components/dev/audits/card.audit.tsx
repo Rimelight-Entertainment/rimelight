@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const VARIANTS = ["outline", "solid", "soft", "subtle"] as const;
 
@@ -23,7 +24,7 @@ export const CardSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Variants */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -51,7 +52,7 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setHasTitle(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Title</span>
+            <span class="text-muted">{t("app.text.title-768e")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -61,7 +62,7 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setHasDescription(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Description</span>
+            <span class="text-muted">{t("app.text.description")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -71,7 +72,7 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setHasBody(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Body</span>
+            <span class="text-muted">{t("app.text.body")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -81,7 +82,7 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setHasFooter(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Footer</span>
+            <span class="text-muted">{t("app.text.footer")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -91,7 +92,7 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setHasMedia(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Media</span>
+            <span class="text-muted">{t("app.text.media")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -101,7 +102,7 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setIsOverlay(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Overlay</span>
+            <span class="text-muted">{t("app.text.overlay")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -111,13 +112,13 @@ export const CardSandbox = (): JSX.Element => {
               onChange={(e) => setIsLink(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Link Card</span>
+            <span class="text-muted">{t("app.text.link-card")}</span>
           </label>
         </div>
 
         {/* Title & Description inputs */}
         <div class="flex items-center gap-2">
-          <span class="text-muted">Title:</span>
+          <span class="text-muted">{t("app.text.title")}</span>
           <input
             type="text"
             value={title()}
@@ -126,7 +127,7 @@ export const CardSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Desc:</span>
+          <span class="text-muted">{t("app.text.desc")}</span>
           <input
             type="text"
             value={description()}
@@ -146,7 +147,9 @@ export const CardSandbox = (): JSX.Element => {
           overlay={isOverlay()}
           href={isLink() ? "#card-action" : undefined}
           footer={
-            hasFooter() ? <span class="text-xs text-muted">Card footer content</span> : undefined
+            hasFooter() ? (
+              <span class="text-xs text-muted">{t("app.text.card-footer-content")}</span>
+            ) : undefined
           }
         >
           {hasBody() ? (
@@ -172,8 +175,12 @@ export const cardAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "variants-matrix",
-      title: "All Visual Variants",
-      description: "Outline (default), Solid, Soft, and Subtle visual variants.",
+      get title() {
+        return t("app.text.all-visual-variants");
+      },
+      get description() {
+        return t("app.text.outline-default-solid-soft-and-subtle-visual-var");
+      },
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <For each={VARIANTS}>
@@ -182,7 +189,7 @@ export const cardAudit: ComponentAuditDefinition = {
                 variant={v}
                 title={`Variant: ${v}`}
                 description={`This card demonstrates the ${v} variant.`}
-                footer={<span class="text-xs text-muted">Footer slot</span>}
+                footer={<span class="text-xs text-muted">{"Footer slot"}</span>}
               >
                 <p class="text-sm">Main content area for variant {v}.</p>
               </RLCard>
@@ -193,46 +200,52 @@ export const cardAudit: ComponentAuditDefinition = {
     },
     {
       id: "header-title-description",
-      title: "Header, Title & Description Compositions",
+      get title() {
+        return t("app.text.header-title-description-compositions");
+      },
       description:
         "Title-only, description-only, title with description, and custom header slot override.",
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <RLCard title="Title Only Card">
-            <p class="text-sm text-muted">Card with a title header only.</p>
+          <RLCard title={"Title Only Card"}>
+            <p class="text-sm text-muted">{"Card with a title header only."}</p>
           </RLCard>
           <RLCard description="Description only without a title heading.">
-            <p class="text-sm text-muted">Body content follows the description.</p>
+            <p class="text-sm text-muted">{"Body content follows the description."}</p>
           </RLCard>
-          <RLCard title="Complete Header" description="Subtitle explaining the context.">
-            <p class="text-sm text-muted">Both title and description rendered in header.</p>
+          <RLCard title={"Complete Header"} description="Subtitle explaining the context.">
+            <p class="text-sm text-muted">{"Both title and description rendered in header."}</p>
           </RLCard>
           <RLCard
             header={
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-sm text-highlighted">Custom Header Slot</span>
+                <span class="font-semibold text-sm text-highlighted">{"Custom Header Slot"}</span>
                 <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-mono">
                   Badge
                 </span>
               </div>
             }
           >
-            <p class="text-sm text-muted">Header slot replaces default title/description layout.</p>
+            <p class="text-sm text-muted">
+              {"Header slot replaces default title/description layout."}
+            </p>
           </RLCard>
         </div>
       ),
     },
     {
       id: "slots-and-structure",
-      title: "Slots & Structural Customization",
+      get title() {
+        return t("app.text.slots-structural-customization");
+      },
       description:
         "Demonstrating headerSlot, titleSlot, descriptionSlot, bodySlot, and footerSlot.",
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLCard
-            titleSlot={<h3 class="text-base font-bold text-primary">Custom Title Slot</h3>}
+            titleSlot={<h3 class="text-base font-bold text-primary">{"Custom Title Slot"}</h3>}
             descriptionSlot={
-              <p class="text-xs italic text-muted">Custom description slot styling</p>
+              <p class="text-xs italic text-muted">{"Custom description slot styling"}</p>
             }
             footerSlot={
               <div class="flex items-center justify-end gap-2">
@@ -251,7 +264,9 @@ export const cardAudit: ComponentAuditDefinition = {
               </div>
             }
           >
-            <p class="text-sm text-muted">Custom slots provide fine-grained control over layout.</p>
+            <p class="text-sm text-muted">
+              {"Custom slots provide fine-grained control over layout."}
+            </p>
           </RLCard>
           <RLCard
             bodySlot={
@@ -260,54 +275,58 @@ export const cardAudit: ComponentAuditDefinition = {
                 <div class="h-4 bg-elevated rounded w-1/2 animate-pulse" />
               </div>
             }
-            footerSlot={<span class="text-xs text-muted">Loading skeleton state</span>}
+            footerSlot={<span class="text-xs text-muted">{"Loading skeleton state"}</span>}
           />
         </div>
       ),
     },
     {
       id: "media-and-overlay",
-      title: "Media & Overlay Modes",
+      get title() {
+        return t("app.text.media-overlay-modes");
+      },
       description:
         "Card with top media image, and card with text overlaid on top of a media background.",
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLCard
             mediaSrc="https://picsum.photos/seed/cardmedia/600/250"
-            title="Card with Media"
+            title={"Card with Media"}
             description="Media image displayed at the top."
-            footer={<span class="text-xs text-muted">Media Card Footer</span>}
+            footer={<span class="text-xs text-muted">{"Media Card Footer"}</span>}
           >
-            <p class="text-sm text-muted">Standard layout with media header.</p>
+            <p class="text-sm text-muted">{"Standard layout with media header."}</p>
           </RLCard>
           <RLCard
             mediaSrc="https://picsum.photos/seed/cardoverlay/600/350"
             overlay
-            title="Overlay Title"
+            title={"Overlay Title"}
             description="Text content layered directly over the background image."
-            footer={<span class="text-xs text-white/80">Overlay Footer Action</span>}
+            footer={<span class="text-xs text-white/80">{"Overlay Footer Action"}</span>}
           >
-            <p class="text-sm text-white/90">Card body in overlay mode.</p>
+            <p class="text-sm text-white/90">{"Card body in overlay mode."}</p>
           </RLCard>
         </div>
       ),
     },
     {
       id: "polymorphism-and-links",
-      title: "Polymorphism & Link Cards",
+      get title() {
+        return t("app.text.polymorphism-link-cards");
+      },
       description:
         "Renders as semantic HTML tags (section, article) or clickable link (a) without altering card styling.",
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <RLCard as="article" title="Article Element" description="Semantic <article> root tag.">
-            <p class="text-sm text-muted">Inspect DOM to see article tag.</p>
+          <RLCard as="article" title={"Article Element"} description="Semantic <article> root tag.">
+            <p class="text-sm text-muted">{"Inspect DOM to see article tag."}</p>
           </RLCard>
-          <RLCard as="section" title="Section Element" description="Semantic <section> root tag.">
-            <p class="text-sm text-muted">Inspect DOM to see section tag.</p>
+          <RLCard as="section" title={"Section Element"} description="Semantic <section> root tag.">
+            <p class="text-sm text-muted">{"Inspect DOM to see section tag."}</p>
           </RLCard>
           <RLCard
             href="#card-link"
-            title="Link Card"
+            title={"Link Card"}
             description="Renders as <a> with identical card styling."
             footer={<span class="text-xs text-primary font-medium">Click to navigate &rarr;</span>}
           >
@@ -320,13 +339,17 @@ export const cardAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-ui-and-theme",
-      title: "Custom UI Slot Styling",
-      description: "Fine-grained styling overrides via the `ui` prop on all slots.",
+      get title() {
+        return t("app.text.custom-ui-slot-styling");
+      },
+      get description() {
+        return t("app.text.fine-grained-styling-overrides-via-the-ui-prop-o");
+      },
       render: () => (
         <RLCard
-          title="Custom Styled Card"
+          title={"Custom Styled Card"}
           description="Custom padding, font styling, and border treatment."
-          footer={<span class="text-xs font-mono text-primary">Status: Active</span>}
+          footer={<span class="text-xs font-mono text-primary">{"Status: Active"}</span>}
           ui={{
             root: "border-2 border-primary/40 shadow-lg",
             header: "bg-primary/5 p-6",

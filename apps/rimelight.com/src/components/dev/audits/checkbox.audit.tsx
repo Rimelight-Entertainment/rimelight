@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 import { RLCheckboxGroup } from "@rimelight/ui/components/checkbox-group/RLCheckboxGroup.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const COLORS = AUDIT_COLORS;
@@ -30,7 +31,7 @@ export const CheckboxSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Sizes */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -50,7 +51,7 @@ export const CheckboxSandbox = (): JSX.Element => {
 
         {/* Colors */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -70,7 +71,7 @@ export const CheckboxSandbox = (): JSX.Element => {
 
         {/* Indicator */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Indicator:</span>
+          <span class="text-muted mr-1">{t("app.text.indicator")}</span>
           <For each={INDICATORS}>
             {(ind) => (
               <button
@@ -90,7 +91,7 @@ export const CheckboxSandbox = (): JSX.Element => {
 
         {/* Variant */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <button
             type="button"
             onClick={() => setVariant("list")}
@@ -125,7 +126,7 @@ export const CheckboxSandbox = (): JSX.Element => {
               onChange={(e) => setHighlight(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Highlight</span>
+            <span class="text-muted">{t("app.text.highlight")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -135,7 +136,7 @@ export const CheckboxSandbox = (): JSX.Element => {
               onChange={(e) => setDisabled(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Disabled</span>
+            <span class="text-muted">{t("app.text.disabled")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -145,7 +146,7 @@ export const CheckboxSandbox = (): JSX.Element => {
               onChange={(e) => setRequired(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Required</span>
+            <span class="text-muted">{t("app.text.required")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -155,7 +156,7 @@ export const CheckboxSandbox = (): JSX.Element => {
               onChange={(e) => setHasLabel(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Has Label</span>
+            <span class="text-muted">{t("app.text.has-label")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -165,7 +166,7 @@ export const CheckboxSandbox = (): JSX.Element => {
               onChange={(e) => setHasDescription(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Has Description</span>
+            <span class="text-muted">{t("app.text.has-description")}</span>
           </label>
           <button
             type="button"
@@ -182,7 +183,7 @@ export const CheckboxSandbox = (): JSX.Element => {
 
         {/* Input fields */}
         <div class="flex items-center gap-2">
-          <span class="text-muted">Label:</span>
+          <span class="text-muted">{t("app.text.label")}</span>
           <input
             type="text"
             value={label()}
@@ -191,7 +192,7 @@ export const CheckboxSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Desc:</span>
+          <span class="text-muted">{t("app.text.desc")}</span>
           <input
             type="text"
             value={description()}
@@ -237,36 +238,38 @@ export const checkboxAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "bare-checkbox-standalone",
-      title: "Bare & Standalone Checkbox (No Label / No Description)",
+      get title() {
+        return t("app.text.bare-standalone-checkbox-no-label-no-description");
+      },
       description:
         "Standalone bare checkbox with aria-label across all states (unchecked, checked, indeterminate, disabled, highlight, sizes, and colors) for data-table rows and toolbars.",
       render: () => (
         <div class="flex flex-col gap-6">
           <div class="flex flex-wrap items-center gap-6 p-4 rounded-xl border border-default bg-elevated/20">
             <div class="flex items-center gap-2">
-              <span class="text-xs text-muted">Unchecked:</span>
-              <RLCheckbox aria-label="Unchecked bare" />
+              <span class="text-xs text-muted">{"Unchecked:"}</span>
+              <RLCheckbox aria-label={"Unchecked bare"} />
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-muted">Checked:</span>
-              <RLCheckbox defaultValue aria-label="Checked bare" />
+              <span class="text-xs text-muted">{"Checked:"}</span>
+              <RLCheckbox defaultValue aria-label={"Checked bare"} />
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-muted">Indeterminate:</span>
-              <RLCheckbox defaultValue="indeterminate" aria-label="Indeterminate bare" />
+              <span class="text-xs text-muted">{"Indeterminate:"}</span>
+              <RLCheckbox defaultValue="indeterminate" aria-label={"Indeterminate bare"} />
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-muted">Highlighted:</span>
-              <RLCheckbox defaultValue highlight aria-label="Highlighted bare" />
+              <span class="text-xs text-muted">{"Highlighted:"}</span>
+              <RLCheckbox defaultValue highlight aria-label={"Highlighted bare"} />
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-muted">Disabled:</span>
-              <RLCheckbox disabled defaultValue aria-label="Disabled bare" />
+              <span class="text-xs text-muted">{"Disabled:"}</span>
+              <RLCheckbox disabled defaultValue aria-label={"Disabled bare"} />
             </div>
           </div>
 
           <div class="flex flex-wrap items-center gap-6 p-4 rounded-xl border border-default bg-elevated/10">
-            <span class="text-xs text-muted font-mono uppercase mr-2">Sizes:</span>
+            <span class="text-xs text-muted font-mono uppercase mr-2">{"Sizes:"}</span>
             <For each={SIZES}>
               {(s) => (
                 <div class="flex items-center gap-1.5">
@@ -278,7 +281,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
           </div>
 
           <div class="flex flex-wrap items-center gap-4 p-4 rounded-xl border border-default bg-elevated/10">
-            <span class="text-xs text-muted font-mono uppercase mr-2">Colors:</span>
+            <span class="text-xs text-muted font-mono uppercase mr-2">{"Colors"}</span>
             <For each={COLORS}>
               {(c) => (
                 <div class="flex items-center gap-1.5">
@@ -293,7 +296,9 @@ export const checkboxAudit: ComponentAuditDefinition = {
     },
     {
       id: "label-only-minimal",
-      title: "Label-Only Minimal Checkbox (No Description)",
+      get title() {
+        return t("app.text.label-only-minimal-checkbox-no-description");
+      },
       description:
         "Minimal checkboxes with text label only, inline children, and card variant without descriptions.",
       render: () => (
@@ -304,14 +309,16 @@ export const checkboxAudit: ComponentAuditDefinition = {
           <RLCheckbox highlight label="Highlighted focus ring" />
           <RLCheckbox variant="card" defaultValue label="Card variant (label only)" />
           <RLCheckbox>
-            <span class="font-medium text-highlighted">Inline JSX children</span>
+            <span class="font-medium text-highlighted">{"Inline JSX children"}</span>
           </RLCheckbox>
         </div>
       ),
     },
     {
       id: "states-and-modes",
-      title: "Interactive States & Description",
+      get title() {
+        return t("app.text.interactive-states-description");
+      },
       description:
         "Full layout with title and description across Unchecked, Checked, Indeterminate, Disabled, and Required states.",
       render: () => (
@@ -346,7 +353,9 @@ export const checkboxAudit: ComponentAuditDefinition = {
     },
     {
       id: "colors-matrix",
-      title: "Color Variants Matrix",
+      get title() {
+        return t("app.text.color-variants-matrix");
+      },
       description:
         "All built-in theme and semantic colors (primary, secondary, success, info, warning, error, commentary, ideation, source, neutral).",
       render: () => (
@@ -366,8 +375,12 @@ export const checkboxAudit: ComponentAuditDefinition = {
     },
     {
       id: "sizes-matrix",
-      title: "Size Scales",
-      description: "Extra Small (xs), Small (sm), Medium (md), Large (lg), and Extra Large (xl).",
+      get title() {
+        return t("app.text.size-scales");
+      },
+      get description() {
+        return t("app.text.extra-small-xs-small-sm-medium-md-large-lg-and-e");
+      },
       render: () => (
         <div class="space-y-4">
           <For each={SIZES}>
@@ -385,7 +398,9 @@ export const checkboxAudit: ComponentAuditDefinition = {
     },
     {
       id: "indicator-positions-and-card",
-      title: "Indicators & Card Variant",
+      get title() {
+        return t("app.text.indicators-card-variant");
+      },
       description:
         "Indicator start (default), indicator end, indicator hidden (icon above label), and card variant styling.",
       render: () => (
@@ -424,7 +439,9 @@ export const checkboxAudit: ComponentAuditDefinition = {
     },
     {
       id: "checkbox-group",
-      title: "CheckboxGroup (List, Card, Table)",
+      get title() {
+        return t("app.text.checkboxgroup-list-card-table");
+      },
       description:
         "Multi-select checkbox groups with array models, string/object items, horizontal/vertical layouts, and max selection limits.",
       render: () => {
@@ -432,9 +449,33 @@ export const checkboxAudit: ComponentAuditDefinition = {
         const [tableVal, setTableVal] = createSignal(["light"]);
 
         const themeItems = [
-          { label: "System", value: "system", description: "Matches device settings." },
-          { label: "Light", value: "light", description: "Always uses light theme." },
-          { label: "Dark", value: "dark", description: "Always uses dark theme." },
+          {
+            get label() {
+              return t("app.text.system");
+            },
+            value: "system",
+            get description() {
+              return t("app.text.matches-device-settings");
+            },
+          },
+          {
+            get label() {
+              return t("app.text.light");
+            },
+            value: "light",
+            get description() {
+              return t("app.text.always-uses-light-theme");
+            },
+          },
+          {
+            get label() {
+              return t("app.text.dark");
+            },
+            value: "dark",
+            get description() {
+              return t("app.text.always-uses-dark-theme");
+            },
+          },
         ];
 
         return (
@@ -469,8 +510,12 @@ export const checkboxAudit: ComponentAuditDefinition = {
     },
     {
       id: "slots-and-custom-ui",
-      title: "Slots & Custom UI Styling",
-      description: "Custom labelSlot, descriptionSlot, legendSlot, and slot-level class overrides.",
+      get title() {
+        return t("app.text.slots-custom-ui-styling");
+      },
+      get description() {
+        return t("app.text.custom-labelslot-descriptionslot-legendslot-and");
+      },
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLCheckbox
@@ -485,7 +530,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
               </span>
             )}
             descriptionSlot={
-              <span class="text-xs italic text-muted">Custom slot JSX description.</span>
+              <span class="text-xs italic text-muted">{"Custom slot JSX description."}</span>
             }
           />
 

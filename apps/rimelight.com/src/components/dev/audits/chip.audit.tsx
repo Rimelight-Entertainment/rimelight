@@ -4,6 +4,7 @@ import { RLChip } from "@rimelight/ui/components/chip/RLChip.tsx";
 import { RLAvatar } from "@rimelight/ui/components/avatar/RLAvatar.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
 const COLORS = AUDIT_COLORS;
@@ -24,7 +25,7 @@ export const ChipSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -43,7 +44,7 @@ export const ChipSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -62,7 +63,7 @@ export const ChipSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Position:</span>
+          <span class="text-muted mr-1">{t("app.text.position")}</span>
           <For each={POSITIONS}>
             {(p) => (
               <button
@@ -89,7 +90,7 @@ export const ChipSandbox = (): JSX.Element => {
               onChange={(e) => setInset(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Inset</span>
+            <span class="text-muted">{t("app.text.inset")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -99,7 +100,7 @@ export const ChipSandbox = (): JSX.Element => {
               onChange={(e) => setStandalone(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Standalone</span>
+            <span class="text-muted">{t("app.text.standalone")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -109,12 +110,12 @@ export const ChipSandbox = (): JSX.Element => {
               onChange={(e) => setShow(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Show</span>
+            <span class="text-muted">{t("app.text.show")}</span>
           </label>
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Wrapped Target:</span>
+          <span class="text-muted mr-1">{t("app.text.wrapped-target")}</span>
           <button
             type="button"
             onClick={() => setWrapperType("button")}
@@ -140,12 +141,12 @@ export const ChipSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Text:</span>
+          <span class="text-muted">{t("app.text.text")}</span>
           <input
             type="text"
             value={text()}
             onInput={(e) => setText(e.currentTarget.value)}
-            placeholder="e.g. 5 or 99+"
+            placeholder={t("app.text.e-g-5-or-99")}
             class="px-2 py-1 rounded bg-elevated border border-default text-highlighted text-xs w-24"
           />
           <button
@@ -180,9 +181,18 @@ export const ChipSandbox = (): JSX.Element => {
             text={text() || undefined}
           >
             {wrapperType() === "avatar" ? (
-              <RLAvatar src="https://github.com/benjamincanac.png" alt="Benjamin" size="lg" />
+              <RLAvatar
+                src="https://github.com/benjamincanac.png"
+                alt={t("app.text.benjamin")}
+                size="lg"
+              />
             ) : (
-              <RLButton icon="mail" color="neutral" variant="subtle" aria-label="Inbox" />
+              <RLButton
+                icon="mail"
+                color="neutral"
+                variant="subtle"
+                aria-label={t("app.text.inbox")}
+              />
             )}
           </RLChip>
         )}
@@ -203,7 +213,9 @@ export const chipAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "colors-and-variants",
-      title: "Colors & Palettes Matrix",
+      get title() {
+        return t("app.text.colors-palettes-matrix");
+      },
       description:
         "Indicators across all built-in semantic colors (primary, secondary, success, info, warning, error, neutral) and custom color ramps.",
       render: () => (
@@ -220,7 +232,9 @@ export const chipAudit: ComponentAuditDefinition = {
     },
     {
       id: "sizes",
-      title: "All Size Scales (3xs to 3xl)",
+      get title() {
+        return t("app.text.all-size-scales-3xs-to-3xl");
+      },
       description:
         "Size scale from 3xs (4px) to 3xl (12px) scaling dimensions and typography proportionally.",
       render: () => (
@@ -237,7 +251,9 @@ export const chipAudit: ComponentAuditDefinition = {
     },
     {
       id: "positions",
-      title: "Positions (All 4 Corners)",
+      get title() {
+        return t("app.text.positions-all-4-corners");
+      },
       description:
         "Indicator positioning at top-right (default), bottom-right, top-left, and bottom-left.",
       render: () => (
@@ -254,51 +270,62 @@ export const chipAudit: ComponentAuditDefinition = {
     },
     {
       id: "inset",
-      title: "Inset Mode for Rounded Elements",
+      get title() {
+        return t("app.text.inset-mode-for-rounded-elements");
+      },
       description:
         "Keeps the chip inside the component boundary for avatars and rounded shapes without negative translation.",
       render: () => (
         <div class="flex items-center gap-6 flex-wrap">
           <RLChip inset color="success" size="lg">
-            <RLAvatar src="https://github.com/benjamincanac.png" alt="User 1" size="lg" />
+            <RLAvatar src="https://github.com/benjamincanac.png" alt={"User 1"} size="lg" />
           </RLChip>
           <RLChip inset color="warning" position="bottom-right" size="lg">
-            <RLAvatar src="https://github.com/nuxt.png" alt="User 2" size="lg" />
+            <RLAvatar src="https://github.com/nuxt.png" alt={"User 2"} size="lg" />
           </RLChip>
           <RLChip inset color="error" position="bottom-left" size="lg">
-            <RLAvatar alt="Offline" size="lg" />
+            <RLAvatar alt={"Offline"} size="lg" />
           </RLChip>
           <RLChip inset color="neutral" position="top-left" size="lg">
-            <RLAvatar alt="Away" size="lg" />
+            <RLAvatar alt={"Away"} size="lg" />
           </RLChip>
         </div>
       ),
     },
     {
       id: "text-and-numbers",
-      title: "Text & Numeric Counters",
+      get title() {
+        return t("app.text.text-numeric-counters");
+      },
       description:
         "Display numeric badge counters or short text strings with automatic proportional expanding min-width.",
       render: () => (
         <div class="flex items-center gap-6 flex-wrap">
           <RLChip text={5} size="3xl" color="error">
-            <RLButton icon="mail" color="neutral" variant="subtle" aria-label="5 unread emails" />
+            <RLButton icon="mail" color="neutral" variant="subtle" aria-label={"5 unread emails"} />
           </RLChip>
           <RLChip text="99+" size="3xl" color="primary">
-            <RLButton icon="bell" color="neutral" variant="subtle" aria-label="99+ notifications" />
+            <RLButton
+              icon="bell"
+              color="neutral"
+              variant="subtle"
+              aria-label={"99+ notifications"}
+            />
           </RLChip>
           <RLChip text="NEW" size="3xl" color="success">
             <RLButton label="Messages" color="neutral" variant="outline" />
           </RLChip>
           <RLChip text="PRO" size="3xl" color="neutral">
-            <RLAvatar alt="Member" size="md" />
+            <RLAvatar alt={"Member"} size="md" />
           </RLChip>
         </div>
       ),
     },
     {
       id: "standalone",
-      title: "Standalone Inline Chips",
+      get title() {
+        return t("app.text.standalone-inline-chips");
+      },
       description:
         "Inline status indicators without wrapping a parent element (used in menus, command palettes, and tables).",
       render: () => (
@@ -323,8 +350,12 @@ export const chipAudit: ComponentAuditDefinition = {
     },
     {
       id: "visibility-control",
-      title: "Controlled Visibility (show prop)",
-      description: "Controls chip visibility dynamically while preserving wrapped children.",
+      get title() {
+        return t("app.text.controlled-visibility-show-prop");
+      },
+      get description() {
+        return t("app.text.controls-chip-visibility-dynamically-while-prese");
+      },
       render: () => (
         <div class="flex items-center gap-6 flex-wrap">
           <RLChip show={true} color="success">
@@ -338,12 +369,16 @@ export const chipAudit: ComponentAuditDefinition = {
     },
     {
       id: "polymorphic-as",
-      title: "Polymorphic Element (as prop)",
-      description: "Renders as custom HTML tag such as span or section.",
+      get title() {
+        return t("app.text.polymorphic-element-as-prop");
+      },
+      get description() {
+        return t("app.text.renders-as-custom-html-tag-such-as-span-or-secti");
+      },
       render: () => (
         <div class="flex items-center gap-4 flex-wrap">
           <RLChip as="span" color="primary">
-            <span>Inline Span Container</span>
+            <span>{"Inline Span Container"}</span>
           </RLChip>
         </div>
       ),

@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl", "fullscreen"] as const;
 
@@ -26,7 +27,7 @@ export const ModalSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Size Selection */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -54,7 +55,7 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setScrollable(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Scrollable</span>
+            <span class="text-muted">{t("app.text.scrollable")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -64,7 +65,7 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setFullscreen(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Fullscreen</span>
+            <span class="text-muted">{t("app.text.fullscreen")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -74,7 +75,7 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setOverlay(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Overlay</span>
+            <span class="text-muted">{t("app.text.overlay")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -94,7 +95,7 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setDismissible(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Dismissible</span>
+            <span class="text-muted">{t("app.text.dismissible")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -104,7 +105,7 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setHasHeader(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Header</span>
+            <span class="text-muted">{t("app.text.header")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -114,7 +115,7 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setHasFooter(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Footer</span>
+            <span class="text-muted">{t("app.text.footer")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -124,13 +125,13 @@ export const ModalSandbox = (): JSX.Element => {
               onChange={(e) => setHasClose(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Close Button</span>
+            <span class="text-muted">{t("app.text.close-button")}</span>
           </label>
         </div>
 
         {/* Text Inputs */}
         <div class="flex items-center gap-2">
-          <span class="text-muted">Title:</span>
+          <span class="text-muted">{t("app.text.title")}</span>
           <input
             type="text"
             value={title()}
@@ -139,7 +140,7 @@ export const ModalSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Desc:</span>
+          <span class="text-muted">{t("app.text.desc")}</span>
           <input
             type="text"
             value={description()}
@@ -211,7 +212,9 @@ export const modalAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "sizes-matrix",
-      title: "All Size Variants",
+      get title() {
+        return t("app.text.all-size-variants");
+      },
       description: "xs, sm, md, lg, xl, and fullscreen modal sizes.",
       render: () => {
         const [activeSize, setActiveSize] = createSignal<string | null>(null);
@@ -251,7 +254,9 @@ export const modalAudit: ComponentAuditDefinition = {
     },
     {
       id: "scrollable-content",
-      title: "Scrollable Overlay Mode",
+      get title() {
+        return t("app.text.scrollable-overlay-mode");
+      },
       description:
         "Long form content scrolling smoothly within the overlay container (scrollable=true).",
       render: () => {
@@ -265,7 +270,7 @@ export const modalAudit: ComponentAuditDefinition = {
               open={open()}
               onOpenChange={setOpen}
               scrollable
-              title="Terms of Service & Privacy Policy"
+              title={"Terms of Service & Privacy Policy"}
               description="Please review all sections carefully."
               footer={() => (
                 <div class="flex justify-end gap-2 w-full">
@@ -301,7 +306,9 @@ export const modalAudit: ComponentAuditDefinition = {
     },
     {
       id: "nested-and-slots",
-      title: "Slots, Header Actions & Nested Modals",
+      get title() {
+        return t("app.text.slots-header-actions-nested-modals");
+      },
       description:
         "Demonstrating titleSlot, descriptionSlot, actions, footerSlot, and nested modal workflows.",
       render: () => {
@@ -309,14 +316,14 @@ export const modalAudit: ComponentAuditDefinition = {
         const [secondOpen, setSecondOpen] = createSignal(false);
         return (
           <div>
-            <RLButton onClick={() => setFirstOpen(true)}>Launch Multi-Step Modal</RLButton>
+            <RLButton onClick={() => setFirstOpen(true)}>{"Launch Multi-Step Modal"}</RLButton>
 
             <RLModal
               open={firstOpen()}
               onOpenChange={setFirstOpen}
-              titleSlot={<span class="text-primary font-bold">Step 1: Configuration</span>}
+              titleSlot={<span class="text-primary font-bold">{"Step 1: Configuration"}</span>}
               descriptionSlot={
-                <span class="text-xs italic text-muted">Primary settings stage</span>
+                <span class="text-xs italic text-muted">{"Primary settings stage"}</span>
               }
               actions={
                 <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-mono">
@@ -341,7 +348,7 @@ export const modalAudit: ComponentAuditDefinition = {
               <RLModal
                 open={secondOpen()}
                 onOpenChange={setSecondOpen}
-                title="Step 2: Confirmation"
+                title={"Step 2: Confirmation"}
                 description="Review summary before final deployment."
                 footer={() => (
                   <div class="flex justify-end gap-2 w-full">
@@ -373,8 +380,12 @@ export const modalAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-styling-ui",
-      title: "Custom UI Slot Overrides",
-      description: "Custom borders, blur levels, and layout overrides via the `ui` prop.",
+      get title() {
+        return t("app.text.custom-ui-slot-overrides");
+      },
+      get description() {
+        return t("app.text.custom-borders-blur-levels-and-layout-overrides");
+      },
       render: () => {
         const [open, setOpen] = createSignal(false);
         return (
@@ -385,7 +396,7 @@ export const modalAudit: ComponentAuditDefinition = {
             <RLModal
               open={open()}
               onOpenChange={setOpen}
-              title="Custom Styled Modal"
+              title={"Custom Styled Modal"}
               description="Enhanced styling overrides on all dialog slots."
               ui={{
                 overlay: "bg-black/80 backdrop-blur-md",

@@ -1,30 +1,31 @@
 import type { Component } from "solid-js";
 import { getLocaleUrl } from "@rimelight/i18n";
+import { t } from "@rimelight/i18n";
 
 export const GuidesSidebar: Component = () => {
   const sections = [
     {
-      label: "Guides Explorer",
-      items: [{ label: "Featured Guides", to: "/franchises/grand-tale/guides" }],
+      label: t("app.text.guides-explorer"),
+      items: [{ label: t("app.text.featured-guides"), to: "/franchises/grand-tale/guides" }],
     },
     {
-      label: "Categories",
+      label: t("app.text.categories"),
       items: [
-        { label: "New Players", to: "/franchises/grand-tale/guides/getting-started" },
-        { label: "Hero Builds", to: "/franchises/grand-tale/guides/builds" },
-        { label: "Endgame Content", to: "/franchises/grand-tale/guides/endgame" },
-        { label: "Resources & Crafting", to: "/franchises/grand-tale/guides/crafting" },
+        { label: t("app.text.new-players"), to: "/franchises/grand-tale/guides/getting-started" },
+        { label: t("app.text.hero-builds"), to: "/franchises/grand-tale/guides/builds" },
+        { label: t("app.text.endgame-content"), to: "/franchises/grand-tale/guides/endgame" },
+        { label: t("app.text.resources-crafting"), to: "/franchises/grand-tale/guides/crafting" },
       ],
     },
     {
-      label: "Media",
-      items: [{ label: "Video Guides", to: "/franchises/grand-tale/guides/videos" }],
+      label: t("app.text.media"),
+      items: [{ label: t("app.text.video-guides"), to: "/franchises/grand-tale/guides/videos" }],
     },
     {
-      label: "Tools",
+      label: t("app.text.tools"),
       items: [
-        { label: "Build Planners", to: "/franchises/grand-tale/guides/build-planners" },
-        { label: "Calculators", to: "/franchises/grand-tale/guides/calculators" },
+        { label: t("app.text.build-planners"), to: "/franchises/grand-tale/guides/build-planners" },
+        { label: t("app.text.calculators"), to: "/franchises/grand-tale/guides/calculators" },
       ],
     },
   ];

@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCallout } from "@rimelight/ui/components/callout/RLCallout.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const COLORS = AUDIT_COLORS;
 
@@ -26,7 +27,7 @@ export const CalloutSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Colors */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -46,7 +47,7 @@ export const CalloutSandbox = (): JSX.Element => {
 
         {/* Variants */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -66,7 +67,7 @@ export const CalloutSandbox = (): JSX.Element => {
 
         {/* Orientation */}
         <div class="flex items-center gap-1.5">
-          <span class="text-muted mr-1">Orientation:</span>
+          <span class="text-muted mr-1">{t("app.text.orientation")}</span>
           <button
             type="button"
             onClick={() => setOrientation("vertical")}
@@ -101,7 +102,7 @@ export const CalloutSandbox = (): JSX.Element => {
               onChange={(e) => setHasIcon(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Icon</span>
+            <span class="text-muted">{t("app.text.icon")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -111,7 +112,7 @@ export const CalloutSandbox = (): JSX.Element => {
               onChange={(e) => setHasAvatar(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Avatar</span>
+            <span class="text-muted">{t("app.text.avatar")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -121,7 +122,7 @@ export const CalloutSandbox = (): JSX.Element => {
               onChange={(e) => setHasActions(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Actions</span>
+            <span class="text-muted">{t("app.text.actions")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -131,13 +132,13 @@ export const CalloutSandbox = (): JSX.Element => {
               onChange={(e) => setIsClosable(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Close Button</span>
+            <span class="text-muted">{t("app.text.close-button")}</span>
           </label>
         </div>
 
         {/* Title & Description inputs */}
         <div class="flex items-center gap-2">
-          <span class="text-muted">Title:</span>
+          <span class="text-muted">{t("app.text.title")}</span>
           <input
             type="text"
             value={title()}
@@ -146,7 +147,7 @@ export const CalloutSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Desc:</span>
+          <span class="text-muted">{t("app.text.desc")}</span>
           <input
             type="text"
             value={description()}
@@ -168,7 +169,10 @@ export const CalloutSandbox = (): JSX.Element => {
         close={isClosable()}
         actions={
           hasActions()
-            ? [{ label: "Action 1" }, { label: "Action 2", color: "neutral", variant: "subtle" }]
+            ? [
+                { label: t("app.text.action-1") },
+                { label: t("app.text.action-2"), color: "neutral", variant: "subtle" },
+              ]
             : undefined
         }
       />
@@ -188,7 +192,9 @@ export const calloutAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "colors-matrix",
-      title: "All Color Variants",
+      get title() {
+        return t("app.text.all-color-variants");
+      },
       description:
         "All visual colors (primary, secondary, success, info, warning, error, neutral) with consistent theme token resolution and crisp white contrast on solid variant.",
       render: () => (
@@ -211,8 +217,12 @@ export const calloutAudit: ComponentAuditDefinition = {
     },
     {
       id: "variants-matrix",
-      title: "All Visual Variants",
-      description: "Solid, outline, soft, and subtle variants across brand and neutral colors.",
+      get title() {
+        return t("app.text.all-visual-variants");
+      },
+      get description() {
+        return t("app.text.solid-outline-soft-and-subtle-variants-across-br");
+      },
       render: () => (
         <div class="flex flex-col gap-3">
           <For each={VARIANTS}>
@@ -244,7 +254,9 @@ export const calloutAudit: ComponentAuditDefinition = {
     },
     {
       id: "orientations-and-actions",
-      title: "Vertical & Horizontal Orientations with Actions",
+      get title() {
+        return t("app.text.vertical-horizontal-orientations-with-actions");
+      },
       description:
         "In vertical mode actions are placed below description; in horizontal mode actions are aligned alongside content and the close button.",
       render: () => (
@@ -253,11 +265,22 @@ export const calloutAudit: ComponentAuditDefinition = {
             orientation="vertical"
             color="info"
             icon="rocket"
-            title="Vertical Orientation with Action Buttons"
+            title={"Vertical Orientation with Action Buttons"}
             description="Actions render stacked underneath description with size='xs' buttons."
             actions={[
-              { label: "Accept", color: "info" },
-              { label: "Dismiss", color: "neutral", variant: "subtle" },
+              {
+                get label() {
+                  return t("app.text.accept");
+                },
+                color: "info",
+              },
+              {
+                get label() {
+                  return t("app.text.dismiss");
+                },
+                color: "neutral",
+                variant: "subtle",
+              },
             ]}
             close
           />
@@ -266,11 +289,21 @@ export const calloutAudit: ComponentAuditDefinition = {
             color="neutral"
             variant="outline"
             icon="info"
-            title="Horizontal Orientation"
+            title={"Horizontal Orientation"}
             description="Actions and close button align horizontally beside the message content."
             actions={[
-              { label: "Action 1" },
-              { label: "Action 2", color: "neutral", variant: "subtle" },
+              {
+                get label() {
+                  return t("app.text.action-1");
+                },
+              },
+              {
+                get label() {
+                  return t("app.text.action-2");
+                },
+                color: "neutral",
+                variant: "subtle",
+              },
             ]}
             close
           />
@@ -279,7 +312,9 @@ export const calloutAudit: ComponentAuditDefinition = {
     },
     {
       id: "avatar-and-icons",
-      title: "Avatar & Icon Support",
+      get title() {
+        return t("app.text.avatar-icon-support");
+      },
       description:
         "Demonstrating leading icon, leading avatar from string or object, and custom slot overrides.",
       render: () => (
@@ -287,14 +322,14 @@ export const calloutAudit: ComponentAuditDefinition = {
           <RLCallout
             icon="terminal"
             color="secondary"
-            title="Icon-based Callout"
+            title={"Icon-based Callout"}
             description="Uses standard RLIcon resolution with aria-hidden for accessibility."
           />
           <RLCallout
             avatar={{ src: "https://github.com/nuxt.png", alt: "Nuxt Logo" }}
             color="success"
             variant="subtle"
-            title="Avatar-based Callout"
+            title={"Avatar-based Callout"}
             description="Uses RLAvatar with 2xl size and alt text."
             close
           />
@@ -306,7 +341,7 @@ export const calloutAudit: ComponentAuditDefinition = {
             }
             color="warning"
             variant="outline"
-            title="Custom Leading Slot"
+            title={"Custom Leading Slot"}
             description="Leading slot replaces both icon and avatar slots."
             close
           />
@@ -315,7 +350,9 @@ export const calloutAudit: ComponentAuditDefinition = {
     },
     {
       id: "dismissible-and-close-customization",
-      title: "Dismissible & Close Button Customization",
+      get title() {
+        return t("app.text.dismissible-close-button-customization");
+      },
       description:
         "Dismissible callout with custom close icon, custom ButtonProps (e.g. rounded-full), and closeSlot.",
       render: () => (
@@ -323,14 +360,14 @@ export const calloutAudit: ComponentAuditDefinition = {
           <RLCallout
             color="neutral"
             variant="outline"
-            title="Default Close Button"
+            title={"Default Close Button"}
             description="Click the close button to dismiss this callout."
             close
           />
           <RLCallout
             color="primary"
             variant="subtle"
-            title="Customized Close Button"
+            title={"Customized Close Button"}
             description="Customized with closeIcon='arrow-right' and custom button styling."
             close={{
               color: "primary",
@@ -344,7 +381,9 @@ export const calloutAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-slots",
-      title: "Custom Slots Parity",
+      get title() {
+        return t("app.text.custom-slots-parity");
+      },
       description:
         "Slots (leading, titleSlot, descriptionSlot, actionsSlot, closeSlot) allow full template customization.",
       render: () => (
@@ -354,12 +393,12 @@ export const calloutAudit: ComponentAuditDefinition = {
           leading={<span aria-hidden="true">🌟</span>}
           titleSlot={
             <span>
-              Custom <strong>titleSlot</strong> formatting
+              Custom <strong>{"titleSlot"}</strong> formatting
             </span>
           }
           descriptionSlot={
             <span>
-              Custom <em>descriptionSlot</em> with rich HTML content and styling.
+              Custom <em>{"descriptionSlot"}</em> with rich HTML content and styling.
             </span>
           }
           actionsSlot={

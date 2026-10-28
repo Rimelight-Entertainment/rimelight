@@ -2,6 +2,7 @@ import { createSignal, For, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLRouteAnnouncer, type RLRouteAnnouncerProgressSize } from "@rimelight/ui";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES: RLRouteAnnouncerProgressSize[] = ["xs", "sm", "md", "lg"];
 const COLORS = AUDIT_COLORS;
@@ -29,7 +30,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
         {/* Announcer Controls */}
         <div class="flex items-center gap-3 flex-wrap">
           <label class="flex items-center gap-2">
-            <span class="text-muted font-medium">Custom Prefix:</span>
+            <span class="text-muted font-medium">{t("app.text.custom-prefix")}</span>
             <input
               type="text"
               value={prefix()}
@@ -41,7 +42,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
 
         {/* Quick Nav Simulation Buttons */}
         <div class="flex flex-col gap-2">
-          <span class="text-muted font-medium">Simulate Navigation:</span>
+          <span class="text-muted font-medium">{t("app.text.simulate-navigation")}</span>
           <div class="flex items-center gap-2 flex-wrap">
             <button
               type="button"
@@ -80,7 +81,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
                 onChange={(e) => setProgressEnabled(e.currentTarget.checked)}
                 class="rounded border-default"
               />
-              <span class="text-muted font-medium">Enable Visual Progress Bar</span>
+              <span class="text-muted font-medium">{t("app.text.enable-visual-progress-bar")}</span>
             </label>
 
             <Show when={progressEnabled()}>
@@ -101,7 +102,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
           <Show when={progressEnabled()}>
             {/* Colors */}
             <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-muted font-medium mr-1">Progress Color:</span>
+              <span class="text-muted font-medium mr-1">{t("app.text.progress-color")}</span>
               <For each={COLORS}>
                 {(c) => (
                   <button
@@ -121,7 +122,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
 
             {/* Sizes */}
             <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-muted font-medium mr-1">Progress Size:</span>
+              <span class="text-muted font-medium mr-1">{t("app.text.progress-size")}</span>
               <For each={SIZES}>
                 {(s) => (
                   <button
@@ -178,7 +179,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
             <Show when={isSimulatedRouting()}>
               <div
                 role="progressbar"
-                aria-label="Simulated loading"
+                aria-label={t("app.text.simulated-loading")}
                 class={`w-full overflow-hidden ${
                   selectedSize() === "xs"
                     ? "h-0.5"
@@ -231,19 +232,29 @@ export const routeAnnouncerAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "unified-default",
-      title: "Default Navigation Feedback",
-      description: "Screen reader live announcements enabled with default top loading indicator.",
+      get title() {
+        return t("app.text.default-navigation-feedback");
+      },
+      get description() {
+        return t("app.text.screen-reader-live-announcements-enabled-with-de");
+      },
       render: () => (
         <div class="p-4 rounded border border-default bg-elevated/20 text-xs">
           <RLRouteAnnouncer />
-          <p class="text-muted">Mounted with default settings. aria-live is polite and atomic.</p>
+          <p class="text-muted">
+            {"Mounted with default settings. aria-live is polite and atomic."}
+          </p>
         </div>
       ),
     },
     {
       id: "announcer-only",
-      title: "Announcer Only (Headless)",
-      description: "Visual progress bar disabled via progress={false}.",
+      get title() {
+        return t("app.text.announcer-only-headless");
+      },
+      get description() {
+        return t("app.text.visual-progress-bar-disabled-via-progress-false");
+      },
       render: () => (
         <div class="p-4 rounded border border-default bg-elevated/20 text-xs">
           <RLRouteAnnouncer progress={false} />
@@ -253,7 +264,9 @@ export const routeAnnouncerAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-styling",
-      title: "Configured Progress Color & Size",
+      get title() {
+        return t("app.text.configured-progress-color-size");
+      },
       description:
         "Supports discrete semantic sizes (xs to lg) and all design system theme colors.",
       render: () => (

@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCalendar } from "@rimelight/ui/components/calendar/RLCalendar.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const COLORS = AUDIT_COLORS;
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
@@ -34,7 +35,7 @@ export const CalendarSandbox = (): JSX.Element => {
     <div class="flex flex-col gap-6">
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button type="button" onClick={() => setColor(c)} class={chip(color() === c)}>
@@ -44,7 +45,7 @@ export const CalendarSandbox = (): JSX.Element => {
           </For>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button type="button" onClick={() => setVariant(v)} class={chip(variant() === v)}>
@@ -54,7 +55,7 @@ export const CalendarSandbox = (): JSX.Element => {
           </For>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button type="button" onClick={() => setSize(s)} class={chip(size() === s)}>
@@ -64,7 +65,7 @@ export const CalendarSandbox = (): JSX.Element => {
           </For>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Type:</span>
+          <span class="text-muted mr-1">{t("app.text.type-ee3f")}</span>
           <For each={["date", "month", "year"] as const}>
             {(t) => (
               <button type="button" onClick={() => setType(t)} class={chip(type() === t)}>
@@ -74,7 +75,7 @@ export const CalendarSandbox = (): JSX.Element => {
           </For>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Mode:</span>
+          <span class="text-muted mr-1">{t("app.text.mode")}</span>
           <For each={["single", "multiple", "range"] as const}>
             {(m) => (
               <button
@@ -98,7 +99,7 @@ export const CalendarSandbox = (): JSX.Element => {
               onInput={(e) => setWeekNumbers(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Week numbers</span>
+            <span class="text-muted">{t("app.text.week-numbers")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -107,7 +108,7 @@ export const CalendarSandbox = (): JSX.Element => {
               onInput={(e) => setDisabled(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Disabled</span>
+            <span class="text-muted">{t("app.text.disabled")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -116,7 +117,7 @@ export const CalendarSandbox = (): JSX.Element => {
               onInput={(e) => setReadonly(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Readonly</span>
+            <span class="text-muted">{t("app.text.readonly")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -125,7 +126,7 @@ export const CalendarSandbox = (): JSX.Element => {
               onInput={(e) => setFixedWeeks(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">fixedWeeks</span>
+            <span class="text-muted">{t("app.text.fixedweeks")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -182,7 +183,9 @@ export const calendarAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "single-selection",
-      title: "Single Date Selection",
+      get title() {
+        return t("app.text.single-date-selection");
+      },
       description:
         "Default single selection with a controlled value, today marker, roving tabindex and per-day full-date aria-labels.",
       render: () => (
@@ -191,7 +194,9 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "multiple-selection",
-      title: "Multiple Date Selection",
+      get title() {
+        return t("app.text.multiple-date-selection");
+      },
       description: "`multiple` toggles membership of each clicked day independently.",
       render: () => (
         <RLCalendar
@@ -203,7 +208,9 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "range-selection",
-      title: "Range Date Selection",
+      get title() {
+        return t("app.text.range-date-selection");
+      },
       description:
         "`range` selects start on first click, end on second (out-of-order clicks swap), and restarts when both are set.",
       render: () => (
@@ -216,7 +223,9 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "month-year-views",
-      title: "Month & Year Picker Views",
+      get title() {
+        return t("app.text.month-year-picker-views");
+      },
       description:
         "`type='month'` renders a 12-cell month grid, `type='year'` a decade-aligned 12-year grid; both omit the weekday header and cycle navigation labels to Previous/Next year.",
       render: () => (
@@ -228,27 +237,35 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "view-switching",
-      title: "View Switching (day → month → year)",
+      get title() {
+        return t("app.text.view-switching-day-month-year");
+      },
       description:
         "The heading renders a button that cycles views down to the type's minimum view and wraps back.",
       render: () => <RLCalendar defaultPlaceholder={FEB} defaultValue={d(2022, 1, 17)} />,
     },
     {
       id: "week-numbers",
-      title: "Week Numbers Column",
+      get title() {
+        return t("app.text.week-numbers-column");
+      },
       description:
         "`weekNumbers` adds a leading week-number cell per row and widens the grid to 8 columns.",
       render: () => <RLCalendar weekNumbers defaultPlaceholder={FEB} />,
     },
     {
       id: "multi-month",
-      title: "Multiple Months (numberOfMonths)",
+      get title() {
+        return t("app.text.multiple-months-numberofmonths");
+      },
       description: "`numberOfMonths=2` renders two side-by-side month grids sharing one heading.",
       render: () => <RLCalendar numberOfMonths={2} defaultPlaceholder={FEB} />,
     },
     {
       id: "disabled-dates",
-      title: "Disabled / Unavailable / Min-Max Dates",
+      get title() {
+        return t("app.text.disabled-unavailable-min-max-dates");
+      },
       description:
         "`isDateDisabled`, `isDateUnavailable`, `minValue` and `maxValue` mark cells with data-disabled / data-unavailable and block selection; nav buttons clamp at min/max.",
       render: () => (
@@ -263,7 +280,9 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "disabled-readonly",
-      title: "Disabled & Readonly States",
+      get title() {
+        return t("app.text.disabled-readonly-states");
+      },
       description:
         "Root carries data-disabled/data-readonly, all day cells become aria-disabled, navigation buttons are disabled.",
       render: () => (
@@ -275,8 +294,12 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "color-variant-matrix",
-      title: "Color × Variant Matrix",
-      description: "All 7 colors with the 4 variants driving the day-cell state styling.",
+      get title() {
+        return t("app.text.color-variant-matrix-857a");
+      },
+      get description() {
+        return t("app.text.all-7-colors-with-the-4-variants-driving-the-day");
+      },
       render: () => (
         <div class="flex flex-col gap-6">
           <For each={VARIANTS}>
@@ -306,8 +329,12 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "sizes",
-      title: "Sizes (xs – xl)",
-      description: "Size drives heading label, head cells and day-cell dimensions.",
+      get title() {
+        return t("app.text.sizes-xs-xl");
+      },
+      get description() {
+        return t("app.text.size-drives-heading-label-head-cells-and-day-cel");
+      },
       render: () => (
         <div class="flex flex-wrap gap-6">
           <For each={SIZES}>
@@ -323,14 +350,16 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-slots",
-      title: "Custom Slots (heading, day, weekDay, monthCell, yearCell)",
+      get title() {
+        return t("app.text.custom-slots-heading-day-weekday-monthcell-yearc");
+      },
       description:
         "Render-prop slots replace their default content: headingSlot the heading, daySlot the day number, weekDaySlot the weekday header, monthCellSlot/yearCellSlot the picker cells.",
       render: () => (
         <div class="flex flex-wrap gap-8">
           <RLCalendar
             defaultPlaceholder={FEB}
-            headingSlot={() => <span class="text-success font-bold">CUSTOM HEADING</span>}
+            headingSlot={() => <span class="text-success font-bold">{"CUSTOM HEADING"}</span>}
             weekDaySlot={(ctx) => (
               <span class="text-primary">{ctx.day.slice(0, 2).toUpperCase()}</span>
             )}
@@ -352,7 +381,9 @@ export const calendarAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-label",
-      title: "Custom Calendar Label (aria-label)",
+      get title() {
+        return t("app.text.custom-calendar-label-aria-label");
+      },
       description:
         "`calendarLabel` prefixes the root aria-label: `<label>, <heading>` (Nuxt UI omits this prop; Rimelight addition).",
       render: () => <RLCalendar calendarLabel="Appointment Date" defaultPlaceholder={FEB} />,
@@ -360,7 +391,9 @@ export const calendarAudit: ComponentAuditDefinition = {
     {
       id: "ui-overrides",
       title: "ui Prop Overrides",
-      description: "Per-slot class overrides through the `ui` prop merge.",
+      get description() {
+        return t("app.text.per-slot-class-overrides-through-the-ui-prop-mer");
+      },
       render: () => (
         <RLCalendar
           defaultPlaceholder={FEB}

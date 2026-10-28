@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLConfirm } from "@rimelight/ui/components/confirm/RLConfirm.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const VARIANTS = ["default", "destructive"] as const;
 
@@ -23,7 +24,7 @@ export const ConfirmSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Variant Selection */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -43,7 +44,7 @@ export const ConfirmSandbox = (): JSX.Element => {
 
         {/* Text Inputs */}
         <div class="flex items-center gap-2">
-          <span class="text-muted">Title:</span>
+          <span class="text-muted">{t("app.text.title")}</span>
           <input
             type="text"
             value={title()}
@@ -52,7 +53,7 @@ export const ConfirmSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Desc:</span>
+          <span class="text-muted">{t("app.text.desc")}</span>
           <input
             type="text"
             value={description()}
@@ -61,7 +62,7 @@ export const ConfirmSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Action:</span>
+          <span class="text-muted">{t("app.text.action")}</span>
           <input
             type="text"
             value={actionLabel()}
@@ -70,7 +71,7 @@ export const ConfirmSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Cancel:</span>
+          <span class="text-muted">{t("app.text.cancel")}</span>
           <input
             type="text"
             value={cancelLabel()}
@@ -128,7 +129,9 @@ export const confirmAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "variants-matrix",
-      title: "Confirmation Variants (Default & Destructive)",
+      get title() {
+        return t("app.text.confirmation-variants-default-destructive");
+      },
       description:
         "Standard confirmation with primary CTA and destructive confirmation with error styled CTA.",
       render: () => {
@@ -143,7 +146,7 @@ export const confirmAudit: ComponentAuditDefinition = {
               open={defaultOpen()}
               onOpenChange={setDefaultOpen}
               variant="default"
-              title="Publish Changes?"
+              title={"Publish Changes?"}
               description="Your drafted changes will immediately go live to all visitors."
               actionLabel="Publish Now"
               onConfirm={() => setDefaultOpen(false)}
@@ -157,7 +160,7 @@ export const confirmAudit: ComponentAuditDefinition = {
               open={destructOpen()}
               onOpenChange={setDestructOpen}
               variant="destructive"
-              title="Delete Repository?"
+              title={"Delete Repository?"}
               description="This will immediately and irreversibly delete the repository and all branches."
               actionLabel="Delete Repository"
               onConfirm={() => setDestructOpen(false)}
@@ -169,8 +172,12 @@ export const confirmAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-slots-and-labels",
-      title: "Custom Slots & Layout",
-      description: "Custom titleSlot, descriptionSlot, and triggerLabel.",
+      get title() {
+        return t("app.text.custom-slots-layout");
+      },
+      get description() {
+        return t("app.text.custom-titleslot-descriptionslot-and-triggerlabe");
+      },
       render: () => {
         const [open, setOpen] = createSignal(false);
         return (
@@ -179,7 +186,9 @@ export const confirmAudit: ComponentAuditDefinition = {
               open={open()}
               onOpenChange={setOpen}
               triggerLabel="Confirm with Custom Slots"
-              titleSlot={<span class="text-error-500 font-bold">⚠️ Warning: Sensitive Action</span>}
+              titleSlot={
+                <span class="text-error-500 font-bold">{"⚠️ Warning: Sensitive Action"}</span>
+              }
               descriptionSlot={
                 <span class="text-xs text-muted">
                   Custom formatted notice regarding your data export request.

@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLCarousel } from "@rimelight/ui/components/carousel/RLCarousel.tsx";
 import type { RLCarouselHandle } from "@rimelight/ui/components/carousel/carousel.types.ts";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SAMPLE_ITEMS: string[] = [
   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
@@ -31,7 +32,7 @@ export const CarouselSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Orientation */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Orientation:</span>
+          <span class="text-muted mr-1">{t("app.text.orientation")}</span>
           <button
             type="button"
             onClick={() => setOrientation("horizontal")}
@@ -58,7 +59,7 @@ export const CarouselSandbox = (): JSX.Element => {
 
         {/* Controls Placement */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Controls:</span>
+          <span class="text-muted mr-1">{t("app.text.controls")}</span>
           <button
             type="button"
             onClick={() => setControls("inside")}
@@ -93,7 +94,7 @@ export const CarouselSandbox = (): JSX.Element => {
               onChange={(e) => setArrows(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Arrows</span>
+            <span class="text-muted">{t("app.text.arrows")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -103,7 +104,7 @@ export const CarouselSandbox = (): JSX.Element => {
               onChange={(e) => setDots(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Dots</span>
+            <span class="text-muted">{t("app.text.dots-4b44")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -113,7 +114,7 @@ export const CarouselSandbox = (): JSX.Element => {
               onChange={(e) => setLoop(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Loop</span>
+            <span class="text-muted">{t("app.text.loop")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -123,7 +124,7 @@ export const CarouselSandbox = (): JSX.Element => {
               onChange={(e) => setAutoplay(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Autoplay</span>
+            <span class="text-muted">{t("app.text.autoplay")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -133,13 +134,13 @@ export const CarouselSandbox = (): JSX.Element => {
               onChange={(e) => setFade(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Fade</span>
+            <span class="text-muted">{t("app.text.fade")}</span>
           </label>
         </div>
 
         {/* Items count */}
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Items:</span>
+          <span class="text-muted">{t("app.text.items")}</span>
           <For each={[3, 4, 5, 6]}>
             {(n) => (
               <button
@@ -175,7 +176,7 @@ export const CarouselSandbox = (): JSX.Element => {
           {({ item }: { item: string }) => (
             <img
               src={item}
-              alt="Slide"
+              alt={t("app.text.slide")}
               width="320"
               height="320"
               class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -203,7 +204,7 @@ export const ThumbnailsScenario = (): JSX.Element => {
         {({ item }: { item: string }) => (
           <img
             src={item}
-            alt="Product visual"
+            alt={t("app.text.product-visual")}
             width="320"
             height="320"
             class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -247,15 +248,19 @@ export const carouselAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "basic-items",
-      title: "Basic Items Carousel",
-      description: "Simple image carousel rendering an array of items via scoped slot function.",
+      get title() {
+        return t("app.text.basic-items-carousel");
+      },
+      get description() {
+        return t("app.text.simple-image-carousel-rendering-an-array-of-item");
+      },
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)}>
             {({ item }: { item: string }) => (
               <img
                 src={item}
-                alt="Item"
+                alt={"Item"}
                 width="320"
                 height="320"
                 class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -267,15 +272,19 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "arrows-and-dots",
-      title: "Arrows & Dots Navigation",
-      description: "Carousel with customized prev/next buttons and pagination dots.",
+      get title() {
+        return t("app.text.arrows-dots-navigation");
+      },
+      get description() {
+        return t("app.text.carousel-with-customized-prev-next-buttons-and-p");
+      },
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows dots>
             {({ item }: { item: string }) => (
               <img
                 src={item}
-                alt="Item"
+                alt={"Item"}
                 width="320"
                 height="320"
                 class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -287,15 +296,19 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "controls-inside",
-      title: "Controls Inside Viewport",
-      description: "Arrows and pagination dots positioned inside the carousel slide bounds.",
+      get title() {
+        return t("app.text.controls-inside-viewport");
+      },
+      get description() {
+        return t("app.text.arrows-and-pagination-dots-positioned-inside-the");
+      },
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows dots controls="inside">
             {({ item }: { item: string }) => (
               <img
                 src={item}
-                alt="Inside Controls Item"
+                alt={"Inside Controls Item"}
                 width="320"
                 height="320"
                 class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -307,8 +320,12 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "multi-items-basis",
-      title: "Multiple Items in View (Basis)",
-      description: "Displaying 3 items simultaneously using `basis-1/3` on item slot.",
+      get title() {
+        return t("app.text.multiple-items-in-view-basis");
+      },
+      get description() {
+        return t("app.text.displaying-3-items-simultaneously-using-basis-1");
+      },
       render: () => (
         <RLCarousel
           items={SAMPLE_ITEMS}
@@ -321,7 +338,7 @@ export const carouselAudit: ComponentAuditDefinition = {
           {({ item }: { item: string }) => (
             <img
               src={item}
-              alt="Multi item"
+              alt={"Multi item"}
               width="200"
               height="200"
               class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -332,8 +349,12 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "vertical-orientation",
-      title: "Vertical Orientation",
-      description: "Vertical navigation with top/bottom arrows and vertical slide flow.",
+      get title() {
+        return t("app.text.vertical-orientation");
+      },
+      get description() {
+        return t("app.text.vertical-navigation-with-top-bottom-arrows-and-v");
+      },
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel
@@ -346,7 +367,7 @@ export const carouselAudit: ComponentAuditDefinition = {
             {({ item }: { item: string }) => (
               <img
                 src={item}
-                alt="Vertical item"
+                alt={"Vertical item"}
                 width="320"
                 height="320"
                 class="rounded-2xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -358,15 +379,19 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "fade-transition",
-      title: "Fade Transition Mode",
-      description: "Smooth crossfade between slides instead of translation.",
+      get title() {
+        return t("app.text.fade-transition-mode");
+      },
+      get description() {
+        return t("app.text.smooth-crossfade-between-slides-instead-of-trans");
+      },
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} fade arrows dots>
             {({ item }: { item: string }) => (
               <img
                 src={item}
-                alt="Fade item"
+                alt={"Fade item"}
                 width="320"
                 height="320"
                 class="rounded-2xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -378,8 +403,12 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "class-names-plugin",
-      title: "Class Names Plugin (Snapped Opacity)",
-      description: "Dynamically applies snap states for customized slide highlighting.",
+      get title() {
+        return t("app.text.class-names-plugin-snapped-opacity");
+      },
+      get description() {
+        return t("app.text.dynamically-applies-snap-states-for-customized-s");
+      },
       render: () => (
         <div class="max-w-md mx-auto">
           <RLCarousel
@@ -393,7 +422,7 @@ export const carouselAudit: ComponentAuditDefinition = {
             {({ item }: { item: string }) => (
               <img
                 src={item}
-                alt="Class names slide"
+                alt={"Class names slide"}
                 width="320"
                 height="320"
                 class="rounded-2xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -405,8 +434,12 @@ export const carouselAudit: ComponentAuditDefinition = {
     },
     {
       id: "programmatic-thumbnails",
-      title: "Programmatic Control & Thumbnails",
-      description: "Syncing external thumbnail buttons via the carousel ref handle.",
+      get title() {
+        return t("app.text.programmatic-control-thumbnails");
+      },
+      get description() {
+        return t("app.text.syncing-external-thumbnail-buttons-via-the-carou");
+      },
       render: () => <ThumbnailsScenario />,
     },
   ],

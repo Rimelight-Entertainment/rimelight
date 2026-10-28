@@ -4,6 +4,7 @@ import { RLCollapsible } from "@rimelight/ui/components/collapsible/RLCollapsibl
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 export const CollapsibleSandbox = (): JSX.Element => {
   const [isOpen, setIsOpen] = createSignal(false);
@@ -18,7 +19,7 @@ export const CollapsibleSandbox = (): JSX.Element => {
       {/* Controls Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-2">
-          <span class="text-muted">State:</span>
+          <span class="text-muted">{t("app.text.state")}</span>
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen())}
@@ -41,7 +42,7 @@ export const CollapsibleSandbox = (): JSX.Element => {
               onChange={(e) => setIsDisabled(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Disabled</span>
+            <span class="text-muted">{t("app.text.disabled")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -52,7 +53,7 @@ export const CollapsibleSandbox = (): JSX.Element => {
               onChange={(e) => setUnmountOnHide(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Unmount On Hide</span>
+            <span class="text-muted">{t("app.text.unmount-on-hide")}</span>
           </label>
         </div>
 
@@ -87,8 +88,8 @@ export const CollapsibleSandbox = (): JSX.Element => {
           class="flex flex-col gap-2 w-72"
           content={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
-              <p class="font-medium text-highlighted mb-1">Collapsible Content</p>
-              <p>This content toggles smoothly according to the open state.</p>
+              <p class="font-medium text-highlighted mb-1">{t("app.text.collapsible-content")}</p>
+              <p>{t("app.text.this-content-toggles-smoothly-according-to-the-o")}</p>
             </div>
           }
         >
@@ -113,14 +114,20 @@ export const collapsibleAudit: ComponentAuditDefinition = {
   name: "Collapsible",
   category: "Layout",
   status: "Auditing",
-  description: "A collapsible element to toggle visibility of its content.",
+  get description() {
+    return t("app.text.a-collapsible-element-to-toggle-visibility-of-it");
+  },
   importPath: "@rimelight/ui/components/collapsible/RLCollapsible.tsx",
   renderSandbox: () => <CollapsibleSandbox />,
   testScenarios: [
     {
       id: "basic",
-      title: "Basic Collapsible",
-      description: "Default collapsible with button trigger and content slot.",
+      get title() {
+        return t("app.text.basic-collapsible");
+      },
+      get description() {
+        return t("app.text.default-collapsible-with-button-trigger-and-cont");
+      },
       render: () => (
         <RLCollapsible
           class="flex flex-col gap-2 w-72"
@@ -136,7 +143,9 @@ export const collapsibleAudit: ComponentAuditDefinition = {
     },
     {
       id: "unmount-on-hide",
-      title: "Persistent Content (unmountOnHide: false)",
+      get title() {
+        return t("app.text.persistent-content-unmountonhide-false");
+      },
       description:
         "Content stays mounted in the DOM with hidden attribute when collapsed instead of unmounting.",
       render: () => (
@@ -155,8 +164,12 @@ export const collapsibleAudit: ComponentAuditDefinition = {
     },
     {
       id: "controlled-open",
-      title: "Controlled Open State & defaultOpen",
-      description: "Controls the open state programmatically with defaultOpen={true}.",
+      get title() {
+        return t("app.text.controlled-open-state-defaultopen");
+      },
+      get description() {
+        return t("app.text.controls-the-open-state-programmatically-with-de");
+      },
       render: () => {
         const [open, setOpen] = createSignal(true);
         return (
@@ -189,13 +202,19 @@ export const collapsibleAudit: ComponentAuditDefinition = {
     },
     {
       id: "disabled",
-      title: "Disabled Collapsible",
-      description: "Disabled collapsible prevents user interaction and applies disabled state.",
+      get title() {
+        return t("app.text.disabled-collapsible");
+      },
+      get description() {
+        return t("app.text.disabled-collapsible-prevents-user-interaction-a");
+      },
       render: () => (
         <RLCollapsible
           disabled
           class="flex flex-col gap-2 w-72"
-          content={<div class="p-4 rounded-lg bg-elevated/50 border border-default">Hidden</div>}
+          content={
+            <div class="p-4 rounded-lg bg-elevated/50 border border-default">{"Hidden"}</div>
+          }
         >
           <RLButton label="Disabled Collapsible" color="neutral" variant="subtle" disabled block />
         </RLCollapsible>
@@ -203,8 +222,12 @@ export const collapsibleAudit: ComponentAuditDefinition = {
     },
     {
       id: "rotating-icon",
-      title: "Rotating Indicator Icon",
-      description: "Collapsible trigger utilizing reactive open state to animate an icon.",
+      get title() {
+        return t("app.text.rotating-indicator-icon");
+      },
+      get description() {
+        return t("app.text.collapsible-trigger-utilizing-reactive-open-stat");
+      },
       render: () => (
         <RLCollapsible
           class="flex flex-col gap-2 w-72"
@@ -216,7 +239,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
         >
           {({ open }: { open: boolean }) => (
             <div class="flex items-center justify-between p-3 rounded-lg border border-default bg-elevated/50 cursor-pointer select-none">
-              <span class="text-sm font-medium text-highlighted">Expand Details</span>
+              <span class="text-sm font-medium text-highlighted">{"Expand Details"}</span>
               <RLIcon
                 name="chevronDown"
                 size="sm"
@@ -229,8 +252,12 @@ export const collapsibleAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-ui",
-      title: "Custom UI Slot Styling",
-      description: "Overriding styles for root, trigger, and content slots.",
+      get title() {
+        return t("app.text.custom-ui-slot-styling");
+      },
+      get description() {
+        return t("app.text.overriding-styles-for-root-trigger-and-content-s");
+      },
       render: () => (
         <RLCollapsible
           ui={{
@@ -238,7 +265,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
             trigger: "font-semibold text-primary",
             content: "mt-2 p-3 rounded-lg bg-elevated border border-primary/20 text-xs",
           }}
-          content={<div>Custom styled slot content</div>}
+          content={<div>{"Custom styled slot content"}</div>}
         >
           <RLButton label="Custom Styled Collapsible" color="primary" variant="soft" block />
         </RLCollapsible>
@@ -246,8 +273,12 @@ export const collapsibleAudit: ComponentAuditDefinition = {
     },
     {
       id: "polymorphic",
-      title: "Polymorphic Tag (as='section')",
-      description: "Renders root container as a semantic HTML section element.",
+      get title() {
+        return t("app.text.polymorphic-tag-as-section");
+      },
+      get description() {
+        return t("app.text.renders-root-container-as-a-semantic-html-sectio");
+      },
       render: () => (
         <RLCollapsible
           as="section"

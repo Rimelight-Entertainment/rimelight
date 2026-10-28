@@ -17,6 +17,7 @@ import {
   type PaymentItem,
 } from "./table-showcase-data";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 interface SimpleUser {
   id: number;
@@ -280,7 +281,7 @@ export const TableSandbox = (): JSX.Element => {
         const dropdownItems = [
           [
             {
-              label: "Copy ID",
+              label: t("app.text.copy-id"),
               icon: "copy",
               onSelect: () => navigator.clipboard.writeText(row.id),
             },
@@ -303,7 +304,7 @@ export const TableSandbox = (): JSX.Element => {
           ],
           [
             {
-              label: "Delete Payment",
+              label: t("app.text.delete-payment"),
               icon: "trash",
               color: "error" as const,
               onSelect: () => {
@@ -426,7 +427,7 @@ export const TableSandbox = (): JSX.Element => {
         </RLButton>
 
         <div class="flex items-center gap-2 ml-auto">
-          <span class="text-xs text-muted">Anim:</span>
+          <span class="text-xs text-muted">{t("app.text.anim")}</span>
           <select
             class="text-xs bg-muted/20 border border-default rounded px-2 py-1 text-toned"
             value={loadingAnimation()}
@@ -436,10 +437,10 @@ export const TableSandbox = (): JSX.Element => {
               )
             }
           >
-            <option value="carousel">Carousel</option>
-            <option value="carousel-inverse">Carousel-Inverse</option>
-            <option value="swing">Swing</option>
-            <option value="elastic">Elastic</option>
+            <option value="carousel">{t("app.text.carousel")}</option>
+            <option value="carousel-inverse">{t("app.text.carousel-inverse")}</option>
+            <option value="swing">{t("app.text.swing")}</option>
+            <option value="elastic">{t("app.text.elastic")}</option>
           </select>
         </div>
       </div>
@@ -484,7 +485,7 @@ export const TableSandbox = (): JSX.Element => {
       {/* Faceted Statistics & Event state readouts */}
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
         <div class="p-3 rounded-lg border border-default bg-elevated/20">
-          <span class="text-muted block">Selected rows:</span>
+          <span class="text-muted block">{t("app.text.selected-rows")}</span>
           <span class="font-bold text-highlighted">
             {totalRowCount()} total rows ({data().length} root) | {selectedCount()} selected
           </span>
@@ -494,7 +495,7 @@ export const TableSandbox = (): JSX.Element => {
           <span class="font-bold text-highlighted truncate block">{lastClickedRow()}</span>
         </div>
         <div class="p-3 rounded-lg border border-default bg-elevated/20">
-          <span class="text-muted block">Faceted Status Counts:</span>
+          <span class="text-muted block">{t("app.text.faceted-status-counts")}</span>
           <div class="flex items-center gap-2 mt-1">
             <For each={facetedStatusCounts()}>
               {([status, count]) => (
@@ -526,7 +527,9 @@ export const tableAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "basic-inferred-columns",
-      title: "Basic Inferred Columns",
+      get title() {
+        return t("app.text.basic-inferred-columns");
+      },
       description:
         "Auto-infers column headers and formatters directly from data objects without manual column definitions.",
       render: () => {
@@ -543,7 +546,9 @@ export const tableAudit: ComponentAuditDefinition = {
     },
     {
       id: "selection-and-pagination",
-      title: "Selection & Pagination",
+      get title() {
+        return t("app.text.selection-pagination");
+      },
       description:
         "Multi-row checkbox selection with synchronized header master-checkbox and client-side pagination.",
       render: () => {
@@ -606,7 +611,9 @@ export const tableAudit: ComponentAuditDefinition = {
     },
     {
       id: "striped-bordered-hoverable",
-      title: "Striped, Bordered & Hoverable States",
+      get title() {
+        return t("app.text.striped-bordered-hoverable-states");
+      },
       description:
         "Visual appearance variations with alternating row backgrounds and cell borders.",
       render: () => (
@@ -615,8 +622,12 @@ export const tableAudit: ComponentAuditDefinition = {
     },
     {
       id: "empty-and-loading-states",
-      title: "Empty & Loading Feedback",
-      description: "Empty placeholder slot and animated top loading progress indicator.",
+      get title() {
+        return t("app.text.empty-loading-feedback");
+      },
+      get description() {
+        return t("app.text.empty-placeholder-slot-and-animated-top-loading");
+      },
       render: () => {
         const [loading, setLoading] = createSignal(true);
         return (

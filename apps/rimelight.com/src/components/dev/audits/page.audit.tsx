@@ -2,6 +2,7 @@ import { createSignal } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLPage } from "@rimelight/ui/components/page/RLPage.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SLOT_PLACEHOLDER_CLASS =
   "flex min-h-32 w-full items-center justify-center rounded-xl border border-default bg-gradient-to-br from-primary/30 to-secondary/30 p-6";
@@ -29,7 +30,7 @@ export const PageSandbox = (): JSX.Element => {
               onChange={(e) => setHasLeft(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Left slot</span>
+            <span class="text-muted">{t("app.text.left-slot")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -39,7 +40,7 @@ export const PageSandbox = (): JSX.Element => {
               onChange={(e) => setHasRight(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Right slot</span>
+            <span class="text-muted">{t("app.text.right-slot")}</span>
           </label>
         </div>
       </div>
@@ -66,7 +67,9 @@ export const pageAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "default-slot",
-      title: "Default slot only (single centered column)",
+      get title() {
+        return t("app.text.default-slot-only-single-centered-column");
+      },
       description:
         "With no left or right slot the default slot spans the full grid (lg:col-span-10).",
       render: () => (
@@ -77,7 +80,9 @@ export const pageAudit: ComponentAuditDefinition = {
     },
     {
       id: "left-slot",
-      title: "Left slot",
+      get title() {
+        return t("app.text.left-slot");
+      },
       description:
         "The left slot renders in its own column and the default slot spans lg:col-span-8.",
       render: () => (
@@ -88,7 +93,9 @@ export const pageAudit: ComponentAuditDefinition = {
     },
     {
       id: "right-slot",
-      title: "Right slot",
+      get title() {
+        return t("app.text.right-slot");
+      },
       description:
         "The right slot renders in its own column, ordered first on mobile and last on large screens.",
       render: () => (
@@ -99,8 +106,12 @@ export const pageAudit: ComponentAuditDefinition = {
     },
     {
       id: "both-slots",
-      title: "Left and right slots together",
-      description: "The default slot narrows to lg:col-span-6 when both side columns are present.",
+      get title() {
+        return t("app.text.left-and-right-slots-together");
+      },
+      get description() {
+        return t("app.text.the-default-slot-narrows-to-lg-col-span-6-when-b");
+      },
       render: () => (
         <RLPage left={<Placeholder label="left slot" />} right={<Placeholder label="right slot" />}>
           <Placeholder label="default slot" />

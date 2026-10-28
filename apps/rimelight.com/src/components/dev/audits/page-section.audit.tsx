@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const VARIANTS = ["default", "hero", "cta"] as const;
 const CTA_VARIANTS = ["solid", "outline", "soft", "subtle", "naked"] as const;
@@ -37,7 +38,7 @@ export const PageSectionSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -56,7 +57,7 @@ export const PageSectionSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">CTA Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.cta-variant")}</span>
           <For each={CTA_VARIANTS}>
             {(v) => (
               <button
@@ -76,7 +77,7 @@ export const PageSectionSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Orientation:</span>
+          <span class="text-muted mr-1">{t("app.text.orientation")}</span>
           <For each={ORIENTATIONS}>
             {(o) => (
               <button
@@ -103,7 +104,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setReverse(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Reverse</span>
+            <span class="text-muted">{t("app.text.reverse")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -113,7 +114,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasIcon(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Icon</span>
+            <span class="text-muted">{t("app.text.icon")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -123,7 +124,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasHeadline(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Headline</span>
+            <span class="text-muted">{t("app.text.headline")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -133,7 +134,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasDescription(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Description</span>
+            <span class="text-muted">{t("app.text.description")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -143,7 +144,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasLinks(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Links</span>
+            <span class="text-muted">{t("app.text.links")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -153,7 +154,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasBody(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Body</span>
+            <span class="text-muted">{t("app.text.body")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -163,7 +164,7 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasFooter(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Footer</span>
+            <span class="text-muted">{t("app.text.footer")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -173,12 +174,12 @@ export const PageSectionSandbox = (): JSX.Element => {
               onChange={(e) => setHasBackground(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Background</span>
+            <span class="text-muted">{t("app.text.background")}</span>
           </label>
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Headline:</span>
+          <span class="text-muted">{t("app.text.headline-4063")}</span>
           <input
             type="text"
             value={headline()}
@@ -187,7 +188,7 @@ export const PageSectionSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Title:</span>
+          <span class="text-muted">{t("app.text.title")}</span>
           <input
             type="text"
             value={title()}
@@ -196,7 +197,7 @@ export const PageSectionSandbox = (): JSX.Element => {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-muted">Desc:</span>
+          <span class="text-muted">{t("app.text.desc")}</span>
           <input
             type="text"
             value={description()}
@@ -220,8 +221,8 @@ export const PageSectionSandbox = (): JSX.Element => {
           {...(hasLinks()
             ? {
                 links: [
-                  { label: "Get started", color: "primary" },
-                  { label: "Learn more", color: "neutral", variant: "subtle" },
+                  { label: t("app.text.get-started-90e4"), color: "primary" },
+                  { label: t("app.text.learn-more"), color: "neutral", variant: "subtle" },
                 ],
               }
             : {})}
@@ -263,7 +264,9 @@ export const pageSectionAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "variants-matrix",
-      title: "All Variants (default, hero, cta)",
+      get title() {
+        return t("app.text.all-variants-default-hero-cta");
+      },
       description:
         "default uses an h2 title, hero uses an h1 with a larger scale, and cta wraps the section in a rounded surface that pairs with ctaVariant.",
       render: () => (
@@ -272,11 +275,21 @@ export const pageSectionAudit: ComponentAuditDefinition = {
             variant="default"
             orientation="vertical"
             headline="Default"
-            title="Default variant section"
+            title={"Default variant section"}
             description="Standard section spacing with an h2 title and centered header."
             links={[
-              { label: "Primary action" },
-              { label: "Secondary", color: "neutral", variant: "subtle" },
+              {
+                get label() {
+                  return t("app.text.primary-action");
+                },
+              },
+              {
+                get label() {
+                  return t("app.text.secondary");
+                },
+                color: "neutral",
+                variant: "subtle",
+              },
             ]}
           />
           <RLPageSection
@@ -284,24 +297,39 @@ export const pageSectionAudit: ComponentAuditDefinition = {
             orientation="vertical"
             icon="sparkles"
             headline="Hero"
-            title="Hero variant section"
+            title={"Hero variant section"}
             description="Large type scale with an h1 title and generous vertical rhythm."
-            links={[{ label: "Get started" }]}
+            links={[
+              {
+                get label() {
+                  return t("app.text.get-started");
+                },
+              },
+            ]}
           />
           <RLPageSection
             variant="cta"
             ctaVariant="solid"
             orientation="vertical"
-            title="CTA variant section"
+            title={"CTA variant section"}
             description="Rounded, high-contrast surface for conversion-focused calls to action."
-            links={[{ label: "Talk to sales", color: "neutral" }]}
+            links={[
+              {
+                get label() {
+                  return t("app.text.talk-to-sales");
+                },
+                color: "neutral",
+              },
+            ]}
           />
         </div>
       ),
     },
     {
       id: "cta-variants",
-      title: "CTA Variants (solid, outline, soft, subtle, naked)",
+      get title() {
+        return t("app.text.cta-variants-solid-outline-soft-subtle-naked");
+      },
       description:
         "The ctaVariant prop controls the CTA surface treatment and description contrast.",
       render: () => (
@@ -314,7 +342,13 @@ export const pageSectionAudit: ComponentAuditDefinition = {
                 orientation="horizontal"
                 title={`CTA: ${v}`}
                 description={`Rendered with ctaVariant="${v}".`}
-                links={[{ label: "Action" }]}
+                links={[
+                  {
+                    get label() {
+                      return t("app.text.action");
+                    },
+                  },
+                ]}
               >
                 <SectionPlaceholder label={`cta ${v}`} />
               </RLPageSection>
@@ -325,25 +359,39 @@ export const pageSectionAudit: ComponentAuditDefinition = {
     },
     {
       id: "orientations-and-reverse",
-      title: "Orientation & Reverse",
+      get title() {
+        return t("app.text.orientation-reverse");
+      },
       description:
         "Vertical stacks the header over the default slot; horizontal pairs the content wrapper with the default slot in a two-column grid. reverse flips their order.",
       render: () => (
         <div class="flex flex-col gap-2">
           <RLPageSection
             orientation="horizontal"
-            title="Horizontal — content left, slot right"
+            title={"Horizontal — content left, slot right"}
             description="The wrapper sits beside the default slot on large screens."
-            links={[{ label: "Learn more" }]}
+            links={[
+              {
+                get label() {
+                  return t("app.text.learn-more");
+                },
+              },
+            ]}
           >
             <SectionPlaceholder label="Slot (right)" />
           </RLPageSection>
           <RLPageSection
             orientation="horizontal"
             reverse
-            title="Horizontal reverse — slot left"
+            title={"Horizontal reverse — slot left"}
             description="reverse swaps the order of the wrapper and the default slot."
-            links={[{ label: "Learn more" }]}
+            links={[
+              {
+                get label() {
+                  return t("app.text.learn-more");
+                },
+              },
+            ]}
           >
             <SectionPlaceholder label="Slot (left)" />
           </RLPageSection>
@@ -352,7 +400,9 @@ export const pageSectionAudit: ComponentAuditDefinition = {
     },
     {
       id: "header-and-icon",
-      title: "Header, Icon, Headline & Description",
+      get title() {
+        return t("app.text.header-icon-headline-description");
+      },
       description:
         "The leading icon, headline, title, and description compose the default header when no header slot is provided.",
       render: () => (
@@ -360,39 +410,54 @@ export const pageSectionAudit: ComponentAuditDefinition = {
           orientation="vertical"
           icon="shield"
           headline="Security first"
-          title="Everything you need to ship with confidence"
+          title={"Everything you need to ship with confidence"}
           description="Icon, headline, title, and description all resolve through the default header with theme tokens."
         />
       ),
     },
     {
       id: "links-and-footer",
-      title: "Links & Footer Regions",
+      get title() {
+        return t("app.text.links-footer-regions");
+      },
       description:
         "links render as RLButton with size='lg'; footer renders custom content when links are not enough.",
       render: () => (
         <RLPageSection
           orientation="vertical"
-          title="Links and footer"
+          title={"Links and footer"}
           description="The links array renders buttons and footer replaces them when provided."
           links={[
-            { label: "Primary", color: "primary" },
-            { label: "Secondary", color: "neutral", variant: "subtle" },
+            {
+              get label() {
+                return t("app.text.primary");
+              },
+              color: "primary",
+            },
+            {
+              get label() {
+                return t("app.text.secondary");
+              },
+              color: "neutral",
+              variant: "subtle",
+            },
           ]}
-          footer={<p class="text-xs text-muted">Custom footer slot content.</p>}
+          footer={<p class="text-xs text-muted">{"Custom footer slot content."}</p>}
         />
       ),
     },
     {
       id: "background-and-content-visibility",
-      title: "Background Layer & Content Visibility",
+      get title() {
+        return t("app.text.background-layer-content-visibility");
+      },
       description:
         "background renders an absolutely positioned, overflow-hidden layer behind content; contentVisibility defers offscreen painting.",
       render: () => (
         <RLPageSection
           variant="hero"
           orientation="vertical"
-          title="Background and content-visibility"
+          title={"Background and content-visibility"}
           description="The background slot is mounted behind the section container at -z-1."
           background={
             <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
@@ -404,7 +469,9 @@ export const pageSectionAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-slots",
-      title: "Custom Slot Parity",
+      get title() {
+        return t("app.text.custom-slot-parity");
+      },
       description:
         "header, leading, headlineSlot, titleSlot, descriptionSlot, body, footer, linksSlot, content, top, and bottom allow full template replacement.",
       render: () => (
@@ -415,8 +482,8 @@ export const pageSectionAudit: ComponentAuditDefinition = {
               <span class="text-3xl" aria-hidden="true">
                 🌌
               </span>
-              <h2 class="text-3xl font-bold text-highlighted">Custom header slot</h2>
-              <p class="text-muted">The header slot replaces the default header entirely.</p>
+              <h2 class="text-3xl font-bold text-highlighted">{"Custom header slot"}</h2>
+              <p class="text-muted">{"The header slot replaces the default header entirely."}</p>
             </div>
           }
           body={<SectionPlaceholder label="Body slot" />}
@@ -430,14 +497,18 @@ export const pageSectionAudit: ComponentAuditDefinition = {
     },
     {
       id: "polymorphic-as",
-      title: "Polymorphic as Prop",
-      description: "Root renders the configured element (defaults to <section>).",
+      get title() {
+        return t("app.text.polymorphic-as-prop");
+      },
+      get description() {
+        return t("app.text.root-renders-the-configured-element-defaults-to");
+      },
       render: () => (
         <RLPageSection
           as="article"
           orientation="vertical"
           headline="Boxed content"
-          title="Rendered as an article element"
+          title={"Rendered as an article element"}
           description="Inspect the DOM to confirm the root tag is <article>."
         />
       ),

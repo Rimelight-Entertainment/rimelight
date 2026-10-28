@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLCompare } from "@rimelight/ui/components/compare/RLCompare.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const VARIANTS = ["solid", "outline", "subtle", "glass"] as const;
@@ -32,7 +33,7 @@ export const CompareSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Orientation:</span>
+          <span class="text-muted mr-1">{t("app.text.orientation")}</span>
           <For each={ORIENTATIONS}>
             {(o) => (
               <button
@@ -51,7 +52,7 @@ export const CompareSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -70,7 +71,7 @@ export const CompareSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -89,7 +90,7 @@ export const CompareSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -116,7 +117,7 @@ export const CompareSandbox = (): JSX.Element => {
               onChange={(e) => setShowLabels(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Labels</span>
+            <span class="text-muted">{t("app.text.labels")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -126,7 +127,7 @@ export const CompareSandbox = (): JSX.Element => {
               onChange={(e) => setHover(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Hover</span>
+            <span class="text-muted">{t("app.text.hover")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -136,7 +137,7 @@ export const CompareSandbox = (): JSX.Element => {
               onChange={(e) => setAutoplay(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Autoplay</span>
+            <span class="text-muted">{t("app.text.autoplay")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -146,7 +147,7 @@ export const CompareSandbox = (): JSX.Element => {
               onChange={(e) => setDisabled(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Disabled</span>
+            <span class="text-muted">{t("app.text.disabled")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -156,7 +157,7 @@ export const CompareSandbox = (): JSX.Element => {
               onChange={(e) => setShowHandle(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Handle</span>
+            <span class="text-muted">{t("app.text.handle")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -166,12 +167,12 @@ export const CompareSandbox = (): JSX.Element => {
               onChange={(e) => setShowDivider(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Divider</span>
+            <span class="text-muted">{t("app.text.divider")}</span>
           </label>
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Value:</span>
+          <span class="text-muted">{t("app.text.value")}</span>
           <input
             type="range"
             min="0"
@@ -222,8 +223,12 @@ export const compareAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "basic-image-comparison",
-      title: "Basic Image Comparison",
-      description: "Standard horizontal split comparing two photos with before and after labels.",
+      get title() {
+        return t("app.text.basic-image-comparison");
+      },
+      get description() {
+        return t("app.text.standard-horizontal-split-comparing-two-photos-w");
+      },
       render: () => (
         <RLCompare
           beforeSrc={IMG_BEFORE}
@@ -236,8 +241,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "vertical-orientation",
-      title: "Vertical Split Orientation",
-      description: "Vertical split slider moving top-to-bottom with horizontal divider line.",
+      get title() {
+        return t("app.text.vertical-split-orientation");
+      },
+      get description() {
+        return t("app.text.vertical-split-slider-moving-top-to-bottom-with");
+      },
       render: () => (
         <RLCompare
           orientation="vertical"
@@ -251,7 +260,9 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "all-sizes",
-      title: "All Sizes (xs, sm, md, lg, xl)",
+      get title() {
+        return t("app.text.all-sizes-xs-sm-md-lg-xl");
+      },
       description:
         "Showcases different sizes affecting handle dimensions, divider weight, and label sizing.",
       render: () => (
@@ -276,8 +287,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "all-variants",
-      title: "Visual Variants (solid, outline, subtle, glass)",
-      description: "Handle and divider styling variants across solid, outline, subtle, and glass.",
+      get title() {
+        return t("app.text.visual-variants-solid-outline-subtle-glass");
+      },
+      get description() {
+        return t("app.text.handle-and-divider-styling-variants-across-solid");
+      },
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <For each={VARIANTS}>
@@ -301,8 +316,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "rich-jsx-content-comparison",
-      title: "Rich JSX Content Comparison",
-      description: "Compares arbitrary DOM/JSX components such as light/dark mode UI cards.",
+      get title() {
+        return t("app.text.rich-jsx-content-comparison");
+      },
+      get description() {
+        return t("app.text.compares-arbitrary-dom-jsx-components-such-as-li");
+      },
       render: () => (
         <RLCompare
           defaultValue={45}
@@ -312,7 +331,7 @@ export const compareAudit: ComponentAuditDefinition = {
                 <span class="text-xs font-mono uppercase tracking-wider text-primary">
                   Dark Mode Theme
                 </span>
-                <h4 class="text-lg font-bold mt-1">Modern Analytics Dashboard</h4>
+                <h4 class="text-lg font-bold mt-1">{"Modern Analytics Dashboard"}</h4>
                 <p class="text-xs text-slate-400 mt-2">
                   Optimized for low-light environments with high contrast data accents.
                 </p>
@@ -329,7 +348,7 @@ export const compareAudit: ComponentAuditDefinition = {
                 <span class="text-xs font-mono uppercase tracking-wider text-sky-600">
                   Light Mode Theme
                 </span>
-                <h4 class="text-lg font-bold mt-1">Modern Analytics Dashboard</h4>
+                <h4 class="text-lg font-bold mt-1">{"Modern Analytics Dashboard"}</h4>
                 <p class="text-xs text-slate-600 mt-2">
                   Clean, crisp daylight rendering with balanced neutral typography.
                 </p>
@@ -348,8 +367,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "hover-mode",
-      title: "Hover Interaction Mode",
-      description: "Divider tracks mouse pointer movement automatically without requiring drag.",
+      get title() {
+        return t("app.text.hover-interaction-mode");
+      },
+      get description() {
+        return t("app.text.divider-tracks-mouse-pointer-movement-automatica");
+      },
       render: () => (
         <RLCompare
           hover={true}
@@ -363,8 +386,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "autoplay-mode",
-      title: "Autoplay Mode",
-      description: "Continuously oscillates the split position in a smooth sine wave cycle.",
+      get title() {
+        return t("app.text.autoplay-mode");
+      },
+      get description() {
+        return t("app.text.continuously-oscillates-the-split-position-in-a");
+      },
       render: () => (
         <RLCompare
           autoplay={true}
@@ -379,8 +406,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-handle-slot",
-      title: "Custom Handle Slot",
-      description: "Custom handle element displaying live percentage value inside a pill badge.",
+      get title() {
+        return t("app.text.custom-handle-slot");
+      },
+      get description() {
+        return t("app.text.custom-handle-element-displaying-live-percentage");
+      },
       render: () => (
         <RLCompare
           beforeSrc={IMG_BEFORE}
@@ -396,8 +427,12 @@ export const compareAudit: ComponentAuditDefinition = {
     },
     {
       id: "disabled-state",
-      title: "Disabled State",
-      description: "Static non-interactive comparison slider locked at a fixed position.",
+      get title() {
+        return t("app.text.disabled-state");
+      },
+      get description() {
+        return t("app.text.static-non-interactive-comparison-slider-locked");
+      },
       render: () => (
         <RLCompare
           disabled={true}

@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl", "none"] as const;
 const COLORS = AUDIT_COLORS;
@@ -41,7 +42,7 @@ export const IconSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -60,7 +61,7 @@ export const IconSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -106,7 +107,9 @@ export const iconAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "size-scale",
-      title: "All Size Variants (xs to xl + none)",
+      get title() {
+        return t("app.text.all-size-variants-xs-to-xl-none");
+      },
       description:
         "Scale tokens from xs (12px) through xl (32px), plus an unstyled option that inherits the parent font size.",
       render: () => (
@@ -124,7 +127,9 @@ export const iconAudit: ComponentAuditDefinition = {
     },
     {
       id: "color-inheritance",
-      title: "Color Inheritance via currentColor",
+      get title() {
+        return t("app.text.color-inheritance-via-currentcolor");
+      },
       description:
         "Icons inherit text color from any utility class, enabling full palette theming with no color prop.",
       render: () => (
@@ -162,7 +167,9 @@ export const iconAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-class",
-      title: "Custom Class Name",
+      get title() {
+        return t("app.text.custom-class-name");
+      },
       description:
         "Passing a full UnoCSS/Iconify class name through the custom prop passes it through verbatim.",
       render: () => (
@@ -174,40 +181,44 @@ export const iconAudit: ComponentAuditDefinition = {
     },
     {
       id: "inline-inline-flow",
-      title: "Inline Flow with Text & Badges",
+      get title() {
+        return t("app.text.inline-flow-with-text-badges");
+      },
       description:
         "Icons align seamlessly inline within text runs and controls thanks to inline-flex leading-none sizing.",
       render: () => (
         <div class="flex flex-col gap-3 text-sm text-highlighted">
           <p class="flex items-center gap-2">
             <RLIcon name="info" class="text-info" />
-            <span>Deployments are synced automatically.</span>
+            <span>{"Deployments are synced automatically."}</span>
           </p>
           <p class="flex items-center gap-2">
             <RLIcon name="circle-check" class="text-success" />
-            <span>All checks passed with no warnings.</span>
+            <span>{"All checks passed with no warnings."}</span>
           </p>
           <p class="flex items-center gap-2">
             <RLIcon name="triangle-alert" class="text-warning" />
-            <span>Rate limit approaching — 82% consumed.</span>
+            <span>{"Rate limit approaching — 82% consumed."}</span>
           </p>
           <p class="flex items-center gap-2">
             <RLIcon name="circle-x" class="text-error" />
-            <span>Build failed at step 4 of 9.</span>
+            <span>{"Build failed at step 4 of 9."}</span>
           </p>
         </div>
       ),
     },
     {
       id: "missing-icon",
-      title: "Missing / Empty Icon Resolution",
+      get title() {
+        return t("app.text.missing-empty-icon-resolution");
+      },
       description:
         "Unresolvable names render an empty, accessible span without throwing or emitting stray markup.",
       render: () => (
         <div class="flex items-center gap-6 p-4 rounded-lg border border-dashed border-default bg-elevated/10">
           <RLIcon name="does-not-exist" size="lg" class="text-muted" />
           <RLIcon name="" size="lg" class="text-muted" />
-          <span class="text-xs text-muted">Empty spans, no crash.</span>
+          <span class="text-xs text-muted">{"Empty spans, no crash."}</span>
         </div>
       ),
     },

@@ -2,18 +2,19 @@ import type { Component } from "solid-js";
 import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { getLocaleUrl } from "@rimelight/i18n";
+import { t } from "@rimelight/i18n";
 
 export const GrandTaleHeader: Component = () => {
   const links = [
-    { label: "News", to: "/franchises/grand-tale/news" },
-    { label: "About", to: "/franchises/grand-tale/about" },
-    { label: "Wiki", to: "/franchises/grand-tale/wiki" },
-    { label: "Guides", to: "/franchises/grand-tale/guides" },
-    { label: "Forums", to: "/franchises/grand-tale/forums" },
-    { label: "Leaderboards", to: "/franchises/grand-tale/leaderboards" },
+    { label: t("app.text.news"), to: "/franchises/grand-tale/news" },
+    { label: t("app.text.about"), to: "/franchises/grand-tale/about" },
+    { label: t("app.text.wiki"), to: "/franchises/grand-tale/wiki" },
+    { label: t("app.text.guides"), to: "/franchises/grand-tale/guides" },
+    { label: t("app.text.forums"), to: "/franchises/grand-tale/forums" },
+    { label: t("app.text.leaderboards"), to: "/franchises/grand-tale/leaderboards" },
   ];
 
-  const rightLinks = [{ label: "Support", to: "/franchises/grand-tale/support" }];
+  const rightLinks = [{ label: t("app.text.support"), to: "/franchises/grand-tale/support" }];
 
   return (
     <RLHeader
@@ -25,7 +26,7 @@ export const GrandTaleHeader: Component = () => {
           <a href={getLocaleUrl("/franchises/grand-tale")}>
             <img
               src="https://cdn.rimelight.com/franchises/Grand%20Tale/Logos/Grand%20Tale%20-%20Logomark.webp"
-              alt="Grand Tale Logo"
+              alt={t("app.text.grand-tale-logo")}
               class="size-10"
             />
           </a>
