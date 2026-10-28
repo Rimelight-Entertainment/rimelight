@@ -1,5 +1,5 @@
 import type { Component, ParentProps } from "solid-js";
-import { isRichTextEmpty, type BaseBlock } from "@rimelight/cms";
+import { isRichTextEmpty, type BaseBlock } from "@rimelight/cms/blocks";
 import { RichText } from "@rimelight/cms/solid";
 
 export interface SceneBlockProps extends ParentProps {

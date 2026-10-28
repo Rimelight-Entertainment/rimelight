@@ -1,4 +1,4 @@
-import { builtinBlocks, defineBlock, defineCmsConfig } from "@rimelight/cms";
+import { builtinBlocks, defineBlock, defineCmsConfig } from "@rimelight/cms/blocks";
 import {
   ApiDocumentationBlock,
   DialogueBlock,

@@ -80,6 +80,10 @@
       "types": "./src/solid/index.tsx",
       "import": "./src/solid/index.tsx"
     },
+    "./blocks": {
+      "types": "./src/blocks.ts",
+      "import": "./src/blocks.ts"
+    },
     "./dashboard": {
       "types": "./src/dashboard/index.tsx",
       "import": "./src/dashboard/index.tsx"

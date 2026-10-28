@@ -1,5 +1,5 @@
 import type { Component, ParentProps } from "solid-js";
-import type { BaseBlock } from "@rimelight/cms";
+import type { BaseBlock } from "@rimelight/cms/blocks";
 
 export interface ScriptBlockProps extends ParentProps {
   block: BaseBlock;

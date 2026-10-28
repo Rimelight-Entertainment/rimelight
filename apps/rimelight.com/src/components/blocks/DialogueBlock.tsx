@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import type { BaseBlock } from "@rimelight/cms";
+import type { BaseBlock } from "@rimelight/cms/blocks";
 import { RichText } from "@rimelight/cms/solid";
 
 export interface DialogueBlockProps {

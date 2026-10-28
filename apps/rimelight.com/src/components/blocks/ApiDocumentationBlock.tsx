@@ -1,5 +1,5 @@
 import { type Component, Show, For, createSignal, createMemo } from "solid-js";
-import type { BaseBlock } from "@rimelight/cms";
+import type { BaseBlock } from "@rimelight/cms/blocks";
 import { t } from "@rimelight/i18n";
 
 function filterProps(props: any[], options: { hide?: string[]; show?: string[] }): any[] {
