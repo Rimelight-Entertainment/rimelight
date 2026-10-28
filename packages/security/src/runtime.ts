@@ -51,6 +51,14 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
       ...(options.imgSrc || []),
     ]),
   );
+  const mediaSources = Array.from(
+    new Set([
+      "'self'",
+      ...(domain ? [`https://cdn.${domain}`] : []),
+      ...allowed,
+      ...(options.mediaSrc || []),
+    ]),
+  );
   const connectSources = Array.from(
     new Set([
       "'self'",
@@ -86,6 +94,7 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
   const directives: Record<string, string[]> = {
     "default-src": ["'none'"],
     "img-src": imgSources,
+    "media-src": mediaSources,
     "font-src": ["'self'"],
     "connect-src": connectSources,
     "frame-ancestors": ["'none'"],

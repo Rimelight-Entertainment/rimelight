@@ -4,6 +4,7 @@ export interface SecurityConfig {
   domain?: string;
   allowedDomains?: string[];
   imgSrc?: string[];
+  mediaSrc?: string[];
   connectSrc?: string[];
   frameSrc?: string[];
   scriptResources?: string[];
