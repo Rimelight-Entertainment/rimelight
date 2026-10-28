@@ -4,6 +4,7 @@ import { useLocation } from "@solidjs/router";
 import { RLButton, RLCarousel } from "@rimelight/ui";
 import { getLocaleInfo, getLocales } from "@rimelight/i18n";
 import { createPageHead, type HeadTag } from "@rimelight/seo/head";
+import { t } from "@rimelight/i18n";
 import {
   buildApiCatalog,
   buildArticleSchema,
@@ -156,7 +157,7 @@ const OgSandbox = () => {
           <input
             type="text"
             value={sandboxType()}
-            placeholder="e.g. Documentation, Blog, Changelog"
+            placeholder={t("app.text.e-g-documentation-blog-changelog")}
             onInput={(e) => setSandboxType(e.currentTarget.value)}
             class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
           />
@@ -166,7 +167,7 @@ const OgSandbox = () => {
           <input
             type="text"
             value={sandboxDate()}
-            placeholder="e.g. 2026-10-18"
+            placeholder={t("app.text.e-g-2026-10-18")}
             onInput={(e) => setSandboxDate(e.currentTarget.value)}
             class="px-3 py-2 bg-default border border-default rounded-md text-highlighted text-sm focus:border-primary outline-none"
           />
@@ -180,7 +181,7 @@ const OgSandbox = () => {
           >
             <option value="dark">Dark (#0a0a0a)</option>
             <option value="gradient">Gradient (#0a0a0a → #1a1a2e)</option>
-            <option value="custom">Custom Color</option>
+            <option value="custom">{t("app.text.custom-color")}</option>
           </select>
         </label>
       </div>
@@ -192,7 +193,7 @@ const OgSandbox = () => {
             <input
               type="text"
               value={sandboxCustomBg()}
-              placeholder="#1e1b4b"
+              placeholder={t("app.text.1e1b4b")}
               onInput={(e) => setSandboxCustomBg(e.currentTarget.value)}
               class="px-2 py-1 bg-default border border-default rounded text-highlighted text-xs font-mono outline-none"
             />
@@ -223,7 +224,7 @@ const OgSandbox = () => {
       <pre class="text-xs text-muted break-all">{sandboxUrl()}</pre>
       <img
         src={previewSrc()}
-        alt="Sandbox OG preview"
+        alt={t("app.text.sandbox-og-preview")}
         class="w-full aspect-[1200/630] object-cover rounded-xl border border-default bg-elevated/20"
       />
       <a href={sandboxUrl()} target="_blank" rel="noreferrer" class="text-xs text-muted underline">
@@ -252,7 +253,7 @@ export default function DevSeoPage() {
 
   const liveHead = () =>
     createPageHead({
-      title: "SEO Audit",
+      title: t("app.text.seo-audit"),
       description: liveConfig().description,
       ogType: "website",
       url: `${activeOrigin()}${location.pathname}`,
@@ -292,16 +293,16 @@ export default function DevSeoPage() {
       language: liveLocales()[defaultLocaleKey()] || "en-US",
       items: [
         {
-          title: "Platform Overview",
+          title: t("app.text.platform-overview"),
           link: "/",
           pubDate: new Date("2026-09-01"),
           description: liveConfig().description || "",
         },
         {
-          title: "Developer Tools Release",
+          title: t("app.text.developer-tools-release"),
           link: "/dev/seo",
           pubDate: new Date("2026-10-01"),
-          description: "Live runtime SEO auditing and validation tooling.",
+          description: t("app.text.live-runtime-seo-auditing-and-validation-tooling"),
         },
       ],
     });
@@ -310,18 +311,18 @@ export default function DevSeoPage() {
     buildLlmsTxt({
       site: activeOrigin(),
       title: `${liveConfig().name} AI Directory`,
-      description: "Index of public pages for automated agents and LLM ingest.",
+      description: t("app.text.index-of-public-pages-for-automated-agents-and-l"),
       pages: [
         {
-          title: "Documentation Overview",
+          title: t("app.text.documentation-overview"),
           url: `${activeOrigin()}/docs`,
-          description: "Getting started guide and references.",
+          description: t("app.text.getting-started-guide-and-references"),
           section: "Docs",
         },
         {
-          title: "Platform Runtime",
+          title: t("app.text.platform-runtime"),
           url: `${activeOrigin()}/dev`,
-          description: "Developer tools and environment.",
+          description: t("app.text.developer-tools-and-environment"),
           section: "Dev",
         },
       ],
@@ -385,39 +386,39 @@ export default function DevSeoPage() {
 
   const ogPreviewCards: OgPreviewItem[] = [
     {
-      label: "Home",
+      label: t("app.text.home"),
       title: liveConfig().name || "Rimelight",
       description: liveConfig().description || "Interactive entertainment and software tools.",
       type: "",
     },
     {
-      label: "Company",
+      label: t("app.text.company"),
       title: `About ${liveConfig().name || "Rimelight"}`,
-      description: "Creating interactive entertainment and software tools.",
+      description: t("app.text.creating-interactive-entertainment-and-software"),
       type: "Company",
     },
     {
-      label: "Products",
-      title: "Products & Games",
-      description: "Explore Grand Tale and our ecosystem of open-source tools.",
+      label: t("app.text.products"),
+      title: t("app.text.products-games"),
+      description: t("app.text.explore-grand-tale-and-our-ecosystem-of-open-sou"),
       type: "Products",
     },
     {
-      label: "Documentation",
-      title: "Getting Started",
-      description: "Everything you need to get up and running with Rimelight.",
+      label: t("app.text.documentation"),
+      title: t("app.text.getting-started"),
+      description: t("app.text.everything-you-need-to-get-up-and-running-with-r"),
       type: "Documentation",
     },
     {
-      label: "API Reference",
-      title: "API Reference",
-      description: "Complete API reference for integrations.",
+      label: t("app.text.api-reference"),
+      title: t("app.text.api-reference"),
+      description: t("app.text.complete-api-reference-for-integrations"),
       type: "Reference",
     },
     {
-      label: "Blog Post",
-      title: "Announcing Platform v2",
-      description: "A look at what's new in our latest release.",
+      label: t("app.text.blog-post"),
+      title: t("app.text.announcing-platform-v2"),
+      description: t("app.text.a-look-at-what-s-new-in-our-latest-release"),
       type: "Blog Post",
     },
   ];
@@ -443,25 +444,25 @@ export default function DevSeoPage() {
     }[];
   }[] => [
     {
-      title: "Active Configuration",
+      title: t("app.text.active-configuration"),
       rows: [
         {
-          label: "Site Config",
+          label: t("app.text.site-config"),
           code: `import { config } from "virtual:rimelight-seo"`,
           description:
             "Active metadata passed to the Vite plugin and exported by the virtual module at build/dev runtime.",
           value: JSON.stringify(liveConfig(), null, 2),
         },
         {
-          label: "Configured Locales",
+          label: t("app.text.configured-locales"),
           code: `config.locales`,
-          description: "Locale to hreflang mappings used for alternate URLs and sitemaps.",
+          description: t("app.text.locale-to-hreflang-mappings-used-for-alternate-u"),
           value: JSON.stringify(liveLocales(), null, 2),
         },
         {
-          label: "Private Path Prefixes",
+          label: t("app.text.private-path-prefixes"),
           code: `config.privatePathPrefixes`,
-          description: "Prefixes excluded from public indexing and disallowed in robots.txt.",
+          description: t("app.text.prefixes-excluded-from-public-indexing-and-disal"),
           value: JSON.stringify(livePrivatePrefixes(), null, 2),
         },
       ],
@@ -472,8 +473,8 @@ export default function DevSeoPage() {
       output: summarizeHeadTags(liveHead()),
       rows: [
         {
-          label: "Resolved head tags",
-          code: `createPageHead({ title: "SEO Audit", description, ogType: "website", url, noindex: false, config: siteConfig })`,
+          label: t("app.text.resolved-head-tags"),
+          code: `createPageHead({ title: t("app.text.seo-audit"), description, ogType: "website", url, noindex: false, config: siteConfig })`,
           description:
             "Builds strongly-typed head tags — title, canonical, OG, Twitter, JSON-LD, icons, and web manifest link.",
           value: summarizeHeadTags(liveHead()),
@@ -485,19 +486,19 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Templated title",
-          code: `buildPageTitle({ title: "SEO Audit", siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
-          description: "Interpolates %s with the title according to the active template.",
+          label: t("app.text.templated-title"),
+          code: `buildPageTitle({ title: t("app.text.seo-audit"), siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
+          description: t("app.text.interpolates-s-with-the-title-according-to-the-a"),
           value: buildPageTitle({
-            title: "SEO Audit",
+            title: t("app.text.seo-audit"),
             siteName: liveConfig().name || "Rimelight",
             titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
           }),
         },
         {
-          label: "Untitled fallback",
+          label: t("app.text.untitled-fallback"),
           code: `buildPageTitle({ siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
-          description: "Falls back to siteName when title is omitted.",
+          description: t("app.text.falls-back-to-sitename-when-title-is-omitted"),
           value: buildPageTitle({
             siteName: liveConfig().name || "Rimelight",
             titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
@@ -506,7 +507,7 @@ export default function DevSeoPage() {
         {
           label: "404 route",
           code: `buildPageTitle({ is404: true, siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
-          description: "Standard 404 title format.",
+          description: t("app.text.standard-404-title-format"),
           value: buildPageTitle({
             is404: true,
             siteName: liveConfig().name || "Rimelight",
@@ -514,11 +515,11 @@ export default function DevSeoPage() {
           }),
         },
         {
-          label: "Absolute bypass",
-          code: `buildPageTitle({ title: "Custom Verbatim Title", absolute: true, siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
-          description: "Bypasses the site template entirely.",
+          label: t("app.text.absolute-bypass"),
+          code: `buildPageTitle({ title: t("app.text.custom-verbatim-title"), absolute: true, siteName: siteConfig.name, titleTemplate: siteConfig.titleTemplate })`,
+          description: t("app.text.bypasses-the-site-template-entirely"),
           value: buildPageTitle({
-            title: "Custom Verbatim Title",
+            title: t("app.text.custom-verbatim-title"),
             absolute: true,
             siteName: liveConfig().name || "Rimelight",
             titleTemplate: liveConfig().titleTemplate || "%s | Rimelight",
@@ -531,18 +532,18 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Within character limit",
+          label: t("app.text.within-character-limit"),
           code: `buildSafeDescription(siteConfig.description, siteConfig.maxDescriptionLength)`,
-          description: "Description passed through without truncation when under the limit.",
+          description: t("app.text.description-passed-through-without-truncation-wh"),
           value: buildSafeDescription(
             liveConfig().description || "",
             liveConfig().maxDescriptionLength || 160,
           ),
         },
         {
-          label: "Truncated description",
+          label: t("app.text.truncated-description"),
           code: `buildSafeDescription("...", 24)`,
-          description: "Truncates at boundary and appends ellipsis.",
+          description: t("app.text.truncates-at-boundary-and-appends-ellipsis"),
           value: buildSafeDescription(
             "Creating interactive entertainment and software tools for the web.",
             24,
@@ -555,7 +556,7 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Indexable page",
+          label: t("app.text.indexable-page"),
           code: `buildRobotsMetaContent({ noindex: false })`,
           value: buildRobotsMetaContent({ noindex: false }),
         },
@@ -570,7 +571,7 @@ export default function DevSeoPage() {
           value: buildRobotsMetaContent({ is404: true }),
         },
         {
-          label: "Custom directive override",
+          label: t("app.text.custom-directive-override"),
           code: `buildRobotsMetaContent({ override: "noindex, follow" })`,
           value: buildRobotsMetaContent({ override: "noindex, follow" }),
         },
@@ -581,17 +582,17 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Root URL",
+          label: t("app.text.root-url"),
           code: `buildCanonicalUrl("/", siteConfig.url)`,
           value: buildCanonicalUrl("/", liveConfig().url || "https://rimelight.com"),
         },
         {
-          label: "Current location path",
+          label: t("app.text.current-location-path"),
           code: `buildCanonicalUrl(location.pathname, siteConfig.url)`,
           value: buildCanonicalUrl(location.pathname, liveConfig().url || "https://rimelight.com"),
         },
         {
-          label: "Query string preserved",
+          label: t("app.text.query-string-preserved"),
           code: `buildCanonicalUrl("${location.pathname}?tab=audit", siteConfig.url)`,
           value: buildCanonicalUrl(
             `${location.pathname}?tab=audit`,
@@ -605,17 +606,17 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Derived from active site",
-          code: `buildDefaultOgImageUrl({ title: "SEO Audit", description: siteConfig.description, siteName: siteConfig.name })`,
-          description: "Standard dynamic query URL for Open Graph card generation.",
+          label: t("app.text.derived-from-active-site"),
+          code: `buildDefaultOgImageUrl({ title: t("app.text.seo-audit"), description: siteConfig.description, siteName: siteConfig.name })`,
+          description: t("app.text.standard-dynamic-query-url-for-open-graph-card-g"),
           value: buildDefaultOgImageUrl({
-            title: "SEO Audit",
+            title: t("app.text.seo-audit"),
             description: liveConfig().description,
             siteName: liveConfig().name,
           }),
         },
         {
-          label: "Fallback route",
+          label: t("app.text.fallback-route"),
           code: `buildDefaultOgImageUrl({})`,
           value: buildDefaultOgImageUrl({}),
         },
@@ -626,9 +627,9 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Active WebSite JSON-LD",
+          label: t("app.text.active-website-json-ld"),
           code: `buildWebSiteSchema(siteConfig, siteConfig.url)`,
-          description: "Emits Schema.org WebSite node for search engines.",
+          description: t("app.text.emits-schema-org-website-node-for-search-engines"),
           value: JSON.stringify(
             buildWebSiteSchema(liveConfig(), liveConfig().url || "https://rimelight.com"),
             null,
@@ -638,12 +639,12 @@ export default function DevSeoPage() {
       ],
     },
     {
-      title: "Serialization & Sanitization",
+      title: t("app.text.serialization-sanitization"),
       rows: [
         {
           label: "serializeJsonLd()",
           code: `serializeJsonLd({ "@type": "WebSite", name: "<Rimelight>" })`,
-          description: "Neutralizes script tag breakout vectors in JSON-LD.",
+          description: t("app.text.neutralizes-script-tag-breakout-vectors-in-json"),
           value: serializeJsonLd({ "@type": "WebSite", name: "<Rimelight>" }),
         },
         {
@@ -664,7 +665,7 @@ export default function DevSeoPage() {
       output: liveSitemapXml(),
       rows: [
         {
-          label: "Generated URLs",
+          label: t("app.text.generated-urls"),
           code: `buildSitemapUrls(entries, { site: siteConfig.url, locales: SEO_LOCALES, defaultLocale })`,
           description:
             "Generates language alternates and x-default URLs across all active locales.",
@@ -685,8 +686,8 @@ export default function DevSeoPage() {
           value: `Disallow: ${livePrivatePrefixes().length} paths\nSitemap: ${activeOrigin()}/sitemap.xml`,
         },
         {
-          label: "Live endpoint",
-          description: "Endpoint served directly by the seo() plugin middleware.",
+          label: t("app.text.live-endpoint"),
+          description: t("app.text.endpoint-served-directly-by-the-seo-plugin-middl"),
           content: (
             <RLButton
               variant="soft"
@@ -705,14 +706,14 @@ export default function DevSeoPage() {
       output: liveRssFeed(),
       rows: [
         {
-          label: "Active channel",
+          label: t("app.text.active-channel"),
           code: `buildRssXml({ title: siteConfig.name, site: siteConfig.url, items: [...] })`,
-          description: "Generates an RSS 2.0 XML feed with Atom namespace linkage.",
+          description: t("app.text.generates-an-rss-2-0-xml-feed-with-atom-namespac"),
           value: `${liveConfig().name} Newsfeed`,
         },
         {
-          label: "Live endpoint",
-          description: "Endpoint served by the seo() plugin middleware.",
+          label: t("app.text.live-endpoint"),
+          description: t("app.text.endpoint-served-by-the-seo-plugin-middleware"),
           content: (
             <RLButton
               variant="soft"
@@ -731,14 +732,14 @@ export default function DevSeoPage() {
       output: liveLlmsTxt(),
       rows: [
         {
-          label: "AI Corpus Index",
+          label: t("app.text.ai-corpus-index"),
           code: `buildLlmsTxt({ site: siteConfig.url, title: siteConfig.name, pages: [...] })`,
-          description: "Standard /llms.txt manifest for automated crawler context.",
+          description: t("app.text.standard-llms-txt-manifest-for-automated-crawler"),
           value: "Live corpus manifest generated",
         },
         {
-          label: "Live endpoints",
-          description: "Endpoints served by the seo() plugin middleware.",
+          label: t("app.text.live-endpoints"),
+          description: t("app.text.endpoints-served-by-the-seo-plugin-middleware"),
           content: (
             <div class="flex gap-sm flex-wrap">
               <RLButton
@@ -767,12 +768,12 @@ export default function DevSeoPage() {
         {
           label: "site.webmanifest",
           code: `buildWebManifest({ name: siteConfig.name, themeColor: siteConfig.branding.colors.themeColor })`,
-          description: "Progressive Web App manifest derived from active site configuration.",
+          description: t("app.text.progressive-web-app-manifest-derived-from-active"),
           value: JSON.stringify(liveWebManifest(), null, 2),
         },
         {
-          label: "Live endpoint",
-          description: "Endpoint served by the seo() plugin middleware.",
+          label: t("app.text.live-endpoint"),
+          description: t("app.text.endpoint-served-by-the-seo-plugin-middleware"),
           content: (
             <RLButton
               variant="soft"
@@ -790,13 +791,13 @@ export default function DevSeoPage() {
       mono: true,
       rows: [
         {
-          label: "Article JSON-LD",
+          label: t("app.text.article-json-ld"),
           code: `buildArticleSchema({ type: "BlogPosting", title, publisherName: siteConfig.name, ... })`,
-          description: "Emits Schema.org Article / BlogPosting structured data.",
+          description: t("app.text.emits-schema-org-article-blogposting-structured"),
           value: JSON.stringify(liveArticleSchema(), null, 2),
         },
         {
-          label: "BreadcrumbList JSON-LD",
+          label: t("app.text.breadcrumblist-json-ld"),
           code: `buildBreadcrumbSchema([...])`,
           description:
             "Emits Schema.org BreadcrumbList structured data for search result sitelinks.",
@@ -811,12 +812,12 @@ export default function DevSeoPage() {
         {
           label: "/.well-known/api-catalog",
           code: `buildApiCatalog({ items: [...] })`,
-          description: "RFC 9652 machine-readable API catalog linkset.",
+          description: t("app.text.rfc-9652-machine-readable-api-catalog-linkset"),
           value: JSON.stringify(liveApiCatalog(), null, 2),
         },
         {
-          label: "Live endpoint",
-          description: "API catalog discovery document.",
+          label: t("app.text.live-endpoint"),
+          description: t("app.text.api-catalog-discovery-document"),
           content: (
             <RLButton
               variant="soft"
@@ -830,10 +831,10 @@ export default function DevSeoPage() {
       ],
     },
     {
-      title: "Open Graph Previews",
+      title: t("app.text.open-graph-previews"),
       rows: [
         {
-          label: "Active card templates",
+          label: t("app.text.active-card-templates"),
           code: `/open-graph/page.png?title=...&description=...&type=...`,
           description:
             "Live Open Graph images generated via the SVG layout renderer with live site identity tokens.",
@@ -899,10 +900,10 @@ export default function DevSeoPage() {
       ],
     },
     {
-      title: "Open Graph Sandbox",
+      title: t("app.text.open-graph-sandbox"),
       rows: [
         {
-          label: "Live generator",
+          label: t("app.text.live-generator"),
           code: "/open-graph/card.svg?title=...&description=...&type=...&brand=...&bg=...&date=...&preview=true",
           description:
             "Interactively test title, description, brand, background, date, and preview parameters.",
@@ -911,10 +912,10 @@ export default function DevSeoPage() {
       ],
     },
     {
-      title: "Public Asset Endpoints",
+      title: t("app.text.public-asset-endpoints"),
       rows: [
         {
-          label: "Branding assets & sitemap",
+          label: t("app.text.branding-assets-sitemap"),
           description:
             "Public assets served by the seo() plugin middleware and static route injectors.",
           content: (
@@ -964,7 +965,7 @@ export default function DevSeoPage() {
   return (
     <div class="flex flex-col gap-2xl">
       <header class="flex flex-col gap-xs">
-        <h1 class="text-3xl text-highlighted">SEO</h1>
+        <h1 class="text-3xl text-highlighted">{t("app.text.seo")}</h1>
         <p class="text-sm text-muted">
           Auditing @rimelight/seo — live runtime site metadata, head generation, structured data,
           Open Graph image generation, sitemap, robots.txt, RSS feeds, LLMs.txt, web manifest,
@@ -1020,7 +1021,7 @@ export default function DevSeoPage() {
             <Show when={section.output}>
               <hr class="border-default" />
               <div class="px-xl py-md">
-                <h3 class="mb-xs text-xs text-muted">Rendered output</h3>
+                <h3 class="mb-xs text-xs text-muted">{t("app.text.rendered-output")}</h3>
                 <pre class="max-h-[30rem] overflow-auto whitespace-pre-wrap break-words rounded-md bg-elevated/40 px-sm py-xs font-mono text-xs text-muted">
                   {section.output}
                 </pre>

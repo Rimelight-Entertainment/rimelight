@@ -1,4 +1,5 @@
 import { type Component } from "solid-js";
+import { t } from "@rimelight/i18n";
 
 export const WikiGettingStartedPage: Component = () => {
   return (
@@ -10,7 +11,7 @@ export const WikiGettingStartedPage: Component = () => {
         Welcome adventurer! This guide covers creating your initial avatar, selecting starting
         skills, and venturing into the world of Aethelgard.
       </p>
-      <h2 class="text-2xl font-bold text-white mt-8 mb-4">1. Choosing Your Path</h2>
+      <h2 class="text-2xl font-bold text-white mt-8 mb-4">{t("app.text.1-choosing-your-path")}</h2>
       <p class="text-neutral-400">
         Grand Tale features classless character progression. Pick introductory proficiencies that
         align with your playstyle.

@@ -7,7 +7,7 @@ import type { RLButtonProps } from "@rimelight/ui/components/button/button.types
 export const GrandTaleIndexPage: Component = () => {
   const heroLinks = (): RLButtonProps[] => [
     {
-      label: t("page.franchises.grand.tale.home.hero.button") || "Play Grand Tale",
+      label: t("page.franchises.grand.tale.home.hero.button"),
       href: getLocaleUrl("/franchises/grand-tale/download"),
       color: "primary",
       variant: "solid",
@@ -18,7 +18,7 @@ export const GrandTaleIndexPage: Component = () => {
 
   const overviewLinks = (): RLButtonProps[] => [
     {
-      label: t("page.franchises.grand.tale.home.overview.button") || "Learn More",
+      label: t("page.franchises.grand.tale.home.overview.button"),
       href: getLocaleUrl("/franchises/grand-tale/about"),
       color: "primary",
       variant: "solid",
@@ -80,7 +80,7 @@ export const GrandTaleIndexPage: Component = () => {
         <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
           <RLVideo
             src="https://www.youtube.com/watch?v=QdXl3QtutQI"
-            title="Grand Tale Official Trailer"
+            title={t("app.text.grand-tale-official-trailer")}
             class="aspect-video w-full max-w-2xl overflow-hidden rounded-2xl border border-neutral-800 shadow-2xl"
           />
         </div>

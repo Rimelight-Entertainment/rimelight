@@ -3,6 +3,7 @@ import { type JSX } from "@solidjs/web";
 import { RLBadge, RLButton, RLIcon } from "@rimelight/ui";
 import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
 import { getUIConfig } from "@rimelight/ui/runtime";
+import { t } from "@rimelight/i18n";
 
 // Inlined here to avoid importing fonts.ts (which pulls unocss → oxc-parser WASM into the client bundle)
 const DEFAULT_UI_FONTS = {
@@ -136,23 +137,23 @@ export default function DevUserInterfacePage() {
     }[];
   }[] => [
     {
-      title: "Active Configuration",
+      title: t("app.text.active-configuration"),
       rows: [
         {
-          label: "Virtual UI Module",
+          label: t("app.text.virtual-ui-module"),
           code: `getUIConfig()`,
           description:
             "Resolved options provided to the UnoCSS preset and Solid runtime from virtual:rimelight-ui.",
           value: JSON.stringify(uiConfig, null, 2),
         },
         {
-          label: "Palettes & Scales",
+          label: t("app.text.palettes-scales"),
           code: `PALETTES`,
-          description: "Ten hybrid OKLCH palettes with 11 lightness/chroma shade stops each.",
+          description: t("app.text.ten-hybrid-oklch-palettes-with-11-lightness-chro"),
           value: PALETTES.join(", "),
         },
         {
-          label: "Intent Tokens",
+          label: t("app.text.intent-tokens"),
           code: `INTENTS`,
           description:
             "8 semantic intent modifiers (text, bg, border, ring) mapped dynamically to neutral tone stops.",
@@ -161,18 +162,18 @@ export default function DevUserInterfacePage() {
       ],
     },
     {
-      title: "Typography & Web Fonts",
+      title: t("app.text.typography-web-fonts"),
       mono: true,
       rows: [
         {
-          label: "Active Web Font Preset Config",
+          label: t("app.text.active-web-font-preset-config"),
           code: `resolveWebFontsPreset(getUIConfig().fonts)`,
           description:
             "Active font configuration merged from DEFAULT_UI_FONTS and virtual:rimelight-ui. Fonts are downloaded into node_modules/.cache and served locally with zero CDN requests.",
           value: JSON.stringify(resolvedFontsConfig(), null, 2),
         },
         {
-          label: "Active Font Families",
+          label: t("app.text.active-font-families"),
           code: `Object.keys(resolvedFontsConfig().fonts)`,
           description:
             "Dynamically resolved families and configured weights actively applied to CSS utility classes.",
@@ -212,18 +213,18 @@ export default function DevUserInterfacePage() {
       ],
     },
     {
-      title: "Icon System",
+      title: t("app.text.icon-system"),
       mono: true,
       rows: [
         {
-          label: "Lucide Collection & Resolution",
+          label: t("app.text.lucide-collection-resolution"),
           code: `presetIcons() // resolves i-lucide-* via @iconify-json/lucide`,
           description:
             "Icons resolve to UnoCSS icon classes backed by the bundled Lucide collection. Bare lucide names (e.g. `check`) are prefixed to `i-lucide-check`; full class names like 'i-lucide-*' or 'i-carbon-*' pass through as-is.",
           value: `Default icons: ${iconNames.length} (safelisted)\nConfigured overrides: ${overrideCount}`,
         },
         {
-          label: "Default Icons (Lucide)",
+          label: t("app.text.default-icons-lucide"),
           code: `<RLIcon name="..." /> or class="i-lucide-..."`,
           description:
             "Click any icon cell to copy its JSX component invocation. Supports searching by keyword.",
@@ -232,7 +233,7 @@ export default function DevUserInterfacePage() {
               <div class="flex items-center gap-sm">
                 <input
                   type="text"
-                  placeholder="Filter default icons by name..."
+                  placeholder={t("app.text.filter-default-icons-by-name")}
                   value={iconSearch()}
                   onInput={(e) => setIconSearch(e.currentTarget.value)}
                   class="w-full max-w-xs rounded-lg border border-default bg-elevated/40 px-sm py-xs text-xs text-highlighted placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary-500"
@@ -274,7 +275,7 @@ export default function DevUserInterfacePage() {
       ],
     },
     {
-      title: "Active Hybrid Palette Scales",
+      title: t("app.text.active-hybrid-palette-scales"),
       mono: true,
       rows: PALETTES.map((name) => ({
         label: name,
@@ -299,12 +300,12 @@ export default function DevUserInterfacePage() {
       })),
     },
     {
-      title: "Semantic Intent Utility Tokens",
+      title: t("app.text.semantic-intent-utility-tokens"),
       rows: [
         {
-          label: "Surface intent tokens",
+          label: t("app.text.surface-intent-tokens"),
           code: `bg-[intent] / text-[intent] / border-[intent]`,
-          description: "Design tokens dynamically resolved to the current theme surface layer.",
+          description: t("app.text.design-tokens-dynamically-resolved-to-the-curren"),
           content: (
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
               <For each={INTENTS}>
@@ -313,7 +314,7 @@ export default function DevUserInterfacePage() {
                     class={`p-3 rounded-lg border shadow-xs bg-${intent} text-${intent} border-${intent}`}
                   >
                     <span class="text-[10px] font-mono block font-bold mb-0.5">{intent}</span>
-                    <span class="text-xs">Sample surface</span>
+                    <span class="text-xs">{t("app.text.sample-surface")}</span>
                   </div>
                 )}
               </For>
@@ -323,10 +324,10 @@ export default function DevUserInterfacePage() {
       ],
     },
     {
-      title: "Component Scoped Theming (rl-color-*)",
+      title: t("app.text.component-scoped-theming-rl-color"),
       rows: [
         {
-          label: "Button color variants",
+          label: t("app.text.button-color-variants"),
           code: `<RLButton color="primary|secondary|..." variant="solid|soft|outline" />`,
           description:
             "Single class scoped theming tokens driving solid, soft, outline, subtle, ghost, and link variants.",
@@ -342,9 +343,9 @@ export default function DevUserInterfacePage() {
           ),
         },
         {
-          label: "Badge palette spectrum",
+          label: t("app.text.badge-palette-spectrum"),
           code: `<RLBadge color="..." />`,
-          description: "All 10 hybrid palette colors applied to the badge primitive.",
+          description: t("app.text.all-10-hybrid-palette-colors-applied-to-the-badg"),
           content: (
             <div class="flex flex-wrap items-center gap-1.5">
               <For each={PALETTES}>{(color) => <RLBadge label={color} color={color} />}</For>
@@ -358,7 +359,7 @@ export default function DevUserInterfacePage() {
   return (
     <div class="flex flex-col gap-2xl">
       <header class="flex flex-col gap-xs">
-        <h1 class="text-3xl text-highlighted">User Interface</h1>
+        <h1 class="text-3xl text-highlighted">{t("app.text.user-interface")}</h1>
         <p class="text-sm text-muted">
           Verifying @rimelight/ui OKLCH hybrid palette scales, dynamic typography families, icon
           library and collections, semantic intent utilities, and component theming.

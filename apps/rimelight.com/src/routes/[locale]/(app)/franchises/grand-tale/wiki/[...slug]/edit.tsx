@@ -3,6 +3,7 @@ import { useParams } from "@solidjs/router";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
 import { api } from "#api/client";
+import { t } from "@rimelight/i18n";
 
 export const WikiEditPage: Component = () => {
   const params = useParams<{ locale: string; slug?: string }>();
@@ -105,13 +106,13 @@ export const WikiEditPage: Component = () => {
           type="text"
           value={titleVal()}
           onInput={(e: any) => setTitleVal(e.currentTarget.value)}
-          placeholder="Page Title"
+          placeholder={t("app.text.page-title")}
           class="w-full text-3xl font-bold bg-transparent border-b border-neutral-800 py-2 mb-4 focus:outline-none focus:border-indigo-500"
         />
         <textarea
           value={descVal()}
           onInput={(e: any) => setDescVal(e.currentTarget.value)}
-          placeholder="Add a description..."
+          placeholder={t("app.text.add-a-description")}
           rows={3}
           class="w-full text-lg text-neutral-400 bg-transparent border border-neutral-800 rounded-lg p-3 focus:outline-none focus:border-indigo-500"
         />

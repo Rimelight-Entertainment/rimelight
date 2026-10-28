@@ -1,6 +1,7 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { t } from "@rimelight/i18n";
 
 const categoryToType: Record<string, string> = {
   timeline: "Timeline",
@@ -56,8 +57,8 @@ export const LoreCategoryPage: Component = () => {
         <table class="w-full border-collapse text-left text-sm">
           <thead>
             <tr class="border-b border-neutral-850 bg-neutral-900/50 text-xs font-bold uppercase text-indigo-400 tracking-wider">
-              <th class="p-4">Title</th>
-              <th class="p-4">Description</th>
+              <th class="p-4">{t("app.text.title-768e")}</th>
+              <th class="p-4">{t("app.text.description")}</th>
               <th class="p-4 text-right"></th>
             </tr>
           </thead>

@@ -3,58 +3,57 @@ import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import { getLocaleUrl } from "@rimelight/i18n";
-
-const quickNavItems = [
-  {
-    title: "Getting Started",
-    description: "New to Grand Tale? Start here to learn the basics.",
-    href: "/franchises/grand-tale/wiki/getting-started",
-    icon: "i-lucide-book-open",
-  },
-  {
-    title: "Characters",
-    description: "Explore the heroes, villains, and legends of the world.",
-    href: "/franchises/grand-tale/wiki/lore/characters",
-    icon: "i-lucide-users",
-  },
-  {
-    title: "Locations",
-    description: "Discover the regions, cities, and landmarks.",
-    href: "/franchises/grand-tale/wiki/lore/locations",
-    icon: "i-lucide-map-pin",
-  },
-  {
-    title: "Heroes",
-    description: "Master the playable heroes and their abilities.",
-    href: "/franchises/grand-tale/wiki/lore/heroes",
-    icon: "i-lucide-shield-check",
-  },
-];
-
-const trendingArticles = [
-  {
-    title: "Chronicles of the Cataclysm",
-    category: "Lore",
-    summary: "A deep dive into the cataclysmic events that reshaped Aethelgard.",
-  },
-  {
-    title: "Soulstone Resonance Mechanics",
-    category: "Guides",
-    summary: "How to maximize your character's combat efficiency using Soulstone resonance.",
-  },
-  {
-    title: "The Nine Factions Overview",
-    category: "Lore",
-    summary: "Learn about the origins, motives, and leaders of the Nine Factions.",
-  },
-  {
-    title: "Elemental Weakness & Rotations",
-    category: "Strategy",
-    summary: "Mastering elemental synergy to defeat raid bosses.",
-  },
-];
+import { t } from "@rimelight/i18n";
 
 export const WikiIndexPage: Component = () => {
+  const quickNavItems = [
+    {
+      title: t("app.text.getting-started"),
+      description: t("app.text.new-to-grand-tale-start-here-to-learn-the-basics"),
+      href: "/franchises/grand-tale/wiki/getting-started",
+      icon: "i-lucide-book-open",
+    },
+    {
+      title: t("app.text.characters"),
+      description: t("app.text.explore-the-heroes-villains-and-legends-of-the-w"),
+      href: "/franchises/grand-tale/wiki/lore/characters",
+      icon: "i-lucide-users",
+    },
+    {
+      title: t("app.text.locations"),
+      description: t("app.text.discover-the-regions-cities-and-landmarks"),
+      href: "/franchises/grand-tale/wiki/lore/locations",
+      icon: "i-lucide-map-pin",
+    },
+    {
+      title: t("app.text.heroes"),
+      description: t("app.text.master-the-playable-heroes-and-their-abilities"),
+      href: "/franchises/grand-tale/wiki/lore/heroes",
+      icon: "i-lucide-shield-check",
+    },
+  ];
+  const trendingArticles = [
+    {
+      title: t("app.text.chronicles-of-the-cataclysm"),
+      category: "Lore",
+      summary: t("app.text.a-deep-dive-into-the-cataclysmic-events-that-res"),
+    },
+    {
+      title: t("app.text.soulstone-resonance-mechanics"),
+      category: "Guides",
+      summary: t("app.text.how-to-maximize-your-character-s-combat-efficien"),
+    },
+    {
+      title: t("app.text.the-nine-factions-overview"),
+      category: "Lore",
+      summary: t("app.text.learn-about-the-origins-motives-and-leaders-of-t"),
+    },
+    {
+      title: t("app.text.elemental-weakness-rotations"),
+      category: "Strategy",
+      summary: t("app.text.mastering-elemental-synergy-to-defeat-raid-bosse"),
+    },
+  ];
   return (
     <div class="space-y-16">
       <section class="space-y-6">
@@ -63,7 +62,7 @@ export const WikiIndexPage: Component = () => {
         </div>
         <h1 class="text-5xl font-black uppercase tracking-tighter text-white leading-none">
           The Great Library <br />
-          of <span class="text-indigo-400">Aethelgard</span>
+          of <span class="text-indigo-400">{t("app.text.aethelgard")}</span>
         </h1>
         <p class="text-xl text-neutral-300 font-light max-w-2xl leading-relaxed">
           Welcome to the central knowledge hub of Grand Tale. Here you will find detailed
@@ -72,7 +71,12 @@ export const WikiIndexPage: Component = () => {
 
         <div class="flex flex-col md:flex-row gap-6 items-start lg:items-center pt-2">
           <div class="bg-neutral-900/60 border border-neutral-800 p-4 flex gap-3 w-full max-w-xl rounded-2xl shadow-inner">
-            <RLInput placeholder="Search the library..." size="lg" class="flex-1" color="neutral" />
+            <RLInput
+              placeholder={t("app.text.search-the-library")}
+              size="lg"
+              class="flex-1"
+              color="neutral"
+            />
             <RLButton color="primary" label="Search" class="px-6 rounded-xl" />
           </div>
 

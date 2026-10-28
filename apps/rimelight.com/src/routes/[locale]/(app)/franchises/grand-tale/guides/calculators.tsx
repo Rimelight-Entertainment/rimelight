@@ -1,9 +1,12 @@
 import { type Component } from "solid-js";
+import { t } from "@rimelight/i18n";
 
 export const CalculatorsPage: Component = () => {
   return (
     <div class="py-16 max-w-6xl mx-auto px-4 text-white">
-      <h1 class="text-4xl font-extrabold uppercase tracking-tight mb-4">Mechanics Calculators</h1>
+      <h1 class="text-4xl font-extrabold uppercase tracking-tight mb-4">
+        {t("app.text.mechanics-calculators")}
+      </h1>
       <p class="text-neutral-400 mb-8">
         Compute soulstone crafting rates, combat scaling, and XP milestones.
       </p>

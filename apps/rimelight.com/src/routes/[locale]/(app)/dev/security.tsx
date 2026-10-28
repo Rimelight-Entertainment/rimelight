@@ -2,6 +2,7 @@ import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui";
 import { buildCspHeader, activeConfig } from "@rimelight/security";
+import { t } from "@rimelight/i18n";
 
 const DEMO_NONCE = "abC0123def456GHI";
 
@@ -42,32 +43,32 @@ export default function DevSecurityPage() {
     }[];
   }[] => [
     {
-      title: "Current Values",
+      title: t("app.text.current-values"),
       rows: [
         {
-          label: "Security Config",
+          label: t("app.text.security-config"),
           code: `activeConfig`,
           description:
             "The plugin options ship as JSON from the virtual module; the same object is consumed by the runtime and unified security middleware.",
           value: JSON.stringify(config, null, 2),
         },
         {
-          label: "Domain",
+          label: t("app.text.domain"),
           code: `activeConfig.domain`,
           value: String(config.domain ?? "(unset)"),
         },
         {
-          label: "Image Sources",
+          label: t("app.text.image-sources"),
           code: `activeConfig.imgSrc`,
           value: JSON.stringify(config.imgSrc ?? []),
         },
         {
-          label: "Rate Limited Routes",
+          label: t("app.text.rate-limited-routes"),
           code: `activeConfig.ratelimit?.routes`,
           value: JSON.stringify(ratelimitOptions?.routes ?? []),
         },
         {
-          label: "Rate Limiter",
+          label: t("app.text.rate-limiter"),
           code: `typeof activeConfig.ratelimit`,
           value: typeof config.ratelimit,
         },
@@ -78,21 +79,21 @@ export default function DevSecurityPage() {
       mono: true,
       rows: [
         {
-          label: "Production CSP",
+          label: t("app.text.production-csp"),
           code: `buildCspHeader(activeConfig)`,
           description:
             "Default directive set resolved from the active plugin options, without a script nonce.",
           value: formatCsp(cspProd),
         },
         {
-          label: "CSP with script nonce",
+          label: t("app.text.csp-with-script-nonce"),
           code: `buildCspHeader(activeConfig, "${DEMO_NONCE}")`,
           description:
             "Passing a nonce opts into 'strict-dynamic' mode: first-party scripts are allowed via nonce, then load their own dependencies.",
           value: formatCsp(cspNonce),
         },
         {
-          label: "Turnstile enabled",
+          label: t("app.text.turnstile-enabled"),
           code: `buildCspHeader({ ...activeConfig, turnstile: true })`,
           description:
             "Enabling the Turnstile option relaxes connect-src/frame-src to allow challenges.cloudflare.com.",
@@ -101,7 +102,7 @@ export default function DevSecurityPage() {
       ],
     },
     {
-      title: "Directives",
+      title: t("app.text.directives"),
       mono: true,
       rows: Object.entries(directives).map(([directive, values]) => ({
         label: directive,
@@ -111,32 +112,32 @@ export default function DevSecurityPage() {
       })),
     },
     {
-      title: "Turnstile",
+      title: t("app.text.turnstile"),
       rows: [
         {
-          label: "Turnstile Config",
+          label: t("app.text.turnstile-config"),
           code: `activeConfig.turnstile`,
-          description: "Configured turnstile options from security plugin.",
+          description: t("app.text.configured-turnstile-options-from-security-plugi"),
           value: JSON.stringify(config.turnstile ?? false),
         },
       ],
     },
     {
-      title: "Construction Mode",
+      title: t("app.text.construction-mode"),
       rows: [
         {
-          label: "Construction Config",
+          label: t("app.text.construction-config"),
           code: `activeConfig.construction`,
-          description: "Active construction mode configuration from security plugin.",
+          description: t("app.text.active-construction-mode-configuration-from-secu"),
           value: JSON.stringify(config.construction ?? false),
         },
       ],
     },
     {
-      title: "Public Endpoints",
+      title: t("app.text.public-endpoints"),
       rows: [
         {
-          label: "Security policy",
+          label: t("app.text.security-policy"),
           code: `/.well-known/security.txt`,
           description:
             "RFC 9116 security.txt emitted by the seo plugin using the configured security contact.",
@@ -166,7 +167,7 @@ export default function DevSecurityPage() {
   return (
     <div class="flex flex-col gap-2xl">
       <header class="flex flex-col gap-xs">
-        <h1 class="text-3xl text-highlighted">Security</h1>
+        <h1 class="text-3xl text-highlighted">{t("app.text.security")}</h1>
         <p class="text-sm text-muted">
           Verifying @rimelight/security config resolution, generated CSP headers, unified middleware
           head/SRI injection, and Turnstile / construction runtime flags.
@@ -221,7 +222,7 @@ export default function DevSecurityPage() {
             <Show when={section.output}>
               <hr class="border-default" />
               <div class="px-xl py-md">
-                <h3 class="mb-xs text-xs text-muted">Rendered output</h3>
+                <h3 class="mb-xs text-xs text-muted">{t("app.text.rendered-output")}</h3>
                 <pre class="max-h-[30rem] overflow-auto whitespace-pre-wrap break-words rounded-md bg-elevated/40 px-sm py-xs font-mono text-xs text-muted">
                   {section.output}
                 </pre>

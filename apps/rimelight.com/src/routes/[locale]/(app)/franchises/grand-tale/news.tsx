@@ -1,4 +1,5 @@
 import { type Component } from "solid-js";
+import { t } from "@rimelight/i18n";
 
 export const GrandTaleNewsPage: Component = () => {
   return (
@@ -6,7 +7,9 @@ export const GrandTaleNewsPage: Component = () => {
       <h1 class="text-4xl font-extrabold text-white uppercase tracking-tight mb-4">
         Grand Tale News
       </h1>
-      <p class="text-neutral-400">Read development updates, patch notes, and community events.</p>
+      <p class="text-neutral-400">
+        {t("app.text.read-development-updates-patch-notes-and-communi")}
+      </p>
     </div>
   );
 };
