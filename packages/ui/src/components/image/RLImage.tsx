@@ -84,7 +84,8 @@ export const RLImage: Component<RLImageProps> = (props) => {
   const loading = () => props.loading ?? "lazy";
   const decoding = () => props.decoding ?? "async";
 
-  const [show, setShow] = createSignal(() => loading() !== "lazy");
+  // Always set `src` so server HTML includes it. Native `loading="lazy"` already defers the fetch.
+  const show = () => true;
   const [status, setStatus] = createSignal<"loading" | "ok" | "error">("loading");
   const [open, setOpen] = createSignal(() => Boolean(props.open));
   const [zoom, setZoom] = createSignal(false);
@@ -93,7 +94,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
   );
   const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(() => fileExtension());
 
-  let rootRef: HTMLDivElement | undefined;
   let dialogRef: HTMLDialogElement | undefined;
   let fetched = false;
 
@@ -132,25 +132,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
       console.error("Download failed", err);
     }
   };
-
-  createEffect(
-    () => show(),
-    (isShown) => {
-      const el = rootRef;
-      if (!el || loading() !== "lazy" || isShown) return;
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            setShow(true);
-            io.disconnect();
-          }
-        },
-        { rootMargin: "200px" },
-      );
-      io.observe(el);
-      return () => io.disconnect();
-    },
-  );
 
   createEffect(
     () => ({ isOpen: open(), src: activeModalSrc() }),
@@ -263,13 +244,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
     );
 
   return (
-    <div
-      ref={(el) => (rootRef = el)}
-      class={classes().root}
-      data-slot="root"
-      data-theme={props.theme}
-      {...rest}
-    >
+    <div class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
       {isFigure() ? (
         <figure class={classes().figure} data-slot="figure">
           {renderTrigger()}

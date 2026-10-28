@@ -40,12 +40,14 @@ describe("@rimelight/security CSP header generator", () => {
       allowedDomains: ["https://api.example.com", "https://ws.example.com"],
     });
 
-    expect(csp).toContain("img-src 'self' data: https://api.example.com https://ws.example.com");
+    expect(csp).toContain(
+      "img-src 'self' data: https://i3.ytimg.com https://api.example.com https://ws.example.com",
+    );
     expect(csp).toContain(
       "connect-src 'self' https://challenges.cloudflare.com https://api.example.com https://ws.example.com",
     );
     expect(csp).toContain(
-      "frame-src 'self' https://challenges.cloudflare.com https://api.example.com https://ws.example.com",
+      "frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://api.example.com https://ws.example.com",
     );
   });
 
@@ -66,7 +68,9 @@ describe("@rimelight/security CSP header generator", () => {
       imgSrc: ["https://api.example.com"],
     });
 
-    expect(csp).toContain("img-src 'self' data: https://cdn.example.com https://api.example.com");
+    expect(csp).toContain(
+      "img-src 'self' data: https://cdn.example.com https://i3.ytimg.com https://api.example.com",
+    );
   });
 
   it("should allow merging and disabling custom directives", () => {

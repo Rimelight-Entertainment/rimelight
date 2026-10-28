@@ -46,6 +46,7 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
       "'self'",
       "data:",
       ...(domain ? [`https://cdn.${domain}`] : []),
+      "https://i3.ytimg.com",
       ...allowed,
       ...(options.imgSrc || []),
     ]),
@@ -62,6 +63,7 @@ export function buildCspHeader(options: SecurityConfig = {}, nonce?: string): st
     new Set([
       "'self'",
       ...(turnstile ? ["https://challenges.cloudflare.com"] : []),
+      "https://www.youtube.com",
       ...allowed,
       ...(options.frameSrc || []),
     ]),
