@@ -1,5 +1,6 @@
 import { Show, type Component } from "solid-js";
 import type { BlockViewProps } from "./ParagraphBlock";
+import { cmsT } from "../../locale";
 
 export const LivePreviewBlock: Component<BlockViewProps> = (props) => {
   const componentCode = () => (props.block.props?.["componentCode"] as string) ?? "";
@@ -21,7 +22,7 @@ export const LivePreviewBlock: Component<BlockViewProps> = (props) => {
           </span>
         </div>
         <Show when={editable()}>
-          <span class="text-xs text-neutral-500">Interactive</span>
+          <span class="text-xs text-neutral-500">{cmsT("text.interactive")}</span>
         </Show>
       </div>
 

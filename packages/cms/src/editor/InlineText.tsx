@@ -13,6 +13,7 @@ import { htmlToInline, inlineToHtml, mentionHtml, toInlineNodes, toPlainText } f
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { useRichEditing, type MentionCandidate } from "./rich-context";
+import { cmsT } from "../locale";
 
 /**
  * A contenteditable text region.
@@ -581,8 +582,8 @@ const LinkPopover: Component<{
                   variant="ghost"
                   color="error"
                   icon="i-lucide-unlink"
-                  title="Remove link"
-                  aria-label="Remove link"
+                  title={cmsT("text.remove-link")}
+                  aria-label={cmsT("text.remove-link")}
                   onClick={props.onRemove}
                 />
               </Show>
@@ -595,7 +596,7 @@ const LinkPopover: Component<{
             variant="ghost"
             size="sm"
             class="w-60"
-            placeholder="Paste or type a link…"
+            placeholder={cmsT("text.paste-or-type-a-link")}
             value={url()}
             onInput={(e) => setUrl(e.currentTarget.value)}
             onKeyDown={(e) => {
@@ -613,7 +614,7 @@ const LinkPopover: Component<{
             variant={newTab() ? "soft" : "ghost"}
             color={newTab() ? "primary" : "neutral"}
             icon="i-lucide-external-link"
-            title="Open in a new tab"
+            title={cmsT("text.open-in-a-new-tab")}
             aria-pressed={newTab() ? "true" : "false"}
             onClick={() => {
               setNewTab(!newTab());
@@ -689,7 +690,7 @@ const MentionPicker: Component<{
             variant="ghost"
             size="sm"
             class="min-w-0 flex-1"
-            placeholder="Mention a page…"
+            placeholder={cmsT("text.mention-a-page")}
             value={query()}
             onInput={(e) => {
               setQuery(e.currentTarget.value);

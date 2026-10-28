@@ -16,12 +16,16 @@ export const taxonomyPresets: TaxonomyPreset[] = [
   {
     id: "category",
     summary: "Nested topics, e.g. Guides > Setup. Good for sorting content into sections.",
-    definition: { slug: "category", label: "Categories", hierarchical: true },
+    definition: {
+      slug: "category",
+      label: { en: "Categories", es: "Categories", pt: "Categories" },
+      hierarchical: true,
+    },
   },
   {
     id: "tag",
     summary: "Flat keywords for cross-cutting labels.",
-    definition: { slug: "tag", label: "Tags", hierarchical: false },
+    definition: { slug: "tag", label: { en: "Tags", es: "Tags", pt: "Tags" }, hierarchical: false },
   },
 ];
 

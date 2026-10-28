@@ -28,6 +28,7 @@ import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { cmsT } from "../../locale";
 import {
   Button,
   Field,
@@ -338,7 +339,7 @@ const EditorWorkspace: Component<{
                 href={liveUrl()!}
                 target="_blank"
                 rel="noopener"
-                title="View live page"
+                title={cmsT("text.view-live-page")}
                 class="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-success-600 hover:bg-elevated"
               >
                 <span class="size-1.5 rounded-full bg-success-500" />
@@ -638,7 +639,7 @@ const TitleInput: Component<{
     <RLInput
       variant="ghost"
       class="text-4xl font-bold"
-      placeholder="Untitled"
+      placeholder={cmsT("text.untitled")}
       value={props.entry.title[props.locale] ?? resolveLabel(props.entry.title)}
       disabled={props.readOnly}
       onChange={(e) =>
@@ -782,7 +783,7 @@ const TermPicker: Component<{ entryId: string; taxonomy: string; readOnly: boole
       <div class="flex flex-wrap gap-1.5">
         <For
           each={all.data()?.terms ?? []}
-          fallback={<span class="text-xs text-muted">No terms yet.</span>}
+          fallback={<span class="text-xs text-muted">{cmsT("text.no-terms-yet")}</span>}
         >
           {(t) => (
             <RLButton
@@ -822,7 +823,9 @@ const BylinePicker: Component<{
     (bylines.data()?.bylines ?? []).filter((b) => !props.value.some((v) => v.userId === b.id));
   return (
     <section class="flex flex-col gap-2 border-t border-default pt-4">
-      <h3 class="text-[11px] font-semibold uppercase tracking-wide text-muted">Bylines</h3>
+      <h3 class="text-[11px] font-semibold uppercase tracking-wide text-muted">
+        {cmsT("text.bylines")}
+      </h3>
       <For each={props.value}>
         {(credit, i) => (
           <div class="flex items-center gap-2 text-xs">
@@ -845,7 +848,7 @@ const BylinePicker: Component<{
               variant="ghost"
               color="neutral"
               icon="i-lucide-x"
-              aria-label="Remove byline"
+              aria-label={cmsT("text.remove-byline")}
               disabled={props.readOnly}
               onClick={() => props.onChange(props.value.filter((_, j) => j !== i()))}
             />
@@ -996,7 +999,7 @@ const VersionsModal: Component<{
   onClose: () => void;
   onRestored: (e: Entry) => void;
 }> = (props) => (
-  <Modal open={props.open} title="Versions & history" onClose={props.onClose} wide>
+  <Modal open={props.open} title={cmsT("text.versions-history")} onClose={props.onClose} wide>
     <VersionsBrowser {...props} />
   </Modal>
 );
@@ -1056,14 +1059,18 @@ const VersionsBrowser: Component<{
         </Button>
         <Show when={props.entry.draftUpdatedAt}>
           <div class="rounded-lg border border-dashed border-default p-2.5 text-xs">
-            <div class="font-medium text-highlighted">Current draft</div>
+            <div class="font-medium text-highlighted">{cmsT("text.current-draft")}</div>
             <div class="text-muted">Saved {relativeTime(props.entry.draftUpdatedAt)}</div>
           </div>
         </Show>
         <Loading when={versions.loading()}>
           <For
             each={versions.data()?.versions ?? []}
-            fallback={<p class="text-xs text-muted">No versions yet. Publishing creates one.</p>}
+            fallback={
+              <p class="text-xs text-muted">
+                {cmsT("text.no-versions-yet-publishing-creates-one")}
+              </p>
+            }
           >
             {(v) => (
               <button
@@ -1155,7 +1162,7 @@ const DiffView: Component<{ diff: any }> = (props) => (
     </For>
     <For
       each={props.diff.blocks.filter((b: any) => b.status !== "unchanged")}
-      fallback={<p class="text-muted">No block changes.</p>}
+      fallback={<p class="text-muted">{cmsT("text.no-block-changes")}</p>}
     >
       {(b: any) => (
         <div
@@ -1196,7 +1203,7 @@ const ScheduleModal: Component<{
   return (
     <Modal
       open={props.open}
-      title="Schedule publishing"
+      title={cmsT("text.schedule-publishing")}
       onClose={props.onClose}
       footer={
         <>

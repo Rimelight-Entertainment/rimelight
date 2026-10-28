@@ -5,6 +5,7 @@ import { isRichTextEmpty, richTextToPlain } from "../../core/richtext";
 import { RichText } from "./inlines";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import type { BlockViewProps } from "./ParagraphBlock";
+import { cmsT } from "../../locale";
 
 export function slugify(text: string): string {
   return text
@@ -79,7 +80,7 @@ const CopyAnchor: Component<{ id: string }> = (props) => {
   return (
     <button
       type="button"
-      aria-label="Copy link to this section"
+      aria-label={cmsT("text.copy-link-to-this-section")}
       title={copied() ? "Link copied" : "Copy link to this section"}
       class="inline-flex size-7 shrink-0 items-center justify-center rounded text-neutral-400 opacity-0 transition-opacity hover:text-neutral-700 focus-visible:opacity-100 group-hover/heading:opacity-100"
       onClick={async (e) => {

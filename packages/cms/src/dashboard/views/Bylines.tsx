@@ -4,6 +4,7 @@ import { FieldInput } from "../fields/FieldInput";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
+import { cmsT } from "../../locale";
 
 export const Bylines: Component = () => {
   const { api, toast } = useDashboard();
@@ -38,7 +39,7 @@ export const Bylines: Component = () => {
     <div>
       <PageHeader
         icon="i-lucide-users"
-        title="Bylines"
+        title={cmsT("text.bylines")}
         description="Public author and contributor profiles credited on entries."
         actions={
           <Button
@@ -54,7 +55,7 @@ export const Bylines: Component = () => {
         <Loading when={list.loading() && !list.data()}>
           <Show
             when={list.data()?.bylines.length}
-            fallback={<Empty icon="i-lucide-user" title="No bylines yet" />}
+            fallback={<Empty icon="i-lucide-user" title={cmsT("text.no-bylines-yet")} />}
           >
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               <For each={list.data()!.bylines}>
@@ -122,7 +123,7 @@ export const Bylines: Component = () => {
             <Field label="Slug">
               <RLInput
                 class="font-mono"
-                placeholder="auto"
+                placeholder={cmsT("text.auto")}
                 value={editing()!.slug ?? ""}
                 onInput={(e) => set({ slug: e.currentTarget.value })}
               />

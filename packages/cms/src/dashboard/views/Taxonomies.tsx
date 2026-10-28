@@ -9,6 +9,7 @@ import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
+import { cmsT } from "../../locale";
 
 export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
   const { api, href, navigate, toast } = useDashboard();
@@ -54,7 +55,7 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
     <div>
       <PageHeader
         icon="i-lucide-tags"
-        title="Taxonomies"
+        title={cmsT("text.taxonomies")}
         description="Vocabularies for organising entries, such as categories or tags. Start from a preset or create your own."
         actions={
           <Button variant="primary" icon="i-lucide-plus" onClick={() => setCreating(true)}>
@@ -100,7 +101,7 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
             fallback={
               <Empty
                 icon="i-lucide-tags"
-                title="No taxonomies yet"
+                title={cmsT("text.no-taxonomies-yet")}
                 description="Add one from a preset on the left, or create your own."
               />
             }
@@ -120,7 +121,7 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
       </div>
       <Modal
         open={creating()}
-        title="New taxonomy"
+        title={cmsT("text.new-taxonomy")}
         onClose={() => setCreating(false)}
         footer={
           <Button variant="primary" onClick={() => void create()}>
@@ -216,7 +217,10 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () 
         </Button>
       </div>
       <Loading when={terms.loading() && !terms.data()}>
-        <Show when={tree().length} fallback={<Empty icon="i-lucide-tag" title="No terms yet" />}>
+        <Show
+          when={tree().length}
+          fallback={<Empty icon="i-lucide-tag" title={cmsT("text.no-terms-yet-8ee9")} />}
+        >
           <div class="divide-y divide-default rounded-xl border border-default">
             <For each={tree()}>
               {({ term, depth }) => (
@@ -232,7 +236,7 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () 
                     color="neutral"
                     size="xs"
                     icon="i-lucide-pencil"
-                    aria-label="Edit term"
+                    aria-label={cmsT("text.edit-term")}
                     onClick={() => setEditing({ ...term })}
                   />
                   <RLButton
@@ -240,7 +244,7 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () 
                     color="error"
                     size="xs"
                     icon="i-lucide-trash-2"
-                    aria-label="Delete term"
+                    aria-label={cmsT("text.delete-term")}
                     onClick={async () => {
                       if (!confirm(`Delete "${term.name}"? Child terms are deleted too.`)) return;
                       await api.taxonomies.deleteTerm(props.taxonomy, term.id);
@@ -274,7 +278,7 @@ const Terms: Component<{ taxonomy: string; hierarchical: boolean; onDeleted: () 
             <Field label="Slug">
               <RLInput
                 class="font-mono"
-                placeholder="auto"
+                placeholder={cmsT("text.auto")}
                 value={editing()!.slug ?? ""}
                 onInput={(e) => setEditing({ ...editing()!, slug: e.currentTarget.value })}
               />

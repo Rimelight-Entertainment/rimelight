@@ -8,6 +8,7 @@ import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { useDashboard } from "../dashboard/context";
 import { isAdmin } from "../auth/roles";
 import type { BlockEditorState } from "./store";
+import { cmsT } from "../locale";
 
 /**
  * Settings for the selected block: its declared `fields`, plus access rules and template locks
@@ -26,7 +27,7 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
   return (
     <Show
       when={selected()}
-      fallback={<p class="text-xs text-muted">Select a block to see its settings.</p>}
+      fallback={<p class="text-xs text-muted">{cmsT("text.select-a-block-to-see-its-settings")}</p>}
     >
       {(sel) => (
         <div class="flex flex-col gap-4">
@@ -41,7 +42,9 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
           </Show>
           <Show
             when={def()?.fields && Object.keys(def()!.fields!).length}
-            fallback={<p class="text-xs text-muted">This block has no extra settings.</p>}
+            fallback={
+              <p class="text-xs text-muted">{cmsT("text.this-block-has-no-extra-settings")}</p>
+            }
           >
             <FieldGroups
               fields={def()!.fields!}
@@ -64,7 +67,7 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
                 <RLFormField label="Visible to roles (empty = everyone)">
                   <RLInput
                     value={(sel().block.allowedRoles ?? []).join(", ")}
-                    placeholder="e.g. employee, admin"
+                    placeholder={cmsT("text.e-g-employee-admin")}
                     onChange={(e) => {
                       const roles = e.currentTarget.value
                         .split(",")

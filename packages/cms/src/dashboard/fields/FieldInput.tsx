@@ -11,6 +11,7 @@ import { RLCollapsible } from "@rimelight/ui/components/collapsible/RLCollapsibl
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
+import { cmsT } from "../../locale";
 
 /**
  * One input for any field type. Used by the entry properties panel, the block inspector and the
@@ -300,7 +301,7 @@ const TagsInput: Component<{
         class="min-w-20 flex-1 bg-transparent outline-none"
         value={draft()}
         disabled={props.readOnly}
-        placeholder="Add…"
+        placeholder={cmsT("text.add")}
         onInput={(e) => setDraft(e.currentTarget.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === ",") {
@@ -376,7 +377,7 @@ const MediaInput: Component<{
       <div class="flex gap-2">
         <RLInput
           value={src()}
-          placeholder="https://… or pick from library"
+          placeholder={cmsT("text.https-or-pick-from-library")}
           disabled={props.readOnly}
           onInput={(e) => props.onChange(e.currentTarget.value)}
         />
@@ -463,7 +464,7 @@ const ReferenceInput: Component<{
                   variant="ghost"
                   color="neutral"
                   icon="i-lucide-x"
-                  aria-label="Remove reference"
+                  aria-label={cmsT("text.remove-reference")}
                   onClick={() => props.onChange(many() ? ids().filter((i) => i !== id) : null)}
                 />
               </Show>
@@ -473,7 +474,7 @@ const ReferenceInput: Component<{
       </div>
       <Show when={!props.readOnly && (many() || ids().length === 0)}>
         <RLInput
-          placeholder="Search entries…"
+          placeholder={cmsT("text.search-entries")}
           value={query()}
           onInput={(e) => void search(e.currentTarget.value)}
         />

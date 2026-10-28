@@ -1,3 +1,4 @@
+import { getCurrentLocale } from "@rimelight/i18n";
 import type { BaseBlock } from "../types/blocks";
 import { createBlockId } from "../blocks/tree";
 import type { CollectionDefinition, FieldDefinition, Label, ResolvedCollection } from "./types";
@@ -11,7 +12,7 @@ export function defineField<const T extends FieldDefinition>(def: T): T {
   return def;
 }
 
-export function resolveLabel(label: Label | undefined | null, locale = "en"): string {
+export function resolveLabel(label: Label | undefined | null, locale = getCurrentLocale()): string {
   if (!label) return "";
   if (typeof label === "string") return label;
   return label[locale] ?? label["en"] ?? Object.values(label)[0] ?? "";

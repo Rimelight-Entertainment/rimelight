@@ -2,6 +2,7 @@ import { For, Show, createSignal, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { useDashboard } from "../context";
+import { cmsT } from "../../locale";
 import {
   Button,
   Empty,
@@ -35,7 +36,7 @@ export const Reviews: Component = () => {
     <div>
       <PageHeader
         icon="i-lucide-check-check"
-        title="Reviews"
+        title={cmsT("text.reviews")}
         description="Changes waiting for approval before they can be published."
       />
       <div class="p-6">
@@ -45,7 +46,7 @@ export const Reviews: Component = () => {
             fallback={
               <Empty
                 icon="i-lucide-check-circle"
-                title="All caught up"
+                title={cmsT("text.all-caught-up")}
                 description="Nothing is waiting for review."
               />
             }
@@ -136,11 +137,16 @@ export const Reviews: Component = () => {
           </Show>
         </Loading>
       </div>
-      <Modal open={!!diff()} title="Changes vs. live" onClose={() => setDiff(null)} wide>
+      <Modal
+        open={!!diff()}
+        title={cmsT("text.changes-vs-live")}
+        onClose={() => setDiff(null)}
+        wide
+      >
         <Show when={diff()}>
           <For
             each={diff().blocks.filter((b: any) => b.status !== "unchanged")}
-            fallback={<p class="text-sm text-muted">No block changes.</p>}
+            fallback={<p class="text-sm text-muted">{cmsT("text.no-block-changes")}</p>}
           >
             {(b: any) => (
               <div class="text-xs">
@@ -152,7 +158,7 @@ export const Reviews: Component = () => {
       </Modal>
       <Modal
         open={!!comments()}
-        title="Comments"
+        title={cmsT("text.comments")}
         onClose={() => setComments(null)}
         footer={
           <div class="flex w-full gap-2">
@@ -160,7 +166,7 @@ export const Reviews: Component = () => {
               class="flex-1"
               value={draft()}
               onInput={(e) => setDraft(e.currentTarget.value)}
-              placeholder="Write a comment…"
+              placeholder={cmsT("text.write-a-comment")}
             />
             <Button
               variant="primary"
@@ -180,7 +186,7 @@ export const Reviews: Component = () => {
         <div class="flex flex-col gap-2">
           <For
             each={comments()?.list ?? []}
-            fallback={<p class="text-sm text-muted">No comments yet.</p>}
+            fallback={<p class="text-sm text-muted">{cmsT("text.no-comments-yet")}</p>}
           >
             {(c) => (
               <div class="rounded-lg bg-elevated px-3 py-2 text-sm">

@@ -12,6 +12,7 @@ import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
 import { Button, Empty, Field, Loading, Modal, PageHeader, useLoader } from "../ui";
+import { cmsT } from "../../locale";
 
 /** Templates: reusable starting layouts + defaults + permissions within a collection. */
 export const Templates: Component<{ id?: string }> = (props) => {
@@ -26,7 +27,7 @@ export const Templates: Component<{ id?: string }> = (props) => {
       <div>
         <PageHeader
           icon="i-lucide-layout-template"
-          title="Templates"
+          title={cmsT("text.templates")}
           description="Starting layouts for new entries, with their own permissions and approval rules."
           actions={
             <Button variant="primary" icon="i-lucide-plus" onClick={() => setCreating(true)}>
@@ -38,7 +39,7 @@ export const Templates: Component<{ id?: string }> = (props) => {
           <Loading when={list.loading() && !list.data()}>
             <Show
               when={list.data()?.templates.length}
-              fallback={<Empty icon="i-lucide-layout-template" title="No templates" />}
+              fallback={<Empty icon="i-lucide-layout-template" title={cmsT("text.no-templates")} />}
             >
               <div class="divide-y divide-default rounded-xl border border-default">
                 <For each={list.data()!.templates}>
@@ -64,7 +65,7 @@ export const Templates: Component<{ id?: string }> = (props) => {
         </div>
         <Modal
           open={creating()}
-          title="New template"
+          title={cmsT("text.new-template")}
           onClose={() => setCreating(false)}
           footer={
             <Button

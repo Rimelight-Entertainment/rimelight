@@ -10,6 +10,7 @@ import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { Button, Field, Loading, PageHeader, useLoader } from "../ui";
+import { cmsT } from "../../locale";
 
 const FIELD_TYPES: FieldType[] = [
   "text",
@@ -66,7 +67,7 @@ export const Schemas: Component<{ slug?: string }> = (props) => {
       <div>
         <PageHeader
           icon="i-lucide-database"
-          title="Collections"
+          title={cmsT("text.collections")}
           description="Content models, stored in the database. Start from a preset or create one from scratch."
           actions={
             <Button variant="primary" icon="i-lucide-plus" href={href("/schemas/new")}>
@@ -76,7 +77,7 @@ export const Schemas: Component<{ slug?: string }> = (props) => {
         />
         <Show when={available().length > 0}>
           <div class="px-6 pt-6">
-            <h3 class="text-sm font-medium text-highlighted">Start from a preset</h3>
+            <h3 class="text-sm font-medium text-highlighted">{cmsT("text.start-from-a-preset")}</h3>
             <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
               <For each={available()}>
                 {(p) => (
@@ -268,19 +269,19 @@ const SchemaForm: Component<{
       />
       <div class="grid max-w-6xl gap-8 p-6 lg:grid-cols-[1fr_320px]">
         <section class="flex flex-col gap-3">
-          <h2 class="text-sm font-semibold text-highlighted">Fields</h2>
+          <h2 class="text-sm font-semibold text-highlighted">{cmsT("text.fields")}</h2>
           <For each={fields()}>
             {(f, i) => (
               <div class="grid grid-cols-12 items-start gap-2 rounded-lg border border-default p-3">
                 <RLInput
                   class="col-span-3 font-mono text-xs"
-                  placeholder="key"
+                  placeholder={cmsT("text.key")}
                   value={f.key}
                   onInput={(e) => updateField(i(), { key: e.currentTarget.value })}
                 />
                 <RLInput
                   class="col-span-4"
-                  placeholder="Label"
+                  placeholder={cmsT("text.label")}
                   value={resolveLabel(f.label)}
                   onInput={(e) => updateField(i(), { label: e.currentTarget.value })}
                 />
@@ -296,7 +297,7 @@ const SchemaForm: Component<{
                     color="neutral"
                     size="xs"
                     icon="i-lucide-arrow-up"
-                    aria-label="Move field up"
+                    aria-label={cmsT("text.move-field-up")}
                     onClick={() => moveField(i(), -1)}
                   />
                   <RLButton
@@ -304,7 +305,7 @@ const SchemaForm: Component<{
                     color="neutral"
                     size="xs"
                     icon="i-lucide-arrow-down"
-                    aria-label="Move field down"
+                    aria-label={cmsT("text.move-field-down")}
                     onClick={() => moveField(i(), 1)}
                   />
                   <RLButton
@@ -312,7 +313,7 @@ const SchemaForm: Component<{
                     color="error"
                     size="xs"
                     icon="i-lucide-trash-2"
-                    aria-label="Remove field"
+                    aria-label={cmsT("text.remove-field")}
                     onClick={() => setFields(fields().filter((_, j) => j !== i()))}
                   />
                 </div>
@@ -345,7 +346,7 @@ const SchemaForm: Component<{
                       Options
                       <RLInput
                         class="flex-1"
-                        placeholder="comma,separated"
+                        placeholder={cmsT("text.comma-separated")}
                         value={(f.options ?? []).map((o) => o.value).join(",")}
                         onChange={(e) =>
                           updateField(i(), {
@@ -364,7 +365,7 @@ const SchemaForm: Component<{
                       Collections
                       <RLInput
                         class="flex-1"
-                        placeholder="blog,wiki"
+                        placeholder={cmsT("text.blog-wiki")}
                         value={(f.collections ?? []).join(",")}
                         onChange={(e) =>
                           updateField(i(), {
@@ -498,7 +499,7 @@ const SchemaForm: Component<{
             />
           </Field>
           <div class="flex flex-col gap-2">
-            <span class="text-xs font-medium text-toned">Features</span>
+            <span class="text-xs font-medium text-toned">{cmsT("text.features")}</span>
             <For each={FEATURES}>
               {([key, label, hint]) => (
                 <RLCheckbox

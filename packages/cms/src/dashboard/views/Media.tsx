@@ -4,6 +4,7 @@ import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { Empty, Loading, Modal, PageHeader, useLoader } from "../ui";
+import { cmsT } from "../../locale";
 
 interface MediaFile {
   key: string;
@@ -51,7 +52,7 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
       <div class="flex flex-wrap items-center gap-2">
         <RLInput
           class="max-w-xs"
-          placeholder="Search files…"
+          placeholder={cmsT("text.search-files")}
           value={search()}
           onInput={(e) => setSearch(e.currentTarget.value)}
           onChange={() => void files.reload()}
@@ -93,7 +94,7 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
         fallback={
           <Empty
             icon="i-lucide-hard-drive"
-            title="Storage isn't available"
+            title={cmsT("text.storage-isn-t-available")}
             description={files.error() ?? ""}
           />
         }
@@ -104,7 +105,7 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
             fallback={
               <Empty
                 icon="i-lucide-image"
-                title="No files"
+                title={cmsT("text.no-files")}
                 description="Drop files here or use Upload."
               />
             }
@@ -140,8 +141,8 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
                     <Show when={!props.onPick}>
                       <div class="absolute right-1 top-1 hidden gap-1 group-hover:flex">
                         <RLButton
-                          title="Copy URL"
-                          aria-label="Copy URL"
+                          title={cmsT("text.copy-url")}
+                          aria-label={cmsT("text.copy-url")}
                           icon="i-lucide-link"
                           size="xs"
                           color="neutral"
@@ -152,8 +153,8 @@ const MediaGrid: Component<{ onPick?: (file: MediaFile) => void }> = (props) => 
                           }}
                         />
                         <RLButton
-                          title="Delete"
-                          aria-label="Delete"
+                          title={cmsT("text.delete")}
+                          aria-label={cmsT("text.delete")}
                           icon="i-lucide-trash-2"
                           size="xs"
                           color="error"
@@ -186,7 +187,7 @@ export const MediaLibrary: Component = () => (
   <div>
     <PageHeader
       icon="i-lucide-image"
-      title="Media"
+      title={cmsT("text.media")}
       description="Images and files stored in your bucket. Drag files anywhere on this page to upload."
     />
     <div class="p-6">
@@ -200,7 +201,7 @@ export const MediaPicker: Component<{
   onClose: () => void;
   onPick: (file: MediaFile) => void;
 }> = (props) => (
-  <Modal open={props.open} title="Choose media" onClose={props.onClose} wide>
+  <Modal open={props.open} title={cmsT("text.choose-media")} onClose={props.onClose} wide>
     <Show when={props.open}>
       <MediaGrid onPick={props.onPick} />
     </Show>

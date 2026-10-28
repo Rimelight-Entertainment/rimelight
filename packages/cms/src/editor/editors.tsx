@@ -2,6 +2,7 @@ import { For, Show, type Component } from "solid-js";
 import type { BlockEditorProps } from "../core/blocks/registry";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { cmsT } from "../locale";
 
 /**
  * Canvas editors for built-in blocks whose content isn't a single line of text. Everything
@@ -56,8 +57,8 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
                         variant="ghost"
                         color="neutral"
                         icon="i-lucide-x"
-                        title="Remove column"
-                        aria-label="Remove column"
+                        title={cmsT("text.remove-column")}
+                        aria-label={cmsT("text.remove-column")}
                         onClick={() => removeColumn(col.key)}
                       />
                     </Show>
@@ -72,8 +73,8 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
                   variant="ghost"
                   color="neutral"
                   icon="i-lucide-plus"
-                  title="Add column"
-                  aria-label="Add column"
+                  title={cmsT("text.add-column")}
+                  aria-label={cmsT("text.add-column")}
                   onClick={addColumn}
                 />
               </th>
@@ -105,8 +106,8 @@ const TableEditor: Component<BlockEditorProps> = (props) => {
                       variant="ghost"
                       color="error"
                       icon="i-lucide-trash-2"
-                      title="Remove row"
-                      aria-label="Remove row"
+                      title={cmsT("text.remove-row")}
+                      aria-label={cmsT("text.remove-row")}
                       onClick={() => removeRow(r())}
                     />
                   </td>
@@ -138,7 +139,7 @@ const CodeEditor: Component<BlockEditorProps> = (props) => (
         variant="ghost"
         size="sm"
         value={props.block.props["filename"] ?? ""}
-        placeholder="filename"
+        placeholder={cmsT("text.filename")}
         disabled={props.readOnly}
         onInput={(e) => props.update({ filename: e.currentTarget.value })}
       />
@@ -147,7 +148,7 @@ const CodeEditor: Component<BlockEditorProps> = (props) => (
         size="sm"
         class="w-24 text-right"
         value={props.block.props["language"] ?? ""}
-        placeholder="language"
+        placeholder={cmsT("text.language")}
         disabled={props.readOnly}
         onInput={(e) => props.update({ language: e.currentTarget.value })}
       />
@@ -196,7 +197,7 @@ const ImageEditor: Component<BlockEditorProps> = (props) => {
         variant="ghost"
         size="sm"
         class="text-center text-xs"
-        placeholder="Caption"
+        placeholder={cmsT("text.caption")}
         value={props.block.props["caption"] ?? ""}
         disabled={props.readOnly}
         onInput={(e) => props.update({ caption: e.currentTarget.value })}

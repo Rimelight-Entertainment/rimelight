@@ -2,6 +2,7 @@ import { For, Show, type Component } from "solid-js";
 import { resolveLabel } from "../../core/collections/define";
 import { useDashboard } from "../context";
 import { Button, PageHeader, StatusBadge, relativeTime, useLoader, Loading } from "../ui";
+import { cmsT } from "../../locale";
 
 export const Overview: Component = () => {
   const { api, collections, href, user } = useDashboard();
@@ -38,7 +39,7 @@ export const Overview: Component = () => {
         </div>
 
         <section>
-          <h2 class="mb-3 text-sm font-semibold text-highlighted">Collections</h2>
+          <h2 class="mb-3 text-sm font-semibold text-highlighted">{cmsT("text.collections")}</h2>
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <For each={collections()}>
               {(c) => (
@@ -67,7 +68,9 @@ export const Overview: Component = () => {
         </section>
 
         <section>
-          <h2 class="mb-3 text-sm font-semibold text-highlighted">Recently edited</h2>
+          <h2 class="mb-3 text-sm font-semibold text-highlighted">
+            {cmsT("text.recently-edited")}
+          </h2>
           <Loading when={recent.loading() && !recent.data()}>
             <div class="divide-y divide-default overflow-hidden rounded-xl border border-default">
               <For each={recent.data()?.entries ?? []}>

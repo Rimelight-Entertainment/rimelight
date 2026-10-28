@@ -5,6 +5,7 @@ import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
 import { RLEmpty } from "@rimelight/ui/components/empty/RLEmpty.tsx";
 import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { cmsT } from "../locale";
 
 /** Small, dependency-free primitives so every dashboard view looks and behaves the same. */
 
@@ -128,7 +129,7 @@ export const StatusBadge: Component<{ status: string; changed?: boolean }> = (pr
       class="capitalize"
     />
     <Show when={props.changed}>
-      <span class="size-1.5 rounded-full bg-warning-500" title="Unpublished changes" />
+      <span class="size-1.5 rounded-full bg-warning-500" title={cmsT("text.unpublished-changes")} />
     </Show>
   </span>
 );

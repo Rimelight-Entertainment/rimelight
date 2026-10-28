@@ -23,6 +23,7 @@ import { Templates } from "./views/Templates";
 import { Reviews } from "./views/Reviews";
 import { Schemas } from "./views/Schemas";
 import { Settings } from "./views/Settings";
+import { cmsT } from "../locale";
 
 export interface CmsDashboardProps {
   /** Admin API base. Default `/api/cms`. */
@@ -188,7 +189,7 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
                 <Show when={navOpen()}>
                   <button
                     type="button"
-                    aria-label="Close menu"
+                    aria-label={cmsT("text.close-menu")}
                     class="fixed inset-0 z-30 bg-black/40 lg:hidden"
                     onClick={() => setNavOpen(false)}
                   />
@@ -199,10 +200,10 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
                       variant="ghost"
                       color="neutral"
                       icon="i-lucide-menu"
-                      aria-label="Open menu"
+                      aria-label={cmsT("text.open-menu")}
                       onClick={() => setNavOpen(true)}
                     />
-                    <span class="text-sm font-semibold">Rimelight CMS</span>
+                    <span class="text-sm font-semibold">{cmsT("text.rimelight-cms")}</span>
                   </div>
                   <div class="min-h-0 flex-1 overflow-y-auto">
                     <Show
@@ -271,7 +272,7 @@ const Sidebar: Component<{ active: string }> = (props) => {
     <nav class="flex h-full flex-col overflow-y-auto p-3">
       <div class="flex items-center gap-2 px-2.5 py-2">
         <span class="i-lucide-layers size-5 text-primary-500" />
-        <span class="font-semibold text-highlighted">Rimelight CMS</span>
+        <span class="font-semibold text-highlighted">{cmsT("text.rimelight-cms")}</span>
       </div>
       {item("/", "Overview", "i-lucide-layout-dashboard")}
       {heading("Library")}

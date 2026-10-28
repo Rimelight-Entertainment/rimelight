@@ -4,6 +4,7 @@ import type { BaseBlock } from "../core/types/blocks";
 import { normalizeBlocks } from "../core/blocks/tree";
 import { BlockRenderer } from "../solid/BlockRenderer";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { cmsT } from "../locale";
 
 /**
  * Editor on the left, a live view-mode render of the page on the right, separated by a
@@ -73,9 +74,9 @@ export const SplitPane: Component<{
           aria-valuemin={MIN * 100}
           aria-valuemax={MAX * 100}
           aria-valuenow={Math.round(ratio() * 100)}
-          aria-label="Resize preview"
+          aria-label={cmsT("text.resize-preview")}
           tabindex={0}
-          title="Drag to resize · double-click to reset"
+          title={cmsT("text.drag-to-resize-double-click-to-reset")}
           class={`group relative hidden w-1.5 shrink-0 cursor-col-resize items-center justify-center border-x border-default bg-elevated transition-colors hover:bg-primary-500/20 focus-visible:bg-primary-500/30 focus-visible:outline-none 2xl:flex ${dragging() ? "bg-primary-500/30" : ""}`}
           onPointerDown={(e) => {
             e.preventDefault();
@@ -125,7 +126,9 @@ export const PagePreview: Component<{
   return (
     <div class="flex h-full flex-col bg-muted/5">
       <div class="sticky top-0 z-10 flex items-center gap-2 border-b border-default bg-default/90 px-3 py-1.5 backdrop-blur">
-        <span class="text-[11px] font-semibold uppercase tracking-wide text-muted">Preview</span>
+        <span class="text-[11px] font-semibold uppercase tracking-wide text-muted">
+          {cmsT("text.preview")}
+        </span>
         <Show when={props.badge}>
           <span class="rounded bg-elevated px-1.5 py-0.5 text-[10px] text-toned">
             {props.badge}
@@ -164,8 +167,8 @@ export const PagePreview: Component<{
             variant="ghost"
             color="neutral"
             icon="i-lucide-x"
-            title="Close preview"
-            aria-label="Close preview"
+            title={cmsT("text.close-preview")}
+            aria-label={cmsT("text.close-preview")}
             onClick={() => props.onClose?.()}
           />
         </Show>
@@ -179,7 +182,7 @@ export const PagePreview: Component<{
             <h1 class="mb-6 text-3xl font-bold text-highlighted">{props.title}</h1>
             <For
               each={blocks()}
-              fallback={<p class="text-sm text-muted">Nothing to preview yet.</p>}
+              fallback={<p class="text-sm text-muted">{cmsT("text.nothing-to-preview-yet")}</p>}
             >
               {(block, i) => <BlockRenderer block={block} index={i()} locale={props.locale} />}
             </For>

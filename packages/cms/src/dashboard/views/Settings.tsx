@@ -2,6 +2,7 @@ import { Show, createSignal, type Component } from "solid-js";
 import { useDashboard } from "../context";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { Button, Field, Loading, PageHeader, useLoader } from "../ui";
+import { cmsT } from "../../locale";
 
 export const Settings: Component = () => {
   const { api, toast } = useDashboard();
@@ -21,7 +22,7 @@ export const Settings: Component = () => {
     <div>
       <PageHeader
         icon="i-lucide-settings"
-        title="Settings"
+        title={cmsT("text.settings")}
         actions={
           <Button
             variant="primary"
@@ -49,7 +50,7 @@ export const Settings: Component = () => {
       <Loading when={!s()}>
         <div class="grid max-w-4xl gap-8 p-6 md:grid-cols-2">
           <section class="flex flex-col gap-3">
-            <h2 class="text-sm font-semibold text-highlighted">Site</h2>
+            <h2 class="text-sm font-semibold text-highlighted">{cmsT("text.site")}</h2>
             {text("name", "Site name")}
             {text("description", "Description")}
             {text("url", "URL")}
@@ -58,7 +59,7 @@ export const Settings: Component = () => {
             {text("ogImage", "Default social image")}
           </section>
           <section class="flex flex-col gap-3">
-            <h2 class="text-sm font-semibold text-highlighted">SEO</h2>
+            <h2 class="text-sm font-semibold text-highlighted">{cmsT("text.seo")}</h2>
             <Field label="Title template" hint="%s is replaced with the page title">
               <RLInput
                 value={s()?.seo?.titleTemplate ?? ""}
@@ -74,7 +75,7 @@ export const Settings: Component = () => {
                 }
               />
             </Field>
-            <h2 class="pt-4 text-sm font-semibold text-highlighted">Maintenance</h2>
+            <h2 class="pt-4 text-sm font-semibold text-highlighted">{cmsT("text.maintenance")}</h2>
             <Show when={true}>
               <Button
                 icon="i-lucide-refresh-cw"

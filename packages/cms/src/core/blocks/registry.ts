@@ -1,6 +1,6 @@
 import type { Component } from "solid-js";
 import type { BaseBlock } from "../types/blocks";
-import type { FieldDefinition } from "../collections/types";
+import type { FieldDefinition, Label } from "../collections/types";
 import { createBlockId } from "./tree";
 
 /** Props every block renderer receives. Nested blocks arrive pre-rendered as `children`. */
@@ -28,8 +28,8 @@ export type BlockCategory = "text" | "structure" | "media" | "data" | "embed" | 
 
 export interface BlockDefinition<P extends Record<string, any> = Record<string, any>> {
   type: string;
-  label: string;
-  description?: string;
+  label: Label;
+  description?: Label;
   icon?: string;
   category?: BlockCategory;
   /** Slash-menu search aliases. */

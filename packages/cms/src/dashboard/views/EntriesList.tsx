@@ -14,6 +14,7 @@ import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLTable, type TableColumn } from "@rimelight/ui/components/table/RLTable.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
+import { cmsT } from "../../locale";
 import {
   Button,
   Empty,
@@ -261,7 +262,7 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
           </Show>
           <RLInput
             class="max-w-xs"
-            placeholder="Search title or slug…"
+            placeholder={cmsT("text.search-title-or-slug")}
             value={q()}
             onInput={(e) => {
               const value = e.currentTarget.value;
@@ -271,7 +272,7 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
             }}
           />
           <RLSelect
-            aria-label="Sort"
+            aria-label={cmsT("text.sort")}
             value={query().sort ?? defaultSort()}
             items={[
               ...(hierarchical() ? [{ label: "Tree order", value: "slug" }] : []),
@@ -462,7 +463,7 @@ export const CreateEntryModal: Component<{
           <RLInput
             class="font-mono"
             value={slug()}
-            placeholder="auto"
+            placeholder={cmsT("text.auto")}
             onInput={(e) => setSlug(e.currentTarget.value)}
           />
         </Field>
@@ -471,7 +472,7 @@ export const CreateEntryModal: Component<{
             <div class="grid grid-cols-2 gap-2">
               <TemplateOption
                 selected={!templateId()}
-                title="Blank"
+                title={cmsT("text.blank")}
                 onClick={() => setTemplateId("")}
               />
               <For each={templates.data()!.templates}>

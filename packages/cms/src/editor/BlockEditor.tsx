@@ -11,6 +11,8 @@ import {
 import { Dynamic, Portal } from "@solidjs/web";
 import { RLEmpty } from "@rimelight/ui/components/empty/RLEmpty.tsx";
 import { defineShortcuts } from "@rimelight/ui/shortcuts";
+import { resolveLabel } from "../core/collections/define";
+import { cmsT } from "../locale";
 import type { BaseBlock } from "../core/types/blocks";
 import type { BlockDefinition } from "../core/blocks/registry";
 import { getChildren } from "../core/blocks/tree";
@@ -157,7 +159,7 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
         fallback={
           <RLEmpty
             icon="i-lucide-layout-template"
-            title="This page is empty"
+            title={cmsT("text.this-page-is-empty")}
             description="Start by adding your first block."
             class="border border-dashed border-default"
             actions={
@@ -192,7 +194,7 @@ export const BlockEditor: Component<BlockEditorProps> = (props) => {
       <Show when={ed.selectedIds().length > 1}>
         <div
           role="toolbar"
-          aria-label="Selected blocks"
+          aria-label={cmsT("text.selected-blocks")}
           class="sticky bottom-4 z-20 mx-auto mt-4 flex w-fit items-center gap-1 rounded-full border border-default bg-elevated px-3 py-1.5 text-sm shadow-lg"
         >
           <span class="px-1 font-medium text-highlighted">
@@ -242,7 +244,7 @@ const EmptyDropzone: Component<{
   setDrag: (d: DragState | null) => void;
 }> = (props) => {
   const ed = props.editor;
-  const label = () => ed.registry.get(props.parent.type)?.label ?? props.parent.type;
+  const label = () => resolveLabel(ed.registry.get(props.parent.type)?.label) || props.parent.type;
   const accepts = () => !!props.drag && ed.canMoveTo(props.drag.id, props.parent.id);
   const active = () =>
     props.drag?.over?.id === props.parent.id && props.drag.over.position === "inside";
@@ -398,10 +400,16 @@ const BlockView: Component<{
           mode={isPlain() ? "plain" : "rich"}
           readOnly={ed.readOnly || props.block.templatedProps === true}
           class={textClass(props.block.type, props.depth)}
-          {...((props.block.type === "ParagraphBlock" ? "Type '/' for blocks" : def()?.label)
+          {...((
+            props.block.type === "ParagraphBlock"
+              ? cmsT("text.type-slash-for-blocks")
+              : resolveLabel(def()?.label)
+          )
             ? {
                 placeholder:
-                  props.block.type === "ParagraphBlock" ? "Type '/' for blocks" : def()?.label,
+                  props.block.type === "ParagraphBlock"
+                    ? cmsT("text.type-slash-for-blocks")
+                    : resolveLabel(def()?.label),
               }
             : {})}
           onFocus={() => ed.select(props.block.id)}
@@ -483,7 +491,7 @@ const BlockView: Component<{
       <Show when={props.block.type === "SectionBlock"}>
         <span
           class="pointer-events-none absolute right-1 top-1.5 rounded bg-elevated px-1 font-mono text-[10px] font-semibold text-muted"
-          title="Heading level follows nesting"
+          title={cmsT("text.heading-level-follows-nesting")}
         >
           H{calculateHeadingLevel(props.depth)}
         </span>
@@ -499,7 +507,7 @@ const BlockView: Component<{
         >
           <button
             type="button"
-            aria-label={`${def()?.label ?? "Block"} actions`}
+            aria-label={`${resolveLabel(def()?.label) || "Block"} actions`}
             aria-haspopup="menu"
             aria-expanded={menu() ? "true" : "false"}
             title={
@@ -719,7 +727,9 @@ const BlockMenu: Component<{
         <div class="max-h-40 overflow-y-auto">
           <For each={turnInto()}>
             {(d) =>
-              item(d.label, d.icon ?? "i-lucide-square", () => ed.transform(props.block.id, d.type))
+              item(resolveLabel(d.label), d.icon ?? "i-lucide-square", () =>
+                ed.transform(props.block.id, d.type),
+              )
             }
           </For>
         </div>
@@ -762,7 +772,7 @@ const BlockPicker: Component<{
   const title = () => {
     if (props.target.replaceId) return "Turn into";
     const p = parentType();
-    return p ? `Add to ${ed.registry.get(p)?.label ?? p}` : "Add block";
+    return p ? `Add to ${resolveLabel(ed.registry.get(p)?.label) || p}` : "Add block";
   };
 
   const matches = createMemo(() => {
@@ -775,9 +785,13 @@ const BlockPicker: Component<{
         .filter(
           (d) =>
             !q ||
-            [d.label, d.type, d.description ?? "", d.category ?? "", ...(d.keywords ?? [])].some(
-              (s) => s.toLowerCase().includes(q),
-            ),
+            [
+              resolveLabel(d.label),
+              d.type,
+              resolveLabel(d.description),
+              d.category ?? "",
+              ...(d.keywords ?? []),
+            ].some((s) => s.toLowerCase().includes(q)),
         )
     );
   });
@@ -885,7 +899,7 @@ const BlockPicker: Component<{
                 <RLEmpty
                   size="sm"
                   icon="i-lucide-search-x"
-                  title="No blocks match"
+                  title={cmsT("text.no-blocks-match")}
                   description={
                     query() ? `Nothing found for “${query()}”.` : "No blocks can be added here."
                   }
@@ -926,8 +940,8 @@ const BlockPicker: Component<{
           </div>
 
           <div class="flex items-center gap-3 border-t border-default px-4 py-2 text-[11px] text-muted">
-            <span>↑↓ to navigate</span>
-            <span>↵ to insert</span>
+            <span>{cmsT("text.to-navigate")}</span>
+            <span>{cmsT("text.to-insert")}</span>
             <span class="ml-auto">{flat().length} blocks</span>
           </div>
         </div>
