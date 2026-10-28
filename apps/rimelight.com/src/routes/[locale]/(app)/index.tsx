@@ -8,7 +8,7 @@ import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 import { content, type PublicEntry } from "@rimelight/cms/solid";
-import { BlogPostCard } from "#components/blog/BlogPostCard";
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
@@ -240,7 +240,31 @@ export const HomePage: Component = () => {
         body={
           <div class="w-full mt-12 max-w-7xl mx-auto px-4">
             <RLGrid>
-              <For each={latestPosts() || []}>{(post) => <BlogPostCard post={post} />}</For>
+              <For each={latestPosts() || []}>
+                {(post) => {
+                  const category = post.terms?.find((x) => x.taxonomy === "category")?.label;
+                  const date = post.publishedAt || post.updatedAt;
+                  return (
+                    <RLPost
+                      title={t.localize(post.title)}
+                      description={
+                        t.localize(post.description ?? {}) || post.properties?.["excerpt"] || ""
+                      }
+                      date={date ? new Date(date) : undefined}
+                      image={post.properties?.["cover"] as string | Record<string, any> | undefined}
+                      badge={
+                        category
+                          ? typeof category === "string"
+                            ? category
+                            : t.localize(category as any)
+                          : undefined
+                      }
+                      to={getLocaleUrl(`/company/blog/${post.slug}/`)}
+                      variant="ghost"
+                    />
+                  );
+                }}
+              </For>
             </RLGrid>
 
             <Show when={(latestPosts() || []).length > 0}>

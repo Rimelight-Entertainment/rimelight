@@ -1,10 +1,10 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useSearchParams } from "@solidjs/router";
-import { t, getCurrentLocale } from "@rimelight/i18n";
+import { t, getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { content, type PublicEntry, type PublicTerm } from "@rimelight/cms/solid";
-import { BlogPostCard } from "#components/blog/BlogPostCard";
 
 /**
  * Published blog posts, newest first, filterable by category. Categories are CMS taxonomy
@@ -70,7 +70,25 @@ export const BlogIndexPage: Component = () => {
         </Show>
 
         <RLGrid cols={3}>
-          <For each={posts() || []}>{(post) => <BlogPostCard post={post} />}</For>
+          <For each={posts() || []}>
+            {(post) => {
+              const category = post.terms?.find((x) => x.taxonomy === "category")?.label;
+              const date = post.publishedAt || post.updatedAt;
+              return (
+                <RLPost
+                  title={t.localize(post.title)}
+                  description={
+                    t.localize(post.description ?? {}) || post.properties?.["excerpt"] || ""
+                  }
+                  date={date ? new Date(date) : undefined}
+                  image={post.properties?.["cover"] as string | Record<string, any> | undefined}
+                  badge={category ? label(category) : undefined}
+                  to={getLocaleUrl(`/company/blog/${post.slug}/`)}
+                  variant="ghost"
+                />
+              );
+            }}
+          </For>
         </RLGrid>
 
         <Show when={!posts() || posts()!.length === 0}>

@@ -7,9 +7,9 @@ import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
+import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 import { content, type PublicEntry } from "@rimelight/cms/solid";
-import { BlogPostCard } from "#components/blog/BlogPostCard";
 
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
@@ -94,7 +94,31 @@ export const HomePage: Component = () => {
       >
         <div class="flex flex-col gap-xl items-center">
           <RLGrid cols={3}>
-            <For each={latestPosts()}>{(post) => <BlogPostCard post={post} />}</For>
+            <For each={latestPosts()}>
+              {(post) => {
+                const category = post.terms?.find((x) => x.taxonomy === "category")?.label;
+                const date = post.publishedAt || post.updatedAt;
+                return (
+                  <RLPost
+                    title={t.localize(post.title)}
+                    description={
+                      t.localize(post.description ?? {}) || post.properties?.["excerpt"] || ""
+                    }
+                    date={date ? new Date(date) : undefined}
+                    image={post.properties?.["cover"] as string | Record<string, any> | undefined}
+                    badge={
+                      category
+                        ? typeof category === "string"
+                          ? category
+                          : t.localize(category as any)
+                        : undefined
+                    }
+                    to={getLocaleUrl(`/blog/${post.slug}/`)}
+                    variant="ghost"
+                  />
+                );
+              }}
+            </For>
           </RLGrid>
 
           <Show when={latestPosts().length > 0}>

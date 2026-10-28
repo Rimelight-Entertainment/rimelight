@@ -23,9 +23,6 @@ export default defineConfig({
       IMAGES: bindings.images(),
       BLOB: bindings.r2({
         name: "rimelight-dot-com",
-        dev: {
-          remote: true,
-        },
       }),
       RATE_LIMIT: bindings.rateLimit({
         namespace: "1001",
