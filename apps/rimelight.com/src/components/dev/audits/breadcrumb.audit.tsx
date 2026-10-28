@@ -3,22 +3,23 @@ import type { JSX } from "@solidjs/web";
 import { RLBreadcrumb } from "@rimelight/ui/components/breadcrumb/RLBreadcrumb.tsx";
 import type { BreadcrumbItem } from "@rimelight/ui/components/breadcrumb/breadcrumb.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const COLORS = AUDIT_COLORS;
 
-const defaultItems: BreadcrumbItem[] = [
-  { label: "Docs", icon: "bookOpen", to: "/docs" },
-  { label: "Components", icon: "layers", to: "/docs/components" },
-  { label: "Breadcrumb" },
+const defaultItems = (): BreadcrumbItem[] => [
+  { label: t("app.text.docs"), icon: "bookOpen", to: "/docs" },
+  { label: t("app.text.components"), icon: "layers", to: "/docs/components" },
+  { label: t("app.text.breadcrumb") },
 ];
 
-const manyItems: BreadcrumbItem[] = [
-  { label: "Home", to: "/" },
-  { label: "Store", to: "/store" },
-  { label: "Electronics", to: "/store/electronics" },
-  { label: "Audio & Headphones", to: "/store/electronics/audio" },
-  { label: "Wireless ANC", to: "/store/electronics/audio/wireless" },
-  { label: "Studio Pro X900" },
+const manyItems = (): BreadcrumbItem[] => [
+  { label: t("app.text.home"), to: "/" },
+  { label: t("app.text.store"), to: "/store" },
+  { label: t("app.text.electronics"), to: "/store/electronics" },
+  { label: t("app.text.audio-headphones"), to: "/store/electronics/audio" },
+  { label: t("app.text.wireless-anc"), to: "/store/electronics/audio/wireless" },
+  { label: t("app.text.studio-pro-x900") },
 ];
 
 export const BreadcrumbSandbox = (): JSX.Element => {
@@ -30,7 +31,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
 
   const sandboxItems = (): BreadcrumbItem[] => [
     {
-      label: "Home",
+      label: t("app.text.home"),
       to: "/",
       icon: showIcons() ? "home" : undefined,
       avatar: showAvatars()
@@ -38,17 +39,17 @@ export const BreadcrumbSandbox = (): JSX.Element => {
         : undefined,
     },
     {
-      label: "Documentation",
+      label: t("app.text.documentation"),
       to: "/docs",
       icon: showIcons() ? "bookOpen" : undefined,
     },
     {
-      label: "Components",
+      label: t("app.text.components"),
       to: "/docs/components",
       icon: showIcons() ? "layers" : undefined,
     },
     {
-      label: "Breadcrumb",
+      label: t("app.text.breadcrumb"),
       to: "/docs/components/breadcrumb",
       icon: showIcons() ? "link" : undefined,
     },
@@ -59,7 +60,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -78,7 +79,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Separator:</span>
+          <span class="text-muted mr-1">{t("app.text.separator")}</span>
           <For each={["chevronRight", "arrowRight", "slash"]}>
             {(icon) => (
               <button
@@ -97,7 +98,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Max Visible:</span>
+          <span class="text-muted mr-1">{t("app.text.max-visible")}</span>
           <For each={[undefined, 2, 3, 4]}>
             {(mv) => (
               <button
@@ -124,7 +125,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
               onChange={(e) => setShowIcons(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Show Icons</span>
+            <span class="text-muted">{t("app.text.show-icons")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -134,7 +135,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
               onChange={(e) => setShowAvatars(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Show Avatar</span>
+            <span class="text-muted">{t("app.text.show-avatar")}</span>
           </label>
         </div>
       </div>
@@ -164,21 +165,29 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "standard-items",
-      title: "Standard Items with Icons",
-      description: "Default breadcrumb items with icons and active styling on the terminal step.",
-      render: () => <RLBreadcrumb items={defaultItems} />,
+      get title() {
+        return t("app.text.standard-items-with-icons");
+      },
+      get description() {
+        return t("app.text.default-breadcrumb-items-with-icons-and-active-s");
+      },
+      render: () => <RLBreadcrumb items={defaultItems()} />,
     },
     {
       id: "color-variants",
-      title: "Color Variants",
-      description: "Supports changing the active item color across all semantic colors.",
+      get title() {
+        return t("app.text.color-variants");
+      },
+      get description() {
+        return t("app.text.supports-changing-the-active-item-color-across-a");
+      },
       render: () => (
         <div class="flex flex-col gap-3">
           <For each={COLORS}>
             {(c) => (
               <div class="flex items-center gap-3">
                 <span class="w-20 text-[11px] font-mono text-muted uppercase">{c}</span>
-                <RLBreadcrumb color={c} items={defaultItems} />
+                <RLBreadcrumb color={c} items={defaultItems()} />
               </div>
             )}
           </For>
@@ -187,14 +196,16 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-separator",
-      title: "Custom Separator Icon & Slot",
+      get title() {
+        return t("app.text.custom-separator-icon-slot");
+      },
       description:
         "Using custom separator icon prop or custom separator slot for slash delimiters.",
       render: () => (
         <div class="flex flex-col gap-4">
-          <RLBreadcrumb separatorIcon="arrowRight" items={defaultItems} />
+          <RLBreadcrumb separatorIcon="arrowRight" items={defaultItems()} />
           <RLBreadcrumb
-            items={defaultItems}
+            items={defaultItems()}
             separatorSlot={() => <span class="text-muted font-bold text-xs">/</span>}
           />
         </div>
@@ -202,22 +213,32 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
     },
     {
       id: "avatars",
-      title: "Avatar Integration",
-      description: "Renders avatars within leading items with proportional sizing.",
+      get title() {
+        return t("app.text.avatar-integration");
+      },
+      get description() {
+        return t("app.text.renders-avatars-within-leading-items-with-propor");
+      },
       render: () => (
         <RLBreadcrumb
           items={[
             {
-              label: "Organization",
+              get label() {
+                return t("app.text.organization");
+              },
               avatar: { src: "https://github.com/rimelight.png", alt: "Rimelight" },
               to: "/org",
             },
             {
-              label: "Developers",
+              get label() {
+                return t("app.text.developers");
+              },
               to: "/org/developers",
             },
             {
-              label: "Benjamin",
+              get label() {
+                return t("app.text.benjamin");
+              },
               avatar: { src: "https://github.com/benjamincanac.png", alt: "Benjamin" },
             },
           ]}
@@ -226,27 +247,52 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
     },
     {
       id: "max-visible-overflow",
-      title: "Responsive / Server Overflow Collapse (maxVisible)",
+      get title() {
+        return t("app.text.responsive-server-overflow-collapse-maxvisible");
+      },
       description:
         "Automatically collapses middle items when exceeding maxVisible, displaying an overflow counter tag.",
       render: () => (
         <div class="flex flex-col gap-4">
-          <RLBreadcrumb items={manyItems} maxVisible={3} />
-          <RLBreadcrumb items={manyItems} maxVisible={4} />
+          <RLBreadcrumb items={manyItems()} maxVisible={3} />
+          <RLBreadcrumb items={manyItems()} maxVisible={4} />
         </div>
       ),
     },
     {
       id: "custom-slots",
-      title: "Custom Item Slots",
-      description: "Custom rendering per-item using the item, leading, and label slot patterns.",
+      get title() {
+        return t("app.text.custom-item-slots");
+      },
+      get description() {
+        return t("app.text.custom-rendering-per-item-using-the-item-leading");
+      },
       render: () => (
         <RLBreadcrumb
           items={[
-            { label: "Home", to: "/" },
-            { slot: "dropdown", label: "Categories" },
-            { label: "Products", to: "/products" },
-            { label: "Detail" },
+            {
+              get label() {
+                return t("app.text.home");
+              },
+              to: "/",
+            },
+            {
+              slot: "dropdown",
+              get label() {
+                return t("app.text.categories");
+              },
+            },
+            {
+              get label() {
+                return t("app.text.products");
+              },
+              to: "/products",
+            },
+            {
+              get label() {
+                return t("app.text.detail");
+              },
+            },
           ]}
           itemSlot={({ item }) =>
             item.slot === "dropdown" ? (

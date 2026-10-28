@@ -13,6 +13,7 @@ import {
   decodeJwt,
 } from "@rimelight/auth/auth0";
 import { syncAuth0UserToDb } from "#auth/sync-user";
+import { t } from "@rimelight/i18n";
 
 const auth0Config = getAuth0ConfigFromEnv();
 const api = new Hono();
@@ -72,10 +73,7 @@ const handleHeadlessLogin = async (c: any) => {
     const password = body.password;
 
     if (!username || !password) {
-      return c.json(
-        { error: "Bad Request", message: "Username/email and password are required." },
-        400,
-      );
+      return c.json({ error: "Bad Request", message: t("api.message.credentials-required") }, 400);
     }
 
     const tokens = await loginWithAuth0Password({
@@ -131,7 +129,10 @@ api.post("/refresh", async (c) => {
     const refreshToken = (body.refresh_token || body.refreshToken || "").trim();
 
     if (!refreshToken) {
-      return c.json({ error: "Bad Request", message: "Refresh token is required." }, 400);
+      return c.json(
+        { error: "Bad Request", message: t("api.message.refresh-token-required") },
+        400,
+      );
     }
 
     const tokens = await refreshAuth0Token({

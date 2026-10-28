@@ -3,6 +3,7 @@ import { verifyAuth0Jwt } from "@rimelight/auth/auth0";
 import { getDb } from "#db";
 import type { AppUser } from "#db/schema/users";
 import { ProvisionConflictError, provisionUser } from "./provision";
+import { t } from "@rimelight/i18n";
 
 export type ClientVariables = { jwtPayload: Record<string, any>; user: AppUser };
 
@@ -10,22 +11,24 @@ export const requireClientToken = createMiddleware<{ Bindings: Env; Variables: C
   async (c, next) => {
     const header = c.req.header("Authorization") ?? "";
     const token = header.startsWith("Bearer ") ? header.slice(7) : null;
-    if (!token) return c.json({ error: "Unauthorized", message: "Missing bearer token." }, 401);
+    if (!token)
+      return c.json({ error: "Unauthorized", message: t("api.message.bearer-missing") }, 401);
 
     // Read these bindings directly. getAuth0ConfigFromEnv() is not used here.
     const payload = await verifyAuth0Jwt(token, {
       domain: c.env.AUTH0_DOMAIN,
       audience: c.env.AUTH0_AUDIENCE,
     });
-    if (!payload?.["sub"]) return c.json({ error: "Unauthorized", message: "Invalid token." }, 401);
+    if (!payload?.["sub"])
+      return c.json({ error: "Unauthorized", message: t("api.message.token-invalid") }, 401);
 
     if (payload["https://rimelight.com/user_type"] !== "user") {
-      return c.json({ error: "Forbidden", message: "Player account required." }, 403);
+      return c.json({ error: "Forbidden", message: t("api.message.player-account-required") }, 403);
     }
 
     const email = payload["https://rimelight.com/email"];
     if (typeof email !== "string" || !email) {
-      return c.json({ error: "Unauthorized", message: "Token has no email claim." }, 401);
+      return c.json({ error: "Unauthorized", message: t("api.message.token-no-email") }, 401);
     }
 
     try {

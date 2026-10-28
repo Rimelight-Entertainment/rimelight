@@ -2,6 +2,7 @@ import { createMemo, createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLAspectRatio } from "@rimelight/ui/components/aspect-ratio/RLAspectRatio.tsx";
 import type { ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const RATIOS: Array<{ label: string; value: number }> = [
   { label: "16 / 9", value: 16 / 9 },
@@ -26,7 +27,7 @@ export const AspectRatioSandbox = (): JSX.Element => {
     <>
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-2 text-xs">
-        <span class="text-muted mr-2">Ratio:</span>
+        <span class="text-muted mr-2">{t("app.text.ratio")}</span>
         <For each={RATIOS}>
           {(entry, index) => (
             <button
@@ -63,8 +64,12 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "widescreen",
-      title: "Widescreen 16 / 9 (Radix-style)",
-      description: "Standard video ratio; content fills the box.",
+      get title() {
+        return t("app.text.widescreen-16-9-radix-style");
+      },
+      get description() {
+        return t("app.text.standard-video-ratio-content-fills-the-box");
+      },
       render: () => (
         <RLAspectRatio ratio={16 / 9}>
           <Placeholder label="16 / 9" />
@@ -73,8 +78,12 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
     },
     {
       id: "default-ratio",
-      title: "Omitted Ratio Falls Back to Square",
-      description: "No ratio prop renders 1:1, mirroring the Radix default of 1.",
+      get title() {
+        return t("app.text.omitted-ratio-falls-back-to-square");
+      },
+      get description() {
+        return t("app.text.no-ratio-prop-renders-1-1-mirroring-the-radix-de");
+      },
       render: () => (
         <RLAspectRatio>
           <Placeholder label="default 1 / 1" />
@@ -83,8 +92,12 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
     },
     {
       id: "portrait",
-      title: "Portrait 9 / 16",
-      description: "Height-dominant ratio keeps its box without layout shift.",
+      get title() {
+        return t("app.text.portrait-9-16");
+      },
+      get description() {
+        return t("app.text.height-dominant-ratio-keeps-its-box-without-layo");
+      },
       render: () => (
         <RLAspectRatio ratio={9 / 16}>
           <Placeholder label="9 / 16" />
@@ -93,7 +106,9 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
     },
     {
       id: "invalid-ratio",
-      title: "Invalid Ratio Guards to Square",
+      get title() {
+        return t("app.text.invalid-ratio-guards-to-square");
+      },
       description:
         "ratio={0} (and NaN/negative/Infinity) would collapse the spacer math; the component falls back to 1:1. Box below must render square.",
       render: () => (
@@ -104,8 +119,12 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
     },
     {
       id: "as-prop",
-      title: "Polymorphic as Prop",
-      description: "Root renders a section element; inspect the DOM for section[data-slot=root].",
+      get title() {
+        return t("app.text.polymorphic-as-prop");
+      },
+      get description() {
+        return t("app.text.root-renders-a-section-element-inspect-the-dom-f");
+      },
       render: () => (
         <RLAspectRatio as="section" ratio={4 / 3}>
           <Placeholder label="section 4 / 3" />
@@ -114,8 +133,12 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
     },
     {
       id: "ui-override",
-      title: "Root ui Override",
-      description: "Rounded corners + border via ui without touching the component.",
+      get title() {
+        return t("app.text.root-ui-override");
+      },
+      get description() {
+        return t("app.text.rounded-corners-border-via-ui-without-touching-t");
+      },
       render: () => (
         <RLAspectRatio ratio={16 / 9} ui={{ root: "rounded-2xl border-2 border-primary" }}>
           <Placeholder label="ui rounded" />

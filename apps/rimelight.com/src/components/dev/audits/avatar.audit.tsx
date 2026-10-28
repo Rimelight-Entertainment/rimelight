@@ -4,6 +4,7 @@ import { RLAvatar } from "@rimelight/ui/components/avatar/RLAvatar.tsx";
 import { RLAvatarGroup } from "@rimelight/ui/components/avatar-group/RLAvatarGroup.tsx";
 import { RLPopover } from "@rimelight/ui/components/popover/RLPopover.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
 const COLORS = AUDIT_COLORS;
@@ -20,7 +21,7 @@ export const AvatarSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -39,7 +40,7 @@ export const AvatarSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -58,7 +59,7 @@ export const AvatarSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Chip Color:</span>
+          <span class="text-muted mr-1">{t("app.text.chip-color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -84,7 +85,7 @@ export const AvatarSandbox = (): JSX.Element => {
               onChange={(e) => setShowSrc(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Image Src</span>
+            <span class="text-muted">{t("app.text.image-src")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -93,7 +94,7 @@ export const AvatarSandbox = (): JSX.Element => {
               onChange={(e) => setShowChip(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Chip</span>
+            <span class="text-muted">{t("app.text.chip")}</span>
           </label>
         </div>
       </div>
@@ -102,14 +103,14 @@ export const AvatarSandbox = (): JSX.Element => {
       <div class="p-8 rounded-xl border border-default bg-elevated/10 flex flex-wrap items-center justify-center gap-6">
         <RLAvatar
           src={showSrc() ? "https://github.com/benjamincanac.png" : undefined}
-          alt="Benjamin Canac"
+          alt={t("app.text.benjamin-canac")}
           size={size()}
           color={color()}
           chip={showChip() ? { inset: true, color: chipColor() } : undefined}
         />
 
         <RLAvatar
-          alt="John Doe"
+          alt={t("app.text.john-doe")}
           size={size()}
           color={color()}
           chip={showChip() ? { inset: true, color: chipColor() } : undefined}
@@ -145,14 +146,16 @@ export const avatarAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "image-and-fallbacks",
-      title: "Image & Fallback Progression",
+      get title() {
+        return t("app.text.image-fallback-progression");
+      },
       description:
         "Demonstrates image source, text override, alt initials, custom icon, and default user icon.",
       render: () => (
         <div class="flex items-center gap-4 flex-wrap">
-          <RLAvatar src="https://github.com/benjamincanac.png" alt="Benjamin Canac" />
-          <RLAvatar text="+1" alt="Benjamin Canac" />
-          <RLAvatar alt="Benjamin Canac" />
+          <RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />
+          <RLAvatar text="+1" alt={"Benjamin Canac"} />
+          <RLAvatar alt={"Benjamin Canac"} />
           <RLAvatar icon="star" />
           <RLAvatar />
         </div>
@@ -160,19 +163,25 @@ export const avatarAudit: ComponentAuditDefinition = {
     },
     {
       id: "sizes",
-      title: "All Size Variants (3xs to 3xl)",
-      description: "From 3xs (16px) up to 3xl (48px) with proportional typography and badges.",
+      get title() {
+        return t("app.text.all-size-variants-3xs-to-3xl");
+      },
+      get description() {
+        return t("app.text.from-3xs-16px-up-to-3xl-48px-with-proportional-t");
+      },
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           {SIZES.map((s) => (
-            <RLAvatar alt="Size Test" size={s} />
+            <RLAvatar alt={"Size Test"} size={s} />
           ))}
         </div>
       ),
     },
     {
       id: "colors",
-      title: "Theme Colors & User Palettes",
+      get title() {
+        return t("app.text.theme-colors-user-palettes");
+      },
       description:
         "Supports built-in colors and custom user color ramps via color: 'auto' CSS variable tokens.",
       render: () => (
@@ -187,39 +196,47 @@ export const avatarAudit: ComponentAuditDefinition = {
     },
     {
       id: "chip-and-badge",
-      title: "Chip & Badge Badging",
+      get title() {
+        return t("app.text.chip-badge-badging");
+      },
       description:
         "Avatars with integrated RLChip component: inset status indicator, counter badges, and custom corner positions.",
       render: () => (
         <div class="flex items-center gap-6 flex-wrap">
           <RLAvatar
             src="https://github.com/benjamincanac.png"
-            alt="Ben"
+            alt={"Ben"}
             chip={{ inset: true, color: "success" }}
           />
-          <RLAvatar alt="Alex" chip={{ inset: true, color: "warning" }} />
-          <RLAvatar alt="John Doe" chip={{ inset: true, color: "error" }} />
-          <RLAvatar alt="Sam" chip={{ color: "primary", position: "top-right" }} />
-          <RLAvatar alt="Taylor" badge="3" badgeColor="primary" badgePosition="top-right" />
+          <RLAvatar alt={"Alex"} chip={{ inset: true, color: "warning" }} />
+          <RLAvatar alt={"John Doe"} chip={{ inset: true, color: "error" }} />
+          <RLAvatar alt={"Sam"} chip={{ color: "primary", position: "top-right" }} />
+          <RLAvatar alt={"Taylor"} badge="3" badgeColor="primary" badgePosition="top-right" />
         </div>
       ),
     },
     {
       id: "profile-wrapper",
-      title: "Title & Subtitle Profile Layout",
-      description: "Renders adjacent name and description when title or subtitle are provided.",
+      get title() {
+        return t("app.text.title-subtitle-profile-layout");
+      },
+      get description() {
+        return t("app.text.renders-adjacent-name-and-description-when-title");
+      },
       render: () => (
         <RLAvatar
           src="https://github.com/benjamincanac.png"
-          alt="Daniel Marchi"
-          title="Daniel Marchi"
+          alt={"Daniel Marchi"}
+          title={"Daniel Marchi"}
           subtitle="Lead Developer"
         />
       ),
     },
     {
       id: "avatar-group-popover",
-      title: "AvatarGroup with Hover Popover Profile",
+      get title() {
+        return t("app.text.avatargroup-with-hover-popover-profile");
+      },
       description:
         "Hovering over an avatar in the group displays an RLPopover with Title & Subtitle details.",
       render: () => (
@@ -227,99 +244,107 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLPopover
             mode="hover"
             placement="top"
-            trigger={<RLAvatar src="https://github.com/benjamincanac.png" alt="Benjamin Canac" />}
+            trigger={<RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />}
           >
             <RLAvatar
               src="https://github.com/benjamincanac.png"
-              alt="Benjamin Canac"
-              title="Benjamin Canac"
+              alt={"Benjamin Canac"}
+              title={"Benjamin Canac"}
               subtitle="Core Maintainer"
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt="Daniel Marchi" />}>
+          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt={"Daniel Marchi"} />}>
             <RLAvatar
               src="https://github.com/benjamincanac.png"
-              alt="Daniel Marchi"
-              title="Daniel Marchi"
+              alt={"Daniel Marchi"}
+              title={"Daniel Marchi"}
               subtitle="Lead Developer"
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt="Hugo Richard" />}>
+          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt={"Hugo Richard"} />}>
             <RLAvatar
-              alt="Hugo Richard"
-              title="Hugo Richard"
+              alt={"Hugo Richard"}
+              title={"Hugo Richard"}
               subtitle="Design Engineer"
               color="secondary"
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt="Sebastien Chopin" />}>
+          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt={"Sebastien Chopin"} />}>
             <RLAvatar
-              alt="Sebastien Chopin"
-              title="Sebastien Chopin"
+              alt={"Sebastien Chopin"}
+              title={"Sebastien Chopin"}
               subtitle="CEO NuxtLabs"
               color="success"
             />
           </RLPopover>
 
-          <RLAvatar alt="Anthony Fu" />
-          <RLAvatar alt="Pooya Parsa" />
+          <RLAvatar alt={"Anthony Fu"} />
+          <RLAvatar alt={"Pooya Parsa"} />
         </RLAvatarGroup>
       ),
     },
     {
       id: "avatar-group-sizes",
-      title: "AvatarGroup Across Different Sizes",
+      get title() {
+        return t("app.text.avatargroup-across-different-sizes");
+      },
       description:
         "Avatar groups across sm, md, lg, and xl sizes showing solid background ring separation without transparency overlap.",
       render: () => (
         <div class="flex flex-col gap-4">
           <RLAvatarGroup size="sm" max={3}>
-            <RLAvatar src="https://github.com/benjamincanac.png" alt="Benjamin Canac" />
-            <RLAvatar alt="Hugo Richard" />
-            <RLAvatar alt="Sebastien Chopin" />
-            <RLAvatar alt="Anthony Fu" />
+            <RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />
+            <RLAvatar alt={"Hugo Richard"} />
+            <RLAvatar alt={"Sebastien Chopin"} />
+            <RLAvatar alt={"Anthony Fu"} />
           </RLAvatarGroup>
           <RLAvatarGroup size="md" max={3}>
-            <RLAvatar src="https://github.com/benjamincanac.png" alt="Benjamin Canac" />
-            <RLAvatar alt="Hugo Richard" />
-            <RLAvatar alt="Sebastien Chopin" />
-            <RLAvatar alt="Anthony Fu" />
+            <RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />
+            <RLAvatar alt={"Hugo Richard"} />
+            <RLAvatar alt={"Sebastien Chopin"} />
+            <RLAvatar alt={"Anthony Fu"} />
           </RLAvatarGroup>
           <RLAvatarGroup size="lg" max={3}>
-            <RLAvatar src="https://github.com/benjamincanac.png" alt="Benjamin Canac" />
-            <RLAvatar alt="Hugo Richard" />
-            <RLAvatar alt="Sebastien Chopin" />
-            <RLAvatar alt="Anthony Fu" />
+            <RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />
+            <RLAvatar alt={"Hugo Richard"} />
+            <RLAvatar alt={"Sebastien Chopin"} />
+            <RLAvatar alt={"Anthony Fu"} />
           </RLAvatarGroup>
         </div>
       ),
     },
     {
       id: "avatar-group",
-      title: "AvatarGroup with Max Counter & Chips",
+      get title() {
+        return t("app.text.avatargroup-with-max-counter-chips");
+      },
       description:
         "Stacks avatars with negative margin overlap in flex-row-reverse order and displays +X badge when max is exceeded.",
       render: () => (
         <RLAvatarGroup max={3}>
           <RLAvatar
             src="https://github.com/benjamincanac.png"
-            alt="Benjamin Canac"
+            alt={"Benjamin Canac"}
             chip={{ inset: true, color: "success" }}
           />
-          <RLAvatar alt="Hugo Richard" chip={{ inset: true, color: "warning" }} />
-          <RLAvatar alt="Sebastien Chopin" chip={{ inset: true, color: "error" }} />
-          <RLAvatar alt="Anthony Fu" />
-          <RLAvatar alt="Pooya Parsa" />
+          <RLAvatar alt={"Hugo Richard"} chip={{ inset: true, color: "warning" }} />
+          <RLAvatar alt={"Sebastien Chopin"} chip={{ inset: true, color: "error" }} />
+          <RLAvatar alt={"Anthony Fu"} />
+          <RLAvatar alt={"Pooya Parsa"} />
         </RLAvatarGroup>
       ),
     },
     {
       id: "avatar-group-items",
-      title: "AvatarGroup with Items Array",
-      description: "Declarative items array prop rendering with automated limit.",
+      get title() {
+        return t("app.text.avatargroup-with-items-array");
+      },
+      get description() {
+        return t("app.text.declarative-items-array-prop-rendering-with-auto");
+      },
       render: () => (
         <RLAvatarGroup
           max={2}

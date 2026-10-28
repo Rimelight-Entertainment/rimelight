@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const VARIANTS = ["solid", "outline", "soft", "subtle", "ghost"] as const;
@@ -24,7 +25,7 @@ export const BadgeSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -43,7 +44,7 @@ export const BadgeSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -62,7 +63,7 @@ export const BadgeSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -81,7 +82,7 @@ export const BadgeSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Corner Shape:</span>
+          <span class="text-muted mr-1">{t("app.text.corner-shape")}</span>
           <For each={SHAPES}>
             {(sh) => (
               <button
@@ -118,7 +119,7 @@ export const BadgeSandbox = (): JSX.Element => {
               onChange={(e) => setHasLeadingIcon(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Leading Icon</span>
+            <span class="text-muted">{t("app.text.leading-icon")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -128,7 +129,7 @@ export const BadgeSandbox = (): JSX.Element => {
               onChange={(e) => setHasTrailingIcon(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Trailing Icon</span>
+            <span class="text-muted">{t("app.text.trailing-icon")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -138,12 +139,12 @@ export const BadgeSandbox = (): JSX.Element => {
               onChange={(e) => setHasAvatar(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Avatar</span>
+            <span class="text-muted">{t("app.text.avatar")}</span>
           </label>
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Label:</span>
+          <span class="text-muted">{t("app.text.label")}</span>
           <input
             type="text"
             value={label()}
@@ -190,7 +191,9 @@ export const badgeAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "variants-and-colors",
-      title: "Variants & Colors Matrix",
+      get title() {
+        return t("app.text.variants-colors-matrix");
+      },
       description:
         "All visual variants across all built-in semantic colors (primary, secondary, success, info, warning, error, neutral).",
       render: () => (
@@ -214,7 +217,9 @@ export const badgeAudit: ComponentAuditDefinition = {
     },
     {
       id: "sizes",
-      title: "All Size Scales (xs to xl)",
+      get title() {
+        return t("app.text.all-size-scales-xs-to-xl");
+      },
       description:
         "Scales font size, padding, spacing, and nested icon/avatar dimensions proportionally.",
       render: () => (
@@ -225,7 +230,9 @@ export const badgeAudit: ComponentAuditDefinition = {
     },
     {
       id: "icons-and-positions",
-      title: "Icons & Positioning",
+      get title() {
+        return t("app.text.icons-positioning");
+      },
       description:
         "Leading icon, trailing icon, both leading and trailing icons simultaneously, and icon-only badge.",
       render: () => (
@@ -233,14 +240,18 @@ export const badgeAudit: ComponentAuditDefinition = {
           <RLBadge icon="rocket" label="Leading Icon" />
           <RLBadge trailingIcon="arrow-right" label="Trailing Icon" />
           <RLBadge icon="star" trailingIcon="check" label="Both Icons" />
-          <RLBadge icon="bell" square aria-label="Notifications" />
+          <RLBadge icon="bell" square aria-label={"Notifications"} />
         </div>
       ),
     },
     {
       id: "avatar",
-      title: "Avatar Integration",
-      description: "Renders leading avatars inside badge with proportional sizing (3xs and 2xs).",
+      get title() {
+        return t("app.text.avatar-integration");
+      },
+      get description() {
+        return t("app.text.renders-leading-avatars-inside-badge-with-propor");
+      },
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLBadge
@@ -261,7 +272,9 @@ export const badgeAudit: ComponentAuditDefinition = {
     },
     {
       id: "shapes-and-square",
-      title: "Corner Shapes & Square Mode",
+      get title() {
+        return t("app.text.corner-shapes-square-mode");
+      },
       description:
         "Pill (rounded-full), Rounded (rounded-md), and Square (rounded-none) corner shapes, plus equal-padding square badges.",
       render: () => (
@@ -277,8 +290,12 @@ export const badgeAudit: ComponentAuditDefinition = {
     },
     {
       id: "polymorphic-as",
-      title: "Polymorphic Element (as prop)",
-      description: "Renders as anchor link, button, or custom HTML tag.",
+      get title() {
+        return t("app.text.polymorphic-element-as-prop");
+      },
+      get description() {
+        return t("app.text.renders-as-anchor-link-button-or-custom-html-tag");
+      },
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLBadge as="a" href="#badge-link" label="Link Badge" color="info" />

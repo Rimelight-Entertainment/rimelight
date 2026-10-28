@@ -1,5 +1,6 @@
 import type { Component } from "solid-js";
 import type { BaseBlock } from "@rimelight/cms";
+import { t } from "@rimelight/i18n";
 
 export interface LivePreviewBlockProps {
   block: BaseBlock;
@@ -23,12 +24,14 @@ export const LivePreviewBlock: Component<LivePreviewBlockProps> = (props) => {
     >
       <div class="controls-area p-4 border-b border-default flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-medium text-muted uppercase tracking-wider">Live Preview</span>
+          <span class="text-xs font-medium text-muted uppercase tracking-wider">
+            {t("app.text.live-preview")}
+          </span>
           <span class="text-xs font-mono text-muted bg-muted px-2 py-0.5 rounded">
             {framework()}
           </span>
         </div>
-        {editable() && <span class="text-xs text-muted italic">Editable</span>}
+        {editable() && <span class="text-xs text-muted italic">{t("app.text.editable")}</span>}
       </div>
 
       <div

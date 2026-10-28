@@ -837,7 +837,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <div class="block md:hidden">
             <RLSlideover
               side="left"
-              title="Menu"
+              title={t("app.text.menu")}
               trigger={
                 <RLButton
                   color="neutral"
@@ -845,7 +845,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                   rounded={true}
                   leadingIcon="i-lucide-menu"
                   class="!text-white"
-                  aria-label="Open Menu"
+                  aria-label={t("app.text.open-menu")}
                 />
               }
             >
@@ -876,7 +876,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             variant="ghost"
             color="neutral"
             leadingIcon="i-lucide-keyboard"
-            aria-label="Keyboard Shortcuts"
+            aria-label={t("app.text.keyboard-shortcuts")}
             onClick={() => useShortcuts().open()}
           />
           <div class="hidden md:flex flex-row gap-md">
@@ -921,7 +921,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
               fallback={
                 <RLSlideover
                   side="right"
-                  title="Actions"
+                  title={t("app.text.actions")}
                   trigger={
                     <RLButton
                       color="neutral"
@@ -929,7 +929,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                       rounded={true}
                       leadingIcon="i-lucide-ellipsis-vertical"
                       class="!text-white"
-                      aria-label="Open Actions"
+                      aria-label={t("app.text.open-actions")}
                     />
                   }
                 >

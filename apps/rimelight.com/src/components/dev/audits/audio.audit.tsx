@@ -3,12 +3,13 @@ import type { JSX } from "@solidjs/web";
 import { RLAudio } from "@rimelight/ui/components/audio/RLAudio.tsx";
 import type { AudioTrackItem } from "@rimelight/ui/components/audio/audio.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
-const SAMPLE_TRACKS: AudioTrackItem[] = [
+const SAMPLE_TRACKS = (): AudioTrackItem[] => [
   {
     src: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3",
-    title: "Lofi Study Session #1",
-    description: "FassSounds — Chill Ambient Beats",
+    title: t("app.text.lofi-study-session-1"),
+    description: t("app.text.fasssounds-chill-ambient-beats"),
     artwork:
       "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
     duration: 146,
@@ -20,8 +21,8 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
   },
   {
     src: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3",
-    title: "Sunset Boulevard Walk",
-    description: "Tokyo Night Vibe — Acoustic & Chill",
+    title: t("app.text.sunset-boulevard-walk"),
+    description: t("app.text.tokyo-night-vibe-acoustic-chill"),
     artwork:
       "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80",
     duration: 194,
@@ -32,8 +33,8 @@ const SAMPLE_TRACKS: AudioTrackItem[] = [
   },
   {
     src: "https://cdn.pixabay.com/audio/2022/10/14/audio_9939f792cb.mp3",
-    title: "Midnight Coding Flow",
-    description: "Coma-Media — Deep Focus Session",
+    title: t("app.text.midnight-coding-flow"),
+    description: t("app.text.coma-media-deep-focus-session"),
     artwork:
       "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop&q=80",
     duration: 168,
@@ -72,7 +73,7 @@ export const AudioSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Variant:</span>
+          <span class="text-muted">{t("app.text.variant")}</span>
           <For each={variants}>
             {(v) => (
               <button
@@ -91,7 +92,7 @@ export const AudioSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Orientation:</span>
+          <span class="text-muted">{t("app.text.orientation")}</span>
           <For each={orientations}>
             {(o) => (
               <button
@@ -110,7 +111,7 @@ export const AudioSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Progress:</span>
+          <span class="text-muted">{t("app.text.progress")}</span>
           <For each={progressTypes}>
             {(p) => (
               <button
@@ -129,7 +130,7 @@ export const AudioSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Size:</span>
+          <span class="text-muted">{t("app.text.size")}</span>
           <For each={sizes}>
             {(s) => (
               <button
@@ -148,7 +149,7 @@ export const AudioSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Theme Color:</span>
+          <span class="text-muted">{t("app.text.theme-color")}</span>
           <For each={colors}>
             {(c) => (
               <button
@@ -167,7 +168,7 @@ export const AudioSandbox = (): JSX.Element => {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <span class="text-muted">Progress Color:</span>
+          <span class="text-muted">{t("app.text.progress-color")}</span>
           <For each={colors}>
             {(c) => (
               <button
@@ -192,7 +193,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showSkip()}
               onChange={(e) => setShowSkip(e.currentTarget.checked)}
             />
-            <span>Skip</span>
+            <span>{t("app.text.skip")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -200,7 +201,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showSpeed()}
               onChange={(e) => setShowSpeed(e.currentTarget.checked)}
             />
-            <span>Speed</span>
+            <span>{t("app.text.speed")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -208,7 +209,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showVolume()}
               onChange={(e) => setShowVolume(e.currentTarget.checked)}
             />
-            <span>Volume</span>
+            <span>{t("app.text.volume")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -216,7 +217,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showRepeat()}
               onChange={(e) => setShowRepeat(e.currentTarget.checked)}
             />
-            <span>Repeat</span>
+            <span>{t("app.text.repeat")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -224,7 +225,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showDownload()}
               onChange={(e) => setShowDownload(e.currentTarget.checked)}
             />
-            <span>Download</span>
+            <span>{t("app.text.download")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -232,7 +233,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showExternalLink()}
               onChange={(e) => setShowExternalLink(e.currentTarget.checked)}
             />
-            <span>External Link</span>
+            <span>{t("app.text.external-link")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -240,7 +241,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showPlaylist()}
               onChange={(e) => setShowPlaylist(e.currentTarget.checked)}
             />
-            <span>Playlist</span>
+            <span>{t("app.text.playlist")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -248,7 +249,7 @@ export const AudioSandbox = (): JSX.Element => {
               checked={showVolumeNumber()}
               onChange={(e) => setShowVolumeNumber(e.currentTarget.checked)}
             />
-            <span>Volume %</span>
+            <span>{t("app.text.volume-c9cc")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-muted select-none">
             <input
@@ -256,13 +257,13 @@ export const AudioSandbox = (): JSX.Element => {
               checked={artworkZoomable()}
               onChange={(e) => setArtworkZoomable(e.currentTarget.checked)}
             />
-            <span>Zoomable Art</span>
+            <span>{t("app.text.zoomable-art")}</span>
           </label>
         </div>
       </div>
 
       <RLAudio
-        playlist={SAMPLE_TRACKS}
+        playlist={SAMPLE_TRACKS()}
         variant={variant()}
         size={size()}
         color={color()}
@@ -295,12 +296,14 @@ export const audioAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "multi-track-playlist",
-      title: "Multi-Track Album Playlist with Top Actions",
+      get title() {
+        return t("app.text.multi-track-album-playlist-with-top-actions");
+      },
       description:
         "Full album player with playlist queue, track switching, next/previous controls, and download/link buttons.",
       render: () => (
         <RLAudio
-          playlist={SAMPLE_TRACKS}
+          playlist={SAMPLE_TRACKS()}
           progressVariant="waveform"
           showRepeat
           showPlaylist
@@ -311,18 +314,20 @@ export const audioAudit: ComponentAuditDefinition = {
     },
     {
       id: "vertical-poster",
-      title: "Vertical Poster Orientation (1:1 Ratio)",
+      get title() {
+        return t("app.text.vertical-poster-orientation-1-1-ratio");
+      },
       description:
         "Album artwork hero on top with full controls, speed multiplier, repeat mode, format badge, and waveform maintaining 1:1 square ratio.",
       render: () => (
         <RLAudio
-          src={SAMPLE_TRACKS[0]?.src}
-          title={SAMPLE_TRACKS[0]?.title}
-          description={SAMPLE_TRACKS[0]?.description}
-          artwork={SAMPLE_TRACKS[0]?.artwork}
-          format={SAMPLE_TRACKS[0]?.format}
-          fileSize={SAMPLE_TRACKS[0]?.fileSize}
-          bitrate={SAMPLE_TRACKS[0]?.bitrate}
+          src={SAMPLE_TRACKS()[0]?.src}
+          title={SAMPLE_TRACKS()[0]?.title}
+          description={SAMPLE_TRACKS()[0]?.description}
+          artwork={SAMPLE_TRACKS()[0]?.artwork}
+          format={SAMPLE_TRACKS()[0]?.format}
+          fileSize={SAMPLE_TRACKS()[0]?.fileSize}
+          bitrate={SAMPLE_TRACKS()[0]?.bitrate}
           orientation="vertical"
           progressVariant="waveform"
           showSpeed
@@ -334,15 +339,17 @@ export const audioAudit: ComponentAuditDefinition = {
     },
     {
       id: "waveform-vs-bar",
-      title: "Waveform Soundwave vs Linear Progress Bar with Color Tokens",
+      get title() {
+        return t("app.text.waveform-soundwave-vs-linear-progress-bar-with-c");
+      },
       description:
         "Comparison between SVG interactive soundwave visualization and linear scrub bar.",
       render: () => (
         <RLAudio
-          src={SAMPLE_TRACKS[0]?.src}
-          title="Waveform Progress Variant"
+          src={SAMPLE_TRACKS()[0]?.src}
+          title={"Waveform Progress Variant"}
           description="progressColor='success'"
-          artwork={SAMPLE_TRACKS[0]?.artwork}
+          artwork={SAMPLE_TRACKS()[0]?.artwork}
           progressVariant="waveform"
           progressColor="success"
         />
@@ -350,15 +357,17 @@ export const audioAudit: ComponentAuditDefinition = {
     },
     {
       id: "repeat-modes",
-      title: "Repeat Modes (Off, Repeat All, Repeat One)",
+      get title() {
+        return t("app.text.repeat-modes-off-repeat-all-repeat-one");
+      },
       description:
         "Repeat looping mode support (cycle between off, playlist repeat, and single track repeat).",
       render: () => (
         <RLAudio
-          src={SAMPLE_TRACKS[0]?.src}
-          title="Repeat Loop Mode"
+          src={SAMPLE_TRACKS()[0]?.src}
+          title={"Repeat Loop Mode"}
           description="repeatMode='one'"
-          artwork={SAMPLE_TRACKS[0]?.artwork}
+          artwork={SAMPLE_TRACKS()[0]?.artwork}
           repeatMode="one"
           showRepeat
         />
@@ -366,28 +375,36 @@ export const audioAudit: ComponentAuditDefinition = {
     },
     {
       id: "with-transcript",
-      title: "With Collapsible Transcript & Lyrics",
-      description: "Accordion-style transcript drawer below the playback controls.",
+      get title() {
+        return t("app.text.with-collapsible-transcript-lyrics");
+      },
+      get description() {
+        return t("app.text.accordion-style-transcript-drawer-below-the-play");
+      },
       render: () => (
         <RLAudio
-          src={SAMPLE_TRACKS[0]?.src}
-          title="Interview Episode #42"
+          src={SAMPLE_TRACKS()[0]?.src}
+          title={"Interview Episode #42"}
           description="Audio transcript demonstration"
-          artwork={SAMPLE_TRACKS[0]?.artwork}
+          artwork={SAMPLE_TRACKS()[0]?.artwork}
           transcript="Speaker 1: Welcome to the episode! Today we are discussing accessible web audio players. Speaker 2: Thanks for having me, glad to be here!"
         />
       ),
     },
     {
       id: "custom-icon-overrides",
-      title: "Custom Icon Overrides",
-      description: "Overriding control button icons via the icons prop.",
+      get title() {
+        return t("app.text.custom-icon-overrides");
+      },
+      get description() {
+        return t("app.text.overriding-control-button-icons-via-the-icons-pr");
+      },
       render: () => (
         <RLAudio
-          src={SAMPLE_TRACKS[0]?.src}
-          title="Custom Control Icons"
+          src={SAMPLE_TRACKS()[0]?.src}
+          title={"Custom Control Icons"}
           description="Testing icons prop overrides"
-          artwork={SAMPLE_TRACKS[0]?.artwork}
+          artwork={SAMPLE_TRACKS()[0]?.artwork}
           icons={{
             play: "sun",
             pause: "moon",

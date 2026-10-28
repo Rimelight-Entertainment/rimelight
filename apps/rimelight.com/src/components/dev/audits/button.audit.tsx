@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const COLORS = AUDIT_COLORS;
 const VARIANTS = ["solid", "outline", "soft", "subtle", "ghost", "link"] as const;
@@ -29,7 +30,7 @@ export const ButtonSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-col gap-3 text-xs">
         {/* Colors */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -49,7 +50,7 @@ export const ButtonSandbox = (): JSX.Element => {
 
         {/* Variants */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -69,7 +70,7 @@ export const ButtonSandbox = (): JSX.Element => {
 
         {/* Sizes */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -97,7 +98,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setHasIcon(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Icon</span>
+            <span class="text-muted">{t("app.text.icon")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -108,7 +109,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsTrailing(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Trailing</span>
+            <span class="text-muted">{t("app.text.trailing")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -119,7 +120,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setHasAvatar(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Avatar</span>
+            <span class="text-muted">{t("app.text.avatar")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -130,7 +131,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsLoading(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Loading</span>
+            <span class="text-muted">{t("app.text.loading-8f26")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -141,7 +142,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setLoadingAuto(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">LoadingAuto</span>
+            <span class="text-muted">{t("app.text.loadingauto")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -152,7 +153,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsDisabled(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Disabled</span>
+            <span class="text-muted">{t("app.text.disabled")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -163,7 +164,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsBlock(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Block</span>
+            <span class="text-muted">{t("app.text.block")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -174,7 +175,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsSquare(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Square</span>
+            <span class="text-muted">{t("app.text.square")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -185,7 +186,7 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsActive(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Active</span>
+            <span class="text-muted">{t("app.text.active-a733")}</span>
           </label>
 
           <label class="flex items-center gap-1.5 cursor-pointer">
@@ -196,11 +197,11 @@ export const ButtonSandbox = (): JSX.Element => {
               onChange={(e) => setIsLink(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">As Link</span>
+            <span class="text-muted">{t("app.text.as-link")}</span>
           </label>
 
           <div class="flex items-center gap-2">
-            <span class="text-muted">Label:</span>
+            <span class="text-muted">{t("app.text.label")}</span>
             <input
               type="text"
               value={label()}
@@ -250,7 +251,9 @@ export const buttonAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "color-variant-matrix",
-      title: "Color & Variant Matrix",
+      get title() {
+        return t("app.text.color-variant-matrix");
+      },
       description:
         "All 7 semantic color scales across all 6 visual variants (solid, outline, soft, subtle, ghost, link).",
       render: () => (
@@ -272,7 +275,9 @@ export const buttonAudit: ComponentAuditDefinition = {
     },
     {
       id: "size-spectrum",
-      title: "Size Spectrum (xs to xl)",
+      get title() {
+        return t("app.text.size-spectrum-xs-to-xl");
+      },
       description:
         "Button sizing scale from xs to xl with proportional icon sizes, padding, and centered vertical alignment.",
       render: () => (
@@ -293,7 +298,9 @@ export const buttonAudit: ComponentAuditDefinition = {
     },
     {
       id: "icon-and-avatar-variations",
-      title: "Icons & Avatars",
+      get title() {
+        return t("app.text.icons-avatars");
+      },
       description:
         "Leading icon, trailing icon, leading avatar, and icon-only square button modes.",
       render: () => (
@@ -312,14 +319,16 @@ export const buttonAudit: ComponentAuditDefinition = {
             variant="outline"
             color="neutral"
           />
-          <RLButton icon="star" aria-label="Favorite" variant="subtle" color="warning" />
-          <RLButton icon="trash" aria-label="Delete" variant="ghost" color="error" />
+          <RLButton icon="star" aria-label={"Favorite"} variant="subtle" color="warning" />
+          <RLButton icon="trash" aria-label={"Delete"} variant="ghost" color="error" />
         </div>
       ),
     },
     {
       id: "loading-states",
-      title: "Loading & LoadingAuto States",
+      get title() {
+        return t("app.text.loading-loadingauto-states");
+      },
       description:
         "Leading and trailing animated spinner loaders, custom loader icons, and automatic promise resolution with loadingAuto.",
       render: () => (
@@ -333,13 +342,15 @@ export const buttonAudit: ComponentAuditDefinition = {
             variant="outline"
             onClick={() => new Promise<void>((resolve) => setTimeout(resolve, 1500))}
           />
-          <RLButton loading square aria-label="Loading action" />
+          <RLButton loading square aria-label={"Loading action"} />
         </div>
       ),
     },
     {
       id: "link-and-active-mode",
-      title: "Interactive Link & Active State",
+      get title() {
+        return t("app.text.interactive-link-active-state");
+      },
       description:
         "Polymorphic anchor mode via `to` / `href` with target, rel, activeClass, and custom activeColor/activeVariant.",
       render: () => (
@@ -370,7 +381,9 @@ export const buttonAudit: ComponentAuditDefinition = {
     },
     {
       id: "field-group",
-      title: "Field Group Segmenting",
+      get title() {
+        return t("app.text.field-group-segmenting");
+      },
       description:
         "Seamless horizontal and vertical grouping with proper border radius removal on outer edges and border-overlap collapse on inner edges.",
       render: () => (
@@ -390,14 +403,16 @@ export const buttonAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-slots-and-ui",
-      title: "Custom Slots & UI Overrides",
+      get title() {
+        return t("app.text.custom-slots-ui-overrides");
+      },
       description:
         "Slot overrides for leading/trailing elements, default slot content, and slot styling via the `ui` prop.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLButton
             leading={<span class="text-sm">✨</span>}
-            trailing={<span class="text-xs bg-white/20 px-1 rounded">HOT</span>}
+            trailing={<span class="text-xs bg-white/20 px-1 rounded">{"HOT"}</span>}
             ui={{
               base: "shadow-lg",
               label: "tracking-wider uppercase font-bold",

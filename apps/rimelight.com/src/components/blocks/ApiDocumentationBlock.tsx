@@ -1,5 +1,6 @@
 import { type Component, Show, For, createSignal, createMemo } from "solid-js";
 import type { BaseBlock } from "@rimelight/cms";
+import { t } from "@rimelight/i18n";
 
 function filterProps(props: any[], options: { hide?: string[]; show?: string[] }): any[] {
   if (options.show?.length) return props.filter((p: any) => options.show!.includes(p.name));
@@ -53,20 +54,20 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
     <div class="api-documentation-wrapper">
       {sections().props !== false && (
         <div class="api-documentation-section mb-6">
-          <h3 class="text-lg font-semibold text-highlighted mb-3">Props</h3>
+          <h3 class="text-lg font-semibold text-highlighted mb-3">{t("app.text.props")}</h3>
           <Show
             when={filteredProps().length > 0}
-            fallback={<p class="text-sm italic text-muted">No props to display.</p>}
+            fallback={<p class="text-sm italic text-muted">{t("app.text.no-props-to-display")}</p>}
           >
             <div class="overflow-x-auto">
               <table class="w-full text-sm border-collapse">
                 <thead>
                   <tr class="border-b border-default">
-                    <th class="text-left py-2 px-3 font-semibold">Name</th>
-                    <th class="text-left py-2 px-3 font-semibold">Type</th>
-                    <th class="text-left py-2 px-3 font-semibold">Required</th>
-                    <th class="text-left py-2 px-3 font-semibold">Default</th>
-                    <th class="text-left py-2 px-3 font-semibold">Description</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.name")}</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.type")}</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.required")}</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.default")}</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.description")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -100,17 +101,17 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
 
       {sections().slots !== false && (
         <div class="api-documentation-section mb-6">
-          <h3 class="text-lg font-semibold text-highlighted mb-3">Slots</h3>
+          <h3 class="text-lg font-semibold text-highlighted mb-3">{t("app.text.slots")}</h3>
           <Show
             when={slots().length > 0}
-            fallback={<p class="text-sm italic text-muted">No slots to display.</p>}
+            fallback={<p class="text-sm italic text-muted">{t("app.text.no-slots-to-display")}</p>}
           >
             <div class="overflow-x-auto">
               <table class="w-full text-sm border-collapse">
                 <thead>
                   <tr class="border-b border-default">
-                    <th class="text-left py-2 px-3 font-semibold">Slot</th>
-                    <th class="text-left py-2 px-3 font-semibold">Type</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.slot")}</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.type")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,17 +142,21 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
 
       {sections().emits !== false && (
         <div class="api-documentation-section mb-6">
-          <h3 class="text-lg font-semibold text-highlighted mb-3">Emits</h3>
+          <h3 class="text-lg font-semibold text-highlighted mb-3">{t("app.text.emits")}</h3>
           <Show
             when={emits().length > 0}
-            fallback={<p class="text-sm italic text-muted">No events emitted by this component.</p>}
+            fallback={
+              <p class="text-sm italic text-muted">
+                {t("app.text.no-events-emitted-by-this-component")}
+              </p>
+            }
           >
             <div class="overflow-x-auto">
               <table class="w-full text-sm border-collapse">
                 <thead>
                   <tr class="border-b border-default">
-                    <th class="text-left py-2 px-3 font-semibold">Event</th>
-                    <th class="text-left py-2 px-3 font-semibold">Payload</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.event")}</th>
+                    <th class="text-left py-2 px-3 font-semibold">{t("app.text.payload")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -176,10 +181,12 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
 
       {sections().theme !== false && (
         <div class="api-documentation-section mb-6">
-          <h3 class="text-lg font-semibold text-highlighted mb-3">Theme</h3>
+          <h3 class="text-lg font-semibold text-highlighted mb-3">{t("app.text.theme")}</h3>
           <Show
             when={themeCode()}
-            fallback={<p class="text-sm italic text-muted">No theme data available.</p>}
+            fallback={
+              <p class="text-sm italic text-muted">{t("app.text.no-theme-data-available")}</p>
+            }
           >
             <div class="relative border border-default rounded-lg overflow-hidden group mb-6">
               <div
@@ -219,7 +226,7 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
 
       {sections().changelog && (
         <div class="api-documentation-section mb-6">
-          <h3 class="text-lg font-semibold text-highlighted mb-3">Changelog</h3>
+          <h3 class="text-lg font-semibold text-highlighted mb-3">{t("app.text.changelog")}</h3>
           <div class="api-changelog-container group">
             <Show when={changelogLoading()}>
               <div class="py-6 flex flex-col gap-4">
@@ -230,7 +237,9 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
             </Show>
 
             <Show when={!changelogLoading() && changelogError()}>
-              <div class="text-sm italic text-muted py-2">Failed to load changelog.</div>
+              <div class="text-sm italic text-muted py-2">
+                {t("app.text.failed-to-load-changelog")}
+              </div>
             </Show>
 
             <Show
@@ -238,7 +247,9 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
                 !changelogLoading() && !changelogError() && (changelogData()?.length ?? 0) === 0
               }
             >
-              <div class="text-sm italic text-muted py-2">No recent changes found.</div>
+              <div class="text-sm italic text-muted py-2">
+                {t("app.text.no-recent-changes-found")}
+              </div>
             </Show>
 
             <Show
@@ -251,7 +262,7 @@ export const ApiDocumentationBlock: Component<ApiDocumentationBlockProps> = (pro
                       <Show when={release.tag}>
                         <div class="font-medium text-highlighted text-sm flex items-center mb-2">
                           <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-primary/10 text-primary border border-primary/20">
-                            {release.tag === "unreleased" ? "Soon" : release.tag}
+                            {release.tag === "unreleased" ? t("app.text.soon") : release.tag}
                           </span>
                         </div>
                       </Show>

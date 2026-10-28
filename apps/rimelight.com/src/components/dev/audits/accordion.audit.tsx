@@ -3,35 +3,35 @@ import type { JSX } from "@solidjs/web";
 import { RLAccordion } from "@rimelight/ui/components/accordion/RLAccordion.tsx";
 import type { AccordionItem } from "@rimelight/ui/components/accordion/accordion.types.ts";
 import type { ComponentAuditDefinition } from "./types";
-
-const BASE_ITEMS: AccordionItem[] = [
-  {
-    label: "What is Rimelight UI?",
-    icon: "i-lucide-sparkles",
-    content:
-      "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS.",
-  },
-  {
-    label: "How does Accordion grouping work?",
-    icon: "i-lucide-folder-tree",
-    content:
-      "When `multiple={false}`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
-  },
-  {
-    label: "Can items be individually disabled?",
-    icon: "i-lucide-shield-alert",
-    disabled: true,
-    content: "This item is disabled (disabled: true) and should not respond to user clicks.",
-  },
-  {
-    label: "Custom trailing icon support",
-    icon: "i-lucide-settings",
-    trailingIcon: "i-lucide-arrow-down-circle",
-    content: "This item overrides the default chevron trailing icon.",
-  },
-];
+import { t } from "@rimelight/i18n";
 
 export const AccordionSandbox = (): JSX.Element => {
+  const BASE_ITEMS: AccordionItem[] = [
+    {
+      label: t("app.text.what-is-rimelight-ui"),
+      icon: "i-lucide-sparkles",
+      content:
+        "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS.",
+    },
+    {
+      label: t("app.text.how-does-accordion-grouping-work"),
+      icon: "i-lucide-folder-tree",
+      content:
+        "When `multiple={false}`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
+    },
+    {
+      label: t("app.text.can-items-be-individually-disabled"),
+      icon: "i-lucide-shield-alert",
+      disabled: true,
+      content: "This item is disabled (disabled: true) and should not respond to user clicks.",
+    },
+    {
+      label: t("app.text.custom-trailing-icon-support"),
+      icon: "i-lucide-settings",
+      trailingIcon: "i-lucide-arrow-down-circle",
+      content: "This item overrides the default chevron trailing icon.",
+    },
+  ];
   const [multiple, setMultiple] = createSignal(false);
   const [disabled, setDisabled] = createSignal(false);
   const [useCustomIcon, setUseCustomIcon] = createSignal(false);
@@ -84,11 +84,11 @@ export const AccordionSandbox = (): JSX.Element => {
             onChange={(e) => setUseCustomIcon(e.currentTarget.checked)}
             class="rounded border-default"
           />
-          <span class="font-medium text-highlighted">Override Trailing Icon</span>
+          <span class="font-medium text-highlighted">{t("app.text.override-trailing-icon")}</span>
         </label>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Item Count:</span>
+          <span class="text-muted">{t("app.text.item-count")}</span>
           <div class="flex gap-1">
             <For each={[1, 2, 3, 4]}>
               {(count) => (
@@ -126,22 +126,24 @@ export const accordionAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "single-item-children",
-      title: "Single Item with Custom Children Slot",
+      get title() {
+        return t("app.text.single-item-with-custom-children-slot");
+      },
       description:
         "Testing single-item summary syntax with rich arbitrary nested HTML / components.",
       render: () => (
         <RLAccordion summary="Click to expand detailed system diagnostics">
           <div class="p-3 rounded bg-elevated/40 border border-default text-xs space-y-2 mt-2">
             <div class="flex justify-between">
-              <span class="text-muted">Status:</span>
-              <span class="text-emerald-500 font-medium">Operational</span>
+              <span class="text-muted">{"Status:"}</span>
+              <span class="text-emerald-500 font-medium">{"Operational"}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-muted">Latency:</span>
+              <span class="text-muted">{"Latency:"}</span>
               <span class="font-mono text-highlighted">14ms</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-muted">Region:</span>
+              <span class="text-muted">{"Region:"}</span>
               <span class="font-mono text-highlighted">iad-1</span>
             </div>
           </div>
@@ -150,20 +152,26 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-icons",
-      title: "Custom Leading & Trailing Icons",
+      get title() {
+        return t("app.text.custom-leading-trailing-icons");
+      },
       description:
         "Verifying icon resolution for UnoCSS class icons, custom trailing icons, and rotational transitions.",
       render: () => (
         <RLAccordion
           items={[
             {
-              label: "Security & Permissions",
+              get label() {
+                return t("app.text.security-permissions");
+              },
               icon: "i-lucide-shield-check",
               trailingIcon: "i-lucide-lock",
               content: "Role-based access controls and token expirations.",
             },
             {
-              label: "Payment & Invoices",
+              get label() {
+                return t("app.text.payment-invoices");
+              },
               icon: "i-lucide-credit-card",
               trailingIcon: "i-lucide-external-link",
               content: "Subscription management, payment gateways, and tax history.",
@@ -175,25 +183,33 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "disabled-handling",
-      title: "Disabled State Matrix",
+      get title() {
+        return t("app.text.disabled-state-matrix");
+      },
       description:
         "Ensuring disabled items prevent pointer events, have dimmed opacity, and do not toggle on enter/space.",
       render: () => (
         <RLAccordion
           items={[
             {
-              label: "Enabled Section 1",
+              get label() {
+                return t("app.text.enabled-section-1");
+              },
               icon: "i-lucide-check",
               content: "Can be opened and closed freely.",
             },
             {
-              label: "Disabled Section 2 (disabled: true)",
+              get label() {
+                return t("app.text.disabled-section-2-disabled-true");
+              },
               icon: "i-lucide-ban",
               disabled: true,
               content: "Should not be clickable or expandable.",
             },
             {
-              label: "Enabled Section 3",
+              get label() {
+                return t("app.text.enabled-section-3");
+              },
               icon: "i-lucide-check",
               content: "Another enabled section.",
             },
@@ -212,17 +228,23 @@ export const accordionAudit: ComponentAuditDefinition = {
           name="audit-multiple"
           items={[
             {
-              label: "Icons",
+              get label() {
+                return t("app.text.icons");
+              },
               icon: "i-lucide-smile",
               content: "You have nothing to do, @nuxt/icon will handle it automatically.",
             },
             {
-              label: "Colors",
+              get label() {
+                return t("app.text.colors");
+              },
               icon: "i-lucide-swatch-book",
               content: "Choose a primary and a neutral color from your Tailwind CSS theme.",
             },
             {
-              label: "Components",
+              get label() {
+                return t("app.text.components");
+              },
               icon: "i-lucide-box",
               content: "Customize via the `class` / `ui` props or in your app config.",
             },
@@ -232,7 +254,9 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "single-exclusive-grouping",
-      title: "Single Exclusive Grouping via name",
+      get title() {
+        return t("app.text.single-exclusive-grouping-via-name");
+      },
       description:
         "With multiple={false} (default) open items collapse each other through a shared HTML5 `name` attribute. Two accordions with different names must not interfere.",
       render: () => (
@@ -240,15 +264,35 @@ export const accordionAudit: ComponentAuditDefinition = {
           <RLAccordion
             name="audit-group-a"
             items={[
-              { label: "Group A — Item 1", content: "First item of group A." },
-              { label: "Group A — Item 2", content: "Second item of group A." },
+              {
+                get label() {
+                  return t("app.text.group-a-item-1");
+                },
+                content: "First item of group A.",
+              },
+              {
+                get label() {
+                  return t("app.text.group-a-item-2");
+                },
+                content: "Second item of group A.",
+              },
             ]}
           />
           <RLAccordion
             name="audit-group-b"
             items={[
-              { label: "Group B — Item 1", content: "First item of group B." },
-              { label: "Group B — Item 2", content: "Second item of group B." },
+              {
+                get label() {
+                  return t("app.text.group-b-item-1");
+                },
+                content: "First item of group B.",
+              },
+              {
+                get label() {
+                  return t("app.text.group-b-item-2");
+                },
+                content: "Second item of group B.",
+              },
             ]}
           />
         </>
@@ -256,7 +300,9 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "trailing-icon-prop",
-      title: "Global trailingIcon Prop (Nuxt: trailing-icon)",
+      get title() {
+        return t("app.text.global-trailingicon-prop-nuxt-trailing-icon");
+      },
       description:
         "The root trailingIcon prop overrides the default chevron for every item that does not set its own trailingIcon.",
       render: () => (
@@ -264,12 +310,16 @@ export const accordionAudit: ComponentAuditDefinition = {
           trailingIcon="i-lucide-plus"
           items={[
             {
-              label: "Global plus icon",
+              get label() {
+                return t("app.text.global-plus-icon");
+              },
               icon: "i-lucide-smile",
               content: "Uses the root trailingIcon.",
             },
             {
-              label: "Per-item override wins",
+              get label() {
+                return t("app.text.per-item-override-wins");
+              },
               icon: "i-lucide-swatch-book",
               trailingIcon: "i-lucide-arrow-down",
               content: "Uses its own trailingIcon.",
@@ -280,30 +330,51 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "root-disabled",
-      title: "Root disabled Prop (Nuxt: disabled)",
+      get title() {
+        return t("app.text.root-disabled-prop-nuxt-disabled");
+      },
       description:
         "disabled on the root disables every trigger. Compare with per-item disabled in the Disabled State Matrix scenario.",
       render: () => (
         <RLAccordion
           disabled
           items={[
-            { label: "Section 1", content: "Should not be clickable." },
-            { label: "Section 2", content: "Should not be clickable." },
+            {
+              get label() {
+                return t("app.text.section-1");
+              },
+              content: "Should not be clickable.",
+            },
+            {
+              get label() {
+                return t("app.text.section-2");
+              },
+              content: "Should not be clickable.",
+            },
           ]}
         />
       ),
     },
     {
       id: "per-item-ui-override",
-      title: "Per-item class / ui Override",
+      get title() {
+        return t("app.text.per-item-class-ui-override");
+      },
       description:
         "item.class appends to the item node; item.ui merges per slot over the root ui. The second row label renders rose/black.",
       render: () => (
         <RLAccordion
           items={[
-            { label: "Plain item", content: "No overrides." },
             {
-              label: "Item with ui override",
+              get label() {
+                return t("app.text.plain-item");
+              },
+              content: "No overrides.",
+            },
+            {
+              get label() {
+                return t("app.text.item-with-ui-override");
+              },
               content: "This label is styled by item.ui.",
               ui: { label: "text-rose-500 font-black" },
             },
@@ -313,7 +384,9 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "controlled-value",
-      title: "Controlled value + onChange (Nuxt: v-model)",
+      get title() {
+        return t("app.text.controlled-value-onchange-nuxt-v-model");
+      },
       description:
         "Maps to Nuxt's v-model / update:modelValue. External buttons drive the open item; clicking triggers reports through onChange.",
       render: () => {
@@ -322,7 +395,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         return (
           <>
             <div class="flex items-center gap-2 text-xs">
-              <span class="text-muted">Active:</span>
+              <span class="text-muted">{"Active:"}</span>
               <code class="font-mono text-primary">{active() ?? "(none)"}</code>
               <For each={ids}>
                 {(id) => (
@@ -349,9 +422,27 @@ export const accordionAudit: ComponentAuditDefinition = {
                 setActive(v as string | undefined);
               }}
               items={[
-                { label: "Controlled 0", value: "0", content: "First panel." },
-                { label: "Controlled 1", value: "1", content: "Second panel." },
-                { label: "Controlled 2", value: "2", content: "Third panel." },
+                {
+                  get label() {
+                    return t("app.text.controlled-0");
+                  },
+                  value: "0",
+                  content: "First panel.",
+                },
+                {
+                  get label() {
+                    return t("app.text.controlled-1");
+                  },
+                  value: "1",
+                  content: "Second panel.",
+                },
+                {
+                  get label() {
+                    return t("app.text.controlled-2");
+                  },
+                  value: "2",
+                  content: "Third panel.",
+                },
               ]}
             />
           </>
@@ -367,9 +458,27 @@ export const accordionAudit: ComponentAuditDefinition = {
         <RLAccordion
           defaultValue="1"
           items={[
-            { label: "Item 0", value: "0", content: "Starts closed." },
-            { label: "Item 1", value: "1", content: "Starts open via defaultValue." },
-            { label: "Item 2", value: "2", content: "Starts closed." },
+            {
+              get label() {
+                return t("app.text.item-0");
+              },
+              value: "0",
+              content: "Starts closed.",
+            },
+            {
+              get label() {
+                return t("app.text.item-1");
+              },
+              value: "1",
+              content: "Starts open via defaultValue.",
+            },
+            {
+              get label() {
+                return t("app.text.item-2");
+              },
+              value: "2",
+              content: "Starts closed.",
+            },
           ]}
         />
       ),
@@ -384,9 +493,27 @@ export const accordionAudit: ComponentAuditDefinition = {
           type="multiple"
           defaultValue={["m0", "m2"]}
           items={[
-            { label: "M0 open", value: "m0", content: "Starts open." },
-            { label: "M1 closed", value: "m1", content: "Starts closed." },
-            { label: "M2 open", value: "m2", content: "Starts open." },
+            {
+              get label() {
+                return t("app.text.m0-open");
+              },
+              value: "m0",
+              content: "Starts open.",
+            },
+            {
+              get label() {
+                return t("app.text.m1-closed");
+              },
+              value: "m1",
+              content: "Starts closed.",
+            },
+            {
+              get label() {
+                return t("app.text.m2-open");
+              },
+              value: "m2",
+              content: "Starts open.",
+            },
           ]}
         />
       ),
@@ -401,8 +528,20 @@ export const accordionAudit: ComponentAuditDefinition = {
           collapsible={false}
           defaultValue="c0"
           items={[
-            { label: "Pinned open at start", value: "c0", content: "Clicking me keeps me open." },
-            { label: "Switch target", value: "c1", content: "Clicking me switches here." },
+            {
+              get label() {
+                return t("app.text.pinned-open-at-start");
+              },
+              value: "c0",
+              content: "Clicking me keeps me open.",
+            },
+            {
+              get label() {
+                return t("app.text.switch-target");
+              },
+              value: "c1",
+              content: "Clicking me switches here.",
+            },
           ]}
         />
       ),
@@ -416,13 +555,23 @@ export const accordionAudit: ComponentAuditDefinition = {
         <>
           <RLAccordion
             defaultValue="u0"
-            items={[{ label: "Collapse me, then inspect DOM", value: "u0", content: "I unmount." }]}
+            items={[
+              {
+                get label() {
+                  return t("app.text.collapse-me-then-inspect-dom");
+                },
+                value: "u0",
+                content: "I unmount.",
+              },
+            ]}
           />
           <RLAccordion
             unmountOnHide={false}
             items={[
               {
-                label: "Collapsed but mounted",
+                get label() {
+                  return t("app.text.collapsed-but-mounted");
+                },
                 value: "u1",
                 content: "This node exists in the DOM even while collapsed.",
               },
@@ -433,16 +582,36 @@ export const accordionAudit: ComponentAuditDefinition = {
     },
     {
       id: "value-label-keys",
-      title: "Custom valueKey / labelKey incl. Dot Paths",
-      description: "Items keyed by nested fields. Open state tracks meta.key values.",
+      get title() {
+        return t("app.text.custom-valuekey-labelkey-incl-dot-paths");
+      },
+      get description() {
+        return t("app.text.items-keyed-by-nested-fields-open-state-tracks-m");
+      },
       render: () => (
         <RLAccordion
           valueKey="meta.key"
           labelKey="meta.title"
           defaultValue="k2"
           items={[
-            { meta: { key: "k1", title: "Nested one" }, content: "Resolved via dot paths." },
-            { meta: { key: "k2", title: "Nested two (open)" }, content: "Starts open." },
+            {
+              meta: {
+                key: "k1",
+                get title() {
+                  return t("app.text.nested-one");
+                },
+              },
+              content: "Resolved via dot paths.",
+            },
+            {
+              meta: {
+                key: "k2",
+                get title() {
+                  return t("app.text.nested-two-open");
+                },
+              },
+              content: "Starts open.",
+            },
           ]}
         />
       ),
@@ -479,17 +648,36 @@ export const accordionAudit: ComponentAuditDefinition = {
             )
           }
           items={[
-            { label: "Alpha", content: "first" },
-            { label: "Beta", content: "second" },
-            { label: "Gamma", content: "third" },
+            {
+              get label() {
+                return t("app.text.alpha");
+              },
+              content: "first",
+            },
+            {
+              get label() {
+                return t("app.text.beta");
+              },
+              content: "second",
+            },
+            {
+              get label() {
+                return t("app.text.gamma");
+              },
+              content: "third",
+            },
           ]}
         />
       ),
     },
     {
       id: "named-item-slot",
-      title: "Per-item custom body render prop",
-      description: "Custom item body rendered by the body render prop.",
+      get title() {
+        return t("app.text.per-item-custom-body-render-prop");
+      },
+      get description() {
+        return t("app.text.custom-item-body-rendered-by-the-body-render-pro");
+      },
       render: () => (
         <RLAccordion
           type="multiple"
@@ -502,15 +690,29 @@ export const accordionAudit: ComponentAuditDefinition = {
             )
           }
           items={[
-            { label: "Standard", value: "s0", content: "Default body." },
-            { label: "Featured", value: "s1", content: "Named slot body." },
+            {
+              get label() {
+                return t("app.text.standard");
+              },
+              value: "s0",
+              content: "Default body.",
+            },
+            {
+              get label() {
+                return t("app.text.featured");
+              },
+              value: "s1",
+              content: "Named slot body.",
+            },
           ]}
         />
       ),
     },
     {
       id: "nested-accordions",
-      title: "Nested Accordion Hierarchies",
+      get title() {
+        return t("app.text.nested-accordion-hierarchies");
+      },
       description:
         "Parent-child nesting. The inner accordion uses class -mx-4 so its triggers sit flush with the parent's (negating the parent content padding) instead of indenting a second level.",
       render: () => (
@@ -519,11 +721,15 @@ export const accordionAudit: ComponentAuditDefinition = {
             class="-mx-4"
             items={[
               {
-                label: "Sub-Section A",
+                get label() {
+                  return t("app.text.sub-section-a");
+                },
                 content: "Nested child accordion item A content.",
               },
               {
-                label: "Sub-Section B",
+                get label() {
+                  return t("app.text.sub-section-b");
+                },
                 content: "Nested child accordion item B content.",
               },
             ]}

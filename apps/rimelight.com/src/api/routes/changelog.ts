@@ -1,3 +1,4 @@
+import { t } from "@rimelight/i18n";
 import { Hono } from "hono";
 
 const api = new Hono().get("/changelog", async (c) => {
@@ -103,7 +104,7 @@ const api = new Hono().get("/changelog", async (c) => {
     if (unreleased.length > 0) {
       result.push({
         tag: "unreleased",
-        title: "Soon",
+        title: t("app.text.soon"),
         commits: unreleased,
       });
     }

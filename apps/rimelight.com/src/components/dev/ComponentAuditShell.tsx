@@ -1,6 +1,7 @@
 import { createSignal, createMemo, For, Show, type Component } from "solid-js";
 import { COMPONENT_AUDITS, getAllAudits, getAuditById } from "./audits/registry";
 import type { ComponentCategory, AuditStatus } from "./audits/types";
+import { t } from "@rimelight/i18n";
 
 interface ComponentAuditShellProps {
   initialComponentId?: string;
@@ -49,7 +50,7 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
       {/* Sidebar Navigation */}
       <aside class="w-full lg:w-64 shrink-0 flex flex-col bg-elevated/20 border border-default lg:sticky lg:top-4">
         <header class="bg-elevated/40 px-md py-sm border-b border-default">
-          <h2 class="text-xs text-muted font-mono">Components</h2>
+          <h2 class="text-xs text-muted font-mono">{t("app.text.components")}</h2>
         </header>
         <div class="flex flex-col gap-sm p-sm max-h-[calc(100vh-220px)] overflow-y-auto">
           <For each={categories()}>
@@ -234,7 +235,9 @@ export const ComponentAuditShell: Component<ComponentAuditShellProps> = (props) 
               <Show when={activeTab() === "code"}>
                 <section class="bg-elevated/20 border border-default">
                   <header class="bg-elevated/40 px-xl py-sm border-b border-default">
-                    <h3 class="text-xs font-semibold text-highlighted">Import & Usage</h3>
+                    <h3 class="text-xs font-semibold text-highlighted">
+                      {t("app.text.import-usage")}
+                    </h3>
                   </header>
                   <div class="p-xl font-mono text-xs">
                     <pre class="p-md rounded bg-elevated/40 border border-default text-primary overflow-x-auto">

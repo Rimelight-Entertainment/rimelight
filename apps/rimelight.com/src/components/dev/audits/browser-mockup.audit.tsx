@@ -7,6 +7,7 @@ import type {
   BrowserMockupColor,
 } from "@rimelight/ui/components/browser-mockup/browser-mockup.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const VARIANTS: BrowserMockupVariant[] = ["outline", "solid", "soft", "subtle", "ghost"];
 const SIZES: BrowserMockupSize[] = ["sm", "md", "lg", "xl"];
@@ -31,7 +32,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         {/* Variant */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Variant:</span>
+          <span class="text-muted mr-1">{t("app.text.variant")}</span>
           <For each={VARIANTS}>
             {(v) => (
               <button
@@ -51,7 +52,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
 
         {/* Size */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Size:</span>
+          <span class="text-muted mr-1">{t("app.text.size")}</span>
           <For each={SIZES}>
             {(s) => (
               <button
@@ -71,7 +72,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
 
         {/* Color */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -91,7 +92,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
 
         {/* Controls Variant */}
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Dots:</span>
+          <span class="text-muted mr-1">{t("app.text.dots")}</span>
           <For each={CONTROLS_VARIANTS}>
             {(cv) => (
               <button
@@ -119,7 +120,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
               onChange={(e) => setHasNavigation(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Navigation</span>
+            <span class="text-muted">{t("app.text.navigation")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -129,7 +130,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
               onChange={(e) => setPadded(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Padded</span>
+            <span class="text-muted">{t("app.text.padded")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -139,7 +140,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
               onChange={(e) => setShadow(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Shadow</span>
+            <span class="text-muted">{t("app.text.shadow")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -149,13 +150,13 @@ export const BrowserMockupSandbox = (): JSX.Element => {
               onChange={(e) => setRounded(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Rounded</span>
+            <span class="text-muted">{t("app.text.rounded")}</span>
           </label>
         </div>
 
         {/* URL Input */}
         <div class="flex items-center gap-2">
-          <span class="text-muted">URL:</span>
+          <span class="text-muted">{t("app.text.url")}</span>
           <input
             type="text"
             value={url()}
@@ -181,7 +182,9 @@ export const BrowserMockupSandbox = (): JSX.Element => {
           <div class="flex flex-col gap-4">
             <div class="flex items-center justify-between pb-3 border-b border-default">
               <div>
-                <h3 class="text-base font-semibold text-highlighted">Rimelight Dashboard</h3>
+                <h3 class="text-base font-semibold text-highlighted">
+                  {t("app.text.rimelight-dashboard")}
+                </h3>
                 <p class="text-xs text-muted">
                   Production-ready SSR & high performance web components
                 </p>
@@ -192,15 +195,15 @@ export const BrowserMockupSandbox = (): JSX.Element => {
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div class="p-3 rounded-lg border border-default bg-elevated/20">
-                <span class="text-xs text-muted">Total Visits</span>
+                <span class="text-xs text-muted">{t("app.text.total-visits")}</span>
                 <p class="text-xl font-bold text-highlighted mt-1">128,490</p>
               </div>
               <div class="p-3 rounded-lg border border-default bg-elevated/20">
-                <span class="text-xs text-muted">Performance</span>
+                <span class="text-xs text-muted">{t("app.text.performance")}</span>
                 <p class="text-xl font-bold text-emerald-500 mt-1">99.8%</p>
               </div>
               <div class="p-3 rounded-lg border border-default bg-elevated/20">
-                <span class="text-xs text-muted">Aria Compliance</span>
+                <span class="text-xs text-muted">{t("app.text.aria-compliance")}</span>
                 <p class="text-xl font-bold text-primary mt-1">100%</p>
               </div>
             </div>
@@ -223,48 +226,58 @@ export const browserMockupAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "all-variants",
-      title: "Visual Variants (Outline, Solid, Soft, Subtle, Ghost)",
-      description: "Demonstrates all visual frame styles with consistent borders and backgrounds.",
+      get title() {
+        return t("app.text.visual-variants-outline-solid-soft-subtle-ghost");
+      },
+      get description() {
+        return t("app.text.demonstrates-all-visual-frame-styles-with-consis");
+      },
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLBrowserMockup variant="outline" url="https://rimelight.com/outline">
             <div class="text-xs text-muted">Outline variant (default)</div>
           </RLBrowserMockup>
           <RLBrowserMockup variant="solid" url="https://rimelight.com/solid">
-            <div class="text-xs text-muted">Solid variant with elevated background</div>
+            <div class="text-xs text-muted">{"Solid variant with elevated background"}</div>
           </RLBrowserMockup>
           <RLBrowserMockup variant="soft" url="https://rimelight.com/soft">
-            <div class="text-xs text-muted">Soft variant</div>
+            <div class="text-xs text-muted">{"Soft variant"}</div>
           </RLBrowserMockup>
           <RLBrowserMockup variant="subtle" url="https://rimelight.com/subtle">
-            <div class="text-xs text-muted">Subtle variant</div>
+            <div class="text-xs text-muted">{"Subtle variant"}</div>
           </RLBrowserMockup>
         </div>
       ),
     },
     {
       id: "sizes",
-      title: "Size Presets (sm, md, lg, xl)",
+      get title() {
+        return t("app.text.size-presets-sm-md-lg-xl");
+      },
       description:
         "Scales header padding, control dots, address bar typography, and internal padding.",
       render: () => (
         <div class="flex flex-col gap-4">
           <RLBrowserMockup size="sm" url="https://rimelight.com/size-sm">
-            <div class="text-xs text-muted">Small size browser mockup</div>
+            <div class="text-xs text-muted">{"Small size browser mockup"}</div>
           </RLBrowserMockup>
           <RLBrowserMockup size="md" url="https://rimelight.com/size-md">
             <div class="text-xs text-muted">Medium size browser mockup (default)</div>
           </RLBrowserMockup>
           <RLBrowserMockup size="lg" url="https://rimelight.com/size-lg">
-            <div class="text-xs text-muted">Large size browser mockup</div>
+            <div class="text-xs text-muted">{"Large size browser mockup"}</div>
           </RLBrowserMockup>
         </div>
       ),
     },
     {
       id: "navigation-and-actions",
-      title: "Navigation Controls & Custom Actions Slot",
-      description: "Back/forward/reload buttons alongside custom header actions slot.",
+      get title() {
+        return t("app.text.navigation-controls-custom-actions-slot");
+      },
+      get description() {
+        return t("app.text.back-forward-reload-buttons-alongside-custom-hea");
+      },
       render: () => (
         <RLBrowserMockup
           navigation
@@ -289,7 +302,9 @@ export const browserMockupAudit: ComponentAuditDefinition = {
     },
     {
       id: "unpadded-app-screen",
-      title: "Unpadded Embedded Media & Hero Screenshot",
+      get title() {
+        return t("app.text.unpadded-embedded-media-hero-screenshot");
+      },
       description:
         "Ideal for embedding responsive images, iframe previews, or code editors edge-to-edge.",
       render: () => (
@@ -302,8 +317,12 @@ export const browserMockupAudit: ComponentAuditDefinition = {
     },
     {
       id: "monochrome-controls",
-      title: "Monochrome Minimalist Style",
-      description: "Subtle neutral dot styling for understated product mockups.",
+      get title() {
+        return t("app.text.monochrome-minimalist-style");
+      },
+      get description() {
+        return t("app.text.subtle-neutral-dot-styling-for-understated-produ");
+      },
       render: () => (
         <RLBrowserMockup
           controlsVariant="monochrome"

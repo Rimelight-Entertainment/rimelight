@@ -4,6 +4,7 @@ import { getDb } from "#db";
 import { titleSettings } from "#db/schema/title-settings";
 import { isTitleSlug } from "../../titles";
 import { requireClientToken, type ClientVariables } from "./middleware";
+import { t } from "@rimelight/i18n";
 import {
   byteLength,
   mergeTitleSettings,
@@ -35,7 +36,7 @@ v1.get("/profile", (c) => {
 
 v1.use("/titles/:title/*", async (c, next) => {
   if (!isTitleSlug(c.req.param("title"))) {
-    return c.json({ error: "Not Found", message: "Unknown title." }, 404);
+    return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
   }
   return next();
 });
@@ -56,19 +57,19 @@ v1.put("/titles/:title/settings", async (c) => {
   const title = c.req.param("title");
   const raw = await c.req.text();
   if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
-    return c.json({ error: "Payload Too Large", message: "Body exceeds 16 KB." }, 413);
+    return c.json({ error: "Payload Too Large", message: t("api.message.body-too-large") }, 413);
   }
 
   let body: unknown;
   try {
     body = JSON.parse(raw);
   } catch {
-    return c.json({ error: "Bad Request", message: "Body must be JSON." }, 400);
+    return c.json({ error: "Bad Request", message: t("api.message.body-must-be-json") }, 400);
   }
 
   const parsed = titleSettingsPatchSchema.safeParse(body);
   if (!parsed.success) {
-    return c.json({ error: "Bad Request", message: "Settings structure is invalid." }, 400);
+    return c.json({ error: "Bad Request", message: t("api.message.settings-invalid") }, 400);
   }
 
   const db = getDb();
@@ -100,7 +101,7 @@ v1.put("/titles/:title/settings", async (c) => {
   } catch (err) {
     if (err instanceof PayloadTooLargeError) {
       return c.json(
-        { error: "Payload Too Large", message: "Stored settings would exceed 64 KB." },
+        { error: "Payload Too Large", message: t("api.message.stored-settings-too-large") },
         413,
       );
     }

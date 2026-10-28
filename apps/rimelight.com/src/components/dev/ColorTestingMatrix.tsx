@@ -1,4 +1,5 @@
 import { createSignal, For, Show } from "solid-js";
+import { t } from "@rimelight/i18n";
 
 export const PALETTES = [
   "neutral",
@@ -77,7 +78,9 @@ export default function ColorTestingMatrix() {
           <div class="flex items-start justify-between gap-3">
             <div>
               <div class="flex items-center gap-2">
-                <h3 class="font-bold text-base text-highlighted">Surface & Card Component</h3>
+                <h3 class="font-bold text-base text-highlighted">
+                  {t("app.text.surface-card-component")}
+                </h3>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--rl-bg)] text-white capitalize">
                   {sandboxAccentColor()}
                 </span>
@@ -182,7 +185,7 @@ export default function ColorTestingMatrix() {
               <span class="text-muted pb-1.5 hover:text-highlighted cursor-pointer">
                 Inactive Tab
               </span>
-              <span class="text-dimmed pb-1.5">Disabled Tab</span>
+              <span class="text-dimmed pb-1.5">{t("app.text.disabled-tab")}</span>
             </div>
           </div>
         </div>
@@ -199,8 +202,8 @@ export default function ColorTestingMatrix() {
                 ✓
               </div>
               <div class="flex flex-col">
-                <span class="text-xs font-bold text-highlighted">Account</span>
-                <span class="text-[10px] text-dimmed">Completed</span>
+                <span class="text-xs font-bold text-highlighted">{t("app.text.account")}</span>
+                <span class="text-[10px] text-dimmed">{t("app.text.completed")}</span>
               </div>
             </div>
 
@@ -212,8 +215,8 @@ export default function ColorTestingMatrix() {
                 2
               </div>
               <div class="flex flex-col">
-                <span class="text-xs font-bold text-highlighted">Profile</span>
-                <span class="text-[10px] text-muted">In Progress</span>
+                <span class="text-xs font-bold text-highlighted">{t("app.text.profile")}</span>
+                <span class="text-[10px] text-muted">{t("app.text.in-progress")}</span>
               </div>
             </div>
 
@@ -225,8 +228,8 @@ export default function ColorTestingMatrix() {
                 3
               </div>
               <div class="flex flex-col">
-                <span class="text-xs text-muted">Finish</span>
-                <span class="text-[10px] text-dimmed">Pending</span>
+                <span class="text-xs text-muted">{t("app.text.finish")}</span>
+                <span class="text-[10px] text-dimmed">{t("app.text.pending")}</span>
               </div>
             </div>
           </div>
@@ -242,7 +245,7 @@ export default function ColorTestingMatrix() {
 
             {/* Text Input with Sunken Well */}
             <div class="flex flex-col gap-1">
-              <label class="text-xs font-bold text-toned">Search Query</label>
+              <label class="text-xs font-bold text-toned">{t("app.text.search-query")}</label>
               <div class="relative">
                 <input
                   type="text"
@@ -256,12 +259,12 @@ export default function ColorTestingMatrix() {
             <div class="flex items-center gap-4 pt-1">
               <label class="flex items-center gap-2 text-xs font-medium text-default cursor-pointer">
                 <input type="checkbox" checked class="size-4 rounded accent-[var(--rl-bg)]" />
-                <span>Remember me</span>
+                <span>{t("app.text.remember-me")}</span>
               </label>
 
               <label class="flex items-center gap-2 text-xs font-medium text-default cursor-pointer">
                 <input type="radio" checked class="size-4 accent-[var(--rl-bg)]" />
-                <span>Option A</span>
+                <span>{t("app.text.option-a")}</span>
               </label>
             </div>
           </div>
@@ -280,17 +283,17 @@ export default function ColorTestingMatrix() {
             {/* Floating Menu simulation */}
             <div class="p-1 rounded-lg border border-default bg-elevated shadow-md flex flex-col gap-0.5 text-xs">
               <div class="px-2.5 py-1.5 rounded-md hover:bg-accented hover:text-highlighted flex items-center justify-between cursor-pointer">
-                <span class="font-medium text-highlighted">Profile Settings</span>
-                <span class="text-[10px] font-mono text-dimmed">⌘P</span>
+                <span class="font-medium text-highlighted">{t("app.text.profile-settings")}</span>
+                <span class="text-[10px] font-mono text-dimmed">{t("app.text.p")}</span>
               </div>
               <div class="px-2.5 py-1.5 rounded-md hover:bg-accented hover:text-highlighted flex items-center justify-between cursor-pointer">
-                <span class="font-medium text-highlighted">Appearance</span>
-                <span class="text-[10px] font-mono text-dimmed">⌘T</span>
+                <span class="font-medium text-highlighted">{t("app.text.appearance")}</span>
+                <span class="text-[10px] font-mono text-dimmed">{t("app.text.t")}</span>
               </div>
               <div class="h-px border-t border-default my-0.5" />
               <div class="px-2.5 py-1.5 rounded-md text-error-600 hover:bg-error-500/10 flex items-center justify-between cursor-pointer">
-                <span>Sign Out</span>
-                <span class="text-[10px] font-mono text-dimmed">⌥Q</span>
+                <span>{t("app.text.sign-out")}</span>
+                <span class="text-[10px] font-mono text-dimmed">{t("app.text.q")}</span>
               </div>
             </div>
           </div>
@@ -303,7 +306,9 @@ export default function ColorTestingMatrix() {
             <div class="flex items-center gap-2.5">
               <span class="size-2 rounded-full bg-[var(--rl-bg)]" />
               <div class="flex flex-col">
-                <span class="text-xs font-bold text-[var(--rl-text)]">System Notification</span>
+                <span class="text-xs font-bold text-[var(--rl-text)]">
+                  {t("app.text.system-notification")}
+                </span>
                 <span class="text-[11px] text-muted">
                   All components dynamically resolve against theme.
                 </span>
@@ -431,7 +436,7 @@ export default function ColorTestingMatrix() {
           {/* Controls Bar */}
           <div class="flex flex-wrap gap-3 p-3 bg-muted rounded-xl text-xs font-mono">
             <div class="flex items-center gap-1.5">
-              <span class="text-muted">Surface BG:</span>
+              <span class="text-muted">{t("app.text.surface-bg")}</span>
               <select
                 value={sandboxBgIntent()}
                 onChange={(e) => setSandboxBgIntent(e.currentTarget.value)}
@@ -444,7 +449,7 @@ export default function ColorTestingMatrix() {
             </div>
 
             <div class="flex items-center gap-1.5">
-              <span class="text-muted">Text Intent:</span>
+              <span class="text-muted">{t("app.text.text-intent")}</span>
               <select
                 value={sandboxTextIntent()}
                 onChange={(e) => setSandboxTextIntent(e.currentTarget.value)}
@@ -457,7 +462,7 @@ export default function ColorTestingMatrix() {
             </div>
 
             <div class="flex items-center gap-1.5">
-              <span class="text-muted">Border Intent:</span>
+              <span class="text-muted">{t("app.text.border-intent")}</span>
               <select
                 value={sandboxBorderIntent()}
                 onChange={(e) => setSandboxBorderIntent(e.currentTarget.value)}
@@ -470,7 +475,7 @@ export default function ColorTestingMatrix() {
             </div>
 
             <div class="flex items-center gap-1.5">
-              <span class="text-muted">Accent Color:</span>
+              <span class="text-muted">{t("app.text.accent-color")}</span>
               <select
                 value={sandboxAccentColor()}
                 onChange={(e) => setSandboxAccentColor(e.currentTarget.value)}
@@ -569,7 +574,9 @@ export default function ColorTestingMatrix() {
                                 }
                               >
                                 <div class="flex items-center justify-between">
-                                  <span class="text-xs font-bold font-sans">Aa Sample</span>
+                                  <span class="text-xs font-bold font-sans">
+                                    {t("app.text.aa-sample")}
+                                  </span>
                                   <Show when={isInvalid}>
                                     <span class="text-[7px] font-mono font-black uppercase px-1 rounded bg-red-500/20 text-red-500 border border-red-500/40">
                                       Mismatch
@@ -684,7 +691,7 @@ export default function ColorTestingMatrix() {
       <Show when={activeTab() === "matrix"}>
         <div class="flex flex-col gap-3">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-mono text-muted">Palette:</span>
+            <span class="text-xs font-mono text-muted">{t("app.text.palette")}</span>
             <select
               value={selectedMatrixPalette()}
               onChange={(e) => setSelectedMatrixPalette(e.currentTarget.value)}
@@ -733,7 +740,7 @@ export default function ColorTestingMatrix() {
                               }
                               title={`bg-${selectedMatrixPalette()}-${bgShade} text-${selectedMatrixPalette()}-${txtShade}`}
                             >
-                              <span class="text-xs font-bold">Aa</span>
+                              <span class="text-xs font-bold">{t("app.text.aa")}</span>
                               <span class="text-[7px] font-mono opacity-70">
                                 {bgShade}/{txtShade}
                               </span>
@@ -754,7 +761,7 @@ export default function ColorTestingMatrix() {
       <Show when={activeTab() === "variants"}>
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-mono text-muted">Preview BG:</span>
+            <span class="text-xs font-mono text-muted">{t("app.text.preview-bg")}</span>
             <select
               value={sandboxVariantBg()}
               onChange={(e) => setSandboxVariantBg(e.currentTarget.value)}

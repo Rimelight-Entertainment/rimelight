@@ -87,7 +87,7 @@ export const AppFooter: Component = () => {
           <NewsletterSignup />
           <div class="flex flex-col items-center gap-xs lg:items-start mt-auto">
             <RLLogo href={getLocaleUrl("/")} variant="logotype" class="h-6 w-auto" mode="color" />
-            <p class="text-sm text-white">Accessing me.</p>
+            <p class="text-sm text-white">{t("app.text.accessing-me")}</p>
             <span class="text-sm text-white">© {new Date().getFullYear()} idantity.me</span>
           </div>
         </div>

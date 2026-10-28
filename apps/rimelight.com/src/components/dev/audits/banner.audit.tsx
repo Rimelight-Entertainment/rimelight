@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBanner } from "@rimelight/ui/components/banner/RLBanner.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import { t } from "@rimelight/i18n";
 
 const COLORS = AUDIT_COLORS;
 
@@ -19,7 +20,7 @@ export const BannerSandbox = (): JSX.Element => {
       {/* Control Toolbar */}
       <div class="p-4 rounded-xl border border-default bg-elevated/20 flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">Color:</span>
+          <span class="text-muted mr-1">{t("app.text.color")}</span>
           <For each={COLORS}>
             {(c) => (
               <button
@@ -46,7 +47,7 @@ export const BannerSandbox = (): JSX.Element => {
               onChange={(e) => setHasIcon(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Icon</span>
+            <span class="text-muted">{t("app.text.icon")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -56,7 +57,7 @@ export const BannerSandbox = (): JSX.Element => {
               onChange={(e) => setHasActions(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Actions</span>
+            <span class="text-muted">{t("app.text.actions")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -66,7 +67,7 @@ export const BannerSandbox = (): JSX.Element => {
               onChange={(e) => setIsClosable(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Close Button</span>
+            <span class="text-muted">{t("app.text.close-button")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -76,7 +77,7 @@ export const BannerSandbox = (): JSX.Element => {
               onChange={(e) => setContain(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">Contain</span>
+            <span class="text-muted">{t("app.text.contain")}</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -86,12 +87,12 @@ export const BannerSandbox = (): JSX.Element => {
               onChange={(e) => setIsLink(e.currentTarget.checked)}
               class="rounded border-default"
             />
-            <span class="text-muted">As Link</span>
+            <span class="text-muted">{t("app.text.as-link")}</span>
           </label>
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-muted">Title:</span>
+          <span class="text-muted">{t("app.text.title")}</span>
           <input
             type="text"
             value={title()}
@@ -113,8 +114,8 @@ export const BannerSandbox = (): JSX.Element => {
         actions={
           hasActions()
             ? [
-                { label: "Documentation", variant: "outline", href: "#docs" },
-                { label: "Get Started", trailingIcon: "arrow-right" },
+                { label: t("app.text.documentation"), variant: "outline", href: "#docs" },
+                { label: t("app.text.get-started"), trailingIcon: "arrow-right" },
               ]
             : undefined
         }
@@ -135,7 +136,9 @@ export const bannerAudit: ComponentAuditDefinition = {
   testScenarios: [
     {
       id: "colors-matrix",
-      title: "All Color Variants",
+      get title() {
+        return t("app.text.all-color-variants");
+      },
       description:
         "All visual colors (primary, secondary, success, info, warning, error, neutral) with standard contrast inverted text styling.",
       render: () => (
@@ -157,18 +160,32 @@ export const bannerAudit: ComponentAuditDefinition = {
     },
     {
       id: "actions-and-slots",
-      title: "Actions and Slots",
+      get title() {
+        return t("app.text.actions-and-slots");
+      },
       description:
         "Action buttons with outline/solid variants, trailing icons, custom left/center/right slots.",
       render: () => (
         <div class="flex flex-col gap-3">
           <RLBanner
-            title="We just raised Series A funding!"
+            title={"We just raised Series A funding!"}
             icon="rocket"
             color="secondary"
             actions={[
-              { label: "Read Press Release", variant: "solid", href: "#press" },
-              { label: "View Open Roles", variant: "outline", trailingIcon: "arrow-right" },
+              {
+                get label() {
+                  return t("app.text.read-press-release");
+                },
+                variant: "solid",
+                href: "#press",
+              },
+              {
+                get label() {
+                  return t("app.text.view-open-roles");
+                },
+                variant: "outline",
+                trailingIcon: "arrow-right",
+              },
             ]}
             close
           />
@@ -179,8 +196,15 @@ export const bannerAudit: ComponentAuditDefinition = {
                 NEW
               </span>
             }
-            title="Solid 2.0 and UnoCSS now supported"
-            actions={[{ label: "Changelog", size: "xs" }]}
+            title={"Solid 2.0 and UnoCSS now supported"}
+            actions={[
+              {
+                get label() {
+                  return t("app.text.changelog");
+                },
+                size: "xs",
+              },
+            ]}
             close
           />
         </div>
@@ -188,7 +212,9 @@ export const bannerAudit: ComponentAuditDefinition = {
     },
     {
       id: "custom-slots",
-      title: "Slot Overrides (leading, title, actions, close)",
+      get title() {
+        return t("app.text.slot-overrides-leading-title-actions-close");
+      },
       description:
         "Nuxt UI slots replace their default content: `leading` replaces the icon, `titleSlot` the title, `actionsSlot` the actions and `closeSlot` the close button.",
       render: () => (
@@ -200,14 +226,16 @@ export const bannerAudit: ComponentAuditDefinition = {
               Custom <strong>title</strong> slot
             </span>
           }
-          actionsSlot={<a href="#custom-action">Custom action</a>}
+          actionsSlot={<a href="#custom-action">{"Custom action"}</a>}
           closeSlot={<span>(custom close slot)</span>}
         />
       ),
     },
     {
       id: "link-mode",
-      title: "Interactive Link Mode",
+      get title() {
+        return t("app.text.interactive-link-mode");
+      },
       description:
         "`to` / `href` renders a full-surface overlay link labelled by the title, so actions and the close button stay valid, independently focusable controls.",
       render: () => (
@@ -216,21 +244,30 @@ export const bannerAudit: ComponentAuditDefinition = {
           target="_blank"
           color="primary"
           icon="star"
-          title="Rimelight Entertainment releases Next-Gen UI toolkit — Click to explore!"
-          actions={[{ label: "Secondary action", variant: "outline" }]}
+          title={"Rimelight Entertainment releases Next-Gen UI toolkit — Click to explore!"}
+          actions={[
+            {
+              get label() {
+                return t("app.text.secondary-action");
+              },
+              variant: "outline",
+            },
+          ]}
           close
         />
       ),
     },
     {
       id: "closable-and-persistence",
-      title: "Dismissible with Persistence ID",
+      get title() {
+        return t("app.text.dismissible-with-persistence-id");
+      },
       description:
         "Custom close icon; with an explicit `id`, dismissal is saved to localStorage (`banner-<id>`). Clear it from devtools to see it again.",
       render: () => (
         <RLBanner
           id="audit-closable-banner-demo"
-          title="You can dismiss this banner. On explicit `id`, state is saved to localStorage."
+          title={"You can dismiss this banner. On explicit `id`, state is saved to localStorage."}
           color="warning"
           icon="alert-circle"
           closeIcon="x"
@@ -240,16 +277,25 @@ export const bannerAudit: ComponentAuditDefinition = {
     },
     {
       id: "header-stack-integration",
-      title: "Header Stack Integration",
+      get title() {
+        return t("app.text.header-stack-integration");
+      },
       description:
         "Coordinates with Rimelight Header Stack system: supports `sticky`, `fixed`, `stackIndex`, `hideOnScroll` and dynamic height registration.",
       render: () => (
         <RLBanner
-          title="Header-Stack Synchronized Banner (stackIndex=0)"
+          title={"Header-Stack Synchronized Banner (stackIndex=0)"}
           color="neutral"
           icon="layers"
           stackIndex={0}
-          actions={[{ label: "Configure Stack", variant: "outline" }]}
+          actions={[
+            {
+              get label() {
+                return t("app.text.configure-stack");
+              },
+              variant: "outline",
+            },
+          ]}
         />
       ),
     },
