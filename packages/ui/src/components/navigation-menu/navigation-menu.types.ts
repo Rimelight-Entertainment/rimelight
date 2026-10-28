@@ -95,7 +95,7 @@ export interface RLNavigationMenuProps {
   children?: JSX.Element;
   /**
    * Named mega-menu panels, matched by each item's `slot` key.
-   * Horizontal orientation only; vertical menus always render the item's children.
+   * Horizontal menus show these as mega-menu panels; vertical menus render them inline in the accordion.
    */
   slots?: Record<string, NavigationMenuContentRenderer>;
   /**

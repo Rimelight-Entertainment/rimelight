@@ -38,8 +38,8 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     groupTitle: "px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-primary",
     childList: "flex flex-col gap-0.5",
     childLink:
-      "flex items-start gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accented hover:text-highlighted",
-    childIcon: "mt-0.5 size-4 shrink-0 text-muted",
+      "flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accented hover:text-highlighted",
+    childIcon: "size-4 shrink-0 text-muted",
     childLabel: "font-medium leading-none",
     childDescription: "mt-1 text-xs text-muted line-clamp-2",
   },

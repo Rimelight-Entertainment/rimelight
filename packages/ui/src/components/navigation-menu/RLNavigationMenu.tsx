@@ -248,8 +248,8 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                   </button>
                 </Show>
 
-                {/* Vertical: inline accordion. Always the item's own links — mega-menu
-                    panels are desktop layouts and don't fit a sidebar. */}
+                {/* Vertical: inline accordion. Uses the item's slot panel when one exists,
+                    otherwise the item's own links. */}
                 <Show when={!isHorizontal() && hasChildren(item)}>
                   <div
                     class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
@@ -258,7 +258,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                     data-item-index={i()}
                     role="region"
                   >
-                    <DefaultPanel item={item} />
+                    {renderPanel(item, i())}
                   </div>
                 </Show>
               </li>
