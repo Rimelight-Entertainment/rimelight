@@ -4,6 +4,7 @@ import type { RLScrollToTopProps } from "./scroll-to-top.types";
 import { RLScrollToTopTheme } from "./scroll-to-top.theme";
 import { scrollToTop, trackScroll } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["progressWidth", "duration", "threshold", "showProgress", "theme"] as const;
 
@@ -49,7 +50,7 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
       <button
         type="button"
         class={classes().button}
-        aria-label="Scroll to top"
+        aria-label={uiT("scroll-to-top.label")}
         data-scroll-to-top-button
         onClick={scrollToTop}
       >

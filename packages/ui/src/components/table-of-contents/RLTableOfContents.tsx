@@ -2,6 +2,7 @@ import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-
 import { RLTableOfContentsTheme } from "./table-of-contents.theme";
 import { createMemo, createSignal, For, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["headings", "collapsible", "containerSelector", "tableOfContents"] as const;
 
@@ -130,7 +131,7 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
           <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
             <span class="flex items-center gap-2">
               <RLIcon name="list" class="size-4 text-primary shrink-0" aria-hidden="true" />
-              <span>On this page</span>
+              <span>{uiT("toc.heading")}</span>
             </span>
             <RLIcon
               name="chevron-down"

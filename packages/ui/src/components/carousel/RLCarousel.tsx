@@ -12,6 +12,7 @@ import {
   type Component,
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "items",
@@ -566,7 +567,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
         <div data-slot="arrows" class={classes().arrows}>
           <button
             type="button"
-            aria-label="Previous slide"
+            aria-label={uiT("carousel.previous")}
             disabled={!canScrollPrev()}
             class={prevButtonClass()}
             data-slot="prev-button"
@@ -576,7 +577,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
           </button>
           <button
             type="button"
-            aria-label="Next slide"
+            aria-label={uiT("carousel.next")}
             disabled={!canScrollNext()}
             class={nextButtonClass()}
             data-slot="next-button"
@@ -588,7 +589,12 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
       </Show>
 
       <Show when={showDots()}>
-        <div data-slot="dots" role="tablist" aria-label="Slides" class={classes().dots}>
+        <div
+          data-slot="dots"
+          role="tablist"
+          aria-label={uiT("carousel.slides")}
+          class={classes().dots}
+        >
           <For each={dots()}>
             {(i) => (
               <button

@@ -3,6 +3,7 @@ import { RLModalTheme } from "./modal.theme";
 import { createEffect, createSignal, onSettled, Show, type Component } from "solid-js";
 import { Portal, type JSX } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "open",
@@ -225,7 +226,7 @@ export const RLModal: Component<RLModalProps> = (props) => {
                               size="sm"
                               square
                               leadingIcon={props.closeIcon ?? "x"}
-                              aria-label="Close modal"
+                              aria-label={uiT("modal.close")}
                               data-slot="close"
                               class={classes().close}
                               onClick={handleClose}

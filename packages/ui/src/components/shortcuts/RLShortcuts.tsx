@@ -20,6 +20,7 @@ import {
 } from "../../shortcuts";
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
+import { uiNodes, uiT } from "../../locale";
 
 const OMIT_KEYS = ["categories", "open", "defaultOpen", "onOpenChange"] as const;
 
@@ -168,7 +169,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
               <button
                 type="button"
                 class={classes().close}
-                aria-label="Close shortcuts help"
+                aria-label={uiT("shortcuts.close")}
                 onClick={handleClose}
                 data-slot="close"
               >
@@ -222,7 +223,10 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
 
             <div class={classes().footer} data-slot="footer">
               <span class="flex items-center gap-1">
-                Press <RLKbd size="sm">?</RLKbd> or <RLKbd size="sm">Esc</RLKbd> to close
+                {uiNodes("shortcuts.press-to-close", {
+                  question: <RLKbd size="sm">?</RLKbd>,
+                  escape: <RLKbd size="sm">Esc</RLKbd>,
+                })}
               </span>
             </div>
           </div>

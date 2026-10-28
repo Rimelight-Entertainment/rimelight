@@ -2,6 +2,7 @@ import type { RLPackageManagersProps, Manager, CommandType } from "./package-man
 import { RLPackageManagersTheme } from "./package-managers.theme";
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
+import { uiT } from "../../locale";
 
 const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: string }> = {
   npm: {
@@ -157,7 +158,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
                   size="sm"
                   class={classes().copyButton}
                   leadingIcon={copied() === tab.mgr ? "check" : "copy"}
-                  aria-label="Copy command"
+                  aria-label={uiT("package-managers.copy")}
                   data-slot="copy-button"
                   onClick={() => copyCommand(tab.mgr, tab.cmd!)}
                 >

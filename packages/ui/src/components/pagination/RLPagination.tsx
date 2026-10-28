@@ -2,6 +2,7 @@ import type { RLPaginationProps } from "./pagination.types";
 import { RLPaginationTheme } from "./pagination.theme";
 import { createMemo, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["currentPage", "page", "totalPages", "baseUrl", "onPageChange"] as const;
 
@@ -35,13 +36,18 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
   const itemLinkClasses = (isActive: boolean) => RLPaginationTheme({ active: isActive }).link;
 
   return (
-    <nav class={classes().root} data-slot="pagination-root" aria-label="pagination" {...rest}>
+    <nav
+      class={classes().root}
+      data-slot="pagination-root"
+      aria-label={uiT("pagination.label")}
+      {...rest}
+    >
       <ul class={classes().list} data-slot="list">
         <li class={classes().item}>
           <button
             type="button"
             class={`${classes().link} ${currentPage() === 1 ? "pointer-events-none opacity-50" : ""}`}
-            aria-label="Go to previous page"
+            aria-label={uiT("pagination.previous")}
             aria-disabled={currentPage() === 1 ? "true" : "false"}
             disabled={currentPage() === 1}
             onClick={() => {
@@ -79,7 +85,7 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
           <button
             type="button"
             class={`${classes().link} ${currentPage() === totalPages() ? "pointer-events-none opacity-50" : ""}`}
-            aria-label="Go to next page"
+            aria-label={uiT("pagination.next")}
             aria-disabled={currentPage() === totalPages() ? "true" : "false"}
             disabled={currentPage() === totalPages()}
             onClick={() => {

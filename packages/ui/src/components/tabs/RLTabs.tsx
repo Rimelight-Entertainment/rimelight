@@ -11,6 +11,7 @@ import {
 } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "items",
@@ -189,7 +190,7 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
               type="button"
               class={`${classes().trigger} rl-tb-overflow-btn`}
               data-slot="overflow-trigger"
-              aria-label="More tabs"
+              aria-label={uiT("tabs.more")}
               onClick={() => setPopoverOpen(!popoverOpen())}
             >
               <span class="rl-tb-label">+{overflowItems().length} more</span>

@@ -1,28 +1,143 @@
 {
-  "link.opensInNewTab": "(abre em uma nova aba)",
-  "error.status": "Status HTTP",
-  "error.home": "Ir para o início",
-  "error.retry": "Tentar novamente",
-  "error.details": "Detalhes do erro",
-  "error.titles.400": "Requisição Inválida",
-  "error.titles.401": "Autenticação Necessária",
-  "error.titles.403": "Acesso Negado",
-  "error.titles.404": "Página Não Encontrada",
-  "error.titles.408": "Tempo Esgotado",
-  "error.titles.429": "Muitas Requisições",
-  "error.titles.500": "Algo Deu Errado",
-  "error.titles.503": "Serviço Indisponível",
-  "error.titles.client": "Erro na Requisição",
-  "error.titles.server": "Algo Deu Errado",
-  "error.descriptions.400": "Não foi possível entender a requisição.",
-  "error.descriptions.401": "Você precisa entrar para ver esta página.",
-  "error.descriptions.403": "Você não tem permissão para ver esta página.",
-  "error.descriptions.404": "A página que você procura não existe ou foi movida.",
-  "error.descriptions.408": "A requisição demorou demais. Tente novamente.",
-  "error.descriptions.429": "Você está fazendo isso com muita frequência. Aguarde um momento e tente novamente.",
-  "error.descriptions.500": "Ocorreu um erro inesperado do nosso lado. Tente novamente.",
-  "error.descriptions.503": "Estamos temporariamente indisponíveis. Tente novamente em breve.",
-  "error.descriptions.client": "Havia algo errado com essa requisição.",
-  "error.descriptions.server": "Ocorreu um erro inesperado do nosso lado. Tente novamente.",
-  "localeSelector.label": "Selecionar idioma"
+  "link": {
+    "opens-in-new-tab": "(abre em uma nova aba)"
+  },
+  "error": {
+    "status": "Status HTTP",
+    "home": "Ir para o início",
+    "retry": "Tentar novamente",
+    "details": "Detalhes do erro",
+    "titles": {
+      "400": "Requisição Inválida",
+      "401": "Autenticação Necessária",
+      "403": "Acesso Negado",
+      "404": "Página Não Encontrada",
+      "408": "Tempo Esgotado",
+      "429": "Muitas Requisições",
+      "500": "Algo Deu Errado",
+      "503": "Serviço Indisponível",
+      "client": "Erro na Requisição",
+      "server": "Algo Deu Errado"
+    },
+    "descriptions": {
+      "400": "Não foi possível entender a requisição.",
+      "401": "Você precisa entrar para ver esta página.",
+      "403": "Você não tem permissão para ver esta página.",
+      "404": "A página que você procura não existe ou foi movida.",
+      "408": "A requisição demorou demais. Tente novamente.",
+      "429": "Você está fazendo isso com muita frequência. Aguarde um momento e tente novamente.",
+      "500": "Ocorreu um erro inesperado do nosso lado. Tente novamente.",
+      "503": "Estamos temporariamente indisponíveis. Tente novamente em breve.",
+      "client": "Havia algo errado com essa requisição.",
+      "server": "Ocorreu um erro inesperado do nosso lado. Tente novamente."
+    }
+  },
+  "locale-selector": {
+    "label": "Selecionar idioma"
+  },
+  "audio": {
+    "download-track": "Baixar faixa de áudio",
+    "open-source": "Abrir link de origem",
+    "seek": "Buscar na linha do tempo do áudio",
+    "volume-hint": "Clique para ajustar o volume, clique com o botão direito para silenciar ou ativar",
+    "volume-level": "Nível do volume",
+    "previous": "Faixa anterior",
+    "next": "Próxima faixa",
+    "speed-hint": "Clique para alternar, clique com o botão direito para inserir um valor",
+    "playback-speed": "Definir uma velocidade de reprodução específica"
+  },
+  "breadcrumb": {
+    "label": "Trilha de navegação"
+  },
+  "browser": {
+    "navigation": "Navegação do navegador",
+    "back": "Voltar",
+    "forward": "Avançar",
+    "reload": "Recarregar"
+  },
+  "carousel": {
+    "previous": "Slide anterior",
+    "next": "Próximo slide",
+    "slides": "Slides"
+  },
+  "color-area": {
+    "thumb": "Controle da área de cor"
+  },
+  "color-slider": {
+    "thumb": "Controle deslizante de cor"
+  },
+  "sidebar": {
+    "toggle": "Alternar barra lateral",
+    "collapse": "Recolher barra lateral"
+  },
+  "search": {
+    "placeholder": "Pesquisar...",
+    "type-to-search": "Digite para pesquisar...",
+    "label": "Pesquisar",
+    "close": "Fechar pesquisa",
+    "press-to-close": "Pressione {escape} para fechar"
+  },
+  "drawer": {
+    "close": "Fechar gaveta"
+  },
+  "image": {
+    "unavailable": "Imagem indisponível",
+    "source": "Fonte:",
+    "format": "Formato:",
+    "dimensions": "Dimensões:",
+    "size": "Tamanho:",
+    "alt": "Texto alternativo:"
+  },
+  "actions": {
+    "close": "Fechar"
+  },
+  "input-number": {
+    "increment": "Incrementar",
+    "decrement": "Decrementar"
+  },
+  "input-pin": {
+    "label": "Código de uso único"
+  },
+  "modal": {
+    "close": "Fechar modal"
+  },
+  "package-managers": {
+    "copy": "Copiar comando"
+  },
+  "pagination": {
+    "label": "Paginação",
+    "previous": "Ir para a página anterior",
+    "next": "Ir para a próxima página"
+  },
+  "route-announcer": {
+    "loading": "Carregando página"
+  },
+  "scroll-to-top": {
+    "label": "Rolar para o topo"
+  },
+  "shortcuts": {
+    "close": "Fechar ajuda de atalhos",
+    "press-to-close": "Pressione {question} ou {escape} para fechar"
+  },
+  "slideover": {
+    "close": "Fechar painel deslizante"
+  },
+  "splitter": {
+    "resize": "Redimensionar painéis"
+  },
+  "table": {
+    "loading": "Carregando..."
+  },
+  "toc": {
+    "heading": "Nesta página"
+  },
+  "tabs": {
+    "more": "Mais abas"
+  },
+  "theme": {
+    "toggle": "Alternar tema"
+  },
+  "toast": {
+    "dismiss": "Dispensar notificação"
+  }
 }

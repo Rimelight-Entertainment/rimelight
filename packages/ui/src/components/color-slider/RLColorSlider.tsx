@@ -1,6 +1,7 @@
 import type { RLColorSliderProps } from "./color-slider.types";
 import { RLColorSliderTheme } from "./color-slider.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { uiT } from "../../locale";
 import {
   clamp,
   getChannelRange,
@@ -307,7 +308,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
           class={classes().thumb}
           data-slot="thumb"
           role="slider"
-          aria-label="Color Slider Thumb"
+          aria-label={uiT("color-slider.thumb")}
           tabindex={props.disabled ? -1 : 0}
           onKeyDown={handleKeyDown}
           style={

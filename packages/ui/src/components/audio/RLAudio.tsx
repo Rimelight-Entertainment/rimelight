@@ -5,6 +5,7 @@ import { RLIcon } from "../icon/RLIcon";
 import { RLImage } from "../image/RLImage";
 import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio";
 import { RLPopover } from "../popover/RLPopover";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "src",
@@ -617,8 +618,8 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                       rel="noopener noreferrer"
                       class={classes().actionButton}
                       data-slot="download-button"
-                      aria-label="Download audio track"
-                      title="Download audio track"
+                      aria-label={uiT("audio.download-track")}
+                      title={uiT("audio.download-track")}
                     >
                       <RLIcon name={downloadIconName()} class="size-4" aria-hidden="true" />
                     </a>
@@ -631,8 +632,8 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                       rel="noopener noreferrer"
                       class={classes().actionButton}
                       data-slot="external-link-button"
-                      aria-label="Open source link"
-                      title="Open source link"
+                      aria-label={uiT("audio.open-source")}
+                      title={uiT("audio.open-source")}
                     >
                       <RLIcon name={externalLinkIconName()} class="size-4" aria-hidden="true" />
                     </a>
@@ -679,7 +680,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                         onInput={handleProgressChange}
                         onChange={handleProgressChange}
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        aria-label="Seek audio timeline"
+                        aria-label={uiT("audio.seek")}
                         aria-valuemin={0}
                         aria-valuemax={Math.round(getDuration())}
                         aria-valuenow={Math.round(currentTime())}
@@ -694,7 +695,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                     data-slot="waveform-container"
                     role="slider"
                     tabindex={0}
-                    aria-label="Seek audio timeline"
+                    aria-label={uiT("audio.seek")}
                     aria-valuemin={0}
                     aria-valuemax={Math.round(getDuration())}
                     aria-valuenow={Math.round(currentTime())}
@@ -790,7 +791,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                               ? "Unmute audio (right click) / adjust volume (left click)"
                               : "Mute audio (right click) / adjust volume (left click)"
                           }
-                          title="Click to adjust volume, right-click to mute/unmute"
+                          title={uiT("audio.volume-hint")}
                         >
                           <RLIcon
                             name={volumeIconName()}
@@ -850,7 +851,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                             value={volumePercent()}
                             onInput={handleVolumeChange}
                             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [writing-mode:vertical-lr] [direction:rtl]"
-                            aria-label="Volume level"
+                            aria-label={uiT("audio.volume-level")}
                             aria-valuemin={0}
                             aria-valuemax={100}
                             aria-valuenow={Math.round(volumePercent())}
@@ -872,7 +873,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                     onClick={prevTrack}
                     class={classes().navButton}
                     data-slot="nav-button-prev"
-                    aria-label="Previous track"
+                    aria-label={uiT("audio.previous")}
                     disabled={activeTrackIndex() === 0 && repeatMode() !== "all"}
                   >
                     <RLIcon
@@ -945,7 +946,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                     onClick={nextTrack}
                     class={classes().navButton}
                     data-slot="nav-button-next"
-                    aria-label="Next track"
+                    aria-label={uiT("audio.next")}
                     disabled={
                       activeTrackIndex() === playlist().length - 1 && repeatMode() !== "all"
                     }
@@ -996,7 +997,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                           class={classes().speedButton}
                           data-slot="speed-button"
                           aria-label={`Playback speed ${playbackRate()}x (right click to type)`}
-                          title="Click to cycle, right-click to enter value"
+                          title={uiT("audio.speed-hint")}
                         >
                           {playbackRate()}x
                         </button>
@@ -1009,7 +1010,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                         value={playbackRate()}
                         class={classes().speedInput}
                         data-slot="speed-input"
-                        aria-label="Set specific playback speed"
+                        aria-label={uiT("audio.playback-speed")}
                         onBlur={(e) => {
                           setCustomSpeed(parseFloat(e.currentTarget.value));
                           setIsEditingSpeed(false);

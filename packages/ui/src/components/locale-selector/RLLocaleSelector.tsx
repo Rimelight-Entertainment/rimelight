@@ -76,7 +76,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
           onChange={handleChange}
           size={(props.size as any) || "md"}
           variant={isIconMode() ? "icon" : "default"}
-          aria-label={uiT("localeSelector.label")}
+          aria-label={uiT("locale-selector.label")}
           class={classes().select}
           leadingIcon={props.leadingIcon || "i-lucide-globe"}
           leading={props.leading}

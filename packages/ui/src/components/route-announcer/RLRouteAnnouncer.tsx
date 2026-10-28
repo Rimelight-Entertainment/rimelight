@@ -3,6 +3,7 @@ import type { RLRouteAnnouncerProps, RLRouteAnnouncerProgressSize } from "./rout
 import { RLRouteAnnouncerTheme } from "./route-announcer.theme";
 import { createSignal, onSettled, Show } from "solid-js";
 import { useLocation, useIsRouting } from "@solidjs/router";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["prefix", "progress"] as const;
 
@@ -56,7 +57,7 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
       <Show when={progressEnabled() && isRouting()}>
         <div
           role="progressbar"
-          aria-label="Page loading"
+          aria-label={uiT("route-announcer.loading")}
           aria-valuemin={0}
           aria-valuemax={100}
           class={`${classes().progressBar} ${progressOptions()?.class ?? ""}`.trim()}

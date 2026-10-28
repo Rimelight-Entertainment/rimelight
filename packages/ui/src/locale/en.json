@@ -1,28 +1,143 @@
 {
-  "link.opensInNewTab": "(opens in a new tab)",
-  "error.status": "HTTP status",
-  "error.home": "Go home",
-  "error.retry": "Try again",
-  "error.details": "Error details",
-  "error.titles.400": "Bad Request",
-  "error.titles.401": "Authentication Required",
-  "error.titles.403": "Access Denied",
-  "error.titles.404": "Page Not Found",
-  "error.titles.408": "Request Timeout",
-  "error.titles.429": "Too Many Requests",
-  "error.titles.500": "Something Went Wrong",
-  "error.titles.503": "Service Unavailable",
-  "error.titles.client": "Request Error",
-  "error.titles.server": "Something Went Wrong",
-  "error.descriptions.400": "The request could not be understood.",
-  "error.descriptions.401": "You need to sign in to see this page.",
-  "error.descriptions.403": "You don't have permission to see this page.",
-  "error.descriptions.404": "The page you are looking for does not exist or has been moved.",
-  "error.descriptions.408": "The request took too long. Please try again.",
-  "error.descriptions.429": "You're doing that too often. Please wait a moment and try again.",
-  "error.descriptions.500": "An unexpected error occurred on our end. Please try again.",
-  "error.descriptions.503": "We're temporarily unavailable. Please try again shortly.",
-  "error.descriptions.client": "Something was wrong with that request.",
-  "error.descriptions.server": "An unexpected error occurred on our end. Please try again.",
-  "localeSelector.label": "Select language"
+  "link": {
+    "opens-in-new-tab": "(opens in a new tab)"
+  },
+  "error": {
+    "status": "HTTP status",
+    "home": "Go home",
+    "retry": "Try again",
+    "details": "Error details",
+    "titles": {
+      "400": "Bad Request",
+      "401": "Authentication Required",
+      "403": "Access Denied",
+      "404": "Page Not Found",
+      "408": "Request Timeout",
+      "429": "Too Many Requests",
+      "500": "Something Went Wrong",
+      "503": "Service Unavailable",
+      "client": "Request Error",
+      "server": "Something Went Wrong"
+    },
+    "descriptions": {
+      "400": "The request could not be understood.",
+      "401": "You need to sign in to see this page.",
+      "403": "You don't have permission to see this page.",
+      "404": "The page you are looking for does not exist or has been moved.",
+      "408": "The request took too long. Please try again.",
+      "429": "You're doing that too often. Please wait a moment and try again.",
+      "500": "An unexpected error occurred on our end. Please try again.",
+      "503": "We're temporarily unavailable. Please try again shortly.",
+      "client": "Something was wrong with that request.",
+      "server": "An unexpected error occurred on our end. Please try again."
+    }
+  },
+  "locale-selector": {
+    "label": "Select language"
+  },
+  "audio": {
+    "download-track": "Download audio track",
+    "open-source": "Open source link",
+    "seek": "Seek audio timeline",
+    "volume-hint": "Click to adjust volume, right-click to mute/unmute",
+    "volume-level": "Volume level",
+    "previous": "Previous track",
+    "next": "Next track",
+    "speed-hint": "Click to cycle, right-click to enter value",
+    "playback-speed": "Set specific playback speed"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb"
+  },
+  "browser": {
+    "navigation": "Browser navigation",
+    "back": "Back",
+    "forward": "Forward",
+    "reload": "Reload"
+  },
+  "carousel": {
+    "previous": "Previous slide",
+    "next": "Next slide",
+    "slides": "Slides"
+  },
+  "color-area": {
+    "thumb": "Color Area Thumb"
+  },
+  "color-slider": {
+    "thumb": "Color Slider Thumb"
+  },
+  "sidebar": {
+    "toggle": "Toggle sidebar",
+    "collapse": "Collapse sidebar"
+  },
+  "search": {
+    "placeholder": "Search...",
+    "type-to-search": "Type to search...",
+    "label": "Search",
+    "close": "Close search",
+    "press-to-close": "Press {escape} to close"
+  },
+  "drawer": {
+    "close": "Close drawer"
+  },
+  "image": {
+    "unavailable": "Image unavailable",
+    "source": "Source:",
+    "format": "Format:",
+    "dimensions": "Dimensions:",
+    "size": "Size:",
+    "alt": "Alt:"
+  },
+  "actions": {
+    "close": "Close"
+  },
+  "input-number": {
+    "increment": "Increment",
+    "decrement": "Decrement"
+  },
+  "input-pin": {
+    "label": "One-time code"
+  },
+  "modal": {
+    "close": "Close modal"
+  },
+  "package-managers": {
+    "copy": "Copy command"
+  },
+  "pagination": {
+    "label": "pagination",
+    "previous": "Go to previous page",
+    "next": "Go to next page"
+  },
+  "route-announcer": {
+    "loading": "Page loading"
+  },
+  "scroll-to-top": {
+    "label": "Scroll to top"
+  },
+  "shortcuts": {
+    "close": "Close shortcuts help",
+    "press-to-close": "Press {question} or {escape} to close"
+  },
+  "slideover": {
+    "close": "Close slideover"
+  },
+  "splitter": {
+    "resize": "Resize panels"
+  },
+  "table": {
+    "loading": "Loading..."
+  },
+  "toc": {
+    "heading": "On this page"
+  },
+  "tabs": {
+    "more": "More tabs"
+  },
+  "theme": {
+    "toggle": "Toggle theme"
+  },
+  "toast": {
+    "dismiss": "Dismiss notification"
+  }
 }

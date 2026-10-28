@@ -3,6 +3,7 @@ import { RLInputNumberTheme } from "./input-number.theme";
 import { createMemo, createSignal, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "value",
@@ -126,7 +127,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
           <button
             type="button"
             tabindex={-1}
-            aria-label="Increment"
+            aria-label={uiT("input-number.increment")}
             class="flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50"
             data-slot="increment"
             disabled={props.disabled || props.readonly}
@@ -137,7 +138,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
           <button
             type="button"
             tabindex={-1}
-            aria-label="Decrement"
+            aria-label={uiT("input-number.decrement")}
             class="flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50"
             data-slot="decrement"
             disabled={props.disabled || props.readonly}

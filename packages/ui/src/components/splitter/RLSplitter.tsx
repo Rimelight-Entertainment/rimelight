@@ -3,6 +3,7 @@ import { RLSplitterTheme } from "./splitter.theme";
 import { children, createMemo, createSignal, For, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["defaultSizes", "panels"] as const;
 
@@ -119,7 +120,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                 role="separator"
                 aria-orientation={isHorizontal() ? "vertical" : "horizontal"}
                 tabindex={0}
-                aria-label="Resize panels"
+                aria-label={uiT("splitter.resize")}
                 onPointerDown={(e) => handlePointerDown(i(), e)}
                 onPointerMove={(e) => handlePointerMove(i(), e)}
                 onPointerUp={(e) => handlePointerUp(i(), e)}

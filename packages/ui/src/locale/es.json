@@ -1,28 +1,143 @@
 {
-  "link.opensInNewTab": "(se abre en una pestaña nueva)",
-  "error.status": "Estado HTTP",
-  "error.home": "Ir al inicio",
-  "error.retry": "Intentar de nuevo",
-  "error.details": "Detalles del error",
-  "error.titles.400": "Solicitud Incorrecta",
-  "error.titles.401": "Autenticación Requerida",
-  "error.titles.403": "Acceso Denegado",
-  "error.titles.404": "Página No Encontrada",
-  "error.titles.408": "Tiempo de Espera Agotado",
-  "error.titles.429": "Demasiadas Solicitudes",
-  "error.titles.500": "Algo Salió Mal",
-  "error.titles.503": "Servicio No Disponible",
-  "error.titles.client": "Error en la Solicitud",
-  "error.titles.server": "Algo Salió Mal",
-  "error.descriptions.400": "No se pudo entender la solicitud.",
-  "error.descriptions.401": "Necesitas iniciar sesión para ver esta página.",
-  "error.descriptions.403": "No tienes permiso para ver esta página.",
-  "error.descriptions.404": "La página que buscas no existe o ha sido movida.",
-  "error.descriptions.408": "La solicitud tardó demasiado. Inténtalo de nuevo.",
-  "error.descriptions.429": "Lo estás haciendo con demasiada frecuencia. Espera un momento e inténtalo de nuevo.",
-  "error.descriptions.500": "Ocurrió un error inesperado de nuestro lado. Inténtalo de nuevo.",
-  "error.descriptions.503": "No estamos disponibles temporalmente. Inténtalo de nuevo en breve.",
-  "error.descriptions.client": "Hubo un problema con esa solicitud.",
-  "error.descriptions.server": "Ocurrió un error inesperado de nuestro lado. Inténtalo de nuevo.",
-  "localeSelector.label": "Seleccionar idioma"
+  "link": {
+    "opens-in-new-tab": "(se abre en una pestaña nueva)"
+  },
+  "error": {
+    "status": "Estado HTTP",
+    "home": "Ir al inicio",
+    "retry": "Intentar de nuevo",
+    "details": "Detalles del error",
+    "titles": {
+      "400": "Solicitud Incorrecta",
+      "401": "Autenticación Requerida",
+      "403": "Acceso Denegado",
+      "404": "Página No Encontrada",
+      "408": "Tiempo de Espera Agotado",
+      "429": "Demasiadas Solicitudes",
+      "500": "Algo Salió Mal",
+      "503": "Servicio No Disponible",
+      "client": "Error en la Solicitud",
+      "server": "Algo Salió Mal"
+    },
+    "descriptions": {
+      "400": "No se pudo entender la solicitud.",
+      "401": "Necesitas iniciar sesión para ver esta página.",
+      "403": "No tienes permiso para ver esta página.",
+      "404": "La página que buscas no existe o ha sido movida.",
+      "408": "La solicitud tardó demasiado. Inténtalo de nuevo.",
+      "429": "Lo estás haciendo con demasiada frecuencia. Espera un momento e inténtalo de nuevo.",
+      "500": "Ocurrió un error inesperado de nuestro lado. Inténtalo de nuevo.",
+      "503": "No estamos disponibles temporalmente. Inténtalo de nuevo en breve.",
+      "client": "Hubo un problema con esa solicitud.",
+      "server": "Ocurrió un error inesperado de nuestro lado. Inténtalo de nuevo."
+    }
+  },
+  "locale-selector": {
+    "label": "Seleccionar idioma"
+  },
+  "audio": {
+    "download-track": "Descargar pista de audio",
+    "open-source": "Abrir enlace de origen",
+    "seek": "Buscar en la línea de tiempo del audio",
+    "volume-hint": "Haz clic para ajustar el volumen, clic derecho para silenciar o reactivar",
+    "volume-level": "Nivel de volumen",
+    "previous": "Pista anterior",
+    "next": "Pista siguiente",
+    "speed-hint": "Haz clic para cambiar, clic derecho para introducir un valor",
+    "playback-speed": "Establecer una velocidad de reproducción específica"
+  },
+  "breadcrumb": {
+    "label": "Migas de pan"
+  },
+  "browser": {
+    "navigation": "Navegación del navegador",
+    "back": "Atrás",
+    "forward": "Adelante",
+    "reload": "Recargar"
+  },
+  "carousel": {
+    "previous": "Diapositiva anterior",
+    "next": "Diapositiva siguiente",
+    "slides": "Diapositivas"
+  },
+  "color-area": {
+    "thumb": "Control de área de color"
+  },
+  "color-slider": {
+    "thumb": "Control deslizante de color"
+  },
+  "sidebar": {
+    "toggle": "Alternar barra lateral",
+    "collapse": "Contraer barra lateral"
+  },
+  "search": {
+    "placeholder": "Buscar...",
+    "type-to-search": "Escribe para buscar...",
+    "label": "Buscar",
+    "close": "Cerrar búsqueda",
+    "press-to-close": "Pulsa {escape} para cerrar"
+  },
+  "drawer": {
+    "close": "Cerrar cajón"
+  },
+  "image": {
+    "unavailable": "Imagen no disponible",
+    "source": "Fuente:",
+    "format": "Formato:",
+    "dimensions": "Dimensiones:",
+    "size": "Tamaño:",
+    "alt": "Texto alternativo:"
+  },
+  "actions": {
+    "close": "Cerrar"
+  },
+  "input-number": {
+    "increment": "Incrementar",
+    "decrement": "Decrementar"
+  },
+  "input-pin": {
+    "label": "Código de un solo uso"
+  },
+  "modal": {
+    "close": "Cerrar modal"
+  },
+  "package-managers": {
+    "copy": "Copiar comando"
+  },
+  "pagination": {
+    "label": "Paginación",
+    "previous": "Ir a la página anterior",
+    "next": "Ir a la página siguiente"
+  },
+  "route-announcer": {
+    "loading": "Cargando página"
+  },
+  "scroll-to-top": {
+    "label": "Desplazarse al inicio"
+  },
+  "shortcuts": {
+    "close": "Cerrar ayuda de atajos",
+    "press-to-close": "Pulsa {question} o {escape} para cerrar"
+  },
+  "slideover": {
+    "close": "Cerrar panel deslizante"
+  },
+  "splitter": {
+    "resize": "Redimensionar paneles"
+  },
+  "table": {
+    "loading": "Cargando..."
+  },
+  "toc": {
+    "heading": "En esta página"
+  },
+  "tabs": {
+    "more": "Más pestañas"
+  },
+  "theme": {
+    "toggle": "Cambiar tema"
+  },
+  "toast": {
+    "dismiss": "Descartar notificación"
+  }
 }

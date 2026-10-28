@@ -3,6 +3,7 @@ import { RLSlideoverTheme } from "./slideover.theme";
 import { createSignal, onSettled, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "open",
@@ -96,7 +97,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
               class={classes().closeButton}
               data-slot="close-button"
               type="button"
-              aria-label="Close slideover"
+              aria-label={uiT("slideover.close")}
               onClick={() => setOpenState(false)}
             >
               <RLIcon name="x" class="size-4" aria-hidden="true" />

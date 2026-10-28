@@ -2,6 +2,7 @@ import type { RLImageProps, ImageMetadata } from "./image.types";
 import { RLImageTheme } from "./image.theme";
 import { createEffect, createSignal, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const urlOf = (v?: string | ImageMetadata): string | undefined =>
   typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src;
@@ -162,7 +163,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
   const fallbackBox = () => (
     <div class="flex w-full h-full min-h-40 items-center justify-center gap-2 rounded-lg bg-elevated text-muted">
       <RLIcon name="image" class="size-8" aria-hidden="true" />
-      <span class="text-sm">Image unavailable</span>
+      <span class="text-sm">{uiT("image.unavailable")}</span>
     </div>
   );
 
@@ -335,7 +336,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                 {props.metaSource !== false && (
                   <div class="flex flex-row gap-xs items-center">
                     <RLIcon name="image" class="size-4 shrink-0 text-muted" aria-hidden="true" />
-                    <span class="text-muted">Source:</span>
+                    <span class="text-muted">{uiT("image.source")}</span>
                     <span class="text-dimmed truncate max-w-[40vw]">{fileName()}</span>
                   </div>
                 )}
@@ -346,7 +347,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
-                    <span class="text-muted">Format:</span>
+                    <span class="text-muted">{uiT("image.format")}</span>
                     <span class="text-dimmed" data-metadata-format>
                       {metaFormatTxt()}
                     </span>
@@ -359,7 +360,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
-                    <span class="text-muted">Dimensions:</span>
+                    <span class="text-muted">{uiT("image.dimensions")}</span>
                     <span class="text-dimmed">
                       {imgWidth() || "?"} x {imgHeight() || "?"}
                     </span>
@@ -372,7 +373,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
-                    <span class="text-muted">Size:</span>
+                    <span class="text-muted">{uiT("image.size")}</span>
                     <span class="text-dimmed" data-metadata-size>
                       {metaSizeTxt()}
                     </span>
@@ -385,7 +386,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                       class="size-4 shrink-0 text-muted"
                       aria-hidden="true"
                     />
-                    <span class="text-muted">Alt:</span>
+                    <span class="text-muted">{uiT("image.alt")}</span>
                     <span
                       class={`text-dimmed truncate max-w-[30vw]${alt() ? "" : " italic opacity-50"}`}
                     >
@@ -412,7 +413,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
               <button
                 type="submit"
                 class={classes().closeButton}
-                aria-label="Close"
+                aria-label={uiT("actions.close")}
                 onClick={() => setOpen(false)}
               >
                 <RLIcon name="x" class="size-4" aria-hidden="true" />

@@ -315,7 +315,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
   const externalHint = () => (
     <Show when={showExternalHint()}>
       <span class={classes()["externalHint"]} data-slot="external-hint">
-        {uiT("link.opensInNewTab")}
+        {uiT("link.opens-in-new-tab")}
       </span>
     </Show>
   );

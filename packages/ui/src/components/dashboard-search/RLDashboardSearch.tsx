@@ -2,6 +2,7 @@ import type { RLDashboardSearchProps } from "./dashboard-search.types";
 import { RLDashboardSearchTheme } from "./dashboard-search.theme";
 import { createSignal, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["open", "onOpenChange"] as const;
 
@@ -77,7 +78,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
                 ref={(el) => (inputRef = el)}
                 type="text"
                 data-dashboard-search-input
-                placeholder="Search..."
+                placeholder={uiT("search.placeholder")}
                 class="flex-1 h-12 bg-transparent border-0 outline-none text-default placeholder:text-muted"
               />
               <button
@@ -88,7 +89,7 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
                 <RLIcon name="x" class="size-4" />
               </button>
             </div>
-            <div class="p-4 text-sm text-muted text-center">Type to search...</div>
+            <div class="p-4 text-sm text-muted text-center">{uiT("search.type-to-search")}</div>
           </div>
         </div>
       </Show>

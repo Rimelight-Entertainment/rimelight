@@ -24,6 +24,7 @@ import { RLDropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
 import { RLInput } from "../input/RLInput";
 import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 export * from "./table.types";
 
 function getNestedValue(obj: AnyData, key: string): any {
@@ -1478,7 +1479,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                             name="i-lucide-loader-2"
                             class="size-5 animate-spin text-primary"
                           />
-                          <span>Loading...</span>
+                          <span>{uiT("table.loading")}</span>
                         </div>
                       }
                     >

@@ -2,6 +2,7 @@ import type { RLDashboardNavbarProps } from "./dashboard-navbar.types";
 import { RLDashboardNavbarTheme } from "./dashboard-navbar.theme";
 import { type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "icon",
@@ -37,7 +38,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
         data-dashboard-toggle="mobile"
         class={`${classes().toggle} lg:hidden`}
         data-slot="toggle"
-        aria-label="Toggle sidebar"
+        aria-label={uiT("sidebar.toggle")}
       >
         <RLIcon name="menu" class="size-5" />
       </button>
@@ -50,7 +51,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
         data-dashboard-toggle="mobile"
         class={`${classes().toggle} lg:hidden`}
         data-slot="toggle"
-        aria-label="Toggle sidebar"
+        aria-label={uiT("sidebar.toggle")}
       >
         <RLIcon name="menu" class="size-5" />
       </button>

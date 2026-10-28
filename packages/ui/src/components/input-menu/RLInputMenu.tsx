@@ -10,6 +10,7 @@ import {
   type Component,
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 type InputMenuItem = { label: string; value: string; [key: string]: any };
 
@@ -135,7 +136,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
             <input
               type="text"
               class={classes().input}
-              placeholder="Search..."
+              placeholder={uiT("search.placeholder")}
               data-inputMenu-search
               ref={(el) => (searchRef = el)}
               onInput={(e) => setQuery(e.currentTarget.value)}

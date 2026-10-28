@@ -7,6 +7,7 @@ import { RLInput } from "../input/RLInput";
 import { RLKbd } from "../kbd/RLKbd";
 import { RLButton } from "../button/RLButton";
 import { defineShortcuts } from "../../shortcuts";
+import { uiNodes, uiT } from "../../locale";
 
 const OMIT_KEYS = ["endpoint", "placeholder", "messages", "triggerSlot"] as const;
 
@@ -143,7 +144,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
           color="neutral"
           square
           leadingIcon="search"
-          aria-label="Search"
+          aria-label={uiT("search.label")}
           onClick={toggleModal}
         />
       )}
@@ -163,7 +164,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
               data-slot="dialog"
               role="dialog"
               aria-modal="true"
-              aria-label="Search"
+              aria-label={uiT("search.label")}
             >
               <div class={classes().header} data-slot="header">
                 <RLInput
@@ -190,7 +191,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
                       <button
                         type="button"
                         class={classes().close}
-                        aria-label="Close search"
+                        aria-label={uiT("search.close")}
                         onClick={closeModal}
                         data-slot="close"
                       >
@@ -232,7 +233,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
 
               <div class={classes().footer} data-slot="footer">
                 <span class="flex items-center gap-1">
-                  Press <RLKbd size="sm">Esc</RLKbd> to close
+                  {uiNodes("search.press-to-close", { escape: <RLKbd size="sm">Esc</RLKbd> })}
                 </span>
                 <span>{footerBackendHint()}</span>
               </div>

@@ -4,6 +4,7 @@ import { createMemo, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { resolveLinkAttrs } from "../link/helpers";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "items",
@@ -320,7 +321,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
   );
 
   return (
-    <RootTag aria-label="Breadcrumb" class={classes().root} data-slot="root" {...rest}>
+    <RootTag aria-label={uiT("breadcrumb.label")} class={classes().root} data-slot="root" {...rest}>
       <ol class={classes().list} data-slot="list">
         {props.items ? (
           <For each={visibleItemsWithMeta()}>

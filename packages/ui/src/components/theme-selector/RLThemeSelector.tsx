@@ -3,6 +3,7 @@ import { RLThemeSelectorTheme } from "./theme-selector.theme";
 import { createSignal, onSettled, type Component } from "solid-js";
 import { RLSelect } from "../select/RLSelect";
 import { defineShortcuts } from "../../shortcuts";
+import { uiT } from "../../locale";
 import {
   getThemePreference,
   parseThemePreference,
@@ -93,7 +94,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
           onChange={(e) => applyTheme(e.currentTarget.value)}
           size={size() as any}
           variant={mode() === "icon" ? "icon" : "default"}
-          aria-label="Toggle theme"
+          aria-label={uiT("theme.toggle")}
           class={classes().select}
           leadingIcon={activeIcon()}
         />

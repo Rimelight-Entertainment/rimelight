@@ -3,6 +3,7 @@ import { RLSidebarTheme } from "./sidebar.theme";
 import { For, Show, type Component } from "solid-js";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 function hasActiveChild(item: SidebarItem): boolean {
   if (item.active) return true;
@@ -258,7 +259,7 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
           type="button"
           data-sidebar-toggle
           class={classes().toggleButton}
-          aria-label="Toggle sidebar"
+          aria-label={uiT("sidebar.toggle")}
           onClick={toggleSidebar}
         >
           <RLIcon name="i-lucide-panel-left" class="size-4" />

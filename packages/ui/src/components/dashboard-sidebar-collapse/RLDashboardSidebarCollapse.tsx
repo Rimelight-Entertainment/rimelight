@@ -2,6 +2,7 @@ import type { Component } from "solid-js";
 import type { RLDashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse.types";
 import { RLDashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["icon"] as const;
 
@@ -14,7 +15,7 @@ export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapsePro
       data-dashboard-toggle="collapse"
       class={classes().root}
       data-slot="root"
-      aria-label="Collapse sidebar"
+      aria-label={uiT("sidebar.collapse")}
       {...rest}
     >
       <RLIcon

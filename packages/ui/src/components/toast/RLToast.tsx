@@ -2,6 +2,7 @@ import type { RLToastProps } from "./toast.types";
 import { RLToastTheme } from "./toast.theme";
 import { createSignal, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const variantIcons: Record<string, string> = {
   default: "bell",
@@ -144,7 +145,7 @@ export const RLToast: Component<RLToastProps> = (props) => {
           class={classes().close}
           data-slot="close"
           data-toast-close
-          aria-label="Dismiss notification"
+          aria-label={uiT("toast.dismiss")}
           onClick={dismiss}
         >
           <RLIcon name="x" class="size-3.5" aria-hidden="true" />

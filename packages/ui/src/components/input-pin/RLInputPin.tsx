@@ -2,6 +2,7 @@ import type { RLInputPinProps } from "./input-pin.types";
 import { RLInputPinTheme } from "./input-pin.theme";
 import { createMemo, createSignal, For, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "length",
@@ -118,7 +119,7 @@ export const RLInputPin: Component<RLInputPinProps> = (props) => {
     <div class={classes().root} data-slot="root" {...rest}>
       <div
         role="group"
-        aria-label="One-time code"
+        aria-label={uiT("input-pin.label")}
         class="flex items-center gap-2"
         data-slot="group"
       >

@@ -83,7 +83,7 @@ export const RLLink: Component<RLLinkProps> = (props) => {
 
       {attrs().isExternal && attrs().target === "_blank" && !ariaLabelValue() && (
         <span class={classes()["externalHint"]} data-slot="external-hint">
-          {uiT("link.opensInNewTab")}
+          {uiT("link.opens-in-new-tab")}
         </span>
       )}
     </a>

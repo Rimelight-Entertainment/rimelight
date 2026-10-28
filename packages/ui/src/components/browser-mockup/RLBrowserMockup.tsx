@@ -3,6 +3,7 @@ import { Show } from "solid-js";
 import type { RLBrowserMockupProps } from "./browser-mockup.types";
 import { RLBrowserMockupTheme } from "./browser-mockup.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "url",
@@ -123,11 +124,11 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                     <div
                       class={classes().navigation}
                       data-slot="navigation"
-                      aria-label="Browser navigation"
+                      aria-label={uiT("browser.navigation")}
                     >
                       <button
                         type="button"
-                        aria-label="Back"
+                        aria-label={uiT("browser.back")}
                         class={`${classes().navButton} ${classes().navBack}`}
                         data-slot="nav-back"
                       >
@@ -135,7 +136,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                       </button>
                       <button
                         type="button"
-                        aria-label="Forward"
+                        aria-label={uiT("browser.forward")}
                         class={`${classes().navButton} ${classes().navForward}`}
                         data-slot="nav-forward"
                       >
@@ -143,7 +144,7 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                       </button>
                       <button
                         type="button"
-                        aria-label="Reload"
+                        aria-label={uiT("browser.reload")}
                         class={`${classes().navButton} ${classes().navReload}`}
                         data-slot="nav-reload"
                       >

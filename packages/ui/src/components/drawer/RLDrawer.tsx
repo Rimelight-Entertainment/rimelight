@@ -2,6 +2,7 @@ import type { RLDrawerProps } from "./drawer.types";
 import { RLDrawerTheme } from "./drawer.theme";
 import { createEffect, createSignal, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "open",
@@ -105,7 +106,7 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
             class={classes().closeButton}
             data-slot="close-button"
             type="button"
-            aria-label="Close drawer"
+            aria-label={uiT("drawer.close")}
             onClick={() => handleOpenChange(false)}
           >
             <RLIcon name="x" size="sm" aria-hidden="true" />

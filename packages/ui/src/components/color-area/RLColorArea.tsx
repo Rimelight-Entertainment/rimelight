@@ -1,6 +1,7 @@
 import type { RLColorAreaProps } from "./color-area.types";
 import { RLColorAreaTheme } from "./color-area.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "colorSpace",
@@ -453,7 +454,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
           class={classes().thumb}
           data-slot="thumb"
           role="slider"
-          aria-label="Color Area Thumb"
+          aria-label={uiT("color-area.thumb")}
           tabindex={0}
           style={{
             left: `${pctX()}%`,
