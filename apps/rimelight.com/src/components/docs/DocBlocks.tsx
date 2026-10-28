@@ -1,4 +1,4 @@
-import { type Component, For } from "solid-js";
+import { type Component, For, lazy, Loading } from "solid-js";
 import { BlockRenderer, type PublicEntry } from "@rimelight/cms/solid";
 import meta from "virtual:rimelight-ui-docs-meta";
 import { generateThemeCode } from "#docs/utils";
@@ -11,16 +11,18 @@ import { rimelightCustomBlocks } from "#components/blocks";
  * `ApiDocumentationBlock` gets the component's extracted metadata (props / theme) injected.
  */
 
-// Every RL component and theme, for live showcases (resolved at build time).
-const componentModules: Record<string, any> = import.meta.glob(
+// Every RL component, for live showcases. Each one is its own lazy chunk, so a docs page only
+// downloads the components it actually previews instead of all of them.
+const componentLoaders: Record<string, () => Promise<any>> = import.meta.glob(
   "../../../../../packages/ui/src/components/*/RL*.tsx",
-  { eager: true },
 );
-const componentRegistry: Record<string, any> = {};
-for (const [p, mod] of Object.entries(componentModules)) {
+const componentRegistry: Record<string, Component<any>> = {};
+for (const [p, load] of Object.entries(componentLoaders)) {
   const fileName = p.split("/").pop()?.replace(".tsx", "");
-  if (fileName && (mod.default || mod[fileName]))
-    componentRegistry[fileName] = mod.default || mod[fileName];
+  if (!fileName) continue;
+  componentRegistry[fileName] = lazy(() =>
+    load().then((mod) => ({ default: mod.default ?? mod[fileName] })),
+  );
 }
 
 const themeModules: Record<string, any> = import.meta.glob(
@@ -153,7 +155,9 @@ const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (prop
       {...showcase}
     >
       {Comp ? (
-        <Comp {...(parsed?.props ?? {})} />
+        <Loading fallback={<div class="h-24" />}>
+          <Comp {...(parsed?.props ?? {})} />
+        </Loading>
       ) : (
         <div innerHTML={block.props.previewHtml || ""} />
       )}
