@@ -46,7 +46,6 @@ export default defineConfig({
     security({
       domain: "starter.rimelight.com",
       allowedDomains: ["https://cdn.rimelight.com"],
-      turnstile: true,
     }),
 
     auth(),
