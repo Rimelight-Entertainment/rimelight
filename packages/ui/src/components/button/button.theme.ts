@@ -12,7 +12,7 @@ export const RLButtonTheme = defineTheme("button", {
   ],
   base: {
     root: [
-      "rounded-md font-medium inline-flex items-center justify-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+      "rounded-md font-medium inline-flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
       "transition-colors outline-none select-none no-underline leading-none",
       "aria-invalid:border-error-500 aria-invalid:ring-error-500/20",
     ],
