@@ -1,5 +1,6 @@
 import { type Component, createEffect } from "solid-js";
 import { useLocation } from "@solidjs/router";
+import { t } from "@rimelight/i18n";
 
 export const SignInPage: Component = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ export const SignInPage: Component = () => {
   );
   return (
     <div class="flex items-center justify-center min-h-screen">
-      <p class="text-muted text-sm">Redirecting to sign in...</p>
+      <p class="text-muted text-sm">{t("app.text.redirecting-to-sign-in")}</p>
     </div>
   );
 };

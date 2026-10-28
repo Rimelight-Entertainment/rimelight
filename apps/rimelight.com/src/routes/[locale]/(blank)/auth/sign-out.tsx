@@ -1,4 +1,5 @@
 import { type Component, createEffect } from "solid-js";
+import { t } from "@rimelight/i18n";
 
 export const SignOutPage: Component = () => {
   createEffect(
@@ -11,7 +12,7 @@ export const SignOutPage: Component = () => {
   );
   return (
     <div class="flex items-center justify-center min-h-screen">
-      <p class="text-muted text-sm">Redirecting to sign out...</p>
+      <p class="text-muted text-sm">{t("app.text.redirecting-to-sign-out")}</p>
     </div>
   );
 };

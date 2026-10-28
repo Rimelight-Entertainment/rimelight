@@ -73,7 +73,7 @@ export const HomePage: Component = () => {
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_hero_background.webp"
-              alt="Hero Background"
+              alt={t("app.text.hero-background")}
               class="h-full w-full object-cover"
               loading="eager"
               width={1999}
@@ -102,7 +102,7 @@ export const HomePage: Component = () => {
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_company_background.webp"
-              alt="Company Background"
+              alt={t("app.text.company-background")}
               class="h-full w-full object-cover opacity-10"
               width={9000}
               height={4000}
@@ -130,7 +130,7 @@ export const HomePage: Component = () => {
         <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
           <RLVideo
             src="https://www.youtube.com/watch?v=uH1Hw6SDI1M"
-            title="We are Rimelight Entertainment"
+            title={t("app.text.we-are-rimelight-entertainment")}
             class="aspect-video w-full max-w-2xl overflow-hidden rounded-2xl shadow-2xl border border-neutral-800"
           />
         </div>
@@ -149,7 +149,7 @@ export const HomePage: Component = () => {
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_projects_background.webp"
-              alt="Projects Background"
+              alt={t("app.text.projects-background")}
               class="h-full w-full object-cover opacity-15"
               width={5000}
               height={3542}
@@ -166,7 +166,7 @@ export const HomePage: Component = () => {
               <div class="relative h-full w-full overflow-hidden isolate transition-transform duration-700 ease-out group-hover:scale-[1.02] rounded-[inherit] will-change-transform bg-neutral-900">
                 <div class="absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
                   <RLImage
-                    alt="Grand Tale"
+                    alt={t("app.text.grand-tale")}
                     src="https://cdn.rimelight.com/images/placeholder_home_projects_grand-tale.webp"
                     class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 will-change-transform opacity-75"
                     width={900}
@@ -229,7 +229,7 @@ export const HomePage: Component = () => {
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_news_background.webp"
-              alt="News Background"
+              alt={t("app.text.news-background")}
               class="h-full w-full object-cover opacity-15"
               width={1320}
               height={743}
@@ -299,7 +299,7 @@ export const HomePage: Component = () => {
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_cta_background.webp"
-              alt="CTA Background"
+              alt={t("app.text.cta-background")}
               class="h-full w-full object-cover opacity-20"
               width={3000}
               height={2000}
