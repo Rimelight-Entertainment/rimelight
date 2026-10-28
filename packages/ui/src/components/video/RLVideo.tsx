@@ -78,7 +78,7 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
   const isPlayable = () => Boolean(embedUrl());
 
   return (
-    <div>
+    <div class={classes().wrapper} data-slot="wrapper">
       <Tag class={classes().root} data-slot="root" {...rest}>
         <Show
           when={isPlaying() && embedUrl()}
@@ -118,6 +118,7 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
             loading="lazy"
+            credentialless
             referrerpolicy="strict-origin-when-cross-origin"
             class={classes().iframe}
             data-slot="iframe"

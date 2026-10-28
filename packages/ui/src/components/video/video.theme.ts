@@ -1,8 +1,9 @@
 import { defineTheme } from "../../resolver";
 
 export const RLVideoTheme = defineTheme("video", {
-  slots: ["root", "trigger", "image", "icon", "iframe", "transcript"],
+  slots: ["wrapper", "root", "trigger", "image", "icon", "iframe", "transcript"],
   base: {
+    wrapper: "w-full",
     root: "relative aspect-video h-full w-full cursor-pointer overflow-hidden",
     trigger: "group absolute inset-0 aspect-video h-full w-full overflow-hidden",
     image: "h-full w-full object-cover",
