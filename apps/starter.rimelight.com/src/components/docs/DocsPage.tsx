@@ -140,7 +140,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
     <div class="mb-8 flex flex-wrap items-center gap-3 border-b border-default pb-4">
       <Show when={nav().versions.length > 0}>
         <label class="flex items-center gap-2 text-sm text-muted">
-          <span class="sr-only">Docs version</span>
+          <span class="sr-only">{t("page.docs.version-label")}</span>
           <select
             class="rounded-md border border-default bg-default px-2.5 py-1.5 text-sm font-medium text-highlighted"
             value={nav().version}
@@ -165,7 +165,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
           </select>
         </label>
       </Show>
-      <nav aria-label="Docs sections" class="flex flex-wrap gap-1">
+      <nav aria-label={t("page.docs.sections-aria")} class="flex flex-wrap gap-1">
         <For each={nav().scopes}>
           {(s) => (
             <a
@@ -289,11 +289,13 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                     <Show
                       when={index() !== null && !nav().versions.length}
                       fallback={
-                        <div class="p-12 text-center text-neutral-400">Loading documentation…</div>
+                        <div class="p-12 text-center text-neutral-400">
+                          {t("page.docs.loading")}
+                        </div>
                       }
                     >
                       <div class="p-12 text-center">
-                        <p class="text-lg text-highlighted">No documentation yet.</p>
+                        <p class="text-lg text-highlighted">{t("page.docs.empty")}</p>
                         <p class="mt-2 text-neutral-400">
                           Publish entries in the <code>doc</code> collection with slugs like{" "}
                           <code>v1/guide/introduction</code>.

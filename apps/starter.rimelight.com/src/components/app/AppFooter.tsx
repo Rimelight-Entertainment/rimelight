@@ -59,10 +59,12 @@ export const AppFooter: Component = () => {
       class="bg-black z-50"
       left={
         <div class="flex flex-col gap-xl justify-between items-center lg:items-start">
-          <div class="text-center lg:text-left text-white">Newsletter Signup</div>
+          <div class="text-center lg:text-left text-white">{t("app.footer.newsletter.title")}</div>
           <div class="flex flex-col gap-xs items-center lg:items-start">
             <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
-            <p class="text-sm text-center lg:text-left text-white">Rimelight Starter</p>
+            <p class="text-sm text-center lg:text-left text-white">
+              {t("app.footer.product-name")}
+            </p>
             <span class="text-sm text-center lg:text-left text-white">
               © {new Date().getFullYear()} Rimelight Entertainment
             </span>

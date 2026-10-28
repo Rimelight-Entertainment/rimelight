@@ -45,18 +45,18 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
         class="bg-primary text-neutral-50 font-medium"
         actions={[
           {
-            label: t("app.banner.actions.learn-more") || "Learn more",
+            label: t("app.banner.actions.learn-more"),
             href: getLocaleUrl("/docs"),
             variant: "solid",
           },
           {
-            label: t("app.banner.actions.whats-new") || "What's new",
+            label: t("app.banner.actions.whats-new"),
             href: getLocaleUrl("/changelog"),
             variant: "outline",
           },
         ]}
       >
-        {t("app.banner.content") || "New: Rimelight v2 is out"}
+        {t("app.banner.content")}
       </RLBanner>
       <AppHeader stackIndex={1} />
       <RLMain>
@@ -74,7 +74,7 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
           class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300"
         >
           <RLToast
-            title={t("cookie.notice.title")}
+            title={t("app.cookie.notice.title")}
             dismissable={false}
             duration={0}
             class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm"
@@ -86,7 +86,7 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
                   size="sm"
                   onClick={() => setCookieAndDismiss("allowed")}
                 >
-                  {t("cookie.notice.allow.all")}
+                  {t("app.cookie.notice.allow.all")}
                 </RLButton>
                 <RLButton
                   variant="solid"
@@ -94,20 +94,20 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
                   size="sm"
                   onClick={() => setCookieAndDismiss("denied")}
                 >
-                  {t("cookie.notice.deny.all")}
+                  {t("app.cookie.notice.deny.all")}
                 </RLButton>
               </div>
             }
           >
             <span>
-              {t("cookie.notice.description.prefix")}{" "}
+              {t("app.cookie.notice.description.prefix")}{" "}
               <a
                 href={getLocaleUrl("/legal/cookie-policy")}
                 class="underline hover:text-primary transition-colors font-medium"
               >
-                {t("cookie.notice.cookie.policy.label")}
+                {t("app.cookie.notice.cookie.policy.label")}
               </a>{" "}
-              {t("cookie.notice.description.suffix")}
+              {t("app.cookie.notice.description.suffix")}
             </span>
           </RLToast>
         </div>

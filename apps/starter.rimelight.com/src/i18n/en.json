@@ -19,7 +19,11 @@
           "cookie-policy": "Cookie Policy",
           "other-documents": "Other Documents"
         }
-      }
+      },
+      "newsletter": {
+        "title": "Newsletter Signup"
+      },
+      "product-name": "Rimelight Starter"
     },
     "header": {
       "left-links": {
@@ -67,45 +71,70 @@
             }
           }
         }
-      }
-    }
-  },
-  "blog": {
-    "title": "Blog",
-    "description": "Articles, development logs, and more."
-  },
-  "branding": {
-    "title": "Branding",
-    "description": "Rimelight Branding Guidelines"
-  },
-  "cookie": {
-    "notice": {
-      "title": "Cookie Notice",
-      "description": {
-        "prefix": "This site doesn't actually use cookies, but this is how a cookie notice would be done, as per a ",
-        "suffix": "."
       },
-      "cookie": {
-        "policy": {
-          "label": "Cookie Policy"
+      "menu": {
+        "title": "Menu",
+        "open": "Open Menu"
+      },
+      "shortcuts": {
+        "open": "Keyboard Shortcuts"
+      },
+      "actions": {
+        "title": "Actions",
+        "open": "Open Actions"
+      }
+    },
+    "cookie": {
+      "notice": {
+        "title": "Cookie Notice",
+        "description": {
+          "prefix": "This site doesn't actually use cookies, but this is how a cookie notice would be done, as per a ",
+          "suffix": "."
+        },
+        "cookie": {
+          "policy": {
+            "label": "Cookie Policy"
+          }
+        },
+        "allow": {
+          "all": "Allow all"
+        },
+        "deny": {
+          "all": "Deny all"
         }
-      },
-      "allow": {
-        "all": "Allow all"
-      },
-      "deny": {
-        "all": "Deny all"
       }
+    },
+    "loading": {
+      "page": "Loading.",
+      "post": "Loading post...",
+      "document": "Loading document..."
+    },
+    "text": {
+      "contact": "Contact"
     }
-  },
-  "errors": {
-    "not-found": "Page Not Found",
-    "not-found-desc": "The page you are looking for does not exist."
   },
   "page": {
+    "blog": {
+      "meta": {
+        "title": "Blog",
+        "description": "Articles, development logs, and more."
+      },
+      "categories": {
+        "aria-label": "Categories"
+      },
+      "empty": "No blog posts available yet."
+    },
+    "branding": {
+      "meta": {
+        "title": "Branding",
+        "description": "Rimelight Branding Guidelines"
+      }
+    },
     "about": {
-      "title": "About Rimelight",
-      "description": "Learn about Rimelight Entertainment and our starter template.",
+      "meta": {
+        "title": "About Rimelight",
+        "description": "Learn about Rimelight Entertainment and our starter template."
+      },
       "hero": {
         "title": "Rimelight Entertainment",
         "description": "We craft beautiful, modern, high-performance web experiences designed to scale and empower developers."
@@ -138,8 +167,10 @@
       }
     },
     "contact": {
-      "title": "Contact Us",
-      "description": "Get in touch with the website team.",
+      "meta": {
+        "title": "Contact Us",
+        "description": "Get in touch with the website team."
+      },
       "hero": {
         "title": "Get in Touch",
         "description": "Have questions, feedback, or need help? Send us a message directly."
@@ -212,7 +243,8 @@
           "view-on-github": "View on GitHub",
           "learn-how": "Learn How"
         }
-      }
+      },
+      "placeholder-alt": "Placeholder Image"
     },
     "legal": {
       "meta": {
@@ -220,6 +252,16 @@
         "description": "Policies and agreements."
       },
       "empty": "No legal documents yet."
+    },
+    "docs": {
+      "version-label": "Docs version",
+      "sections-aria": "Docs sections",
+      "loading": "Loading documentation…",
+      "empty": "No documentation yet."
     }
+  },
+  "error": {
+    "not-found": "Page Not Found",
+    "not-found-desc": "The page you are looking for does not exist."
   }
 }

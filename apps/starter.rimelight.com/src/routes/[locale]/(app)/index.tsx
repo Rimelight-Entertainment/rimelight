@@ -85,7 +85,10 @@ export const HomePage: Component = () => {
         description={t("page.home.section.features.description")}
         links={featureLinks()}
       >
-        <RLImage src="https://cdn.rimelight.com/images/placeholder.webp" alt="Placeholder Image" />
+        <RLImage
+          src="https://cdn.rimelight.com/images/placeholder.webp"
+          alt={t("page.home.placeholder-alt")}
+        />
       </RLPageSection>
 
       <RLPageSection

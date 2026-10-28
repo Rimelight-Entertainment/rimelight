@@ -50,8 +50,8 @@ export const ContactPage: Component = () => {
 
   useHead(() =>
     createPageHead({
-      title: t("page.contact.title"),
-      description: t("page.contact.description"),
+      title: t("page.contact.meta.title"),
+      description: t("page.contact.meta.description"),
     }),
   );
 

@@ -14,12 +14,16 @@
           "branding": "Identidade Visual"
         },
         "legal": {
-          "label": "Legal",
+          "label": "Aviso legal",
           "privacy-policy": "Política de Privacidade",
           "cookie-policy": "Política de Cookies",
           "other-documents": "Outros Documentos"
         }
-      }
+      },
+      "newsletter": {
+        "title": "Inscrição na newsletter"
+      },
+      "product-name": "Rimelight Starter"
     },
     "header": {
       "left-links": {
@@ -67,45 +71,70 @@
             }
           }
         }
-      }
-    }
-  },
-  "blog": {
-    "title": "Blog",
-    "description": "Artigos, diários de desenvolvimento e mais."
-  },
-  "branding": {
-    "title": "Identidade Visual",
-    "description": "Diretrizes de Marca da Rimelight"
-  },
-  "cookie": {
-    "notice": {
-      "title": "Aviso de cookies",
-      "description": {
-        "prefix": "Este site na verdade não usa cookies, mas é assim que um aviso de cookies seria feito, de acordo com uma ",
-        "suffix": "."
       },
-      "cookie": {
-        "policy": {
-          "label": "Política de Cookies"
+      "menu": {
+        "title": "Menu",
+        "open": "Abrir menu"
+      },
+      "shortcuts": {
+        "open": "Atalhos de teclado"
+      },
+      "actions": {
+        "title": "Ações",
+        "open": "Abrir ações"
+      }
+    },
+    "cookie": {
+      "notice": {
+        "title": "Aviso de cookies",
+        "description": {
+          "prefix": "Este site na verdade não usa cookies, mas é assim que um aviso de cookies seria feito, de acordo com uma ",
+          "suffix": "."
+        },
+        "cookie": {
+          "policy": {
+            "label": "Política de Cookies"
+          }
+        },
+        "allow": {
+          "all": "Permitir todos"
+        },
+        "deny": {
+          "all": "Recusar todos"
         }
-      },
-      "allow": {
-        "all": "Permitir todos"
-      },
-      "deny": {
-        "all": "Recusar todos"
       }
+    },
+    "loading": {
+      "page": "Carregando.",
+      "post": "Carregando publicação...",
+      "document": "Carregando documento..."
+    },
+    "text": {
+      "contact": "Contact"
     }
-  },
-  "errors": {
-    "not-found": "Página Não Encontrada",
-    "not-found-desc": "A página que você está procurando não existe."
   },
   "page": {
+    "blog": {
+      "meta": {
+        "title": "Blog",
+        "description": "Artigos, diários de desenvolvimento e mais."
+      },
+      "categories": {
+        "aria-label": "Categorias"
+      },
+      "empty": "Ainda não há publicações no blog."
+    },
+    "branding": {
+      "meta": {
+        "title": "Identidade Visual",
+        "description": "Diretrizes de Marca da Rimelight"
+      }
+    },
     "about": {
-      "title": "Sobre a Rimelight",
-      "description": "Conheça a Rimelight Entertainment e nosso modelo inicial.",
+      "meta": {
+        "title": "Sobre a Rimelight",
+        "description": "Conheça a Rimelight Entertainment e nosso modelo inicial."
+      },
       "hero": {
         "title": "Rimelight Entertainment",
         "description": "Criamos experiências web modernas, elegantes e de alto desempenho projetadas para escalar e capacitar desenvolvedores."
@@ -138,8 +167,10 @@
       }
     },
     "contact": {
-      "title": "Fale Conosco",
-      "description": "Entre em contato com a equipe do site.",
+      "meta": {
+        "title": "Fale Conosco",
+        "description": "Entre em contato com a equipe do site."
+      },
       "hero": {
         "title": "Entre em Contato",
         "description": "Tem dúvidas, feedback ou precisa de ajuda? Envie-nos uma mensagem diretamente."
@@ -171,12 +202,12 @@
     },
     "home": {
       "meta": {
-        "title": "Rimelight Starter Template",
+        "title": "Modelo Rimelight Starter",
         "description": "Um projeto inicial Solid baseado na forma como operamos na Rimelight Entertainment."
       },
       "section": {
         "hero": {
-          "title": "Rimelight Starter Template",
+          "title": "Modelo Rimelight Starter",
           "description": "Um projeto inicial Solid baseado na forma como operamos na Rimelight Entertainment.",
           "link": {
             "github": {
@@ -212,7 +243,8 @@
           "view-on-github": "Ver no GitHub",
           "learn-how": "Saiba Como"
         }
-      }
+      },
+      "placeholder-alt": "Imagem de exemplo"
     },
     "legal": {
       "meta": {
@@ -220,6 +252,16 @@
         "description": "Políticas e acordos."
       },
       "empty": "Ainda não há documentos legais."
+    },
+    "docs": {
+      "version-label": "Versão da documentação",
+      "sections-aria": "Seções da documentação",
+      "loading": "Carregando documentação…",
+      "empty": "Ainda não há documentação."
     }
+  },
+  "error": {
+    "not-found": "Página Não Encontrada",
+    "not-found-desc": "A página que você está procurando não existe."
   }
 }

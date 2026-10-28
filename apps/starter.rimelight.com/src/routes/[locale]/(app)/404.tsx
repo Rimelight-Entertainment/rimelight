@@ -7,8 +7,8 @@ import { t } from "@rimelight/i18n";
 export const Page404: Component = () => {
   useHead(() =>
     createPageHead({
-      title: t("errors.not-found") || "Page Not Found",
-      description: t("errors.not-found-desc") || "The page you are looking for does not exist.",
+      title: t("error.not-found"),
+      description: t("error.not-found-desc"),
       is404: true,
     }),
   );

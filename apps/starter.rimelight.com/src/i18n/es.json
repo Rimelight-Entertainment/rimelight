@@ -14,12 +14,16 @@
           "branding": "Identidad de marca"
         },
         "legal": {
-          "label": "Legal",
+          "label": "Aviso legal",
           "privacy-policy": "Política de privacidad",
           "cookie-policy": "Política de Cookies",
           "other-documents": "Otros documentos"
         }
-      }
+      },
+      "newsletter": {
+        "title": "Suscripción al boletín"
+      },
+      "product-name": "Rimelight Starter"
     },
     "header": {
       "left-links": {
@@ -67,45 +71,70 @@
             }
           }
         }
-      }
-    }
-  },
-  "blog": {
-    "title": "Blog",
-    "description": "Artículos, registros de desarrollo y mucho más."
-  },
-  "branding": {
-    "title": "Identidad de marca",
-    "description": "Guías de identidad de marca de Rimelight"
-  },
-  "cookie": {
-    "notice": {
-      "title": "Aviso de cookies",
-      "description": {
-        "prefix": "Este sitio en realidad no usa cookies, pero así es como se haría un aviso de cookies, de acuerdo con una ",
-        "suffix": "."
       },
-      "cookie": {
-        "policy": {
-          "label": "Política de Cookies"
+      "menu": {
+        "title": "Menú",
+        "open": "Abrir menú"
+      },
+      "shortcuts": {
+        "open": "Atajos de teclado"
+      },
+      "actions": {
+        "title": "Acciones",
+        "open": "Abrir acciones"
+      }
+    },
+    "cookie": {
+      "notice": {
+        "title": "Aviso de cookies",
+        "description": {
+          "prefix": "Este sitio en realidad no usa cookies, pero así es como se haría un aviso de cookies, de acuerdo con una ",
+          "suffix": "."
+        },
+        "cookie": {
+          "policy": {
+            "label": "Política de Cookies"
+          }
+        },
+        "allow": {
+          "all": "Permitir todas"
+        },
+        "deny": {
+          "all": "Denegar todas"
         }
-      },
-      "allow": {
-        "all": "Permitir todas"
-      },
-      "deny": {
-        "all": "Denegar todas"
       }
+    },
+    "loading": {
+      "page": "Cargando.",
+      "post": "Cargando publicación...",
+      "document": "Cargando documento..."
+    },
+    "text": {
+      "contact": "Contact"
     }
-  },
-  "errors": {
-    "not-found": "Página no encontrada",
-    "not-found-desc": "La página que buscas no existe."
   },
   "page": {
+    "blog": {
+      "meta": {
+        "title": "Blog",
+        "description": "Artículos, registros de desarrollo y mucho más."
+      },
+      "categories": {
+        "aria-label": "Categorías"
+      },
+      "empty": "Todavía no hay entradas en el blog."
+    },
+    "branding": {
+      "meta": {
+        "title": "Identidad de marca",
+        "description": "Guías de identidad de marca de Rimelight"
+      }
+    },
     "about": {
-      "title": "Sobre Rimelight",
-      "description": "Conoce Rimelight Entertainment y nuestra plantilla de inicio.",
+      "meta": {
+        "title": "Sobre Rimelight",
+        "description": "Conoce Rimelight Entertainment y nuestra plantilla de inicio."
+      },
       "hero": {
         "title": "Rimelight Entertainment",
         "description": "Creamos experiencias web bonitas, modernas y de alto rendimiento, pensadas para escalar y dar poder a los desarrolladores."
@@ -138,8 +167,10 @@
       }
     },
     "contact": {
-      "title": "Contacta con nosotros",
-      "description": "Ponte en contacto con el equipo del sitio web.",
+      "meta": {
+        "title": "Contacta con nosotros",
+        "description": "Ponte en contacto con el equipo del sitio web."
+      },
       "hero": {
         "title": "Ponte en contacto",
         "description": "¿Tienes preguntas, comentarios o necesitas ayuda? Envíanos un mensaje directamente."
@@ -212,7 +243,8 @@
           "view-on-github": "Ver en GitHub",
           "learn-how": "Aprende cómo"
         }
-      }
+      },
+      "placeholder-alt": "Imagen de marcador"
     },
     "legal": {
       "meta": {
@@ -220,6 +252,16 @@
         "description": "Políticas y acuerdos."
       },
       "empty": "Aún no hay documentos legales."
+    },
+    "docs": {
+      "version-label": "Versión de la documentación",
+      "sections-aria": "Secciones de la documentación",
+      "loading": "Cargando documentación…",
+      "empty": "Aún no hay documentación."
     }
+  },
+  "error": {
+    "not-found": "Página no encontrada",
+    "not-found-desc": "La página que buscas no existe."
   }
 }

@@ -7,8 +7,8 @@ import { t } from "@rimelight/i18n";
 export const AboutPage: Component = () => {
   useHead(() =>
     createPageHead({
-      title: t("page.about.title"),
-      description: t("page.about.description"),
+      title: t("page.about.meta.title"),
+      description: t("page.about.meta.description"),
     }),
   );
 

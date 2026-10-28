@@ -112,7 +112,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       to: getLocaleUrl("/docs"),
     },
     {
-      label: "Contact",
+      label: t("app.text.contact"),
       to: getLocaleUrl("/contact"),
     },
   ];
@@ -165,7 +165,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <div class="block md:hidden">
             <RLSlideover
               side="left"
-              title="Menu"
+              title={t("app.header.menu.title")}
               trigger={
                 <RLButton
                   color="neutral"
@@ -173,7 +173,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                   rounded={true}
                   leadingIcon="i-lucide-menu"
                   class="!text-white"
-                  aria-label="Open Menu"
+                  aria-label={t("app.header.menu.open")}
                 />
               }
             >
@@ -237,7 +237,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             variant="ghost"
             color="neutral"
             leadingIcon="i-lucide-keyboard"
-            aria-label="Keyboard Shortcuts"
+            aria-label={t("app.header.shortcuts.open")}
             onClick={() => useShortcuts().open()}
           />
           <div class="hidden md:flex flex-row gap-md">
@@ -247,7 +247,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <div class="block md:hidden">
             <RLSlideover
               side="right"
-              title="Actions"
+              title={t("app.header.actions.title")}
               trigger={
                 <RLButton
                   color="neutral"
@@ -255,7 +255,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                   rounded={true}
                   leadingIcon="i-lucide-ellipsis-vertical"
                   class="!text-white"
-                  aria-label="Open Actions"
+                  aria-label={t("app.header.actions.open")}
                 />
               }
             >
