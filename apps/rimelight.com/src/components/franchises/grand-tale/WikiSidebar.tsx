@@ -4,37 +4,43 @@ import { t, getLocaleUrl } from "@rimelight/i18n";
 export const WikiSidebar: Component = () => {
   const sections = [
     {
-      label: t("wiki.sidebar.wiki"),
+      label: t("page.wiki.sidebar.wiki"),
       items: [
         {
-          label: t("wiki.sidebar.getting.started"),
+          label: t("page.wiki.sidebar.getting.started"),
           to: "/franchises/grand-tale/wiki/getting-started",
         },
         {
-          label: t("wiki.sidebar.contribution.guide"),
+          label: t("page.wiki.sidebar.contribution.guide"),
           to: "/franchises/grand-tale/wiki/contribution-guide",
         },
       ],
     },
     {
-      label: t("wiki.sidebar.lore"),
+      label: t("page.wiki.sidebar.lore"),
       items: [
-        { label: t("wiki.sidebar.timeline"), to: "/franchises/grand-tale/wiki/lore/timeline" },
-        { label: t("wiki.sidebar.characters"), to: "/franchises/grand-tale/wiki/lore/characters" },
-        { label: t("wiki.sidebar.locations"), to: "/franchises/grand-tale/wiki/lore/locations" },
-        { label: t("wiki.sidebar.species"), to: "/franchises/grand-tale/wiki/lore/species" },
-        { label: t("wiki.sidebar.objects"), to: "/franchises/grand-tale/wiki/lore/objects" },
-        { label: t("wiki.sidebar.groups"), to: "/franchises/grand-tale/wiki/lore/groups" },
+        { label: t("page.wiki.sidebar.timeline"), to: "/franchises/grand-tale/wiki/lore/timeline" },
+        {
+          label: t("page.wiki.sidebar.characters"),
+          to: "/franchises/grand-tale/wiki/lore/characters",
+        },
+        {
+          label: t("page.wiki.sidebar.locations"),
+          to: "/franchises/grand-tale/wiki/lore/locations",
+        },
+        { label: t("page.wiki.sidebar.species"), to: "/franchises/grand-tale/wiki/lore/species" },
+        { label: t("page.wiki.sidebar.objects"), to: "/franchises/grand-tale/wiki/lore/objects" },
+        { label: t("page.wiki.sidebar.groups"), to: "/franchises/grand-tale/wiki/lore/groups" },
       ],
     },
     {
-      label: t("wiki.sidebar.game"),
+      label: t("page.wiki.sidebar.game"),
       items: [
-        { label: t("wiki.sidebar.tales"), to: "/franchises/grand-tale/wiki/game/tales" },
-        { label: t("wiki.sidebar.items"), to: "/franchises/grand-tale/wiki/game/items" },
-        { label: t("wiki.sidebar.quests"), to: "/franchises/grand-tale/wiki/game/quests" },
-        { label: t("wiki.sidebar.skills"), to: "/franchises/grand-tale/wiki/game/skills" },
-        { label: t("wiki.sidebar.settings"), to: "/franchises/grand-tale/wiki/game/settings" },
+        { label: t("page.wiki.sidebar.tales"), to: "/franchises/grand-tale/wiki/game/tales" },
+        { label: t("page.wiki.sidebar.items"), to: "/franchises/grand-tale/wiki/game/items" },
+        { label: t("page.wiki.sidebar.quests"), to: "/franchises/grand-tale/wiki/game/quests" },
+        { label: t("page.wiki.sidebar.skills"), to: "/franchises/grand-tale/wiki/game/skills" },
+        { label: t("page.wiki.sidebar.settings"), to: "/franchises/grand-tale/wiki/game/settings" },
       ],
     },
   ];

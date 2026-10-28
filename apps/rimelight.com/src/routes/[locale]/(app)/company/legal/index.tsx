@@ -23,8 +23,8 @@ export const LegalIndexPage: Component = () => {
 
   return (
     <RLPageSection
-      title={t("page.legal.meta.title") || "Legal Documents"}
-      description={t("page.legal.meta.description") || "Our policies and agreements"}
+      title={t("page.legal.meta.title")}
+      description={t("page.legal.meta.description")}
       class="py-16"
     >
       <div class="max-w-5xl mx-auto w-full px-4 mt-8">
@@ -48,7 +48,7 @@ export const LegalIndexPage: Component = () => {
         </RLGrid>
 
         <Show when={!legalPages() || legalPages()!.length === 0}>
-          <p class="text-center text-neutral-500 py-12">No legal documents found.</p>
+          <p class="text-center text-neutral-500 py-12">{t("app.text.no-legal-documents-found")}</p>
         </Show>
       </div>
     </RLPageSection>

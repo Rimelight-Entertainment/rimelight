@@ -13,8 +13,8 @@ export const DevComponentsPage: Component = () => {
   return (
     <div class="flex flex-col gap-2xl">
       <header class="flex flex-col gap-xs">
-        <h1 class="text-3xl text-highlighted">{t("dev.components.title")}</h1>
-        <p class="text-sm text-muted">{t("dev.components.description")}</p>
+        <h1 class="text-3xl text-highlighted">{t("page.dev.components.title")}</h1>
+        <p class="text-sm text-muted">{t("page.dev.components.description")}</p>
       </header>
 
       <ComponentAuditShell initialComponentId={untrack(requestedComp)} />

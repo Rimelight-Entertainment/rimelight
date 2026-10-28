@@ -19,7 +19,7 @@ const withComputedTranslation = (
 
 export default function DevLocalizationPage() {
   return (
-    <Loading fallback={<main>Loading.</main>}>
+    <Loading fallback={<main>{t("app.text.loading")}</main>}>
       <Localization />
     </Loading>
   );
@@ -45,20 +45,20 @@ function Localization() {
     }[];
   }[] => [
     {
-      title: t("dev.localization.current.values"),
+      title: t("page.dev.localization.current.values"),
       rows: [
         {
-          label: t("dev.localization.current.locale"),
+          label: t("page.dev.localization.current.locale"),
           code: `getCurrentLocale()`,
           value: getCurrentLocale(),
         },
         {
-          label: t("dev.localization.window.pathname"),
+          label: t("page.dev.localization.window.pathname"),
           code: `location.pathname`,
           value: location.pathname,
         },
         {
-          label: t("dev.localization.available.locales"),
+          label: t("page.dev.localization.available.locales"),
           code: `getLocales()`,
           value: JSON.stringify(getLocales()),
         },
@@ -69,7 +69,7 @@ function Localization() {
       mono: true,
       rows: [
         {
-          label: "Locale selector",
+          label: t("app.text.locale-selector"),
           code: `getLocales()`,
           content: <RLLocaleSelector locales={getLocales()} currentLocale={getCurrentLocale()} />,
         },
@@ -80,9 +80,9 @@ function Localization() {
       mono: true,
       rows: [
         {
-          label: t("dev.localization.default.locale.title"),
+          label: t("page.dev.localization.default.locale.title"),
           code: `getDefaultLocale()`,
-          description: t("dev.localization.default.locale.description"),
+          description: t("page.dev.localization.default.locale.description"),
           value: getDefaultLocale(),
         },
       ],
@@ -102,7 +102,7 @@ function Localization() {
             variant="soft"
             color="neutral"
             href={getLocaleUrl(location.pathname, code)}
-            label={t("dev.localization.goto.locale", { locale: code })}
+            label={t("page.dev.localization.goto.locale", { locale: code })}
             rel="external"
           />
         ),
@@ -113,9 +113,9 @@ function Localization() {
       mono: true,
       rows: [
         {
-          label: t("dev.localization.locale.asset.title"),
+          label: t("page.dev.localization.locale.asset.title"),
           code: `getLocaleAsset({ en: "🇬🇧 English", pt: "🇧🇷 Português" })\ngetLocaleAsset({ en: "🇬🇧 English", pt: "🇧🇷 Português" }, "es")`,
-          description: t("dev.localization.locale.asset.description"),
+          description: t("page.dev.localization.locale.asset.description"),
           value: `${getCurrentLocale()}: ${getLocaleAsset(LOCALE_ASSETS)}\nes: ${getLocaleAsset(
             LOCALE_ASSETS,
             "es",
@@ -128,97 +128,99 @@ function Localization() {
       mono: true,
       rows: [
         {
-          label: t("dev.localization.t.basic.title"),
-          code: `t("dev.localization.sample.hello")`,
-          description: t("dev.localization.t.basic.description"),
-          value: t("dev.localization.sample.hello"),
+          label: t("page.dev.localization.t.basic.title"),
+          code: `t("page.dev.localization.sample.hello")`,
+          description: t("page.dev.localization.t.basic.description"),
+          value: t("page.dev.localization.sample.hello"),
         },
         {
-          label: t("dev.localization.t.interpolation.title"),
-          code: `t("dev.localization.sample.greeting", { name: "Ada" })`,
-          description: t("dev.localization.t.interpolation.description"),
-          value: t("dev.localization.sample.greeting", { name: "Ada" }),
+          label: t("page.dev.localization.t.interpolation.title"),
+          code: `t("page.dev.localization.sample.greeting", { name: "Ada" })`,
+          description: t("page.dev.localization.t.interpolation.description"),
+          value: t("page.dev.localization.sample.greeting", { name: "Ada" }),
         },
         {
-          label: t("dev.localization.t.count.title"),
-          code: `t("dev.localization.sample.items", { count: 1 })\nt("dev.localization.sample.items", { count: 1234 })`,
-          description: t("dev.localization.t.count.description"),
-          value: `${t("dev.localization.sample.items", { count: 1 })}\n${t("dev.localization.sample.items", { count: 1234 })}`,
+          label: t("page.dev.localization.t.count.title"),
+          code: `t("page.dev.localization.sample.items", { count: 1 })\nt("page.dev.localization.sample.items", { count: 1234 })`,
+          description: t("page.dev.localization.t.count.description"),
+          value: `${t("page.dev.localization.sample.items", { count: 1 })}\n${t("page.dev.localization.sample.items", { count: 1234 })}`,
         },
         {
-          label: t("dev.localization.t.count.branch.title"),
-          code: `t("dev.localization.sample.other.only", { count: 1 })`,
-          description: t("dev.localization.t.count.branch.description"),
-          value: t("dev.localization.sample.other.only", { count: 1 }),
+          label: t("page.dev.localization.t.count.branch.title"),
+          code: `t("page.dev.localization.sample.other.only", { count: 1 })`,
+          description: t("page.dev.localization.t.count.branch.description"),
+          value: t("page.dev.localization.sample.other.only", { count: 1 }),
         },
         {
-          label: t("dev.localization.t.function.title"),
-          code: `t("dev.localization.sample.computed", { value: 21 })`,
-          description: t("dev.localization.t.function.description"),
+          label: t("page.dev.localization.t.function.title"),
+          code: `t("page.dev.localization.sample.computed", { value: 21 })`,
+          description: t("page.dev.localization.t.function.description"),
           value: withComputedTranslation(
             (params) => `Computed: ${Number(params?.["value"] ?? 0) * 2}`,
             { value: 21 },
           ),
         },
         {
-          label: t("dev.localization.t.locale.title"),
-          code: `t("dev.localization.sample.hello", undefined, "${EXPLICIT_LOCALE}")`,
-          description: t("dev.localization.t.locale.description"),
-          value: `${getCurrentLocale()}: ${t("dev.localization.sample.hello")}\n${EXPLICIT_LOCALE}: ${t(
-            "dev.localization.sample.hello",
+          label: t("page.dev.localization.t.locale.title"),
+          code: `t("page.dev.localization.sample.hello", undefined, "${EXPLICIT_LOCALE}")`,
+          description: t("page.dev.localization.t.locale.description"),
+          value: `${getCurrentLocale()}: ${t("page.dev.localization.sample.hello")}\n${EXPLICIT_LOCALE}: ${t(
+            "page.dev.localization.sample.hello",
             undefined,
             EXPLICIT_LOCALE,
           )}`,
         },
         {
-          label: t("dev.localization.t.raw.title"),
-          code: `t.raw("dev.localization.sample.object")`,
-          description: t("dev.localization.t.raw.description"),
-          value: JSON.stringify(t.raw("dev.localization.sample.object") ?? null),
+          label: t("page.dev.localization.t.raw.title"),
+          code: `t.raw("page.dev.localization.sample.object")`,
+          description: t("page.dev.localization.t.raw.description"),
+          value: JSON.stringify(t.raw("page.dev.localization.sample.object") ?? null),
         },
         {
-          label: t("dev.localization.t.raw.locale.title"),
-          code: `t.raw("dev.localization.sample.hello", undefined, "${EXPLICIT_LOCALE}")`,
-          description: t("dev.localization.t.raw.locale.description"),
-          value: String(t.raw("dev.localization.sample.hello", undefined, EXPLICIT_LOCALE) ?? null),
+          label: t("page.dev.localization.t.raw.locale.title"),
+          code: `t.raw("page.dev.localization.sample.hello", undefined, "${EXPLICIT_LOCALE}")`,
+          description: t("page.dev.localization.t.raw.locale.description"),
+          value: String(
+            t.raw("page.dev.localization.sample.hello", undefined, EXPLICIT_LOCALE) ?? null,
+          ),
         },
         {
-          label: t("dev.localization.t.raw.fallback.title"),
+          label: t("page.dev.localization.t.raw.fallback.title"),
           code: `t.raw("dev_localization.missing_key", "fallback value")`,
-          description: t("dev.localization.t.raw.fallback.description"),
+          description: t("page.dev.localization.t.raw.fallback.description"),
           value: String(t.raw("dev_localization.missing_key", "fallback value")),
         },
         {
-          label: t("dev.localization.t.array.title"),
-          code: `t.array("dev.localization.sample.tags")`,
-          description: t("dev.localization.t.array.description"),
-          value: JSON.stringify(t.array("dev.localization.sample.tags") ?? []),
+          label: t("page.dev.localization.t.array.title"),
+          code: `t.array("page.dev.localization.sample.tags")`,
+          description: t("page.dev.localization.t.array.description"),
+          value: JSON.stringify(t.array("page.dev.localization.sample.tags") ?? []),
         },
         {
-          label: t("dev.localization.t.array.fallback.title"),
+          label: t("page.dev.localization.t.array.fallback.title"),
           code: `t.array("dev_localization.missing_key", ["Fallback", "Items"])`,
-          description: t("dev.localization.t.array.fallback.description"),
+          description: t("page.dev.localization.t.array.fallback.description"),
           value: JSON.stringify(t.array("dev_localization.missing_key", ["Fallback", "Items"])),
         },
         {
-          label: t("dev.localization.t.plural.title"),
+          label: t("page.dev.localization.t.plural.title"),
           code: `t.plural(1)\nt.plural(5)\nt.plural(2, "${EXPLICIT_LOCALE}")`,
-          description: t("dev.localization.t.plural.description"),
+          description: t("page.dev.localization.t.plural.description"),
           value: `1: ${t.plural(1)}\n5: ${t.plural(5)}\n2 (${EXPLICIT_LOCALE}): ${t.plural(2, EXPLICIT_LOCALE)}`,
         },
         {
-          label: t("dev.localization.t.localize.title"),
+          label: t("page.dev.localization.t.localize.title"),
           code: `t.localize({ en: "English", pt: "Português", es: "Español" })`,
-          description: t("dev.localization.t.localize.description"),
+          description: t("page.dev.localization.t.localize.description"),
           value: `${getCurrentLocale()}: ${t.localize({ en: "English", pt: "Português", es: "Español" })}\nes: ${t.localize(
             { en: "English", pt: "Português", es: "Español" },
             "es",
           )}`,
         },
         {
-          label: t("dev.localization.t.missing.title"),
+          label: t("page.dev.localization.t.missing.title"),
           code: `t.raw("dev_localization.does_not_exist")`,
-          description: t("dev.localization.t.missing.description"),
+          description: t("page.dev.localization.t.missing.description"),
           value: t.raw("dev_localization.does_not_exist"),
         },
       ],
@@ -228,8 +230,8 @@ function Localization() {
   return (
     <div class="flex flex-col gap-2xl">
       <header class="flex flex-col gap-xs">
-        <h1 class="text-3xl text-highlighted">{t("dev.localization.title")}</h1>
-        <p class="text-sm text-muted">{t("dev.localization.description")}</p>
+        <h1 class="text-3xl text-highlighted">{t("page.dev.localization.title")}</h1>
+        <p class="text-sm text-muted">{t("page.dev.localization.description")}</p>
       </header>
 
       <For each={sections()}>

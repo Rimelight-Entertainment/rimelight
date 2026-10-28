@@ -55,15 +55,16 @@ export const BlogIndexPage: Component = () => {
 
   return (
     <RLPageSection
-      title={t("page.company.blog.meta.title") || "Rimelight Blog"}
-      description={
-        t("page.company.blog.meta.description") || "News, engineering deep-dives, and announcements"
-      }
+      title={t("page.company.blog.meta.title")}
+      description={t("page.company.blog.meta.description")}
       class="py-16"
     >
       <div class="max-w-7xl mx-auto w-full px-4 mt-8">
         <Show when={categories().length > 0}>
-          <nav aria-label="Categories" class="mb-10 flex flex-wrap justify-center gap-2">
+          <nav
+            aria-label={t("app.text.categories")}
+            class="mb-10 flex flex-wrap justify-center gap-2"
+          >
             {chip("", "All")}
             <For each={categories()}>{(c) => chip(c.slug, label(c.label), c.count)}</For>
           </nav>
@@ -92,7 +93,9 @@ export const BlogIndexPage: Component = () => {
         </RLGrid>
 
         <Show when={!posts() || posts()!.length === 0}>
-          <p class="text-center text-neutral-500 py-12">No blog posts available yet.</p>
+          <p class="text-center text-neutral-500 py-12">
+            {t("app.text.no-blog-posts-available-yet")}
+          </p>
         </Show>
       </div>
     </RLPageSection>

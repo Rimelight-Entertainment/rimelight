@@ -1,21 +1,24 @@
 import type { Component } from "solid-js";
 import { getLocaleUrl } from "@rimelight/i18n";
+import { t } from "@rimelight/i18n";
 
 export const StoreSidebar: Component = () => {
   const categories = [
-    { label: "All Products", icon: "i-lucide-grid-3x3", to: "/store" },
-    { label: "Digital Goods", icon: "i-lucide-zap", to: "/store/digital" },
+    { label: t("app.text.all-products"), icon: "i-lucide-grid-3x3", to: "/store" },
+    { label: t("app.text.digital-goods"), icon: "i-lucide-zap", to: "/store/digital" },
   ];
 
   const supportLinks = [
-    { label: "Shipping Policy", to: "/company/legal/shipping-policy" },
-    { label: "Contact Support", to: "/franchises/grand-tale/support" },
+    { label: t("app.text.shipping-policy"), to: "/company/legal/shipping-policy" },
+    { label: t("app.text.contact-support"), to: "/franchises/grand-tale/support" },
   ];
 
   return (
     <div class="flex flex-col gap-6 p-4">
       <div class="flex flex-col gap-3">
-        <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 px-4">Browse</h3>
+        <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 px-4">
+          {t("app.text.browse")}
+        </h3>
         <nav class="flex flex-col gap-1">
           {categories.map((cat) => (
             <a
@@ -32,14 +35,16 @@ export const StoreSidebar: Component = () => {
         <span class="text-xs font-bold text-primary-500/60 uppercase tracking-tight">
           Active Offers
         </span>
-        <span class="text-2xl font-black text-primary-600">10% OFF</span>
+        <span class="text-2xl font-black text-primary-600">{t("app.text.10-off")}</span>
         <p class="text-[10px] text-gray-500 leading-tight">
           Apply 'RIMELIGHT' at checkout for your first order.
         </p>
       </div>
 
       <div class="flex flex-col gap-3 mt-auto">
-        <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 px-4">Help Center</h3>
+        <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 px-4">
+          {t("app.text.help-center")}
+        </h3>
         <nav class="flex flex-col gap-1 px-4 text-sm">
           {supportLinks.map((link) => (
             <a

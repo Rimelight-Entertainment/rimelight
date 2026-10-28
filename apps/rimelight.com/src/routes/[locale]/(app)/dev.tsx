@@ -16,9 +16,9 @@ export default function DevRouteLayout(props: RouteSectionProps) {
               variant="logomark"
               mode="color"
               class="h-8 w-auto"
-              alt={t("dev.layout.brand")}
+              alt={t("page.dev.layout.brand")}
             />
-            <span class="truncate font-bold text-highlighted">{t("dev.layout.brand")}</span>
+            <span class="truncate font-bold text-highlighted">{t("page.dev.layout.brand")}</span>
           </a>
         }
       />

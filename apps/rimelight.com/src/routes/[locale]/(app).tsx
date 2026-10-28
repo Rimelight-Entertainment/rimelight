@@ -77,7 +77,7 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
             class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300"
           >
             <RLToast
-              title={t("cookie.notice.title") || "Cookie Preferences"}
+              title={t("app.cookie.notice.title")}
               dismissable={false}
               duration={0}
               class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm"
@@ -89,7 +89,7 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
                     size="sm"
                     onClick={() => setCookieAndDismiss("allowed")}
                   >
-                    {t("cookie.notice.allow.all") || "Accept"}
+                    {t("app.cookie.notice.allow.all")}
                   </RLButton>
                   <RLButton
                     variant="solid"
@@ -97,21 +97,20 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
                     size="sm"
                     onClick={() => setCookieAndDismiss("denied")}
                   >
-                    {t("cookie.notice.deny.all") || "Decline"}
+                    {t("app.cookie.notice.deny.all")}
                   </RLButton>
                 </div>
               }
             >
               <span>
-                {t("cookie.notice.description.prefix") ||
-                  "We use cookies to enhance your experience."}{" "}
+                {t("app.cookie.notice.description.prefix")}{" "}
                 <a
                   href={getLocaleUrl("/company/legal/cookie-policy")}
                   class="underline hover:text-primary transition-colors font-medium"
                 >
-                  {t("cookie.notice.cookie.policy.label") || "Cookie Policy"}
+                  {t("app.cookie.notice.cookie.policy.label")}
                 </a>{" "}
-                {t("cookie.notice.description.suffix") || ""}
+                {t("app.cookie.notice.description.suffix")}
               </span>
             </RLToast>
           </div>

@@ -1,8 +1,10 @@
 {
   "page": {
     "about": {
-      "title": "Sobre a Rimelight",
-      "description": "Conheça nossa missão, nossa visão e nossa equipe."
+      "meta": {
+        "title": "Sobre a Rimelight",
+        "description": "Conheça nossa missão, nossa visão e nossa equipe."
+      }
     },
     "home": {
       "section": {
@@ -121,6 +123,174 @@
       "meta": {
         "title": "Loja",
         "description": "Compre produtos digitais e mercadorias."
+      }
+    },
+    "wiki": {
+      "sidebar": {
+        "wiki": "Wiki",
+        "getting": {
+          "started": "Primeiros passos"
+        },
+        "contribution": {
+          "guide": "Guia de contribuição"
+        },
+        "lore": "Lore",
+        "timeline": "Linha do tempo",
+        "characters": "Personagens",
+        "locations": "Locais",
+        "species": "Espécies",
+        "objects": "Objetos",
+        "groups": "Grupos",
+        "game": "Informações do jogo",
+        "tales": "Contos",
+        "items": "Itens",
+        "quests": "Missões",
+        "skills": "Habilidades",
+        "settings": "Configurações"
+      }
+    },
+    "dev": {
+      "components": {
+        "title": "Componentes",
+        "description": "Ambientes interativos de teste, cenários de casos extremos, listas de verificação WCAG e fichas de propriedades dos componentes de interface da Rimelight."
+      },
+      "index": {
+        "title": "Painel",
+        "description": "Ambiente de teste isolado e padronizado, com suíte de auditoria de recursos da Rimelight. Sem poluição de layout, para garantir a precisão dos testes.",
+        "card": {
+          "user": {
+            "interface": {
+              "title": "Interface do usuário",
+              "description": "Escalas de paleta OKLCH híbridas interativas, tipografia e fontes, biblioteca de ícones, matriz de contraste por intenção e temas de componentes."
+            }
+          },
+          "components": {
+            "title": "Componentes",
+            "description": "Ambientes interativos de teste, cenários de casos extremos, listas de verificação WCAG e fichas de propriedades de mais de 19 componentes de interface da Rimelight."
+          },
+          "localization": {
+            "title": "Localização",
+            "description": "Teste básico do seletor de idioma, diagnósticos de reescrita de URL e verificação da sincronização cliente/servidor do @rimelight/i18n."
+          },
+          "security": {
+            "title": "Segurança",
+            "description": "Geração de cabeçalhos CSP, injeção de nonce e Trusted Types no head, inspeção da configuração de limite de requisições e diagnósticos de Turnstile e de construção em tempo de execução."
+          },
+          "seo": {
+            "title": "SEO",
+            "description": "Auditoria completa do @rimelight/seo: geração de head, utilitários de meta, dados estruturados (JSON-LD), imagens OG, sitemap, robots.txt, RSS, LLMs.txt, manifesto web, security.txt e catálogo de API."
+          }
+        }
+      },
+      "layout": {
+        "brand": "Rimelight Developer Workspace"
+      },
+      "localization": {
+        "title": "Localização",
+        "description": "Validando a reescrita de URL de i18n, parâmetros de rota e sincronização reativa do RLLocaleSelector.",
+        "current": {
+          "values": "Valores atuais",
+          "locale": "Idioma atual"
+        },
+        "window": {
+          "pathname": "Caminho da janela"
+        },
+        "available": {
+          "locales": "Idiomas disponíveis"
+        },
+        "default": {
+          "locale": {
+            "title": "Idioma padrão",
+            "description": "Retorna o idioma de fallback usado quando nenhum está ativo ou falta uma tradução."
+          }
+        },
+        "goto": {
+          "locale": "Ir para /{locale}"
+        },
+        "locale": {
+          "asset": {
+            "title": "Recurso localizado",
+            "description": "Resolve um recurso para o idioma ativo, recorrendo ao idioma padrão."
+          }
+        },
+        "t": {
+          "basic": {
+            "title": "Chave básica",
+            "description": "Resolve uma chave de tradução para o idioma ativo."
+          },
+          "interpolation": {
+            "title": "Interpolação",
+            "description": "Substitui espaços reservados na string usando o objeto de parâmetros."
+          },
+          "count": {
+            "title": "Plural + formatação numérica",
+            "description": "Uma contagem numérica seleciona a variante plural e é formatada por idioma.",
+            "branch": {
+              "title": "Fallback de plural",
+              "description": "Um plural sem variante correspondente recorre à forma \"other\"."
+            }
+          },
+          "function": {
+            "title": "Valor de função",
+            "description": "Um valor de tradução pode ser uma função que recebe o objeto de parâmetros."
+          },
+          "locale": {
+            "title": "Substituição explícita de idioma",
+            "description": "O terceiro argumento resolve um idioma diferente do ativo."
+          },
+          "raw": {
+            "title": "t.raw()",
+            "description": "Retorna o valor subjacente em vez de convertê-lo em string.",
+            "locale": {
+              "title": "Substituição de idioma de t.raw()",
+              "description": "O terceiro argumento lê um valor bruto de outro idioma."
+            },
+            "fallback": {
+              "title": "Fallback de t.raw()",
+              "description": "Retorna o fallback quando a chave não existe."
+            }
+          },
+          "array": {
+            "title": "t.array()",
+            "description": "Retorna um array tipado do dicionário.",
+            "fallback": {
+              "title": "Fallback de t.array()",
+              "description": "Retorna o array de fallback quando a chave está ausente ou não é um array."
+            }
+          },
+          "plural": {
+            "title": "t.plural()",
+            "description": "Retorna a categoria plural CLDR para uma contagem."
+          },
+          "localize": {
+            "title": "t.localize()",
+            "description": "Escolhe um valor de um dicionário de idiomas inline."
+          },
+          "missing": {
+            "title": "Chave ausente",
+            "description": "Chaves desconhecidas retornam a própria chave."
+          }
+        },
+        "sample": {
+          "hello": "Olá da Rimelight!",
+          "greeting": "Olá, {name}!",
+          "items": {
+            "one": "{count} item no seu carrinho",
+            "other": "{count} itens no seu carrinho"
+          },
+          "other": {
+            "only": {
+              "other": "{count} resultados - recorreu a other"
+            }
+          },
+          "computed": "Valor calculado indisponível",
+          "tags": ["TypeScript", "SolidJS", "Vite+"],
+          "object": {
+            "name": "Rimelight Entertainment",
+            "founded": 2023,
+            "featured": true
+          }
+        }
       }
     }
   },
@@ -315,197 +485,765 @@
           "other-documents": "Outros documentos"
         }
       }
-    }
-  },
-  "cookie": {
-    "notice": {
-      "title": "Preferências de cookies",
-      "description": {
-        "prefix": "Usamos cookies para melhorar sua experiência.",
-        "suffix": "."
-      },
-      "cookie": {
-        "policy": {
-          "label": "Política de cookies"
+    },
+    "cookie": {
+      "notice": {
+        "title": "Preferências de cookies",
+        "description": {
+          "prefix": "Usamos cookies para melhorar sua experiência.",
+          "suffix": "."
+        },
+        "cookie": {
+          "policy": {
+            "label": "Política de cookies"
+          }
+        },
+        "allow": {
+          "all": "Aceitar"
+        },
+        "deny": {
+          "all": "Recusar"
         }
-      },
-      "allow": {
-        "all": "Aceitar"
-      },
-      "deny": {
-        "all": "Recusar"
       }
-    }
-  },
-  "wiki": {
-    "sidebar": {
+    },
+    "text": {
+      "loading": "Carregando.",
+      "accessing-me": "Acessando me.",
+      "menu": "Menu",
+      "open-menu": "Abrir menu",
+      "keyboard-shortcuts": "Atalhos de teclado",
+      "actions": "Ações",
+      "open-actions": "Abrir ações",
+      "props": "Props",
+      "no-props-to-display": "Nenhuma prop para exibir.",
+      "name": "Nome",
+      "type": "Tipo",
+      "required": "Obrigatório",
+      "default": "Padrão",
+      "description": "Descrição",
+      "slots": "Slots",
+      "no-slots-to-display": "Nenhum slot para exibir.",
+      "slot": "Slot",
+      "emits": "Emits",
+      "no-events-emitted-by-this-component": "Este componente não emite eventos.",
+      "event": "Evento",
+      "payload": "Payload",
+      "theme": "Tema",
+      "no-theme-data-available": "Nenhum dado de tema disponível.",
+      "changelog": "Changelog",
+      "failed-to-load-changelog": "Falha ao carregar o registro de alterações.",
+      "no-recent-changes-found": "Nenhuma alteração recente encontrada.",
+      "live-preview": "Pré-visualização ao vivo",
+      "editable": "Editável",
+      "override-trailing-icon": "Substituir ícone final",
+      "item-count": "Quantidade de itens:",
+      "ratio": "Proporção:",
+      "variant": "Variante:",
+      "orientation": "Orientação:",
+      "progress": "Progresso:",
+      "size": "Tamanho:",
+      "theme-color": "Cor do tema:",
+      "progress-color": "Cor do progresso:",
+      "skip": "Pular",
+      "speed": "Velocidade",
+      "volume": "Volume",
+      "repeat": "Repetir",
+      "download": "Baixar",
+      "external-link": "Link externo",
+      "playlist": "Playlist",
+      "volume-c9cc": "Volume %",
+      "zoomable-art": "Arte com zoom",
+      "color": "Cor:",
+      "chip-color": "Cor do chip:",
+      "image-src": "Origem da imagem",
+      "chip": "Chip",
+      "benjamin-canac": "Benjamin Canac",
+      "john-doe": "John Doe",
+      "corner-shape": "Formato do canto:",
+      "leading-icon": "Ícone inicial",
+      "trailing-icon": "Ícone final",
+      "avatar": "Avatar",
+      "label": "Rótulo:",
+      "icon": "Ícone",
+      "close-button": "Botão fechar",
+      "contain": "Conter",
+      "as-link": "Como link",
+      "title": "Título:",
+      "separator": "Separador:",
+      "max-visible": "Máximo visível:",
+      "show-icons": "Mostrar ícones",
+      "show-avatar": "Mostrar avatar",
+      "dots": "Pontos:",
+      "navigation": "Navegação",
+      "padded": "Com preenchimento",
+      "shadow": "Sombra",
+      "rounded": "Arredondado",
+      "url": "URL:",
+      "rimelight-dashboard": "Painel Rimelight",
+      "total-visits": "Total de visitas",
+      "performance": "Desempenho",
+      "aria-compliance": "Conformidade ARIA",
+      "trailing": "Final",
+      "loading-8f26": "Carregando",
+      "loadingauto": "LoadingAuto",
+      "disabled": "Desativado",
+      "block": "Bloco",
+      "square": "Quadrado",
+      "active-a733": "Ativo",
+      "type-ee3f": "Tipo:",
+      "mode": "Modo:",
+      "week-numbers": "Números das semanas",
+      "readonly": "Somente leitura",
+      "fixedweeks": "fixedWeeks",
+      "desc": "Desc.:",
+      "title-768e": "Título",
+      "body": "Corpo",
+      "footer": "Rodapé",
+      "media": "Media",
+      "overlay": "Sobreposição",
+      "link-card": "Cartão de link",
+      "card-footer-content": "Conteúdo do rodapé do cartão",
+      "controls": "Controles:",
+      "arrows": "Setas",
+      "dots-4b44": "Pontos",
+      "loop": "Loop",
+      "autoplay": "Reprodução automática",
+      "fade": "Fade",
+      "items": "Itens:",
+      "slide": "Slide",
+      "product-visual": "Visual do produto",
+      "indicator": "Indicador:",
+      "highlight": "Destaque",
+      "has-label": "Com rótulo",
+      "has-description": "Com descrição",
+      "position": "Posição:",
+      "inset": "Interno",
+      "standalone": "Independente",
+      "show": "Mostrar",
+      "wrapped-target": "Alvo envolvido:",
+      "text": "Texto:",
+      "e-g-5-or-99": "e.g. 5 or 99+",
+      "benjamin": "Benjamin",
+      "inbox": "Caixa de entrada",
+      "state": "Estado:",
+      "unmount-on-hide": "Desmontar ao ocultar",
+      "collapsible-content": "Conteúdo recolhível",
+      "this-content-toggles-smoothly-according-to-the-o": "Este conteúdo alterna suavemente de acordo com o estado aberto.",
+      "labels": "Rótulos",
+      "hover": "Ao passar o mouse",
+      "handle": "Alça",
+      "divider": "Divisor",
+      "value": "Valor:",
+      "action": "Action",
+      "cancel": "Cancelar:",
+      "source": "Origem:",
+      "fit": "Ajuste:",
+      "theme-0485": "Tema:",
+      "lightbox": "Lightbox",
+      "figure": "Figura",
+      "caption": "Legenda:",
+      "optional-caption": "legenda opcional...",
+      "sandbox-preview": "Pré-visualização do sandbox",
+      "main-content-area": "Área de conteúdo principal",
+      "children": "Filhos",
+      "class": "Classe:",
+      "e-g-bg-elevated-10-rounded-xl-border-border-defa": "ex.: bg-elevated/10 rounded-xl border border-default",
+      "scrollable": "Rolável",
+      "fullscreen": "Tela cheia",
+      "dismissible": "Dispensável",
+      "header": "Cabeçalho",
+      "cta-variant": "Variante de CTA:",
+      "reverse": "Invertido",
+      "headline": "Manchete",
+      "links": "Links",
+      "background": "Plano de fundo",
+      "headline-4063": "Manchete:",
+      "left-slot": "Left slot",
+      "right-slot": "Right slot",
+      "custom-prefix": "Prefixo personalizado:",
+      "simulate-navigation": "Simular navegação:",
+      "enable-visual-progress-bar": "Ativar barra de progresso visual",
+      "progress-size": "Tamanho do progresso:",
+      "simulated-loading": "Carregamento simulado",
+      "anim": "Animação:",
+      "carousel": "Carrossel",
+      "carousel-inverse": "Carrossel inverso",
+      "swing": "Balanço",
+      "elastic": "Elástico",
+      "selected-rows": "Linhas selecionadas:",
+      "faceted-status-counts": "Contagens de status facetadas:",
+      "surface-card-component": "Componente de superfície e cartão",
+      "disabled-tab": "Aba desativada",
+      "account": "Conta",
+      "completed": "Concluído",
+      "profile": "Perfil",
+      "in-progress": "Em andamento",
+      "finish": "Concluir",
+      "pending": "Pendente",
+      "search-query": "Termo de busca",
+      "remember-me": "Lembrar de mim",
+      "option-a": "Opção A",
+      "profile-settings": "Configurações do perfil",
+      "p": "⌘P",
+      "appearance": "Aparência",
+      "t": "⌘T",
+      "sign-out": "Sair",
+      "q": "⌥Q",
+      "system-notification": "Notificação do sistema",
+      "surface-bg": "Fundo da superfície:",
+      "text-intent": "Intenção do texto:",
+      "border-intent": "Intenção da borda:",
+      "accent-color": "Cor de destaque:",
+      "aa-sample": "Amostra Aa",
+      "palette": "Paleta:",
+      "aa": "Aa",
+      "preview-bg": "Fundo da pré-visualização:",
+      "components": "Components",
+      "import-usage": "Importação e uso",
+      "docs-version": "Versão da documentação",
+      "docs-sections": "Seções da documentação",
+      "loading-documentation": "Carregando documentação…",
+      "grand-tale-logo": "Logo de Grand Tale",
+      "browse": "Explorar",
+      "10-off": "10% de desconto",
+      "help-center": "Central de ajuda",
+      "about-rimelight": "Sobre a Rimelight",
+      "our-mission": "Nossa missão",
+      "our-values": "Nossos valores",
+      "join-our-journey": "Faça parte da nossa jornada",
+      "categories": "Categories",
+      "no-blog-posts-available-yet": "Ainda não há posts no blog.",
+      "loading-post": "Carregando post...",
+      "life-culture-at-rimelight": "Vida e cultura na Rimelight",
+      "remote-first": "Remoto em primeiro lugar",
+      "creative-autonomy": "Autonomia criativa",
+      "competitive-compensation": "Remuneração competitiva",
+      "open-positions": "Vagas abertas",
+      "senior-game-engine-developer": "Desenvolvedor sênior de game engine",
+      "engineering-remote": "Engenharia • Remoto",
+      "full-stack-cloud-systems-engineer": "Engenheiro full-stack de sistemas em nuvem",
+      "platform-remote": "Plataforma • Remoto",
+      "rimelight-entertainment": "Rimelight Entertainment",
+      "no-legal-documents-found": "Nenhum documento legal encontrado.",
+      "loading-document": "Carregando documento...",
+      "studio-partnerships": "Parcerias de estúdio",
+      "security": "Segurança",
+      "rendered-output": "Saída renderizada",
+      "e-g-documentation-blog-changelog": "ex.: Documentação, Blog, Registro de alterações",
+      "e-g-2026-10-18": "e.g. 2026-10-18",
+      "custom-color": "Cor personalizada",
+      "1e1b4b": "#1e1b4b",
+      "sandbox-og-preview": "Pré-visualização OG do sandbox",
+      "seo": "SEO",
+      "filter-default-icons-by-name": "Filtrar ícones padrão por nome...",
+      "sample-surface": "Superfície de exemplo",
+      "user-interface": "Interface do usuário",
+      "lightcon": "LightCon",
+      "grand-tale-forums": "Grand Tale Forums",
+      "rimelight-forums": "Fóruns da Rimelight",
+      "about-grand-tale": "Sobre Grand Tale",
+      "build-planners": "Build Planners",
+      "mechanics-calculators": "Calculadoras de mecânicas",
+      "grand-tale-guides": "Guias de Grand Tale",
+      "calculators": "Calculators",
+      "grand-tale-official-trailer": "Trailer oficial de Grand Tale",
+      "leaderboards": "Leaderboards",
+      "read-development-updates-patch-notes-and-communi": "Leia atualizações de desenvolvimento, notas de patch e eventos da comunidade.",
+      "search-troubleshooting-guides-or-submit-a-suppor": "Pesquise guias de solução de problemas ou envie um chamado de suporte.",
+      "1-choosing-your-path": "1. Escolha seu caminho",
+      "aethelgard": "Aethelgard",
+      "search-the-library": "Pesquisar na biblioteca...",
+      "page-title": "Título da página",
+      "add-a-description": "Adicione uma descrição...",
+      "loading-article": "Carregando artigo...",
+      "review-revision": "Revisar alterações",
+      "no-revisions-pending-review-for-this-page": "Nenhuma revisão pendente para esta página.",
+      "hero-background": "Fundo do hero",
+      "company-background": "Fundo da empresa",
+      "we-are-rimelight-entertainment": "Somos a Rimelight Entertainment",
+      "projects-background": "Fundo de projetos",
+      "grand-tale": "Grand Tale",
+      "news-background": "Fundo de notícias",
+      "cta-background": "Fundo do CTA",
+      "redirecting-to-sign-in": "Redirecionando para o login...",
+      "redirecting-to-sign-out": "Redirecionando para o logout...",
+      "redirecting-to-sign-up": "Redirecionando para o cadastro...",
+      "soon": "Em breve",
+      "documentation": "Documentação",
+      "get-started": "Get started",
+      "breadcrumb": "Breadcrumb",
+      "home": "Home",
+      "products": "Products",
+      "action-1": "Action 1",
+      "action-2": "Action 2",
+      "get-started-90e4": "Começar",
+      "learn-more": "Learn more",
+      "copy-id": "Copiar ID",
+      "delete-payment": "Excluir pagamento",
+      "news": "Notícias",
+      "about": "Sobre",
       "wiki": "Wiki",
-      "getting": {
-        "started": "Primeiros passos"
-      },
-      "contribution": {
-        "guide": "Guia de contribuição"
-      },
-      "lore": "Lore",
-      "timeline": "Linha do tempo",
-      "characters": "Personagens",
-      "locations": "Locais",
-      "species": "Espécies",
-      "objects": "Objetos",
-      "groups": "Grupos",
-      "game": "Informações do jogo",
-      "tales": "Tales",
-      "items": "Itens",
-      "quests": "Missões",
-      "skills": "Habilidades",
-      "settings": "Configurações"
+      "guides": "Guias",
+      "forums": "Fóruns",
+      "support": "Suporte",
+      "guides-explorer": "Explorador de guias",
+      "featured-guides": "Guias em destaque",
+      "new-players": "Novos jogadores",
+      "hero-builds": "Builds de heróis",
+      "endgame-content": "Conteúdo de endgame",
+      "resources-crafting": "Recursos e criação",
+      "video-guides": "Guias em vídeo",
+      "tools": "Ferramentas",
+      "all-products": "Todos os produtos",
+      "digital-goods": "Produtos digitais",
+      "shipping-policy": "Política de envio",
+      "contact-support": "Falar com o suporte",
+      "locale-selector": "Seletor de idioma",
+      "current-values": "Valores atuais",
+      "security-config": "Configuração de segurança",
+      "domain": "Domínio",
+      "image-sources": "Fontes de imagem",
+      "rate-limited-routes": "Rotas com limite de requisições",
+      "rate-limiter": "Limitador de requisições",
+      "production-csp": "CSP de produção",
+      "csp-with-script-nonce": "CSP com nonce de script",
+      "turnstile-enabled": "Turnstile ativado",
+      "directives": "Diretivas",
+      "turnstile": "Turnstile",
+      "turnstile-config": "Configuração do Turnstile",
+      "configured-turnstile-options-from-security-plugi": "Opções do Turnstile configuradas pelo plugin de segurança.",
+      "construction-mode": "Modo de construção",
+      "construction-config": "Configuração de construção",
+      "active-construction-mode-configuration-from-secu": "Configuração ativa do modo de construção pelo plugin de segurança.",
+      "public-endpoints": "Endpoints públicos",
+      "security-policy": "Política de segurança",
+      "seo-audit": "Auditoria de SEO",
+      "platform-overview": "Visão geral da plataforma",
+      "developer-tools-release": "Lançamento de ferramentas para desenvolvedores",
+      "live-runtime-seo-auditing-and-validation-tooling": "Ferramentas de auditoria e validação de SEO em tempo de execução.",
+      "index-of-public-pages-for-automated-agents-and-l": "Índice de páginas públicas para agentes automatizados e ingestão por LLMs.",
+      "documentation-overview": "Visão geral da documentação",
+      "getting-started-guide-and-references": "Guia de início e referências.",
+      "platform-runtime": "Runtime da plataforma",
+      "developer-tools-and-environment": "Ferramentas e ambiente de desenvolvimento.",
+      "company": "Empresa",
+      "creating-interactive-entertainment-and-software": "Criando entretenimento interativo e ferramentas de software.",
+      "products-games": "Produtos e jogos",
+      "explore-grand-tale-and-our-ecosystem-of-open-sou": "Explore o Grand Tale e nosso ecossistema de ferramentas de código aberto.",
+      "getting-started": "Getting Started",
+      "everything-you-need-to-get-up-and-running-with-r": "Tudo o que você precisa para começar com a Rimelight.",
+      "api-reference": "Referência da API",
+      "complete-api-reference-for-integrations": "Referência completa da API para integrações.",
+      "blog-post": "Post do blog",
+      "announcing-platform-v2": "Apresentando a plataforma v2",
+      "a-look-at-what-s-new-in-our-latest-release": "Um olhar sobre as novidades da nossa última versão.",
+      "active-configuration": "Configuração ativa",
+      "site-config": "Configuração do site",
+      "configured-locales": "Idiomas configurados",
+      "locale-to-hreflang-mappings-used-for-alternate-u": "Mapeamentos de idioma para hreflang usados em URLs alternativas e sitemaps.",
+      "private-path-prefixes": "Prefixos de caminho privados",
+      "prefixes-excluded-from-public-indexing-and-disal": "Prefixos excluídos da indexação pública e bloqueados no robots.txt.",
+      "resolved-head-tags": "Tags head resolvidas",
+      "templated-title": "Título com template",
+      "interpolates-s-with-the-title-according-to-the-a": "Interpola %s com o título conforme o template ativo.",
+      "untitled-fallback": "Fallback sem título",
+      "falls-back-to-sitename-when-title-is-omitted": "Usa siteName quando o título é omitido.",
+      "standard-404-title-format": "Formato padrão do título 404.",
+      "absolute-bypass": "Bypass absoluto",
+      "custom-verbatim-title": "Título literal personalizado",
+      "bypasses-the-site-template-entirely": "Ignora completamente o template do site.",
+      "within-character-limit": "Dentro do limite de caracteres",
+      "description-passed-through-without-truncation-wh": "Descrição passada sem truncar quando abaixo do limite.",
+      "truncated-description": "Descrição truncada",
+      "truncates-at-boundary-and-appends-ellipsis": "Trunca no limite e acrescenta reticências.",
+      "indexable-page": "Página indexável",
+      "custom-directive-override": "Substituição de diretiva personalizada",
+      "root-url": "URL raiz",
+      "current-location-path": "Caminho da localização atual",
+      "query-string-preserved": "Query string preservada",
+      "derived-from-active-site": "Derivado do site ativo",
+      "standard-dynamic-query-url-for-open-graph-card-g": "URL de consulta dinâmica padrão para geração de cards Open Graph.",
+      "fallback-route": "Rota de fallback",
+      "active-website-json-ld": "JSON-LD de WebSite ativo",
+      "emits-schema-org-website-node-for-search-engines": "Emite um nó WebSite do Schema.org para buscadores.",
+      "serialization-sanitization": "Serialização e sanitização",
+      "neutralizes-script-tag-breakout-vectors-in-json": "Neutraliza vetores de escape de tags script no JSON-LD.",
+      "generated-urls": "URLs geradas",
+      "live-endpoint": "Endpoint ativo",
+      "endpoint-served-directly-by-the-seo-plugin-middl": "Endpoint servido diretamente pelo middleware do plugin seo().",
+      "active-channel": "Canal ativo",
+      "generates-an-rss-2-0-xml-feed-with-atom-namespac": "Gera um feed XML RSS 2.0 com vínculo ao namespace Atom.",
+      "endpoint-served-by-the-seo-plugin-middleware": "Endpoint servido pelo middleware do plugin seo().",
+      "ai-corpus-index": "Índice do corpus de IA",
+      "standard-llms-txt-manifest-for-automated-crawler": "Manifesto /llms.txt padrão para o contexto de crawlers automatizados.",
+      "live-endpoints": "Endpoints ativos",
+      "endpoints-served-by-the-seo-plugin-middleware": "Endpoints servidos pelo middleware do plugin seo().",
+      "progressive-web-app-manifest-derived-from-active": "Manifesto de PWA derivado da configuração do site ativo.",
+      "article-json-ld": "JSON-LD de artigo",
+      "emits-schema-org-article-blogposting-structured": "Emite dados estruturados Schema.org de Article / BlogPosting.",
+      "breadcrumblist-json-ld": "JSON-LD de BreadcrumbList",
+      "rfc-9652-machine-readable-api-catalog-linkset": "Linkset do catálogo de API legível por máquina (RFC 9652).",
+      "api-catalog-discovery-document": "Documento de descoberta do catálogo de API.",
+      "open-graph-previews": "Pré-visualizações Open Graph",
+      "active-card-templates": "Templates de card ativos",
+      "open-graph-sandbox": "Sandbox Open Graph",
+      "live-generator": "Gerador ao vivo",
+      "public-asset-endpoints": "Endpoints de recursos públicos",
+      "branding-assets-sitemap": "Recursos de marca e sitemap",
+      "virtual-ui-module": "Módulo virtual de UI",
+      "palettes-scales": "Paletas e escalas",
+      "ten-hybrid-oklch-palettes-with-11-lightness-chro": "Dez paletas híbridas OKLCH com 11 níveis de luminosidade/croma cada.",
+      "intent-tokens": "Tokens de intenção",
+      "typography-web-fonts": "Tipografia e fontes web",
+      "active-web-font-preset-config": "Configuração ativa de predefinição de fontes web",
+      "active-font-families": "Famílias de fontes ativas",
+      "icon-system": "Sistema de ícones",
+      "lucide-collection-resolution": "Coleção e resolução do Lucide",
+      "default-icons-lucide": "Ícones padrão (Lucide)",
+      "active-hybrid-palette-scales": "Escalas de paleta híbrida ativas",
+      "semantic-intent-utility-tokens": "Tokens utilitários de intenção semântica",
+      "surface-intent-tokens": "Tokens de intenção de superfície",
+      "design-tokens-dynamically-resolved-to-the-curren": "Tokens de design resolvidos dinamicamente para a camada de superfície do tema atual.",
+      "component-scoped-theming-rl-color": "Tematização com escopo de componente (rl-color-*)",
+      "button-color-variants": "Variantes de cor de botão",
+      "badge-palette-spectrum": "Espectro de paleta de badges",
+      "all-10-hybrid-palette-colors-applied-to-the-badg": "As 10 cores da paleta híbrida aplicadas à primitiva de badge.",
+      "official-community-forums-for-grand-tale": "Fóruns oficiais da comunidade do Grand Tale",
+      "what-is-rimelight-ui": "What is Rimelight UI?",
+      "how-does-accordion-grouping-work": "How does Accordion grouping work?",
+      "can-items-be-individually-disabled": "Can items be individually disabled?",
+      "custom-trailing-icon-support": "Custom trailing icon support",
+      "single-item-with-custom-children-slot": "Single Item with Custom Children Slot",
+      "custom-leading-trailing-icons": "Custom Leading & Trailing Icons",
+      "security-permissions": "Security & Permissions",
+      "payment-invoices": "Payment & Invoices",
+      "disabled-state-matrix": "Disabled State Matrix",
+      "enabled-section-1": "Enabled Section 1",
+      "disabled-section-2-disabled-true": "Disabled Section 2 (disabled: true)",
+      "enabled-section-3": "Enabled Section 3",
+      "icons": "Icons",
+      "colors": "Colors",
+      "single-exclusive-grouping-via-name": "Single Exclusive Grouping via name",
+      "group-a-item-1": "Group A — Item 1",
+      "group-a-item-2": "Group A — Item 2",
+      "group-b-item-1": "Group B — Item 1",
+      "group-b-item-2": "Group B — Item 2",
+      "global-trailingicon-prop-nuxt-trailing-icon": "Global trailingIcon Prop (Nuxt: trailing-icon)",
+      "global-plus-icon": "Global plus icon",
+      "per-item-override-wins": "Per-item override wins",
+      "root-disabled-prop-nuxt-disabled": "Root disabled Prop (Nuxt: disabled)",
+      "section-1": "Section 1",
+      "section-2": "Section 2",
+      "per-item-class-ui-override": "Per-item class / ui Override",
+      "plain-item": "Plain item",
+      "item-with-ui-override": "Item with ui override",
+      "controlled-value-onchange-nuxt-v-model": "Controlled value + onChange (Nuxt: v-model)",
+      "controlled-0": "Controlled 0",
+      "controlled-1": "Controlled 1",
+      "controlled-2": "Controlled 2",
+      "item-0": "Item 0",
+      "item-1": "Item 1",
+      "item-2": "Item 2",
+      "m0-open": "M0 open",
+      "m1-closed": "M1 closed",
+      "m2-open": "M2 open",
+      "pinned-open-at-start": "Pinned open at start",
+      "switch-target": "Switch target",
+      "collapse-me-then-inspect-dom": "Collapse me, then inspect DOM",
+      "collapsed-but-mounted": "Collapsed but mounted",
+      "custom-valuekey-labelkey-incl-dot-paths": "Custom valueKey / labelKey incl. Dot Paths",
+      "items-keyed-by-nested-fields-open-state-tracks-m": "Items keyed by nested fields. Open state tracks meta.key values.",
+      "nested-one": "Nested one",
+      "nested-two-open": "Nested two (open)",
+      "alpha": "Alpha",
+      "beta": "Beta",
+      "gamma": "Gamma",
+      "per-item-custom-body-render-prop": "Per-item custom body render prop",
+      "custom-item-body-rendered-by-the-body-render-pro": "Custom item body rendered by the body render prop.",
+      "standard": "Standard",
+      "featured": "Featured",
+      "nested-accordion-hierarchies": "Nested Accordion Hierarchies",
+      "sub-section-a": "Sub-Section A",
+      "sub-section-b": "Sub-Section B",
+      "widescreen-16-9-radix-style": "Widescreen 16 / 9 (Radix-style)",
+      "standard-video-ratio-content-fills-the-box": "Standard video ratio; content fills the box.",
+      "omitted-ratio-falls-back-to-square": "Omitted Ratio Falls Back to Square",
+      "no-ratio-prop-renders-1-1-mirroring-the-radix-de": "No ratio prop renders 1:1, mirroring the Radix default of 1.",
+      "portrait-9-16": "Portrait 9 / 16",
+      "height-dominant-ratio-keeps-its-box-without-layo": "Height-dominant ratio keeps its box without layout shift.",
+      "invalid-ratio-guards-to-square": "Invalid Ratio Guards to Square",
+      "polymorphic-as-prop": "Polymorphic as Prop",
+      "root-renders-a-section-element-inspect-the-dom-f": "Root renders a section element; inspect the DOM for section[data-slot=root].",
+      "root-ui-override": "Root ui Override",
+      "rounded-corners-border-via-ui-without-touching-t": "Rounded corners + border via ui without touching the component.",
+      "lofi-study-session-1": "Lofi Study Session #1",
+      "fasssounds-chill-ambient-beats": "FassSounds — Chill Ambient Beats",
+      "sunset-boulevard-walk": "Sunset Boulevard Walk",
+      "tokyo-night-vibe-acoustic-chill": "Tokyo Night Vibe — Acoustic & Chill",
+      "midnight-coding-flow": "Midnight Coding Flow",
+      "coma-media-deep-focus-session": "Coma-Media — Deep Focus Session",
+      "multi-track-album-playlist-with-top-actions": "Multi-Track Album Playlist with Top Actions",
+      "vertical-poster-orientation-1-1-ratio": "Vertical Poster Orientation (1:1 Ratio)",
+      "waveform-soundwave-vs-linear-progress-bar-with-c": "Waveform Soundwave vs Linear Progress Bar with Color Tokens",
+      "repeat-modes-off-repeat-all-repeat-one": "Repeat Modes (Off, Repeat All, Repeat One)",
+      "with-collapsible-transcript-lyrics": "With Collapsible Transcript & Lyrics",
+      "accordion-style-transcript-drawer-below-the-play": "Accordion-style transcript drawer below the playback controls.",
+      "custom-icon-overrides": "Custom Icon Overrides",
+      "overriding-control-button-icons-via-the-icons-pr": "Overriding control button icons via the icons prop.",
+      "image-fallback-progression": "Image & Fallback Progression",
+      "all-size-variants-3xs-to-3xl": "All Size Variants (3xs to 3xl)",
+      "from-3xs-16px-up-to-3xl-48px-with-proportional-t": "From 3xs (16px) up to 3xl (48px) with proportional typography and badges.",
+      "theme-colors-user-palettes": "Theme Colors & User Palettes",
+      "chip-badge-badging": "Chip & Badge Badging",
+      "title-subtitle-profile-layout": "Title & Subtitle Profile Layout",
+      "renders-adjacent-name-and-description-when-title": "Renders adjacent name and description when title or subtitle are provided.",
+      "avatargroup-with-hover-popover-profile": "AvatarGroup with Hover Popover Profile",
+      "avatargroup-across-different-sizes": "AvatarGroup Across Different Sizes",
+      "avatargroup-with-max-counter-chips": "AvatarGroup with Max Counter & Chips",
+      "avatargroup-with-items-array": "AvatarGroup with Items Array",
+      "declarative-items-array-prop-rendering-with-auto": "Declarative items array prop rendering with automated limit.",
+      "variants-colors-matrix": "Variants & Colors Matrix",
+      "all-size-scales-xs-to-xl": "All Size Scales (xs to xl)",
+      "icons-positioning": "Icons & Positioning",
+      "avatar-integration": "Avatar Integration",
+      "renders-leading-avatars-inside-badge-with-propor": "Renders leading avatars inside badge with proportional sizing (3xs and 2xs).",
+      "corner-shapes-square-mode": "Corner Shapes & Square Mode",
+      "polymorphic-element-as-prop": "Polymorphic Element (as prop)",
+      "renders-as-anchor-link-button-or-custom-html-tag": "Renders as anchor link, button, or custom HTML tag.",
+      "all-color-variants": "All Color Variants",
+      "actions-and-slots": "Actions and Slots",
+      "read-press-release": "Read Press Release",
+      "view-open-roles": "View Open Roles",
+      "slot-overrides-leading-title-actions-close": "Slot Overrides (leading, title, actions, close)",
+      "interactive-link-mode": "Interactive Link Mode",
+      "secondary-action": "Secondary action",
+      "dismissible-with-persistence-id": "Dismissible with Persistence ID",
+      "header-stack-integration": "Header Stack Integration",
+      "configure-stack": "Configure Stack",
+      "docs": "Docs",
+      "store": "Store",
+      "electronics": "Electronics",
+      "audio-headphones": "Audio & Headphones",
+      "wireless-anc": "Wireless ANC",
+      "studio-pro-x900": "Studio Pro X900",
+      "standard-items-with-icons": "Standard Items with Icons",
+      "default-breadcrumb-items-with-icons-and-active-s": "Default breadcrumb items with icons and active styling on the terminal step.",
+      "color-variants": "Color Variants",
+      "supports-changing-the-active-item-color-across-a": "Supports changing the active item color across all semantic colors.",
+      "custom-separator-icon-slot": "Custom Separator Icon & Slot",
+      "renders-avatars-within-leading-items-with-propor": "Renders avatars within leading items with proportional sizing.",
+      "organization": "Organization",
+      "developers": "Developers",
+      "responsive-server-overflow-collapse-maxvisible": "Responsive / Server Overflow Collapse (maxVisible)",
+      "custom-item-slots": "Custom Item Slots",
+      "custom-rendering-per-item-using-the-item-leading": "Custom rendering per-item using the item, leading, and label slot patterns.",
+      "detail": "Detail",
+      "visual-variants-outline-solid-soft-subtle-ghost": "Visual Variants (Outline, Solid, Soft, Subtle, Ghost)",
+      "demonstrates-all-visual-frame-styles-with-consis": "Demonstrates all visual frame styles with consistent borders and backgrounds.",
+      "size-presets-sm-md-lg-xl": "Size Presets (sm, md, lg, xl)",
+      "navigation-controls-custom-actions-slot": "Navigation Controls & Custom Actions Slot",
+      "back-forward-reload-buttons-alongside-custom-hea": "Back/forward/reload buttons alongside custom header actions slot.",
+      "unpadded-embedded-media-hero-screenshot": "Unpadded Embedded Media & Hero Screenshot",
+      "monochrome-minimalist-style": "Monochrome Minimalist Style",
+      "subtle-neutral-dot-styling-for-understated-produ": "Subtle neutral dot styling for understated product mockups.",
+      "color-variant-matrix": "Color & Variant Matrix",
+      "size-spectrum-xs-to-xl": "Size Spectrum (xs to xl)",
+      "icons-avatars": "Icons & Avatars",
+      "loading-loadingauto-states": "Loading & LoadingAuto States",
+      "interactive-link-active-state": "Interactive Link & Active State",
+      "field-group-segmenting": "Field Group Segmenting",
+      "custom-slots-ui-overrides": "Custom Slots & UI Overrides",
+      "single-date-selection": "Single Date Selection",
+      "multiple-date-selection": "Multiple Date Selection",
+      "range-date-selection": "Range Date Selection",
+      "month-year-picker-views": "Month & Year Picker Views",
+      "view-switching-day-month-year": "View Switching (day → month → year)",
+      "week-numbers-column": "Week Numbers Column",
+      "multiple-months-numberofmonths": "Multiple Months (numberOfMonths)",
+      "disabled-unavailable-min-max-dates": "Disabled / Unavailable / Min-Max Dates",
+      "disabled-readonly-states": "Disabled & Readonly States",
+      "color-variant-matrix-857a": "Color × Variant Matrix",
+      "all-7-colors-with-the-4-variants-driving-the-day": "All 7 colors with the 4 variants driving the day-cell state styling.",
+      "sizes-xs-xl": "Sizes (xs – xl)",
+      "size-drives-heading-label-head-cells-and-day-cel": "Size drives heading label, head cells and day-cell dimensions.",
+      "custom-slots-heading-day-weekday-monthcell-yearc": "Custom Slots (heading, day, weekDay, monthCell, yearCell)",
+      "custom-calendar-label-aria-label": "Custom Calendar Label (aria-label)",
+      "per-slot-class-overrides-through-the-ui-prop-mer": "Per-slot class overrides through the `ui` prop merge.",
+      "all-visual-variants": "All Visual Variants",
+      "solid-outline-soft-and-subtle-variants-across-br": "Solid, outline, soft, and subtle variants across brand and neutral colors.",
+      "vertical-horizontal-orientations-with-actions": "Vertical & Horizontal Orientations with Actions",
+      "accept": "Accept",
+      "dismiss": "Dismiss",
+      "avatar-icon-support": "Avatar & Icon Support",
+      "dismissible-close-button-customization": "Dismissible & Close Button Customization",
+      "custom-slots-parity": "Custom Slots Parity",
+      "outline-default-solid-soft-and-subtle-visual-var": "Outline (default), Solid, Soft, and Subtle visual variants.",
+      "header-title-description-compositions": "Header, Title & Description Compositions",
+      "slots-structural-customization": "Slots & Structural Customization",
+      "media-overlay-modes": "Media & Overlay Modes",
+      "polymorphism-link-cards": "Polymorphism & Link Cards",
+      "custom-ui-slot-styling": "Custom UI Slot Styling",
+      "fine-grained-styling-overrides-via-the-ui-prop-o": "Fine-grained styling overrides via the `ui` prop on all slots.",
+      "basic-items-carousel": "Basic Items Carousel",
+      "simple-image-carousel-rendering-an-array-of-item": "Simple image carousel rendering an array of items via scoped slot function.",
+      "arrows-dots-navigation": "Arrows & Dots Navigation",
+      "carousel-with-customized-prev-next-buttons-and-p": "Carousel with customized prev/next buttons and pagination dots.",
+      "controls-inside-viewport": "Controls Inside Viewport",
+      "arrows-and-pagination-dots-positioned-inside-the": "Arrows and pagination dots positioned inside the carousel slide bounds.",
+      "multiple-items-in-view-basis": "Multiple Items in View (Basis)",
+      "displaying-3-items-simultaneously-using-basis-1": "Displaying 3 items simultaneously using `basis-1/3` on item slot.",
+      "vertical-orientation": "Vertical Orientation",
+      "vertical-navigation-with-top-bottom-arrows-and-v": "Vertical navigation with top/bottom arrows and vertical slide flow.",
+      "fade-transition-mode": "Fade Transition Mode",
+      "smooth-crossfade-between-slides-instead-of-trans": "Smooth crossfade between slides instead of translation.",
+      "class-names-plugin-snapped-opacity": "Class Names Plugin (Snapped Opacity)",
+      "dynamically-applies-snap-states-for-customized-s": "Dynamically applies snap states for customized slide highlighting.",
+      "programmatic-control-thumbnails": "Programmatic Control & Thumbnails",
+      "syncing-external-thumbnail-buttons-via-the-carou": "Syncing external thumbnail buttons via the carousel ref handle.",
+      "bare-standalone-checkbox-no-label-no-description": "Bare & Standalone Checkbox (No Label / No Description)",
+      "label-only-minimal-checkbox-no-description": "Label-Only Minimal Checkbox (No Description)",
+      "interactive-states-description": "Interactive States & Description",
+      "color-variants-matrix": "Color Variants Matrix",
+      "size-scales": "Size Scales",
+      "extra-small-xs-small-sm-medium-md-large-lg-and-e": "Extra Small (xs), Small (sm), Medium (md), Large (lg), and Extra Large (xl).",
+      "indicators-card-variant": "Indicators & Card Variant",
+      "checkboxgroup-list-card-table": "CheckboxGroup (List, Card, Table)",
+      "system": "System",
+      "matches-device-settings": "Matches device settings.",
+      "light": "Light",
+      "always-uses-light-theme": "Always uses light theme.",
+      "dark": "Dark",
+      "always-uses-dark-theme": "Always uses dark theme.",
+      "slots-custom-ui-styling": "Slots & Custom UI Styling",
+      "custom-labelslot-descriptionslot-legendslot-and": "Custom labelSlot, descriptionSlot, legendSlot, and slot-level class overrides.",
+      "colors-palettes-matrix": "Colors & Palettes Matrix",
+      "all-size-scales-3xs-to-3xl": "All Size Scales (3xs to 3xl)",
+      "positions-all-4-corners": "Positions (All 4 Corners)",
+      "inset-mode-for-rounded-elements": "Inset Mode for Rounded Elements",
+      "text-numeric-counters": "Text & Numeric Counters",
+      "standalone-inline-chips": "Standalone Inline Chips",
+      "controlled-visibility-show-prop": "Controlled Visibility (show prop)",
+      "controls-chip-visibility-dynamically-while-prese": "Controls chip visibility dynamically while preserving wrapped children.",
+      "renders-as-custom-html-tag-such-as-span-or-secti": "Renders as custom HTML tag such as span or section.",
+      "a-collapsible-element-to-toggle-visibility-of-it": "A collapsible element to toggle visibility of its content.",
+      "basic-collapsible": "Basic Collapsible",
+      "default-collapsible-with-button-trigger-and-cont": "Default collapsible with button trigger and content slot.",
+      "persistent-content-unmountonhide-false": "Persistent Content (unmountOnHide: false)",
+      "controlled-open-state-defaultopen": "Controlled Open State & defaultOpen",
+      "disabled-collapsible": "Disabled Collapsible",
+      "disabled-collapsible-prevents-user-interaction-a": "Disabled collapsible prevents user interaction and applies disabled state.",
+      "rotating-indicator-icon": "Rotating Indicator Icon",
+      "collapsible-trigger-utilizing-reactive-open-stat": "Collapsible trigger utilizing reactive open state to animate an icon.",
+      "overriding-styles-for-root-trigger-and-content-s": "Overriding styles for root, trigger, and content slots.",
+      "polymorphic-tag-as-section": "Polymorphic Tag (as='section')",
+      "renders-root-container-as-a-semantic-html-sectio": "Renders root container as a semantic HTML section element.",
+      "basic-image-comparison": "Basic Image Comparison",
+      "standard-horizontal-split-comparing-two-photos-w": "Standard horizontal split comparing two photos with before and after labels.",
+      "vertical-split-orientation": "Vertical Split Orientation",
+      "vertical-split-slider-moving-top-to-bottom-with": "Vertical split slider moving top-to-bottom with horizontal divider line.",
+      "all-sizes-xs-sm-md-lg-xl": "All Sizes (xs, sm, md, lg, xl)",
+      "visual-variants-solid-outline-subtle-glass": "Visual Variants (solid, outline, subtle, glass)",
+      "handle-and-divider-styling-variants-across-solid": "Handle and divider styling variants across solid, outline, subtle, and glass.",
+      "rich-jsx-content-comparison": "Rich JSX Content Comparison",
+      "compares-arbitrary-dom-jsx-components-such-as-li": "Compares arbitrary DOM/JSX components such as light/dark mode UI cards.",
+      "hover-interaction-mode": "Hover Interaction Mode",
+      "divider-tracks-mouse-pointer-movement-automatica": "Divider tracks mouse pointer movement automatically without requiring drag.",
+      "autoplay-mode": "Autoplay Mode",
+      "continuously-oscillates-the-split-position-in-a": "Continuously oscillates the split position in a smooth sine wave cycle.",
+      "custom-handle-slot": "Custom Handle Slot",
+      "custom-handle-element-displaying-live-percentage": "Custom handle element displaying live percentage value inside a pill badge.",
+      "disabled-state": "Disabled State",
+      "static-non-interactive-comparison-slider-locked": "Static non-interactive comparison slider locked at a fixed position.",
+      "confirmation-variants-default-destructive": "Confirmation Variants (Default & Destructive)",
+      "custom-slots-layout": "Custom Slots & Layout",
+      "custom-titleslot-descriptionslot-and-triggerlabe": "Custom titleSlot, descriptionSlot, and triggerLabel.",
+      "all-size-variants-xs-to-xl-none": "All Size Variants (xs to xl + none)",
+      "color-inheritance-via-currentcolor": "Color Inheritance via currentColor",
+      "custom-class-name": "Custom Class Name",
+      "inline-flow-with-text-badges": "Inline Flow with Text & Badges",
+      "missing-empty-icon-resolution": "Missing / Empty Icon Resolution",
+      "basic-image-with-lightbox-dialog": "Basic Image with Lightbox Dialog",
+      "figure-caption-wrapper": "Figure & Caption Wrapper",
+      "light-dark-color-mode-sources": "Light / Dark Color-Mode Sources",
+      "object-fit-variants": "Object Fit Variants",
+      "custom-trigger-element": "Custom Trigger Element",
+      "broken-source-fallback": "Broken Source Fallback",
+      "non-interactive-static-image": "Non-Interactive Static Image",
+      "default-slot-children": "Default Slot (children)",
+      "custom-class-ui-slot-overrides": "Custom Class & ui Slot Overrides",
+      "attribute-accessibility-forwarding": "Attribute & Accessibility Forwarding",
+      "empty-main": "Empty Main",
+      "all-size-variants": "All Size Variants",
+      "scrollable-overlay-mode": "Scrollable Overlay Mode",
+      "slots-header-actions-nested-modals": "Slots, Header Actions & Nested Modals",
+      "custom-ui-slot-overrides": "Custom UI Slot Overrides",
+      "custom-borders-blur-levels-and-layout-overrides": "Custom borders, blur levels, and layout overrides via the `ui` prop.",
+      "all-variants-default-hero-cta": "All Variants (default, hero, cta)",
+      "primary-action": "Primary action",
+      "secondary": "Secondary",
+      "talk-to-sales": "Talk to sales",
+      "cta-variants-solid-outline-soft-subtle-naked": "CTA Variants (solid, outline, soft, subtle, naked)",
+      "orientation-reverse": "Orientation & Reverse",
+      "header-icon-headline-description": "Header, Icon, Headline & Description",
+      "links-footer-regions": "Links & Footer Regions",
+      "primary": "Primary",
+      "background-layer-content-visibility": "Background Layer & Content Visibility",
+      "custom-slot-parity": "Custom Slot Parity",
+      "default-slot-only-single-centered-column": "Default slot only (single centered column)",
+      "left-and-right-slots-together": "Left and right slots together",
+      "the-default-slot-narrows-to-lg-col-span-6-when-b": "The default slot narrows to lg:col-span-6 when both side columns are present.",
+      "default-navigation-feedback": "Default Navigation Feedback",
+      "screen-reader-live-announcements-enabled-with-de": "Screen reader live announcements enabled with default top loading indicator.",
+      "announcer-only-headless": "Announcer Only (Headless)",
+      "configured-progress-color-size": "Configured Progress Color & Size",
+      "basic-inferred-columns": "Basic Inferred Columns",
+      "selection-pagination": "Selection & Pagination",
+      "striped-bordered-hoverable-states": "Striped, Bordered & Hoverable States",
+      "empty-loading-feedback": "Empty & Loading Feedback",
+      "empty-placeholder-slot-and-animated-top-loading": "Empty placeholder slot and animated top loading progress indicator.",
+      "what-is-grand-tale": "What is Grand Tale?",
+      "when-is-the-game-launching": "When is the game launching?",
+      "what-platforms-will-be-supported": "What platforms will be supported?",
+      "is-grand-tale-free-to-play": "Is Grand Tale free to play?",
+      "new-to-grand-tale-start-here-to-learn-the-basics": "New to Grand Tale? Start here to learn the basics.",
+      "characters": "Characters",
+      "explore-the-heroes-villains-and-legends-of-the-w": "Explore the heroes, villains, and legends of the world.",
+      "locations": "Locations",
+      "discover-the-regions-cities-and-landmarks": "Discover the regions, cities, and landmarks.",
+      "heroes": "Heroes",
+      "master-the-playable-heroes-and-their-abilities": "Master the playable heroes and their abilities.",
+      "chronicles-of-the-cataclysm": "Chronicles of the Cataclysm",
+      "a-deep-dive-into-the-cataclysmic-events-that-res": "A deep dive into the cataclysmic events that reshaped Aethelgard.",
+      "soulstone-resonance-mechanics": "Soulstone Resonance Mechanics",
+      "how-to-maximize-your-character-s-combat-efficien": "How to maximize your character's combat efficiency using Soulstone resonance.",
+      "the-nine-factions-overview": "The Nine Factions Overview",
+      "learn-about-the-origins-motives-and-leaders-of-t": "Learn about the origins, motives, and leaders of the Nine Factions.",
+      "elemental-weakness-rotations": "Elemental Weakness & Rotations",
+      "mastering-elemental-synergy-to-defeat-raid-bosse": "Mastering elemental synergy to defeat raid bosses.",
+      "controls-the-open-state-programmatically-with-de": "Controls the open state programmatically with the defaultOpen prop set to true.",
+      "responsive-picture-breakpoints": "Responsive <picture> Breakpoints",
+      "default-main-element": "Default <main> Element",
+      "renders-a-self-contained-empty-main-with-no-chil": "Renders a self-contained empty <main> with no children.",
+      "root-renders-the-configured-element-defaults-to": "Root renders the configured element (defaults to <section>).",
+      "visual-progress-bar-disabled-via-progress-false": "Visual progress bar disabled via the progress prop set to false."
     }
   },
   "error": {
     "retry": "Tentar novamente"
   },
-  "dev": {
-    "components": {
-      "title": "Componentes",
-      "description": "Ambientes interativos de teste, cenários de casos extremos, listas de verificação WCAG e fichas de propriedades dos componentes de interface da Rimelight."
-    },
-    "index": {
-      "title": "Painel",
-      "description": "Ambiente de teste isolado e padronizado, com suíte de auditoria de recursos da Rimelight. Sem poluição de layout, para garantir a precisão dos testes.",
-      "card": {
-        "user": {
-          "interface": {
-            "title": "Interface do usuário",
-            "description": "Escalas de paleta OKLCH híbridas interativas, tipografia e fontes, biblioteca de ícones, matriz de contraste por intenção e temas de componentes."
-          }
-        },
-        "components": {
-          "title": "Componentes",
-          "description": "Ambientes interativos de teste, cenários de casos extremos, listas de verificação WCAG e fichas de propriedades de mais de 19 componentes de interface da Rimelight."
-        },
-        "localization": {
-          "title": "Localização",
-          "description": "Teste básico do seletor de idioma, diagnósticos de reescrita de URL e verificação da sincronização cliente/servidor do @rimelight/i18n."
-        },
-        "security": {
-          "title": "Segurança",
-          "description": "Geração de cabeçalhos CSP, injeção de nonce e Trusted Types no head, inspeção da configuração de limite de requisições e diagnósticos de Turnstile e de construção em tempo de execução."
-        },
-        "seo": {
-          "title": "SEO",
-          "description": "Auditoria completa do @rimelight/seo: geração de head, utilitários de meta, dados estruturados (JSON-LD), imagens OG, sitemap, robots.txt, RSS, LLMs.txt, manifesto web, security.txt e catálogo de API."
-        }
-      }
-    },
-    "layout": {
-      "brand": "Rimelight Developer Workspace"
-    },
-    "localization": {
-      "title": "Localização",
-      "description": "Validando a reescrita de URL de i18n, parâmetros de rota e sincronização reativa do RLLocaleSelector.",
-      "current": {
-        "values": "Valores atuais",
-        "locale": "Idioma atual"
-      },
-      "window": {
-        "pathname": "Caminho da janela"
-      },
-      "available": {
-        "locales": "Idiomas disponíveis"
-      },
-      "default": {
-        "locale": {
-          "title": "Idioma padrão",
-          "description": "Retorna o idioma de fallback usado quando nenhum está ativo ou falta uma tradução."
-        }
-      },
-      "goto": {
-        "locale": "Ir para /{locale}"
-      },
-      "locale": {
-        "asset": {
-          "title": "Recurso localizado",
-          "description": "Resolve um recurso para o idioma ativo, recorrendo ao idioma padrão."
-        }
-      },
-      "t": {
-        "basic": {
-          "title": "Chave básica",
-          "description": "Resolve uma chave de tradução para o idioma ativo."
-        },
-        "interpolation": {
-          "title": "Interpolação",
-          "description": "Substitui espaços reservados na string usando o objeto de parâmetros."
-        },
-        "count": {
-          "title": "Plural + formatação numérica",
-          "description": "Uma contagem numérica seleciona a variante plural e é formatada por idioma.",
-          "branch": {
-            "title": "Fallback de plural",
-            "description": "Um plural sem variante correspondente recorre à forma \"other\"."
-          }
-        },
-        "function": {
-          "title": "Valor de função",
-          "description": "Um valor de tradução pode ser uma função que recebe o objeto de parâmetros."
-        },
-        "locale": {
-          "title": "Substituição explícita de idioma",
-          "description": "O terceiro argumento resolve um idioma diferente do ativo."
-        },
-        "raw": {
-          "title": "t.raw()",
-          "description": "Retorna o valor subjacente em vez de convertê-lo em string.",
-          "locale": {
-            "title": "Substituição de idioma de t.raw()",
-            "description": "O terceiro argumento lê um valor bruto de outro idioma."
-          },
-          "fallback": {
-            "title": "Fallback de t.raw()",
-            "description": "Retorna o fallback quando a chave não existe."
-          }
-        },
-        "array": {
-          "title": "t.array()",
-          "description": "Retorna um array tipado do dicionário.",
-          "fallback": {
-            "title": "Fallback de t.array()",
-            "description": "Retorna o array de fallback quando a chave está ausente ou não é um array."
-          }
-        },
-        "plural": {
-          "title": "t.plural()",
-          "description": "Retorna a categoria plural CLDR para uma contagem."
-        },
-        "localize": {
-          "title": "t.localize()",
-          "description": "Escolhe um valor de um dicionário de idiomas inline."
-        },
-        "missing": {
-          "title": "Chave ausente",
-          "description": "Chaves desconhecidas retornam a própria chave."
-        }
-      },
-      "sample": {
-        "hello": "Olá da Rimelight!",
-        "greeting": "Olá, {name}!",
-        "items": {
-          "one": "{count} item no seu carrinho",
-          "other": "{count} itens no seu carrinho"
-        },
-        "other": {
-          "only": {
-            "other": "{count} resultados - recorreu a other"
-          }
-        },
-        "computed": "Valor calculado indisponível",
-        "tags": ["TypeScript", "SolidJS", "Vite+"],
-        "object": {
-          "name": "Rimelight Entertainment",
-          "founded": 2023,
-          "featured": true
-        }
-      }
+  "api": {
+    "message": {
+      "credentials-required": "São obrigatórios o usuário ou e-mail e a senha.",
+      "refresh-token-required": "O token de atualização é obrigatório.",
+      "unknown-title": "Título desconhecido.",
+      "body-too-large": "O corpo excede 16 KB.",
+      "body-must-be-json": "O corpo deve ser JSON.",
+      "settings-invalid": "A estrutura das configurações é inválida.",
+      "stored-settings-too-large": "As configurações armazenadas excederiam 64 KB.",
+      "bearer-missing": "Falta o token Bearer.",
+      "token-invalid": "Token inválido.",
+      "player-account-required": "É necessária uma conta de jogador.",
+      "token-no-email": "O token não possui a declaração de e-mail."
     }
   }
 }

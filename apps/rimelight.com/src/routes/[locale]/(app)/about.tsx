@@ -11,7 +11,7 @@ export const AboutPage: Component = () => {
           width={1020}
           height={510}
           src="https://cdn.rimelight.com/images/placeholder.webp"
-          alt="About Rimelight"
+          alt={t("app.text.about-rimelight")}
         />
       </div>
       <div class="prose dark:prose-invert max-w-none">
@@ -19,10 +19,10 @@ export const AboutPage: Component = () => {
           <div class="date text-muted mb-2">
             <RLDate date={new Date("August 08 2023")} />
           </div>
-          <h1 class="text-4xl font-extrabold tracking-tight">{t("page.about.title")}</h1>
+          <h1 class="text-4xl font-extrabold tracking-tight">{t("page.about.meta.title")}</h1>
           <hr class="my-4 border-neutral-800" />
         </div>
-        <p class="text-lg leading-relaxed text-neutral-300">{t("page.about.description")}</p>
+        <p class="text-lg leading-relaxed text-neutral-300">{t("page.about.meta.description")}</p>
       </div>
     </article>
   );
