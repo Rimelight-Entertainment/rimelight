@@ -1,7 +1,34 @@
 # @rimelight/i18n
 
-Locale-aware translation for Vite + Hono apps: JSON dictionaries, a synchronous `t()`, locale URLs and
-per-request locale resolution, with typed keys generated from your base locale.
+[![npm](https://img.shields.io/npm/v/@rimelight/i18n?style=flat-square&logo=npm)](https://www.npmjs.com/package/@rimelight/i18n)
+[![downloads](https://img.shields.io/npm/dt/@rimelight/i18n?style=flat-square&logo=npm)](https://www.npmjs.com/package/@rimelight/i18n)
+
+Locale-aware translation for Vite and Hono apps. Translations are JSON dictionaries, `t()` is synchronous, and locale URLs and per-request locale resolution are handled for you. Keys are typed from your base locale.
+
+## Features
+
+- **JSON dictionaries**: one file per locale, in `src/i18n` by default.
+- **Typed keys**: unknown keys fail to compile, and placeholders and plurals are checked.
+- **Locale URLs**: per-request resolution, with redirects to the locale-prefixed URL.
+- **Per-route loading**: Solid pages load only the translations they use.
+- **Plurals and arrays**: `t.plural` and `t.array` for the cases `t()` doesn't cover.
+- **CLI**: `rimelight-i18n` checks for missing, stale, empty, and mismatched keys, and can fix them in CI.
+- **External consumers**: dictionaries are served as JSON for game clients and other non-Solid consumers.
+
+## Installation
+
+```sh
+pnpm add @rimelight/i18n
+```
+
+### Peer dependencies
+
+| Package        | Version         |
+| -------------- | --------------- |
+| `@solidjs/web` | `>=2.0.0-rc.18` |
+| `hono`         | `^5.0.0-rc.1`   |
+| `solid-js`     | `>=2.0.0-rc.18` |
+| `vite-plus`    | `^1.0.0`        |
 
 ## Setup
 
@@ -12,7 +39,7 @@ src/i18n/en.json   # base locale: defines every key
 src/i18n/pt.json
 ```
 
-**Vite plugin.** Loads the files and generates the typed keys. Add `types` to choose where the typed keys go:
+**Vite plugin.** Loads the files and generates the typed keys. Set `types` to choose where the typed keys go:
 
 ```ts
 // vite.config.ts
@@ -23,8 +50,7 @@ export default defineConfig({
 });
 ```
 
-**Server middleware.** Mount it in your Hono app. It resolves the locale per request and redirects to the
-locale-prefixed URL:
+**Server middleware.** Mount it in your Hono app. It resolves the locale per request and redirects to the locale-prefixed URL:
 
 ```ts
 import { i18n } from "@rimelight/i18n/middleware";
@@ -32,8 +58,7 @@ import { i18n } from "@rimelight/i18n/middleware";
 app.use(i18n());
 ```
 
-Calling `i18n()` is what makes `getCurrentLocale()` return the request's locale on the server. Before each
-page renders, the middleware loads that URL's translations. The page sends them to the browser with its HTML.
+Calling `i18n()` is what makes `getCurrentLocale()` return the request's locale on the server. Before each page renders, the middleware loads that URL's translations. The page sends them to the browser with its HTML.
 
 ## Usage
 
@@ -54,10 +79,10 @@ getLocaleInfo().tag; // "pt-BR", for <html lang>
 Locale-aware helpers:
 
 - `getLocales()`, `getDefaultLocale()`, `getCurrentLocale()`, `setCurrentLocale(code)`
-- `getLocaleUrl(path, locale?)`: prefixes internal paths; external, hash, and file paths are returned unchanged
+- `getLocaleUrl(path, locale?)`: prefixes internal paths. External, hash, and file paths are returned unchanged.
 - `getLocaleInfo(code?)`: `{ code, tag, label, dir }`, derived with `Intl` unless configured
 - `getLocaleAsset(assets, locale?)`: picks a value keyed by locale, falling back to the default locale
-- `t.array`, `t.plural`: arrays and plural category lookups, for the cases `t()` doesn't cover
+- `t.array`, `t.plural`: arrays and plural category lookups
 
 ## Typed keys
 
@@ -68,11 +93,9 @@ The plugin generates an augmentation of `TranslationRegistry` from the base loca
 - Plural keys require `count`.
 - `t.raw` stays untyped, for dynamic keys.
 
-The generated file has to be part of your TypeScript program. Add its folder to `tsconfig.json`
-`include` if it isn't already covered. Keys are generated when Vite starts or builds, and again whenever a
-base-locale file changes.
+The generated file has to be part of your TypeScript program. Add its folder to `tsconfig.json` `include` if it isn't already covered. Keys are generated when Vite starts or builds, and again whenever a base-locale file changes.
 
-Only literal keys are typed. A key built at runtime, such as `t(\`page.${id}\`)`, falls back to `t.raw`.
+Only literal keys are typed. A key built at runtime, such as ``t(`page.${id}`)``, falls back to `t.raw`.
 
 ## Plugin options
 
@@ -85,12 +108,6 @@ Only literal keys are typed. A key built at runtime, such as `t(\`page.${id}\`)`
 | `defaultLocale`       | `en`                                      | Base locale, and the fallback for missing keys                         |
 | `prefixDefaultLocale` | `true`                                    | Whether the default locale also gets a URL prefix                      |
 | `skipPaths`           | `/api`, `/_`, `/.well-known`, `/cdn-cgi`  | Paths the middleware leaves alone                                      |
-
-## Game clients and other external consumers
-
-The middleware serves each dictionary as JSON at `/locales/<locale>.json`, with a one-hour cache. Each file is
-the whole locale: its own keys, plus the default locale's value for every key it lacks. So a `pt.json` has
-every key the default locale has, and some of them are in English.
 
 ## CLI
 
@@ -130,20 +147,35 @@ import { RLI18n } from "@rimelight/i18n/solid";
 
 How it works:
 
-- **First load.** The server renders the page with its translations. `RLI18n` hands them to Solid as async
-  data, so Solid serializes them into the HTML. The browser adopts them during hydration and fetches nothing
-  for translations. There is no top-level `await` in the client code, and no `modulepreload` tags.
-- **Client navigation.** The next URL's translations load before its page renders. The previous page stays
-  on screen until then. A stale navigation is dropped, and a failed load reaches the nearest error boundary.
-  Translations already loaded render at once.
-- **What a locale loads.** For each route bucket, the URL's own locale loads its keys. If that locale lacks
-  some of the default locale's keys, it also loads just those default-locale values. A locale with every key
-  loads nothing extra. The default locale's dictionary is not fetched for other locales.
+- **First load.** The server renders the page with its translations. `RLI18n` hands them to Solid as async data, so Solid serializes them into the HTML. The browser adopts them during hydration and fetches nothing for translations. There is no top-level `await` in the client code, and no `modulepreload` tags.
+- **Client navigation.** The next URL's translations load before its page renders. The previous page stays on screen until then. A stale navigation is dropped, and a failed load reaches the nearest error boundary. Translations already loaded render at once.
+- **What a locale loads.** For each route bucket, the URL's own locale loads its keys. If that locale lacks some of the default locale's keys, it also loads just those default-locale values. A locale with every key loads nothing extra. The default locale's dictionary is not fetched for other locales.
 
 Requirements and limits:
 
 - `solid-js` is a peer dependency, and `RLI18n` must render inside the server render, under `Loading`.
-- `t()` reads the loaded dictionary, so call it inside components or after `RLI18n` has rendered. A `t()`
-  call at module scope, evaluated at import time, reads before the page's translations arrive.
-- `t(key, params, locale)` for a locale other than the URL's own works only after `loadLocale(locale)`.
-  Reading the default locale from a non-default URL works only when the default locale's chunks are loaded.
+- `t()` reads the loaded dictionary, so call it inside components or after `RLI18n` has rendered. A `t()` call at module scope, evaluated at import time, reads before the page's translations arrive.
+- `t(key, params, locale)` for a locale other than the URL's own works only after `loadLocale(locale)`. Reading the default locale from a non-default URL works only when the default locale's chunks are loaded.
+
+## External consumers
+
+The middleware serves each dictionary as JSON at `/locales/<locale>.json`, with a one-hour cache. Each file is the whole locale: its own keys, plus the default locale's value for every key it lacks. So a `pt.json` has every key the default locale has, and some of them are in English.
+
+## Development
+
+This package lives in the [Rimelight monorepo](../../README.md). From the monorepo root:
+
+```sh
+pnpm install
+pnpm --filter @rimelight/i18n test
+pnpm --filter @rimelight/i18n build
+pnpm --filter @rimelight/i18n check
+```
+
+## Contributing
+
+Open an issue or pull request in the [monorepo](https://github.com/Rimelight-Entertainment/rimelight). Run `check` and `test` before submitting.
+
+## License
+
+MIT. See [LICENSE](../../LICENSE).
