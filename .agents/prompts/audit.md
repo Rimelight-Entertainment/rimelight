@@ -87,8 +87,6 @@ Audit a component file to ensure strict adherence to our design patterns and fun
   - **Slots & Children:**
     - Use native Solid JSX slot props (`props.leadingSlot`, `props.trailingSlot`, `props.children`), or typed render functions `(item: T) => JSX.Element`.
     - Never use Vue-like `props.slots` record bags or dynamic string lookups (`props.slots?.['header']`).
-    - Resolve slots using Solid 2.0 idiomatic patterns:
-      `<Show when={props.slotName}>{(slot) => (typeof slot() === "function" ? (slot() as Function)() : slot())}</Show>`.
 - Audit & Test Coverage:
   - Do not surround the component in any wrapper on the audit page.
   - The audit page must include a test scenario where every slot of the component is passed children (a single dedicated example per slot, including the default slot).
