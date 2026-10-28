@@ -8,7 +8,6 @@ import { auth } from "@rimelight/auth/plugin";
 import { i18n } from "@rimelight/i18n/plugin";
 import { ui } from "@rimelight/ui/plugin";
 import { cms } from "@rimelight/cms/plugin";
-import { uiDocsMeta } from "./src/docs/vite-plugin";
 
 export default defineConfig({
   plugins: [
@@ -80,9 +79,6 @@ export default defineConfig({
     }),
 
     cms({ autoMigrate: true, devBypassAuth: true }),
-
-    // Temporary: UI component metadata for the docs pages (see src/docs/vite-plugin.ts).
-    uiDocsMeta(),
   ],
 
   test: {

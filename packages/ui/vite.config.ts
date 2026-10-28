@@ -7,6 +7,10 @@ export default defineConfig({
     environment: "node",
     setupFiles: ["test/setup.ts"],
   },
+  fmt: {
+    // Written by scripts/generate-meta.ts; test/meta.test.ts compares it byte-for-byte.
+    ignorePatterns: ["src/meta/generated.ts"],
+  },
   pack: {
     entry: [
       "src/plugin.ts",

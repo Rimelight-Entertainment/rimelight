@@ -1,6 +1,8 @@
 import { type Component, For, lazy, Loading } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { RLErrorBoundary } from "@rimelight/ui/components/error-boundary/RLErrorBoundary.tsx";
 import { BlockRenderer, type PublicEntry } from "@rimelight/cms/solid";
-import meta from "virtual:rimelight-ui-docs-meta";
+import { componentMeta as meta } from "@rimelight/ui/meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
 import { rimelightCustomBlocks } from "#components/blocks";
@@ -66,36 +68,6 @@ function generateCombinationClasses(
   return { combinationClasses: result, initialThemeClasses };
 }
 
-function parseComponentTag(html: string): { tag: string; props: Record<string, any> } | null {
-  const parseTag = (tagHtml: string) => {
-    const match = tagHtml.match(/^<(\w+)([^>]*?)\/?>/);
-    if (!match) return null;
-    const props: Record<string, any> = {};
-    const attrRegex = /(\w[\w-]*)(?:=(?:"([^"]*)"|{([^}]*)}|'([^']*)'))?/g;
-    let m;
-    while ((m = attrRegex.exec((match[2] || "").trim())) !== null) {
-      const key = m[1]!;
-      if (m[2] !== undefined) props[key] = m[2];
-      else if (m[3] !== undefined) {
-        const val = m[3].trim();
-        props[key] =
-          val === "true"
-            ? true
-            : val === "false"
-              ? false
-              : /^\d+$/.test(val)
-                ? Number(val)
-                : val.replace(/^["']|["']$/g, "");
-      } else props[key] = true;
-    }
-    // Older docs use framework-prefixed names (RLAButton / RLVButton); the component is RLButton.
-    return { tag: match[1]!.replace(/^RL[AV](?=[A-Z])/, "RL"), props };
-  };
-  const trimmed = html.trim();
-  const componentMatch = trimmed.match(/<(RL\w+)[^>]*\/?>/);
-  return parseTag(componentMatch ? componentMatch[0] : trimmed);
-}
-
 /** Blocks with ApiDocumentationBlock metadata filled in, at any depth (copies; never mutates). */
 export function withDocsMeta(blocks: PublicEntry["blocks"]): PublicEntry["blocks"] {
   const all = meta as Record<string, any>;
@@ -118,11 +90,35 @@ export function withDocsMeta(blocks: PublicEntry["blocks"]): PublicEntry["blocks
   });
 }
 
+/** One node of a showcase preview: a live RL component, or a static HTML chunk. Built at migration time. */
+type PreviewNode =
+  | { html: string }
+  | { tag: string; props: Record<string, any>; children: PreviewNode[] };
+
+function renderPreviewNode(node: PreviewNode): JSX.Element {
+  if ("html" in node) return <span class="contents" innerHTML={node.html} />;
+  const Comp = componentRegistry[node.tag];
+  if (!Comp) return <span class="text-xs text-danger">Unknown component: {node.tag}</span>;
+  return (
+    <Loading fallback={<div class="h-24" />}>
+      <Comp {...node.props}>
+        {node.children.length ? (
+          <For each={node.children}>{(c) => renderPreviewNode(c)}</For>
+        ) : undefined}
+      </Comp>
+    </Loading>
+  );
+}
+
 /** Live component preview with prop toggles (`ComponentShowcaseBlock`). */
 const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (props) => {
   const block = props.block as any;
-  const parsed = parseComponentTag(block.props.previewHtml || "");
-  const Comp = parsed ? componentRegistry[parsed.tag] : null;
+  const preview = (): PreviewNode[] => block.props.preview ?? [];
+  console.log(
+    block.props.componentName,
+    JSON.stringify(block.props.preview ?? "MISSING").slice(0, 200),
+    Object.keys(block.props).join(","),
+  );
   const compKey = (block.props.componentName || "")
     .replace(/^RL[AV]?(?=[A-Z])/, "")
     .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
@@ -154,13 +150,13 @@ const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (prop
       playground={block.props.playgroundUrl}
       {...showcase}
     >
-      {Comp ? (
-        <Loading fallback={<div class="h-24" />}>
-          <Comp {...(parsed?.props ?? {})} />
-        </Loading>
-      ) : (
-        <div innerHTML={block.props.previewHtml || ""} />
-      )}
+      <RLErrorBoundary
+        fallback={(err: unknown) => (
+          <div class="text-sm text-danger">Preview failed to render: {String(err)}</div>
+        )}
+      >
+        <For each={preview()}>{(node) => renderPreviewNode(node)}</For>
+      </RLErrorBoundary>
     </ComponentShowcase>
   );
 };

@@ -6,7 +6,7 @@ import { extractAllThemesMeta } from "./extractors/extractTheme";
 import { extractPropsMeta } from "./extractors/extractProps";
 
 const pathDirname = path.dirname(fileURLToPath(import.meta.url));
-const uiRoot = path.resolve(pathDirname, "..", "..", "..", "..", "packages", "ui");
+const uiRoot = path.resolve(pathDirname, "..", "..");
 
 function pascalToKebab(name: string): string {
   return name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

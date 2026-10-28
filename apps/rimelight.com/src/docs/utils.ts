@@ -1,4 +1,4 @@
-import type { PropMeta, ThemeMeta } from "./types.ts";
+import type { PropMeta, ThemeMeta } from "@rimelight/ui/meta";
 
 export function kebabToPascal(name: string): string {
   return name

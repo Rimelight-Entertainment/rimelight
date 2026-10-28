@@ -73,6 +73,11 @@
       "solid": "./src/theme.ts",
       "import": "./src/theme.ts"
     },
+    "./meta": {
+      "types": "./src/meta/index.ts",
+      "solid": "./src/meta/index.ts",
+      "import": "./src/meta/index.ts"
+    },
     "./fonts": {
       "types": "./dist/fonts.d.mts",
       "solid": "./dist/fonts.mjs",
@@ -86,8 +91,9 @@
   "scripts": {
     "check": "vp check --fix",
     "test": "vp test",
-    "build": "vp pack",
-    "prepack": "vp pack"
+    "generate:meta": "vpx scripts/generate-meta.ts",
+    "build": "vp run generate:meta && vp pack",
+    "prepack": "vp run generate:meta && vp pack"
   },
   "dependencies": {
     "@rimelight/i18n": "workspace:*",
