@@ -58,7 +58,7 @@ describe("taxonomies", () => {
     expect(await bare.cms.taxonomies.listTaxonomies()).toEqual([]);
     const category = await bare.cms.taxonomies.createTaxonomyFromPreset(admin, "category");
     expect(category).toMatchObject({ slug: "category", hierarchical: true });
-    expect(category.label).toEqual({ en: "Categories" });
+    expect(category.label).toEqual({ en: "Categories", es: "Categories", pt: "Categories" });
     await expectError(bare.cms.taxonomies.createTaxonomyFromPreset(admin, "category"), 409);
     await expectError(bare.cms.taxonomies.createTaxonomyFromPreset(editor, "tag"), 403);
     await expectError(bare.cms.taxonomies.createTerm(admin, "tag", { label: "News" }), 404);

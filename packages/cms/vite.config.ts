@@ -1,6 +1,7 @@
 import { defineConfig } from "vite-plus";
 import solid from "@solidjs/vite-plugin";
 import { ui } from "@rimelight/ui/plugin";
+import { i18n } from "@rimelight/i18n/plugin";
 
 const setupFiles = ["./test/setup.ts"];
 
@@ -13,14 +14,16 @@ export default defineConfig({
     projects: [
       {
         extends: true,
+        plugins: [i18n({ dir: "test/fixtures/i18n", types: false })],
         test: {
           name: "logic",
           include: ["test/**/*.test.ts"],
           environment: "happy-dom",
+          environmentOptions: { happyDOM: { settings: { disableIframePageLoading: true } } },
         },
       },
       {
-        plugins: [solid(), ui({})],
+        plugins: [solid(), ui({}), i18n({ dir: "test/fixtures/i18n", types: false })],
         test: {
           name: "render",
           include: ["test/**/*.test.tsx"],

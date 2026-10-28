@@ -12,7 +12,10 @@ export function defineField<const T extends FieldDefinition>(def: T): T {
   return def;
 }
 
-export function resolveLabel(label: Label | undefined | null, locale = getCurrentLocale()): string {
+export function resolveLabel(
+  label: Label | undefined | null,
+  locale: string = getCurrentLocale(),
+): string {
   if (!label) return "";
   if (typeof label === "string") return label;
   return label[locale] ?? label["en"] ?? Object.values(label)[0] ?? "";

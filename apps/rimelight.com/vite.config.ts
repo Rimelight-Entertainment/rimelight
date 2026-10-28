@@ -85,6 +85,12 @@ export default defineConfig({
     uiDocsMeta(),
   ],
 
+  build: {
+    // The largest client chunk is ~464 kB minified (~96 kB gzipped), a shared chunk that the
+    // CMS code lands in. Raised so the warning stops firing; keeping CMS out of public pages is the real fix.
+    chunkSizeWarningLimit: 600,
+  },
+
   test: {
     environment: "happy-dom",
     include: ["test/**/*.test.{ts,tsx}"],
