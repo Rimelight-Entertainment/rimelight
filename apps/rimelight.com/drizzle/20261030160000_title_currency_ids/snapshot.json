@@ -1,0 +1,71 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "e65179b9-4ee0-4682-86d0-3f86e0034b4c",
+  "prevIds": ["3bfd0a7a-4847-419c-9356-a7443c4c1a6e"],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": ["column", "public", "title_currencies", "currency_id"],
+      "writes": [
+        "s|col|public.title_currencies.currency_id",
+        "n|col|public.title_currencies.currency_id",
+        "e|col|public.title_currencies.currency_id"
+      ],
+      "reads": ["n|tbl|public.title_currencies", "n|sch|public"]
+    },
+    {
+      "statementType": "drop_column",
+      "statementTarget": ["column", "public", "title_currencies", "currency"],
+      "writes": [
+        "s|col|public.title_currencies.currency",
+        "n|col|public.title_currencies.currency",
+        "e|col|public.title_currencies.currency"
+      ],
+      "reads": ["n|tbl|public.title_currencies", "n|sch|public"]
+    },
+    {
+      "statementType": "alter_pk",
+      "statementTarget": ["table", "public", "title_currencies"],
+      "writes": ["s|pk|public.title_currencies"],
+      "reads": [
+        "n|tbl|public.title_currencies",
+        "n|sch|public",
+        "n|col|public.title_currencies.user_id",
+        "n|col|public.title_currencies.title",
+        "n|col|public.title_currencies.currency_id"
+      ],
+      "sharedWrites": ["e|uniqueness|public.title_currencies.currency.title.user_id"]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_currencies",
+        "name": "currency_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"title_currencies\",\"currency\"]"
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"title_currencies\",\"title_currencies_user_id_title_currency_pk\"]",
+      "set": {
+        "columns": ["user_id", "title", "currency_id"]
+      }
+    }
+  ]
+}

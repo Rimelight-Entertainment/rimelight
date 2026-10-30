@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { canAdjustCurrency, clampBalance, currencyCapsFor } from "../src/api/title-currencies";
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
 describe("clampBalance", () => {
   it("keeps a balance inside zero and the cap", () => {
     expect(clampBalance(50, 100)).toBe(50);
@@ -19,9 +21,12 @@ describe("canAdjustCurrency", () => {
 });
 
 describe("currencyCapsFor", () => {
-  it("lists the Grand Tale currencies with positive caps", () => {
+  it("lists the Grand Tale currencies with positive caps, keyed by UUIDv4", () => {
     const caps = currencyCapsFor("grand-tale");
-    expect(caps["Currency.Gold"]).toBeGreaterThan(0);
-    expect(caps["Currency.Sparks"]).toBeGreaterThan(0);
+    expect(Object.keys(caps)).toHaveLength(2);
+    for (const [id, cap] of Object.entries(caps)) {
+      expect(id).toMatch(UUID);
+      expect(cap).toBeGreaterThan(0);
+    }
   });
 });

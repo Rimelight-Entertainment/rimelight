@@ -129,12 +129,12 @@ v1.get("/titles/:title/currencies", async (c) => {
 
   const currencies: Record<string, number> = {};
   for (const id of Object.keys(currencyCapsFor(title))) currencies[id] = 0;
-  for (const row of rows) currencies[row.currency] = row.amount;
+  for (const row of rows) currencies[row.currencyId] = row.amount;
   return c.json({ success: true, currencies });
 });
 
 const adjustSchema = z.object({
-  currency: z.string().max(64),
+  currency: z.string().uuid(),
   delta: z.number().int().min(-1_000_000_000).max(1_000_000_000),
 });
 
@@ -174,11 +174,14 @@ v1.post("/titles/:title/currencies/adjust", async (c) => {
   const key = and(
     eq(titleCurrencies.userId, userId),
     eq(titleCurrencies.title, title),
-    eq(titleCurrencies.currency, currency),
+    eq(titleCurrencies.currencyId, currency),
   );
 
   const amount = await db.transaction(async (tx) => {
-    await tx.insert(titleCurrencies).values({ userId, title, currency }).onConflictDoNothing();
+    await tx
+      .insert(titleCurrencies)
+      .values({ userId, title, currencyId: currency })
+      .onConflictDoNothing();
     const [row] = await tx.select().from(titleCurrencies).where(key).for("update");
 
     const next = clampBalance(row!.amount + delta, cap);

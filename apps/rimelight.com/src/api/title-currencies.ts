@@ -1,14 +1,14 @@
 import type { TitleSlug } from "./titles";
 
 /**
- * The most each currency can hold, per title. This is the server's copy of the caps in the game's
- * currency data table (DT_Currencies). The game's copy is for display; the server enforces these.
- * Keep the two in step when a cap changes.
+ * The most each currency can hold, per title, keyed by the currency's internal id (a UUIDv4). The server is
+ * the source of truth: it enforces these, and the fetch returns them. The game's caps in the currency data
+ * table are for display and for local development only. The ids must match the game's currency table.
  */
 const CURRENCY_CAPS: Record<TitleSlug, Record<string, number>> = {
   "grand-tale": {
-    "Currency.Gold": 999999,
-    "Currency.Sparks": 9999,
+    "c13f3bd2-2c20-47bd-a26e-4f3ae3f7b29c": 999999, // Gold
+    "78d63015-cb60-482b-9107-bb72e952ad86": 9999, // Sparks
   },
 };
 
