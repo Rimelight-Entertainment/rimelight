@@ -1243,7 +1243,8 @@
       "bearer-missing": "Falta el token de portador.",
       "token-invalid": "Token no válido.",
       "player-account-required": "Se requiere una cuenta de jugador.",
-      "token-no-email": "El token no tiene una declaración de correo electrónico."
+      "token-no-email": "El token no tiene una declaración de correo electrónico.",
+      "server-misconfigured": "Al servidor le falta la configuración de audiencia de Auth0."
     }
   }
 }

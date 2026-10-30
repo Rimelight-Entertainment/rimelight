@@ -10,6 +10,7 @@ declare namespace Cloudflare {
     AUTH0_SECRET: string;
     RATE_LIMIT: RateLimit;
     RATE_LIMIT_LOGIN: RateLimit;
+    RATE_LIMIT_SETTINGS: RateLimit;
     HYPERDRIVE: Hyperdrive;
     DATABASE_URL: string;
   }

@@ -55,6 +55,13 @@ export default defineConfig({
             bindingName: "RATE_LIMIT_LOGIN",
             retryAfter: 60,
           },
+          {
+            name: "settings-write",
+            routes: ["/api/v1/titles/"],
+            methods: ["PUT"],
+            bindingName: "RATE_LIMIT_SETTINGS",
+            retryAfter: 60,
+          },
         ],
       },
     }),

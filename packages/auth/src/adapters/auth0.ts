@@ -456,7 +456,6 @@ export function getAuth0ConfigFromEnv(
       getEnv("AUTH0_SECRET", "rimelight_default_development_secret_key_32bytes_minimum_length"),
     loginUrl: overrides.loginUrl || "/api/auth/login",
     defaultRole: overrides.defaultRole || "user",
-    ...overrides,
   };
 }
 

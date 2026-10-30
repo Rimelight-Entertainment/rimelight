@@ -1,10 +1,52 @@
 # RFC-0001: Unreal Engine 5 Account Auth & Global Settings API
 
-- **Status**: **Draft**
+- **Status**: **Implemented on the server and verified live. Game client in C++ complete. Editor wiring pending.**
 - **Author(s)**: idant
 - **Created**: 2026-10-26
-- **Last Updated**: 2026-10-26
+- **Last Updated**: 2026-10-29
 - **Discussion/PR**: TBD
+
+---
+
+## Status update (2026-10-29)
+
+**Read this first.** Parts of the body below were written before the work was done, and some describe states that no longer exist. Where this section and the body disagree, this section is correct.
+
+### What is implemented
+
+- **Server** (`apps/rimelight.com`): `POST /api/auth/login`, `POST /api/auth/refresh`, `GET /api/v1/profile`, `GET` and `PUT /api/v1/titles/grand-tale/settings`, the `title_settings` table (migration applied to the dev database), and rate limits on login and on settings writes.
+- **Database**: the whole app and the CMS use postgres-js over Hyperdrive. `neon-http` is gone. §2.1, §2.3 non-goals, and §6 step 0 describe the old state.
+- **Audience**: always sent on the ROPC login. There is no `AUTH0_USE_CUSTOM_AUDIENCE` gate in the code. §2.1 and the §6 table row describe a gate that does not exist. On 2026-10-29 the code was changed as follows:
+  - `getAuth0ConfigFromEnv` no longer lets an `undefined` override erase the resolved audience.
+  - The headless login and refresh routes read the Worker bindings on each request. The module-level config is built at load time, which can run before the bindings are visible.
+  - `/api/v1/*` and the headless routes return 500 when `AUTH0_AUDIENCE` is unset. Before this change, `verifyJwtRs256` skipped the audience check when no audience was given, so any tenant token would have been accepted.
+- **Live check, 2026-10-29**, against the local Worker and the `rimelight` tenant with a test account:
+  - Login returned an RS256 access token. `aud` contains `https://api.rimelight.com`, `user_type` is `user`, and a refresh token was issued.
+  - `GET /api/v1/profile` returned 200 with the user's UUID, and the settings `GET` returned version 0 and empty settings.
+  - `PUT` returned version 1, and a following `GET` returned the same values.
+- **Game client** (GrandTale repo): sign-in, settings, the login gate, the Esc menu, and the settings UI are written in C++. Six automation tests pass. The editor wiring is described in `Docs/editor-handoff.md` in that repo.
+
+### Decisions that changed from the body
+
+- **One session per game run.** The refresh token is held in memory only. It is never written to the OS credential store or to disk, and every launch requires sign-in. This replaces the storage bullet in §3.3.4 and the token storage bullet in §7.
+- **No logout.** The game has no log-out item. Each run has one session.
+- **Rate limits are per IP**, not per account. The rule type in `packages/security` only keys by IP. Settings writes are limited to 30 per minute per IP, and the game debounces writes by one second so a slider drag sends one request.
+
+### Open issues
+
+These are tenant or configuration problems, not code changes.
+
+1. **Two post-login Actions are deployed and both set `user_type`.** `rimelight-claims` reads `app_metadata.user_type`, which matches §3.3.2. The other, "Add User Roles & Classification", classifies any `@rimelight.com` email as `employee`. The token for `test@rimelight.com` came back as `user`, so the current order seems to favour `rimelight-claims`. That order is not guaranteed. Keep one Action. Staff marking should follow §3.3.2.
+2. **Access token lifetime is 86400 seconds** on the `Rimelight API`. §3.3.2 requires 900. Change it before production.
+3. **Password logins need a client grant.** The `Rimelight API` has `subject_type_authorization.user.policy = require_client_grant`. Keep the grant for the `rimelight.com` application when changing the API.
+4. **Local dev Hyperdrive string is stale.** `.env.local` sets `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` to a different Neon endpoint (`ep-odd-forest…`) from `DATABASE_URL` in `.dev.vars` (`ep-rough-haze…`). The Worker prefers the Hyperdrive value, so every authenticated route fails with "password authentication failed". Make the two match, or remove the `.env.local` entry.
+5. **API error messages come back as raw i18n keys**, for example `api.message.bearer-missing`. See the next subsection.
+
+### Why the API returns raw i18n keys
+
+Translations in `@rimelight/i18n` are split into per-route chunks. A chunk is loaded when a page for that route is rendered. The API routes never render a page, so their message chunk is never loaded. `t()` then finds nothing in the dictionary and returns the key. The dev server confirms this with `[i18n] "api.message.bearer-missing" is read in "en", which isn't loaded`.
+
+The fix is not to load the chunk on the server. Clients should not show server prose anyway, so API errors should carry a stable `code` (for example `bearer-missing`) with an English `message` for logs. The game maps codes to localized `FText`. This is not implemented yet.
 
 ---
 
@@ -32,7 +74,7 @@ Verified against the repository on 2026-10-26.
 - **Users table exists.** `apps/rimelight.com/src/db/schema/users.ts` has a uuid PK, a nullable unique `auth0_id`, unique `email`, required `name`, and `tag` (default `"0000"`). The display identity is `name` plus `tag`.
 - **Auth0 verification exists.** `packages/auth/src/jwt.ts` (`verifyJwtRs256`) and `packages/auth/src/adapters/auth0.ts` (`verifyAuth0Jwt`) verify RS256 tokens against the tenant JWKS, including issuer and audience.
 - **Login exists, but is not yet a game credential.** `POST /api/auth/login` (and `/token`) performs an Auth0 Resource Owner Password (ROPC) exchange and returns tokens. `POST /api/auth/refresh` handles refresh.
-  - `getAuth0ConfigFromEnv` sends `audience` only when `AUTH0_USE_CUSTOM_AUDIENCE=true`. That variable is not set, so login tokens lack the game audience and fail the bearer check in §3.3.3.
+  - _Superseded (2026-10-29):_ there was no `AUTH0_USE_CUSTOM_AUDIENCE` gate in the code. The real defect was a `...overrides` spread that could erase the audience, and a module-load read of the bindings. Both are fixed. See the status section.
   - Login uses `AUTH0_CLIENT_ID`, the website's client. There is no separate game application today.
 - **Existing sync merges by email.** `syncAuth0UserToDb` (`apps/rimelight.com/src/auth/sync-user.ts`) matches on `auth0_id` or `email`, rebinds `auth0_id` silently, and sets `emailVerified: true` without reading the `email_verified` claim. §3.3.3 forbids the silent merge, so game routes need their own provisioning helper.
 - **Session vocabulary differs.** `UserType` in `packages/auth/src/types.ts` is `"user" | "employee" | "guest"`. No code produces `player`.
@@ -280,7 +322,7 @@ Direct Auth0 ROPC from the client is not used. Worker-issued game tokens are not
 Token handling in the client:
 
 - The bearer for `/api/v1/*` is `access_token`. The `user` field in the login response is built from the ID token, and is informational only.
-- Store the refresh token in the OS credential store (Windows Credential Manager, macOS Keychain). Never in a plain config file.
+- Hold the refresh token in memory for the current game run only. Do not write it to the OS credential store or to disk. Every launch requires sign-in. _(Changed 2026-10-29; see the status section.)_
 - Refresh the access token shortly before expiry. On `401`, refresh once and retry once. If the refresh fails, return the player to the login screen.
 - Do not log tokens.
 
@@ -356,7 +398,7 @@ The UE6 port keeps the same HTTP contract and the same stored document. Only the
 `docs/ue5-auth-architecture.md` was removed when this RFC was created. Its content is folded in as follows:
 
 - Auth0 as the single identity source, and the ROPC trade-offs (§3.3.4, §4).
-- Token lifetime and OS credential storage (§3.3.4).
+- Token lifetime (§3.3.4). Storage is in memory only, per the status section.
 - The `players`/`employees` split is replaced by one `users` table with a `user_type` claim. Employees keep their own table.
 - The Worker-issued JWT option, the social-login options, and the separate `players` table are not carried forward.
 - PlanetScale is future. Neon is the current database.
@@ -403,13 +445,13 @@ The UE6 port keeps the same HTTP contract and the same stored document. Only the
   | `AUTH0_CLIENT_ID`                                                                   | `.dev.vars`                       | Placeholder. Website client. Must be set for the website as well.                                                                                                    |
   | `AUTH0_CLIENT_SECRET`                                                               | `.dev.vars`                       | Placeholder.                                                                                                                                                         |
   | `AUTH0_AUDIENCE`                                                                    | `.dev.vars`                       | `https://api.rimelight.com`, copied from the example. Matches the API identifier in §3.3.2.                                                                          |
-  | `AUTH0_USE_CUSTOM_AUDIENCE`                                                         | not set                           | Remove the gate in code (recommended, §3.2.1), or set it to `true` in every environment.                                                                             |
+  | `AUTH0_USE_CUSTOM_AUDIENCE`                                                         | not set                           | Resolved. No gate exists in code, and the audience is always sent.                                                                                                   |
   | `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_AUDIENCE`                                 | `cloudflare.config.ts`            | Not declared as bindings. Declare them. `AUTH0_CLIENT_SECRET` and `AUTH0_SECRET` are declared as secrets.                                                            |
   | Production values for the above                                                     | Cloudflare dashboard              | Not verifiable from the repo. Confirm each is set.                                                                                                                   |
-  | Auth0 tenant: API, web application with Password grant, Login Action, DB connection | Auth0 dashboard                   | Not verifiable from the repo. Confirm each is configured.                                                                                                            |
+  | Auth0 tenant: API, web application with Password grant, Login Action, DB connection | Auth0 dashboard                   | Verified live 2026-10-29: password grant on `rimelight.com`, API `https://api.rimelight.com` (RS256), two post-login Actions deployed (see the status section).      |
   | `postgres` dependency                                                               | `apps/rimelight.com/package.json` | Not installed.                                                                                                                                                       |
   | `DATABASE_URL`                                                                      | `.dev.vars`                       | Set. Used by `drizzle.config.ts` and the current `neon-http` client.                                                                                                 |
-  | `HYPERDRIVE` binding                                                                | `cloudflare.config.ts`            | Declared with an id. Not usable until step 0, because the current client is `neon-http`.                                                                             |
+  | `HYPERDRIVE` binding                                                                | `cloudflare.config.ts`            | Declared, and used by the postgres-js client. Step 0 is done.                                                                                                        |
 
 - **Database driver.** Move the whole app from `neon-http` to Hyperdrive with a TCP Postgres driver (`postgres` / postgres.js with `drizzle-orm/postgres-js`). This covers `apps/rimelight.com/src/db/index.ts` and the CMS's `getCmsDb` in `packages/cms/src/db/index.ts`, which currently sends SQL over HTTP to `https://<host>/sql`. The rest of the app depends on the same client, so this is the first rollout step, not a later change.
 - **Rollout order:**
@@ -444,7 +486,7 @@ The API has no UI. The settings the game stores (text scale, subtitles, colorbli
 - **Token validation.** RS256 only, `iss`, single-string `aud`, and `exp`. Reject `alg: none`. The existing verifier restricts algorithms to RS256.
 - **Authorization.** `user_type` must be `user` on game routes (§3.3.3).
 - **Data exposure.** Settings are visible only to their owner. Never return other users' rows. Never log bearer tokens or bodies. The existing `console.error` in the login handler logs Auth0's error text only; keep it that way.
-- **Token storage.** OS credential store only (§3.3.4).
+- **Token storage.** In memory for one game run. Nothing is persisted (status section).
 - **Privacy.** Settings are personal data. Document them in the privacy policy. Account deletion cascades to `title_settings`.
 
 ---

@@ -1243,7 +1243,8 @@
       "bearer-missing": "Falta o token Bearer.",
       "token-invalid": "Token inválido.",
       "player-account-required": "É necessária uma conta de jogador.",
-      "token-no-email": "O token não possui a declaração de e-mail."
+      "token-no-email": "O token não possui a declaração de e-mail.",
+      "server-misconfigured": "Ao servidor falta a configuração de audiência do Auth0."
     }
   }
 }

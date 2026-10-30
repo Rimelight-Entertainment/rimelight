@@ -1243,7 +1243,8 @@
       "bearer-missing": "Missing bearer token.",
       "token-invalid": "Invalid token.",
       "player-account-required": "Player account required.",
-      "token-no-email": "Token has no email claim."
+      "token-no-email": "Token has no email claim.",
+      "server-misconfigured": "Server is missing its Auth0 audience configuration."
     }
   }
 }

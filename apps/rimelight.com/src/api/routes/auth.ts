@@ -16,7 +16,20 @@ import { syncAuth0UserToDb } from "#auth/sync-user";
 import { t } from "@rimelight/i18n";
 
 const auth0Config = getAuth0ConfigFromEnv();
-const api = new Hono();
+const api = new Hono<{ Bindings: Env }>();
+
+/**
+ * Headless (game) routes read the Worker bindings on each request. The module-level config above
+ * is built once at load time, which may run before the bindings are visible.
+ */
+function headlessAuth0Config(env: Env) {
+  return getAuth0ConfigFromEnv({
+    domain: env.AUTH0_DOMAIN,
+    clientId: env.AUTH0_CLIENT_ID,
+    clientSecret: env.AUTH0_CLIENT_SECRET,
+    audience: env.AUTH0_AUDIENCE,
+  });
+}
 
 function getBaseUrl(c: any): string {
   const envBase =
@@ -63,6 +76,15 @@ api.get("/login", (c) => {
  * returns the JWT Bearer token and user context directly in JSON.
  */
 const handleHeadlessLogin = async (c: any) => {
+  const auth0Config = headlessAuth0Config(c.env);
+  // Without an audience the access token is not bound to the game API, and the bearer check
+  // would accept tokens minted for any audience. Fail closed.
+  if (!auth0Config.audience) {
+    return c.json(
+      { error: "Internal Server Error", message: t("api.message.server-misconfigured") },
+      500,
+    );
+  }
   try {
     const body = (await c.req.json().catch(() => ({}))) as {
       username?: string;
@@ -121,6 +143,13 @@ api.post("/token", handleHeadlessLogin);
  * Exchanges a valid refresh token for a new access token without interrupting gameplay.
  */
 api.post("/refresh", async (c) => {
+  const auth0Config = headlessAuth0Config(c.env);
+  if (!auth0Config.audience) {
+    return c.json(
+      { error: "Internal Server Error", message: t("api.message.server-misconfigured") },
+      500,
+    );
+  }
   try {
     const body = (await c.req.json().catch(() => ({}))) as {
       refresh_token?: string;

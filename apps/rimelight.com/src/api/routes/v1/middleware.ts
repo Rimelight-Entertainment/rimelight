@@ -14,6 +14,16 @@ export const requireClientToken = createMiddleware<{ Bindings: Env; Variables: C
     if (!token)
       return c.json({ error: "Unauthorized", message: t("api.message.bearer-missing") }, 401);
 
+    // verifyJwtRs256 skips the audience check when no audience is given, so a missing binding
+    // would accept a token minted for any API in the tenant. Fail closed instead.
+    if (!c.env.AUTH0_AUDIENCE) {
+      console.error("[client] AUTH0_AUDIENCE is not set; refusing client API requests");
+      return c.json(
+        { error: "Internal Server Error", message: t("api.message.server-misconfigured") },
+        500,
+      );
+    }
+
     // Read these bindings directly. getAuth0ConfigFromEnv() is not used here.
     const payload = await verifyAuth0Jwt(token, {
       domain: c.env.AUTH0_DOMAIN,

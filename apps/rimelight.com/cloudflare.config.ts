@@ -38,6 +38,13 @@ export default defineConfig({
           period: 60,
         },
       }),
+      RATE_LIMIT_SETTINGS: bindings.rateLimit({
+        namespace: "1003",
+        simple: {
+          limit: 30,
+          period: 60,
+        },
+      }),
       CONSTRUCTION_MODE: bindings.secret(),
       CONSTRUCTION_PASSPHRASE: bindings.secret(),
       AUTH0_AUDIENCE: bindings.secret(),
