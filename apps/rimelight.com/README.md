@@ -52,8 +52,8 @@ The company website for Rimelight Entertainment. It hosts company pages, the doc
 
 ### Prerequisites
 
-- Node.js 26.12.1 (see `.node-version`)
-- pnpm 12.15.0
+- Node.js 26.13.0 (see `.node-version`)
+- pnpm 12.16.1
 - A Cloudflare account, and a PostgreSQL database reachable through Hyperdrive
 - An Auth0 tenant. See [`docs/auth0-setup.md`](../../docs/auth0-setup.md).
 

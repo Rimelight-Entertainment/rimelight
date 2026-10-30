@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/config",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "private": false,
   "description": "Rimelight Entertainment's Shared Configuration Package",
   "homepage": "https://rimelight.com/docs",
@@ -36,5 +36,5 @@
   "engines": {
     "node": ">=26.10.0"
   },
-  "packageManager": "pnpm@12.15.0"
+  "packageManager": "pnpm@12.16.1"
 }

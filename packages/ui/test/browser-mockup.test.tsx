@@ -169,7 +169,7 @@ describe("RLBrowserMockup", () => {
         />
       ));
       expect(slotTag(html, "url-suffix")).not.toBe("");
-      expect(html).toContain("★");
+      expect(html).toMatch(/★|&#9733;/);
       expect(slotTag(html, "actions")).not.toBe("");
       expect(html).toContain("Menu");
     });

@@ -1,6 +1,6 @@
 # starter.rimelight.com
 
-Rimelight's starter template for Solid 2.0 websites on Cloudflare Workers. It ships with the standard Rimelight stack already wired together: auth, CMS, i18n, security, SEO, and UI. New sites are scaffolded from it with `@rimelight/cli`.
+Rimelight's starter template for Solid 2.0 websites on Cloudflare Workers. It ships with the standard Rimelight stack already wired together: auth, CMS, i18n, security, SEO, and UI. New sites are scaffolded from it with `@rimelight/cli``.
 
 ## Create a New Site
 
@@ -54,8 +54,8 @@ The CLI copies this template, sets the domain, and optionally installs dependenc
 
 ### Prerequisites
 
-- Node.js 26.12.1 (see `.node-version`)
-- pnpm 12.15.0
+- Node.js 26.13.0 (see `.node-version`)
+- pnpm 12.16.1
 - A Cloudflare account
 
 ### Setup
