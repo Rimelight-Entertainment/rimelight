@@ -11,3 +11,4 @@ export * from "./component-metadata.ts";
 export * from "./title-settings.ts";
 export * from "./title-currencies.ts";
 export * from "./title-items.ts";
+export * from "./title-proficiencies.ts";
