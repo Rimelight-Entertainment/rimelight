@@ -1,0 +1,1413 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "3bfd0a7a-4847-419c-9356-a7443c4c1a6e",
+  "prevIds": ["e23bc2c6-f17e-4e03-82fb-7550ad60cc8b"],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_items"],
+      "writes": [
+        "s|tbl|public.title_items",
+        "n|tbl|public.title_items",
+        "e|tbl|public.title_items",
+        "n|rel|public.title_items",
+        "n|type|public.title_items",
+        "n|rel|public.title_items_user_id_title_item_pk"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "account"],
+      "writes": [
+        "s|fk|public.account.account_user_id_user_id_fk",
+        "n|fk|public.account.account_user_id_user_id_fk",
+        "e|fk|public.account.account_user_id_user_id_fk",
+        "n|con|public.account.account_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.account", "n|sch|public", "e|col|public.account.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "invitation"],
+      "writes": [
+        "s|fk|public.invitation.invitation_inviter_id_user_id_fk",
+        "n|fk|public.invitation.invitation_inviter_id_user_id_fk",
+        "e|fk|public.invitation.invitation_inviter_id_user_id_fk",
+        "n|con|public.invitation.invitation_inviter_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.invitation", "n|sch|public", "e|col|public.invitation.inviter_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "invitation"],
+      "writes": [
+        "s|fk|public.invitation.invitation_organization_id_organization_id_fk",
+        "n|fk|public.invitation.invitation_organization_id_organization_id_fk",
+        "e|fk|public.invitation.invitation_organization_id_organization_id_fk",
+        "n|con|public.invitation.invitation_organization_id_organization_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.invitation",
+        "n|sch|public",
+        "e|col|public.invitation.organization_id"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "kanban_board"],
+      "writes": [
+        "s|fk|public.kanban_board.kanban_board_user_id_user_id_fk",
+        "n|fk|public.kanban_board.kanban_board_user_id_user_id_fk",
+        "e|fk|public.kanban_board.kanban_board_user_id_user_id_fk",
+        "n|con|public.kanban_board.kanban_board_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.kanban_board", "n|sch|public", "e|col|public.kanban_board.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "member"],
+      "writes": [
+        "s|fk|public.member.member_organization_id_organization_id_fk",
+        "n|fk|public.member.member_organization_id_organization_id_fk",
+        "e|fk|public.member.member_organization_id_organization_id_fk",
+        "n|con|public.member.member_organization_id_organization_id_fk"
+      ],
+      "reads": ["n|tbl|public.member", "n|sch|public", "e|col|public.member.organization_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "member"],
+      "writes": [
+        "s|fk|public.member.member_user_id_user_id_fk",
+        "n|fk|public.member.member_user_id_user_id_fk",
+        "e|fk|public.member.member_user_id_user_id_fk",
+        "n|con|public.member.member_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.member", "n|sch|public", "e|col|public.member.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "note"],
+      "writes": [
+        "s|fk|public.note.note_user_id_user_id_fk",
+        "n|fk|public.note.note_user_id_user_id_fk",
+        "e|fk|public.note.note_user_id_user_id_fk",
+        "n|con|public.note.note_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.note", "n|sch|public", "e|col|public.note.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "noteLabel"],
+      "writes": [
+        "s|fk|public.noteLabel.noteLabel_user_id_user_id_fk",
+        "n|fk|public.noteLabel.noteLabel_user_id_user_id_fk",
+        "e|fk|public.noteLabel.noteLabel_user_id_user_id_fk",
+        "n|con|public.noteLabel.noteLabel_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.noteLabel", "n|sch|public", "e|col|public.noteLabel.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "session"],
+      "writes": [
+        "s|fk|public.session.session_user_id_user_id_fk",
+        "n|fk|public.session.session_user_id_user_id_fk",
+        "e|fk|public.session.session_user_id_user_id_fk",
+        "n|con|public.session.session_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.session", "n|sch|public", "e|col|public.session.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "team"],
+      "writes": [
+        "s|fk|public.team.team_organization_id_organization_id_fk",
+        "n|fk|public.team.team_organization_id_organization_id_fk",
+        "e|fk|public.team.team_organization_id_organization_id_fk",
+        "n|con|public.team.team_organization_id_organization_id_fk"
+      ],
+      "reads": ["n|tbl|public.team", "n|sch|public", "e|col|public.team.organization_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "team_member"],
+      "writes": [
+        "s|fk|public.team_member.team_member_team_id_team_id_fk",
+        "n|fk|public.team_member.team_member_team_id_team_id_fk",
+        "e|fk|public.team_member.team_member_team_id_team_id_fk",
+        "n|con|public.team_member.team_member_team_id_team_id_fk"
+      ],
+      "reads": ["n|tbl|public.team_member", "n|sch|public", "e|col|public.team_member.team_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "team_member"],
+      "writes": [
+        "s|fk|public.team_member.team_member_user_id_user_id_fk",
+        "n|fk|public.team_member.team_member_user_id_user_id_fk",
+        "e|fk|public.team_member.team_member_user_id_user_id_fk",
+        "n|con|public.team_member.team_member_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.team_member", "n|sch|public", "e|col|public.team_member.user_id"]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": ["table", "public", "todo"],
+      "writes": [
+        "s|fk|public.todo.todo_user_id_user_id_fk",
+        "n|fk|public.todo.todo_user_id_user_id_fk",
+        "e|fk|public.todo.todo_user_id_user_id_fk",
+        "n|con|public.todo.todo_user_id_user_id_fk"
+      ],
+      "reads": ["n|tbl|public.todo", "n|sch|public", "e|col|public.todo.user_id"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "_rimelight_cms_migrations"],
+      "writes": [
+        "s|tbl|public._rimelight_cms_migrations",
+        "n|tbl|public._rimelight_cms_migrations",
+        "e|tbl|public._rimelight_cms_migrations",
+        "n|rel|public._rimelight_cms_migrations",
+        "n|type|public._rimelight_cms_migrations"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "account"],
+      "writes": [
+        "s|tbl|public.account",
+        "n|tbl|public.account",
+        "e|tbl|public.account",
+        "n|rel|public.account",
+        "n|type|public.account"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "invitation"],
+      "writes": [
+        "s|tbl|public.invitation",
+        "n|tbl|public.invitation",
+        "e|tbl|public.invitation",
+        "n|rel|public.invitation",
+        "n|type|public.invitation"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "member"],
+      "writes": [
+        "s|tbl|public.member",
+        "n|tbl|public.member",
+        "e|tbl|public.member",
+        "n|rel|public.member",
+        "n|type|public.member"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "organization"],
+      "writes": [
+        "s|tbl|public.organization",
+        "n|tbl|public.organization",
+        "e|tbl|public.organization",
+        "n|rel|public.organization",
+        "n|type|public.organization"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "rate_limit"],
+      "writes": [
+        "s|tbl|public.rate_limit",
+        "n|tbl|public.rate_limit",
+        "e|tbl|public.rate_limit",
+        "n|rel|public.rate_limit",
+        "n|type|public.rate_limit"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "role"],
+      "writes": [
+        "s|tbl|public.role",
+        "n|tbl|public.role",
+        "e|tbl|public.role",
+        "n|rel|public.role",
+        "n|type|public.role"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "session"],
+      "writes": [
+        "s|tbl|public.session",
+        "n|tbl|public.session",
+        "e|tbl|public.session",
+        "n|rel|public.session",
+        "n|type|public.session"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "team"],
+      "writes": [
+        "s|tbl|public.team",
+        "n|tbl|public.team",
+        "e|tbl|public.team",
+        "n|rel|public.team",
+        "n|type|public.team"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "team_member"],
+      "writes": [
+        "s|tbl|public.team_member",
+        "n|tbl|public.team_member",
+        "e|tbl|public.team_member",
+        "n|rel|public.team_member",
+        "n|type|public.team_member"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "user"],
+      "writes": [
+        "s|tbl|public.user",
+        "n|tbl|public.user",
+        "e|tbl|public.user",
+        "n|rel|public.user",
+        "n|type|public.user"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": ["table", "public", "verification"],
+      "writes": [
+        "s|tbl|public.verification",
+        "n|tbl|public.verification",
+        "e|tbl|public.verification",
+        "n|rel|public.verification",
+        "n|type|public.verification"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "component_dependencies",
+        "component_dependencies_unique_idx"
+      ],
+      "writes": [
+        "s|idx|public.component_dependencies_unique_idx",
+        "n|idx|public.component_dependencies_unique_idx",
+        "e|idx|public.component_dependencies_unique_idx",
+        "n|rel|public.component_dependencies_unique_idx"
+      ],
+      "reads": [
+        "n|tbl|public.component_dependencies",
+        "n|sch|public",
+        "n|col|public.component_dependencies.source_component",
+        "n|col|public.component_dependencies.target_component",
+        "n|col|public.component_dependencies.dependency_type"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "component_metadata",
+        "component_metadata_name_version_idx"
+      ],
+      "writes": [
+        "s|idx|public.component_metadata_name_version_idx",
+        "n|idx|public.component_metadata_name_version_idx",
+        "e|idx|public.component_metadata_name_version_idx",
+        "n|rel|public.component_metadata_name_version_idx"
+      ],
+      "reads": [
+        "n|tbl|public.component_metadata",
+        "n|sch|public",
+        "n|col|public.component_metadata.component_name",
+        "n|col|public.component_metadata.version"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "component_metadata_cache",
+        "component_metadata_cache_expires_idx"
+      ],
+      "writes": [
+        "s|idx|public.component_metadata_cache_expires_idx",
+        "n|idx|public.component_metadata_cache_expires_idx",
+        "e|idx|public.component_metadata_cache_expires_idx",
+        "n|rel|public.component_metadata_cache_expires_idx"
+      ],
+      "reads": [
+        "n|tbl|public.component_metadata_cache",
+        "n|sch|public",
+        "n|col|public.component_metadata_cache.expires_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "component_versions",
+        "component_versions_name_version_idx"
+      ],
+      "writes": [
+        "s|idx|public.component_versions_name_version_idx",
+        "n|idx|public.component_versions_name_version_idx",
+        "e|idx|public.component_versions_name_version_idx",
+        "n|rel|public.component_versions_name_version_idx"
+      ],
+      "reads": [
+        "n|tbl|public.component_versions",
+        "n|sch|public",
+        "n|col|public.component_versions.component_name",
+        "n|col|public.component_versions.version"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": ["table", "public", "title_items"],
+      "writes": [
+        "s|fk|public.title_items.title_items_user_id_users_id_fk",
+        "n|fk|public.title_items.title_items_user_id_users_id_fk",
+        "e|fk|public.title_items.title_items_user_id_users_id_fk",
+        "n|con|public.title_items.title_items_user_id_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.title_items",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.title_items.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_items",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "user_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "item_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "amount",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "component_dependencies",
+        "name": "component_dependencies_unique_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "source_component",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "target_component",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "dependency_type",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "component_metadata",
+        "name": "component_metadata_name_version_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "component_name",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "version",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "component_metadata_cache",
+        "name": "component_metadata_cache_expires_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "expires_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "component_versions",
+        "name": "component_versions_name_version_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "component_name",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "version",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "title_items_user_id_users_id_fk",
+        "nameExplicit": true,
+        "columns": ["user_id"],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": ["id"],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_items",
+        "name": "title_items_user_id_title_item_pk",
+        "columns": ["user_id", "title", "item_id"],
+        "nameExplicit": true,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"_rimelight_cms_migrations\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"account\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"invitation\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"member\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"organization\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"rate_limit\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"role\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"session\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"team\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"team_member\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"user\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"verification\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rate_limit\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"_rimelight_cms_migrations\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"team_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"account_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"organization_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"identifier\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rate_limit\",\"key\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"organization_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"_rimelight_cms_migrations\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rate_limit\",\"count\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"tag\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"organization_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"email\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"_rimelight_cms_migrations\",\"applied_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"provider_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"slug\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"value\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"display_name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"role\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"description\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"logo\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rate_limit\",\"last_request\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"email\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"role\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"parent_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"role\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"status\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"access_token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"email_verified\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"permissions\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"refresh_token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"image\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"first_name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"id_token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"member\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"ip_address\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team_member\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"role\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"organization\",\"metadata\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"user_agent\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"team\",\"metadata\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"access_token_expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"last_name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"availability\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"refresh_token_expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invitation\",\"inviter_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"status\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"scope\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"impersonated_by\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"active_organization_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"password\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"session\",\"active_team_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"role\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"account\",\"deleted_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"banned\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"ban_reason\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"ban_expires\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"public_key\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"encrypted_private_key\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user\",\"derivation_salt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"account_userId_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"invitation_email_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"invitation_organizationId_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"member_organizationId_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"member_userId_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"session_userId_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"team_organizationId_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"user_name_tag_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"verification_identifier_idx\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"account\",\"account_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"invitation\",\"invitation_inviter_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"invitation\",\"invitation_organization_id_organization_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"kanban_board\",\"kanban_board_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"member\",\"member_organization_id_organization_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"member\",\"member_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"note\",\"note_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"noteLabel\",\"noteLabel_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"session\",\"session_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"team\",\"team_organization_id_organization_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"team\",\"team_parent_id_team_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"team_member\",\"team_member_team_id_team_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"team_member\",\"team_member_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"todo\",\"todo_user_id_user_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"_rimelight_cms_migrations\",\"_rimelight_cms_migrations_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"account\",\"account_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"invitation\",\"invitation_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"member\",\"member_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"organization\",\"organization_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"rate_limit\",\"rate_limit_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"role\",\"role_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"session\",\"session_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"team\",\"team_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"team_member\",\"team_member_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"user\",\"user_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"verification\",\"verification_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"organization\",\"organization_slug_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"role\",\"role_name_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"session\",\"session_token_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"user\",\"user_email_unique\"]"
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"component_dependencies\",\"component_dependencies_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"component_metadata\",\"component_metadata_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"component_metadata_cache\",\"component_metadata_cache_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"component_versions\",\"component_versions_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"employees\",\"employees_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"kanban_board\",\"kanban_board_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"kanban_card\",\"kanban_card_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"kanban_custom_field\",\"kanban_custom_field_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"kanban_list\",\"kanban_list_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"note\",\"note_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"noteLabel\",\"noteLabel_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"todo\",\"todo_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "pks\u0000[\"public\",\"users\",\"users_pkey\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"employees\",\"employees_auth0_id_key\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"employees\",\"employees_email_key\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"users\",\"users_auth0_id_key\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"users\",\"users_email_key\"]",
+      "set": {
+        "nameExplicit": false
+      }
+    }
+  ]
+}

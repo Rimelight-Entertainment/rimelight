@@ -1,4 +1,13 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  foreignKey,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const board = pgTable("kanban_board", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -15,54 +24,81 @@ export const board = pgTable("kanban_board", {
 
 export type Board = typeof board.$inferSelect;
 
-export const customFieldDefinition = pgTable("kanban_custom_field", {
-  id: uuid("id").defaultRandom().notNull().primaryKey(),
-  boardId: uuid("board_id")
-    .notNull()
-    .references(() => board.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  type: text("type", { enum: ["TEXT", "NUMBER", "DATE", "SELECT", "CHECKBOX", "URL"] }).notNull(),
-  options: jsonb("options").$type<{ label: string; value: string; color?: string }[]>().default([]),
-  updatedAt: timestamp("updated_at", {
-    withTimezone: true,
-  }).$onUpdate(() => new Date()),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
-});
+export const customFieldDefinition = pgTable(
+  "kanban_custom_field",
+  {
+    id: uuid("id").defaultRandom().notNull().primaryKey(),
+    boardId: uuid("board_id").notNull(),
+    name: text("name").notNull(),
+    type: text("type", { enum: ["TEXT", "NUMBER", "DATE", "SELECT", "CHECKBOX", "URL"] }).notNull(),
+    options: jsonb("options")
+      .$type<{ label: string; value: string; color?: string }[]>()
+      .default([]),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    }).$onUpdate(() => new Date()),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  },
+  (t) => [
+    // Named to match the constraint in the database, so drizzle-kit does not see a rename.
+    foreignKey({
+      name: "kanban_custom_field_board_id_kanban_board_id_fk",
+      columns: [t.boardId],
+      foreignColumns: [board.id],
+    }).onDelete("cascade"),
+  ],
+);
 
 export type CustomFieldDefinition = typeof customFieldDefinition.$inferSelect;
 
-export const list = pgTable("kanban_list", {
-  id: uuid("id").defaultRandom().notNull().primaryKey(),
-  boardId: uuid("board_id")
-    .notNull()
-    .references(() => board.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  order: integer("order").notNull().default(0),
-  updatedAt: timestamp("updated_at", {
-    withTimezone: true,
-  }).$onUpdate(() => new Date()),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
-});
+export const list = pgTable(
+  "kanban_list",
+  {
+    id: uuid("id").defaultRandom().notNull().primaryKey(),
+    boardId: uuid("board_id").notNull(),
+    title: text("title").notNull(),
+    order: integer("order").notNull().default(0),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    }).$onUpdate(() => new Date()),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  },
+  (t) => [
+    foreignKey({
+      name: "kanban_list_board_id_kanban_board_id_fk",
+      columns: [t.boardId],
+      foreignColumns: [board.id],
+    }).onDelete("cascade"),
+  ],
+);
 
 export type List = typeof list.$inferSelect;
 
-export const card = pgTable("kanban_card", {
-  id: uuid("id").defaultRandom().notNull().primaryKey(),
-  listId: uuid("list_id")
-    .notNull()
-    .references(() => list.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  description: text("description"),
-  order: integer("order").notNull().default(0),
-  dueDate: timestamp("due_date"),
-  customFields: jsonb("custom_fields").$type<Record<string, any>>().default({}),
-  updatedAt: timestamp("updated_at", {
-    withTimezone: true,
-  }).$onUpdate(() => new Date()),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
-});
+export const card = pgTable(
+  "kanban_card",
+  {
+    id: uuid("id").defaultRandom().notNull().primaryKey(),
+    listId: uuid("list_id").notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    order: integer("order").notNull().default(0),
+    dueDate: timestamp("due_date"),
+    customFields: jsonb("custom_fields").$type<Record<string, any>>().default({}),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    }).$onUpdate(() => new Date()),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  },
+  (t) => [
+    foreignKey({
+      name: "kanban_card_list_id_kanban_list_id_fk",
+      columns: [t.listId],
+      foreignColumns: [list.id],
+    }).onDelete("cascade"),
+  ],
+);
 
 export type Card = typeof card.$inferSelect;

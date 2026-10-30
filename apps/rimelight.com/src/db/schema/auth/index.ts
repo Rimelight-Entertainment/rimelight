@@ -1,4 +1,12 @@
-import { boolean, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  foreignKey,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const todo = pgTable("todo", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -43,14 +51,23 @@ export const noteLabel = pgTable("noteLabel", {
 export const note_noteLabel = pgTable(
   "note_noteLabel",
   {
-    noteId: uuid("note_id")
-      .notNull()
-      .references(() => note.id, { onDelete: "cascade" }),
-    labelId: uuid("label_id")
-      .notNull()
-      .references(() => noteLabel.id, { onDelete: "cascade" }),
+    noteId: uuid("note_id").notNull(),
+    labelId: uuid("label_id").notNull(),
   },
-  (t) => [primaryKey({ columns: [t.noteId, t.labelId] })],
+  (t) => [
+    // Names match the constraints in the database, so drizzle-kit does not see renames.
+    primaryKey({ name: "note_noteLabel_note_id_label_id_pk", columns: [t.noteId, t.labelId] }),
+    foreignKey({
+      name: "note_noteLabel_note_id_note_id_fk",
+      columns: [t.noteId],
+      foreignColumns: [note.id],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "note_noteLabel_label_id_noteLabel_id_fk",
+      columns: [t.labelId],
+      foreignColumns: [noteLabel.id],
+    }).onDelete("cascade"),
+  ],
 );
 
 export type Note = typeof note.$inferSelect & {

@@ -8,7 +8,7 @@ export type AppUserAvailability = "available" | "busy" | "away" | "offline" | (s
  */
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
-  auth0Id: text("auth0_id").unique(),
+  auth0Id: text("auth0_id").notNull().unique(),
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
   tag: text("tag").default("0000").notNull(),
