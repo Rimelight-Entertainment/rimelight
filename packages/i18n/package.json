@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -19,7 +19,8 @@
     "rimelight-i18n": "./dist/bin.mjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "type": "module",
   "exports": {
