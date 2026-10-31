@@ -2,6 +2,7 @@ import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
 import { createMemo, type Component } from "solid-js";
 import { getUIConfig } from "../../runtime";
+import { localizeHref } from "../link/helpers";
 
 const OMIT_KEYS = [
   "variant",
@@ -37,7 +38,7 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
   const { classes, rest } = RLLogoTheme.setup(props, { omit: OMIT_KEYS });
 
   const variant = () => props.variant || "logomark";
-  const href = () => props.href ?? "/";
+  const href = () => localizeHref(props.href ?? "/");
 
   const logoInfo = createMemo(() => {
     if (props.src) {
