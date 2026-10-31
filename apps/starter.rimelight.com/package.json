@@ -13,7 +13,9 @@
   },
   "license": "MIT",
   "author": {
-    "name": "Rimelight Entertainment"
+    "name": "rimelight.com",
+    "email": "contact@rimelight.com",
+    "url": "https://rimelight.com"
   },
   "repository": {
     "type": "git",
