@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@solidjs/vite-plugin": "3.0.0-next.52",
+    "@solidjs/vite-plugin": "3.0.0-next.54",
     "@solidjs/web": "2.0.0-rc.20",
     "hono": "5.0.0-rc.1",
     "solid-js": "2.0.0-rc.20"

@@ -177,8 +177,8 @@ importers:
         specifier: workspace:*
         version: link:packages/config
       pkg-pr-new:
-        specifier: 0.0.92
-        version: 0.0.92
+        specifier: 0.0.93
+        version: 0.0.93
       typescript:
         specifier: 7.1.0-beta
         version: 7.1.0-beta
@@ -216,8 +216,8 @@ importers:
         specifier: 2.0.0-next.43
         version: 2.0.0-next.43(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(filesystem-routing@0.4.2(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.1.0-beta))(solid-js@2.0.0-rc.20)
       '@solidjs/vite-plugin':
-        specifier: 3.0.0-next.52
-        version: 3.0.0-next.52(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
+        specifier: 3.0.0-next.54
+        version: 3.0.0-next.54(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@solidjs/web':
         specifier: 2.0.0-rc.20
         version: 2.0.0-rc.20(solid-js@2.0.0-rc.20)
@@ -241,8 +241,8 @@ importers:
         specifier: 1.2.18
         version: 1.2.18
       '@iconify-json/lucide':
-        specifier: 1.2.149
-        version: 1.2.149
+        specifier: 1.2.150
+        version: 1.2.150
       '@rimelight/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -295,8 +295,8 @@ importers:
         specifier: 2.0.0-next.43
         version: 2.0.0-next.43(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(filesystem-routing@0.4.2(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.1.0-beta))(solid-js@2.0.0-rc.20)
       '@solidjs/vite-plugin':
-        specifier: 3.0.0-next.52
-        version: 3.0.0-next.52(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
+        specifier: 3.0.0-next.54
+        version: 3.0.0-next.54(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@solidjs/web':
         specifier: 2.0.0-rc.20
         version: 2.0.0-rc.20(solid-js@2.0.0-rc.20)
@@ -317,8 +317,8 @@ importers:
         specifier: 1.2.18
         version: 1.2.18
       '@iconify-json/lucide':
-        specifier: 1.2.149
-        version: 1.2.149
+        specifier: 1.2.150
+        version: 1.2.150
       '@rimelight/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -410,8 +410,8 @@ importers:
         specifier: 2.0.0-next.43
         version: 2.0.0-next.43(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(filesystem-routing@0.4.2(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.1.0-beta))(solid-js@2.0.0-rc.20)
       '@solidjs/vite-plugin':
-        specifier: 3.0.0-next.52
-        version: 3.0.0-next.52(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
+        specifier: 3.0.0-next.54
+        version: 3.0.0-next.54(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@types/sortablejs':
         specifier: 1.15.9
         version: 1.15.9
@@ -438,8 +438,8 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@solidjs/vite-plugin':
-        specifier: 3.0.0-next.52
-        version: 3.0.0-next.52(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
+        specifier: 3.0.0-next.54
+        version: 3.0.0-next.54(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@solidjs/web':
         specifier: 2.0.0-rc.20
         version: 2.0.0-rc.20(solid-js@2.0.0-rc.20)
@@ -504,8 +504,8 @@ importers:
         specifier: 2.0.0-next.43
         version: 2.0.0-next.43(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(filesystem-routing@0.4.2(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.1.0-beta))(solid-js@2.0.0-rc.20)
       '@solidjs/vite-plugin':
-        specifier: 3.0.0-next.52
-        version: 3.0.0-next.52(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
+        specifier: 3.0.0-next.54
+        version: 3.0.0-next.54(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@solidjs/web':
         specifier: 2.0.0-rc.20
         version: 2.0.0-rc.20(solid-js@2.0.0-rc.20)
@@ -692,8 +692,8 @@ packages:
   '@iconify-json/logos@1.2.18':
     resolution: {integrity: sha512-Qehd7RmUbYM4LSXNHFqulgvmdmqldOxQ3VDbCmzos5IGlo40+cChVdX7GnG9VODBU0H3+Bb8npYOkplooJZvtQ==}
 
-  '@iconify-json/lucide@1.2.149':
-    resolution: {integrity: sha512-5NG9YdbtRS03hG1A+EIE6nLhhdAYsf0mKu1ZRi6kLMlCG8DxmDsRM6DAhwlNMLiSiQKFbHpKTJ2VddZdwUkUyw==}
+  '@iconify-json/lucide@1.2.150':
+    resolution: {integrity: sha512-av3IH1CB8RuKrlKGDmBbt6dLYtZus1Vr89VOysxORLhKcTr4ARe4Dmp0gL7Q47sK9GMkyROn1a+h07tAYpSuEw==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -1521,8 +1521,8 @@ packages:
     resolution: {integrity: sha512-BIL5dKm0dAtPGsCEuLSNw60spDbmYG5QFK+aHUxPIgPLweA8IeJKd62DiqqqU/jqX0x39ty31GoP1n+ZINkrcg==}
     engines: {node: '>=22.12.0'}
 
-  '@solidjs/vite-plugin@3.0.0-next.52':
-    resolution: {integrity: sha512-Dn4xLGdZxYOFOQpY/wISboBR6sYrfuN2Nxq+h56a6bspCqMq7hhpWYhQwwwo8RvsiVD2/T9o1U76pz/KJ1Wkgw==}
+  '@solidjs/vite-plugin@3.0.0-next.54':
+    resolution: {integrity: sha512-KcOXhajHsPd7+BMB72tefvG6OngRLR3BK6PWKMP6jtb6xj/ryLjT7SlYxgdBgsWcC3iEMmb9PiD5ZaX5NnBnMQ==}
     engines: {node: '>=22.12.0'}
     peerDependencies:
       '@solidjs/start-devtools': ^1.0.0-next.2
@@ -2551,6 +2551,9 @@ packages:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
 
+  magic-string@0.30.21:
+    resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
   magic-string@1.4.5:
     resolution: {integrity: sha512-oLLC2+YvQUfAa+vxoufE/yc1icb87M9iXIRqAoR/2EhE/8cb3SF/+Gi0c2By1B+5Vz2e2vQtUvHiu1+63Znh+w==}
 
@@ -2680,8 +2683,8 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pkg-pr-new@0.0.92:
-    resolution: {integrity: sha512-l9HE4y0LmS5n3pw9vKby7m9O+SBzjWF5HXGH6Z8jdPWW7OW7hFMKsFOrgubc0JuPz8gYEuIw1mLaU3GEmPuukQ==}
+  pkg-pr-new@0.0.93:
+    resolution: {integrity: sha512-JH3HEO+m8sNFpalNAeGrNKjdwxNcXT3yuEuGMU/65dvLojPo+Ofnmc8la2v2ceisjXTOKQw/738Pj4KNFY7F+w==}
     hasBin: true
 
   pngjs@7.0.0:
@@ -3208,7 +3211,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/lucide@1.2.149':
+  '@iconify-json/lucide@1.2.150':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -3710,7 +3713,7 @@ snapshots:
 
   '@solidjs/signals@2.0.0-rc.20': {}
 
-  '@solidjs/vite-plugin@3.0.0-next.52(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@solidjs/vite-plugin@3.0.0-next.54(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(jiti@2.7.0)(solid-js@2.0.0-rc.20)(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@babel/core': 7.29.7(supports-color@10.2.2)
@@ -3718,6 +3721,7 @@ snapshots:
       '@solidjs/compiler': 2.0.0-rc.20
       '@solidjs/web': 2.0.0-rc.20(solid-js@2.0.0-rc.20)
       '@types/babel__core': 7.20.5
+      magic-string: 0.30.21
       merge-anything: 5.1.7
       solid-js: 2.0.0-rc.20
       vite: '@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta)'
@@ -4560,6 +4564,10 @@ snapshots:
 
   lz-string@1.5.0: {}
 
+  magic-string@0.30.21:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.6.0
+
   magic-string@1.4.5:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -4738,7 +4746,7 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  pkg-pr-new@0.0.92: {}
+  pkg-pr-new@0.0.93: {}
 
   pngjs@7.0.0: {}
 

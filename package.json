@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "pkg-pr-new": "0.0.92",
+    "pkg-pr-new": "0.0.93",
     "typescript": "7.1.0-beta",
     "vite-plus": "1.4.0"
   },
