@@ -23,7 +23,7 @@ export const ContactPage: Component = () => {
 
     try {
       const res = await api.contact.$post({
-        form: new FormData(contactFormRef) as any,
+        form: Object.fromEntries(new FormData(contactFormRef)) as any,
       });
       const result = await res.json();
 
@@ -138,6 +138,7 @@ export const ContactPage: Component = () => {
                     name="message"
                     rows={5}
                     required
+                    minlength={10}
                     placeholder={t("page.contact.form.placeholder.message")}
                     class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition resize-y min-h-[120px]"
                   />

@@ -1,1 +1,2 @@
-export * from "@rimelight/cms/schema/sqlite";
+// Custom database tables go here
+export {};

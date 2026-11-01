@@ -8,6 +8,7 @@ export interface ConstructionFallbackHtmlOptions {
   signInButtonLabel?: string | undefined;
   error?: string | undefined;
   redirect?: string | undefined;
+  nonce?: string | undefined;
 }
 
 export function getConstructionFallbackHtml(options: ConstructionFallbackHtmlOptions = {}): string {
@@ -21,6 +22,7 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackHtmlOpt
     signInButtonLabel = "Unlock Site",
     error,
     redirect = "/",
+    nonce,
   } = options;
 
   const escapedRedirect = redirect.replace(/"/g, "&quot;");
@@ -32,7 +34,7 @@ export function getConstructionFallbackHtml(options: ConstructionFallbackHtmlOpt
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title} - ${siteName}</title>
   <meta name="robots" content="noindex, nofollow" />
-  <style>
+  ${nonce ? `<meta name="csp-nonce" content="${nonce}" />\n  ` : ""}<style${nonce ? ` nonce="${nonce}"` : ""}>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

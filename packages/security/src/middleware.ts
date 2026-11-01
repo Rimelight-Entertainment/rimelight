@@ -39,15 +39,182 @@ export const security = (): MiddlewareHandler => async (c, next) => {
       : typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV);
   const { path } = c.req;
 
+  interface RewriterEl {
+    getAttribute(n: string): string | null;
+    setAttribute(n: string, v: string): void;
+    append(c: string, o?: { html?: boolean }): void;
+  }
+  const { HTMLRewriter: Rewriter } = globalThis as {
+    HTMLRewriter?: new () => {
+      on(s: string, h: { element(e: RewriterEl): void }): void;
+      transform(r: Response): Response;
+    };
+  };
+
+  const devList = (val: string[] | string | boolean | undefined, extra: string[] = []) =>
+    val
+      ? Array.isArray(val)
+        ? [...new Set([...val, "'unsafe-inline'"])]
+        : val
+      : ["'self'", "'unsafe-inline'", ...extra];
+
+  const getSecurityHeaders = (isHtml: boolean, nonce?: string) => {
+    const proto =
+      typeof c.req?.header === "function" ? c.req.header("x-forwarded-proto") : undefined;
+    let isCleartextHttp = false;
+    if (proto) {
+      isCleartextHttp = proto === "http";
+    } else if (c.req?.url) {
+      try {
+        isCleartextHttp = new URL(c.req.url).protocol === "http:";
+      } catch {}
+    }
+
+    const secHeaders: Record<string, string | undefined> = {
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "0",
+      "Strict-Transport-Security": isCleartextHttp
+        ? undefined
+        : "max-age=31536000; includeSubDomains; preload",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+      "No-Vary-Search": isHtml ? 'except=("q" "search" "locale"), params=?1' : undefined,
+      "Cross-Origin-Resource-Policy": activeConfig.crossOriginResourcePolicy || undefined,
+      "Cross-Origin-Opener-Policy": activeConfig.crossOriginOpenerPolicy || undefined,
+      "Cross-Origin-Embedder-Policy": activeConfig.crossOriginEmbedderPolicy || undefined,
+      "Content-Security-Policy": isHtml
+        ? buildCspHeader(
+            isDev
+              ? {
+                  ...activeConfig,
+                  directives: {
+                    ...activeConfig.directives,
+                    "default-src": false,
+                    "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https: http: ws: wss:",
+                    "script-src-attr": "'unsafe-inline'",
+                    "style-src": "'self' 'unsafe-inline' https: http:",
+                    "connect-src": "'self' ws: wss: http: https:",
+                    "img-src": "'self' data: blob: https: http:",
+                    "upgrade-insecure-requests": false,
+                  },
+                }
+              : activeConfig,
+            nonce,
+          )
+        : undefined,
+      "Content-Security-Policy-Report-Only":
+        isHtml && isDev
+          ? buildCspHeader({
+              ...activeConfig,
+              directives: {
+                ...activeConfig.directives,
+                "upgrade-insecure-requests": false,
+                "script-src": devList(activeConfig.directives?.["script-src"], [
+                  "'inline-speculation-rules'",
+                  ...(activeConfig.turnstile ? ["https://challenges.cloudflare.com"] : []),
+                  ...(activeConfig.scriptResources || []),
+                ]),
+                "script-src-attr": "'unsafe-inline'",
+                "style-src": devList(
+                  activeConfig.directives?.["style-src"],
+                  activeConfig.styleResources,
+                ),
+              },
+            })
+          : undefined,
+      ...activeConfig.headers,
+    };
+    return secHeaders;
+  };
+
+  const finalize = (input: unknown, explicitNonce?: string): any => {
+    if (!input) return input;
+    if (!(input instanceof Response)) return input;
+
+    let res: Response = input;
+    const isHtml = (res.headers.get("content-type") || "").includes("text/html");
+    const nonce =
+      explicitNonce ??
+      (isHtml && !isDev
+        ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
+        : undefined);
+
+    if (isHtml && Rewriter) {
+      const headHtml = [
+        nonce ? `<meta name="csp-nonce" content="${nonce}">` : "",
+        activeConfig.trustedTypes
+          ? `<script${nonce ? ` nonce="${nonce}"` : ""}>if(window.trustedTypes?.createPolicy&&!trustedTypes.defaultPolicy)try{trustedTypes.createPolicy("default",{createHTML:s=>s,createScript:s=>s,createScriptURL:s=>s})}catch{}</script>`
+          : "",
+        isDev
+          ? `<script>{const s=new Set();addEventListener("securitypolicyviolation",e=>{const k=e.effectiveDirective+":"+(e.blockedURI||e.sample||"");if(e.disposition==="report"&&!s.has(k)){s.add(k);console.warn("%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\\nDirective: "+e.effectiveDirective+(e.blockedURI?"\\nBlocked URI: "+e.blockedURI:"")+(e.sourceFile?"\\nSource: "+e.sourceFile+":"+(e.lineNumber||0):"")+(e.sample?"\\nSample: "+e.sample.slice(0,100):"")+"\\nFix: Add to imgSrc, scriptResources, styleResources or use nonces in your security configuration","background:#e11d48;color:white;padding:2px 6px;border-radius:4px;font-weight:bold","color:inherit;font-weight:normal")}})}</script>`
+          : "",
+      ].join("");
+
+      const rewriter = new Rewriter();
+      rewriter.on("head", { element: (el) => el.append(headHtml, { html: true }) });
+
+      if (nonce) {
+        const sri = (attr: string) => ({
+          element(el: RewriterEl) {
+            const hash = activeConfig.manifest?.[el.getAttribute(attr) || ""];
+            if (hash) {
+              el.setAttribute("integrity", hash);
+              el.setAttribute("crossorigin", "anonymous");
+            }
+          },
+        });
+
+        rewriter.on("script[src]", sri("src"));
+        rewriter.on('link[rel="stylesheet"][href]', sri("href"));
+        rewriter.on("script", { element: (el) => el.setAttribute("nonce", nonce) });
+        rewriter.on("style", { element: (el) => el.setAttribute("nonce", nonce) });
+      }
+
+      res = rewriter.transform(res);
+    }
+
+    const headers = new Headers(res.headers);
+    const secHeaders = getSecurityHeaders(isHtml, nonce);
+    for (const [k, v] of Object.entries(secHeaders)) {
+      if (v) headers.set(k, v);
+    }
+
+    if (activeConfig.crossOriginResourcePolicy === false) {
+      headers.delete("Cross-Origin-Resource-Policy");
+    }
+    if (activeConfig.crossOriginOpenerPolicy === false) {
+      headers.delete("Cross-Origin-Opener-Policy");
+    }
+    if (activeConfig.crossOriginEmbedderPolicy === false) {
+      headers.delete("Cross-Origin-Embedder-Policy");
+    }
+
+    if (activeConfig.stripHeaders) {
+      for (const k of activeConfig.stripHeaders) headers.delete(k);
+    }
+
+    const finalRes = new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers,
+    });
+    try {
+      c.res = finalRes;
+    } catch {}
+    return finalRes;
+  };
+
   // 1. Block /dev routes in production & enforce TLS 1.2+ / HTTPS
-  if (activeConfig.devOnly && !isDev && /(?:^|\/)dev(?:\/|$)/.test(path)) return c.notFound();
+  if (activeConfig.devOnly && !isDev && /(?:^|\/)dev(?:\/|$)/.test(path))
+    return finalize(c.notFound());
 
   const tls = ((c.req.raw as { cf?: { tlsVersion?: string } }).cf || c.env?.cf)?.tlsVersion;
   if (activeConfig.enforceTls && tls && tls !== "TLSv1.2" && tls !== "TLSv1.3") {
-    return c.text("TLS 1.2 or higher is required.", 400);
+    return finalize(c.text("TLS 1.2 or higher is required.", 400));
   }
   if (!isDev && c.req.header("x-forwarded-proto") === "http") {
-    return c.redirect(c.req.url.replace(/^http:/, "https:"), 301);
+    return finalize(c.redirect(c.req.url.replace(/^http:/, "https:"), 301));
   }
 
   // security.txt (RFC 9116)
@@ -55,10 +222,12 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     (path === "/.well-known/security.txt" || path === "/security.txt") &&
     activeConfig.securityTxt
   ) {
-    return c.text(buildSecurityTxt(activeConfig.securityTxt), 200, {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
-    });
+    return finalize(
+      c.text(buildSecurityTxt(activeConfig.securityTxt), 200, {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+      }),
+    );
   }
 
   const matches = (routes?: (string | RegExp)[] | ((c: Context) => boolean)) =>
@@ -84,25 +253,27 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     const failBlock = rl.fallback && rl.fallback !== "pass";
 
     if (typeof limiter?.limit !== "function") {
-      if (failBlock) return c.json({ error: "Rate limiter not configured" }, 500);
+      if (failBlock) return finalize(c.json({ error: "Rate limiter not configured" }, 500));
     } else {
       try {
         const key = await (rl.keyGenerator?.(c) ?? (c.req.header("CF-Connecting-IP") || "unknown"));
         if (!(await limiter.limit({ key })).success) {
           const retry = rl.retryAfter!;
-          return rl.onRateLimited
-            ? await rl.onRateLimited(c, retry)
-            : c.json(
-                {
-                  error: "Too Many Requests",
-                  message: "Rate limit exceeded. Please try again later.",
-                },
-                429,
-                { "Retry-After": String(retry) },
-              );
+          return finalize(
+            rl.onRateLimited
+              ? await rl.onRateLimited(c, retry)
+              : c.json(
+                  {
+                    error: "Too Many Requests",
+                    message: "Rate limit exceeded. Please try again later.",
+                  },
+                  429,
+                  { "Retry-After": String(retry) },
+                ),
+          );
         }
       } catch {
-        if (failBlock) return c.json({ error: "Rate limit check failed" }, 500);
+        if (failBlock) return finalize(c.json({ error: "Rate limit check failed" }, 500));
       }
     }
   }
@@ -111,7 +282,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   for (const rule of activeConfig.ratelimit ? (activeConfig.ratelimit.rules ?? []) : []) {
     if (!ruleMatches(rule, c)) continue;
     const blocked = await enforceRule(c, rule, c.req.header("CF-Connecting-IP") || "unknown");
-    if (blocked) return blocked;
+    if (blocked) return finalize(blocked);
   }
 
   // 3. Turnstile verification
@@ -124,7 +295,8 @@ export const security = (): MiddlewareHandler => async (c, next) => {
       c.req.header("CF-Connecting-IP"),
       ts,
     );
-    if (!ok) return c.json({ success: false, error: "Turnstile verification failed" }, 400);
+    if (!ok)
+      return finalize(c.json({ success: false, error: "Turnstile verification failed" }, 400));
   }
 
   // 4. Construction mode
@@ -138,6 +310,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
     const cookieOpts = (remember = true) => ({
       httpOnly: true,
       secure: true,
+      sameSite: "Lax" as const,
       ...(remember && cookieMaxAge ? { maxAge: cookieMaxAge } : {}),
     });
     const secret = (c.env?.CONSTRUCTION_PASSPHRASE ??
@@ -147,7 +320,7 @@ export const security = (): MiddlewareHandler => async (c, next) => {
 
     if (secret && c.req.query("preview") === secret) {
       setCookie(c, cookieName!, secret, cookieOpts());
-      return c.redirect(path);
+      return finalize(c.redirect(path));
     }
 
     const authed =
@@ -167,22 +340,36 @@ export const security = (): MiddlewareHandler => async (c, next) => {
         const rawTo = typeof body["redirect"] === "string" ? body["redirect"] : "/";
         const to = rawTo.startsWith("/") && !rawTo.startsWith("//") ? rawTo : "/";
         if (ok) setCookie(c, cookieName!, secret!, cookieOpts(body["rememberMe"] !== "false"));
-        return c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`);
+        return finalize(
+          c.redirect(ok ? to : `${path}?error=invalid&redirect=${encodeURIComponent(to)}`),
+        );
       }
 
       if (renderFallback) {
-        return c.html(
-          getConstructionFallbackHtml({ redirect: path, error: c.req.query("error") }),
-          503,
+        const nonce = !isDev
+          ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
+          : undefined;
+        return finalize(
+          c.html(
+            getConstructionFallbackHtml({
+              redirect: path,
+              error: c.req.query("error"),
+              nonce,
+            }),
+            503,
+          ),
+          nonce,
         );
       }
 
       if (!isGate) {
-        return /\.[a-z0-9]{1,16}$/i.test(path)
-          ? c.notFound()
-          : c.redirect(
-              `${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`,
-            );
+        return finalize(
+          /\.[a-z0-9]{1,16}$/i.test(path)
+            ? c.notFound()
+            : c.redirect(
+                `${constructionPath}?redirect=${encodeURIComponent(path + new URL(c.req.url).search)}`,
+              ),
+        );
       }
     }
   }
@@ -191,131 +378,5 @@ export const security = (): MiddlewareHandler => async (c, next) => {
   await next();
   if (!c.res) return;
 
-  const isHtml = (c.res.headers.get("content-type") || "").includes("text/html");
-  const nonce =
-    isHtml && !isDev
-      ? btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
-      : undefined;
-
-  interface RewriterEl {
-    getAttribute(n: string): string | null;
-    setAttribute(n: string, v: string): void;
-    append(c: string, o?: { html?: boolean }): void;
-  }
-  const { HTMLRewriter: Rewriter } = globalThis as {
-    HTMLRewriter?: new () => {
-      on(s: string, h: { element(e: RewriterEl): void }): void;
-      transform(r: Response): Response;
-    };
-  };
-
-  let res = c.res;
-  if (isHtml && Rewriter) {
-    const headHtml = [
-      nonce ? `<meta name="csp-nonce" content="${nonce}">` : "",
-      activeConfig.trustedTypes
-        ? `<script${nonce ? ` nonce="${nonce}"` : ""}>if(window.trustedTypes?.createPolicy&&!trustedTypes.defaultPolicy)try{trustedTypes.createPolicy("default",{createHTML:s=>s,createScript:s=>s,createScriptURL:s=>s})}catch{}</script>`
-        : "",
-      isDev
-        ? `<script>{const s=new Set();addEventListener("securitypolicyviolation",e=>{const k=e.effectiveDirective+":"+(e.blockedURI||e.sample||"");if(e.disposition==="report"&&!s.has(k)){s.add(k);console.warn("%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\\nDirective: "+e.effectiveDirective+(e.blockedURI?"\\nBlocked URI: "+e.blockedURI:"")+(e.sourceFile?"\\nSource: "+e.sourceFile+":"+(e.lineNumber||0):"")+(e.sample?"\\nSample: "+e.sample.slice(0,100):"")+"\\nFix: Add to imgSrc, scriptResources, styleResources or use nonces in your security configuration","background:#e11d48;color:white;padding:2px 6px;border-radius:4px;font-weight:bold","color:inherit;font-weight:normal")}})}</script>`
-        : "",
-    ].join("");
-
-    const rewriter = new Rewriter();
-    rewriter.on("head", { element: (el) => el.append(headHtml, { html: true }) });
-
-    if (nonce) {
-      const sri = (attr: string) => ({
-        element(el: RewriterEl) {
-          const hash = activeConfig.manifest?.[el.getAttribute(attr) || ""];
-          if (hash) {
-            el.setAttribute("integrity", hash);
-            el.setAttribute("crossorigin", "anonymous");
-          }
-        },
-      });
-
-      rewriter.on("script[src]", sri("src"));
-      rewriter.on('link[rel="stylesheet"][href]', sri("href"));
-      rewriter.on("script", { element: (el) => el.setAttribute("nonce", nonce) });
-      rewriter.on("style", { element: (el) => el.setAttribute("nonce", nonce) });
-    }
-
-    res = rewriter.transform(res);
-  }
-
-  // 6. Apply security headers
-  const devList = (val: string[] | string | boolean | undefined, extra: string[] = []) =>
-    val
-      ? Array.isArray(val)
-        ? [...new Set([...val, "'unsafe-inline'"])]
-        : val
-      : ["'self'", "'unsafe-inline'", ...extra];
-
-  const headers = new Headers(res.headers);
-  for (const [k, v] of Object.entries({
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "0",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-    "No-Vary-Search": isHtml ? 'except=("q" "search" "locale"), params=?1' : undefined,
-    "Cross-Origin-Resource-Policy": activeConfig.crossOriginResourcePolicy,
-    "Cross-Origin-Opener-Policy": activeConfig.crossOriginOpenerPolicy,
-    "Cross-Origin-Embedder-Policy": activeConfig.crossOriginEmbedderPolicy,
-    "Content-Security-Policy": isHtml
-      ? buildCspHeader(
-          isDev
-            ? {
-                ...activeConfig,
-                directives: {
-                  ...activeConfig.directives,
-                  "default-src": false,
-                  "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https: http: ws: wss:",
-                  "script-src-attr": "'unsafe-inline'",
-                  "style-src": "'self' 'unsafe-inline' https: http:",
-                  "connect-src": "'self' ws: wss: http: https:",
-                  "img-src": "'self' data: blob: https: http:",
-                  "upgrade-insecure-requests": false,
-                },
-              }
-            : activeConfig,
-          nonce,
-        )
-      : undefined,
-    "Content-Security-Policy-Report-Only":
-      isHtml && isDev
-        ? buildCspHeader({
-            ...activeConfig,
-            directives: {
-              ...activeConfig.directives,
-              "upgrade-insecure-requests": false,
-              "script-src": devList(activeConfig.directives?.["script-src"], [
-                "'inline-speculation-rules'",
-                ...(activeConfig.turnstile ? ["https://challenges.cloudflare.com"] : []),
-                ...(activeConfig.scriptResources || []),
-              ]),
-              "script-src-attr": "'unsafe-inline'",
-              "style-src": devList(
-                activeConfig.directives?.["style-src"],
-                activeConfig.styleResources,
-              ),
-            },
-          })
-        : undefined,
-    ...activeConfig.headers,
-  })) {
-    if (v) headers.set(k, v);
-  }
-
-  if (activeConfig.stripHeaders) {
-    for (const k of activeConfig.stripHeaders) headers.delete(k);
-  }
-
-  return (c.res = new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
-    headers,
-  }));
+  return finalize(c.res);
 };

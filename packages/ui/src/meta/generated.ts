@@ -13085,18 +13085,27 @@ export const componentMeta: ComponentMetaMap = {
         type: '"left" | "right" | "up" | "down"',
         required: false,
         description: "Direction of marquee motion.",
+        default: '"left"',
       },
       {
         name: "speed",
         type: "number",
         required: false,
         description: "Speed of animation in seconds (duration of scroll cycle).",
+        default: "40",
       },
       {
         name: "pauseOnHover",
         type: "boolean",
         required: false,
         description: "Whether to pause scroll animation on mouse hover.",
+        default: "true",
+      },
+      {
+        name: "gap",
+        type: "string | number",
+        required: false,
+        description: 'Gap between marquee items (e.g. "1rem" or 16).',
       },
       {
         name: "ui",
@@ -13122,8 +13131,8 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "track"],
       base: {
-        root: "relative w-full overflow-hidden flex gap-4 mask-gradient-to-r",
-        track: "flex shrink-0 gap-4 min-w-full justify-around animate-marquee",
+        root: "group relative w-full overflow-hidden flex gap-4 mask-gradient-to-r",
+        track: "flex shrink-0 gap-4 items-center animate-marquee",
       },
       variants: {
         direction: {
@@ -13144,7 +13153,7 @@ export const componentMeta: ComponentMetaMap = {
         },
         pauseOnHover: {
           true: {
-            track: "hover:[animation-play-state:paused]",
+            track: "group-hover:[animation-play-state:paused]",
           },
           false: {
             track: "",

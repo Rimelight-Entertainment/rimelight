@@ -3,8 +3,8 @@ import { defineTheme } from "../../resolver";
 export const RLMarqueeTheme = defineTheme("marquee", {
   slots: ["root", "track"],
   base: {
-    root: "relative w-full overflow-hidden flex gap-4 mask-gradient-to-r",
-    track: "flex shrink-0 gap-4 min-w-full justify-around animate-marquee",
+    root: "group relative w-full overflow-hidden flex gap-4 mask-gradient-to-r",
+    track: "flex shrink-0 gap-4 items-center animate-marquee",
   },
   variants: {
     direction: {
@@ -14,7 +14,7 @@ export const RLMarqueeTheme = defineTheme("marquee", {
       down: { root: "flex-col h-80", track: "flex-col animate-marquee-down" },
     },
     pauseOnHover: {
-      true: { track: "hover:[animation-play-state:paused]" },
+      true: { track: "group-hover:[animation-play-state:paused]" },
       false: { track: "" },
     },
   },

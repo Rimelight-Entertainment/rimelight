@@ -655,5 +655,98 @@ describe("Security Middleware Headers", () => {
       const payload = await res.json();
       expect(payload.error).toBe("Turnstile verification failed");
     });
+
+    it("applies full security headers to construction fallback responses (503)", async () => {
+      Object.assign(activeConfig, {
+        domain: "rimelight.com",
+        construction: {
+          renderFallback: true,
+        },
+      });
+
+      const middleware = security();
+      let nextCalled = false;
+      const raw = new Request("https://rimelight.com/");
+      const ctx = {
+        req: {
+          path: "/",
+          method: "GET",
+          url: raw.url,
+          raw,
+          header: (n: string) => raw.headers.get(n) ?? undefined,
+          query: () => undefined,
+        },
+        env: {
+          CONSTRUCTION_MODE: "true",
+          CONSTRUCTION_PASSPHRASE: "secret-key",
+        },
+        html: (htmlStr: string, status = 200) =>
+          new Response(htmlStr, {
+            status,
+            headers: { "content-type": "text/html; charset=utf-8" },
+          }),
+      };
+
+      const res = (await middleware(ctx as any, async () => {
+        nextCalled = true;
+      })) as Response;
+
+      expect(nextCalled).toBe(false);
+      expect(res.status).toBe(503);
+      expect(res.headers.get("Content-Security-Policy")).toBeDefined();
+      expect(res.headers.get("Content-Security-Policy")).toContain("default-src 'none'");
+      expect(res.headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+      expect(res.headers.get("Strict-Transport-Security")).toBe(
+        "max-age=31536000; includeSubDomains; preload",
+      );
+      expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
+      expect(res.headers.get("X-Frame-Options")).toBe("DENY");
+      expect(res.headers.get("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
+      expect(res.headers.get("Cross-Origin-Embedder-Policy")).toBe("credentialless");
+      expect(res.headers.get("Cross-Origin-Opener-Policy")).toBe("same-origin");
+      expect(res.headers.get("Cross-Origin-Resource-Policy")).toBe("same-origin");
+
+      const bodyText = await res.text();
+      expect(bodyText).toContain("<title>Under Construction - Rimelight</title>");
+    });
+
+    it("applies SameSite=Lax on construction mode preview cookie", async () => {
+      Object.assign(activeConfig, {
+        construction: {
+          cookieName: "rimelight-construction-guest",
+          cookieMaxAge: 604800,
+        },
+      });
+
+      let setCookieHeader: string | undefined;
+      const middleware = security();
+      const raw = new Request("https://rimelight.com/?preview=secret-pass");
+      const ctx = {
+        req: {
+          path: "/",
+          method: "GET",
+          url: raw.url,
+          raw,
+          header: (n: string) => raw.headers.get(n) ?? undefined,
+          query: (k: string) => (k === "preview" ? "secret-pass" : undefined),
+        },
+        env: {
+          CONSTRUCTION_MODE: "true",
+          CONSTRUCTION_PASSPHRASE: "secret-pass",
+        },
+        header: (n: string, v: string) => {
+          if (n.toLowerCase() === "set-cookie") setCookieHeader = v;
+        },
+        redirect: (target: string) =>
+          new Response(null, { status: 302, headers: { Location: target } }),
+      };
+
+      const res = (await middleware(ctx as any, vi.fn())) as Response;
+      expect(res.status).toBe(302);
+      expect(setCookieHeader).toBeDefined();
+      expect(setCookieHeader).toContain("SameSite=Lax");
+      expect(setCookieHeader).toContain("HttpOnly");
+      expect(setCookieHeader).toContain("Secure");
+    });
   });
 });

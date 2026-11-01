@@ -12,7 +12,6 @@ import {
   RLLayoutGrid,
   RLToast,
   RLButton,
-  RLErrorBoundary,
 } from "@rimelight/ui";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
@@ -59,9 +58,7 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
         {t("app.banner.content")}
       </RLBanner>
       <AppHeader stackIndex={1} />
-      <RLMain>
-        <RLErrorBoundary resetKey={props.location.pathname}>{props.children}</RLErrorBoundary>
-      </RLMain>
+      <RLMain>{props.children}</RLMain>
       <AppFooter />
       <RLScrollToTop />
       <RLShortcuts />
@@ -78,7 +75,7 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
             dismissable={false}
             duration={0}
             class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm"
-            actionsSlot={
+            actionsSlot={[
               <div class="flex items-center gap-2">
                 <RLButton
                   variant="solid"
@@ -96,8 +93,8 @@ export const AppRouteLayout: Component<RouteSectionProps> = (props) => {
                 >
                   {t("app.cookie.notice.deny.all")}
                 </RLButton>
-              </div>
-            }
+              </div>,
+            ]}
           >
             <span>
               {t("app.cookie.notice.description.prefix")}{" "}
