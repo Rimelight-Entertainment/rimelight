@@ -162,7 +162,7 @@ export const SplitterSandbox = (): JSX.Element => {
 
 export const splitterAudit: ComponentAuditDefinition = {
   id: "splitter",
-  name: "Splitter (Resizable)",
+  name: "Splitter",
   category: "Layout",
   status: "Auditing",
   description:
