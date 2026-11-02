@@ -70,8 +70,31 @@ export { RLConfirm } from "./confirm/RLConfirm";
 export type { RLConfirmProps } from "./confirm/confirm.types";
 export { RLContainer } from "./container/RLContainer";
 export type { RLContainerProps } from "./container/container.types";
-export { RLContextMenu } from "./context-menu/RLContextMenu";
-export type { RLContextMenuProps } from "./context-menu/context-menu.types";
+export {
+  RLContextMenu,
+  RLContextMenuTrigger,
+  RLContextMenuContent,
+} from "./context-menu/RLContextMenu";
+export type {
+  RLContextMenuProps,
+  RLContextMenuTriggerProps,
+  RLContextMenuContentProps,
+  RLContextMenuSlot,
+  ContextMenuItem,
+  ContextMenuItems,
+  ContextMenuActionItem,
+  ContextMenuCheckboxItem,
+  ContextMenuRadioItem,
+  ContextMenuGroupItem,
+  ContextMenuSeparatorItem,
+  ContextMenuTopRenderProps,
+  ContextMenuBottomRenderProps,
+  ContextMenuItemRenderProps,
+  ContextMenuAlign,
+  ContextMenuPlacement,
+  ContextMenuSize,
+  ContextMenuItemVariant,
+} from "./context-menu/context-menu.types";
 export { RLCopyMarkdown } from "./copy-markdown/RLCopyMarkdown";
 export type { RLCopyMarkdownProps } from "./copy-markdown/copy-markdown.types";
 export { RLDashboardGroup } from "./dashboard-group/RLDashboardGroup";
