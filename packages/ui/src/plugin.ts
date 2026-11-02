@@ -17,23 +17,31 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): Plugin[] => {
   };
 
   return [
-    ...(UnoCSS({
-      ...unocss,
-      presets: [rimelightUiPreset(cfg), ...(unocss.presets || [])],
-      content: {
-        ...unocss.content,
-        pipeline: unocss.content?.pipeline !== false && {
-          ...unocss.content?.pipeline,
-          include: [
-            /\.([jt]sx?|mdx?|html)($|\?)/,
-            /[\\/](@rimelight\/(ui|cms)|packages\/(ui|cms))[\\/]/,
-            ...[unocss.content?.pipeline?.include]
-              .flat()
-              .filter((v): v is string | RegExp => Boolean(v)),
-          ],
+    ...(
+      UnoCSS({
+        ...unocss,
+        presets: [rimelightUiPreset(cfg), ...(unocss.presets || [])],
+        content: {
+          ...unocss.content,
+          pipeline: unocss.content?.pipeline !== false && {
+            ...unocss.content?.pipeline,
+            include: [
+              /\.([jt]sx?|mdx?|html)($|\?)/,
+              /[\\/](@rimelight\/(ui|cms)|packages\/(ui|cms))[\\/]/,
+              ...[unocss.content?.pipeline?.include]
+                .flat()
+                .filter((v): v is string | RegExp => Boolean(v)),
+            ],
+          },
         },
-      },
-    }) as unknown as Plugin[]),
+      }) as unknown as Plugin[]
+    ).map((plugin) => ({
+      ...plugin,
+      // Run after the host's environment-setting plugins (e.g. @cloudflare/vite-plugin),
+      // which move build.outDir. UnoCSS snapshots output dirs in configResolved; with the
+      // default "pre" ordering it captures the wrong dir and emits empty CSS.
+      enforce: "post" as const,
+    })),
     {
       name: "rimelight:ui",
       resolveId: (id) => (id === ID ? RESOLVED_ID : undefined),
