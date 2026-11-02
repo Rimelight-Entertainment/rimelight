@@ -23,6 +23,7 @@ import { modalAudit } from "./modal.audit";
 import { pageAudit } from "./page.audit";
 import { pageSectionAudit } from "./page-section.audit";
 import { routeAnnouncerAudit } from "./route-announcer.audit";
+import { splitterAudit } from "./splitter.audit";
 import { tableAudit } from "./table.audit";
 import type { ComponentAuditDefinition } from "./types";
 
@@ -52,10 +53,22 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   page: pageAudit,
   "page-section": pageSectionAudit,
   "route-announcer": routeAnnouncerAudit,
+  splitter: splitterAudit,
+  resizable: splitterAudit,
   table: tableAudit,
 };
 
-export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);
+export const getAllAudits = (): ComponentAuditDefinition[] => {
+  const seen = new Set<string>();
+  const list: ComponentAuditDefinition[] = [];
+  for (const item of Object.values(COMPONENT_AUDITS)) {
+    if (!seen.has(item.id)) {
+      seen.add(item.id);
+      list.push(item);
+    }
+  }
+  return list;
+};
 
 export const getAuditById = (id: string): ComponentAuditDefinition | undefined =>
   COMPONENT_AUDITS[id.toLowerCase()];
