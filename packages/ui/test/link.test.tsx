@@ -73,5 +73,21 @@ describe("RLLink", () => {
       expect(disabledHtml).toContain('aria-disabled="true"');
       expect(disabledHtml).not.toContain("href=");
     });
+
+    it("renders JSX children without evaluating them multiple times", () => {
+      let count = 0;
+      const Child = () => {
+        count++;
+        return <span class="custom-child">Child Content</span>;
+      };
+      const html = render(() => (
+        <RLLink href="/about">
+          <Child />
+        </RLLink>
+      ));
+      expect(html).toContain("custom-child");
+      expect(html).toContain("Child Content");
+      expect(count).toBe(1);
+    });
   });
 });
