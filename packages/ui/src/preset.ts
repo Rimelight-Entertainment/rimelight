@@ -188,6 +188,27 @@ select.rl-select selectedcontent {
 select.rl-select[data-variant="icon"] selectedcontent {
   display: none;
 }
+select.rl-select[data-variant="icon"]::picker-icon {
+  display: none;
+}
+select.rl-select[data-variant="icon"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+select.rl-select[data-variant="icon"] > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+select.rl-select[data-variant="icon"] [data-slot="leading"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
 select.rl-select::picker-icon {
   color: var(--rl-neutral-500);
   transition: rotate 0.15s;

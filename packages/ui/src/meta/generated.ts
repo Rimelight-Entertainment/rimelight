@@ -15756,7 +15756,8 @@ export const componentMeta: ComponentMetaMap = {
             root: "w-full",
           },
           icon: {
-            select: "w-auto rounded-lg focus-within:ring-2 focus-within:ring-ring",
+            select:
+              "w-auto rounded-lg focus-within:ring-2 focus-within:ring-ring inline-flex items-center justify-center",
             trigger: "justify-center",
             label: "hidden",
           },
