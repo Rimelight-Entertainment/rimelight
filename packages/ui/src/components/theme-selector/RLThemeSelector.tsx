@@ -17,7 +17,7 @@ const themeItems = [
   { label: "Dark", value: "dark", icon: "moon" },
 ];
 
-const OMIT_KEYS = ["mode", "size", "onChange"] as const;
+const OMIT_KEYS = ["mode", "size", "color", "onChange"] as const;
 
 export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
   const { classes, rest } = RLThemeSelectorTheme.setup(props, { omit: OMIT_KEYS });
@@ -94,6 +94,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
           onChange={(e) => applyTheme(e.currentTarget.value)}
           size={size() as any}
           variant={mode() === "icon" ? "icon" : "default"}
+          color={props.color}
           aria-label={uiT("theme.toggle")}
           class={classes().select}
           leadingIcon={activeIcon()}

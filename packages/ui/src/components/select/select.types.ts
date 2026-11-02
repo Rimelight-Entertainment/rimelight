@@ -1,4 +1,5 @@
 import type { JSX } from "@solidjs/web";
+import type { ThemeColor } from "../../types";
 import type { RLButtonProps } from "../button/button.types";
 
 export interface SelectItem {
@@ -19,6 +20,7 @@ export interface RLSelectProps {
   disabled?: boolean | undefined;
   required?: boolean | undefined;
   multiple?: boolean | undefined;
+  color?: ThemeColor | undefined;
   size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
   variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none" | undefined;
   buttonVariant?: RLButtonProps["variant"] | undefined;

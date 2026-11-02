@@ -12,6 +12,7 @@ const OMIT_KEYS = [
   "mode",
   "variant",
   "size",
+  "color",
   "labelSlot",
   "leading",
   "leadingIcon",
@@ -76,6 +77,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
           onChange={handleChange}
           size={(props.size as any) || "md"}
           variant={isIconMode() ? "icon" : "default"}
+          color={props.color}
           aria-label={uiT("locale-selector.label")}
           class={classes().select}
           leadingIcon={props.leadingIcon || "i-lucide-globe"}

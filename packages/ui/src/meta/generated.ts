@@ -12748,6 +12748,12 @@ export const componentMeta: ComponentMetaMap = {
         default: '"default"',
       },
       {
+        name: "color",
+        type: "ThemeColor",
+        required: false,
+        description: "Color theme override.",
+      },
+      {
         name: "size",
         type: '"xs" | "sm" | "md" | "lg" | "xl"',
         required: false,
@@ -15660,6 +15666,12 @@ export const componentMeta: ComponentMetaMap = {
         description: "",
       },
       {
+        name: "color",
+        type: "ThemeColor | undefined",
+        required: false,
+        description: "",
+      },
+      {
         name: "size",
         type: '"xs" | "sm" | "md" | "lg" | "xl" | undefined',
         required: false,
@@ -15745,7 +15757,7 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "relative inline-flex items-center",
         select:
-          "rl-select w-full rounded-md border border-default bg-default shadow-sm text-highlighted hover:bg-accented/50 transition-colors cursor-pointer",
+          "rl-select w-full rounded-md border shadow-sm transition-colors cursor-pointer focus-within:outline-none",
         trigger: "flex items-center gap-2 w-full min-w-0 cursor-pointer",
         label: "truncate",
         leading: "flex items-center text-current shrink-0 pointer-events-none",
@@ -15754,10 +15766,12 @@ export const componentMeta: ComponentMetaMap = {
         variant: {
           default: {
             root: "w-full",
+            select:
+              "border-[var(--rl-border)]/50 bg-default text-highlighted hover:border-[var(--rl-border)] focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
           },
           icon: {
             select:
-              "w-auto rounded-lg focus-within:ring-2 focus-within:ring-ring inline-flex items-center justify-center",
+              "w-auto rounded-lg focus-within:ring-2 focus-within:ring-[var(--rl-ring)] inline-flex items-center justify-center border-[var(--rl-border)]/60 text-[var(--rl-text)] hover:border-[var(--rl-border)] hover:bg-[var(--rl-bg)]/10",
             trigger: "justify-center",
             label: "hidden",
           },
@@ -15786,6 +15800,22 @@ export const componentMeta: ComponentMetaMap = {
         },
       },
       compoundVariants: [
+        {
+          color: "neutral",
+          variant: "default",
+          class: {
+            select:
+              "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+          },
+        },
+        {
+          color: "neutral",
+          variant: "icon",
+          class: {
+            select:
+              "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+          },
+        },
         {
           variant: "default",
           size: "xs",
@@ -15859,6 +15889,7 @@ export const componentMeta: ComponentMetaMap = {
       ],
       defaultVariants: {
         variant: "default",
+        color: "primary",
         size: "md",
       },
     },
@@ -18677,6 +18708,12 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "size",
         type: '"3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"',
+        required: false,
+        description: "",
+      },
+      {
+        name: "color",
+        type: "ThemeColor",
         required: false,
         description: "",
       },

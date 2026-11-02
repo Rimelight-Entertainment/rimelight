@@ -1,4 +1,5 @@
 import type { JSX } from "@solidjs/web";
+import type { ThemeColor } from "../../types";
 
 export interface LocaleItem {
   code: string;
@@ -39,6 +40,10 @@ export interface RLLocaleSelectorProps {
    * @default "default"
    */
   variant?: "default" | "outline" | "ghost" | "icon";
+  /**
+   * Color theme override.
+   */
+  color?: ThemeColor;
   /**
    * The size scale of typography and spacing metrics.
    *

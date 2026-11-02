@@ -5,7 +5,7 @@ export const RLSelectTheme = defineTheme("select", {
   base: {
     root: "relative inline-flex items-center",
     select:
-      "rl-select w-full rounded-md border border-default bg-default shadow-sm text-highlighted hover:bg-accented/50 transition-colors cursor-pointer",
+      "rl-select w-full rounded-md border shadow-sm transition-colors cursor-pointer focus-within:outline-none",
     trigger: "flex items-center gap-2 w-full min-w-0 cursor-pointer",
     label: "truncate",
     leading: "flex items-center text-current shrink-0 pointer-events-none",
@@ -14,14 +14,17 @@ export const RLSelectTheme = defineTheme("select", {
     variant: {
       default: {
         root: "w-full",
+        select:
+          "border-[var(--rl-border)]/50 bg-default text-highlighted hover:border-[var(--rl-border)] focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
       },
       icon: {
         select:
-          "w-auto rounded-lg focus-within:ring-2 focus-within:ring-ring inline-flex items-center justify-center",
+          "w-auto rounded-lg focus-within:ring-2 focus-within:ring-[var(--rl-ring)] inline-flex items-center justify-center border-[var(--rl-border)]/60 text-[var(--rl-text)] hover:border-[var(--rl-border)] hover:bg-[var(--rl-bg)]/10",
         trigger: "justify-center",
         label: "hidden",
       },
     },
+    color: "auto",
     size: {
       xs: { select: "text-xs", label: "text-xs" },
       sm: { select: "text-xs", label: "text-xs" },
@@ -31,6 +34,22 @@ export const RLSelectTheme = defineTheme("select", {
     },
   },
   compoundVariants: [
+    {
+      color: "neutral",
+      variant: "default",
+      class: {
+        select:
+          "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+      },
+    },
+    {
+      color: "neutral",
+      variant: "icon",
+      class: {
+        select:
+          "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+      },
+    },
     { variant: "default", size: "xs", class: { select: "px-2 py-0.5" } },
     { variant: "default", size: "sm", class: { select: "px-2.5 py-1" } },
     { variant: "default", size: "md", class: { select: "px-3 py-1.5" } },
@@ -44,6 +63,7 @@ export const RLSelectTheme = defineTheme("select", {
   ],
   defaultVariants: {
     variant: "default",
+    color: "primary",
     size: "md",
   },
 });
