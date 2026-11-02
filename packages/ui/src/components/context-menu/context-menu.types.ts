@@ -202,73 +202,6 @@ export interface ContextMenuItemRenderProps {
   close: () => void;
 }
 
-export interface RLContextMenuTriggerProps {
-  /**
-   * Element or component to render as.
-   * @default "div"
-   */
-  as?: ValidComponent | undefined;
-  /**
-   * Whether this trigger is disabled.
-   */
-  disabled?: boolean | undefined;
-  /**
-   * Trigger label and visual content.
-   */
-  children?: JSX.Element | undefined;
-  /**
-   * Class applied to the trigger element.
-   */
-  class?: ClassValue | undefined;
-  /**
-   * Style applied to the trigger element.
-   */
-  style?: JSX.CSSProperties | string | undefined;
-  [key: string]: unknown;
-}
-
-export interface RLContextMenuContentProps {
-  /**
-   * Items rendered in the menu body. Supports flat array, explicit group objects, or array-of-arrays.
-   */
-  items?: ContextMenuItems | undefined;
-  /**
-   * Icon used for checked checkbox items.
-   * @default "check"
-   */
-  checkedIcon?: string | undefined;
-  /**
-   * Icon used for submenu trigger items.
-   * @default "chevron-right"
-   */
-  submenuIcon?: string | undefined;
-  /**
-   * Content rendered before the resolved item groups.
-   */
-  topRender?: JSX.Element | Component<ContextMenuTopRenderProps> | undefined;
-  /**
-   * Content rendered after the resolved item groups.
-   */
-  bottomRender?: JSX.Element | Component<ContextMenuBottomRenderProps> | undefined;
-  /**
-   * Renderer for each menu item.
-   */
-  itemRender?: Component<ContextMenuItemRenderProps> | undefined;
-  /**
-   * Class applied to the content element.
-   */
-  class?: ClassValue | undefined;
-  /**
-   * Style applied to the content element.
-   */
-  style?: JSX.CSSProperties | string | undefined;
-  /**
-   * Custom content children when not using `items` or in addition to `items`.
-   */
-  children?: JSX.Element | undefined;
-  [key: string]: unknown;
-}
-
 export interface RLContextMenuProps {
   /**
    * Element or component the trigger or root should render as.
@@ -371,7 +304,7 @@ export interface RLContextMenuProps {
    */
   itemSlot?: Component<ContextMenuItemRenderProps> | undefined;
   /**
-   * Explicit trigger element when not using `RLContextMenu.Trigger` or `children`.
+   * Explicit trigger element when not using `children`.
    */
   trigger?: JSX.Element | undefined;
   /**
@@ -379,7 +312,7 @@ export interface RLContextMenuProps {
    */
   triggerSlot?: JSX.Element | undefined;
   /**
-   * Explicit content element when not using `RLContextMenu.Content` or `items`.
+   * Explicit content element when not using `items`.
    */
   content?: JSX.Element | undefined;
   /**
@@ -402,7 +335,7 @@ export interface RLContextMenuProps {
    */
   longPressDelay?: number | undefined;
   /**
-   * Composed trigger and content primitives, or direct trigger children.
+   * Trigger children.
    */
   children?: JSX.Element | undefined;
   /**
@@ -428,6 +361,10 @@ export interface RLContextMenuProps {
   /**
    * Optional theme override (`"light"` or `"dark"`).
    */
-  theme?: "light" | "dark" | (string & {}) | undefined;
+  theme?: "light" | "dark" | undefined;
+  /**
+   * Color theme variant.
+   */
+  color?: string | undefined;
   [key: string]: unknown;
 }

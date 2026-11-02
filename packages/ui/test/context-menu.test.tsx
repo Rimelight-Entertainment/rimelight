@@ -20,23 +20,16 @@ function attr(tag: string, name: string): string | undefined {
 
 describe("RLContextMenu", () => {
   describe("Exports", () => {
-    it("exports RLContextMenu and compound parts from index", () => {
+    it("exports RLContextMenu as a single component from index", () => {
       expect(components.RLContextMenu).toBeDefined();
-      expect(components.RLContextMenu.Trigger).toBeDefined();
-      expect(components.RLContextMenu.Content).toBeDefined();
-      expect(components.RLContextMenuTrigger).toBeDefined();
-      expect(components.RLContextMenuContent).toBeDefined();
     });
   });
 
-  describe("Compound Anatomy & Trigger", () => {
-    it("renders compound Trigger and closed state by default", () => {
+  describe("Single Component Anatomy & Trigger", () => {
+    it("renders trigger and closed state by default", () => {
       const html = render(() => (
-        <RLContextMenu>
-          <RLContextMenu.Trigger as="div" class="custom-trigger">
-            Right-click here
-          </RLContextMenu.Trigger>
-          <RLContextMenu.Content items={[{ label: "Copy" }]} />
+        <RLContextMenu items={[{ label: "Copy" }]} class="custom-trigger">
+          Right-click here
         </RLContextMenu>
       ));
 
@@ -49,36 +42,24 @@ describe("RLContextMenu", () => {
       expect(slotTag(html, "content")).toBe("");
     });
 
-    it("supports single-component props shorthand alongside compound API", () => {
+    it("supports explicit trigger prop", () => {
       const html = render(() => (
         <RLContextMenu
-          open
-          portal={false}
-          items={[
-            { label: "Back", leading: "i-lucide:arrow-left" },
-            { label: "Forward", leading: "i-lucide:arrow-right", disabled: true },
-            { label: "Reload", leading: "i-lucide:rotate-cw" },
-          ]}
-        >
-          Right-click area
-        </RLContextMenu>
+          trigger={<span class="explicit-trigger">Custom Surface</span>}
+          items={[{ label: "Copy" }]}
+        />
       ));
 
-      expect(slotTag(html, "trigger")).not.toBe("");
-      expect(slotTag(html, "content")).not.toBe("");
-      expect(html).toContain("Right-click area");
-      expect(html).toContain("Back");
-      expect(html).toContain("Forward");
-      expect(html).toContain("Reload");
+      const trigger = slotTag(html, "trigger");
+      expect(trigger).not.toBe("");
+      expect(html).toContain("explicit-trigger");
+      expect(html).toContain("Custom Surface");
     });
 
     it("supports polymorphic trigger via `as` prop", () => {
       const html = render(() => (
-        <RLContextMenu>
-          <RLContextMenu.Trigger as="section" class="poly-trigger">
-            Surface
-          </RLContextMenu.Trigger>
-          <RLContextMenu.Content items={[{ label: "Copy" }]} />
+        <RLContextMenu as="section" class="poly-trigger" items={[{ label: "Copy" }]}>
+          Surface
         </RLContextMenu>
       ));
 
@@ -89,24 +70,27 @@ describe("RLContextMenu", () => {
   describe("Open States & Content Anatomy", () => {
     it("renders overlay, positioner, content, groups, and items when open", () => {
       const html = render(() => (
-        <RLContextMenu open portal={false} align="end" placement="bottom">
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content
-            items={[
-              {
-                label: "Copy",
-                description: "Copy selection to clipboard",
-                icon: "copy",
-                kbds: ["Ctrl", "C"],
-              },
-              { type: "separator" },
-              {
-                label: "Delete",
-                icon: "trash-2",
-                variant: "danger",
-              },
-            ]}
-          />
+        <RLContextMenu
+          open
+          portal={false}
+          align="end"
+          placement="bottom"
+          items={[
+            {
+              label: "Copy",
+              description: "Copy selection to clipboard",
+              icon: "copy",
+              kbds: ["Ctrl", "C"],
+            },
+            { type: "separator" },
+            {
+              label: "Delete",
+              icon: "trash-2",
+              variant: "danger",
+            },
+          ]}
+        >
+          Surface
         </RLContextMenu>
       ));
 
@@ -139,9 +123,8 @@ describe("RLContextMenu", () => {
 
     it("renders when defaultOpen is true", () => {
       const html = render(() => (
-        <RLContextMenu defaultOpen portal={false}>
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={[{ label: "Inspect" }]} />
+        <RLContextMenu defaultOpen portal={false} items={[{ label: "Inspect" }]}>
+          Surface
         </RLContextMenu>
       ));
 
@@ -151,9 +134,13 @@ describe("RLContextMenu", () => {
 
     it("keeps content in DOM when unmountOnHide={false} and closed", () => {
       const html = render(() => (
-        <RLContextMenu open={false} unmountOnHide={false} portal={false}>
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={[{ label: "Persisted Action" }]} />
+        <RLContextMenu
+          open={false}
+          unmountOnHide={false}
+          portal={false}
+          items={[{ label: "Persisted Action" }]}
+        >
+          Surface
         </RLContextMenu>
       ));
 
@@ -178,9 +165,8 @@ describe("RLContextMenu", () => {
       ];
 
       const html = render(() => (
-        <RLContextMenu open portal={false}>
-          <RLContextMenu.Trigger>File</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={items} />
+        <RLContextMenu open portal={false} items={items}>
+          File
         </RLContextMenu>
       ));
 
@@ -192,20 +178,21 @@ describe("RLContextMenu", () => {
 
     it("renders shorthand top-level group object without explicit type='group'", () => {
       const html = render(() => (
-        <RLContextMenu open portal={false}>
-          <RLContextMenu.Trigger>File</RLContextMenu.Trigger>
-          <RLContextMenu.Content
-            items={[
-              {
-                label: "Actions",
-                children: [
-                  { label: "Copy path", icon: "i-lucide:copy" },
-                  { label: "Rename file", icon: "i-lucide:edit-2" },
-                  { label: "Delete", icon: "i-lucide:trash-2", variant: "danger" },
-                ],
-              },
-            ]}
-          />
+        <RLContextMenu
+          open
+          portal={false}
+          items={[
+            {
+              label: "Actions",
+              items: [
+                { label: "Copy path", icon: "i-lucide:copy" },
+                { label: "Rename file", icon: "i-lucide:edit-2" },
+                { label: "Delete", icon: "i-lucide:trash-2", variant: "danger" },
+              ],
+            },
+          ]}
+        >
+          File
         </RLContextMenu>
       ));
 
@@ -218,11 +205,12 @@ describe("RLContextMenu", () => {
 
     it("supports array-of-arrays item grouping with automatic separators", () => {
       const html = render(() => (
-        <RLContextMenu open portal={false}>
-          <RLContextMenu.Trigger>File</RLContextMenu.Trigger>
-          <RLContextMenu.Content
-            items={[[{ label: "Cut" }, { label: "Copy" }], [{ label: "Paste" }]]}
-          />
+        <RLContextMenu
+          open
+          portal={false}
+          items={[[{ label: "Cut" }, { label: "Copy" }], [{ label: "Paste" }]]}
+        >
+          File
         </RLContextMenu>
       ));
 
@@ -257,9 +245,8 @@ describe("RLContextMenu", () => {
       ];
 
       const html = render(() => (
-        <RLContextMenu open portal={false}>
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={items} />
+        <RLContextMenu open portal={false} items={items}>
+          Surface
         </RLContextMenu>
       ));
 
@@ -283,9 +270,8 @@ describe("RLContextMenu", () => {
       ];
 
       const html = render(() => (
-        <RLContextMenu open portal={false}>
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={items} />
+        <RLContextMenu open portal={false} items={items}>
+          Surface
         </RLContextMenu>
       ));
 
@@ -297,9 +283,13 @@ describe("RLContextMenu", () => {
 
     it("marks disabled trigger and disabled items with data-disabled", () => {
       const html = render(() => (
-        <RLContextMenu open portal={false} disabled>
-          <RLContextMenu.Trigger>Disabled Trigger</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={[{ label: "Disabled Action", disabled: true }]} />
+        <RLContextMenu
+          open
+          portal={false}
+          disabled
+          items={[{ label: "Disabled Action", disabled: true }]}
+        >
+          Disabled Trigger
         </RLContextMenu>
       ));
 
@@ -311,18 +301,19 @@ describe("RLContextMenu", () => {
   describe("Custom Renderers & Styling", () => {
     it("supports topRender, bottomRender, and itemRender", () => {
       const html = render(() => (
-        <RLContextMenu open portal={false}>
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content
-            topRender={() => <div class="custom-top">Header Metadata</div>}
-            bottomRender={() => <div class="custom-bottom">Footer Info</div>}
-            itemRender={(props) => (
-              <div class="custom-item-render" data-index={props.index}>
-                Custom: {props.item.label}
-              </div>
-            )}
-            items={[{ label: "Action 1" }]}
-          />
+        <RLContextMenu
+          open
+          portal={false}
+          topRender={() => <div class="custom-top">Header Metadata</div>}
+          bottomRender={() => <div class="custom-bottom">Footer Info</div>}
+          itemRender={(props) => (
+            <div class="custom-item-render" data-index={props.index}>
+              Custom: {props.item.label}
+            </div>
+          )}
+          items={[{ label: "Action 1" }]}
+        >
+          Surface
         </RLContextMenu>
       ));
 
@@ -348,9 +339,9 @@ describe("RLContextMenu", () => {
           classes={{
             group: "classes-group-custom",
           }}
+          items={[{ label: "Styled Item" }]}
         >
-          <RLContextMenu.Trigger>Surface</RLContextMenu.Trigger>
-          <RLContextMenu.Content items={[{ label: "Styled Item" }]} />
+          Surface
         </RLContextMenu>
       ));
 

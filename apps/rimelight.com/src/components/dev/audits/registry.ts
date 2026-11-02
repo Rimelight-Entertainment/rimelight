@@ -16,6 +16,7 @@ import { chipAudit } from "./chip.audit";
 import { collapsibleAudit } from "./collapsible.audit";
 import { compareAudit } from "./compare.audit";
 import { confirmAudit } from "./confirm.audit";
+import { contextMenuAudit } from "./context-menu.audit";
 import { iconAudit } from "./icon.audit";
 import { imageAudit } from "./image.audit";
 import { mainAudit } from "./main.audit";
@@ -46,6 +47,8 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
   collapsible: collapsibleAudit,
   compare: compareAudit,
   confirm: confirmAudit,
+  "context-menu": contextMenuAudit,
+  contextmenu: contextMenuAudit,
   icon: iconAudit,
   image: imageAudit,
   main: mainAudit,
@@ -60,4 +63,4 @@ export const COMPONENT_AUDITS: Record<string, ComponentAuditDefinition> = {
 export const getAllAudits = (): ComponentAuditDefinition[] => Object.values(COMPONENT_AUDITS);
 
 export const getAuditById = (id: string): ComponentAuditDefinition | undefined =>
-  COMPONENT_AUDITS[id.toLowerCase()];
+  COMPONENT_AUDITS[id];

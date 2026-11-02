@@ -7738,14 +7738,13 @@ export const componentMeta: ComponentMetaMap = {
         name: "trigger",
         type: "JSX.Element | undefined",
         required: false,
-        description:
-          "Explicit trigger element when not using `RLContextMenu.Trigger` or `children`.",
+        description: "Explicit trigger element when not using `children`.",
       },
       {
         name: "content",
         type: "JSX.Element | undefined",
         required: false,
-        description: "Explicit content element when not using `RLContextMenu.Content` or `items`.",
+        description: "Explicit content element when not using `items`.",
       },
       {
         name: "portal",
@@ -7800,9 +7799,15 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "theme",
-        type: '"light" | "dark" | (string & {}) | undefined',
+        type: '"light" | "dark" | undefined',
         required: false,
         description: 'Optional theme override (`"light"` or `"dark"`).',
+      },
+      {
+        name: "color",
+        type: "string | undefined",
+        required: false,
+        description: "Color theme variant.",
       },
     ],
     slots: [
@@ -7834,7 +7839,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "default",
         bindings: {},
-        description: "Composed trigger and content primitives, or direct trigger children.",
+        description: "Trigger children.",
       },
     ],
     emits: [],

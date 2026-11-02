@@ -1,5 +1,4 @@
 import {
-  createContext,
   createEffect,
   createMemo,
   createSignal,
@@ -7,8 +6,6 @@ import {
   onCleanup,
   onSettled,
   Show,
-  useContext,
-  type Accessor,
   type Component,
 } from "solid-js";
 import { Portal, type JSX } from "@solidjs/web";
@@ -17,22 +14,16 @@ import { RLIcon } from "../icon/RLIcon";
 import { RLContextMenuTheme } from "./context-menu.theme";
 import type {
   ContextMenuActionItem,
-  ContextMenuAlign,
   ContextMenuCheckboxItem,
   ContextMenuGroupItem,
   ContextMenuItem,
-  ContextMenuItemRenderProps,
   ContextMenuItems,
-  ContextMenuPlacement,
   ContextMenuRadioItem,
-  ContextMenuSize,
-  RLContextMenuContentProps,
   RLContextMenuProps,
   RLContextMenuSlot,
-  RLContextMenuTriggerProps,
 } from "./context-menu.types";
 
-const ROOT_OMIT_KEYS = [
+const OMIT_KEYS = [
   "align",
   "defaultOpen",
   "open",
@@ -66,59 +57,15 @@ const ROOT_OMIT_KEYS = [
   "style",
 ] as const;
 
-const TRIGGER_OMIT_KEYS = ["as", "disabled", "children", "class", "style"] as const;
-
-const CONTENT_OMIT_KEYS = [
-  "items",
-  "checkedIcon",
-  "submenuIcon",
-  "topRender",
-  "bottomRender",
-  "itemRender",
-  "class",
-  "style",
-  "children",
-] as const;
-
 interface AnchorCoords {
   x: number;
   y: number;
 }
 
-interface ContextMenuContextValue {
-  id: Accessor<string>;
-  isOpen: Accessor<boolean>;
-  setOpenState: (open: boolean, coords?: AnchorCoords) => void;
-  close: () => void;
-  disabled: Accessor<boolean>;
-  align: Accessor<ContextMenuAlign>;
-  placement: Accessor<ContextMenuPlacement>;
-  gutter: Accessor<number>;
-  shift: Accessor<number>;
-  overflowPadding: Accessor<number>;
-  preventScroll: Accessor<boolean>;
-  size: Accessor<ContextMenuSize>;
-  portal: Accessor<boolean | Node>;
-  unmountOnHide: Accessor<boolean>;
-  longPressDelay: Accessor<number>;
-  anchorCoords: Accessor<AnchorCoords | null>;
-  getTriggerRef: () => HTMLElement | undefined;
-  setTriggerRef: (el: HTMLElement | undefined) => void;
-  getContentRef: () => HTMLElement | undefined;
-  setContentRef: (el: HTMLElement | undefined) => void;
-  classes: Accessor<Record<RLContextMenuSlot, string>>;
-  styles: Accessor<Partial<Record<RLContextMenuSlot, JSX.CSSProperties | string>> | undefined>;
-  theme: Accessor<string | undefined>;
-  rootProps: RLContextMenuProps;
-}
-
-const ContextMenuContext = createContext<ContextMenuContextValue | null>(null);
-
 interface ResolvedMenuSection {
   type: "group" | "separator";
   label?: JSX.Element | undefined;
   items?: ContextMenuItem[] | undefined;
-  item?: ContextMenuItem | undefined;
 }
 
 function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMenuSection[] {
@@ -149,54 +96,32 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
     if (currentUngrouped.length > 0) {
       sections.push({
         type: "group",
-        items: currentUngrouped,
+        items: [...currentUngrouped],
       });
       currentUngrouped = [];
     }
   };
 
   for (let i = 0; i < flat.length; i++) {
-    const entry = flat[i];
-    if (!entry) continue;
-
-    if (entry.type === "separator") {
+    const it = flat[i];
+    if (!it) continue;
+    if (it.type === "separator") {
       flushUngrouped();
-      sections.push({ type: "separator", item: entry });
-    } else if (entry.type === "group") {
-      flushUngrouped();
-      const groupEntry = entry as ContextMenuGroupItem;
-      const children = groupEntry.items ?? groupEntry.children ?? [];
-      sections.push({
-        type: "group",
-        label: groupEntry.label,
-        items: children,
-        item: groupEntry,
-      });
+      sections.push({ type: "separator" });
     } else if (
-      entry.type === undefined &&
-      !entry.icon &&
-      !entry.leading &&
-      !(entry as ContextMenuActionItem).onSelect &&
-      !(entry as ContextMenuActionItem).href &&
-      Array.isArray((entry as ContextMenuActionItem).children) &&
-      i === 0 &&
-      flat.length === 1
+      it.type === "group" ||
+      (!it.type && "items" in it && Array.isArray((it as unknown as ContextMenuGroupItem).items))
     ) {
-      // Top-level single group object shorthand without explicit `type: 'group'`:
-      // e.g. items={[{ label: 'Actions', children: [...] }]}
       flushUngrouped();
-      const groupLike = entry as ContextMenuActionItem;
-      const children = Array.isArray(groupLike.children?.[0])
-        ? (groupLike.children as ContextMenuItem[][]).flat()
-        : ((groupLike.children as ContextMenuItem[] | undefined) ?? []);
+      const grp = it as ContextMenuGroupItem;
+      const grpItems = grp.items ?? grp.children ?? [];
       sections.push({
         type: "group",
-        label: groupLike.label,
-        items: children,
-        item: entry,
+        label: grp.label,
+        items: grpItems,
       });
     } else {
-      currentUngrouped.push(entry);
+      currentUngrouped.push(it);
     }
   }
 
@@ -205,130 +130,73 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
 }
 
 function mergeStyle(
-  a?: JSX.CSSProperties | string,
-  b?: JSX.CSSProperties | string,
+  base: JSX.CSSProperties | string | undefined,
+  extra: JSX.CSSProperties | string | undefined,
 ): JSX.CSSProperties | string | undefined {
-  if (!a) return b;
-  if (!b) return a;
-  if (typeof a === "string" || typeof b === "string") {
-    const strA =
-      typeof a === "string"
-        ? a
-        : Object.entries(a)
-            .map(([k, v]) => `${k}:${String(v)}`)
-            .join(";");
-    const strB =
-      typeof b === "string"
-        ? b
-        : Object.entries(b)
-            .map(([k, v]) => `${k}:${String(v)}`)
-            .join(";");
-    return `${strA};${strB}`;
+  if (!base) return extra;
+  if (!extra) return base;
+  if (typeof base === "string" && typeof extra === "string") {
+    return `${base}; ${extra}`;
   }
-  return { ...a, ...b };
-}
-
-function renderCustomSlot<P extends Record<string, any>>(
-  slot: JSX.Element | Component<P> | undefined,
-  props: P,
-): JSX.Element {
-  if (slot === undefined || slot === null) return null;
-  if (typeof slot === "function") {
-    return (slot as Component<P>)(props);
+  if (typeof base === "object" && typeof extra === "object") {
+    return { ...base, ...extra };
   }
-  return slot;
+  return extra;
 }
 
-function isCustomElementIcon(val: unknown): val is JSX.Element {
-  return val !== undefined && val !== null && typeof val !== "string";
-}
-
-function findInitialOpenSubmenuIndex(sections: ResolvedMenuSection[]): number | null {
-  let idx = 0;
-  for (const sec of sections) {
-    if (sec.type === "group" && sec.items) {
-      for (const it of sec.items) {
-        if (it.type === undefined || it.type === "item") {
-          const actionIt = it as ContextMenuActionItem;
-          if (actionIt.open || actionIt.defaultOpen) {
-            return idx;
-          }
-        }
-        idx++;
-      }
-    }
-  }
-  return null;
-}
-
+/**
+ * Recursive submenu layer component
+ */
 interface MenuLayerProps {
-  items: ContextMenuItems | undefined;
-  classes: Accessor<Record<RLContextMenuSlot, string>>;
-  styles: Accessor<Partial<Record<RLContextMenuSlot, JSX.CSSProperties | string>> | undefined>;
-  checkedIcon: Accessor<string>;
-  submenuIcon: Accessor<string>;
-  topRender?: JSX.Element | Component<{ open: boolean; close: () => void }> | undefined;
-  bottomRender?: JSX.Element | Component<{ open: boolean; close: () => void }> | undefined;
-  itemRender?: Component<ContextMenuItemRenderProps> | undefined;
-  isOpen: Accessor<boolean>;
+  sections: ResolvedMenuSection[];
+  classes: ReturnType<typeof RLContextMenuTheme.setup>["classes"];
+  styles?: Partial<Record<RLContextMenuSlot, JSX.CSSProperties | string>> | undefined;
+  checkedIcon: () => string;
+  submenuIcon: () => string;
+  itemRender?: RLContextMenuProps["itemRender"];
+  isSubmenu?: boolean;
+  closeLayer?: () => void;
   closeRoot: () => void;
-  closeLayer?: (() => void) | undefined;
-  isSubmenu?: boolean | undefined;
-  align: Accessor<ContextMenuAlign>;
-  side: Accessor<ContextMenuPlacement>;
-  size: Accessor<ContextMenuSize>;
-  contentClass?: any;
-  contentStyle?: JSX.CSSProperties | string | undefined;
-  contentRef?: ((el: HTMLDivElement) => void) | undefined;
-  children?: JSX.Element | undefined;
-  restProps?: Record<string, unknown> | undefined;
 }
 
 const MenuLayer: Component<MenuLayerProps> = (props) => {
-  const sections = createMemo(() => normalizeMenuSections(props.items));
-
   const [highlightedIndex, setHighlightedIndex] = createSignal<number>(-1);
-  const [openSubmenuIndex, setOpenSubmenuIndex] = createSignal<number | null>(
-    findInitialOpenSubmenuIndex(sections()),
-  );
+  const [openSubmenuIndex, setOpenSubmenuIndex] = createSignal<number | null>(null);
   const [uncontrolledChecked, setUncontrolledChecked] = createSignal<Record<number, boolean>>({});
   const [uncontrolledRadioGroups, setUncontrolledRadioGroups] = createSignal<
     Record<string, string>
   >({});
 
-  const itemEls = new Map<number, HTMLElement>();
-
-  // Flatten interactive/navigable items for keyboard indexing
   const flatItems = createMemo(() => {
-    const list: { item: ContextMenuItem; flatIndex: number }[] = [];
-    let idx = 0;
-    for (const sec of sections()) {
-      if (sec.type === "group" && sec.items) {
-        for (const it of sec.items) {
-          if (it.type !== "separator" && it.type !== "group") {
-            list.push({ item: it, flatIndex: idx });
-          }
-          idx++;
+    const list: Array<{ item: ContextMenuItem; flatIndex: number }> = [];
+    let counter = 0;
+    for (const section of props.sections) {
+      if (section.type === "group" && section.items) {
+        for (const item of section.items) {
+          list.push({ item, flatIndex: counter });
+          counter++;
         }
       }
     }
     return list;
   });
 
-  const moveHighlight = (delta: number) => {
-    const navigable = flatItems().filter((entry) => !entry.item.disabled);
-    if (navigable.length === 0) return;
+  const itemEls = new Map<number, HTMLElement>();
+
+  const moveHighlight = (step: number) => {
+    const items = flatItems();
+    if (items.length === 0) return;
     const current = highlightedIndex();
-    const currentPos = navigable.findIndex((e) => e.flatIndex === current);
-    let nextPos: number;
-    if (currentPos === -1) {
-      nextPos = delta > 0 ? 0 : navigable.length - 1;
-    } else {
-      nextPos = (currentPos + delta + navigable.length) % navigable.length;
+    let next = current;
+    for (let attempts = 0; attempts < items.length; attempts++) {
+      next = (next + step + items.length) % items.length;
+      const candidate = items[next];
+      if (candidate && !candidate.item.disabled && candidate.item.type !== "separator") {
+        setHighlightedIndex(candidate.flatIndex);
+        itemEls.get(candidate.flatIndex)?.focus();
+        return;
+      }
     }
-    const nextFlatIdx = navigable[nextPos]!.flatIndex;
-    setHighlightedIndex(nextFlatIdx);
-    itemEls.get(nextFlatIdx)?.focus();
   };
 
   const hasSubmenu = (item: ContextMenuItem): boolean => {
@@ -464,7 +332,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           role="separator"
           data-slot="separator"
           class={cx(props.classes().separator, item.class)}
-          style={mergeStyle(props.styles()?.separator, item.style)}
+          style={mergeStyle(props.styles?.separator, item.style)}
         />
       );
     }
@@ -488,614 +356,275 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
       });
     }
 
-    const itemRole = (): "menuitemcheckbox" | "menuitemradio" | "menuitem" =>
-      item.type === "checkbox"
-        ? "menuitemcheckbox"
-        : item.type === "radio"
-          ? "menuitemradio"
-          : "menuitem";
+    const role = () => {
+      if (item.type === "checkbox") return "menuitemcheckbox";
+      if (item.type === "radio") return "menuitemradio";
+      return "menuitem";
+    };
 
-    const leadingSource = () => item.icon ?? item.leading;
+    const leadingIcon = () => item.icon ?? item.leading;
 
-    const itemContent = (
-      <>
-        <Show when={leadingSource() !== undefined}>
-          <span
-            data-slot="itemLeading"
-            class={cx(props.classes().itemLeading, item.ui?.itemLeading)}
-            style={props.styles()?.itemLeading}
-          >
-            {isCustomElementIcon(leadingSource()) ? (
-              leadingSource()
-            ) : (
-              <RLIcon
-                name={leadingSource() as string}
-                size="sm"
-                class={cx(props.classes().itemLeadingIcon, item.ui?.itemLeadingIcon)}
-              />
-            )}
-          </span>
-        </Show>
-
-        <span
-          data-slot="itemWrapper"
-          class={cx(props.classes().itemWrapper, item.ui?.itemWrapper)}
-          style={props.styles()?.itemWrapper}
-        >
-          <Show when={item.label !== undefined}>
-            <span
-              data-slot="itemLabel"
-              class={cx(props.classes().itemLabel, item.ui?.itemLabel)}
-              style={props.styles()?.itemLabel}
-            >
-              {item.label}
-            </span>
-          </Show>
-          <Show when={item.description !== undefined}>
-            <span
-              data-slot="itemDescription"
-              class={cx(props.classes().itemDescription, item.ui?.itemDescription)}
-              style={props.styles()?.itemDescription}
-            >
-              {item.description}
-            </span>
-          </Show>
-        </span>
-
-        <Show
-          when={
-            (item.kbds && item.kbds.length > 0) ||
-            item.type === "checkbox" ||
-            item.type === "radio" ||
-            isSubmenu()
+    return (
+      <div class="relative w-full">
+        <div
+          ref={(el) => {
+            itemEls.set(flatIdx, el);
+          }}
+          role={role() as any}
+          tabindex={isDisabled() ? -1 : 0}
+          aria-disabled={isDisabled() ? "true" : undefined}
+          aria-checked={
+            item.type === "checkbox" || item.type === "radio"
+              ? isSelected()
+                ? "true"
+                : "false"
+              : undefined
           }
+          aria-haspopup={isSubmenu() ? "menu" : undefined}
+          aria-expanded={isSubmenu() ? (isSubOpen() ? "true" : "false") : undefined}
+          data-slot="item"
+          data-disabled={isDisabled() ? "" : undefined}
+          data-highlighted={isHighlighted() ? "" : undefined}
+          data-selected={isSelected() ? "" : undefined}
+          data-danger={isDanger() ? "" : undefined}
+          data-expanded={isSubOpen() ? "" : undefined}
+          class={cx(
+            props.classes().item,
+            isDisabled() && "opacity-50 pointer-events-none",
+            isDanger() && "text-error hover:bg-error/10 focus-visible:bg-error/10",
+            item.class,
+          )}
+          style={mergeStyle(props.styles?.item, item.style) as any}
+          onClick={(e) => {
+            e.stopPropagation();
+            activateItem(item, flatIdx, e);
+          }}
+          onMouseEnter={() => {
+            if (!isDisabled()) {
+              setHighlightedIndex(flatIdx);
+              if (isSubmenu()) {
+                setSubmenuOpenFor(item, flatIdx, true);
+              }
+            }
+          }}
+          onMouseLeave={() => {
+            if (isSubmenu() && !isSubOpen()) {
+              setSubmenuOpenFor(item, flatIdx, false);
+            }
+          }}
         >
-          <span
-            data-slot="itemTrailing"
-            class={cx(props.classes().itemTrailing, item.ui?.itemTrailing)}
-            style={props.styles()?.itemTrailing}
+          {/* Leading Icon / Check Indicator */}
+          <Show when={leadingIcon() || item.type === "checkbox" || item.type === "radio"}>
+            <span
+              class={props.classes().itemLeading}
+              data-slot="itemLeading"
+              style={props.styles?.itemLeading}
+            >
+              <Show
+                when={leadingIcon()}
+                fallback={
+                  <Show when={isSelected()}>
+                    <RLIcon
+                      name={props.checkedIcon()}
+                      class={props.classes().itemIndicator}
+                      data-slot="itemIndicator"
+                    />
+                  </Show>
+                }
+              >
+                {typeof leadingIcon() === "string" ? (
+                  <RLIcon
+                    name={leadingIcon() as string}
+                    class={props.classes().itemLeadingIcon}
+                    data-slot="itemLeadingIcon"
+                  />
+                ) : (
+                  (leadingIcon() as JSX.Element)
+                )}
+              </Show>
+            </span>
+          </Show>
+
+          {/* Label + Description wrapper */}
+          <div
+            class={props.classes().itemWrapper}
+            data-slot="itemWrapper"
+            style={props.styles?.itemWrapper}
           >
-            <Show when={item.kbds && item.kbds.length > 0}>
+            <Show when={item.label}>
               <span
-                data-slot="itemKbds"
-                class={cx(props.classes().itemKbds, item.ui?.itemKbds)}
-                style={props.styles()?.itemKbds}
+                class={props.classes().itemLabel}
+                data-slot="itemLabel"
+                style={props.styles?.itemLabel}
               >
-                <For each={item.kbds}>
-                  {(kbd) => (
-                    <kbd
-                      data-slot="itemKbd"
-                      class={cx(props.classes().itemKbd, item.ui?.itemKbd)}
-                      style={props.styles()?.itemKbd}
-                    >
-                      {kbd}
-                    </kbd>
-                  )}
-                </For>
+                {item.label}
               </span>
             </Show>
-
-            <Show when={(item.type === "checkbox" || item.type === "radio") && isSelected()}>
+            <Show when={item.description}>
               <span
-                data-slot="itemIndicator"
-                class={cx(props.classes().itemIndicator, item.ui?.itemIndicator)}
-                style={props.styles()?.itemIndicator}
+                class={props.classes().itemDescription}
+                data-slot="itemDescription"
+                style={props.styles?.itemDescription}
               >
-                <RLIcon name={props.checkedIcon()} size="xs" />
+                {item.description}
               </span>
             </Show>
+          </div>
 
-            <Show when={isSubmenu()}>
-              <span
-                data-slot="itemSubIndicator"
-                class={cx(props.classes().itemSubIndicator, item.ui?.itemSubIndicator)}
-                style={props.styles()?.itemSubIndicator}
-              >
-                <RLIcon name={props.submenuIcon()} size="xs" />
-              </span>
-            </Show>
-          </span>
-        </Show>
+          {/* Trailing: Kbds + Submenu indicator */}
+          <Show when={(item.kbds && item.kbds.length > 0) || isSubmenu()}>
+            <span
+              class={props.classes().itemTrailing}
+              data-slot="itemTrailing"
+              style={props.styles?.itemTrailing}
+            >
+              <Show when={item.kbds && item.kbds.length > 0}>
+                <span
+                  class={props.classes().itemKbds}
+                  data-slot="itemKbds"
+                  style={props.styles?.itemKbds}
+                >
+                  <For each={item.kbds}>
+                    {(kbd) => (
+                      <kbd
+                        class={props.classes().itemKbd}
+                        data-slot="itemKbd"
+                        style={props.styles?.itemKbd}
+                      >
+                        {kbd}
+                      </kbd>
+                    )}
+                  </For>
+                </span>
+              </Show>
 
+              <Show when={isSubmenu()}>
+                <RLIcon
+                  name={props.submenuIcon()}
+                  class={props.classes().itemSubIndicator}
+                  data-slot="itemSubIndicator"
+                />
+              </Show>
+            </span>
+          </Show>
+        </div>
+
+        {/* Submenu Floating Layer */}
         <Show when={isSubmenu() && isSubOpen()}>
           <div
-            data-slot="positioner"
-            class={cx(props.classes().positioner, "absolute left-full top-0 ml-1")}
-            style={props.styles()?.positioner}
+            class={cx("absolute left-full top-0 ml-1 z-50", props.classes().content)}
+            data-slot="content"
+            role="menu"
+            tabindex={-1}
+            onClick={(e) => e.stopPropagation()}
           >
             <MenuLayer
-              items={(item as ContextMenuActionItem).children}
+              sections={normalizeMenuSections((item as ContextMenuActionItem).children)}
               classes={props.classes}
               styles={props.styles}
               checkedIcon={props.checkedIcon}
               submenuIcon={props.submenuIcon}
               itemRender={props.itemRender}
-              isOpen={isSubOpen}
-              closeRoot={props.closeRoot}
-              closeLayer={() => setSubmenuOpenFor(item, flatIdx, false)}
               isSubmenu={true}
-              align={props.align}
-              side={() => "right"}
-              size={props.size}
+              closeLayer={() => setSubmenuOpenFor(item, flatIdx, false)}
+              closeRoot={props.closeRoot}
             />
           </div>
         </Show>
-      </>
-    );
-
-    const commonAttrs = () => ({
-      "data-slot": "item",
-      "data-disabled": isDisabled() ? "" : undefined,
-      "data-danger": isDanger() ? "" : undefined,
-      "data-highlighted": isHighlighted() ? "" : undefined,
-      "data-selected": isSelected() ? "" : undefined,
-      "data-expanded": isSubmenu() && isSubOpen() ? "" : undefined,
-      "data-closed": isSubmenu() && !isSubOpen() ? "" : undefined,
-      "data-state":
-        item.type === "checkbox" || item.type === "radio"
-          ? isSelected()
-            ? "checked"
-            : "unchecked"
-          : isSubmenu()
-            ? isSubOpen()
-              ? "open"
-              : "closed"
-            : undefined,
-      role: itemRole(),
-      "aria-disabled": isDisabled() ? ("true" as const) : undefined,
-      "aria-checked":
-        item.type === "checkbox" || item.type === "radio"
-          ? isSelected()
-            ? ("true" as const)
-            : ("false" as const)
-          : undefined,
-      "aria-haspopup": isSubmenu() ? ("menu" as const) : undefined,
-      "aria-expanded": isSubmenu()
-        ? isSubOpen()
-          ? ("true" as const)
-          : ("false" as const)
-        : undefined,
-      tabindex: isDisabled() ? -1 : isHighlighted() ? 0 : -1,
-      class: cx(props.classes().item, item.ui?.item, item.class),
-      style: mergeStyle(props.styles()?.item, item.style),
-      onMouseEnter: () => {
-        if (isDisabled()) return;
-        setHighlightedIndex(flatIdx);
-        if (isSubmenu()) {
-          setSubmenuOpenFor(item, flatIdx, true);
-        } else if (openSubmenuIndex() !== null && openSubmenuIndex() !== flatIdx) {
-          setOpenSubmenuIndex(null);
-        }
-      },
-      onFocus: () => {
-        if (!isDisabled()) setHighlightedIndex(flatIdx);
-      },
-      onClick: (e: MouseEvent) => {
-        e.stopPropagation();
-        activateItem(item, flatIdx, e);
-      },
-    });
-
-    const actItem = item as ContextMenuActionItem;
-    if (actItem.href) {
-      return (
-        <a
-          ref={(el) => {
-            itemEls.set(flatIdx, el);
-          }}
-          href={actItem.href}
-          target={actItem.target}
-          {...commonAttrs()}
-        >
-          {itemContent}
-        </a>
-      );
-    }
-
-    return (
-      <button
-        ref={(el) => {
-          itemEls.set(flatIdx, el);
-        }}
-        type="button"
-        disabled={isDisabled()}
-        {...commonAttrs()}
-      >
-        {itemContent}
-      </button>
+      </div>
     );
   };
 
   return (
-    <div
-      ref={(el) => {
-        props.contentRef?.(el);
-      }}
-      role="menu"
-      tabindex={-1}
-      data-slot="content"
-      data-state={props.isOpen() ? "open" : "closed"}
-      data-expanded={props.isOpen() ? "" : undefined}
-      data-closed={!props.isOpen() ? "" : undefined}
-      data-align={props.align()}
-      data-side={props.side()}
-      class={cx(props.classes().content, props.contentClass)}
-      style={mergeStyle(props.styles()?.content, props.contentStyle)}
-      onKeyDown={handleKeyDown}
-      onClick={(e) => e.stopPropagation()}
-      onContextMenu={(e) => e.preventDefault()}
-      {...props.restProps}
-    >
-      {renderCustomSlot(props.topRender, {
-        open: props.isOpen(),
-        close: props.closeRoot,
-      })}
-
-      {(() => {
-        let runningIdx = 0;
-        return (
-          <For each={sections()}>
-            {(section) => {
-              if (section.type === "separator") {
-                return (
-                  <div
-                    role="separator"
-                    data-slot="separator"
-                    class={cx(props.classes().separator, section.item?.class)}
-                    style={mergeStyle(props.styles()?.separator, section.item?.style)}
-                  />
-                );
-              }
-
-              const startIdx = runningIdx;
-              const groupItems = section.items ?? [];
-              runningIdx += groupItems.length;
-
-              return (
+    <div class="flex flex-col w-full" onKeyDown={handleKeyDown}>
+      <For each={props.sections}>
+        {(section) => (
+          <Show
+            when={section.type === "group"}
+            fallback={
+              <div
+                role="separator"
+                data-slot="separator"
+                class={props.classes().separator}
+                style={props.styles?.separator}
+              />
+            }
+          >
+            <div
+              role="group"
+              data-slot="group"
+              class={props.classes().group}
+              style={props.styles?.group}
+            >
+              <Show when={section.label}>
                 <div
-                  role="group"
-                  data-slot="group"
-                  class={cx(props.classes().group, section.item?.class)}
-                  style={mergeStyle(props.styles()?.group, section.item?.style)}
+                  data-slot="groupLabel"
+                  class={props.classes().groupLabel}
+                  style={props.styles?.groupLabel}
                 >
-                  <Show when={section.label !== undefined}>
-                    <div
-                      data-slot="groupLabel"
-                      class={cx(props.classes().groupLabel, section.item?.ui?.groupLabel)}
-                      style={props.styles()?.groupLabel}
-                    >
-                      {section.label}
-                    </div>
-                  </Show>
-                  <For each={groupItems}>
-                    {(it, localIdx) => renderItem(it, startIdx + localIdx())}
-                  </For>
+                  {section.label}
                 </div>
-              );
-            }}
-          </For>
-        );
-      })()}
-
-      {props.children}
-
-      {renderCustomSlot(props.bottomRender, {
-        open: props.isOpen(),
-        close: props.closeRoot,
-      })}
+              </Show>
+              <For each={section.items}>
+                {(item) => {
+                  const entry = flatItems().find((it) => it.item === item);
+                  return renderItem(item, entry ? entry.flatIndex : 0);
+                }}
+              </For>
+            </div>
+          </Show>
+        )}
+      </For>
     </div>
   );
 };
 
-export const RLContextMenuTrigger: Component<RLContextMenuTriggerProps> = (props) => {
-  const ctx = useContext(ContextMenuContext);
-
-  const Tag = RLContextMenuTheme.tag(props as any, "div");
-  const rest = RLContextMenuTheme.omit(props, ...TRIGGER_OMIT_KEYS);
-
-  const isDisabled = () => Boolean(props.disabled ?? ctx?.disabled());
-  const isOpen = () => Boolean(ctx?.isOpen());
-
-  let longPressTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const clearLongPress = () => {
-    if (longPressTimer !== undefined) {
-      clearTimeout(longPressTimer);
-      longPressTimer = undefined;
-    }
-  };
-
-  onCleanup(clearLongPress);
-
-  const openAt = (x: number, y: number) => {
-    if (isDisabled() || !ctx) return;
-    ctx.setOpenState(true, { x, y });
-  };
-
-  const openAtTriggerCenter = (target: HTMLElement) => {
-    if (isDisabled() || !ctx) return;
-    const rect = target.getBoundingClientRect();
-    openAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
-  };
-
-  return (
-    <Tag
-      ref={(el: HTMLElement) => {
-        ctx?.setTriggerRef(el);
-      }}
-      data-slot="trigger"
-      data-state={isOpen() ? "open" : "closed"}
-      data-expanded={isOpen() ? "" : undefined}
-      data-closed={!isOpen() ? "" : undefined}
-      data-disabled={isDisabled() ? "" : undefined}
-      aria-disabled={isDisabled() ? "true" : undefined}
-      aria-expanded={isOpen() ? "true" : "false"}
-      aria-haspopup="menu"
-      tabindex={isDisabled() ? undefined : (rest["tabindex"] ?? 0)}
-      class={cx(ctx?.classes().trigger, props.class)}
-      style={mergeStyle(ctx?.styles()?.trigger, props.style)}
-      onContextMenu={(e: MouseEvent) => {
-        if (typeof rest["onContextMenu"] === "function") {
-          (rest["onContextMenu"] as (ev: MouseEvent) => void)(e);
-        }
-        if (isDisabled()) return;
-        e.preventDefault();
-        e.stopPropagation();
-        openAt(e.clientX, e.clientY);
-      }}
-      onKeyDown={(e: KeyboardEvent) => {
-        if (typeof rest["onKeyDown"] === "function") {
-          (rest["onKeyDown"] as (ev: KeyboardEvent) => void)(e);
-        }
-        if (isDisabled()) return;
-        if (e.key === "ContextMenu" || (e.shiftKey && e.key === "F10")) {
-          e.preventDefault();
-          e.stopPropagation();
-          openAtTriggerCenter(e.currentTarget as HTMLElement);
-        }
-      }}
-      onPointerDown={(e: PointerEvent) => {
-        if (typeof rest["onPointerDown"] === "function") {
-          (rest["onPointerDown"] as (ev: PointerEvent) => void)(e);
-        }
-        if (isDisabled()) return;
-        if (e.pointerType === "touch" || e.pointerType === "pen") {
-          clearLongPress();
-          const x = e.clientX;
-          const y = e.clientY;
-          const delay = ctx?.longPressDelay() ?? 700;
-          longPressTimer = setTimeout(() => {
-            longPressTimer = undefined;
-            openAt(x, y);
-          }, delay);
-        }
-      }}
-      onPointerUp={(e: PointerEvent) => {
-        if (typeof rest["onPointerUp"] === "function") {
-          (rest["onPointerUp"] as (ev: PointerEvent) => void)(e);
-        }
-        clearLongPress();
-      }}
-      onPointerCancel={(e: PointerEvent) => {
-        if (typeof rest["onPointerCancel"] === "function") {
-          (rest["onPointerCancel"] as (ev: PointerEvent) => void)(e);
-        }
-        clearLongPress();
-      }}
-      onPointerMove={(e: PointerEvent) => {
-        if (typeof rest["onPointerMove"] === "function") {
-          (rest["onPointerMove"] as (ev: PointerEvent) => void)(e);
-        }
-        if (longPressTimer !== undefined) {
-          clearLongPress();
-        }
-      }}
-      {...rest}
-    >
-      {props.children}
-    </Tag>
-  );
-};
-
-export const RLContextMenuContent: Component<RLContextMenuContentProps> = (props) => {
-  const ctx = useContext(ContextMenuContext);
-
-  const rest = RLContextMenuTheme.omit(props, ...CONTENT_OMIT_KEYS);
-
-  const isOpen = () => Boolean(ctx?.isOpen());
-  const unmountOnHide = () => ctx?.unmountOnHide() ?? true;
-  const usePortal = () => (ctx ? ctx.portal() !== false : false);
-  const portalMount = typeof ctx?.portal() === "object" ? (ctx.portal() as any) : undefined;
-
-  const checkedIcon = () => props.checkedIcon ?? ctx?.rootProps.checkedIcon ?? "check";
-  const submenuIcon = () => props.submenuIcon ?? ctx?.rootProps.submenuIcon ?? "chevron-right";
-  const items = () => props.items ?? ctx?.rootProps.items;
-  const topRender = () => props.topRender ?? ctx?.rootProps.topRender ?? ctx?.rootProps.topSlot;
-  const bottomRender = () =>
-    props.bottomRender ?? ctx?.rootProps.bottomRender ?? ctx?.rootProps.bottomSlot;
-  const itemRender = () => props.itemRender ?? ctx?.rootProps.itemRender ?? ctx?.rootProps.itemSlot;
-
-  const positionStyle = createMemo<JSX.CSSProperties>(() => {
-    if (!ctx) return {};
-    const anchor = ctx.anchorCoords();
-    const triggerEl = ctx.getTriggerRef();
-    const gutter = ctx.gutter();
-    const shift = ctx.shift();
-    const pad = ctx.overflowPadding();
-    const placement = ctx.placement();
-    const align = ctx.align();
-
-    let baseX = anchor?.x ?? 0;
-    let baseY = anchor?.y ?? 0;
-
-    if (!anchor && triggerEl && typeof triggerEl.getBoundingClientRect === "function") {
-      const rect = triggerEl.getBoundingClientRect();
-      baseX = rect.left + rect.width / 2;
-      baseY = rect.top + rect.height / 2;
-    }
-
-    let x = baseX;
-    let y = baseY;
-
-    if (placement === "right") {
-      x += gutter;
-      y += shift;
-    } else if (placement === "left") {
-      x -= gutter;
-      y += shift;
-    } else if (placement === "bottom") {
-      x += shift;
-      y += gutter;
-    } else if (placement === "top") {
-      x += shift;
-      y -= gutter;
-    }
-
-    if (typeof window !== "undefined") {
-      x = Math.max(pad, Math.min(x, Math.max(pad, window.innerWidth - pad)));
-      y = Math.max(pad, Math.min(y, Math.max(pad, window.innerHeight - pad)));
-    }
-
-    const transforms: string[] = [];
-    if (placement === "left") transforms.push("translateX(-100%)");
-    if (placement === "top") transforms.push("translateY(-100%)");
-    if (placement === "top" || placement === "bottom") {
-      if (align === "center") transforms.push("translateX(-50%)");
-      else if (align === "end") transforms.push("translateX(-100%)");
-    } else {
-      if (align === "center") transforms.push("translateY(-50%)");
-      else if (align === "end") transforms.push("translateY(-100%)");
-    }
-
-    return {
-      position: "fixed",
-      left: `${x}px`,
-      top: `${y}px`,
-      ...(transforms.length > 0 ? { transform: transforms.join(" ") } : {}),
-    };
+export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
+  const setupProps = props.classes ? { ...props, ui: { ...props.classes, ...props.ui } } : props;
+  const {
+    Tag,
+    classes,
+    rest,
+    id: menuId,
+  } = RLContextMenuTheme.setup(setupProps, {
+    omit: OMIT_KEYS,
+    idPrefix: "rl-context-menu",
+    variants: () => ({
+      size: props.size ?? "md",
+      disabled: Boolean(props.disabled),
+    }),
   });
 
-  const renderTree = () => (
-    <>
-      <div
-        data-slot="overlay"
-        data-state={isOpen() ? "open" : "closed"}
-        class={ctx?.classes().overlay}
-        style={{
-          ...(typeof ctx?.styles()?.overlay === "object"
-            ? (ctx.styles()!.overlay as JSX.CSSProperties)
-            : {}),
-          ...(isOpen() ? {} : { display: "none" }),
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          ctx?.close();
-        }}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          ctx?.close();
-        }}
-      />
-      <div
-        data-slot="positioner"
-        data-state={isOpen() ? "open" : "closed"}
-        data-align={ctx?.align() ?? "start"}
-        data-side={ctx?.placement() ?? "right"}
-        data-theme={ctx?.theme()}
-        class={ctx?.classes().positioner}
-        style={{
-          ...positionStyle(),
-          ...(typeof ctx?.styles()?.positioner === "object"
-            ? (ctx.styles()!.positioner as JSX.CSSProperties)
-            : {}),
-          ...(isOpen() ? {} : { display: "none" }),
-        }}
-      >
-        <MenuLayer
-          items={items()}
-          classes={() =>
-            ctx?.classes() ??
-            RLContextMenuTheme({
-              size: "md",
-            })
-          }
-          styles={() => ctx?.styles()}
-          checkedIcon={checkedIcon}
-          submenuIcon={submenuIcon}
-          topRender={topRender()}
-          bottomRender={bottomRender()}
-          itemRender={itemRender()}
-          isOpen={isOpen}
-          closeRoot={() => {
-            ctx?.close();
-          }}
-          align={() => ctx?.align() ?? "start"}
-          side={() => ctx?.placement() ?? "right"}
-          size={() => ctx?.size() ?? "md"}
-          contentClass={props.class}
-          contentStyle={props.style}
-          contentRef={(el) => {
-            ctx?.setContentRef(el);
-          }}
-          restProps={rest}
-        >
-          {props.children}
-        </MenuLayer>
-      </div>
-    </>
-  );
-
-  return (
-    <Show when={isOpen() || !unmountOnHide()}>
-      <Show when={usePortal()} fallback={renderTree()}>
-        <Portal mount={portalMount}>{renderTree()}</Portal>
-      </Show>
-    </Show>
-  );
-};
-
-const RLContextMenuBase: Component<RLContextMenuProps> = (props) => {
   const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
-  const [anchorCoords, setAnchorCoords] = createSignal<AnchorCoords | null>(null);
-
-  let triggerRef: HTMLElement | undefined;
-  let contentRef: HTMLElement | undefined;
-
   const isOpen = () => (props.open !== undefined ? Boolean(props.open) : uncontrolledOpen());
-  const isDisabled = () => Boolean(props.disabled);
+
+  const [coords, setCoords] = createSignal<AnchorCoords>({ x: 0, y: 0 });
+
   const align = () => props.align ?? "start";
   const placement = () => props.placement ?? "right";
   const gutter = () => props.gutter ?? 0;
   const shift = () => props.shift ?? 0;
   const overflowPadding = () => props.overflowPadding ?? 4;
   const preventScroll = () => props.preventScroll !== false;
-  const size = () => props.size ?? "md";
-  const portal = () => props.portal ?? true;
+  const disabled = () => Boolean(props.disabled);
+  const usePortal = () => props.portal !== false;
   const unmountOnHide = () => props.unmountOnHide !== false;
   const longPressDelay = () => props.longPressDelay ?? 700;
+  const checkedIcon = () => props.checkedIcon ?? "check";
+  const submenuIcon = () => props.submenuIcon ?? "chevron-right";
 
-  const { classes, rest, id } = RLContextMenuTheme.setup(props, {
-    omit: ROOT_OMIT_KEYS,
-    idPrefix: "rl-context-menu",
-    variants: () => ({
-      size: size(),
-      disabled: isDisabled(),
-      ...(props.classes || props.ui
-        ? {
-            ui: {
-              ...props.classes,
-              ...props.ui,
-            },
-          }
-        : {}),
-    }),
-  });
+  const portalMount =
+    typeof props.portal === "object" && props.portal !== null && "nodeType" in props.portal
+      ? (props.portal as Element)
+      : undefined;
 
-  const setOpenState = (next: boolean, coords?: AnchorCoords) => {
-    if (next && isDisabled()) return;
-    if (coords) {
-      setAnchorCoords(coords);
+  let triggerRef: HTMLElement | undefined;
+  let contentRef: HTMLElement | undefined;
+
+  const setOpenState = (next: boolean, nextCoords?: AnchorCoords) => {
+    if (disabled() && next) return;
+    if (nextCoords) {
+      setCoords(nextCoords);
     }
     if (props.open === undefined) {
       setUncontrolledOpen(next);
@@ -1103,162 +632,276 @@ const RLContextMenuBase: Component<RLContextMenuProps> = (props) => {
     props.onOpenChange?.(next);
   };
 
-  const close = () => setOpenState(false);
+  const closeMenu = () => setOpenState(false);
 
-  // Scroll lock when preventScroll is active and menu is open
+  // Prevent scroll when open
   createEffect(
     () => ({ open: isOpen(), lock: preventScroll() }),
     ({ open, lock }) => {
-      if (typeof document === "undefined") return;
-      if (open && lock) {
-        const prev = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-        return () => {
-          document.body.style.overflow = prev;
-        };
+      if (typeof document !== "undefined") {
+        document.body.style.overflow = open && lock ? "hidden" : "";
       }
-      return undefined;
+      return () => {
+        if (typeof document !== "undefined") {
+          document.body.style.overflow = "";
+        }
+      };
     },
   );
 
-  // Escape and outside click listeners
+  // Outside click & window resize dismissal
   onSettled(() => {
-    if (typeof window === "undefined" || typeof document === "undefined") return;
+    const handleDocClick = (e: MouseEvent) => {
+      if (!isOpen()) return;
+      if (contentRef && !contentRef.contains(e.target as Node)) {
+        closeMenu();
+      }
+    };
 
-    const onKeyDown = (e: KeyboardEvent) => {
+    const handleWindowResize = () => {
+      if (isOpen()) closeMenu();
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen()) {
         e.preventDefault();
-        close();
+        closeMenu();
       }
     };
 
-    const onPointerDown = (e: MouseEvent) => {
-      if (!isOpen()) return;
-      const target = e.target as Node | null;
-      if (contentRef && target && !contentRef.contains(target)) {
-        close();
-      }
-    };
+    document.addEventListener("click", handleDocClick, true);
+    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener("keydown", handleKeyDown);
 
-    window.addEventListener("keydown", onKeyDown);
-    document.addEventListener("mousedown", onPointerDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("mousedown", onPointerDown);
-    };
+    onCleanup(() => {
+      document.removeEventListener("click", handleDocClick, true);
+      window.removeEventListener("resize", handleWindowResize);
+      window.removeEventListener("keydown", handleKeyDown);
+    });
   });
 
-  const contextValue: ContextMenuContextValue = {
-    id,
-    isOpen,
-    setOpenState,
-    close,
-    disabled: isDisabled,
-    align,
-    placement,
-    gutter,
-    shift,
-    overflowPadding,
-    preventScroll,
-    size,
-    portal,
-    unmountOnHide,
-    longPressDelay,
-    anchorCoords,
-    getTriggerRef: () => triggerRef,
-    setTriggerRef: (el) => {
-      triggerRef = el;
-    },
-    getContentRef: () => contentRef,
-    setContentRef: (el) => {
-      contentRef = el;
-    },
-    classes,
-    styles: () => props.styles,
-    theme: () => props.theme,
-    rootProps: props,
+  const clampPosition = (x: number, y: number) => {
+    if (typeof window === "undefined") return { x, y };
+    const pad = overflowPadding();
+    const g = gutter();
+    const s = shift();
+
+    let targetX = x + (placement() === "right" ? g : placement() === "left" ? -g : s);
+    let targetY = y + (placement() === "bottom" ? g : placement() === "top" ? -g : s);
+
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+    const menuW = contentRef?.offsetWidth ?? 200;
+    const menuH = contentRef?.offsetHeight ?? 200;
+
+    if (align() === "center") {
+      targetY -= menuH / 2;
+    } else if (align() === "end") {
+      targetY -= menuH;
+    }
+
+    if (targetX + menuW > winW - pad) {
+      targetX = Math.max(pad, winW - pad - menuW);
+    }
+    if (targetX < pad) {
+      targetX = pad;
+    }
+
+    if (targetY + menuH > winH - pad) {
+      targetY = Math.max(pad, winH - pad - menuH);
+    }
+    if (targetY < pad) {
+      targetY = pad;
+    }
+
+    return { x: targetX, y: targetY };
   };
 
-  const hasSingleComponentProps = () =>
-    props.items !== undefined ||
-    props.content !== undefined ||
-    props.contentSlot !== undefined ||
-    props.trigger !== undefined ||
-    props.triggerSlot !== undefined;
+  const handleContextMenu = (e: MouseEvent) => {
+    if (disabled()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const clamped = clampPosition(e.clientX, e.clientY);
+    setOpenState(true, clamped);
+  };
 
-  const triggerElement = () => props.triggerSlot ?? props.trigger;
-  const contentElement = () => props.contentSlot ?? props.content;
+  const handleTriggerKeyDown = (e: KeyboardEvent) => {
+    if (disabled()) return;
+    if (e.key === "ContextMenu" || (e.shiftKey && e.key === "F10")) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (triggerRef) {
+        const rect = triggerRef.getBoundingClientRect();
+        const clamped = clampPosition(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        setOpenState(true, clamped);
+      } else {
+        setOpenState(true, clampPosition(window.innerWidth / 2, window.innerHeight / 2));
+      }
+    }
+  };
+
+  // Long press touch handling
+  let longPressTimer: ReturnType<typeof setTimeout> | undefined;
+  let touchStartPos: { x: number; y: number } | null = null;
+
+  const handleTouchStart = (e: TouchEvent) => {
+    if (disabled()) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    touchStartPos = { x: touch.clientX, y: touch.clientY };
+
+    longPressTimer = setTimeout(() => {
+      if (touchStartPos) {
+        const clamped = clampPosition(touchStartPos.x, touchStartPos.y);
+        setOpenState(true, clamped);
+      }
+    }, longPressDelay());
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!touchStartPos) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const dist = Math.hypot(touch.clientX - touchStartPos.x, touch.clientY - touchStartPos.y);
+    if (dist > 10 && longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = undefined;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = undefined;
+    }
+    touchStartPos = null;
+  };
+
+  const sections = createMemo(() => normalizeMenuSections(props.items));
+
+  const resolveRenderProp = (renderProp: unknown, ctx: { open: boolean; close: () => void }) => {
+    if (typeof renderProp === "function") {
+      return (renderProp as (c: typeof ctx) => JSX.Element)(ctx);
+    }
+    return renderProp as JSX.Element;
+  };
+
+  const topRenderContent = () =>
+    resolveRenderProp(props.topSlot ?? props.topRender, { open: isOpen(), close: closeMenu });
+
+  const bottomRenderContent = () =>
+    resolveRenderProp(props.bottomSlot ?? props.bottomRender, { open: isOpen(), close: closeMenu });
+
+  const triggerContent = () => props.triggerSlot ?? props.trigger ?? props.children;
+
+  const slotStyles = () => props.styles;
+
+  const renderMenuContent = () => (
+    <>
+      {/* Backdrop overlay */}
+      <div
+        class={classes().overlay}
+        data-slot="overlay"
+        data-state={isOpen() ? "open" : "closed"}
+        onClick={closeMenu}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          closeMenu();
+        }}
+      />
+
+      {/* Positioner */}
+      <div
+        class={cx("fixed pointer-events-auto", classes().positioner)}
+        data-slot="positioner"
+        data-side={placement()}
+        data-align={align()}
+        style={{
+          left: `${coords().x}px`,
+          top: `${coords().y}px`,
+          ...(typeof slotStyles()?.positioner === "object"
+            ? (slotStyles()!.positioner as JSX.CSSProperties)
+            : {}),
+        }}
+      >
+        <div
+          ref={(el) => (contentRef = el)}
+          role="menu"
+          tabindex={-1}
+          aria-orientation="vertical"
+          data-slot="content"
+          data-state={isOpen() ? "open" : "closed"}
+          data-expanded={isOpen() ? "" : undefined}
+          data-closed={!isOpen() ? "" : undefined}
+          data-side={placement()}
+          data-align={align()}
+          class={classes().content}
+          style={slotStyles()?.content}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Top custom render */}
+          <Show when={topRenderContent()}>
+            <div data-slot="topRender">{topRenderContent()}</div>
+          </Show>
+
+          {/* Menu Items */}
+          <Show when={sections().length > 0}>
+            <MenuLayer
+              sections={sections()}
+              classes={classes}
+              styles={slotStyles()}
+              checkedIcon={checkedIcon}
+              submenuIcon={submenuIcon}
+              itemRender={props.itemSlot ?? props.itemRender}
+              closeRoot={closeMenu}
+            />
+          </Show>
+
+          {/* Bottom custom render */}
+          <Show when={bottomRenderContent()}>
+            <div data-slot="bottomRender">{bottomRenderContent()}</div>
+          </Show>
+
+          {/* Custom content Slot */}
+          <Show when={props.contentSlot ?? props.content}>
+            {props.contentSlot ?? props.content}
+          </Show>
+        </div>
+      </div>
+    </>
+  );
 
   return (
-    <ContextMenuContext value={contextValue}>
-      <div
-        id={id()}
-        data-slot="root"
+    <>
+      <Tag
+        ref={(el: HTMLElement) => (triggerRef = el)}
+        id={menuId()}
+        class={cx("rl-context-menu-trigger", classes().trigger, classes().root, props.class)}
+        style={mergeStyle(slotStyles()?.trigger, props.style)}
+        data-slot="trigger"
         data-state={isOpen() ? "open" : "closed"}
-        data-disabled={isDisabled() ? "" : undefined}
-        data-theme={props.theme}
-        class={classes().root}
-        style={props.styles?.root}
+        data-expanded={isOpen() ? "" : undefined}
+        data-closed={!isOpen() ? "" : undefined}
+        data-disabled={disabled() ? "" : undefined}
+        tabindex={disabled() ? undefined : 0}
+        onContextMenu={handleContextMenu}
+        onKeyDown={handleTriggerKeyDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         {...rest}
       >
-        <Show
-          when={!hasSingleComponentProps() || triggerElement() === undefined}
-          fallback={
-            <RLContextMenuTrigger
-              as={props.as}
-              disabled={props.disabled}
-              class={props.class}
-              style={props.style}
-            >
-              {triggerElement()}
-            </RLContextMenuTrigger>
-          }
-        >
-          <Show
-            when={!hasSingleComponentProps()}
-            fallback={
-              <RLContextMenuTrigger
-                as={props.as}
-                disabled={props.disabled}
-                class={props.class}
-                style={props.style}
-              >
-                {props.children}
-              </RLContextMenuTrigger>
-            }
-          >
-            {props.children}
+        {triggerContent()}
+      </Tag>
+
+      <Show when={isOpen() || !unmountOnHide()}>
+        <Show when={usePortal()} fallback={renderMenuContent()}>
+          <Show when={portalMount} fallback={<Portal>{renderMenuContent()}</Portal>}>
+            {(mount) => <Portal mount={mount()}>{renderMenuContent()}</Portal>}
           </Show>
         </Show>
-
-        <Show
-          when={
-            hasSingleComponentProps() &&
-            (props.items !== undefined || contentElement() !== undefined)
-          }
-        >
-          <RLContextMenuContent
-            items={props.items}
-            checkedIcon={props.checkedIcon}
-            submenuIcon={props.submenuIcon}
-            topRender={props.topRender ?? props.topSlot}
-            bottomRender={props.bottomRender ?? props.bottomSlot}
-            itemRender={props.itemRender ?? props.itemSlot}
-          >
-            {contentElement()}
-          </RLContextMenuContent>
-        </Show>
-      </div>
-    </ContextMenuContext>
+      </Show>
+    </>
   );
 };
-
-export type RLContextMenuCompound = Component<RLContextMenuProps> & {
-  Trigger: Component<RLContextMenuTriggerProps>;
-  Content: Component<RLContextMenuContentProps>;
-};
-
-export const RLContextMenu: RLContextMenuCompound = Object.assign(RLContextMenuBase, {
-  Trigger: RLContextMenuTrigger,
-  Content: RLContextMenuContent,
-});

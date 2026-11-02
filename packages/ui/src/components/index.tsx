@@ -70,15 +70,9 @@ export { RLConfirm } from "./confirm/RLConfirm";
 export type { RLConfirmProps } from "./confirm/confirm.types";
 export { RLContainer } from "./container/RLContainer";
 export type { RLContainerProps } from "./container/container.types";
-export {
-  RLContextMenu,
-  RLContextMenuTrigger,
-  RLContextMenuContent,
-} from "./context-menu/RLContextMenu";
+export { RLContextMenu } from "./context-menu/RLContextMenu";
 export type {
   RLContextMenuProps,
-  RLContextMenuTriggerProps,
-  RLContextMenuContentProps,
   RLContextMenuSlot,
   ContextMenuItem,
   ContextMenuItems,
