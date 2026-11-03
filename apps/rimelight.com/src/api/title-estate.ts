@@ -21,3 +21,11 @@ export function isEstateTier(value: unknown): value is number {
 export function hasConcluded(endsAt: Date, now: Date): boolean {
   return now.getTime() >= endsAt.getTime();
 }
+
+/** The most researches that can run at once. Each research counts once. */
+export const MAX_PARALLEL_RESEARCH = 5;
+
+/** Whether another research may start, given how many are already running. */
+export function canStartResearch(running: number): boolean {
+  return running >= 0 && running < MAX_PARALLEL_RESEARCH;
+}

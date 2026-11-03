@@ -37,6 +37,8 @@ export const titleEstateExpeditions = pgTable(
     startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
     endsAt: timestamp("ends_at", { withTimezone: true }).notNull(),
     reward: bigint("reward", { mode: "number" }),
+    /** Which kind of run this is: an expedition, or a research (which pays Blueprints). */
+    kind: text("kind").default("expedition").notNull(),
   },
   (t) => [
     primaryKey({

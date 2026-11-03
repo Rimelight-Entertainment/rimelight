@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
-import { ESTATE_MAX_TIER, hasConcluded, isEstateTier } from "../src/api/title-estate";
+import {
+  ESTATE_MAX_TIER,
+  canStartResearch,
+  hasConcluded,
+  isEstateTier,
+} from "../src/api/title-estate";
 
 describe("estate tiers", () => {
   it("accepts only whole tiers from 1 to 15", () => {
@@ -18,5 +23,13 @@ describe("estate runs", () => {
     expect(hasConcluded(endsAt, new Date("2026-11-03T23:59:59Z"))).toBe(false);
     expect(hasConcluded(endsAt, endsAt)).toBe(true);
     expect(hasConcluded(endsAt, new Date("2026-11-05T12:00:00Z"))).toBe(true);
+  });
+});
+
+describe("research slots", () => {
+  it("allows five researches at once and no more", () => {
+    expect(canStartResearch(0)).toBe(true);
+    expect(canStartResearch(4)).toBe(true);
+    expect(canStartResearch(5)).toBe(false);
   });
 });

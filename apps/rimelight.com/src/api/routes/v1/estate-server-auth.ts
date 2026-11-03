@@ -17,7 +17,7 @@ function sameSecret(given: string, expected: string): boolean {
  * Lets only the Unreal game server through to the estate's write routes. The server sends `Authorization: Server <token>`,
  * where the token is GT_ESTATE_SERVER_TOKEN, the same value it is configured with. Refused when the token is not set.
  */
-export const requireEstateServer = createMiddleware<{ Bindings: Env }>(async (c, next) => {
+export const requireGameServer = createMiddleware<{ Bindings: Env }>(async (c, next) => {
   const expected = c.env.GT_ESTATE_SERVER_TOKEN;
   if (!expected) {
     console.error("[estate] GT_ESTATE_SERVER_TOKEN is not set; refusing estate server requests");

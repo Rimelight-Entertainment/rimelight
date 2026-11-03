@@ -6,10 +6,10 @@ import { titleCurrencies } from "#db/schema/title-currencies";
 import { z } from "zod";
 import { t } from "@rimelight/i18n";
 import { clampBalance, currencyCapsFor } from "../../title-currencies";
-import { ESTATE_MIN_TIER, hasConcluded, isEstateTier } from "../../title-estate";
+import { ESTATE_MIN_TIER, canStartResearch, hasConcluded, isEstateTier } from "../../title-estate";
 import { isTitleSlug, type TitleSlug } from "../../titles";
 import { requireClientToken, type ClientVariables } from "./middleware";
-import { requireEstateServer } from "./estate-server-auth";
+import { requireGameServer } from "./estate-server-auth";
 
 /**
  * The Grand Estate on the web API. The game server prices every change from the game's assets, checks it, and then calls the
@@ -36,10 +36,14 @@ const upgradeSchema = serverUser.extend({
   tier: z.number().int(),
   cost: z.number().int().min(0),
   goldCurrency: uuid,
+  blueprintCost: z.number().int().min(0),
+  blueprintCurrency: uuid,
 });
 const dispatchSchema = serverUser.extend({
+  kind: z.enum(["expedition", "research"]),
   expedition: uuid,
-  facility: uuid,
+  /** The facility an expedition unlocks from. Researches are not tied to a facility. */
+  facility: uuid.optional(),
   tier: z.number().int(),
   cost: z.number().int().min(0),
   reward: z.number().int().min(0),
@@ -183,7 +187,7 @@ estateRoutes.get("/titles/:title/estate", requireClientToken, async (c) => {
 /** Records a facility level the game server has priced and checked. The facility must be exactly one tier below the new level. */
 estateRoutes.post(
   "/titles/:title/estate/server/facilities/upgrade",
-  requireEstateServer,
+  requireGameServer,
   async (c) => {
     const title = c.req.param("title");
     if (!isTitleSlug(title)) {
@@ -191,20 +195,32 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, upgradeSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { userId, facility, tier, cost, goldCurrency } = body.data;
+    const { userId, facility, tier, cost, goldCurrency, blueprintCost, blueprintCurrency } =
+      body.data;
     if (!isEstateTier(tier) || tier <= ESTATE_MIN_TIER) {
       return c.json({ error: "Bad Request", message: t("api.message.estate-invalid") }, 400);
     }
 
     try {
-      const gold = await getDb().transaction(async (tx) => {
+      const balances = await getDb().transaction(async (tx) => {
         const current = await lockFacilityTier(tx, userId, title, facility);
         if (current !== tier - 1) {
           throw new EstateRefusal(409, t("api.message.estate-tier-out-of-date"));
         }
-        const balance = await adjustCurrencyBalance(tx, userId, title, goldCurrency, -cost);
-        if (balance === null) {
+        const gold = await adjustCurrencyBalance(tx, userId, title, goldCurrency, -cost);
+        if (gold === null) {
           throw new EstateRefusal(409, t("api.message.estate-not-enough-gold"));
+        }
+        // The Blueprints are spent in the same transaction, so a level either costs both or neither.
+        const blueprints = await adjustCurrencyBalance(
+          tx,
+          userId,
+          title,
+          blueprintCurrency,
+          -blueprintCost,
+        );
+        if (blueprints === null) {
+          throw new EstateRefusal(409, t("api.message.estate-not-enough-blueprints"));
         }
         await tx
           .update(titleEstateFacilities)
@@ -216,9 +232,9 @@ estateRoutes.post(
               eq(titleEstateFacilities.facilityId, facility),
             ),
           );
-        return balance;
+        return { [goldCurrency]: gold, [blueprintCurrency]: blueprints };
       });
-      return c.json({ success: true, facility, tier, balances: { [goldCurrency]: gold } });
+      return c.json({ success: true, facility, tier, balances });
     } catch (err) {
       if (err instanceof EstateRefusal)
         return c.json({ error: "Conflict", message: err.message }, err.status);
@@ -230,7 +246,7 @@ estateRoutes.post(
 /** Records a sent expedition. One run per expedition: a second send is refused while one is out. */
 estateRoutes.post(
   "/titles/:title/estate/server/expeditions/dispatch",
-  requireEstateServer,
+  requireGameServer,
   async (c) => {
     const title = c.req.param("title");
     if (!isTitleSlug(title)) {
@@ -238,17 +254,44 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, dispatchSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { userId, expedition, facility, tier, cost, reward, goldCurrency, startedAt, endsAt } =
-      body.data;
-    if (!isEstateTier(tier)) {
+    const {
+      kind,
+      userId,
+      expedition,
+      facility,
+      tier,
+      cost,
+      reward,
+      goldCurrency,
+      startedAt,
+      endsAt,
+    } = body.data;
+    // An expedition unlocks from a facility; a research does not, and only a fixed number of them run at once.
+    if (!isEstateTier(tier) || (kind === "expedition" && facility === undefined)) {
       return c.json({ error: "Bad Request", message: t("api.message.estate-invalid") }, 400);
     }
 
     try {
       const result = await getDb().transaction(async (tx) => {
-        const facilityTier = await lockFacilityTier(tx, userId, title, facility);
-        if (tier > facilityTier) {
-          throw new EstateRefusal(409, t("api.message.estate-facility-too-low"));
+        if (kind === "expedition") {
+          const facilityTier = await lockFacilityTier(tx, userId, title, facility!);
+          if (tier > facilityTier) {
+            throw new EstateRefusal(409, t("api.message.estate-facility-too-low"));
+          }
+        } else {
+          const running = await tx
+            .select({ count: sql<number>`count(*)::int` })
+            .from(titleEstateExpeditions)
+            .where(
+              and(
+                eq(titleEstateExpeditions.userId, userId),
+                eq(titleEstateExpeditions.title, title),
+                eq(titleEstateExpeditions.kind, "research"),
+              ),
+            );
+          if (!canStartResearch(running[0]?.count ?? 0)) {
+            throw new EstateRefusal(409, t("api.message.estate-research-slots-full"));
+          }
         }
         const inserted = await tx
           .insert(titleEstateExpeditions)
@@ -260,6 +303,7 @@ estateRoutes.post(
             startedAt: new Date(startedAt * 1000),
             endsAt: new Date(endsAt * 1000),
             reward,
+            kind,
           })
           .onConflictDoNothing()
           .returning();
@@ -288,7 +332,7 @@ estateRoutes.post(
 /** Records a recall: the run is removed and its gold refunded. A concluded run cannot be recalled. */
 estateRoutes.post(
   "/titles/:title/estate/server/expeditions/cancel",
-  requireEstateServer,
+  requireGameServer,
   async (c) => {
     const title = c.req.param("title");
     if (!isTitleSlug(title)) {
@@ -323,7 +367,7 @@ estateRoutes.post(
 /** Records a claim: the concluded run is removed and its stored reward is credited in the reward currency. */
 estateRoutes.post(
   "/titles/:title/estate/server/expeditions/claim",
-  requireEstateServer,
+  requireGameServer,
   async (c) => {
     const title = c.req.param("title");
     if (!isTitleSlug(title)) {
@@ -365,7 +409,7 @@ estateRoutes.post(
 /** Debug: ends a running expedition now, so the game server concludes it on its next check. */
 estateRoutes.post(
   "/titles/:title/estate/server/expeditions/end-now",
-  requireEstateServer,
+  requireGameServer,
   async (c) => {
     const title = c.req.param("title");
     if (!isTitleSlug(title)) {

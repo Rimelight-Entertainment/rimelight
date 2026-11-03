@@ -10,6 +10,7 @@ import { itemCapsFor } from "../../title-items";
 import { proficiencyIdsFor } from "../../title-proficiencies";
 import { titleProficiencies } from "#db/schema/title-proficiencies";
 import { estateRoutes } from "./estate";
+import { ledgerRoutes } from "./ledger";
 import { isTitleSlug } from "../../titles";
 import { requireClientToken, type ClientVariables } from "./middleware";
 import { t } from "@rimelight/i18n";
@@ -405,5 +406,6 @@ v1.post("/titles/:title/proficiencies/set", async (c) => {
 });
 
 v1.route("/", estateRoutes);
+v1.route("/", ledgerRoutes);
 
 export default v1;
