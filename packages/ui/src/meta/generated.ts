@@ -12556,7 +12556,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "default",
         bindings: {},
-        description: "Body content.",
+        description: "Body content. Function-only: invoked while the sheet is mounted.",
       },
       {
         name: "trigger",

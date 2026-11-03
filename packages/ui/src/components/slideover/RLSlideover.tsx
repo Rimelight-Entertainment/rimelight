@@ -1,7 +1,7 @@
 import type { RLSlideoverProps } from "./slideover.types";
 import { RLSlideoverTheme } from "./slideover.theme";
 import { createEffect, onSettled, Show, type Component } from "solid-js";
-import { Portal } from "@solidjs/web";
+import { Portal, type JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
@@ -21,7 +21,7 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLSlideover: Component<RLSlideoverProps> = (props) => {
-  const { Tag, classes, rest, slots, theme } = RLSlideoverTheme.setup(props, {
+  const { Tag, classes, rest, slots, theme, children } = RLSlideoverTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const,
   });
@@ -108,7 +108,9 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
             </Show>
           </div>
 
-          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{props.children?.()}</div>
+          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">
+            {(children() as unknown as (() => JSX.Element) | undefined)?.()}
+          </div>
 
           <Show when={slots.footerSlot() !== undefined}>
             <div class={classes().footer} data-slot="footer">

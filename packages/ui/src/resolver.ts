@@ -495,7 +495,7 @@ export function defineTheme<
     for (const key of slotKeys) {
       slots[key] = slot(() => props[key]);
     }
-    const children = slot(() => props["children"]);
+    const children = createMemo(() => props["children"], { lazy: true });
     const variantsFn = options?.variants;
     const omitKeys = slotKeys.length ? [...(options?.omit ?? []), ...slotKeys] : options?.omit;
     return {
