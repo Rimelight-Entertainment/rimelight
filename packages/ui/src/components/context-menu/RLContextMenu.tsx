@@ -3,7 +3,6 @@ import {
   createMemo,
   createSignal,
   For,
-  onCleanup,
   onSettled,
   Show,
   type Component,
@@ -598,11 +597,11 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     window.addEventListener("resize", handleWindowResize);
     window.addEventListener("keydown", handleKeyDown);
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("click", handleDocClick, true);
       window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("keydown", handleKeyDown);
-    });
+    };
   });
 
   const clampPosition = (x: number, y: number) => {
