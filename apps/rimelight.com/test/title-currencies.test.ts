@@ -23,7 +23,7 @@ describe("canAdjustCurrency", () => {
 describe("currencyCapsFor", () => {
   it("lists the Grand Tale currencies with positive caps, keyed by UUIDv4", () => {
     const caps = currencyCapsFor("grand-tale");
-    expect(Object.keys(caps)).toHaveLength(3);
+    expect(Object.keys(caps)).toHaveLength(5);
     for (const [id, cap] of Object.entries(caps)) {
       expect(id).toMatch(UUID);
       expect(cap).toBeGreaterThan(0);
