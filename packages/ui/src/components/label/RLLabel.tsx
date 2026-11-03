@@ -2,14 +2,15 @@ import type { Component } from "solid-js";
 import type { RLLabelProps } from "./label.types";
 import { RLLabelTheme } from "./label.theme";
 
-const OMIT_KEYS = ["for"] as const;
-
 export const RLLabel: Component<RLLabelProps> = (props) => {
-  const { classes, rest } = RLLabelTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLLabelTheme.setup(props, {
+    as: "label",
+    omit: ["for"] as const,
+  });
 
   return (
-    <label class={classes().root} data-slot="root" for={props.for} {...rest}>
-      {props.children}
-    </label>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} for={props.for} {...rest}>
+      {children()}
+    </Tag>
   );
 };

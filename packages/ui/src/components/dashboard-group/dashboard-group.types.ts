@@ -1,10 +1,8 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDashboardGroupTheme } from "./dashboard-group.theme";
 
-export interface RLDashboardGroupProps {
-  as?: ValidComponent;
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Horizontal row that lays out the sidebar and panels of a dashboard.
+ * @default as "div"
+ */
+export type RLDashboardGroupProps = InferThemeProps<typeof RLDashboardGroupTheme>;

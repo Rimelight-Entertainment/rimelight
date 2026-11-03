@@ -18,46 +18,33 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLPageSection: Component<RLPageSectionProps> = (props) => {
-  const resolvedVariant = () =>
-    props.variant === "default" || props.variant === "hero" || props.variant === "cta"
-      ? props.variant
-      : "default";
+  const resolvedLayout = () => props.layout ?? "default";
 
-  const {
-    Tag: Root,
-    classes,
-    rest,
-    slots,
-  } = RLPageSectionTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLPageSectionTheme.setup(props, {
     as: "section",
     omit: OMIT_KEYS,
     slots: [
       "backgroundSlot",
-      "topSlot",
       "headerSlot",
       "leadingSlot",
-      "headlineSlot",
       "titleSlot",
       "descriptionSlot",
       "bodySlot",
       "footerSlot",
-      "linksSlot",
-      "contentSlot",
-      "bottomSlot",
+      "actionSlot",
     ] as const,
     variants: (s) => ({
-      variant: resolvedVariant(),
-      ...(resolvedVariant() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
+      layout: resolvedLayout(),
+      ...(resolvedLayout() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
       orientation: props.orientation ?? "vertical",
       reverse: Boolean(props.reverse),
-      headline: Boolean(s.headlineSlot() ?? props.headline),
+      headline: Boolean(props.headline),
       title: Boolean(s.titleSlot() ?? props.title),
       description: Boolean(s.descriptionSlot() ?? props.description),
       body: Boolean(s.bodySlot()),
     }),
   });
 
-  const resolvedHeadline = () => slots.headlineSlot() ?? props.headline;
   const resolvedTitle = () => slots.titleSlot() ?? props.title;
   const resolvedDescription = () => slots.descriptionSlot() ?? props.description;
 
@@ -66,7 +53,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       slots.headerSlot() ||
       props.icon ||
       slots.leadingSlot() ||
-      resolvedHeadline() ||
+      props.headline ||
       resolvedTitle() ||
       resolvedDescription(),
     );
@@ -76,12 +63,14 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       showHeader() ||
       slots.bodySlot() ||
       slots.footerSlot() ||
-      slots.linksSlot() ||
+      slots.actionSlot() ||
       (props.links?.length ?? 0) > 0,
     );
 
   return (
-    <Root
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
       data-orientation={props.orientation ?? "vertical"}
       class={`${classes().root} ${
         props.contentVisibility === "auto"
@@ -101,8 +90,6 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
         </div>
       </Show>
 
-      {slots.topSlot()}
-
       <div class={classes().container}>
         <Show when={showWrapper()}>
           <div class={classes().wrapper}>
@@ -115,7 +102,7 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
                     <Show
                       when={slots.leadingSlot()}
                       fallback={
-                        <RLIcon name={props.icon!} size="md" ui={{ root: classes().leadingIcon }} />
+                        <RLIcon name={props.icon!} size="md" class={classes().leadingIcon} />
                       }
                     >
                       {slots.leadingSlot()}
@@ -123,13 +110,13 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
                   </div>
                 </Show>
 
-                <Show when={resolvedHeadline()}>
-                  <div class={classes().headline}>{resolvedHeadline()}</div>
+                <Show when={props.headline}>
+                  <div class={classes().headline}>{props.headline}</div>
                 </Show>
 
                 <Show when={resolvedTitle()}>
                   <Show
-                    when={resolvedVariant() === "hero"}
+                    when={resolvedLayout() === "hero"}
                     fallback={<h2 class={classes().title}>{resolvedTitle()}</h2>}
                   >
                     <h1 class={classes().title}>{resolvedTitle()}</h1>
@@ -151,26 +138,20 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
             </Show>
 
             <Show
-              when={!slots.footerSlot() && (slots.linksSlot() || (props.links?.length ?? 0) > 0)}
+              when={!slots.footerSlot() && (slots.actionSlot() || (props.links?.length ?? 0) > 0)}
             >
               <div class={classes().footer}>
                 <div class={classes().links}>
                   <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
-                  {slots.linksSlot()}
+                  {slots.actionSlot()}
                 </div>
               </div>
             </Show>
           </div>
         </Show>
 
-        {props.children}
-
-        <Show when={slots.contentSlot()}>
-          <div class="col-span-full w-full">{slots.contentSlot()}</div>
-        </Show>
+        {children()}
       </div>
-
-      {slots.bottomSlot()}
-    </Root>
+    </Tag>
   );
 };

@@ -38,7 +38,7 @@ const mainButtons: GamepadButton[] = [
 const OMIT_KEYS = ["highlightedButtons", "groups", "highlightColor", "backgroundColor"] as const;
 
 export const RLGamepad: Component<RLGamepadProps> = (props) => {
-  const { Tag, classes, rest } = RLGamepadTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, theme } = RLGamepadTheme.setup(props, { omit: OMIT_KEYS });
 
   const highlighted = (): string[] => props.highlightedButtons ?? [];
   const groups = (): HighlightGroup[] => props.groups ?? [];
@@ -61,7 +61,7 @@ export const RLGamepad: Component<RLGamepadProps> = (props) => {
     active ? `${classes().button} ${classes().buttonActive}` : classes().button;
 
   return (
-    <Tag class={classes().root} data-slot="root" {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <div class={classes().container} data-slot="container">
         <svg viewBox="-20 -20 440 380" class={classes().svg} data-slot="svg">
           <defs>

@@ -1,31 +1,45 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLAvatarProps } from "../avatar/avatar.types";
+import type { RLSeparatorTheme } from "./separator.theme";
 
-export interface RLSeparatorProps {
-  color?: string;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  type?: "solid" | "dashed" | "dotted";
-  position?: "start" | "center" | "end";
-  /**
-   * The visual layout orientation.
-   */
-  orientation?: "horizontal" | "vertical";
+/**
+ * Visual divider, optionally carrying a label, icon, or avatar.
+ */
+export type RLSeparatorProps = InferThemeProps<typeof RLSeparatorTheme> & {
   /**
    * Whether to treat as purely decorative (hides from accessibility tree).
+   * @default true
    */
-  decorative?: boolean;
+  decorative?: boolean | undefined;
+
   /**
-   * Slot-specific CSS class overrides.
+   * Text rendered in the middle of the separator.
+   * @default undefined
    */
-  ui?: any;
+  label?: string | undefined;
+
   /**
-   * Additional CSS classes to apply to the root element.
+   * Icon name rendered in the middle of the separator.
+   * @default undefined
    */
-  class?: any;
-  children?: JSX.Element;
+  icon?: string | undefined;
+
+  /**
+   * Avatar props, or an image URL, rendered in the middle of the separator.
+   * @default undefined
+   */
+  avatar?: RLAvatarProps | string | undefined;
+
+  /**
+   * Replaces the avatar with custom JSX.
+   * @default undefined
+   */
   avatarSlot?: JSX.Element;
+
+  /**
+   * Replaces the icon with custom JSX.
+   * @default undefined
+   */
   iconSlot?: JSX.Element;
-  label?: any;
-  icon?: string;
-  avatar?: string | Record<string, any>;
-  [key: string]: unknown;
-}
+};

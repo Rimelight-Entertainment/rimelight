@@ -10,24 +10,4 @@ export const RLScrollToTopTheme = defineTheme("scroll-to-top", {
     iconContainer: "absolute inset-0 flex items-center justify-center text-center",
     icon: "size-6 text-white",
   },
-  variants: {
-    color: "auto",
-  },
-  compoundVariants: [
-    {
-      color: "primary",
-      class: {
-        icon: "text-neutral-50",
-      },
-    },
-    {
-      color: "secondary",
-      class: {
-        icon: "text-neutral-50",
-      },
-    },
-  ],
-  defaultVariants: {
-    color: "primary",
-  },
 });

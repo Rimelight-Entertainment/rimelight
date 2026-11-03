@@ -44,7 +44,23 @@
     "previous": "Faixa anterior",
     "next": "Próxima faixa",
     "speed-hint": "Clique para alternar, clique com o botão direito para inserir um valor",
-    "playback-speed": "Definir uma velocidade de reprodução específica"
+    "playback-speed": "Definir uma velocidade de reprodução específica",
+    "artwork": "Arte de áudio",
+    "player": "Player de áudio",
+    "mute": "Silenciar áudio",
+    "unmute": "Ativar som",
+    "play": "Reproduzir áudio",
+    "pause": "Pausar áudio",
+    "skip-back": "Voltar",
+    "skip-forward": "Avançar",
+    "repeat-off": "Repetição desativada",
+    "repeat-all": "Repetir tudo",
+    "repeat-one": "Repetir um",
+    "speed-button": "Velocidade de reprodução",
+    "playlist": "Lista de reprodução",
+    "track": "Faixa",
+    "hide-transcript": "Ocultar transcrição",
+    "show-transcript": "Mostrar transcrição"
   },
   "breadcrumb": {
     "label": "Trilha de navegação"
@@ -58,7 +74,9 @@
   "carousel": {
     "previous": "Slide anterior",
     "next": "Próximo slide",
-    "slides": "Slides"
+    "slides": "Slides",
+    "label": "Carrossel",
+    "goToSlide": "Ir para o slide"
   },
   "color-area": {
     "thumb": "Controle da área de cor"
@@ -75,7 +93,14 @@
     "type-to-search": "Digite para pesquisar...",
     "label": "Pesquisar",
     "close": "Fechar pesquisa",
-    "press-to-close": "Pressione {escape} para fechar"
+    "press-to-close": "Pressione {escape} para fechar",
+    "no-results": "Nenhum resultado encontrado",
+    "site-search": "Pesquisa do site",
+    "untitled": "Sem título",
+    "shortcut-open": "Abrir pesquisa do site",
+    "shortcut-quick": "Pesquisa rápida",
+    "shortcut-quick-description": "Focar pesquisa do site",
+    "esc": "Esc"
   },
   "drawer": {
     "close": "Fechar gaveta"
@@ -86,7 +111,11 @@
     "format": "Formato:",
     "dimensions": "Dimensões:",
     "size": "Tamanho:",
-    "alt": "Texto alternativo:"
+    "alt": "Texto alternativo:",
+    "download": "Baixar original",
+    "fetching": "obtendo...",
+    "sizeUnavailable": "indisponível",
+    "none": "nenhum"
   },
   "actions": {
     "close": "Fechar"
@@ -96,13 +125,16 @@
     "decrement": "Decrementar"
   },
   "input-pin": {
-    "label": "Código de uso único"
+    "label": "Código de uso único",
+    "digitLabel": "Dígito {n}"
   },
   "modal": {
     "close": "Fechar modal"
   },
   "package-managers": {
-    "copy": "Copiar comando"
+    "copy": "Copiar comando",
+    "copied": "Copiado",
+    "copyButton": "Copiar"
   },
   "pagination": {
     "label": "Paginação",
@@ -110,14 +142,19 @@
     "next": "Ir para a próxima página"
   },
   "route-announcer": {
-    "loading": "Carregando página"
+    "loading": "Carregando página",
+    "prefix": "Navegou para"
   },
   "scroll-to-top": {
     "label": "Rolar para o topo"
   },
   "shortcuts": {
     "close": "Fechar ajuda de atalhos",
-    "press-to-close": "Pressione {question} ou {escape} para fechar"
+    "press-to-close": "Pressione {question} ou {escape} para fechar",
+    "title": "Atalhos de teclado",
+    "empty": "Nenhum atalho ativo encontrado nesta página.",
+    "show-shortcuts": "Mostrar atalhos de teclado",
+    "show-shortcuts-description": "Exibir a folha de ajuda de atalhos"
   },
   "slideover": {
     "close": "Fechar painel deslizante"
@@ -126,18 +163,100 @@
     "resize": "Redimensionar painéis"
   },
   "table": {
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "searchPlaceholder": "Filtrar tabela...",
+    "export": "Exportar",
+    "exportCsv": "Exportar como CSV",
+    "exportJson": "Exportar como JSON",
+    "columns": "Colunas",
+    "empty": "Nenhum dado disponível"
   },
   "toc": {
     "heading": "Nesta página"
   },
   "tabs": {
-    "more": "Mais abas"
+    "more": "mais",
+    "moreTabs": "Mais abas"
   },
   "theme": {
-    "toggle": "Alternar tema"
+    "toggle": "Alternar tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "cycle": "Alternar tema",
+    "cycle-description": "Alternar entre os modos de tema sistema, claro e escuro"
   },
   "toast": {
     "dismiss": "Dispensar notificação"
+  },
+  "video": {
+    "defaultTitle": "Player de vídeo do YouTube",
+    "playLabel": "Reproduzir vídeo do YouTube",
+    "unavailableLabel": "Vídeo do YouTube indisponível"
+  },
+  "browser-mockup": {
+    "label": "Maquete de navegador",
+    "labelWithUrl": "Maquete de navegador:"
+  },
+  "chart": {
+    "lineLabel": "Gráfico de linhas",
+    "pieLabel": "Gráfico de pizza"
+  },
+  "compare": {
+    "label": "Controle de comparação deslizante",
+    "beforeAlt": "Antes",
+    "afterAlt": "Depois"
+  },
+  "banner": {
+    "close": "Dispensar banner"
+  },
+  "callout": {
+    "close": "Dispensar aviso"
+  },
+  "confirm": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "toaster": {
+    "signed-in": "Sessão iniciada com sucesso",
+    "account-created": "Conta criada com sucesso"
+  },
+  "share": {
+    "label": "Compartilhar",
+    "copied": "Link copiado!"
+  },
+  "calendar": {
+    "defaultLabel": "Data do evento",
+    "previousMonth": "Mês anterior",
+    "nextMonth": "Próximo mês",
+    "previousYear": "Ano anterior",
+    "nextYear": "Próximo ano"
+  },
+  "surround": {
+    "previous": "Anterior",
+    "next": "Seguinte"
+  },
+  "layout-grid": {
+    "shortcut": {
+      "label": "Alternar grade de layout",
+      "description": "Mostrar ou ocultar a sobreposição da guia de grade de layout de desenvolvimento",
+      "category": "desenvolvimento"
+    }
+  },
+  "file-upload": {
+    "title": "Solte os arquivos aqui ou clique para enviar",
+    "accepted": "Aceitos:",
+    "files-selected": "arquivos selecionados"
+  },
+  "input-menu": {
+    "placeholder": "Selecionar item..."
+  },
+  "input-tags": {
+    "placeholder": "Adicionar tag…",
+    "more": "+{count} mais"
+  },
+  "copy-markdown": {
+    "copy": "Copiar Markdown",
+    "copied": "Copiado!"
   }
 }

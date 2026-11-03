@@ -171,21 +171,6 @@ describe("RLModal", () => {
       expect(slotTag(html, "footer")).not.toBe("");
       expect(html).toContain("Slot Footer");
     });
-
-    it("renders contentSlot overriding whole dialog contents", () => {
-      const html = render(() => (
-        <RLModal
-          open
-          portal={false}
-          title="Ignored"
-          contentSlot={() => <div class="entire-content-override">Override All</div>}
-        />
-      ));
-      expect(html).toContain("entire-content-override");
-      expect(html).toContain("Override All");
-      expect(slotTag(html, "header")).toBe("");
-      expect(html).not.toContain("Ignored");
-    });
   });
 
   describe("Close Button", () => {
@@ -195,21 +180,9 @@ describe("RLModal", () => {
       expect(attr(slotTag(html, "close"), "aria-label")).toBe("Close modal");
     });
 
-    it("hides close button when close={false}", () => {
-      const html = render(() => <RLModal open portal={false} close={false} title="Title" />);
+    it("hides close button when dismissible={false}", () => {
+      const html = render(() => <RLModal open portal={false} dismissible={false} title="Title" />);
       expect(slotTag(html, "close")).toBe("");
-    });
-
-    it("supports custom close button props", () => {
-      const html = render(() => (
-        <RLModal
-          open
-          portal={false}
-          title="Title"
-          close={{ color: "primary", variant: "outline", class: "custom-close-btn" }}
-        />
-      ));
-      expect(html).toContain("custom-close-btn");
     });
 
     it("renders custom closeSlot override", () => {
@@ -231,7 +204,7 @@ describe("RLModal", () => {
   });
 
   describe("Variants, Sizes & Modes", () => {
-    const sizes = ["xs", "sm", "md", "lg", "xl", "fullscreen"] as const;
+    const sizes = ["xs", "sm", "md", "lg", "xl"] as const;
 
     for (const size of sizes) {
       it(`renders size=${size} correctly`, () => {
@@ -299,15 +272,15 @@ describe("RLModal", () => {
       expect(attr(content, "aria-describedby")).toBe(descId);
     });
 
-    it("supports explicit ariaLabel, ariaLabelledby, ariaDescribedby and role", () => {
+    it("supports explicit aria-label, aria-labelledby, aria-describedby and role", () => {
       const html = render(() => (
         <RLModal
           open
           portal={false}
           role="alertdialog"
-          ariaLabel="Custom Label"
-          ariaLabelledby="custom-title-id"
-          ariaDescribedby="custom-desc-id"
+          aria-label="Custom Label"
+          aria-labelledby="custom-title-id"
+          aria-describedby="custom-desc-id"
         />
       ));
       const content = slotTag(html, "content");

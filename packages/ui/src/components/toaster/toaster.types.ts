@@ -1,17 +1,4 @@
-import type { Theme } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLToasterTheme } from "./toaster.theme";
 
-export interface RLToasterProps {
-  /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  [key: string]: unknown;
-}
+export type RLToasterProps = InferThemeProps<typeof RLToasterTheme>;

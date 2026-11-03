@@ -11,7 +11,7 @@ export const RLInputTheme = defineTheme("input", {
   },
   variants: {
     variant: {
-      default: {},
+      outline: {},
       ghost: {
         root: "bg-transparent border-none shadow-none focus-within:ring-0",
       },
@@ -27,15 +27,15 @@ export const RLInputTheme = defineTheme("input", {
     hasTrailing: {
       true: { input: "pr-9" },
     },
-    error: {
+    invalid: {
       true: { root: "border-error-500 focus-within:ring-error-500/50" },
     },
   },
   defaultVariants: {
-    variant: "default",
+    variant: "outline",
     size: "md",
     hasLeading: false,
     hasTrailing: false,
-    error: false,
+    invalid: false,
   },
 });

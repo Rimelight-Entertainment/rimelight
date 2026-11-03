@@ -1,11 +1,12 @@
 import type { RLToastProps } from "./toast.types";
+import type { ThemeColor } from "../../types";
 import { RLToastTheme } from "./toast.theme";
-import { createSignal, onSettled, type Component } from "solid-js";
+import { createSignal, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
-const variantIcons: Record<string, string> = {
-  default: "bell",
+const colorIcons: Partial<Record<ThemeColor, string>> = {
+  neutral: "bell",
   error: "circle-check",
   success: "circle-check",
   warning: "triangle-alert",
@@ -13,98 +14,95 @@ const variantIcons: Record<string, string> = {
 };
 
 const OMIT_KEYS = [
+  "color",
   "title",
   "description",
   "actionLabel",
   "duration",
-  "dismissable",
+  "dismissible",
   "onDismiss",
 ] as const;
 
 export const RLToast: Component<RLToastProps> = (props) => {
-  const { Tag, classes, rest, slots } = RLToastTheme.setup(props, {
-    slots: ["titleSlot", "descriptionSlot", "actionsSlot"] as const,
+  const { Tag, classes, rest, slots, children, theme } = RLToastTheme.setup(props, {
     omit: OMIT_KEYS,
-    variants: () => ({
-      variant: ["success", "error", "warning", "info"].includes(props.variant ?? "")
-        ? props.variant
-        : "default",
-    }),
+    slots: ["titleSlot", "descriptionSlot", "actionsSlot"] as const,
   });
 
   const [leaving, setLeaving] = createSignal(false);
+  const duration = () => props.duration ?? 6000;
+  const isDismissible = () => props.dismissible ?? true;
+  const isError = () => props.color === "error";
+
   let rootRef: HTMLDivElement | undefined;
-  let timerId: ReturnType<typeof setTimeout> | null = null;
+  let timerId: ReturnType<typeof setTimeout> | undefined;
   let dismissTimerId: ReturnType<typeof setTimeout> | undefined;
   let startTime = 0;
-  let remaining = props.duration ?? 6000;
+  let remaining = duration();
 
-  const isError = () => props.variant === "error";
-
-  const icon = () => variantIcons[props.variant ?? ""] ?? variantIcons["default"]!;
+  const icon = () => colorIcons[props.color ?? "neutral"] ?? "bell";
 
   const dismiss = () => {
     if (leaving()) return;
     setLeaving(true);
     if (props.onDismiss) {
-      if (dismissTimerId !== undefined) clearTimeout(dismissTimerId);
+      clearTimeout(dismissTimerId);
       dismissTimerId = setTimeout(props.onDismiss, 300);
     }
   };
 
   const startTimer = () => {
-    const duration = props.duration ?? 6000;
-    // Non-dismissable toasts (e.g. consent prompts) must never time out.
-    if (props.dismissable === false) return;
-    if (duration > 0 && remaining > 0 && timerId === null) {
+    // Non-dismissible toasts (e.g. consent prompts) must never time out.
+    if (!isDismissible()) return;
+    if (duration() > 0 && remaining > 0 && timerId === undefined) {
       startTime = Date.now();
       timerId = setTimeout(dismiss, remaining);
     }
   };
 
   const pauseTimer = () => {
-    if (timerId !== null) {
+    if (timerId !== undefined) {
       clearTimeout(timerId);
-      timerId = null;
+      timerId = undefined;
       remaining -= Date.now() - startTime;
     }
   };
 
   onSettled(() => {
-    const duration = props.duration ?? 6000;
-    if (duration > 0) {
+    if (duration() > 0) {
       startTimer();
     }
 
     return () => {
-      if (timerId !== null) clearTimeout(timerId);
-      if (dismissTimerId !== undefined) clearTimeout(dismissTimerId);
+      clearTimeout(timerId);
+      clearTimeout(dismissTimerId);
     };
   });
 
   return (
     <Tag
       ref={(el: HTMLDivElement) => (rootRef = el)}
-      class={`${classes().root}  ${leaving() ? "opacity-0 translate-y-2 pointer-events-none" : ""}`}
+      class={`${classes().root} ${isError() ? "error" : ""} ${leaving() ? "opacity-0 translate-y-2 pointer-events-none" : ""}`}
       data-slot="root"
+      data-theme={theme()}
       data-toast
-      data-duration={props.duration ?? 6000}
-      data-dismissable={(props.dismissable !== false).toString()}
+      data-duration={duration()}
+      data-dismissible={isDismissible().toString()}
       role={isError() ? "alert" : "status"}
       aria-live={isError() ? "assertive" : "polite"}
       aria-atomic="true"
       tabindex="-1"
       onMouseEnter={() => {
-        if ((props.duration ?? 6000) > 0) pauseTimer();
+        if (duration() > 0) pauseTimer();
       }}
       onMouseLeave={() => {
-        if ((props.duration ?? 6000) > 0) startTimer();
+        if (duration() > 0) startTimer();
       }}
       onFocusIn={() => {
-        if ((props.duration ?? 6000) > 0) pauseTimer();
+        if (duration() > 0) pauseTimer();
       }}
       onFocusOut={(e: FocusEvent) => {
-        if ((props.duration ?? 6000) > 0 && !rootRef?.contains(e.relatedTarget as Node)) {
+        if (duration() > 0 && !rootRef?.contains(e.relatedTarget as Node)) {
           startTimer();
         }
       }}
@@ -123,7 +121,7 @@ export const RLToast: Component<RLToastProps> = (props) => {
             {slots.descriptionSlot() ? slots.descriptionSlot() : props.description}
           </div>
         ) : null}
-        {props.children}
+        {children()}
         {slots.actionsSlot() || props.actionLabel ? (
           <div class="flex items-center justify-end gap-2 mt-3" data-slot="actions">
             {slots.actionsSlot() ? (
@@ -137,7 +135,7 @@ export const RLToast: Component<RLToastProps> = (props) => {
         ) : null}
       </div>
 
-      {props.dismissable !== false && (
+      <Show when={isDismissible()}>
         <button
           type="button"
           class={classes().close}
@@ -148,7 +146,7 @@ export const RLToast: Component<RLToastProps> = (props) => {
         >
           <RLIcon name="x" class="size-3.5" aria-hidden="true" />
         </button>
-      )}
+      </Show>
     </Tag>
   );
 };

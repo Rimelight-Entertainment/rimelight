@@ -1,55 +1,56 @@
 import type { Component } from "solid-js";
-import { For } from "solid-js";
-import type { RLTimelineProps, TimelineItem } from "./timeline.types";
+import { For, Show } from "solid-js";
+import type { RLTimelineProps, TimelineItem, TimelineSlotContext } from "./timeline.types";
 import { RLTimelineTheme } from "./timeline.theme";
-import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
 const OMIT_KEYS = [
   "items",
-  "valueKey",
-  "defaultValue",
+  "size",
+  "orientation",
   "value",
+  "defaultValue",
   "reverse",
-  "indicator",
-  "wrapper",
-  "date",
-  "title",
-  "description",
+  "indicatorSlot",
+  "wrapperSlot",
+  "dateSlot",
+  "titleSlot",
+  "descriptionSlot",
 ] as const;
+
+const resolveSlot = <Ctx,>(renderer: SlotRenderer<Ctx> | undefined, ctx: Ctx) =>
+  typeof renderer === "function" ? renderer(ctx) : renderer;
 
 export const RLTimeline: Component<RLTimelineProps> = (props) => {
   const reverse = (): boolean => props.reverse === true;
 
-  const {
-    Tag: Root,
-    classes,
-    rest,
-  } = RLTimelineTheme.setup(props, {
-    as: "div",
+  const { Tag, classes, rest, slots, children, theme } = RLTimelineTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["indicatorSlot", "wrapperSlot", "dateSlot", "titleSlot", "descriptionSlot"] as const,
     variants: () => ({
       reverse: reverse(),
     }),
   });
 
   const items = (): TimelineItem[] => props.items ?? [];
-  const valueKey = (): string => props.valueKey ?? "value";
-  const orientation = (): string => props.orientation ?? "vertical";
+  const orientation = (): "horizontal" | "vertical" =>
+    props.orientation === "horizontal" ? "horizontal" : "vertical";
 
-  const getItemValue = (item: TimelineItem, index: number): string | number =>
-    item[valueKey()] !== undefined ? item[valueKey()] : index;
+  const getItemValue = (item: TimelineItem, index: number): string | number => item.value ?? index;
 
-  const getItemState = (_item: TimelineItem, index: number): "active" | "completed" | undefined => {
-    const activeVal = props.value !== undefined ? props.value : props.defaultValue;
+  const getItemState = (index: number): "active" | "completed" | undefined => {
+    const activeVal = props.value ?? props.defaultValue;
     if (activeVal === undefined) return undefined;
 
     let currentIndex = -1;
     if (items().length > 0) {
       if (typeof activeVal === "string") {
-        currentIndex = items().findIndex((i) => getItemValue(i, items().indexOf(i)) === activeVal);
-      } else if (typeof activeVal === "number") {
+        currentIndex = items().findIndex(
+          (item, idx) => String(getItemValue(item, idx)) === activeVal,
+        );
+      } else {
         currentIndex = reverse() ? items().length - 1 - activeVal : activeVal;
       }
     }
@@ -60,98 +61,67 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
     return index < currentIndex ? "completed" : undefined;
   };
 
-  const renderSlot = (
-    slotFn: any,
-    item: TimelineItem,
-    index: number,
-    fallback?: () => JSX.Element,
-  ) => {
-    if (typeof slotFn === "function") {
-      const ctx = { ...item, item, index };
-      return slotFn(ctx);
-    }
-    return fallback ? fallback() : null;
-  };
-
   return (
-    <Root data-slot="root" class={classes().root} data-orientation={orientation()} {...rest}>
-      {items().length > 0 ? (
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
+      data-orientation={orientation()}
+      {...rest}
+    >
+      <Show when={items().length > 0} fallback={children()}>
         <For each={items()}>
           {(item, index) => {
-            const state = getItemState(item, index());
-            const isLast = index() === items().length - 1;
-            const avatar =
-              typeof item.avatar === "object" && item.avatar !== null ? item.avatar : undefined;
+            const ctx = (): TimelineSlotContext => ({ item, index: index() });
+            const state = () => getItemState(index());
+            const isLast = () => index() === items().length - 1;
 
             return (
-              <div
-                data-slot="item"
-                class={`${classes().item}  ${item.ui?.item || ""}  ${item.class || ""}`}
-                data-state={state}
-              >
-                <div
-                  data-slot="container"
-                  class={`${classes().container}  ${item.ui?.container || ""}`}
-                >
+              <div data-slot="item" class={classes().item} data-state={state()}>
+                <div data-slot="container" class={classes().container}>
                   <RLAvatar
                     size={props.size ?? "md"}
-                    src={avatar?.src}
-                    alt={avatar?.alt}
-                    {...(avatar ? avatar : {})}
+                    src={item.avatar?.src}
+                    alt={item.avatar?.alt}
                     data-slot="indicator"
-                    class={`${classes().indicator}  ${item.ui?.indicator || ""}`}
+                    class={classes().indicator}
                     ui={{
                       icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
                       fallback:
                         "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
                     }}
                   >
-                    {props.indicator ? (
-                      renderSlot(props.indicator, item, index())
-                    ) : item.icon ? (
-                      <RLIcon name={item.icon} class="text-inherit" />
-                    ) : null}
+                    {resolveSlot(slots.indicatorSlot(), ctx()) ??
+                      (item.icon ? <RLIcon name={item.icon} class="text-inherit" /> : null)}
                   </RLAvatar>
 
-                  {!isLast ? (
+                  <Show when={!isLast()}>
                     <div
                       data-slot="separator"
-                      class={`${classes().separator}  ${item.ui?.separator || ""}`}
+                      class={classes().separator}
                       data-orientation={orientation()}
                     />
-                  ) : null}
+                  </Show>
                 </div>
 
-                <div data-slot="wrapper" class={`${classes().wrapper}  ${item.ui?.wrapper || ""}`}>
-                  {props.wrapper ? (
-                    renderSlot(props.wrapper, item, index())
-                  ) : (
+                <div data-slot="wrapper" class={classes().wrapper}>
+                  {resolveSlot(slots.wrapperSlot(), ctx()) ?? (
                     <>
-                      {item.date || props.date ? (
-                        <div data-slot="date" class={`${classes().date}  ${item.ui?.date || ""}`}>
-                          {renderSlot(props.date, item, index(), () => item.date)}
+                      <Show when={item.date || slots.dateSlot()}>
+                        <div data-slot="date" class={classes().date}>
+                          {resolveSlot(slots.dateSlot(), ctx()) ?? item.date}
                         </div>
-                      ) : null}
-                      {item.title || props.title ? (
-                        <div
-                          data-slot="title"
-                          class={`${classes().title}  ${item.ui?.title || ""}`}
-                        >
-                          {renderSlot(props.title, item, index(), () => item.title)}
+                      </Show>
+                      <Show when={item.title || slots.titleSlot()}>
+                        <div data-slot="title" class={classes().title}>
+                          {resolveSlot(slots.titleSlot(), ctx()) ?? item.title}
                         </div>
-                      ) : null}
-                      {item.description ||
-                      props.description ||
-                      typeof props.children === "function" ? (
-                        <div
-                          data-slot="description"
-                          class={`${classes().description}  ${item.ui?.description || ""}`}
-                        >
-                          {typeof props.children === "function"
-                            ? renderSlot(props.children, item, index(), () => item.description)
-                            : renderSlot(props.description, item, index(), () => item.description)}
+                      </Show>
+                      <Show when={item.description || slots.descriptionSlot()}>
+                        <div data-slot="description" class={classes().description}>
+                          {resolveSlot(slots.descriptionSlot(), ctx()) ?? item.description}
                         </div>
-                      ) : null}
+                      </Show>
                     </>
                   )}
                 </div>
@@ -159,9 +129,7 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
             );
           }}
         </For>
-      ) : typeof props.children !== "function" ? (
-        props.children
-      ) : null}
-    </Root>
+      </Show>
+    </Tag>
   );
 };

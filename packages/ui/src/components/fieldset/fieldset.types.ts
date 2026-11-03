@@ -1,8 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLFieldsetTheme } from "./fieldset.theme";
 
-export interface RLFieldsetProps {
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Fieldset container.
+ * @status stub
+ */
+export type RLFieldsetProps = InferThemeProps<typeof RLFieldsetTheme>;

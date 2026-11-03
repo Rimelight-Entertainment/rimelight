@@ -3,17 +3,7 @@ import { RLHeaderTheme } from "./header.theme";
 import { createEffect, type Component } from "solid-js";
 import { useHeaderStack } from "./useHeaderStack";
 
-const OMIT_KEYS = [
-  "layerType",
-  "contain",
-  "sticky",
-  "fixed",
-  "stackIndex",
-  "hideOnScroll",
-  "left",
-  "center",
-  "right",
-] as const;
+const OMIT_KEYS = ["layerType", "stackIndex", "hideOnScroll"] as const;
 
 export const RLHeader: Component<RLHeaderProps> = (props) => {
   const contain = () => props.contain ?? true;
@@ -24,14 +14,12 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
   const layerType = () => props.layerType ?? "header";
   const isBanner = () => layerType() === "banner";
 
-  const { Tag, classes, rest, id, slots } = RLHeaderTheme.setup(props, {
-    slots: ["leftSlot", "centerSlot", "rightSlot"] as const,
+  const { Tag, classes, rest, id, slots, children, theme } = RLHeaderTheme.setup(props, {
+    slots: ["leadingSlot", "centerSlot", "trailingSlot"] as const,
     as: "header",
     omit: OMIT_KEYS,
     variants: () => ({
-      contain: contain(),
       sticky: fixed() ? false : sticky(),
-      fixed: fixed(),
     }),
   });
 
@@ -68,6 +56,7 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
       }}
       id={layerId()}
       data-slot="root"
+      data-theme={theme()}
       class={classes().root}
       data-contain={contain() ? "true" : "false"}
       data-collapsed={layer.isCollapsed() ? "true" : "false"}
@@ -81,14 +70,14 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
     >
       <div class={classes().content} data-header-content>
         <div class={classes().container} data-slot="container">
-          <div class={classes().left} data-slot="left">
-            {slots.leftSlot()}
+          <div class={classes().leading} data-slot="leading">
+            {slots.leadingSlot()}
           </div>
           <div class={classes().center} data-slot="center">
-            {slots.centerSlot() ?? props.children}
+            {slots.centerSlot() ?? children()}
           </div>
-          <div class={classes().right} data-slot="right">
-            {slots.rightSlot()}
+          <div class={classes().trailing} data-slot="trailing">
+            {slots.trailingSlot()}
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 import { RLCheckboxGroup } from "@rimelight/ui/components/checkbox-group/RLCheckboxGroup.tsx";
+import type { RLCheckboxGroupItemValue } from "@rimelight/ui/components/checkbox-group/checkbox-group.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
@@ -208,7 +209,7 @@ export const CheckboxSandbox = (): JSX.Element => {
           <RLCheckbox
             size={size()}
             color={color()}
-            variant={variant()}
+            layout={variant()}
             indicator={indicator()}
             highlight={highlight()}
             disabled={disabled()}
@@ -252,19 +253,19 @@ export const checkboxAudit: ComponentAuditDefinition = {
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted">{"Checked:"}</span>
-              <RLCheckbox defaultValue aria-label={"Checked bare"} />
+              <RLCheckbox defaultChecked aria-label={"Checked bare"} />
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted">{"Indeterminate:"}</span>
-              <RLCheckbox defaultValue="indeterminate" aria-label={"Indeterminate bare"} />
+              <RLCheckbox defaultChecked="indeterminate" aria-label={"Indeterminate bare"} />
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted">{"Highlighted:"}</span>
-              <RLCheckbox defaultValue highlight aria-label={"Highlighted bare"} />
+              <RLCheckbox defaultChecked highlight aria-label={"Highlighted bare"} />
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted">{"Disabled:"}</span>
-              <RLCheckbox disabled defaultValue aria-label={"Disabled bare"} />
+              <RLCheckbox disabled defaultChecked aria-label={"Disabled bare"} />
             </div>
           </div>
 
@@ -273,7 +274,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
             <For each={SIZES}>
               {(s) => (
                 <div class="flex items-center gap-1.5">
-                  <RLCheckbox size={s} defaultValue aria-label={`Size ${s}`} />
+                  <RLCheckbox size={s} defaultChecked aria-label={`Size ${s}`} />
                   <span class="text-2xs font-mono text-muted">{s}</span>
                 </div>
               )}
@@ -285,7 +286,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
             <For each={COLORS}>
               {(c) => (
                 <div class="flex items-center gap-1.5">
-                  <RLCheckbox color={c} defaultValue aria-label={`Color ${c}`} />
+                  <RLCheckbox color={c} defaultChecked aria-label={`Color ${c}`} />
                   <span class="text-2xs font-mono text-muted">{c}</span>
                 </div>
               )}
@@ -304,10 +305,10 @@ export const checkboxAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <RLCheckbox label="Remember my login" />
-          <RLCheckbox defaultValue label="Accept privacy policy" />
-          <RLCheckbox defaultValue="indeterminate" label="Select all 42 items" />
+          <RLCheckbox defaultChecked label="Accept privacy policy" />
+          <RLCheckbox defaultChecked="indeterminate" label="Select all 42 items" />
           <RLCheckbox highlight label="Highlighted focus ring" />
-          <RLCheckbox variant="card" defaultValue label="Card variant (label only)" />
+          <RLCheckbox layout="card" defaultChecked label="Card variant (label only)" />
           <RLCheckbox>
             <span class="font-medium text-highlighted">{"Inline JSX children"}</span>
           </RLCheckbox>
@@ -325,23 +326,23 @@ export const checkboxAudit: ComponentAuditDefinition = {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLCheckbox label="Unchecked by default" description="Click to toggle state." />
           <RLCheckbox
-            defaultValue
+            defaultChecked
             label="Checked initially"
             description="Uncontrolled initial value."
           />
           <RLCheckbox
-            defaultValue="indeterminate"
+            defaultChecked="indeterminate"
             label="Indeterminate State"
             description="Useful for select-all parent controls."
           />
           <RLCheckbox
-            defaultValue="indeterminate"
+            defaultChecked="indeterminate"
             indeterminateIcon="plus"
             label="Custom Indeterminate Icon"
             description="Uses custom icon token."
           />
           <RLCheckbox disabled label="Disabled Unchecked" />
-          <RLCheckbox disabled defaultValue label="Disabled Checked" />
+          <RLCheckbox disabled defaultChecked label="Disabled Checked" />
           <RLCheckbox
             required
             label="Required Checkbox"
@@ -364,7 +365,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
             {(c) => (
               <RLCheckbox
                 color={c}
-                defaultValue
+                defaultChecked
                 label={`Color: ${c}`}
                 description={`Using ${c} token theme.`}
               />
@@ -387,7 +388,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
             {(s) => (
               <RLCheckbox
                 size={s}
-                defaultValue
+                defaultChecked
                 label={`Size ${s.toUpperCase()}`}
                 description={`Checkbox scaled with size="${s}".`}
               />
@@ -406,31 +407,31 @@ export const checkboxAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLCheckbox
-            variant="card"
-            defaultValue
+            layout="card"
+            defaultChecked
             label="Card Variant (Start Indicator)"
             description="Card container border and elevated background on hover."
           />
           <RLCheckbox
-            variant="card"
+            layout="card"
             indicator="end"
-            defaultValue
+            defaultChecked
             label="Card Variant (End Indicator)"
             description="Reversed layout with indicator aligned to end."
           />
           <RLCheckbox
-            variant="card"
+            layout="card"
             indicator="hidden"
             icon="star"
-            defaultValue
+            defaultChecked
             label="Hidden Indicator (Card)"
             description="Icon displayed centrally above label."
           />
           <RLCheckbox
-            variant="list"
+            layout="list"
             indicator="hidden"
             icon="sparkles"
-            defaultValue
+            defaultChecked
             label="Hidden Indicator (List)"
             description="Minimal layout with icon above text."
           />
@@ -445,8 +446,8 @@ export const checkboxAudit: ComponentAuditDefinition = {
       description:
         "Multi-select checkbox groups with array models, string/object items, horizontal/vertical layouts, and max selection limits.",
       render: () => {
-        const [groupVal, setGroupVal] = createSignal(["System"]);
-        const [tableVal, setTableVal] = createSignal(["light"]);
+        const [groupVal, setGroupVal] = createSignal<RLCheckboxGroupItemValue[]>(["System"]);
+        const [tableVal, setTableVal] = createSignal<RLCheckboxGroupItemValue[]>(["light"]);
 
         const themeItems = [
           {
@@ -483,14 +484,16 @@ export const checkboxAudit: ComponentAuditDefinition = {
             <RLCheckboxGroup
               legend="Select Themes (Vertical List)"
               items={["System", "Light", "Dark"]}
-              modelValue={groupVal()}
-              onUpdate:modelValue={(v: string[]) => setGroupVal(v)}
+              value={groupVal()}
+              onValueChange={(v: RLCheckboxGroupItemValue[]) => {
+                setGroupVal(v);
+              }}
             />
 
             <RLCheckboxGroup
               legend="Orientation Horizontal & Card Variant (Max 2)"
               orientation="horizontal"
-              variant="card"
+              layout="card"
               max={2}
               items={themeItems}
               defaultValue={["system", "light"]}
@@ -499,10 +502,12 @@ export const checkboxAudit: ComponentAuditDefinition = {
             <RLCheckboxGroup
               legend="Table Variant (Segmented Row)"
               orientation="horizontal"
-              variant="table"
+              layout="table"
               items={themeItems}
-              modelValue={tableVal()}
-              onUpdate:modelValue={(v: string[]) => setTableVal(v)}
+              value={tableVal()}
+              onValueChange={(v: RLCheckboxGroupItemValue[]) => {
+                setTableVal(v);
+              }}
             />
           </div>
         );
@@ -520,7 +525,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RLCheckbox
             label="Pro Feature"
-            defaultValue
+            defaultChecked
             labelSlot={({ label }) => (
               <span class="flex items-center gap-1.5">
                 <strong class="text-highlighted">{label}</strong>
@@ -537,7 +542,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
           <RLCheckbox
             label="Custom UI Tokens"
             description="Custom container, base, and label slot classes."
-            defaultValue
+            defaultChecked
             ui={{
               root: "p-3 rounded-lg border border-primary/30 bg-primary/5",
               base: "ring-2 ring-primary",
@@ -553,7 +558,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for RLCheckbox and RLCheckboxGroup with as, label, description, color, variant (list, card, table), size (xs..xl), indicator (start, end, hidden), indeterminate, indeterminateIcon, max limit, and custom slots.",
+        "Full support for RLCheckbox and RLCheckboxGroup with as, label, description, color, layout (list, card, table), size (xs..xl), indicator (start, end, hidden), indeterminate, indeterminateIcon, max limit, and custom slots.",
     },
     {
       criterion: "Custom user defined colors support",

@@ -1,10 +1,19 @@
 import { defineTheme } from "../../resolver";
 
 export const RLInputTimeTheme = defineTheme("input-time", {
-  slots: ["root"],
+  slots: ["root", "input"],
   base: {
     root: "",
+    input: "",
   },
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    size: {
+      sm: {},
+      md: {},
+      lg: {},
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
 });

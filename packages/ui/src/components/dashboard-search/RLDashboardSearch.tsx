@@ -1,25 +1,26 @@
 import type { RLDashboardSearchProps } from "./dashboard-search.types";
 import { RLDashboardSearchTheme } from "./dashboard-search.theme";
-import { createSignal, onSettled, Show, type Component } from "solid-js";
+import { onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
+import { createControllable } from "../../controllable";
 
-const OMIT_KEYS = ["open", "onOpenChange"] as const;
+const OMIT_KEYS = ["open", "defaultOpen", "onOpenChange"] as const;
 
 export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
-  const { classes, rest } = RLDashboardSearchTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLDashboardSearchTheme.setup(props, {
     omit: OMIT_KEYS,
-    variants: () => ({ fullscreen: false, size: "md" }),
   });
 
-  const [isOpen, setIsOpen] = createSignal(() => props.open ?? false);
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
   let inputRef: HTMLInputElement | null = null;
 
   const setOpenState = (open: boolean) => {
-    if (props.open === undefined) {
-      setIsOpen(open);
-    }
-    props.onOpenChange?.(open);
+    setOpen(open);
     if (open) {
       setTimeout(() => inputRef?.focus(), 50);
     }
@@ -53,8 +54,14 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
   });
 
   return (
-    <div data-dashboard-search-target data-slot="root" {...rest}>
-      {props.children}
+    <Tag
+      data-dashboard-search-target
+      data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
+      {...rest}
+    >
+      {children()}
 
       <Show when={isOpen()}>
         <div
@@ -78,8 +85,9 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
                 ref={(el) => (inputRef = el)}
                 type="text"
                 data-dashboard-search-input
+                data-slot="input"
                 placeholder={uiT("search.placeholder")}
-                class="flex-1 h-12 bg-transparent border-0 outline-none text-default placeholder:text-muted"
+                class={classes().input}
               />
               <button
                 type="button"
@@ -93,6 +101,6 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
           </div>
         </div>
       </Show>
-    </div>
+    </Tag>
   );
 };

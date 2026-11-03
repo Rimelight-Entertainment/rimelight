@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLRatingTheme } from "./rating.theme";
 
-export interface RLRatingProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Rating display root. Renders the root element and children only.
+ * @status stub
+ */
+export type RLRatingProps = InferThemeProps<typeof RLRatingTheme>;

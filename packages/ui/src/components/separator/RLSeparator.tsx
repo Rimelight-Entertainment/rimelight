@@ -1,37 +1,38 @@
 import type { Component } from "solid-js";
 import type { RLSeparatorProps } from "./separator.types";
+import type { RLAvatarProps } from "../avatar/avatar.types";
 import { RLSeparatorTheme } from "./separator.theme";
 import { Show } from "solid-js";
 import { RLAvatar } from "../avatar/RLAvatar";
+import { RLIcon } from "../icon/RLIcon";
 
 const OMIT_KEYS = ["decorative", "label", "icon", "avatar"] as const;
 
 export const RLSeparator: Component<RLSeparatorProps> = (props) => {
-  const { classes, rest, slots } = RLSeparatorTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLSeparatorTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["avatarSlot", "iconSlot"] as const,
   });
 
-  const decorative = () => props.decorative ?? true;
-
   return (
-    <div
+    <Tag
       class={classes().root}
       data-slot="root"
-      role={decorative() ? "none" : "separator"}
-      aria-orientation={decorative() ? undefined : props.orientation}
+      data-theme={theme()}
+      role={(props.decorative ?? true) ? "none" : "separator"}
+      aria-orientation={(props.decorative ?? true) ? undefined : props.orientation}
       {...rest}
     >
       <div class={classes().border} />
 
-      <Show when={props.label || props.icon || props.avatar || props.children}>
+      <Show when={props.label || props.icon || props.avatar || children()}>
         <div class={classes().container} data-slot="container">
           {slots.avatarSlot() ? (
             slots.avatarSlot()
           ) : props.avatar ? (
             <RLAvatar
               {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-              size={classes().avatarSize as any}
+              size={classes().avatarSize as RLAvatarProps["size"]}
               class={classes().avatar}
               data-slot="avatar"
             />
@@ -41,18 +42,18 @@ export const RLSeparator: Component<RLSeparatorProps> = (props) => {
             slots.iconSlot()
           ) : props.icon ? (
             <span class={classes().icon} data-slot="icon">
-              <span class={props.icon} aria-hidden="true" />
+              <RLIcon name={props.icon} />
             </span>
           ) : null}
 
           <span class={classes().label} data-slot="label">
             {props.label}
-            {props.children}
+            {children()}
           </span>
         </div>
 
         <div class={classes().border} />
       </Show>
-    </div>
+    </Tag>
   );
 };

@@ -1,19 +1,24 @@
 import type { Component } from "solid-js";
 import { createSignal, onSettled } from "solid-js";
 import type { RLShareProps } from "./share.types";
+import { RLShareTheme } from "./share.theme";
 import { RLButton } from "../button/RLButton";
-import { RLButtonTheme } from "../button/button.theme";
-import type { RLButtonProps } from "../button/button.types";
+import { uiT } from "../../locale";
 
+/**
+ * Share button. Uses the Web Share API when available, otherwise copies the current link.
+ * `@status stable`
+ */
 export const RLShare: Component<RLShareProps> = (props) => {
-  const { rest } = RLButtonTheme.setup(props);
-  const buttonProps = props as RLButtonProps;
+  const { Tag, classes, rest, theme, ui, children } = RLShareTheme.setup(props, {
+    as: () => RLButton,
+  });
   const [copied, setCopied] = createSignal(false);
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   onSettled(() => {
     return () => {
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
     };
   });
 
@@ -22,8 +27,7 @@ export const RLShare: Component<RLShareProps> = (props) => {
       try {
         await navigator.share({ title: document.title, url: window.location.href });
       } catch (err) {
-        const error = err as { name?: string };
-        if (error.name !== "AbortError") {
+        if (!(err instanceof Error && err.name === "AbortError")) {
           console.error("Share failed:", err);
         }
       }
@@ -32,7 +36,7 @@ export const RLShare: Component<RLShareProps> = (props) => {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
       timeoutId = setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy link:", err);
@@ -40,26 +44,21 @@ export const RLShare: Component<RLShareProps> = (props) => {
   };
 
   return (
-    <RLButton
-      class={props["class"]}
-      color={buttonProps.color ?? "neutral"}
-      variant={buttonProps.variant ?? "outline"}
-      size={buttonProps.size ?? "sm"}
-      block={buttonProps.block}
-      rounded={buttonProps.rounded}
-      fieldGroup={buttonProps.fieldGroup}
-      justify={buttonProps.justify}
-      leadingSlot={buttonProps.leadingSlot}
-      trailingSlot={buttonProps.trailingSlot}
-      {...(buttonProps.as !== undefined ? { as: buttonProps.as } : {})}
-      theme={buttonProps.theme}
-      leadingIcon="share"
-      label={copied() ? "Link Copied!" : "Share"}
-      ui={props["ui"]}
-      onClick={handleShare}
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      color="neutral"
+      variant="outline"
+      size="sm"
       {...rest}
+      class={classes().root}
+      theme={theme()}
+      ui={ui()}
+      leadingIcon="share"
+      label={copied() ? uiT("share.copied") : uiT("share.label")}
+      onClick={handleShare}
     >
-      {buttonProps.children}
-    </RLButton>
+      {children()}
+    </Tag>
   );
 };

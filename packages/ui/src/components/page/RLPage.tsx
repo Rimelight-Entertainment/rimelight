@@ -4,37 +4,32 @@ import type { RLPageProps } from "./page.types";
 import { RLPageTheme } from "./page.theme";
 
 export const RLPage: Component<RLPageProps> = (props) => {
-  const {
-    Tag: Root,
-    classes,
-    rest,
-    slots,
-  } = RLPageTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLPageTheme.setup(props, {
     as: "div",
-    slots: ["leftSlot", "rightSlot"] as const,
+    slots: ["leadingSlot", "trailingSlot"] as const,
     variants: (s) => ({
-      left: Boolean(s.leftSlot()),
-      right: Boolean(s.rightSlot()),
+      leading: Boolean(s.leadingSlot()),
+      trailing: Boolean(s.trailingSlot()),
     }),
   });
 
   return (
-    <Root class={classes().root} data-slot="root" {...rest}>
-      <Show when={slots.leftSlot()}>
-        <div class={classes().left} data-slot="left">
-          {slots.leftSlot()}
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      <Show when={slots.leadingSlot()}>
+        <div class={classes().leading} data-slot="leading">
+          {slots.leadingSlot()}
         </div>
       </Show>
 
       <div class={classes().center} data-slot="center">
-        {props.children}
+        {children()}
       </div>
 
-      <Show when={slots.rightSlot()}>
-        <div class={classes().right} data-slot="right">
-          {slots.rightSlot()}
+      <Show when={slots.trailingSlot()}>
+        <div class={classes().trailing} data-slot="trailing">
+          {slots.trailingSlot()}
         </div>
       </Show>
-    </Root>
+    </Tag>
   );
 };

@@ -6,7 +6,7 @@ import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const SIZES = ["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
+const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const COLORS = AUDIT_COLORS;
 const POSITIONS = ["top-right", "bottom-right", "top-left", "bottom-left"] as const;
 
@@ -235,8 +235,7 @@ export const chipAudit: ComponentAuditDefinition = {
       get title() {
         return t("app.text.all-size-scales-3xs-to-3xl");
       },
-      description:
-        "Size scale from 3xs (4px) to 3xl (12px) scaling dimensions and typography proportionally.",
+      description: "Size scale from xs to xl scaling dimensions and typography proportionally.",
       render: () => (
         <div class="flex items-center gap-4 flex-wrap">
           <For each={SIZES}>
@@ -301,10 +300,10 @@ export const chipAudit: ComponentAuditDefinition = {
         "Display numeric badge counters or short text strings with automatic proportional expanding min-width.",
       render: () => (
         <div class="flex items-center gap-6 flex-wrap">
-          <RLChip text={5} size="3xl" color="error">
+          <RLChip text={5} size="xl" color="error">
             <RLButton icon="mail" color="neutral" variant="subtle" aria-label={"5 unread emails"} />
           </RLChip>
-          <RLChip text="99+" size="3xl" color="primary">
+          <RLChip text="99+" size="xl" color="primary">
             <RLButton
               icon="bell"
               color="neutral"
@@ -312,10 +311,10 @@ export const chipAudit: ComponentAuditDefinition = {
               aria-label={"99+ notifications"}
             />
           </RLChip>
-          <RLChip text="NEW" size="3xl" color="success">
+          <RLChip text="NEW" size="xl" color="success">
             <RLButton label="Messages" color="neutral" variant="outline" />
           </RLChip>
-          <RLChip text="PRO" size="3xl" color="neutral">
+          <RLChip text="PRO" size="xl" color="neutral">
             <RLAvatar alt={"Member"} size="md" />
           </RLChip>
         </div>
@@ -343,7 +342,7 @@ export const chipAudit: ComponentAuditDefinition = {
             <RLChip standalone inset color="neutral" size="sm" /> Offline
           </span>
           <span class="flex items-center gap-1.5">
-            <RLChip standalone text={3} size="3xl" color="primary" /> In Queue
+            <RLChip standalone text={3} size="xl" color="primary" /> In Queue
           </span>
         </div>
       ),
@@ -394,7 +393,7 @@ export const chipAudit: ComponentAuditDefinition = {
     {
       criterion: "Slot pattern parity (default, content)",
       status: "pass",
-      notes: "Full JSX slot support for wrapped children and content/contentSlot.",
+      notes: "Full JSX slot support for wrapped children and text/textSlot.",
     },
     {
       criterion: "Custom user defined colors support",

@@ -102,7 +102,7 @@ export const ContextMenuSandbox = (): JSX.Element => {
     {
       label: "Delete",
       icon: "trash",
-      variant: "danger",
+      color: "error",
       kbds: ["Del"],
       onSelect: () => setLastAction("Delete"),
     },
@@ -256,7 +256,7 @@ const testScenarios: TestScenario[] = [
                 {
                   label: "Delete File",
                   icon: "trash",
-                  variant: "danger",
+                  color: "error",
                   onSelect: () => setStatus("Deleted document.tsx"),
                 },
               ]}
@@ -286,7 +286,7 @@ const testScenarios: TestScenario[] = [
                 {
                   label: "Move to Trash",
                   icon: "trash",
-                  variant: "danger",
+                  color: "error",
                   onSelect: () => setStatus("Moved banner.png to trash"),
                 },
               ]}
@@ -383,7 +383,7 @@ const testScenarios: TestScenario[] = [
       "Custom user profile header and quick upgrade footer rendered inside menu content.",
     render: () => (
       <RLContextMenu
-        topSlot={({ close }) => (
+        topSlot={({ closeMenu }) => (
           <div class="p-3 border-b border-default bg-elevated/20 flex items-center justify-between gap-3">
             <div class="flex items-center gap-2">
               <div class="w-6 h-6 rounded-full bg-primary text-inverted text-xs font-bold flex items-center justify-center">
@@ -391,16 +391,20 @@ const testScenarios: TestScenario[] = [
               </div>
               <div class="text-xs font-semibold">Jane Doe</div>
             </div>
-            <button type="button" onClick={close} class="text-muted hover:text-highlighted text-xs">
+            <button
+              type="button"
+              onClick={closeMenu}
+              class="text-muted hover:text-highlighted text-xs"
+            >
               &times;
             </button>
           </div>
         )}
-        bottomSlot={({ close }) => (
+        bottomSlot={({ closeMenu }) => (
           <div class="p-2 border-t border-default bg-surface">
             <button
               type="button"
-              onClick={close}
+              onClick={closeMenu}
               class="w-full text-center py-1 text-2xs font-semibold text-primary hover:underline"
             >
               Upgrade to Pro &rarr;
@@ -411,7 +415,7 @@ const testScenarios: TestScenario[] = [
           { label: "Account Settings", icon: "user" },
           { label: "Billing & Plans", icon: "credit-card" },
           { type: "separator" },
-          { label: "Log Out", icon: "log-out", variant: "danger" },
+          { label: "Log Out", icon: "log-out", color: "error" },
         ]}
       >
         <div class="p-6 rounded-xl border border-default bg-elevated/10 text-center cursor-context-menu">

@@ -11,6 +11,20 @@ import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 import { content, type PublicEntry } from "@rimelight/cms/solid";
 
+/** Narrows an untyped CMS `cover` property to the `RLPost` image prop. */
+const postImage = (value: unknown): string | { src: string } | undefined => {
+  if (typeof value === "string") return value;
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    "src" in value &&
+    typeof value.src === "string"
+  ) {
+    return { src: value.src };
+  }
+  return undefined;
+};
+
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
 
@@ -71,7 +85,7 @@ export const HomePage: Component = () => {
   return (
     <>
       <RLPageSection
-        variant="hero"
+        layout="hero"
         title={t("page.home.section.hero.title")}
         description={t("page.home.section.hero.description")}
         links={heroLinks()}
@@ -108,7 +122,7 @@ export const HomePage: Component = () => {
                       t.localize(post.description ?? {}) || post.properties?.["excerpt"] || ""
                     }
                     date={date ? new Date(date) : undefined}
-                    image={post.properties?.["cover"] as string | Record<string, any> | undefined}
+                    image={postImage(post.properties?.["cover"])}
                     badge={
                       category
                         ? typeof category === "string"
@@ -116,8 +130,7 @@ export const HomePage: Component = () => {
                           : t.localize(category as any)
                         : undefined
                     }
-                    to={getLocaleUrl(`/blog/${post.slug}/`)}
-                    variant="ghost"
+                    href={getLocaleUrl(`/blog/${post.slug}/`)}
                   />
                 );
               }}
@@ -135,7 +148,7 @@ export const HomePage: Component = () => {
       </RLPageSection>
 
       <RLPageSection
-        variant="cta"
+        layout="cta"
         ctaVariant="solid"
         title={t("page.home.section.cta.title")}
         description={t("page.home.section.cta.description")}

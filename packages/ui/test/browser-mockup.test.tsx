@@ -57,9 +57,9 @@ describe("RLBrowserMockup", () => {
       expect(attr(root, "aria-label")).toBe("Browser mockup: https://starter.rimelight.com");
     });
 
-    it("allows custom ariaLabel prop", () => {
+    it("allows custom aria-label prop", () => {
       const html = render(() => (
-        <RLBrowserMockup ariaLabel="Custom Browser Preview">
+        <RLBrowserMockup aria-label="Custom Browser Preview">
           <div>Content</div>
         </RLBrowserMockup>
       ));

@@ -1,4 +1,6 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLAudioTheme } from "./audio.theme";
 
 export interface AudioSource {
   src: string;
@@ -26,8 +28,6 @@ export interface AudioTrackItem {
   bitrate?: string | undefined;
 }
 
-export type AudioSlotRenderer = () => any;
-
 export type AudioProgressVariant = "bar" | "waveform";
 export type AudioOrientation = "horizontal" | "vertical";
 export type AudioRepeatMode = "off" | "all" | "one";
@@ -51,7 +51,10 @@ export interface AudioIconOverrides {
   externalLink?: string | undefined;
 }
 
-export interface RLAudioProps {
+export type RLAudioProps = Omit<
+  InferThemeProps<typeof RLAudioTheme>,
+  "onPlay" | "onPause" | "onEnded" | "onTimeUpdate" | "onVolumeChange"
+> & {
   /**
    * Audio source URL or array of source objects with mime types.
    */
@@ -91,21 +94,15 @@ export interface RLAudioProps {
    */
   currentTrackIndex?: number | undefined;
   /**
-   * Layout orientation: 'horizontal' (compact row) or 'vertical' (large album art on top).
-   *
-   * @default "horizontal"
+   * Custom waveform peaks / heights array (values 0 - 100) or auto-generated.
    */
-  orientation?: AudioOrientation | undefined;
+  waveformPeaks?: number[] | undefined;
   /**
    * Progress bar visual variant: 'bar' (standard linear bar) or 'waveform' (soundwave bars).
    *
    * @default "bar"
    */
   progressVariant?: AudioProgressVariant | undefined;
-  /**
-   * Custom waveform peaks / heights array (values 0 - 100) or auto-generated.
-   */
-  waveformPeaks?: number[] | undefined;
   /**
    * Repeat mode: 'off' | 'all' (loop playlist/track) | 'one' (repeat single track).
    *
@@ -118,10 +115,6 @@ export interface RLAudioProps {
    * @default false
    */
   autoplay?: boolean | undefined;
-  /**
-   * Legacy loop prop (sets repeatMode="all" when true).
-   */
-  loop?: boolean | undefined;
   /**
    * Whether the audio should start muted.
    *
@@ -155,30 +148,12 @@ export interface RLAudioProps {
    */
   icons?: AudioIconOverrides | undefined;
   /**
-   * Optional primary accent color token.
-   *
-   * @default "primary"
-   */
-  color?: string | undefined;
-  /**
    * Color token specifically for the progress bar / waveform (e.g. 'primary', 'success',
    * 'secondary', 'warning').
    *
    * @default inherit from color prop
    */
   progressColor?: string | undefined;
-  /**
-   * Visual layout size.
-   *
-   * @default "md"
-   */
-  size?: "sm" | "md" | "lg" | undefined;
-  /**
-   * Visual style variant.
-   *
-   * @default "outline"
-   */
-  variant?: "solid" | "outline" | "soft" | "subtle" | undefined;
   /**
    * Whether to show or hide the time display (current / duration).
    *
@@ -250,26 +225,55 @@ export interface RLAudioProps {
    */
   artworkZoomable?: boolean | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Transcript text for the active track (shown in a collapsible section).
    */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element | undefined;
   transcript?: string | undefined;
-  transcriptSlot?: JSX.Element | undefined;
+  /**
+   * Custom header content replacing the artwork / details / actions row.
+   */
   headerSlot?: JSX.Element | undefined;
+  /**
+   * Custom timeline content replacing the progress bar and time display.
+   */
   timelineSlot?: JSX.Element | undefined;
+  /**
+   * Custom controls content replacing the default playback controls row.
+   */
   controlsSlot?: JSX.Element | undefined;
+  /**
+   * Custom artwork content replacing the default album artwork.
+   */
   artworkSlot?: JSX.Element | undefined;
+  /**
+   * Custom transcript content replacing the transcript string.
+   */
+  transcriptSlot?: JSX.Element | undefined;
+  /**
+   * Called when playback starts.
+   */
   onPlay?: (() => void) | undefined;
+  /**
+   * Called when playback pauses.
+   */
   onPause?: (() => void) | undefined;
+  /**
+   * Called when the last track ends and playback stops.
+   */
   onEnded?: (() => void) | undefined;
+  /**
+   * Called when the active track changes.
+   */
   onTrackChange?: ((index: number, track: AudioTrackItem) => void) | undefined;
+  /**
+   * Called on playback time updates.
+   */
   onTimeUpdate?: ((currentTime: number, duration: number) => void) | undefined;
+  /**
+   * Called when volume or mute state changes.
+   */
   onVolumeChange?: ((volume: number, muted: boolean) => void) | undefined;
+  /**
+   * Called when the repeat mode is cycled.
+   */
   onRepeatModeChange?: ((mode: AudioRepeatMode) => void) | undefined;
-  [key: string]: unknown;
-}
+};

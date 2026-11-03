@@ -5,9 +5,10 @@ import { createEffect, createSignal, onSettled, Show, type Component } from "sol
 const OMIT_KEYS = ["scrollHideDelay", "height"] as const;
 
 export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
-  const { classes, rest } = RLScrollAreaTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLScrollAreaTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const orientation = () => props.orientation ?? "vertical";
   const hideDelay = () => props.scrollHideDelay ?? 600;
 
   let viewportRef: HTMLDivElement | null = null;
@@ -116,7 +117,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
   });
 
   createEffect(
-    () => props.children,
+    () => children(),
     () => {
       requestAnimationFrame(() => updateThumbs());
     },
@@ -130,11 +131,12 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
       : "";
 
   return (
-    <div
-      class={`${classes().root} ${heightClass()}`}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
+      class={`${classes().root} ${heightClass()}`}
       data-scroll-area
-      data-orientation={orientation()}
+      data-orientation={props.orientation}
       data-hide-delay={hideDelay()}
       {...rest}
     >
@@ -145,10 +147,10 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
         data-scroll-viewport
         onScroll={handleScroll}
       >
-        {props.children}
+        {children()}
       </div>
 
-      <Show when={orientation() === "vertical" || orientation() === "both"}>
+      <Show when={props.orientation !== "horizontal"}>
         <div
           ref={(el) => (vBarRef = el)}
           class={`${classes().scrollbar} transition-opacity ${
@@ -166,7 +168,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
         </div>
       </Show>
 
-      <Show when={orientation() === "horizontal" || orientation() === "both"}>
+      <Show when={props.orientation === "horizontal" || props.orientation === "both"}>
         <div
           ref={(el) => (hBarRef = el)}
           class={`absolute bottom-0 left-0 right-0 h-2.5 flex-row flex p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-muted/10 transition-opacity ${
@@ -183,6 +185,6 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
           />
         </div>
       </Show>
-    </div>
+    </Tag>
   );
 };

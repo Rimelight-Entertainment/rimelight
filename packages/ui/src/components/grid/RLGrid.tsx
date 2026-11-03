@@ -3,11 +3,11 @@ import type { RLGridProps } from "./grid.types";
 import { RLGridTheme } from "./grid.theme";
 
 export const RLGrid: Component<RLGridProps> = (props) => {
-  const { classes, rest } = RLGridTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLGridTheme.setup(props);
 
   return (
-    <div class={classes().root} {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

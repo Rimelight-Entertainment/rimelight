@@ -1,10 +1,12 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme";
 
-export interface RLDashboardSidebarToggleProps {
+export type RLDashboardSidebarToggleProps = InferThemeProps<
+  typeof RLDashboardSidebarToggleTheme
+> & {
+  /**
+   * Icon name shown on the toggle button.
+   * @default "menu"
+   */
   icon?: string;
-  side?: "left" | "right";
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+};

@@ -5,7 +5,9 @@ import { RLAspectRatioTheme } from "./aspect-ratio.theme";
 const OMIT_KEYS = ["ratio"] as const;
 
 export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
-  const { Tag: Root, classes, rest } = RLAspectRatioTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLAspectRatioTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const safeRatio = () => {
     const value = props.ratio ?? 1;
@@ -23,14 +25,20 @@ export const RLAspectRatio: Component<RLAspectRatioProps> = (props) => {
         aria-hidden="true"
       />
       <div class={classes().content} data-slot="content">
-        {props.children}
+        {children()}
       </div>
     </>
   );
 
   return (
-    <Root class={classes().root} data-slot="root" data-ratio={safeRatio()} {...rest}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
+      data-ratio={safeRatio()}
+      {...rest}
+    >
       {inner()}
-    </Root>
+    </Tag>
   );
 };

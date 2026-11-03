@@ -254,10 +254,10 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
             <RLTabs
               items={STATUSES.map((s) => ({ label: s[0]!.toUpperCase() + s.slice(1), value: s }))}
               value={status()}
-              onChange={(value: string) => setStatus(value as (typeof STATUSES)[number])}
+              onValueChange={(value: string) => setStatus(value as (typeof STATUSES)[number])}
               content={false}
               size="sm"
-              variant="pill"
+              variant="solid"
             />
           </Show>
           <RLInput

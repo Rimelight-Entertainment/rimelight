@@ -1,33 +1,54 @@
-import type { Component } from "solid-js";
+import { Show, type Component } from "solid-js";
 import type { RLSwitchProps } from "./switch.types";
 import { RLSwitchTheme } from "./switch.theme";
-
-const OMIT_KEYS = ["disabled", "name", "label", "value", "trailing"] as const;
+import { createControllable } from "../../controllable";
 
 export const RLSwitch: Component<RLSwitchProps> = (props) => {
-  const { classes, rest } = RLSwitchTheme.setup(props, { omit: OMIT_KEYS });
+  const [checked, setChecked] = createControllable<boolean>(
+    () => props.checked,
+    props.defaultChecked ?? false,
+    (next) => props.onCheckedChange?.(next),
+  );
+
+  const { Tag, classes, rest, children, theme } = RLSwitchTheme.setup(props, {
+    as: "label",
+    omit: [
+      "defaultChecked",
+      "onCheckedChange",
+      "disabled",
+      "name",
+      "value",
+      "label",
+      "onChange",
+    ] as const,
+    variants: () => ({ checked: checked() }),
+  });
+
+  const handleChange = (event: Event & { currentTarget: HTMLInputElement }) => {
+    setChecked(event.currentTarget.checked);
+    props.onChange?.(event);
+  };
 
   return (
-    <label class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <input
         type="checkbox"
         class={classes().input}
-        checked={!!props.checked}
+        data-slot="input"
+        checked={checked()}
         disabled={props.disabled}
         name={props.name}
+        value={props.value}
+        onChange={handleChange}
       />
       <div class={classes().track} data-slot="track">
         <div class={classes().thumb} data-slot="thumb" />
       </div>
-      {props.label !== undefined && props.label !== null ? (
+      <Show when={props.label ?? children()}>
         <span class={classes().label} data-slot="label">
-          {props.label}
+          {props.label ?? children()}
         </span>
-      ) : props.children ? (
-        <span class={classes().label} data-slot="label">
-          {props.children}
-        </span>
-      ) : null}
-    </label>
+      </Show>
+    </Tag>
   );
 };

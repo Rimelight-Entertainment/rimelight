@@ -1,12 +1,14 @@
 import type { Component } from "solid-js";
 import type { RLToasterProps } from "./toaster.types";
+import type { ThemeColor } from "../../types";
 import { RLToasterTheme } from "./toaster.theme";
 import { For, onSettled } from "solid-js";
 import { toasts, removeToast, addToast, type ToastItem } from "../toast/store";
 import { RLToast } from "../toast/RLToast";
+import { uiT } from "../../locale";
 
 export const RLToaster: Component<RLToasterProps> = (props) => {
-  const { classes, rest } = RLToasterTheme.setup(props);
+  const { Tag, classes, rest, theme } = RLToasterTheme.setup(props);
 
   onSettled(() => {
     const stored = sessionStorage.getItem("pending_toast");
@@ -23,35 +25,36 @@ export const RLToaster: Component<RLToasterProps> = (props) => {
     const url = new URL(window.location.href);
     let toastTitle = url.searchParams.get("toast_title");
     const toastDesc = url.searchParams.get("toast_desc") ?? undefined;
-    let toastVariant = url.searchParams.get("toast_variant") || "success";
+    const toastColor = (url.searchParams.get("toast_color") || "success") as ThemeColor;
 
     if (!toastTitle) {
       if (url.searchParams.has("signed_in")) {
-        toastTitle = "Signed in successfully";
+        toastTitle = uiT("toaster.signed-in");
       } else if (url.searchParams.has("new")) {
-        toastTitle = "Account created successfully";
+        toastTitle = uiT("toaster.account-created");
       }
     }
 
     if (toastTitle) {
       url.searchParams.delete("toast_title");
       url.searchParams.delete("toast_desc");
-      url.searchParams.delete("toast_variant");
+      url.searchParams.delete("toast_color");
       url.searchParams.delete("signed_in");
       url.searchParams.delete("new");
       const cleanUrl = url.pathname + (url.search ? url.search : "");
       window.history.replaceState({}, "", cleanUrl);
 
-      const payload: Record<string, unknown> = { title: toastTitle, variant: toastVariant };
-      if (toastDesc) payload["description"] = toastDesc;
-      addToast(payload as Omit<ToastItem, "id">);
+      const payload: Omit<ToastItem, "id"> = { title: toastTitle, color: toastColor };
+      if (toastDesc) payload.description = toastDesc;
+      addToast(payload);
     }
   });
 
   return (
-    <div
-      class={classes().root}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       aria-live="polite"
       aria-atomic="false"
       role="status"
@@ -62,12 +65,12 @@ export const RLToaster: Component<RLToasterProps> = (props) => {
           <RLToast
             title={item.title}
             {...(item.description ? { description: item.description } : {})}
-            {...(item.variant ? { variant: item.variant } : {})}
+            {...(item.color ? { color: item.color } : {})}
             {...(item.duration ? { duration: item.duration } : {})}
             onDismiss={() => removeToast(item.id)}
           />
         )}
       </For>
-    </div>
+    </Tag>
   );
 };

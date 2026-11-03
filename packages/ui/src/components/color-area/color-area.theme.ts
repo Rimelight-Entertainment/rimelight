@@ -10,8 +10,12 @@ export const RLColorAreaTheme = defineTheme("color-area", {
   },
   variants: {
     color: "auto",
+    disabled: {
+      true: { root: "opacity-50 pointer-events-none" },
+    },
   },
   defaultVariants: {
     color: "primary",
+    disabled: false,
   },
 });

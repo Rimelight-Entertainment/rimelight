@@ -1,37 +1,59 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPopoverTheme } from "./popover.theme";
 
-export interface RLPopoverProps {
+export type RLPopoverProps = Omit<InferThemeProps<typeof RLPopoverTheme>, "size" | "placement"> & {
+  /**
+   * Popover padding preset.
+   *
+   * @default "md"
+   */
+  size?: "xs" | "sm" | "md" | "lg" | undefined;
+  /**
+   * Placement of the popover relative to the trigger.
+   *
+   * @default "bottom"
+   */
+  placement?:
+    | "top"
+    | "top-start"
+    | "top-end"
+    | "bottom"
+    | "bottom-start"
+    | "bottom-end"
+    | "left"
+    | "right"
+    | undefined;
+  /**
+   * Which interactions open the popover: `"click"`, `"hover"`, or `"both"`.
+   *
+   * @default "both"
+   */
+  mode?: "click" | "hover" | "both" | undefined;
   /**
    * Controlled open state.
    */
-  open?: boolean;
+  open?: boolean | undefined;
   /**
-   * The trigger label to render.
+   * Initial open state when uncontrolled.
+   *
+   * @default false
    */
-  triggerLabel?: string;
+  defaultOpen?: boolean | undefined;
   /**
-   * The placement of the popover relative to trigger.
+   * Label of a default trigger button. Rendered only when `triggerSlot` is not set.
    */
-  placement?: "top" | "bottom" | "bottom-end" | "bottom-start" | "left" | "right";
+  triggerLabel?: string | undefined;
   /**
-   * Trigger mode: 'click', 'hover', or 'both'.
+   * Popover body content.
    */
-  mode?: "click" | "hover" | "both";
+  children?: JSX.Element | undefined;
   /**
-   * Size variant for padding.
+   * Trigger element. Always rendered, so it is plain JSX.
    */
-  size?: "xs" | "sm" | "md" | "lg" | (string & {}) | undefined;
+  triggerSlot?: JSX.Element | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Called whenever the open state changes through a click or outside click.
    */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  triggerSlot?: JSX.Element;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  [key: string]: unknown;
-}
+  onOpenChange?: ((open: boolean) => void) | undefined;
+};

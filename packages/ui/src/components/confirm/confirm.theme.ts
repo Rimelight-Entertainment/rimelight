@@ -24,16 +24,9 @@ export const RLConfirmTheme = defineTheme("confirm", {
     actionButton: "",
   },
   variants: {
-    variant: {
-      default: {
-        actionButton: "",
-      },
-      destructive: {
-        actionButton: "",
-      },
-    },
+    color: "auto",
   },
   defaultVariants: {
-    variant: "default",
+    color: "primary",
   },
 });

@@ -3,25 +3,23 @@ import type { RLQuoteProps } from "./quote.types";
 import { RLQuoteTheme } from "./quote.theme";
 import { RLIcon } from "../icon/RLIcon";
 
-const OMIT_KEYS = ["quote", "caption"] as const;
-
 export const RLQuote: Component<RLQuoteProps> = (props) => {
-  const { classes, rest, slots } = RLQuoteTheme.setup(props, {
-    omit: OMIT_KEYS,
+  const { Tag, classes, rest, slots, children, theme } = RLQuoteTheme.setup(props, {
+    as: "figure",
     slots: ["quoteSlot", "captionSlot"] as const,
   });
 
   return (
-    <figure class={classes().root} data-slot="root" {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <RLIcon name="quote" class={classes().icon} data-slot="icon" />
       <blockquote class={classes().quote} data-slot="quote">
-        {slots.quoteSlot() !== undefined ? slots.quoteSlot() : props.children}
+        {slots.quoteSlot() ?? children()}
       </blockquote>
       {slots.captionSlot() ? (
         <figcaption class={classes().caption} data-slot="caption">
           {slots.captionSlot()}
         </figcaption>
       ) : null}
-    </figure>
+    </Tag>
   );
 };

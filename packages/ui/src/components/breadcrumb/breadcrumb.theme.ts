@@ -1,5 +1,21 @@
 import { defineTheme } from "../../resolver";
 
+export type RLBreadcrumbSlot =
+  | "root"
+  | "list"
+  | "item"
+  | "link"
+  | "linkLeadingIcon"
+  | "linkLeadingAvatar"
+  | "linkLabel"
+  | "separator"
+  | "separatorIcon"
+  | "overflow"
+  | "overflowEllipsis"
+  | "overflowCount";
+
+export type RLBreadcrumbClasses = Record<RLBreadcrumbSlot, string>;
+
 export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
   slots: [
     "root",
@@ -8,7 +24,6 @@ export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
     "link",
     "linkLeadingIcon",
     "linkLeadingAvatar",
-    "linkLeadingAvatarSize",
     "linkLabel",
     "separator",
     "separatorIcon",
@@ -23,7 +38,6 @@ export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
     link: "group relative inline-flex items-center gap-1.5 text-sm min-w-0 rounded-md transition-colors cursor-pointer decoration-none",
     linkLeadingIcon: "shrink-0 size-4 flex items-center justify-center text-inherit",
     linkLeadingAvatar: "shrink-0 inline-flex items-center justify-center",
-    linkLeadingAvatarSize: "3xs",
     linkLabel: "truncate",
     separator: "inline-flex items-center justify-center shrink-0 select-none",
     separatorIcon: "shrink-0 size-3.5 text-muted flex items-center justify-center",

@@ -7,8 +7,10 @@ import type {
   RLCheckboxSize,
   RLCheckboxUiSlots,
 } from "../checkbox/checkbox.types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLCheckboxGroupTheme } from "./checkbox-group.theme";
 
-export type RLCheckboxGroupItemValue = string | number | boolean;
+export type RLCheckboxGroupItemValue = string | number;
 
 export interface RLCheckboxGroupItemObject {
   label?: string | undefined;
@@ -17,7 +19,7 @@ export interface RLCheckboxGroupItemObject {
   value?: RLCheckboxGroupItemValue | undefined;
   id?: string | undefined;
   icon?: string | undefined;
-  class?: any;
+  class?: string | undefined;
   ui?:
     | (Partial<{
         item?: string | undefined;
@@ -30,19 +32,19 @@ export interface RLCheckboxGroupItemObject {
 export type RLCheckboxGroupItem = RLCheckboxGroupItemValue | RLCheckboxGroupItemObject;
 
 export type RLCheckboxGroupOrientation = "horizontal" | "vertical";
+export type RLCheckboxGroupLayout = "list" | "card" | "table";
 
 export interface RLCheckboxGroupUiSlots {
   root?: string | undefined;
   fieldset?: string | undefined;
   legend?: string | undefined;
   item?: string | undefined;
-  [key: string]: any;
 }
 
-export interface RLCheckboxGroupProps<
+export type RLCheckboxGroupProps<
   T extends RLCheckboxGroupItem = RLCheckboxGroupItem,
   V = RLCheckboxGroupItemValue,
-> {
+> = Omit<InferThemeProps<typeof RLCheckboxGroupTheme>, "onChange"> & {
   /**
    * The element or component this component should render as.
    * @default 'div'
@@ -94,10 +96,10 @@ export interface RLCheckboxGroupProps<
   size?: RLCheckboxSize | undefined;
 
   /**
-   * Visual variant.
+   * Layout preset of the group. `table` renders items as a joined bordered table; `card` renders each item as a tile.
    * @default 'list'
    */
-  variant?: "table" | "list" | "card" | undefined;
+  layout?: RLCheckboxGroupLayout | undefined;
 
   /**
    * Layout orientation of the items.
@@ -168,17 +170,12 @@ export interface RLCheckboxGroupProps<
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any;
+  class?: string | undefined;
 
   /**
    * Theme mode override.
    */
   theme?: Theme | undefined;
-
-  /**
-   * Change event callback.
-   */
-  onChange?: ((e: Event) => void) | undefined;
 
   /**
    * Value change callback for reactive binding.
@@ -195,7 +192,12 @@ export interface RLCheckboxGroupProps<
    */
   labelSlot?:
     | ((props: {
-        item: T & { id: string; label?: string; description?: string; value?: any };
+        item: T & {
+          id: string;
+          label?: string;
+          description?: string;
+          value?: RLCheckboxGroupItemValue;
+        };
       }) => JSX.Element)
     | undefined;
 
@@ -204,7 +206,12 @@ export interface RLCheckboxGroupProps<
    */
   descriptionSlot?:
     | ((props: {
-        item: T & { id: string; label?: string; description?: string; value?: any };
+        item: T & {
+          id: string;
+          label?: string;
+          description?: string;
+          value?: RLCheckboxGroupItemValue;
+        };
       }) => JSX.Element)
     | undefined;
 
@@ -212,6 +219,4 @@ export interface RLCheckboxGroupProps<
    * Custom children (alternative to items prop).
    */
   children?: JSX.Element;
-
-  [key: string]: unknown;
-}
+};

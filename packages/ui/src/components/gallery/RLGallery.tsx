@@ -3,11 +3,11 @@ import type { RLGalleryProps } from "./gallery.types";
 import { RLGalleryTheme } from "./gallery.theme";
 
 export const RLGallery: Component<RLGalleryProps> = (props) => {
-  const { classes, rest } = RLGalleryTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLGalleryTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

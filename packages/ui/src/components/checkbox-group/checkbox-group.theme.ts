@@ -18,7 +18,7 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
       },
     },
     color: "auto",
-    variant: {
+    layout: {
       list: {
         fieldset: "flex-wrap",
       },
@@ -69,26 +69,26 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
   },
   compoundVariants: [
     {
-      variant: "table",
+      layout: "table",
       class: {
         item: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1] has-data-[state=checked]:bg-[var(--rl-bg)]/10 has-data-[state=checked]:border-[var(--rl-border)]/50 has-data-[state=checked]:z-[2]",
       },
     },
     {
-      variant: "table",
+      layout: "table",
       highlight: false,
       class: {
         item: "hover:not-has-disabled:not-has-aria-disabled:not-has-focus-visible:not-has-data-[state=checked]:border-accented hover:not-has-disabled:not-has-aria-disabled:not-has-focus-visible:not-has-data-[state=checked]:z-[1]",
       },
     },
-    { size: "xs", variant: "table", class: { item: "p-2.5" } },
-    { size: "sm", variant: "table", class: { item: "p-3" } },
-    { size: "md", variant: "table", class: { item: "p-3.5" } },
-    { size: "lg", variant: "table", class: { item: "p-4" } },
-    { size: "xl", variant: "table", class: { item: "p-4.5" } },
+    { size: "xs", layout: "table", class: { item: "p-2.5" } },
+    { size: "sm", layout: "table", class: { item: "p-3" } },
+    { size: "md", layout: "table", class: { item: "p-3.5" } },
+    { size: "lg", layout: "table", class: { item: "p-4" } },
+    { size: "xl", layout: "table", class: { item: "p-4.5" } },
     {
       orientation: "horizontal",
-      variant: "table",
+      layout: "table",
       class: {
         item: "first-of-type:rounded-s-lg last-of-type:rounded-e-lg",
         fieldset: "gap-0 -space-x-px",
@@ -96,7 +96,7 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
     },
     {
       orientation: "vertical",
-      variant: "table",
+      layout: "table",
       class: {
         item: "first-of-type:rounded-t-lg last-of-type:rounded-b-lg",
         fieldset: "gap-0 -space-y-px",
@@ -104,13 +104,13 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
     },
     {
       color: "neutral",
-      variant: "table",
+      layout: "table",
       class: {
         item: "has-data-[state=checked]:bg-elevated has-data-[state=checked]:border-inverted/50 has-data-[state=checked]:z-[2]",
       },
     },
     {
-      variant: "table",
+      layout: "table",
       disabled: true,
       class: {
         item: "cursor-not-allowed",
@@ -120,7 +120,7 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
   defaultVariants: {
     highlight: false,
     size: "md",
-    variant: "list",
+    layout: "list",
     color: "primary",
     orientation: "vertical",
   },

@@ -10,6 +10,7 @@ import {
   type Component,
 } from "solid-js";
 import { defineShortcuts } from "../../shortcuts";
+import { uiT } from "../../locale";
 
 const isDev = (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV === true;
 
@@ -64,7 +65,7 @@ const hexToRgba = (hex: string, alpha: number): string => {
 };
 
 export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
-  const { classes, rest } = RLLayoutGridTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, theme } = RLLayoutGridTheme.setup(props, { omit: OMIT_KEYS });
 
   const gutterArray = createMemo(() => normalizeArray(props.gutter ?? [0.75, 1, 1.5, 2, 2], 1));
   const marginArray = createMemo(() => normalizeArray(props.margin ?? [0.75, 1, 1.5, 2, 2], 1));
@@ -124,9 +125,9 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
           e.preventDefault();
           toggleGrid();
         },
-        label: "Toggle Layout Grid",
-        description: "Show or hide the development layout grid guide overlay",
-        category: "development",
+        label: uiT("layout-grid.shortcut.label"),
+        description: uiT("layout-grid.shortcut.description"),
+        category: uiT("layout-grid.shortcut.category"),
       },
     });
 
@@ -310,9 +311,10 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
 
   return (
     <Show when={shouldRender()}>
-      <div
-        ref={(el) => (hostRef = el)}
+      <Tag
+        ref={(el: HTMLElement) => (hostRef = el)}
         data-slot="root"
+        data-theme={theme()}
         class={classes().root}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}
@@ -341,7 +343,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
         {...rest}
       >
         <aside ref={(el) => (overlayRef = el)} class={classes().overlay} data-slot="overlay">
-          <div class={classes().container} data-slot="columns-container">
+          <div class={classes().container} data-slot="container">
             <Show when={visible()}>
               <div class={classes().columns}>
                 <For each={gridMetrics().innerColumns}>
@@ -365,7 +367,7 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
             </Show>
           </div>
         </aside>
-      </div>
+      </Tag>
     </Show>
   );
 };

@@ -247,7 +247,7 @@ describe("RLButton", () => {
 
     it("sets aria-current on active links", () => {
       const html = render(() => (
-        <RLButton href="/current" active ariaCurrentValue="page" label="Current Page" />
+        <RLButton href="/current" active current="page" label="Current Page" />
       ));
       expect(html).toContain('aria-current="page"');
     });
@@ -274,7 +274,7 @@ describe("RLButton", () => {
     });
 
     it("passes aria-labelledby when provided", () => {
-      const html = render(() => <RLButton ariaLabelledby="heading-id" label="Linked" />);
+      const html = render(() => <RLButton aria-labelledby="heading-id" label="Linked" />);
       expect(html).toContain('aria-labelledby="heading-id"');
     });
 
@@ -344,7 +344,7 @@ describe("RLButton", () => {
 
     it("hides the hint when an explicit aria-label carries the name", () => {
       const html = render(() => (
-        <RLButton href="https://example.com" label="Open" ariaLabel="Open example in a new tab" />
+        <RLButton href="https://example.com" label="Open" aria-label="Open example in a new tab" />
       ));
       expect(html).not.toContain('data-slot="external-hint"');
     });

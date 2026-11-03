@@ -1,14 +1,27 @@
 import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { ThemePreference } from "../../theme";
+import type { RLThemeSelectorTheme } from "./theme-selector.theme";
 
-export interface RLThemeSelectorProps {
+/**
+ * Theme selector props. `@status stable`.
+ */
+export type RLThemeSelectorProps = InferThemeProps<typeof RLThemeSelectorTheme> & {
+  /**
+   * Display mode. `icon` renders a compact icon-only trigger.
+   * @default "select"
+   */
   mode?: "select" | "icon";
-  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
-  color?: ThemeColor;
-  theme?: string;
-  ui?: any;
-  class?: any;
+
+  /**
+   * Called with the new preference after it is applied.
+   * @default undefined
+   */
+  onValueChange?: (theme: ThemePreference) => void;
+
+  /**
+   * Content rendered after the select.
+   * @default undefined
+   */
   children?: JSX.Element;
-  onChange?: (theme: string) => void;
-  [key: string]: unknown;
-}
+};

@@ -1,6 +1,7 @@
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
-import type { RLButtonProps } from "../button/button.types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSelectTheme } from "./select.theme";
 
 export interface SelectItem {
   label?: string;
@@ -8,31 +9,106 @@ export interface SelectItem {
   disabled?: boolean;
   icon?: string;
   avatar?: string;
-  [key: string]: unknown;
 }
 
-export interface RLSelectProps {
+export type RLSelectVariant = "solid" | "outline" | "soft" | "subtle" | "ghost" | "link";
+export type RLSelectLayout = "default" | "icon";
+
+export interface RLSelectProps extends Omit<
+  InferThemeProps<typeof RLSelectTheme>,
+  "color" | "size" | "variant" | "layout" | "onChange" | "onBlur" | "ref"
+> {
+  /**
+   * Unique ID for the select element.
+   */
   id?: string | undefined;
+
+  /**
+   * Form field name.
+   */
   name?: string | undefined;
+
+  /**
+   * The controlled selected value.
+   */
   value?: string | number | (string | number)[] | undefined;
+
+  /**
+   * The initial uncontrolled selected value.
+   */
   defaultValue?: string | number | (string | number)[] | undefined;
+
+  /**
+   * Placeholder option shown when nothing is selected.
+   */
   placeholder?: string | undefined;
+
+  /**
+   * Whether the select is disabled.
+   */
   disabled?: boolean | undefined;
+
+  /**
+   * Whether a value is required.
+   */
   required?: boolean | undefined;
+
+  /**
+   * Whether multiple values can be selected.
+   */
   multiple?: boolean | undefined;
+
+  /**
+   * Color theme.
+   * @default 'primary'
+   */
   color?: ThemeColor | undefined;
+
+  /**
+   * Size scale.
+   * @default 'md'
+   */
   size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
-  variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none" | undefined;
-  buttonVariant?: RLButtonProps["variant"] | undefined;
-  buttonColor?: RLButtonProps["color"] | undefined;
-  class?: string | undefined;
+
+  /**
+   * Visual style.
+   * @default 'solid'
+   */
+  variant?: RLSelectVariant | undefined;
+
+  /**
+   * Layout preset. `icon` renders a compact icon-only control.
+   * @default 'default'
+   */
+  layout?: RLSelectLayout | undefined;
+
+  /**
+   * Option items. Strings or objects with label/value.
+   */
   items?: SelectItem[] | string[] | undefined;
+
+  /**
+   * Icon name rendered before the selected label.
+   */
   leadingIcon?: string | undefined;
+
+  /**
+   * Custom leading slot content.
+   */
   leadingSlot?: JSX.Element | undefined;
-  children?: JSX.Element | undefined;
-  theme?: string | undefined;
-  ui?: any;
+
+  /**
+   * Native change event callback.
+   */
   onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;
+
+  /**
+   * Native blur event callback.
+   */
   onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void;
-  [key: string]: unknown;
+
+  /**
+   * Ref to the native select element.
+   */
+  ref?: HTMLSelectElement | ((el: HTMLSelectElement) => void) | undefined;
 }

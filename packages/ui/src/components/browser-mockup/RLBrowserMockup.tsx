@@ -5,27 +5,10 @@ import { RLBrowserMockupTheme } from "./browser-mockup.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = [
-  "url",
-  "urlPrefix",
-  "urlIcon",
-  "controls",
-  "controlsVariant",
-  "navigation",
-  "padded",
-  "shadow",
-  "rounded",
-  "ariaLabel",
-] as const;
+const OMIT_KEYS = ["url", "urlPrefix", "urlIcon", "controls", "navigation"] as const;
 
 export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
-  const {
-    Tag: RootTag,
-    classes,
-    rest,
-    id,
-    slots,
-  } = RLBrowserMockupTheme.setup(props, {
+  const { Tag, classes, rest, id, slots, children, theme } = RLBrowserMockupTheme.setup(props, {
     slots: [
       "headerSlot",
       "controlsSlot",
@@ -80,13 +63,16 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
   };
 
   return (
-    <RootTag
+    <Tag
       role="region"
       aria-label={
-        props.ariaLabel ?? (props.url ? `Browser mockup: ${props.url}` : "Browser Mockup")
+        props.url !== undefined
+          ? `${uiT("browser-mockup.labelWithUrl")} ${props.url}`
+          : uiT("browser-mockup.label")
       }
       class={classes().root}
       data-slot="root"
+      data-theme={theme()}
       {...rest}
     >
       <header class={classes().header} data-slot="header">
@@ -199,8 +185,8 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
 
       {/* Mockup Body Content */}
       <div class={classes().body} data-slot="body">
-        {props.children}
+        {children()}
       </div>
-    </RootTag>
+    </Tag>
   );
 };

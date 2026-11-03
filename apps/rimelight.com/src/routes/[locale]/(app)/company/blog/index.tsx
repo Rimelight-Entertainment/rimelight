@@ -6,6 +6,13 @@ import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 import { content, type PublicEntry, type PublicTerm } from "@rimelight/cms/solid";
 
+/** Cover image of a post: a media value (`{ src }`) or a plain URL. Anything else has none. */
+function coverImage(value: unknown): string | { src: string } | undefined {
+  if (typeof value === "string") return value;
+  if (typeof value !== "object" || value === null || !("src" in value)) return undefined;
+  return typeof value.src === "string" ? { src: value.src } : undefined;
+}
+
 /**
  * Published blog posts, newest first, filterable by category. Categories are CMS taxonomy
  * terms (managed in the dashboard under Taxonomies → category, or via MCP) — nothing is
@@ -82,9 +89,9 @@ export const BlogIndexPage: Component = () => {
                     t.localize(post.description ?? {}) || post.properties?.["excerpt"] || ""
                   }
                   date={date ? new Date(date) : undefined}
-                  image={post.properties?.["cover"] as string | Record<string, any> | undefined}
+                  image={coverImage(post.properties?.["cover"])}
                   badge={category ? label(category) : undefined}
-                  to={getLocaleUrl(`/company/blog/${post.slug}/`)}
+                  href={getLocaleUrl(`/company/blog/${post.slug}/`)}
                   variant="ghost"
                 />
               );

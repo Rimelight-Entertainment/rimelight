@@ -12,23 +12,17 @@ const OMIT_KEYS = [
   "disabled",
   "required",
   "multiple",
-  "buttonVariant",
-  "buttonColor",
   "items",
   "leadingIcon",
-  "leading",
-  "onChange",
   "onBlur",
+  "ref",
 ] as const;
 
 export const RLSelect: Component<RLSelectProps> = (props) => {
-  const resolvedVariant = () =>
-    props.variant === "default" || props.variant === "icon" ? props.variant : "default";
-
-  const { Tag, classes, rest, slots } = RLSelectTheme.setup(props, {
+  const { Tag, classes, rest, slots, id, children, theme } = RLSelectTheme.setup(props, {
     slots: ["leadingSlot"] as const,
     omit: OMIT_KEYS,
-    variants: () => ({ variant: resolvedVariant() }),
+    idPrefix: "rl-select",
   });
 
   const normalizedItems = createMemo(() => {
@@ -39,7 +33,7 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
       }
       const i = item as {
         label?: string;
-        value?: any;
+        value?: string | number;
         disabled?: boolean;
         icon?: string;
         avatar?: { src?: string; alt?: string; loading?: "lazy" | "eager" };
@@ -80,20 +74,20 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
   };
 
   return (
-    <Tag class={classes().root} data-slot="root" data-theme={props.theme}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()}>
       <select
-        id={props.id}
+        id={id()}
         name={props.name}
         disabled={props.disabled}
         required={props.required}
         multiple={props.multiple}
         value={currentValueStr()}
-        onChange={handleChange}
+        ref={props.ref}
         onBlur={props.onBlur}
         class={classes().select}
         data-slot="select"
-        data-variant={resolvedVariant()}
         {...rest}
+        onChange={handleChange}
       >
         {/* The select button. <selectedcontent> mirrors the chosen option, so the closed control shows its label. */}
         <button type="button" class={classes().trigger} data-slot="trigger">
@@ -115,8 +109,8 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
           </option>
         ) : null}
 
-        {props.children ? (
-          props.children
+        {children() ? (
+          children()
         ) : (
           <For each={normalizedItems()}>
             {(item) => (

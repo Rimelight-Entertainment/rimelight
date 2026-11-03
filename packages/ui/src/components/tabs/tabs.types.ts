@@ -1,79 +1,61 @@
-import type { ThemeColor } from "../../types";
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLTabsTheme } from "./tabs.theme";
 
 export interface TabItem {
-  label?: string;
-  value?: string;
-  icon?: string;
-  badge?: string | number | { label?: string | number; color?: string; variant?: string };
-  content?: string;
-  disabled?: boolean;
-  slot?: string;
-  class?: any;
-  ui?: any;
-  [key: string]: any;
+  /**
+   * Visible label of the tab.
+   */
+  label?: string | undefined;
+  /**
+   * Value that identifies the tab. Defaults to the item's index when unset.
+   */
+  value?: string | undefined;
+  /**
+   * Icon name rendered before the label.
+   */
+  icon?: string | undefined;
+  /**
+   * Badge rendered after the label. An object uses its `label`.
+   */
+  badge?: string | number | { label?: string | number | undefined } | undefined;
+  /**
+   * Panel content rendered when the tab is active.
+   */
+  content?: string | undefined;
+  /**
+   * Disables the tab.
+   * @default false
+   */
+  disabled?: boolean | undefined;
 }
 
-export interface RLTabsProps<T extends TabItem = TabItem> {
+export type RLTabsProps<T extends TabItem = TabItem> = InferThemeProps<typeof RLTabsTheme> & {
   /**
    * The tab items.
    */
-  items?: T[];
+  items?: T[] | undefined;
   /**
-   * Active tab value.
+   * Active tab value. Setting it makes the component controlled.
    */
-  value?: string;
+  value?: string | undefined;
   /**
-   * Default active tab value when uncontrolled.
+   * Initially active tab value when uncontrolled. Defaults to the first item's value.
    */
-  defaultValue?: string;
+  defaultValue?: string | undefined;
   /**
-   * Tab variant.
-   *
-   * @default "pill"
+   * Called with the tab value when the user selects a tab.
    */
-  variant?: "pill" | "underline" | "link" | "solid" | "pills";
-  /**
-   * Layout orientation.
-   *
-   * @default "horizontal"
-   */
-  orientation?: "horizontal" | "vertical";
-  /**
-   * Size scale.
-   *
-   * @default "md"
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /**
-   * Color theme.
-   */
-  color?: ThemeColor;
+  onValueChange?: ((value: string) => void) | undefined;
   /**
    * Whether to render content panels automatically. Set to false for tab bar only.
-   *
    * @default true
    */
-  content?: boolean;
+  content?: boolean | undefined;
   /**
-   * Unmount hidden tab panels from DOM. Defaults to true. If false, panel is hidden via
-   * CSS/attribute.
-   *
+   * Unmount hidden tab panels from DOM. If false, panels are hidden via CSS/attribute.
    * @default true
    */
-  unmountOnHide?: boolean;
-  /**
-   * Property key for value on item object.
-   *
-   * @default "value"
-   */
-  valueKey?: string;
-  /**
-   * Property key for label on item object.
-   *
-   * @default "label"
-   */
-  labelKey?: string;
+  unmountOnHide?: boolean | undefined;
   /**
    * Maximum number of tab triggers to render in the tab list. Tabs beyond this cap are placed in a
    * native popover accessible via a '+N more' overflow button at the end of the tab list.
@@ -81,25 +63,7 @@ export interface RLTabsProps<T extends TabItem = TabItem> {
    * Additionally, container queries will progressively hide visible triggers from right to left as
    * the container narrows, surfacing those in the popover as well.
    *
-   * When undefined, all tabs are rendered in the list (original behaviour).
+   * When undefined, all tabs are rendered in the list.
    */
-  maxTabs?: number;
-  /**
-   * Estimated width in pixels of each tab trigger — used to compute the container-query breakpoints
-   * that drive the responsive overflow. Increase for longer labels, decrease for icon-only tabs.
-   *
-   * @default 100
-   */
-  estimatedTabWidth?: number;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  onChange?: (value: string) => void;
-  [key: string]: unknown;
-}
+  maxTabs?: number | undefined;
+};

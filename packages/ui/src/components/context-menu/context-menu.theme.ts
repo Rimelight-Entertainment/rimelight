@@ -1,5 +1,28 @@
 import { defineTheme } from "../../resolver";
 
+export type RLContextMenuSlot =
+  | "root"
+  | "trigger"
+  | "overlay"
+  | "positioner"
+  | "content"
+  | "group"
+  | "groupLabel"
+  | "item"
+  | "itemLeading"
+  | "itemLeadingIcon"
+  | "itemWrapper"
+  | "itemLabel"
+  | "itemDescription"
+  | "itemTrailing"
+  | "itemKbds"
+  | "itemKbd"
+  | "itemIndicator"
+  | "itemSubIndicator"
+  | "separator";
+
+export type RLContextMenuClasses = Record<RLContextMenuSlot, string>;
+
 export const RLContextMenuTheme = defineTheme("context-menu", {
   slots: [
     "root",
@@ -77,13 +100,6 @@ export const RLContextMenuTheme = defineTheme("context-menu", {
         itemSubIndicator: "size-4.5",
       },
     },
-    variant: {
-      default: {},
-      danger: {
-        item: "text-error-600 hover:bg-error-500/10 data-[highlighted]:bg-error-500/10",
-        itemLeading: "text-error-600",
-      },
-    },
     disabled: {
       true: {
         trigger: "pointer-events-none opacity-50 cursor-not-allowed",
@@ -94,7 +110,6 @@ export const RLContextMenuTheme = defineTheme("context-menu", {
   },
   defaultVariants: {
     size: "md",
-    variant: "default",
     disabled: false,
   },
 });

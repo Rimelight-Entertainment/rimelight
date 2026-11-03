@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLQrCodeTheme } from "./qr-code.theme";
 
-export interface RLQrCodeProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * QR code container.
+ *
+ * @status stub
+ */
+export type RLQrCodeProps = InferThemeProps<typeof RLQrCodeTheme>;

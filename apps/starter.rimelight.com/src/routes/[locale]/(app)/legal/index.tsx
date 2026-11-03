@@ -49,8 +49,7 @@ export const LegalIndexPage: Component = () => {
                   title={title}
                   description={description}
                   {...(postDate ? { date: postDate } : {})}
-                  to={getLocaleUrl(`/legal/${post.slug}/`)}
-                  variant="ghost"
+                  href={getLocaleUrl(`/legal/${post.slug}/`)}
                 />
               );
             }}

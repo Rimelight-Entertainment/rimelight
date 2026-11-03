@@ -1,4 +1,6 @@
-import type { ValidComponent } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLTableOfContentsTheme } from "./table-of-contents.theme";
+
 export interface TableOfContentsHeading {
   depth: number;
   slug: string;
@@ -6,40 +8,37 @@ export interface TableOfContentsHeading {
 }
 
 export interface TableOfContentsConfig {
-  minHeadingLevel?: number;
-  maxHeadingLevel?: number;
+  /**
+   * Shallowest heading level to include.
+   * @default 2
+   */
+  minHeadingLevel?: number | undefined;
+  /**
+   * Deepest heading level to include.
+   * @default 3
+   */
+  maxHeadingLevel?: number | undefined;
 }
 
-export interface RLTableOfContentsProps {
+export type RLTableOfContentsProps = InferThemeProps<typeof RLTableOfContentsTheme> & {
+  /**
+   * Headings to list, in document order.
+   */
   headings: TableOfContentsHeading[];
   /**
-   * False = hide entirely, object = heading level bounds
+   * `false` hides the table of contents entirely. An object bounds the heading levels.
+   * @default undefined
    */
-  tableOfContents?: false | TableOfContentsConfig;
+  tableOfContents?: false | TableOfContentsConfig | undefined;
   /**
    * CSS selector for the container element whose headings should be tracked.
-   *
    * @default ".markdown-content"
    */
-  containerSelector?: string;
+  containerSelector?: string | undefined;
   /**
-   * Render as a collapsible dropdown (<details>/<summary>) with a scrollable list and a built-in
+   * Render as a collapsible dropdown (`<details>`/`<summary>`) with a scrollable list and a built-in
    * bottom gap. Intended for small-screen / mobile contexts.
+   * @default false
    */
-  collapsible?: boolean;
-  /**
-   * The component the root element should render as.
-   *
-   * @default "div"
-   */
-  as?: ValidComponent;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  [key: string]: unknown;
-}
+  collapsible?: boolean | undefined;
+};

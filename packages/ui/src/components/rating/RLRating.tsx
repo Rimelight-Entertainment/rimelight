@@ -3,11 +3,11 @@ import type { RLRatingProps } from "./rating.types";
 import { RLRatingTheme } from "./rating.theme";
 
 export const RLRating: Component<RLRatingProps> = (props) => {
-  const { classes, rest } = RLRatingTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLRatingTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

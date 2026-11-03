@@ -1,25 +1,25 @@
-import type { Component } from "solid-js";
+import { Show, type Component } from "solid-js";
 import type { RLFieldGroupProps } from "./field-group.types";
 import { RLFieldGroupTheme } from "./field-group.theme";
 
 export const RLFieldGroup: Component<RLFieldGroupProps> = (props) => {
-  const { classes, rest, slots } = RLFieldGroupTheme.setup(props, {
-    slots: ["prependSlot", "appendSlot"] as const,
+  const { Tag, classes, rest, children, slots, theme } = RLFieldGroupTheme.setup(props, {
+    slots: ["leadingSlot", "trailingSlot"] as const,
   });
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {slots.prependSlot() ? (
-        <div class={classes().prepend} data-slot="prepend">
-          {slots.prependSlot()}
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      <Show when={slots.leadingSlot()}>
+        <div class={classes().leading} data-slot="leading">
+          {slots.leadingSlot()}
         </div>
-      ) : null}
-      {props.children}
-      {slots.appendSlot() ? (
-        <div class={classes().append} data-slot="append">
-          {slots.appendSlot()}
+      </Show>
+      {children()}
+      <Show when={slots.trailingSlot()}>
+        <div class={classes().trailing} data-slot="trailing">
+          {slots.trailingSlot()}
         </div>
-      ) : null}
-    </div>
+      </Show>
+    </Tag>
   );
 };

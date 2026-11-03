@@ -1,37 +1,26 @@
-import type { Theme, ThemeColor } from "../../types";
+import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLScrollToTopTheme } from "./scroll-to-top.theme";
 
-export interface RLScrollToTopProps {
+export type RLScrollToTopProps = InferThemeProps<typeof RLScrollToTopTheme> & {
   /**
    * The color scheme applied to the scroll-to-top button.
+   * @default "primary"
    */
-  color?: ThemeColor;
+  color?: ThemeColor | undefined;
   /**
-   * The width of the progress indicator line.
+   * The width of the progress indicator line in pixels.
+   * @default 6
    */
-  progressWidth?: number;
-  /**
-   * The duration of the scroll-to-top animation in milliseconds.
-   */
-  duration?: number;
+  progressWidth?: number | undefined;
   /**
    * The scroll threshold in pixels before showing the button.
+   * @default 200
    */
-  threshold?: number;
+  threshold?: number | undefined;
   /**
    * Whether to show the scroll progress indicator.
+   * @default true
    */
-  showProgress?: boolean;
-  /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  [key: string]: unknown;
-}
+  showProgress?: boolean | undefined;
+};

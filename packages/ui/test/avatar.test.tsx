@@ -36,13 +36,6 @@ describe("RLAvatar Solid Component Suite", () => {
       expect(html).not.toContain("BC");
     });
 
-    it("renders fallback / initials props with priority over alt", () => {
-      const html = renderSolid(RLAvatar, { alt: "Benjamin Canac", initials: "JD" });
-
-      expect(html).toContain("JD");
-      expect(html).not.toContain("BC");
-    });
-
     it("renders custom icon prop as fallback", () => {
       const html = renderSolid(RLAvatar, { icon: "star" });
 
@@ -93,15 +86,11 @@ describe("RLAvatar Solid Component Suite", () => {
 
   describe("Size Variants", () => {
     const sizes = [
-      { size: "3xs", expected: "size-4" },
-      { size: "2xs", expected: "size-5" },
       { size: "xs", expected: "size-6" },
       { size: "sm", expected: "size-7" },
       { size: "md", expected: "size-8" },
       { size: "lg", expected: "size-9" },
       { size: "xl", expected: "size-10" },
-      { size: "2xl", expected: "size-11" },
-      { size: "3xl", expected: "size-12" },
     ] as const;
 
     for (const { size, expected } of sizes) {
@@ -228,7 +217,7 @@ describe("RLAvatarGroup Solid Component Suite", () => {
         )),
       );
 
-      expect(html).toContain('data-slot="avatar-group"');
+      expect(html).toContain('data-slot="root"');
       expect(html).toContain("flex-row-reverse");
       expect(html).toContain("justify-end");
       expect(html).toContain('data-slot="base"');
@@ -243,7 +232,7 @@ describe("RLAvatarGroup Solid Component Suite", () => {
 
       const html = renderSolid(RLAvatarGroup, { items });
 
-      expect(html).toContain('data-slot="avatar-group"');
+      expect(html).toContain('data-slot="root"');
       expect(html).toContain('src="https://example.com/ben.png"');
       expect(html).toContain('src="https://example.com/hugo.png"');
       expect(html).toContain('src="https://example.com/seb.png"');

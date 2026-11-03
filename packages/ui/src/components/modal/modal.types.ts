@@ -1,259 +1,177 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { OverlaySlot } from "../../slot";
+import type { RLModalTheme } from "./modal.theme";
 
-export type RLModalSize = "xs" | "sm" | "md" | "lg" | "xl" | "fullscreen";
+export type RLModalSize = "xs" | "sm" | "md" | "lg" | "xl";
 
-export interface RLModalUiSlots {
-  root?: string | undefined;
-  trigger?: string | undefined;
-  overlay?: string | undefined;
-  backdrop?: string | undefined;
-  content?: string | undefined;
-  header?: string | undefined;
-  wrapper?: string | undefined;
-  body?: string | undefined;
-  footer?: string | undefined;
-  title?: string | undefined;
-  description?: string | undefined;
-  close?: string | undefined;
-  closeButton?: string | undefined;
-  actions?: string | undefined;
-}
-
-export interface RLModalProps {
+export type RLModalProps = Omit<
+  InferThemeProps<typeof RLModalTheme>,
+  "size" | "overlay" | "scrollable" | "transition" | "fullscreen" | "modal" | "role"
+> & {
   /**
-   * Title text displayed in the modal header.
+   * Title text displayed in the modal header. Use `titleSlot` for JSX.
    */
   title?: string | undefined;
-
   /**
-   * Description text displayed below the title in the modal header.
+   * Description text displayed below the title. Use `descriptionSlot` for JSX.
    */
   description?: string | undefined;
-
   /**
    * Controlled open state.
    */
   open?: boolean | undefined;
-
   /**
    * Initial open state when uncontrolled.
+   *
    * @default false
    */
   defaultOpen?: boolean | undefined;
-
   /**
-   * Modal size preset.
+   * Modal width preset.
+   *
    * @default "md"
    */
   size?: RLModalSize | undefined;
-
   /**
    * Render an overlay / backdrop behind the modal.
+   *
    * @default true
    */
   overlay?: boolean | undefined;
-
   /**
-   * When true, enables scrollable overlay mode where content scrolls within the overlay container.
+   * Enables scrollable overlay mode where content scrolls within the overlay container.
+   *
    * @default false
    */
   scrollable?: boolean | undefined;
-
   /**
    * Animate the modal when opening or closing.
+   *
    * @default true
    */
   transition?: boolean | undefined;
-
   /**
-   * When true, the modal will take up the full screen.
+   * Take up the full screen.
+   *
    * @default false
    */
   fullscreen?: boolean | undefined;
-
-  /**
-   * Render the modal in a portal attached to document body or target element.
-   * Set to false to render inline.
-   * @default true
-   */
-  portal?: boolean | HTMLElement | string | undefined;
-
-  /**
-   * Display a close button to dismiss the modal, or pass button props object to customize.
-   * Set to false to hide the close button.
-   * @default true
-   */
-  close?: boolean | Record<string, any> | undefined;
-
-  /**
-   * Icon displayed inside the header close button.
-   * @default "x"
-   */
-  closeIcon?: any;
-
-  /**
-   * When false, the modal will not close when clicking outside or pressing Escape.
-   * A close:prevent event is emitted instead.
-   * @default true
-   */
-  dismissible?: boolean | undefined;
-
   /**
    * The modality of the dialog. When true, interaction with outside elements is blocked.
-   * When false, overlay is disabled and outside content remains interactive.
+   * When false, the overlay is disabled and outside content remains interactive.
+   *
    * @default true
    */
   modal?: boolean | undefined;
-
   /**
-   * Prevents body scrolling when open.
+   * Render in a portal attached to `document.body` or the given element.
+   * Set to false to render inline.
+   *
+   * @default true
+   */
+  portal?: boolean | HTMLElement | undefined;
+  /**
+   * Whether the modal can be dismissed by the close button, Escape, or clicking the backdrop.
+   * Dismissal calls `onOpenChange(false)`.
+   *
+   * @default true
+   */
+  dismissible?: boolean | undefined;
+  /**
+   * Icon name displayed in the header close button.
+   *
+   * @default "x"
+   */
+  closeIcon?: string | undefined;
+  /**
+   * Prevents body scrolling while open.
+   *
    * @default true
    */
   lockScroll?: boolean | undefined;
-
   /**
-   * Keep content mounted in the DOM when hidden.
+   * Keep content mounted in the DOM while hidden.
+   *
    * @default true
    */
   unmountOnHide?: boolean | undefined;
-
   /**
-   * Trigger label to render a default trigger button.
+   * Label of a default trigger button. Rendered only when `triggerSlot` is not set.
    */
   triggerLabel?: string | undefined;
-
   /**
-   * WAI-ARIA role attribute for dialog container.
+   * WAI-ARIA role of the dialog element.
+   *
    * @default "dialog"
    */
-  role?: any;
-
+  role?: "dialog" | "alertdialog" | undefined;
   /**
-   * Explicit aria-label for accessibility.
-   */
-  ariaLabel?: string | undefined;
-
-  /**
-   * Alias for ariaLabel.
+   * Accessible label of the dialog.
    */
   "aria-label"?: string | undefined;
-
   /**
-   * Explicit aria-labelledby element id.
-   */
-  ariaLabelledby?: string | undefined;
-
-  /**
-   * Alias for ariaLabelledby.
+   * Element id that labels the dialog. Defaults to the title id when a title is shown.
    */
   "aria-labelledby"?: string | undefined;
-
   /**
-   * Explicit aria-describedby element id.
-   */
-  ariaDescribedby?: string | undefined;
-
-  /**
-   * Alias for ariaDescribedby.
+   * Element id that describes the dialog. Defaults to the description id when a description is shown.
    */
   "aria-describedby"?: string | undefined;
-
   /**
-   * Slot-specific CSS class overrides.
+   * Body content. Takes precedence over `children`.
    */
-  ui?: Partial<RLModalUiSlots> | undefined;
-
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-
-  /**
-   * Default slot / modal body content.
-   */
-  children?: JSX.Element;
-
+  children?: JSX.Element | undefined;
   /**
    * Trigger element. Always rendered, so it is plain JSX.
    */
   triggerSlot?: JSX.Element | undefined;
-
   /**
-   * Whole content override. Replaces the header, body, and footer.
-   * Function-only: invoked inside the dialog, so nothing is built while closed.
-   */
-  contentSlot?: OverlaySlot | undefined;
-
-  /**
-   * Header override. Replaces the default title/description/close header.
+   * Header override. Replaces the default title, description, and close header.
    */
   headerSlot?: OverlaySlot | undefined;
-
   /**
    * Title content. Takes precedence over the `title` string.
    */
   titleSlot?: OverlaySlot | undefined;
-
   /**
    * Description content. Takes precedence over the `description` string.
    */
   descriptionSlot?: OverlaySlot | undefined;
-
   /**
    * Actions rendered in the header.
    */
   actionsSlot?: OverlaySlot | undefined;
-
   /**
    * Custom close control. Replaces the default close button.
    */
   closeSlot?: OverlaySlot | undefined;
-
   /**
    * Body content. Takes precedence over `children`.
    */
   bodySlot?: OverlaySlot | undefined;
-
   /**
    * Footer content.
    */
   footerSlot?: OverlaySlot | undefined;
-
   /**
-   * Callback fired when open state changes.
+   * Called whenever the open state changes. Dismissal calls it with `false`.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
-
   /**
-   * Callback fired when modal is closed.
-   */
-  onClose?: (() => void) | undefined;
-
-  /**
-   * Callback fired when dismissal is attempted while dismissible is false.
-   */
-  onClosePrevent?: (() => void) | undefined;
-
-  /**
-   * Callback fired when modal enters.
+   * Called when the modal opens.
    */
   onEnter?: (() => void) | undefined;
-
   /**
-   * Callback fired after enter transition completes.
+   * Called after the modal has opened.
    */
   onAfterEnter?: (() => void) | undefined;
-
   /**
-   * Callback fired when modal leaves.
+   * Called when the modal closes.
    */
   onLeave?: (() => void) | undefined;
-
   /**
-   * Callback fired after leave transition completes.
+   * Called after the modal has closed.
    */
   onAfterLeave?: (() => void) | undefined;
-
-  [key: string]: unknown;
-}
+};

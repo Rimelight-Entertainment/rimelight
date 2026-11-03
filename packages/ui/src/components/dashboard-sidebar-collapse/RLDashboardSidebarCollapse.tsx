@@ -7,14 +7,18 @@ import { uiT } from "../../locale";
 const OMIT_KEYS = ["icon"] as const;
 
 export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapseProps> = (props) => {
-  const { classes, rest } = RLDashboardSidebarCollapseTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLDashboardSidebarCollapseTheme.setup(props, {
+    as: "button",
+    omit: OMIT_KEYS,
+  });
 
   return (
-    <button
+    <Tag
       type="button"
       data-dashboard-toggle="collapse"
-      class={classes().root}
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       aria-label={uiT("sidebar.collapse")}
       {...rest}
     >
@@ -30,7 +34,7 @@ export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapsePro
         data-dashboard-collapse-icon
         data-collapsed
       />
-      {props.children}
-    </button>
+      {children()}
+    </Tag>
   );
 };

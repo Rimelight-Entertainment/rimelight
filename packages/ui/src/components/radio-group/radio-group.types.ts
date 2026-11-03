@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLRadioGroupTheme } from "./radio-group.theme";
 
-export interface RLRadioGroupProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Radio group container.
+ * @status stub
+ */
+export type RLRadioGroupProps = InferThemeProps<typeof RLRadioGroupTheme>;

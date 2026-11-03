@@ -21,6 +21,9 @@ export type SlotOverride = ClassValue | ((base: string) => string);
 
 export type ThemeUI<S extends string = string> = Partial<Record<S, SlotOverride>>;
 
+/** A static slot, or a render function that receives per-slot context. */
+export type SlotRenderer<Ctx = void> = JSX.Element | ((ctx: Ctx) => JSX.Element);
+
 export interface ThemeConfig<
   S extends string = string,
   V extends Record<string, any> = Record<string, any>,
@@ -48,25 +51,27 @@ export type InferThemeVariants<V extends Record<string, any>> = {
   [K in keyof V & string]?: InferVariantValue<V[K]> | undefined;
 };
 
-export interface BaseThemeProps<S extends string = string> {
+export interface BaseThemeProps<S extends string = string> extends Omit<
+  JSX.HTMLAttributes<HTMLElement>,
+  "class" | "children"
+> {
   /**
    * The element or component this component should render as.
    */
-  as?: ValidComponent;
+  as?: ValidComponent | undefined;
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: ThemeUI<S>;
+  ui?: ThemeUI<S> | undefined;
   /**
    * Additional CSS classes to apply to the root element.
    */
   class?: ClassValue;
   /**
-   * Optional theme override (`"light"` or `"dark"`).
+   * Theme override, rendered as `data-theme` on the root element.
    */
-  theme?: Theme | (string & {});
+  theme?: Theme | undefined;
   children?: JSX.Element;
-  [key: string]: unknown;
 }
 
 export type ColorModeInput =

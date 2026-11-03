@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSpeedDialTheme } from "./speed-dial.theme";
 
-export interface RLSpeedDialProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Speed dial: a floating button that expands into a set of related actions.
+ * @status stub
+ * @default as "div"
+ */
+export type RLSpeedDialProps = InferThemeProps<typeof RLSpeedDialTheme>;

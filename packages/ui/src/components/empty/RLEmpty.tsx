@@ -6,20 +6,17 @@ import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
-const OMIT_KEYS = [
-  "icon",
-  "avatar",
-  "loading",
-  "loadingIcon",
-  "title",
-  "description",
-  "actions",
-] as const;
-
 export const RLEmpty: Component<RLEmptyProps> = (props) => {
-  const { classes, rest, slots } = RLEmptyTheme.setup(props, {
-    omit: OMIT_KEYS,
+  const { Tag, classes, rest, slots, children, theme } = RLEmptyTheme.setup(props, {
     slots: [
+      "icon",
+      "avatar",
+      "loading",
+      "loadingIcon",
+      "title",
+      "description",
+      "actions",
+      "size",
       "headerSlot",
       "leadingSlot",
       "titleSlot",
@@ -31,52 +28,55 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
   });
 
   const activeIcon = () =>
-    props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
-  const actionList = () => props.actions ?? [];
+    slots.loading() ? (slots.loadingIcon() ?? "i-lucide-loader-circle") : slots.icon();
 
   return (
-    <div class={classes()["root"]} data-slot="root" {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <Show
         when={slots.headerSlot()}
         fallback={
-          <div class={classes()["header"]} data-slot="header">
+          <div class={classes().header} data-slot="header">
             <Show
               when={slots.leadingSlot()}
               fallback={
                 <Show
                   when={activeIcon()}
                   fallback={
-                    <Show when={props.avatar}>
-                      <div class={classes()["avatar"]} data-slot="avatar">
-                        <RLAvatar {...props.avatar} />
-                      </div>
+                    <Show when={slots.avatar()}>
+                      {(avatar) => (
+                        <div class={classes().avatar} data-slot="avatar">
+                          <RLAvatar {...avatar()} />
+                        </div>
+                      )}
                     </Show>
                   }
                 >
-                  <div class={classes()["avatar"]} data-slot="avatar">
-                    <RLIcon
-                      name={activeIcon()!}
-                      class={`size-full ${props.loading ? "animate-spin" : ""}`}
-                      aria-hidden="true"
-                    />
-                  </div>
+                  {(icon) => (
+                    <div class={classes().avatar} data-slot="avatar">
+                      <RLIcon
+                        name={icon()}
+                        class={`size-full ${slots.loading() ? "animate-spin" : ""}`}
+                        aria-hidden="true"
+                      />
+                    </div>
+                  )}
                 </Show>
               }
             >
               {slots.leadingSlot()}
             </Show>
 
-            <Show when={props.title || slots.titleSlot()}>
-              <div class={classes()["title"]} data-slot="title">
-                <Show when={slots.titleSlot()} fallback={props.title}>
+            <Show when={slots.title() || slots.titleSlot()}>
+              <div class={classes().title} data-slot="title">
+                <Show when={slots.titleSlot()} fallback={slots.title()}>
                   {slots.titleSlot()}
                 </Show>
               </div>
             </Show>
 
-            <Show when={props.description || slots.descriptionSlot()}>
-              <div class={classes()["description"]} data-slot="description">
-                <Show when={slots.descriptionSlot()} fallback={props.description}>
+            <Show when={slots.description() || slots.descriptionSlot()}>
+              <div class={classes().description} data-slot="description">
+                <Show when={slots.descriptionSlot()} fallback={slots.description()}>
                   {slots.descriptionSlot()}
                 </Show>
               </div>
@@ -87,29 +87,27 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
         {slots.headerSlot()}
       </Show>
 
-      <Show when={slots.bodySlot() || props.children}>
-        <div class={classes()["body"]} data-slot="body">
-          <Show when={slots.bodySlot()} fallback={props.children}>
+      <Show when={slots.bodySlot() || children()}>
+        <div class={classes().body} data-slot="body">
+          <Show when={slots.bodySlot()} fallback={children()}>
             {slots.bodySlot()}
           </Show>
         </div>
       </Show>
 
-      <Show when={actionList().length > 0 || slots.actionsSlot()}>
-        <div class={classes()["actions"]} data-slot="actions">
+      <Show when={(slots.actions() ?? []).length > 0 || slots.actionsSlot()}>
+        <div class={classes().actions} data-slot="actions">
           <Show
             when={slots.actionsSlot()}
             fallback={
-              <For each={actionList()}>
+              <For each={slots.actions() ?? []}>
                 {(action) => {
-                  const { icon, label, color, variant, ...actionRest } = action;
+                  const { icon, label, ...buttonProps } = action;
                   return (
                     <RLButton
-                      size={props.size === "xs" || props.size === "sm" ? "xs" : "sm"}
-                      color={(color || "primary") as any}
-                      variant={(variant || "solid") as any}
+                      size={slots.size() === "xs" || slots.size() === "sm" ? "xs" : "sm"}
                       {...(icon ? { leadingIcon: icon } : {})}
-                      {...actionRest}
+                      {...buttonProps}
                     >
                       {label}
                     </RLButton>
@@ -124,10 +122,10 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
       </Show>
 
       <Show when={slots.footerSlot()}>
-        <div class={classes()["footer"]} data-slot="footer">
+        <div class={classes().footer} data-slot="footer">
           {slots.footerSlot()}
         </div>
       </Show>
-    </div>
+    </Tag>
   );
 };

@@ -1,4 +1,5 @@
-import type { Theme } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLKeyboardTheme } from "./keyboard.theme";
 
 export interface HighlightGroup {
   keys: string[];
@@ -6,26 +7,61 @@ export interface HighlightGroup {
   label?: string;
 }
 
-export interface RLKeyboardProps {
-  highlightedKeys?: string[];
-  groups?: HighlightGroup[];
-  keyGap?: number;
-  sectionGap?: number;
-  keySize?: number;
-  variant?: "full" | "60";
-  os?: "windows" | "mac";
-  highlightColor?: string;
-  backgroundColor?: string;
+/**
+ * Renders an interactive keyboard diagram with highlighted keys.
+ */
+export type RLKeyboardProps = InferThemeProps<typeof RLKeyboardTheme> & {
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Key codes or labels to highlight.
+   * @default []
    */
-  theme?: Theme | undefined;
+  highlightedKeys?: string[] | undefined;
+
   /**
-   * Slot-specific CSS class overrides.
+   * Groups of keys highlighted with their own color and legend label.
+   * @default []
    */
-  ui?: any;
+  groups?: HighlightGroup[] | undefined;
+
   /**
-   * Additional CSS classes to apply to the root element.
+   * Gap between keys in pixels.
+   * @default 8
    */
-  class?: any;
-}
+  keyGap?: number | undefined;
+
+  /**
+   * Gap between key sections in pixels.
+   * @default 40
+   */
+  sectionGap?: number | undefined;
+
+  /**
+   * Size of a single key in pixels.
+   * @default 40
+   */
+  keySize?: number | undefined;
+
+  /**
+   * Keyboard layout: full-size or 60% (no function row or numpad).
+   * @default "full"
+   */
+  layout?: "full" | "60" | undefined;
+
+  /**
+   * Operating system whose key labels are shown.
+   * @default "windows"
+   */
+  os?: "windows" | "mac" | undefined;
+
+  /**
+   * Fill color applied to highlighted keys.
+   * @default "var(--rl-primary-500)"
+   */
+  highlightColor?: string | undefined;
+
+  /**
+   * Fill color of the diagram background. `transparent` hides it.
+   * @default "transparent"
+   */
+  backgroundColor?: string | undefined;
+};

@@ -1,8 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLGalleryTheme } from "./gallery.theme";
 
-export interface RLGalleryProps {
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Gallery container.
+ *
+ * @status stub
+ */
+export type RLGalleryProps = InferThemeProps<typeof RLGalleryTheme>;

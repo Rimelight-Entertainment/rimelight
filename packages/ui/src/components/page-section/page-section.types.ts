@@ -1,26 +1,31 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { RLButtonProps } from "../button/button.types";
+import type { RLPageSectionTheme } from "./page-section.theme";
 
-export interface RLPageSectionProps {
+export type RLPageSectionProps = Omit<
+  InferThemeProps<typeof RLPageSectionTheme>,
+  | "layout"
+  | "ctaVariant"
+  | "orientation"
+  | "reverse"
+  | "headline"
+  | "title"
+  | "description"
+  | "body"
+> & {
   /**
-   * The element or component this component should render as.
-   *
-   * @default "section"
-   */
-  as?: ValidComponent;
-  /**
-   * The variant of the section.
+   * The layout of the section.
    *
    * @default "default"
    */
-  variant?: "default" | "hero" | "cta" | "none";
+  layout?: "default" | "hero" | "cta";
   /**
    * The variant of the section when it's a CTA.
    *
    * @default "solid"
    */
-  ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "naked";
+  ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost";
   /**
    * The headline displayed above the title.
    */
@@ -30,7 +35,7 @@ export interface RLPageSectionProps {
    */
   icon?: string;
   /**
-   * The section's title, displayed as a <h1> for the hero variant or <h2> otherwise.
+   * The section's title, displayed as a <h1> for the hero layout or <h2> otherwise.
    */
   title?: string;
   /**
@@ -54,14 +59,6 @@ export interface RLPageSectionProps {
    */
   reverse?: boolean;
   /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  /**
    * Set content-visibility for offscreen render painting optimization.
    */
   contentVisibility?: "auto" | "visible";
@@ -70,17 +67,11 @@ export interface RLPageSectionProps {
    */
   containIntrinsicSize?: string;
   backgroundSlot?: JSX.Element;
-  topSlot?: JSX.Element;
   headerSlot?: JSX.Element;
   leadingSlot?: JSX.Element;
-  headlineSlot?: JSX.Element;
   titleSlot?: JSX.Element;
   descriptionSlot?: JSX.Element;
   bodySlot?: JSX.Element;
   footerSlot?: JSX.Element;
-  linksSlot?: JSX.Element;
-  contentSlot?: JSX.Element;
-  bottomSlot?: JSX.Element;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  actionSlot?: JSX.Element;
+};

@@ -3,11 +3,11 @@ import type { RLQrCodeProps } from "./qr-code.types";
 import { RLQrCodeTheme } from "./qr-code.theme";
 
 export const RLQrCode: Component<RLQrCodeProps> = (props) => {
-  const { classes, rest } = RLQrCodeTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLQrCodeTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

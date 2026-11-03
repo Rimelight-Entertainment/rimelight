@@ -3,19 +3,18 @@ import { Show } from "solid-js";
 import type { RLFormFieldProps } from "./form-field.types";
 import { RLFormFieldTheme } from "./form-field.theme";
 
-const OMIT_KEYS = ["id", "label", "description", "error", "required", "hint"] as const;
-
 export const RLFormField: Component<RLFormFieldProps> = (props) => {
-  const { classes, rest, slots } = RLFormFieldTheme.setup(props, {
-    omit: OMIT_KEYS,
+  const { Tag, classes, rest, children, id, slots, theme } = RLFormFieldTheme.setup(props, {
+    idPrefix: "rl-form-field",
+    omit: ["id", "label", "description", "error", "required"] as const,
     slots: ["labelSlot", "descriptionSlot", "errorSlot", "helpSlot", "hintSlot"] as const,
   });
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <Show when={props.label || slots.labelSlot() || slots.hintSlot()}>
         <div class="flex items-center justify-between gap-2">
-          <label for={props.id} class={classes().label} data-slot="label">
+          <label for={id()} class={classes().label} data-slot="label">
             {slots.labelSlot() ? slots.labelSlot() : props.label}
             <Show when={props.required}>
               <span class="text-error-500 ml-0.5">*</span>
@@ -31,7 +30,7 @@ export const RLFormField: Component<RLFormFieldProps> = (props) => {
         </p>
       </Show>
 
-      <div class="relative w-full">{props.children}</div>
+      <div class="relative w-full">{children()}</div>
 
       <Show when={props.error || slots.errorSlot()}>
         <p class={classes().error} data-slot="error">
@@ -42,6 +41,6 @@ export const RLFormField: Component<RLFormFieldProps> = (props) => {
       <Show when={slots.helpSlot()}>
         <div class="mt-1">{slots.helpSlot()}</div>
       </Show>
-    </div>
+    </Tag>
   );
 };

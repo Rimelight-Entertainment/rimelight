@@ -18,7 +18,7 @@ export const AboutPage: Component = () => {
   return (
     <>
       <RLPageSection
-        variant="hero"
+        layout="hero"
         title={t("page.about.hero.title")}
         description={t("page.about.hero.description")}
         orientation="horizontal"

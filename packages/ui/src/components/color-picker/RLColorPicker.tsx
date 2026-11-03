@@ -3,11 +3,11 @@ import type { RLColorPickerProps } from "./color-picker.types";
 import { RLColorPickerTheme } from "./color-picker.theme";
 
 export const RLColorPicker: Component<RLColorPickerProps> = (props) => {
-  const { classes, rest } = RLColorPickerTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLColorPickerTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

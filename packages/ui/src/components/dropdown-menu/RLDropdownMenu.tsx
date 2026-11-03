@@ -1,8 +1,9 @@
 import type { RLDropdownMenuProps, DropdownMenuItem } from "./dropdown-menu.types";
 import { RLDropdownMenuTheme } from "./dropdown-menu.theme";
-import { createSignal, createMemo, onSettled, For, Show, type Component } from "solid-js";
+import { createMemo, createSignal, onSettled, For, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
 
 const OMIT_KEYS = [
   "items",
@@ -12,16 +13,22 @@ const OMIT_KEYS = [
   "arrow",
   "content",
   "disabled",
-  "trigger",
+  "open",
+  "defaultOpen",
+  "onOpenChange",
 ] as const;
 
 export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
-  const { classes, rest, slots } = RLDropdownMenuTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLDropdownMenuTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["triggerSlot"] as const,
   });
 
-  const [isOpen, setIsOpen] = createSignal(false);
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
   const [coords, setCoords] = createSignal<{
     top: number;
     left?: number | undefined;
@@ -59,7 +66,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
         !menuContainer.contains(target) &&
         (!menuContentRef || !menuContentRef.contains(target))
       ) {
-        setIsOpen(false);
+        setOpen(false);
       }
     };
     const handleScroll = () => {
@@ -83,15 +90,16 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
     return [props.items as DropdownMenuItem[]];
   });
 
-  const triggerElement = () => slots.triggerSlot() || props.children;
+  const triggerElement = () => slots.triggerSlot() || children();
 
   return (
-    <div
-      ref={(el) => {
+    <Tag
+      ref={(el: HTMLDivElement) => {
         menuContainer = el;
       }}
-      class={classes().root}
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       {...rest}
     >
       <button
@@ -104,7 +112,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
           e.stopPropagation();
           const next = !isOpen();
           if (next) updatePosition();
-          setIsOpen(next);
+          setOpen(next);
         }}
         class={`${classes().trigger} ${!props.label && !triggerElement() ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
         data-slot="trigger"
@@ -222,11 +230,11 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                             <a
                               href={item.href}
                               target={item.target}
-                              class={`${classes().item} ${itemColor()} ${item.class || ""}`}
+                              class={`${classes().item} ${itemColor()}`}
                               data-slot="item"
                               role="menuitem"
                               onClick={(e) => {
-                                setIsOpen(false);
+                                setOpen(false);
                                 item.onSelect?.(e);
                               }}
                             >
@@ -243,7 +251,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                             <button
                               type="button"
                               disabled={item.disabled}
-                              class={`${classes().item} ${itemColor()} ${item.class || ""}`}
+                              class={`${classes().item} ${itemColor()}`}
                               data-slot="item"
                               role="menuitemcheckbox"
                               aria-checked={isChecked() ? "true" : "false"}
@@ -269,11 +277,11 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                           <button
                             type="button"
                             disabled={item.disabled}
-                            class={`${classes().item} ${itemColor()} ${item.class || ""}`}
+                            class={`${classes().item} ${itemColor()}`}
                             data-slot="item"
                             role="menuitem"
                             onClick={(e) => {
-                              setIsOpen(false);
+                              setOpen(false);
                               item.onSelect?.(e);
                             }}
                           >
@@ -291,6 +299,6 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
           </div>
         </Portal>
       </Show>
-    </div>
+    </Tag>
   );
 };

@@ -1,20 +1,39 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDashboardNavbarTheme } from "./dashboard-navbar.theme";
 
-export interface RLDashboardNavbarProps {
-  as?: ValidComponent;
+export type RLDashboardNavbarProps = InferThemeProps<typeof RLDashboardNavbarTheme> & {
+  /**
+   * Icon name shown before the title. Ignored when `leadingSlot` is provided.
+   */
   icon?: string;
+  /**
+   * Title text. Ignored when `titleSlot` is provided.
+   */
   title?: string;
+  /**
+   * Shows the mobile sidebar toggle button.
+   * @default true
+   */
   toggle?: boolean;
-  toggleSide?: "left" | "right";
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  leftSlot?: JSX.Element;
-  rightSlot?: JSX.Element;
-  centerSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
+  /**
+   * Replaces the whole leading region (icon, title and toggle excluded from the default layout).
+   */
   leadingSlot?: JSX.Element;
+  /**
+   * Replaces the default icon. Ignored when `leadingSlot` is provided.
+   */
+  iconSlot?: JSX.Element;
+  /**
+   * Replaces the default title text. Ignored when `leadingSlot` is provided.
+   */
+  titleSlot?: JSX.Element;
+  /**
+   * Replaces the center content. Falls back to `children`.
+   */
+  centerSlot?: JSX.Element;
+  /**
+   * Content rendered at the trailing edge, before the toggle when `toggleSide` is `"right"`.
+   */
   trailingSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

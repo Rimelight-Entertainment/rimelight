@@ -66,40 +66,44 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
 };
 
 export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
+  const { Tag, classes, rest, slots, theme } = RLPackageManagersTheme.setup(props, {
+    slots: ["pkg", "type", "dev", "args", "comment", "prefix", "managers"] as const,
+  });
+
   const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
     let cmd = commands[mgr][cmdType];
     if (cmd === undefined) return undefined;
 
-    if (props.prefix) cmd = `${props.prefix} ${cmd}`;
-    if (props.comment) cmd = `# ${props.comment.replaceAll("{PKG}", mgr)}\n${cmd}`;
-    if (props.dev && cmdType === "add") cmd += ` ${commands[mgr].dev}`;
+    const prefix = slots.prefix();
+    const comment = slots.comment();
+    const pkg = slots.pkg();
+    const args = slots.args();
+    if (prefix) cmd = `${prefix} ${cmd}`;
+    if (comment) cmd = `# ${comment.replaceAll("{PKG}", mgr)}\n${cmd}`;
+    if (slots.dev() && cmdType === "add") cmd += ` ${commands[mgr].dev}`;
 
-    if (props.pkg) {
+    if (pkg) {
       const processedPkg =
-        cmdType === "create" && mgr === "yarn"
-          ? props.pkg.replace(/@(?![^@]*\/)\S*$/, "")
-          : props.pkg;
+        cmdType === "create" && mgr === "yarn" ? pkg.replace(/@(?![^@]*\/)\S*$/, "") : pkg;
       cmd += ` ${processedPkg}`;
     }
 
-    if (props.args) {
+    if (args) {
       const needsDoubleDash = mgr === "npm" && !["dlx", "exec", "run"].includes(cmdType);
-      cmd += `${needsDoubleDash ? " --" : ""} ${props.args}`;
+      cmd += `${needsDoubleDash ? " --" : ""} ${args}`;
     }
 
     return cmd;
   };
 
   const tabs = createMemo(() =>
-    ((props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"]) as Manager[])
-      .map((mgr) => ({ mgr, cmd: getCommand(mgr, props.type ?? "add") }))
+    (slots.managers() ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"])
+      .map((mgr) => ({ mgr, cmd: getCommand(mgr, slots.type() ?? "add") }))
       .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined),
   );
 
   const [activeIdx, setActiveIdx] = createSignal(0);
   const [copied, setCopied] = createSignal<string | null>(null);
-
-  const { classes } = RLPackageManagersTheme.setup(props);
 
   const copyCommand = async (mgr: string, cmd: string) => {
     try {
@@ -114,7 +118,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="root">
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <div class={classes().list} role="tablist" data-slot="list">
         <For each={tabs()}>
           {(tab, idx) => {
@@ -149,7 +153,7 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
             <Show when={idx() === activeIdx()}>
               <div class="relative">
                 <pre class={classes().codeBlock}>
-                  <code aria-hidden="true">{tab.cmd!}</code>
+                  <code aria-hidden="true">{tab.cmd}</code>
                 </pre>
                 <RLButton
                   type="button"
@@ -160,15 +164,17 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
                   leadingIcon={copied() === tab.mgr ? "check" : "copy"}
                   aria-label={uiT("package-managers.copy")}
                   data-slot="copy-button"
-                  onClick={() => copyCommand(tab.mgr, tab.cmd!)}
+                  onClick={() => copyCommand(tab.mgr, tab.cmd)}
                 >
-                  {copied() === tab.mgr ? "Copied" : "Copy"}
+                  {copied() === tab.mgr
+                    ? uiT("package-managers.copied")
+                    : uiT("package-managers.copyButton")}
                 </RLButton>
               </div>
             </Show>
           </div>
         )}
       </For>
-    </div>
+    </Tag>
   );
 };

@@ -8,17 +8,17 @@ import { t } from "@rimelight/i18n";
 const COLORS = AUDIT_COLORS;
 
 const defaultItems = (): BreadcrumbItem[] => [
-  { label: t("app.text.docs"), icon: "bookOpen", to: "/docs" },
-  { label: t("app.text.components"), icon: "layers", to: "/docs/components" },
+  { label: t("app.text.docs"), icon: "bookOpen", href: "/docs" },
+  { label: t("app.text.components"), icon: "layers", href: "/docs/components" },
   { label: t("app.text.breadcrumb") },
 ];
 
 const manyItems = (): BreadcrumbItem[] => [
-  { label: t("app.text.home"), to: "/" },
-  { label: t("app.text.store"), to: "/store" },
-  { label: t("app.text.electronics"), to: "/store/electronics" },
-  { label: t("app.text.audio-headphones"), to: "/store/electronics/audio" },
-  { label: t("app.text.wireless-anc"), to: "/store/electronics/audio/wireless" },
+  { label: t("app.text.home"), href: "/" },
+  { label: t("app.text.store"), href: "/store" },
+  { label: t("app.text.electronics"), href: "/store/electronics" },
+  { label: t("app.text.audio-headphones"), href: "/store/electronics/audio" },
+  { label: t("app.text.wireless-anc"), href: "/store/electronics/audio/wireless" },
   { label: t("app.text.studio-pro-x900") },
 ];
 
@@ -32,7 +32,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
   const sandboxItems = (): BreadcrumbItem[] => [
     {
       label: t("app.text.home"),
-      to: "/",
+      href: "/",
       icon: showIcons() ? "home" : undefined,
       avatar: showAvatars()
         ? { src: "https://github.com/rimelight.png", alt: "Rimelight" }
@@ -40,17 +40,17 @@ export const BreadcrumbSandbox = (): JSX.Element => {
     },
     {
       label: t("app.text.documentation"),
-      to: "/docs",
+      href: "/docs",
       icon: showIcons() ? "bookOpen" : undefined,
     },
     {
       label: t("app.text.components"),
-      to: "/docs/components",
+      href: "/docs/components",
       icon: showIcons() ? "layers" : undefined,
     },
     {
       label: t("app.text.breadcrumb"),
-      to: "/docs/components/breadcrumb",
+      href: "/docs/components/breadcrumb",
       icon: showIcons() ? "link" : undefined,
     },
   ];
@@ -227,13 +227,13 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
                 return t("app.text.organization");
               },
               avatar: { src: "https://github.com/rimelight.png", alt: "Rimelight" },
-              to: "/org",
+              href: "/org",
             },
             {
               get label() {
                 return t("app.text.developers");
               },
-              to: "/org/developers",
+              href: "/org/developers",
             },
             {
               get label() {
@@ -274,10 +274,9 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.home");
               },
-              to: "/",
+              href: "/",
             },
             {
-              slot: "dropdown",
               get label() {
                 return t("app.text.categories");
               },
@@ -286,7 +285,7 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.products");
               },
-              to: "/products",
+              href: "/products",
             },
             {
               get label() {
@@ -294,8 +293,8 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
               },
             },
           ]}
-          itemSlot={({ item }) =>
-            item.slot === "dropdown" ? (
+          itemSlot={({ item, index }) =>
+            index === 1 ? (
               <span class="px-2 py-0.5 rounded bg-elevated border border-default text-xs font-semibold text-highlighted">
                 ▾ {item.label}
               </span>

@@ -9,6 +9,7 @@ import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 import { RLCollapsible } from "@rimelight/ui/components/collapsible/RLCollapsible.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLInputNumber } from "@rimelight/ui/components/input-number/RLInputNumber.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import { cmsT } from "../../locale";
@@ -141,15 +142,12 @@ const Control: Component<{
       );
     case "number":
       return (
-        <RLInput
-          type="number"
-          value={text()}
+        <RLInputNumber
+          value={typeof props.value === "number" ? props.value : undefined}
           min={f().min}
           max={f().max}
           disabled={props.readOnly}
-          onInput={(e) =>
-            props.onChange(e.currentTarget.value === "" ? null : Number(e.currentTarget.value))
-          }
+          onValueChange={(v) => props.onChange(v)}
         />
       );
     case "boolean":
@@ -326,32 +324,24 @@ const CurrencyInput: Component<{
   const currency = () => props.value?.currency ?? props.field.currency ?? "USD";
   return (
     <div class="flex gap-2">
-      <RLInput
-        type="number"
-        step="0.01"
-        min="0"
+      <RLInputNumber
+        step={0.01}
+        min={0}
         disabled={props.readOnly}
         // Stored in minor units (cents) to avoid float rounding.
-        value={props.value?.amount == null ? "" : (props.value.amount / 100).toFixed(2)}
-        onInput={(e) =>
-          props.onChange(
-            e.currentTarget.value === ""
-              ? null
-              : { amount: Math.round(Number(e.currentTarget.value) * 100), currency: currency() },
-          )
-        }
+        value={props.value?.amount == null ? undefined : props.value.amount / 100}
+        onValueChange={(v) => props.onChange({ amount: Math.round(v * 100), currency: currency() })}
       />
       <RLInput
         class="w-20 uppercase"
-        maxlength={3}
         value={currency()}
         disabled={props.readOnly}
-        onInput={(e) =>
-          props.onChange({
-            amount: props.value?.amount ?? 0,
-            currency: e.currentTarget.value.toUpperCase(),
-          })
-        }
+        onInput={(e) => {
+          // ISO currency code: three letters, enforced here since the ui input has no `maxlength`.
+          const code = e.currentTarget.value.toUpperCase().slice(0, 3);
+          e.currentTarget.value = code;
+          props.onChange({ amount: props.value?.amount ?? 0, currency: code });
+        }}
       />
     </div>
   );
@@ -566,7 +556,7 @@ export const FieldGroups: Component<{
           <Show when={group} fallback={fieldList(fields)}>
             <RLCollapsible
               defaultOpen={props.groups?.[group]?.defaultOpen !== false}
-              trigger={
+              triggerSlot={
                 <span class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
                   {resolveLabel(props.groups?.[group]?.label as any) || group}
                 </span>

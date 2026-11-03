@@ -3,11 +3,11 @@ import type { RLChatMessagesProps } from "./chat-messages.types";
 import { RLChatMessagesTheme } from "./chat-messages.theme";
 
 export const RLChatMessages: Component<RLChatMessagesProps> = (props) => {
-  const { classes, rest } = RLChatMessagesTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLChatMessagesTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

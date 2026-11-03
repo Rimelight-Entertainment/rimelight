@@ -62,15 +62,11 @@ export const RLTimelineTheme = defineTheme("timeline", {
       },
     },
     size: {
-      "3xs": {},
-      "2xs": {},
       xs: {},
       sm: {},
       md: {},
       lg: {},
       xl: {},
-      "2xl": {},
-      "3xl": {},
     },
     reverse: {
       true: {},
@@ -179,20 +175,6 @@ export const RLTimelineTheme = defineTheme("timeline", {
     },
     {
       orientation: "horizontal",
-      size: "3xs",
-      class: {
-        wrapper: "pe-4.5",
-      },
-    },
-    {
-      orientation: "horizontal",
-      size: "2xs",
-      class: {
-        wrapper: "pe-5",
-      },
-    },
-    {
-      orientation: "horizontal",
       size: "xs",
       class: {
         wrapper: "pe-5.5",
@@ -224,34 +206,6 @@ export const RLTimelineTheme = defineTheme("timeline", {
       size: "xl",
       class: {
         wrapper: "pe-7.5",
-      },
-    },
-    {
-      orientation: "horizontal",
-      size: "2xl",
-      class: {
-        wrapper: "pe-8",
-      },
-    },
-    {
-      orientation: "horizontal",
-      size: "3xl",
-      class: {
-        wrapper: "pe-8.5",
-      },
-    },
-    {
-      orientation: "vertical",
-      size: "3xs",
-      class: {
-        wrapper: "-mt-0.5 pb-4.5",
-      },
-    },
-    {
-      orientation: "vertical",
-      size: "2xs",
-      class: {
-        wrapper: "pb-5",
       },
     },
     {
@@ -289,23 +243,10 @@ export const RLTimelineTheme = defineTheme("timeline", {
         wrapper: "mt-2.5 pb-7.5",
       },
     },
-    {
-      orientation: "vertical",
-      size: "2xl",
-      class: {
-        wrapper: "mt-3 pb-8",
-      },
-    },
-    {
-      orientation: "vertical",
-      size: "3xl",
-      class: {
-        wrapper: "mt-3.5 pb-8.5",
-      },
-    },
   ],
   defaultVariants: {
     size: "md",
     color: "primary",
+    orientation: "vertical",
   },
 });

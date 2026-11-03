@@ -14,6 +14,8 @@ const SAMPLE_ITEMS: string[] = [
   "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop&q=80",
 ];
 
+const slideSrc = (item: unknown): string => (typeof item === "string" ? item : "");
+
 export const CarouselSandbox = (): JSX.Element => {
   const [arrows, setArrows] = createSignal(true);
   const [dots, setDots] = createSignal(true);
@@ -173,9 +175,9 @@ export const CarouselSandbox = (): JSX.Element => {
           ui={orientation() === "vertical" ? { container: "h-[320px]" } : undefined}
           class="w-full"
         >
-          {({ item }: { item: string }) => (
+          {({ item }: { item: unknown }) => (
             <img
-              src={item}
+              src={slideSrc(item)}
               alt={t("app.text.slide")}
               width="320"
               height="320"
@@ -201,9 +203,9 @@ export const ThumbnailsScenario = (): JSX.Element => {
         class="w-full"
         onSelect={(i) => setActiveIndex(i)}
       >
-        {({ item }: { item: string }) => (
+        {({ item }: { item: unknown }) => (
           <img
-            src={item}
+            src={slideSrc(item)}
             alt={t("app.text.product-visual")}
             width="320"
             height="320"
@@ -257,9 +259,9 @@ export const carouselAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)}>
-            {({ item }: { item: string }) => (
+            {({ item }: { item: unknown }) => (
               <img
-                src={item}
+                src={slideSrc(item)}
                 alt={"Item"}
                 width="320"
                 height="320"
@@ -281,9 +283,9 @@ export const carouselAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows dots>
-            {({ item }: { item: string }) => (
+            {({ item }: { item: unknown }) => (
               <img
-                src={item}
+                src={slideSrc(item)}
                 alt={"Item"}
                 width="320"
                 height="320"
@@ -305,9 +307,9 @@ export const carouselAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows dots controls="inside">
-            {({ item }: { item: string }) => (
+            {({ item }: { item: unknown }) => (
               <img
-                src={item}
+                src={slideSrc(item)}
                 alt={"Inside Controls Item"}
                 width="320"
                 height="320"
@@ -335,9 +337,9 @@ export const carouselAudit: ComponentAuditDefinition = {
           ui={{ item: "basis-1/3 ps-2" }}
           class="w-full max-w-lg mx-auto"
         >
-          {({ item }: { item: string }) => (
+          {({ item }: { item: unknown }) => (
             <img
-              src={item}
+              src={slideSrc(item)}
               alt={"Multi item"}
               width="200"
               height="200"
@@ -364,9 +366,9 @@ export const carouselAudit: ComponentAuditDefinition = {
             dots
             ui={{ container: "h-[336px]" }}
           >
-            {({ item }: { item: string }) => (
+            {({ item }: { item: unknown }) => (
               <img
-                src={item}
+                src={slideSrc(item)}
                 alt={"Vertical item"}
                 width="320"
                 height="320"
@@ -388,9 +390,9 @@ export const carouselAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="max-w-xs mx-auto">
           <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} fade arrows dots>
-            {({ item }: { item: string }) => (
+            {({ item }: { item: unknown }) => (
               <img
-                src={item}
+                src={slideSrc(item)}
                 alt={"Fade item"}
                 width="320"
                 height="320"
@@ -419,9 +421,9 @@ export const carouselAudit: ComponentAuditDefinition = {
               item: "basis-[70%] transition-opacity [&:not(.is-snapped)]:opacity-25 ps-2",
             }}
           >
-            {({ item }: { item: string }) => (
+            {({ item }: { item: unknown }) => (
               <img
-                src={item}
+                src={slideSrc(item)}
                 alt={"Class names slide"}
                 width="320"
                 height="320"
@@ -448,7 +450,7 @@ export const carouselAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Supports items, slides, arrows, prev, prevIcon, next, nextIcon, dots, orientation, autoplay, autoScroll, autoHeight, classNames, fade, wheelGestures, align, loop, slidesToScroll, and ref handle.",
+        "Supports items, arrows, prev, prevIcon, next, nextIcon, dots, orientation, autoplay, autoScroll, autoHeight, classNames, fade, wheelGestures, align, loop, slidesToScroll, and ref handle.",
     },
     {
       criterion: "Gestures, keyboard & motion",

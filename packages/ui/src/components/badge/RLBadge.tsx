@@ -1,5 +1,6 @@
 import type { Component } from "solid-js";
 import type { RLBadgeProps } from "./badge.types";
+import type { RLAvatarProps } from "../avatar/avatar.types";
 import { RLBadgeTheme } from "./badge.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -14,48 +15,40 @@ const OMIT_KEYS = [
   "trailingIcon",
 ] as const;
 
-export const RLBadge: Component<RLBadgeProps> = (props) => {
-  const leadingIconProp = () => props.leadingIcon;
-  const trailingIconProp = () => props.trailingIcon;
-  const leadingProp = () => props.leading;
-  const trailingProp = () => props.trailing;
-  const iconProp = () => props.icon;
+const BADGE_ICON_SIZE = { xs: "xs", sm: "xs", md: "sm", lg: "md", xl: "lg" } as const;
 
+export const RLBadge: Component<RLBadgeProps> = (props) => {
   const isLeading = () =>
     Boolean(
-      leadingProp() ||
-      (iconProp() && !trailingProp()) ||
-      leadingIconProp() ||
+      props.leading ||
+      (props.icon && !props.trailing) ||
+      props.leadingIcon ||
       props.avatar ||
       slots.leadingSlot(),
     );
 
   const leadingIconName = () =>
-    leadingIconProp() || (iconProp() && !trailingProp() ? iconProp() : undefined);
+    props.leadingIcon || (props.icon && !props.trailing ? props.icon : undefined);
 
   const isTrailing = () =>
     Boolean(
-      trailingProp() ||
-      (iconProp() && trailingProp()) ||
-      trailingIconProp() ||
+      props.trailing ||
+      (props.icon && props.trailing) ||
+      props.trailingIcon ||
       slots.trailingSlot(),
     );
 
   const trailingIconName = () =>
-    trailingIconProp() || (iconProp() && trailingProp() ? iconProp() : undefined);
+    props.trailingIcon || (props.icon && props.trailing ? props.icon : undefined);
 
-  const isSquare = () => Boolean(props.square);
+  // Without a size prop the theme default (md) applies, which maps to "sm".
+  const iconSize = () => (props.size ? BADGE_ICON_SIZE[props.size] : "sm");
 
-  const {
-    Tag: Root,
-    classes,
-    rest,
-    slots,
-  } = RLBadgeTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLBadgeTheme.setup(props, {
     as: "span",
     omit: OMIT_KEYS,
     slots: ["leadingSlot", "trailingSlot"] as const,
-    variants: () => ({ square: isSquare() }),
+    variants: () => ({ square: props.square }),
   });
 
   const renderLeading = () => {
@@ -65,20 +58,14 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
 
     const iconName = leadingIconName();
     if (iconName) {
-      if (typeof iconName === "string") {
-        return (
-          <RLIcon
-            name={iconName}
-            class={classes().leadingIcon}
-            data-slot="leading-icon"
-            aria-hidden="true"
-          />
-        );
-      }
       return (
-        <span class={classes().leadingIcon} data-slot="leading-icon" aria-hidden="true">
-          {iconName}
-        </span>
+        <RLIcon
+          name={iconName}
+          size={iconSize()}
+          class={classes().leadingIcon}
+          data-slot="leading-icon"
+          aria-hidden="true"
+        />
       );
     }
 
@@ -87,7 +74,7 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
         return (
           <RLAvatar
             src={props.avatar}
-            size={classes().leadingAvatarSize as any}
+            size={classes().leadingAvatarSize as RLAvatarProps["size"]}
             class={classes().leadingAvatar}
             data-slot="leading-avatar"
           />
@@ -96,7 +83,7 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
       return (
         <RLAvatar
           {...props.avatar}
-          size={(props.avatar.size || classes().leadingAvatarSize) as any}
+          size={(props.avatar.size || classes().leadingAvatarSize) as RLAvatarProps["size"]}
           class={classes().leadingAvatar}
           data-slot="leading-avatar"
         />
@@ -113,20 +100,14 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
 
     const iconName = trailingIconName();
     if (iconName) {
-      if (typeof iconName === "string") {
-        return (
-          <RLIcon
-            name={iconName}
-            class={classes().trailingIcon}
-            data-slot="trailing-icon"
-            aria-hidden="true"
-          />
-        );
-      }
       return (
-        <span class={classes().trailingIcon} data-slot="trailing-icon" aria-hidden="true">
-          {iconName}
-        </span>
+        <RLIcon
+          name={iconName}
+          size={iconSize()}
+          class={classes().trailingIcon}
+          data-slot="trailing-icon"
+          aria-hidden="true"
+        />
       );
     }
 
@@ -134,8 +115,8 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
   };
 
   const renderContent = () => {
-    if (props.children !== undefined && props.children !== null) {
-      return props.children;
+    if (children() !== undefined && children() !== null) {
+      return children();
     }
     if (props.label !== undefined && props.label !== null) {
       return (
@@ -148,10 +129,10 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
   };
 
   return (
-    <Root class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       {isLeading() ? renderLeading() : null}
       {renderContent()}
       {isTrailing() ? renderTrailing() : null}
-    </Root>
+    </Tag>
   );
 };

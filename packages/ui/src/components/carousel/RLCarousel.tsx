@@ -1,3 +1,4 @@
+import type { JSX } from "@solidjs/web";
 import type { RLCarouselProps, CarouselSlide } from "./carousel.types";
 import { RLCarouselTheme } from "./carousel.theme";
 import { RLButtonTheme } from "../button/button.theme";
@@ -13,10 +14,10 @@ import {
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
+import { cx } from "../../resolver";
 
 const OMIT_KEYS = [
   "items",
-  "slides",
   "prev",
   "prevIcon",
   "next",
@@ -45,7 +46,7 @@ const OMIT_KEYS = [
   "watchFocus",
   "breakpoints",
   "onSelect",
-  "ariaLabel",
+  "aria-label",
   "ref",
 ] as const;
 
@@ -76,23 +77,43 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
 
   const resolvedItems = createMemo(() => {
     if (props.items && Array.isArray(props.items)) return props.items;
-    if (props.slides && Array.isArray(props.slides)) return props.slides;
     return [];
   });
 
+  const {
+    Tag,
+    classes,
+    rest,
+    ui,
+    theme,
+    children: childNodes,
+  } = RLCarouselTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => ({
+      orientation: orientation(),
+      controls: controlsPlacement(),
+      active: false,
+    }),
+  });
+
   const resolvedChildren = children(() =>
-    typeof props.children === "function" ? null : (props.children as any),
+    typeof childNodes() === "function" ? null : childNodes(),
   );
 
   const slideCount = createMemo(() => {
     const items = resolvedItems();
     if (items.length > 0) return items.length;
-    if (typeof props.children === "function") return 0;
+    if (typeof childNodes() === "function") return 0;
     const ch = resolvedChildren.toArray();
     return ch.length;
   });
 
-  const basisPercent = createMemo(() => parseBasisPercent(props.ui?.item));
+  const itemOverrideClass = (): string => {
+    const override = ui()?.item;
+    if (typeof override === "function") return override(classes().item);
+    return cx(override);
+  };
+  const basisPercent = createMemo(() => parseBasisPercent(itemOverrideClass()));
 
   let viewportRef: HTMLDivElement | undefined;
   let containerRef: HTMLDivElement | undefined;
@@ -102,19 +123,6 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   let hasDragged = false;
   let autoplayTimer: ReturnType<typeof setInterval> | undefined;
   let wheelThrottleTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const {
-    Tag: Root,
-    classes,
-    rest,
-  } = RLCarouselTheme.setup(props, {
-    omit: OMIT_KEYS,
-    variants: () => ({
-      orientation: orientation(),
-      controls: controlsPlacement(),
-      active: false,
-    }),
-  });
 
   const dotActiveClasses = RLCarouselTheme.use(props, () => ({
     orientation: orientation(),
@@ -386,9 +394,12 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     }
   };
 
-  const renderSingleSlideContent = (item: any, i: number) => {
-    if (typeof props.children === "function") {
-      const renderFn = props.children as any;
+  const renderSingleSlideContent = (item: unknown, i: number) => {
+    if (typeof childNodes() === "function") {
+      const renderFn = childNodes() as unknown as (
+        ctx: { item: unknown; index: number },
+        index: () => number,
+      ) => JSX.Element;
       return renderFn({ item, index: i }, () => i);
     }
 
@@ -440,19 +451,15 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     return baseContainer;
   };
 
-  const itemClassNames = (item: any, i: number) => {
+  const itemClassNames = (i: number) => {
     const isSnapped = index() === i;
     const rawBaseItemClass = isFade() ? "col-start-1 row-start-1 w-full min-w-0" : classes().item;
-    const customItemClass =
-      typeof item === "object" && item !== null ? `${item.class || ""} ${item.ui?.item || ""}` : "";
-
-    const hasCustomBasis =
-      /(?:^|\s)basis-/.test(customItemClass) || /(?:^|\s)basis-/.test(props.ui?.item || "");
+    const hasCustomBasis = /(?:^|\s)basis-/.test(itemOverrideClass());
     const baseItemClass = hasCustomBasis
       ? rawBaseItemClass.replace(/(?:^|\s)basis-full(?:\s|$)/g, " ")
       : rawBaseItemClass;
 
-    let itemClasses = `${baseItemClass} ${customItemClass}`;
+    let itemClasses = baseItemClass;
 
     if (props.classNames) {
       const opt = typeof props.classNames === "object" ? props.classNames : {};
@@ -497,12 +504,13 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   const showDots = () => Boolean(props.dots) && dots().length > 0;
 
   return (
-    <Root
+    <Tag
       role="region"
       aria-roledescription="carousel"
-      aria-label={props.ariaLabel || "Carousel"}
+      aria-label={props["aria-label"] ?? uiT("carousel.label")}
       data-orientation={orientation()}
       data-slot="root"
+      data-theme={theme()}
       class={classes().root}
       tabIndex={0}
       onKeyDown={handleKeyDown}
@@ -535,10 +543,10 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
                 {(child, i) => (
                   <div
                     data-slot="item"
-                    class={itemClassNames(null, i())}
+                    class={itemClassNames(i())}
                     role="group"
                     aria-roledescription="slide"
-                    aria-label={`${i() + 1} of ${slideCount()}`}
+                    aria-label={`${i() + 1} / ${slideCount()}`}
                   >
                     {child}
                   </div>
@@ -550,10 +558,10 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
               {(item, i) => (
                 <div
                   data-slot="item"
-                  class={itemClassNames(item, i())}
+                  class={itemClassNames(i())}
                   role="group"
                   aria-roledescription="slide"
-                  aria-label={`${i() + 1} of ${slideCount()}`}
+                  aria-label={`${i() + 1} / ${slideCount()}`}
                 >
                   {renderSingleSlideContent(item, i())}
                 </div>
@@ -570,7 +578,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
             aria-label={uiT("carousel.previous")}
             disabled={!canScrollPrev()}
             class={prevButtonClass()}
-            data-slot="prev-button"
+            data-slot="prev"
             onClick={prev}
           >
             <RLIcon name={props.prevIcon || "chevron-left"} class="size-4" />
@@ -580,7 +588,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
             aria-label={uiT("carousel.next")}
             disabled={!canScrollNext()}
             class={nextButtonClass()}
-            data-slot="next-button"
+            data-slot="next"
             onClick={next}
           >
             <RLIcon name={props.nextIcon || "chevron-right"} class="size-4" />
@@ -602,8 +610,8 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
                 role="tab"
                 data-slot="dot"
                 data-state={index() === i ? "active" : undefined}
-                aria-selected={index() === i ? ("true" as any) : ("false" as any)}
-                aria-label={`Go to slide ${i + 1}`}
+                aria-selected={index() === i ? "true" : "false"}
+                aria-label={`${uiT("carousel.goToSlide")} ${i + 1}`}
                 class={index() === i ? dotActiveClasses().dot : classes().dot}
                 onClick={() => scrollTo(i)}
               />
@@ -611,6 +619,6 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
           </For>
         </div>
       </Show>
-    </Root>
+    </Tag>
   );
 };

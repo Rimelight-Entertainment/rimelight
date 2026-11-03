@@ -9,15 +9,11 @@ export const RLChipTheme = defineTheme("chip", {
   variants: {
     color: "auto",
     size: {
-      "3xs": { base: "h-1 min-w-1 text-[4px] p-0.5" },
-      "2xs": { base: "h-[5px] min-w-[5px] text-[5px] p-0.5" },
       xs: { base: "h-1.5 min-w-1.5 text-[6px] p-0.5" },
       sm: { base: "h-[7px] min-w-[7px] text-[7px] p-0.5" },
       md: { base: "h-2 min-w-2 text-[8px] p-0.5" },
       lg: { base: "h-[9px] min-w-[9px] text-[9px] p-0.5" },
       xl: { base: "h-2.5 min-w-2.5 text-[10px] p-0.5" },
-      "2xl": { base: "h-[11px] min-w-[11px] text-[11px] p-0.5" },
-      "3xl": { base: "h-3 min-w-3 text-[12px] p-0.5" },
     },
     position: {
       "top-right": { base: "top-0 right-0" },

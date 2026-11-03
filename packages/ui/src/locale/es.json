@@ -44,7 +44,23 @@
     "previous": "Pista anterior",
     "next": "Pista siguiente",
     "speed-hint": "Haz clic para cambiar, clic derecho para introducir un valor",
-    "playback-speed": "Establecer una velocidad de reproducción específica"
+    "playback-speed": "Establecer una velocidad de reproducción específica",
+    "artwork": "Arte de audio",
+    "player": "Reproductor de audio",
+    "mute": "Silenciar audio",
+    "unmute": "Activar sonido",
+    "play": "Reproducir audio",
+    "pause": "Pausar audio",
+    "skip-back": "Retroceder",
+    "skip-forward": "Avanzar",
+    "repeat-off": "Repetición desactivada",
+    "repeat-all": "Repetir todo",
+    "repeat-one": "Repetir uno",
+    "speed-button": "Velocidad de reproducción",
+    "playlist": "Lista de reproducción",
+    "track": "Pista",
+    "hide-transcript": "Ocultar transcripción",
+    "show-transcript": "Mostrar transcripción"
   },
   "breadcrumb": {
     "label": "Migas de pan"
@@ -58,7 +74,9 @@
   "carousel": {
     "previous": "Diapositiva anterior",
     "next": "Diapositiva siguiente",
-    "slides": "Diapositivas"
+    "slides": "Diapositivas",
+    "label": "Carrusel",
+    "goToSlide": "Ir a la diapositiva"
   },
   "color-area": {
     "thumb": "Control de área de color"
@@ -75,7 +93,14 @@
     "type-to-search": "Escribe para buscar...",
     "label": "Buscar",
     "close": "Cerrar búsqueda",
-    "press-to-close": "Pulsa {escape} para cerrar"
+    "press-to-close": "Pulsa {escape} para cerrar",
+    "no-results": "No se encontraron resultados",
+    "site-search": "Búsqueda del sitio",
+    "untitled": "Sin título",
+    "shortcut-open": "Abrir búsqueda del sitio",
+    "shortcut-quick": "Búsqueda rápida",
+    "shortcut-quick-description": "Enfocar búsqueda del sitio",
+    "esc": "Esc"
   },
   "drawer": {
     "close": "Cerrar cajón"
@@ -86,7 +111,11 @@
     "format": "Formato:",
     "dimensions": "Dimensiones:",
     "size": "Tamaño:",
-    "alt": "Texto alternativo:"
+    "alt": "Texto alternativo:",
+    "download": "Descargar original",
+    "fetching": "obteniendo...",
+    "sizeUnavailable": "no disponible",
+    "none": "ninguno"
   },
   "actions": {
     "close": "Cerrar"
@@ -96,13 +125,16 @@
     "decrement": "Decrementar"
   },
   "input-pin": {
-    "label": "Código de un solo uso"
+    "label": "Código de un solo uso",
+    "digitLabel": "Dígito {n}"
   },
   "modal": {
     "close": "Cerrar modal"
   },
   "package-managers": {
-    "copy": "Copiar comando"
+    "copy": "Copiar comando",
+    "copied": "Copiado",
+    "copyButton": "Copiar"
   },
   "pagination": {
     "label": "Paginación",
@@ -110,14 +142,19 @@
     "next": "Ir a la página siguiente"
   },
   "route-announcer": {
-    "loading": "Cargando página"
+    "loading": "Cargando página",
+    "prefix": "Navegó a"
   },
   "scroll-to-top": {
     "label": "Desplazarse al inicio"
   },
   "shortcuts": {
     "close": "Cerrar ayuda de atajos",
-    "press-to-close": "Pulsa {question} o {escape} para cerrar"
+    "press-to-close": "Pulsa {question} o {escape} para cerrar",
+    "title": "Atajos de teclado",
+    "empty": "No se encontraron atajos activos en esta página.",
+    "show-shortcuts": "Mostrar atajos de teclado",
+    "show-shortcuts-description": "Mostrar la hoja de ayuda de atajos"
   },
   "slideover": {
     "close": "Cerrar panel deslizante"
@@ -126,18 +163,100 @@
     "resize": "Redimensionar paneles"
   },
   "table": {
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "searchPlaceholder": "Filtrar tabla...",
+    "export": "Exportar",
+    "exportCsv": "Exportar como CSV",
+    "exportJson": "Exportar como JSON",
+    "columns": "Columnas",
+    "empty": "No hay datos disponibles"
   },
   "toc": {
     "heading": "En esta página"
   },
   "tabs": {
-    "more": "Más pestañas"
+    "more": "más",
+    "moreTabs": "Más pestañas"
   },
   "theme": {
-    "toggle": "Cambiar tema"
+    "toggle": "Cambiar tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "cycle": "Cambiar tema",
+    "cycle-description": "Alternar entre los modos de tema sistema, claro y oscuro"
   },
   "toast": {
     "dismiss": "Descartar notificación"
+  },
+  "video": {
+    "defaultTitle": "Reproductor de vídeo de YouTube",
+    "playLabel": "Reproducir vídeo de YouTube",
+    "unavailableLabel": "Vídeo de YouTube no disponible"
+  },
+  "browser-mockup": {
+    "label": "Maqueta de navegador",
+    "labelWithUrl": "Maqueta de navegador:"
+  },
+  "chart": {
+    "lineLabel": "Gráfico de líneas",
+    "pieLabel": "Gráfico circular"
+  },
+  "compare": {
+    "label": "Control comparativo deslizante",
+    "beforeAlt": "Antes",
+    "afterAlt": "Después"
+  },
+  "banner": {
+    "close": "Descartar banner"
+  },
+  "callout": {
+    "close": "Descartar aviso"
+  },
+  "confirm": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "toaster": {
+    "signed-in": "Sesión iniciada correctamente",
+    "account-created": "Cuenta creada correctamente"
+  },
+  "share": {
+    "label": "Compartir",
+    "copied": "¡Enlace copiado!"
+  },
+  "calendar": {
+    "defaultLabel": "Fecha del evento",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "previousYear": "Año anterior",
+    "nextYear": "Año siguiente"
+  },
+  "surround": {
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "layout-grid": {
+    "shortcut": {
+      "label": "Alternar cuadrícula de diseño",
+      "description": "Mostrar u ocultar la superposición de la guía de cuadrícula de diseño para desarrollo",
+      "category": "desarrollo"
+    }
+  },
+  "file-upload": {
+    "title": "Suelta los archivos aquí o haz clic para subir",
+    "accepted": "Aceptados:",
+    "files-selected": "archivos seleccionados"
+  },
+  "input-menu": {
+    "placeholder": "Seleccionar elemento..."
+  },
+  "input-tags": {
+    "placeholder": "Añadir etiqueta…",
+    "more": "+{count} más"
+  },
+  "copy-markdown": {
+    "copy": "Copiar Markdown",
+    "copied": "¡Copiado!"
   }
 }

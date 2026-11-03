@@ -1,8 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLFloatingActionTheme } from "./floating-action.theme";
 
-export interface RLFloatingActionProps {
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Floating action button anchored to a corner of its container.
+ * @status stub
+ * @default as "div"
+ */
+export type RLFloatingActionProps = InferThemeProps<typeof RLFloatingActionTheme>;

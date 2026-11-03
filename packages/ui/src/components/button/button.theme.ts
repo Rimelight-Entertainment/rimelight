@@ -54,36 +54,11 @@ export const RLButtonTheme = defineTheme("button", {
     },
     color: "auto",
     size: {
-      xs: {
-        root: "text-xs gap-1 leading-none",
-        leadingIcon: "size-4",
-        leadingAvatarSize: "3xs",
-        trailingIcon: "size-4",
-      },
-      sm: {
-        root: "text-xs gap-1.5 leading-none",
-        leadingIcon: "size-4",
-        leadingAvatarSize: "3xs",
-        trailingIcon: "size-4",
-      },
-      md: {
-        root: "text-sm gap-1.5 leading-none",
-        leadingIcon: "size-5",
-        leadingAvatarSize: "2xs",
-        trailingIcon: "size-5",
-      },
-      lg: {
-        root: "text-sm gap-2 leading-none",
-        leadingIcon: "size-5",
-        leadingAvatarSize: "2xs",
-        trailingIcon: "size-5",
-      },
-      xl: {
-        root: "text-base gap-2 leading-none",
-        leadingIcon: "size-6",
-        leadingAvatarSize: "xs",
-        trailingIcon: "size-6",
-      },
+      xs: { root: "text-xs gap-1 leading-none", leadingAvatarSize: "xs" },
+      sm: { root: "text-xs gap-1.5 leading-none", leadingAvatarSize: "xs" },
+      md: { root: "text-sm gap-1.5 leading-none", leadingAvatarSize: "xs" },
+      lg: { root: "text-sm gap-2 leading-none", leadingAvatarSize: "xs" },
+      xl: { root: "text-base gap-2 leading-none", leadingAvatarSize: "xs" },
     },
     justify: {
       start: { root: "justify-start" },

@@ -1,43 +1,44 @@
-import type { Theme, ThemeColor } from "../../types";
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSwitchTheme } from "./switch.theme";
 
-export interface RLSwitchProps {
+export type RLSwitchProps = Omit<
+  InferThemeProps<typeof RLSwitchTheme>,
+  "checked" | "disabled" | "name" | "value" | "onChange"
+> & {
   /**
-   * Controlled checked state.
+   * Whether the switch is on. Omit for uncontrolled use.
+   * @default undefined
    */
-  checked?: boolean;
+  checked?: boolean | undefined;
   /**
-   * Disabled state.
+   * Initial state when uncontrolled.
+   * @default false
    */
-  disabled?: boolean;
+  defaultChecked?: boolean | undefined;
   /**
-   * Input element name.
+   * Called with the next state when the user toggles the switch.
    */
-  name?: string;
+  onCheckedChange?: (checked: boolean) => void;
   /**
-   * Label descriptor.
+   * Disables the switch.
+   * @default false
    */
-  label?: string;
+  disabled?: boolean | undefined;
   /**
-   * Size scale.
+   * Form field name for the underlying checkbox input.
+   * @default undefined
    */
-  size?: "sm" | "md" | "lg";
+  name?: string | undefined;
   /**
-   * Color theme.
+   * Form value submitted with `name` when checked.
+   * @default undefined
    */
-  color?: ThemeColor;
+  value?: string | undefined;
   /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
+   * Text rendered next to the switch. Falls back to `children` when omitted.
+   * @default undefined
    */
-  theme?: Theme;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  label?: string | undefined;
+  /** Native change event on the underlying checkbox input. */
+  onChange?: (event: Event & { currentTarget: HTMLInputElement }) => void;
+};

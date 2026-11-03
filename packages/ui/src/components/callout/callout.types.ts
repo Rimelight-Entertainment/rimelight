@@ -1,136 +1,104 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLButtonProps } from "../button/button.types";
+import type { RLCalloutTheme } from "./callout.theme";
 
-export interface RLCalloutProps {
+export type RLCalloutProps = Omit<InferThemeProps<typeof RLCalloutTheme>, "title"> & {
   /**
-   * The element or component this component should render as.
-   * @defaultValue 'div'
-   */
-  as?: ValidComponent;
-  /**
-   * The visual color scheme of the callout.
-   * @defaultValue 'primary'
-   */
-  color?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | (string & {})
-    | undefined;
-  /**
-   * The visual variant of the callout.
-   * @defaultValue 'solid'
-   */
-  variant?: "solid" | "outline" | "soft" | "subtle" | undefined;
-  /**
-   * The orientation between the content and the actions.
-   * @defaultValue 'vertical'
-   */
-  orientation?: "vertical" | "horizontal" | undefined;
-  /**
-   * The main title text of the callout.
+   * Main title text of the callout. Use `titleSlot` for JSX.
    */
   title?: string | undefined;
   /**
-   * The secondary description text of the callout.
+   * Secondary description text of the callout. Use `descriptionSlot` for JSX.
    */
   description?: string | undefined;
   /**
-   * An optional leading icon name.
+   * Icon name displayed at the start of the callout.
    */
   icon?: string | undefined;
   /**
-   * An optional avatar configuration or image source URL string.
+   * Avatar configuration or image source URL.
    */
   avatar?: { src: string; alt: string } | string | undefined;
   /**
-   * Display a list of action buttons:
-   * - under the title and description when orientation is `vertical`
-   * - next to the close button when orientation is `horizontal`
+   * Action buttons. Rendered under the content when `orientation` is `vertical`, and next to the
+   * close button when `orientation` is `horizontal`.
    */
-  actions?: any[] | undefined;
+  actions?: RLButtonProps[] | undefined;
   /**
-   * Display a close button to dismiss the callout.
-   * Can be a boolean or custom object.
-   * @defaultValue false
+   * Whether the callout shows a close button and can be dismissed.
+   *
+   * @default true
    */
-  close?: boolean | Record<string, unknown> | undefined;
+  dismissible?: boolean | undefined;
   /**
-   * The icon displayed in the close button.
-   * @defaultValue 'close'
+   * Icon name displayed in the close button.
+   *
+   * @default "x"
    */
   closeIcon?: string | undefined;
   /**
-   * Controlled open state for the callout.
+   * Controlled open state. Dismissal sets it to `false` through `onOpenChange`.
    */
   open?: boolean | undefined;
   /**
    * Initial open state when uncontrolled.
-   * @defaultValue true
+   *
+   * @default true
    */
   defaultOpen?: boolean | undefined;
   /**
-   * Callback fired when the callout is dismissed.
-   */
-  onClose?: (() => void) | undefined;
-  /**
-   * Callback fired when the open state changes.
+   * Called whenever the open state changes.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Called after the callout is dismissed by the user.
    */
-  theme?: "light" | "dark" | undefined;
+  onDismiss?: (() => void) | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Layout of the actions relative to the content.
+   *
+   * @default "vertical"
    */
-  ui?:
-    | Partial<
-        Record<
-          | "root"
-          | "wrapper"
-          | "title"
-          | "description"
-          | "icon"
-          | "avatar"
-          | "avatarSize"
-          | "actions"
-          | "close",
-          unknown
-        >
-      >
-    | undefined;
+  orientation?: "vertical" | "horizontal" | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Replaces the leading icon.
    */
-  class?: any;
+  iconSlot?: JSX.Element | undefined;
   /**
-   * Explicit element ID for accessibility linkages.
+   * Replaces the title text.
    */
-  id?: string | undefined;
+  titleSlot?: JSX.Element | undefined;
   /**
-   * Accessible aria-label override.
+   * Content rendered between the title and the description.
    */
-  ariaLabel?: string | undefined;
+  headerSlot?: JSX.Element | undefined;
   /**
-   * Accessible aria-labelledby ID override.
+   * Replaces the description text.
    */
-  ariaLabelledby?: string | undefined;
+  descriptionSlot?: JSX.Element | undefined;
   /**
-   * Accessible aria-describedby ID override.
+   * Replaces the action buttons.
    */
-  ariaDescribedby?: string | undefined;
-  iconSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  headerSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  actionsSlot?: JSX.Element;
-  closeSlot?: JSX.Element;
-  avatarSlot?: JSX.Element;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  actionsSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the close button.
+   */
+  closeSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the avatar.
+   */
+  avatarSlot?: JSX.Element | undefined;
+  /**
+   * Accessible label of the callout.
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Accessible labelledby override.
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Accessible describedby override.
+   */
+  "aria-describedby"?: string | undefined;
+};

@@ -6,7 +6,7 @@ import { RLPopover } from "@rimelight/ui/components/popover/RLPopover.tsx";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const SIZES = ["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
+const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const COLORS = AUDIT_COLORS;
 
 export const AvatarSandbox = (): JSX.Element => {
@@ -211,7 +211,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLAvatar alt={"Alex"} chip={{ inset: true, color: "warning" }} />
           <RLAvatar alt={"John Doe"} chip={{ inset: true, color: "error" }} />
           <RLAvatar alt={"Sam"} chip={{ color: "primary", position: "top-right" }} />
-          <RLAvatar alt={"Taylor"} badge="3" badgeColor="primary" badgePosition="top-right" />
+          <RLAvatar alt={"Taylor"} badge="3" badgeColor="primary" />
         </div>
       ),
     },

@@ -1,22 +1,24 @@
 import type { Component } from "solid-js";
 import { createSignal, onSettled } from "solid-js";
 import type { RLCopyMarkdownProps } from "./copy-markdown.types";
+import { RLCopyMarkdownTheme } from "./copy-markdown.theme";
 import { RLButton } from "../button/RLButton";
-import { RLButtonTheme } from "../button/button.theme";
+import { uiT } from "../../locale";
 
-const OMIT_KEYS = ["raw"] as const;
+const OMIT_KEYS = ["raw", "onClick"] as const;
 
 export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
-  const { rest, slots } = RLButtonTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLCopyMarkdownTheme.setup(props, {
+    as: "button",
     omit: OMIT_KEYS,
     slots: ["leadingSlot", "trailingSlot"] as const,
   });
   const [copied, setCopied] = createSignal(false);
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  let timeoutId: number | undefined;
 
   onSettled(() => {
     return () => {
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      window.clearTimeout(timeoutId);
     };
   });
 
@@ -24,35 +26,32 @@ export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
     try {
       await navigator.clipboard.writeText(props.raw);
       setCopied(true);
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => setCopied(false), 2000);
+      window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
   };
 
+  const handleClick = async (event: MouseEvent) => {
+    await handleCopy();
+    props.onClick?.(event);
+  };
+
   return (
     <RLButton
-      class={`rl-copy-markdown ${typeof props.class === "string" ? props.class : ""}`.trim()}
-      color={props.color ?? "neutral"}
-      variant={props.variant ?? "outline"}
-      size={props.size ?? "sm"}
-      block={props.block}
-      rounded={props.rounded}
-      fieldGroup={props.fieldGroup}
-      justify={props.justify}
+      class={classes().root}
+      theme={theme()}
+      as={Tag}
+      leadingIcon="copy"
+      label={copied() ? uiT("copy-markdown.copied") : uiT("copy-markdown.copy")}
       leadingSlot={slots.leadingSlot()}
       trailingSlot={slots.trailingSlot()}
-      {...(props.as !== undefined ? { as: props.as } : {})}
-      theme={props.theme}
-      leadingIcon="copy"
-      label={copied() ? "Copied!" : "Copy Markdown"}
       data-raw={props.raw}
-      ui={props.ui}
-      onClick={handleCopy}
+      onClick={handleClick}
       {...rest}
     >
-      {props.children}
+      {children()}
     </RLButton>
   );
 };

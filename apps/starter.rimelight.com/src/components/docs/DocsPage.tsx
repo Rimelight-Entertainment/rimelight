@@ -191,7 +191,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
           fixed
           data-docs-subheader=""
           class="w-full border-b border-default bg-default/95 backdrop-blur"
-          leftSlot={
+          leadingSlot={
             <div class="lg:hidden">
               <RLButton
                 variant="ghost"
@@ -199,13 +199,13 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 leadingIcon="menu"
                 label="Menu"
                 trailingIcon={panel() === "nav" ? "chevron-up" : "chevron-down"}
-                aria-expanded={panel() === "nav"}
+                aria-expanded={panel() === "nav" ? "true" : "false"}
                 aria-controls="docs-panel-nav"
                 onClick={() => toggle("nav")}
               />
             </div>
           }
-          rightSlot={
+          trailingSlot={
             <Show when={headings().length > 0}>
               <RLButton
                 variant="ghost"
@@ -213,7 +213,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 label="On this page"
                 trailingIcon={panel() === "toc" ? "chevron-up" : "chevron-down"}
                 class="whitespace-nowrap"
-                aria-expanded={panel() === "toc"}
+                aria-expanded={panel() === "toc" ? "true" : "false"}
                 aria-controls="docs-panel-toc"
                 onClick={() => toggle("toc")}
               />
@@ -252,7 +252,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 <div class="flex flex-col gap-4">
                   {versionBar()}
                   <RLSidebar
-                    items={nav().items as any}
+                    items={nav().items}
                     collapsible="none"
                     class="w-full border-0 shadow-none"
                   />
@@ -272,7 +272,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
           <style>{`.docs-sidebar-wrapper [data-slot="header"],.docs-mobile-nav [data-sidebar] > [data-slot="header"]{display:none}`}</style>
           <div class="docs-sidebar-wrapper sticky top-[calc(var(--rl-header-height,64px)+2rem)] hidden max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] w-[280px] shrink-0 overflow-y-auto lg:block [&_[data-slot=header]]:hidden">
             <RLSidebar
-              items={nav().items as any}
+              items={nav().items}
               collapsible="none"
               class="docs-nav-sidebar w-full shadow-none"
               ui={{ header: "hidden" } as any}

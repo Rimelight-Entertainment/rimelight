@@ -1,5 +1,25 @@
 import { defineTheme } from "../../resolver";
 
+export type RLSidebarSlot =
+  | "root"
+  | "header"
+  | "content"
+  | "footer"
+  | "item"
+  | "itemLink"
+  | "itemIcon"
+  | "itemBadge"
+  | "itemsContainer"
+  | "itemText"
+  | "itemSummary"
+  | "itemChevron"
+  | "subItemLink"
+  | "subItemIcon"
+  | "logoWrapper"
+  | "toggleButton";
+
+export type RLSidebarClasses = Record<RLSidebarSlot, string>;
+
 export const RLSidebarTheme = defineTheme("sidebar", {
   slots: [
     "root",
@@ -55,7 +75,7 @@ export const RLSidebarTheme = defineTheme("sidebar", {
       offcanvas: { root: "-translate-x-full" },
       none: {},
     },
-    variant: {
+    layout: {
       sidebar: {},
       floating: {
         root: "m-4 rounded-xl border border-default shadow-md h-[calc(100vh-2rem)] bg-default/95 backdrop-blur",
@@ -68,6 +88,6 @@ export const RLSidebarTheme = defineTheme("sidebar", {
   defaultVariants: {
     side: "left",
     collapsible: "none",
-    variant: "sidebar",
+    layout: "sidebar",
   },
 });

@@ -3,11 +3,11 @@ import type { RLPageBodyProps } from "./page-body.types";
 import { RLPageBodyTheme } from "./page-body.theme";
 
 export const RLPageBody: Component<RLPageBodyProps> = (props) => {
-  const { classes, rest } = RLPageBodyTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLPageBodyTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

@@ -3,11 +3,11 @@ import type { RLProseProps } from "./prose.types";
 import { RLProseTheme } from "./prose.theme";
 
 export const RLProse: Component<RLProseProps> = (props) => {
-  const { classes, rest } = RLProseTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLProseTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

@@ -1,115 +1,23 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLAvatarProps } from "../avatar/avatar.types";
+import type { RLAvatarGroupTheme } from "./avatar-group.theme";
 
-export interface AvatarItemData {
-  /**
-   * Image URL.
-   */
-  src?: string;
-  /**
-   * Alt text for the image.
-   */
-  alt?: string;
-  /**
-   * Fallback icon name or element.
-   */
-  icon?: any;
-  /**
-   * Fallback text.
-   */
-  text?: string;
-  /**
-   * Fallback text (initials or short label).
-   */
-  fallback?: string;
-  /**
-   * Alias for fallback — two-letter initials.
-   */
-  initials?: string;
-  /**
-   * Color variant passed to the inner Avatar.
-   */
-  color?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | ThemeColor
-    | undefined;
-  chip?: any;
-  loading?: "lazy" | "eager";
-  [key: string]: unknown;
-}
+/**
+ * Data for one avatar rendered by `items`. Forwarded to `RLAvatar`.
+ */
+export type AvatarItemData = Pick<
+  RLAvatarProps,
+  "src" | "alt" | "icon" | "text" | "color" | "chip" | "loading"
+>;
 
-export interface RLAvatarGroupProps {
+export type RLAvatarGroupProps = InferThemeProps<typeof RLAvatarGroupTheme> & {
   /**
-   * The element or component this component should render as.
-   *
-   * @default "div"
-   */
-  as?: ValidComponent;
-  /**
-   * Array of avatar data to render automatically. When omitted, renders default children.
+   * Avatars to render from data. When omitted, the `children` are rendered instead.
    */
   items?: AvatarItemData[];
   /**
-   * The maximum number of avatars to display. The rest is displayed as a `+X` avatar.
+   * Maximum number of avatars to display. The remainder is shown as a `+X` counter.
+   * When omitted, every avatar is displayed.
    */
-  max?: string | number | undefined;
-  /**
-   * Alias for `max`.
-   *
-   * @default 5
-   */
-  displayLimit?: number;
-  /**
-   * Avatar size — forwarded to each inner RLAvatar.
-   *
-   * @default "md"
-   */
-  size?:
-    | "3xs"
-    | "2xs"
-    | "xs"
-    | "sm"
-    | "md"
-    | "lg"
-    | "xl"
-    | "2xl"
-    | "3xl"
-    | (string & {})
-    | undefined;
-  /**
-   * Color variant — forwarded to each inner RLAvatar.
-   *
-   * @default "neutral"
-   */
-  color?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | ThemeColor
-    | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: {
-    root?: any;
-    base?: any;
-    more?: any;
-  };
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  max?: number;
+};

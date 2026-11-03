@@ -3,24 +3,26 @@ import type { RLDashboardSearchButtonProps } from "./dashboard-search-button.typ
 import { RLDashboardSearchButtonTheme } from "./dashboard-search-button.theme";
 import { For, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = ["icon", "label", "kbds"] as const;
 
+const DEFAULT_KBDS = [{ value: "meta" }, { value: "k" }];
+
 export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (props) => {
-  const { classes, rest, slots } = RLDashboardSearchButtonTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLDashboardSearchButtonTheme.setup(props, {
+    as: "button",
     omit: OMIT_KEYS,
     slots: ["trailingSlot"] as const,
   });
 
-  const labelText = () => props.label ?? "Search";
-  const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }];
-
   return (
-    <button
+    <Tag
       type="button"
       data-dashboard-search-button
-      class={classes().base}
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       {...rest}
     >
       {props.icon !== false && (
@@ -31,16 +33,16 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
       )}
 
       <span data-slot="label" class={classes().label}>
-        {labelText()}
+        {props.label ?? uiT("search.label")}
       </span>
 
       <span data-slot="trailing" class={classes().trailing}>
         <Show
           when={slots.trailingSlot()}
           fallback={
-            <Show when={kbdsList().length > 0}>
+            <Show when={(props.kbds ?? DEFAULT_KBDS).length > 0}>
               <span class="flex items-center gap-0.5">
-                <For each={kbdsList()}>
+                <For each={props.kbds ?? DEFAULT_KBDS}>
                   {(kbd) => {
                     const val = typeof kbd === "string" ? kbd : kbd.value;
                     const txt = val === "meta" ? "⌘" : val === "k" ? "K" : val;
@@ -58,7 +60,7 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
           {slots.trailingSlot()}
         </Show>
       </span>
-      {props.children}
-    </button>
+      {children()}
+    </Tag>
   );
 };

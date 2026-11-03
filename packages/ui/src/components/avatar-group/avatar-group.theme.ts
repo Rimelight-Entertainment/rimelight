@@ -9,14 +9,6 @@ export const RLAvatarGroupTheme = defineTheme("avatar-group", {
   },
   variants: {
     size: {
-      "3xs": {
-        base: "-me-1",
-        more: "-me-1 size-4 text-[7px]",
-      },
-      "2xs": {
-        base: "-me-1.5",
-        more: "-me-1.5 size-5 text-[8px]",
-      },
       xs: {
         base: "-me-1.5",
         more: "-me-1.5 size-6 text-[9px]",
@@ -36,14 +28,6 @@ export const RLAvatarGroupTheme = defineTheme("avatar-group", {
       xl: {
         base: "-me-3.5",
         more: "-me-3.5 size-10 text-xs",
-      },
-      "2xl": {
-        base: "-me-4",
-        more: "-me-4 size-11 text-sm",
-      },
-      "3xl": {
-        base: "-me-4.5",
-        more: "-me-4.5 size-12 text-sm",
       },
     },
     color: "auto",

@@ -1,82 +1,92 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLTimelineTheme } from "./timeline.theme";
 
 export interface TimelineItem {
-  date?: string;
-  title?: string;
-  description?: string;
-  icon?: string;
-  avatar?: any;
-  value?: string | number;
-  slot?: string;
-  class?: any;
-  ui?: {
-    item?: any;
-    container?: any;
-    indicator?: any;
-    separator?: any;
-    wrapper?: any;
-    date?: any;
-    title?: any;
-    description?: any;
-    [key: string]: any;
-  };
-  [key: string]: any;
-}
-
-export interface TimelineItemProps extends TimelineItem {
-  as?: ValidComponent;
-  isLast?: boolean;
-  state?: "active" | "completed";
-  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
-  color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral";
-  orientation?: "horizontal" | "vertical";
-  class?: any;
-}
-
-export interface RLTimelineProps<T extends TimelineItem = TimelineItem> {
   /**
-   * The element or component this component should render as.
+   * Date text rendered above the title.
    */
-  as?: ValidComponent;
-  items?: T[];
-  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
-  color?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral";
+  date?: string | undefined;
   /**
-   * The orientation of the Timeline.
-   *
+   * Title of the entry.
+   */
+  title?: string | undefined;
+  /**
+   * Description of the entry.
+   */
+  description?: string | undefined;
+  /**
+   * Icon name rendered inside the indicator when no avatar or `indicatorSlot` is set.
+   */
+  icon?: string | undefined;
+  /**
+   * Avatar rendered inside the indicator.
+   */
+  avatar?: { src?: string | undefined; alt?: string | undefined } | undefined;
+  /**
+   * Value that identifies the entry for `value`. Defaults to the item's index.
+   */
+  value?: string | number | undefined;
+}
+
+export interface TimelineSlotContext {
+  item: {
+    date?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
+    icon?: string | undefined;
+    avatar?: { src?: string | undefined; alt?: string | undefined } | undefined;
+    value?: string | number | undefined;
+  };
+  index: number;
+}
+
+export type RLTimelineProps = InferThemeProps<typeof RLTimelineTheme> & {
+  /**
+   * The entries to render.
+   */
+  items?: TimelineItem[] | undefined;
+  /**
+   * The size of the indicators and spacing.
+   * @default "md"
+   */
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
+  /**
+   * The orientation of the timeline.
    * @default "vertical"
    */
-  orientation?: "horizontal" | "vertical";
+  orientation?: "horizontal" | "vertical" | undefined;
   /**
-   * The key used to get the value from the item.
-   *
-   * @default "value"
+   * Index or value of the active entry. Entries before it are completed.
    */
-  valueKey?: string;
-  defaultValue?: string | number;
-  value?: string | number;
-  reverse?: boolean;
-  ui?: {
-    root?: any;
-    item?: any;
-    container?: any;
-    indicator?: any;
-    separator?: any;
-    wrapper?: any;
-    date?: any;
-    title?: any;
-    description?: any;
-    [key: string]: any;
-  };
-  class?: any;
-  children?:
-    | JSX.Element
-    | ((ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element);
-  indicator?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  wrapper?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  date?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  title?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element;
-  [key: string]: unknown;
-}
+  value?: string | number | undefined;
+  /**
+   * Initial active entry when `value` is not set.
+   */
+  defaultValue?: string | number | undefined;
+  /**
+   * When `true`, entries are laid out in reverse order.
+   * @default false
+   */
+  reverse?: boolean | undefined;
+  /**
+   * Custom indicator content per entry. Replaces the avatar and icon.
+   */
+  indicatorSlot?: SlotRenderer<TimelineSlotContext>;
+  /**
+   * Custom wrapper content per entry. Replaces the date, title and description.
+   */
+  wrapperSlot?: SlotRenderer<TimelineSlotContext>;
+  /**
+   * Custom date content per entry. Falls back to `item.date`.
+   */
+  dateSlot?: SlotRenderer<TimelineSlotContext>;
+  /**
+   * Custom title content per entry. Falls back to `item.title`.
+   */
+  titleSlot?: SlotRenderer<TimelineSlotContext>;
+  /**
+   * Custom description content per entry. Falls back to `item.description`.
+   */
+  descriptionSlot?: SlotRenderer<TimelineSlotContext>;
+};

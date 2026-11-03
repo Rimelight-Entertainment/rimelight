@@ -1,38 +1,38 @@
 import type { Component } from "solid-js";
-import { createSignal } from "solid-js";
 import type { RLHoverCardProps } from "./hover-card.types";
 import { RLHoverCardTheme } from "./hover-card.theme";
+import { createControllable } from "../../controllable";
 
-const OMIT_KEYS = ["triggerLabel", "trigger"] as const;
+const OMIT_KEYS = ["triggerLabel", "placement", "open", "defaultOpen", "onOpenChange"] as const;
 
 export const RLHoverCard: Component<RLHoverCardProps> = (props) => {
-  const { classes, rest, slots } = RLHoverCardTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLHoverCardTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["triggerSlot"] as const,
   });
 
-  const [isOpen, setIsOpen] = createSignal(false);
-
-  const contentClass = () =>
-    classes()["content"].replace(
-      /\s*(invisible|opacity-0|scale-95|pointer-events-none|group-hover\/hover-card:(visible|opacity-100|scale-100|pointer-events-auto))/g,
-      "",
-    );
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
 
   return (
-    <div
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      data-placement={props.placement ?? "bottom"}
       class={classes().root}
-      data-slot="hover-card-container"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
       {...rest}
     >
       <div
         class={classes().trigger}
         data-slot="trigger"
-        tabindex="0"
-        onFocus={() => setIsOpen(true)}
-        onBlur={() => setIsOpen(false)}
+        tabindex={0}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
       >
         {slots.triggerSlot() ? (
           slots.triggerSlot()
@@ -41,16 +41,9 @@ export const RLHoverCard: Component<RLHoverCardProps> = (props) => {
         ) : null}
       </div>
 
-      <div
-        class={`${contentClass()} ${
-          isOpen()
-            ? "visible opacity-100 scale-100 pointer-events-auto"
-            : "invisible opacity-0 scale-95 pointer-events-none"
-        }`}
-        data-slot="content"
-      >
-        {props.children}
+      <div class={classes().content} data-slot="content" data-state={isOpen() ? "open" : "closed"}>
+        {children()}
       </div>
-    </div>
+    </Tag>
   );
 };

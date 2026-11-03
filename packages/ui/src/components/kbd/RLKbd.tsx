@@ -3,11 +3,11 @@ import type { RLKbdProps } from "./kbd.types";
 import { RLKbdTheme } from "./kbd.theme";
 
 export const RLKbd: Component<RLKbdProps> = (props) => {
-  const { classes, rest } = RLKbdTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLKbdTheme.setup(props, { as: "kbd" });
 
   return (
-    <kbd class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
-      {props.children}
-    </kbd>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
+      {children()}
+    </Tag>
   );
 };

@@ -3,11 +3,11 @@ import type { RLMeterProps } from "./meter.types";
 import { RLMeterTheme } from "./meter.theme";
 
 export const RLMeter: Component<RLMeterProps> = (props) => {
-  const { classes, rest } = RLMeterTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLMeterTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
+      {children()}
+    </Tag>
   );
 };

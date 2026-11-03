@@ -1,25 +1,23 @@
-export interface RLPaginationProps {
+import type { InferThemeProps } from "../../resolver";
+import type { RLPaginationTheme } from "./pagination.theme";
+
+export type RLPaginationProps = InferThemeProps<typeof RLPaginationTheme> & {
   /**
-   * The currently active page (1-indexed).
+   * The current page (1-indexed). Setting it makes the component controlled.
    */
-  currentPage?: number;
+  page?: number | undefined;
+  /**
+   * The initial page (1-indexed) when uncontrolled.
+   * @default 1
+   */
+  defaultPage?: number | undefined;
   /**
    * Total number of pages.
+   * @default 1
    */
-  totalPages?: number;
+  totalPages?: number | undefined;
   /**
-   * The base URL used for links (e.g. `/blog?page=`).
+   * Called with the next page number when the user selects a page.
    */
-  baseUrl?: string;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  page?: number;
-  onPageChange?: (page: number) => void;
-  [key: string]: unknown;
-}
+  onPageChange?: ((page: number) => void) | undefined;
+};

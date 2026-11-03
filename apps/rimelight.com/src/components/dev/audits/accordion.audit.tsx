@@ -17,7 +17,7 @@ export const AccordionSandbox = (): JSX.Element => {
       label: t("app.text.how-does-accordion-grouping-work"),
       icon: "i-lucide-folder-tree",
       content:
-        "When `multiple={false}`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
+        "When `type` is `single`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
     },
     {
       label: t("app.text.can-items-be-individually-disabled"),
@@ -61,7 +61,7 @@ export const AccordionSandbox = (): JSX.Element => {
             class="rounded border-default"
           />
           <span class="font-medium text-highlighted">
-            Multiple Mode (<code>multiple={String(multiple())}</code>)
+            Multiple Mode (<code>{multiple() ? 'type="multiple"' : 'type="single"'}</code>)
           </span>
         </label>
 
@@ -109,7 +109,11 @@ export const AccordionSandbox = (): JSX.Element => {
         </div>
       </div>
 
-      <RLAccordion items={items()} multiple={multiple()} disabled={disabled()} />
+      <RLAccordion
+        items={items()}
+        type={multiple() ? "multiple" : "single"}
+        disabled={disabled()}
+      />
     </>
   );
 };
@@ -120,7 +124,7 @@ export const accordionAudit: ComponentAuditDefinition = {
   category: "Data Display",
   status: "Passed",
   description:
-    "A collapsible content panel component built on native HTML5 <details> & <summary> elements with props (type, value/defaultValue + onChange, collapsible, unmountOnHide, valueKey/labelKey, slots) plus extras (summary/children single mode, multiple alias, name, trailingIconSlot).",
+    "A collapsible content panel component built on native HTML5 <details> & <summary> elements with props (type, value/defaultValue + onValueChange, collapsible, unmountOnHide, slots) plus extras (summary/children single mode, name, trailingIconSlot).",
   importPath: "@rimelight/ui/components/accordion/RLAccordion.tsx",
   renderSandbox: () => <AccordionSandbox />,
   testScenarios: [
@@ -177,7 +181,7 @@ export const accordionAudit: ComponentAuditDefinition = {
               content: "Subscription management, payment gateways, and tax history.",
             },
           ]}
-          multiple
+          type="multiple"
         />
       ),
     },
@@ -221,10 +225,10 @@ export const accordionAudit: ComponentAuditDefinition = {
       id: "multiple-mode",
       title: 'Multiple Open Mode (Nuxt: type="multiple")',
       description:
-        "Rimelight alias: multiple={true}. All items share no `name` group so several can stay open.",
+        "Set `type` to `multiple`. All items share no `name` group so several can stay open.",
       render: () => (
         <RLAccordion
-          multiple
+          type="multiple"
           name="audit-multiple"
           items={[
             {
@@ -258,7 +262,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         return t("app.text.single-exclusive-grouping-via-name");
       },
       description:
-        "With multiple={false} (default) open items collapse each other through a shared HTML5 `name` attribute. Two accordions with different names must not interfere.",
+        "With `type` set to single (default) open items collapse each other through a shared HTML5 `name` attribute. Two accordions with different names must not interfere.",
       render: () => (
         <>
           <RLAccordion
@@ -418,7 +422,7 @@ export const accordionAudit: ComponentAuditDefinition = {
             </div>
             <RLAccordion
               value={active()}
-              onChange={(v) => {
+              onValueChange={(v) => {
                 setActive(v as string | undefined);
               }}
               items={[
@@ -590,25 +594,19 @@ export const accordionAudit: ComponentAuditDefinition = {
       },
       render: () => (
         <RLAccordion
-          valueKey="meta.key"
-          labelKey="meta.title"
           defaultValue="k2"
           items={[
             {
-              meta: {
-                key: "k1",
-                get title() {
-                  return t("app.text.nested-one");
-                },
+              value: "k1",
+              get label() {
+                return t("app.text.nested-one");
               },
               content: "Resolved via dot paths.",
             },
             {
-              meta: {
-                key: "k2",
-                get title() {
-                  return t("app.text.nested-two-open");
-                },
+              value: "k2",
+              get label() {
+                return t("app.text.nested-two-open");
               },
               content: "Starts open.",
             },
@@ -623,20 +621,15 @@ export const accordionAudit: ComponentAuditDefinition = {
         "Maps to Nuxt's #leading #trailing #body #content slots. Custom badge leading, action trailing, markdown-ish body. The last item's fully custom content area starts from scratch (Nuxt semantics) so it carries its own px-4 to align with default body text.",
       render: () => (
         <RLAccordion
-          leadingSlot={(item) => (
+          leadingSlot={({ item }) => (
             <span class="shrink-0 size-5 rounded bg-primary/15 text-primary text-[10px] font-black flex items-center justify-center">
               {(item.label ?? "?").slice(0, 1)}
             </span>
           )}
-          trailingSlot={(_item, index) => (
+          trailingSlot={({ index }) => (
             <span class="shrink-0 ms-auto text-[10px] font-mono text-muted">#{index}</span>
           )}
-          bodySlot={(item) => (
-            <p class="text-sm">
-              <strong>{item.label}</strong> — {item.content}
-            </p>
-          )}
-          contentSlot={(item, index) =>
+          bodySlot={({ item, index }) =>
             index === 2 ? (
               <div class="px-4 pb-3.5">
                 <div class="rounded border border-primary/40 bg-primary/5 p-3 text-xs">
@@ -644,7 +637,9 @@ export const accordionAudit: ComponentAuditDefinition = {
                 </div>
               </div>
             ) : (
-              <div class="px-4 text-sm pb-3.5 opacity-80">{item.content} (default wrapper)</div>
+              <p class="text-sm">
+                <strong>{item.label}</strong> — {item.content}
+              </p>
             )
           }
           items={[
@@ -682,7 +677,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         <RLAccordion
           type="multiple"
           defaultValue={["s0", "s1"]}
-          bodySlot={(item) =>
+          bodySlot={({ item }) =>
             item.value === "s1" ? (
               <p class="text-sm text-primary font-medium">{item.content} ★</p>
             ) : (

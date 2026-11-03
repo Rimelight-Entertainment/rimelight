@@ -3,11 +3,11 @@ import type { RLWatermarkProps } from "./watermark.types";
 import { RLWatermarkTheme } from "./watermark.theme";
 
 export const RLWatermark: Component<RLWatermarkProps> = (props) => {
-  const { classes, rest } = RLWatermarkTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLWatermarkTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

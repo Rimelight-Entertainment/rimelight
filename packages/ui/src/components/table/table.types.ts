@@ -1,3 +1,7 @@
+import type { SlotRenderer } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { JSX } from "@solidjs/web";
+import type { RLTableTheme } from "./table.theme";
 export interface TableColumnMeta {
   class?: {
     td?: string | ((row: TableRow) => string);
@@ -13,7 +17,6 @@ export interface TableColumnMeta {
   rowspan?: {
     td?: number | string | ((row: TableRow) => number | string);
   };
-  [key: string]: any;
 }
 
 export type AnyData = Record<string, any>;
@@ -36,11 +39,23 @@ export type TableAggregationFn<T = any> =
 
 import type { DropdownMenuItem } from "../dropdown-menu/dropdown-menu.types";
 
+/** Context passed to `columnSlots` render functions. */
+export interface TableSlotCtx<T = any> {
+  table: TableApi<T>;
+  column: TableColumn<T>;
+  row?: TableRow<T>;
+  cell?: { value: unknown };
+  getValue?: () => any;
+  renderValue?: () => any;
+  isEditing?: () => boolean;
+  setEditing?: (editing: boolean) => void;
+}
+
 export interface TableColumn<T = any> {
   id?: string;
   accessorKey?: keyof T | string;
   accessorFn?: (row: T) => any;
-  header?: string | ((props: { column: TableColumn<T>; table: any }) => any);
+  header?: string | ((props: { column: TableColumn<T>; table: TableApi<T> }) => any);
   cell?: (props: {
     row: TableRow<T>;
     getValue: () => any;
@@ -48,7 +63,7 @@ export interface TableColumn<T = any> {
     isEditing?: () => boolean;
     setEditing?: (editing: boolean) => void;
     column: TableColumn<T>;
-    table: any;
+    table: TableApi<T>;
   }) => any;
   actions?:
     | ((row: TableRow<T>) => DropdownMenuItem[] | DropdownMenuItem[][])
@@ -65,9 +80,9 @@ export interface TableColumn<T = any> {
     isEditing?: () => boolean;
     setEditing?: (editing: boolean) => void;
     column: TableColumn<T>;
-    table: any;
+    table: TableApi<T>;
   }) => any;
-  footer?: string | ((props: { column: TableColumn<T>; table: any }) => any);
+  footer?: string | ((props: { column: TableColumn<T>; table: TableApi<T> }) => any);
   meta?: TableColumnMeta;
   enableSorting?: boolean;
   enableHiding?: boolean;
@@ -76,7 +91,6 @@ export interface TableColumn<T = any> {
   size?: number | string;
   minSize?: number | string;
   maxSize?: number | string;
-  [key: string]: any;
 }
 
 export interface TableRow<T = any> {
@@ -99,7 +113,6 @@ export interface TableRow<T = any> {
   getIsGrouped: () => boolean;
   getCanExpand: () => boolean;
   subRows?: TableRow<T>[];
-  [key: string]: any;
 }
 
 export interface TableGroup<T = any> {
@@ -117,7 +130,6 @@ export interface TableMeta<T = any> {
   style?: {
     tr?: string | ((row: TableRow<T>) => string);
   };
-  [key: string]: any;
 }
 
 export interface TableSortingItem {
@@ -167,7 +179,7 @@ export interface TableVirtualizeOptions {
 }
 
 /**
- * Imperative API exposed by RLTable (via ref callback or instance).
+ * Imperative API exposed by RLTable via the `onApi` callback.
  */
 export interface TableApi<T = any> {
   tableRef: HTMLTableElement | null;
@@ -224,9 +236,7 @@ export interface TableApi<T = any> {
   };
 }
 
-import type { JSX } from "@solidjs/web";
-
-export interface RLTableProps<T = any> {
+export type RLTableProps<T = unknown> = Omit<InferThemeProps<typeof RLTableTheme>, "onSelect"> & {
   /**
    * Data rows. Auto-infers columns from the first row's keys when `columns` is omitted.
    */
@@ -427,26 +437,10 @@ export interface RLTableProps<T = any> {
     | DropdownMenuItem[][]
     | undefined;
   /**
-   * Alias for actions.
-   */
-  rowActions?:
-    | ((row: TableRow<T>) => DropdownMenuItem[] | DropdownMenuItem[][])
-    | DropdownMenuItem[]
-    | DropdownMenuItem[][]
-    | undefined;
-  /**
-   * Per-slot class overrides.
-   */
-  ui?: Partial<Record<string, string>> | undefined;
-  /**
-   * Additional classes on the root element.
-   */
-  class?: any;
-  /**
    * Solid slot overrides dictionary (e.g. { "name-cell": ({ row }) => ... })
    */
-  columnSlots?: Record<string, (ctx: any) => any> | undefined;
-  ref?: (api: TableApi<T>) => void | TableApi<T>;
+  columnSlots?: Record<string, SlotRenderer<TableSlotCtx<T>>> | undefined;
+  onApi?: (api: TableApi<T>) => void | TableApi<T>;
   toolbarSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
   captionSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
   groupHeaderSlot?: (ctx: {
@@ -459,5 +453,4 @@ export interface RLTableProps<T = any> {
   emptyContentSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
   bodyTopSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
   bodyBottomSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
-  [key: string]: unknown;
-}
+};

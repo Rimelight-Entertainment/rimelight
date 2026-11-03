@@ -1,21 +1,12 @@
 import type { RLFileUploadProps } from "./file-upload.types";
 import { RLFileUploadTheme } from "./file-upload.theme";
-import { createSignal, type Component } from "solid-js";
+import { createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
-
-const OMIT_KEYS = [
-  "accept",
-  "multiple",
-  "title",
-  "description",
-  "icon",
-  "color",
-  "onChange",
-] as const;
+import { uiT } from "../../locale";
 
 export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
-  const { classes, rest, slots } = RLFileUploadTheme.setup(props, {
-    omit: OMIT_KEYS,
+  const { Tag, classes, rest, children, slots, theme } = RLFileUploadTheme.setup(props, {
+    omit: ["accept", "multiple", "title", "description", "icon", "onValueChange"] as const,
     slots: ["iconSlot"] as const,
   });
 
@@ -24,7 +15,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
 
   let inputRef: HTMLInputElement | undefined;
 
-  const uploadTitle = () => props.title ?? "Drop files here or click to upload";
+  const uploadTitle = () => props.title ?? uiT("file-upload.title");
 
   const openPicker = () => {
     if (props.disabled) return;
@@ -41,12 +32,14 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
 
   const showFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
-    setFileLabel(files.length === 1 ? files[0]!.name : `${files.length} files selected`);
+    setFileLabel(
+      files.length === 1 ? files[0]!.name : `${files.length} ${uiT("file-upload.files-selected")}`,
+    );
   };
 
   const handleInputChange = (e: Event & { currentTarget: HTMLInputElement }) => {
     showFiles(e.currentTarget.files);
-    props.onChange?.(e);
+    props.onValueChange?.(Array.from(e.currentTarget.files ?? []));
   };
 
   const handleDragOver = (e: DragEvent) => {
@@ -71,12 +64,14 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
       void err;
     }
     showFiles(dt.files);
+    props.onValueChange?.(Array.from(dt.files));
   };
 
   return (
-    <div
-      class={classes().root + (dragging() ? " border-primary bg-primary/5" : "")}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root + (dragging() ? " border-primary bg-primary/5" : "")}
       data-fileUpload
       data-disabled={props.disabled ? "true" : undefined}
       role="button"
@@ -88,6 +83,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       {...rest}
+      onChange={undefined}
     >
       <input
         type="file"
@@ -109,25 +105,28 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
           <RLIcon name={props.icon ?? "cloud-upload"} class={classes().icon} aria-hidden="true" />
         )}
 
-        {props.children ? (
-          props.children
-        ) : (
-          <>
-            <p class={classes().title} data-slot="title">
-              {uploadTitle()}
-            </p>
-            {props.description ? (
-              <p class={classes().description} data-slot="description">
-                {props.description}
+        <Show
+          when={children()}
+          fallback={
+            <>
+              <p class={classes().title} data-slot="title">
+                {uploadTitle()}
               </p>
-            ) : null}
-            {props.accept ? (
-              <p class="mt-1 text-[10px] text-muted/70">
-                Accepted: <span class="font-mono">{props.accept}</span>
-              </p>
-            ) : null}
-          </>
-        )}
+              <Show when={props.description}>
+                <p class={classes().description} data-slot="description">
+                  {props.description}
+                </p>
+              </Show>
+              <Show when={props.accept}>
+                <p class="mt-1 text-[10px] text-muted/70">
+                  {uiT("file-upload.accepted")} <span class="font-mono">{props.accept}</span>
+                </p>
+              </Show>
+            </>
+          }
+        >
+          {children()}
+        </Show>
 
         <div
           class={`mt-3 text-xs text-muted ${fileLabel() ? "" : "hidden"}`}
@@ -137,6 +136,6 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
           {fileLabel() || "\u00a0"}
         </div>
       </div>
-    </div>
+    </Tag>
   );
 };

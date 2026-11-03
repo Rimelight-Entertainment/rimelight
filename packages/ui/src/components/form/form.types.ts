@@ -1,23 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLFormTheme } from "./form.theme";
 
-export interface RLFormProps {
+export type RLFormProps = Omit<InferThemeProps<typeof RLFormTheme>, "onSubmit"> & {
   /**
-   * Validation schema (Zod or similar).
+   * Native submit event on the form element.
    */
-  schema?: any;
-  /**
-   * Form state.
-   */
-  state?: any;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  onSubmit?: (e: Event & { currentTarget: HTMLFormElement }) => void;
-  [key: string]: unknown;
-}
+  onSubmit?: (event: Event & { currentTarget: HTMLFormElement }) => void;
+};

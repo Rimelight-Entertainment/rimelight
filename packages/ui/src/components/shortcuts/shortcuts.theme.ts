@@ -3,7 +3,6 @@ import { defineTheme } from "../../resolver";
 export const RLShortcutsTheme = defineTheme("shortcuts", {
   slots: [
     "root",
-    "modal",
     "dialog",
     "header",
     "title",
@@ -17,15 +16,11 @@ export const RLShortcutsTheme = defineTheme("shortcuts", {
     "name",
     "desc",
     "keys",
-    "kbd",
     "empty",
     "footer",
-    "kbdFooter",
   ],
   base: {
-    root: "relative inline-block",
-    modal:
-      "fixed inset-0 z-[1000] flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm",
+    root: "fixed inset-0 z-[1000] flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm",
     dialog:
       "bg-elevated border border-default rounded-xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col text-default",
     header: "flex items-center justify-between border-b border-default px-5 py-4",
@@ -41,12 +36,9 @@ export const RLShortcutsTheme = defineTheme("shortcuts", {
     name: "text-sm font-medium text-highlighted",
     desc: "text-xs text-muted",
     keys: "flex items-center gap-1",
-    kbd: "inline-flex items-center justify-center font-mono text-xs font-semibold bg-muted border border-default rounded px-1.5 py-0.5 min-w-5 text-muted shadow-sm",
     empty: "text-sm text-muted text-center py-4",
     footer:
       "bg-muted/50 border-t border-default px-5 py-3 flex items-center justify-end text-xs text-muted",
-    kbdFooter:
-      "bg-muted border border-default rounded px-1.5 py-0.5 text-[11px] text-muted font-mono ml-1 mr-1",
   },
   variants: {},
   defaultVariants: {},

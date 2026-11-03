@@ -27,14 +27,11 @@ describe("RLContextMenu", () => {
   describe("Single Component Anatomy & Trigger", () => {
     it("renders trigger and closed state by default", () => {
       const html = render(() => (
-        <RLContextMenu items={[{ label: "Copy" }]} class="custom-trigger">
-          Right-click here
-        </RLContextMenu>
+        <RLContextMenu items={[{ label: "Copy" }]}>Right-click here</RLContextMenu>
       ));
 
       const trigger = slotTag(html, "trigger");
       expect(trigger).not.toBe("");
-      expect(trigger).toContain("custom-trigger");
       expect(trigger).toContain("data-closed");
       expect(attr(trigger, "data-state")).toBe("closed");
       expect(html).toContain("Right-click here");
@@ -55,14 +52,14 @@ describe("RLContextMenu", () => {
       expect(html).toContain("Custom Surface");
     });
 
-    it("supports polymorphic trigger via `as` prop", () => {
+    it("supports polymorphic root via `as` prop", () => {
       const html = render(() => (
-        <RLContextMenu as="section" class="poly-trigger" items={[{ label: "Copy" }]}>
+        <RLContextMenu as="section" items={[{ label: "Copy" }]}>
           Surface
         </RLContextMenu>
       ));
 
-      expect(slotTag(html, "trigger")).toMatch(/^<section/);
+      expect(html).toMatch(/^<section[^>]*data-slot="root"/);
     });
   });
 
@@ -85,7 +82,7 @@ describe("RLContextMenu", () => {
             {
               label: "Delete",
               icon: "trash-2",
-              variant: "danger",
+              color: "error",
             },
           ]}
         >
@@ -175,18 +172,19 @@ describe("RLContextMenu", () => {
       expect(html).toContain("Rename");
     });
 
-    it("renders shorthand top-level group object without explicit type='group'", () => {
+    it("renders group object with label and items", () => {
       const html = render(() => (
         <RLContextMenu
           open
           portal={false}
           items={[
             {
+              type: "group",
               label: "Actions",
               items: [
                 { label: "Copy path", icon: "i-lucide:copy" },
                 { label: "Rename file", icon: "i-lucide:edit-2" },
-                { label: "Delete", icon: "i-lucide:trash-2", variant: "danger" },
+                { label: "Delete", icon: "i-lucide:trash-2", color: "error" },
               ],
             },
           ]}
@@ -322,32 +320,6 @@ describe("RLContextMenu", () => {
       expect(html).toContain("Footer Info");
       expect(html).toContain("custom-item-render");
       expect(html).toContain("Custom: Action 1");
-    });
-
-    it("applies ui / classes and styles overrides across slots", () => {
-      const html = render(() => (
-        <RLContextMenu
-          open
-          portal={false}
-          size="lg"
-          ui={{
-            trigger: "ui-trigger-custom",
-            content: "ui-content-custom",
-            item: "ui-item-custom",
-          }}
-          classes={{
-            group: "classes-group-custom",
-          }}
-          items={[{ label: "Styled Item" }]}
-        >
-          Surface
-        </RLContextMenu>
-      ));
-
-      expect(slotTag(html, "trigger")).toContain("ui-trigger-custom");
-      expect(slotTag(html, "content")).toContain("ui-content-custom");
-      expect(slotTag(html, "group")).toContain("classes-group-custom");
-      expect(slotTag(html, "item")).toContain("ui-item-custom");
     });
   });
 });

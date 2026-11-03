@@ -643,17 +643,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           {
             label: t("app.header.user.dropdown.dashboard"),
             icon: "i-lucide-layout-dashboard",
-            to: getLocaleUrl("/dashboard"),
+            href: getLocaleUrl("/dashboard"),
           },
           {
             label: t("app.header.user.dropdown.profile"),
             icon: "i-lucide-user",
-            to: getLocaleUrl("/dashboard/profile"),
+            href: getLocaleUrl("/dashboard/profile"),
           },
           {
             label: t("app.header.user.dropdown.settings"),
             icon: "i-lucide-cog",
-            to: getLocaleUrl("/dashboard/settings"),
+            href: getLocaleUrl("/dashboard/settings"),
           },
           {
             type: "separator",
@@ -661,7 +661,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           {
             label: t("app.header.user.dropdown.sign-out"),
             icon: "i-lucide-log-out",
-            to: "/api/auth/logout",
+            href: "/api/auth/logout",
             color: "error",
           },
         ]
@@ -818,13 +818,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       stackIndex={props.stackIndex ?? 0}
       data-theme="dark"
       class="scroll-header bg-black"
-      leftSlot={
+      leadingSlot={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
             <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
             <RLNavigationMenu
               items={leftLinks()}
-              variant="link"
               panels={leftSlots()}
               ui={{
                 link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
@@ -851,7 +850,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 items={leftLinks()}
                 panels={leftMobileSlots}
                 orientation="vertical"
-                variant="link"
                 ui={{
                   link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
                 }}
@@ -867,7 +865,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           </div>
         </div>
       }
-      rightSlot={
+      trailingSlot={
         <div class="flex items-center gap-md">
           <RLSearch />
           <RLButton

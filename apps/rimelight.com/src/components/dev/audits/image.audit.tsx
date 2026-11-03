@@ -136,7 +136,7 @@ import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import { type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const FITS = ["cover", "contain", "fill", "none"] as const;
+const FITS = ["cover", "contain", "fill"] as const;
 
 export const imageAudit: ComponentAuditDefinition = {
   id: "image",
@@ -248,8 +248,7 @@ export const imageAudit: ComponentAuditDefinition = {
       get title() {
         return t("app.text.object-fit-variants");
       },
-      description:
-        "The fit prop maps to object-cover, object-contain, object-fill, and object-none.",
+      description: "The fit prop maps to object-cover, object-contain, and object-fill.",
       render: () => (
         <div class="flex flex-wrap gap-4">
           <For each={FITS}>

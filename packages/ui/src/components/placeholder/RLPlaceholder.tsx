@@ -3,11 +3,11 @@ import type { RLPlaceholderProps } from "./placeholder.types";
 import { RLPlaceholderTheme } from "./placeholder.theme";
 
 export const RLPlaceholder: Component<RLPlaceholderProps> = (props) => {
-  const { classes, rest } = RLPlaceholderTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLPlaceholderTheme.setup(props);
 
   return (
-    <div class={classes()["base"]} {...rest}>
-      <svg class={classes()["svg"]}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      <svg class={classes().svg}>
         <defs>
           <pattern
             id="pattern-5c1e4f0e-62d5-498b-8ff0-cf77bb448c8e"
@@ -28,7 +28,7 @@ export const RLPlaceholder: Component<RLPlaceholderProps> = (props) => {
         />
       </svg>
 
-      {props.children}
-    </div>
+      {children()}
+    </Tag>
   );
 };

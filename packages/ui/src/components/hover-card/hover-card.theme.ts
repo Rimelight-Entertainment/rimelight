@@ -3,12 +3,12 @@ import { defineTheme } from "../../resolver";
 export const RLHoverCardTheme = defineTheme("hover-card", {
   slots: ["root", "trigger", "content"],
   base: {
-    root: "relative inline-block group/hover-card",
+    root: "relative inline-block",
     trigger: "",
     content: [
       "absolute z-50 w-80 rounded-lg border border-default bg-elevated p-4 text-highlighted shadow-md outline-none",
       "transition-all duration-200 invisible opacity-0 scale-95 origin-center pointer-events-none",
-      "group-hover/hover-card:visible group-hover/hover-card:opacity-100 group-hover/hover-card:scale-100 group-hover/hover-card:pointer-events-auto",
+      "data-[state=open]:visible data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=open]:pointer-events-auto",
     ],
   },
   variants: {

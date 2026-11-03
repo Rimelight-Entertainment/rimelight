@@ -3,11 +3,11 @@ import type { RLPricingPlanProps } from "./pricing-plan.types";
 import { RLPricingPlanTheme } from "./pricing-plan.theme";
 
 export const RLPricingPlan: Component<RLPricingPlanProps> = (props) => {
-  const { classes, rest } = RLPricingPlanTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLPricingPlanTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

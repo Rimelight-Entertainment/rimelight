@@ -1,6 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCalendar } from "@rimelight/ui/components/calendar/RLCalendar.tsx";
+import type { CalendarModelValue } from "@rimelight/ui/components/calendar/calendar.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
@@ -22,7 +23,7 @@ export const CalendarSandbox = (): JSX.Element => {
   const [readonly, setReadonly] = createSignal(false);
   const [fixedWeeks, setFixedWeeks] = createSignal(true);
   const [numberOfMonths, setNumberOfMonths] = createSignal(1);
-  const [value, setValue] = createSignal<Date | Date[] | { start?: Date; end?: Date } | null>(null);
+  const [value, setValue] = createSignal<CalendarModelValue>(null);
 
   const chip = (active: boolean) =>
     `px-2 py-0.5 rounded text-xs font-mono transition-colors ${
@@ -153,8 +154,10 @@ export const CalendarSandbox = (): JSX.Element => {
         fixedWeeks={fixedWeeks()}
         numberOfMonths={numberOfMonths()}
         defaultPlaceholder={FEB}
-        modelValue={value() as never}
-        onUpdateValue={setValue as never}
+        value={value()}
+        onValueChange={(next) => {
+          setValue(next ?? null);
+        }}
       />
 
       <p class="text-xs text-muted font-mono">
@@ -359,7 +362,7 @@ export const calendarAudit: ComponentAuditDefinition = {
         <div class="flex flex-wrap gap-8">
           <RLCalendar
             defaultPlaceholder={FEB}
-            headingSlot={() => <span class="text-success font-bold">{"CUSTOM HEADING"}</span>}
+            headingSlot={<span class="text-success font-bold">{"CUSTOM HEADING"}</span>}
             weekDaySlot={(ctx) => (
               <span class="text-primary">{ctx.day.slice(0, 2).toUpperCase()}</span>
             )}

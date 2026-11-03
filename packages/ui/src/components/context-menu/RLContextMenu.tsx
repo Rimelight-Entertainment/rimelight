@@ -10,8 +10,9 @@ import {
 } from "solid-js";
 import { Portal, type JSX } from "@solidjs/web";
 import { cx } from "../../resolver";
+import { createControllable } from "../../controllable";
 import { RLIcon } from "../icon/RLIcon";
-import { RLContextMenuTheme } from "./context-menu.theme";
+import { RLContextMenuTheme, type RLContextMenuClasses } from "./context-menu.theme";
 import type {
   ContextMenuActionItem,
   ContextMenuCheckboxItem,
@@ -20,7 +21,6 @@ import type {
   ContextMenuItems,
   ContextMenuRadioItem,
   RLContextMenuProps,
-  RLContextMenuSlot,
 } from "./context-menu.types";
 
 const OMIT_KEYS = [
@@ -42,9 +42,6 @@ const OMIT_KEYS = [
   "portal",
   "unmountOnHide",
   "longPressDelay",
-  "classes",
-  "styles",
-  "style",
 ] as const;
 
 interface AnchorCoords {
@@ -98,10 +95,7 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
     if (it.type === "separator") {
       flushUngrouped();
       sections.push({ type: "separator" });
-    } else if (
-      it.type === "group" ||
-      (!it.type && "items" in it && Array.isArray((it as unknown as ContextMenuGroupItem).items))
-    ) {
+    } else if (it.type === "group") {
       flushUngrouped();
       const grp = it as ContextMenuGroupItem;
       const grpItems = grp.items ?? grp.children ?? [];
@@ -119,34 +113,28 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
   return sections;
 }
 
-function mergeStyle(
-  base: JSX.CSSProperties | string | undefined,
-  extra: JSX.CSSProperties | string | undefined,
-): JSX.CSSProperties | string | undefined {
-  if (!base) return extra;
-  if (!extra) return base;
-  if (typeof base === "string" && typeof extra === "string") {
-    return `${base}; ${extra}`;
-  }
-  if (typeof base === "object" && typeof extra === "object") {
-    return { ...base, ...extra };
-  }
-  return extra;
-}
-
 /**
  * Recursive submenu layer component
  */
 interface MenuLayerProps {
   sections: ResolvedMenuSection[];
-  classes: ReturnType<typeof RLContextMenuTheme.setup>["classes"];
-  styles?: Partial<Record<RLContextMenuSlot, JSX.CSSProperties | string>> | undefined;
+  menuClasses: () => RLContextMenuClasses;
   checkedIcon: () => string;
   submenuIcon: () => string;
-  itemRender?: RLContextMenuProps["itemSlot"];
+  itemRender?: ((props: ItemRenderArgs) => JSX.Element) | undefined;
   isSubmenu?: boolean;
   closeLayer?: () => void;
   closeRoot: () => void;
+}
+
+interface ItemRenderArgs {
+  item: ContextMenuItem;
+  index: number;
+  disabled: boolean;
+  highlighted: boolean;
+  selected: boolean;
+  expanded: boolean;
+  closeMenu: () => void;
 }
 
 const MenuLayer: Component<MenuLayerProps> = (props) => {
@@ -317,18 +305,11 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
 
   const renderItem = (item: ContextMenuItem, flatIdx: number) => {
     if (item.type === "separator") {
-      return (
-        <div
-          role="separator"
-          data-slot="separator"
-          class={cx(props.classes().separator, item.class)}
-          style={mergeStyle(props.styles?.separator, item.style)}
-        />
-      );
+      return <div role="separator" data-slot="separator" class={props.menuClasses().separator} />;
     }
 
     const isDisabled = () => Boolean(item.disabled);
-    const isDanger = () => item.variant === "danger";
+    const isDanger = () => item.color === "error";
     const isHighlighted = () => highlightedIndex() === flatIdx;
     const isSelected = () => isItemChecked(item, flatIdx);
     const isSubmenu = () => hasSubmenu(item);
@@ -342,7 +323,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
         highlighted: isHighlighted(),
         selected: isSelected(),
         expanded: isSubOpen(),
-        close: props.closeRoot,
+        closeMenu: props.closeRoot,
       });
     }
 
@@ -352,7 +333,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
       return "menuitem";
     };
 
-    const leadingIcon = () => item.icon ?? item.leading;
+    const leadingIcon = () => item.iconSlot ?? item.icon;
 
     return (
       <div class="relative w-full">
@@ -360,7 +341,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           ref={(el) => {
             itemEls.set(flatIdx, el);
           }}
-          role={role() as any}
+          role={role()}
           tabindex={isDisabled() ? -1 : 0}
           aria-disabled={isDisabled() ? "true" : undefined}
           aria-checked={
@@ -379,12 +360,10 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           data-danger={isDanger() ? "" : undefined}
           data-expanded={isSubOpen() ? "" : undefined}
           class={cx(
-            props.classes().item,
+            props.menuClasses().item,
             isDisabled() && "opacity-50 pointer-events-none",
             isDanger() && "text-error hover:bg-error/10 focus-visible:bg-error/10",
-            item.class,
           )}
-          style={mergeStyle(props.styles?.item, item.style) as any}
           onClick={(e) => {
             e.stopPropagation();
             activateItem(item, flatIdx, e);
@@ -405,18 +384,14 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
         >
           {/* Leading Icon / Check Indicator */}
           <Show when={leadingIcon() || item.type === "checkbox" || item.type === "radio"}>
-            <span
-              class={props.classes().itemLeading}
-              data-slot="itemLeading"
-              style={props.styles?.itemLeading}
-            >
+            <span class={props.menuClasses().itemLeading} data-slot="itemLeading">
               <Show
                 when={leadingIcon()}
                 fallback={
                   <Show when={isSelected()}>
                     <RLIcon
                       name={props.checkedIcon()}
-                      class={props.classes().itemIndicator}
+                      class={props.menuClasses().itemIndicator}
                       data-slot="itemIndicator"
                     />
                   </Show>
@@ -425,7 +400,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
                 {typeof leadingIcon() === "string" ? (
                   <RLIcon
                     name={leadingIcon() as string}
-                    class={props.classes().itemLeadingIcon}
+                    class={props.menuClasses().itemLeadingIcon}
                     data-slot="itemLeadingIcon"
                   />
                 ) : (
@@ -436,26 +411,14 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           </Show>
 
           {/* Label + Description wrapper */}
-          <div
-            class={props.classes().itemWrapper}
-            data-slot="itemWrapper"
-            style={props.styles?.itemWrapper}
-          >
+          <div class={props.menuClasses().itemWrapper} data-slot="itemWrapper">
             <Show when={item.label}>
-              <span
-                class={props.classes().itemLabel}
-                data-slot="itemLabel"
-                style={props.styles?.itemLabel}
-              >
+              <span class={props.menuClasses().itemLabel} data-slot="itemLabel">
                 {item.label}
               </span>
             </Show>
             <Show when={item.description}>
-              <span
-                class={props.classes().itemDescription}
-                data-slot="itemDescription"
-                style={props.styles?.itemDescription}
-              >
+              <span class={props.menuClasses().itemDescription} data-slot="itemDescription">
                 {item.description}
               </span>
             </Show>
@@ -463,24 +426,12 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
 
           {/* Trailing: Kbds + Submenu indicator */}
           <Show when={(item.kbds && item.kbds.length > 0) || isSubmenu()}>
-            <span
-              class={props.classes().itemTrailing}
-              data-slot="itemTrailing"
-              style={props.styles?.itemTrailing}
-            >
+            <span class={props.menuClasses().itemTrailing} data-slot="itemTrailing">
               <Show when={item.kbds && item.kbds.length > 0}>
-                <span
-                  class={props.classes().itemKbds}
-                  data-slot="itemKbds"
-                  style={props.styles?.itemKbds}
-                >
+                <span class={props.menuClasses().itemKbds} data-slot="itemKbds">
                   <For each={item.kbds}>
                     {(kbd) => (
-                      <kbd
-                        class={props.classes().itemKbd}
-                        data-slot="itemKbd"
-                        style={props.styles?.itemKbd}
-                      >
+                      <kbd class={props.menuClasses().itemKbd} data-slot="itemKbd">
                         {kbd}
                       </kbd>
                     )}
@@ -491,7 +442,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
               <Show when={isSubmenu()}>
                 <RLIcon
                   name={props.submenuIcon()}
-                  class={props.classes().itemSubIndicator}
+                  class={props.menuClasses().itemSubIndicator}
                   data-slot="itemSubIndicator"
                 />
               </Show>
@@ -502,7 +453,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
         {/* Submenu Floating Layer */}
         <Show when={isSubmenu() && isSubOpen()}>
           <div
-            class={cx("absolute left-full top-0 ml-1 z-50", props.classes().content)}
+            class={cx("absolute left-full top-0 ml-1 z-50", props.menuClasses().content)}
             data-slot="content"
             role="menu"
             tabindex={-1}
@@ -510,8 +461,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           >
             <MenuLayer
               sections={normalizeMenuSections((item as ContextMenuActionItem).children)}
-              classes={props.classes}
-              styles={props.styles}
+              menuClasses={props.menuClasses}
               checkedIcon={props.checkedIcon}
               submenuIcon={props.submenuIcon}
               itemRender={props.itemRender}
@@ -532,26 +482,12 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           <Show
             when={section.type === "group"}
             fallback={
-              <div
-                role="separator"
-                data-slot="separator"
-                class={props.classes().separator}
-                style={props.styles?.separator}
-              />
+              <div role="separator" data-slot="separator" class={props.menuClasses().separator} />
             }
           >
-            <div
-              role="group"
-              data-slot="group"
-              class={props.classes().group}
-              style={props.styles?.group}
-            >
+            <div role="group" data-slot="group" class={props.menuClasses().group}>
               <Show when={section.label}>
-                <div
-                  data-slot="groupLabel"
-                  class={props.classes().groupLabel}
-                  style={props.styles?.groupLabel}
-                >
+                <div data-slot="groupLabel" class={props.menuClasses().groupLabel}>
                   {section.label}
                 </div>
               </Show>
@@ -570,16 +506,16 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
 };
 
 export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
-  const setupProps = props.classes ? { ...props, ui: { ...props.classes, ...props.ui } } : props;
   const {
     Tag,
     classes,
-    rest,
     id: menuId,
     slots,
-  } = RLContextMenuTheme.setup(setupProps, {
+    children,
+    theme,
+  } = RLContextMenuTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: ["topSlot", "bottomSlot", "itemSlot", "triggerSlot", "contentSlot"] as const,
+    slots: ["topSlot", "bottomSlot", "itemSlot", "triggerSlot", "bodySlot"] as const,
     idPrefix: "rl-context-menu",
     variants: () => ({
       size: props.size ?? "md",
@@ -587,8 +523,11 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     }),
   });
 
-  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
-  const isOpen = () => (props.open !== undefined ? Boolean(props.open) : uncontrolledOpen());
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
 
   const [coords, setCoords] = createSignal<AnchorCoords>({ x: 0, y: 0 });
 
@@ -605,10 +544,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   const checkedIcon = () => props.checkedIcon ?? "check";
   const submenuIcon = () => props.submenuIcon ?? "chevron-right";
 
-  const portalMount =
-    typeof props.portal === "object" && props.portal !== null && "nodeType" in props.portal
-      ? (props.portal as Element)
-      : undefined;
+  const portalMount = () => (typeof props.portal === "object" ? props.portal : undefined);
 
   let triggerRef: HTMLElement | undefined;
   let contentRef: HTMLElement | undefined;
@@ -618,10 +554,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     if (nextCoords) {
       setCoords(nextCoords);
     }
-    if (props.open === undefined) {
-      setUncontrolledOpen(next);
-    }
-    props.onOpenChange?.(next);
+    setOpen(next);
   };
 
   const closeMenu = () => setOpenState(false);
@@ -762,31 +695,29 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   };
 
   const handleTouchEnd = () => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      longPressTimer = undefined;
-    }
+    clearTimeout(longPressTimer);
+    longPressTimer = undefined;
     touchStartPos = null;
   };
 
   const sections = createMemo(() => normalizeMenuSections(props.items));
 
-  const resolveRenderProp = (renderProp: unknown, ctx: { open: boolean; close: () => void }) => {
+  const resolveRenderProp = (
+    renderProp: unknown,
+    ctx: { open: boolean; closeMenu: () => void },
+  ) => {
     if (typeof renderProp === "function") {
       return (renderProp as (c: typeof ctx) => JSX.Element)(ctx);
     }
     return renderProp as JSX.Element;
   };
 
-  const topRenderContent = () =>
-    resolveRenderProp(slots.topSlot(), { open: isOpen(), close: closeMenu });
+  const topRenderContent = () => resolveRenderProp(slots.topSlot(), { open: isOpen(), closeMenu });
 
   const bottomRenderContent = () =>
-    resolveRenderProp(slots.bottomSlot(), { open: isOpen(), close: closeMenu });
+    resolveRenderProp(slots.bottomSlot(), { open: isOpen(), closeMenu });
 
-  const triggerContent = () => slots.triggerSlot() ?? props.children;
-
-  const slotStyles = () => props.styles;
+  const triggerContent = () => slots.triggerSlot() ?? children();
 
   const renderMenuContent = () => (
     <>
@@ -811,9 +742,6 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
         style={{
           left: `${coords().x}px`,
           top: `${coords().y}px`,
-          ...(typeof slotStyles()?.positioner === "object"
-            ? (slotStyles()!.positioner as JSX.CSSProperties)
-            : {}),
         }}
       >
         <div
@@ -828,7 +756,6 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
           data-side={placement()}
           data-align={align()}
           class={classes().content}
-          style={slotStyles()?.content}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Top custom render */}
@@ -840,8 +767,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
           <Show when={sections().length > 0}>
             <MenuLayer
               sections={sections()}
-              classes={classes}
-              styles={slotStyles()}
+              menuClasses={classes}
               checkedIcon={checkedIcon}
               submenuIcon={submenuIcon}
               itemRender={slots.itemSlot()}
@@ -854,20 +780,19 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
             <div data-slot="bottomRender">{bottomRenderContent()}</div>
           </Show>
 
-          {/* Custom content Slot */}
-          <Show when={slots.contentSlot()}>{slots.contentSlot()}</Show>
+          {/* Body slot */}
+          <Show when={slots.bodySlot()}>{slots.bodySlot()}</Show>
         </div>
       </div>
     </>
   );
 
   return (
-    <>
-      <Tag
+    <Tag data-slot="root" data-theme={theme()} class={classes().root}>
+      <div
         ref={(el: HTMLElement) => (triggerRef = el)}
         id={menuId()}
-        class={cx("rl-context-menu-trigger", classes().trigger, classes().root, props.class)}
-        style={mergeStyle(slotStyles()?.trigger, props.style)}
+        class={classes().trigger}
         data-slot="trigger"
         data-state={isOpen() ? "open" : "closed"}
         data-expanded={isOpen() ? "" : undefined}
@@ -880,18 +805,17 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handleTouchEnd}
-        {...rest}
       >
         {triggerContent()}
-      </Tag>
+      </div>
 
       <Show when={isOpen() || !unmountOnHide()}>
         <Show when={usePortal()} fallback={renderMenuContent()}>
-          <Show when={portalMount} fallback={<Portal>{renderMenuContent()}</Portal>}>
+          <Show when={portalMount()} fallback={<Portal>{renderMenuContent()}</Portal>}>
             {(mount) => <Portal mount={mount()}>{renderMenuContent()}</Portal>}
           </Show>
         </Show>
       </Show>
-    </>
+    </Tag>
   );
 };

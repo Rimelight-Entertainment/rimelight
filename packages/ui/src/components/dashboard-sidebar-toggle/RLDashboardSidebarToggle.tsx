@@ -7,19 +7,23 @@ import { uiT } from "../../locale";
 const OMIT_KEYS = ["icon"] as const;
 
 export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> = (props) => {
-  const { classes, rest } = RLDashboardSidebarToggleTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLDashboardSidebarToggleTheme.setup(props, {
+    as: "button",
+    omit: OMIT_KEYS,
+  });
 
   return (
-    <button
+    <Tag
       type="button"
       data-dashboard-toggle="mobile"
-      class={classes().root}
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       aria-label={uiT("sidebar.toggle")}
       {...rest}
     >
       <RLIcon name={props.icon || "menu"} class="size-5" />
-      {props.children}
-    </button>
+      {children()}
+    </Tag>
   );
 };

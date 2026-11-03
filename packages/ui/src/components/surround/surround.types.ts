@@ -1,23 +1,22 @@
-import type { Theme } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSurroundTheme } from "./surround.theme";
 
 export interface RLSurroundItem {
   label: string;
   href: string;
 }
 
-export interface RLSurroundProps {
+export type RLSurroundProps = Omit<InferThemeProps<typeof RLSurroundTheme>, "side"> & {
+  /**
+   * The previous item. Omit or pass `null` to hide the previous link.
+   *
+   * @default undefined
+   */
   prev?: RLSurroundItem | null;
+  /**
+   * The next item. Omit or pass `null` to hide the next link.
+   *
+   * @default undefined
+   */
   next?: RLSurroundItem | null;
-  /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-}
+};

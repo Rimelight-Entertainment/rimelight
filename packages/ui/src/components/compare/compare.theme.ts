@@ -104,7 +104,7 @@ export const RLCompareTheme = defineTheme("compare", {
           "bg-elevated/80 backdrop-blur-sm text-muted border border-default/40 shadow-xs",
         afterLabel: "bg-elevated/80 backdrop-blur-sm text-muted border border-default/40 shadow-xs",
       },
-      glass: {
+      ghost: {
         handle:
           "bg-white/20 dark:bg-black/30 backdrop-blur-md text-white border border-white/30 shadow-lg hover:bg-white/30 focus-visible:ring-white",
         divider: "bg-white/70 backdrop-blur-xs",

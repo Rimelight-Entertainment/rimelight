@@ -1,34 +1,21 @@
-import type { JSX, ValidComponent } from "@solidjs/web";
-import type { ClassValue, ThemeUI } from "../../types";
+import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPageTheme } from "./page.theme";
 
-export type RLPageSlot = "root" | "left" | "center" | "right";
-
-export interface RLPageProps {
+/**
+ * Props for the page layout. Leading/trailing columns are internal layout variants and are not public props.
+ */
+export type RLPageProps = Omit<InferThemeProps<typeof RLPageTheme>, "leading" | "trailing"> & {
   /**
-   * The element or component this component should render as.
+   * Content rendered in the leading column. The column is only rendered when provided.
    *
-   * @default "div"
+   * @default undefined
    */
-  as?: ValidComponent;
+  leadingSlot?: JSX.Element;
   /**
-   * Slot-specific CSS class overrides.
+   * Content rendered in the trailing column. The column is only rendered when provided.
+   *
+   * @default undefined
    */
-  ui?: ThemeUI<RLPageSlot>;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: ClassValue;
-  /**
-   * Content rendered in the left column. The column is only rendered when provided.
-   */
-  leftSlot?: JSX.Element;
-  /**
-   * Content rendered in the right column. The column is only rendered when provided.
-   */
-  rightSlot?: JSX.Element;
-  /**
-   * Content rendered in the centered main column.
-   */
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  trailingSlot?: JSX.Element;
+};

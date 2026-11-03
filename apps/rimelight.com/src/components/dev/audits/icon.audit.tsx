@@ -5,7 +5,7 @@ import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const SIZES = ["xs", "sm", "md", "lg", "xl", "none"] as const;
+const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const COLORS = AUDIT_COLORS;
 
 const FEATURED = [
@@ -110,8 +110,7 @@ export const iconAudit: ComponentAuditDefinition = {
       get title() {
         return t("app.text.all-size-variants-xs-to-xl-none");
       },
-      description:
-        "Scale tokens from xs (12px) through xl (32px), plus an unstyled option that inherits the parent font size.",
+      description: "Scale tokens from xs (12px) through xl (32px).",
       render: () => (
         <div class="flex items-center gap-6 flex-wrap">
           <For each={SIZES}>
@@ -171,11 +170,11 @@ export const iconAudit: ComponentAuditDefinition = {
         return t("app.text.custom-class-name");
       },
       description:
-        "Passing a full UnoCSS/Iconify class name through the custom prop passes it through verbatim.",
+        "Passing a full UnoCSS/Iconify class name through the name prop passes it through verbatim.",
       render: () => (
         <div class="flex items-center gap-6">
-          <RLIcon name="customSvg" size="xl" class="text-primary" custom="i-lucide-circle-gauge" />
-          <RLIcon name="customNodes" size="xl" class="text-secondary" custom="i-lucide-compass" />
+          <RLIcon name="i-lucide-circle-gauge" size="xl" class="text-primary" />
+          <RLIcon name="i-lucide-compass" size="xl" class="text-secondary" />
         </div>
       ),
     },
@@ -227,7 +226,7 @@ export const iconAudit: ComponentAuditDefinition = {
     {
       criterion: "Nuxt UI v4 API parity (Icon)",
       status: "pass",
-      notes: "Matches name, size, class, ui and custom overrides with the lucide-backed resolver.",
+      notes: "Matches name, size, class, and ui overrides with the lucide-backed resolver.",
     },
     {
       criterion: "Multi-source icon resolution cascade",

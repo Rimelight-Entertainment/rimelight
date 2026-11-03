@@ -3,11 +3,11 @@ import type { RLChatPaletteProps } from "./chat-palette.types";
 import { RLChatPaletteTheme } from "./chat-palette.theme";
 
 export const RLChatPalette: Component<RLChatPaletteProps> = (props) => {
-  const { classes, rest } = RLChatPaletteTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLChatPaletteTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

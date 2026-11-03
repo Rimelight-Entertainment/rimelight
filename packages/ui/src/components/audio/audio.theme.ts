@@ -114,8 +114,7 @@ export const RLAudioTheme = defineTheme("audio", {
     volumeButton:
       "inline-flex items-center justify-center size-8 rounded-lg text-muted hover:text-highlighted hover:bg-elevated/60 active:bg-elevated transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]",
     volumeIcon: "size-4.5",
-    volumePopover:
-      "flex flex-col items-center gap-1.5 p-2 rounded-xl bg-elevated/95 backdrop-blur-md border border-default shadow-xl select-none w-9 z-50 absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5",
+    volumePopover: "flex flex-col items-center gap-1.5 w-9",
     volumeSlider:
       "relative w-2 h-20 flex flex-col justify-end items-center cursor-pointer my-0.5 select-none",
     volumeTrack:

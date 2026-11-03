@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLMeterTheme } from "./meter.theme";
 
-export interface RLMeterProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Displays a scalar measurement within a known range.
+ * @status stub
+ */
+export type RLMeterProps = InferThemeProps<typeof RLMeterTheme>;

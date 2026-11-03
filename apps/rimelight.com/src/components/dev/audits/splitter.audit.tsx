@@ -118,7 +118,7 @@ export const SplitterSandbox = (): JSX.Element => {
               collapsible: true,
               collapsibleMin: 56,
               handle: { action: "collapse" },
-              content: (state) => (
+              children: (state) => (
                 <div class="h-full p-4 flex flex-col justify-between bg-muted/20">
                   <div class="flex flex-col gap-1">
                     <span class="text-xs font-semibold text-highlighted uppercase tracking-wider">
@@ -136,7 +136,7 @@ export const SplitterSandbox = (): JSX.Element => {
             },
             {
               min: "30%",
-              content: (state) => (
+              children: (state) => (
                 <div class="h-full p-4 flex flex-col justify-between bg-background/50">
                   <div class="flex flex-col gap-1">
                     <span class="text-xs font-semibold text-highlighted uppercase tracking-wider">
@@ -182,7 +182,7 @@ export const splitterAudit: ComponentAuditDefinition = {
             panels={[
               {
                 min: "20%",
-                content: (
+                children: (
                   <div class="h-full p-4 bg-muted/20 flex flex-col gap-2">
                     <span class="font-semibold text-sm">Sidebar</span>
                     <p class="text-xs text-muted">Constrained to minimum 20% width.</p>
@@ -191,7 +191,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               },
               {
                 min: "30%",
-                content: (
+                children: (
                   <div class="h-full p-4 bg-background/50 flex flex-col gap-2">
                     <span class="font-semibold text-sm">Content</span>
                     <p class="text-xs text-muted">Adapts smoothly to remaining area.</p>
@@ -216,7 +216,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "25%",
                 max: "45%",
-                content: (
+                children: (
                   <div class="h-full p-4 bg-elevated/40 flex flex-col gap-2">
                     <span class="text-xs font-mono font-semibold uppercase text-primary">
                       Inspector (25% - 45%)
@@ -230,7 +230,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               },
               {
                 min: "35%",
-                content: (
+                children: (
                   <div class="h-full p-4 bg-background/40 flex flex-col gap-2">
                     <span class="text-xs font-mono font-semibold uppercase text-highlighted">
                       Viewport (min 35%)
@@ -274,7 +274,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                       </span>
                     ),
                   },
-                  content: (state) => (
+                  children: (state) => (
                     <div class="h-full p-3 bg-elevated/30 flex flex-col justify-between">
                       <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
@@ -301,7 +301,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                 },
                 {
                   min: "40%",
-                  content: (
+                  children: (
                     <div class="h-full p-4 bg-background/50 flex flex-col gap-2">
                       <div class="flex items-center gap-2">
                         <span class="text-xs font-semibold">Project Overview</span>
@@ -337,7 +337,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "15%",
                 max: "25%",
-                content: (
+                children: (
                   <div class="h-full p-3 bg-muted/30 flex flex-col gap-1 text-xs">
                     <span class="font-bold text-highlighted mb-1">Mailboxes</span>
                     <span class="text-primary font-medium">Inbox (12)</span>
@@ -350,7 +350,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "25%",
                 max: "45%",
-                content: (
+                children: (
                   <div class="h-full p-3 bg-elevated/20 flex flex-col gap-2 text-xs">
                     <span class="font-bold text-highlighted">Messages</span>
                     <div class="p-2 rounded bg-elevated/60 border border-default/40 flex flex-col gap-0.5">
@@ -366,7 +366,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               },
               {
                 min: "35%",
-                content: (
+                children: (
                   <div class="h-full p-4 bg-background/60 flex flex-col gap-2">
                     <span class="font-semibold text-sm text-highlighted">
                       Moraine 0.5.0 Release Candidate
@@ -397,7 +397,7 @@ export const splitterAudit: ComponentAuditDefinition = {
             panels={[
               {
                 min: "25%",
-                content: (
+                children: (
                   <div class="h-full p-3 bg-elevated/40 font-mono text-xs flex flex-col gap-1">
                     <span class="text-primary font-semibold">-- SQL Query Editor</span>
                     <span class="text-muted">SELECT id, name, role FROM team_members;</span>
@@ -406,7 +406,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               },
               {
                 min: "30%",
-                content: (
+                children: (
                   <div class="h-full p-3 bg-background/50 flex flex-col gap-2">
                     <span class="text-xs font-semibold text-highlighted">
                       Results (3 rows returned)
@@ -438,7 +438,7 @@ export const splitterAudit: ComponentAuditDefinition = {
             panels={[
               {
                 min: "20%",
-                content: (
+                children: (
                   <div class="h-full p-3 bg-muted/30 flex flex-col gap-1 text-xs font-mono">
                     <span class="font-bold text-highlighted mb-1">Explorer</span>
                     <span class="text-primary">src/app.tsx</span>
@@ -449,7 +449,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               },
               {
                 min: "40%",
-                content: (
+                children: (
                   <RLSplitter
                     orientation="vertical"
                     defaultValue={["65%", "35%"]}
@@ -457,7 +457,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                     panels={[
                       {
                         min: "30%",
-                        content: (
+                        children: (
                           <div class="h-full p-3 bg-background/60 font-mono text-xs">
                             <span class="text-muted">// Code Editor</span>
                             <div class="text-highlighted mt-1">
@@ -468,7 +468,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                       },
                       {
                         min: "20%",
-                        content: (
+                        children: (
                           <div class="h-full p-3 bg-slate-950 text-slate-100 font-mono text-[11px]">
                             <span class="text-emerald-400">➜ Local: http://localhost:5173/</span>
                           </div>
@@ -525,7 +525,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                 panels={[
                   {
                     min: 150,
-                    content: (state) => (
+                    children: (state) => (
                       <div class="h-full p-4 bg-muted/20 flex flex-col justify-between">
                         <span class="text-xs font-semibold">Worker Logs</span>
                         <span class="text-xs font-mono text-muted">{state.size}px</span>
@@ -534,7 +534,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                   },
                   {
                     min: 150,
-                    content: (state) => (
+                    children: (state) => (
                       <div class="h-full p-4 bg-background/50 flex flex-col justify-between">
                         <span class="text-xs font-semibold">Telemetry Output</span>
                         <span class="text-xs font-mono text-muted">{state.size}px</span>

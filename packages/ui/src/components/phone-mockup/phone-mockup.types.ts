@@ -1,8 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPhoneMockupTheme } from "./phone-mockup.theme";
 
-export interface RLPhoneMockupProps {
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Phone mockup container.
+ *
+ * @status stub
+ */
+export type RLPhoneMockupProps = InferThemeProps<typeof RLPhoneMockupTheme>;

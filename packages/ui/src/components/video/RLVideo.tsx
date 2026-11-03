@@ -2,6 +2,7 @@ import type { RLVideoProps } from "./video.types";
 import { RLVideoTheme } from "./video.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { uiT } from "../../locale";
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
 const YOUTUBE_EMBED_BASE = "https://www.youtube.com/embed/";
@@ -11,9 +12,7 @@ const YOUTUBE_THUMB_BASE = "https://i3.ytimg.com/vi/";
 
 function normalizeHost(host: string): string {
   for (const prefix of KNOWN_PREFIXES) {
-    if (host.startsWith(prefix)) {
-      return host.slice(prefix.length);
-    }
+    if (host.startsWith(prefix)) return host.slice(prefix.length);
   }
   return host;
 }
@@ -51,7 +50,6 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
     if (VALID_ID_PATTERN.test(rawUrl)) {
       return rawUrl;
     }
-    return null;
   }
   return null;
 }
@@ -59,9 +57,9 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
 const OMIT_KEYS = ["src", "title", "icon", "thumbnail"] as const;
 
 export const RLVideo: Component<RLVideoProps> = (props) => {
-  const { Tag, classes, rest, slots } = RLVideoTheme.setup(props, {
-    slots: ["iconSlot", "transcriptSlot"] as const,
+  const { Tag, classes, rest, slots, children, theme } = RLVideoTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["iconSlot", "transcriptSlot"] as const,
   });
 
   const [isPlaying, setIsPlaying] = createSignal(false);
@@ -74,13 +72,9 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
     videoId() ? `${YOUTUBE_THUMB_BASE}${videoId()}/hqdefault.jpg` : PLACEHOLDER_THUMBNAIL,
   );
 
-  const titleText = () => props.title || "YouTube Video Player";
-  const iconName = () => props.icon || "play";
-  const isPlayable = () => Boolean(embedUrl());
-
   return (
-    <div class={classes().wrapper} data-slot="wrapper">
-      <Tag class={classes().root} data-slot="root" {...rest}>
+    <>
+      <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
         <Show
           when={isPlaying() && embedUrl()}
           fallback={
@@ -88,13 +82,15 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
               type="button"
               class={classes().trigger}
               data-slot="trigger"
-              aria-label={isPlayable() ? "Play YouTube Video" : "YouTube Video Unavailable"}
-              disabled={!isPlayable()}
+              aria-label={
+                embedUrl() !== null ? uiT("video.playLabel") : uiT("video.unavailableLabel")
+              }
+              disabled={embedUrl() === null}
               onClick={() => setIsPlaying(true)}
             >
               <img
                 src={props.thumbnail || defaultThumbnail()}
-                alt={titleText()}
+                alt={props.title || uiT("video.defaultTitle")}
                 loading="lazy"
                 class={classes().image}
                 data-slot="image"
@@ -104,7 +100,7 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
                 slots.iconSlot()
               ) : (
                 <RLIcon
-                  name={iconName()}
+                  name={props.icon || "play"}
                   class={classes().icon}
                   data-slot="icon"
                   aria-hidden="true"
@@ -115,7 +111,7 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
         >
           <iframe
             src={embedUrl()!}
-            title={titleText()}
+            title={props.title || uiT("video.defaultTitle")}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
             loading="lazy"
@@ -127,11 +123,11 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
         </Show>
       </Tag>
 
-      <Show when={slots.transcriptSlot() || props.children}>
+      <Show when={slots.transcriptSlot() || children()}>
         <div class={classes().transcript} data-slot="transcript">
-          {slots.transcriptSlot() ? slots.transcriptSlot() : props.children}
+          {slots.transcriptSlot() ? slots.transcriptSlot() : children()}
         </div>
       </Show>
-    </div>
+    </>
   );
 };

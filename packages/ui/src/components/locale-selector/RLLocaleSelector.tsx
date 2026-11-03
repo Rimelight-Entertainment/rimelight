@@ -6,26 +6,15 @@ import { getLocaleInfo, getLocales, getLocaleUrl } from "@rimelight/i18n";
 import { useLocale } from "@rimelight/i18n/solid";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = [
-  "locales",
-  "currentLocale",
-  "mode",
-  "variant",
-  "size",
-  "color",
-  "leadingIcon",
-  "onSelect",
-  "onChange",
-] as const;
+const OMIT_KEYS = ["locales", "currentLocale", "mode", "onValueChange", "leadingIcon"] as const;
 
 export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
-  const { classes, rest, slots } = RLLocaleSelectorTheme.setup(props, {
+  const { Tag, children, classes, rest, slots, theme } = RLLocaleSelectorTheme.setup(props, {
+    slots: ["leadingSlot"] as const,
     omit: OMIT_KEYS,
-    slots: ["labelSlot", "leadingSlot"] as const,
   });
 
   const locale = useLocale();
-  const currentCode = (): string => props.currentLocale ?? locale();
 
   const processedLocales = createMemo<LocaleItem[]>(() =>
     (props.locales ?? getLocales()).map((item) =>
@@ -34,10 +23,6 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
         : { ...item, label: item.label || getLocaleInfo(item.code).label },
     ),
   );
-
-  /** An item's own `href`, otherwise the current page in that locale. */
-  const resolveTargetUrl = (item: LocaleItem, pathname: string, search: string): string =>
-    item.href ?? getLocaleUrl(pathname + search, item.code);
 
   // Only label/value feed the select, so `items` must not depend on the window location.
   // Otherwise it rebuilds after hydration and <For> recreates every option.
@@ -48,44 +33,45 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
     })),
   );
 
-  const isIconMode = () => props.mode === "icon" || props.variant === "icon";
-
   const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
     const selectedCode = e.currentTarget.value;
     const found = processedLocales().find((i) => i.code === selectedCode);
     if (found) {
-      const href = resolveTargetUrl(found, window.location.pathname, window.location.search);
-      props.onSelect?.({ label: found.label, code: found.code, href });
+      // An item's own `href`, otherwise the current page in that locale.
+      const href =
+        found.href ?? getLocaleUrl(window.location.pathname + window.location.search, found.code);
+      props.onValueChange?.({ label: found.label, code: found.code, href });
       if (href && typeof window !== "undefined") {
         window.location.href = href;
       }
     }
-    props.onChange?.(e);
   };
 
   return (
-    <div
+    <Tag
       class={classes().root}
+      data-slot="root"
+      data-theme={theme()}
       data-locale-selector
-      data-mode={isIconMode() ? "icon" : "select"}
-      data-theme={props.theme}
+      data-mode={props.mode === "icon" ? "icon" : "select"}
       {...rest}
     >
       <div class={classes().wrapper}>
         <RLSelect
           items={items()}
-          value={currentCode()}
+          value={props.currentLocale ?? locale()}
           onChange={handleChange}
-          size={(props.size as any) || "md"}
-          variant={isIconMode() ? "icon" : "default"}
-          color={props.color}
+          size={props.size}
+          layout={props.mode === "icon" ? "icon" : "default"}
+          variant={props.variant}
+          color={props.color === "auto" ? undefined : props.color}
           aria-label={uiT("locale-selector.label")}
           class={classes().select}
           leadingIcon={props.leadingIcon || "i-lucide-globe"}
           leadingSlot={slots.leadingSlot()}
         />
       </div>
-      {props.children}
-    </div>
+      {children()}
+    </Tag>
   );
 };

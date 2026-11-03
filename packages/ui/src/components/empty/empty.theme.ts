@@ -63,7 +63,7 @@ export const RLEmptyTheme = defineTheme("empty", {
         root: "bg-gray-800/30 border border-gray-700/50",
         description: "text-gray-400",
       },
-      naked: {
+      ghost: {
         root: "bg-transparent border border-transparent p-0",
         description: "text-gray-400",
       },

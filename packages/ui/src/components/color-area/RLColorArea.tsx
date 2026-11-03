@@ -1,7 +1,19 @@
+import type { Component } from "solid-js";
 import type { RLColorAreaProps } from "./color-area.types";
 import { RLColorAreaTheme } from "./color-area.theme";
-import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { createMemo, createSignal, Show } from "solid-js";
 import { uiT } from "../../locale";
+import { createControllable } from "../../controllable";
+import {
+  clamp,
+  getChannelRange,
+  hexToRgb,
+  hslToRgb,
+  hsbToRgb,
+  rgbToHex,
+  rgbToHsb,
+  rgbToHsl,
+} from "../color-picker/color";
 
 const OMIT_KEYS = [
   "colorSpace",
@@ -9,24 +21,15 @@ const OMIT_KEYS = [
   "value",
   "disabled",
   "name",
-  "required",
   "xChannel",
   "xName",
   "yChannel",
   "yName",
   "onValueChange",
-  "onChangeEnd",
+  "onValueChangeEnd",
 ] as const;
 
-type Channel =
-  | "hue"
-  | "saturation"
-  | "red"
-  | "green"
-  | "blue"
-  | "alpha"
-  | "lightness"
-  | "brightness";
+type Channel = NonNullable<RLColorAreaProps["xChannel"]>;
 
 interface ChannelState {
   hue: number;
@@ -38,177 +41,19 @@ interface ChannelState {
   blue: number;
 }
 
-const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(max, val));
-
-const hexToRgb = (hex: string): [number, number, number] => {
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  const fullHex = hex.replace(shorthandRegex, (_, r, g, b) => r + r + g + g + b + b);
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
-  return result
-    ? [parseInt(result[1]!, 16), parseInt(result[2]!, 16), parseInt(result[3]!, 16)]
-    : [0, 0, 0];
-};
-
-const toHex = (c: number): string => {
-  const hex = Math.max(0, Math.min(255, c)).toString(16);
-  return hex.length === 1 ? "0" + hex : hex;
-};
-
-const rgbToHex = (r: number, g: number, b: number): string => "#" + toHex(r) + toHex(g) + toHex(b);
-
-const rgbToHsl = (r: number, g: number, b: number): [number, number, number] => {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-};
-
-const hue2rgb = (p: number, q: number, t: number): number => {
-  if (t < 0) t += 1;
-  if (t > 1) t -= 1;
-  if (t < 1 / 6) return p + (q - p) * 6 * t;
-  if (t < 1 / 2) return q;
-  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-  return p;
-};
-
-const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
-  h /= 360;
-  s /= 100;
-  l /= 100;
-  let r = l;
-  let g = l;
-  let b = l;
-  if (s !== 0) {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
-  }
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-};
-
-const rgbToHsb = (r: number, g: number, b: number): [number, number, number] => {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h = 0;
-  let s = 0;
-  const v = max;
-  const d = max - min;
-  s = max === 0 ? 0 : d / max;
-  if (max !== min) {
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(v * 100)];
-};
-
-const hsbToRgb = (h: number, s: number, b: number): [number, number, number] => {
-  h /= 360;
-  s /= 100;
-  b /= 100;
-  let r = 0;
-  let g = 0;
-  let bl = 0;
-  const i = Math.floor(h * 6);
-  const f = h * 6 - i;
-  const p = b * (1 - s);
-  const q = b * (1 - f * s);
-  const t = b * (1 - (1 - f) * s);
-  switch (i % 6) {
-    case 0:
-      r = b;
-      g = t;
-      bl = p;
-      break;
-    case 1:
-      r = q;
-      g = b;
-      bl = p;
-      break;
-    case 2:
-      r = p;
-      g = b;
-      bl = t;
-      break;
-    case 3:
-      r = p;
-      g = q;
-      bl = b;
-      break;
-    case 4:
-      r = t;
-      g = p;
-      bl = b;
-      break;
-    case 5:
-      r = b;
-      g = p;
-      bl = q;
-      break;
-  }
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(bl * 255)];
-};
-
-const getChannelRange = (channel: string): { min: number; max: number } => {
-  switch (channel) {
-    case "hue":
-      return { min: 0, max: 360 };
-    case "alpha":
-      return { min: 0, max: 100 };
-    case "red":
-    case "green":
-    case "blue":
-      return { min: 0, max: 255 };
-    default:
-      return { min: 0, max: 100 };
-  }
-};
-
 export const RLColorArea: Component<RLColorAreaProps> = (props) => {
-  const { classes, rest } = RLColorAreaTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLColorAreaTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const colorSpace = () => props.colorSpace ?? "hsl";
   const xChannel = (): Channel => props.xChannel ?? "saturation";
   const yChannel = (): Channel => props.yChannel ?? "lightness";
 
-  const [value, setValue] = createSignal<string>(
-    () => props.value || props.defaultValue || "#ff0000",
+  const [value, setValue] = createControllable(
+    () => props.value,
+    props.defaultValue ?? "#ff0000",
+    (next) => props.onValueChange?.(next),
   );
   const [isDragging, setIsDragging] = createSignal(false);
   let areaRef: HTMLDivElement | undefined;
@@ -351,7 +196,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
         blue: newRgb[2],
       });
       setValue(newValue);
-      props.onValueChange?.(newValue);
     }
   };
 
@@ -389,7 +233,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {}
-    props.onChangeEnd?.(value());
+    props.onValueChangeEnd?.(value());
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -429,15 +273,15 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
   };
 
   return (
-    <div
-      class={`${classes().root}  ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       data-color-space={colorSpace()}
       data-value={value()}
       data-x-channel={xChannel()}
       data-y-channel={yChannel()}
       data-disabled={props.disabled ? "true" : "false"}
-      data-theme={props.theme}
       {...rest}
     >
       <div
@@ -464,6 +308,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
           onKeyDown={handleKeyDown}
         />
       </div>
+      {children()}
       <Show when={props.name}>
         {(name) => <input type="hidden" name={name()} value={value()} data-main-input />}
       </Show>
@@ -473,6 +318,6 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
       <Show when={props.yName}>
         {(yName) => <input type="hidden" name={yName()} value={yVal()} data-y-input />}
       </Show>
-    </div>
+    </Tag>
   );
 };

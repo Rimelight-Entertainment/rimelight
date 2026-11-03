@@ -1,20 +1,10 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLStepsTheme } from "./steps.theme";
 
-export interface RLStepsProps {
+export type RLStepsProps = InferThemeProps<typeof RLStepsTheme> & {
   /**
    * Controls the size of the step indicators and spacing.
-   *
    * @default "md"
    */
-  size?: "sm" | "md" | "lg";
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  size?: "sm" | "md" | "lg" | undefined;
+};

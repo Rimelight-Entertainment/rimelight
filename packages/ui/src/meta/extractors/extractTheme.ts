@@ -73,14 +73,79 @@ function extractThemeFromFile(filePath: string): any {
 
   const objectLiteral = content.slice(firstBraceIndex, end + 1);
 
-  return JSON.parse(objectLiteralToJson(objectLiteral));
+  return JSON.parse(objectLiteralToJson(objectLiteral, createConstantResolver(content)));
+}
+
+/**
+ * Resolves identifiers that a theme literal references (`increment: STEPPER`) to the JSON of the
+ * top-level `const STEPPER = <value>;` declaration in the same file. Declarations are converted
+ * lazily, so unreferenced ones (for example ones built with function calls) are never parsed.
+ */
+function createConstantResolver(content: string): (name: string) => string {
+  const declarations = new Map<string, string>();
+  const declarationRe = /^(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\b[^=\n]*=/gm;
+  let match: RegExpExecArray | null;
+  while ((match = declarationRe.exec(content)) !== null) {
+    const valueStart = match.index + match[0].length;
+    declarations.set(match[1]!, content.slice(valueStart, findStatementEnd(content, valueStart)));
+  }
+
+  const resolved = new Map<string, string>();
+  const resolving = new Set<string>();
+  const resolve = (name: string): string => {
+    const cached = resolved.get(name);
+    if (cached !== undefined) return cached;
+    const raw = declarations.get(name);
+    if (raw === undefined) throw new Error(`Unresolved identifier "${name}" in theme literal`);
+    if (resolving.has(name)) throw new Error(`Circular constant "${name}" in theme literal`);
+    resolving.add(name);
+    // `as const` only narrows types; it has no runtime meaning.
+    const json = objectLiteralToJson(raw.replace(/\s+as\s+const\s*$/, ""), resolve);
+    resolving.delete(name);
+    resolved.set(name, json);
+    return json;
+  };
+  return resolve;
+}
+
+/** Index of the `;` that ends the statement starting at `start`, skipping strings and comments. */
+function findStatementEnd(content: string, start: number): number {
+  let depth = 0;
+  for (let i = start; i < content.length; i++) {
+    const char = content[i];
+    if (char === "/" && content[i + 1] === "/") {
+      const nl = content.indexOf("\n", i);
+      if (nl === -1) return content.length;
+      i = nl;
+      continue;
+    }
+    if (char === "/" && content[i + 1] === "*") {
+      const close = content.indexOf("*/", i + 2);
+      if (close === -1) return content.length;
+      i = close + 1;
+      continue;
+    }
+    if (char === '"' || char === "'" || char === "`") {
+      i++;
+      while (i < content.length && content[i] !== char) {
+        if (content[i] === "\\") i++;
+        i++;
+      }
+      continue;
+    }
+    if (char === "(" || char === "[" || char === "{") depth++;
+    else if (char === ")" || char === "]" || char === "}") depth--;
+    else if (char === ";" && depth === 0) return i;
+  }
+  return content.length;
 }
 
 /**
  * Converts a JS object literal (single-quoted strings, unquoted keys, numeric keys, trailing
- * commas, `//` and `/*` comments) into valid JSON.
+ * commas, `//` and `/*` comments) into valid JSON. Identifier values are replaced by
+ * `resolveIdentifier(name)`, which returns their JSON text.
  */
-function objectLiteralToJson(literal: string): string {
+function objectLiteralToJson(literal: string, resolveIdentifier: (name: string) => string): string {
   let out = "";
   let i = 0;
   const n = literal.length;
@@ -165,6 +230,14 @@ function objectLiteralToJson(literal: string): string {
       continue;
     }
 
+    const identMatch = /^[A-Za-z_$][\w$]*/.exec(literal.slice(i));
+    if (identMatch) {
+      const word = identMatch[0];
+      const isKeyword = word === "true" || word === "false" || word === "null";
+      out += isKeyword ? word : resolveIdentifier(word);
+      i += word.length;
+      continue;
+    }
     out += ch;
     i++;
   }

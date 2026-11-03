@@ -5,13 +5,21 @@ import { RLStepsTheme } from "./steps.theme";
 const OMIT_KEYS = ["size"] as const;
 
 export const RLSteps: Component<RLStepsProps> = (props) => {
-  const { classes, rest } = RLStepsTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLStepsTheme.setup(props, { omit: OMIT_KEYS });
 
-  const size = () => props.size || "md";
+  const size = () => props.size ?? "md";
 
   return (
-    <div class={`${classes().root} rl-steps`} data-slot="root" data-size={size()} {...rest}>
-      <ol class="rl-steps-list">{props.children}</ol>
+    <Tag
+      class={`${classes().root} rl-steps`}
+      data-slot="root"
+      data-theme={theme()}
+      data-size={size()}
+      {...rest}
+    >
+      <ol class="rl-steps-list" data-slot="list">
+        {children()}
+      </ol>
       <style>{`
         .rl-steps-list {
           list-style: none;
@@ -92,6 +100,6 @@ export const RLSteps: Component<RLStepsProps> = (props) => {
           top: calc(2.25rem + 0.375rem);
         }
       `}</style>
-    </div>
+    </Tag>
   );
 };

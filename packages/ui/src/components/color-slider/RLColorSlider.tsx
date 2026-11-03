@@ -1,7 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLColorSliderProps } from "./color-slider.types";
 import { RLColorSliderTheme } from "./color-slider.theme";
-import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { createMemo, Show } from "solid-js";
 import { uiT } from "../../locale";
+import { createControllable } from "../../controllable";
 import {
   clamp,
   getChannelRange,
@@ -17,37 +19,36 @@ const OMIT_KEYS = [
   "channel",
   "colorSpace",
   "defaultValue",
-  "dir",
   "disabled",
   "inverted",
   "value",
   "name",
   "orientation",
-  "required",
   "step",
   "onValueChange",
-  "onChangeEnd",
+  "onValueChangeEnd",
 ] as const;
 
 export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
-  const { classes, rest } = RLColorSliderTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLColorSliderTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const channel = () => props.channel || "hue";
+  const channel = () => props.channel;
   const colorSpace = () => props.colorSpace ?? "hsl";
   const orientation = () => props.orientation ?? "horizontal";
   const stepValue = () => props.step ?? 1;
 
-  const [currentHex, setCurrentHex] = createSignal(
-    () => props.value ?? props.defaultValue ?? "#000000",
+  const [currentHex, setCurrentHex] = createControllable(
+    () => props.value,
+    props.defaultValue ?? "#000000",
+    (next) => props.onValueChange?.(next),
   );
 
   const updateColor = (newHex: string, isFinal = false) => {
-    if (props.value === undefined) {
-      setCurrentHex(newHex);
-    }
-    props.onValueChange?.(newHex);
+    setCurrentHex(newHex);
     if (isFinal) {
-      props.onChangeEnd?.(newHex);
+      props.onValueChangeEnd?.(newHex);
     }
   };
 
@@ -283,10 +284,10 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
   };
 
   return (
-    <div
-      class={`${classes().root} ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
+    <Tag
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
+      class={classes().root}
       data-orientation={orientation()}
       data-channel={channel()}
       data-color-space={colorSpace()}
@@ -328,9 +329,10 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
           }
         />
       </div>
+      {children()}
       <Show when={props.name}>
         <input type="hidden" name={props.name} value={currentHex()} data-main-input />
       </Show>
-    </div>
+    </Tag>
   );
 };

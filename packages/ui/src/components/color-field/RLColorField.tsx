@@ -1,7 +1,8 @@
 import type { RLColorFieldProps } from "./color-field.types";
-import { RLColorFieldTheme } from "./color-field.theme";
+import { COLOR_FIELD_DEFAULTS, RLColorFieldTheme } from "./color-field.theme";
 import { createSignal, Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
+import { createControllable } from "../../controllable";
 import {
   clamp,
   getChannelRange,
@@ -19,7 +20,6 @@ const OMIT_KEYS = [
   "defaultValue",
   "disabled",
   "disableWheelChange",
-  "locale",
   "value",
   "name",
   "placeholder",
@@ -30,13 +30,16 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLColorField: Component<RLColorFieldProps> = (props) => {
-  const { classes, rest } = RLColorFieldTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLColorFieldTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const colorSpace = () => props.colorSpace ?? "hsl";
-  const stepValue = () => props.step ?? 1;
+  const colorSpace = () => props.colorSpace ?? COLOR_FIELD_DEFAULTS.colorSpace;
 
-  const [currentHex, setCurrentHex] = createSignal(
-    () => props.value ?? props.defaultValue ?? "#000000",
+  const [currentHex, setCurrentHex] = createControllable(
+    () => props.value,
+    props.defaultValue ?? COLOR_FIELD_DEFAULTS.defaultValue,
+    (next) => props.onValueChange?.(next),
   );
 
   const getDisplayValue = () => {
@@ -61,13 +64,6 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
 
   const [displayValue, setDisplayValue] = createSignal(getDisplayValue);
 
-  const updateColor = (newHex: string) => {
-    if (props.value === undefined) {
-      setCurrentHex(newHex);
-    }
-    props.onValueChange?.(newHex);
-  };
-
   const updateFromChannelValue = (val: number) => {
     if (!props.channel) return;
     const range = getChannelRange(props.channel);
@@ -91,8 +87,7 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
       if (index !== -1) newRgb[index] = clampedVal;
     }
 
-    const newHex = rgbToHex(newRgb[0], newRgb[1], newRgb[2]);
-    updateColor(newHex);
+    setCurrentHex(rgbToHex(newRgb[0], newRgb[1], newRgb[2]));
   };
 
   const handleInputChange: JSX.EventHandler<HTMLInputElement, InputEvent> = (e) => {
@@ -102,7 +97,7 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
 
     if (!props.channel) {
       if (/^#[0-9A-F]{6}$/i.test(raw)) {
-        updateColor(raw);
+        setCurrentHex(raw);
       }
     } else {
       const num = parseFloat(raw);
@@ -114,7 +109,7 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
 
   const handleKeyDown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (e) => {
     if (props.disabled || props.readonly) return;
-    const stepSize = (e.shiftKey ? 10 : 1) * stepValue();
+    const stepSize = (e.shiftKey ? 10 : 1) * (props.step ?? COLOR_FIELD_DEFAULTS.step);
 
     if (props.channel) {
       const currentVal = parseFloat(displayValue()) || 0;
@@ -152,16 +147,16 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
     if (props.disableWheelChange || props.disabled || props.readonly || !props.channel) return;
     e.preventDefault();
     const direction = e.deltaY < 0 ? 1 : -1;
-    const stepSize = stepValue() * direction;
+    const stepSize = (props.step ?? COLOR_FIELD_DEFAULTS.step) * direction;
     const currentVal = parseFloat(displayValue()) || 0;
     updateFromChannelValue(currentVal + stepSize);
   };
 
   return (
-    <div
-      class={classes().root}
+    <Tag
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
+      class={classes().root}
       data-channel={props.channel}
       data-color-space={colorSpace()}
       data-value={currentHex()}
@@ -170,13 +165,14 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
       {...rest}
     >
       <div
-        class="w-5 h-5 rounded border border-default mr-2 shrink-0 shadow-sm"
+        class={classes().swatch}
         data-slot="swatch"
         style={{ "background-color": currentHex() }}
       />
       <input
         type="text"
         class={classes().input}
+        data-slot="input"
         placeholder={props.placeholder}
         required={props.required}
         disabled={props.disabled}
@@ -185,11 +181,11 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
         onInput={handleInputChange}
         onKeyDown={handleKeyDown}
         onWheel={handleWheel}
-        data-slot="input"
       />
       <Show when={props.name}>
         <input type="hidden" name={props.name} value={currentHex()} data-main-input />
       </Show>
-    </div>
+      {children()}
+    </Tag>
   );
 };

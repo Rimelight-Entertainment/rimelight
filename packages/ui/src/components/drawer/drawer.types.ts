@@ -1,56 +1,71 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { OverlaySlot } from "../../slot";
+import type { RLDrawerTheme } from "./drawer.theme";
 
-export interface RLDrawerProps {
+export type RLDrawerProps = Omit<InferThemeProps<typeof RLDrawerTheme>, "direction"> & {
   /**
    * Controlled open state.
    */
-  open?: boolean;
+  open?: boolean | undefined;
   /**
-   * The orientation/side where the drawer anchors.
+   * Initial open state when uncontrolled.
+   *
+   * @default false
    */
-  direction?: "bottom" | "top" | "left" | "right";
+  defaultOpen?: boolean | undefined;
   /**
-   * Main text title.
+   * Edge the drawer anchors to.
+   *
+   * @default "bottom"
    */
-  title?: string;
+  direction?: "bottom" | "top" | "left" | "right" | undefined;
   /**
-   * Explanation subtitle.
+   * Main title text. Use `titleSlot` for JSX.
    */
-  description?: string;
+  title?: string | undefined;
   /**
-   * Trigger button content.
+   * Explanation subtitle. Use `descriptionSlot` for JSX.
    */
-  triggerLabel?: string;
+  description?: string | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Label of a default trigger button. Rendered only when `triggerSlot` is not set.
    */
-  ui?: any;
+  triggerLabel?: string | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Whether the drawer can be dismissed by the close button, Escape, or clicking the backdrop.
+   *
+   * @default true
    */
-  class?: any;
-  children?: JSX.Element;
+  dismissible?: boolean | undefined;
+  /**
+   * Prevents body scrolling while open.
+   *
+   * @default true
+   */
+  lockScroll?: boolean | undefined;
+  /**
+   * Body content.
+   */
+  children?: JSX.Element | undefined;
   /**
    * Trigger element. Always rendered, so it is plain JSX.
    */
-  triggerSlot?: JSX.Element;
+  triggerSlot?: JSX.Element | undefined;
   /**
-   * Title content. Function-only: invoked inside the open dialog.
+   * Title content. Takes precedence over the `title` string. Function-only: invoked inside the open dialog.
    */
-  titleSlot?: OverlaySlot;
+  titleSlot?: OverlaySlot | undefined;
   /**
-   * Description content. Function-only: invoked inside the open dialog.
+   * Description content. Takes precedence over the `description` string. Function-only: invoked inside the open dialog.
    */
-  descriptionSlot?: OverlaySlot;
+  descriptionSlot?: OverlaySlot | undefined;
   /**
    * Footer content. Function-only: invoked inside the open dialog.
    */
-  footerSlot?: OverlaySlot;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  closeOnClickOutside?: boolean;
-  closeOnEscape?: boolean;
-  lockScroll?: boolean;
-  [key: string]: unknown;
-}
+  footerSlot?: OverlaySlot | undefined;
+  /**
+   * Called whenever the open state changes.
+   */
+  onOpenChange?: ((open: boolean) => void) | undefined;
+};

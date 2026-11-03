@@ -1,11 +1,11 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLGridTheme } from "./grid.theme";
 
-export interface RLGridProps {
+export type RLGridProps = Omit<InferThemeProps<typeof RLGridTheme>, "cols"> & {
+  /**
+   * Number of columns at the largest breakpoint.
+   *
+   * @default 2
+   */
   cols?: 1 | 2 | 3 | 4 | 5 | 6;
-  stagger?: boolean;
-  gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl";
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+};

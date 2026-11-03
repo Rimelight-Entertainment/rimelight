@@ -29,42 +29,42 @@ describe("RLPage", () => {
     expect(html).toContain("main-content");
     expect(html).toContain('data-slot="root"');
     expect(html).toContain('data-slot="center"');
-    expect(html).not.toContain('data-slot="left"');
-    expect(html).not.toContain('data-slot="right"');
+    expect(html).not.toContain('data-slot="leading"');
+    expect(html).not.toContain('data-slot="trailing"');
     expect(extractClass(html, "center")).toContain("lg:col-span-10");
   });
 
-  it("renders the left slot in its own column", () => {
+  it("renders the leading slot in its own column", () => {
     const html = renderToString(() => (
-      <RLPage leftSlot={<nav class="left-nav">Navigation</nav>}>
+      <RLPage leadingSlot={<nav class="leading-nav">Navigation</nav>}>
         <div>Main</div>
       </RLPage>
     ));
 
-    expect(html).toContain('data-slot="left"');
-    expect(html).toContain("left-nav");
-    expect(html).not.toContain('data-slot="right"');
-    expect(extractClass(html, "left")).toContain("lg:col-span-2");
+    expect(html).toContain('data-slot="leading"');
+    expect(html).toContain("leading-nav");
+    expect(html).not.toContain('data-slot="trailing"');
+    expect(extractClass(html, "leading")).toContain("lg:col-span-2");
     expect(extractClass(html, "center")).toContain("lg:col-span-8");
   });
 
-  it("renders the right slot in its own column", () => {
+  it("renders the trailing slot in its own column", () => {
     const html = renderToString(() => (
-      <RLPage rightSlot={<aside class="right-toc">Table of contents</aside>}>
+      <RLPage trailingSlot={<aside class="trailing-toc">Table of contents</aside>}>
         <div>Main</div>
       </RLPage>
     ));
 
-    expect(html).toContain('data-slot="right"');
-    expect(html).toContain("right-toc");
-    expect(html).not.toContain('data-slot="left"');
-    expect(extractClass(html, "right")).toContain("order-first");
+    expect(html).toContain('data-slot="trailing"');
+    expect(html).toContain("trailing-toc");
+    expect(html).not.toContain('data-slot="leading"');
+    expect(extractClass(html, "trailing")).toContain("order-first");
     expect(extractClass(html, "center")).toContain("lg:col-span-8");
   });
 
-  it("splits the center column when both left and right slots are provided", () => {
+  it("splits the center column when both leading and trailing slots are provided", () => {
     const html = renderToString(() => (
-      <RLPage leftSlot={<div>Left</div>} rightSlot={<div>Right</div>}>
+      <RLPage leadingSlot={<div>Left</div>} trailingSlot={<div>Right</div>}>
         <div>Main</div>
       </RLPage>
     ));
@@ -102,18 +102,23 @@ describe("RLPage", () => {
   it("applies ui slot overrides", () => {
     const html = renderToString(() => (
       <RLPage
-        leftSlot={<div>Left</div>}
-        rightSlot={<div>Right</div>}
-        ui={{ root: "ui-root", left: "ui-left", center: "ui-center", right: "ui-right" }}
+        leadingSlot={<div>Left</div>}
+        trailingSlot={<div>Right</div>}
+        ui={{
+          root: "ui-root",
+          leading: "ui-leading",
+          center: "ui-center",
+          trailing: "ui-trailing",
+        }}
       >
         <div>Main</div>
       </RLPage>
     ));
 
     expect(extractClass(html, "root")).toContain("ui-root");
-    expect(extractClass(html, "left")).toContain("ui-left");
+    expect(extractClass(html, "leading")).toContain("ui-leading");
     expect(extractClass(html, "center")).toContain("ui-center");
-    expect(extractClass(html, "right")).toContain("ui-right");
+    expect(extractClass(html, "trailing")).toContain("ui-trailing");
   });
 
   it("does not leak internal props onto the DOM", () => {
@@ -121,8 +126,8 @@ describe("RLPage", () => {
       <RLPage
         as="section"
         ui={{ root: "x" }}
-        leftSlot={<div>Left</div>}
-        rightSlot={<div>Right</div>}
+        leadingSlot={<div>Left</div>}
+        trailingSlot={<div>Right</div>}
       >
         <div>Main</div>
       </RLPage>
@@ -130,19 +135,19 @@ describe("RLPage", () => {
 
     expect(html).not.toContain("ui=");
     expect(html).not.toContain("as=");
-    expect(html).not.toContain("left=");
-    expect(html).not.toContain("right=");
+    expect(html).not.toContain("leading=");
+    expect(html).not.toContain("trailing=");
   });
 
   it("renders correctly in the DOM when mounted into a container", () => {
     container.innerHTML = renderToString(() => (
-      <RLPage leftSlot={<div>Left</div>}>
+      <RLPage leadingSlot={<div>Left</div>}>
         <div>Main</div>
       </RLPage>
     ));
 
     expect(container.querySelector('[data-slot="root"]')).not.toBeNull();
-    expect(container.querySelector('[data-slot="left"]')?.textContent).toContain("Left");
+    expect(container.querySelector('[data-slot="leading"]')?.textContent).toContain("Left");
     expect(container.querySelector('[data-slot="center"]')?.textContent).toContain("Main");
   });
 });

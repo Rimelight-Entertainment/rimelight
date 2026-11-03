@@ -1,4 +1,4 @@
-import type { RLInputMenuProps } from "./input-menu.types";
+import type { InputMenuItem, RLInputMenuProps } from "./input-menu.types";
 import { RLInputMenuTheme } from "./input-menu.theme";
 import {
   createMemo,
@@ -10,24 +10,24 @@ import {
   type Component,
 } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
-
-type InputMenuItem = { label: string; value: string; [key: string]: any };
 
 const OMIT_KEYS = [
   "items",
   "value",
   "defaultValue",
+  "onValueChange",
   "placeholder",
   "disabled",
   "name",
   "label",
-  "color",
-  "onValueChange",
 ] as const;
 
 export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
-  const { classes, rest } = RLInputMenuTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLInputMenuTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const normalizedItems = createMemo<InputMenuItem[]>(() =>
     (props.items ?? []).map((item) =>
@@ -35,31 +35,27 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
     ),
   );
 
-  const [selectedValue, setSelectedValue] = createSignal<string>(
-    props.value !== undefined
-      ? String(props.value)
-      : props.defaultValue !== undefined
-        ? String(props.defaultValue)
-        : "",
+  const [currentValue, setCurrentValue] = createControllable<string>(
+    () => props.value,
+    props.defaultValue ?? "",
+    (next) => props.onValueChange?.(next),
   );
-  const currentValue = () => (props.value !== undefined ? String(props.value) : selectedValue());
 
   const selectedItem = createMemo(() =>
-    normalizedItems().find((item) => String(item.value) === String(currentValue())),
+    normalizedItems().find((item) => item.value === currentValue()),
   );
 
   const visibleLabel = createMemo(() => {
     if (props.placeholder && (currentValue() === "" || currentValue() === "undefined")) {
       return props.placeholder;
     }
-    return selectedItem()?.label ?? props.placeholder ?? "Select item...";
+    return selectedItem()?.label ?? props.placeholder ?? uiT("input-menu.placeholder");
   });
 
   const [open, setOpen] = createSignal(false);
   const [query, setQuery] = createSignal("");
 
   let searchRef: HTMLInputElement | undefined;
-  let hiddenRef: HTMLInputElement | undefined;
 
   const filteredItems = createMemo(() => {
     const q = query().toLowerCase().trim();
@@ -67,10 +63,8 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
     return normalizedItems().filter((item) => item.label.toLowerCase().includes(q));
   });
 
-  const selectItem = (value: string, _label: string) => {
-    if (props.value === undefined) setSelectedValue(value);
-    if (hiddenRef) hiddenRef.value = value;
-    props.onValueChange?.(value);
+  const selectItem = (value: string) => {
+    setCurrentValue(value);
     setQuery("");
     setOpen(false);
   };
@@ -83,7 +77,7 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
 
   const handleItemClick = (e: MouseEvent, item: InputMenuItem) => {
     e.stopPropagation();
-    selectItem(item.value, item.label);
+    selectItem(item.value);
   };
 
   createEffect(
@@ -102,9 +96,10 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
   });
 
   return (
-    <div
-      class={classes().root}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       data-disabled={props.disabled ? "" : undefined}
       {...rest}
     >
@@ -150,16 +145,14 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
                     data-value={item.value}
                     data-label={item.label}
                     data-inputMenu-item
-                    data-state={
-                      String(item.value) === String(currentValue()) ? "selected" : undefined
-                    }
+                    data-state={item.value === currentValue() ? "selected" : undefined}
                     onClick={(e) => handleItemClick(e, item)}
                   >
                     <span class={classes().itemText}>{item.label}</span>
                     <RLIcon
                       name="check"
                       class={`${classes().itemIcon} ${
-                        String(item.value) === String(currentValue()) ? "" : "hidden"
+                        item.value === currentValue() ? "" : "hidden"
                       }`}
                       data-check-icon
                       aria-hidden="true"
@@ -172,13 +165,8 @@ export const RLInputMenu: Component<RLInputMenuProps> = (props) => {
         </Show>
       </div>
 
-      <input
-        type="hidden"
-        name={props.name}
-        value={currentValue()}
-        data-inputMenu-hidden-input
-        ref={(el) => (hiddenRef = el)}
-      />
-    </div>
+      <input type="hidden" name={props.name} value={currentValue()} data-inputMenu-hidden-input />
+      {children()}
+    </Tag>
   );
 };

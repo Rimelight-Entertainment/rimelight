@@ -30,7 +30,7 @@ export const GrandTaleIndexPage: Component = () => {
   return (
     <>
       <RLPageSection
-        variant="hero"
+        layout="hero"
         title={t("page.franchises.grand.tale.home.sections.hero.title")}
         description={t("page.franchises.grand.tale.home.sections.hero.description")}
         links={heroLinks()}

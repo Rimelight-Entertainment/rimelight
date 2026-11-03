@@ -75,7 +75,7 @@ describe("RLBanner", () => {
 
     it("defaults to primary", () => {
       const html = render(() => <RLBanner title="t" />);
-      expect(attr(slotTag(html, "root"), "data-color")).toBe("primary");
+      expect(attr(slotTag(html, "root"), "class")).toContain("rl-color-primary");
     });
   });
 
@@ -88,12 +88,12 @@ describe("RLBanner", () => {
       expect(html).toContain("i-lucide-rocket");
     });
 
-    it("leading slot replaces the icon", () => {
+    it("renders leadingSlot alongside the icon", () => {
       const html = render(() => (
         <RLBanner icon="rocket" leadingSlot={<span class="custom-leading">L</span>} title="t" />
       ));
       expect(html).toContain("custom-leading");
-      expect(slotTag(html, "icon")).toBe("");
+      expect(slotTag(html, "icon")).not.toBe("");
     });
   });
 
@@ -154,30 +154,23 @@ describe("RLBanner", () => {
       expect(render(() => <RLBanner title="t" />)).not.toContain("data-banner-close");
     });
 
-    it("renders an accessible type=button when close=true", () => {
-      const html = render(() => <RLBanner title="t" close={true} />);
+    it("renders an accessible type=button when dismissible", () => {
+      const html = render(() => <RLBanner title="t" dismissible />);
       const btn = slotTag(html, "close");
       expect(btn).not.toBe("");
       expect(btn).toContain("data-banner-close");
       expect(attr(btn, "type")).toBe("button");
-      expect(attr(btn, "aria-label")).toBe("Close banner");
-    });
-
-    it("merges object close props", () => {
-      const html = render(() => (
-        <RLBanner title="t" close={{ color: "error", ariaLabel: "Dismiss announcement" }} />
-      ));
-      expect(attr(slotTag(html, "close"), "aria-label")).toBe("Dismiss announcement");
+      expect(attr(btn, "aria-label")).toBeTruthy();
     });
 
     it("accepts a closeIcon", () => {
-      const html = render(() => <RLBanner title="t" close={true} closeIcon="x" />);
+      const html = render(() => <RLBanner title="t" dismissible closeIcon="x" />);
       expect(slotTag(html, "close")).not.toBe("");
     });
 
     it("closeSlot replaces the close button", () => {
       const html = render(() => (
-        <RLBanner title="t" close={true} closeSlot={<span class="custom-close">C</span>} />
+        <RLBanner title="t" dismissible closeSlot={<span class="custom-close">C</span>} />
       ));
       expect(html).toContain("custom-close");
       expect(html).not.toContain("data-banner-close");
@@ -185,12 +178,12 @@ describe("RLBanner", () => {
   });
 
   describe("Rimelight extra slots", () => {
-    it("renders left and right content", () => {
+    it("renders leading and trailing content", () => {
       const html = render(() => (
         <RLBanner
           title="t"
-          leftSlot={<span class="l-extra">L</span>}
-          rightSlot={<span class="r-extra">R</span>}
+          leadingSlot={<span class="l-extra">L</span>}
+          trailingSlot={<span class="r-extra">R</span>}
         />
       ));
       expect(html).toContain("l-extra");
@@ -224,7 +217,7 @@ describe("RLBanner", () => {
 
     it("never nests interactive content inside the anchor", () => {
       const html = render(() => (
-        <RLBanner href="/x" title="t" actions={[{ label: "Act" }]} close={true} />
+        <RLBanner href="/x" title="t" actions={[{ label: "Act" }]} dismissible />
       ));
       expect(html).toMatch(/<a[^>]*data-slot="link"[^>]*><\/a>/);
     });
@@ -235,8 +228,8 @@ describe("RLBanner", () => {
       expect(attr(slotTag(html, "link"), "aria-labelledby")).toBe(titleId);
     });
 
-    it("uses ariaLabel on the link when provided", () => {
-      const html = render(() => <RLBanner href="/x" title="t" ariaLabel="Open news" />);
+    it("uses aria-label on the link when provided", () => {
+      const html = render(() => <RLBanner href="/x" title="t" aria-label="Open news" />);
       const link = slotTag(html, "link");
       expect(attr(link, "aria-label")).toBe("Open news");
       expect(attr(link, "aria-labelledby")).toBeUndefined();
@@ -277,8 +270,8 @@ describe("RLBanner", () => {
       expect(attr(slotTag(html, "root"), "aria-labelledby")).toBeTruthy();
     });
 
-    it("falls back to ariaLabel when untitled", () => {
-      const html = render(() => <RLBanner ariaLabel="Announcement" />);
+    it("falls back to aria-label when untitled", () => {
+      const html = render(() => <RLBanner aria-label="Announcement" />);
       const root = slotTag(html, "root");
       expect(attr(root, "role")).toBe("region");
       expect(attr(root, "aria-label")).toBe("Announcement");
@@ -328,17 +321,17 @@ describe("RLBanner", () => {
     });
 
     it("still SSR-renders a previously dismissed banner (no initial-render divergence)", () => {
-      const html = render(() => <RLBanner id="dismissed-one" title="Still here" close={true} />);
+      const html = render(() => <RLBanner id="dismissed-one" title="Still here" dismissible />);
       expect(html).toContain("Still here");
     });
 
     it("exposes the dismiss key matching the head script", () => {
-      const html = render(() => <RLBanner id="promo" title="t" close={true} />);
+      const html = render(() => <RLBanner id="promo" title="t" dismissible />);
       expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBe("banner-promo");
     });
 
     it("has no dismiss key without an id", () => {
-      const html = render(() => <RLBanner title="t" close={true} />);
+      const html = render(() => <RLBanner title="t" dismissible />);
       expect(attr(slotTag(html, "root"), "data-dismiss-key")).toBeUndefined();
     });
   });

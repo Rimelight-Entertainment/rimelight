@@ -2,33 +2,31 @@ import type { Component } from "solid-js";
 import type { RLFooterProps } from "./footer.types";
 import { RLFooterTheme } from "./footer.theme";
 
-const OMIT_KEYS = ["left", "center", "right"] as const;
-
 export const RLFooter: Component<RLFooterProps> = (props) => {
-  const { classes, rest, slots } = RLFooterTheme.setup(props, {
-    omit: OMIT_KEYS,
-    slots: ["leftSlot", "centerSlot", "rightSlot"] as const,
+  const { Tag, classes, rest, slots, children, theme } = RLFooterTheme.setup(props, {
+    as: "footer",
+    slots: ["leadingSlot", "centerSlot", "trailingSlot"] as const,
   });
 
   return (
-    <footer
-      class={classes().root}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
       data-contain={props.contain ? "true" : "false"}
-      data-theme={props.theme}
+      class={classes().root}
       {...rest}
     >
       <div class={classes().container} data-slot="container">
-        <div class={classes().left} data-slot="left">
-          {slots.leftSlot()}
+        <div class={classes().leading} data-slot="leading">
+          {slots.leadingSlot()}
         </div>
         <div class={classes().center} data-slot="center">
-          {slots.centerSlot()}
+          {slots.centerSlot() ?? children()}
         </div>
-        <div class={classes().right} data-slot="right">
-          {slots.rightSlot()}
+        <div class={classes().trailing} data-slot="trailing">
+          {slots.trailingSlot()}
         </div>
       </div>
-    </footer>
+    </Tag>
   );
 };

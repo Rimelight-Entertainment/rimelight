@@ -27,7 +27,7 @@ describe("RLCollapsible", () => {
   describe("Structure & Polymorphism", () => {
     it("renders default structure with root, trigger, and content slots", () => {
       const html = render(() => (
-        <RLCollapsible defaultOpen={true} contentSlot={<div>Collapsible content</div>}>
+        <RLCollapsible defaultOpen={true} bodySlot={<div>Collapsible content</div>}>
           <button type="button">Toggle</button>
         </RLCollapsible>
       ));
@@ -41,14 +41,14 @@ describe("RLCollapsible", () => {
 
     it("renders polymorphic root element via as prop", () => {
       const sectionHtml = render(() => (
-        <RLCollapsible as="section" defaultOpen={true} contentSlot={<div>Inner</div>}>
+        <RLCollapsible as="section" defaultOpen={true} bodySlot={<div>Inner</div>}>
           <button type="button">Toggle</button>
         </RLCollapsible>
       ));
       expect(sectionHtml).toMatch(/^<section/);
 
       const navHtml = render(() => (
-        <RLCollapsible as="nav" defaultOpen={true} contentSlot={<div>Links</div>}>
+        <RLCollapsible as="nav" defaultOpen={true} bodySlot={<div>Links</div>}>
           <button type="button">Menu</button>
         </RLCollapsible>
       ));
@@ -59,11 +59,11 @@ describe("RLCollapsible", () => {
       const html = render(() => (
         <RLCollapsible
           id="custom-collapsible"
-          ariaLabel="FAQ section"
-          ariaLabelledby="faq-heading"
-          ariaDescribedby="faq-desc"
+          aria-label="FAQ section"
+          aria-labelledby="faq-heading"
+          aria-describedby="faq-desc"
           data-testid="test-collapsible"
-          contentSlot={<div>Body</div>}
+          bodySlot={<div>Body</div>}
         >
           <button type="button">Header</button>
         </RLCollapsible>
@@ -80,7 +80,7 @@ describe("RLCollapsible", () => {
   describe("Open & Closed States", () => {
     it("defaults to closed state when neither open nor defaultOpen is passed", () => {
       const html = render(() => (
-        <RLCollapsible contentSlot={<div>Hidden Body</div>}>
+        <RLCollapsible bodySlot={<div>Hidden Body</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -96,7 +96,7 @@ describe("RLCollapsible", () => {
 
     it("renders open when defaultOpen is true", () => {
       const html = render(() => (
-        <RLCollapsible defaultOpen={true} contentSlot={<div>Visible Content</div>}>
+        <RLCollapsible defaultOpen={true} bodySlot={<div>Visible Content</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -112,7 +112,7 @@ describe("RLCollapsible", () => {
 
     it("respects controlled open prop", () => {
       const openHtml = render(() => (
-        <RLCollapsible open={true} contentSlot={<div>Controlled Content</div>}>
+        <RLCollapsible open={true} bodySlot={<div>Controlled Content</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -120,7 +120,7 @@ describe("RLCollapsible", () => {
       expect(openHtml).toContain("Controlled Content");
 
       const closedHtml = render(() => (
-        <RLCollapsible open={false} defaultOpen={true} contentSlot={<div>Controlled Content</div>}>
+        <RLCollapsible open={false} defaultOpen={true} bodySlot={<div>Controlled Content</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -132,7 +132,7 @@ describe("RLCollapsible", () => {
   describe("Unmount on Hide", () => {
     it("unmounts content from DOM when closed and unmountOnHide is true", () => {
       const html = render(() => (
-        <RLCollapsible unmountOnHide={true} contentSlot={<div>Secret text</div>}>
+        <RLCollapsible unmountOnHide={true} bodySlot={<div>Secret text</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -142,7 +142,7 @@ describe("RLCollapsible", () => {
 
     it("keeps content in DOM with hidden attribute when unmountOnHide is false", () => {
       const html = render(() => (
-        <RLCollapsible unmountOnHide={false} contentSlot={<div>Persistent text</div>}>
+        <RLCollapsible unmountOnHide={false} bodySlot={<div>Persistent text</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -157,7 +157,7 @@ describe("RLCollapsible", () => {
   describe("Disabled State", () => {
     it("applies data-disabled attributes when disabled is true", () => {
       const html = render(() => (
-        <RLCollapsible disabled={true} defaultOpen={true} contentSlot={<div>Content</div>}>
+        <RLCollapsible disabled={true} defaultOpen={true} bodySlot={<div>Content</div>}>
           <button type="button">Trigger</button>
         </RLCollapsible>
       ));
@@ -170,10 +170,13 @@ describe("RLCollapsible", () => {
   describe("Slots and Render Props", () => {
     it("supports render function for trigger receiving open state", () => {
       const html = render(() => (
-        <RLCollapsible defaultOpen={true} contentSlot={<div>Content</div>}>
-          {({ open }: { open: boolean }) => (
+        <RLCollapsible
+          defaultOpen={true}
+          triggerSlot={({ open }) => (
             <button type="button">{open ? "Expanded" : "Collapsed"}</button>
           )}
+        >
+          <div>Content</div>
         </RLCollapsible>
       ));
       expect(html).toContain("Expanded");
@@ -184,7 +187,7 @@ describe("RLCollapsible", () => {
         <RLCollapsible
           defaultOpen={true}
           triggerSlot={<span class="custom-trigger">Trigger Slot</span>}
-          contentSlot={<span class="custom-content">Content Slot</span>}
+          bodySlot={<span class="custom-content">Content Slot</span>}
         />
       ));
       expect(html).toContain("custom-trigger");
@@ -205,7 +208,7 @@ describe("RLCollapsible", () => {
   describe("ARIA & Accessibility", () => {
     it("connects trigger aria-controls with content id", () => {
       const html = render(() => (
-        <RLCollapsible id="faq-item" defaultOpen={true} contentSlot={<div>Answer</div>}>
+        <RLCollapsible id="faq-item" defaultOpen={true} bodySlot={<div>Answer</div>}>
           <button type="button">Question</button>
         </RLCollapsible>
       ));
@@ -227,7 +230,7 @@ describe("RLCollapsible", () => {
             content: "ui-content-override",
           }}
           defaultOpen={true}
-          contentSlot={<div>Custom UI Content</div>}
+          bodySlot={<div>Custom UI Content</div>}
         >
           <button type="button">Custom UI Trigger</button>
         </RLCollapsible>
@@ -240,7 +243,7 @@ describe("RLCollapsible", () => {
 
     it("applies data-theme attribute when provided", () => {
       const html = render(() => (
-        <RLCollapsible theme="dark" contentSlot={<div>Dark content</div>}>
+        <RLCollapsible theme="dark" bodySlot={<div>Dark content</div>}>
           <button type="button">Dark toggle</button>
         </RLCollapsible>
       ));

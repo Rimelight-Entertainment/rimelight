@@ -136,7 +136,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
   });
 
   describe("Volume Control & Popover Positioning", () => {
-    it("renders volume button trigger with mute handler and popover markup", () => {
+    it("renders volume button trigger with mute handler", () => {
       const html = renderSolid(RLAudio, {
         ...sampleTrack,
         showVolume: true,
@@ -146,7 +146,6 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
 
       expect(html).toContain('data-slot="volume-container"');
       expect(html).toContain('data-slot="volume-button"');
-      expect(html).toContain('data-slot="popover-container"');
       expect(html).toContain('data-slot="trigger"');
       expect(html).toContain('title="Click to adjust volume, right-click to mute/unmute"');
     });
@@ -160,8 +159,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
         skipSeconds: 15,
       });
 
-      expect(html).toContain('data-slot="skip-button-back"');
-      expect(html).toContain('data-slot="skip-button-forward"');
+      expect(html).toContain('data-slot="skip-button"');
       expect(html).toContain('data-slot="skip-badge"');
       expect(html).toContain("15");
     });
@@ -174,7 +172,6 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
       });
 
       expect(html).toContain('data-slot="repeat-button"');
-      expect(html).toContain('aria-label="Repeat mode: all"');
     });
 
     it("renders playback speed controls", () => {
@@ -199,13 +196,12 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
 
       expect(html).toContain('data-slot="playlist-container"');
       expect(html).toContain('data-slot="playlist-header"');
-      expect(html).toContain("Playlist (3 tracks)");
+      expect(html).toContain("Playlist (3)");
       expect(html).toContain('data-slot="playlist-item"');
       expect(html).toContain("Echoes of Eternity");
       expect(html).toContain("Neon Horizon");
       expect(html).toContain("Solar Winds");
-      expect(html).toContain('data-slot="nav-button-prev"');
-      expect(html).toContain('data-slot="nav-button-next"');
+      expect(html).toContain('data-slot="nav-button"');
     });
   });
 
@@ -217,8 +213,7 @@ describe("RLAudio Solid Component Rendering & Regression Suite", () => {
         showExternalLink: true,
       });
 
-      expect(html).toContain('data-slot="download-button"');
-      expect(html).toContain('data-slot="external-link-button"');
+      expect(html).toContain('data-slot="action-button"');
       expect(html).toContain('download="Echoes of Eternity.mp3"');
       expect(html).toContain('href="https://example.com/audio/sample.mp3"');
     });

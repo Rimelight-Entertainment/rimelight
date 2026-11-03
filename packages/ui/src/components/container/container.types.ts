@@ -1,21 +1,4 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLContainerTheme } from "./container.theme";
 
-export interface RLContainerProps {
-  /**
-   * The component the root element should render as.
-   *
-   * @default "div"
-   */
-  as?: ValidComponent;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+export type RLContainerProps = InferThemeProps<typeof RLContainerTheme>;

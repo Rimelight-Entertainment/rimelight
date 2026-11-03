@@ -1,100 +1,123 @@
 import type { JSX } from "@solidjs/web";
 import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
 import type { RLButtonProps } from "../button/button.types";
+import type { RLErrorTheme } from "./error.theme";
 
-export interface RLErrorAction {
+/**
+ * Button shown below the error text. Takes `href` or `onClick`.
+ */
+export type RLErrorAction = {
+  /**
+   * Button text.
+   */
   label: string;
-  icon?: string;
-  color?: ThemeColor;
-  variant?: RLButtonProps["variant"];
-  href?: string;
-  onClick?: RLButtonProps["onClick"];
-  class?: string;
-  [key: string]: any;
-}
 
-export interface RLErrorProps {
+  /**
+   * Icon name rendered before the label.
+   * @default undefined
+   */
+  icon?: string;
+
+  /**
+   * Button color.
+   * @default undefined; the button default applies.
+   */
+  color?: ThemeColor;
+
+  /**
+   * Button variant.
+   * @default undefined; the button default applies.
+   */
+  variant?: RLButtonProps["variant"];
+
+  /**
+   * Target URL. Renders the button as a link.
+   * @default undefined
+   */
+  href?: string;
+
+  /**
+   * Click handler.
+   * @default undefined
+   */
+  onClick?: RLButtonProps["onClick"];
+
+  /**
+   * Additional CSS classes for the button.
+   * @default undefined
+   */
+  class?: string;
+};
+
+/**
+ * Error props. `@status stable`.
+ */
+export type RLErrorProps = InferThemeProps<typeof RLErrorTheme> & {
   /**
    * HTTP status code. Picks the default icon, color and title.
-   * When omitted, it is read from `error` (an `HttpError`), otherwise 500.
+   * @default read from `error` (an `HttpError`), otherwise 500.
    */
   status?: number;
+
   /**
    * The thrown value. Used for the status, for an exposed `HttpError` message,
    * and for the details panel in development.
+   * @default undefined
    */
   error?: unknown;
+
   /**
-   * Title text. Defaults to a generic title for the status.
+   * Title text.
+   * @default a generic title for the status.
    */
   title?: string;
+
   /**
-   * Description text. Defaults to an exposed `HttpError` message, otherwise a generic one.
+   * Description text.
+   * @default an exposed `HttpError` message, otherwise a generic one for the status.
    */
   description?: string;
+
   /**
-   * Icon name. Defaults to an icon for the status.
+   * Icon name.
+   * @default an icon for the status.
    */
   icon?: string;
-  /**
-   * Accent color. Defaults to a color for the status.
-   */
-  color?: ThemeColor;
+
   /**
    * Hide the status pill.
+   * @default false
    */
   hideStatus?: boolean;
+
   /**
-   * Buttons below the text. Each takes `href` or `onClick`.
-   * Defaults to a single "Go home" link to `/` (localized automatically); pass `[]` for none.
-   * Built-in text is translated by ui and can be overridden in the app's i18n JSON under `rimelight.ui.error`.
+   * Buttons below the text.
+   * @default a single "Go home" link to `/` (localized automatically); pass `[]` for none.
    */
   actions?: RLErrorAction[];
+
   /**
-   * Show the error message and stack. (default: true only in development)
+   * Show the error message and stack.
+   * @default true only in development.
    */
   showDetails?: boolean;
-  /**
-   * Fill the viewport height (page use). Set false to use inline, e.g. inside a widget. (default: true)
-   */
-  fullscreen?: boolean;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: {
-    root?: string;
-    card?: string;
-    badge?: string;
-    dot?: string;
-    badgeLabel?: string;
-    icon?: string;
-    header?: string;
-    title?: string;
-    description?: string;
-    body?: string;
-    details?: string;
-    actions?: string;
-    footer?: string;
-  };
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  /**
-   * Extra content inside the card, below the description (e.g. account info).
-   */
-  children?: JSX.Element;
+
   /**
    * Replaces the icon box.
+   * @default undefined
    */
   iconSlot?: JSX.Element;
+
   /**
    * Replaces the action buttons.
+   * @default undefined
    */
   actionsSlot?: JSX.Element;
+
   /**
    * Content at the bottom of the card.
+   * @default undefined
    */
   footerSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

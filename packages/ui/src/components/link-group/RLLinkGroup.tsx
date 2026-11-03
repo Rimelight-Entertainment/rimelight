@@ -8,7 +8,10 @@ import { RLIcon } from "../icon/RLIcon";
 const OMIT_KEYS = ["label", "leadingIcon", "trailingIcon", "href", "links"] as const;
 
 export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
-  const { classes, rest } = RLLinkGroupTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLLinkGroupTheme.setup(props, {
+    as: "div",
+    omit: OMIT_KEYS,
+  });
 
   const normalizedLinks = createMemo(() => {
     if (!props.links) return [];
@@ -16,7 +19,7 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
   });
 
   return (
-    <div class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <Show when={props.label}>
         {(label) => (
           <h4 class={classes().title} data-slot="title">
@@ -51,12 +54,11 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
       </Show>
 
       <ul class={classes().list} data-slot="list">
-        <Show when={!props.children} fallback={props.children}>
+        <Show when={!children()} fallback={children()}>
           <For each={normalizedLinks()}>
             {(link) => (
               <li class={classes().item} data-slot="item">
                 <RLLink
-                  theme={link.theme ?? props.theme}
                   class={`${classes().link} w-full !justify-start`}
                   data-slot="link"
                   {...link}
@@ -66,6 +68,6 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
           </For>
         </Show>
       </ul>
-    </div>
+    </Tag>
   );
 };

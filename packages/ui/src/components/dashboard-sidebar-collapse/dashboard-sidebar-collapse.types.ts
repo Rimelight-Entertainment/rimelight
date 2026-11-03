@@ -1,10 +1,12 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme";
 
-export interface RLDashboardSidebarCollapseProps {
+export type RLDashboardSidebarCollapseProps = InferThemeProps<
+  typeof RLDashboardSidebarCollapseTheme
+> & {
+  /**
+   * Icon name shown on the collapse button.
+   * @default "panel-left"
+   */
   icon?: string;
-  side?: "left" | "right";
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+};

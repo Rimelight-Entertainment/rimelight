@@ -18,7 +18,7 @@ function attr(tag: string, name: string): string | undefined {
 }
 
 describe("RLChip", () => {
-  const sizes = ["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
+  const sizes = ["xs", "sm", "md", "lg", "xl"] as const;
   const colors = [
     "primary",
     "secondary",
@@ -219,22 +219,12 @@ describe("RLChip", () => {
 
     it("renders custom content slot and overrides text prop", () => {
       const html = render(() => (
-        <RLChip text="Ignored" contentSlot={<strong class="vip-badge">VIP</strong>}>
+        <RLChip text="Ignored" textSlot={<strong class="vip-badge">VIP</strong>}>
           <span>Target</span>
         </RLChip>
       ));
       expect(html).toContain("VIP");
       expect(html).toContain("vip-badge");
-      expect(html).not.toContain("Ignored");
-    });
-
-    it("supports contentSlot alias for content prop", () => {
-      const html = render(() => (
-        <RLChip text="Ignored" contentSlot={<em>Active</em>}>
-          <span>Target</span>
-        </RLChip>
-      ));
-      expect(html).toContain("Active");
       expect(html).not.toContain("Ignored");
     });
   });

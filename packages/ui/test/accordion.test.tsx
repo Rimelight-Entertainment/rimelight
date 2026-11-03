@@ -200,7 +200,7 @@ describe("RLAccordion Solid Component Suite", () => {
     });
   });
 
-  describe("Multiple Mode Open/Close State (type='multiple' / multiple={true})", () => {
+  describe("Multiple Mode Open/Close State (type='multiple')", () => {
     it("opens multiple items via array defaultValue in multiple mode", () => {
       const html = renderSolid(RLAccordion, {
         type: "multiple",
@@ -218,22 +218,6 @@ describe("RLAccordion Solid Component Suite", () => {
       expect(html).toContain("ARIA patterns, keyboard focus management");
       // Closed content not rendered (unmountOnHide default)
       expect(html).not.toContain("Deep dive into reactive primitives");
-    });
-
-    it("supports multiple alias prop (multiple={true})", () => {
-      const items: AccordionItem[] = [
-        { label: "First", value: "first", content: "First Body" },
-        { label: "Second", value: "second", content: "Second Body" },
-      ];
-      const html = renderSolid(RLAccordion, {
-        multiple: true,
-        items,
-        defaultValue: ["first", "second"],
-      });
-
-      expect(html).toContain('data-value="first second"');
-      expect(html).toContain("First Body");
-      expect(html).toContain("Second Body");
     });
 
     it("respects controlled array value in multiple mode", () => {
@@ -287,55 +271,13 @@ describe("RLAccordion Solid Component Suite", () => {
     });
   });
 
-  describe("Custom valueKey and labelKey with Dot Paths", () => {
-    it("resolves top-level custom keys", () => {
-      const customItems = [
-        { id: "alpha", title: "Alpha Title", content: "Alpha Body" },
-        { id: "beta", title: "Beta Title", content: "Beta Body" },
-      ];
-
-      const html = renderSolid(RLAccordion, {
-        items: customItems as any,
-        valueKey: "id",
-        labelKey: "title",
-        defaultValue: "beta",
-      });
-
-      expect(html).toContain('data-value="alpha"');
-      expect(html).toContain('data-value="beta" data-state="open"');
-      expect(html).toContain("Alpha Title");
-      expect(html).toContain("Beta Title");
-      expect(html).toContain("Beta Body");
-    });
-
-    it("resolves nested dot paths for valueKey and labelKey", () => {
-      const nestedItems = [
-        { meta: { id: "n1", header: { title: "Nested One" } }, content: "Nested Body 1" },
-        { meta: { id: "n2", header: { title: "Nested Two" } }, content: "Nested Body 2" },
-      ];
-
-      const html = renderSolid(RLAccordion, {
-        items: nestedItems as any,
-        valueKey: "meta.id",
-        labelKey: "meta.header.title",
-        defaultValue: "n1",
-      });
-
-      expect(html).toContain('data-value="n1" data-state="open"');
-      expect(html).toContain('data-value="n2" data-state="closed"');
-      expect(html).toContain("Nested One");
-      expect(html).toContain("Nested Two");
-      expect(html).toContain("Nested Body 1");
-    });
-  });
-
   describe("Leading & Trailing Slot Renderers and Icon Hierarchy", () => {
     it("renders custom leading slot renderer", () => {
       const html = cleanHtml(
         renderToString(() => (
           <RLAccordion
             items={SAMPLE_ITEMS}
-            leadingSlot={(item, index) => (
+            leadingSlot={({ item, index }) => (
               <span class="custom-badge-leading">
                 Badge #{index}: {item.label}
               </span>
@@ -354,9 +296,7 @@ describe("RLAccordion Solid Component Suite", () => {
         renderToString(() => (
           <RLAccordion
             items={SAMPLE_ITEMS}
-            trailingSlot={(_item, index) => (
-              <span class="custom-trailing-action">Action {index}</span>
-            )}
+            trailingSlot={({ index }) => <span class="custom-trailing-action">Action {index}</span>}
           />
         )),
       );
@@ -407,7 +347,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion
             items={SAMPLE_ITEMS}
             defaultValue="0"
-            bodySlot={(item, index) => (
+            bodySlot={({ item, index }) => (
               <p class="custom-body-renderer">
                 Item [{index}]: {item.content}
               </p>
@@ -418,27 +358,6 @@ describe("RLAccordion Solid Component Suite", () => {
 
       expect(html).toContain("custom-body-renderer");
       expect(html).toContain("Item [0]: Installation and quick start guide for Rimelight UI.");
-    });
-
-    it("renders custom content render prop replacing default content wrapper", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLAccordion
-            items={SAMPLE_ITEMS}
-            defaultValue="0"
-            contentSlot={(item, index) => (
-              <article class="custom-content-wrapper" data-index={index}>
-                <h4>{item.label}</h4>
-                <p>{item.content}</p>
-              </article>
-            )}
-          />
-        )),
-      );
-
-      expect(html).toContain("custom-content-wrapper");
-      expect(html).toContain('data-index="0"');
-      expect(html).toContain("<h4>Getting Started</h4>");
     });
 
     it("renders custom body via body render prop", () => {
@@ -456,7 +375,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion
             items={items}
             defaultValue="special"
-            bodySlot={(item) =>
+            bodySlot={({ item }) =>
               item.value === "special" ? (
                 <div class="named-slot-output">SPECIAL: {item.content}</div>
               ) : (

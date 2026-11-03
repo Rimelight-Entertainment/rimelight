@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLChatTheme } from "./chat.theme";
 
-export interface RLChatProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for `RLChat`. Renders its children inside the themed root.
+ *
+ * @status stub
+ */
+export type RLChatProps = InferThemeProps<typeof RLChatTheme>;

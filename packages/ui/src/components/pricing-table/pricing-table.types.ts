@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPricingTableTheme } from "./pricing-table.theme";
 
-export interface RLPricingTableProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for the pricing table component.
+ *
+ * @status stub
+ */
+export type RLPricingTableProps = InferThemeProps<typeof RLPricingTableTheme>;

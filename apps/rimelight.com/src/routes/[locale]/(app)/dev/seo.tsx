@@ -842,8 +842,9 @@ export default function DevSeoPage() {
           content: (
             <div class="flex flex-col gap-md w-full">
               <RLCarousel items={ogPreviewCards} dots arrows>
-                {(ctx: { item: OgPreviewItem; index: number }) => {
-                  const page = ctx.item;
+                {({ index }: { index: number }) => {
+                  const page = ogPreviewCards[index];
+                  if (!page) return null;
                   const url = resolveOgUrl(page);
                   const isCopied = () => copiedOg() === url;
                   return (

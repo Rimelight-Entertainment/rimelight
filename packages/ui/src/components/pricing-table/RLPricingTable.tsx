@@ -3,11 +3,11 @@ import type { RLPricingTableProps } from "./pricing-table.types";
 import { RLPricingTableTheme } from "./pricing-table.theme";
 
 export const RLPricingTable: Component<RLPricingTableProps> = (props) => {
-  const { classes, rest } = RLPricingTableTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLPricingTableTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

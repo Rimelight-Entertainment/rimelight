@@ -5,7 +5,7 @@ import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import type { ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const SIZES = ["xs", "sm", "md", "lg", "xl", "fullscreen"] as const;
+const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 
 export const ModalSandbox = (): JSX.Element => {
   const [open, setOpen] = createSignal(false);
@@ -17,7 +17,6 @@ export const ModalSandbox = (): JSX.Element => {
   const [dismissible, setDismissible] = createSignal(true);
   const [hasHeader, setHasHeader] = createSignal(true);
   const [hasFooter, setHasFooter] = createSignal(true);
-  const [hasClose, setHasClose] = createSignal(true);
   const [title, setTitle] = createSignal("Edit User Profile");
   const [description, setDescription] = createSignal("Update account credentials and preferences.");
 
@@ -117,16 +116,6 @@ export const ModalSandbox = (): JSX.Element => {
             />
             <span class="text-muted">{t("app.text.footer")}</span>
           </label>
-          <label class="flex items-center gap-1.5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={hasClose()}
-              onInput={(e) => setHasClose(e.currentTarget.checked)}
-              onChange={(e) => setHasClose(e.currentTarget.checked)}
-              class="rounded border-default"
-            />
-            <span class="text-muted">{t("app.text.close-button")}</span>
-          </label>
         </div>
 
         {/* Text Inputs */}
@@ -161,7 +150,6 @@ export const ModalSandbox = (): JSX.Element => {
           overlay={overlay()}
           modal={isModal()}
           dismissible={dismissible()}
-          close={hasClose()}
           title={hasHeader() ? title() : undefined}
           description={hasHeader() ? description() : undefined}
           triggerSlot={
@@ -215,7 +203,7 @@ export const modalAudit: ComponentAuditDefinition = {
       get title() {
         return t("app.text.all-size-variants");
       },
-      description: "xs, sm, md, lg, xl, and fullscreen modal sizes.",
+      description: "xs, sm, md, lg, xl modal sizes.",
       render: () => {
         const [activeSize, setActiveSize] = createSignal<string | null>(null);
         return (
@@ -431,7 +419,7 @@ export const modalAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for title, description, open (v-model), defaultOpen, size, overlay, scrollable, transition, fullscreen, portal, close, closeIcon, dismissible, modal, unmountOnHide, header, body, footer, actions, close, content slots and aliases.",
+        "Full support for title, description, open (v-model), defaultOpen, size, overlay, scrollable, transition, fullscreen, portal, closeIcon, dismissible, modal, unmountOnHide, headerSlot, titleSlot, descriptionSlot, actionsSlot, closeSlot, bodySlot, footerSlot slots and aliases.",
     },
     {
       criterion: "Full WAI-ARIA compliance",

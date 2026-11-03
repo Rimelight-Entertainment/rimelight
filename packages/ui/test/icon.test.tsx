@@ -46,7 +46,7 @@ describe("RLIcon class rendering", () => {
     const html = render(() => <RLIcon name="rocket" />);
     expect(html).toContain("i-lucide-rocket");
     expect(html).not.toContain("<svg");
-    expect(html).toContain('data-slot="icon"');
+    expect(html).toContain('data-slot="root"');
     expect(html).toContain('aria-hidden="true"');
   });
 
@@ -63,13 +63,13 @@ describe("RLIcon class rendering", () => {
 
   it("renders only the wrapper for unknown icon names", () => {
     const html = render(() => <RLIcon name="definitely-not-an-icon" />);
-    expect(html).toContain('data-slot="icon"');
+    expect(html).toContain('data-slot="root"');
     expect(html).not.toContain("<svg");
   });
 
   it("renders an empty wrapper for an empty name", () => {
     const html = render(() => <RLIcon name="" />);
-    expect(html).toContain('data-slot="icon"');
+    expect(html).toContain('data-slot="root"');
     expect(html).not.toContain("<svg");
   });
 

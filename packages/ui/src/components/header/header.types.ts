@@ -1,30 +1,63 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLHeaderTheme } from "./header.theme";
 
-export interface RLHeaderProps {
+export type RLHeaderProps = Omit<
+  InferThemeProps<typeof RLHeaderTheme>,
+  "contain" | "sticky" | "fixed"
+> & {
   /**
-   * The element or component this component should render as.
+   * Whether the header content is constrained to the max-width container.
+   *
+   * @default true
+   */
+  contain?: boolean;
+  /**
+   * Whether the header sticks to the top of the viewport when scrolling.
+   *
+   * @default true
+   */
+  sticky?: boolean;
+  /**
+   * Whether the header is fixed to the viewport. Overrides `sticky`.
+   *
+   * @default false
+   */
+  fixed?: boolean;
+  /**
+   * Stacking order among registered headers.
+   *
+   * @default 0
+   */
+  stackIndex?: number;
+  /**
+   * Whether the header collapses when scrolling down.
+   *
+   * @default false
+   */
+  hideOnScroll?: boolean;
+  /**
+   * Layer role: a regular header or a banner stacked above it.
    *
    * @default "header"
    */
-  as?: ValidComponent;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  contain?: boolean;
-  sticky?: boolean;
-  fixed?: boolean;
-  stackIndex?: number;
-  hideOnScroll?: boolean;
   layerType?: "header" | "banner";
-  leftSlot?: JSX.Element;
+  /**
+   * Content rendered in the leading area.
+   *
+   * @default undefined
+   */
+  leadingSlot?: JSX.Element;
+  /**
+   * Replaces the center area content. Falls back to `children` when omitted.
+   *
+   * @default undefined
+   */
   centerSlot?: JSX.Element;
-  rightSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  /**
+   * Content rendered in the trailing area.
+   *
+   * @default undefined
+   */
+  trailingSlot?: JSX.Element;
+};

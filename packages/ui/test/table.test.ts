@@ -3,7 +3,7 @@ import { describe, it, expect } from "vite-plus/test";
 import { RLTableTheme } from "../src/components/table/table.theme";
 import { RLTable } from "../src/components/table/RLTable";
 import { renderSolid } from "./utils/normalize";
-import type { TableApi, TableColumn } from "../src/components/table/table.types";
+import type { TableApi, TableColumn, TableRow } from "../src/components/table/table.types";
 
 describe("RLTable Theme & Logic Suite", () => {
   it("generates correct slot classes with default variants", () => {
@@ -156,7 +156,7 @@ describe("RLTable Theme & Logic Suite", () => {
       renderSolid(RLTable, {
         data: sampleData,
         columns,
-        ref: (a: TableApi) => {
+        onApi: (a: TableApi) => {
           api = a;
         },
       });
@@ -183,7 +183,7 @@ describe("RLTable Theme & Logic Suite", () => {
       renderSolid(RLTable, {
         data: sampleData,
         columns,
-        ref: (a: TableApi) => {
+        onApi: (a: TableApi) => {
           api = a;
         },
       });
@@ -237,11 +237,13 @@ describe("RLTable Theme & Logic Suite", () => {
       expect(html).toContain('data-slot="trigger"');
     });
 
-    it("auto-injects actions column when rowActions prop is passed to table", () => {
+    it("auto-injects actions column when actions prop is passed to table", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
         columns: [{ accessorKey: "name", header: "Name" }],
-        rowActions: (row: any) => [{ label: "View Profile", href: `/profile/${row.original.id}` }],
+        actions: (row: TableRow<{ id: number }>) => [
+          { label: "View Profile", href: `/profile/${row.original.id}` },
+        ],
       });
       expect(html).toContain('data-col-id="actions"');
       expect(html).toContain('data-slot="trigger"');

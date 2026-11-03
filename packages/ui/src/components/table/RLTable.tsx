@@ -35,7 +35,75 @@ function getNestedValue(obj: AnyData, key: string): any {
   return obj[key];
 }
 
-export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
+const OMIT_KEYS = [
+  "data",
+  "columns",
+  "caption",
+  "meta",
+  "sticky",
+  "virtualize",
+  "loading",
+  "loadingColor",
+  "loadingAnimation",
+  "empty",
+  "striped",
+  "bordered",
+  "hoverable",
+  "globalFilter",
+  "columnFilters",
+  "columnVisibility",
+  "columnPinning",
+  "sorting",
+  "grouping",
+  "rowPinning",
+  "rowSelection",
+  "expanded",
+  "pagination",
+  "getSubRows",
+  "getRowCanExpand",
+  "getRowId",
+  "onSelect",
+  "onHover",
+  "onContextmenu",
+  "onSortingChange",
+  "onColumnFiltersChange",
+  "onGlobalFilterChange",
+  "onColumnVisibilityChange",
+  "onColumnPinningChange",
+  "onRowSelectionChange",
+  "onExpandedChange",
+  "onRowPinningChange",
+  "onPaginationChange",
+  "enableColumnResizing",
+  "columnResizeMode",
+  "columnSizing",
+  "onColumnSizingChange",
+  "enableColumnReordering",
+  "columnOrder",
+  "onColumnOrderChange",
+  "enableRowReordering",
+  "onRowReorder",
+  "editingCell",
+  "onEditingCellChange",
+  "searchable",
+  "searchPlaceholder",
+  "showColumnsToggle",
+  "exportable",
+  "exportFilename",
+  "actions",
+  "columnSlots",
+  "onApi",
+  "toolbarSlot",
+  "captionSlot",
+  "groupHeaderSlot",
+  "expandedContentSlot",
+  "loadingContentSlot",
+  "emptyContentSlot",
+  "bodyTopSlot",
+  "bodyBottomSlot",
+] as const;
+
+export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
   let tableElementRef: HTMLTableElement | null = null;
   let containerRef: HTMLDivElement | null = null;
 
@@ -223,7 +291,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
     }
 
     // Auto-inject rowActions / actions column if defined on table props and not in columns
-    const actionsDef = props.actions || props.rowActions;
+    const actionsDef = props.actions;
     if (actionsDef && !cols.some((c) => c.id === "actions")) {
       cols.push({
         id: "actions",
@@ -267,9 +335,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
 
   function getCellActions(row: TableRow<T>, col: TableColumn<T>) {
     const actionsFn =
-      col.actions ??
-      col.items ??
-      (col.id === "actions" ? props.actions || props.rowActions : undefined);
+      col.actions ?? col.items ?? (col.id === "actions" ? props.actions : undefined);
     if (actionsFn) {
       return typeof actionsFn === "function" ? (actionsFn as any)(row) : actionsFn;
     }
@@ -1087,12 +1153,14 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
     }),
   };
 
-  if (typeof props.ref === "function") {
-    props.ref(tableApi);
+  if (typeof props.onApi === "function") {
+    props.onApi(tableApi);
   }
 
   // ─── Theme Resolution ────────────────────────────────────────────────────────
-  const { classes, slots } = RLTableTheme.setup(props, {
+  const { Tag, classes, rest, slots, theme } = RLTableTheme.setup(props, {
+    as: "div",
+    omit: OMIT_KEYS,
     slots: [
       "toolbarSlot",
       "captionSlot",
@@ -1131,7 +1199,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   const exportDropdownItems = createMemo(() => [
     {
       id: "csv",
-      label: "Export as CSV",
+      label: uiT("table.exportCsv"),
       icon: "i-lucide-file-spreadsheet",
       onSelect: () => {
         tableApi.exportToCsv({ filename: props.exportFilename ?? "export" });
@@ -1139,7 +1207,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
     },
     {
       id: "json",
-      label: "Export as JSON",
+      label: uiT("table.exportJson"),
       icon: "i-lucide-file-json",
       onSelect: () => {
         tableApi.exportToJson({ filename: props.exportFilename ?? "export" });
@@ -1157,13 +1225,13 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   );
 
   return (
-    <div class={classes().root} data-slot="root">
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <Show when={showToolbar()}>
         <div class={classes().toolbar} data-slot="toolbar">
           <Show when={props.searchable}>
             <RLInput
               type="search"
-              placeholder={props.searchPlaceholder ?? "Filter table..."}
+              placeholder={props.searchPlaceholder ?? uiT("table.searchPlaceholder")}
               leadingIcon="i-lucide-search"
               class="max-w-xs min-w-[10ch] w-full"
               value={currentGlobalFilter()}
@@ -1176,7 +1244,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
           <div class="ml-auto flex items-center gap-2 shrink-0">
             <Show when={props.exportable}>
               <RLDropdownMenu
-                label="Export"
+                label={uiT("table.export")}
                 icon="i-lucide-download"
                 items={exportDropdownItems()}
                 content={{ align: "end" }}
@@ -1187,7 +1255,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
 
             <Show when={props.showColumnsToggle}>
               <RLDropdownMenu
-                label="Columns"
+                label={uiT("table.columns")}
                 icon="i-lucide-columns"
                 items={columnDropdownItems()}
                 content={{ align: "end" }}
@@ -1400,7 +1468,11 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                           <div class="flex-1 min-w-0">
                             <Show
                               when={!slotHeader}
-                              fallback={slotHeader?.({ column: col, table: tableApi })}
+                              fallback={
+                                typeof slotHeader === "function"
+                                  ? slotHeader({ column: col, table: tableApi })
+                                  : slotHeader
+                              }
                             >
                               <Show
                                 when={canSort()}
@@ -1500,7 +1572,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                         fallback={
                           <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
                             <RLIcon name="i-lucide-inbox" class="size-8 opacity-40" />
-                            <p class="text-sm font-medium">{props.empty ?? "No data available"}</p>
+                            <p class="text-sm font-medium">{props.empty ?? uiT("table.empty")}</p>
                           </div>
                         }
                       >
@@ -1721,16 +1793,20 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                                 >
                                   <Show
                                     when={!cellSlot}
-                                    fallback={cellSlot?.({
-                                      row,
-                                      column: col,
-                                      cell: { value: cellValue() },
-                                      getValue: cellValue,
-                                      renderValue: cellValue,
-                                      isEditing,
-                                      setEditing,
-                                      table: tableApi,
-                                    })}
+                                    fallback={
+                                      typeof cellSlot === "function"
+                                        ? cellSlot({
+                                            row,
+                                            column: col,
+                                            cell: { value: cellValue() },
+                                            getValue: cellValue,
+                                            renderValue: cellValue,
+                                            isEditing,
+                                            setEditing,
+                                            table: tableApi,
+                                          })
+                                        : cellSlot
+                                    }
                                   >
                                     {renderCellContent(row, col, cellValue, isEditing, setEditing)}
                                   </Show>
@@ -1874,16 +1950,20 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                                         >
                                           <Show
                                             when={!cellSlot}
-                                            fallback={cellSlot?.({
-                                              row: subRow,
-                                              column: col,
-                                              cell: { value: cellValue() },
-                                              getValue: cellValue,
-                                              renderValue: cellValue,
-                                              isEditing,
-                                              setEditing,
-                                              table: tableApi,
-                                            })}
+                                            fallback={
+                                              typeof cellSlot === "function"
+                                                ? cellSlot({
+                                                    row: subRow,
+                                                    column: col,
+                                                    cell: { value: cellValue() },
+                                                    getValue: cellValue,
+                                                    renderValue: cellValue,
+                                                    isEditing,
+                                                    setEditing,
+                                                    table: tableApi,
+                                                  })
+                                                : cellSlot
+                                            }
                                           >
                                             {renderCellContent(
                                               subRow,
@@ -1935,7 +2015,11 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                       <td class={classes().td} data-slot="td">
                         <Show
                           when={!footerSlot}
-                          fallback={footerSlot?.({ column: col, table: tableApi })}
+                          fallback={
+                            typeof footerSlot === "function"
+                              ? footerSlot({ column: col, table: tableApi })
+                              : footerSlot
+                          }
                         >
                           {typeof col.footer === "function"
                             ? col.footer({ column: col, table: tableApi })
@@ -1950,6 +2034,6 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
           </Show>
         </table>
       </div>
-    </div>
+    </Tag>
   );
 };

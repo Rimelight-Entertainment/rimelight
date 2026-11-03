@@ -4,7 +4,7 @@ import type { PropMeta, SlotMeta } from "../types.ts";
 
 /**
  * Props and slots of an RL component, read from `components/<kebab>/<kebab>.types.ts`:
- * the members of `export interface RL<Name>Props { … }` with their JSDoc comments.
+ * the members of `export interface RL<Name>Props { … }` or of the object literal in `export type RL<Name>Props = … & { … }`, with their JSDoc comments.
  *
  * - `foo?: T` → optional prop; no `?` → required.
  * - A "(default: x)" phrase or `@default x` tag in the comment becomes the default.
@@ -22,7 +22,9 @@ export function extractPropsMeta(
   if (!existsSync(file)) return { props: [], slots: [] };
   const source = readFileSync(file, "utf-8");
 
-  const head = new RegExp(`export\\s+interface\\s+RL${componentName}Props\\b[^{]*\\{`).exec(source);
+  const head = new RegExp(
+    `export\\s+(?:interface\\s+RL${componentName}Props\\b[^{]*|type\\s+RL${componentName}Props\\s*=[^{;]*)\\{`,
+  ).exec(source);
   if (!head) return { props: [], slots: [] };
   const body = sliceBalanced(source, head.index + head[0].length - 1);
   if (body == null) return { props: [], slots: [] };

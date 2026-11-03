@@ -33,7 +33,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     links: "flex flex-wrap",
   },
   variants: {
-    variant: {
+    layout: {
       default: {
         container: "py-16 sm:py-24 lg:py-32 gap-8 sm:gap-16",
         headline: "mb-3",
@@ -82,7 +82,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
         root: "bg-elevated/50 ring ring-default",
         description: "text-toned",
       },
-      naked: {
+      ghost: {
         description: "text-muted",
       },
     },
@@ -122,28 +122,28 @@ export const RLPageSectionTheme = defineTheme("page-section", {
   },
   compoundVariants: [
     {
-      variant: "hero",
+      layout: "hero",
       reverse: true,
       class: {
         wrapper: "order-first",
       },
     },
     {
-      variant: "default",
+      layout: "default",
       reverse: true,
       class: {
         wrapper: "order-last",
       },
     },
     {
-      variant: "cta",
+      layout: "cta",
       reverse: true,
       class: {
         wrapper: "order-last",
       },
     },
     {
-      variant: "default",
+      layout: "default",
       orientation: "vertical",
       title: true,
       class: {
@@ -151,7 +151,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       },
     },
     {
-      variant: "default",
+      layout: "default",
       orientation: "vertical",
       description: true,
       class: {
@@ -159,7 +159,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       },
     },
     {
-      variant: "default",
+      layout: "default",
       orientation: "vertical",
       body: true,
       class: {
@@ -167,14 +167,14 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       },
     },
     {
-      variant: "cta",
+      layout: "cta",
       ctaVariant: "outline",
       class: {
         root: "bg-default ring ring-default",
       },
     },
     {
-      variant: "cta",
+      layout: "cta",
       ctaVariant: "solid",
       class: {
         root: "bg-inverted text-inverted",
@@ -183,7 +183,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       },
     },
     {
-      variant: "cta",
+      layout: "cta",
       ctaVariant: "soft",
       class: {
         root: "bg-elevated/50",
@@ -191,7 +191,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
       },
     },
     {
-      variant: "cta",
+      layout: "cta",
       ctaVariant: "subtle",
       class: {
         root: "bg-elevated/50 ring ring-default",
@@ -200,7 +200,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     },
   ],
   defaultVariants: {
-    variant: "default",
+    layout: "default",
     orientation: "vertical",
   },
 });

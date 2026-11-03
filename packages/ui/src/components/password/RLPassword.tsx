@@ -2,12 +2,15 @@ import type { Component } from "solid-js";
 import type { RLPasswordProps } from "./password.types";
 import { RLPasswordTheme } from "./password.theme";
 
+/**
+ * @status stub
+ */
 export const RLPassword: Component<RLPasswordProps> = (props) => {
-  const { classes, rest } = RLPasswordTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLPasswordTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

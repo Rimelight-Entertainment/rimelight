@@ -1,45 +1,51 @@
 import type { Component } from "solid-js";
-import { createSignal, For, Show } from "solid-js";
+import { For, Show } from "solid-js";
 import type { RLStepperProps, StepperItem } from "./stepper.types";
 import { RLStepperTheme } from "./stepper.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
+import type { SlotRenderer } from "../../types";
 
 const OMIT_KEYS = [
   "items",
   "value",
   "defaultValue",
-  "valueKey",
+  "onValueChange",
   "linear",
   "disabled",
-  "indicator",
-  "wrapper",
-  "onChange",
   "onNext",
   "onPrev",
+  "indicatorSlot",
+  "wrapperSlot",
 ] as const;
 
+const resolveSlot = <Ctx,>(renderer: SlotRenderer<Ctx> | undefined, ctx: Ctx) =>
+  typeof renderer === "function" ? renderer(ctx) : renderer;
+
 export const RLStepper: Component<RLStepperProps> = (props) => {
-  const { classes, rest } = RLStepperTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, slots, children, theme } = RLStepperTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["indicatorSlot", "wrapperSlot"] as const,
+  });
 
   const items = (): StepperItem[] => props.items ?? [];
-  const valueKey = (): string => props.valueKey ?? "value";
   const linear = (): boolean => props.linear !== false;
   const isDisabled = (): boolean => props.disabled === true;
 
-  const initialActiveValue =
-    props.value ??
-    props.defaultValue ??
-    (items().length > 0 ? (items()[0]?.[valueKey()] ?? items()[0]?.value ?? 0) : 0);
+  const itemValue = (item: StepperItem, index: number): string | number => item.value ?? index;
 
-  const activeIndex = items().findIndex((item, idx) => {
-    const val = item[valueKey()] ?? item.value ?? idx;
-    return String(val) === String(initialActiveValue);
-  });
+  const [currentValue, setCurrentValue] = createControllable<string | number>(
+    () => props.value,
+    props.defaultValue ?? (props.items?.[0] ? itemValue(props.items[0], 0) : 0),
+    props.onValueChange,
+  );
 
-  const [currentIndex, setCurrentIndex] = createSignal(activeIndex >= 0 ? activeIndex : 0);
-
-  const itemValue = (item: StepperItem, index: number): string | number =>
-    item[valueKey()] ?? item.value ?? index;
+  const currentIndex = (): number => {
+    const idx = items().findIndex(
+      (item, index) => String(itemValue(item, index)) === String(currentValue()),
+    );
+    return idx >= 0 ? idx : 0;
+  };
 
   const goTo = (index: number) => {
     if (isDisabled()) return;
@@ -47,19 +53,18 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
     if (linear() && index > currentIndex() + 1) return;
 
     const oldIndex = currentIndex();
-    setCurrentIndex(index);
     const value = itemValue(items()[index]!, index);
+    setCurrentValue(value);
 
     if (index > oldIndex) {
       props.onNext?.({ index, value });
     } else if (index < oldIndex) {
       props.onPrev?.({ index, value });
     }
-    props.onChange?.({ index, value });
   };
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <div class={classes().header} data-slot="header">
         <For each={items()}>
           {(item, index) => {
@@ -76,7 +81,7 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
             return (
               <>
                 <div
-                  class={`${classes().item}  ${item.class || ""}`}
+                  class={classes().item}
                   data-slot="item"
                   data-index={index()}
                   data-value={itemValue(item, index())}
@@ -93,45 +98,42 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
                       onClick={() => goTo(index())}
                     >
                       <span class={classes().indicator} data-slot="indicator">
-                        {props.indicator ? (
-                          props.indicator({ item, index: index(), state })
-                        ) : item.icon ? (
-                          <RLIcon
-                            name={item.icon}
-                            size="sm"
-                            class={classes().icon}
-                            data-slot="icon"
-                          />
-                        ) : (
-                          <span>{index() + 1}</span>
-                        )}
+                        {resolveSlot(slots.indicatorSlot(), { item, index: index(), state }) ??
+                          (item.icon ? (
+                            <RLIcon
+                              name={item.icon}
+                              size="sm"
+                              class={classes().icon}
+                              data-slot="icon"
+                            />
+                          ) : (
+                            <span>{index() + 1}</span>
+                          ))}
                       </span>
                     </button>
                   </div>
 
-                  {item.title || item.description ? (
+                  <Show when={item.title || item.description}>
                     <div class={classes().wrapper} data-slot="wrapper">
-                      {props.wrapper ? (
-                        props.wrapper({ item, index: index() })
-                      ) : (
+                      {resolveSlot(slots.wrapperSlot(), { item, index: index() }) ?? (
                         <>
-                          {item.title ? (
+                          <Show when={item.title}>
                             <div class={classes().title} data-slot="title">
                               {item.title}
                             </div>
-                          ) : null}
-                          {item.description ? (
+                          </Show>
+                          <Show when={item.description}>
                             <div class={classes().description} data-slot="description">
                               {item.description}
                             </div>
-                          ) : null}
+                          </Show>
                         </>
                       )}
                     </div>
-                  ) : null}
+                  </Show>
                 </div>
 
-                {index() < items().length - 1 ? (
+                <Show when={index() < items().length - 1}>
                   <div
                     class={`${classes().separator} ${
                       index() < currentIndex() ? "bg-primary" : "bg-muted"
@@ -139,7 +141,7 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
                     data-slot="separator"
                     data-separator-index={index()}
                   />
-                ) : null}
+                </Show>
               </>
             );
           }}
@@ -147,7 +149,7 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
       </div>
 
       <div class={classes().content} data-slot="content">
-        {props.children}
+        {children()}
         <For each={items()}>
           {(item, index) => {
             const panelActive = index() === currentIndex();
@@ -164,6 +166,6 @@ export const RLStepper: Component<RLStepperProps> = (props) => {
           }}
         </For>
       </div>
-    </div>
+    </Tag>
   );
 };

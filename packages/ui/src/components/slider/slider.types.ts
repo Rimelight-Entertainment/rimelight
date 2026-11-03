@@ -1,45 +1,42 @@
-import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSliderTheme } from "./slider.theme";
 
-export interface RLSliderProps {
+export type RLSliderProps = Omit<
+  InferThemeProps<typeof RLSliderTheme>,
+  "value" | "defaultValue" | "onChange"
+> & {
   /**
-   * The value of the range input.
+   * Controlled value. Omit for uncontrolled use.
+   * @default undefined
    */
-  value?: number;
+  value?: number | undefined;
   /**
-   * Minimum boundary.
+   * Initial value when uncontrolled.
+   * @default min
    */
-  min?: number;
+  defaultValue?: number | undefined;
   /**
-   * Maximum boundary.
+   * Called with the next value on each change.
    */
-  max?: number;
+  onValueChange?: (value: number) => void;
   /**
-   * Steps size.
+   * Smallest selectable value.
+   * @default 0
    */
-  step?: number;
+  min?: number | undefined;
   /**
-   * Form element input name.
+   * Largest selectable value.
+   * @default 100
    */
-  name?: string;
+  max?: number | undefined;
   /**
-   * Color theme.
+   * Distance between selectable values.
+   * @default 1
    */
-  color?: ThemeColor;
+  step?: number | undefined;
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Form field name for the underlying range input.
+   * @default undefined
    */
-  theme?: Theme;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  defaultValue?: number;
-  onChange?: (val: number) => void;
-  [key: string]: unknown;
-}
+  name?: string | undefined;
+};

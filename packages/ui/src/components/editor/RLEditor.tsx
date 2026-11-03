@@ -3,11 +3,11 @@ import type { RLEditorProps } from "./editor.types";
 import { RLEditorTheme } from "./editor.theme";
 
 export const RLEditor: Component<RLEditorProps> = (props) => {
-  const { classes, rest } = RLEditorTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLEditorTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

@@ -1,20 +1,13 @@
-export interface RLIconProps {
+import type { InferThemeProps } from "../../resolver";
+import type { RLIconTheme } from "./icon.theme";
+
+/**
+ * Renders a named icon as an inline element.
+ */
+export type RLIconProps = InferThemeProps<typeof RLIconTheme> & {
   /**
-   * The name of the icon to display — a Lucide icon name (e.g. `check`, `chevron-down`)
-   * or a full UnoCSS/Iconify class name (e.g. `i-lucide-check`).
+   * Icon name resolved by the icon registry.
+   * @default undefined
    */
   name: string;
-  /**
-   * The size scale of the icon.
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | "none" | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  [key: string]: unknown;
-}
+};

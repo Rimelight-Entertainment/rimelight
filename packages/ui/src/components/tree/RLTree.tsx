@@ -3,11 +3,11 @@ import type { RLTreeProps } from "./tree.types";
 import { RLTreeTheme } from "./tree.theme";
 
 export const RLTree: Component<RLTreeProps> = (props) => {
-  const { classes, rest } = RLTreeTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLTreeTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

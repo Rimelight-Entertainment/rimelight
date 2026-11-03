@@ -1,8 +1,9 @@
 import type { RLChartProps, ChartDataPoint } from "./chart.types";
 import { RLChartTheme } from "./chart.theme";
 import { createMemo, For, Show, type Component } from "solid-js";
+import { uiT } from "../../locale";
 
-const OMIT_KEYS = ["type", "data", "title", "height", "color"] as const;
+const OMIT_KEYS = ["type", "data", "title", "height"] as const;
 
 const palette = [
   "hsl(221 83% 53%)",
@@ -34,7 +35,7 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
 };
 
 export const RLChart: Component<RLChartProps> = (props) => {
-  const { classes, rest, id } = RLChartTheme.setup(props, {
+  const { Tag, classes, rest, id, children, theme } = RLChartTheme.setup(props, {
     omit: OMIT_KEYS,
     idPrefix: "rl-chart",
   });
@@ -105,7 +106,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
   .${id()} .rl-chart-pie-wrap { height: ${height() - 60}px; }
 `}</style>
 
-      <div class={`${classes().root}  ${id()}`} data-slot="root" {...rest}>
+      <Tag data-slot="root" data-theme={theme()} class={`${classes().root}  ${id()}`} {...rest}>
         <Show when={props.title}>
           {(t) => (
             <div class={classes().title} data-slot="title">
@@ -157,7 +158,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
               class={classes().svg}
               viewBox={`0 0 ${LINE_W} ${LINE_H}`}
               preserveAspectRatio="none"
-              aria-label={props.title ?? "Line chart"}
+              aria-label={props.title ?? uiT("chart.lineLabel")}
             >
               <For each={gridLines}>
                 {(t) => {
@@ -219,7 +220,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
             <svg
               viewBox="0 0 200 200"
               class="h-full w-auto max-h-48"
-              aria-label={props.title ?? "Pie chart"}
+              aria-label={props.title ?? uiT("chart.pieLabel")}
             >
               <For each={pieSlices()}>
                 {({ item, i, start, end }) => {
@@ -261,7 +262,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
           </div>
         </Show>
 
-        {props.children}
+        {children()}
 
         <Show
           when={
@@ -282,7 +283,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
             </For>
           </div>
         </Show>
-      </div>
+      </Tag>
     </>
   );
 };

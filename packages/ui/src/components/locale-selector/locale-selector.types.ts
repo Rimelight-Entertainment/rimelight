@@ -1,5 +1,6 @@
 import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLLocaleSelectorTheme } from "./locale-selector.theme";
 
 export interface LocaleItem {
   code: string;
@@ -12,61 +13,50 @@ export interface LocaleItem {
   href?: string;
 }
 
-export interface RLLocaleSelectorProps {
+/**
+ * Locale selector props. `@status stable`.
+ */
+export type RLLocaleSelectorProps = InferThemeProps<typeof RLLocaleSelectorTheme> & {
   /**
-   * Array of available locales to display in the selector.
-   *
-   * Accepts plain locale code strings (`"en"`, `"pt"`) or full `LocaleItem` objects. Labels
-   * default to each language's own name.
-   *
-   * When omitted, every locale configured in @rimelight/i18n.
+   * Locales to show. Accepts codes (`"en"`) or `LocaleItem` objects; labels default to
+   * each language's own name.
+   * @default every locale configured in @rimelight/i18n
    */
   locales?: string[] | LocaleItem[];
+
   /**
-   * The currently active locale code. Used to pre-select the right option in the dropdown.
-   *
-   * When omitted, the current locale from @rimelight/i18n.
+   * Active locale code, pre-selected in the dropdown.
+   * @default the current locale from @rimelight/i18n
    */
   currentLocale?: string;
+
   /**
-   * The display mode of the locale selector.
-   *
+   * Display mode. `icon` renders a compact icon-only trigger.
    * @default "select"
    */
   mode?: "select" | "icon";
+
   /**
-   * The styling variant of the language selection element.
-   *
-   * @default "default"
+   * Called with the selected item before navigation.
+   * @default undefined
    */
-  variant?: "default" | "outline" | "ghost" | "icon";
+  onValueChange?: (item: LocaleItem) => void;
+
   /**
-   * Color theme override.
+   * Icon shown in the trigger.
+   * @default "i-lucide-globe"
    */
-  color?: ThemeColor;
-  /**
-   * The size scale of typography and spacing metrics.
-   *
-   * @default "md"
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /**
-   * The color theme mode override for this component.
-   */
-  theme?: "light" | "dark";
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  labelSlot?: JSX.Element;
-  leadingSlot?: JSX.Element;
   leadingIcon?: string;
-  onSelect?: (item: LocaleItem) => void;
-  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;
-  [key: string]: unknown;
-}
+
+  /**
+   * Content rendered before the select.
+   * @default undefined
+   */
+  leadingSlot?: JSX.Element;
+
+  /**
+   * Content rendered after the select.
+   * @default undefined
+   */
+  children?: JSX.Element;
+};

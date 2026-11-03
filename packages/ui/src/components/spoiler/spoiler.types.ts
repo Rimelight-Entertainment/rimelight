@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSpoilerTheme } from "./spoiler.theme";
 
-export interface RLSpoilerProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for the spoiler component.
+ *
+ * @status stub
+ */
+export type RLSpoilerProps = InferThemeProps<typeof RLSpoilerTheme>;

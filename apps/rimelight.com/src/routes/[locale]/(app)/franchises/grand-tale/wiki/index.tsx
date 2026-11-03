@@ -71,12 +71,7 @@ export const WikiIndexPage: Component = () => {
 
         <div class="flex flex-col md:flex-row gap-6 items-start lg:items-center pt-2">
           <div class="bg-neutral-900/60 border border-neutral-800 p-4 flex gap-3 w-full max-w-xl rounded-2xl shadow-inner">
-            <RLInput
-              placeholder={t("app.text.search-the-library")}
-              size="lg"
-              class="flex-1"
-              color="neutral"
-            />
+            <RLInput placeholder={t("app.text.search-the-library")} size="lg" class="flex-1" />
             <RLButton color="primary" label="Search" class="px-6 rounded-xl" />
           </div>
 

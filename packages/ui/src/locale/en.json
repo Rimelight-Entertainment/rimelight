@@ -44,7 +44,23 @@
     "previous": "Previous track",
     "next": "Next track",
     "speed-hint": "Click to cycle, right-click to enter value",
-    "playback-speed": "Set specific playback speed"
+    "playback-speed": "Set specific playback speed",
+    "artwork": "Audio artwork",
+    "player": "Audio player",
+    "mute": "Mute audio",
+    "unmute": "Unmute audio",
+    "play": "Play audio",
+    "pause": "Pause audio",
+    "skip-back": "Skip backward",
+    "skip-forward": "Skip forward",
+    "repeat-off": "Repeat off",
+    "repeat-all": "Repeat all",
+    "repeat-one": "Repeat one",
+    "speed-button": "Playback speed",
+    "playlist": "Playlist",
+    "track": "Track",
+    "hide-transcript": "Hide transcript",
+    "show-transcript": "Show transcript"
   },
   "breadcrumb": {
     "label": "Breadcrumb"
@@ -58,7 +74,9 @@
   "carousel": {
     "previous": "Previous slide",
     "next": "Next slide",
-    "slides": "Slides"
+    "slides": "Slides",
+    "label": "Carousel",
+    "goToSlide": "Go to slide"
   },
   "color-area": {
     "thumb": "Color Area Thumb"
@@ -75,7 +93,14 @@
     "type-to-search": "Type to search...",
     "label": "Search",
     "close": "Close search",
-    "press-to-close": "Press {escape} to close"
+    "press-to-close": "Press {escape} to close",
+    "no-results": "No results found",
+    "site-search": "Site Search",
+    "untitled": "Untitled",
+    "shortcut-open": "Open site search",
+    "shortcut-quick": "Quick Search",
+    "shortcut-quick-description": "Focus site search",
+    "esc": "Esc"
   },
   "drawer": {
     "close": "Close drawer"
@@ -86,7 +111,11 @@
     "format": "Format:",
     "dimensions": "Dimensions:",
     "size": "Size:",
-    "alt": "Alt:"
+    "alt": "Alt:",
+    "download": "Download Original",
+    "fetching": "fetching...",
+    "sizeUnavailable": "unavailable",
+    "none": "none"
   },
   "actions": {
     "close": "Close"
@@ -96,13 +125,16 @@
     "decrement": "Decrement"
   },
   "input-pin": {
-    "label": "One-time code"
+    "label": "One-time code",
+    "digitLabel": "Digit {n}"
   },
   "modal": {
     "close": "Close modal"
   },
   "package-managers": {
-    "copy": "Copy command"
+    "copy": "Copy command",
+    "copied": "Copied",
+    "copyButton": "Copy"
   },
   "pagination": {
     "label": "pagination",
@@ -110,14 +142,19 @@
     "next": "Go to next page"
   },
   "route-announcer": {
-    "loading": "Page loading"
+    "loading": "Page loading",
+    "prefix": "Navigated to"
   },
   "scroll-to-top": {
     "label": "Scroll to top"
   },
   "shortcuts": {
     "close": "Close shortcuts help",
-    "press-to-close": "Press {question} or {escape} to close"
+    "press-to-close": "Press {question} or {escape} to close",
+    "title": "Keyboard Shortcuts",
+    "empty": "No active shortcuts found on this page.",
+    "show-shortcuts": "Show Keyboard Shortcuts",
+    "show-shortcuts-description": "Display this shortcuts help cheat sheet modal"
   },
   "slideover": {
     "close": "Close slideover"
@@ -126,18 +163,100 @@
     "resize": "Resize panels"
   },
   "table": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "searchPlaceholder": "Filter table...",
+    "export": "Export",
+    "exportCsv": "Export as CSV",
+    "exportJson": "Export as JSON",
+    "columns": "Columns",
+    "empty": "No data available"
   },
   "toc": {
     "heading": "On this page"
   },
   "tabs": {
-    "more": "More tabs"
+    "more": "more",
+    "moreTabs": "More tabs"
   },
   "theme": {
-    "toggle": "Toggle theme"
+    "toggle": "Toggle theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "cycle": "Cycle Theme",
+    "cycle-description": "Cycle between system, light, and dark theme mode"
   },
   "toast": {
     "dismiss": "Dismiss notification"
+  },
+  "video": {
+    "defaultTitle": "YouTube Video Player",
+    "playLabel": "Play YouTube Video",
+    "unavailableLabel": "YouTube Video Unavailable"
+  },
+  "browser-mockup": {
+    "label": "Browser Mockup",
+    "labelWithUrl": "Browser mockup:"
+  },
+  "chart": {
+    "lineLabel": "Line chart",
+    "pieLabel": "Pie chart"
+  },
+  "compare": {
+    "label": "Comparison slider",
+    "beforeAlt": "Before",
+    "afterAlt": "After"
+  },
+  "banner": {
+    "close": "Dismiss banner"
+  },
+  "callout": {
+    "close": "Dismiss callout"
+  },
+  "confirm": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "toaster": {
+    "signed-in": "Signed in successfully",
+    "account-created": "Account created successfully"
+  },
+  "share": {
+    "label": "Share",
+    "copied": "Link Copied!"
+  },
+  "calendar": {
+    "defaultLabel": "Event Date",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "previousYear": "Previous year",
+    "nextYear": "Next year"
+  },
+  "surround": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "layout-grid": {
+    "shortcut": {
+      "label": "Toggle Layout Grid",
+      "description": "Show or hide the development layout grid guide overlay",
+      "category": "development"
+    }
+  },
+  "file-upload": {
+    "title": "Drop files here or click to upload",
+    "accepted": "Accepted:",
+    "files-selected": "files selected"
+  },
+  "input-menu": {
+    "placeholder": "Select item..."
+  },
+  "input-tags": {
+    "placeholder": "Add tag…",
+    "more": "+{count} more"
+  },
+  "copy-markdown": {
+    "copy": "Copy Markdown",
+    "copied": "Copied!"
   }
 }

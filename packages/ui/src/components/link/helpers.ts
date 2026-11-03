@@ -40,9 +40,7 @@ export function resolveLinkAttrs(props: Partial<RLLinkProps>) {
       : (props.rel ??
         (isExternal || (target && target !== "_self") ? "noopener noreferrer" : undefined));
 
-  const rawAriaCurrent = props.active ? (props.ariaCurrentValue ?? "page") : undefined;
-  const ariaCurrent =
-    rawAriaCurrent === true ? "true" : rawAriaCurrent === false ? "false" : rawAriaCurrent;
+  const ariaCurrent = props.active ? (props.current ?? "page") : undefined;
 
   const href = props.disabled ? undefined : localizeHref(props.href, props.localize, isExternal);
   const ariaDisabled: "true" | undefined = props.disabled ? "true" : undefined;

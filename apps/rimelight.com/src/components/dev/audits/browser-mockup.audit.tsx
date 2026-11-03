@@ -1,13 +1,13 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLBrowserMockup } from "@rimelight/ui/components/browser-mockup/RLBrowserMockup.tsx";
-import type {
-  BrowserMockupVariant,
-  BrowserMockupSize,
-  BrowserMockupColor,
-} from "@rimelight/ui/components/browser-mockup/browser-mockup.types.ts";
+import type { RLBrowserMockupProps } from "@rimelight/ui/components/browser-mockup/browser-mockup.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
+
+type BrowserMockupVariant = NonNullable<RLBrowserMockupProps["variant"]>;
+type BrowserMockupSize = NonNullable<RLBrowserMockupProps["size"]>;
+type BrowserMockupColor = NonNullable<RLBrowserMockupProps["color"]>;
 
 const VARIANTS: BrowserMockupVariant[] = ["outline", "solid", "soft", "subtle", "ghost"];
 const SIZES: BrowserMockupSize[] = ["sm", "md", "lg", "xl"];

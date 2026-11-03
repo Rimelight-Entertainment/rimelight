@@ -263,27 +263,17 @@ describe("RLCallout", () => {
   });
 
   describe("Close Button & Dismissal", () => {
-    it("renders close button when close is true", () => {
-      const html = render(() => <RLCallout title="Dismissible" close />);
+    it("renders close button when dismissible", () => {
+      const html = render(() => <RLCallout title="Dismissible" dismissible />);
       const close = slotTag(html, "close");
       expect(close).not.toBe("");
-      expect(attr(close, "aria-label")).toBe("Close");
-    });
-
-    it("customizes close button with object props", () => {
-      const html = render(() => (
-        <RLCallout
-          title="Dismissible"
-          close={{ color: "primary", variant: "outline", class: "rounded-full" }}
-        />
-      ));
-      const close = slotTag(html, "close");
-      expect(close).not.toBe("");
-      expect(close).toContain("rounded-full");
+      expect(attr(close, "aria-label")).toBeTruthy();
     });
 
     it("customizes close button icon with closeIcon prop", () => {
-      const html = render(() => <RLCallout title="Dismissible" close closeIcon="arrow-right" />);
+      const html = render(() => (
+        <RLCallout title="Dismissible" dismissible closeIcon="arrow-right" />
+      ));
       expect(html).toContain("i-lucide-arrow-right");
     });
 
@@ -328,7 +318,7 @@ describe("RLCallout", () => {
     });
 
     it("falls back to aria-label when no title is provided", () => {
-      const html = render(() => <RLCallout ariaLabel="Global notice" />);
+      const html = render(() => <RLCallout aria-label="Global notice" />);
       const root = slotTag(html, "root");
       expect(attr(root, "aria-label")).toBe("Global notice");
       expect(attr(root, "aria-labelledby")).toBeUndefined();
@@ -336,7 +326,7 @@ describe("RLCallout", () => {
 
     it("allows custom aria-labelledby and aria-describedby overrides", () => {
       const html = render(() => (
-        <RLCallout ariaLabelledby="external-heading" ariaDescribedby="external-desc" />
+        <RLCallout aria-labelledby="external-heading" aria-describedby="external-desc" />
       ));
       const root = slotTag(html, "root");
       expect(attr(root, "aria-labelledby")).toBe("external-heading");
@@ -356,7 +346,7 @@ describe("RLCallout", () => {
           title="Customized"
           description="Sub-text"
           icon="star"
-          close
+          dismissible
           ui={{
             root: "shadow-2xl",
             title: "tracking-wide font-black",

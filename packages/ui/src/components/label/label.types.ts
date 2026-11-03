@@ -1,22 +1,10 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLLabelTheme } from "./label.theme";
 
-export interface RLLabelProps {
+export type RLLabelProps = InferThemeProps<typeof RLLabelTheme> & {
   /**
-   * The associated form input element ID.
+   * Id of the form control this label describes.
+   * @default undefined
    */
-  for?: string;
-  /**
-   * Label size.
-   */
-  size?: "sm" | "md" | "lg";
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  for?: string | undefined;
+};

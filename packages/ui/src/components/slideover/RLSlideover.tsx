@@ -1,45 +1,59 @@
 import type { RLSlideoverProps } from "./slideover.types";
 import { RLSlideoverTheme } from "./slideover.theme";
-import { createSignal, onSettled, Show, type Component } from "solid-js";
+import { createEffect, onSettled, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
 import { slot } from "../../slot";
 
 const OMIT_KEYS = [
+  "side",
   "open",
   "defaultOpen",
   "title",
   "description",
   "triggerLabel",
+  "dismissible",
   "unmountOnHide",
   "onOpenChange",
+  "portal",
 ] as const;
 
-const SLOT_KEYS = ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const;
-
 export const RLSlideover: Component<RLSlideoverProps> = (props) => {
-  const { Tag, classes, rest, slots } = RLSlideoverTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLSlideoverTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: SLOT_KEYS,
+    slots: ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const,
   });
 
   const unmountOnHide = () => props.unmountOnHide ?? true;
+  const isDismissible = () => props.dismissible ?? true;
+  // Resolved once, outside a reactive getter: Portal reads `mount` during the effect phase.
+  const portalMount = typeof props.portal === "object" ? props.portal : undefined;
 
-  const [isOpen, setIsOpen] = createSignal(() => props.open ?? props.defaultOpen ?? false);
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
 
-  const setOpenState = (open: boolean) => {
-    if (props.open === undefined) {
-      setIsOpen(open);
+  const dismiss = () => {
+    if (isDismissible()) {
+      setOpen(false);
     }
-    document.body.style.overflow = open ? "hidden" : "";
-    props.onOpenChange?.(open);
   };
+
+  createEffect(
+    () => isOpen(),
+    (open) => {
+      document.body.style.overflow = open ? "hidden" : "";
+    },
+  );
 
   onSettled(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen()) {
-        setOpenState(false);
+        dismiss();
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -57,13 +71,9 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
     const footerNode = slot(() => slots.footerSlot()?.());
 
     return (
-      <Portal>
-        <Show when={isOpen()}>
-          <div
-            class={classes().backdrop}
-            data-slot="backdrop"
-            onClick={() => setOpenState(false)}
-          />
+      <>
+        <Show when={isOpen() && isDismissible()}>
+          <div class={classes().backdrop} data-slot="backdrop" onClick={dismiss} />
         </Show>
 
         <div
@@ -72,15 +82,17 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
           data-state={isOpen() ? "open" : "closed"}
           style={{ display: isOpen() ? undefined : "none" }}
         >
-          <button
-            class={classes().closeButton}
-            data-slot="close-button"
-            type="button"
-            aria-label={uiT("slideover.close")}
-            onClick={() => setOpenState(false)}
-          >
-            <RLIcon name="x" class="size-4" aria-hidden="true" />
-          </button>
+          <Show when={isDismissible()}>
+            <button
+              class={classes().closeButton}
+              data-slot="close-button"
+              type="button"
+              aria-label={uiT("slideover.close")}
+              onClick={dismiss}
+            >
+              <RLIcon name="x" class="size-4" aria-hidden="true" />
+            </button>
+          </Show>
 
           <div class={classes().header} data-slot="header">
             <Show when={titleNode()}>
@@ -96,7 +108,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
             </Show>
           </div>
 
-          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{props.children}</div>
+          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{children()}</div>
 
           <Show when={slots.footerSlot() !== undefined}>
             <div class={classes().footer} data-slot="footer">
@@ -104,16 +116,16 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
             </div>
           </Show>
         </div>
-      </Portal>
+      </>
     );
   };
 
   return (
-    <Tag class={classes().root} data-slot="root" {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <Show
         when={props.triggerLabel}
         fallback={
-          <span class="inline-flex cursor-pointer" onClick={() => setOpenState(true)}>
+          <span class="inline-flex cursor-pointer" onClick={() => setOpen(true)}>
             {slots.triggerSlot()}
           </span>
         }
@@ -122,13 +134,17 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
           type="button"
           class={classes().trigger}
           data-slot="trigger"
-          onClick={() => setOpenState(true)}
+          onClick={() => setOpen(true)}
         >
           {props.triggerLabel}
         </button>
       </Show>
 
-      <Show when={!unmountOnHide() || isOpen()}>{renderContent()}</Show>
+      <Show when={!unmountOnHide() || isOpen()}>
+        <Show when={props.portal !== false} fallback={renderContent()}>
+          <Portal {...(portalMount ? { mount: portalMount } : {})}>{renderContent()}</Portal>
+        </Show>
+      </Show>
     </Tag>
   );
 };

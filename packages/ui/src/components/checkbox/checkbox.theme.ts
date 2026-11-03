@@ -15,7 +15,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
   },
   variants: {
     color: "auto",
-    variant: {
+    layout: {
       list: {
         root: "",
       },
@@ -110,7 +110,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
       },
     },
     {
-      variant: "card",
+      layout: "card",
       highlight: false,
       class: {
         root: "hover:not-has-disabled:not-has-aria-disabled:not-has-focus-visible:not-has-data-[state=checked]:border-accented",
@@ -153,41 +153,41 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       size: "xs",
-      variant: "card",
+      layout: "card",
       class: {
         root: "p-2.5",
       },
     },
     {
       size: "sm",
-      variant: "card",
+      layout: "card",
       class: {
         root: "p-3",
       },
     },
     {
       size: "md",
-      variant: "card",
+      layout: "card",
       class: {
         root: "p-3.5",
       },
     },
     {
       size: "lg",
-      variant: "card",
+      layout: "card",
       class: {
         root: "p-4",
       },
     },
     {
       size: "xl",
-      variant: "card",
+      layout: "card",
       class: {
         root: "p-4.5",
       },
     },
     {
-      variant: "card",
+      layout: "card",
       disabled: true,
       class: {
         root: "cursor-not-allowed",
@@ -195,34 +195,34 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     // Focus and checked styles for card / list
     {
-      variant: "card",
+      layout: "card",
       class: {
         root: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1]",
       },
     },
     {
-      variant: "card",
+      layout: "card",
       checked: true,
       class: {
         root: "border-[var(--rl-border)]/50 bg-[var(--rl-bg)]/10",
       },
     },
     {
-      variant: "card",
+      layout: "card",
       highlight: true,
       class: {
         root: "ring-2 ring-[var(--rl-ring)] border-[var(--rl-border)] outline-2 outline-solid outline-[var(--rl-ring)] outline-offset-2",
       },
     },
     {
-      variant: "list",
+      layout: "list",
       indicator: ["start", "end"],
       class: {
         base: "outline-[var(--rl-ring)]/25 focus-visible:outline-solid focus-visible:outline-3 focus-visible:ring-[var(--rl-ring)]",
       },
     },
     {
-      variant: "list",
+      layout: "list",
       indicator: "hidden",
       class: {
         root: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1]",
@@ -254,7 +254,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       color: "neutral",
-      variant: "card",
+      layout: "card",
       checked: true,
       class: {
         root: "border-inverted/50 bg-elevated",
@@ -285,7 +285,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       color: "neutral",
-      variant: "card",
+      layout: "card",
       highlight: true,
       class: {
         root: "ring-2 ring-inverted border-inverted outline-2 outline-solid outline-inverted outline-offset-2",
@@ -296,7 +296,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     highlight: false,
     size: "md",
     color: "primary",
-    variant: "list",
+    layout: "list",
     indicator: "start",
     checked: false,
   },

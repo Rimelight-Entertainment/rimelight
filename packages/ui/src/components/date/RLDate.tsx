@@ -12,7 +12,7 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
 const OMIT_KEYS = ["date", "locale", "options"] as const;
 
 export const RLDate: Component<RLDateProps> = (props) => {
-  const { Tag, classes, rest } = RLDateTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLDateTheme.setup(props, {
     as: "time",
     omit: OMIT_KEYS,
   });
@@ -29,8 +29,15 @@ export const RLDate: Component<RLDateProps> = (props) => {
   const datetime = createMemo(() => (valid() ? resolvedDate().toISOString() : ""));
 
   return (
-    <Tag datetime={datetime()} class={classes().root} {...rest}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      datetime={datetime()}
+      class={classes().root}
+      {...rest}
+    >
       {formatted()}
+      {children()}
     </Tag>
   );
 };

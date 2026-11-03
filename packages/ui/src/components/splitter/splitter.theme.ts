@@ -30,16 +30,6 @@ export const RLSplitterTheme = defineTheme("splitter", {
           "top-1/2 -translate-y-1/2 w-4 h-4 cursor-move data-[resizable-handle-start-target]:left-0 data-[resizable-handle-end-target]:right-0",
       },
     },
-    direction: {
-      horizontal: {
-        root: "flex-row",
-        handle: "w-1.5 h-full cursor-col-resize border-x border-default/40",
-      },
-      vertical: {
-        root: "flex-col",
-        handle: "h-1.5 w-full cursor-row-resize border-y border-default/40",
-      },
-    },
     disabled: {
       true: {
         root: "opacity-75",
@@ -52,7 +42,6 @@ export const RLSplitterTheme = defineTheme("splitter", {
   },
   defaultVariants: {
     orientation: "horizontal",
-    direction: "horizontal",
     disabled: false,
     color: "auto",
   },

@@ -1,72 +1,49 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
 import type { RLChipProps } from "../chip/chip.types";
+import type { RLAvatarTheme } from "./avatar.theme";
 
-export interface RLAvatarProps {
+export type RLAvatarProps = InferThemeProps<typeof RLAvatarTheme> & {
   /**
-   * The element or component this component should render as.
-   *
-   * @default "span"
+   * Image URL. When omitted, the fallback content is rendered.
    */
-  as?: ValidComponent;
   src?: string | undefined;
+  /**
+   * Alt text for the image. Also used to derive initials when no `text` is given.
+   */
   alt?: string | undefined;
-  icon?: any;
+  /**
+   * Icon name rendered as the fallback content (e.g. `i-lucide-user`).
+   */
+  icon?: string | undefined;
+  /**
+   * Custom fallback content rendered in place of `icon`.
+   */
+  iconSlot?: JSX.Element | undefined;
+  /**
+   * Fallback text (e.g. initials) rendered when no image is available.
+   * When omitted, initials are derived from `alt`.
+   */
   text?: string | undefined;
   /**
-   * Fallback text (alias for text / initials).
-   */
-  fallback?: string | undefined;
-  /**
-   * Compact initials displayed inside the avatar (alias for text / fallback).
-   */
-  initials?: string | undefined;
-  /**
-   * Avatar size.
+   * Chip (indicator) configuration. `true` renders an inset chip.
    *
-   * @default "md"
+   * @default false
    */
-  size?:
-    | "3xs"
-    | "2xs"
-    | "xs"
-    | "sm"
-    | "md"
-    | "lg"
-    | "xl"
-    | "2xl"
-    | "3xl"
-    | "4xl"
-    | "5xl"
-    | "6xl"
-    | "7xl"
-    | "8xl"
-    | "9xl"
-    | "10xl"
-    | "11xl"
-    | "12xl"
-    | (string & {})
-    | undefined;
-  /**
-   * Color variant.
-   *
-   * @default "neutral"
-   */
-  color?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | ThemeColor
-    | undefined;
   chip?: boolean | RLChipProps | undefined;
+  /**
+   * Badge content. A string or number is rendered as text; `true` renders an empty badge.
+   *
+   * @default false
+   */
   badge?: boolean | string | number | undefined;
+  /**
+   * Badge color. Forwarded to the chip.
+   */
   badgeColor?: string | undefined;
-  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined;
+  /**
+   * Image loading strategy.
+   */
   loading?: "lazy" | "eager" | undefined;
   referrerpolicy?:
     | ""
@@ -87,37 +64,24 @@ export interface RLAvatarProps {
   srcset?: string | undefined;
   usemap?: string | undefined;
   /**
-   * Display name rendered adjacent to the avatar (e.g. "Daniel Marchi")
+   * Display name rendered adjacent to the avatar (e.g. "Daniel Marchi"). Also used as the
+   * accessible name when the avatar has no image.
    */
   title?: string | undefined;
   /**
-   * Secondary description rendered below the title (e.g. "Lead Developer")
+   * Secondary description rendered below the title (e.g. "Lead Developer").
    */
   subtitle?: string | undefined;
   /**
-   * Accessible aria-label fallback for screen readers when avatar is purely visual
+   * Custom fallback content rendered in place of the icon and text.
    */
-  label?: string;
+  fallbackSlot?: JSX.Element | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Custom badge content rendered inside the chip.
    */
-  ui?: {
-    root?: any;
-    image?: any;
-    fallback?: any;
-    icon?: any;
-    badge?: any;
-    wrapper?: any;
-    title?: any;
-    subtitle?: any;
-  };
+  badgeSlot?: JSX.Element | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Extra attributes forwarded to the `<img>` element.
    */
-  class?: any;
-  children?: JSX.Element;
-  fallbackSlot?: JSX.Element;
-  badgeSlot?: JSX.Element;
-  imgProps?: JSX.ImgHTMLAttributes<HTMLImageElement>;
-  [key: string]: unknown;
-}
+  imgProps?: JSX.ImgHTMLAttributes<HTMLImageElement> | undefined;
+};

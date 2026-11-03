@@ -1,41 +1,68 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLSearchTheme } from "./search.theme";
 
 export interface SearchResultItem {
+  /**
+   * Result heading. Falls back to a localized "Untitled".
+   */
   title?: string;
+  /**
+   * Link target for the result.
+   */
   url?: string;
+  /**
+   * Source label shown as a badge.
+   */
   sourceType?: string;
+  /**
+   * Short excerpt shown under the heading.
+   */
   snippet?: string;
-  [key: string]: any;
 }
 
-export interface RLSearchProps {
+export type RLSearchProps = InferThemeProps<typeof RLSearchTheme> & {
   /**
-   * API endpoint to query results from.
+   * API endpoint queried with `?q=`.
+   * @default "/api/search"
    */
-  endpoint?: string;
+  endpoint?: string | undefined;
   /**
-   * Search input placeholder.
+   * Search input placeholder. Falls back to `messages.searchPlaceholder`, then a localized default.
+   * @default uiT("search.placeholder")
    */
-  placeholder?: string;
+  placeholder?: string | undefined;
   /**
-   * Custom labels and localization text.
+   * Custom labels. Each entry falls back to a localized default when omitted.
+   * @default undefined
    */
-  messages?: {
-    searchButtonLabel?: string;
-    searchPlaceholder?: string;
-    noResultsLabel?: string;
-    footerCloseHint?: string;
-    footerBackendHint?: string;
-  };
+  messages?:
+    | {
+        /** @default uiT("search.placeholder") */
+        searchPlaceholder?: string;
+        /** @default uiT("search.no-results") */
+        noResultsLabel?: string;
+        /** @default uiT("search.site-search") */
+        footerBackendHint?: string;
+      }
+    | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Controlled open state of the search dialog. Omit for uncontrolled use.
+   * @default undefined
    */
-  ui?: any;
+  open?: boolean | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Initial open state when uncontrolled.
+   * @default false
    */
-  class?: any;
-  children?: JSX.Element;
+  defaultOpen?: boolean | undefined;
+  /**
+   * Called with the next open state when the dialog opens or closes.
+   */
+  onOpenChange?: (open: boolean) => void;
+  /**
+   * Replaces the default trigger button.
+   */
   triggerSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  children?: JSX.Element;
+};

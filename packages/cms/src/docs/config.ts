@@ -1,6 +1,9 @@
-import type { SidebarItem, SidebarScope } from "@rimelight/ui/components/sidebar/sidebar.types.ts";
+import type {
+  SidebarBadge,
+  SidebarItem,
+  SidebarScope,
+} from "@rimelight/ui/components/sidebar/sidebar.types.ts";
 import type { Cms } from "../services/index";
-import type { RLBadgeProps } from "@rimelight/ui/components/badge/badge.types.ts";
 
 export interface EditLinkConfig {
   baseUrl: string;
@@ -11,19 +14,32 @@ export interface TableOfContentsConfig {
   maxHeadingLevel?: number;
 }
 
+/**
+ * Sidebar item as authored in the docs config. `collapsed` is cms-only: the ui never collapses items.
+ */
+export interface DocsSidebarItem extends SidebarItem {
+  collapsed?: boolean | undefined;
+  children?: DocsSidebarItem[] | undefined;
+}
+
+/** Sidebar scope as authored in the docs config, holding cms-typed items. */
+export interface DocsSidebarScope extends SidebarScope {
+  items?: DocsSidebarItem[] | undefined;
+}
+
 export interface DocsConfig {
   basePath?: string | undefined;
   sidebar:
-    | (SidebarItem | SidebarScope)[]
+    | (DocsSidebarItem | DocsSidebarScope)[]
     | {
-        scopes: SidebarScope[];
+        scopes: DocsSidebarScope[];
       };
   editLink?: EditLinkConfig | undefined;
   tableOfContents?: false | TableOfContentsConfig | undefined;
 }
 
 export const defineDocsConfig = <const T extends DocsConfig>(config: T): T => config;
-export type { RLBadgeProps, SidebarItem, SidebarScope };
+export type { SidebarBadge, SidebarItem, SidebarScope };
 
 export interface DocsNavOptions {
   basePath?: string | undefined;
@@ -92,7 +108,7 @@ export function buildDocsNavFromPages(pages: any[], options: DocsNavOptions = {}
       label: string;
       icon?: string;
       order?: number;
-      items: SidebarItem[];
+      items: DocsSidebarItem[];
     }
   >();
 
@@ -134,7 +150,7 @@ export function buildDocsNavFromPages(pages: any[], options: DocsNavOptions = {}
           : `/${rawSlug}`
         : `${basePath}/${rawSlug}`;
 
-    const item: SidebarItem = {
+    const item: DocsSidebarItem = {
       label: title,
       href,
       icon: props.icon,
@@ -151,18 +167,18 @@ export function buildDocsNavFromPages(pages: any[], options: DocsNavOptions = {}
         groupItem = {
           label: titleCase(subGroup),
           collapsed: true,
-          items: [],
+          children: [],
         };
         scopeObj.items.push(groupItem);
       }
-      if (!groupItem.items) groupItem.items = [];
-      groupItem.items.push(item);
+      if (!groupItem.children) groupItem.children = [];
+      groupItem.children.push(item);
     } else {
       scopeObj.items.push(item);
     }
   }
 
-  const sortedScopes: SidebarScope[] = Array.from(scopeMap.values()).map((s) => ({
+  const sortedScopes: DocsSidebarScope[] = Array.from(scopeMap.values()).map((s) => ({
     id: s.id,
     label: s.label,
     icon: s.icon,

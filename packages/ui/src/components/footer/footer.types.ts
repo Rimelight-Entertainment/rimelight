@@ -1,26 +1,30 @@
 import type { JSX } from "@solidjs/web";
-import type {} from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLFooterTheme } from "./footer.theme";
 
-export interface RLFooterProps {
+export type RLFooterProps = Omit<InferThemeProps<typeof RLFooterTheme>, "contain"> & {
   /**
    * Whether to contain the footer content within a max-width container.
+   *
+   * @default false
    */
   contain?: boolean;
   /**
-   * Theme mode override for the footer subtree ("dark" | "light").
+   * Content rendered in the leading area.
+   *
+   * @default undefined
    */
-  theme?: "light" | "dark";
+  leadingSlot?: JSX.Element;
   /**
-   * Slot-specific CSS class overrides.
+   * Replaces the center area content. Falls back to `children` when omitted.
+   *
+   * @default undefined
    */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  leftSlot?: JSX.Element;
   centerSlot?: JSX.Element;
-  rightSlot?: JSX.Element;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  /**
+   * Content rendered in the trailing area.
+   *
+   * @default undefined
+   */
+  trailingSlot?: JSX.Element;
+};

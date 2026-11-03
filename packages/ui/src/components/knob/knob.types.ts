@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLKnobTheme } from "./knob.theme";
 
-export interface RLKnobProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Rotary control for selecting a value.
+ * @status stub
+ */
+export type RLKnobProps = InferThemeProps<typeof RLKnobTheme>;

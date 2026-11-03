@@ -86,7 +86,7 @@ export const ConfirmSandbox = (): JSX.Element => {
         <RLConfirm
           open={open()}
           onOpenChange={setOpen}
-          variant={variant()}
+          color={variant() === "destructive" ? "error" : "primary"}
           title={title()}
           description={description()}
           actionLabel={actionLabel()}
@@ -145,7 +145,7 @@ export const confirmAudit: ComponentAuditDefinition = {
             <RLConfirm
               open={defaultOpen()}
               onOpenChange={setDefaultOpen}
-              variant="default"
+              color="primary"
               title={"Publish Changes?"}
               description="Your drafted changes will immediately go live to all visitors."
               actionLabel="Publish Now"
@@ -159,7 +159,7 @@ export const confirmAudit: ComponentAuditDefinition = {
             <RLConfirm
               open={destructOpen()}
               onOpenChange={setDestructOpen}
-              variant="destructive"
+              color="error"
               title={"Delete Repository?"}
               description="This will immediately and irreversibly delete the repository and all branches."
               actionLabel="Delete Repository"
@@ -209,7 +209,7 @@ export const confirmAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for title, description, variant (default, destructive), actionLabel, cancelLabel, triggerLabel, onConfirm, onCancel, and slot aliases.",
+        "Full support for title, description, color (primary, error), actionLabel, cancelLabel, triggerLabel, onConfirm, onCancel, and slot aliases.",
     },
     {
       criterion: "Composition over RLModal",

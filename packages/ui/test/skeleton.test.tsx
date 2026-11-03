@@ -42,7 +42,7 @@ describe("RLSkeleton", () => {
   });
 
   describe("Structural wrapper mode (with children)", () => {
-    it("renders structural wrapper with container, measure, and overlay slots when loading", () => {
+    it("renders measure and overlay layers under the root when loading", () => {
       const html = render(() => (
         <RLSkeleton loading={true}>
           <div class="user-card">
@@ -52,7 +52,7 @@ describe("RLSkeleton", () => {
         </RLSkeleton>
       ));
 
-      expect(slotTag(html, "container")).not.toBe("");
+      expect(slotTag(html, "root")).toContain("relative w-full");
       expect(slotTag(html, "measure")).not.toBe("");
       expect(slotTag(html, "overlay")).not.toBe("");
       expect(html).toContain("User Name");
@@ -68,7 +68,6 @@ describe("RLSkeleton", () => {
         </RLSkeleton>
       ));
 
-      expect(slotTag(html, "container")).toBe("");
       expect(slotTag(html, "overlay")).toBe("");
       expect(html).toContain("User Name");
     });

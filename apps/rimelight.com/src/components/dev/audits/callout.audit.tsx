@@ -166,7 +166,7 @@ export const CalloutSandbox = (): JSX.Element => {
         description={description()}
         icon={hasIcon() && !hasAvatar() ? "terminal" : undefined}
         avatar={hasAvatar() ? { src: "https://github.com/nuxt.png", alt: "Nuxt" } : undefined}
-        close={isClosable()}
+        dismissible={isClosable()}
         actions={
           hasActions()
             ? [
@@ -207,7 +207,7 @@ export const calloutAudit: ComponentAuditDefinition = {
                   icon="info"
                   title={`This is a ${c} callout notification.`}
                   description={`Demonstrating ${c} theme color styling with high contrast readability.`}
-                  close
+                  dismissible
                 />
               </span>
             )}
@@ -233,7 +233,7 @@ export const calloutAudit: ComponentAuditDefinition = {
                 icon="terminal"
                 title={`Variant: ${v}`}
                 description={`This callout is rendered with variant="${v}".`}
-                close
+                dismissible
               />
             )}
           </For>
@@ -245,7 +245,7 @@ export const calloutAudit: ComponentAuditDefinition = {
                 icon="info"
                 title={`Neutral Variant: ${v}`}
                 description={`Neutral color with variant="${v}" matching standard theme surface contrast.`}
-                close
+                dismissible
               />
             )}
           </For>
@@ -282,7 +282,7 @@ export const calloutAudit: ComponentAuditDefinition = {
                 variant: "subtle",
               },
             ]}
-            close
+            dismissible
           />
           <RLCallout
             orientation="horizontal"
@@ -305,7 +305,7 @@ export const calloutAudit: ComponentAuditDefinition = {
                 variant: "subtle",
               },
             ]}
-            close
+            dismissible
           />
         </div>
       ),
@@ -330,8 +330,8 @@ export const calloutAudit: ComponentAuditDefinition = {
             color="success"
             variant="subtle"
             title={"Avatar-based Callout"}
-            description="Uses RLAvatar with 2xl size and alt text."
-            close
+            description="Uses RLAvatar with xl size and alt text."
+            dismissible
           />
           <RLCallout
             iconSlot={
@@ -343,7 +343,7 @@ export const calloutAudit: ComponentAuditDefinition = {
             variant="outline"
             title={"Custom Leading Slot"}
             description="Leading slot replaces both icon and avatar slots."
-            close
+            dismissible
           />
         </div>
       ),
@@ -353,8 +353,7 @@ export const calloutAudit: ComponentAuditDefinition = {
       get title() {
         return t("app.text.dismissible-close-button-customization");
       },
-      description:
-        "Dismissible callout with custom close icon, custom ButtonProps (e.g. rounded-full), and closeSlot.",
+      description: "Dismissible callout with custom close icon and closeSlot.",
       render: () => (
         <div class="flex flex-col gap-3">
           <RLCallout
@@ -362,18 +361,14 @@ export const calloutAudit: ComponentAuditDefinition = {
             variant="outline"
             title={"Default Close Button"}
             description="Click the close button to dismiss this callout."
-            close
+            dismissible
           />
           <RLCallout
             color="primary"
             variant="subtle"
             title={"Customized Close Button"}
-            description="Customized with closeIcon='arrow-right' and custom button styling."
-            close={{
-              color: "primary",
-              variant: "outline",
-              class: "rounded-full",
-            }}
+            description="Customized with closeIcon='arrow-right'."
+            dismissible
             closeIcon="arrow-right"
           />
         </div>
@@ -418,7 +413,7 @@ export const calloutAudit: ComponentAuditDefinition = {
       criterion: "Nuxt UI v4 Callout Parity",
       status: "pass",
       notes:
-        "Full support for as, title, description, icon, avatar, color (auto), variant (solid, outline, soft, subtle), orientation (vertical, horizontal), actions, close, closeIcon, ui, class, and update:open parity.",
+        "Full support for as, title, description, icon, avatar, color (auto), variant (solid, outline, soft, subtle), orientation (vertical, horizontal), actions, dismissible, closeIcon, ui, class, and onDismiss/onOpenChange parity.",
     },
     {
       criterion: "Slot pattern parity (leading, title, description, actions, close)",

@@ -104,17 +104,15 @@ describe("RLConfirm", () => {
     });
   });
 
-  describe("Variants", () => {
-    it("renders default variant with primary action button", () => {
-      const html = render(() => (
-        <RLConfirm open portal={false} variant="default" title="Save Changes" />
-      ));
+  describe("Color", () => {
+    it("renders primary action button by default", () => {
+      const html = render(() => <RLConfirm open portal={false} title="Save Changes" />);
       expect(slotTag(html, "action")).toContain("rl-color-primary");
     });
 
-    it("renders destructive variant with error color action button", () => {
+    it("renders error color action button when color='error'", () => {
       const html = render(() => (
-        <RLConfirm open portal={false} variant="destructive" title="Permanently Delete" />
+        <RLConfirm open portal={false} color="error" title="Permanently Delete" />
       ));
       expect(slotTag(html, "action")).toContain("rl-color-error");
     });

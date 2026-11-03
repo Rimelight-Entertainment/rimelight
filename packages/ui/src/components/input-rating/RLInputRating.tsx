@@ -1,7 +1,9 @@
+import type { Component } from "solid-js";
 import type { RLInputRatingProps } from "./input-rating.types";
 import { RLInputRatingTheme } from "./input-rating.theme";
-import { createMemo, createSignal, For, type Component } from "solid-js";
+import { createMemo, createSignal, For } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
 
 const OMIT_KEYS = [
   "id",
@@ -19,30 +21,21 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLInputRating: Component<RLInputRatingProps> = (props) => {
-  const { classes, rest } = RLInputRatingTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme, id } = RLInputRatingTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const step = () => props.step ?? 1;
   const length = () => props.length ?? 5;
-  const hoverable = () => !!props.hoverable;
-  const clearable = () => !!props.clearable;
-  const itemSizeClass = () => {
-    const map: Record<string, string> = {
-      xs: "size-3",
-      sm: "size-4",
-      md: "size-5",
-      lg: "size-6",
-      xl: "size-7",
-    };
-    return map[props.size ?? "md"] || "size-5";
-  };
 
-  const [internalValue, setInternalValue] = createSignal<number>(
-    props.value !== undefined ? props.value : (props.defaultValue ?? 0),
+  const [value, setValue] = createControllable(
+    () => props.value,
+    props.defaultValue ?? 0,
+    (next) => props.onValueChange?.(next),
   );
-  const value = () => (props.value !== undefined ? props.value : internalValue());
 
   const [hoverValue, setHoverValue] = createSignal<number | null>(null);
-  const display = (): number => (hoverValue() !== null ? hoverValue()! : value());
+  const display = (): number => hoverValue() ?? value();
 
   const items = createMemo(() => Array.from({ length: length() }, (_, idx) => idx + 1));
 
@@ -61,23 +54,18 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
   };
 
   const handleMouseMove = (e: MouseEvent, el: HTMLElement, index: number) => {
-    if (!hoverable()) return;
+    if (!props.hoverable) return;
     const val = getValueFromEvent(e, el, index);
     setHoverValue(val);
-  };
-
-  const handleMouseLeave = () => {
-    setHoverValue(null);
   };
 
   const handleClick = (e: MouseEvent, el: HTMLElement, index: number) => {
     const val = getValueFromEvent(e, el, index);
     let next = val;
-    if (clearable() && value() === val) {
+    if (props.clearable && value() === val) {
       next = 0;
     }
-    setInternalValue(next);
-    props.onValueChange?.(next);
+    setValue(next);
     setHoverValue(null);
   };
 
@@ -98,22 +86,22 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
       e.preventDefault();
     }
     if (next !== value()) {
-      setInternalValue(next);
-      props.onValueChange?.(next);
+      setValue(next);
     }
   };
 
   return (
-    <div
-      class={classes().root}
+    <Tag
       data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
       data-step={step()}
       data-length={length()}
       data-clearable={props.clearable ? "true" : "false"}
       data-hoverable={props.hoverable ? "true" : "false"}
       data-disabled={props.disabled ? "true" : "false"}
       data-readonly={props.readonly ? "true" : "false"}
-      id={props.id}
+      id={id()}
       role="slider"
       aria-valuenow={value()}
       aria-valuemin={0}
@@ -136,17 +124,17 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
       <For each={items()}>
         {(i) => (
           <div
-            class={`input-rating-item ${classes().item} ${itemSizeClass()}`}
+            class={`input-rating-item ${classes().item}`}
             data-slot="item"
             data-index={i}
             onMouseMove={(e) => handleMouseMove(e, e.currentTarget, i)}
-            onMouseLeave={handleMouseLeave}
+            onMouseLeave={() => setHoverValue(null)}
             onClick={(e) => handleClick(e, e.currentTarget, i)}
           >
-            <div class={classes().emptyIcon} data-slot="emptyIcon">
+            <div class={classes().emptyIcon} data-slot="empty-icon">
               <RLIcon
                 name={props.emptyIcon || props.icon || "star"}
-                size={props.size ?? "md"}
+                size={props.size}
                 class={classes().icon}
                 aria-hidden="true"
               />
@@ -159,7 +147,7 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
             >
               <RLIcon
                 name={props.icon || "star"}
-                size={props.size ?? "md"}
+                size={props.size}
                 class={classes().icon}
                 aria-hidden="true"
               />
@@ -167,6 +155,7 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
           </div>
         )}
       </For>
-    </div>
+      {children()}
+    </Tag>
   );
 };

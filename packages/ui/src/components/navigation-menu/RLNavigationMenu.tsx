@@ -2,31 +2,37 @@ import type {
   RLNavigationMenuProps,
   NavigationMenuItem,
   NavigationMenuChildItem,
-  NavigationMenuContentRenderer,
+  NavigationMenuPanelContext,
+  NavigationMenuItemContext,
 } from "./navigation-menu.types";
 import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import { createMemo, createSignal, For, Show, onSettled, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { localizeHref } from "../link/helpers";
+import type { SlotRenderer } from "../../types";
 
-const OMIT_KEYS = ["items", "color", "variant", "orientation", "panels"] as const;
+const OMIT_KEYS = ["items", "panels"] as const;
 
 const LOCALE_PREFIX = /^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/;
 const normalizePath = (p: string) => p.replace(LOCALE_PREFIX, "").replace(/\/+$/, "") || "/";
 
 /** Items accept either `href` or `to` (RLLink convention). Internal hrefs are localized. */
-const resolveHref = (item: NavigationMenuItem | NavigationMenuChildItem): string | undefined => {
-  const h = item["href"] ?? item["to"];
-  return typeof h === "string" ? localizeHref(h, item["localize"]) : undefined;
+const resolveHref = (item: NavigationMenuChildItem): string | undefined => {
+  const h = item.href ?? item.to;
+  return typeof h === "string" ? localizeHref(h, item.localize) : undefined;
 };
 
-const hasChildren = (item: NavigationMenuItem) => !!item.children && item.children.length > 0;
+const hasChildren = (item: NavigationMenuChildItem) => !!item.children && item.children.length > 0;
+
+const renderSlot = <C,>(renderer: SlotRenderer<C>, ctx: C) =>
+  typeof renderer === "function" ? renderer(ctx) : renderer;
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
-  const { classes, rest, slots } = RLNavigationMenuTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLNavigationMenuTheme.setup(props, {
+    as: "nav",
     omit: OMIT_KEYS,
-    slots: ["contentSlot", "itemSlot"] as const,
+    slots: ["panelSlot", "itemSlot"] as const,
   });
 
   let navRef: HTMLElement | undefined;
@@ -35,23 +41,24 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   const [currentPath, setCurrentPath] = createSignal("");
 
   const items = createMemo(() => props.items ?? []);
-  const orientation = () => props.orientation ?? "horizontal";
-  const isHorizontal = () => orientation() === "horizontal";
+  // The theme defaults `orientation` to "horizontal"; any value other than "vertical" is horizontal.
+  const isHorizontal = () => props.orientation !== "vertical";
+  const orientation = () => (isHorizontal() ? "horizontal" : "vertical");
 
   /**
-   * Custom panel renderer for an item. `panels[item.panel]` wins, `contentSlot` is the
-   * generic fallback. Returns the *function* (never calls it) so checking for a panel
+   * Custom panel renderer for an item. `panels[item.panel]` wins, `panelSlot` is the
+   * generic fallback. Returns the renderer without calling it, so checking for a panel
    * doesn't instantiate the panel's JSX.
    */
-  const rendererFor = (item: NavigationMenuItem): NavigationMenuContentRenderer | undefined => {
+  const rendererFor = (item: NavigationMenuItem) => {
     if (item.panel && props.panels?.[item.panel]) return props.panels[item.panel];
-    return slots.contentSlot();
+    return slots.panelSlot();
   };
 
   const hasPanel = (item: NavigationMenuItem) => hasChildren(item) || !!rendererFor(item);
 
   const isItemActive = (item: NavigationMenuItem) => {
-    if (item["active"] !== undefined) return !!item["active"];
+    if (item.active !== undefined) return !!item.active;
     const href = resolveHref(item);
     if (!href) return false;
     const target = normalizePath(href);
@@ -62,7 +69,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
 
   let closeTimer: ReturnType<typeof setTimeout> | undefined;
   const cancelClose = () => {
-    if (closeTimer) clearTimeout(closeTimer);
+    clearTimeout(closeTimer);
     closeTimer = undefined;
   };
   const openItem = (index: number) => {
@@ -105,7 +112,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
 
   const ChildLink = (p: { child: NavigationMenuChildItem }) => (
     <a href={resolveHref(p.child) ?? "#"} class={classes().childLink} onClick={() => closeAll()}>
-      <Icon name={p.child.icon ?? p.child["leadingIcon"]} class={classes().childIcon} />
+      <Icon name={p.child.icon} class={classes().childIcon} />
       <div>
         <div class={classes().childLabel}>{p.child.label}</div>
         <Show when={p.child.description}>
@@ -167,16 +174,26 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   /** Plain function (not a component) — called from a JSX expression, so every
    *  read it does is tracked by the compiled expression's computation. */
   const renderPanel = (item: NavigationMenuItem, index: number): JSX.Element => {
-    const render = rendererFor(item);
-    return render ? render({ item, index }) : <DefaultPanel item={item} />;
+    const context: NavigationMenuPanelContext = { item, index };
+    if (item.panel && props.panels?.[item.panel]) return props.panels[item.panel]!(context);
+    const fallback = slots.panelSlot();
+    return fallback ? renderSlot(fallback, context) : <DefaultPanel item={item} />;
+  };
+
+  /** Custom item renderer, or `undefined` for the default link or trigger. */
+  const renderItemSlot = (item: NavigationMenuItem, index: number, active: boolean) => {
+    const renderer = slots.itemSlot();
+    if (!renderer) return undefined;
+    const context: NavigationMenuItemContext = { item, index, active };
+    return renderSlot(renderer, context);
   };
 
   return (
-    <nav
-      ref={(el) => (navRef = el)}
+    <Tag
+      ref={(el: HTMLElement) => (navRef = el)}
       class={classes().root}
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
       data-nav-menu
       data-orientation={orientation()}
       onMouseLeave={() => {
@@ -202,46 +219,48 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                   else scheduleClose();
                 }}
               >
-                <Show
-                  when={hasPanel(item)}
-                  fallback={
-                    <a
-                      href={resolveHref(item) ?? "#"}
-                      class={classes().link}
-                      data-slot="link"
-                      aria-current={isActive() ? "page" : undefined}
-                    >
-                      <Icon name={item.icon ?? item["leadingIcon"]} class="size-4" />
-                      {item.label}
-                    </a>
-                  }
-                >
-                  {/* Trigger shares the `link` slot so `ui.link` styles both. */}
-                  <button
-                    type="button"
-                    class={`${classes().link} ${classes().trigger}`}
-                    data-slot="trigger"
-                    data-nav-trigger
-                    aria-expanded={isOpen() ? "true" : "false"}
-                    aria-haspopup="true"
-                    aria-current={isActive() ? "page" : undefined}
-                    data-state={isOpen() ? "open" : "closed"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isOpen()) closeAll();
-                      else openItem(i());
-                    }}
+                {renderItemSlot(item, i(), isActive()) ?? (
+                  <Show
+                    when={hasPanel(item)}
+                    fallback={
+                      <a
+                        href={resolveHref(item) ?? "#"}
+                        class={classes().link}
+                        data-slot="link"
+                        aria-current={isActive() ? "page" : undefined}
+                      >
+                        <Icon name={item.icon} class="size-4" />
+                        {item.label}
+                      </a>
+                    }
                   >
-                    <Icon name={item.icon ?? item["leadingIcon"]} class="size-4" />
-                    {item.label}
-                    <RLIcon
-                      name="chevron-down"
-                      class={`size-3.5 transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
-                      aria-hidden="true"
-                      data-chevron
-                    />
-                  </button>
-                </Show>
+                    {/* Trigger shares the `link` slot so `ui.link` styles both. */}
+                    <button
+                      type="button"
+                      class={`${classes().link} ${classes().trigger}`}
+                      data-slot="trigger"
+                      data-nav-trigger
+                      aria-expanded={isOpen() ? "true" : "false"}
+                      aria-haspopup="true"
+                      aria-current={isActive() ? "page" : undefined}
+                      data-state={isOpen() ? "open" : "closed"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isOpen()) closeAll();
+                        else openItem(i());
+                      }}
+                    >
+                      <Icon name={item.icon} class="size-4" />
+                      {item.label}
+                      <RLIcon
+                        name="chevron-down"
+                        class={`size-3.5 transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
+                        aria-hidden="true"
+                        data-chevron
+                      />
+                    </button>
+                  </Show>
+                )}
 
                 {/* Vertical: inline accordion. Uses the item's slot panel when one exists,
                     otherwise the item's own links. */}
@@ -261,6 +280,8 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
           }}
         </For>
       </ul>
+
+      {children()}
 
       {/* Horizontal: single shared viewport — the ONLY place panels render. */}
       <Show when={isHorizontal()}>
@@ -293,6 +314,6 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
           </div>
         </div>
       </Show>
-    </nav>
+    </Tag>
   );
 };

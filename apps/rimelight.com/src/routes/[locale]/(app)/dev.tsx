@@ -11,7 +11,7 @@ export default function DevRouteLayout(props: RouteSectionProps) {
         stackIndex={1}
         fixed={true}
         class="bg-primary-400"
-        leftSlot={
+        leadingSlot={
           <a href={getLocaleUrl("/dev")} class="flex flex-row items-center gap-sm min-w-0">
             <RLLogo
               as="span"

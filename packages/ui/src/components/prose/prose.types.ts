@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLProseTheme } from "./prose.theme";
 
-export interface RLProseProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for `RLProse`. Renders its children inside the themed root.
+ *
+ * @status stub
+ */
+export type RLProseProps = InferThemeProps<typeof RLProseTheme>;

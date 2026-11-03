@@ -1,25 +1,26 @@
 import type { RLSliderProps } from "./slider.types";
 import { RLSliderTheme } from "./slider.theme";
-import { createMemo, createSignal, type Component } from "solid-js";
+import { createMemo, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-
-const OMIT_KEYS = ["value", "defaultValue", "min", "max", "step", "name", "onChange"] as const;
+import { createControllable } from "../../controllable";
 
 export const RLSlider: Component<RLSliderProps> = (props) => {
-  const { classes, rest } = RLSliderTheme.setup(props, { omit: OMIT_KEYS });
-
   const min = () => props.min ?? 0;
   const max = () => props.max ?? 100;
   const step = () => props.step ?? 1;
 
-  const [internalVal, setInternalVal] = createSignal(
-    () => props.value ?? props.defaultValue ?? min(),
+  const [value, setValue] = createControllable<number>(
+    () => props.value,
+    props.defaultValue ?? min(),
+    (next) => props.onValueChange?.(next),
   );
 
-  const currentVal = () => (props.value !== undefined ? props.value : internalVal());
+  const { Tag, classes, rest, theme } = RLSliderTheme.setup(props, {
+    omit: ["value", "defaultValue", "onValueChange", "min", "max", "step", "name"] as const,
+  });
 
   const percentage = createMemo(() => {
-    const v = currentVal();
+    const v = value();
     const mn = min();
     const mx = max();
     return Math.min(100, Math.max(0, ((v - mn) / (mx - mn)) * 100));
@@ -27,16 +28,11 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
 
   const handleInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (e) => {
     const num = parseFloat(e.currentTarget.value);
-    if (!isNaN(num)) {
-      if (props.value === undefined) {
-        setInternalVal(num);
-      }
-      props.onChange?.(num);
-    }
+    if (!isNaN(num)) setValue(num);
   };
 
   return (
-    <div class={classes().root} data-slot="slider-root" data-theme={props.theme} {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <div class={classes().track} data-slot="track">
         <svg class="h-full w-full overflow-visible pointer-events-none">
           <rect
@@ -53,9 +49,9 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
         min={min()}
         max={max()}
         step={step()}
-        value={currentVal()}
+        value={value()}
         name={props.name}
-        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        class={classes().input}
         data-slot="input"
         onInput={handleInput}
       />
@@ -70,6 +66,6 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
           fill="currentColor"
         />
       </svg>
-    </div>
+    </Tag>
   );
 };

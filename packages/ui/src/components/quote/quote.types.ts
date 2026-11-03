@@ -1,16 +1,16 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLQuoteTheme } from "./quote.theme";
 
-export interface RLQuoteProps {
+export type RLQuoteProps = InferThemeProps<typeof RLQuoteTheme> & {
   /**
-   * Slot-specific CSS class overrides.
+   * Replaces the children as the quoted text.
+   * @default undefined (renders `children`)
    */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
   quoteSlot?: JSX.Element;
+  /**
+   * Attribution rendered below the quote as a `figcaption`. Not rendered when omitted.
+   * @default undefined
+   */
   captionSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

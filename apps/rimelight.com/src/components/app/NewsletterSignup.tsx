@@ -30,13 +30,13 @@ export const NewsletterSignup: Component<NewsletterSignupProps> = (props) => {
   return (
     <RLForm>
       <RLFormField
-        name="email"
         label={resolvedFieldLabel()}
         description={resolvedDescription()}
         class={`${props.rc?.label || ""} ${props.rc?.description || ""}`}
       >
         <RLFieldGroup class={`pt-2 ${props.rc?.group || ""}`}>
           <RLInput
+            name="email"
             type="email"
             placeholder={props.placeholder || "email@domain.com"}
             class={props.rc?.input}

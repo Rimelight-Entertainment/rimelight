@@ -26,7 +26,7 @@ describe("RLTable — DOM & TableApi interactions", () => {
       <RLTable
         data={sampleData}
         columns={columns}
-        ref={(a: TableApi) => {
+        onApi={(a: TableApi) => {
           api = a;
         }}
       />
@@ -67,7 +67,7 @@ describe("RLTable — DOM & TableApi interactions", () => {
         data={treeData}
         columns={[{ accessorKey: "id" }, { accessorKey: "name" }]}
         getSubRows={(r) => (r as { children?: { id: string; name: string }[] }).children}
-        ref={(a: TableApi) => {
+        onApi={(a: TableApi) => {
           api = a;
         }}
       />
@@ -101,7 +101,7 @@ describe("RLTable — DOM & TableApi interactions", () => {
       <RLTable
         data={sampleData}
         columns={columns}
-        ref={(a: TableApi) => {
+        onApi={(a: TableApi) => {
           api = a;
         }}
       />

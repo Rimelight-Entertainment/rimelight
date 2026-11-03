@@ -227,7 +227,7 @@ export const ButtonSandbox = (): JSX.Element => {
         block={isBlock()}
         square={isSquare()}
         active={isActive()}
-        to={isLink() ? "https://rimelight.com" : undefined}
+        href={isLink() ? "https://rimelight.com" : undefined}
         target={isLink() ? "_blank" : undefined}
         onClick={
           loadingAuto()
@@ -352,7 +352,7 @@ export const buttonAudit: ComponentAuditDefinition = {
         return t("app.text.interactive-link-active-state");
       },
       description:
-        "Polymorphic anchor mode via `to` / `href` with target, rel, activeClass, and custom activeColor/activeVariant.",
+        "Polymorphic anchor mode via `href` with target, rel, activeClass, and custom activeColor/activeVariant.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLButton
@@ -364,7 +364,7 @@ export const buttonAudit: ComponentAuditDefinition = {
             variant="outline"
           />
           <RLButton
-            to="/dev/components?comp=button"
+            href="/dev/components?comp=button"
             active
             activeColor="success"
             activeVariant="solid"
@@ -414,7 +414,7 @@ export const buttonAudit: ComponentAuditDefinition = {
             leadingSlot={<span class="text-sm">✨</span>}
             trailingSlot={<span class="text-xs bg-white/20 px-1 rounded">{"HOT"}</span>}
             ui={{
-              base: "shadow-lg",
+              root: "shadow-lg",
               label: "tracking-wider uppercase font-bold",
             }}
           >
@@ -429,7 +429,7 @@ export const buttonAudit: ComponentAuditDefinition = {
       criterion: "API parity (Button)",
       status: "pass",
       notes:
-        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, exactActiveClass, to, href, target, rel, noRel, external, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array. square uses `square || (!label && !children)` rule.",
+        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, href, target, rel, noRel, external, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array. square uses `square || (!label && !children)` rule.",
     },
     {
       criterion: "Slot pattern parity (leading, default, trailing)",

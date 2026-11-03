@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDockTheme } from "./dock.theme";
 
-export interface RLDockProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Dock container for pinned actions.
+ * @status stub
+ * @default as "div"
+ */
+export type RLDockProps = InferThemeProps<typeof RLDockTheme>;

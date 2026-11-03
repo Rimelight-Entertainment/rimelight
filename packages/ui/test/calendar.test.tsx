@@ -10,7 +10,8 @@ function render(fn: () => any): string {
 }
 
 function slotTag(html: string, slot: string): string {
-  const match = html.match(new RegExp(`<[a-z]+[^>]*data-slot="${slot}"[^>]*>`));
+  const name = slot.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+  const match = html.match(new RegExp(`<[a-z]+[^>]*data-slot="${name}"[^>]*>`));
   return match?.[0] ?? "";
 }
 
@@ -49,7 +50,7 @@ describe("RLCalendar", () => {
 
     it("renders a screen-reader heading with aria-level 2", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
-      const sr = html.match(/<div[^>]*data-slot="srLabel"[^>]*>(.*?)<\/div>/)?.[1] ?? "";
+      const sr = html.match(/<div[^>]*data-slot="sr-label"[^>]*>(.*?)<\/div>/)?.[1] ?? "";
       expect(sr).toContain('role="heading"');
       expect(sr).toContain('aria-level="2"');
     });
@@ -97,24 +98,24 @@ describe("RLCalendar", () => {
 
     it("renders 7 weekday head cells", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
-      expect(countMatches(html, /data-slot="headCell"/g)).toBe(7);
+      expect(countMatches(html, /data-slot="head-cell"/g)).toBe(7);
     });
 
     it("renders 42 day cells with fixedWeeks", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
-      expect(countMatches(html, /data-slot="cellTrigger"/g)).toBe(42);
+      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(42);
     });
 
     it("renders 35 day cells without fixedWeeks when the month needs 5 rows", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} fixedWeeks={false} />);
-      expect(countMatches(html, /data-slot="cellTrigger"/g)).toBe(35);
-      expect(countMatches(html, /data-slot="cellTrigger"/g)).toBeLessThan(42);
+      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(35);
+      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBeLessThan(42);
     });
 
     it("honours numberOfMonths", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} numberOfMonths={2} />);
       expect(countMatches(html, /data-slot="grid"/g)).toBe(2);
-      expect(countMatches(html, /data-slot="cellTrigger"/g)).toBe(84);
+      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(84);
     });
   });
 
@@ -147,7 +148,7 @@ describe("RLCalendar", () => {
       const cells = html.match(/<td[^>]*data-slot="cell"[^>]*>/g) ?? [];
       expect(cells.length).toBe(42);
       expect(cells.every((c) => c.includes('role="gridcell"'))).toBe(true);
-      const triggers = html.match(/<div[^>]*data-slot="cellTrigger"[^>]*>/g) ?? [];
+      const triggers = html.match(/<div[^>]*data-slot="cell-trigger"[^>]*>/g) ?? [];
       expect(triggers.length).toBe(42);
       expect(triggers.every((t) => t.includes('role="button"'))).toBe(true);
     });
@@ -155,7 +156,7 @@ describe("RLCalendar", () => {
     it("gives each trigger a full-date aria-label", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       const label =
-        html.match(/<div[^>]*data-slot="cellTrigger"[^>]*aria-label="([^"]+)"/)?.[1] ?? "";
+        html.match(/<div[^>]*data-slot="cell-trigger"[^>]*aria-label="([^"]+)"/)?.[1] ?? "";
       expect(label).toContain("2022");
     });
 
@@ -222,16 +223,16 @@ describe("RLCalendar", () => {
 
     it("roving tabindex: exactly one enabled day cell has tabindex=0", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
-      expect(countMatches(html, /<div[^>]*data-slot="cellTrigger"[^>]*tabindex="0"/g)).toBe(1);
+      expect(countMatches(html, /<div[^>]*data-slot="cell-trigger"[^>]*tabindex="0"/g)).toBe(1);
       expect(
-        countMatches(html, /<div[^>]*data-slot="cellTrigger"[^>]*tabindex="-1"/g),
+        countMatches(html, /<div[^>]*data-slot="cell-trigger"[^>]*tabindex="-1"/g),
       ).toBeGreaterThan(1);
     });
 
     it("outside days have no tabindex", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       const outside =
-        html.match(/<div[^>]*data-slot="cellTrigger"[^>]*\sdata-outside-view=""[^>]*>/g) ?? [];
+        html.match(/<div[^>]*data-slot="cell-trigger"[^>]*\sdata-outside-view=""[^>]*>/g) ?? [];
       expect(outside.length).toBeGreaterThan(0);
       expect(outside.every((t) => !t.includes("tabindex"))).toBe(true);
     });
@@ -271,14 +272,14 @@ describe("RLCalendar", () => {
   describe("views", () => {
     it("renders the month picker view with 12 cells and no weekday header", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} type="month" />);
-      expect(countMatches(html, /data-slot="cellTrigger"/g)).toBe(12);
-      expect(countMatches(html, /data-slot="headCell"/g)).toBe(0);
+      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(12);
+      expect(countMatches(html, /data-slot="head-cell"/g)).toBe(0);
       expect(attr(slotTag(html, "root"), "aria-label")).toContain("2022");
     });
 
     it("renders the year picker view with 12 cells", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} type="year" />);
-      expect(countMatches(html, /data-slot="cellTrigger"/g)).toBe(12);
+      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(12);
       expect(attr(slotTag(html, "root"), "aria-label")).toContain("2020");
       expect(attr(slotTag(html, "root"), "aria-label")).toContain("2031");
     });
@@ -316,7 +317,7 @@ describe("RLCalendar", () => {
 
     it("weekNumbers adds a week-number cell per row", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} weekNumbers />);
-      expect(countMatches(html, /data-slot="cellWeek"/g)).toBe(6);
+      expect(countMatches(html, /data-slot="cell-week"/g)).toBe(6);
     });
   });
 
@@ -326,16 +327,18 @@ describe("RLCalendar", () => {
         <RLCalendar placeholder={feb2022} daySlot={({ day }) => `D${day.getDate()}`} />
       ));
       expect(html).toContain("D15");
-      expect(html).not.toMatch(/data-slot="cellTrigger"[^>]*>\s*15\s*<\//);
+      expect(html).not.toMatch(/data-slot="cell-trigger"[^>]*>\s*15\s*<\//);
     });
 
     it("renders weekDaySlot output", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} weekDaySlot={() => "WD"} />);
-      expect(countMatches(html, /data-slot="headCell"[^>]*>WD</g)).toBe(7);
+      expect(countMatches(html, /data-slot="head-cell"[^>]*>WD</g)).toBe(7);
     });
 
     it("renders headingSlot output", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} headingSlot={() => "HEADING"} />);
+      const html = render(() => (
+        <RLCalendar placeholder={feb2022} headingSlot={<span>HEADING</span>} />
+      ));
       expect(html).toContain("HEADING");
     });
 

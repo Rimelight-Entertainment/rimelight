@@ -1,26 +1,23 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLScrollAreaTheme } from "./scroll-area.theme";
 
-export interface RLScrollAreaProps {
+export type RLScrollAreaProps = Omit<InferThemeProps<typeof RLScrollAreaTheme>, "orientation"> & {
   /**
    * Orientation of the scrollbar.
+   *
+   * @default "vertical"
    */
   orientation?: "vertical" | "horizontal" | "both";
   /**
    * Scrollbar visibility delay in ms.
+   *
+   * @default 600
    */
   scrollHideDelay?: number;
   /**
    * Height override if needed.
+   *
+   * @default undefined
    */
   height?: string | number;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+};

@@ -4,61 +4,49 @@ import type { RLAvatarGroupProps } from "./avatar-group.types";
 import { RLAvatarGroupTheme } from "./avatar-group.theme";
 import { RLAvatar } from "../avatar/RLAvatar";
 
-const OMIT_KEYS = ["items", "max", "displayLimit"] as const;
+const OMIT_KEYS = ["items", "max"] as const;
 
 export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
   const {
-    Tag: Root,
+    Tag,
     classes,
     rest,
+    children: childNodes,
+    theme,
   } = RLAvatarGroupTheme.setup(props, {
     omit: OMIT_KEYS,
   });
 
-  const maxCount = () => {
-    if (props.max !== undefined) {
-      const parsed = Number(props.max);
-      return Number.isFinite(parsed) ? parsed : undefined;
-    }
-    if (props.displayLimit !== undefined) {
-      return props.displayLimit;
-    }
-    return undefined;
-  };
-
-  const size = () => props.size ?? "md";
-  const color = () => props.color ?? "neutral";
-
   // For props.items mode
   const normalizedItems = () => props.items ?? [];
   const renderedItems = () => {
-    const limit = maxCount();
+    const limit = props.max;
     return limit !== undefined ? normalizedItems().slice(0, limit) : normalizedItems();
   };
   const hiddenItemCount = () => {
-    const limit = maxCount();
+    const limit = props.max;
     if (limit === undefined) return 0;
     return Math.max(0, normalizedItems().length - limit);
   };
 
   // For children mode
-  const resolvedChildren = children(() => props.children);
+  const resolvedChildren = children(childNodes);
   const childArray = () => resolvedChildren.toArray();
 
   const visibleChildren = () => {
-    const limit = maxCount();
+    const limit = props.max;
     const arr = childArray();
     return limit !== undefined ? arr.slice(0, limit) : arr;
   };
 
   const hiddenChildCount = () => {
-    const limit = maxCount();
+    const limit = props.max;
     if (limit === undefined) return 0;
     return Math.max(0, childArray().length - limit);
   };
 
   return (
-    <Root class={classes().root} data-slot="avatar-group" {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <Show
         when={normalizedItems().length > 0}
         fallback={
@@ -88,13 +76,11 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
             <span class={classes().base} data-slot="base">
               <RLAvatar
                 src={item.src}
-                alt={item.alt ?? ""}
+                alt={item.alt}
                 icon={item.icon}
                 text={item.text}
-                fallback={item.fallback}
-                initials={item.initials}
-                size={size()}
-                color={(item.color ?? color()) as any}
+                size={props.size}
+                color={item.color ?? props.color}
                 chip={item.chip}
                 loading={item.loading}
               />
@@ -102,6 +88,6 @@ export const RLAvatarGroup: Component<RLAvatarGroupProps> = (props) => {
           )}
         </For>
       </Show>
-    </Root>
+    </Tag>
   );
 };

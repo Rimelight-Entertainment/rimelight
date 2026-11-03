@@ -1,30 +1,39 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { ThemeColor } from "../../types";
+import type { RLPostTheme } from "./post.theme";
 
-export interface RLPostProps {
+export type RLPostProps = InferThemeProps<typeof RLPostTheme> & {
   /**
    * The title of the post.
+   *
+   * @default undefined
    */
   title?: string | undefined;
   /**
    * The description of the post.
+   *
+   * @default undefined
    */
   description?: string | undefined;
   /**
    * The date of the post.
+   *
+   * @default undefined
    */
   date?: string | Date | undefined;
   /**
-   * The image of the post.
+   * The image of the post, as a URL or an object with a `src`.
+   *
+   * @default undefined
    */
-  image?: string | Record<string, any> | undefined;
+  image?: string | { src: string } | undefined;
   /**
-   * The link to the post.
+   * The link to the post. When set, the root renders as an anchor.
+   *
+   * @default undefined
    */
   href?: string | undefined;
-  /**
-   * The link to the post (alias of href).
-   */
-  to?: string | undefined;
   /**
    * Localize an internal link for the current locale. Pass a locale code to target that
    * locale, or `false` to keep the href as-is.
@@ -33,35 +42,21 @@ export interface RLPostProps {
    */
   localize?: boolean | string | undefined;
   /**
-   * The variant of the post.
-   */
-  variant?: "soft" | "ghost" | undefined;
-  /**
-   * The orientation layout of the post.
-   */
-  orientation?: "vertical" | "horizontal" | undefined;
-  /**
    * Badge label displayed on the post.
+   *
+   * @default undefined
    */
   badge?: string | undefined;
   /**
    * Badge color scheme.
+   *
+   * @default "primary"
    */
-  badgeColor?: string | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
+  badgeColor?: ThemeColor | undefined;
   imageSlot?: JSX.Element;
   titleSlot?: JSX.Element;
   descriptionSlot?: JSX.Element;
   badgeSlot?: JSX.Element;
   dateSlot?: JSX.Element;
   footerSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

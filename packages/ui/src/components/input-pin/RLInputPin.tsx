@@ -1,49 +1,42 @@
 import type { RLInputPinProps } from "./input-pin.types";
 import { RLInputPinTheme } from "./input-pin.theme";
-import { createMemo, createSignal, For, type Component } from "solid-js";
+import { createMemo, For, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
+import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "length",
   "value",
   "defaultValue",
+  "onValueChange",
   "name",
   "disabled",
   "required",
   "type",
-  "size",
   "onInput",
-  "onChange",
   "onKeyDown",
   "onComplete",
 ] as const;
 
 export const RLInputPin: Component<RLInputPinProps> = (props) => {
-  const { classes, rest } = RLInputPinTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme, ui } = RLInputPinTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const cellsClasses = createMemo(() =>
-    RLInputTheme({
-      variant: "default",
-      size: props.size ?? "md",
-      error: false,
-      ui: props.ui,
-    }),
-  );
+  const cellsClasses = createMemo(() => RLInputTheme({ size: props.size, ui: ui() }));
 
   const length = () => props.length ?? 4;
   const pinType = () => props.type ?? "numeric";
-
-  const initial = (props.value ?? props.defaultValue ?? "").split("");
   const cells = createMemo(() => Array.from({ length: length() }));
 
-  const [current, setCurrent] = createSignal<string>(props.value ?? props.defaultValue ?? "");
+  const [current, setCurrent] = createControllable<string>(
+    () => props.value,
+    props.defaultValue ?? "",
+    (next) => props.onValueChange?.(next),
+  );
 
   let pinRefs: Array<HTMLInputElement | undefined> = [];
-
-  const setCellRef = (el: HTMLInputElement | undefined, index: number) => {
-    pinRefs[index] = el;
-  };
 
   const focusCell = (index: number) => {
     const el = pinRefs[index];
@@ -68,7 +61,6 @@ export const RLInputPin: Component<RLInputPinProps> = (props) => {
     const next = current().slice(0, index) + digit + current().slice(index + 1);
     setCurrent(next);
     props.onInput?.(e);
-    props.onChange?.(e);
     if (digit) {
       if (index < length() - 1) {
         focusCell(index + 1);
@@ -116,31 +108,34 @@ export const RLInputPin: Component<RLInputPinProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
+      {...rest}
+      onChange={undefined}
+    >
       <div
         role="group"
         aria-label={uiT("input-pin.label")}
-        class="flex items-center gap-2"
+        class={classes().group}
         data-slot="group"
       >
         <For each={cells()}>
           {(_, index) => (
-            <div
-              class={`${cellsClasses().root} w-12 h-12 flex items-center justify-center rounded-md`}
-              data-slot="cell"
-            >
+            <div class={`${cellsClasses().root} ${classes().cell}`} data-slot="cell">
               <input
-                ref={(el) => setCellRef(el, index())}
+                ref={(el) => (pinRefs[index()] = el)}
                 type="text"
                 name={props.name ? `${props.name}-${index()}` : undefined}
                 inputmode={pinType() === "numeric" ? "numeric" : "text"}
                 autocomplete="one-time-code"
                 maxlength={1}
-                value={initial[index()] ?? ""}
+                value={current()[index()] ?? ""}
                 disabled={props.disabled}
                 required={props.required}
-                aria-label={`Digit ${index() + 1}`}
-                class={`${cellsClasses().input} w-full text-center`}
+                aria-label={uiT("input-pin.digitLabel").replace("{n}", String(index() + 1))}
+                class={`${cellsClasses().input} ${classes().input}`}
                 data-slot="input"
                 onInput={(e) =>
                   handleInput(e as InputEvent & { currentTarget: HTMLInputElement }, index())
@@ -154,7 +149,7 @@ export const RLInputPin: Component<RLInputPinProps> = (props) => {
           )}
         </For>
       </div>
-      {props.children}
-    </div>
+      {children()}
+    </Tag>
   );
 };

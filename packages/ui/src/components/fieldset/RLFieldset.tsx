@@ -2,12 +2,15 @@ import type { Component } from "solid-js";
 import type { RLFieldsetProps } from "./fieldset.types";
 import { RLFieldsetTheme } from "./fieldset.theme";
 
+/**
+ * @status stub
+ */
 export const RLFieldset: Component<RLFieldsetProps> = (props) => {
-  const { classes, rest } = RLFieldsetTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLFieldsetTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

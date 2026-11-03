@@ -73,7 +73,7 @@ export default function AppRouteLayout(props: AppRouteLayoutProps) {
           >
             <RLToast
               title={t("app.cookie.notice.title")}
-              dismissable={false}
+              dismissible={false}
               duration={0}
               class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm"
               actionsSlot={

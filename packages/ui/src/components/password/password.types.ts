@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPasswordTheme } from "./password.theme";
 
-export interface RLPasswordProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Password input container.
+ * @status stub
+ */
+export type RLPasswordProps = InferThemeProps<typeof RLPasswordTheme>;

@@ -158,8 +158,8 @@ describe("RLCheckbox & RLCheckboxGroup", () => {
       expect(html).toContain("star");
     });
 
-    it("renders variant='card' with border treatment", () => {
-      const html = render(() => <RLCheckbox variant="card" label="Card Checkbox" />);
+    it("renders layout='card' with border treatment", () => {
+      const html = render(() => <RLCheckbox layout="card" label="Card Checkbox" />);
       const root = slotTag(html, "root");
       expect(root).toContain("border border-default rounded-lg");
     });
@@ -238,9 +238,9 @@ describe("RLCheckbox & RLCheckboxGroup", () => {
       expect(slotTag(horizHtml, "fieldset")).toContain("flex-row");
     });
 
-    it("supports variant='table'", () => {
+    it("supports layout='table'", () => {
       const html = render(() => (
-        <RLCheckboxGroup items={stringItems} variant="table" orientation="horizontal" />
+        <RLCheckboxGroup items={stringItems} layout="table" orientation="horizontal" />
       ));
       const fieldset = slotTag(html, "fieldset");
       expect(fieldset).toContain("-space-x-px");

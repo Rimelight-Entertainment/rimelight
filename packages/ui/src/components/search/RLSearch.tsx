@@ -8,29 +8,43 @@ import { RLKbd } from "../kbd/RLKbd";
 import { RLButton } from "../button/RLButton";
 import { defineShortcuts } from "../../shortcuts";
 import { uiNodes, uiT } from "../../locale";
-
-const OMIT_KEYS = ["endpoint", "placeholder", "messages"] as const;
+import { createControllable } from "../../controllable";
 
 export const RLSearch: Component<RLSearchProps> = (props) => {
+  const [open, setOpen] = createControllable<boolean>(
+    () => props.open,
+    props.defaultOpen ?? false,
+    (next) => props.onOpenChange?.(next),
+  );
+
   const {
     Tag,
     classes,
     rest,
+    children,
     id: modalId,
     slots,
+    theme,
   } = RLSearchTheme.setup(props, {
-    omit: OMIT_KEYS,
+    omit: [
+      "id",
+      "endpoint",
+      "placeholder",
+      "messages",
+      "open",
+      "defaultOpen",
+      "onOpenChange",
+    ] as const,
     slots: ["triggerSlot"] as const,
     idPrefix: "rl-search",
   });
 
   const endpoint = () => props.endpoint ?? "/api/search";
   const searchPlaceholder = () =>
-    props.messages?.searchPlaceholder || props.placeholder || "Search...";
-  const noResultsLabel = () => props.messages?.noResultsLabel || "No results found";
-  const footerBackendHint = () => props.messages?.footerBackendHint || "Site Search";
+    props.messages?.searchPlaceholder || props.placeholder || uiT("search.placeholder");
+  const noResultsLabel = () => props.messages?.noResultsLabel || uiT("search.no-results");
+  const footerBackendHint = () => props.messages?.footerBackendHint || uiT("search.site-search");
 
-  const [isOpen, setIsOpen] = createSignal(false);
   const [query, setQuery] = createSignal("");
   const [results, setResults] = createSignal<SearchResultItem[]>([]);
   const [hasSearched, setHasSearched] = createSignal(false);
@@ -40,7 +54,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
   const openModal = () => {
-    setIsOpen(true);
+    setOpen(true);
     document.body.style.overflow = "hidden";
     setTimeout(() => {
       inputRef?.focus();
@@ -49,16 +63,16 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
   };
 
   const closeModal = () => {
-    setIsOpen(false);
+    setOpen(false);
     document.body.style.overflow = "";
     setQuery("");
     setResults([]);
     setHasSearched(false);
-    if (debounceTimer) clearTimeout(debounceTimer);
+    clearTimeout(debounceTimer);
   };
 
   const toggleModal = () => {
-    if (isOpen()) {
+    if (open()) {
       closeModal();
     } else {
       openModal();
@@ -69,24 +83,24 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     const searchShortcutCleanup = defineShortcuts({
       meta_k: {
         handler: () => toggleModal(),
-        label: "Search",
-        description: "Open site search",
+        label: uiT("search.label"),
+        description: uiT("search.shortcut-open"),
         category: "navigation",
         order: 0,
       },
       "/": {
         handler: () => {
-          if (!isOpen()) openModal();
+          if (!open()) openModal();
         },
-        label: "Quick Search",
-        description: "Focus site search",
+        label: uiT("search.shortcut-quick"),
+        description: uiT("search.shortcut-quick-description"),
         category: "navigation",
         order: 1,
       },
     });
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen()) {
+      if (e.key === "Escape" && open()) {
         closeModal();
       }
     };
@@ -95,14 +109,14 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "";
-      if (debounceTimer) clearTimeout(debounceTimer);
+      clearTimeout(debounceTimer);
       searchShortcutCleanup();
     };
   });
 
   const handleInput = (val: string) => {
     setQuery(val);
-    if (debounceTimer) clearTimeout(debounceTimer);
+    clearTimeout(debounceTimer);
 
     const trimmed = val.trim();
     if (!trimmed) {
@@ -131,14 +145,19 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
   };
 
   return (
-    <Tag class={`${classes().root} rl-search-wrapper`} data-slot="root" {...rest}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      class={`${classes().root} rl-search-wrapper`}
+      {...rest}
+    >
       {slots.triggerSlot() ? (
         <div class="cursor-pointer" onClick={toggleModal}>
           {slots.triggerSlot()}
         </div>
-      ) : props.children ? (
+      ) : children() ? (
         <div class="cursor-pointer" onClick={toggleModal}>
-          {props.children}
+          {children()}
         </div>
       ) : (
         <RLButton
@@ -151,7 +170,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
         />
       )}
 
-      <Show when={isOpen()}>
+      <Show when={open()}>
         <Portal>
           <div
             class={classes().modal}
@@ -170,7 +189,9 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
             >
               <div class={classes().header} data-slot="header">
                 <RLInput
-                  ref={(el) => (inputRef = el)}
+                  ref={(el) => {
+                    inputRef = el;
+                  }}
                   variant="ghost"
                   type="text"
                   value={query()}
@@ -189,7 +210,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
                       <Show when={loading()}>
                         <RLIcon name="loader-circle" class="size-4 animate-spin text-muted" />
                       </Show>
-                      <RLKbd size="sm">Esc</RLKbd>
+                      <RLKbd size="sm">{uiT("search.esc")}</RLKbd>
                       <button
                         type="button"
                         class={classes().close}
@@ -216,7 +237,9 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
                   {(item) => (
                     <a href={item.url || "#"} class={classes().resultItem} onClick={closeModal}>
                       <div class={classes().resultHeader}>
-                        <span class={classes().resultTitle}>{item.title || "Untitled"}</span>
+                        <span class={classes().resultTitle}>
+                          {item.title || uiT("search.untitled")}
+                        </span>
                         {item.sourceType && (
                           <span class={classes().resultBadge}>{item.sourceType}</span>
                         )}
@@ -235,7 +258,9 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
 
               <div class={classes().footer} data-slot="footer">
                 <span class="flex items-center gap-1">
-                  {uiNodes("search.press-to-close", { escape: <RLKbd size="sm">Esc</RLKbd> })}
+                  {uiNodes("search.press-to-close", {
+                    escape: <RLKbd size="sm">{uiT("search.esc")}</RLKbd>,
+                  })}
                 </span>
                 <span>{footerBackendHint()}</span>
               </div>

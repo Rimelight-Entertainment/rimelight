@@ -31,13 +31,13 @@ describe("RLSplitter Component Test Suite", () => {
   });
 
   describe("Structure, Anatomy & Slots", () => {
-    it("renders root, panel, handle, handleControl, and intersection slots", () => {
+    it("renders root, panel, handle, handle-control, and intersection slots", () => {
       const html = render(() => (
         <RLSplitter
           defaultValue={["30%", "70%"]}
           panels={[
-            { min: "20%", content: <div>Sidebar</div> },
-            { min: "30%", content: <div>Content</div> },
+            { min: "20%", children: <div>Sidebar</div> },
+            { min: "30%", children: <div>Content</div> },
           ]}
         />
       ));
@@ -48,7 +48,7 @@ describe("RLSplitter Component Test Suite", () => {
       expect(root).toContain("data-resizable-root");
       expect(slotTag(html, "panel")).not.toBe("");
       expect(slotTag(html, "handle")).not.toBe("");
-      expect(slotTag(html, "handleControl")).not.toBe("");
+      expect(slotTag(html, "handle-control")).not.toBe("");
       expect(slotTag(html, "intersection")).not.toBe("");
       expect(html).toContain("data-resizable-handle-start-target");
       expect(html).toContain("data-resizable-handle-end-target");
@@ -88,7 +88,7 @@ describe("RLSplitter Component Test Suite", () => {
   describe("Sizing & Normalization", () => {
     it("normalizes percentage defaultValue and sets flex-basis on panels", () => {
       const container = mountComponent(() => (
-        <RLSplitter defaultValue={["30%", "70%"]} panels={[{ content: "A" }, { content: "B" }]} />
+        <RLSplitter defaultValue={["30%", "70%"]} panels={[{ children: "A" }, { children: "B" }]} />
       ));
       const panels = container.querySelectorAll('[data-slot="panel"]');
       expect(panels.length).toBe(2);
@@ -101,8 +101,8 @@ describe("RLSplitter Component Test Suite", () => {
         <RLSplitter
           value={[100, 700]}
           panels={[
-            { min: 200, content: "Logs" },
-            { min: 150, content: "Output" },
+            { min: 200, children: "Logs" },
+            { min: 150, children: "Output" },
           ]}
         />
       ));
@@ -118,9 +118,9 @@ describe("RLSplitter Component Test Suite", () => {
         <RLSplitter
           defaultValue={["20%", "35%", "45%"]}
           panels={[
-            { min: "15%", content: "Mailboxes" },
-            { min: "25%", content: "Threads" },
-            { min: "30%", content: "Reading Pane" },
+            { min: "15%", children: "Mailboxes" },
+            { min: "25%", children: "Threads" },
+            { min: "30%", children: "Reading Pane" },
           ]}
         />
       ));
@@ -138,7 +138,7 @@ describe("RLSplitter Component Test Suite", () => {
       expect(resolveValuePx("35%", 800)).toBe(280);
       expect(resolveValuePx(280, 800)).toBe(280);
       expect(inferFallbackTotalPx([280, 520], false)).toBe(800);
-      expect(isPanelItem({ min: "20%", content: "Nav" })).toBe(true);
+      expect(isPanelItem({ min: "20%", children: "Nav" })).toBe(true);
     });
   });
 
@@ -152,7 +152,7 @@ describe("RLSplitter Component Test Suite", () => {
               collapsible: true,
               collapsibleMin: 56,
               defaultCollapsed: true,
-              content: (state) => (
+              children: (state) => (
                 <span>{state.collapsed ? `Rail:${state.size}px` : "Full Sidebar"}</span>
               ),
               handle: {
@@ -162,7 +162,7 @@ describe("RLSplitter Component Test Suite", () => {
                 ),
               },
             },
-            { min: "30%", content: "Workspace" },
+            { min: "30%", children: "Workspace" },
           ]}
         />
       ));
@@ -182,7 +182,7 @@ describe("RLSplitter Component Test Suite", () => {
       const html = render(() => (
         <RLSplitter
           orientation="vertical"
-          panels={[{ content: "Query Editor" }, { content: "Results" }]}
+          panels={[{ children: "Query Editor" }, { children: "Results" }]}
         />
       ));
 
@@ -195,7 +195,7 @@ describe("RLSplitter Component Test Suite", () => {
 
     it("enables intersection targets when intersection prop is set", () => {
       const container = mountComponent(() => (
-        <RLSplitter intersection={true} panels={[{ content: "A" }, { content: "B" }]} />
+        <RLSplitter intersection={true} panels={[{ children: "A" }, { children: "B" }]} />
       ));
       const startTarget = container.querySelector("[data-resizable-handle-start-target]");
       const endTarget = container.querySelector("[data-resizable-handle-end-target]");
@@ -206,45 +206,39 @@ describe("RLSplitter Component Test Suite", () => {
 
     it("locks handles when disabled is true or adjacent panel has resizable={false}", () => {
       const disabledHtml = render(() => (
-        <RLSplitter disabled={true} panels={[{ content: "A" }, { content: "B" }]} />
+        <RLSplitter disabled={true} panels={[{ children: "A" }, { children: "B" }]} />
       ));
       expect(slotTag(disabledHtml, "root")).toContain("data-disabled");
       expect(attr(slotTag(disabledHtml, "handle"), "tabindex")).toBe("-1");
       expect(attr(slotTag(disabledHtml, "handle"), "aria-disabled")).toBe("true");
 
       const lockedHtml = render(() => (
-        <RLSplitter panels={[{ resizable: false, content: "Fixed" }, { content: "Flexible" }]} />
+        <RLSplitter panels={[{ resizable: false, children: "Fixed" }, { children: "Flexible" }]} />
       ));
       expect(attr(slotTag(lockedHtml, "handle"), "tabindex")).toBe("-1");
       expect(attr(slotTag(lockedHtml, "handle"), "aria-disabled")).toBe("true");
     });
   });
 
-  describe("Custom UI, Classes, Styles & Translations", () => {
-    it("applies custom class, ui/classes slot overrides, styles, and translations", () => {
+  describe("Custom UI & Translations", () => {
+    it("applies custom class, ui slot overrides, and translations", () => {
       const html = render(() => (
         <RLSplitter
           class="custom-root"
-          classes={{ root: "alias-root" }}
           ui={{
             panel: "custom-panel",
             handle: "custom-handle",
             handleControl: "custom-control",
           }}
-          styles={{
-            root: "min-height: 200px",
-          }}
           translations={{ resize: "Custom resize label" }}
-          panels={[{ content: "One" }, { content: "Two" }]}
+          panels={[{ children: "One" }, { children: "Two" }]}
         />
       ));
 
       expect(slotTag(html, "root")).toContain("custom-root");
-      expect(slotTag(html, "root")).toContain("alias-root");
-      expect(slotTag(html, "root")).toContain("min-height: 200px");
       expect(slotTag(html, "panel")).toContain("custom-panel");
       expect(slotTag(html, "handle")).toContain("custom-handle");
-      expect(slotTag(html, "handleControl")).toContain("custom-control");
+      expect(slotTag(html, "handle-control")).toContain("custom-control");
       expect(attr(slotTag(html, "handle"), "aria-label")).toBe("Custom resize label");
     });
   });

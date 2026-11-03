@@ -4,6 +4,7 @@ import { createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
 const OMIT_KEYS = [
+  "checked",
   "id",
   "name",
   "label",
@@ -15,6 +16,7 @@ const OMIT_KEYS = [
   "defaultChecked",
   "onCheckedChange",
   "onChange",
+  "ref",
   "autofocus",
   "form",
   "formaction",
@@ -49,7 +51,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
 
   const size = () => props.size ?? "md";
   const color = () => props.color ?? "primary";
-  const variant = () => props.variant ?? "list";
   const indicator = () => props.indicator ?? "start";
   const highlight = () => Boolean(props.highlight);
   const disabled = () => Boolean(props.disabled);
@@ -59,20 +60,14 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
   const activeIcon = () =>
     isIndeterminate() ? props.indeterminateIcon || "minus" : props.icon || "check";
 
-  const {
-    Tag: Root,
-    classes,
-    rest,
-    id,
-    slots,
-  } = RLCheckboxTheme.setup(props, {
+  const { Tag, classes, rest, id, slots, children, theme } = RLCheckboxTheme.setup(props, {
     slots: ["labelSlot", "descriptionSlot"] as const,
     as: "label",
     omit: OMIT_KEYS,
     idPrefix: "rl-checkbox",
     variants: () => ({
       color: color(),
-      variant: variant(),
+      layout: props.layout,
       size: size(),
       indicator: indicator(),
       highlight: highlight(),
@@ -95,7 +90,7 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
     }
   };
 
-  const hasLabel = () => Boolean(props.label || slots.labelSlot() || props.children);
+  const hasLabel = () => Boolean(props.label || slots.labelSlot() || children());
   const hasDescription = () => Boolean(props.description || slots.descriptionSlot());
   const hasWrapper = () => Boolean(labelIcon() || hasLabel() || hasDescription());
 
@@ -106,8 +101,8 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
       }
       return slots.labelSlot();
     }
-    if (props.children) {
-      return props.children;
+    if (children()) {
+      return children();
     }
     return props.label;
   };
@@ -123,15 +118,16 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
   };
 
   return (
-    <Root
+    <Tag
       class={classes().root}
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
       data-state={checkState()}
       data-disabled={disabled() ? "true" : undefined}
     >
       <div class={classes().container} data-slot="container">
         <input
+          ref={props.ref}
           id={id()}
           type="checkbox"
           name={props.name}
@@ -164,7 +160,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
             <span class={classes().indicator} data-slot="indicator" data-state={checkState()}>
               <RLIcon
                 name={activeIcon()}
-                size="none"
                 class={classes().icon}
                 data-slot="icon"
                 aria-hidden="true"
@@ -179,7 +174,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
           <Show when={labelIcon()}>
             <RLIcon
               name={labelIcon()!}
-              size="none"
               class={classes().icon}
               data-slot="icon"
               aria-hidden="true"
@@ -197,6 +191,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
           </Show>
         </div>
       </Show>
-    </Root>
+    </Tag>
   );
 };

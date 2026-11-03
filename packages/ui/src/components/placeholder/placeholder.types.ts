@@ -1,14 +1,4 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPlaceholderTheme } from "./placeholder.theme";
 
-export interface RLPlaceholderProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+export type RLPlaceholderProps = InferThemeProps<typeof RLPlaceholderTheme>;

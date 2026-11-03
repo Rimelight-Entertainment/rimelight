@@ -2,20 +2,21 @@ import type { RLInputTagsProps, TagItem } from "./input-tags.types";
 import { RLInputTagsTheme } from "./input-tags.theme";
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "items",
   "displayLimit",
-  "estimatedTagWidth",
   "showInput",
   "name",
   "placeholder",
   "onAddTag",
-  "onRemoveTag",
 ] as const;
 
 export const RLInputTags: Component<RLInputTagsProps> = (props) => {
-  const { classes, rest } = RLInputTagsTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLInputTagsTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const [inputValue, setInputValue] = createSignal("");
   const limit = () => props.displayLimit ?? 4;
@@ -41,8 +42,8 @@ export const RLInputTags: Component<RLInputTagsProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      <Show when={normalizedItems().length > 0} fallback={props.children}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      <Show when={normalizedItems().length > 0} fallback={children()}>
         <For each={renderedItems()}>
           {(item) => (
             <span class={classes().tag} data-slot="tag">
@@ -56,7 +57,7 @@ export const RLInputTags: Component<RLInputTagsProps> = (props) => {
 
         <Show when={overflowCount() > 0}>
           <span class={classes().more} data-slot="more" aria-hidden="true">
-            +{overflowCount()} more
+            {uiT("input-tags.more").replace("{count}", String(overflowCount()))}
           </span>
         </Show>
       </Show>
@@ -65,7 +66,7 @@ export const RLInputTags: Component<RLInputTagsProps> = (props) => {
         <input
           type="text"
           name={props.name ? `${props.name}__input` : undefined}
-          placeholder={props.placeholder || "Add tag…"}
+          placeholder={props.placeholder || uiT("input-tags.placeholder")}
           value={inputValue()}
           onInput={(e) => setInputValue(e.currentTarget.value)}
           onKeyDown={handleKeyDown}
@@ -74,6 +75,6 @@ export const RLInputTags: Component<RLInputTagsProps> = (props) => {
           autocomplete="off"
         />
       </Show>
-    </div>
+    </Tag>
   );
 };

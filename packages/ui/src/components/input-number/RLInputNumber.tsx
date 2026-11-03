@@ -1,8 +1,10 @@
 import type { RLInputNumberProps } from "./input-number.types";
 import { RLInputNumberTheme } from "./input-number.theme";
-import { createMemo, createSignal, type Component } from "solid-js";
+import { createMemo, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
+import { cx } from "../../resolver";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
@@ -16,9 +18,7 @@ const OMIT_KEYS = [
   "disabled",
   "readonly",
   "required",
-  "size",
   "onInput",
-  "onChange",
   "onBlur",
   "onFocus",
   "onKeyDown",
@@ -26,16 +26,11 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
-  const { classes, rest } = RLInputNumberTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme, ui } = RLInputNumberTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const inputClasses = createMemo(() =>
-    RLInputTheme({
-      variant: "default",
-      size: props.size ?? "md",
-      error: false,
-      ui: props.ui,
-    }),
-  );
+  const inputClasses = createMemo(() => RLInputTheme({ size: props.size, ui: ui() }));
 
   const clamp = (value: number) =>
     Math.min(
@@ -43,30 +38,23 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
       Math.max(props.min ?? Number.NEGATIVE_INFINITY, value),
     );
 
-  const [internalValue, setInternalValue] = createSignal<number | undefined>(props.defaultValue);
-  const boundValue = () => (props.value !== undefined ? props.value : internalValue());
+  const [current, setCurrent] = createControllable<number | undefined>(
+    () => props.value,
+    props.defaultValue,
+    (next) => {
+      if (next !== undefined) props.onValueChange?.(next);
+    },
+  );
 
   let inputRef: HTMLInputElement | undefined;
 
-  const updateValue = (next: number) => {
-    const clamped = clamp(next);
-    if (props.value === undefined) setInternalValue(clamped);
-    props.onValueChange?.(clamped);
-  };
-
   const stepBy = (dir: 1 | -1) => {
     if (props.disabled || props.readonly) return;
-    const raw = inputRef ? Number(inputRef.value) : Number(boundValue());
-    const base = Number.isNaN(raw) ? Number(boundValue() || 0) : raw;
-    updateValue((Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1));
-    if (inputRef)
-      inputRef.value = String(clamp((Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1)));
-  };
-
-  const changeEvent = (el: HTMLInputElement): Event & { currentTarget: HTMLInputElement } => {
-    const ev = new Event("change", { bubbles: true });
-    Object.defineProperty(ev, "currentTarget", { value: el });
-    return ev as Event & { currentTarget: HTMLInputElement };
+    const raw = inputRef ? Number(inputRef.value) : Number(current());
+    const base = Number.isNaN(raw) ? Number(current() || 0) : raw;
+    const next = (Number.isNaN(base) ? 0 : base) + dir * (props.step ?? 1);
+    setCurrent(clamp(next));
+    if (inputRef) inputRef.value = String(clamp(next));
   };
 
   const commit = () => {
@@ -75,11 +63,9 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
     const raw = Number(el.value);
     if (el.value !== "" && !Number.isNaN(raw)) {
       const clamped = clamp(raw);
-      if (props.value === undefined) setInternalValue(clamped);
       if (clamped !== raw) el.value = String(clamped);
-      props.onValueChange?.(clamped);
+      setCurrent(clamped);
     }
-    props.onChange?.(changeEvent(el));
   };
 
   const handleWheel = (e: WheelEvent) => {
@@ -100,13 +86,19 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      <div class={`relative w-full ${inputClasses().root}`}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
+      {...rest}
+      onChange={undefined}
+    >
+      <div class={cx("relative w-full", inputClasses().root)}>
         <input
           ref={(el) => (inputRef = el)}
           type="number"
           name={props.name}
-          value={props.value !== undefined ? props.value : ""}
+          value={current() ?? ""}
           placeholder={props.placeholder}
           min={props.min}
           max={props.max}
@@ -114,10 +106,9 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
           disabled={props.disabled}
           readonly={props.readonly}
           required={props.required}
-          class={`${inputClasses().input} pr-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+          class={cx(inputClasses().input, classes().input)}
           data-slot="input"
           onInput={props.onInput}
-          onChange={props.onChange}
           onBlur={commit}
           onFocus={props.onFocus}
           onKeyDown={handleKeyDown}
@@ -128,7 +119,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
             type="button"
             tabindex={-1}
             aria-label={uiT("input-number.increment")}
-            class="flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50"
+            class={classes().increment}
             data-slot="increment"
             disabled={props.disabled || props.readonly}
             onClick={() => stepBy(1)}
@@ -139,7 +130,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
             type="button"
             tabindex={-1}
             aria-label={uiT("input-number.decrement")}
-            class="flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50"
+            class={classes().decrement}
             data-slot="decrement"
             disabled={props.disabled || props.readonly}
             onClick={() => stepBy(-1)}
@@ -148,7 +139,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
           </button>
         </div>
       </div>
-      {props.children}
-    </div>
+      {children()}
+    </Tag>
   );
 };

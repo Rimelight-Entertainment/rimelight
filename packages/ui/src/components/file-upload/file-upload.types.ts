@@ -1,54 +1,42 @@
 import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLFileUploadTheme } from "./file-upload.theme";
 
-export interface RLFileUploadProps {
+export type RLFileUploadProps = Omit<
+  InferThemeProps<typeof RLFileUploadTheme>,
+  "title" | "onChange"
+> & {
   /**
    * Accepted file types (e.g. 'image/*', 'application/pdf').
+   * @default undefined
    */
-  accept?: string;
+  accept?: string | undefined;
   /**
-   * Allow multiple file selection.
+   * Allows selecting multiple files.
+   * @default false
    */
-  multiple?: boolean;
+  multiple?: boolean | undefined;
   /**
-   * Disabled state.
+   * Heading text inside the drop area. Falls back to a localized default.
+   * @default uiT("file-upload.title")
    */
-  disabled?: boolean;
+  title?: string | undefined;
   /**
-   * Title text shown inside the file upload area.
+   * Helper text shown under the title.
+   * @default undefined
    */
-  title?: string;
+  description?: string | undefined;
   /**
-   * Description text shown inside.
+   * Icon name rendered inside the drop area. Ignored when `iconSlot` is set.
+   * @default "cloud-upload"
    */
-  description?: string;
+  icon?: string | undefined;
   /**
-   * Icon shown inside.
+   * Called with the selected or dropped files whenever the selection changes.
    */
-  icon?: string;
+  onValueChange?: (files: File[]) => void;
   /**
-   * Color theme.
-   */
-  color?: ThemeColor;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  /**
-   * Click event handler.
-   */
-  onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-  /**
-   * Slot for the icon.
+   * Replaces the default icon.
    */
   iconSlot?: JSX.Element;
-  /**
-   * Default slot children.
-   */
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+};

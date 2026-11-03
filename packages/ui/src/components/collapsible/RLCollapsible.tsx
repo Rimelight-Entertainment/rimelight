@@ -1,98 +1,71 @@
-import type { RLCollapsibleProps } from "./collapsible.types";
+import type { CollapsibleSlotContext, RLCollapsibleProps } from "./collapsible.types";
 import { RLCollapsibleTheme } from "./collapsible.theme";
-import { createSignal, Show, type Component } from "solid-js";
-import { type JSX } from "@solidjs/web";
+import { Show, type Component } from "solid-js";
+import type { SlotRenderer } from "../../types";
+import { createControllable } from "../../controllable";
 
 const OMIT_KEYS = [
+  "disabled",
   "defaultOpen",
-  "unmountOnHide",
+  "open",
   "onOpenChange",
-  "id",
-  "ariaLabel",
-  "ariaLabelledby",
-  "ariaDescribedby",
+  "unmountOnHide",
+  "triggerSlot",
+  "bodySlot",
 ] as const;
 
-export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
-  const [internalOpen, setInternalOpen] = createSignal(props.defaultOpen ?? false);
+const resolveSlot = (
+  renderer: SlotRenderer<CollapsibleSlotContext> | undefined,
+  ctx: CollapsibleSlotContext,
+) => (typeof renderer === "function" ? renderer(ctx) : renderer);
 
-  const isOpen = () => (props.open !== undefined ? Boolean(props.open) : internalOpen());
+export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
+  const { Tag, classes, rest, id, slots, children, theme } = RLCollapsibleTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["triggerSlot", "bodySlot"] as const,
+    idPrefix: "rl-collapsible",
+    variants: () => ({ disabled: props.disabled === true }),
+  });
+
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
   const unmountOnHide = () => props.unmountOnHide !== false;
   const isDisabled = () => props.disabled === true;
-
-  const { Tag, classes, rest, id, slots } = RLCollapsibleTheme.setup(props, {
-    omit: OMIT_KEYS,
-    slots: ["triggerSlot", "contentSlot"] as const,
-    idPrefix: "rl-collapsible",
-    variants: () => ({ open: isOpen(), disabled: isDisabled() }),
-  });
 
   const triggerId = () => `${id()}-trigger`;
   const contentId = () => `${id()}-content`;
 
   const handleToggle = () => {
     if (isDisabled()) return;
-    const next = !isOpen();
-    if (props.open === undefined) {
-      setInternalOpen(next);
-    }
-    props.onOpenChange?.(next);
+    setOpen(!isOpen());
   };
 
-  const hasContentProp = () => slots.contentSlot() !== undefined;
-  const hasTriggerProp = () => slots.triggerSlot() !== undefined;
+  const ctx = (): CollapsibleSlotContext => ({ open: isOpen() });
+  const hasTriggerSlot = () => slots.triggerSlot() !== undefined;
 
-  // Slots may be JSX or a render function receiving `{ open }`. Render functions are invoked
-  // here, at the render site.
-  const renderTrigger = () => {
-    const t = slots.triggerSlot();
-    if (t !== undefined) {
-      return typeof t === "function"
-        ? (t as (p: { open: boolean }) => JSX.Element)({ open: isOpen() })
-        : t;
-    }
-    if (hasContentProp() || !hasTriggerProp()) {
-      const c = props.children;
-      if (typeof c === "function") {
-        return (c as (p: { open: boolean }) => JSX.Element)({ open: isOpen() });
-      }
-      return c;
-    }
-    return null;
-  };
-
-  const renderContent = () => {
-    const c = slots.contentSlot();
-    if (c !== undefined) {
-      return typeof c === "function" ? (c as (p?: Record<string, unknown>) => JSX.Element)({}) : c;
-    }
-    if (hasTriggerProp() && !hasContentProp()) {
-      const ch = props.children;
-      if (typeof ch === "function") {
-        return (ch as (p: { open: boolean }) => JSX.Element)({ open: isOpen() });
-      }
-      return ch;
-    }
-    return null;
-  };
-
-  const hasTrigger = () => hasTriggerProp() || props.children !== undefined;
-  const hasContent = () => hasContentProp() || (hasTriggerProp() && props.children !== undefined);
+  // `children` is the trigger, or the content when `triggerSlot` is set.
+  const triggerContent = () =>
+    hasTriggerSlot() ? resolveSlot(slots.triggerSlot(), ctx()) : children();
+  const contentContent = () =>
+    slots.bodySlot() !== undefined
+      ? resolveSlot(slots.bodySlot(), ctx())
+      : hasTriggerSlot()
+        ? children()
+        : undefined;
 
   return (
     <Tag
-      id={props.id}
       class={classes().root}
       data-slot="root"
+      data-theme={theme()}
       data-state={isOpen() ? "open" : "closed"}
       data-disabled={isDisabled() ? "" : undefined}
-      data-theme={props.theme}
-      aria-label={props.ariaLabel}
-      aria-labelledby={props.ariaLabelledby}
-      aria-describedby={props.ariaDescribedby}
       {...rest}
     >
-      <Show when={hasTrigger()}>
+      <Show when={triggerContent() !== undefined}>
         <div
           id={triggerId()}
           class={classes().trigger}
@@ -117,11 +90,11 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
             }
           }}
         >
-          {renderTrigger()}
+          {triggerContent()}
         </div>
       </Show>
 
-      <Show when={hasContent()}>
+      <Show when={contentContent() !== undefined}>
         <Show
           when={unmountOnHide()}
           fallback={
@@ -133,7 +106,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
               data-disabled={isDisabled() ? "" : undefined}
               hidden={!isOpen() ? true : undefined}
             >
-              {renderContent()}
+              {contentContent()}
             </div>
           }
         >
@@ -145,7 +118,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
               data-state="open"
               data-disabled={isDisabled() ? "" : undefined}
             >
-              {renderContent()}
+              {contentContent()}
             </div>
           </Show>
         </Show>

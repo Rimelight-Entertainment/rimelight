@@ -48,7 +48,9 @@ export const ComponentShowcase: Component<ComponentShowcaseProps> = (props) => {
                     value={selectedProps()[prop] || ""}
                     name={prop}
                     size="sm"
-                    onChange={(val: any) => setSelectedProps((prev) => ({ ...prev, [prop]: val }))}
+                    onChange={(e) =>
+                      setSelectedProps((prev) => ({ ...prev, [prop]: e.currentTarget.value }))
+                    }
                   />
                 </div>
               )}

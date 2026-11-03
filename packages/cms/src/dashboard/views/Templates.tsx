@@ -7,6 +7,7 @@ import { BlockInspector } from "../../editor/BlockInspector";
 import { useDashboard } from "../context";
 import { FieldGroups } from "../fields/FieldInput";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLInputNumber } from "@rimelight/ui/components/input-number/RLInputNumber.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
@@ -225,7 +226,7 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
                 { label: "Block", value: "block" },
               ]}
               value={tab()}
-              onChange={(value: string) => setTab(value as "settings" | "block")}
+              onValueChange={(value: string) => setTab(value as "settings" | "block")}
               content={false}
             />
           </div>
@@ -276,16 +277,15 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
                   Approval
                 </h3>
                 <Field label="Approvals required to publish">
-                  <RLInput
-                    type="number"
-                    min="0"
+                  <RLInputNumber
+                    min={0}
                     value={meta().approvalRules?.minApprovals ?? 0}
-                    onInput={(e) =>
+                    onValueChange={(v) =>
                       setMeta({
                         ...meta(),
                         approvalRules: {
                           ...meta().approvalRules,
-                          minApprovals: Number(e.currentTarget.value),
+                          minApprovals: v,
                         },
                       })
                     }

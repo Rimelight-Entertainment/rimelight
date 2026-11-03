@@ -1,7 +1,9 @@
-import type { RLCompareProps, CompareOrientation } from "./compare.types";
+import type { RLCompareProps } from "./compare.types";
 import { RLCompareTheme, LABEL_PLACEMENT_CLASSES } from "./compare.theme";
-import { createMemo, createSignal, createEffect, children, type Component } from "solid-js";
+import { createSignal, createEffect, children, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "value",
@@ -10,14 +12,10 @@ const OMIT_KEYS = [
   "max",
   "step",
   "largeStep",
-  "before",
-  "after",
   "beforeSrc",
   "afterSrc",
   "beforeAlt",
   "afterAlt",
-  "beforeLabel",
-  "afterLabel",
   "showLabels",
   "beforeLabelPlacement",
   "afterLabelPlacement",
@@ -28,51 +26,52 @@ const OMIT_KEYS = [
   "autoplay",
   "autoplayDuration",
   "onValueChange",
-  "onChange",
-  "ariaLabel",
-  "ariaLabelledby",
+  "aria-label",
+  "aria-labelledby",
 ] as const;
 
 export const RLCompare: Component<RLCompareProps> = (props) => {
   const {
-    Tag: Root,
+    Tag,
     classes,
     rest,
     slots,
+    children: childNodes,
+    theme,
   } = RLCompareTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: ["beforeSlot", "afterSlot", "beforeLabelSlot", "afterLabelSlot", "handleSlot"] as const,
+    slots: [
+      "leadingSlot",
+      "trailingSlot",
+      "beforeLabelSlot",
+      "afterLabelSlot",
+      "handleSlot",
+    ] as const,
   });
 
-  const resolvedChildren = children(() => props.children);
+  const resolvedChildren = children(childNodes);
 
   const min = () => props.min ?? 0;
   const max = () => props.max ?? 100;
   const step = () => props.step ?? 1;
   const largeStep = () => props.largeStep ?? 10;
-  const orientation = (): CompareOrientation => props.orientation ?? "horizontal";
-  const isHorizontal = () => orientation() === "horizontal";
+  const isHorizontal = () => props.orientation !== "vertical";
+  const orientation = () => (isHorizontal() ? "horizontal" : "vertical");
   const isDisabled = () => Boolean(props.disabled);
   const showHandle = () => props.showHandle ?? true;
   const showDivider = () => props.showDivider ?? true;
 
-  const [internalValue, setInternalValue] = createSignal<number>(
-    () => props.value ?? props.defaultValue ?? 50,
+  const [valueState, setValueState] = createControllable(
+    () => props.value,
+    props.defaultValue ?? 50,
+    (next) => props.onValueChange?.(next),
   );
 
-  const clampedValue = createMemo(() => {
-    const raw = props.value !== undefined ? props.value : internalValue();
-    return Math.min(max(), Math.max(min(), raw));
-  });
+  const clampedValue = () => Math.min(max(), Math.max(min(), valueState()));
 
   const updateValue = (nextVal: number) => {
     if (isDisabled()) return;
-    const clamped = Math.min(max(), Math.max(min(), nextVal));
-    if (props.value === undefined) {
-      setInternalValue(clamped);
-    }
-    props.onValueChange?.(clamped);
-    props.onChange?.(clamped);
+    setValueState(Math.min(max(), Math.max(min(), nextVal)));
   };
 
   let rootRef: HTMLElement | undefined;
@@ -189,23 +188,13 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
     },
   );
 
-  const beforeLabelPlacementClass = () => {
-    const custom = props.beforeLabelPlacement;
-    if (custom && LABEL_PLACEMENT_CLASSES[custom]) {
-      return LABEL_PLACEMENT_CLASSES[custom];
-    }
-    return LABEL_PLACEMENT_CLASSES["top-left"];
-  };
+  const beforeLabelPlacementClass = () =>
+    LABEL_PLACEMENT_CLASSES[props.beforeLabelPlacement ?? "top-left"];
 
-  const afterLabelPlacementClass = () => {
-    const custom = props.afterLabelPlacement;
-    if (custom && LABEL_PLACEMENT_CLASSES[custom]) {
-      return LABEL_PLACEMENT_CLASSES[custom];
-    }
-    return isHorizontal()
-      ? LABEL_PLACEMENT_CLASSES["top-right"]
-      : LABEL_PLACEMENT_CLASSES["bottom-left"];
-  };
+  const afterLabelPlacementClass = () =>
+    LABEL_PLACEMENT_CLASSES[
+      props.afterLabelPlacement ?? (isHorizontal() ? "top-right" : "bottom-left")
+    ];
 
   const shouldShowLabels = () =>
     props.showLabels !== undefined
@@ -213,18 +202,18 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
       : Boolean(slots.beforeLabelSlot() || slots.afterLabelSlot());
 
   const renderBeforeContent = () => {
-    const before = slots.beforeSlot();
-    if (typeof before === "function") {
-      return before(clampedValue());
+    const leading = slots.leadingSlot();
+    if (typeof leading === "function") {
+      return leading(clampedValue());
     }
-    if (before !== undefined) {
-      return before;
+    if (leading !== undefined) {
+      return leading;
     }
     if (props.beforeSrc) {
       return (
         <img
           src={props.beforeSrc}
-          alt={props.beforeAlt ?? "Before"}
+          alt={props.beforeAlt ?? uiT("compare.beforeAlt")}
           class={classes().image}
           draggable={false}
         />
@@ -238,18 +227,18 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
   };
 
   const renderAfterContent = () => {
-    const after = slots.afterSlot();
-    if (typeof after === "function") {
-      return after(clampedValue());
+    const trailing = slots.trailingSlot();
+    if (typeof trailing === "function") {
+      return trailing(clampedValue());
     }
-    if (after !== undefined) {
-      return after;
+    if (trailing !== undefined) {
+      return trailing;
     }
     if (props.afterSrc) {
       return (
         <img
           src={props.afterSrc}
-          alt={props.afterAlt ?? "After"}
+          alt={props.afterAlt ?? uiT("compare.afterAlt")}
           class={classes().image}
           draggable={false}
         />
@@ -294,13 +283,13 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
       : { left: "50%", top: `${clampedValue()}%` };
 
   return (
-    <Root
+    <Tag
       ref={(el: HTMLElement) => (rootRef = el)}
       class={classes().root}
       data-slot="root"
       data-orientation={orientation()}
       data-disabled={isDisabled() ? "true" : undefined}
-      data-theme={props.theme}
+      data-theme={theme()}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -308,12 +297,12 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
       {...rest}
     >
       <div class={classes().container} data-slot="container">
-        {/* Base Layer: After */}
+        {/* Base Layer: Trailing */}
         <div class={classes().after} data-slot="after">
           {renderAfterContent()}
         </div>
 
-        {/* Clipped Top Layer: Before */}
+        {/* Clipped Top Layer: Leading */}
         <div class={classes().before} data-slot="before" style={clipStyle()}>
           {renderBeforeContent()}
         </div>
@@ -360,8 +349,8 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
             aria-valuemin={min()}
             aria-valuemax={max()}
             aria-valuetext={`${Math.round(clampedValue())}%`}
-            aria-label={props.ariaLabel ?? "Comparison slider"}
-            aria-labelledby={props.ariaLabelledby}
+            aria-label={props["aria-label"] ?? uiT("compare.label")}
+            aria-labelledby={props["aria-labelledby"]}
             aria-disabled={isDisabled() ? "true" : undefined}
             onKeyDown={handleKeyDown}
             style={handleStyle()}
@@ -370,6 +359,6 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
           </div>
         ) : null}
       </div>
-    </Root>
+    </Tag>
   );
 };

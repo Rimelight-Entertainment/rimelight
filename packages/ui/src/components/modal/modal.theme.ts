@@ -3,6 +3,7 @@ import { defineTheme } from "../../resolver";
 export const RLModalTheme = defineTheme("modal", {
   slots: [
     "root",
+    "triggerWrapper",
     "trigger",
     "overlay",
     "backdrop",
@@ -19,6 +20,7 @@ export const RLModalTheme = defineTheme("modal", {
   ],
   base: {
     root: "relative inline-block",
+    triggerWrapper: "inline-flex cursor-pointer",
     trigger: "",
     overlay: "fixed inset-0 z-50",
     backdrop: "",
@@ -83,9 +85,6 @@ export const RLModalTheme = defineTheme("modal", {
       md: { content: "max-w-lg" },
       lg: { content: "max-w-2xl" },
       xl: { content: "max-w-4xl" },
-      fullscreen: {
-        content: "fixed inset-0 rounded-none w-screen h-screen max-w-none max-h-none border-none",
-      },
     },
   },
   defaultVariants: {

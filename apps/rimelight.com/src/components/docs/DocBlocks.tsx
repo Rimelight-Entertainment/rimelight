@@ -151,8 +151,8 @@ const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (prop
       {...showcase}
     >
       <RLErrorBoundary
-        fallbackSlot={(err: unknown) => (
-          <div class="text-sm text-danger">Preview failed to render: {String(err)}</div>
+        fallbackSlot={({ error }) => (
+          <div class="text-sm text-danger">Preview failed to render: {String(error)}</div>
         )}
       >
         <For each={preview()}>{(node) => renderPreviewNode(node)}</For>

@@ -6,7 +6,7 @@ import type { ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
 const VARIANTS = ["default", "hero", "cta"] as const;
-const CTA_VARIANTS = ["solid", "outline", "soft", "subtle", "naked"] as const;
+const CTA_VARIANTS = ["solid", "outline", "soft", "subtle", "ghost"] as const;
 const ORIENTATIONS = ["vertical", "horizontal"] as const;
 
 const SectionPlaceholder = (props: { label: string }): JSX.Element => (
@@ -210,7 +210,7 @@ export const PageSectionSandbox = (): JSX.Element => {
       {/* Preview (bare) */}
       <div class="rounded-xl border border-default overflow-hidden">
         <RLPageSection
-          variant={variant()}
+          layout={variant()}
           orientation={orientation()}
           reverse={reverse()}
           title={title()}
@@ -226,10 +226,10 @@ export const PageSectionSandbox = (): JSX.Element => {
                 ],
               }
             : {})}
-          {...(hasBody() ? { body: <SectionPlaceholder label="Body region" /> } : {})}
+          {...(hasBody() ? { bodySlot: <SectionPlaceholder label="Body region" /> } : {})}
           {...(hasFooter()
             ? {
-                footer: (
+                footerSlot: (
                   <p class="text-xs text-muted">
                     Footer region — supporting content and disclaimers.
                   </p>
@@ -238,7 +238,7 @@ export const PageSectionSandbox = (): JSX.Element => {
             : {})}
           {...(hasBackground()
             ? {
-                background: (
+                backgroundSlot: (
                   <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
                 ),
               }
@@ -258,7 +258,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
   category: "Layout",
   status: "Passed",
   description:
-    "A responsive full-width page section with default, hero, and CTA variants, vertical/horizontal orientations, header, body, footer, link buttons, background, and rich slots (leading, headline, title, description, links, content).",
+    "A responsive full-width page section with default, hero, and CTA layouts, vertical/horizontal orientations, header, body, footer, link buttons, background, and rich slots (leading, headline, title, description, links, body).",
   importPath: "@rimelight/ui/components/page-section/RLPageSection.tsx",
   renderSandbox: () => <PageSectionSandbox />,
   testScenarios: [
@@ -272,7 +272,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="flex flex-col gap-2">
           <RLPageSection
-            variant="default"
+            layout="default"
             orientation="vertical"
             headline="Default"
             title={"Default variant section"}
@@ -293,7 +293,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
             ]}
           />
           <RLPageSection
-            variant="hero"
+            layout="hero"
             orientation="vertical"
             icon="sparkles"
             headline="Hero"
@@ -308,7 +308,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
             ]}
           />
           <RLPageSection
-            variant="cta"
+            layout="cta"
             ctaVariant="solid"
             orientation="vertical"
             title={"CTA variant section"}
@@ -337,7 +337,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
           <For each={CTA_VARIANTS}>
             {(v) => (
               <RLPageSection
-                variant="cta"
+                layout="cta"
                 ctaVariant={v}
                 orientation="horizontal"
                 title={`CTA: ${v}`}
@@ -455,7 +455,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
         "background renders an absolutely positioned, overflow-hidden layer behind content; contentVisibility defers offscreen painting.",
       render: () => (
         <RLPageSection
-          variant="hero"
+          layout="hero"
           orientation="vertical"
           title={"Background and content-visibility"}
           description="The background slot is mounted behind the section container at -z-1."
@@ -473,7 +473,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
         return t("app.text.custom-slot-parity");
       },
       description:
-        "header, leading, headlineSlot, titleSlot, descriptionSlot, body, footer, linksSlot, content, top, and bottom allow full template replacement.",
+        "headerSlot, leadingSlot, titleSlot, descriptionSlot, bodySlot, footerSlot, and actionSlot allow full template replacement.",
       render: () => (
         <RLPageSection
           orientation="vertical"
@@ -519,11 +519,11 @@ export const pageSectionAudit: ComponentAuditDefinition = {
       criterion: "Nuxt UI v4 PageSection parity",
       status: "pass",
       notes:
-        "Supports as, variant (default, hero, cta), ctaVariant, headline, icon, title, description, links, orientation, reverse, ui, class, contentVisibility, containIntrinsicSize, and update:open-style slot parity.",
+        "Supports as, layout (default, hero, cta), ctaVariant, headline, icon, title, description, links, orientation, reverse, ui, class, contentVisibility, containIntrinsicSize, and update:open-style slot parity.",
     },
     {
       criterion:
-        "Slot/region parity (background, top, header, leading, headline, title, description, body, footer, links, content, bottom)",
+        "Slot/region parity (background, header, leading, headline, title, description, body, footer, action)",
       status: "pass",
       notes:
         "Every region can be replaced with a slot element; slots win over prop-based defaults.",

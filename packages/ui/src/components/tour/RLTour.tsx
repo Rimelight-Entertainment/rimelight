@@ -3,11 +3,11 @@ import type { RLTourProps } from "./tour.types";
 import { RLTourTheme } from "./tour.theme";
 
 export const RLTour: Component<RLTourProps> = (props) => {
-  const { classes, rest } = RLTourTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLTourTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

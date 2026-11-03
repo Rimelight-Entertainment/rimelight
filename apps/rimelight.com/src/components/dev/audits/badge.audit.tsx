@@ -298,8 +298,12 @@ export const badgeAudit: ComponentAuditDefinition = {
       },
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
-          <RLBadge as="a" href="#badge-link" label="Link Badge" color="info" />
-          <RLBadge as="button" type="button" label="Interactive Badge" color="secondary" />
+          <a href="#badge-link" class="contents">
+            <RLBadge label="Link Badge" color="info" />
+          </a>
+          <button type="button" class="contents">
+            <RLBadge label="Interactive Badge" color="secondary" />
+          </button>
         </div>
       ),
     },

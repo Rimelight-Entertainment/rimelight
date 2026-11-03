@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPageBodyTheme } from "./page-body.theme";
 
-export interface RLPageBodyProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for the page body region.
+ *
+ * @status stub
+ */
+export type RLPageBodyProps = InferThemeProps<typeof RLPageBodyTheme>;

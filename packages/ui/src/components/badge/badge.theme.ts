@@ -32,36 +32,11 @@ export const RLBadgeTheme = defineTheme("badge", {
     },
     color: "auto",
     size: {
-      xs: {
-        root: "text-[8px]/3 gap-1",
-        leadingIcon: "size-3",
-        leadingAvatarSize: "3xs",
-        trailingIcon: "size-3",
-      },
-      sm: {
-        root: "text-[10px]/3 gap-1",
-        leadingIcon: "size-3",
-        leadingAvatarSize: "3xs",
-        trailingIcon: "size-3",
-      },
-      md: {
-        root: "text-xs gap-1",
-        leadingIcon: "size-4",
-        leadingAvatarSize: "3xs",
-        trailingIcon: "size-4",
-      },
-      lg: {
-        root: "text-sm gap-1.5",
-        leadingIcon: "size-5",
-        leadingAvatarSize: "2xs",
-        trailingIcon: "size-5",
-      },
-      xl: {
-        root: "text-base gap-1.5",
-        leadingIcon: "size-6",
-        leadingAvatarSize: "2xs",
-        trailingIcon: "size-6",
-      },
+      xs: { root: "text-[8px]/3 gap-1", leadingAvatarSize: "xs" },
+      sm: { root: "text-[10px]/3 gap-1", leadingAvatarSize: "xs" },
+      md: { root: "text-xs gap-1", leadingAvatarSize: "xs" },
+      lg: { root: "text-sm gap-1.5", leadingAvatarSize: "xs" },
+      xl: { root: "text-base gap-1.5", leadingAvatarSize: "xs" },
     },
     shape: {
       square: { root: "rounded-none" },

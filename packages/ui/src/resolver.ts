@@ -7,8 +7,15 @@ import {
   type Accessor,
   type Component,
 } from "solid-js";
-import { dynamic, type ValidComponent } from "@solidjs/web";
-import type { BaseThemeProps, ClassValue, InferThemeVariants, ThemeConfig, ThemeUI } from "./types";
+import { dynamic, type JSX, type ValidComponent } from "@solidjs/web";
+import type {
+  BaseThemeProps,
+  ClassValue,
+  InferThemeVariants,
+  Theme,
+  ThemeConfig,
+  ThemeUI,
+} from "./types";
 import { getUIConfig } from "./runtime";
 import { slot } from "./slot";
 
@@ -211,7 +218,7 @@ export interface ThemeSetupOptions<
    * Optional reactive accessor for computed variant overrides. Receives the slot accessors
    * from `slots`, so variants can depend on slot presence without reading props directly.
    */
-  variants?: (slots: SlotAccessors<T, SK>) => Record<string, any>;
+  variants?: (slots: SlotAccessors<T, SK>, children: Accessor<unknown>) => Record<string, any>;
   /**
    * Optional prefix (e.g. `"rl-card"`) to generate a hydration-safe reactive `id()`
    * accessor (`() => props.id || "${idPrefix}-${createUniqueId()}"`).
@@ -230,6 +237,10 @@ export interface ThemeSetupResult<
   rest: Omit<T, "as" | "ui" | "class" | "children" | "theme" | K | SK>;
   id: Accessor<string>;
   slots: { [P in SK]-?: Accessor<T[P]> };
+  children: Accessor<JSX.Element>;
+  ui: Accessor<ThemeUI<S> | undefined>;
+  theme: Accessor<Theme | undefined>;
+  tagProp: Accessor<ValidComponent | undefined>;
 }
 
 export interface ThemeResolver<
@@ -268,7 +279,7 @@ export interface ThemeResolver<
    * automatically applying `{ static: isStatic(props, "as") }` inside `untrack`.
    */
   tag: (
-    props: { as?: ValidComponent; [key: string]: unknown },
+    props: { as?: ValidComponent | undefined },
     defaultTag?: ValidComponent | (() => ValidComponent),
   ) => Component<any>;
   /**
@@ -276,10 +287,7 @@ export interface ThemeResolver<
    * Calls `createUniqueId()` unconditionally during component setup so SSR hydration counters
    * never drift, while reading `props.id` lazily inside the accessor so reactive IDs track.
    */
-  id: (
-    props: { id?: string | undefined; [key: string]: unknown },
-    prefix?: string,
-  ) => Accessor<string>;
+  id: (props: { id?: string | undefined }, prefix?: string) => Accessor<string>;
 }
 
 /**
@@ -458,7 +466,7 @@ export function defineTheme<
   ) => omitWithList(props, extraKeys);
 
   resolve.tag = (
-    props: { as?: ValidComponent; [key: string]: unknown },
+    props: { as?: ValidComponent | undefined },
     defaultTag: ValidComponent | (() => ValidComponent) = "div",
   ) =>
     typeof defaultTag === "function"
@@ -467,13 +475,10 @@ export function defineTheme<
           static: untrack(() => isStatic(props, "as")),
         });
 
-  resolve.id = (
-    props: { id?: string | undefined; [key: string]: unknown },
-    prefix = `rl-${name}`,
-  ): Accessor<string> => {
+  resolve.id = (props: { id?: string | undefined }, prefix = `rl-${name}`): Accessor<string> => {
     const uid = createUniqueId();
     const fallback = prefix ? `${prefix}-${uid}` : uid;
-    return () => (props.id as string | undefined) || fallback;
+    return () => props.id || fallback;
   };
 
   resolve.setup = <
@@ -490,13 +495,18 @@ export function defineTheme<
     for (const key of slotKeys) {
       slots[key] = slot(() => props[key]);
     }
+    const children = slot(() => props["children"]);
     const variantsFn = options?.variants;
     const omitKeys = slotKeys.length ? [...(options?.omit ?? []), ...slotKeys] : options?.omit;
     return {
       Tag: resolve.tag(props, options?.as),
-      classes: resolve.use(props, variantsFn ? () => variantsFn(slots) : undefined),
+      classes: resolve.use(props, variantsFn ? () => variantsFn(slots, children) : undefined),
       rest: omitWithList(props, omitKeys as readonly (K | SK)[] | undefined),
       slots,
+      children,
+      ui: slot(() => props["ui"]),
+      theme: slot(() => props["theme"]),
+      tagProp: slot(() => props["as"]),
       get id() {
         return id;
       },

@@ -11,15 +11,14 @@ const OMIT_KEYS = [
   "date",
   "image",
   "href",
-  "to",
   "localize",
   "badge",
   "badgeColor",
 ] as const;
 
 export const RLPost: Component<RLPostProps> = (props) => {
-  const link = () => localizeHref(props.href || props.to, props.localize);
-  const { Tag, classes, rest, slots } = RLPostTheme.setup(props, {
+  const link = () => localizeHref(props.href, props.localize);
+  const { Tag, classes, rest, slots, children, theme } = RLPostTheme.setup(props, {
     slots: [
       "imageSlot",
       "badgeSlot",
@@ -44,11 +43,6 @@ export const RLPost: Component<RLPostProps> = (props) => {
       : null,
   );
 
-  const imageSrc = () =>
-    typeof props.image === "string"
-      ? props.image
-      : (props.image as { src?: string } | undefined)?.src;
-
   const body = () => (
     <>
       {slots.imageSlot() !== undefined ? (
@@ -56,7 +50,7 @@ export const RLPost: Component<RLPostProps> = (props) => {
       ) : props.image ? (
         <div class={classes()["imageWrapper"]} data-slot="image-wrapper">
           <img
-            src={imageSrc()}
+            src={typeof props.image === "string" ? props.image : props.image?.src}
             alt={props.title || ""}
             class={classes()["image"]}
             data-slot="image"
@@ -85,7 +79,7 @@ export const RLPost: Component<RLPostProps> = (props) => {
           slots.badgeSlot()
         ) : props.badge ? (
           <RLBadge
-            color={(props.badgeColor ?? "primary") as any}
+            color={props.badgeColor}
             size="sm"
             shape="pill"
             class={classes()["badge"]}
@@ -103,7 +97,7 @@ export const RLPost: Component<RLPostProps> = (props) => {
           </time>
         ) : null}
 
-        {props.children}
+        {children()}
       </div>
 
       {slots.footerSlot() !== undefined && (
@@ -115,7 +109,7 @@ export const RLPost: Component<RLPostProps> = (props) => {
   );
 
   return (
-    <Tag href={link()} class={classes().root} data-slot="root" {...rest}>
+    <Tag href={link()} data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       {body()}
     </Tag>
   );

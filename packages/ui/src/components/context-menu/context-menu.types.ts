@@ -1,32 +1,12 @@
 import type { Component } from "solid-js";
 import type { JSX, ValidComponent } from "@solidjs/web";
-import type { ClassValue, ThemeUI } from "../../types";
-
-export type RLContextMenuSlot =
-  | "root"
-  | "trigger"
-  | "overlay"
-  | "positioner"
-  | "content"
-  | "group"
-  | "groupLabel"
-  | "item"
-  | "itemLeading"
-  | "itemLeadingIcon"
-  | "itemWrapper"
-  | "itemLabel"
-  | "itemDescription"
-  | "itemTrailing"
-  | "itemKbds"
-  | "itemKbd"
-  | "itemIndicator"
-  | "itemSubIndicator"
-  | "separator";
+import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLContextMenuTheme } from "./context-menu.theme";
 
 export type ContextMenuAlign = "start" | "center" | "end";
 export type ContextMenuPlacement = "top" | "right" | "bottom" | "left";
 export type ContextMenuSize = "sm" | "md" | "lg";
-export type ContextMenuItemVariant = "default" | "danger";
 
 export interface ContextMenuItemBase {
   /**
@@ -38,39 +18,29 @@ export interface ContextMenuItemBase {
    */
   description?: JSX.Element | undefined;
   /**
-   * Icon name or custom element to display at the start of the item.
+   * Icon name displayed at the start of the item.
    */
-  icon?: JSX.Element | undefined;
+  icon?: string | undefined;
   /**
-   * Alias for `icon` (leading icon name or custom element).
+   * Custom element displayed at the start of the item instead of `icon`.
    */
-  leading?: JSX.Element | undefined;
+  iconSlot?: JSX.Element | undefined;
   /**
    * Array of keyboard shortcuts to display as keys.
    */
   kbds?: string[] | undefined;
   /**
-   * Custom CSS class applied to the item element.
+   * Intent color of the item. `"error"` renders a destructive item.
+   *
+   * @default "neutral"
    */
-  class?: ClassValue | undefined;
-  /**
-   * Custom inline styles applied to the item element.
-   */
-  style?: JSX.CSSProperties | string | undefined;
-  /**
-   * Visual treatment of the menu item.
-   * @default "default"
-   */
-  variant?: ContextMenuItemVariant | undefined;
+  color?: ThemeColor | undefined;
   /**
    * Whether the item is non-interactive.
+   *
    * @default false
    */
   disabled?: boolean | undefined;
-  /**
-   * Per-item slot class overrides.
-   */
-  ui?: ThemeUI<RLContextMenuSlot> | undefined;
 }
 
 export interface ContextMenuActionItem extends ContextMenuItemBase {
@@ -182,39 +152,45 @@ export type ContextMenuItem =
 
 export type ContextMenuItems = Array<ContextMenuItem | ContextMenuItem[]>;
 
-export interface ContextMenuTopRenderProps {
+export interface ContextMenuTopRenderArgs {
   open: boolean;
-  close: () => void;
+  closeMenu: () => void;
 }
 
-export interface ContextMenuBottomRenderProps {
+export interface ContextMenuBottomRenderArgs {
   open: boolean;
-  close: () => void;
+  closeMenu: () => void;
 }
 
-export interface ContextMenuItemRenderProps {
+export interface ContextMenuItemRenderArgs {
   item: ContextMenuItem;
   index: number;
   disabled: boolean;
   highlighted: boolean;
   selected: boolean;
   expanded: boolean;
-  close: () => void;
+  closeMenu: () => void;
 }
 
-export interface RLContextMenuProps {
+export type RLContextMenuProps = Omit<
+  InferThemeProps<typeof RLContextMenuTheme>,
+  "size" | "disabled"
+> & {
   /**
-   * Element or component the trigger or root should render as.
+   * Element or component the root should render as.
+   *
    * @default "div"
    */
   as?: ValidComponent | undefined;
   /**
    * Alignment along the cross axis.
+   *
    * @default "start"
    */
   align?: ContextMenuAlign | undefined;
   /**
    * Initial open state when uncontrolled.
+   *
    * @default false
    */
   defaultOpen?: boolean | undefined;
@@ -228,40 +204,47 @@ export interface RLContextMenuProps {
   onOpenChange?: ((open: boolean) => void) | undefined;
   /**
    * Whether trigger interactions should be ignored.
+   *
    * @default false
    */
   disabled?: boolean | undefined;
   /**
    * Gap between the anchor and the content.
+   *
    * @default 0
    */
   gutter?: number | undefined;
   /**
-   * Unique identifier for the menu.
+   * Unique identifier for the trigger element.
    */
   id?: string | undefined;
   /**
    * Padding applied to the overflow area when calculating position.
+   *
    * @default 4
    */
   overflowPadding?: number | undefined;
   /**
    * Preferred side relative to the anchor.
+   *
    * @default "right"
    */
   placement?: ContextMenuPlacement | undefined;
   /**
    * Whether body scroll should be locked while the menu is open.
+   *
    * @default true
    */
   preventScroll?: boolean | undefined;
   /**
    * Cross-axis or alignment offset relative to the anchor.
+   *
    * @default 0
    */
   shift?: number | undefined;
   /**
    * Visual size of menu items.
+   *
    * @default "md"
    */
   size?: ContextMenuSize | undefined;
@@ -270,47 +253,52 @@ export interface RLContextMenuProps {
    */
   items?: ContextMenuItems | undefined;
   /**
-   * Icon used for checked checkbox items.
+   * Icon name used for checked checkbox and radio items.
+   *
    * @default "check"
    */
   checkedIcon?: string | undefined;
   /**
-   * Icon used for submenu trigger items.
+   * Icon name used for submenu trigger items.
+   *
    * @default "chevron-right"
    */
   submenuIcon?: string | undefined;
   /**
    * Content rendered before the resolved item groups.
    */
-  topSlot?: JSX.Element | Component<ContextMenuTopRenderProps> | undefined;
+  topSlot?: JSX.Element | Component<ContextMenuTopRenderArgs> | undefined;
   /**
    * Content rendered after the resolved item groups.
    */
-  bottomSlot?: JSX.Element | Component<ContextMenuBottomRenderProps> | undefined;
+  bottomSlot?: JSX.Element | Component<ContextMenuBottomRenderArgs> | undefined;
   /**
    * Renderer for each menu item.
    */
-  itemSlot?: Component<ContextMenuItemRenderProps> | undefined;
+  itemSlot?: Component<ContextMenuItemRenderArgs> | undefined;
   /**
    * Trigger element when not using `children`.
    */
   triggerSlot?: JSX.Element | undefined;
   /**
-   * Content element when not using `items`.
+   * Body content rendered after the items, for content that is not expressed as `items`.
    */
-  contentSlot?: JSX.Element | undefined;
+  bodySlot?: JSX.Element | undefined;
   /**
-   * Whether to render menu content inside a Portal.
+   * Whether to render menu content inside a Portal. Pass an element to portal into it.
+   *
    * @default true
    */
-  portal?: boolean | Node | undefined;
+  portal?: boolean | HTMLElement | undefined;
   /**
    * When `true`, unmounts the menu content when closed.
+   *
    * @default true
    */
   unmountOnHide?: boolean | undefined;
   /**
    * Long-press duration in milliseconds for touch/pen interactions.
+   *
    * @default 700
    */
   longPressDelay?: number | undefined;
@@ -318,33 +306,4 @@ export interface RLContextMenuProps {
    * Trigger children.
    */
   children?: JSX.Element | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: ThemeUI<RLContextMenuSlot> | undefined;
-  /**
-   * Family slot class defaults for this instance (alias for `ui`).
-   */
-  classes?: ThemeUI<RLContextMenuSlot> | undefined;
-  /**
-   * Family slot style defaults for this instance.
-   */
-  styles?: Partial<Record<RLContextMenuSlot, JSX.CSSProperties | string>> | undefined;
-  /**
-   * Additional CSS classes to apply to the root or trigger element.
-   */
-  class?: ClassValue | undefined;
-  /**
-   * Inline styles applied to the root or trigger element.
-   */
-  style?: JSX.CSSProperties | string | undefined;
-  /**
-   * Optional theme override (`"light"` or `"dark"`).
-   */
-  theme?: "light" | "dark" | undefined;
-  /**
-   * Color theme variant.
-   */
-  color?: string | undefined;
-  [key: string]: unknown;
-}
+};

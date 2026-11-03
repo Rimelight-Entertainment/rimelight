@@ -1,11 +1,7 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLAspectRatioTheme } from "./aspect-ratio.theme";
 
-export interface RLAspectRatioProps {
-  /**
-   * The element or component the root should render as.
-   */
-  as?: ValidComponent;
+export type RLAspectRatioProps = InferThemeProps<typeof RLAspectRatioTheme> & {
   /**
    * The aspect ratio fraction/decimal (e.g. 16/9, 4/3, 1). Non-finite or non-positive values fall
    * back to 1 (square).
@@ -13,14 +9,4 @@ export interface RLAspectRatioProps {
    * @default 1
    */
   ratio?: number;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+};

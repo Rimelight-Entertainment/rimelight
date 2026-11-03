@@ -3,11 +3,11 @@ import type { RLSpoilerProps } from "./spoiler.types";
 import { RLSpoilerTheme } from "./spoiler.theme";
 
 export const RLSpoiler: Component<RLSpoilerProps> = (props) => {
-  const { classes, rest } = RLSpoilerTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLSpoilerTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

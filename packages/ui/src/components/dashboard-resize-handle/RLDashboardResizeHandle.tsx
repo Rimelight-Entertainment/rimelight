@@ -3,11 +3,11 @@ import type { RLDashboardResizeHandleProps } from "./dashboard-resize-handle.typ
 import { RLDashboardResizeHandleTheme } from "./dashboard-resize-handle.theme";
 
 export const RLDashboardResizeHandle: Component<RLDashboardResizeHandleProps> = (props) => {
-  const { Tag, classes, rest } = RLDashboardResizeHandleTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLDashboardResizeHandleTheme.setup(props);
 
   return (
-    <Tag data-slot="root" class={classes().root} role="separator" {...rest}>
-      {props.children}
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} role="separator" {...rest}>
+      {children()}
     </Tag>
   );
 };

@@ -1,147 +1,131 @@
 import type { JSX } from "@solidjs/web";
-import type { RLModalSize, RLModalUiSlots } from "../modal/modal.types";
+import type { InferThemeProps } from "../../resolver";
+import type { ThemeColor } from "../../types";
 import type { OverlaySlot } from "../../slot";
+import type { RLModalSize } from "../modal/modal.types";
+import type { RLConfirmTheme } from "./confirm.theme";
 
-export interface RLConfirmUiSlots extends RLModalUiSlots {
-  cancelButton?: string | undefined;
-  actionButton?: string | undefined;
-}
-
-export interface RLConfirmProps {
+export type RLConfirmProps = Omit<
+  InferThemeProps<typeof RLConfirmTheme>,
+  "color" | "aria-label" | "aria-labelledby" | "aria-describedby"
+> & {
   /**
-   * Confirmation intent variant. Destructive highlights danger with error colors.
-   * @default "default"
+   * Accessible label for the dialog. Forwarded to the modal.
    */
-  variant?: "default" | "destructive" | undefined;
-
+  "aria-label"?: string | undefined;
   /**
-   * Title of the alert confirmation dialog.
+   * Element id that labels the dialog. Forwarded to the modal.
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Element id that describes the dialog. Forwarded to the modal.
+   */
+  "aria-describedby"?: string | undefined;
+  /**
+   * Intent color of the confirm action button. Use `"error"` for destructive actions.
+   *
+   * @default "primary"
+   */
+  color?: ThemeColor | undefined;
+  /**
+   * Title of the confirmation dialog. Use `titleSlot` for JSX.
    */
   title?: string | undefined;
-
   /**
-   * Explanatory description.
+   * Explanatory description. Use `descriptionSlot` for JSX.
    */
   description?: string | undefined;
-
   /**
    * Label for the confirmation action button.
+   *
    * @default "Confirm"
    */
   actionLabel?: string | undefined;
-
   /**
-   * Label for the cancellation/close button.
+   * Label for the cancel button.
+   *
    * @default "Cancel"
    */
   cancelLabel?: string | undefined;
-
   /**
-   * Trigger button label to automatically render a trigger button.
+   * Label of a default trigger button. Rendered only when `triggerSlot` is not set.
    */
   triggerLabel?: string | undefined;
-
   /**
    * Controlled open state.
    */
   open?: boolean | undefined;
-
   /**
    * Initial open state when uncontrolled.
+   *
    * @default false
    */
   defaultOpen?: boolean | undefined;
-
   /**
-   * Dialog size.
-   * @default "sm"
+   * Dialog width preset. Forwarded to the modal, which defaults to `"md"`.
    */
   size?: RLModalSize | undefined;
-
   /**
-   * Whether the dialog can be dismissed by clicking outside or pressing Escape.
+   * Whether the dialog can be dismissed by the close button, Escape, or clicking the backdrop.
+   * Dismissal is reported as a cancel.
+   *
    * @default true
    */
   dismissible?: boolean | undefined;
-
   /**
-   * Render in a portal attached to document body.
+   * Render in a portal attached to `document.body` or the given element.
+   *
    * @default true
    */
-  portal?: boolean | HTMLElement | string | undefined;
-
+  portal?: boolean | HTMLElement | undefined;
   /**
    * Enable open/close transitions.
+   *
    * @default true
    */
   transition?: boolean | undefined;
-
   /**
-   * Prevents body scrolling when open.
+   * Prevents body scrolling while open.
+   *
    * @default true
    */
   lockScroll?: boolean | undefined;
-
   /**
-   * Keep content mounted in DOM when hidden.
+   * Keep content mounted in the DOM while hidden.
+   *
    * @default true
    */
   unmountOnHide?: boolean | undefined;
-
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: Partial<RLConfirmUiSlots> | undefined;
-
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-
   /**
    * Body content.
    */
   children?: JSX.Element | undefined;
-
   /**
    * Trigger element. Always rendered, so it is plain JSX.
    */
   triggerSlot?: JSX.Element | undefined;
-
   /**
-   * Title content. Function-only: invoked while the dialog is open.
+   * Title content. Takes precedence over the `title` string.
    */
   titleSlot?: OverlaySlot | undefined;
-
   /**
-   * Description content. Function-only: invoked while the dialog is open.
+   * Description content. Takes precedence over the `description` string.
    */
   descriptionSlot?: OverlaySlot | undefined;
-
   /**
-   * Footer content. Replaces the default Cancel/Confirm row. Function-only.
+   * Footer content. Replaces the default Cancel/Confirm row.
    */
   footerSlot?: OverlaySlot | undefined;
-
   /**
-   * Callback fired when open state changes.
+   * Called whenever the open state changes.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
-
   /**
-   * Callback fired when confirmation action button is clicked.
+   * Called when the confirm action button is clicked.
    */
   onConfirm?: (() => void) | undefined;
-
   /**
-   * Callback fired when cancel button or backdrop is clicked.
+   * Called when the dialog is cancelled: by the cancel button, the close button, Escape, or the backdrop.
    */
   onCancel?: (() => void) | undefined;
-
-  /**
-   * Callback fired when dialog is closed.
-   */
-  onClose?: (() => void) | undefined;
-
-  [key: string]: unknown;
-}
+};

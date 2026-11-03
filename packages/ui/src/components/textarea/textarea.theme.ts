@@ -13,12 +13,12 @@ export const RLTextareaTheme = defineTheme("textarea", {
       md: { textarea: "py-2 text-sm min-h-[80px]" },
       lg: { textarea: "py-2.5 text-base min-h-[100px]" },
     },
-    error: {
+    invalid: {
       true: { root: "border-error-500 focus-within:ring-error-500/50" },
     },
   },
   defaultVariants: {
     size: "md",
-    error: false,
+    invalid: false,
   },
 });

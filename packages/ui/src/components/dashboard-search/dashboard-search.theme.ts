@@ -1,17 +1,13 @@
 import { defineTheme } from "../../resolver";
 
 export const RLDashboardSearchTheme = defineTheme("dashboard-search", {
-  slots: ["modal", "input"],
+  slots: ["root", "modal", "input"],
   base: {
-    modal: "",
-    input: "",
+    root: "",
+    modal: "sm:max-w-3xl h-full sm:h-[28rem]",
+    input: "flex-1 h-12 bg-transparent border-0 outline-none text-default placeholder:text-muted",
   },
   variants: {
-    fullscreen: {
-      false: {
-        modal: "sm:max-w-3xl h-full sm:h-[28rem]",
-      },
-    },
     size: {
       xs: {},
       sm: {},

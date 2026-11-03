@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLWindowMockupTheme } from "./window-mockup.theme";
 
-export interface RLWindowMockupProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Window mockup container.
+ *
+ * @status stub
+ */
+export type RLWindowMockupProps = InferThemeProps<typeof RLWindowMockupTheme>;

@@ -58,7 +58,7 @@ export const ContactPage: Component = () => {
   return (
     <>
       <RLPageSection
-        variant="hero"
+        layout="hero"
         title={t("page.contact.hero.title")}
         description={t("page.contact.hero.description")}
         orientation="horizontal"

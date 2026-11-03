@@ -57,7 +57,7 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
           <Show when={user() && isAdmin(user()!)}>
             <RLCollapsible
               class="border-t border-default pt-3"
-              trigger={
+              triggerSlot={
                 <span class="text-[11px] font-semibold uppercase tracking-wide text-muted">
                   Access & locks
                 </span>

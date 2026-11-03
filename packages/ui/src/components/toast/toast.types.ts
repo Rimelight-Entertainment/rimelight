@@ -1,47 +1,57 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { ThemeColor } from "../../types";
+import type { RLToastTheme } from "./toast.theme";
 
-export interface RLToastProps {
+export type RLToastProps = Omit<InferThemeProps<typeof RLToastTheme>, "color"> & {
   /**
-   * Main toast title.
+   * Intent color. Drives the icon and styling.
+   *
+   * @default "neutral"
    */
-  title?: string;
+  color?: ThemeColor | undefined;
   /**
-   * Description or message.
+   * Main toast title. Use `titleSlot` for JSX.
    */
-  description?: string;
+  title?: string | undefined;
   /**
-   * Visual variant.
+   * Description or message. Use `descriptionSlot` for JSX.
    */
-  variant?: "default" | "error" | "success" | "warning" | "info";
+  description?: string | undefined;
   /**
-   * Action button label.
+   * Action button label. Rendered only when `actionsSlot` is not set.
    */
-  actionLabel?: string;
+  actionLabel?: string | undefined;
   /**
-   * Duration in ms.
+   * Duration in milliseconds. `0` keeps the toast open until dismissed.
+   *
+   * @default 6000
    */
-  duration?: number;
+  duration?: number | undefined;
   /**
-   * Color theme.
+   * Whether the toast can be dismissed by the close button or the timeout. Non-dismissible toasts never time out.
+   *
+   * @default true
    */
-  color?: ThemeColor;
+  dismissible?: boolean | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Called after the toast is dismissed.
    */
-  ui?: any;
+  onDismiss?: (() => void) | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Toast body content.
    */
-  class?: any;
+  children?: JSX.Element | undefined;
   /**
-   * Whether the toast can be dismissed by user or timeout.
+   * Title content. Takes precedence over the `title` string.
    */
-  dismissable?: boolean;
-  onDismiss?: () => void;
-  children?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  actionsSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  titleSlot?: JSX.Element | undefined;
+  /**
+   * Description content. Takes precedence over the `description` string.
+   */
+  descriptionSlot?: JSX.Element | undefined;
+  /**
+   * Action content. Replaces the default action button.
+   */
+  actionsSlot?: JSX.Element | undefined;
+};

@@ -1,151 +1,110 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLCardTheme } from "./card.theme";
 
-export type CardVariant = "solid" | "outline" | "soft" | "subtle";
-
-export interface RLCardProps {
+/**
+ * Card props. `@status stable`.
+ */
+export type RLCardProps = InferThemeProps<typeof RLCardTheme> & {
   /**
-   * The element or component this component should render as.
-   *
-   * @default "div"
-   */
-  as?: ValidComponent;
-
-  /**
-   * Title text of the card header. Use titleSlot for JSX.
+   * Title text of the card header. Use `titleSlot` for JSX.
+   * @default undefined; the title is omitted when unset.
    */
   title?: string | undefined;
 
   /**
-   * Description text of the card header. Use descriptionSlot for JSX.
+   * Description text of the card header. Use `descriptionSlot` for JSX.
+   * @default undefined; the description is omitted when unset.
    */
   description?: string | undefined;
 
   /**
-   * The visual variant of the card.
-   *
-   * @default "outline"
-   */
-  variant?: CardVariant | undefined;
-
-  /**
-   * The image URL for the media slot.
+   * Image URL for the media area. Use `mediaSlot` for custom media.
+   * @default undefined; no media is rendered when unset.
    */
   mediaSrc?: string | undefined;
 
   /**
-   * Whether to render content in an overlay layer over media.
-   *
-   * @default false
-   */
-  overlay?: boolean | undefined;
-
-  /**
-   * Target URL when card acts as a link.
+   * Target URL. When set, the card renders as an `a` element.
+   * @default undefined; the card renders as a `div`.
    */
   href?: string | undefined;
 
   /**
-   * Where to open the linked URL when card is a link.
+   * Where to open the linked URL. Only applies when `href` is set.
+   * @default undefined; the browser default applies.
    */
   target?: string | undefined;
 
   /**
-   * Relationship of the linked URL when card is a link.
+   * Relationship of the linked URL. Only applies when `href` is set.
+   * @default "noopener noreferrer" when `target` is `"_blank"`, otherwise undefined.
    */
   rel?: string | undefined;
 
   /**
-   * Unique ID for the card root element.
+   * ARIA role of the root element.
+   * @default undefined
    */
-  id?: string | undefined;
+  role?: JSX.HTMLAttributes<HTMLElement>["role"];
 
   /**
-   * Explicit WAI-ARIA role for the card.
+   * Accessible name of the root element.
+   * @default undefined
    */
-  role?: string | undefined;
+  "aria-label"?: string | undefined;
 
   /**
-   * Screen reader accessibility label.
+   * Id of the element that labels the root element.
+   * @default the title id when a title is rendered, otherwise undefined.
    */
-  ariaLabel?: string | undefined;
+  "aria-labelledby"?: string | undefined;
 
   /**
-   * Identifies the element(s) that label the card.
+   * Id of the element that describes the root element.
+   * @default the description id when a description is rendered, otherwise undefined.
    */
-  ariaLabelledby?: string | undefined;
+  "aria-describedby"?: string | undefined;
 
   /**
-   * Identifies the element(s) that describe the card.
-   */
-  ariaDescribedby?: string | undefined;
-
-  /**
-   * Force a theme mode context on the component.
-   */
-  theme?: string | undefined;
-
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?:
-    | {
-        root?: string;
-        header?: string;
-        title?: string;
-        description?: string;
-        body?: string;
-        footer?: string;
-        overlay?: string;
-        media?: string;
-        [key: string]: any;
-      }
-    | undefined;
-
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-
-  /**
-   * Default slot content rendered in the card body.
-   */
-  children?: JSX.Element;
-
-  /**
-   * Header content. Replaces title and description.
+   * Header content. Replaces `title`, `titleSlot`, `description` and `descriptionSlot`.
+   * @default undefined
    */
   headerSlot?: JSX.Element;
 
   /**
-   * Custom title content. Takes precedence over the `title` string.
+   * Custom title content. Takes precedence over `title`.
+   * @default undefined
    */
   titleSlot?: JSX.Element;
 
   /**
-   * Custom description content. Takes precedence over the `description` string.
+   * Custom description content. Takes precedence over `description`.
+   * @default undefined
    */
   descriptionSlot?: JSX.Element;
 
   /**
    * Body content. Takes precedence over `children`.
+   * @default undefined
    */
   bodySlot?: JSX.Element;
 
   /**
    * Footer content.
+   * @default undefined
    */
   footerSlot?: JSX.Element;
 
   /**
    * Media content. Takes precedence over `mediaSrc`.
+   * @default undefined
    */
   mediaSlot?: JSX.Element;
 
   /**
-   * Custom overlay content slot.
+   * Overlay content. Rendered in place of the header, body and footer.
+   * @default undefined
    */
   overlaySlot?: JSX.Element;
-
-  [key: string]: unknown;
-}
+};

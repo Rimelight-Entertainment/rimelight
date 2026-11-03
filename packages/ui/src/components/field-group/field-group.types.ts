@@ -1,26 +1,14 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLFieldGroupTheme } from "./field-group.theme";
 
-export interface RLFieldGroupProps {
+export type RLFieldGroupProps = InferThemeProps<typeof RLFieldGroupTheme> & {
   /**
-   * Text/icon to prepend.
+   * Content rendered before the grouped field (e.g. an icon or addon text).
    */
-  prependSlot?: JSX.Element;
+  leadingSlot?: JSX.Element;
   /**
-   * Text/icon to append.
+   * Content rendered after the grouped field (e.g. an icon or addon text).
    */
-  appendSlot?: JSX.Element;
-  /**
-   * Size scale.
-   */
-  size?: "sm" | "md" | "lg";
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  trailingSlot?: JSX.Element;
+};

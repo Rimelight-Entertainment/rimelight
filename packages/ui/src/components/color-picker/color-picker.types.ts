@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLColorPickerTheme } from "./color-picker.theme";
 
-export interface RLColorPickerProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Color picker props.
+ * @status stub
+ */
+export type RLColorPickerProps = InferThemeProps<typeof RLColorPickerTheme>;

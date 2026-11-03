@@ -1,12 +1,12 @@
 import { createStore } from "solid-js";
+import type { ThemeColor } from "../../types";
 
 export interface ToastItem {
   id: string;
   title: string;
   description?: string;
-  variant?: "success" | "error" | "warning" | "info" | "default";
+  color?: ThemeColor;
   duration?: number;
-  color?: string;
   icon?: string;
   onDismiss?: () => void;
 }
@@ -49,20 +49,20 @@ export type ToastInput = string | (Omit<ToastItem, "id"> & { id?: string });
 function normalizeToastInput(
   input: ToastInput,
   description?: string,
-  variant?: ToastItem["variant"],
+  color?: ThemeColor,
   extra?: Partial<ToastItem>,
 ): Omit<ToastItem, "id"> & { id?: string } {
   if (typeof input === "string") {
     return {
       title: input,
       ...(description !== undefined ? { description } : {}),
-      ...(variant ? { variant } : {}),
+      ...(color ? { color } : {}),
       ...extra,
     };
   }
   return {
     ...input,
-    ...(variant && !input.variant ? { variant } : {}),
+    ...(color && !input.color ? { color } : {}),
     ...extra,
   };
 }

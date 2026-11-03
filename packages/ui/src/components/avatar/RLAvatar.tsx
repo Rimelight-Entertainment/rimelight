@@ -1,9 +1,11 @@
 import type { Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
 import { createMemo, createSignal, Show } from "solid-js";
 import type { RLAvatarProps } from "./avatar.types";
 import { RLAvatarTheme } from "./avatar.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";
+import type { RLChipProps } from "../chip/chip.types";
 
 /**
  * Extract 1-2 initials from alt text, e.g. "Benjamin Canac" -> "BC", "John" -> "J"
@@ -21,11 +23,8 @@ const OMIT_KEYS = [
   "alt",
   "icon",
   "text",
-  "fallback",
-  "initials",
   "title",
   "subtitle",
-  "label",
   "chip",
   "badge",
   "badgeColor",
@@ -42,37 +41,21 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLAvatar: Component<RLAvatarProps> = (props) => {
-  const {
-    Tag: Root,
-    classes,
-    rest,
-    slots,
-  } = RLAvatarTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLAvatarTheme.setup(props, {
     as: "span",
     omit: OMIT_KEYS,
-    slots: ["fallbackSlot", "badgeSlot"] as const,
+    slots: ["iconSlot", "fallbackSlot", "badgeSlot"] as const,
   });
 
   const [imageError, setImageError] = createSignal(false);
 
-  const fallbackText = () =>
-    props.text || props.fallback || props.initials || getInitials(props.alt);
-
   const hasImage = () => Boolean(props.src && !imageError());
 
   const renderIcon = () => {
+    const customIcon = slots.iconSlot();
+    if (customIcon !== undefined && customIcon !== null) return customIcon;
     if (!props.icon) return null;
-    if (typeof props.icon === "string") {
-      return (
-        <RLIcon
-          name={props.icon}
-          class={classes().icon}
-          ui={{ root: classes().icon }}
-          aria-hidden="true"
-        />
-      );
-    }
-    return <span class={classes().icon}>{props.icon}</span>;
+    return <RLIcon name={props.icon} class={classes().icon} data-slot="icon" aria-hidden="true" />;
   };
 
   const renderFallback = () => {
@@ -85,15 +68,16 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
       );
     }
 
-    if (props.icon) {
+    const iconContent = renderIcon();
+    if (iconContent) {
       return (
         <span class={classes().fallback} data-slot="fallback">
-          {renderIcon()}
+          {iconContent}
         </span>
       );
     }
 
-    const textVal = fallbackText();
+    const textVal = props.text || getInitials(props.alt);
     if (textVal) {
       return (
         <span class={classes().fallback} data-slot="fallback">
@@ -104,18 +88,14 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
 
     return (
       <span class={classes().fallback} data-slot="fallback">
-        <RLIcon
-          name="user"
-          class={classes().icon}
-          ui={{ root: classes().icon }}
-          aria-hidden="true"
-        />
+        <RLIcon name="user" class={classes().icon} data-slot="icon" aria-hidden="true" />
       </span>
     );
   };
 
   const avatarContent = () => {
-    if (props.children) return props.children;
+    const customChildren = children();
+    if (customChildren) return customChildren;
     if (hasImage()) {
       return (
         <img
@@ -140,61 +120,74 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
     return renderFallback();
   };
 
-  const avatarElement = () => (
-    <Root
-      class={classes().root}
-      data-slot="root"
-      aria-label={props.label || props.title || props.alt}
-      role={props.label || props.title || (!hasImage() && props.alt) ? "img" : undefined}
-      {...rest}
-    >
-      {avatarContent()}
-    </Root>
-  );
-
   const chipConfig = createMemo(() => {
     const chipProp = props.chip;
     const badgeProp = props.badge || slots.badgeSlot();
     if (!chipProp && !badgeProp) return null;
 
-    let config: Record<string, any> = {};
+    const config: Partial<RLChipProps> = {};
 
     if (typeof chipProp === "object" && chipProp !== null) {
-      config = { ...chipProp };
+      Object.assign(config, chipProp);
     } else if (chipProp === true) {
-      config = { inset: true };
+      config.inset = true;
     }
 
     if (badgeProp) {
-      config["position"] = props.badgePosition ?? config["position"] ?? "bottom-right";
-      config["inset"] = config["inset"] ?? true;
-      if (props.badgeColor) config["color"] = props.badgeColor;
-      if (slots.badgeSlot()) config["content"] = slots.badgeSlot();
+      config.position = props.badgePosition ?? config.position ?? "bottom-right";
+      config.inset = config.inset ?? true;
+      if (props.badgeColor) config.color = props.badgeColor;
+      const badgeSlot = slots.badgeSlot();
+      if (badgeSlot) config.textSlot = badgeSlot;
       else if (typeof props.badge === "string" || typeof props.badge === "number") {
-        config["text"] = props.badge;
+        config.text = props.badge;
       }
     }
 
     return config;
   });
 
-  const withChip = () => {
-    const cfg = chipConfig();
-    if (!cfg) return avatarElement();
-
-    return (
-      <RLChip size={props.size as any} {...cfg}>
-        {avatarElement()}
-      </RLChip>
-    );
-  };
-
-  const hasProfile = () => Boolean(props.title || props.subtitle);
+  const Chipped = (chipProps: { children: JSX.Element }) => (
+    <Show when={chipConfig()} fallback={chipProps.children}>
+      {(cfg) => (
+        <RLChip size={props.size} {...cfg()}>
+          {chipProps.children}
+        </RLChip>
+      )}
+    </Show>
+  );
 
   return (
-    <Show when={hasProfile()} fallback={withChip()}>
+    <Show
+      when={props.title || props.subtitle}
+      fallback={
+        <Chipped>
+          <Tag
+            data-slot="root"
+            data-theme={theme()}
+            class={classes().root}
+            aria-label={props.title || props.alt}
+            role={props.title || (!hasImage() && props.alt) ? "img" : undefined}
+            {...rest}
+          >
+            {avatarContent()}
+          </Tag>
+        </Chipped>
+      }
+    >
       <div class={classes().wrapper} data-slot="profile-wrapper">
-        {withChip()}
+        <Chipped>
+          <Tag
+            data-slot="root"
+            data-theme={theme()}
+            class={classes().root}
+            aria-label={props.title || props.alt}
+            role={props.title || (!hasImage() && props.alt) ? "img" : undefined}
+            {...rest}
+          >
+            {avatarContent()}
+          </Tag>
+        </Chipped>
         <div class={classes().text} data-slot="text">
           <Show when={props.title}>
             <span class={classes().title} data-slot="title">

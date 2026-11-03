@@ -1,16 +1,8 @@
+import { Portal, type JSX } from "@solidjs/web";
 import type { RLShortcutsProps, CategorySection } from "./shortcuts.types";
 import { RLShortcutsTheme } from "./shortcuts.theme";
 import { getUIConfig } from "../../runtime";
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  For,
-  onSettled,
-  Show,
-  type Component,
-} from "solid-js";
-import { Portal } from "@solidjs/web";
+import { createEffect, createMemo, For, onSettled, Show, type Component } from "solid-js";
 import {
   activeShortcutsStore,
   defineShortcuts,
@@ -18,39 +10,47 @@ import {
   setShortcutsModalOpen,
   type RegisteredShortcut,
 } from "../../shortcuts";
+import { createControllable } from "../../controllable";
 import { RLIcon } from "../icon/RLIcon";
 import { RLKbd } from "../kbd/RLKbd";
 import { uiNodes, uiT } from "../../locale";
 
-const OMIT_KEYS = ["categories", "open", "defaultOpen", "onOpenChange"] as const;
+const OMIT_KEYS = ["categories", "open", "defaultOpen", "onOpenChange", "portal"] as const;
+
+/** Portals children unless `portal` is false. The SSR Portal renders nothing, so `portal: false` renders inline. */
+const DialogLayer = (p: { portal: boolean | HTMLElement | undefined; children: JSX.Element }) => {
+  if (p.portal === false) return p.children;
+  return (
+    <Portal {...(typeof p.portal === "object" ? { mount: p.portal } : {})}>{p.children}</Portal>
+  );
+};
 
 export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   const {
     Tag,
     classes,
     rest,
+    theme,
     id: modalId,
   } = RLShortcutsTheme.setup(props, {
     omit: OMIT_KEYS,
     idPrefix: "rl-shortcuts",
   });
 
-  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
-  const isOpen = () => {
-    if (props.open !== undefined) return Boolean(props.open);
-    return uncontrolledOpen() || shortcutsModalOpen();
-  };
+  const [openState, setOpenState] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
+
+  const isOpen = () => openState() || (props.open === undefined && shortcutsModalOpen());
 
   const setOpen = (next: boolean) => {
-    if (props.open === undefined) {
-      setUncontrolledOpen(next);
-      setShortcutsModalOpen(next);
-    }
-    props.onOpenChange?.(next);
+    if (props.open === undefined) setShortcutsModalOpen(next);
+    setOpenState(next);
   };
 
   const handleClose = () => setOpen(false);
-  const handleToggle = () => setOpen(!isOpen());
 
   const configCategories = (): Record<string, { label: string }> =>
     getUIConfig().shortcuts?.categories || {};
@@ -80,9 +80,9 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   onSettled(() => {
     const qShortcutCleanup = defineShortcuts({
       "?": {
-        handler: handleToggle,
-        label: "Show Keyboard Shortcuts",
-        description: "Display this shortcuts help cheat sheet modal",
+        handler: () => setOpen(!isOpen()),
+        label: uiT("shortcuts.show-shortcuts"),
+        description: uiT("shortcuts.show-shortcuts-description"),
         category: "system",
         order: 0,
       },
@@ -145,10 +145,11 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
 
   return (
     <Show when={isOpen()}>
-      <Portal>
+      <DialogLayer portal={props.portal}>
         <Tag
-          class={classes().modal}
-          data-slot="modal"
+          class={classes().root}
+          data-slot="root"
+          data-theme={theme()}
           onClick={(e: MouseEvent & { currentTarget: Element; target: Element }) => {
             if (e.target === e.currentTarget) handleClose();
           }}
@@ -164,7 +165,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
           >
             <div class={classes().header} data-slot="header">
               <h3 id={`${modalId()}-title`} class={classes().title} data-slot="title">
-                Keyboard Shortcuts
+                {uiT("shortcuts.title")}
               </h3>
               <button
                 type="button"
@@ -173,7 +174,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
                 onClick={handleClose}
                 data-slot="close"
               >
-                <RLIcon name="x" class="size-4" />
+                <RLIcon name="x" size="sm" />
               </button>
             </div>
 
@@ -182,7 +183,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
                 when={activeShortcutsStore.length > 0}
                 fallback={
                   <div class={classes().empty} data-slot="empty">
-                    No active shortcuts found on this page.
+                    {uiT("shortcuts.empty")}
                   </div>
                 }
               >
@@ -231,7 +232,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
             </div>
           </div>
         </Tag>
-      </Portal>
+      </DialogLayer>
     </Show>
   );
 };

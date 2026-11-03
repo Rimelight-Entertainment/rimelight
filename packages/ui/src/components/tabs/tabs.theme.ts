@@ -27,15 +27,10 @@ export const RLTabsTheme = defineTheme("tabs", {
   },
   variants: {
     variant: {
-      pill: {
+      solid: {
         list: "bg-muted/60 rounded-lg p-1",
         trigger: "grow rounded-md data-[state=active]:text-highlighted z-10",
         indicator: "bg-default rounded-md shadow-xs top-1 bottom-1 h-[calc(100%-8px)]",
-      },
-      underline: {
-        list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
-        trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
-        indicator: "bg-primary rounded-full -bottom-px h-0.5 left-0",
       },
       link: {
         list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
@@ -80,7 +75,7 @@ export const RLTabsTheme = defineTheme("tabs", {
     },
   },
   defaultVariants: {
-    variant: "pill",
+    variant: "solid",
     orientation: "horizontal",
     size: "md",
   },

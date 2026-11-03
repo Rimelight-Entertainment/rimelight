@@ -1,5 +1,7 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { ThemeColor } from "../../types";
+import type { RLDropdownMenuTheme } from "./dropdown-menu.theme";
 
 export interface DropdownMenuItem {
   label?: string | undefined;
@@ -31,64 +33,80 @@ export interface DropdownMenuItem {
   children?: DropdownMenuItem[] | DropdownMenuItem[][] | undefined;
   href?: string | undefined;
   target?: string | undefined;
-  class?: any;
-  ui?: any;
-  [key: string]: any;
 }
 
-export interface DropdownMenuContentProps {
-  align?: "start" | "center" | "end";
-  side?: "top" | "right" | "bottom" | "left";
-  sideOffset?: number;
-  [key: string]: any;
+export interface DropdownMenuContentOptions {
+  /**
+   * Horizontal alignment of the menu relative to the trigger.
+   *
+   * @default "start"
+   */
+  align?: "start" | "center" | "end" | undefined;
+  /**
+   * Side of the trigger the menu opens on.
+   */
+  side?: "top" | "right" | "bottom" | "left" | undefined;
+  /**
+   * Gap in pixels between the trigger and the menu.
+   */
+  sideOffset?: number | undefined;
 }
 
-export interface RLDropdownMenuProps {
+export type RLDropdownMenuProps = Omit<InferThemeProps<typeof RLDropdownMenuTheme>, "color"> & {
   /**
    * The menu items array (single level or grouped array).
    */
-  items?: DropdownMenuItem[] | DropdownMenuItem[][];
+  items?: DropdownMenuItem[] | DropdownMenuItem[][] | undefined;
   /**
    * The trigger button label.
    */
-  label?: string;
+  label?: string | undefined;
   /**
-   * Trigger button icon.
+   * Trigger button icon name.
    */
-  icon?: string;
+  icon?: string | undefined;
   /**
-   * Size scale.
+   * Intent color of the trigger.
+   *
+   * @default "neutral"
    */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /**
-   * Color theme of the trigger.
-   */
-  color?: ThemeColor;
+  color?: ThemeColor | undefined;
   /**
    * Display an arrow alongside the menu.
+   *
+   * @default false
    */
-  arrow?: boolean;
+  arrow?: boolean | undefined;
   /**
    * Content options like align and sideOffset.
    */
-  content?: DropdownMenuContentProps;
-  /**
-   * Modal interaction lock.
-   */
-  modal?: boolean;
+  content?: DropdownMenuContentOptions | undefined;
   /**
    * Disabled state.
+   *
+   * @default false
    */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Controlled open state.
    */
-  ui?: any;
+  open?: boolean | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Initial open state when uncontrolled.
+   *
+   * @default false
    */
-  class?: any;
-  children?: JSX.Element;
-  triggerSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  defaultOpen?: boolean | undefined;
+  /**
+   * Trigger content. Takes precedence over `label` and `icon`.
+   */
+  children?: JSX.Element | undefined;
+  /**
+   * Trigger element. Always rendered, so it is plain JSX.
+   */
+  triggerSlot?: JSX.Element | undefined;
+  /**
+   * Called whenever the open state changes.
+   */
+  onOpenChange?: ((open: boolean) => void) | undefined;
+};

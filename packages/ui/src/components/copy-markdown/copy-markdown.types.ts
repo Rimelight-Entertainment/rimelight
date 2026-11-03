@@ -1,170 +1,30 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
-import type { RLAvatarProps } from "../avatar/avatar.types";
-import type { ButtonClickHandler } from "../button/button.types";
+import type { InferThemeProps } from "../../resolver";
+import type { ButtonClickHandler, RLButtonProps } from "../button/button.types";
+import type { RLCopyMarkdownTheme } from "./copy-markdown.theme";
 
-export interface RLCopyMarkdownProps {
-  /**
-   * The color scheme applied to the button.
-   * @default 'primary'
-   */
-  color?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | ThemeColor
-    | undefined;
-  /**
-   * The visual style variant of the button.
-   * @default 'solid'
-   */
-  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link" | undefined;
-  /**
-   * The size scale of the button.
-   * @default 'md'
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
-  /**
-   * Render the button full width.
-   */
-  block?: boolean | undefined;
-  /**
-   * Display an icon based on the `leading` and `trailing` props.
-   */
-  icon?: any;
-  /**
-   * Display an avatar on the left side.
-   */
-  avatar?: RLAvatarProps | string | undefined;
-  /**
-   * Slot content rendered in leading position.
-   */
-  leadingSlot?: JSX.Element;
-  /**
-   * Slot content rendered in trailing position.
-   */
-  trailingSlot?: JSX.Element;
-  /**
-   * The icon when the `loading` prop is `true`.
-   * @default 'loaderCircle'
-   */
-  loadingIcon?: any;
-  /**
-   * Class to apply when the button / link is active.
-   */
-  activeClass?: string | undefined;
-  /**
-   * Class to apply when the button / link is inactive.
-   */
-  inactiveClass?: string | undefined;
-  /**
-   * Class to apply when the link is exact active.
-   */
-  exactActiveClass?: string | undefined;
-  /**
-   * Value passed to the attribute `aria-current` when the link is exact active.
-   * @default 'page'
-   */
-  ariaCurrentValue?: "page" | "step" | "location" | "date" | "time" | "true" | "false" | undefined;
-  /**
-   * The type of the button when not a link.
-   * @default 'button'
-   */
-  type?: "reset" | "submit" | "button" | undefined;
-  /**
-   * The element or component this component should render as when not a link.
-   * @default 'button'
-   */
-  as?: ValidComponent;
-  /**
-   * Field group style variation when grouped in input or button groups.
-   */
-  fieldGroup?: "horizontal" | "vertical" | undefined;
-  /**
-   * Horizontal alignment of content inside the button flex container.
-   */
-  justify?: "start" | "center" | "end" | "between" | "around" | "evenly" | undefined;
-  /**
-   * Rounded button corners or pill shape.
-   */
-  rounded?: boolean | string | undefined;
-  /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme | undefined;
-  /**
-   * If true, no rel attribute will be added to the link.
-   */
-  noRel?: boolean | undefined;
-  /**
-   * Accessible aria-label for screen readers.
-   */
-  ariaLabel?: string | undefined;
-  /**
-   * Element ID that labels this button for screen readers.
-   */
-  ariaLabelledby?: string | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  /**
-   * Default slot children.
-   */
-  children?: JSX.Element;
-  /**
-   * Click event handler. Accepts a single handler or an array of handlers.
-   */
-  onClick?: ButtonClickHandler | ButtonClickHandler[] | undefined;
-  /**
-   * Disables the link, preventing navigation and applying disabled styling.
-   *
-   * @default false
-   */
-  disabled?: boolean | undefined;
-  /**
-   * Forces the link to be treated as an external link.
-   *
-   * @default false
-   */
-  external?: boolean | undefined;
-  /**
-   * Custom external link icon name.
-   *
-   * @default "external-link"
-   */
-  externalIcon?: string | undefined;
-  /**
-   * Suppress the automatic external link icon.
-   *
-   * @default false
-   */
-  noExternalIcon?: boolean | undefined;
-  /**
-   * Where to open the linked URL. External links default to `"_blank"`.
-   *
-   * @default undefined
-   */
-  target?: string | undefined;
-  /**
-   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
-   * string to suppress the attribute entirely.
-   *
-   * @default undefined
-   */
-  rel?: string | null | undefined;
-  /**
-   * Raw markdown content to copy to the clipboard.
-   */
-  raw: string;
-  [key: string]: unknown;
-}
+/**
+ * Props for `RLCopyMarkdown`. Every `RLButton` prop is forwarded to the rendered button; the
+ * button's defaults apply (`color`, `variant`, `size`).
+ */
+export type RLCopyMarkdownProps = InferThemeProps<typeof RLCopyMarkdownTheme> &
+  Omit<RLButtonProps, "ui" | "class" | "as" | "theme" | "children" | "onClick"> & {
+    /**
+     * Raw markdown content copied to the clipboard.
+     */
+    raw: string;
+    /**
+     * Content rendered in the leading position of the button.
+     * @default undefined
+     */
+    leadingSlot?: JSX.Element;
+    /**
+     * Content rendered in the trailing position of the button.
+     * @default undefined
+     */
+    trailingSlot?: JSX.Element;
+    /**
+     * Click handler. Runs after the markdown is copied, so a consumer handler cannot replace the copy.
+     */
+    onClick?: ButtonClickHandler | undefined;
+  };

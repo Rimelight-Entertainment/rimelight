@@ -141,12 +141,12 @@ describe("RLCompare Component Test Suite", () => {
   });
 
   describe("Content Support", () => {
-    it("renders custom JSX elements via before and after props", () => {
+    it("renders custom JSX elements via leading and trailing slots", () => {
       const html = cleanHtml(
         renderToString(() => (
           <RLCompare
-            beforeSlot={<div class="p-4 bg-red-500">Left Version</div>}
-            afterSlot={<div class="p-4 bg-blue-500">Right Version</div>}
+            leadingSlot={<div class="p-4 bg-red-500">Left Version</div>}
+            trailingSlot={<div class="p-4 bg-blue-500">Right Version</div>}
           />
         )),
       );
@@ -160,8 +160,8 @@ describe("RLCompare Component Test Suite", () => {
         renderToString(() => (
           <RLCompare
             value={60}
-            beforeSlot={(val) => <span>Before at {val}%</span>}
-            afterSlot={(val) => <span>After at {val}%</span>}
+            leadingSlot={(val: number) => <span>Before at {val}%</span>}
+            trailingSlot={(val: number) => <span>After at {val}%</span>}
           />
         )),
       );
@@ -268,7 +268,7 @@ describe("RLCompare Component Test Suite", () => {
     });
 
     it("renders visual variants correctly", () => {
-      for (const variant of ["solid", "outline", "subtle", "glass"] as const) {
+      for (const variant of ["solid", "outline", "subtle", "ghost"] as const) {
         const html = cleanHtml(
           renderToString(() => (
             <RLCompare variant={variant} beforeSrc="/b.jpg" afterSrc="/a.jpg" />
@@ -308,7 +308,7 @@ describe("RLCompare Component Test Suite", () => {
             value={42}
             min={0}
             max={100}
-            ariaLabel="Custom image comparison"
+            aria-label="Custom image comparison"
             beforeSrc="/b.jpg"
             afterSrc="/a.jpg"
           />

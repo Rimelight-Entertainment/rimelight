@@ -1,12 +1,13 @@
 import type {
   RLCheckboxGroupItem,
+  RLCheckboxGroupItemValue,
   RLCheckboxGroupItemObject,
   RLCheckboxGroupProps,
 } from "./checkbox-group.types";
 import { RLCheckboxGroupTheme } from "./checkbox-group.theme";
 import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { RLCheckbox } from "../checkbox/RLCheckbox";
-import type { RLCheckboxVariant } from "../checkbox/checkbox.types";
+import type { RLCheckboxLayout } from "../checkbox/checkbox.types";
 
 const OMIT_KEYS = [
   "id",
@@ -22,18 +23,11 @@ const OMIT_KEYS = [
   "valueKey",
   "labelKey",
   "descriptionKey",
-  "onChange",
   "onValueChange",
 ] as const;
 
 export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
-  const {
-    Tag: Root,
-    classes,
-    rest,
-    id,
-    slots,
-  } = RLCheckboxGroupTheme.setup(props, {
+  const { Tag, classes, rest, id, slots, children, theme, ui } = RLCheckboxGroupTheme.setup(props, {
     slots: ["legendSlot", "labelSlot", "descriptionSlot"] as const,
     omit: OMIT_KEYS,
     idPrefix: "rl-checkbox-group",
@@ -45,9 +39,12 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
 
   const size = () => props.size ?? "md";
   const color = () => props.color ?? "primary";
-  const variant = () => props.variant ?? "list";
   const highlight = () => Boolean(props.highlight);
   const disabled = () => Boolean(props.disabled);
+
+  // `table` is a group-level preset; its items are plain list checkboxes.
+  const childLayout = (): RLCheckboxLayout | undefined =>
+    props.layout === "table" ? "list" : props.layout;
 
   const [internalValue, setInternalValue] = createSignal<any[]>(
     props.defaultValue ? [...props.defaultValue] : [],
@@ -110,7 +107,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     return props.items.map((item, index) => normalizeItem(item, index));
   });
 
-  const toggleValue = (itemVal: any, checked: boolean, event: Event) => {
+  const toggleValue = (itemVal: RLCheckboxGroupItemValue | undefined, checked: boolean) => {
     const current = selectedValues();
     let next: any[];
 
@@ -128,9 +125,6 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     if (props.onValueChange) {
       props.onValueChange(next);
     }
-    if (props.onChange) {
-      props.onChange(event);
-    }
   };
 
   const renderLegend = () => {
@@ -139,11 +133,11 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   };
 
   return (
-    <Root
+    <Tag
       id={id()}
       class={classes().root}
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
       data-disabled={disabled() ? "true" : undefined}
       {...rest}
     >
@@ -154,7 +148,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
           </legend>
         </Show>
 
-        <Show when={normalizedItems().length > 0} fallback={props.children}>
+        <Show when={normalizedItems().length > 0} fallback={children()}>
           <For each={normalizedItems()}>
             {(item) => {
               const itemSelected = () => isValueSelected(item.value);
@@ -162,15 +156,12 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
                 disabled() || Boolean(item.disabled) || (isMaxReached() && !itemSelected());
 
               const childUi = () => {
-                const baseUi = props.ui ? omit(props.ui, "root", "fieldset", "legend", "item") : {};
+                const baseUi = ui() ? omit(ui()!, "root", "fieldset", "legend", "item") : {};
                 return {
                   ...baseUi,
                   ...item.ui,
                 };
               };
-
-              const childVariant = (): RLCheckboxVariant =>
-                variant() === "table" ? "list" : (variant() as RLCheckboxVariant);
 
               return (
                 <div
@@ -188,14 +179,14 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
                     icon={item.icon ?? props.icon}
                     size={size()}
                     color={color()}
-                    variant={childVariant()}
+                    layout={childLayout()}
                     indicator={props.indicator}
                     highlight={highlight()}
                     checked={itemSelected()}
                     disabled={itemDisabled()}
                     ui={childUi()}
                     class={item.class}
-                    onChange={(e) => toggleValue(item.value, e.currentTarget.checked, e)}
+                    onChange={(e) => toggleValue(item.value, e.currentTarget.checked)}
                     labelSlot={
                       slots.labelSlot()
                         ? () => slots.labelSlot()!({ item: item as any })
@@ -213,6 +204,6 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
           </For>
         </Show>
       </fieldset>
-    </Root>
+    </Tag>
   );
 };

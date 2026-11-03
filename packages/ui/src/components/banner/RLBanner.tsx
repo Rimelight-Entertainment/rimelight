@@ -6,7 +6,7 @@ import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 import { useHeaderStack } from "../header/useHeaderStack";
 import { resolveLinkAttrs } from "../link/helpers";
-import type { RLButtonProps } from "../button/button.types";
+import { uiT } from "../../locale";
 
 /** Value written to localStorage to persist dismissal across visits. */
 const DISMISSED_VALUE = "true";
@@ -15,64 +15,56 @@ const OMIT_KEYS = [
   "icon",
   "title",
   "actions",
-  "close",
+  "dismissible",
   "closeIcon",
-  "onClose",
-  "contain",
-  "sticky",
-  "fixed",
+  "onDismiss",
   "stackIndex",
   "hideOnScroll",
+  "label",
+  "leadingIcon",
+  "trailingIcon",
   "href",
   "target",
   "rel",
   "external",
   "externalIcon",
   "noExternalIcon",
-  "trailingIcon",
   "active",
   "disabled",
-  "raw",
-  "ariaLabel",
-  "ariaCurrentValue",
+  "aria-label",
+  "aria-current",
 ] as const;
 
 export const RLBanner: Component<RLBannerProps> = (props) => {
+  const isLink = () => Boolean(props.href);
+
+  const { Tag, classes, rest, id, slots, children, theme } = RLBannerTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: [
+      "iconSlot",
+      "leadingSlot",
+      "titleSlot",
+      "centerSlot",
+      "trailingSlot",
+      "actionsSlot",
+      "closeSlot",
+    ] as const,
+    variants: () => ({
+      contain: props.contain ?? true,
+      sticky: (props.sticky ?? false) && !(props.fixed ?? false),
+      fixed: props.fixed ?? false,
+      to: isLink(),
+    }),
+  });
+
   const fixed = () => props.fixed ?? false;
   const sticky = () => (fixed() ? false : (props.sticky ?? false));
   const isStacked = () => fixed() || sticky();
   const hideOnScroll = () => props.hideOnScroll ?? false;
   const stackIndex = () => props.stackIndex ?? 0;
-  const href = () => props.href;
-  const isLink = () => Boolean(href());
 
-  const { Tag, classes, rest, id, slots } = RLBannerTheme.setup(props, {
-    as: "div",
-    omit: OMIT_KEYS,
-    slots: [
-      "leadingSlot",
-      "titleSlot",
-      "actionsSlot",
-      "closeSlot",
-      "leftSlot",
-      "centerSlot",
-      "rightSlot",
-    ] as const,
-    variants: () => ({
-      contain: props.contain ?? true,
-      sticky: sticky(),
-      fixed: fixed(),
-      to: isLink(),
-    }),
-  });
-
-  // Explicit id enables persistence. Otherwise a createUniqueId() fallback
-  // keeps the DOM id unique and SSR/hydration stable.
-  const layerId = id;
-  const titleId = () => `${layerId()}-title`;
+  const titleId = () => `${id()}-title`;
   const storageKey = () => (props.id ? `banner-${props.id}` : undefined);
-
-  const isClosable = () => Boolean(props.close);
 
   // Always start visible so SSR and the first client render match, then hide
   // after settling if a persisted dismissal key is present.
@@ -86,7 +78,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
     } catch {}
   });
 
-  const handleClose = (e?: MouseEvent) => {
+  const handleDismiss = (e?: MouseEvent) => {
     e?.stopPropagation();
     const key = storageKey();
     if (key) {
@@ -95,24 +87,24 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
       } catch {}
     }
     setDismissed(true);
-    props.onClose?.();
+    props.onDismiss?.();
   };
 
   const hasTitle = () =>
     Boolean(
-      slots.titleSlot() !== undefined || props.title !== undefined || props.children !== undefined,
+      slots.titleSlot() !== undefined || props.title !== undefined || children() !== undefined,
     );
   const hasActions = () =>
     Boolean(slots.actionsSlot() !== undefined || (props.actions && props.actions.length > 0));
 
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({
-    id: layerId,
+    id,
     order: stackIndex,
     type: "banner",
-    sticky: sticky,
-    fixed: fixed,
-    hideOnScroll: hideOnScroll,
+    sticky,
+    fixed,
+    hideOnScroll,
     visible: () => !dismissed() && isStacked(),
   });
 
@@ -130,7 +122,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const linkAttrs = createMemo(() =>
     isLink()
       ? resolveLinkAttrs({
-          href: href() as string | undefined,
+          href: props.href,
           label: props.label,
           leadingIcon: props.leadingIcon,
           trailingIcon: props.trailingIcon,
@@ -141,26 +133,15 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
           rel: props.rel,
           active: props.active,
           disabled: props.disabled,
-          raw: props.raw,
-          ariaLabel: props.ariaLabel,
-          ariaCurrentValue: props.ariaCurrentValue,
+          current:
+            typeof props["aria-current"] === "boolean"
+              ? props["aria-current"]
+                ? "true"
+                : "false"
+              : props["aria-current"],
         })
       : undefined,
   );
-
-  const closeButtonProps = createMemo((): RLButtonProps => {
-    const base: RLButtonProps = {
-      size: "md",
-      color: "neutral",
-      variant: "ghost",
-      square: true,
-      leadingIcon: props.closeIcon || "x",
-      ariaLabel: "Close banner",
-    };
-    return typeof props.close === "object" && props.close !== null
-      ? { ...base, ...props.close }
-      : base;
-  });
 
   return (
     <Show when={!dismissed()}>
@@ -169,19 +150,20 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
           rootEl = el;
           layer.ref(el);
         }}
-        id={layerId()}
+        id={id()}
         data-slot="root"
-        role={hasTitle() || props.ariaLabel ? "region" : undefined}
+        data-theme={theme()}
+        role={hasTitle() || props["aria-label"] ? "region" : undefined}
         aria-labelledby={hasTitle() ? titleId() : undefined}
-        aria-label={!hasTitle() ? props.ariaLabel : undefined}
+        aria-label={!hasTitle() ? props["aria-label"] : undefined}
         class={classes().root}
-        data-color={props.color ?? "primary"}
+        data-color={props.color}
         data-contain={(props.contain ?? true) ? "true" : "false"}
         data-collapsed={isStacked() && layer.isCollapsed() ? "true" : "false"}
         data-rl-banner={isStacked() ? "true" : undefined}
         data-stack-index={stackIndex()}
         data-hide-on-scroll={String(hideOnScroll())}
-        data-header-layer-id={layerId()}
+        data-header-layer-id={id()}
         data-layer-type="banner"
         data-dismiss-key={storageKey()}
         {...rest}
@@ -197,8 +179,8 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
               rel={attrs().rel}
               aria-current={attrs().ariaCurrent}
               aria-disabled={attrs().ariaDisabled}
-              aria-labelledby={!props.ariaLabel && hasTitle() ? titleId() : undefined}
-              aria-label={props.ariaLabel}
+              aria-labelledby={!props["aria-label"] && hasTitle() ? titleId() : undefined}
+              aria-label={props["aria-label"]}
             />
           )}
         </Show>
@@ -206,13 +188,13 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
         <div class={classes().content} data-slot="content" data-header-content>
           <div class={classes().container} data-slot="container">
             <div class={classes().left} data-slot="left">
-              {slots.leftSlot()}
+              {slots.leadingSlot()}
             </div>
 
             <div class={classes().center} data-slot="center">
               <Show when={!slots.centerSlot()} fallback={slots.centerSlot()}>
                 <Show
-                  when={slots.leadingSlot()}
+                  when={slots.iconSlot()}
                   fallback={
                     <Show when={props.icon}>
                       {(icon) => (
@@ -223,21 +205,22 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
                     </Show>
                   }
                 >
-                  {slots.leadingSlot()}
+                  <span class={classes().icon} data-slot="icon" aria-hidden="true">
+                    {slots.iconSlot()}
+                  </span>
                 </Show>
 
                 <Show when={hasTitle()}>
                   <div id={titleId()} class={classes().title} data-slot="title">
-                    {slots.titleSlot() ?? props.title ?? props.children}
+                    {slots.titleSlot() ?? props.title ?? children()}
                   </div>
                 </Show>
               </Show>
             </div>
 
             <div class={classes().right} data-slot="right">
-              {slots.rightSlot()}
+              {slots.trailingSlot()}
 
-              {/* Actions off to the rightmost next to the close button */}
               <Show when={hasActions()}>
                 <div class={classes().actions} data-slot="actions">
                   <Show
@@ -253,18 +236,22 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
                 </div>
               </Show>
 
-              {/* Close Button */}
               <Show
                 when={slots.closeSlot()}
                 fallback={
-                  <Show when={isClosable()}>
+                  <Show when={props.dismissible}>
                     <RLButton
                       type="button"
+                      size="md"
+                      color="neutral"
+                      variant="ghost"
+                      square
+                      leadingIcon={props.closeIcon ?? "x"}
                       class={classes().close}
                       data-slot="close"
                       data-banner-close
-                      onClick={handleClose}
-                      {...closeButtonProps()}
+                      aria-label={uiT("banner.close")}
+                      onClick={handleDismiss}
                     />
                   </Show>
                 }

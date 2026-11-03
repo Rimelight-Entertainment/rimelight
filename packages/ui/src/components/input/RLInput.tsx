@@ -14,33 +14,26 @@ const OMIT_KEYS = [
   "required",
   "leadingIcon",
   "trailingIcon",
-  "color",
-  "theme",
   "onInput",
   "onChange",
   "onBlur",
   "onFocus",
   "onKeyDown",
   "ref",
-  "leading",
-  "trailing",
 ] as const;
 
 export const RLInput: Component<RLInputProps> = (props) => {
-  const { classes, rest, slots } = RLInputTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLInputTheme.setup(props, {
     slots: ["leadingSlot", "trailingSlot"] as const,
     omit: OMIT_KEYS,
     variants: (s) => ({
-      variant: props.variant ?? "default",
-      size: props.size ?? "md",
       hasLeading: !!(props.leadingIcon || s.leadingSlot()),
       hasTrailing: !!(props.trailingIcon || s.trailingSlot()),
-      error: !!props.error,
     }),
   });
 
   return (
-    <div class={classes().root} data-slot="root" data-theme={props.theme}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root}>
       <Show when={slots.leadingSlot()}>{slots.leadingSlot()}</Show>
       <Show when={!slots.leadingSlot() && props.leadingIcon}>
         <span class={classes().leading} data-slot="leading">
@@ -50,7 +43,7 @@ export const RLInput: Component<RLInputProps> = (props) => {
 
       <input
         ref={props.ref}
-        type={props.type || "text"}
+        type={props.type}
         name={props.name}
         value={props.value !== undefined ? props.value : ""}
         placeholder={props.placeholder}
@@ -73,6 +66,7 @@ export const RLInput: Component<RLInputProps> = (props) => {
           <RLIcon name={props.trailingIcon!} size="sm" aria-hidden="true" />
         </span>
       </Show>
-    </div>
+      {children()}
+    </Tag>
   );
 };

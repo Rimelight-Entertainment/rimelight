@@ -123,13 +123,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       stackIndex={props.stackIndex ?? 0}
       data-theme="dark"
       class="bg-black"
-      leftSlot={
+      leadingSlot={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
             <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
             <RLNavigationMenu
               items={leftLinks()}
-              variant="link"
               panels={{
                 features: () => (
                   <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
@@ -178,7 +177,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
               <RLNavigationMenu
                 items={leftLinks()}
                 orientation="vertical"
-                variant="link"
                 panels={{
                   features: () => (
                     <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
@@ -228,7 +226,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           </div>
         </div>
       }
-      rightSlot={
+      trailingSlot={
         <div class="flex items-center gap-md">
           <RLSearch />
           <RLButton

@@ -4,17 +4,23 @@ import { createMemo, createSignal, For, onSettled, Show, type Component } from "
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = ["headings", "collapsible", "containerSelector", "tableOfContents"] as const;
+const OMIT_KEYS = [
+  "headings",
+  "tableOfContents",
+  "containerSelector",
+  "collapsible",
+  "ref",
+] as const;
 
 export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
-  const { classes, rest } = RLTableOfContentsTheme.setup(props, {
+  const { Tag, classes, rest, theme } = RLTableOfContentsTheme.setup(props, {
+    as: "div",
     omit: OMIT_KEYS,
-    variants: () => ({ interactive: false, overlay: false }),
   });
 
   const [activeId, setActiveId] = createSignal("");
   const [open, setOpen] = createSignal(false);
-  let rootRef: HTMLDivElement | undefined;
+  let rootRef: HTMLElement | undefined;
   let detailsRef: HTMLDetailsElement | undefined;
 
   const collapsible = () => props.collapsible === true;
@@ -72,7 +78,7 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
   };
 
   return (
-    <Show when={props.tableOfContents !== false && filteredHeadings().length > 0}>
+    <Show when={props.tableOfContents !== false}>
       <Show
         when={collapsible()}
         fallback={
@@ -83,17 +89,19 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
     font-weight: 600;
   }
 `}</style>
-            <div
-              ref={(el) => (rootRef = el)}
+            <Tag
+              ref={(el: HTMLElement) => (rootRef = el)}
               class={classes().root}
               data-slot="root"
+              data-theme={theme()}
+              hidden={filteredHeadings().length === 0}
               data-container-selector={containerSelector()}
               data-heading-selector={headingSelector()}
               {...rest}
             >
               <div class={classes().container} data-slot="container">
                 <h4 class={classes().title} data-slot="title">
-                  On this page
+                  {uiT("toc.heading")}
                 </h4>
                 <ul class={`${classes().list} mt-2xl flex flex-col gap-xs`} data-slot="list">
                   <For each={filteredHeadings()}>
@@ -115,13 +123,18 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
                   </For>
                 </ul>
               </div>
-            </div>
+            </Tag>
           </>
         }
       >
         <details
-          ref={(el) => (detailsRef = el)}
-          class={props.class}
+          ref={(el: HTMLDetailsElement) => {
+            detailsRef = el;
+          }}
+          class={classes().root}
+          data-slot="root"
+          data-theme={theme()}
+          hidden={filteredHeadings().length === 0}
           data-rl-toc-collapsible
           data-container-selector={containerSelector()}
           data-heading-selector={headingSelector()}

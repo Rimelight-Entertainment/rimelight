@@ -178,11 +178,23 @@ const numpadPositions: [number, number][] = [
   [2, 4],
 ];
 
+const OMIT_KEYS = [
+  "highlightedKeys",
+  "groups",
+  "keyGap",
+  "sectionGap",
+  "keySize",
+  "layout",
+  "os",
+  "highlightColor",
+  "backgroundColor",
+] as const;
+
 export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
   const keyGap = (): number => props.keyGap ?? 8;
   const sectionGap = (): number => props.sectionGap ?? 40;
   const keySize = (): number => props.keySize ?? 40;
-  const variant = (): "full" | "60" => props.variant ?? "full";
+  const layout = (): "full" | "60" => props.layout ?? "full";
   const os = (): "windows" | "mac" => props.os ?? "windows";
   const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)";
   const backgroundColor = (): string => props.backgroundColor || "transparent";
@@ -246,7 +258,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
   };
 
   const displayMainRows = createMemo<Key[][]>(() =>
-    variant() === "60"
+    layout() === "60"
       ? [
           [{ label: "Esc", width: 1, code: "Escape" }, ...(mainRows[1] || []).slice(1)],
           ...mainRows.slice(2),
@@ -280,11 +292,11 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
   const mainHeight = (): number => displayMainRows().length * (keySize() + keyGap());
 
   const secondaryRenderKeys = createMemo<RenderKey[]>(() =>
-    variant() === "full" ? processRows(functionRows, 0, mainHeight() + sectionGap()) : [],
+    layout() === "full" ? processRows(functionRows, 0, mainHeight() + sectionGap()) : [],
   );
 
   const numpadRenderKeys = createMemo<RenderKey[]>(() => {
-    if (variant() !== "full") return [];
+    if (layout() !== "full") return [];
     const result: RenderKey[] = [];
     const secondaryY = mainHeight() + sectionGap();
     const numpadX = 3 * keySize() + 3 * keyGap() + sectionGap();
@@ -311,7 +323,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
 
   const totalWidth = createMemo(() => {
     let width = 15 * keySize() + 14 * keyGap();
-    if (variant() === "full") {
+    if (layout() === "full") {
       const numpadX = 3 * keySize() + 3 * keyGap() + sectionGap();
       width = Math.max(width, numpadX + 4 * keySize() + 3 * keyGap());
     }
@@ -319,7 +331,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
   });
 
   const finalHeight = createMemo(() => {
-    if (variant() === "full") {
+    if (layout() === "full") {
       const secondaryY = mainHeight() + sectionGap();
       return secondaryY + 6 * keySize() + 5 * keyGap();
     }
@@ -332,11 +344,11 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
     ...numpadRenderKeys(),
   ]);
 
-  const { classes } = RLKeyboardTheme.setup(props);
+  const { Tag, classes, rest, theme } = RLKeyboardTheme.setup(props, { omit: OMIT_KEYS });
 
   return (
-    <div class={classes().root}>
-      <div class={classes().container}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
+      <div class={classes().container} data-slot="container">
         <svg
           viewBox={`-16 -16 ${totalWidth() + 32} ${finalHeight() + 64}`}
           class={classes().svg}
@@ -412,6 +424,6 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
           </For>
         </div>
       </Show>
-    </div>
+    </Tag>
   );
 };

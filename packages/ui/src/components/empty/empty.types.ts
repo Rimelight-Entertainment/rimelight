@@ -1,78 +1,104 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLAvatarProps } from "../avatar/avatar.types";
+import type { RLButtonProps } from "../button/button.types";
+import type { RLEmptyTheme } from "./empty.theme";
 
-export interface RLEmptyProps {
+/**
+ * Action rendered as a button in the empty state. Extends the button props.
+ */
+export type RLEmptyAction = Omit<RLButtonProps, "children" | "label" | "leadingIcon" | "size"> & {
   /**
-   * Element or tag to render as (default: "div")
+   * Button text.
    */
-  as?: string;
+  label: string;
+
   /**
-   * Icon displayed above the title.
+   * Icon name rendered before the label.
+   * @default undefined
    */
   icon?: string;
+};
+
+/**
+ * Empty state props. `@status stable`.
+ */
+export type RLEmptyProps = InferThemeProps<typeof RLEmptyTheme> & {
   /**
-   * Avatar properties object
+   * Icon displayed above the title.
+   * @default undefined
    */
-  avatar?: Record<string, any>;
+  icon?: string;
+
   /**
-   * When true, the loading icon will be displayed.
+   * Avatar props rendered above the title when no icon is set.
+   * @default undefined
    */
-  loading?: boolean;
+  avatar?: RLAvatarProps;
+
   /**
-   * The icon when the loading prop is true (default: "i-lucide-loader-circle")
+   * Icon shown while `loading` is true.
+   * @default "i-lucide-loader-circle"
    */
   loadingIcon?: string;
+
   /**
-   * Title text
+   * Title text. Use `titleSlot` for JSX.
+   * @default undefined
    */
   title?: string;
+
   /**
-   * Description text
+   * Description text. Use `descriptionSlot` for JSX.
+   * @default undefined
    */
   description?: string;
+
   /**
-   * Display a list of Button actions in the body.
+   * Buttons rendered in the actions area.
+   * @default undefined
    */
-  actions?: Array<{
-    label: string;
-    icon?: string;
-    color?: string;
-    variant?: string;
-    href?: string;
-    class?: string;
-    [key: string]: any;
-  }>;
+  actions?: RLEmptyAction[];
+
   /**
-   * Variant styling: outline (default), solid, soft, subtle, naked
+   * Replaces the header.
+   * @default undefined
    */
-  variant?: "outline" | "solid" | "soft" | "subtle" | "naked";
-  /**
-   * Size variant: md (default), xs, sm, lg, xl
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /**
-   * Slot-specific CSS class overrides
-   */
-  ui?: {
-    root?: string;
-    header?: string;
-    avatar?: string;
-    title?: string;
-    description?: string;
-    body?: string;
-    actions?: string;
-    footer?: string;
-  };
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
   headerSlot?: JSX.Element;
+
+  /**
+   * Replaces the leading icon or avatar.
+   * @default undefined
+   */
   leadingSlot?: JSX.Element;
+
+  /**
+   * Replaces the title text.
+   * @default undefined
+   */
   titleSlot?: JSX.Element;
+
+  /**
+   * Replaces the description text.
+   * @default undefined
+   */
   descriptionSlot?: JSX.Element;
+
+  /**
+   * Replaces the body (children).
+   * @default undefined
+   */
   bodySlot?: JSX.Element;
+
+  /**
+   * Replaces the actions area.
+   * @default undefined
+   */
   actionsSlot?: JSX.Element;
+
+  /**
+   * Footer content.
+   * @default undefined
+   */
   footerSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

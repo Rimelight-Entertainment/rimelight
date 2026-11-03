@@ -1,139 +1,103 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
+import type { ClassValue, SlotRenderer } from "../../types";
+import type { InferThemeProps, InferThemeUI } from "../../resolver";
+import type { RLBreadcrumbTheme } from "./breadcrumb.theme";
 import type { RLAvatarProps } from "../avatar/avatar.types";
-import type { Theme, ThemeColor } from "../../types";
+
+export type BreadcrumbUI = InferThemeUI<typeof RLBreadcrumbTheme>;
 
 export interface BreadcrumbItem {
+  /**
+   * Visible label. Read from `labelKey` when that prop is set.
+   */
   label?: string | undefined;
+  /**
+   * Icon name rendered before the label.
+   */
   icon?: string | undefined;
+  /**
+   * Avatar rendered before the label. A string is used as the avatar `src`.
+   */
   avatar?: RLAvatarProps | string | undefined;
-  slot?: string | undefined;
-  class?: any;
-  ui?:
-    | {
-        item?: any;
-        link?: any;
-        linkLeadingIcon?: any;
-        linkLeadingAvatar?: any;
-        linkLeadingAvatarSize?: any;
-        linkLabel?: any;
-        separator?: any;
-        separatorIcon?: any;
-      }
-    | undefined;
-  leadingIcon?: string | undefined;
-  trailingIcon?: string | undefined;
+  /**
+   * Extra classes applied to this item's link.
+   */
+  class?: ClassValue;
+  /**
+   * Per-item slot class overrides.
+   */
+  ui?: BreadcrumbUI | undefined;
+  /**
+   * Link target. Items without `href` render as plain text.
+   */
   href?: string | undefined;
+  /**
+   * Opens the link as external (adds the link attributes resolved by `resolveLinkAttrs`).
+   * @default false
+   */
   external?: boolean | undefined;
-  externalIcon?: string | undefined;
-  noExternalIcon?: boolean | undefined;
+  /**
+   * Link `target` attribute.
+   */
   target?: string | undefined;
+  /**
+   * Link `rel` attribute. `null` removes it.
+   */
   rel?: string | null | undefined;
+  /**
+   * Marks the item as the current page. Defaults to the last item.
+   */
   active?: boolean | undefined;
+  /**
+   * Disables the item link.
+   * @default false
+   */
   disabled?: boolean | undefined;
-  raw?: boolean | undefined;
-  ariaLabel?: string | undefined;
-  ariaCurrentValue?:
-    | "page"
-    | "step"
-    | "location"
-    | "date"
-    | "time"
-    | "true"
-    | "false"
-    | boolean
-    | undefined;
-  theme?: Theme | undefined;
-  children?: BreadcrumbItem[] | undefined;
-  [key: string]: unknown;
+  /**
+   * Accessible name of the link.
+   */
+  "aria-label"?: string | undefined;
 }
 
-export interface RLBreadcrumbProps<T = BreadcrumbItem> {
+export type RLBreadcrumbProps<T extends object = BreadcrumbItem> = InferThemeProps<
+  typeof RLBreadcrumbTheme
+> & {
   /**
-   * The element or component this component should render as.
-   * @default 'nav'
-   */
-  as?: ValidComponent;
-
-  /**
-   * Array of breadcrumb items to render.
+   * Array of breadcrumb items to render. When omitted, `children` render in the list.
    */
   items?: T[] | undefined;
-
   /**
-   * The icon to use as a separator.
-   * @default 'chevronRight'
+   * Icon name used as the separator between items.
+   * @default 'chevron-right'
    */
-  separatorIcon?: any;
-
+  separatorIcon?: string | undefined;
   /**
-   * Color of the active breadcrumb item.
-   * @default 'primary'
-   */
-  color?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "error"
-    | "neutral"
-    | ThemeColor
-    | (string & {})
-    | undefined;
-
-  /**
-   * The key used to get the label from the item.
+   * Property of each item read as its label.
    * @default 'label'
    */
   labelKey?: string | undefined;
-
   /**
-   * Maximum number of items to show. Middle items beyond this cap are collapsed into an overflow indicator.
+   * Maximum number of items to show. Middle items beyond this cap collapse into an overflow indicator.
+   * @default undefined (no collapsing)
    */
   maxVisible?: number | undefined;
-
   /**
-   * Approximate width in pixels of each breadcrumb item (text + separator).
-   * @default 120
+   * Custom renderer for a whole item.
    */
-  estimatedItemWidth?: number | undefined;
-
+  itemSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
   /**
-   * Slot-specific CSS class overrides.
+   * Custom content rendered before an item's label.
    */
-  ui?:
-    | {
-        root?: any;
-        list?: any;
-        item?: any;
-        link?: any;
-        linkLeadingIcon?: any;
-        linkLeadingAvatar?: any;
-        linkLeadingAvatarSize?: any;
-        linkLabel?: any;
-        separator?: any;
-        separatorIcon?: any;
-        overflow?: any;
-        overflowEllipsis?: any;
-        overflowCount?: any;
-        [key: string]: any;
-      }
-    | undefined;
-
+  itemLeadingSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Custom content replacing an item's label.
    */
-  class?: any;
-
-  children?: JSX.Element;
-  itemSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  itemLeadingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  itemLabelSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  itemTrailingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  /** Separator element, or a render function receiving `{ item, index }`. */
-  separatorSlot?:
-    | JSX.Element
-    | ((props: { item?: T | undefined; index?: number | undefined }) => JSX.Element);
-  [key: string]: unknown;
-}
+  itemLabelSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
+  /**
+   * Custom content rendered after an item's label.
+   */
+  itemTrailingSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
+  /**
+   * Separator element, or a render function receiving `{ item, index }`.
+   */
+  separatorSlot?: SlotRenderer<{ item?: T | undefined; index?: number | undefined }>;
+};

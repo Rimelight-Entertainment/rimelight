@@ -3,13 +3,21 @@ import { RLPaginationTheme } from "./pagination.theme";
 import { createMemo, For, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
+import { createControllable } from "../../controllable";
 
-const OMIT_KEYS = ["currentPage", "page", "totalPages", "baseUrl", "onPageChange"] as const;
+const OMIT_KEYS = ["page", "defaultPage", "totalPages", "onPageChange"] as const;
 
 export const RLPagination: Component<RLPaginationProps> = (props) => {
-  const { classes, rest } = RLPaginationTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, theme } = RLPaginationTheme.setup(props, {
+    as: "nav",
+    omit: OMIT_KEYS,
+  });
 
-  const currentPage = () => props.page ?? props.currentPage ?? 1;
+  const [currentPage, setCurrentPage] = createControllable(
+    () => props.page,
+    props.defaultPage ?? 1,
+    props.onPageChange,
+  );
   const totalPages = () => props.totalPages ?? 1;
 
   const pageNumbers = createMemo<(number | "ellipsis")[]>(() => {
@@ -36,23 +44,22 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
   const itemLinkClasses = (isActive: boolean) => RLPaginationTheme({ active: isActive }).link;
 
   return (
-    <nav
+    <Tag
       class={classes().root}
-      data-slot="pagination-root"
+      data-slot="root"
+      data-theme={theme()}
       aria-label={uiT("pagination.label")}
       {...rest}
     >
       <ul class={classes().list} data-slot="list">
-        <li class={classes().item}>
+        <li class={classes().item} data-slot="item">
           <button
             type="button"
             class={`${classes().link} ${currentPage() === 1 ? "pointer-events-none opacity-50" : ""}`}
             aria-label={uiT("pagination.previous")}
             aria-disabled={currentPage() === 1 ? "true" : "false"}
             disabled={currentPage() === 1}
-            onClick={() => {
-              props.onPageChange?.(currentPage() - 1);
-            }}
+            onClick={() => setCurrentPage(currentPage() - 1)}
           >
             <RLIcon name="chevron-left" size="sm" aria-hidden="true" />
           </button>
@@ -60,9 +67,9 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
 
         <For each={pageNumbers()}>
           {(p) => (
-            <li class={classes().item}>
+            <li class={classes().item} data-slot="item">
               {p === "ellipsis" ? (
-                <span class={classes().ellipsis} aria-hidden="true">
+                <span class={classes().ellipsis} data-slot="ellipsis" aria-hidden="true">
                   &hellip;
                 </span>
               ) : (
@@ -70,9 +77,7 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
                   type="button"
                   class={itemLinkClasses(p === currentPage())}
                   aria-current={p === currentPage() ? "page" : undefined}
-                  onClick={() => {
-                    if (typeof p === "number") props.onPageChange?.(p);
-                  }}
+                  onClick={() => setCurrentPage(p)}
                 >
                   {p}
                 </button>
@@ -81,21 +86,19 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
           )}
         </For>
 
-        <li class={classes().item}>
+        <li class={classes().item} data-slot="item">
           <button
             type="button"
             class={`${classes().link} ${currentPage() === totalPages() ? "pointer-events-none opacity-50" : ""}`}
             aria-label={uiT("pagination.next")}
             aria-disabled={currentPage() === totalPages() ? "true" : "false"}
             disabled={currentPage() === totalPages()}
-            onClick={() => {
-              props.onPageChange?.(currentPage() + 1);
-            }}
+            onClick={() => setCurrentPage(currentPage() + 1)}
           >
             <RLIcon name="chevron-right" size="sm" aria-hidden="true" />
           </button>
         </li>
       </ul>
-    </nav>
+    </Tag>
   );
 };

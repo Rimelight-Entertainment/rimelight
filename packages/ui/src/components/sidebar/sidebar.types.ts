@@ -1,15 +1,26 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { RLBadgeProps } from "../badge/badge.types";
+import type { RLSidebarTheme } from "./sidebar.theme";
+
+/**
+ * Badge shown beside a sidebar item. Shape follows `RLBadgeProps`: `label` is rendered as the
+ * badge text; `color` and `variant` pass through to `RLBadge`.
+ */
+export type SidebarBadge = Pick<RLBadgeProps, "color" | "variant"> & {
+  /**
+   * Badge text, rendered as the `RLBadge` `label`.
+   */
+  label: string;
+};
 
 export interface SidebarItem {
   label: string;
   href?: string | undefined;
   icon?: string | undefined;
-  badge?: string | RLBadgeProps | undefined;
+  badge?: string | SidebarBadge | undefined;
   active?: boolean | undefined;
   children?: SidebarItem[] | undefined;
-  items?: SidebarItem[] | undefined;
-  collapsed?: boolean | undefined;
 }
 
 export interface SidebarScope {
@@ -18,42 +29,23 @@ export interface SidebarScope {
   href?: string | undefined;
   icon?: string | undefined;
   items?: SidebarItem[] | undefined;
-  collapsed?: boolean | undefined;
 }
 
-export interface RLSidebarProps {
-  t?: (key: string) => string;
-  _depth?: number;
+export type RLSidebarProps = InferThemeProps<typeof RLSidebarTheme> & {
   /**
-   * The navigation links array.
+   * The navigation items. Rendered when no children are passed. @default []
    */
-  items?: SidebarItem[];
+  items?: SidebarItem[] | undefined;
   /**
-   * Side of the page.
+   * Header logo text, shown when no `headerSlot` is given. @default undefined
    */
-  side?: "left" | "right";
+  logo?: string | undefined;
   /**
-   * Collapsible mode.
+   * Custom header content. @default undefined
    */
-  collapsible?: "icon" | "offcanvas" | "none";
-  /**
-   * The visual style variant of the sidebar.
-   */
-  variant?: "sidebar" | "floating" | "inset";
-  /**
-   * Header logo or text.
-   */
-  logo?: string;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
   headerSlot?: JSX.Element;
+  /**
+   * Custom footer content. @default undefined
+   */
   footerSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

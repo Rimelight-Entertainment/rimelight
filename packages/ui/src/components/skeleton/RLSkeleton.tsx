@@ -7,10 +7,12 @@ import { createResizeObserver, extractSkeletonRects, type SkeletonRect } from ".
 const OMIT_KEYS = ["loading", "fallbackBorderRadius"] as const;
 
 export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
-  const { classes, rest } = RLSkeletonTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLSkeletonTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const isLoading = () => props.loading ?? true;
-  const hasChildren = () => props.children !== undefined && props.children !== null;
+  const hasChildren = () => children() !== undefined && children() !== null;
 
   const [rects, setRects] = createSignal<SkeletonRect[]>([]);
   let measureRef: HTMLDivElement | undefined = undefined;
@@ -54,44 +56,47 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
   );
 
   return (
-    <Show when={hasChildren()} fallback={<div class={classes().root} data-slot="root" {...rest} />}>
-      <Show when={isLoading()} fallback={<>{props.children}</>}>
-        <div class={classes().container} data-slot="container" {...rest}>
-          {/* Render actual child structure with invisible text / hidden media */}
-          <div
-            ref={(el) => {
-              measureRef = el;
-            }}
-            class={classes().measure}
-            data-slot="measure"
-            aria-hidden="true"
-          >
-            {props.children}
-          </div>
+    <Tag
+      class={hasChildren() ? classes().container : classes().root}
+      data-slot="root"
+      data-theme={theme()}
+      {...rest}
+    >
+      <Show when={hasChildren() && isLoading()} fallback={children()}>
+        {/* Render actual child structure with invisible text / hidden media */}
+        <div
+          ref={(el) => {
+            measureRef = el;
+          }}
+          class={classes().measure}
+          data-slot="measure"
+          aria-hidden="true"
+        >
+          {children()}
+        </div>
 
-          {/* Shimmer overlay based on extracted child geometry */}
-          <div class={classes().overlay} data-slot="overlay">
-            <For each={rects()}>
-              {(rect) => (
-                <div
-                  class={classes().shimmer}
-                  data-slot="shimmer"
-                  style={{
-                    position: "absolute",
-                    left: `${rect.x}px`,
-                    top: `${rect.y}px`,
-                    width: `${rect.width}px`,
-                    height: `${rect.height}px`,
-                    "border-radius": resolveBorderRadius(rect),
-                  }}
-                >
-                  <div class={classes().highlight} data-slot="highlight" />
-                </div>
-              )}
-            </For>
-          </div>
+        {/* Shimmer overlay based on extracted child geometry */}
+        <div class={classes().overlay} data-slot="overlay">
+          <For each={rects()}>
+            {(rect) => (
+              <div
+                class={classes().shimmer}
+                data-slot="shimmer"
+                style={{
+                  position: "absolute",
+                  left: `${rect.x}px`,
+                  top: `${rect.y}px`,
+                  width: `${rect.width}px`,
+                  height: `${rect.height}px`,
+                  "border-radius": resolveBorderRadius(rect),
+                }}
+              >
+                <div class={classes().highlight} data-slot="highlight" />
+              </div>
+            )}
+          </For>
         </div>
       </Show>
-    </Show>
+    </Tag>
   );
 };

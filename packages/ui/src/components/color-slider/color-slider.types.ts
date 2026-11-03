@@ -1,24 +1,59 @@
-import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLColorSliderTheme } from "./color-slider.theme";
 
-export interface RLColorSliderProps {
+export type RLColorSliderProps = InferThemeProps<typeof RLColorSliderTheme> & {
+  /**
+   * Channel the slider controls. Required.
+   */
   channel: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness";
+  /**
+   * Color space the channel is expressed in.
+   * @default "hsl"
+   */
   colorSpace?: "hsl" | "rgb" | "hsb";
-  defaultValue?: string;
-  dir?: "ltr" | "rtl";
-  disabled?: boolean;
-  inverted?: boolean;
-  name?: string;
-  orientation?: "vertical" | "horizontal";
-  required?: boolean;
-  step?: number;
-  color?: ThemeColor;
-  theme?: Theme;
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
+  /**
+   * Controlled hex color. Leave undefined for uncontrolled use.
+   * @default undefined
+   */
   value?: string;
+  /**
+   * Initial hex color when uncontrolled.
+   * @default "#000000"
+   */
+  defaultValue?: string;
+  /**
+   * Disables pointer and keyboard interaction.
+   * @default false
+   */
+  disabled?: boolean;
+  /**
+   * Reverses the direction of the channel along the track.
+   * @default false
+   */
+  inverted?: boolean;
+  /**
+   * Form name of the hidden input holding the hex value. No input is rendered when omitted.
+   * @default undefined
+   */
+  name?: string;
+  /**
+   * Track orientation.
+   * @default "horizontal"
+   */
+  orientation?: "vertical" | "horizontal";
+  /**
+   * Keyboard and pointer step size in channel units.
+   * @default 1
+   */
+  step?: number;
+  /**
+   * Called with the new hex color on every change.
+   * @default undefined
+   */
   onValueChange?: (val: string) => void;
-  onChangeEnd?: (val: string) => void;
-  [key: string]: unknown;
-}
+  /**
+   * Called with the final hex color when a pointer drag or key press ends.
+   * @default undefined
+   */
+  onValueChangeEnd?: (val: string) => void;
+};

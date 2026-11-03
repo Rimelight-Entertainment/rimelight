@@ -2,12 +2,15 @@ import type { Component } from "solid-js";
 import type { RLListboxProps } from "./listbox.types";
 import { RLListboxTheme } from "./listbox.theme";
 
+/**
+ * @status stub
+ */
 export const RLListbox: Component<RLListboxProps> = (props) => {
-  const { classes, rest } = RLListboxTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLListboxTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

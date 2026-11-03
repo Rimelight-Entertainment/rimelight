@@ -1,44 +1,17 @@
+import type { Component } from "solid-js";
+import { createMemo } from "solid-js";
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
-import { createMemo, type Component } from "solid-js";
 import { getUIConfig } from "../../runtime";
 import { localizeHref } from "../link/helpers";
 
-const OMIT_KEYS = [
-  "variant",
-  "mode",
-  "href",
-  "alt",
-  "src",
-  "icon",
-  "text",
-  "fallback",
-  "initials",
-  "size",
-  "color",
-  "chip",
-  "badge",
-  "badgeColor",
-  "badgePosition",
-  "loading",
-  "referrerpolicy",
-  "crossorigin",
-  "decoding",
-  "height",
-  "width",
-  "sizes",
-  "srcset",
-  "usemap",
-  "title",
-  "subtitle",
-  "label",
-] as const;
+const OMIT_KEYS = ["variant", "mode", "src", "alt", "href"] as const;
 
 export const RLLogo: Component<RLLogoProps> = (props) => {
-  const { classes, rest } = RLLogoTheme.setup(props, { omit: OMIT_KEYS });
-
-  const variant = () => props.variant || "logomark";
-  const href = () => localizeHref(props.href ?? "/");
+  const { Tag, classes, rest, children, theme } = RLLogoTheme.setup(props, {
+    as: "a",
+    omit: OMIT_KEYS,
+  });
 
   const logoInfo = createMemo(() => {
     if (props.src) {
@@ -46,7 +19,7 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
     }
 
     const cfgLogos = getUIConfig()?.logos;
-    const logoVariant = cfgLogos?.[variant()];
+    const logoVariant = cfgLogos?.[props.variant || "logomark"];
 
     let logoSrc: string | null = null;
     let darkSrc: string | null = null;
@@ -71,14 +44,10 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
     return { logoSrc, darkSrc, lightSrc };
   });
 
-  const startsWithUrlPrefix = () => {
-    const s = logoInfo().logoSrc;
-    return Boolean(s && (s.startsWith("http") || s.startsWith("/") || s.startsWith(".")));
-  };
-
   const isIcon = () => {
     const s = logoInfo().logoSrc;
-    return Boolean(s && !startsWithUrlPrefix() && (s.includes(":") || s.startsWith("i-")));
+    const isUrl = Boolean(s && (s.startsWith("http") || s.startsWith("/") || s.startsWith(".")));
+    return Boolean(s && !isUrl && (s.includes(":") || s.startsWith("i-")));
   };
 
   const hasAutoMode = () => {
@@ -88,7 +57,7 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
 
   const renderContent = () => {
     const { logoSrc, darkSrc, lightSrc } = logoInfo();
-    if (!logoSrc) return props.children;
+    if (!logoSrc) return children();
     if (isIcon()) {
       return <span class={`${logoSrc} size-full block shrink-0`} aria-hidden="true" />;
     }
@@ -113,29 +82,16 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
     );
   };
 
-  const rootProps = {
-    get class() {
-      return classes().root;
-    },
-    get "aria-label"() {
-      return props.alt || variant();
-    },
-    "data-slot": "root",
-    get "data-theme"() {
-      return props.theme;
-    },
-    ...rest,
-  };
-
-  const renderRoot = () => {
-    if (props.as === "span") return <span {...rootProps}>{renderContent()}</span>;
-    if (props.as === "div") return <div {...rootProps}>{renderContent()}</div>;
-    return (
-      <a {...rootProps} href={href()}>
-        {renderContent()}
-      </a>
-    );
-  };
-
-  return renderRoot();
+  return (
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      class={classes().root}
+      aria-label={props.alt || props.variant || "logomark"}
+      href={localizeHref(props.href ?? "/")}
+      {...rest}
+    >
+      {renderContent()}
+    </Tag>
+  );
 };

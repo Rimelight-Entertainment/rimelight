@@ -108,8 +108,8 @@ export const BannerSandbox = (): JSX.Element => {
         icon={hasIcon() ? "star" : undefined}
         title={title()}
         contain={contain()}
-        close={isClosable()}
-        to={isLink() ? "https://rimelight.com" : undefined}
+        dismissible={isClosable()}
+        href={isLink() ? "https://rimelight.com" : undefined}
         target={isLink() ? "_blank" : undefined}
         actions={
           hasActions()
@@ -150,7 +150,7 @@ export const bannerAudit: ComponentAuditDefinition = {
                   color={c}
                   icon="info"
                   title={`This is an important ${c} announcement banner.`}
-                  close
+                  dismissible
                 />
               </span>
             )}
@@ -187,11 +187,11 @@ export const bannerAudit: ComponentAuditDefinition = {
                 trailingIcon: "arrow-right",
               },
             ]}
-            close
+            dismissible
           />
           <RLBanner
             color="info"
-            leftSlot={
+            leadingSlot={
               <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">
                 NEW
               </span>
@@ -205,7 +205,7 @@ export const bannerAudit: ComponentAuditDefinition = {
                 size: "xs",
               },
             ]}
-            close
+            dismissible
           />
         </div>
       ),
@@ -220,7 +220,7 @@ export const bannerAudit: ComponentAuditDefinition = {
       render: () => (
         <RLBanner
           color="success"
-          leadingSlot={<span aria-hidden="true">🎉</span>}
+          iconSlot={<span aria-hidden="true">🎉</span>}
           titleSlot={
             <span>
               Custom <strong>title</strong> slot
@@ -237,10 +237,10 @@ export const bannerAudit: ComponentAuditDefinition = {
         return t("app.text.interactive-link-mode");
       },
       description:
-        "`to` / `href` renders a full-surface overlay link labelled by the title, so actions and the close button stay valid, independently focusable controls.",
+        "`href` renders a full-surface overlay link labelled by the title, so actions and the close button stay valid, independently focusable controls.",
       render: () => (
         <RLBanner
-          to="https://rimelight.com"
+          href="https://rimelight.com"
           target="_blank"
           color="primary"
           icon="star"
@@ -253,7 +253,7 @@ export const bannerAudit: ComponentAuditDefinition = {
               variant: "outline",
             },
           ]}
-          close
+          dismissible
         />
       ),
     },
@@ -271,7 +271,7 @@ export const bannerAudit: ComponentAuditDefinition = {
           color="warning"
           icon="alert-circle"
           closeIcon="x"
-          close
+          dismissible
         />
       ),
     },
@@ -305,7 +305,7 @@ export const bannerAudit: ComponentAuditDefinition = {
       criterion: "Nuxt UI v4 API parity (Banner)",
       status: "pass",
       notes:
-        "as, id, icon, title, actions (neutral/xs defaults), color, close (md/neutral/ghost defaults), closeIcon, to/href, target, rel, ui, class, onClose. Differences: `to` accepts strings only; slots are props (`leading`, `titleSlot`, `actionsSlot`, `closeSlot`).",
+        "as, id, icon, title, actions (neutral/xs defaults), color, dismissible (md/neutral/ghost defaults), closeIcon, href, target, rel, ui, class, onDismiss. Differences: `href` accepts strings only; slots are props (`leadingSlot`, `titleSlot`, `actionsSlot`, `closeSlot`).",
     },
     {
       criterion:

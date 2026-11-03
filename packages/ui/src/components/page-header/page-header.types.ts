@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLPageHeaderTheme } from "./page-header.theme";
 
-export interface RLPageHeaderProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for the page header region.
+ *
+ * @status stub
+ */
+export type RLPageHeaderProps = InferThemeProps<typeof RLPageHeaderTheme>;

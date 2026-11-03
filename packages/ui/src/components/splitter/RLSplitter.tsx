@@ -12,7 +12,6 @@ import type {
 import { RLSplitterTheme } from "./splitter.theme";
 import { cx } from "../../resolver";
 import {
-  children,
   createEffect,
   createMemo,
   createSignal,
@@ -27,33 +26,25 @@ import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "orientation",
-  "direction",
   "value",
   "defaultValue",
-  "defaultSizes",
   "disabled",
   "keyboardDelta",
   "panels",
   "handles",
   "action",
   "intersection",
-  "handle",
   "handleIcon",
   "translations",
   "onValueChange",
-  "onChange",
   "onResizeStart",
   "onResizeEnd",
   "onHandleKeyDown",
-  "classes",
-  "style",
-  "styles",
   "id",
 ] as const;
 
 const PANEL_ITEM_KEYS = new Set([
   "id",
-  "content",
   "children",
   "defaultSize",
   "min",
@@ -199,65 +190,51 @@ interface PanelBounds {
 }
 
 export const RLSplitter: Component<RLSplitterProps> = (props) => {
-  const effectiveOrientation = (): SplitterOrientation =>
-    props.orientation ?? props.direction ?? "horizontal";
+  const effectiveOrientation = (): SplitterOrientation => props.orientation ?? "horizontal";
   const isHorizontal = () => effectiveOrientation() === "horizontal";
   const isDisabled = () => Boolean(props.disabled);
 
-  const mergedUi = createMemo(() => {
-    if (!props.classes) return props.ui;
-    return { ...props.classes, ...props.ui };
-  });
-
-  const { Tag, classes, rest, id, slots } = RLSplitterTheme.setup(props, {
+  const { Tag, classes, rest, id, slots, children, theme } = RLSplitterTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["handleSlot"] as const,
     idPrefix: "rl-splitter",
     variants: () => ({
       orientation: effectiveOrientation(),
-      direction: effectiveOrientation(),
       disabled: isDisabled(),
-      ui: mergedUi(),
     }),
   });
 
-  const childContent = children(() => props.children);
-
   const normalizedPanels = createMemo<RLSplitterPanelItem[]>(() => {
-    const kids = childContent.toArray();
+    const kids = [children()]
+      .flat()
+      .filter((kid) => kid !== undefined && kid !== null && kid !== false);
     const rawPanels = props.panels;
     if (rawPanels && rawPanels.length > 0) {
       return rawPanels.map((entry, idx) => {
         if (isPanelItem(entry)) {
           return {
             ...entry,
-            content: entry.content ?? entry.children ?? kids[idx],
+            children: entry.children ?? kids[idx],
           };
         }
         return {
-          content: entry,
+          children: entry,
         };
       });
     }
     if (kids.length > 0) {
-      return kids.map((kid) => ({ content: kid }));
+      return kids.map((kid) => ({ children: kid }));
     }
-    const count =
-      props.value?.length ?? props.defaultValue?.length ?? props.defaultSizes?.length ?? 2;
+    const count = props.value?.length ?? props.defaultValue?.length ?? 2;
     return Array.from({ length: Math.max(1, count) }, () => ({}));
   });
 
   let rootRef: HTMLDivElement | undefined;
   const [measuredSize, setMeasuredSize] = createSignal(0);
 
-  const fallbackTotalPx = createMemo(() => {
-    const raw = props.value ?? props.defaultValue ?? props.defaultSizes;
-    const isLegacy =
-      props.value === undefined &&
-      props.defaultValue === undefined &&
-      props.defaultSizes !== undefined;
-    return inferFallbackTotalPx(raw, isLegacy);
-  });
+  const fallbackTotalPx = createMemo(() =>
+    inferFallbackTotalPx(props.value ?? props.defaultValue, false),
+  );
 
   const getTotalPx = (): number => {
     const domSize = rootRef ? (isHorizontal() ? rootRef.clientWidth : rootRef.clientHeight) : 0;
@@ -436,12 +413,8 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
   const computeInitialRatios = (): number[] => {
     const total = fallbackTotalPx();
-    const isLegacy =
-      props.value === undefined &&
-      props.defaultValue === undefined &&
-      props.defaultSizes !== undefined;
-    const raw = props.value ?? props.defaultValue ?? props.defaultSizes;
-    const px = normalizeSizesToTotal(raw, isLegacy, total);
+    const raw = props.value ?? props.defaultValue;
+    const px = normalizeSizesToTotal(raw, false, total);
     return px.map((v) => (total > 0 ? (v / total) * 100 : 100 / Math.max(1, px.length)));
   };
 
@@ -481,7 +454,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     }
     const rounded = nextPx.map((v) => Math.round(v));
     props.onValueChange?.(rounded);
-    props.onChange?.(rounded);
   };
 
   const setCollapsedState = (panelIdx: number, collapsed: boolean, reportedPx: number) => {
@@ -929,7 +901,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
   const getHandleAriaLabel = (i: number, collapsed: boolean): string => {
     const cfg = getHandleConfig(i);
-    if (cfg.ariaLabel) return cfg.ariaLabel;
+    if (cfg["aria-label"]) return cfg["aria-label"];
     if (getHandleAction(i) === "collapse") {
       if (collapsed && props.translations?.expand) return props.translations.expand;
       if (!collapsed && props.translations?.collapse) return props.translations.collapse;
@@ -938,7 +910,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
   };
 
   const renderPanelContent = (panel: RLSplitterPanelItem, idx: number) => {
-    const raw = panel.content ?? panel.children;
+    const raw = panel.children;
     if (typeof raw === "function") {
       const state: SplitterPanelState = {
         size: Math.round(currentSizesPx()[idx] ?? 0),
@@ -954,7 +926,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
   const renderHandleInner = (i: number, state: SplitterHandleState) => {
     const cfg = getHandleConfig(i);
-    const custom = cfg.children ?? cfg.content ?? slots.handleSlot();
+    const custom = cfg.children ?? slots.handleSlot();
     if (custom !== undefined) {
       return typeof custom === "function"
         ? (custom as (s: SplitterHandleState) => JSX.Element)(state)
@@ -975,7 +947,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
       ref={(el: HTMLDivElement) => (rootRef = el)}
       id={id()}
       class={classes().root}
-      style={mergeInlineStyles(props.styles?.root, props.style)}
       data-slot="root"
       data-resizable=""
       data-resizable-root=""
@@ -983,7 +954,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
       data-direction={effectiveOrientation()}
       data-disabled={isDisabled() ? "" : undefined}
       data-resizing={isResizing() ? "" : undefined}
-      data-theme={props.theme}
+      data-theme={theme()}
       {...rest}
     >
       <For each={normalizedPanels()}>
@@ -1050,7 +1021,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                   isHorizontal() ? `w-[${pct()}%]` : `h-[${pct()}%]`,
                   panel.class,
                 )}
-                style={mergeInlineStyles(panelSizeStyle(), props.styles?.panel, panel.style)}
+                style={mergeInlineStyles(panelSizeStyle(), panel.style)}
                 data-slot="panel"
                 data-resizable-panel={i()}
                 data-collapsed={collapsed() ? "" : undefined}
@@ -1072,7 +1043,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                     };
                   }}
                   class={cx(classes().handle, getHandleConfig(i()).class)}
-                  style={mergeInlineStyles(props.styles?.handle, getHandleConfig(i()).style)}
+                  style={getHandleConfig(i()).style}
                   data-slot="handle"
                   data-resizable-handle={i()}
                   data-orientation={effectiveOrientation()}
@@ -1112,7 +1083,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                       classes().intersection,
                       !handleIntersection() && "hidden pointer-events-none",
                     )}
-                    style={props.styles?.intersection}
                     data-slot="intersection"
                     data-resizable-handle-start-target=""
                     data-cross={crossActiveHandle() === i() ? "" : undefined}
@@ -1123,8 +1093,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
                   <div
                     class={classes().handleControl}
-                    style={props.styles?.handleControl}
-                    data-slot="handleControl"
+                    data-slot="handle-control"
                     data-active={handleActive() ? "" : undefined}
                     data-dragging={handleDragging() ? "" : undefined}
                     data-collapse={handleAction() === "collapse" ? "" : undefined}
@@ -1138,7 +1107,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                       classes().intersection,
                       !handleIntersection() && "hidden pointer-events-none",
                     )}
-                    style={props.styles?.intersection}
                     data-slot="intersection"
                     data-resizable-handle-end-target=""
                     data-cross={crossActiveHandle() === i() ? "" : undefined}

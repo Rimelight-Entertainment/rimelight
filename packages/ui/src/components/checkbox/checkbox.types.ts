@@ -1,9 +1,11 @@
 import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLCheckboxTheme } from "./checkbox.theme";
 
 export type RLCheckboxColor = ThemeColor;
-export type RLCheckboxVariant = "list" | "card";
+export type RLCheckboxLayout = "list" | "card";
 export type RLCheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type RLCheckboxIndicator = "start" | "end" | "hidden";
 
@@ -16,10 +18,16 @@ export interface RLCheckboxUiSlots {
   wrapper?: string | undefined;
   label?: string | undefined;
   description?: string | undefined;
-  [key: string]: any;
 }
 
-export interface RLCheckboxProps {
+export type RLCheckboxProps = Omit<
+  InferThemeProps<typeof RLCheckboxTheme>,
+  "checked" | "onChange" | "autofocus" | "ref"
+> & {
+  /**
+   * Ref to the native checkbox input element.
+   */
+  ref?: HTMLInputElement | ((el: HTMLInputElement) => void) | undefined;
   /**
    * The element or component this component should render as.
    * @default 'div'
@@ -43,10 +51,10 @@ export interface RLCheckboxProps {
   color?: RLCheckboxColor | undefined;
 
   /**
-   * Visual style variant.
+   * Layout preset of the checkbox container.
    * @default 'list'
    */
-  variant?: RLCheckboxVariant | undefined;
+  layout?: RLCheckboxLayout | undefined;
 
   /**
    * Size scale of the checkbox.
@@ -86,7 +94,7 @@ export interface RLCheckboxProps {
   /**
    * Additional CSS classes to apply to the root element.
    */
-  class?: any;
+  class?: string | undefined;
 
   /**
    * When `true`, prevents the user from interacting with the checkbox.
@@ -107,7 +115,7 @@ export interface RLCheckboxProps {
    * The value given as data when submitted with a `name`.
    * @default "on"
    */
-  value?: any;
+  value?: string | number | undefined;
 
   /**
    * Unique ID for the input element.
@@ -168,6 +176,4 @@ export interface RLCheckboxProps {
    * Custom child content (rendered inside label container).
    */
   children?: JSX.Element;
-
-  [key: string]: unknown;
-}
+};

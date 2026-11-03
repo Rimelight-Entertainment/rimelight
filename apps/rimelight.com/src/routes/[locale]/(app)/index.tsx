@@ -10,6 +10,13 @@ import type { RLButtonProps } from "@rimelight/ui/components/button/button.types
 import { content, type PublicEntry } from "@rimelight/cms/solid";
 import { RLPost } from "@rimelight/ui/components/post/RLPost.tsx";
 
+/** Cover image of a post: a media value (`{ src }`) or a plain URL. Anything else has none. */
+function coverImage(value: unknown): string | { src: string } | undefined {
+  if (typeof value === "string") return value;
+  if (typeof value !== "object" || value === null || !("src" in value)) return undefined;
+  return typeof value.src === "string" ? { src: value.src } : undefined;
+}
+
 export const HomePage: Component = () => {
   const activeLocale = () => getCurrentLocale();
 
@@ -60,7 +67,7 @@ export const HomePage: Component = () => {
   return (
     <>
       <RLPageSection
-        variant="hero"
+        layout="hero"
         reverse={true}
         title={t("page.home.section.hero.title")}
         description={t("page.home.section.hero.description")}
@@ -251,15 +258,15 @@ export const HomePage: Component = () => {
                         t.localize(post.description ?? {}) || post.properties?.["excerpt"] || ""
                       }
                       date={date ? new Date(date) : undefined}
-                      image={post.properties?.["cover"] as string | Record<string, any> | undefined}
+                      image={coverImage(post.properties?.["cover"])}
                       badge={
                         category
                           ? typeof category === "string"
                             ? category
-                            : t.localize(category as any)
+                            : t.localize(category)
                           : undefined
                       }
-                      to={getLocaleUrl(`/company/blog/${post.slug}/`)}
+                      href={getLocaleUrl(`/company/blog/${post.slug}/`)}
                       variant="ghost"
                     />
                   );
@@ -284,7 +291,7 @@ export const HomePage: Component = () => {
       />
 
       <RLPageSection
-        variant="cta"
+        layout="cta"
         ctaVariant="solid"
         title={t("page.home.section.cta.title")}
         description={t("page.home.section.cta.description")}

@@ -1,114 +1,96 @@
 import type { JSX } from "@solidjs/web";
-import type { Theme } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLLinkTheme } from "./link.theme";
 
-export interface RLLinkProps {
+/**
+ * Navigation link. Renders an `<a>`, adds external-link handling and a screen-reader hint.
+ */
+export type RLLinkProps = InferThemeProps<typeof RLLinkTheme> & {
   /**
-   * The text label displayed inside the link. Alternative to passing children via the default slot.
+   * The text label displayed inside the link. Alternative to passing children.
+   * @default undefined
    */
   label?: string | undefined;
+
   /**
    * Icon name displayed before the link label.
+   * @default undefined
    */
   leadingIcon?: string | undefined;
+
   /**
    * Icon name displayed after the link label. Replaces the external icon when set.
+   * @default undefined
    */
   trailingIcon?: string | undefined;
+
+  /**
+   * Custom JSX rendered before the label. Replaces `leadingIcon`.
+   * @default undefined
+   */
+  leadingSlot?: JSX.Element;
+
+  /**
+   * Custom JSX rendered after the label. Replaces `trailingIcon` and the external icon.
+   * @default undefined
+   */
+  trailingSlot?: JSX.Element;
+
   /**
    * The URL the link points to.
+   * @default undefined
    */
   href?: string | undefined;
+
   /**
    * Localize an internal `href` (one starting with `/`) for the current locale.
    * Pass a locale code to link to that locale instead, or `false` to leave the href as-is.
    * External, relative, API and file paths are never changed.
-   *
    * @default true
    */
   localize?: boolean | string | undefined;
+
   /**
    * Forces the link to be treated as an external link.
-   *
    * @default false
    */
   external?: boolean | undefined;
+
   /**
    * Custom external link icon name.
-   *
    * @default "external-link"
    */
   externalIcon?: string | undefined;
+
   /**
    * Suppress the automatic external link icon.
-   *
    * @default false
    */
   noExternalIcon?: boolean | undefined;
+
   /**
    * Where to open the linked URL. External links default to `"_blank"`.
-   *
    * @default undefined
    */
   target?: string | undefined;
+
   /**
-   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
-   * string to suppress the attribute entirely.
-   *
+   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to an
+   * empty string to suppress the attribute.
    * @default undefined
    */
   rel?: string | null | undefined;
+
   /**
-   * Applies active styling to the link.
-   *
-   * @default undefined
+   * Value of `aria-current` when the link is active.
+   * @default "page"
    */
-  active?: boolean | undefined;
-  /**
-   * Disables the link, preventing navigation and applying disabled styling.
-   *
-   * @default false
-   */
-  disabled?: boolean | undefined;
-  /**
-   * When true, only `class` is applied — all default theme styles are skipped.
-   *
-   * @default false
-   */
-  raw?: boolean | undefined;
+  current?: "page" | "step" | "location" | "date" | "time" | "true" | "false" | undefined;
+
   /**
    * Screen reader accessibility label. When omitted on external links, "(opens in a new tab)" is
    * appended automatically.
+   * @default undefined
    */
-  ariaLabel?: string | undefined;
-  /**
-   * The value of `aria-current` when the link is the active/current page.
-   *
-   * @default "page"
-   */
-  ariaCurrentValue?:
-    | "page"
-    | "step"
-    | "location"
-    | "date"
-    | "time"
-    | "true"
-    | "false"
-    | boolean
-    | undefined;
-  /**
-   * Force a color-scheme context on the component.
-   */
-  theme?: Theme | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  leadingSlot?: JSX.Element;
-  trailingSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  "aria-label"?: string | undefined;
+};

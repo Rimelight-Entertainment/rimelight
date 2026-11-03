@@ -1,8 +1,36 @@
-export interface RLLayoutGridProps {
+import type { InferThemeProps } from "../../resolver";
+import type { RLLayoutGridTheme } from "./layout-grid.theme";
+
+export type RLLayoutGridProps = InferThemeProps<typeof RLLayoutGridTheme> & {
+  /**
+   * Number of columns at the base breakpoint.
+   *
+   * @default 4
+   */
   cols?: number;
+  /**
+   * Number of columns at the sm breakpoint.
+   *
+   * @default 4
+   */
   smCols?: number;
+  /**
+   * Number of columns at the md breakpoint.
+   *
+   * @default 4
+   */
   mdCols?: number;
+  /**
+   * Number of columns at the lg breakpoint.
+   *
+   * @default 4
+   */
   lgCols?: number;
+  /**
+   * Number of columns at the xl breakpoint.
+   *
+   * @default 4
+   */
   xlCols?: number;
   smBreakpoint?: number;
   mdBreakpoint?: number;
@@ -25,7 +53,4 @@ export interface RLLayoutGridProps {
   zIndex?: number;
   shortcut?: string;
   devOnly?: boolean;
-  ui?: any;
-  class?: any;
-  [key: string]: unknown;
-}
+};

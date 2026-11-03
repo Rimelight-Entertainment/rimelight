@@ -1,35 +1,19 @@
-import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLProgressTheme } from "./progress.theme";
 
-export interface RLProgressProps {
+/**
+ * Displays the completion state of a task.
+ */
+export type RLProgressProps = InferThemeProps<typeof RLProgressTheme> & {
   /**
-   * Current value of progress (0 to max).
+   * Current value, between 0 and `max`.
+   * @default 0
    */
-  value?: number;
+  value?: number | undefined;
+
   /**
-   * The maximum boundary (default 100).
+   * Upper bound of the progress range.
+   * @default 100
    */
-  max?: number;
-  /**
-   * Color theme.
-   */
-  color?: ThemeColor;
-  /**
-   * The height size category.
-   */
-  size?: "sm" | "md" | "lg";
-  /**
-   * Theme mode override â€” pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+  max?: number | undefined;
+};

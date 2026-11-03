@@ -3,11 +3,11 @@ import type { RLChatPromptProps } from "./chat-prompt.types";
 import { RLChatPromptTheme } from "./chat-prompt.theme";
 
 export const RLChatPrompt: Component<RLChatPromptProps> = (props) => {
-  const { classes, rest } = RLChatPromptTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLChatPromptTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

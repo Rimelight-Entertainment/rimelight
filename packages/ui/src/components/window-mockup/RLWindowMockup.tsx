@@ -3,11 +3,11 @@ import type { RLWindowMockupProps } from "./window-mockup.types";
 import { RLWindowMockupTheme } from "./window-mockup.theme";
 
 export const RLWindowMockup: Component<RLWindowMockupProps> = (props) => {
-  const { classes, rest } = RLWindowMockupTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLWindowMockupTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

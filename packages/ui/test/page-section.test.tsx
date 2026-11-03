@@ -27,8 +27,8 @@ describe("RLPageSection", () => {
     expect(html).toContain("<h2");
   });
 
-  it("renders hero variant with h1", () => {
-    const html = renderToString(() => <RLPageSection variant="hero" title="Hero Title" />);
+  it("renders hero layout with h1", () => {
+    const html = renderToString(() => <RLPageSection layout="hero" title="Hero Title" />);
 
     expect(html).toContain("<h1");
     expect(html).toContain("Hero Title");

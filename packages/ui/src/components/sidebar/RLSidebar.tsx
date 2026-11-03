@@ -1,6 +1,7 @@
-import type { RLSidebarProps, SidebarItem } from "./sidebar.types";
-import { RLSidebarTheme } from "./sidebar.theme";
-import { For, Show, type Component } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { For, Show } from "solid-js";
+import type { RLSidebarProps, SidebarBadge, SidebarItem } from "./sidebar.types";
+import { RLSidebarTheme, type RLSidebarClasses } from "./sidebar.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
@@ -10,57 +11,39 @@ function hasActiveChild(item: SidebarItem): boolean {
   return (item.children ?? []).some((c) => hasActiveChild(c));
 }
 
-function normalizeBadge(badge: any) {
+function normalizeBadge(badge: SidebarItem["badge"]): Required<SidebarBadge> | null {
   if (!badge) return null;
   if (typeof badge === "string") {
-    return { text: badge, color: "primary" as const, variant: "soft" as const, class: "" };
-  }
-  let color = badge.color || "primary";
-  let badgeVariant = badge.variant || "soft";
-  if (badge.variant) {
-    const v = String(badge.variant).toLowerCase();
-    if (v === "tip" || v === "success") {
-      color = "success";
-      badgeVariant = "soft";
-    } else if (v === "caution" || v === "warning") {
-      color = "warning";
-      badgeVariant = "soft";
-    } else if (v === "error") {
-      color = "error";
-      badgeVariant = "soft";
-    } else if (v === "note" || v === "default") {
-      color = "primary";
-      badgeVariant = "soft";
-    }
+    return { label: badge, color: "primary", variant: "soft" };
   }
   return {
-    text: badge.text || badge.label || "",
-    color,
-    variant: badgeVariant as "solid" | "outline" | "soft" | "ghost",
-    class: badge.class || "",
+    label: badge.label,
+    color: badge.color ?? "primary",
+    variant: badge.variant ?? "soft",
   };
 }
 
-const RLSidebarItems: Component<{
+interface SidebarItemListProps {
   items: SidebarItem[];
-  t: (key: string) => string;
-  _depth: number;
-  themeClasses: any;
-}> = (props) => {
-  const indentClass = () => (props._depth === 0 ? "ml-6" : props._depth === 1 ? "ml-4" : "ml-3");
+  depth: number;
+  itemClasses: RLSidebarClasses;
+}
+
+const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {
+  const indentClass = () => (props.depth === 0 ? "ml-6" : props.depth === 1 ? "ml-4" : "ml-3");
 
   return (
-    <div class={props.themeClasses.itemsContainer}>
+    <div class={props.itemClasses.itemsContainer}>
       <For each={props.items}>
         {(item) => {
           const hasChildren = () => (item.children?.length ?? 0) > 0;
           const isActive = () => item.active || hasActiveChild(item);
-          const b = () => normalizeBadge(item.badge);
+          const badge = () => normalizeBadge(item.badge);
 
           return (
             <div
-              class={props._depth === 1 ? props.themeClasses.item : ""}
-              data-slot={props._depth === 1 ? "item" : undefined}
+              class={props.depth === 1 ? props.itemClasses.item : ""}
+              data-slot={props.depth === 1 ? "item" : undefined}
             >
               <Show
                 when={hasChildren()}
@@ -68,9 +51,7 @@ const RLSidebarItems: Component<{
                   <a
                     href={item.href ?? "#"}
                     class={`${
-                      props._depth === 1
-                        ? props.themeClasses.itemLink
-                        : props.themeClasses.subItemLink
+                      props.depth === 1 ? props.itemClasses.itemLink : props.itemClasses.subItemLink
                     } ${isActive() ? " text-highlighted bg-muted" : ""}`}
                     aria-current={isActive() ? "page" : undefined}
                   >
@@ -78,27 +59,27 @@ const RLSidebarItems: Component<{
                       {(icon) => (
                         <span
                           class={`${
-                            props._depth === 1
-                              ? props.themeClasses.itemIcon
-                              : props.themeClasses.subItemIcon
+                            props.depth === 1
+                              ? props.itemClasses.itemIcon
+                              : props.itemClasses.subItemIcon
                           } ${icon()}`}
                           aria-hidden="true"
                         />
                       )}
                     </Show>
-                    <span data-slot="item-text" class={props.themeClasses.itemText}>
-                      {props.t(item.label || "")}
+                    <span data-slot="item-text" class={props.itemClasses.itemText}>
+                      {item.label}
                     </span>
-                    <Show when={b()}>
-                      {(badge) => (
+                    <Show when={badge()}>
+                      {(b) => (
                         <RLBadge
-                          variant={badge().variant}
-                          color={badge().color as any}
+                          variant={b().variant}
+                          color={b().color}
                           size="sm"
-                          class={`ml-auto select-none ${badge().class}`}
+                          class="ml-auto select-none"
                           data-slot="item-badge"
                         >
-                          {props.t(badge().text)}
+                          {b().label}
                         </RLBadge>
                       )}
                     </Show>
@@ -108,9 +89,9 @@ const RLSidebarItems: Component<{
                 <details open={isActive()} class="group/details">
                   <summary
                     class={`${
-                      props._depth === 1
-                        ? props.themeClasses.itemSummary
-                        : props.themeClasses.subItemLink
+                      props.depth === 1
+                        ? props.itemClasses.itemSummary
+                        : props.itemClasses.subItemLink
                     } ${isActive() ? " text-highlighted bg-muted" : ""}`}
                     data-slot="item-summary"
                   >
@@ -118,38 +99,37 @@ const RLSidebarItems: Component<{
                       {(icon) => (
                         <span
                           class={`${
-                            props._depth === 1
-                              ? props.themeClasses.itemIcon
-                              : props.themeClasses.subItemIcon
+                            props.depth === 1
+                              ? props.itemClasses.itemIcon
+                              : props.itemClasses.subItemIcon
                           } ${icon()}`}
                           aria-hidden="true"
                         />
                       )}
                     </Show>
-                    <span data-slot="item-text" class={props.themeClasses.itemText}>
-                      {props.t(item.label || "")}
+                    <span data-slot="item-text" class={props.itemClasses.itemText}>
+                      {item.label}
                     </span>
-                    <Show when={b()}>
-                      {(badge) => (
+                    <Show when={badge()}>
+                      {(b) => (
                         <RLBadge
-                          variant={badge().variant}
-                          color={badge().color as any}
+                          variant={b().variant}
+                          color={b().color}
                           size="sm"
-                          class={`ml-auto select-none ${badge().class}`}
+                          class="ml-auto select-none"
                           data-slot="item-badge"
                         >
-                          {props.t(badge().text)}
+                          {b().label}
                         </RLBadge>
                       )}
                     </Show>
-                    <RLIcon name="chevron-right" class={props.themeClasses.itemChevron} />
+                    <RLIcon name="chevron-right" class={props.itemClasses.itemChevron} />
                   </summary>
                   <div class={`mt-0.5 ${indentClass()} flex flex-col gap-0.5`}>
-                    <RLSidebarItems
+                    <SidebarItemList
                       items={item.children ?? []}
-                      t={props.t}
-                      _depth={props._depth + 1}
-                      themeClasses={props.themeClasses}
+                      depth={props.depth + 1}
+                      itemClasses={props.itemClasses}
                     />
                   </div>
                 </details>
@@ -162,20 +142,24 @@ const RLSidebarItems: Component<{
   );
 };
 
-const OMIT_KEYS = ["items", "logo", "t", "_depth"] as const;
+const OMIT_KEYS = [
+  "items",
+  "logo",
+  "side",
+  "collapsible",
+  "layout",
+  "headerSlot",
+  "footerSlot",
+] as const;
 
-export const RLSidebar: Component<RLSidebarProps> = (props) => {
-  const { Tag, classes, rest, slots } = RLSidebarTheme.setup(props, {
+export const RLSidebar = (props: RLSidebarProps): JSX.Element => {
+  const { Tag, classes, rest, slots, children, theme } = RLSidebarTheme.setup(props, {
     as: "aside",
     omit: OMIT_KEYS,
     slots: ["headerSlot", "footerSlot"] as const,
-    variants: () => ({ side: "left" }),
   });
 
-  const t = () => props.t ?? ((key: string) => key);
-  const depth = () => props._depth ?? 0;
   const items = () => props.items ?? [];
-  const isRoot = () => depth() === 0;
 
   let sidebarRef: HTMLElement | null = null;
 
@@ -201,19 +185,13 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
     </Show>
   );
 
-  const footerContent = () => slots.footerSlot();
-
   return (
-    <Show
-      when={isRoot()}
-      fallback={
-        <RLSidebarItems items={items()} t={t()} _depth={depth()} themeClasses={classes()} />
-      }
-    >
+    <>
       <Tag
         ref={(el: HTMLElement) => (sidebarRef = el)}
         class={classes().root}
         data-slot="root"
+        data-theme={theme()}
         data-sidebar
         {...rest}
       >
@@ -223,18 +201,16 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
 
         <div class={classes().content} data-slot="content">
           <Show
-            when={props.children}
-            fallback={
-              <RLSidebarItems items={items()} t={t()} _depth={1} themeClasses={classes()} />
-            }
+            when={children()}
+            fallback={<SidebarItemList items={items()} depth={1} itemClasses={classes()} />}
           >
-            {props.children}
+            {children()}
           </Show>
         </div>
 
-        <Show when={footerContent()}>
+        <Show when={slots.footerSlot()}>
           <div class={classes().footer} data-slot="footer">
-            {footerContent()}
+            {slots.footerSlot()}
           </div>
         </Show>
       </Tag>
@@ -250,6 +226,6 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
           <RLIcon name="i-lucide-panel-left" class="size-4" />
         </button>
       </Show>
-    </Show>
+    </>
   );
 };

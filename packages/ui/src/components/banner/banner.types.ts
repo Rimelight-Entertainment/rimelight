@@ -1,124 +1,73 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
 import type { RLButtonProps } from "../button/button.types";
+import type { RLBannerTheme } from "./banner.theme";
 
-export interface RLBannerProps {
+export type RLBannerProps = Omit<
+  InferThemeProps<typeof RLBannerTheme>,
+  "contain" | "sticky" | "fixed"
+> & {
   /**
-   * The element or component this component should render as.
-   *
-   * @default "div"
-   */
-  as?: ValidComponent;
-
-  /**
-   * A unique id saved to local storage to remember if the banner has been dismissed. Without an
-   * explicit id, the banner will not be persisted and will reappear on page reload.
-   */
-  id?: string | undefined;
-
-  /**
-   * The icon displayed next to the title.
-   */
-  icon?: string | undefined;
-
-  /**
-   * Title text of the banner. Use titleSlot for JSX.
+   * Title text of the banner. Use `titleSlot` for JSX.
    */
   title?: string | undefined;
-
   /**
-   * Display a list of actions next to the title.
+   * Icon name displayed next to the title. Use `iconSlot` for JSX.
+   */
+  icon?: string | undefined;
+  /**
+   * Action buttons displayed before the close button.
    */
   actions?: RLButtonProps[] | undefined;
-
   /**
-   * Color variant of the banner.
-   *
-   * @default "primary"
-   */
-  color?: ThemeColor | undefined;
-
-  /**
-   * Display a close button to dismiss the banner. Can be boolean or button props override.
+   * Whether the banner shows a close button and can be dismissed.
+   * Dismissal hides the banner and persists it when `id` is set.
    *
    * @default false
    */
-  close?: boolean | RLButtonProps | undefined;
-
+  dismissible?: boolean | undefined;
   /**
-   * The icon displayed in the close button.
+   * Icon name displayed in the close button.
    *
    * @default "x"
    */
   closeIcon?: string | undefined;
-
   /**
-   * Custom callback invoked when the banner is closed.
+   * Called after the banner is dismissed.
    */
-  onClose?: () => void;
-
+  onDismiss?: (() => void) | undefined;
   /**
    * Whether to contain the banner content within a max-width container.
    *
    * @default true
    */
   contain?: boolean | undefined;
-
   /**
-   * Whether the banner should be sticky at the top of the viewport.
+   * Whether the banner is sticky at the top of the viewport.
    *
    * @default false
    */
   sticky?: boolean | undefined;
-
   /**
-   * Whether the banner should be fixed at the top of the viewport.
+   * Whether the banner is fixed at the top of the viewport.
    *
    * @default false
    */
   fixed?: boolean | undefined;
-
   /**
-   * The z-index stack position in Rimelight header stack logic.
+   * Position in the header stack.
    *
    * @default 0
    */
   stackIndex?: number | undefined;
-
   /**
    * Whether to hide the banner when scrolling down and show it when scrolling up.
    *
    * @default false
    */
   hideOnScroll?: boolean | undefined;
-
   /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?:
-    | {
-        root?: string;
-        content?: string;
-        container?: string;
-        left?: string;
-        center?: string;
-        right?: string;
-        icon?: string;
-        title?: string;
-        actions?: string;
-        close?: string;
-        [key: string]: any;
-      }
-    | undefined;
-
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-
-  /**
-   * The text label displayed inside the link. Alternative to passing children via the default slot.
+   * Link text. When `href` is set the whole banner becomes a link.
    */
   label?: string | undefined;
   /**
@@ -130,7 +79,7 @@ export interface RLBannerProps {
    */
   trailingIcon?: string | undefined;
   /**
-   * The URL the link points to.
+   * URL the banner links to. Setting it makes the banner a link.
    */
   href?: string | undefined;
   /**
@@ -140,13 +89,13 @@ export interface RLBannerProps {
    */
   external?: boolean | undefined;
   /**
-   * Custom external link icon name.
+   * Icon name for the external link indicator.
    *
    * @default "external-link"
    */
   externalIcon?: string | undefined;
   /**
-   * Suppress the automatic external link icon.
+   * Suppresses the automatic external link icon.
    *
    * @default false
    */
@@ -158,8 +107,8 @@ export interface RLBannerProps {
    */
   target?: string | undefined;
   /**
-   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
-   * string to suppress the attribute entirely.
+   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to an
+   * empty string to suppress the attribute.
    *
    * @default undefined
    */
@@ -177,22 +126,15 @@ export interface RLBannerProps {
    */
   disabled?: boolean | undefined;
   /**
-   * When true, only `class` is applied — all default theme styles are skipped.
-   *
-   * @default false
+   * Accessible label. For external links "(opens in a new tab)" is appended when omitted.
    */
-  raw?: boolean | undefined;
+  "aria-label"?: string | undefined;
   /**
-   * Screen reader accessibility label. When omitted on external links, "(opens in a new tab)" is
-   * appended automatically.
-   */
-  ariaLabel?: string | undefined;
-  /**
-   * The value of `aria-current` when the link is the active/current page.
+   * Value of `aria-current` when the link is the current page.
    *
    * @default "page"
    */
-  ariaCurrentValue?:
+  "aria-current"?:
     | "page"
     | "step"
     | "location"
@@ -203,27 +145,31 @@ export interface RLBannerProps {
     | boolean
     | undefined;
   /**
-   * Force a color-scheme context on the component.
+   * Replaces the icon.
    */
-  theme?: unknown;
-
+  iconSlot?: JSX.Element | undefined;
   /**
-   * Default slot children.
+   * Content rendered in the left area.
    */
-  children?: JSX.Element;
-  /** Replaces the leading icon. */
-  leadingSlot?: JSX.Element;
-  /** Replaces the title text. */
-  titleSlot?: JSX.Element;
-  /** Replaces the action buttons. */
-  actionsSlot?: JSX.Element;
-  /** Replaces the close button. */
-  closeSlot?: JSX.Element;
-  /** Content rendered in the left area. */
-  leftSlot?: JSX.Element;
-  /** Replaces the center area content (leading & title). */
-  centerSlot?: JSX.Element;
-  /** Content rendered in the right area, before actions & close button. */
-  rightSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  leadingSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the title text.
+   */
+  titleSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the center area (icon and title).
+   */
+  centerSlot?: JSX.Element | undefined;
+  /**
+   * Content rendered in the right area, before actions and the close button.
+   */
+  trailingSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the action buttons.
+   */
+  actionsSlot?: JSX.Element | undefined;
+  /**
+   * Replaces the close button.
+   */
+  closeSlot?: JSX.Element | undefined;
+};

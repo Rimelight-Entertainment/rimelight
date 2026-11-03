@@ -380,13 +380,13 @@ export const cardAudit: ComponentAuditDefinition = {
       criterion: "Polymorphism and interactive links",
       status: "pass",
       notes:
-        "Supports dynamic rendering with `as` prop (article, section, div, a) and interactive card link mode when href/to is passed.",
+        "Supports dynamic rendering with `as` prop (article, section, div, a) and interactive card link mode when href is passed.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "Automatic aria-labelledby and aria-describedby linking title/description IDs, with support for explicit ariaLabel and role.",
+        "Automatic aria-labelledby and aria-describedby linking title/description IDs, with support for explicit aria-label and role.",
     },
     {
       criterion: "Theme token resolution",

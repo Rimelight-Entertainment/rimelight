@@ -1,9 +1,18 @@
 import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLInputTheme } from "./input.theme";
 
-export interface RLInputProps {
+export type RLInputProps = Omit<
+  InferThemeProps<typeof RLInputTheme>,
+  "onInput" | "onChange" | "onBlur" | "onFocus" | "onKeyDown" | "ref" | "hasLeading" | "hasTrailing"
+> & {
   /**
-   * Type of input element.
+   * Native `autocomplete` hint forwarded to the input element.
+   */
+  autocomplete?: string | undefined;
+  /**
+   * Native input type.
+   * @default "text"
    */
   type?:
     | "text"
@@ -17,71 +26,66 @@ export interface RLInputProps {
     | "url";
   /**
    * The input value.
+   * @default ""
    */
   value?: string | number;
   /**
    * Placeholder text.
+   * @default undefined
    */
   placeholder?: string;
   /**
    * Disabled state.
+   * @default false
    */
   disabled?: boolean;
   /**
    * Readonly state.
+   * @default false
    */
   readonly?: boolean;
   /**
    * Name for forms.
+   * @default undefined
    */
   name?: string;
   /**
    * Required field state.
+   * @default false
    */
   required?: boolean;
   /**
-   * Error state.
+   * Invalid state. Renders the error ring.
+   * @default false
    */
-  error?: boolean | string;
+  invalid?: boolean;
   /**
-   * Leading icon name.
+   * Icon name rendered before the input (string icon). Use `leadingSlot` for custom content.
+   * @default undefined
    */
   leadingIcon?: string;
   /**
-   * Trailing icon name.
+   * Icon name rendered after the input (string icon). Use `trailingSlot` for custom content.
+   * @default undefined
    */
   trailingIcon?: string;
   /**
-   * Variant style.
+   * Content rendered before the input. Replaces `leadingIcon` when present.
+   * @default undefined
    */
-  variant?: "default" | "ghost";
+  leadingSlot?: JSX.Element;
   /**
-   * Size scale.
+   * Content rendered after the input. Replaces `trailingIcon` when present.
+   * @default undefined
    */
-  size?: "sm" | "md" | "lg";
+  trailingSlot?: JSX.Element;
   /**
-   * Color theme.
+   * Native input event handlers and ref.
    */
-  color?: ThemeColor;
-  /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
   onInput?: (e: InputEvent & { currentTarget: HTMLInputElement }) => void;
   onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void;
   onBlur?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
   onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
   onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
   ref?: HTMLInputElement | ((el: HTMLInputElement) => void);
-  leadingSlot?: JSX.Element;
-  trailingSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

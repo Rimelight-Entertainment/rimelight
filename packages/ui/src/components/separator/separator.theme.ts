@@ -8,7 +8,7 @@ export const RLSeparatorTheme = defineTheme("separator", {
     container: "font-medium text-default flex",
     icon: "shrink-0 size-5",
     avatar: "shrink-0",
-    avatarSize: "2xs",
+    avatarSize: "xs",
     label: "text-sm",
   },
   variants: {

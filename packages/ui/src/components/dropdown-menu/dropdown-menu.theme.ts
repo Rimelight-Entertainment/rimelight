@@ -39,6 +39,7 @@ export const RLDropdownMenuTheme = defineTheme("dropdown-menu", {
     arrow: "absolute -top-1.5 left-4 size-3 rotate-45 border-l border-t border-default bg-elevated",
   },
   variants: {
+    color: "auto",
     size: {
       xs: { trigger: "px-2 py-1 text-xs gap-1", item: "px-1.5 py-1 text-xs gap-1" },
       sm: { trigger: "px-2.5 py-1.5 text-xs gap-1.5", item: "px-2 py-1 text-xs gap-1.5" },
@@ -48,6 +49,7 @@ export const RLDropdownMenuTheme = defineTheme("dropdown-menu", {
     },
   },
   defaultVariants: {
+    color: "neutral",
     size: "md",
   },
 });

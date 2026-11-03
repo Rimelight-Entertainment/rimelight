@@ -1,32 +1,50 @@
 import type { Component } from "solid-js";
 import type { RLTooltipProps } from "./tooltip.types";
 import { RLTooltipTheme } from "./tooltip.theme";
+import { createControllable } from "../../controllable";
 
-const OMIT_KEYS = ["content"] as const;
+const OMIT_KEYS = ["content", "placement", "open", "defaultOpen", "onOpenChange"] as const;
 
 export const RLTooltip: Component<RLTooltipProps> = (props) => {
-  const placement = () => props.placement ?? "top";
-
-  const { classes, rest, slots } = RLTooltipTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLTooltipTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: ["contentSlot"] as const,
-    variants: () => ({ placement: placement() }),
+    slots: ["bodySlot"] as const,
   });
 
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
+
   return (
-    <div
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      data-placement={props.placement ?? "top"}
       class={classes().root}
-      data-slot="tooltip-container"
-      data-placement={placement()}
       {...rest}
     >
-      <div class={classes().trigger} data-slot="trigger" tabindex={0}>
-        {props.children}
+      <div
+        class={classes().trigger}
+        data-slot="trigger"
+        tabindex={0}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+      >
+        {children()}
       </div>
 
-      <div class={classes().content} data-slot="content" role="tooltip">
-        {slots.contentSlot() !== undefined ? slots.contentSlot() : props.content}
+      <div
+        class={classes().content}
+        data-slot="content"
+        data-state={isOpen() ? "open" : "closed"}
+        role="tooltip"
+      >
+        {slots.bodySlot() !== undefined ? slots.bodySlot() : props.content}
       </div>
-    </div>
+    </Tag>
   );
 };

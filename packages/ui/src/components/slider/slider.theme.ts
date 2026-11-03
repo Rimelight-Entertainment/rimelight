@@ -1,9 +1,10 @@
 import { defineTheme } from "../../resolver";
 
 export const RLSliderTheme = defineTheme("slider", {
-  slots: ["root", "track", "range", "thumb"],
+  slots: ["root", "input", "track", "range", "thumb"],
   base: {
     root: "relative flex w-full touch-none select-none items-center",
+    input: "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10",
     track: "relative h-1.5 w-full grow overflow-hidden rounded-full bg-muted",
     range: "absolute h-full bg-[var(--rl-bg)]",
     thumb:

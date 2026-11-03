@@ -1,244 +1,207 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
 import type { RLAvatarProps } from "../avatar/avatar.types";
+import type { RLButtonTheme } from "./button.theme";
 
 export type ButtonClickHandler = (event: MouseEvent) => unknown;
 
-export interface RLButtonProps {
+type ButtonVariants = InferThemeProps<typeof RLButtonTheme>;
+
+/**
+ * Button that renders as a `<button>`, or as an `<a>` when `href` is set.
+ */
+export type RLButtonProps = Omit<ButtonVariants, "ref"> & {
   /**
    * The text label displayed inside the button.
+   * @default undefined
    */
   label?: string | undefined;
+
   /**
-   * The color scheme applied to the button.
-   * @default 'primary'
+   * Color used when the button is in the active state.
+   * @default undefined
    */
-  color?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | ThemeColor
-    | undefined;
+  activeColor?: ButtonVariants["color"];
+
   /**
-   * Color used when button is in active state.
+   * Variant used when the button is in the active state.
+   * @default undefined
    */
-  activeColor?:
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | ThemeColor
-    | undefined;
+  activeVariant?: ButtonVariants["variant"];
+
   /**
-   * The visual style variant of the button.
-   * @default 'solid'
+   * Icon name rendered on both sides. Position follows `leading` and `trailing`.
+   * @default undefined
    */
-  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link" | undefined;
-  /**
-   * Variant used when button is in active state.
-   */
-  activeVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link" | undefined;
-  /**
-   * The size scale of the button.
-   * @default 'md'
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
-  /**
-   * Render the button with equal padding on all sides.
-   */
-  square?: boolean | undefined;
-  /**
-   * Render the button full width.
-   */
-  block?: boolean | undefined;
-  /**
-   * Set loading state automatically based on the `@click` / `onClick` promise state.
-   */
-  loadingAuto?: boolean | undefined;
-  /**
-   * Display an icon based on the `leading` and `trailing` props.
-   */
-  icon?: any;
+  icon?: string | undefined;
+
   /**
    * Display an avatar on the left side.
+   * @default undefined
    */
   avatar?: RLAvatarProps | string | undefined;
+
   /**
-   * When `true`, the leading icon is displayed. JSX goes in leadingSlot.
+   * When `true`, the leading icon is displayed. Custom JSX goes in `leadingSlot`.
+   * @default false
    */
   leading?: boolean | undefined;
+
   /**
-   * Display an icon on the left side.
+   * Icon name rendered on the left side.
+   * @default undefined
    */
-  leadingIcon?: any;
+  leadingIcon?: string | undefined;
+
   /**
-   * Slot content rendered in leading position.
+   * Custom JSX rendered in the leading position. Replaces `leadingIcon`.
+   * @default undefined
    */
   leadingSlot?: JSX.Element;
+
   /**
-   * When `true`, the trailing icon is displayed. JSX goes in trailingSlot.
+   * When `true`, the trailing icon is displayed. Custom JSX goes in `trailingSlot`.
+   * @default false
    */
   trailing?: boolean | undefined;
+
   /**
-   * Display an icon on the right side.
+   * Icon name rendered on the right side.
+   * @default undefined
    */
-  trailingIcon?: any;
+  trailingIcon?: string | undefined;
+
   /**
-   * Slot content rendered in trailing position.
+   * Custom JSX rendered in the trailing position. Replaces `trailingIcon`.
+   * @default undefined
    */
   trailingSlot?: JSX.Element;
+
   /**
    * When `true`, the loading icon is displayed and the button is disabled.
+   * @default false
    */
   loading?: boolean | undefined;
+
   /**
-   * The icon when the `loading` prop is `true`.
-   * @default 'loaderCircle'
+   * Icon name shown while `loading` is `true`.
+   * @default "loader-circle"
    */
-  loadingIcon?: any;
+  loadingIcon?: string | undefined;
+
   /**
-   * Force the link / button to be active independent of the current route.
+   * Set loading state automatically based on the `onClick` promise state.
+   * @default false
    */
-  active?: boolean | undefined;
+  loadingAuto?: boolean | undefined;
+
   /**
-   * Class to apply when the button / link is active.
+   * Class applied when `active` is `true`.
+   * @default undefined
    */
   activeClass?: string | undefined;
+
   /**
-   * Class to apply when the button / link is inactive.
+   * Class applied when `active` is `false`.
+   * @default undefined
    */
   inactiveClass?: string | undefined;
+
   /**
-   * Class to apply when the link is exact active.
+   * Value of `aria-current` when the link is the current item.
+   * @default "page"
    */
-  exactActiveClass?: string | undefined;
-  /**
-   * Value passed to the attribute `aria-current` when the link is exact active.
-   * @default 'page'
-   */
-  ariaCurrentValue?: "page" | "step" | "location" | "date" | "time" | "true" | "false" | undefined;
+  current?: "page" | "step" | "location" | "date" | "time" | "true" | "false" | undefined;
+
   /**
    * The type of the button when not a link.
-   * @default 'button'
+   * @default "button"
    */
   type?: "reset" | "submit" | "button" | undefined;
+
   /**
-   * The element or component this component should render as when not a link.
-   * @default 'button'
-   */
-  as?: ValidComponent;
-  /**
-   * Field group style variation when grouped in input or button groups.
-   */
-  fieldGroup?: "horizontal" | "vertical" | undefined;
-  /**
-   * Horizontal alignment of content inside the button flex container.
-   */
-  justify?: "start" | "center" | "end" | "between" | "around" | "evenly" | undefined;
-  /**
-   * Rounded button corners or pill shape.
-   */
-  rounded?: boolean | string | undefined;
-  /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
-   */
-  theme?: Theme | undefined;
-  /**
-   * If true, no rel attribute will be added to the link.
-   */
-  noRel?: boolean | undefined;
-  /**
-   * Accessible aria-label for screen readers.
-   */
-  ariaLabel?: string | undefined;
-  /**
-   * Element ID that labels this button for screen readers.
-   */
-  ariaLabelledby?: string | undefined;
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  /**
-   * Default slot children.
-   */
-  children?: JSX.Element;
-  /**
-   * Click event handler. Accepts a single handler or an array of handlers.
+   * Click handler. Accepts a single handler or an array of handlers.
+   * @default undefined
    */
   onClick?: ButtonClickHandler | ButtonClickHandler[] | undefined;
+
   /**
-   * Key down event handler.
+   * Key down handler.
+   * @default undefined
    */
   onKeyDown?: ((event: KeyboardEvent) => unknown) | undefined;
+
   /**
-   * Disables the link, preventing navigation and applying disabled styling.
-   *
+   * Disables the button or link, preventing interaction and applying disabled styling.
    * @default false
    */
   disabled?: boolean | undefined;
+
   /**
-   * The URL the link points to.
+   * The URL the button links to. When set, renders an `<a>`.
+   * @default undefined
    */
   href?: string | undefined;
+
   /**
-   * Marks the link as external. External URLs are still detected for `target`/`rel` and the
-   * screen-reader hint, but the external icon is only rendered when this prop is explicitly `true`.
-   * Never rendered on icon-only buttons.
-   *
+   * Marks the link as external. Controls `target`/`rel` defaults and the external icon.
    * @default false
    */
   external?: boolean | undefined;
+
   /**
    * Localize an internal `href` (one starting with `/`) for the current locale.
    * Pass a locale code to link to that locale instead, or `false` to leave the href as-is.
-   * External, relative, API and file paths are never changed.
-   *
    * @default true
    */
   localize?: boolean | string | undefined;
+
   /**
-   * Custom external link icon name.
-   *
+   * Icon name used for the external link indicator.
    * @default "external-link"
    */
   externalIcon?: string | undefined;
+
   /**
    * Suppress the external link icon.
-   *
    * @default false
    */
   noExternalIcon?: boolean | undefined;
+
   /**
    * Where to open the linked URL. External links default to `"_blank"`.
-   *
    * @default undefined
    */
   target?: string | undefined;
+
   /**
-   * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
-   * string to suppress the attribute entirely.
-   *
+   * Relationship of the linked URL. External links default to `"noopener noreferrer"`.
+   * Set to an empty string to suppress the attribute.
    * @default undefined
    */
   rel?: string | null | undefined;
+
   /**
-   * When true, only `class` is applied — all default theme styles are skipped.
-   *
+   * If `true`, no `rel` attribute is added to the link.
    * @default false
    */
-  raw?: boolean | undefined;
-  [key: string]: unknown;
-}
+  noRel?: boolean | undefined;
+
+  /**
+   * Accessible label for screen readers.
+   * @default undefined
+   */
+  "aria-label"?: string | undefined;
+
+  /**
+   * Element ID that labels this button for screen readers.
+   * @default undefined
+   */
+  "aria-labelledby"?: string | undefined;
+
+  /**
+   * Ref callback for the rendered `button` or `a` element.
+   * @default undefined
+   */
+  ref?: ((el: HTMLElement) => void) | undefined;
+};

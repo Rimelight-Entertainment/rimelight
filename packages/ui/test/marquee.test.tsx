@@ -8,7 +8,7 @@ describe("RLMarquee Solid Component Suite", () => {
       children: () => <span>Item</span>,
     });
 
-    expect(html).toContain('data-slot="marquee-root"');
+    expect(html).toContain('data-slot="root"');
     const matches = html.match(/data-slot="track"/g);
     expect(matches?.length).toBe(2);
     expect(html).toContain('aria-hidden="true"');

@@ -6,7 +6,7 @@ import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
-const VARIANTS = ["solid", "outline", "subtle", "glass"] as const;
+const VARIANTS = ["solid", "outline", "subtle", "ghost"] as const;
 const ORIENTATIONS = ["horizontal", "vertical"] as const;
 const COLORS = AUDIT_COLORS;
 
@@ -200,8 +200,8 @@ export const CompareSandbox = (): JSX.Element => {
           showHandle={showHandle()}
           showDivider={showDivider()}
           showLabels={showLabels()}
-          beforeLabel="Before (Day)"
-          afterLabel="After (Sunset)"
+          beforeLabelSlot="Before (Day)"
+          afterLabelSlot="After (Sunset)"
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
           class="w-full h-full shadow-lg"
@@ -233,8 +233,8 @@ export const compareAudit: ComponentAuditDefinition = {
         <RLCompare
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
-          beforeLabel="Original"
-          afterLabel="Retouched"
+          beforeLabelSlot="Original"
+          afterLabelSlot="Retouched"
           class="w-full max-w-xl aspect-video"
         />
       ),
@@ -252,8 +252,8 @@ export const compareAudit: ComponentAuditDefinition = {
           orientation="vertical"
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
-          beforeLabel="Top (Day)"
-          afterLabel="Bottom (Sunset)"
+          beforeLabelSlot="Top (Day)"
+          afterLabelSlot="Bottom (Sunset)"
           class="w-full max-w-md h-80"
         />
       ),
@@ -275,8 +275,8 @@ export const compareAudit: ComponentAuditDefinition = {
                   size={s}
                   beforeSrc={IMG_BEFORE}
                   afterSrc={IMG_AFTER}
-                  beforeLabel="Before"
-                  afterLabel="After"
+                  beforeLabelSlot="Before"
+                  afterLabelSlot="After"
                   class="w-full aspect-video"
                 />
               </div>
@@ -304,8 +304,8 @@ export const compareAudit: ComponentAuditDefinition = {
                   color="primary"
                   beforeSrc={IMG_BEFORE}
                   afterSrc={IMG_AFTER}
-                  beforeLabel="Before"
-                  afterLabel="After"
+                  beforeLabelSlot="Before"
+                  afterLabelSlot="After"
                   class="w-full aspect-video"
                 />
               </div>
@@ -325,7 +325,7 @@ export const compareAudit: ComponentAuditDefinition = {
       render: () => (
         <RLCompare
           defaultValue={45}
-          beforeSlot={
+          leadingSlot={
             <div class="w-full h-full bg-slate-950 text-slate-100 p-6 flex flex-col justify-between">
               <div>
                 <span class="text-xs font-mono uppercase tracking-wider text-primary">
@@ -342,7 +342,7 @@ export const compareAudit: ComponentAuditDefinition = {
               </div>
             </div>
           }
-          afterSlot={
+          trailingSlot={
             <div class="w-full h-full bg-slate-50 text-slate-900 p-6 flex flex-col justify-between">
               <div>
                 <span class="text-xs font-mono uppercase tracking-wider text-sky-600">
@@ -359,8 +359,8 @@ export const compareAudit: ComponentAuditDefinition = {
               </div>
             </div>
           }
-          beforeLabel="Dark Theme"
-          afterLabel="Light Theme"
+          beforeLabelSlot="Dark Theme"
+          afterLabelSlot="Light Theme"
           class="w-full max-w-xl h-64 border border-default shadow-md"
         />
       ),
@@ -378,8 +378,8 @@ export const compareAudit: ComponentAuditDefinition = {
           hover={true}
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
-          beforeLabel="Hover over me"
-          afterLabel="Auto tracking"
+          beforeLabelSlot="Hover over me"
+          afterLabelSlot="Auto tracking"
           class="w-full max-w-xl aspect-video"
         />
       ),
@@ -398,8 +398,8 @@ export const compareAudit: ComponentAuditDefinition = {
           autoplayDuration={4000}
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
-          beforeLabel="Day"
-          afterLabel="Sunset"
+          beforeLabelSlot="Day"
+          afterLabelSlot="Sunset"
           class="w-full max-w-xl aspect-video"
         />
       ),
@@ -439,8 +439,8 @@ export const compareAudit: ComponentAuditDefinition = {
           value={35}
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
-          beforeLabel="Locked"
-          afterLabel="Disabled"
+          beforeLabelSlot="Locked"
+          afterLabelSlot="Disabled"
           class="w-full max-w-xl aspect-video"
         />
       ),
@@ -451,7 +451,7 @@ export const compareAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for value, defaultValue, min, max, step, orientation, before/after slots & props, beforeSrc/afterSrc, labels, custom handles, hover, autoplay, disabled, sizes, variants, and colors.",
+        "Full support for value, defaultValue, min, max, step, orientation, leadingSlot/trailingSlot, beforeSrc/afterSrc, label slots, custom handles, hover, autoplay, disabled, sizes, variants, and colors.",
     },
     {
       criterion: "Full WAI-ARIA compliance",

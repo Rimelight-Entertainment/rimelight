@@ -3,11 +3,11 @@ import type { RLFloatingActionProps } from "./floating-action.types";
 import { RLFloatingActionTheme } from "./floating-action.theme";
 
 export const RLFloatingAction: Component<RLFloatingActionProps> = (props) => {
-  const { classes, rest } = RLFloatingActionTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLFloatingActionTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

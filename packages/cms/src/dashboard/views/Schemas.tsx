@@ -5,6 +5,7 @@ import { collectionPresets } from "../../core/collections/presets";
 import type { FieldDefinition, FieldType, ResolvedCollection } from "../../core/collections/types";
 import { useDashboard } from "../context";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
+import { RLInputNumber } from "@rimelight/ui/components/input-number/RLInputNumber.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
@@ -550,13 +551,12 @@ const SchemaForm: Component<{
             />
           </Field>
           <Field label="Approvals required to publish">
-            <RLInput
-              type="number"
-              min="0"
+            <RLInputNumber
+              min={0}
               value={def().workflow.minApprovals}
-              onInput={(e) =>
+              onValueChange={(v) =>
                 patch({
-                  workflow: { ...def().workflow, minApprovals: Number(e.currentTarget.value) },
+                  workflow: { ...def().workflow, minApprovals: v },
                 })
               }
             />

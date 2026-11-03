@@ -1,14 +1,8 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLListboxTheme } from "./listbox.theme";
 
-export interface RLListboxProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Listbox container.
+ * @status stub
+ */
+export type RLListboxProps = InferThemeProps<typeof RLListboxTheme>;

@@ -1,13 +1,25 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDashboardSearchButtonTheme } from "./dashboard-search-button.theme";
 
-export interface RLDashboardSearchButtonProps {
+export type RLDashboardSearchButtonProps = InferThemeProps<typeof RLDashboardSearchButtonTheme> & {
+  /**
+   * Icon name, or `false` to hide the icon.
+   * @default "search"
+   */
   icon?: string | false;
+  /**
+   * Visible label text.
+   * @default uiT("search.label")
+   */
   label?: string;
-  collapsed?: boolean;
+  /**
+   * Keyboard shortcut hints. A `"meta"` key renders as ⌘.
+   * @default [{ value: "meta" }, { value: "k" }]
+   */
   kbds?: Array<string | { value: string; variant?: string }>;
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
+  /**
+   * Replaces the default keyboard shortcut hints.
+   */
   trailingSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

@@ -1,39 +1,42 @@
 import type { RLDrawerProps } from "./drawer.types";
 import { RLDrawerTheme } from "./drawer.theme";
-import { createEffect, createSignal, Show, onSettled, type Component } from "solid-js";
+import { createEffect, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
 import { slot } from "../../slot";
 
 const OMIT_KEYS = [
   "open",
   "defaultOpen",
+  "direction",
   "title",
   "description",
   "triggerLabel",
-  "onOpenChange",
-  "closeOnClickOutside",
-  "closeOnEscape",
+  "dismissible",
   "lockScroll",
+  "onOpenChange",
 ] as const;
 
-const SLOT_KEYS = ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const;
-
 export const RLDrawer: Component<RLDrawerProps> = (props) => {
-  const { classes, rest, slots } = RLDrawerTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLDrawerTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: SLOT_KEYS,
+    slots: ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const,
   });
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
 
-  const closeOnClickOutside = () => props.closeOnClickOutside !== false;
-  const closeOnEscape = () => props.closeOnEscape !== false;
-  const lockScroll = () => props.lockScroll !== false;
+  const isDismissible = () => props.dismissible ?? true;
+  const lockScroll = () => props.lockScroll ?? true;
 
-  const handleOpenChange = (next: boolean) => {
-    setIsOpen(next);
-    props.onOpenChange?.(next);
+  const handleDismiss = () => {
+    if (isDismissible()) {
+      setOpen(false);
+    }
   };
 
   let dialogRef: HTMLDialogElement | undefined;
@@ -57,11 +60,11 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
     const handleCancel = (e: Event) => {
       if (e.target !== dialogRef) return;
       e.preventDefault();
-      if (closeOnEscape()) handleOpenChange(false);
+      handleDismiss();
     };
     const handleClick = (e: MouseEvent) => {
-      if (closeOnClickOutside() && e.target === dialogRef) {
-        handleOpenChange(false);
+      if (e.target === dialogRef) {
+        handleDismiss();
       }
     };
     document.addEventListener("cancel", handleCancel);
@@ -86,19 +89,20 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
         data-slot="content"
         aria-modal="true"
         data-state={isOpen() ? "open" : "closed"}
-        {...rest}
       >
         <div class={classes().handle} data-slot="handle" />
 
-        <button
-          class={classes().closeButton}
-          data-slot="close-button"
-          type="button"
-          aria-label={uiT("drawer.close")}
-          onClick={() => handleOpenChange(false)}
-        >
-          <RLIcon name="x" size="sm" aria-hidden="true" />
-        </button>
+        <Show when={isDismissible()}>
+          <button
+            class={classes().closeButton}
+            data-slot="close-button"
+            type="button"
+            aria-label={uiT("drawer.close")}
+            onClick={handleDismiss}
+          >
+            <RLIcon name="x" size="sm" aria-hidden="true" />
+          </button>
+        </Show>
 
         <div class={classes().header} data-slot="header">
           {titleNode() ? (
@@ -118,7 +122,7 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
           ) : null}
         </div>
 
-        {props.children}
+        {children()}
 
         {footerNode() ? (
           <div class={classes().footer} data-slot="footer">
@@ -130,21 +134,21 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="drawer-container">
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       {props.triggerLabel ? (
         <button
           class={classes().trigger}
           data-slot="trigger"
           type="button"
-          onClick={() => handleOpenChange(true)}
+          onClick={() => setOpen(true)}
         >
           {props.triggerLabel}
         </button>
       ) : slots.triggerSlot() ? (
-        <span onClick={() => handleOpenChange(true)}>{slots.triggerSlot()}</span>
+        <span onClick={() => setOpen(true)}>{slots.triggerSlot()}</span>
       ) : null}
 
       <Show when={isOpen()}>{renderDialog()}</Show>
-    </div>
+    </Tag>
   );
 };

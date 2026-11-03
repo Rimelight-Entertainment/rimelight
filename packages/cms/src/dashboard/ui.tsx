@@ -88,7 +88,7 @@ export const Modal: Component<{
     onOpenChange={(next: boolean) => {
       if (!next) props.onClose();
     }}
-    footer={props.footer}
+    footerSlot={() => props.footer}
     ui={{ content: props.wide ? "max-w-4xl" : "max-w-lg" }}
   >
     {props.children}

@@ -9,10 +9,6 @@ export const RLCollapsibleTheme = defineTheme("collapsible", {
       "data-[state=open]:animate-[collapsible-down_200ms_var(--ease-out)] data-[state=closed]:animate-[collapsible-up_200ms_var(--ease-out)] data-[state=closed]:overflow-hidden",
   },
   variants: {
-    open: {
-      true: {},
-      false: {},
-    },
     disabled: {
       true: {
         trigger: "cursor-not-allowed opacity-75",
@@ -21,7 +17,6 @@ export const RLCollapsibleTheme = defineTheme("collapsible", {
     },
   },
   defaultVariants: {
-    open: false,
     disabled: false,
   },
 });

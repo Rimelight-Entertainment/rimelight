@@ -21,7 +21,7 @@ export const GrandTaleHeader: Component = () => {
       fixed={true}
       stackIndex={1}
       class="bg-indigo-950 border-b border-indigo-900 shadow-md"
-      leftSlot={
+      leadingSlot={
         <div class="flex flex-row items-center gap-6">
           <a href={getLocaleUrl("/franchises/grand-tale")}>
             <img
@@ -43,7 +43,7 @@ export const GrandTaleHeader: Component = () => {
           </nav>
         </div>
       }
-      rightSlot={
+      trailingSlot={
         <div class="flex flex-row items-center gap-6">
           <nav class="hidden lg:flex items-center gap-4">
             {rightLinks.map((link) => (

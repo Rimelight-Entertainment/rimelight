@@ -3,7 +3,7 @@ import { defineTheme } from "../../resolver";
 export const RLSpinnerTheme = defineTheme("spinner", {
   slots: ["root"],
   base: {
-    root: "animate-spin shrink-0 rounded-full border-2 border-t-transparent text-[var(--rl-text)] border-current",
+    root: "animate-spin shrink-0 rounded-full border-2 border-t-transparent text-current border-current",
   },
   variants: {
     size: {
@@ -15,14 +15,7 @@ export const RLSpinnerTheme = defineTheme("spinner", {
     },
     color: "auto",
   },
-  compoundVariants: [
-    {
-      color: "current",
-      class: { root: "text-current" },
-    },
-  ],
   defaultVariants: {
     size: "md",
-    color: "current",
   },
 });

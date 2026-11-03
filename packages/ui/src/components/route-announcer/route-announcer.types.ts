@@ -1,62 +1,46 @@
+import type { InferThemeProps } from "../../resolver";
+import type { ThemeColor } from "../../types";
+import type { RLRouteAnnouncerTheme } from "./route-announcer.theme";
+
 export type RLRouteAnnouncerProgressSize = "xs" | "sm" | "md" | "lg";
 
+/**
+ * Progress bar options. Used in place of the boolean `progress`.
+ */
 export interface RLRouteAnnouncerProgressOptions {
   /**
-   * Theme color name for the progress bar.
-   * Defaults to `"primary"`.
+   * Theme color of the progress bar.
+   * @default undefined; the `color` prop applies, otherwise "primary".
    */
-  color?: string;
+  color?: ThemeColor;
 
   /**
-   * Semantic height size for the progress bar.
-   * Defaults to `"sm"`.
+   * Height of the progress bar.
+   * @default undefined; the `size` prop applies, otherwise "sm".
    */
   size?: RLRouteAnnouncerProgressSize;
 
   /**
    * Additional classes for the progress bar container.
+   * @default undefined
    */
   class?: string;
 }
 
-export interface RLRouteAnnouncerProps {
+/**
+ * Route announcer props. `@status stable`.
+ */
+export type RLRouteAnnouncerProps = InferThemeProps<typeof RLRouteAnnouncerTheme> & {
   /**
    * Custom prefix to announce when `document.title` is empty.
-   * Defaults to `"Navigated to"`.
+   * @default translated "Navigated to"
    */
   prefix?: string;
 
   /**
    * Whether to display the visual top navigation progress bar during async route transitions.
-   * Can be boolean or configuration options object.
-   * Defaults to `true`.
+   * Pass an options object to set the progress bar color, size and class.
+   * @default true
    */
   progress?: boolean | RLRouteAnnouncerProgressOptions;
-
-  /**
-   * Color token for the progress bar when progress is enabled as boolean.
-   * Defaults to `"primary"`.
-   */
-  color?: string;
-
-  /**
-   * Semantic size for the progress bar when progress is enabled as boolean.
-   * Defaults to `"sm"`.
-   */
-  size?: RLRouteAnnouncerProgressSize;
-
-  /**
-   * Additional root classes.
-   */
-  class?: string;
-
-  /**
-   * Custom slot overrides.
-   */
-  ui?: Partial<{
-    root?: string;
-    announcer?: string;
-    progressBar?: string;
-    progressIndicator?: string;
-  }>;
-}
+};

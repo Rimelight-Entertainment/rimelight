@@ -1,60 +1,74 @@
-import type { ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLTextareaTheme } from "./textarea.theme";
 
-export interface RLTextareaProps {
-  autoGrow?: boolean;
+export type RLTextareaProps = Omit<
+  InferThemeProps<typeof RLTextareaTheme>,
+  "value" | "defaultValue" | "onInput" | "onChange" | "onBlur" | "onFocus" | "onKeyDown" | "ref"
+> & {
   /**
-   * The text value.
+   * Controlled text value. Omit for uncontrolled use.
+   * @default undefined
    */
-  value?: string;
+  value?: string | undefined;
   /**
-   * Placeholder text.
+   * Initial text when uncontrolled.
+   * @default ""
    */
-  placeholder?: string;
+  defaultValue?: string | undefined;
   /**
-   * Disabled state.
+   * Called with the next text on each input.
    */
-  disabled?: boolean;
+  onValueChange?: (value: string) => void;
   /**
-   * Readonly state.
+   * Shows the error styling.
+   * @default false
    */
-  readonly?: boolean;
+  invalid?: boolean | undefined;
   /**
-   * Name for forms.
+   * Text shown while the field is empty.
+   * @default undefined
    */
-  name?: string;
+  placeholder?: string | undefined;
   /**
-   * Required field state.
+   * Disables the field.
+   * @default false
    */
-  required?: boolean;
+  disabled?: boolean | undefined;
   /**
-   * Row count.
+   * Makes the field read-only.
+   * @default false
    */
-  rows?: number;
+  readonly?: boolean | undefined;
   /**
-   * Error state.
+   * Marks the field as required.
+   * @default false
    */
-  error?: boolean | string;
+  required?: boolean | undefined;
   /**
-   * Size scale.
+   * Form field name.
+   * @default undefined
    */
-  size?: "sm" | "md" | "lg";
+  name?: string | undefined;
   /**
-   * Color theme.
+   * Visible line count. Ignored when `autoGrow` is set.
+   * @default 4
    */
-  color?: ThemeColor;
+  rows?: number | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Grows the field with its content instead of scrolling.
+   * @default false
    */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  onInput?: (e: InputEvent & { currentTarget: HTMLTextAreaElement }) => void;
-  onChange?: (e: Event & { currentTarget: HTMLTextAreaElement }) => void;
-  onBlur?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
-  onFocus?: (e: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
-  onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  autoGrow?: boolean | undefined;
+  /** Textarea element reference. */
   ref?: HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void);
-  [key: string]: unknown;
-}
+  /** Native input event on the textarea. */
+  onInput?: (event: InputEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  /** Native change event on the textarea. */
+  onChange?: (event: Event & { currentTarget: HTMLTextAreaElement }) => void;
+  /** Native blur event on the textarea. */
+  onBlur?: (event: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  /** Native focus event on the textarea. */
+  onFocus?: (event: FocusEvent & { currentTarget: HTMLTextAreaElement }) => void;
+  /** Native keydown event on the textarea. */
+  onKeyDown?: (event: KeyboardEvent & { currentTarget: HTMLTextAreaElement }) => void;
+};

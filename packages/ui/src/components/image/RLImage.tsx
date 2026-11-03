@@ -3,6 +3,7 @@ import { RLImageTheme } from "./image.theme";
 import { createEffect, createSignal, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
+import { createControllable } from "../../controllable";
 
 const urlOf = (v?: string | ImageMetadata): string | undefined =>
   typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src;
@@ -43,10 +44,13 @@ const OMIT_KEYS = [
   "metaSize",
   "metaAlt",
   "metaDownload",
+  "onOpenChange",
+  "triggerSlot",
+  "captionSlot",
 ] as const;
 
 export const RLImage: Component<RLImageProps> = (props) => {
-  const { classes, rest, slots } = RLImageTheme.setup(props, {
+  const { Tag, classes, rest, slots, theme } = RLImageTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["captionSlot", "triggerSlot"] as const,
   });
@@ -89,10 +93,14 @@ export const RLImage: Component<RLImageProps> = (props) => {
   // Always set `src` so server HTML includes it. Native `loading="lazy"` already defers the fetch.
   const show = () => true;
   const [status, setStatus] = createSignal<"loading" | "ok" | "error">("loading");
-  const [open, setOpen] = createSignal(() => Boolean(props.open));
+  const [open, setOpen] = createControllable(
+    () => props.open,
+    false,
+    (next) => props.onOpenChange?.(next),
+  );
   const [zoom, setZoom] = createSignal(false);
   const [metaSizeTxt, setMetaSizeTxt] = createSignal<string>(() =>
-    props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : "fetching...",
+    props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : uiT("image.fetching"),
   );
   const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(() => fileExtension());
 
@@ -152,7 +160,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                 const mime = blob.type.split("/").pop()?.toUpperCase();
                 if (mime && mime !== "OCTET-STREAM") setMetaFormatTxt(mime);
               })
-              .catch(() => setMetaSizeTxt("unavailable"));
+              .catch(() => setMetaSizeTxt(uiT("image.sizeUnavailable")));
           }
         }
       } else if (dialog.open) {
@@ -246,7 +254,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
     );
 
   return (
-    <div class={classes().root} data-slot="root" data-theme={props.theme} {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       {isFigure() ? (
         <figure class={classes().figure} data-slot="figure">
           {renderTrigger()}
@@ -391,7 +399,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                     <span
                       class={`text-dimmed truncate max-w-[30vw]${alt() ? "" : " italic opacity-50"}`}
                     >
-                      {alt() || "none"}
+                      {alt() || uiT("image.none")}
                     </span>
                   </div>
                 )}
@@ -405,7 +413,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
                   onClick={handleDownload}
                 >
                   <RLIcon name="download" class="size-4 shrink-0" aria-hidden="true" />
-                  Download Original
+                  {uiT("image.download")}
                 </button>
               )}
             </div>
@@ -482,6 +490,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
           }
         }
       `}</style>
-    </div>
+    </Tag>
   );
 };

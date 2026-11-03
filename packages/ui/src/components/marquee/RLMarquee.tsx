@@ -34,12 +34,15 @@ const MARQUEE_KEYFRAMES = `
 }
 `;
 
-const OMIT_KEYS = ["speed", "direction", "pauseOnHover", "gap"] as const;
+const OMIT_KEYS = ["speed", "gap"] as const;
 
 export const RLMarquee: Component<RLMarqueeProps> = (props) => {
-  const { classes, rest } = RLMarqueeTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLMarqueeTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const trackStyle = () => ({ "animation-duration": `${props.speed ?? 40}s` });
+  const trackStyle = () =>
+    props.speed === undefined ? undefined : { "animation-duration": `${props.speed}s` };
 
   const rootStyle = () => {
     const styleObj: Record<string, string> = {};
@@ -56,14 +59,14 @@ export const RLMarquee: Component<RLMarqueeProps> = (props) => {
   };
 
   return (
-    <div class={classes().root} data-slot="marquee-root" style={rootStyle()} {...rest}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} style={rootStyle()} {...rest}>
       <div class={classes().track} data-slot="track" style={trackStyle()}>
-        {props.children}
+        {children()}
       </div>
       <div class={classes().track} data-slot="track" style={trackStyle()} aria-hidden="true">
-        {props.children}
+        {children()}
       </div>
       <style>{MARQUEE_KEYFRAMES}</style>
-    </div>
+    </Tag>
   );
 };

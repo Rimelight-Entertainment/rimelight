@@ -1,115 +1,63 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { InferThemeProps } from "../../resolver";
+import type { RLBadgeTheme } from "./badge.theme";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 
-export interface RLBadgeProps {
+/**
+ * Small status or label chip. Renders a `<span>` with optional icon, avatar and slots.
+ */
+export type RLBadgeProps = InferThemeProps<typeof RLBadgeTheme> & {
   /**
-   * The element or component this component should render as.
-   *
-   * @default "span"
-   */
-  as?: ValidComponent;
-  /**
-   * Text label to display.
+   * Text label to display. Alternative to passing children.
+   * @default undefined
    */
   label?: string | number | undefined;
+
   /**
-   * Color scheme applied.
-   *
-   * @default "primary"
+   * Icon name shown on the side selected by `leading` / `trailing`.
+   * @default undefined
    */
-  color?:
-    | ThemeColor
-    | "error"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "neutral"
-    | undefined;
+  icon?: string | undefined;
+
   /**
-   * Visual style variant.
-   *
-   * @default "solid"
-   */
-  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | undefined;
-  /**
-   * The size scale of the badge.
-   *
-   * @default "md"
-   */
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
-  /**
-   * The shape corner rounding.
-   */
-  shape?: "square" | "rounded" | "pill" | undefined;
-  /**
-   * Render the badge with equal padding on all sides.
-   */
-  square?: boolean | undefined;
-  /**
-   * Field group orientation styling when placed inside a field group.
-   */
-  fieldGroup?: "horizontal" | "vertical" | undefined;
-  /**
-   * Display an icon based on the `leading` and `trailing` props.
-   */
-  icon?: any;
-  /**
-   * Display an avatar on the left side.
-   */
-  avatar?: RLAvatarProps | string | undefined;
-  /**
-   * When `true`, the icon will be displayed on the left side.
+   * When `true`, `icon` is displayed on the left side.
+   * @default false
    */
   leading?: boolean | undefined;
+
   /**
-   * Display an icon on the left side.
-   */
-  leadingIcon?: any;
-  /**
-   * When `true`, the icon will be displayed on the right side.
+   * When `true`, `icon` is displayed on the right side.
+   * @default false
    */
   trailing?: boolean | undefined;
+
   /**
-   * Display an icon on the right side.
+   * Icon name displayed on the left side. Takes precedence over `icon`.
+   * @default undefined
    */
-  trailingIcon?: any;
+  leadingIcon?: string | undefined;
+
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Icon name displayed on the right side. Takes precedence over `icon`.
+   * @default undefined
    */
-  theme?: Theme | undefined;
+  trailingIcon?: string | undefined;
+
   /**
-   * Slot-specific CSS class overrides.
+   * Avatar displayed on the left side. A string is used as the image source.
+   * @default undefined
    */
-  ui?:
-    | {
-        root?: any;
-        label?: any;
-        leadingIcon?: any;
-        leadingAvatar?: any;
-        leadingAvatarSize?: any;
-        trailingIcon?: any;
-        [key: string]: any;
-      }
-    | undefined;
+  avatar?: RLAvatarProps | string | undefined;
+
   /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  /**
-   * Default slot children.
-   */
-  children?: JSX.Element;
-  /**
-   * Replaces the leading icon.
+   * Custom JSX rendered on the left side. Replaces the leading icon and avatar.
+   * @default undefined
    */
   leadingSlot?: JSX.Element;
+
   /**
-   * Replaces the trailing icon.
+   * Custom JSX rendered on the right side. Replaces the trailing icon.
+   * @default undefined
    */
   trailingSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+};

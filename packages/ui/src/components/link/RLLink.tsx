@@ -1,6 +1,6 @@
 import type { RLLinkProps } from "./link.types";
 import { RLLinkTheme } from "./link.theme";
-import { children, createMemo, type Component } from "solid-js";
+import { createMemo, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { resolveLinkAttrs } from "./helpers";
 import { uiT } from "../../locale";
@@ -10,90 +10,72 @@ const OMIT_KEYS = [
   "leadingIcon",
   "trailingIcon",
   "href",
-  "external",
   "localize",
+  "external",
   "externalIcon",
   "noExternalIcon",
   "target",
   "rel",
-  "ariaLabel",
-  "ariaCurrentValue",
-  "raw",
-  "leading",
-  "trailing",
+  "current",
 ] as const;
 
 export const RLLink: Component<RLLinkProps> = (props) => {
   const attrs = createMemo(() => resolveLinkAttrs(props));
 
-  const resolvedLeading = children(() => slots.leadingSlot());
-  const resolvedChildren = children(() => props.children);
-  const resolvedTrailing = children(() => slots.trailingSlot());
-
-  const ariaLabelValue = () => props.ariaLabel;
-
-  const {
-    classes: themeClasses,
-    rest,
-    slots,
-  } = RLLinkTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLLinkTheme.setup(props, {
+    as: "a",
     slots: ["leadingSlot", "trailingSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({
       active: props.active,
-      disabled: !!props.disabled,
+      disabled: props.disabled,
     }),
   });
 
-  const classes = createMemo<Record<string, string>>(() => {
-    if (props.raw) {
-      return { root: props.class || "", externalHint: "sr-only" };
-    }
-
-    return themeClasses();
-  });
-
   return (
-    <a
-      class={classes()["root"]}
+    <Tag
+      class={classes().root}
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
       href={attrs().href}
       target={attrs().target}
       rel={attrs().rel}
-      aria-label={ariaLabelValue()}
       aria-current={attrs().ariaCurrent}
       aria-disabled={attrs().ariaDisabled}
       {...rest}
     >
-      {resolvedLeading() ? (
-        resolvedLeading()
+      {slots.leadingSlot() ? (
+        slots.leadingSlot()
       ) : props.leadingIcon ? (
-        <span class={classes()["leadingIcon"]} data-slot="leading-icon">
+        <span class={classes().leadingIcon} data-slot="leading-icon">
           <RLIcon name={props.leadingIcon} size="sm" aria-hidden="true" />
         </span>
       ) : null}
 
-      {resolvedChildren() ??
+      {children() ??
         (props.label !== undefined && props.label !== null ? (
-          <span class={classes()["label"]} data-slot="label">
+          <span class={classes().label} data-slot="label">
             {props.label}
           </span>
         ) : null)}
 
-      {resolvedTrailing() ? (
-        resolvedTrailing()
-      ) : attrs().showTrailingIcon ? (
-        <span class={classes()["trailingIcon"]} data-slot="trailing-icon">
-          <RLIcon name={attrs().showTrailingIcon!} size="sm" aria-hidden="true" />
-        </span>
-      ) : null}
+      {slots.trailingSlot() ? (
+        slots.trailingSlot()
+      ) : (
+        <Show when={attrs().showTrailingIcon}>
+          {(iconName) => (
+            <span class={classes().trailingIcon} data-slot="trailing-icon">
+              <RLIcon name={iconName()} size="sm" aria-hidden="true" />
+            </span>
+          )}
+        </Show>
+      )}
 
-      {attrs().isExternal && attrs().target === "_blank" && !ariaLabelValue() && (
-        <span class={classes()["externalHint"]} data-slot="external-hint">
+      {attrs().isExternal && attrs().target === "_blank" && !props["aria-label"] && (
+        <span class={classes().externalHint} data-slot="external-hint">
           {uiT("link.opens-in-new-tab")}
         </span>
       )}
-    </a>
+    </Tag>
   );
 };

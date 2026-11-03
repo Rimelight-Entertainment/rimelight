@@ -86,21 +86,17 @@ describe("RLCard", () => {
       expect(html).not.toContain("Ignored Desc");
     });
 
-    it("supports headerSlot alias", () => {
+    it("renders headerSlot content", () => {
       const html = render(() => (
         <RLCard headerSlot={<div class="header-alias">Header Alias</div>} />
       ));
       expect(html).toContain("Header Alias");
     });
 
-    it("renders body via body prop or bodySlot alias", () => {
-      const propHtml = render(() => <RLCard bodySlot={<span>Body Prop</span>} />);
-      expect(propHtml).toContain("Body Prop");
-      expect(slotTag(propHtml, "body")).not.toBe("");
-
-      const slotHtml = render(() => <RLCard bodySlot={<span>Body Slot</span>} />);
-      expect(slotHtml).toContain("Body Slot");
-      expect(slotTag(slotHtml, "body")).not.toBe("");
+    it("renders bodySlot content", () => {
+      const html = render(() => <RLCard bodySlot={<span>Body Slot</span>} />);
+      expect(html).toContain("Body Slot");
+      expect(slotTag(html, "body")).not.toBe("");
     });
 
     it("renders footerSlot", () => {
@@ -174,24 +170,6 @@ describe("RLCard", () => {
       expect(html).toContain("Video");
     });
 
-    it("renders overlay mode with title and description", () => {
-      const html = render(() => (
-        <RLCard
-          overlay
-          mediaSrc="https://example.com/bg.jpg"
-          title="Overlay Title"
-          description="Overlay Description"
-        >
-          Overlay Body
-        </RLCard>
-      ));
-      expect(slotTag(html, "overlay")).not.toBe("");
-      expect(html).toContain("Overlay Title");
-      expect(html).toContain("Overlay Description");
-      expect(html).toContain("Overlay Body");
-      expect(slotTag(html, "root")).toContain("relative");
-    });
-
     it("renders custom overlaySlot", () => {
       const html = render(() => (
         <RLCard
@@ -248,13 +226,13 @@ describe("RLCard", () => {
       expect(attr(desc, "id")).toBe("test-card-description");
     });
 
-    it("supports explicit ariaLabel, ariaLabelledby, ariaDescribedby, and role", () => {
+    it("supports explicit aria-label, aria-labelledby, aria-describedby, and role", () => {
       const html = render(() => (
         <RLCard
           role="region"
-          ariaLabel="Card region"
-          ariaLabelledby="custom-heading"
-          ariaDescribedby="custom-desc"
+          aria-label="Card region"
+          aria-labelledby="custom-heading"
+          aria-describedby="custom-desc"
         >
           Content
         </RLCard>

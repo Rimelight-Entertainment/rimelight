@@ -7,7 +7,6 @@ export const RLIconTheme = defineTheme("icon", {
   },
   variants: {
     size: {
-      none: { root: "" },
       xs: { root: "size-3" },
       sm: { root: "size-4" },
       md: { root: "size-5" },

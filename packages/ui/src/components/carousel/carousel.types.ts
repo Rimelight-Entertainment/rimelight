@@ -1,6 +1,7 @@
-import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
 import type { RLButtonProps } from "../button/button.types";
+import type { RLCarouselTheme } from "./carousel.theme";
 
 export interface CarouselSlide {
   src?: string | undefined;
@@ -9,12 +10,9 @@ export interface CarouselSlide {
   caption?: string | undefined;
   title?: string | undefined;
   description?: string | undefined;
-  class?: any;
-  ui?: { item?: any } | undefined;
-  [key: string]: unknown;
 }
 
-export type CarouselItem = CarouselSlide | Record<string, any> | string;
+export type CarouselItem = CarouselSlide | string;
 
 export interface CarouselAutoplayOptions {
   /** Delay in milliseconds between slide transitions. */
@@ -64,22 +62,14 @@ export interface CarouselWheelGesturesOptions {
   active?: boolean | undefined;
 }
 
-export interface RLCarouselProps<T = any> {
-  /**
-   * The element or component this component should render as.
-   * @default 'div'
-   */
-  as?: ValidComponent;
-
+export type RLCarouselProps<T = unknown> = Omit<
+  InferThemeProps<typeof RLCarouselTheme>,
+  "children" | "onSelect" | "ref"
+> & {
   /**
    * List of items to render in the carousel.
    */
   items?: T[] | undefined;
-
-  /**
-   * Backwards compatible slide list.
-   */
-  slides?: CarouselSlide[] | undefined;
 
   /**
    * Configure the prev button when arrows are enabled.
@@ -88,10 +78,10 @@ export interface RLCarouselProps<T = any> {
   prev?: Omit<RLButtonProps, "href" | "to"> | undefined;
 
   /**
-   * The icon displayed in the prev button.
-   * @default 'chevronLeft'
+   * The icon name displayed in the prev button.
+   * @default 'chevron-left'
    */
-  prevIcon?: any;
+  prevIcon?: string | undefined;
 
   /**
    * Configure the next button when arrows are enabled.
@@ -100,10 +90,10 @@ export interface RLCarouselProps<T = any> {
   next?: Omit<RLButtonProps, "href" | "to"> | undefined;
 
   /**
-   * The icon displayed in the next button.
-   * @default 'chevronRight'
+   * The icon name displayed in the next button.
+   * @default 'chevron-right'
    */
-  nextIcon?: any;
+  nextIcon?: string | undefined;
 
   /**
    * Display prev and next buttons to scroll the carousel.
@@ -116,18 +106,6 @@ export interface RLCarouselProps<T = any> {
    * @default false
    */
   dots?: boolean | undefined;
-
-  /**
-   * Position of controls (arrows and dots) relative to the carousel viewport.
-   * @default 'outside'
-   */
-  controls?: "inside" | "outside" | undefined;
-
-  /**
-   * The orientation of the carousel.
-   * @default 'horizontal'
-   */
-  orientation?: "vertical" | "horizontal" | undefined;
 
   /**
    * Enable Autoplay plugin or configuration object.
@@ -220,7 +198,7 @@ export interface RLCarouselProps<T = any> {
 
   /**
    * Transition duration in milliseconds.
-   * @default 25
+   * @default 500
    */
   duration?: number | undefined;
 
@@ -255,56 +233,9 @@ export interface RLCarouselProps<T = any> {
   watchFocus?: boolean | undefined;
 
   /**
-   * Whether the carousel is active.
-   * @default true
-   */
-  active?: boolean | undefined;
-
-  /**
    * Breakpoint responsive configuration.
    */
   breakpoints?: Record<string, Partial<RLCarouselProps<T>>> | undefined;
-
-  /**
-   * UI slot class overrides.
-   */
-  ui?:
-    | {
-        root?: string | undefined;
-        viewport?: string | undefined;
-        container?: string | undefined;
-        item?: string | undefined;
-        controls?: string | undefined;
-        arrows?: string | undefined;
-        prev?: string | undefined;
-        next?: string | undefined;
-        dots?: string | undefined;
-        dot?: string | undefined;
-        slide?: string | undefined;
-        buttonPrev?: string | undefined;
-        buttonNext?: string | undefined;
-        [key: string]: any;
-      }
-    | undefined;
-
-  /**
-   * Root class name.
-   */
-  class?: any;
-
-  /**
-   * Root class name alias.
-   */
-
-  /**
-   * Theme identifier.
-   */
-  theme?: string | undefined;
-
-  /**
-   * Event fired on slide selection.
-   */
-  onSelect?: ((selectedIndex: number) => void) | undefined;
 
   /**
    * Children content or scoped render function.
@@ -316,17 +247,15 @@ export interface RLCarouselProps<T = any> {
     | undefined;
 
   /**
-   * Custom aria-label for accessibility.
+   * Event fired on slide selection with the selected index.
    */
-  ariaLabel?: string | undefined;
+  onSelect?: ((selectedIndex: number) => void) | undefined;
 
   /**
    * Ref handle callback.
    */
   ref?: ((handle: RLCarouselHandle) => void) | undefined;
-
-  [key: string]: unknown;
-}
+};
 
 export interface RLCarouselHandle {
   scrollTo: (index: number) => void;

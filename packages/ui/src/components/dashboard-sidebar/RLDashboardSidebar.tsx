@@ -1,34 +1,35 @@
 import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
 import { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
-import { createSignal, onSettled, type Component } from "solid-js";
+import { onSettled, Show, type Component } from "solid-js";
+import { createControllable } from "../../controllable";
 
-const OMIT_KEYS = ["collapsible", "openMobile", "onOpenMobileChange", "onCollapseChange"] as const;
+const OMIT_KEYS = [
+  "collapsible",
+  "collapsed",
+  "defaultCollapsed",
+  "onCollapseChange",
+  "openMobile",
+  "defaultOpenMobile",
+  "onOpenMobileChange",
+] as const;
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) => {
-  const side = () => props.side ?? "left";
-  const isCollapsible = () => props.collapsible ?? false;
-  const [isCollapsed, setIsCollapsed] = createSignal(() => props.collapsed ?? false);
-  const [isMobileOpen, setIsMobileOpen] = createSignal(() => props.openMobile ?? false);
+  const [isCollapsed, setCollapsed] = createControllable(
+    () => props.collapsed,
+    props.defaultCollapsed ?? false,
+    props.onCollapseChange,
+  );
+  const [isMobileOpen, setMobileOpen] = createControllable(
+    () => props.openMobile,
+    props.defaultOpenMobile ?? false,
+    props.onOpenMobileChange,
+  );
 
-  const { classes, rest, slots } = RLDashboardSidebarTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme } = RLDashboardSidebarTheme.setup(props, {
     slots: ["headerSlot", "footerSlot"] as const,
     omit: OMIT_KEYS,
-    variants: () => ({ collapsed: isCollapsible() && isCollapsed() }),
+    variants: () => ({ collapsed: props.collapsible === true && isCollapsed() }),
   });
-
-  const setCollapsedState = (collapsed: boolean) => {
-    if (props.collapsed === undefined) {
-      setIsCollapsed(collapsed);
-    }
-    props.onCollapseChange?.(collapsed);
-  };
-
-  const setMobileOpenState = (open: boolean) => {
-    if (props.openMobile === undefined) {
-      setIsMobileOpen(open);
-    }
-    props.onOpenMobileChange?.(open);
-  };
 
   onSettled(() => {
     const handleClick = (e: MouseEvent) => {
@@ -39,22 +40,22 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
       if (toggle) {
         const toggleType = toggle.dataset["dashboardToggle"];
         if (toggleType === "mobile") {
-          setMobileOpenState(!isMobileOpen());
+          setMobileOpen(!isMobileOpen());
         }
-        if (toggleType === "collapse" && isCollapsible()) {
-          setCollapsedState(!isCollapsed());
+        if (toggleType === "collapse" && props.collapsible === true) {
+          setCollapsed(!isCollapsed());
         }
         return;
       }
 
       if (target.closest("[data-dashboard-sidebar-mobile] a")) {
-        setMobileOpenState(false);
+        setMobileOpen(false);
       }
     };
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isMobileOpen()) {
-        setMobileOpenState(false);
+        setMobileOpen(false);
       }
     };
 
@@ -67,20 +68,6 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
     };
   });
 
-  const headerContent = () =>
-    slots.headerSlot() !== undefined ? (
-      <div data-slot="header" class={classes().header}>
-        {slots.headerSlot()}
-      </div>
-    ) : null;
-
-  const footerContent = () =>
-    slots.footerSlot() !== undefined ? (
-      <div data-slot="footer" class={classes().footer}>
-        {slots.footerSlot()}
-      </div>
-    ) : null;
-
   return (
     <>
       <div
@@ -89,16 +76,17 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
         class={`${classes().overlay} fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 ${
           isMobileOpen() ? "block" : "hidden"
         } lg:hidden`}
-        onClick={() => setMobileOpenState(false)}
+        onClick={() => setMobileOpen(false)}
       />
 
-      <div
+      <Tag
         data-dashboard-sidebar
-        data-side={side()}
-        data-collapsible={isCollapsible() ? "true" : "false"}
-        data-collapsed={isCollapsible() && isCollapsed() ? "true" : "false"}
+        data-side={props.side}
+        data-collapsible={props.collapsible === true ? "true" : "false"}
+        data-collapsed={props.collapsible === true && isCollapsed() ? "true" : "false"}
         data-mobile-open={isMobileOpen() ? "true" : "false"}
         data-slot="root"
+        data-theme={theme()}
         class={`${classes().root} ${
           isMobileOpen()
             ? "!flex fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default"
@@ -106,14 +94,22 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
         }`}
         {...rest}
       >
-        {headerContent()}
+        <Show when={slots.headerSlot() !== undefined}>
+          <div data-slot="header" class={classes().header}>
+            {slots.headerSlot()}
+          </div>
+        </Show>
 
         <div data-slot="body" class={classes().body}>
-          {props.children}
+          {children()}
         </div>
 
-        {footerContent()}
-      </div>
+        <Show when={slots.footerSlot() !== undefined}>
+          <div data-slot="footer" class={classes().footer}>
+            {slots.footerSlot()}
+          </div>
+        </Show>
+      </Tag>
     </>
   );
 };

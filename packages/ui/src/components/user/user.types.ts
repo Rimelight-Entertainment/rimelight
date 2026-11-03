@@ -1,14 +1,9 @@
-import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLUserTheme } from "./user.theme";
 
-export interface RLUserProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: any;
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: any;
-  children?: JSX.Element;
-  [key: string]: unknown;
-}
+/**
+ * Props for the user component.
+ *
+ * @status stub
+ */
+export type RLUserProps = InferThemeProps<typeof RLUserTheme>;

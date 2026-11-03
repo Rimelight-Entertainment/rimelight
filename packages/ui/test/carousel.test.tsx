@@ -42,12 +42,12 @@ describe("RLCarousel", () => {
       expect(html).toContain(items[2]);
     });
 
-    it("renders slides passed via slides prop", () => {
+    it("renders slides passed via items prop", () => {
       const slides = [
         { imageSrc: "https://example.com/slide1.jpg", title: "Slide 1", description: "Desc 1" },
         { imageSrc: "https://example.com/slide2.jpg", title: "Slide 2" },
       ];
-      const html = render(() => <RLCarousel slides={slides} />);
+      const html = render(() => <RLCarousel items={slides} />);
       expect(html).toContain("https://example.com/slide1.jpg");
       expect(html).toContain("Slide 1");
       expect(html).toContain("Desc 1");
@@ -69,9 +69,9 @@ describe("RLCarousel", () => {
     it("renders scoped function children with items", () => {
       const html = render(() => (
         <RLCarousel items={items}>
-          {(ctx: { item: string; index: number }) => (
+          {(ctx: { item: unknown; index: number }) => (
             <span class="custom-item">
-              Item {ctx.index}: {ctx.item}
+              Item {ctx.index}: {String(ctx.item)}
             </span>
           )}
         </RLCarousel>
@@ -86,15 +86,15 @@ describe("RLCarousel", () => {
     it("does not render arrows by default", () => {
       const html = render(() => <RLCarousel items={items} />);
       expect(slotTag(html, "arrows")).toBe("");
-      expect(slotTag(html, "prev-button")).toBe("");
-      expect(slotTag(html, "next-button")).toBe("");
+      expect(slotTag(html, "prev")).toBe("");
+      expect(slotTag(html, "next")).toBe("");
     });
 
     it("renders prev and next arrow buttons when arrows is true", () => {
       const html = render(() => <RLCarousel items={items} arrows />);
       expect(slotTag(html, "arrows")).not.toBe("");
-      expect(slotTag(html, "prev-button")).not.toBe("");
-      expect(slotTag(html, "next-button")).not.toBe("");
+      expect(slotTag(html, "prev")).not.toBe("");
+      expect(slotTag(html, "next")).not.toBe("");
     });
 
     it("customizes prev and next buttons with props", () => {
@@ -106,8 +106,8 @@ describe("RLCarousel", () => {
           next={{ color: "neutral", variant: "outline" }}
         />
       ));
-      expect(slotTag(html, "prev-button")).toContain("rl-color-primary");
-      expect(slotTag(html, "next-button")).toContain("rl-color-neutral");
+      expect(slotTag(html, "prev")).toContain("rl-color-primary");
+      expect(slotTag(html, "next")).toContain("rl-color-neutral");
     });
   });
 
@@ -221,7 +221,7 @@ describe("RLCarousel", () => {
 
   describe("Accessibility (WAI-ARIA)", () => {
     it("renders region role and roledescription carousel", () => {
-      const html = render(() => <RLCarousel items={items} ariaLabel="Featured products" />);
+      const html = render(() => <RLCarousel items={items} aria-label="Featured products" />);
       const root = slotTag(html, "root");
       expect(attr(root, "role")).toBe("region");
       expect(attr(root, "aria-roledescription")).toBe("carousel");
@@ -233,7 +233,7 @@ describe("RLCarousel", () => {
       const itemTag = slotTag(html, "item");
       expect(attr(itemTag, "role")).toBe("group");
       expect(attr(itemTag, "aria-roledescription")).toBe("slide");
-      expect(attr(itemTag, "aria-label")).toBe("1 of 3");
+      expect(attr(itemTag, "aria-label")).toBe("1 / 3");
     });
 
     it("renders tablist and tabs for dots", () => {

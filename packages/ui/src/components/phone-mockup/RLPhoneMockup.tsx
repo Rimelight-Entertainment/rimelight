@@ -3,11 +3,11 @@ import type { RLPhoneMockupProps } from "./phone-mockup.types";
 import { RLPhoneMockupTheme } from "./phone-mockup.theme";
 
 export const RLPhoneMockup: Component<RLPhoneMockupProps> = (props) => {
-  const { classes, rest } = RLPhoneMockupTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLPhoneMockupTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

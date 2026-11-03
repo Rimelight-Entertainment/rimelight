@@ -3,11 +3,11 @@ import type { RLUserProps } from "./user.types";
 import { RLUserTheme } from "./user.theme";
 
 export const RLUser: Component<RLUserProps> = (props) => {
-  const { classes, rest } = RLUserTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLUserTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

@@ -178,14 +178,14 @@ describe("RLBreadcrumb Solid Component Suite", () => {
     it("renders custom item slot override via itemSlot", () => {
       const customSlotItems: BreadcrumbItem[] = [
         { label: "Home", href: "/" },
-        { slot: "dropdown", label: "Menu" },
+        { label: "Menu" },
         { label: "End Page" },
       ];
       const html = renderToString(() => (
         <RLBreadcrumb
           items={customSlotItems}
           itemSlot={({ item }) =>
-            item.slot === "dropdown" ? (
+            item.label === "Menu" ? (
               <button class="dropdown-trigger">{item.label}</button>
             ) : (
               <span class="default-item">{item.label}</span>

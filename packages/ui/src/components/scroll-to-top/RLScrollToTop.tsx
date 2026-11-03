@@ -6,10 +6,10 @@ import { scrollToTop, trackScroll } from "./scroll";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = ["progressWidth", "duration", "threshold", "showProgress", "theme"] as const;
+const OMIT_KEYS = ["progressWidth", "threshold", "showProgress"] as const;
 
 export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
-  const { classes, rest } = RLScrollToTopTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, theme } = RLScrollToTopTheme.setup(props, { omit: OMIT_KEYS });
 
   const [isVisible, setIsVisible] = createSignal(false);
   const [scrollPercentage, setScrollPercentage] = createSignal(0);
@@ -39,12 +39,12 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
   });
 
   return (
-    <div
-      class={`fixed bottom-6 right-6 z-50 transition-opacity duration-300 ${classes().root} ${
+    <Tag
+      class={`transition-opacity duration-300 ${classes().root} ${
         isVisible() ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
       data-slot="root"
-      data-theme={props.theme}
+      data-theme={theme()}
       {...rest}
     >
       <button
@@ -68,6 +68,6 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
           </div>
         </div>
       </button>
-    </div>
+    </Tag>
   );
 };

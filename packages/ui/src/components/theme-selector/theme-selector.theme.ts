@@ -7,4 +7,17 @@ export const RLThemeSelectorTheme = defineTheme("theme-selector", {
     wrapper: "relative inline-block",
     select: "",
   },
+  variants: {
+    color: "auto",
+    size: {
+      xs: { select: "" },
+      sm: { select: "" },
+      md: { select: "" },
+      lg: { select: "" },
+      xl: { select: "" },
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
 });

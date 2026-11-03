@@ -6,40 +6,37 @@ import { RLProgressTheme } from "./progress.theme";
 const OMIT_KEYS = ["value", "max"] as const;
 
 export const RLProgress: Component<RLProgressProps> = (props) => {
-  const { classes, rest } = RLProgressTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLProgressTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const value = () => props.value ?? 0;
-  const max = () => props.max ?? 100;
-  const percentage = createMemo(() => Math.min(100, Math.max(0, (value() / max()) * 100)));
+  const percentage = createMemo(() =>
+    Math.min(100, Math.max(0, ((props.value ?? 0) / (props.max ?? 100)) * 100)),
+  );
 
-  const widthClass = () => {
+  const widthClass = createMemo(() => {
     const pct = Math.round(percentage());
-    return pct === 100
-      ? "w-full"
-      : pct === 75
-        ? "w-3/4"
-        : pct === 50
-          ? "w-1/2"
-          : pct === 25
-            ? "w-1/4"
-            : pct === 0
-              ? "w-0"
-              : `w-[${pct}%]`;
-  };
+    if (pct === 100) return "w-full";
+    if (pct === 75) return "w-3/4";
+    if (pct === 50) return "w-1/2";
+    if (pct === 25) return "w-1/4";
+    if (pct === 0) return "w-0";
+    return `w-[${pct}%]`;
+  });
 
   return (
-    <div
+    <Tag
       class={classes().root}
-      data-slot="progress-root"
+      data-slot="root"
+      data-theme={theme()}
       role="progressbar"
       aria-valuemin={0}
-      aria-valuemax={max()}
-      aria-valuenow={value()}
-      data-theme={props.theme}
+      aria-valuemax={props.max ?? 100}
+      aria-valuenow={props.value ?? 0}
       {...rest}
     >
       <div class={`${classes().indicator} ${widthClass()}`} data-slot="indicator" />
-      {props.children}
-    </div>
+      {children()}
+    </Tag>
   );
 };

@@ -3,9 +3,9 @@ import type { RLInputDateProps } from "./input-date.types";
 import { RLInputDateTheme } from "./input-date.theme";
 import { createMemo } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
+import { cx } from "../../resolver";
 
 const OMIT_KEYS = [
-  "children",
   "value",
   "defaultValue",
   "name",
@@ -16,28 +16,23 @@ const OMIT_KEYS = [
   "min",
   "max",
   "step",
-  "size",
   "onInput",
-  "onChange",
+  "onValueChange",
   "onBlur",
   "onFocus",
   "onKeyDown",
+  "ref",
 ] as const;
 
 export const RLInputDate: Component<RLInputDateProps> = (props) => {
-  const { classes, rest } = RLInputDateTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme, ui } = RLInputDateTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
-  const inputClasses = createMemo(() =>
-    RLInputTheme({
-      variant: "default",
-      size: props.size ?? "md",
-      error: false,
-      ui: props.ui,
-    }),
-  );
+  const inputClasses = createMemo(() => RLInputTheme({ size: props.size, ui: ui() }));
 
   return (
-    <div class={`${classes().root} ${inputClasses().root}`} data-slot="root">
+    <Tag data-slot="root" data-theme={theme()} class={cx(classes().root, inputClasses().root)}>
       <input
         type="date"
         name={props.name}
@@ -49,16 +44,17 @@ export const RLInputDate: Component<RLInputDateProps> = (props) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        class={inputClasses().input}
+        class={cx(inputClasses().input, classes().input)}
         data-slot="input"
         onInput={props.onInput}
-        onChange={props.onChange}
         onBlur={props.onBlur}
         onFocus={props.onFocus}
         onKeyDown={props.onKeyDown}
+        ref={props.ref}
         {...rest}
+        onChange={(e) => props.onValueChange?.(e.currentTarget.value)}
       />
-      {props.children}
-    </div>
+      {children()}
+    </Tag>
   );
 };

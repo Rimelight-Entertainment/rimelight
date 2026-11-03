@@ -1,11 +1,14 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLDashboardToolbarTheme } from "./dashboard-toolbar.theme";
 
-export interface RLDashboardToolbarProps {
-  as?: string;
-  ui?: any;
-  class?: any;
-  children?: JSX.Element;
-  leftSlot?: JSX.Element;
-  rightSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+export type RLDashboardToolbarProps = InferThemeProps<typeof RLDashboardToolbarTheme> & {
+  /**
+   * Content of the leading region (start edge). Used when `children` is not provided.
+   */
+  leadingSlot?: JSX.Element;
+  /**
+   * Content of the trailing region (end edge). Used when `children` is not provided.
+   */
+  trailingSlot?: JSX.Element;
+};

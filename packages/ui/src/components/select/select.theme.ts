@@ -12,10 +12,34 @@ export const RLSelectTheme = defineTheme("select", {
   },
   variants: {
     variant: {
-      default: {
-        root: "w-full",
+      solid: {
         select:
           "border-[var(--rl-border)]/50 bg-default text-highlighted hover:border-[var(--rl-border)] focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
+      },
+      outline: {
+        select:
+          "border-[var(--rl-border)] bg-transparent text-highlighted hover:border-[var(--rl-border)] focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
+      },
+      soft: {
+        select:
+          "border-transparent bg-[var(--rl-bg)]/10 text-highlighted hover:bg-[var(--rl-bg)]/15 focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
+      },
+      subtle: {
+        select:
+          "border-transparent bg-elevated text-highlighted hover:bg-accented focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
+      },
+      ghost: {
+        select:
+          "border-transparent bg-transparent text-highlighted shadow-none hover:bg-elevated focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
+      },
+      link: {
+        select:
+          "border-transparent bg-transparent text-highlighted shadow-none rounded-none px-0 underline underline-offset-4 focus-within:ring-2 focus-within:ring-[var(--rl-ring)]",
+      },
+    },
+    layout: {
+      default: {
+        root: "w-full",
       },
       icon: {
         select:
@@ -36,7 +60,7 @@ export const RLSelectTheme = defineTheme("select", {
   compoundVariants: [
     {
       color: "neutral",
-      variant: "default",
+      variant: "solid",
       class: {
         select:
           "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
@@ -44,25 +68,26 @@ export const RLSelectTheme = defineTheme("select", {
     },
     {
       color: "neutral",
-      variant: "icon",
+      layout: "icon",
       class: {
         select:
           "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
       },
     },
-    { variant: "default", size: "xs", class: { select: "px-2 py-0.5" } },
-    { variant: "default", size: "sm", class: { select: "px-2.5 py-1" } },
-    { variant: "default", size: "md", class: { select: "px-3 py-1.5" } },
-    { variant: "default", size: "lg", class: { select: "px-3.5 py-2" } },
-    { variant: "default", size: "xl", class: { select: "px-4 py-2.5" } },
-    { variant: "icon", size: "xs", class: { select: "p-1" } },
-    { variant: "icon", size: "sm", class: { select: "p-1.5" } },
-    { variant: "icon", size: "md", class: { select: "p-2" } },
-    { variant: "icon", size: "lg", class: { select: "p-2.5" } },
-    { variant: "icon", size: "xl", class: { select: "p-3" } },
+    { layout: "default", size: "xs", class: { select: "px-2 py-0.5" } },
+    { layout: "default", size: "sm", class: { select: "px-2.5 py-1" } },
+    { layout: "default", size: "md", class: { select: "px-3 py-1.5" } },
+    { layout: "default", size: "lg", class: { select: "px-3.5 py-2" } },
+    { layout: "default", size: "xl", class: { select: "px-4 py-2.5" } },
+    { layout: "icon", size: "xs", class: { select: "p-1" } },
+    { layout: "icon", size: "sm", class: { select: "p-1.5" } },
+    { layout: "icon", size: "md", class: { select: "p-2" } },
+    { layout: "icon", size: "lg", class: { select: "p-2.5" } },
+    { layout: "icon", size: "xl", class: { select: "p-3" } },
   ],
   defaultVariants: {
-    variant: "default",
+    variant: "solid",
+    layout: "default",
     color: "primary",
     size: "md",
   },

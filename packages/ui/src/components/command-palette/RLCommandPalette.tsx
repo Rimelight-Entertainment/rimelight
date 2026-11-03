@@ -3,11 +3,11 @@ import type { RLCommandPaletteProps } from "./command-palette.types";
 import { RLCommandPaletteTheme } from "./command-palette.theme";
 
 export const RLCommandPalette: Component<RLCommandPaletteProps> = (props) => {
-  const { classes, rest } = RLCommandPaletteTheme.setup(props);
+  const { Tag, classes, rest, children, theme } = RLCommandPaletteTheme.setup(props);
 
   return (
-    <div class={classes().root} data-slot="root" {...rest}>
-      {props.children}
-    </div>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      {children()}
+    </Tag>
   );
 };

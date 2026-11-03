@@ -1,11 +1,17 @@
-import type { DocsConfig, SidebarItem, SidebarScope, RLBadgeProps } from "./config";
+import type {
+  DocsConfig,
+  DocsSidebarItem,
+  DocsSidebarScope,
+  SidebarBadge,
+  SidebarItem,
+} from "./config";
 import { defaultDocsConfig } from "./config";
 
 export interface ResolvedSidebarItem {
   label: string;
   href?: string | undefined;
   icon?: string | undefined;
-  badge?: string | RLBadgeProps | undefined;
+  badge?: string | SidebarBadge | undefined;
   active?: boolean | undefined;
   children?: ResolvedSidebarItem[] | undefined;
   collapsed?: boolean | undefined;
@@ -52,7 +58,7 @@ function findFirstHref(
 ): string | undefined {
   for (const item of items) {
     if (item.href) return formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl);
-    const childItems = item.children || item.items;
+    const childItems = item.children;
     if (childItems) {
       const found = findFirstHref(childItems, locale, activeVersion, includeVersionInUrl);
       if (found) return found;
@@ -72,7 +78,7 @@ function getScopePrefix(
   function collect(item: SidebarItem) {
     if (item.href)
       allHrefs.push(formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl));
-    const childItems = item.children || item.items;
+    const childItems = item.children;
     if (childItems) childItems.forEach(collect);
   }
 
@@ -107,7 +113,7 @@ function hasPath(
     ) {
       return true;
     }
-    const childItems = item.children || item.items;
+    const childItems = item.children;
     if (childItems && hasPath(childItems, locale, normPath, activeVersion, includeVersionInUrl)) {
       return true;
     }
@@ -137,9 +143,9 @@ export async function getDocsSidebar(
 
   const normPath = currentPath.replace(/\/$/, "").toLowerCase();
 
-  const sidebarScopes: SidebarScope[] = Array.isArray(resolvedConfig.sidebar)
+  const sidebarScopes: DocsSidebarScope[] = Array.isArray(resolvedConfig.sidebar)
     ? resolvedConfig.sidebar.filter(
-        (item): item is SidebarScope => "id" in item || "scopes" in item,
+        (item): item is DocsSidebarScope => "id" in item || "scopes" in item,
       )
     : resolvedConfig.sidebar?.scopes || [];
 
@@ -198,7 +204,7 @@ export async function getDocsSidebar(
 
   const items = sidebarConfig?.items || [];
 
-  async function resolveItem(item: SidebarItem): Promise<ResolvedSidebarItem[]> {
+  async function resolveItem(item: DocsSidebarItem): Promise<ResolvedSidebarItem[]> {
     const resolved: ResolvedSidebarItem = {
       label: item.label || "",
       href: item.href
@@ -213,7 +219,7 @@ export async function getDocsSidebar(
       resolved.active = normPath === resolved.href.replace(/\/$/, "").toLowerCase();
     }
 
-    const childItems = item.children || item.items;
+    const childItems = item.children;
     if (childItems) {
       const children: ResolvedSidebarItem[] = [];
       const resolvedChildren = await Promise.all(childItems.map((child) => resolveItem(child)));

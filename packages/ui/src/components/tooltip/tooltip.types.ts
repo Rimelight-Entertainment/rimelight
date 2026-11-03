@@ -1,27 +1,40 @@
 import type { JSX } from "@solidjs/web";
+import type { InferThemeProps } from "../../resolver";
+import type { RLTooltipTheme } from "./tooltip.theme";
 
-export interface RLTooltipProps {
+export type RLTooltipProps = Omit<InferThemeProps<typeof RLTooltipTheme>, "placement"> & {
   /**
-   * The text content to display inside the tooltip.
+   * Plain text shown inside the tooltip. Use `bodySlot` for JSX.
    */
-  content?: string;
-  /**
-   * Controlled open state.
-   */
-  open?: boolean;
+  content?: string | undefined;
   /**
    * Placement of the tooltip relative to the trigger.
+   *
+   * @default "top"
    */
-  placement?: "top" | "bottom" | "left" | "right";
+  placement?: "top" | "bottom" | "left" | "right" | undefined;
   /**
-   * Slot-specific CSS class overrides.
+   * Controlled open state. Hover and focus on the trigger request open changes through `onOpenChange`.
+   *
+   * @default false
    */
-  ui?: any;
+  open?: boolean | undefined;
   /**
-   * Additional CSS classes to apply to the root element.
+   * Initial open state when uncontrolled.
+   *
+   * @default false
    */
-  class?: any;
-  children?: JSX.Element;
-  contentSlot?: JSX.Element;
-  [key: string]: unknown;
-}
+  defaultOpen?: boolean | undefined;
+  /**
+   * Trigger content.
+   */
+  children?: JSX.Element | undefined;
+  /**
+   * Tooltip body content. Takes precedence over the `content` string.
+   */
+  bodySlot?: JSX.Element | undefined;
+  /**
+   * Called whenever the open state changes through hover or focus.
+   */
+  onOpenChange?: ((open: boolean) => void) | undefined;
+};

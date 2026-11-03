@@ -1,48 +1,40 @@
 import type { RLPopoverProps } from "./popover.types";
 import { RLPopoverTheme } from "./popover.theme";
 import { createSignal, Show, onSettled, type Component } from "solid-js";
+import { createControllable } from "../../controllable";
 
 const OMIT_KEYS = [
+  "size",
+  "placement",
+  "mode",
   "open",
   "defaultOpen",
   "triggerLabel",
-  "mode",
-  "trigger",
   "onOpenChange",
 ] as const;
 
 export const RLPopover: Component<RLPopoverProps> = (props) => {
-  const { classes, rest, slots } = RLPopoverTheme.setup(props, {
-    slots: ["triggerSlot"] as const,
+  const { Tag, classes, rest, slots, children, theme } = RLPopoverTheme.setup(props, {
     omit: OMIT_KEYS,
-    variants: () => ({ size: props.size ?? "md", placement: props.placement ?? "bottom" }),
+    slots: ["triggerSlot"] as const,
   });
 
-  const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
+  const [isOpen, setOpen] = createControllable(
+    () => props.open,
+    props.defaultOpen ?? false,
+    props.onOpenChange,
+  );
   const [isHovered, setIsHovered] = createSignal(false);
 
   const mode = () => props.mode ?? "both";
   const isVisible = () => isOpen() || isHovered();
 
-  let containerRef: HTMLDivElement | undefined;
-
-  const handleOpenChange = (next: boolean) => {
-    setIsOpen(next);
-    props.onOpenChange?.(next);
-  };
-
-  const handleHoverShow = () => {
-    setIsHovered(true);
-  };
-
-  const handleHoverHide = () => {
-    setIsHovered(false);
-  };
+  let containerRef: HTMLElement | undefined;
 
   onSettled(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (isOpen() && containerRef && !containerRef.contains(e.target as Node)) {
-        handleOpenChange(false);
+        setOpen(false);
       }
     };
     document.addEventListener("click", handleOutsideClick);
@@ -50,12 +42,13 @@ export const RLPopover: Component<RLPopoverProps> = (props) => {
   });
 
   return (
-    <div
-      ref={(el) => (containerRef = el)}
-      class={`rl-popover-host ${classes().root}`}
-      data-slot="popover-container"
-      data-placement={props.placement ?? "bottom"}
+    <Tag
+      ref={(el: HTMLElement) => (containerRef = el)}
+      data-slot="root"
+      data-theme={theme()}
+      data-placement={props.placement}
       data-mode={mode()}
+      class={classes().root}
       {...rest}
     >
       <div
@@ -63,13 +56,13 @@ export const RLPopover: Component<RLPopoverProps> = (props) => {
         data-slot="trigger"
         onClick={(e) => {
           e.stopPropagation();
-          if (mode() === "click" || mode() === "both") handleOpenChange(!isOpen());
+          if (mode() === "click" || mode() === "both") setOpen(!isOpen());
         }}
         onMouseEnter={() => {
-          if (mode() === "hover" || mode() === "both") handleHoverShow();
+          if (mode() === "hover" || mode() === "both") setIsHovered(true);
         }}
         onMouseLeave={() => {
-          if (mode() === "hover" || mode() === "both") handleHoverHide();
+          if (mode() === "hover" || mode() === "both") setIsHovered(false);
         }}
       >
         {slots.triggerSlot() ??
@@ -81,10 +74,10 @@ export const RLPopover: Component<RLPopoverProps> = (props) => {
       </div>
 
       <Show when={isVisible()}>
-        <div class={classes().content} data-slot="content">
-          {props.children}
+        <div class={classes().content} data-slot="content" data-state="open">
+          {children()}
         </div>
       </Show>
-    </div>
+    </Tag>
   );
 };
